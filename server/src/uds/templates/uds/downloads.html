@@ -1,0 +1,25 @@
+{% extends "uds/internal_page.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+{% spaceless %}
+<h2>
+{% trans "Downloads" %}
+</h2>
+<div id="downdesc">
+	<p class="parrafo">{% trans "This page contains a list of downloadables provided by different modules" %}</p>
+</div>
+<div id="downloadables">
+<ul class="archivos">
+{% for f in files %}
+	<li>
+	  <a href="{% url uds.web.views.download idDownload=f.id %}">{{ f.name }}</a><dfn>{{ f.comment|safe }}</dfn>
+	</li>
+{% endfor %}
+</ul>
+</div>
+{% endspaceless %}
+{% include "uds/snippets/back_to_list.html" %}
+{% endblock %}
+

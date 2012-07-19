@@ -1,0 +1,21 @@
+{% extends "uds/internal_page.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+{% trans "UDS User Preferences" %}
+{% endblock %}
+
+{% block content %}
+	<div>
+		
+		<h2>{% trans "Preferences" %}</h2>
+		<form name="form1" method="post" action="">
+		{% csrf_token %}
+		{% autoescape off %}{{ prefs_form }}{% endautoescape %}
+		<input type="submit" name="submit" value="{% trans "Save Preferences" %}"/>
+		</form>
+		{% include "uds/snippets/back_to_list.html" %}
+		
+	</div>
+{% endblock %}

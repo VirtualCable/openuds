@@ -1,0 +1,35 @@
+Setting up pam module:
+
+add to to common-auth this line:
+auth	required	pam_uds.so	base=http://192.168.0.30/nss
+
+Setting up nsswitch module:
+
+1.- Copy libnss_uds.so.2 to /usr/lib
+2.- Edit /etc/nsswitch.conf, and put:
+
+passwd:		compat uds
+group:		compat
+shadow: 	compat
+
+host:		files dns
+networks:	files
+protocols:	files
+services:	files
+ethers:		files
+rcp:		files
+
+netgroup:	files
+
+(look passwd file, rest is sample content)
+
+3.- Create /etc/uds.cfg file, that hast the BASE url of the auth provider
+example:
+https://192.168.0.30/nss
+
+
+Every connection takes about 2.5 Mb, so with 380 Megas default machine memory size, we have for 100 connections (the 100Mb of "plus" is for OS)
+
+So, machine memory should be 128 + 2.5 * Expected concurrent connections.
+
+No limit has been detected, every connection spawn a process on server, but no data has been collected so far.

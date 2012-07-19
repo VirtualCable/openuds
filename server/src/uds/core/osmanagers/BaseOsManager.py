@@ -1,0 +1,128 @@
+# -*- coding: utf-8 -*-
+
+#
+# Copyright (c) 2012 Virtual Cable S.L.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, 
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice, 
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice, 
+#      this list of conditions and the following disclaimer in the documentation 
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
+#      may be used to endorse or promote products derived from this software 
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+'''
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
+
+from django.utils.translation import ugettext_noop as _
+from uds.core.util.State import State
+from uds.core.BaseModule import BaseModule
+from uds.core.managers.UserServiceManager import UserServiceManager
+
+STORAGE_KEY = 'osmk'
+
+class BaseOSManager(BaseModule):
+    '''
+    An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
+    The Service (i.e. virtual machine) communicates with the OSManager via a published web method, that must include the unique ID.
+    In order to make easier to agents identify themselfs, the Unique ID can be a list with various Ids (i.e. the macs of the virtual machine). 
+    Server will iterate thought them and look for an identifier associated with the service. This list is a comma separated values (i.e. AA:BB:CC:DD:EE:FF,00:11:22:...)
+    Remember also that we inherit the test and check methods from BaseModule
+    '''
+    # Service informational related data 
+    typeName = _('Base OS Manager') 
+    typeType = 'BaseOSManager'
+    typeDescription = _('Base Manager')
+    iconFile = 'osmanager.png'
+    
+    # If true, this os manager  will be invoked with every user service assigned, but not used from time to time
+    # Time is defined as a global config  
+    processUnusedMachines = False
+    
+    def __init__(self,environment, values):
+        super(BaseOSManager, self).__init__(environment, values)
+        self.initialize(values)
+        
+    def initialize(self, values):
+        '''
+        This method will be invoked from __init__ constructor.
+        This is provided so you don't have to provide your own __init__ method,
+        and invoke base methods.
+        This will get invoked when all initialization stuff is done
+        
+        Args:
+            Values: If values is not none, this object is being initialized
+            from administration interface, and not unmarshal will be done.
+            If it's None, this is initialized internally, and unmarshal will
+            be called after this.
+            
+        Default implementation does nothing
+        '''
+        pass
+        
+    def release(self, service):
+        '''
+        Called by a service that is in Usable state before destroying it so osmanager can release data associated with it
+        Only invoked for services that reach the state "removed"
+        @return nothing
+        '''
+        pass
+        
+    # These methods must be overriden
+    def process(self,service, message, data):
+        '''
+        This method must be overriden so your so manager can manage requests and responses from agent.
+        @param service: Service that sends the request (virtual machine or whatever)
+        @param message: message to process (os manager dependent)
+        @param data: Data for this message 
+        '''
+        pass
+    
+    def checkState(self,service):
+        '''
+        This method must be overriden so your os manager can respond to requests from system to the current state of the service
+        This method will be invoked when:
+          * After service creation has finished, with the service wanting to see if it has to wait for os manager process finalization
+          * After call to process method, to check if the state has changed
+          * Before assigning a service to an user (maybe this is not needed)? 
+          Notice that the service could be in any state. In fact, what we want with this is return FINISHED if nothing is expected from os o RUNING else
+          The state will be updated by actors inside oss, so no more direct checking is needed 
+          @return: RUNNING, FINISHED
+          We do not expect any exception from this method
+        '''
+        return State.FINISHED
+
+    
+    def processUnused(self, userService):
+        '''
+        This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
+        This function can update userService values. Normal operation will be remove machines if this state is not valid
+        '''
+        pass
+    
+    def destroy(self):
+        '''
+        Invoked when OS Manager is deleted
+        '''
+        pass
+    
+    def __str__(self):
+        return "Base OS Manager" 
+    

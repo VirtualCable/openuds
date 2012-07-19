@@ -1,0 +1,302 @@
+# -*- coding: utf-8 -*-
+'''
+Settings file for uds server (Django)
+'''
+
+import os
+import django
+import django.conf.global_settings as DEFAULT_SETTINGS
+
+# calculated paths for django and the site
+# used as starting points for various other paths
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+ADMINS = (
+    # ('Your Name', 'your_email@example.com'),
+)
+
+MANAGERS = ADMINS
+
+# This mark can be used by a setup script to easy locate DB Section of the settings file
+#DB_SECTION_START
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'OPTIONS': { 
+            #'init_command': 'SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+            'init_command' : 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+        },
+        'NAME': 'dbuds',                      # Or path to database file if using sqlite3.
+        'USER': 'dbuds',                      # Not used with sqlite3.
+        'PASSWORD': 'dbuds',                  # Not used with sqlite3.
+        'HOST': '172.27.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+#DB_SECTION_END
+
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# On Unix systems, a value of None will cause Django to use the same
+# timezone as the operating system.
+# If running in a Windows environment this must be set to the same as your
+# system time zone.
+
+#TIME_SECTION_START
+TIME_ZONE = 'Europe/Madrid'
+#TIME_SECTION_END
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en'
+
+ugettext = lambda s: s
+
+LANGUAGES = (
+  ('es', ugettext('Spanish')),
+  ('en', ugettext('English')),
+  ('fr', ugettext('French')),
+  ('de', ugettext('German')),
+)
+
+SITE_ID = 1
+
+# If you set this to False, Django will make some optimizations so as not
+# to load the internationalization machinery.
+USE_I18N = True
+
+# If you set this to False, Django will not format dates, numbers and
+# calendars according to the current locale
+USE_L10N = True
+
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Example: "/home/media/media.lawrence.com/media/"
+MEDIA_ROOT = ''
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash.
+# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
+MEDIA_URL = ''
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/static/'
+
+# URL prefix for admin static files -- CSS, JavaScript and images.
+# Make sure to use a trailing slash.
+# Examples: "http://foo.com/static/admin/", "/static/admin/".
+#ADMIN_MEDIA_PREFIX = '/static/admin/'
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+#KEYS_SECTION_START
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = 's5ky!7b5f#s35!e38xv%e-+iey6yi-#630x)tm1hf6_j8rie2*'
+# This is a very long string, an RSA KEY (this can be changed, but if u loose it, all encription will be lost)
+RSA_KEY = '-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQC0qe1GlriQbHFYdKYRPBFDSS8Ne/TEKI2mtPKJf36XZTy6rIyH\nvUpT1gMScVjHjOISLNJQqktyv0G+ZGzLDmfkCUBev6JBlFwNeX3Dv/97Q0BsEzJX\noYHiDANUkuB30ukmGvG0sg1v4ccl+xs2Su6pFSc5bGINBcQ5tO0ZI6Q1nQIDAQAB\nAoGBAKA7Octqb+T/mQOX6ZXNjY38wXOXJb44LXHWeGnEnvUNf/Aci0L0epCidfUM\nfG33oKX4BMwwTVxHDrsa/HaXn0FZtbQeBVywZqMqWpkfL/Ho8XJ8Rsq8OfElrwek\nOCPXgxMzQYxoNHw8V97k5qhfupQ+h878BseN367xSyQ8plahAkEAuPgAi6aobwZ5\nFZhx/+6rmQ8sM8FOuzzm6bclrvfuRAUFa9+kMM2K48NAneAtLPphofqI8wDPCYgQ\nTl7O96GXVQJBAPoKtWIMuBHJXKCdUNOISmeEvEzJMPKduvyqnUYv17tM0JTV0uzO\nuDpJoNIwVPq5c3LJaORKeCZnt3dBrdH1FSkCQQC3DK+1hIvhvB0uUvxWlIL7aTmM\nSny47Y9zsc04N6JzbCiuVdeueGs/9eXHl6f9gBgI7eCD48QAocfJVygphqA1AkEA\nrvzZjcIK+9+pJHqUO0XxlFrPkQloaRK77uHUaW9IEjui6dZu4+2T/q7SjubmQgWR\nZy7Pap03UuFZA2wCoqJbaQJAUG0FVrnyUORUnMQvdDjAWps2sXoPvA8sbQY1W8dh\nR2k4TCFl2wD7LutvsdgdkiH0gWdh5tc1c4dRmSX1eQ27nA==\n-----END RSA PRIVATE KEY-----'
+#KEYS_SECTION_END
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
+)
+
+# Own context processors plus django's onw
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
+    'uds.core.util.Config.context_processor',
+)
+
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+)
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+SESSION_COOKIE_HTTPONLY = False
+
+ROOT_URLCONF = 'server.urls'
+
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'templates')
+)
+
+INSTALLED_APPS = (
+    #'django.contrib.contenttypes', # Not used
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'south',
+    'uds',
+)
+
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGDIR = SITE_ROOT + '/' + 'log'
+LOGFILE = 'uds.log'
+SERVICESFILE = 'services.log'
+AUTHFILE = 'auth.log'
+USEFILE = 'use.log'
+LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
+ROTATINGSIZE = 32*1024*1024 # 32 Megabytes before rotating files
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+        },
+        'database': {
+            'format': '%(levelname)s %(asctime)s Database %(message)s'
+        },
+        'auth': {
+            'format': '%(asctime)s %(message)s'
+        },
+        'use': {
+            'format': '%(asctime)s %(message)s'
+        }
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+                 
+        'file':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'formatter': 'simple',
+            'filename': LOGDIR + '/' + LOGFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8'
+        },
+                 
+        'servicesFile':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'formatter': 'simple',
+            'filename': LOGDIR + '/' + SERVICESFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8'
+        },
+
+        'authFile':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'formatter': 'auth',
+            'filename': LOGDIR + '/' + AUTHFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8'
+        },
+
+        'useFile':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'formatter': 'use',
+            'filename': LOGDIR + '/' + USEFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8'
+        },
+        
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'database':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'database'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers':['null'],
+            'propagate': True,
+            'level':'INFO',
+        },
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['database'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+                
+        'uds': {
+            'handlers': ['file'],
+            'level': LOGLEVEL,
+        },
+                
+        'uds.services': {
+            'handlers': ['servicesFile'],
+            'level': LOGLEVEL,
+            'propagate': False,
+        },
+        # Custom Auth log
+        'authLog': {
+            'handlers' : ['authFile'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Custom Services use log
+        'useLog': {
+            'handlers' : ['useFile'],
+            'level': 'INFO',
+            'propagate': False,
+        }
+        
+    }
+}

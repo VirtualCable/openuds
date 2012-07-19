@@ -1,0 +1,18 @@
+functional:
+
+The function of module is as follow:
+
+With a given base, the module will invoke this urls, and expects the responses indicated:
+
+Imagine that base is http://192.168.0.30/nss
+
+1.- For Authenticating user:
+  http://192.168.0.30/nss?id=[USERID]&pass=[PASSWORD]
+  expects a response of "1" of user is valid, "0" if not.
+  
+2.- For user (nsswitch passwd):
+  http://192.168.0.30/nss?name=[USERNAME]
+  expects a response of "*" for invalid username or "id" (integer between 10000-65500) if not
+  
+  http://192.168.0.30/nss?uid=[UID]
+  expects a response of "*" for invalid uid, or the username if not.

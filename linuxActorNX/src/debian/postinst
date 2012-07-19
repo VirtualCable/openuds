@@ -1,0 +1,37 @@
+#!/bin/sh
+
+NXNODECFG=/usr/NX/etc/node.cfg
+
+. /usr/share/debconf/confmodule
+
+set -e
+
+case "$1" in
+    configure)
+       TMPFILE=$(mktemp /tmp/node.cfg.XXXXX)
+       trap "rm -f $TMPFILE" 0
+       cat $NXNODECFG | sed -e "s/.*udsnxst.*//; s/\(UserScriptAfterSessionStart *=.*\)/#\1/;s/\(UserScriptAfterSessionClose *=.*\)/#\1/" > $TMPFILE
+       echo >> $TMPFILE
+       echo "# Added by udsactor-nx (udsnxstart and udsnxstop)" >> $TMPFILE
+       echo UserScriptAfterSessionStart = \"/usr/bin/udsnxstart\" >> $TMPFILE
+       echo UserScriptAfterSessionClose = \"/usr/bin/udsnxstop\" >> $TMPFILE
+       cp $TMPFILE $NXNODECFG
+       invoke-rc.d nxserver restart
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+# Don't know why, but descriptors get "weird" when launched daemon, so we tell here to debconf to stop.
+# Solved not starting the service right now, defered to next reboot
+
+
+exit 0
