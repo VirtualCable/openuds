@@ -30,13 +30,13 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from uds.core.BaseModule import BaseModule
+from uds.core import Module
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class ServiceProvider(BaseModule):
+class ServiceProvider(Module):
     '''
     Base Service Provider Class.
     

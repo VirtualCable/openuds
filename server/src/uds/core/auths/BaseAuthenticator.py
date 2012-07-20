@@ -31,7 +31,7 @@ Base module for all authenticators
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from uds.core.BaseModule import BaseModule
+from uds.core import Module
 from django.utils.translation import ugettext_noop as translatable
 from GroupsManager import GroupsManager
 from Exceptions import InvalidUserException
@@ -39,7 +39,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class Authenticator(BaseModule):
+class Authenticator(Module):
     '''
     This class represents the base interface to implement authenticators.
     

@@ -33,9 +33,9 @@
 
 from django.utils.translation import ugettext as _
 from uds.core.util import OsDetector
-from uds.core.BaseModule import BaseModule
+from uds.core.BaseModule import Module
 
-class BaseTransport(BaseModule):
+class Transport(Module):
     '''
     An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
     The Service (i.e. virtual machine) communicates with the OSManager via a published web method, that must include the unique ID.
@@ -45,7 +45,7 @@ class BaseTransport(BaseModule):
     '''
     # Transport informational related data, inherited from BaseModule 
     typeName = 'Base Transport Manager' 
-    typeType = 'BaseTransport'
+    typeType = 'Base Transport'
     typeDescription = 'Base Transport'
     iconFile = 'transport.png'
     needsJava = False  # If this transport needs java for rendering
@@ -60,7 +60,7 @@ class BaseTransport(BaseModule):
     tcTransport = False
     
     def __init__(self,environment, values):
-        super(BaseTransport, self).__init__(environment, values)
+        super(Transport, self).__init__(environment, values)
         self.initialize(values)
         
     def initialize(self, values):

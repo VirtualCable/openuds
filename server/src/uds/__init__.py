@@ -38,18 +38,18 @@ from django.db.models import signals
 
 # Make sure that all services are "available" at service startup
 import services # to make sure that the packages are initialized at this point
-import auths# To make sure that the packages are initialized at this point
-from osmanagers import * # To make sure that packages are initialized at this point
-from transports import * # To make sure that packages are initialized at this point
-
+import auths # To make sure that the packages are initialized at this point
+import osmanagers # To make sure that packages are initialized at this point
+import transports # To make sure that packages are initialized at this point
+import models
 
 
 def modify_MySQL_storage(sender, **kwargs):
     from django.db import connection
     cursor = connection.cursor()
     
-    innoDbTables = ( uds.models.UserService, uds.models.DeployedService, uds.models.DeployedServicePublication,
-                     uds.models.Scheduler, uds.models.DelayedTask, )
+    innoDbTables = ( models.UserService, models.DeployedService, models.DeployedServicePublication,
+                     models.Scheduler, models.DelayedTask, )
     dicTables = { k._meta.db_table: True for k in innoDbTables }
 
     for model in kwargs['created_models']:
@@ -58,4 +58,4 @@ def modify_MySQL_storage(sender, **kwargs):
             stmt = 'ALTER TABLE %s ENGINE=%s' % (db_table,'InnoDB')
             cursor.execute(stmt)
 
-signals.post_syncdb.connect(modify_MySQL_storage, sender=uds.models)
+signals.post_syncdb.connect(modify_MySQL_storage, sender=models)

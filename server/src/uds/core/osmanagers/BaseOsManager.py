@@ -33,12 +33,11 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
-from uds.core.BaseModule import BaseModule
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core import Module
 
 STORAGE_KEY = 'osmk'
 
-class BaseOSManager(BaseModule):
+class BaseOSManager(Module):
     '''
     An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
     The Service (i.e. virtual machine) communicates with the OSManager via a published web method, that must include the unique ID.

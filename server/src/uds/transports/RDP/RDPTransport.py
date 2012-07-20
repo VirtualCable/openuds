@@ -12,7 +12,7 @@
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
-from uds.core.transports.BaseTransport import BaseTransport
+from uds.core.transports.BaseTransport import Transport
 from uds.core.util import connection
 from web import generateHtmlForRdp, getHtmlComponent
 
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-class RDPTransport(BaseTransport):
+class RDPTransport(Transport):
     '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password

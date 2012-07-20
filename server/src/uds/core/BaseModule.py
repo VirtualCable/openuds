@@ -39,7 +39,7 @@ import base64, os.path, sys, logging
 
 logger = logging.getLogger(__name__)
 
-class BaseModule(UserInterface, Environmentable, Serializable):
+class Module(UserInterface, Environmentable, Serializable):
     '''
     Base class for all modules used by UDS.
     This base module provides all the needed methods that modules must implement

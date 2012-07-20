@@ -33,14 +33,11 @@
 
 from django.db import models
 from django.db.models import signals
-from uds.core.services.ServiceProviderFactory import ServiceProviderFactory
 from uds.core.osmanagers.OSManagersFactory import OSManagersFactory
-from uds.core.transports.TransportsFactory import TransportsFactory
 from uds.core.jobs.JobsFactory import JobsFactory
 from uds.core.Environment import Environment
 from uds.core.util.db.LockingManager import LockingManager
 from uds.core.util.State import State
-from uds.core import auths
 from uds.core.services.Exceptions import InvalidServiceException
 from datetime import datetime, timedelta
 
@@ -119,6 +116,7 @@ class Provider(models.Model):
         return sp
 
     def getType(self):
+        from uds.core import services
         '''
         Get the type of the object this record represents.
         
@@ -127,7 +125,7 @@ class Provider(models.Model):
         Returns:
             The python type for this record object
         '''
-        return ServiceProviderFactory.factory().lookup(self.data_type)
+        return services.factory().lookup(self.data_type)
     
     def __unicode__(self):
         return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
@@ -403,7 +401,9 @@ class Transport(models.Model):
             
         :note: We only need to get info from this, not access specific data (class specific info)
         '''
-        return TransportsFactory.factory().lookup(self.data_type)
+        from uds.core import transports
+
+        return transports.factory().lookup(self.data_type)
     
     def validForIp(self, ip):
         '''
@@ -521,6 +521,7 @@ class Authenticator(models.Model):
             
         :note: We only need to get info from this, not access specific data (class specific info)
         '''
+        from uds.core import auths
         return auths.factory().lookup(self.data_type)
     
     def getOrCreateUser(self, username, realName = None):
@@ -896,6 +897,8 @@ class DeployedService(models.Model):
         
         '''
         # We have to check if at least one group from this user is valid for this deployed service
+        from uds.core import auths
+        
         logger.debug('User: {0}'.format(user.id))
         logger.debug('DeployedService: {0}'.format(self.id))
         if len( set(user.groups.all()) & set(self.assignedGroups.all()) ) == 0:
@@ -915,9 +918,10 @@ class DeployedService(models.Model):
         Returns:
             List of accesible deployed services
         '''
+        from uds.core import services
         list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state__exact=State.ACTIVE, state = State.ACTIVE).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta__eq=0)
         # Now get deployed services that DO NOT NEED publication
-        doNotNeedPublishing = [ t.type() for t in ServiceProviderFactory.factory().servicesThatDoNotNeedPublication() ]
+        doNotNeedPublishing = [ t.type() for t in services.factory().servicesThatDoNotNeedPublication() ]
         list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state__exact=State.ACTIVE, service__data_type__in=doNotNeedPublishing, state = State.ACTIVE)
         return [ r for r in list1 ] + [ r for r in list2 ]
         

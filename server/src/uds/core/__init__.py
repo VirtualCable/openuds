@@ -34,8 +34,13 @@ This package contains all core-related code for UDS
 '''
 
 # Core needs tasks manager to register scheduled jobs, so we ensure of that here
-from managers.TaskManager import TaskManager
+from BaseModule import Module
 import services
 import auths
+import transports
 
-TaskManager.registerScheduledTask()
+def __init__():
+    from managers.TaskManager import TaskManager
+    TaskManager.registerScheduledTask()
+    
+__init__()

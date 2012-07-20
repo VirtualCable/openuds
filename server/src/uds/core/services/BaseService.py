@@ -31,9 +31,9 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from django.utils.translation import ugettext_noop as translatable
-from uds.core.BaseModule import BaseModule
+from uds.core import Module
 
-class Service(BaseModule):
+class Service(Module):
     '''
     This class is in fact an interface, and represents a service, that is the 
     definition of an offering for consumers (users).

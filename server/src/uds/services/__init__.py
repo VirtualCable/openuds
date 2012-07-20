@@ -28,10 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-Authentication modules for uds are contained inside this module.
+Authentication modules for uds are contained inside this package.
 To create a new authentication module, you will need to follow this steps:
     1.- Create the authentication module, probably based on an existing one
-    2.- Insert the module as child of this module
+    2.- Insert the module package as child of this package
     3.- Import the class of your authentication module at __init__. For example:: 
         from Authenticator import SimpleAthenticator 
     4.- Done. At Server restart, the module will be recognized, loaded and treated
