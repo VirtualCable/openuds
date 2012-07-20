@@ -12,7 +12,7 @@
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.managers.CryptoManager import CryptoManager
-from uds.core.osmanagers.BaseOsManager import BaseOSManager, State
+from uds.core import osmanagers
 from WindowsOsManager import WindowsOsManager, scrambleMsg
 
 import logging
@@ -37,11 +37,11 @@ class WinDomainOsManager(WindowsOsManager):
         super(WinDomainOsManager, self).__init__(environment, values)
         if values != None:
             if values['domain'] == '':
-                raise BaseOSManager.ValidationException(_('Must provide a domain!!!'))
+                raise osmanagers.OSManager.ValidationException(_('Must provide a domain!!!'))
             if values['account'] == '':
-                raise BaseOSManager.ValidationException(_('Must provide an account to add machines to domain!!!'))
+                raise osmanagers.OSManager.ValidationException(_('Must provide an account to add machines to domain!!!'))
             if values['password'] == '':
-                raise BaseOSManager.ValidationException(_('Must provide a password for the account!!!'))
+                raise osmanagers.OSManager.ValidationException(_('Must provide a password for the account!!!'))
             self._domain = values['domain']
             self._ou = values['ou']
             self._account = values['account']

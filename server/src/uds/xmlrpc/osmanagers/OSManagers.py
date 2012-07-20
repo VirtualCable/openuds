@@ -40,7 +40,7 @@ from ..util.Helpers import dictFromData
 from ..auths.AdminAuth import needs_credentials
 from uds.core.Environment import Environment
 import logging
-from uds.core.osmanagers.BaseOsManager import BaseOSManager
+from uds.core import osmanagers
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ def createOSManager(credentials, type, data):
         sp = OSManager.objects.create(name = dict['name'], comments = dict['comments'], data_type = type)
         sp.data = sp.getInstance(dict).serialize()
         sp.save()
-    except BaseOSManager.ValidationException, e:
+    except osmanagers.OSManager.ValidationException, e:
         sp.delete()
         raise ValidationException(str(e))
     except IntegrityError: # Must be exception at creation

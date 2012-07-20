@@ -30,16 +30,6 @@
 '''
 UDS authentication related interfaces and classes
 
-From 1.0 onwards, the refactoring of UDS has started.
-
-We can access the base service interfaces the old method, or recommended
-and easier use the new one, that is "from uds.core.services import ..."
-
-The new valid names for classes are:
-
-   
-I think this is an easier to use and understand way of accessing this classes
-
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from BaseAuthenticator import Authenticator

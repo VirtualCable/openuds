@@ -124,7 +124,7 @@ class UserDeployment(Environmentable, Serializable):
             kwargs: List of arguments that will receive:
                 service: Parent service (derived from Service) of this deployment (this is an instance, not database object) 
                 publication: Parent publication (derived from Publication) of this deployment (optional)(this is an instance, not database object)
-                osmanager: Parent osmanager (derived from BaseOsManager) of this deployment (optional)(this is an instance, not database object)
+                osmanager: Parent osmanager (derived from :py:class:`uds.core.osmanagersOSManager`) of this deployment (optional)(this is an instance, not database object)
                 dbservice: Database object for this service
         '''
         Environmentable.__init__(self, environment)

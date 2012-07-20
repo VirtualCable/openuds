@@ -33,7 +33,6 @@
 
 from django.db import models
 from django.db.models import signals
-from uds.core.osmanagers.OSManagersFactory import OSManagersFactory
 from uds.core.jobs.JobsFactory import JobsFactory
 from uds.core.Environment import Environment
 from uds.core.util.db.LockingManager import LockingManager
@@ -296,8 +295,9 @@ class OSManager(models.Model):
             
         :note: We only need to get info from this, not access specific data (class specific info)
         '''
-        # We only need to get info from this, not access specific data (class specific info
-        return OSManagersFactory.factory().lookup(self.data_type)
+        # We only need to get info from this, not access specific data (class specific info)
+        from uds.core import osmanagers
+        return osmanagers.factory().lookup(self.data_type)
         
     
     def __unicode__(self):

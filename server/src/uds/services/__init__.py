@@ -28,12 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-Authentication modules for uds are contained inside this package.
-To create a new authentication module, you will need to follow this steps:
-    1.- Create the authentication module, probably based on an existing one
+Service modules for uds are contained inside this package.
+To create a new service module, you will need to follow this steps:
+    1.- Create the service module, probably based on an existing one
     2.- Insert the module package as child of this package
-    3.- Import the class of your authentication module at __init__. For example:: 
-        from Authenticator import SimpleAthenticator 
+    3.- Import the class of your service module at __init__. For example:: 
+        from Service import SimpleService 
     4.- Done. At Server restart, the module will be recognized, loaded and treated
     
 The registration of modules is done locating subclases of :py:class:`uds.core.auths.Authentication`

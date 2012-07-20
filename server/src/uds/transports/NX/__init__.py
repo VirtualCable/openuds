@@ -31,14 +31,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from uds.core.transports.TransportsFactory import TransportsFactory
 from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
 from uds.core.managers.DownloadsManager import DownloadsManager
 from NXTransport import NXTransport
 from django.utils.translation import ugettext_noop as _
 import os.path, sys
 
-TransportsFactory.factory().insert(NXTransport)
 UserPrefsManager.manager().registerPrefs('nx', _('NX Protocol'), 
                                           [ 
                                            CommonPrefs.screenSizePref

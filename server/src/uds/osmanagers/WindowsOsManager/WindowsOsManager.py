@@ -11,8 +11,9 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
-from uds.core.osmanagers.BaseOsManager import BaseOSManager, State
+from uds.core import osmanagers
 from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.util.State import State
 
 import logging
 
@@ -31,7 +32,7 @@ def scrambleMsg(data):
     return "".join(res).encode('hex')
 
 
-class WindowsOsManager(BaseOSManager):
+class WindowsOsManager(osmanagers.OSManager):
     typeName = _('Windows Basic OS Manager')
     typeType = 'WindowsManager'
     typeDescription = _('Os Manager to control windows machines without domain. (Basically renames machine)')
@@ -48,9 +49,9 @@ class WindowsOsManager(BaseOSManager):
         try:
             len = int(len)
         except Exception:
-            raise BaseOSManager.ValidationException(_('Length must be numeric!!'))
+            raise osmanagers.OSManager.ValidationException(_('Length must be numeric!!'))
         if len > 6 or len < 1:
-            raise BaseOSManager.ValidationException(_('Length must be betwen 1 and six'))
+            raise osmanagers.OSManager.ValidationException(_('Length must be betwen 1 and six'))
         return len
     
     def __init__(self,environment, values):

@@ -37,7 +37,7 @@ from uds.core import Module
 
 STORAGE_KEY = 'osmk'
 
-class BaseOSManager(Module):
+class OSManager(Module):
     '''
     An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
     The Service (i.e. virtual machine) communicates with the OSManager via a published web method, that must include the unique ID.
@@ -56,7 +56,7 @@ class BaseOSManager(Module):
     processUnusedMachines = False
     
     def __init__(self,environment, values):
-        super(BaseOSManager, self).__init__(environment, values)
+        super(OSManager, self).__init__(environment, values)
         self.initialize(values)
         
     def initialize(self, values):

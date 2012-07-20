@@ -33,14 +33,15 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
-from uds.core.osmanagers.BaseOsManager import BaseOSManager, State
+from uds.core import osmanagers
+from uds.core.util.State import State
 
 import logging
 from uds.core.managers.UserServiceManager import UserServiceManager
 
 logger = logging.getLogger(__name__)
 
-class LinuxOsManager(BaseOSManager):
+class LinuxOsManager(osmanagers.OSManager):
     typeName = _('Linux OS Manager')
     typeType = 'LinuxManager'
     typeDescription = _('Os Manager to control linux virtual machines (basically renames machine and notify state)')
