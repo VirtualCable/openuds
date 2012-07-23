@@ -296,6 +296,35 @@ def authCallback(request, idAuth):
     except Exception as e:
         return errors.exceptionView(request, e)
         
+def authInfo(request, authName):
+    '''
+    This url is provided so authenticators can provide info (such as SAML metadata)
+    
+    This will invoke getInfo on requested authName. The search of the authenticator is done
+    by name, so it's easier to access from external sources
+    '''
+    from uds.core import auths
+    try:
+        authenticator = Authenticator.objects.get(name=authName)
+        authInstance = authenticator.getInstance()
+        if authInstance.getInfo == auths.Authenticator.getInfo:
+            raise Exception() # This authenticator do not provides info
+        
+        params = request.GET.copy()
+        
+        info = authInstance.getInfo(params)
+        
+        if info is None:
+            raise Exception() # This auth do not provides info
+        
+        if type(info) is list or type(info) is tuple:
+            return HttpResponse(info[0], content_type = info[1])
+            
+        return HttpResponse(info)
+    except Exception:
+        return HttpResponse(_('Authenticator do not provides information'))
+    
+    
 
 @webLoginRequired
 @transformId

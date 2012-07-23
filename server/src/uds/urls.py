@@ -58,6 +58,7 @@ urlpatterns = patterns('uds',
     # Custom authentication callback
     (r'^auth/(?P<idAuth>.+)', 'web.views.authCallback'),
     (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),
+    (r'^authinfo/?P<authName>.+)', 'web.views.authInfo'),
     
 )
 

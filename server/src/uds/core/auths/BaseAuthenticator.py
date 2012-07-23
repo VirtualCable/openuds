@@ -200,11 +200,18 @@ class Authenticator(Module):
         Helper method to return callback url for self (authenticator).
         
         This method will allow us to know where to do redirection in case
-        we need to use callback
+        we need to use callback for authentication
         '''
         from auth import authCallbackUrl
         return authCallbackUrl(self.dbAuthenticator())
-            
+    
+    def infoUrl(self):
+        '''
+        Helper method to return info url for this authenticator
+        '''
+        from auth import authInfoUrl
+        return authInfoUrl(self.dbAuthenticator())
+    
     def searchUsers(self, pattern):
         '''
         If you provide this method, the user will be allowed to search users,
@@ -362,6 +369,16 @@ class Authenticator(Module):
         :note: Keeping user information about group membership inside storage is highly recommended.
                There will be calls to getGroups one an again, and also to getRealName, not just
                at login, but at future (from admin interface, at user editing for example)
+        '''
+        return None
+
+    def getInfo(self, parameters):
+        '''
+        This method is invoked whenever the authinfo url is invoked, with the name of the authenticator
+        If this is implemented, information returned by this will be shown via web.
+        
+        :note: You can return here a single element or a list (or tuple), where first element will be content itself, 
+               and second will be the content type (i.e. "text/plain"). 
         '''
         return None
     

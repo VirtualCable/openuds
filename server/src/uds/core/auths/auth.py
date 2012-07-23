@@ -169,6 +169,18 @@ def authCallbackUrl(authenticator):
     from django.core.urlresolvers import reverse
     return reverse('uds.web.views.authCallback', kwargs={'idAuth': authenticator.id})
 
+def authInfoUrl(authenticator):
+    '''
+    Helper method, so we can get the info url for an authenticator
+    '''
+    from django.core.urlresolvers import reverse
+    if type(authenticator) is str:
+        name = authenticator
+    else:
+        name = authenticator.name
+        
+    return reverse('uds.web.views.authInfo', kwargs={'authName': name})
+
 def webLogin(request, response, user, password):
     '''
     Helper function to, once the user is authenticated, store the information at the user session.
