@@ -208,6 +208,7 @@ def webLogout(request, exit_url = None):
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     '''
+    # Invoke esit for authenticator
     request.session.clear()
     if exit_url is None:
         exit_url = GlobalConfig.LOGIN_URL.get()

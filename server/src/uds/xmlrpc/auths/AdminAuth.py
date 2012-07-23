@@ -64,6 +64,23 @@ class Credentials(object):
     def __str__(self):
         return "authId: {0}, isAdmin: {1}, user: {2}, locale: {3}, key: {4}".format(self.idAuth, self.isAdmin, self.user, self.locale, self.key)
     
+    def logout(self):
+        '''
+        Logout administration user
+        '''
+        logger.info('Logged out admin user {0}'.format(self))
+        
+        if self.idAuth == ADMIN_AUTH: # Root administrator does nothing on logout
+            return ''
+        try:
+            a = Authenticator.objects.get(pk=self.idAuth).getInstance()
+            return a.logout(self.user)
+        except Exception:
+            logger.exception('Exception at logout (managed)')
+            
+        return ''
+        
+    
 
 def makeCredentials(idAuth, username, locale, isAdmin):
     session = SessionStore()
@@ -120,8 +137,10 @@ def getAdminAuths(locale):
     Returns the authenticators 
     '''
     activate(locale)
-    auths = Authenticator.all()
-    res = [ { 'id' : str(a.id), 'name' : a.name } for a in auths ]
+    res = []
+    for a in Authenticator.all():
+        if a.getType().isCustom() is False:
+            res.append( { 'id' : str(a.id), 'name' : a.name } )
     return res + [ {'id' : ADMIN_AUTH, 'name' : _('Administration') }] 
     
 
@@ -153,9 +172,9 @@ def logout(credentials):
     '''
     Logs out and administration user
     '''
+    ret = credentials.logout() or ''
     invalidateCredentials(credentials)
-    logger.info('Logged out admin user {0}'.format(credentials))
-    return True
+    return ret
 
 def registerAdminAuthFunctions(dispatcher):
     dispatcher.register_function(login, 'login')

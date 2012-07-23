@@ -211,6 +211,13 @@ class Authenticator(Module):
         '''
         from auth import authInfoUrl
         return authInfoUrl(self.dbAuthenticator())
+
+    @classmethod
+    def isCustom(cls):
+        '''
+        Helper to query if a class is custom (implements getHtml method)
+        '''
+        return cls.getHtml != Authenticator.getHtml
     
     def searchUsers(self, pattern):
         '''
@@ -287,6 +294,34 @@ class Authenticator(Module):
                we let the authenticator decide inside wich groups of UDS this users is included.
         '''
         return False
+    
+    def logout(self, username):
+        '''
+        Invoked whenever an user logs out.
+        
+        Notice that authenticators that provides getHtml method are considered "custom", and
+        these authenticators will never be used to allow an user to access administration interface
+        (they will be filtered out)
+        
+        By default, this method does nothing.
+        
+        Args:
+           
+            username: Name of the user that logged out
+            
+        Returns:
+        
+            None if nothing has to be done by UDS. An URL (absolute or relative), if it has to redirect
+            the user to somewhere. 
+            
+        :note: This method will be invoked also for administration log out (it it's done), but return
+               result will be passed to administration interface, that will invoke the URL but nothing
+               will be shown to the user.
+               Also, notice that this method will only be invoked "implicity", this means that will be
+               invoked if user requests "log out", but maybe it will never be invoked.
+                
+        '''
+        return None
     
     def getForAuth(self, username):
         '''

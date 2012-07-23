@@ -686,6 +686,11 @@ class User(models.Model):
         self.last_access = getSqlDatetime()
         self.save()
         
+    def logout(self):
+        '''
+        Invoked to log out this user
+        '''
+        return self.getManager().logout(self.name)
     
     def __unicode__(self):
         return "User {0} from auth {1}".format(self.name, self.manager.name)

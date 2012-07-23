@@ -121,8 +121,9 @@ def customAuth(request, idAuth):
         res = 'error'
     return HttpResponse(res, content_type = 'text/html')
 
+@webLoginRequired
 def logout(request):
-    return webLogout(request)
+    return webLogout(request, request.user.logout())
 
 @webLoginRequired
 def index(request):

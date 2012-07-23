@@ -33,11 +33,9 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from django.conf import settings
 from django.forms.forms import NON_FIELD_ERRORS
 from django.forms.util import ErrorDict
 from uds.models import Authenticator
-from uds.core.auths import Authenticator as Auth
 import logging
 
 logger = logging.getLogger(__name__)
@@ -72,7 +70,7 @@ class LoginForm(BaseForm):
             if a.getType() is None:
                 continue
             choices.append( (a.id, a.name) )
-            if a.getType().getHtml != Auth.getHtml:
+            if a.getType().isCustom():
                 nonStandard.append(str(a.id))
             else:
                 standard.append(str(a.id))
