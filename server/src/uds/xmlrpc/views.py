@@ -57,16 +57,50 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-dispatcher = SimpleXMLRPCDispatcher(allow_none=False, encoding=None)
+class XMLRPCDispatcher(SimpleXMLRPCDispatcher):
+    '''
+    Own dispatchers, to allow the pass of the request to the methods.
+    
+    Request will be, in most cases, removed from params at @needs_credentials decorator
+    This means that all xmlrpc methods that needs_credentials, will have the request at
+    the Credentials object.
+    
+    If no request is needed, normal method invocation will be done
+    '''
+    
+    def __init__(self):
+        SimpleXMLRPCDispatcher.__init__(self, allow_none=False, encoding=None)
+        
+        
+    def dispatch(self, request, **kwargs):
+        import xmlrpclib
+        xml = request.raw_post_data
+        try:
+            params, method = xmlrpclib.loads(xml)
+            try:
+                response = self._dispatch(method, params + (request,))
+            except TypeError:
+                response = self._dispatch(method, params)
+            
+            response = (response,)
+            response = xmlrpclib.dumps( response, methodresponse=1)
+        except xmlrpclib.Fault as fault:
+            response = xmlrpclib.dumps(fault)
+        except Exception as e:
+            response = xmlrpclib.dumps(
+                xmlrpclib.Fault(1, "Exception caught!: {0}".format(e))
+                )
+        
+        return HttpResponse(response, content_type = 'text/xml')
+    
+
+dispatcher = XMLRPCDispatcher()
 
 # csrf_exempt is needed because we don't expect xmlrcp to be called from a web form
 @csrf_exempt
 def xmlrpc(request):
     if len(request.POST):
-        response = HttpResponse(mimetype="text/xml")
-        data = dispatcher._marshaled_dispatch(request.raw_post_data)
-        #logger.debug(data)
-        response.write(data)
+        response = dispatcher.dispatch(request)
     else:
         logger.error('XMLRPC invocation with GET method {0}'.format(request.path))
         response = HttpResponse()

@@ -51,7 +51,8 @@ class Credentials(object):
     '''
     Represents a valid credential from a user connected to administration.
     '''
-    def __init__(self, session, credential_key):
+    def __init__(self, request, session, credential_key):
+        self.request = request
         self.idAuth = session['idAuth']
         self.isAdmin = session['isAdmin']
         self.user = session['username']
@@ -100,8 +101,12 @@ def needs_credentials(xmlrpc_func):
     '''
     @wraps(xmlrpc_func)
     def _wrapped_xmlrcp_func(credentials, *args, **kwargs):
+        # We expect that request is passed in as last argument ALWAYS (look at views)
+        args = list(args)
+        request = args.pop() # Last argumment is request
+        args = tuple(args)
         logger.debug('Checkin credentials {0} for function {1}'.format(credentials, xmlrpc_func.__name__))
-        cred = validateCredentials(credentials) 
+        cred = validateCredentials(request, credentials) 
         if cred is not None:
             logger.debug('Credentials valid, executing')
             return xmlrpc_func(cred, *args, **kwargs)
@@ -109,7 +114,7 @@ def needs_credentials(xmlrpc_func):
     return _wrapped_xmlrcp_func
 
 
-def validateCredentials(credentials):
+def validateCredentials(request, credentials):
     '''
     Validates the credentials of an user
     :param credentials:
@@ -124,7 +129,7 @@ def validateCredentials(credentials):
     # Updates the expire key, this is the slow part as we can see at debug log, better if we can only update the expire_key this takes 80 ms!!!
     session.save()
     logger.debug('Session updated')
-    return Credentials(session, credentials )
+    return Credentials(request, session, credentials )
 
 
 def invalidateCredentials(credentials):
@@ -145,7 +150,7 @@ def getAdminAuths(locale):
     
 
 # Xmlrpc functions
-def login(username, password, idAuth, locale):
+def login(username, password, idAuth, locale, request):
     '''
     Validates the user/password credentials, assign to it the specified locale for this session and returns a credentials response
     '''
