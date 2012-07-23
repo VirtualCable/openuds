@@ -239,12 +239,13 @@ namespace UdsAdmin.xmlrpc
 
         }
 
-        public static void Logout()
+        public static string Logout()
         {
+            string ret = "";
             if (s != null)
                 try
                 {
-                    s.Logout(credentials);
+                    ret = s.Logout(credentials);
                     credentials = "";
                     s = null;
                 }
@@ -252,6 +253,7 @@ namespace UdsAdmin.xmlrpc
                 {
                     // If credentials are not valid, or we can't reach server, we are exiting so we don't care :-)
                 }
+            return ret;
         }
 
         // Authenticators

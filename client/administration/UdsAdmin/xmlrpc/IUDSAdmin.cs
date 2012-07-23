@@ -45,7 +45,7 @@ namespace UdsAdmin.xmlrpc
         SimpleInfo[] GetAdminAuths(string locale);
 
         [XmlRpcMethod("logout")]
-        bool Logout(string credentials);
+        string Logout(string credentials);
 
         // Service provider related methods
         [XmlRpcMethod("getServiceProvidersTypes")]
