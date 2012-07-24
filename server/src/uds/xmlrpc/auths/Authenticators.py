@@ -148,6 +148,7 @@ def createAuthenticator(credentials, type, data):
     '''
     dict_ = dictFromData(data)
     # First create data without serialization, then serialies data with correct environment
+    dict_['request'] = credentials.request
     auth = None
     try:
         auth = Authenticator.objects.create(name = dict_['name'], comments = dict_['comments'], data_type = type, priority=int(dict_['priority']))
@@ -178,6 +179,7 @@ def modifyAuthenticator(credentials, id, data):
     try:
         auth = Authenticator.objects.get(pk=id)
         dict_ = dictFromData(data)
+        dict_['request'] = credentials.request
         a = auth.getInstance(dict_)
         auth.data = a.serialize()
         auth.name = dict_['name']
