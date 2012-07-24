@@ -654,7 +654,20 @@ namespace UdsAdmin.forms
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            xmlrpc.UdsAdminService.Logout();
+            string url = xmlrpc.UdsAdminService.Logout();
+            if (url != "")
+            {
+                try
+                {
+                    System.Net.WebRequest req = System.Net.WebRequest.Create(url);
+                    System.Net.WebResponse response = req.GetResponse();
+                    // We don't mind whatever result we get
+                    response.Close();
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
