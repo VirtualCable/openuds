@@ -128,6 +128,10 @@ namespace UdsAdmin.xmlrpc
         // For multichoices
         [XmlRpcMissingMapping(MappingAction.Ignore)]
         public int rows;
+
+        // For multilines
+        [XmlRpcMissingMapping(MappingAction.Ignore)]
+        public int multiline = 0;
     }
 
     public class GuiField

@@ -143,7 +143,7 @@ namespace UdsAdmin.gui
        private static Dictionary<string, FldTypeData> ctrlTypeInfo =
             new Dictionary<string, FldTypeData>()
             {
-                { xmlrpc.Constants.TEXT_TYPE, new FldTypeData(CreateTextBox, TextDataExtractor, TextDataWriter, TextSelector) },
+                { xmlrpc.Constants.TEXT_TYPE, new FldTypeData(CreateText, TextDataExtractor, TextDataWriter, TextSelector, TextSizeCalculator) },
                 { xmlrpc.Constants.PASSWORD_TYPE, new FldTypeData(CreatePasswordBox, TextDataExtractor, TextDataWriter, TextSelector) },
                 { xmlrpc.Constants.NUMERIC_TYPE, new FldTypeData(CreateNumericBox, NumericDataExtractor, TextDataWriter, TextSelector) },
                 { xmlrpc.Constants.HIDDEN_TYPE, new FldTypeData(null, TextDataExtractor, TextDataWriter, TextSelector) },
@@ -279,7 +279,7 @@ namespace UdsAdmin.gui
 
 
         // Controls creator helpers
-        private static Control CreateTextBox(xmlrpc.GuiField fld, Control container)
+        private static Control CreateText(xmlrpc.GuiField fld, Control container)
         {
             TextBox text = new TextBox();
             text.Name = fld.name;
@@ -288,6 +288,13 @@ namespace UdsAdmin.gui
             text.Width = sz.Width;
             text.Height = sz.Height;
             text.MaxLength = fld.gui.length;
+            if (fld.gui.multiline > 1)
+            {
+                text.Multiline = true;
+                text.ScrollBars = ScrollBars.Both;
+                text.AcceptsReturn = true;
+                text.WordWrap = false;
+            }
             if (fld.value != "")
                 text.Text = fld.value;
             else
@@ -455,6 +462,22 @@ namespace UdsAdmin.gui
 
             return sz;
         }
+
+        // Text box size calculator
+        private static Size TextSizeCalculator(xmlrpc.GuiField fld)
+        {
+            if (fld.gui.multiline < 2)
+                return DefaultSizeCalculator(fld);
+
+            Size sz = ctrlTypeInfo[fld.gui.type].size();
+            sz.Width *= fld.gui.length;
+            if (sz.Width > UdsAdmin.Properties.Settings.Default.MaxControlWidth)
+                sz.Width = UdsAdmin.Properties.Settings.Default.MaxControlWidth;
+            sz.Height *= fld.gui.multiline;
+            return sz;
+        }
+
+
 
         // Button size calculators
         private static Size BtnSizeCalculator(xmlrpc.GuiField fld)
