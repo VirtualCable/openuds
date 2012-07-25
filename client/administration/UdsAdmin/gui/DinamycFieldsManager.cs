@@ -143,7 +143,7 @@ namespace UdsAdmin.gui
        private static Dictionary<string, FldTypeData> ctrlTypeInfo =
             new Dictionary<string, FldTypeData>()
             {
-                { xmlrpc.Constants.TEXT_TYPE, new FldTypeData(CreateText, TextDataExtractor, TextDataWriter, TextSelector, TextSizeCalculator) },
+                { xmlrpc.Constants.TEXT_TYPE, new FldTypeData(CreateTextBox, TextDataExtractor, TextDataWriter, TextSelector, TextSizeCalculator) },
                 { xmlrpc.Constants.PASSWORD_TYPE, new FldTypeData(CreatePasswordBox, TextDataExtractor, TextDataWriter, TextSelector) },
                 { xmlrpc.Constants.NUMERIC_TYPE, new FldTypeData(CreateNumericBox, NumericDataExtractor, TextDataWriter, TextSelector) },
                 { xmlrpc.Constants.HIDDEN_TYPE, new FldTypeData(null, TextDataExtractor, TextDataWriter, TextSelector) },
@@ -279,7 +279,7 @@ namespace UdsAdmin.gui
 
 
         // Controls creator helpers
-        private static Control CreateText(xmlrpc.GuiField fld, Control container)
+        private static Control CreateTextBox(xmlrpc.GuiField fld, Control container)
         {
             TextBox text = new TextBox();
             text.Name = fld.name;
@@ -288,17 +288,22 @@ namespace UdsAdmin.gui
             text.Width = sz.Width;
             text.Height = sz.Height;
             text.MaxLength = fld.gui.length;
+            string value = fld.value;
+            if (value == "")
+                value = fld.gui.defvalue;
+
             if (fld.gui.multiline > 1)
             {
                 text.Multiline = true;
                 text.ScrollBars = ScrollBars.Both;
                 text.AcceptsReturn = true;
                 text.WordWrap = false;
+                StringBuilder bldr = new StringBuilder();
+                foreach (string v in value.Split('\n'))
+                    bldr.AppendLine(v);
+                value = bldr.ToString();
             }
-            if (fld.value != "")
-                text.Text = fld.value;
-            else
-                text.Text = fld.gui.defvalue;
+            text.Text = value;
             return text;
         }
 
@@ -576,7 +581,17 @@ namespace UdsAdmin.gui
         // Control writers helpers
         private static void TextDataWriter(Control ctrl, xmlrpc.GuiFieldValue value)
         {
-            ctrl.Text = value.value;
+            TextBox tc = (TextBox)ctrl;
+            string val = value.value;
+            if (tc.Multiline)
+            {
+                StringBuilder bldr = new StringBuilder();
+                foreach (string v in val.Split('\n'))
+                    bldr.AppendLine(v);
+                val = bldr.ToString();
+            }
+
+            ctrl.Text = val;
         }
 
         // Control writers helpers
@@ -631,7 +646,7 @@ namespace UdsAdmin.gui
         // Controls "Selectors" (that is, select the items without overwriting it
         private static void TextSelector(Control ctrl, xmlrpc.GuiFieldValue value)
         {
-            ctrl.Text = value.value;
+            TextDataWriter(ctrl, value);
         }
 
         private static void NumericSelector(Control ctrl, xmlrpc.GuiFieldValue value)
