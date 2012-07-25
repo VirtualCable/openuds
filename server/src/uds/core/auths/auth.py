@@ -167,7 +167,7 @@ def authCallbackUrl(authenticator):
     Helper method, so we can get the auth call back url for an authenticator
     '''
     from django.core.urlresolvers import reverse
-    return reverse('uds.web.views.authCallback', kwargs={'idAuth': authenticator.id})
+    return reverse('uds.web.views.authCallback', kwargs={'authName': authenticator.name})
 
 def authInfoUrl(authenticator):
     '''

@@ -261,7 +261,7 @@ def error(request, idError):
     return render_to_response('uds/error.html', {'errorString' : errors.errorString(idError)  }, context_instance=RequestContext(request))
 
 
-def authCallback(request, idAuth):
+def authCallback(request, authName):
     '''
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
@@ -271,7 +271,7 @@ def authCallback(request, idAuth):
     '''
     from uds.core.auths.Exceptions import InvalidUserException
     try:
-        authenticator = Authenticator.objects.get(pk=idAuth)
+        authenticator = Authenticator.objects.get(name=authName)
         params = request.GET.copy()
         params.update(request.POST)
         
@@ -285,10 +285,11 @@ def authCallback(request, idAuth):
             __authLog(request, authenticator, '{0}'.format(params), False, os, 'Invalid at auth callback')
             raise InvalidUserException()
 
+        # Redirect to main page through java detection process, so UDS know the availability of java
         response = render_to_response('uds/detectJava.html', { 'idAuth' : scrambleId(request, authenticator.id)}, 
                                       context_instance=RequestContext(request))
                 
-        webLogin(request, response, user, '') # Password 
+        webLogin(request, response, user, '') # Password is unavailable in this case
         request.session['OS'] = os
         # Now we render an intermediate page, so we get Java support from user
         # It will only detect java, and them redirect to Java
