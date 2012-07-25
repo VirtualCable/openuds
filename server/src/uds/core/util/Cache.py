@@ -53,7 +53,7 @@ class Cache(object):
         h.update(self._owner + key)
         return h.hexdigest()
     
-    def get(self,skey):
+    def get(self,skey, defValue = None):
         now = getSqlDatetime()
         #logger.debug('Requesting key "%s" for cache "%s"' % (skey, self._owner,))
         try:
@@ -61,12 +61,12 @@ class Cache(object):
             c = dbCache.objects.get(pk=key)
             expired = now > c.created + timedelta(seconds = c.validity)
             if expired:
-                return None
+                return defValue
             val = cPickle.loads(c.value.decode(Cache.CODEC))
             return val
         except dbCache.DoesNotExist:
             logger.debug('key not found')
-            return None
+            return defValue
         
     def remove(self,skey):
         #logger.debug('Removing key "%s" for uService "%s"' % (skey, self._owner))
