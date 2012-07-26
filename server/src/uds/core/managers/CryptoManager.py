@@ -33,6 +33,7 @@
 
 from server.settings import RSA_KEY
 from Crypto.PublicKey import RSA
+from OpenSSL import crypto
 from Crypto.Random import atfork
 import hashlib, array
 
@@ -69,6 +70,24 @@ class CryptoManager(object):
         s1 = array.array('B', s1)
         s2 = array.array('B', s2 * mult)
         return array.array('B', (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()        
+    
+    def loadPrivateKey(self, rsaKey):
+        try:
+            pk = RSA.importKey(rsaKey)
+        except Exception as e:
+            raise e
+        return pk
+    
+    def loadCertificate(self,certificate):
+        try:
+            cert = crypto.load_certificate(crypto.FILETYPE_PEM, certificate)
+        except crypto.Error as e:
+            raise Exception(e.message[0][2])
+        return cert 
+
+    def certificateString(self, certificate):
+        return certificate.replace('-----BEGIN CERTIFICATE-----', '').replace('-----END CERTIFICATE-----', '').replace('\n', '')
+            
     
     def hash(self, string):
         if string is '' or string is None:

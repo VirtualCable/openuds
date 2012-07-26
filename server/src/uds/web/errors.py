@@ -64,7 +64,7 @@ strings = [
            _('You need to enable cookies to let this application work'),
            _('User service not found'),
            _('Authenticator not found'),
-           _('Invalid authenticator callback')
+           _('Invalid authenticator')
         ]
 
 

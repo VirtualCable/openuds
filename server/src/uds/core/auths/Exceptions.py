@@ -48,3 +48,9 @@ class InvalidAuthenticatorException(Exception):
     Invalida authenticator has been specified
     '''
     pass
+
+class Redirect(Exception):
+    '''
+    This exception indicates that a redirect is required.
+    Used in authUrlCallback to indicate that no use has been authenticated, but redirect is needed
+    '''

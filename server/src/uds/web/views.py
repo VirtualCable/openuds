@@ -61,7 +61,6 @@ def __authLog(request, authenticator, userName, java, os, log):
     javaStr = java and 'Java' or 'No Java'
     authLogger.info('|'.join([authenticator.name, userName, javaStr, os['OS'], log, request.META['HTTP_USER_AGENT']]))
 
-
 def login(request):
     #request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt()) 
     if request.method == 'POST':
@@ -269,7 +268,7 @@ def authCallback(request, authName):
     This will invoke authCallback of the requested idAuth and, if this represents
     an authenticator that has an authCallback 
     '''
-    from uds.core.auths.Exceptions import InvalidUserException
+    from uds.core import auths
     try:
         authenticator = Authenticator.objects.get(name=authName)
         params = request.GET.copy()
@@ -283,7 +282,7 @@ def authCallback(request, authName):
                 
         if user is None:
             __authLog(request, authenticator, '{0}'.format(params), False, os, 'Invalid at auth callback')
-            raise InvalidUserException()
+            raise auths.Exceptions.InvalidUserException()
 
         # Redirect to main page through java detection process, so UDS know the availability of java
         response = render_to_response('uds/detectJava.html', { 'idAuth' : scrambleId(request, authenticator.id)}, 
@@ -295,6 +294,8 @@ def authCallback(request, authName):
         # It will only detect java, and them redirect to Java
         
         return response
+    except auths.Exceptions.Redirect as e:
+        return HttpResponseRedirect(request.build_absolute_uri(str(e)))
     except Exception as e:
         return errors.exceptionView(request, e)
         

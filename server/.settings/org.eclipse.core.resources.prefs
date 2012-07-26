@@ -53,6 +53,7 @@ encoding//src/uds/core/managers/PublicationManager.py=utf-8
 encoding//src/uds/core/managers/TaskManager.py=utf-8
 encoding//src/uds/core/managers/UserPrefsManager.py=utf-8
 encoding//src/uds/core/managers/UserServiceManager.py=utf-8
+encoding//src/uds/core/managers/__init__.py=utf-8
 encoding//src/uds/core/osmanagers/BaseOsManager.py=utf-8
 encoding//src/uds/core/osmanagers/OSManagersFactory.py=utf-8
 encoding//src/uds/core/osmanagers/__init__.py=utf-8

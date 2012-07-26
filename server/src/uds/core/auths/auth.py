@@ -213,5 +213,5 @@ def webLogout(request, exit_url = None):
     if exit_url is None:
         exit_url = GlobalConfig.LOGIN_URL.get()
     # Try to delete session
-    return HttpResponseRedirect(exit_url)
+    return HttpResponseRedirect(request.build_absolute_uri(exit_url))
 
