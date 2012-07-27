@@ -17,9 +17,9 @@ There are the clases that are base of BaseModule, that are:
 BaseModule
 ----------
 
-.. module:: uds.core.BaseModule
+.. module:: uds.core
 
-.. autoclass:: BaseModule
+.. autoclass:: Module
    :members:
    
 Environmentable
