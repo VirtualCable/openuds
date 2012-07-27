@@ -329,7 +329,7 @@ class Authenticator(Module):
         This transformation is used for transports only, not for transforming
         anything at login time. Transports that will need the username, will invoke
         this method.
-        For example, ad authenticator can add '@domain' so transport use the complete
+        For example, an authenticator can add '@domain' so transport use the complete
         'user@domain' instead of 'user'.
         
         Right now, all authenticators keep this value "as is", i mean, it simply
@@ -339,11 +339,15 @@ class Authenticator(Module):
     
     def getGroups(self, username, groupsManager):
         '''
-        Looks for the real groups to which the specified user belongs
-        Returns a list of groups. 
-        Remember to override it in derived authentication if needed (external auths will need this, for internal authenticators this is never used)
+        Looks for the real groups to which the specified user belongs.
+        
+        You MUST override this method, UDS will call it whenever it needs to refresh an user group membership.
+        
+        The expected behavior of this method is to mark valid groups in the :py:class:`uds.core.auths.GroupsManager` provided, normally
+        calling its :py:meth:`uds.core.auths.GroupsManager.validate` method with groups names provided by the authenticator itself
+        (for example, LDAP, AD, ...)
         '''
-        return []
+        pass
     
     def getHtml(self, request):
         '''
