@@ -25,16 +25,12 @@ BaseModule
 Environmentable
 ---------------
 
-.. module:: uds.core.Environment
-
 .. autoclass:: Environmentable
    :members:
 
 
 Serializable
 ------------
-
-.. module:: uds.core.Serializable
 
 .. autoclass:: Serializable
    :members:

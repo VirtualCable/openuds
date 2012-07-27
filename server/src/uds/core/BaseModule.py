@@ -33,8 +33,8 @@
 
 from django.utils.translation import ugettext as _
 from uds.core.ui.UserInterface import UserInterface
-from uds.core.Environment import Environmentable
-from uds.core.Serializable import Serializable
+from uds.core import Environmentable
+from uds.core import Serializable
 import base64, os.path, sys, logging
 
 logger = logging.getLogger(__name__)

@@ -34,6 +34,8 @@ This package contains all core-related code for UDS
 '''
 
 # Core needs tasks manager to register scheduled jobs, so we ensure of that here
+from Environment import Environmentable
+from Serializable import Serializable
 from BaseModule import Module
 import services
 import auths

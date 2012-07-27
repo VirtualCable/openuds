@@ -33,7 +33,7 @@
 
 from django.utils.translation import ugettext as _
 from uds.core.util import OsDetector
-from uds.core.BaseModule import Module
+from uds.core import Module
 
 class Transport(Module):
     '''
