@@ -36,9 +36,7 @@ Provides useful functions for authenticating, used by web interface.
 from functools import wraps
 from django.http import HttpResponseRedirect
 from uds.core.util.Config import GlobalConfig
-from uds.core.auths import GroupsManager
-from uds.core.auths import Authenticator
-from uds.core.auths.Exceptions import InvalidAuthenticatorException
+from uds.core import auths
 from uds.core.managers.CryptoManager import CryptoManager 
 from uds.core.util.State import State
 from uds.models import User
@@ -116,7 +114,7 @@ def authenticate(username, password, authenticator):
     @return: None if authentication fails, User object (database object) if authentication is o.k. 
     '''
     logger.debug('Authenticating user {0} with authenticator {1}'.format(username, authenticator))
-    gm = GroupsManager(authenticator)
+    gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
     if authInstance.authenticate(username, password, gm) == False:
         return None
@@ -149,16 +147,17 @@ def authenticateViaCallback(authenticator, params):
          callbacks, remember to store (using provided environment storage, for example)
          the groups of this user so your getGroups will work correctly.
     '''
+    gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
     
     # If there is no callback for this authenticator...
-    if authInstance.authCallback == Authenticator.authCallback:
-        raise InvalidAuthenticatorException()
+    if authInstance.authCallback == auths.Authenticator.authCallback:
+        raise auths.Exceptions.InvalidAuthenticatorException()
     
-    username = authInstance.authCallback(params)
+    username = authInstance.authCallback(params, gm)
     
-    if username is None or username == '':
-        raise InvalidAuthenticatorException()
+    if username is None or username == '' or gm.hasValidGroups() is False:
+        raise auths.Exceptions.InvalidUserException('User don\'t has access to UDS')
     
     return __registerUser(authenticator, authInstance, username)
         

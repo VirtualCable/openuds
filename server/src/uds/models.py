@@ -557,6 +557,10 @@ class Authenticator(models.Model):
         if realName is None:
             realName = username
         user, _  = self.users.get_or_create( name = username, defaults = { 'real_name':realName, 'last_access':NEVER, 'state':State.ACTIVE } )
+        if realName != user.real_name:
+            user.real_name = realName
+            user.save()
+            
         return user
     
     def isValidUser(self, username, falseIfNotExists = True):

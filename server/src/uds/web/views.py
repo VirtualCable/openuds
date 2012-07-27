@@ -32,6 +32,7 @@
 '''
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
@@ -259,7 +260,7 @@ def transportIcon(request, idTrans):
 def error(request, idError):
     return render_to_response('uds/error.html', {'errorString' : errors.errorString(idError)  }, context_instance=RequestContext(request))
 
-
+@csrf_exempt
 def authCallback(request, authName):
     '''
     This url is provided so external SSO authenticators can get an url for
@@ -273,8 +274,9 @@ def authCallback(request, authName):
         authenticator = Authenticator.objects.get(name=authName)
         params = request.GET.copy()
         params.update(request.POST)
+        params['_request'] = request
         
-        logger.debug('Auth callback for {0} with params {1}'.format(authenticator, params))
+        logger.debug('Auth callback for {0} with params {1}'.format(authenticator, params.keys()))
         
         user = authenticateViaCallback(authenticator, params)
 
@@ -297,8 +299,10 @@ def authCallback(request, authName):
     except auths.Exceptions.Redirect as e:
         return HttpResponseRedirect(request.build_absolute_uri(str(e)))
     except Exception as e:
+        logger.exception('authCallback')
         return errors.exceptionView(request, e)
         
+@csrf_exempt
 def authInfo(request, authName):
     '''
     This url is provided so authenticators can provide info (such as SAML metadata)
@@ -314,6 +318,7 @@ def authInfo(request, authName):
             raise Exception() # This authenticator do not provides info
         
         params = request.GET.copy()
+        params['_request'] = request
         
         info = authInstance.getInfo(params)
         

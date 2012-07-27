@@ -61,6 +61,9 @@ class Storage(object):
             dbStorage.objects.filter(key=key).update(owner = self._owner, data = data, attr1 = attr1)
         logger.debug('Key saved')
         
+    def put(self, skey, data):
+        return self.saveData(skey, data)
+        
     def updateData(self, skey, data, attr1 = None):
         self.saveData(skey, data, attr1)
     
@@ -73,6 +76,9 @@ class Storage(object):
         except dbStorage.DoesNotExist:
             logger.debug('key not found')
             return None
+        
+    def get(self, skey):
+        return self.readData(skey)
         
     def remove(self, skey):
         try:

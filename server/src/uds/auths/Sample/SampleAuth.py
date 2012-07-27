@@ -248,7 +248,7 @@ class SampleAuth(auths.Authenticator):
         return res
         
     
-    def authCallback(self, parameters):
+    def authCallback(self, parameters, gm):
         '''
         We provide this as a sample of callback for an user.
         We will accept all petitions that has "user" parameter

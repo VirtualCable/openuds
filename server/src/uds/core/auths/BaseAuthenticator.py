@@ -383,7 +383,7 @@ class Authenticator(Module):
         '''
         return None
     
-    def authCallback(self, parameters):
+    def authCallback(self, parameters, gm):
         '''
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.
@@ -400,6 +400,18 @@ class Authenticator(Module):
         
         If this returns None, or empty, the authentication will be considered "invalid"
         and an error will be shown.
+        
+        Args:
+            parameters: all GET and POST received parameters
+            gm: Groups manager, you MUST check group membership using this gm
+            
+        Return:
+            An username if validation check is successfull, None if not
+            
+        You can also return an exception here and, if you don't wont to check the user login,
+        you can raise :py:class:uds.core.auths.Exceptions.Redirect to redirect user to somewhere.
+        In this case, no user checking will be done. This is usefull to use this url to provide
+        other functionality appart of login, (such as logout)
         
         :note: Keeping user information about group membership inside storage is highly recommended.
                There will be calls to getGroups one an again, and also to getRealName, not just
