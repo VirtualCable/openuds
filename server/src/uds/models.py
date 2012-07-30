@@ -1453,7 +1453,7 @@ class Storage(models.Model):
     '''
     owner = models.CharField(max_length = 128, db_index = True)
     key = models.CharField(max_length = 64, primary_key = True)
-    data = models.CharField(max_length = 1024, default='')
+    data = models.TextField(default = '')
     attr1 = models.CharField(max_length = 64, db_index = True, null=True, blank=True, default = None)
     
     objects = LockingManager()
