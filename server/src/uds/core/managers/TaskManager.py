@@ -87,8 +87,6 @@ class TaskManager(object):
         JobsFactory.factory().insert('Publications Info Cleaner', PublicationInfoItemsCleaner)
         JobsFactory.factory().insert('Publication Cleaner', PublicationCleaner)
         JobsFactory.factory().insert('Utility Cache Cleaner', CacheCleaner)
-        JobsFactory.factory().insert('User Service Info Cleaner', UserServiceInfoItemsCleaner)
-        JobsFactory.factory().insert('User Service Cleaner', UserServiceRemover)
         JobsFactory.factory().insert('Deployed Service Info Cleaner', DeployedServiceInfoItemsCleaner)
         JobsFactory.factory().insert('Deployed Service Cleaner', DeployedServiceRemover)
                 

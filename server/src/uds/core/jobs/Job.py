@@ -32,7 +32,7 @@
 '''
 
 from uds.models import Scheduler
-from uds.core.Environment import Environmentable
+from uds.core import Environmentable
 import logging
 
 logger = logging.getLogger(__name__)

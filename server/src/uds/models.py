@@ -524,6 +524,9 @@ class Authenticator(models.Model):
         from uds.core import auths
         return auths.factory().lookup(self.data_type)
     
+    def isOfType(self, type_):
+        return self.data_type == type_
+    
     def getOrCreateUser(self, username, realName = None):
         '''
         Used to get or create a new user at database associated with this authenticator.

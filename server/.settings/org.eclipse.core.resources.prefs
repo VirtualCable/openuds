@@ -47,6 +47,7 @@ encoding//src/uds/core/jobs/DelayedTaskRunner.py=utf-8
 encoding//src/uds/core/jobs/Job.py=utf-8
 encoding//src/uds/core/jobs/JobsFactory.py=utf-8
 encoding//src/uds/core/jobs/Scheduler.py=utf-8
+encoding//src/uds/core/jobs/__init__.py=utf-8
 encoding//src/uds/core/managers/CryptoManager.py=utf-8
 encoding//src/uds/core/managers/DownloadsManager.py=utf-8
 encoding//src/uds/core/managers/PublicationManager.py=utf-8

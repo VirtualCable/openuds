@@ -103,6 +103,7 @@ class Scheduler(object):
                 job.delete()
                 transaction.commit()
                 return
+            logger.debug('Executing job:>{0}<'.format(job.name))
             job.state = State.RUNNING
             job.owner_server = self._hostname
             job.last_execution = now
@@ -131,6 +132,7 @@ class Scheduler(object):
             
     def run(self):
         # We ensure that the jobs are also in database so we can 
+        logger.debug('Run Scheduler thread')
         JobsFactory.factory().ensureJobsInDatabase()
         self.releaseOwnShedules()
         logger.debug("At loop")

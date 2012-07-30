@@ -31,7 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -51,28 +50,32 @@ class JobsFactory(object):
     def jobs(self):
         return self._jobs
     
-    def insert(self, name, type):
+    def insert(self, name, type_):
+        logger.debug('Inserting job {0} of type {1}'.format(name, type_))
         try:
-            self._jobs[name] = type
+            self._jobs[name] = type_
         except Exception, e:
             logger.debug('Exception at insert in JobsFactory: {0}, {1}'.format(e.__class__, e))
         
     def ensureJobsInDatabase(self):
-        from uds.models import Scheduler, getSqlDatetime, State
+        from uds.models import Scheduler, getSqlDatetime
+        from uds.core.util.State import State
+        
         try:
             logger.debug('Ensuring that jobs are registered inside database')
-            for name, type in self._jobs.iteritems():
+            for name, type_ in self._jobs.iteritems():
                 try:
                     # We use database server datetime
                     now = getSqlDatetime()
-                    next = now 
-                    job = Scheduler.objects.create(name = name, frecuency = type.frecuency, last_execution = now, next_execution = next, state = State.FOR_EXECUTE)
+                    next_ = now 
+                    job = Scheduler.objects.create(name = name, frecuency = type_.frecuency, last_execution = now, next_execution = next_, state = State.FOR_EXECUTE)
                 except Exception: # already exists
+                    logger.debug('Already added {0}'.format(name))
                     job = Scheduler.objects.get(name=name)
-                    job.frecuency = type.frecuency
+                    job.frecuency = type_.frecuency
                     job.save()
         except Exception, e:
-            logger.debug('Exception at insert in JobsFactory: {0}, {1}'.format(e.__class__, e))
+            logger.debug('Exception at ensureJobsInDatabase in JobsFactory: {0}, {1}'.format(e.__class__, e))
         
         
     def lookup(self, typeName):
