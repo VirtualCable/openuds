@@ -35,7 +35,7 @@ from django.db.models import Q
 from django.db import transaction, DatabaseError
 from uds.models import Scheduler as dbScheduler, getSqlDatetime, State
 from uds.core.jobs.JobsFactory import JobsFactory
-from datetime import datetime, timedelta
+from datetime import timedelta
 from socket import gethostname
 import threading, time
 import logging

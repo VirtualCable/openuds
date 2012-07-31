@@ -30,13 +30,12 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from django.db import transaction
 from uds.core.jobs.Scheduler import Scheduler
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
-from uds.core.jobs.JobsFactory import JobsFactory
+from uds.core import jobs
 from uds.core.util.Config import GlobalConfig
 import threading, time, signal
-import logging, gc
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -71,9 +70,13 @@ class TaskManager(object):
         logger.info("Caught term signal, finishing task manager")
         TaskManager.keepRunning = False
     
+    @staticmethod
+    def registerJob(jobName, jobType):
+        jobs.factory().insert(jobName, jobType)
+    
     
     @staticmethod
-    def registerScheduledTask():
+    def registerScheduledTasks():
         from uds.core.workers.ServiceCacheUpdater import ServiceCacheUpdater
         from uds.core.workers.UserServiceCleaner import UserServiceInfoItemsCleaner, UserServiceRemover
         from uds.core.workers.PublicationCleaner import PublicationInfoItemsCleaner, PublicationCleaner
@@ -81,14 +84,14 @@ class TaskManager(object):
         from uds.core.workers.DeployedServiceCleaner import DeployedServiceInfoItemsCleaner, DeployedServiceRemover
 
         logger.info("Registering sheduled tasks")
-        JobsFactory.factory().insert('Service Cache Updater', ServiceCacheUpdater)
-        JobsFactory.factory().insert('User Service Info Cleaner', UserServiceInfoItemsCleaner)
-        JobsFactory.factory().insert('User Service Cleaner', UserServiceRemover)
-        JobsFactory.factory().insert('Publications Info Cleaner', PublicationInfoItemsCleaner)
-        JobsFactory.factory().insert('Publication Cleaner', PublicationCleaner)
-        JobsFactory.factory().insert('Utility Cache Cleaner', CacheCleaner)
-        JobsFactory.factory().insert('Deployed Service Info Cleaner', DeployedServiceInfoItemsCleaner)
-        JobsFactory.factory().insert('Deployed Service Cleaner', DeployedServiceRemover)
+        TaskManager.registerJob('Service Cache Updater', ServiceCacheUpdater)
+        TaskManager.registerJob('User Service Info Cleaner', UserServiceInfoItemsCleaner)
+        TaskManager.registerJob('User Service Cleaner', UserServiceRemover)
+        TaskManager.registerJob('Publications Info Cleaner', PublicationInfoItemsCleaner)
+        TaskManager.registerJob('Publication Cleaner', PublicationCleaner)
+        TaskManager.registerJob('Utility Cache Cleaner', CacheCleaner)
+        TaskManager.registerJob('Deployed Service Info Cleaner', DeployedServiceInfoItemsCleaner)
+        TaskManager.registerJob('Deployed Service Cleaner', DeployedServiceRemover)
                 
     
     

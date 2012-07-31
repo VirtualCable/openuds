@@ -37,3 +37,12 @@ def cryptoManager():
     from CryptoManager import CryptoManager
     return CryptoManager.manager() 
 
+
+def taskManager():
+    from TaskManager import TaskManager
+    return TaskManager
+
+
+def downloadsManager():
+    from DownloadsManager import DownloadsManager
+    return DownloadsManager.manager()

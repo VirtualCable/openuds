@@ -43,6 +43,6 @@ import transports
 
 def __init__():
     from managers.TaskManager import TaskManager
-    TaskManager.registerScheduledTask()
+    TaskManager.registerScheduledTasks()
     
 __init__()
