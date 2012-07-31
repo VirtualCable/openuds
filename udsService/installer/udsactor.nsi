@@ -75,21 +75,21 @@ ShowUninstDetails show
 Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
-    File ..\..\udsService\bin\Release\CookComputing.XmlRpcV2.dll
-    File ..\..\udsService\bin\Release\Interop.EventSystemLib.dll
-    File ..\..\udsService\bin\Release\Interop.SensEvents.dll
-    File ..\..\udsService\bin\Release\log4net.dll
-    File ..\..\udsService\bin\Release\udsgui.dll
-    File ..\..\udsService\bin\Release\logging.cfg
-    File ..\..\udsService\bin\Release\udsService.exe
-    File ..\..\udsService\bin\Release\udsService.exe.config
-    File ..\..\udsService\bin\Release\udstools.dll
+    File ..\udsService\bin\Release\CookComputing.XmlRpcV2.dll
+    File ..\udsService\bin\Release\Interop.EventSystemLib.dll
+    File ..\udsService\bin\Release\Interop.SensEvents.dll
+    File ..\udsService\bin\Release\log4net.dll
+    File ..\udsService\bin\Release\udsgui.dll
+    File ..\udsService\bin\Release\logging.cfg
+    File ..\udsService\bin\Release\udsService.exe
+    File ..\udsService\bin\Release\udsService.exe.config
+    File ..\udsService\bin\Release\udstools.dll
     SetOutPath $INSTDIR\es
-    File ..\..\udsService\bin\Release\es\udsgui.resources.dll
+    File ..\udsService\bin\Release\es\udsgui.resources.dll
     SetOutPath $INSTDIR\fr
-    File ..\..\udsService\bin\Release\fr\udsgui.resources.dll
+    File ..\udsService\bin\Release\fr\udsgui.resources.dll
     SetOutPath $INSTDIR\de
-    File ..\..\udsService\bin\Release\de\udsgui.resources.dll
+    File ..\udsService\bin\Release\de\udsgui.resources.dll
     WriteRegStr HKLM "${REGKEY}\Components" Main 1
 SectionEnd
 
