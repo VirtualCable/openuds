@@ -21,6 +21,9 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+#USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https') # For testing begind a reverse proxy
+
 # This mark can be used by a setup script to easy locate DB Section of the settings file
 #DB_SECTION_START
 DATABASES = {
@@ -33,7 +36,7 @@ DATABASES = {
         'NAME': 'dbuds',                      # Or path to database file if using sqlite3.
         'USER': 'dbuds',                      # Not used with sqlite3.
         'PASSWORD': 'dbuds',                  # Not used with sqlite3.
-        'HOST': '172.27.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
