@@ -35,8 +35,6 @@
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.auths import Authenticator
-from uds.models import Authenticator as dbAuthenticator
-from uds.core.util.State import State
 import ldap, re
 
 import logging
@@ -92,6 +90,10 @@ class RegexLdap(Authenticator):
             self._groupNameAttr = values['groupNameAttr']
             self._regex = values['regex']
             self._userNameAttr = values['userNameAttr']
+            try:
+                re.search(self._regex, '')
+            except:
+                raise Authenticator.ValidationException(_('Invalid regular expression'))
         else:
             self._host = None
             self._port = None
@@ -154,13 +156,13 @@ class RegexLdap(Authenticator):
                     
                 l.simple_bind_s(who = username, cred = password)
             except ldap.LDAPError, e:
-                str = _('Ldap connection error: ')
+                str_ = _('Ldap connection error: ')
                 if type(e.message) == dict:
-                    str += e.message.has_key('info') and e.message['info'] + ',' or ''
-                    str += e.message.has_key('desc') and e.message['desc'] or ''
+                    str_ += e.message.has_key('info') and e.message['info'] + ',' or ''
+                    str_ += e.message.has_key('desc') and e.message['desc'] or ''
                 else :
-                    str += str(e)
-                raise Exception(str)
+                    str_ += str(e)
+                raise Exception(str_)
             if cache is True:
                 self._connection = l
             else:
@@ -180,7 +182,7 @@ class RegexLdap(Authenticator):
             usr.update( {'dn' : res[0], '_id' : username })
             logger.debug('Usr: {0}'.format(usr))
             return usr
-        except Exception, e:
+        except Exception:
             logger.exception('Exception:')
             return None
         
@@ -190,10 +192,13 @@ class RegexLdap(Authenticator):
             grps = [grps]
         logger.debug("Groups: {0}".format(grps))
         logger.debug("Re: {0}".format(self._regex))
+        regex = self._regex
+        if regex.find('(') == -1:
+            regex = '(' + regex + ')'        
         rg = re.compile(self._regex)
         res = []
         for g in grps:
-            ma = rg.match(g)
+            ma = rg.search(g)
             if ma is not None:
                 for m in ma.groups():
                     res.append(m)
@@ -201,7 +206,7 @@ class RegexLdap(Authenticator):
         return res
         
     def __getUserRealName(self, usr):
-        return ' '.join([ (type(usr.get(id, '')) is list and ' '.join(( str(k) for k in usr.get(id, ''))) or str(usr.get(id, ''))) for id in self._userNameAttr.split(',') ]).strip()
+        return ' '.join([ (type(usr.get(id_, '')) is list and ' '.join(( str(k) for k in usr.get(id_, ''))) or str(usr.get(id_, ''))) for id_ in self._userNameAttr.split(',') ]).strip()
             
     def authenticate(self, username, credentials, groupsManager):
         '''
