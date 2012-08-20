@@ -77,6 +77,9 @@ namespace UdsAdmin.forms
             Size sz = gui.DinamycFieldsManager.PutFields(dataPanel, _flds, _fldValues);
             groupData.Size = new Size(groupData.Size.Width, 32 + sz.Height);
             Size wSize = new Size();
+            int w = groupData.Location.X + groupData.Size.Width + 48;
+            if (wSize.Width < w)
+                wSize.Width = w;
             wSize.Width = Size.Width;
             wSize.Height = groupData.Location.Y + tableLayoutPanel1.Size.Height + groupData.Size.Height + 48;
             Size = MinimumSize = MaximumSize = wSize;
@@ -85,6 +88,7 @@ namespace UdsAdmin.forms
                 groupData.Visible = false;
 
             Text = _osManagerName;
+            Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)

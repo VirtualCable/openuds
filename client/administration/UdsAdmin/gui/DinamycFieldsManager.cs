@@ -145,7 +145,7 @@ namespace UdsAdmin.gui
             {
                 { xmlrpc.Constants.TEXT_TYPE, new FldTypeData(CreateTextBox, TextDataExtractor, TextDataWriter, TextSelector, TextSizeCalculator) },
                 { xmlrpc.Constants.PASSWORD_TYPE, new FldTypeData(CreatePasswordBox, TextDataExtractor, TextDataWriter, TextSelector) },
-                { xmlrpc.Constants.NUMERIC_TYPE, new FldTypeData(CreateNumericBox, NumericDataExtractor, TextDataWriter, TextSelector) },
+                { xmlrpc.Constants.NUMERIC_TYPE, new FldTypeData(CreateNumericBox, NumericDataExtractor, NumericDataWriter, NumericSelector) },
                 { xmlrpc.Constants.HIDDEN_TYPE, new FldTypeData(null, TextDataExtractor, TextDataWriter, TextSelector) },
                 { xmlrpc.Constants.CHOICE_TYPE, new FldTypeData(CreateChoiceBox, ChoiceDataExtractor, ChoiceDataWriter, ChoiceSelector) },
                 { xmlrpc.Constants.MULTI_CHOICE_TYPE, new FldTypeData(CreateMultiChoiceBox, MultiChoiceExtractor, MultichoiceDataWriter, MultiChoiceSelector, MultiChoiceSizeCalculator) },
@@ -251,7 +251,7 @@ namespace UdsAdmin.gui
                     ctrlTypeInfo[field.gui.type].dataSelector(ctrl[0], v);
                 }
             }
-                    
+
 
             return panel.PreferredSize;
         }

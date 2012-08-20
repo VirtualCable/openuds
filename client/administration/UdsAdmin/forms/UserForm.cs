@@ -131,7 +131,7 @@ namespace UdsAdmin.forms
             staffMember.Checked = _user.staffMember;
             admin.Checked = _user.isAdmin;
 
-            //this.Location = System.Windows.Forms.Cursor.Position;
+            Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)

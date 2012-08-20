@@ -141,7 +141,7 @@ namespace UdsAdmin.forms
                 publishOnSave.Checked = true;
             }
 
-            //this.Location = System.Windows.Forms.Cursor.Position;
+            Location = MainForm.centerLocation(this);
         }
 
         private void baseServiceCombo_SelectionChangeCommitted(object sender, EventArgs e)

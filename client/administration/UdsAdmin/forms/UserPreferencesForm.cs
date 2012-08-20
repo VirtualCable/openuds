@@ -83,6 +83,7 @@ namespace UdsAdmin.forms
             max.Height += 120;
             max.Width += 56;
             Size = max;
+            Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)

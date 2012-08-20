@@ -112,7 +112,7 @@ namespace UdsAdmin.forms
                 panels.Add(pan);
                 modTabs.TabPages.Add(page);
             }
-
+            Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)

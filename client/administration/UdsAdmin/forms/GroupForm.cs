@@ -66,7 +66,7 @@ namespace UdsAdmin.forms
                 check.Visible = false;
             }
             groupLabel.Text = _authType.groupNameLabel;
-            //this.Location = System.Windows.Forms.Cursor.Position;
+            Location = MainForm.centerLocation(this);
         }
 
         private void searchButton_Click(object sender, EventArgs e)

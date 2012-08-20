@@ -92,12 +92,15 @@ namespace UdsAdmin.forms
             groupData.Size = new Size(groupData.Size.Width, 32 + sz.Height);
             Size wSize = new Size();
             wSize.Width = Size.Width + 64;
+            int w = groupData.Location.X + groupData.Size.Width + 96;
+            if (wSize.Width < w)
+                wSize.Width = w;
             wSize.Height = groupData.Location.Y + tableLayoutPanel1.Size.Height + groupData.Size.Height + 96;
             Size = MinimumSize = MaximumSize = wSize;
             if (_flds.Length == 0)
                 groupData.Visible = false;
             Text = _transportName;
-            //this.Location = System.Windows.Forms.Cursor.Position;
+            Location = MainForm.centerLocation(this);
             
             // Networks
             positiveNets_CheckedChanged(null, null);

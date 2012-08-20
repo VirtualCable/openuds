@@ -47,7 +47,7 @@ namespace UdsAdmin.forms
         public xmlrpc.OSManagerType[] _osManagersTypes = null;
         public xmlrpc.TransportType[] _transportTypes = null;
 
-        public MainForm form = null;
+        public static MainForm form = null;
 
         private Icon getIcon( xmlrpc.BaseType[] bas, string type)
         {
@@ -684,6 +684,11 @@ namespace UdsAdmin.forms
         private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ConfigurationForm().ShowDialog();
+        }
+
+        public static Point centerLocation(Form f)
+        {
+            return new Point(form.Location.X + form.Width / 2 - f.Width / 2, form.Location.Y + form.Height / 2 - f.Height / 2);
         }
 
     }

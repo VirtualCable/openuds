@@ -65,6 +65,7 @@ namespace UdsAdmin.forms
                 netStart.Text = _net.netStart;
                 netEnd.Text = _net.netEnd;
             }
+            Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)

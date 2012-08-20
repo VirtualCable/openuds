@@ -63,7 +63,7 @@ namespace UdsAdmin.forms
                 MessageBox.Show(Strings.error, Strings.authenticators, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
-
+            Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)

@@ -74,6 +74,7 @@ namespace UdsAdmin.forms
             }
             authCombo.SelectedIndex = 0;
             serviceCombo.Items.AddRange(services);
+            Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)

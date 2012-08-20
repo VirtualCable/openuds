@@ -421,7 +421,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="Service.Size" type="System.Drawing.Size, System.Drawing">
-    <value>342, 197</value>
+    <value>440, 197</value>
   </data>
   <data name="Service.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1001,7 +1001,7 @@
 </value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterParent</value>
+    <value>Manual</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>New Deployed Service</value>

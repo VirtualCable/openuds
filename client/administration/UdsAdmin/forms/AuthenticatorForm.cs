@@ -71,15 +71,20 @@ namespace UdsAdmin.forms
         {
             _flds = xmlrpc.UdsAdminService.GetAuthenticatorGui(_authenticatorType);
             Size sz = gui.DinamycFieldsManager.PutFields(dataPanel, _flds, _fldValues);
-            groupData.Size = new Size(groupData.Size.Width, 32 + sz.Height);
+            groupData.Size = new Size(sz.Width, 32 + sz.Height);
             Size wSize = new Size();
             wSize.Width = Size.Width;
+            int w = groupData.Location.X + groupData.Size.Width + 48;
+            if (wSize.Width < w)
+                wSize.Width = w;
             wSize.Height = groupData.Location.Y + tableLayoutPanel1.Size.Height + groupData.Size.Height + 48;
             Size = MinimumSize = MaximumSize = wSize;
             
             if (_flds.Length == 0)
                 groupData.Visible = false;
             Text = _authenticatorName;
+
+            this.Location = MainForm.centerLocation(this);
             //this.Location = System.Windows.Forms.Cursor.Position;
         }
 
