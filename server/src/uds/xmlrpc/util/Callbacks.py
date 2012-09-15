@@ -32,12 +32,13 @@
 '''
 
 
-from ..auths.AdminAuth import validateCredentials
+from ..auths.AdminAuth import needs_credentials
+
 
 from uds.core.ui.UserInterface import gui
 
+@needs_credentials
 def chooseCallback(credentials, name, parameters):
-    validateCredentials(credentials)
     res = {}
     params = {}
     for p in parameters:
