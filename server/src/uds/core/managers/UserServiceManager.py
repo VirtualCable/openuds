@@ -177,11 +177,12 @@ class UserServiceManager(object):
 
     
     @transaction.commit_on_success
-    def __checkMaxDeployedReached(self, deployedService):
+    def __checkMaxDeployedReached(self, deployedServicePublication):
         '''
         Checks if maxDeployed for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
         '''
+        deployedService = deployedServicePublication.deployed_service
         serviceInstance = deployedService.service.getInstance()
         # Early return, so no database count is needed
         if serviceInstance.maxDeployed == Service.UNLIMITED:
