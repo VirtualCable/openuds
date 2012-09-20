@@ -177,7 +177,7 @@ class UserServiceManager(object):
 
     
     @transaction.commit_on_success
-    def __checkMaxdeployedReached(self, deployedService):
+    def __checkMaxDeployedReached(self, deployedService):
         '''
         Checks if maxDeployed for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
