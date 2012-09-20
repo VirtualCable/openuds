@@ -126,6 +126,7 @@ encoding//src/uds/services/Vmware/client/Exceptions.py=utf-8
 encoding//src/uds/services/Vmware/client/Server.py=utf-8
 encoding//src/uds/services/Vmware/client/Task.py=utf-8
 encoding//src/uds/services/Vmware/client/ws/VimService_types.py=utf-8
+encoding//src/uds/services/Vmware_enterprise/PublicationVC.py=utf-8
 encoding//src/uds/services/Vmware_enterprise/ServiceProviderVC.py=utf-8
 encoding//src/uds/services/Vmware_enterprise/VCLinkedCloneDeployed.py=utf-8
 encoding//src/uds/services/Vmware_enterprise/VCLinkedCloneService.py=utf-8

@@ -155,6 +155,7 @@ class PublicationManager(object):
             dsp = deployedService.publications.create(state = State.LAUNCHING, state_date = now, publish_date = now, revision = deployedService.current_pub_revision)
             DelayedTaskRunner.runner().insert(PublicationLauncher(dsp), 4, PUBTAG + str(dsp.id))
         except Exception as e:
+            logger.debug('Caught exception at publish: {0}'.format(e))
             raise PublishException(str(e))
         
     @transaction.commit_on_success

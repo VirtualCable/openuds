@@ -46,10 +46,14 @@ class InternalDBAuth(Authenticator):
     typeName = _('Internal Database')
     typeType = 'InternalDBAuth'
     typeDescription = _('Internal dabasase authenticator. Doesn\'t uses external sources')
-    iconFile = 'auth.png' 
+    iconFile = 'auth.png'
+     
 
     # If we need to enter the password for this user
     needsPassword = True
+    
+    # This is the only internal source
+    isExternalSource = False
 
 
     def __init__(self, dbAuth, environment, values = None):
