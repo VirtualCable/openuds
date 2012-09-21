@@ -85,6 +85,7 @@ class InternalDBAuth(Authenticator):
             usr = usr[0]
             # Internal Db Auth has its own groups, and if it active it is valid
             if usr.password == hashlib.sha1(credentials).hexdigest():
+                groupsManager.validate([g.name for g in usr.groups.all()])
                 return True
             return False
         except dbAuthenticator.DoesNotExist:
