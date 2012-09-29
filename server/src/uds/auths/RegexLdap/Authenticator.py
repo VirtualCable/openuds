@@ -291,7 +291,6 @@ class RegexLdap(Authenticator):
         if user is None:
             raise AuthenticatorException(_('Username not found'))
         groups = self.__getGroups(user)
-        res = []
         for g in groups:
             gg = groupsManager.validate(g)
         
