@@ -117,13 +117,23 @@ namespace UdsAdmin.forms
                     xmlrpc.Group[] grps = xmlrpc.UdsAdminService.GetAuthenticatorGroups(_auth.id);
                     foreach (xmlrpc.Group grp in grps)
                     {
-                        bool active = groups.Length > 0 && Array.Find(groups, g => g.id == grp.id).active;
+                        bool active = false;
+                        if (groups.Length > 0)
+                        {
+                            xmlrpc.Group gg = Array.Find(groups, g => g.id == grp.id);
+                            if (gg != null)
+                                active = gg.active;
+                        }
                         groupsList.Items.Add(grp, active);
                     }
                 }
                 catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
                 {
                     gui.UserNotifier.notifyRpcException(ex);
+                }
+                catch (Exception exx)
+                {
+                    gui.UserNotifier.notifyError(exx.Message);
                 }
             }
 

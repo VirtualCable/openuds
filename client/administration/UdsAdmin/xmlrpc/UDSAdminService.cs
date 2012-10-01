@@ -719,7 +719,7 @@ namespace UdsAdmin.xmlrpc
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Exception invoking getServiceGui!!!");
+                MessageBox.Show(e.Message, "Exception invoking Choose Callback!!!");
                 return null;
             }
 
