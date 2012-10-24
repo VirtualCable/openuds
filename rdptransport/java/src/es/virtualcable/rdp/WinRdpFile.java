@@ -20,6 +20,7 @@ public class WinRdpFile {
 	public boolean redirectSmartcards = false;
 	public boolean redirectAudio = false;
 	public boolean compression = false;
+	public boolean displayConnectionBar = true;
 
 	public WinRdpFile(boolean fullScreen, String width, String height, String bpp) {
 		this.width = width;
@@ -38,6 +39,7 @@ public class WinRdpFile {
 		String scards = redirectSmartcards ? "1" : "0";
 		String printers = redirectPrinters ? "1" : "0";
 		String compression = this.compression ? "1" : "0";
+		String bar = displayConnectionBar ? "1" : "0";
 		
 		FileWriter fstream = new FileWriter(fname);
 		PrintWriter out = new PrintWriter(fstream);
@@ -55,7 +57,7 @@ public class WinRdpFile {
 		out.println("redirectcomports:i:" + serials);
 		out.println("redirectsmartcards:i:" + scards);
 		out.println("redirectclipboard:i:1");
-		out.println("displayconnectionbar:i:0");
+		out.println("displayconnectionbar:i:"+bar);
 		if( this.username.length() != 0) {
 			out.println("username:s:"+this.username);
 			out.println("domain:s:"+this.domain);
