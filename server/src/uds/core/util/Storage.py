@@ -51,7 +51,6 @@ class Storage(object):
 
         
     def saveData(self, skey, data, attr1 = None):
-        logger.debug('Saving key {0}, data {1} and attr1 {2}'.format(skey, data, attr1))
         key = self.__getKey(skey)
         data = data.encode(Storage.CODEC)
         attr1 = '' if attr1 == None else attr1
