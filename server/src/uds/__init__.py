@@ -57,5 +57,9 @@ def modify_MySQL_storage(sender, **kwargs):
         if dicTables.has_key(db_table):
             stmt = 'ALTER TABLE %s ENGINE=%s' % (db_table,'InnoDB')
             cursor.execute(stmt)
+        # sets charset to utf8
+        stmt = 'ALTER TABLE %s CHARACTER SET \'utf8\' COLLATE \'utf8_general_ci\'' % db_table
+        cursor.execute(stmt)
+    
 
 signals.post_syncdb.connect(modify_MySQL_storage, sender=models)
