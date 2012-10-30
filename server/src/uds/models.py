@@ -1438,6 +1438,7 @@ class Config(models.Model):
     key = models.CharField(max_length=64)
     value = models.TextField(default = '')
     crypt = models.BooleanField(default = False)
+    long = models.BooleanField(default = False)
     
     class Meta:
         '''
