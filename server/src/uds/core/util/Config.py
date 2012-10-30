@@ -47,10 +47,11 @@ class Config:
     '''
     
     class _Value:
-        def __init__(self, section, key, default = '', crypt = False):
+        def __init__(self, section, key, default = '', crypt = False, longText = False):
             self._section = section
             self._key = key
             self._crypt = crypt
+            self._longText = longText
             if crypt is False:
                 self._default = default
             else:
@@ -66,12 +67,11 @@ class Config:
                     self._crypt = [self._crypt, True][readed.crypt] # True has "higher" precedende than False
             except Exception:
                 # Not found
-                if self._default != '':
-                    if self._crypt:
-                        self.set( CryptoManager.manager().decrypt(self._default) )
-                    else:
-                        self.set(self._default)
-                    self._data = self._default
+                if self._default != '' and self._crypt:
+                    self.set( CryptoManager.manager().decrypt(self._default) )
+                elif not self._crypt:
+                    self.set(self._default)
+                self._data = self._default
             if self._crypt is True:
                 return CryptoManager.manager().decrypt(self._data)
             else:
@@ -96,6 +96,9 @@ class Config:
         
         def isCrypted(self):
             return self._crypt
+        
+        def isLongText(self):
+            return self._longText
 
         def set(self, value):
             if self._crypt is True:
@@ -123,6 +126,9 @@ class Config:
         
         def valueCrypt(self, key, default = ''):
             return Config._Value(self, key, default, True)
+        
+        def valueLong(self, key, default = ''):
+            return Config._Value(self, key, default, False, True)
         
         def name(self):
             return self._sectionName
@@ -208,6 +214,8 @@ class GlobalConfig:
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
     MAX_INITIALIZING_TIME = Config.section(GLOBAL_SECTION).value('maxInitTime', '3600')
+    # Custom HTML for login page
+    CUSTOM_HTML_LOGIN = Config.section(GLOBAL_SECTION).valueLong('customHtmlLogin', '')
     
     
     initDone = False
@@ -238,7 +246,8 @@ class GlobalConfig:
             GlobalConfig.AUTORUN_SERVICE.get()
             GlobalConfig.REDIRECT_TO_HTTPS.get()
             GlobalConfig.MAX_INITIALIZING_TIME.get()
-        except Exception, e:
+            GlobalConfig.CUSTOM_HTML_LOGIN.get()
+        except:
             logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
             
 # Context processor
