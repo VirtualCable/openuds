@@ -385,16 +385,17 @@ namespace UdsAdmin.xmlrpc
         public string key;
         public string value;
         public bool crypt;
+        public bool longText;
 
         public Configuration()
         {
             section = key = value = "";
-            crypt = false;
+            crypt = longText = false;
         }
 
-        public Configuration(string section, string key, string value, bool crypt)
+        public Configuration(string section, string key, string value, bool crypt, bool longText)
         {
-            this.section = section; this.key = key; this.value = value; this.crypt = crypt;
+            this.section = section; this.key = key; this.value = value; this.crypt = crypt; this.longText = longText;
         }
     };
 

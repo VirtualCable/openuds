@@ -88,6 +88,18 @@ namespace UdsAdmin.forms
                     txt.Text = cfg.value;
                     txt.Width = 180;
                     txt.UseSystemPasswordChar = cfg.crypt;
+                    if (cfg.longText)
+                    {
+                        txt.Multiline = true;
+                        txt.Height = 80;
+                        txt.ScrollBars = ScrollBars.Both;
+                        txt.AcceptsReturn = true;
+                        txt.WordWrap = false;
+                        StringBuilder bldr = new StringBuilder();
+                        foreach (string v in cfg.value.Split('\n'))
+                            bldr.AppendLine(v);
+                        txt.Text = bldr.ToString();
+                    }
                     txt.Dock = DockStyle.Fill;
                     pan.Controls.Add(txt, 1, row);
                     row++;
@@ -128,7 +140,7 @@ namespace UdsAdmin.forms
                         TextBox txt = (TextBox)ctrl;
                         xmlrpc.Configuration cfg = (xmlrpc.Configuration)ctrl.Tag;
                         if( cfg.value != txt.Text )
-                            changed.Add( new xmlrpc.Configuration(cfg.section, cfg.key, txt.Text, cfg.crypt ) );
+                            changed.Add( new xmlrpc.Configuration(cfg.section, cfg.key, txt.Text, cfg.crypt, cfg.longText) );
                     }
                 }
             }

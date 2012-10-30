@@ -38,7 +38,7 @@ namespace UdsAdmin.gui
 {
     public class DinamycFieldsManager
     {
-        const int DEF_FLD_HEIGHT = 22;
+        const int DEF_FLD_HEIGHT = 24;
         const int DEF_FLD_WIDTH = 12;
 
         public class ValidationError : Exception
