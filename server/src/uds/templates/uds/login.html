@@ -95,4 +95,9 @@
 			</div>
 		</form>
 </div>
+<div id="customHtml">
+	{% autoescape off %} 
+	{{ customHtml }}
+	{% endautoescape %}
+</div>
 {% endblock %}

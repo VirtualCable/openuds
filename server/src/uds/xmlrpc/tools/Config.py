@@ -45,7 +45,7 @@ def getConfiguration(credentials):
     for cfg in Config.enumerate():
         if cfg.isCrypted() is True and addCrypt is False:
             continue
-        res.append( {'section': cfg.section(), 'key' : cfg.key(), 'value' : cfg.get(), 'crypt': cfg.isCrypted() } )
+        res.append( {'section': cfg.section(), 'key' : cfg.key(), 'value' : cfg.get(), 'crypt': cfg.isCrypted(), 'longText': cfg.isLongText() } )
     logger.debug('Configuration: {0}'.format(res))
     return res
         

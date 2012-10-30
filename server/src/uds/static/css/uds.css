@@ -200,6 +200,10 @@ input[type=submit]{
     width: auto;
 }
 
+#customHtml {
+	margin-top: 4em;
+};
+
 #adminmsgs{
 	text-align:left;
 	margin:auto;
@@ -226,3 +230,8 @@ input[type=submit]{
 #applet {
 	margin:20px 0;
 }
+
+/* Sample "info" (footer) text, to be placed after (c) Virtualcable */
+/*#vcable:after {
+	content: "Testing text";
+}*/

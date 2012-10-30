@@ -65,6 +65,7 @@ class Config:
                     readed = dbConfig.objects.filter(section=self._section.name(), key=self._key)[0]
                     self._data = readed.value
                     self._crypt = [self._crypt, True][readed.crypt] # True has "higher" precedende than False
+                    self._longText = readed.long
             except Exception:
                 # Not found
                 if self._default != '' and self._crypt:
@@ -108,11 +109,11 @@ class Config:
             '''
             logger.debug('Saving config {0}.{1} as {2}'.format(self._section.name(), self._key, value))
             try:
-                if dbConfig.objects.filter(section=self._section.name(), key=self._key).update(value=value, crypt=self._crypt) == 0:
+                if dbConfig.objects.filter(section=self._section.name(), key=self._key).update(value=value, crypt=self._crypt, long=self._longText) == 0:
                     raise Exception() # Do not exists, create a new one
             except Exception:
                 try:
-                    dbConfig.objects.create(section=self._section.name(), key=self._key, value=value, crypt=self._crypt)
+                    dbConfig.objects.create(section=self._section.name(), key=self._key, value=value, crypt=self._crypt, long=self._longText)
                 except Exception:
                     # Probably a migration issue, just ignore it
                     logger.info("Could not save configuration key {0}.{1}".format(self._section.name(), self._key))
@@ -216,7 +217,6 @@ class GlobalConfig:
     MAX_INITIALIZING_TIME = Config.section(GLOBAL_SECTION).value('maxInitTime', '3600')
     # Custom HTML for login page
     CUSTOM_HTML_LOGIN = Config.section(GLOBAL_SECTION).valueLong('customHtmlLogin', '')
-    
     
     initDone = False
     

@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 ADMIN_AUTH = '#'
 
-CLIENT_VERSION_REQUIRED = '1.0.7'
+CLIENT_VERSION_REQUIRED = '1.0.8'
 
 class Credentials(object):
     '''
