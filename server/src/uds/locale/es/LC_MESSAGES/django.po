@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-12 21:26+0200\n"
+"POT-Creation-Date: 2012-10-30 17:27+0100\n"
 "PO-Revision-Date: 2011-12-21 01:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
@@ -42,235 +42,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
-
-#: auths/ActiveDirectory/Authenticator.py:29
-#: auths/EDirectory/Authenticator.py:60 auths/RegexLdap/Authenticator.py:51
-#: auths/SimpleLDAP/Authenticator.py:49
-#: services/Vmware/ServiceProviderVC.py:28
-msgid "Host"
-msgstr "Servidor "
-
-#: auths/ActiveDirectory/Authenticator.py:29
-#: auths/EDirectory/Authenticator.py:60 auths/RegexLdap/Authenticator.py:51
-#: auths/SimpleLDAP/Authenticator.py:49
-#: services/Vmware/ServiceProviderVC.py:28
-msgid "VMWare VC Server IP or Hostname"
-msgstr "IP o nombre DNS del servidor VMWare VC"
-
-#: auths/ActiveDirectory/Authenticator.py:30
-#: auths/EDirectory/Authenticator.py:62 auths/RegexLdap/Authenticator.py:53
-#: auths/SimpleLDAP/Authenticator.py:51
-msgid "Use SSL"
-msgstr "Usar SSL"
-
-#: auths/ActiveDirectory/Authenticator.py:30
-msgid "If checked, will use a ssl connection to Active Directory"
-msgstr "Si está activada, utilizará una conexión ssl con Active Directory"
-
-#: auths/ActiveDirectory/Authenticator.py:31
-#: auths/RegexLdap/Authenticator.py:54 auths/SimpleLDAP/Authenticator.py:52
-msgid "Ldap User"
-msgstr "Usuario LDAP"
-
-#: auths/ActiveDirectory/Authenticator.py:31
-msgid ""
-"Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
-"for this)"
-msgstr ""
-"Usuario con derechos de lectura en la base seleccionada (utilice la forma "
-"USUARIO@DOMINIO.DOM para este elemento)"
-
-#: auths/ActiveDirectory/Authenticator.py:32
-#: auths/ActiveDirectory/Authenticator.py:50
-#: auths/EDirectory/Authenticator.py:64 auths/RegexLdap/Authenticator.py:55
-#: auths/RegexLdap/Authenticator.py:78 auths/SimpleLDAP/Authenticator.py:53
-#: auths/SimpleLDAP/Authenticator.py:77
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:31
-#: services/Vmware/ServiceProviderVC.py:31 transports/NX/NXTransport.py:62
-#: transports/RDP/RDPTransport.py:38 transports/RDP/TSRDPTransport.py:42
-#: transports/RGS/RGSTransport.py:43 transports/RGS/TRGSTransport.py:48
-#: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:60
-msgid "Password"
-msgstr "Contraseña"
-
-#: auths/ActiveDirectory/Authenticator.py:32
-#: auths/EDirectory/Authenticator.py:64 auths/RegexLdap/Authenticator.py:55
-#: auths/SimpleLDAP/Authenticator.py:53
-msgid "Password of the ldap user"
-msgstr "Contraseña del usuario del ldap"
-
-#: auths/ActiveDirectory/Authenticator.py:33
-#: auths/EDirectory/Authenticator.py:65 auths/RegexLdap/Authenticator.py:56
-#: auths/SimpleLDAP/Authenticator.py:54
-#: services/Vmware/ServiceProviderVC.py:32
-msgid "Timeout"
-msgstr "Espera "
-
-#: auths/ActiveDirectory/Authenticator.py:33
-#: auths/EDirectory/Authenticator.py:65 auths/RegexLdap/Authenticator.py:56
-#: auths/SimpleLDAP/Authenticator.py:54
-msgid "Timeout in seconds of connection to LDAP"
-msgstr "Tiempo de espera en segundos"
-
-#: auths/ActiveDirectory/Authenticator.py:35
-msgid "Active Directory Authenticator"
-msgstr "Autenticador Active Directory"
-
-#: auths/ActiveDirectory/Authenticator.py:37
-#, fuzzy
-msgid "Authenticate against Active Directory"
-msgstr "Autenticador Active Directory"
-
-#: auths/ActiveDirectory/Authenticator.py:46
-#: auths/EDirectory/Authenticator.py:77 auths/RegexLdap/Authenticator.py:74
-#: auths/SimpleLDAP/Authenticator.py:73
-#: services/Vmware/ServiceProviderVC.py:30 transports/NX/NXTransport.py:61
-#: transports/RDP/RDPTransport.py:37 transports/RDP/TSRDPTransport.py:41
-#: transports/RGS/RGSTransport.py:42 transports/RGS/TRGSTransport.py:47
-#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:59
-msgid "Username"
-msgstr "Usuario"
-
-#: auths/ActiveDirectory/Authenticator.py:48
-#: auths/EDirectory/Authenticator.py:79 auths/RegexLdap/Authenticator.py:76
-#: auths/SimpleLDAP/Authenticator.py:75
-msgid "Group"
-msgstr "Grupo"
-
-#: auths/ActiveDirectory/Authenticator.py:61
-#: auths/ActiveDirectory/Authenticator.py:395
-msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
-msgstr ""
-"Debe especificar el nombre de usuario en la forma NOMBREUSUARIO@DOMINIO.DOM"
-
-#: auths/ActiveDirectory/Authenticator.py:127
-#: auths/EDirectory/Authenticator.py:123 auths/RegexLdap/Authenticator.py:157
-#: auths/SimpleLDAP/Authenticator.py:158
-msgid "Ldap connection error: "
-msgstr "Error de conexión al ldap: "
-
-#: auths/ActiveDirectory/Authenticator.py:299
-#: auths/ActiveDirectory/Authenticator.py:345
-#: auths/EDirectory/Authenticator.py:243 auths/EDirectory/Authenticator.py:286
-#: auths/RegexLdap/Authenticator.py:244 auths/RegexLdap/Authenticator.py:287
-#: auths/SimpleLDAP/Authenticator.py:268 auths/SimpleLDAP/Authenticator.py:312
-msgid "Username not found"
-msgstr "Nombre de usuario no hallado"
-
-#: auths/ActiveDirectory/Authenticator.py:332
-#: auths/SimpleLDAP/Authenticator.py:301
-msgid "Group not found"
-msgstr "Grupo no hallado"
-
-#: auths/ActiveDirectory/Authenticator.py:364
-#: auths/ActiveDirectory/Authenticator.py:381
-#: auths/EDirectory/Authenticator.py:303 auths/RegexLdap/Authenticator.py:305
-#: auths/SimpleLDAP/Authenticator.py:327 auths/SimpleLDAP/Authenticator.py:341
-msgid "Too many results, be more specific"
-msgstr "Demasiados resultados, sea más específico"
-
-#: auths/ActiveDirectory/Authenticator.py:404
-msgid "Domain seems to be incorrect, please check it"
-msgstr "El dominio parece ser incorrecto, por favor, compruebelo"
-
-#: auths/ActiveDirectory/Authenticator.py:409
-msgid "Ldap does not seem an Active Directory (do not have user objects)"
-msgstr ""
-"El ldap indicado no parece un Active Directory (no tiene objetos de usuario)"
-
-#: auths/ActiveDirectory/Authenticator.py:417
-msgid "Ldap does not seem an Active Directory (no not have group objects)"
-msgstr ""
-"El ldap indicado no parece un Active Directory (no no tienen objetos de "
-"grupo)"
-
-#: auths/ActiveDirectory/Authenticator.py:425
-msgid ""
-"Ldap does not seem an Active Directory (do not have any user nor groups)"
-msgstr ""
-"El ldap indicado no parece un Active Directory (no tiene ningún usuario ni "
-"grupo)"
-
-#: auths/ActiveDirectory/Authenticator.py:430
-#: auths/EDirectory/Authenticator.py:358 auths/RegexLdap/Authenticator.py:380
-#: auths/SimpleLDAP/Authenticator.py:422
-msgid "Connection params seem correct, test was succesfully executed"
-msgstr ""
-"Los parámetros de conexión parecen correctos, la prueba fue ejecutado con "
-"exito"
-
-#: auths/EDirectory/Authenticator.py:61 auths/RegexLdap/Authenticator.py:52
-#: auths/SimpleLDAP/Authenticator.py:50
-#: services/Vmware/ServiceProviderVC.py:29
-msgid "Port"
-msgstr "Puerto"
-
-#: auths/EDirectory/Authenticator.py:61 auths/RegexLdap/Authenticator.py:52
-#: auths/SimpleLDAP/Authenticator.py:50
-msgid "Ldap port (389 for non ssl, 636 for ssl normally"
-msgstr "Puerto LDAP (389 para no SSL, 636 para ssl normalmente)"
-
-#: auths/EDirectory/Authenticator.py:62 auths/RegexLdap/Authenticator.py:53
-#: auths/SimpleLDAP/Authenticator.py:51
-msgid ""
-"If checked, will use a ssl connection to ldap (if port is 389, will use in "
-"fact port 636)"
-msgstr ""
-"Si está activada, utilizará una conexión ssl con ldap (si el puerto es 389, "
-"utilizará de hecho el Puerto 636)"
-
-#: auths/EDirectory/Authenticator.py:63
-#, fuzzy
-msgid "Admin user"
-msgstr "Admin"
-
-#: auths/EDirectory/Authenticator.py:63
-#, fuzzy
-msgid "Username with read privileges on the eDirectory"
-msgstr "Usuario con privilegios de lectura en la base elegida"
-
-#: auths/EDirectory/Authenticator.py:67
-#, fuzzy
-msgid "eDirectory Authenticator"
-msgstr "Autenticador Active Directory"
-
-#: auths/EDirectory/Authenticator.py:69
-#, fuzzy
-msgid "Authenticate against eDirectory"
-msgstr "Autenticador Active Directory"
-
-#: auths/EDirectory/Authenticator.py:323 auths/RegexLdap/Authenticator.py:325
-#: auths/SimpleLDAP/Authenticator.py:362
-msgid "Ldap search base is incorrect"
-msgstr "La base de búsqueda ldap es incorrecta"
-
-#: auths/EDirectory/Authenticator.py:328 auths/RegexLdap/Authenticator.py:330
-#: auths/SimpleLDAP/Authenticator.py:367
-msgid "Ldap user class seems to be incorrect (no user found by that class)"
-msgstr ""
-"La clase de usuario de LDAP parece ser incorrecta (ningún usuario encontrado "
-"por esa clase)"
-
-#: auths/EDirectory/Authenticator.py:336 auths/RegexLdap/Authenticator.py:346
-#: auths/SimpleLDAP/Authenticator.py:383
-msgid ""
-"Ldap user id attribute seems to be incorrect (no user found by that "
-"attribute)"
-msgstr ""
-"El atributo de id de usuario de ldap parece ser incorrecto (ningún usuario "
-"encontrado por atributo)"
-
-#: auths/EDirectory/Authenticator.py:344
-msgid "Expected group attribute "
-msgstr "Atributo de grupo esperado "
-
-#: auths/EDirectory/Authenticator.py:353
-#, fuzzy
-msgid ""
-"Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
-msgstr ""
-"El atributo del id de usuario o la clase de usuario LDAP son probablemente "
-"incorrectos(no se puede encontrar ningún usuario con ambas condiciones)"
 
 #: auths/IP/Authenticator.py:45 auths/IP/Authenticator.py:47
 msgid "IP Authenticator"
@@ -284,7 +55,7 @@ msgstr "IP "
 msgid "IP Range"
 msgstr "Intervalo IP"
 
-#: auths/IP/Authenticator.py:99 auths/InternalDB/Authenticator.py:94
+#: auths/IP/Authenticator.py:99 auths/InternalDB/Authenticator.py:102
 msgid "All seems fine in the authenticator."
 msgstr "Parace que todo funciona correctamente en el autenticador. "
 
@@ -296,79 +67,182 @@ msgstr "Base de datos interna"
 msgid "Internal dabasase authenticator. Doesn't uses external sources"
 msgstr "Dabasase interna autenticador. No utiliza fuentes externas"
 
-#: auths/InternalDB/Authenticator.py:91
+#: auths/InternalDB/Authenticator.py:99
 msgid "Internal structures seems ok"
 msgstr "Las estructuras internas parecen correctas"
 
-#: auths/RegexLdap/Authenticator.py:54 auths/SimpleLDAP/Authenticator.py:52
+#: auths/RegexLdap/Authenticator.py:49 auths/SimpleLDAP/Authenticator.py:49
+#: services/OVirt/OVirtProvider.py:87
+msgid "Host"
+msgstr "Servidor "
+
+#: auths/RegexLdap/Authenticator.py:49 auths/SimpleLDAP/Authenticator.py:49
+msgid "VMWare VC Server IP or Hostname"
+msgstr "IP o nombre DNS del servidor VMWare VC"
+
+#: auths/RegexLdap/Authenticator.py:50 auths/SimpleLDAP/Authenticator.py:50
+#: services/OVirt/OVirtProvider.py:88
+msgid "Port"
+msgstr "Puerto"
+
+#: auths/RegexLdap/Authenticator.py:50 auths/SimpleLDAP/Authenticator.py:50
+msgid "Ldap port (389 for non ssl, 636 for ssl normally"
+msgstr "Puerto LDAP (389 para no SSL, 636 para ssl normalmente)"
+
+#: auths/RegexLdap/Authenticator.py:51 auths/SimpleLDAP/Authenticator.py:51
+msgid "Use SSL"
+msgstr "Usar SSL"
+
+#: auths/RegexLdap/Authenticator.py:51 auths/SimpleLDAP/Authenticator.py:51
+msgid ""
+"If checked, will use a ssl connection to ldap (if port is 389, will use in "
+"fact port 636)"
+msgstr ""
+"Si está activada, utilizará una conexión ssl con ldap (si el puerto es 389, "
+"utilizará de hecho el Puerto 636)"
+
+#: auths/RegexLdap/Authenticator.py:52 auths/SimpleLDAP/Authenticator.py:52
+msgid "Ldap User"
+msgstr "Usuario LDAP"
+
+#: auths/RegexLdap/Authenticator.py:52 auths/SimpleLDAP/Authenticator.py:52
 msgid "Username with read privileges on the base selected"
 msgstr "Usuario con privilegios de lectura en la base elegida"
 
-#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:55
+#: auths/RegexLdap/Authenticator.py:53 auths/RegexLdap/Authenticator.py:76
+#: auths/SimpleLDAP/Authenticator.py:53 auths/SimpleLDAP/Authenticator.py:77
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:31
+#: services/OVirt/OVirtProvider.py:90 transports/NX/NXTransport.py:62
+#: transports/RDP/RDPTransport.py:38 transports/RDP/TSRDPTransport.py:42
+#: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:58
+msgid "Password"
+msgstr "Contraseña"
+
+#: auths/RegexLdap/Authenticator.py:53 auths/SimpleLDAP/Authenticator.py:53
+msgid "Password of the ldap user"
+msgstr "Contraseña del usuario del ldap"
+
+#: auths/RegexLdap/Authenticator.py:54 auths/SimpleLDAP/Authenticator.py:54
+#: services/OVirt/OVirtProvider.py:91
+msgid "Timeout"
+msgstr "Espera "
+
+#: auths/RegexLdap/Authenticator.py:54 auths/SimpleLDAP/Authenticator.py:54
+msgid "Timeout in seconds of connection to LDAP"
+msgstr "Tiempo de espera en segundos"
+
+#: auths/RegexLdap/Authenticator.py:55 auths/SimpleLDAP/Authenticator.py:55
 msgid "Base"
 msgstr "Base"
 
-#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:55
+#: auths/RegexLdap/Authenticator.py:55 auths/SimpleLDAP/Authenticator.py:55
 msgid "Common search base (used for \"users\" and \"groups\""
 msgstr "Base de búsqueda común (utilizado para \"los usuarios\" y \"grupos\""
 
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:56
+#: auths/RegexLdap/Authenticator.py:56 auths/SimpleLDAP/Authenticator.py:56
 msgid "User class"
 msgstr "Clase de usuario"
 
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:56
+#: auths/RegexLdap/Authenticator.py:56 auths/SimpleLDAP/Authenticator.py:56
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "Clase para los usuarios de LDAP (normalmente posixAccount)"
 
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:57
+#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:57
 msgid "User Id Attr"
 msgstr "Attr. de Id de usuario"
 
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:57
+#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:57
 msgid "Attribute that contains the user id"
 msgstr "Atributo que contiene el identificador de usuario"
 
-#: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
 msgid "User Name Attr"
 msgstr "Attr. de nombre usu."
 
-#: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr ""
 "Atributos que contienen el nombre de usuario (lista de valores separados por "
 "comas)"
 
-#: auths/RegexLdap/Authenticator.py:61
+#: auths/RegexLdap/Authenticator.py:59
 msgid "Group Name Attr"
 msgstr "Atr. de nombre de Grupo"
 
-#: auths/RegexLdap/Authenticator.py:61
+#: auths/RegexLdap/Authenticator.py:59
 msgid "Attribute that contains the group name"
 msgstr "Atributo que contiene el nombre del grupo"
 
-#: auths/RegexLdap/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:60
 msgid "Regular Exp. for groups"
 msgstr "EXP. regular para grupos"
 
-#: auths/RegexLdap/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:60
 msgid "Regular Expression to extract the group name"
 msgstr "Expresión regular para extraer el nombre del grupo"
 
-#: auths/RegexLdap/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:62
 msgid "Regex LDAP Authenticator"
 msgstr "Autenticador Regex LDAP"
 
-#: auths/RegexLdap/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:64
 msgid "Regular Expressions LDAP authenticator"
 msgstr "Autenticador LDAP de expresiones regulares"
 
-#: auths/RegexLdap/Authenticator.py:338 auths/SimpleLDAP/Authenticator.py:375
+#: auths/RegexLdap/Authenticator.py:72 auths/SimpleLDAP/Authenticator.py:73
+#: services/OVirt/OVirtProvider.py:89 transports/NX/NXTransport.py:61
+#: transports/RDP/RDPTransport.py:37 transports/RDP/TSRDPTransport.py:41
+#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:57
+msgid "Username"
+msgstr "Usuario"
+
+#: auths/RegexLdap/Authenticator.py:74 auths/SimpleLDAP/Authenticator.py:75
+msgid "Group"
+msgstr "Grupo"
+
+#: auths/RegexLdap/Authenticator.py:96
+msgid "Invalid regular expression"
+msgstr ""
+
+#: auths/RegexLdap/Authenticator.py:159 auths/SimpleLDAP/Authenticator.py:158
+msgid "Ldap connection error: "
+msgstr "Error de conexión al ldap: "
+
+#: auths/RegexLdap/Authenticator.py:249 auths/RegexLdap/Authenticator.py:292
+#: auths/SimpleLDAP/Authenticator.py:269 auths/SimpleLDAP/Authenticator.py:313
+msgid "Username not found"
+msgstr "Nombre de usuario no hallado"
+
+#: auths/RegexLdap/Authenticator.py:309 auths/SimpleLDAP/Authenticator.py:328
+#: auths/SimpleLDAP/Authenticator.py:342
+msgid "Too many results, be more specific"
+msgstr "Demasiados resultados, sea más específico"
+
+#: auths/RegexLdap/Authenticator.py:329 auths/SimpleLDAP/Authenticator.py:363
+msgid "Ldap search base is incorrect"
+msgstr "La base de búsqueda ldap es incorrecta"
+
+#: auths/RegexLdap/Authenticator.py:334 auths/SimpleLDAP/Authenticator.py:368
+msgid "Ldap user class seems to be incorrect (no user found by that class)"
+msgstr ""
+"La clase de usuario de LDAP parece ser incorrecta (ningún usuario encontrado "
+"por esa clase)"
+
+#: auths/RegexLdap/Authenticator.py:342 auths/SimpleLDAP/Authenticator.py:376
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
 msgstr ""
 "La clase de grupo LDAP parece ser incorrecta (ningún grupo encontrado por "
 "esa clase)"
 
-#: auths/RegexLdap/Authenticator.py:356 auths/SimpleLDAP/Authenticator.py:391
+#: auths/RegexLdap/Authenticator.py:350 auths/SimpleLDAP/Authenticator.py:384
+msgid ""
+"Ldap user id attribute seems to be incorrect (no user found by that "
+"attribute)"
+msgstr ""
+"El atributo de id de usuario de ldap parece ser incorrecto (ningún usuario "
+"encontrado por atributo)"
+
+#: auths/RegexLdap/Authenticator.py:360 auths/SimpleLDAP/Authenticator.py:392
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -376,13 +250,19 @@ msgstr ""
 "Atributo de id de grupo ldap parece ser incorrecto (ningún grupo encontrado "
 "por atributo)"
 
-#: auths/RegexLdap/Authenticator.py:365 auths/SimpleLDAP/Authenticator.py:400
+#: auths/RegexLdap/Authenticator.py:369 auths/SimpleLDAP/Authenticator.py:401
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
 msgstr ""
 "El atributo del id de usuario o la clase de usuario LDAP son probablemente "
 "incorrectos(no se puede encontrar ningún usuario con ambas condiciones)"
+
+#: auths/RegexLdap/Authenticator.py:384 auths/SimpleLDAP/Authenticator.py:423
+msgid "Connection params seem correct, test was succesfully executed"
+msgstr ""
+"Los parámetros de conexión parecen correctos, la prueba fue ejecutado con "
+"exito"
 
 #: auths/SimpleLDAP/Authenticator.py:59
 msgid "Group class"
@@ -416,7 +296,11 @@ msgstr "Autenticador LDAP Simple"
 msgid "Simple LDAP authenticator"
 msgstr "Autenticador LDAP Simple"
 
-#: auths/SimpleLDAP/Authenticator.py:409
+#: auths/SimpleLDAP/Authenticator.py:302
+msgid "Group not found"
+msgstr "Grupo no hallado"
+
+#: auths/SimpleLDAP/Authenticator.py:410
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
@@ -425,7 +309,7 @@ msgstr ""
 "probablemente incorrectos (no se encuentra ningún grupo con ambas "
 "condiciones)"
 
-#: auths/SimpleLDAP/Authenticator.py:416
+#: auths/SimpleLDAP/Authenticator.py:417
 msgid "Can't locate any group with the membership attribute specified"
 msgstr ""
 "No se puede localizar algún grupo con el atributo de pertenencia especificado"
@@ -434,26 +318,26 @@ msgstr ""
 msgid "No connection checking method is implemented."
 msgstr "No se ha implementado ningun metodo de comprobación de conexión"
 
-#: core/BaseModule.py:248
+#: core/BaseModule.py:253
 msgid "No check method provided."
 msgstr "No se ha implementado ningún método de verificación."
 
-#: core/managers/PublicationManager.py:156
+#: core/managers/PublicationManager.py:152
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Ya hay una publicación en curso. Espere a la finalización de esta o "
 "cancelela e intentelo de nuevo."
 
-#: core/managers/PublicationManager.py:168
+#: core/managers/PublicationManager.py:165
 msgid "Can't cancel non running publication"
 msgstr "No se puede cancelar una publicación que no está activa"
 
-#: core/managers/PublicationManager.py:186
+#: core/managers/PublicationManager.py:183
 msgid "Can't unpublish non usable publication"
 msgstr "No se puede despublicar una publicación no activa"
 
-#: core/managers/PublicationManager.py:189
+#: core/managers/PublicationManager.py:186
 msgid "Can't unpublish publications with services in process"
 msgstr "No se puede despublicar con servicios en proceso"
 
@@ -485,27 +369,27 @@ msgstr "24 bits"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:302
+#: core/managers/UserServiceManager.py:303
 msgid "Can't cancel non running operation"
 msgstr "No se puede cancelar una operación que no está en curso"
 
-#: core/managers/UserServiceManager.py:321
+#: core/managers/UserServiceManager.py:322
 msgid "Can't remove a non active element"
 msgstr "No se puede eliminar un elemento que no está activo"
 
-#: core/managers/UserServiceManager.py:334
+#: core/managers/UserServiceManager.py:335
 msgid "Can't remove nor cancel {0} cause its states doesn't allows it"
 msgstr "No se puede eliminar o cancelar {0} porque sus estados no lo permiten"
 
-#: core/osmanagers/BaseOsManager.py:50
+#: core/osmanagers/BaseOsManager.py:49
 msgid "Base OS Manager"
 msgstr "Gestor de OS Base"
 
-#: core/osmanagers/BaseOsManager.py:52
+#: core/osmanagers/BaseOsManager.py:51
 msgid "Base Manager"
 msgstr "Gestor Base"
 
-#: core/transports/BaseTransport.py:94
+#: core/transports/BaseTransport.py:112
 msgid "Transport empty"
 msgstr "Transporte Vacio"
 
@@ -570,11 +454,11 @@ msgstr "Finalizado"
 msgid "Waiting execution"
 msgstr "En espera de ejecución"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:44
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:45
 msgid "Linux OS Manager"
 msgstr "Gestor de S.O. Linux"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:46
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:47
 msgid ""
 "Os Manager to control linux virtual machines (basically renames machine and "
 "notify state)"
@@ -582,37 +466,29 @@ msgstr ""
 "Gestor de s.o. para controlar maquinas virtuales con linux (basicamente "
 "renombra las máquinas y notifica los estados)"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:49
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:40
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:50
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:41
 msgid "On Logout"
 msgstr "Al salir"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:49
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:40
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:50
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:41
 msgid "What to do when user logout from service"
 msgstr "Que acción realizar cuando el usuario abandone el servicio"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:50
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:41
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:51
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:42
 msgid "Keep service assigned"
 msgstr "Mantener el servicio asignado"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:51
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:42
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:52
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:43
 msgid "Remove service"
 msgstr "Eliminar servicio"
 
 #: osmanagers/LinuxOsManager/__init__.py:43
 msgid "UDS Actor for linux machines <b>(Requires python 2.6 or greater)"
 msgstr "Actor para las máquinas Linux <b>(Precisa python 2.6 o mayor)</b>"
-
-#: osmanagers/NoneOsManager/Manager.py:43
-msgid "None OS Manager"
-msgstr "Ningún gestor de OS"
-
-#: osmanagers/NoneOsManager/Manager.py:45
-msgid "Os Manager with no actions"
-msgstr "Gestor de OS que no realiza ninguna acción"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:23
 msgid "Windows Domain OS Manager"
@@ -626,7 +502,6 @@ msgstr "Gestor de s.o. para controlar maquinas windows con dominio."
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:29
 #: transports/RDP/RDPTransport.py:39 transports/RDP/TSRDPTransport.py:43
-#: transports/RGS/RGSTransport.py:44 transports/RGS/TRGSTransport.py:49
 msgid "Domain"
 msgstr "Dominio"
 
@@ -672,11 +547,11 @@ msgstr "Debe indicar una cuenta para añadir máquinas al dominio!!!"
 msgid "Must provide a password for the account!!!"
 msgstr "Debe indicar una contraseña para la cuenta!!!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:35
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:36
 msgid "Windows Basic OS Manager"
 msgstr "Gestor de SO Windows Básico"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:37
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:38
 msgid ""
 "Os Manager to control windows machines without domain. (Basically renames "
 "machine)"
@@ -684,11 +559,11 @@ msgstr ""
 "Gestor de SO para controlar máquinas windows sin dominio. (Basicamente, "
 "renombra las máquinas)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:51
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:52
 msgid "Length must be numeric!!"
 msgstr "La longitud debe ser numerica!!!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:54
 msgid "Length must be betwen 1 and six"
 msgstr "La longitud debe estar entre 1 y seis"
 
@@ -700,7 +575,45 @@ msgstr ""
 "Actor para las máquinas Windows <b>(Importante!!! Requiere tener .net "
 "framework 3.5 sp1)</b>"
 
-#: services/PhysicalMachines/IPMachineDeployed.py:56
+#: services/OVirt/OVirtProvider.py:87
+#, fuzzy
+msgid "oVirt Server IP or Hostname"
+msgstr "IP o nombre DNS del servidor VMWare VC"
+
+#: services/OVirt/OVirtProvider.py:88
+msgid "VMWare VC Server Port (usually 443)"
+msgstr "Puerto del servidor VMWare VC (normalmente 443)"
+
+#: services/OVirt/OVirtProvider.py:89
+msgid "User with valid privileges on VC"
+msgstr "Usuario con privilegios en VC"
+
+#: services/OVirt/OVirtProvider.py:90
+msgid "Password of the user of the VC"
+msgstr "Contraseña del usuario de VC"
+
+#: services/OVirt/OVirtProvider.py:91
+msgid "Timeout in seconds of connection to VC"
+msgstr "Timeout en segundos"
+
+#: services/OVirt/OVirtProvider.py:92
+msgid "Macs range"
+msgstr "Rango de Macs"
+
+#: services/OVirt/OVirtProvider.py:93
+msgid "Range of valids macs for created machines"
+msgstr "Rango válido de macs para las máquinas creadas"
+
+#: services/OVirt/OVirtProvider.py:153
+msgid "Connection test successful"
+msgstr ""
+
+#: services/OVirt/OVirtPublication.py:195
+#: services/Sample/SamplePublication.py:195
+msgid "Random integer was 9!!! :-)"
+msgstr "Entero aleatorio fue 9!!!!!! :-)"
+
+#: services/PhysicalMachines/IPMachineDeployed.py:57
 msgid "IP "
 msgstr "IP "
 
@@ -716,190 +629,13 @@ msgstr "Máquinas físicas de acceso por ip"
 msgid "This service provides access to POWERED-ON Machines by ip"
 msgstr "Este servicio provee acceso a máquinas ENCENDIDAS por IP"
 
-#: services/Sample/SampleProvider.py:142
+#: services/Sample/SampleProvider.py:138
 msgid "Methuselah is not alive!!! :-)"
 msgstr "Matusalén no está vivo!!! :-)"
 
-#: services/Sample/SampleProvider.py:182
+#: services/Sample/SampleProvider.py:178
 msgid "Nothing tested, but all went fine.."
 msgstr "Nada probado, pero todo salió bien..."
-
-#: services/Sample/SamplePublication.py:199
-msgid "Random integer was 9!!! :-)"
-msgstr "Entero aleatorio fue 9!!!!!! :-)"
-
-#: services/Vmware/Helpers.py:72
-msgid "Local"
-msgstr "Local"
-
-#: services/Vmware/Helpers.py:74
-msgid "Remote"
-msgstr "Remoto"
-
-#: services/Vmware/PublicationVC.py:36
-msgid "Publication"
-msgstr "Publicación"
-
-#: services/Vmware/PublicationVC.py:37
-msgid "UDS Publication for {0} created at {1}"
-msgstr "Publicación de UDS para {0} creado en {1}"
-
-#: services/Vmware/ServiceProviderVC.py:29
-msgid "VMWare VC Server Port (usually 443)"
-msgstr "Puerto del servidor VMWare VC (normalmente 443)"
-
-#: services/Vmware/ServiceProviderVC.py:30
-msgid "User with valid privileges on VC"
-msgstr "Usuario con privilegios en VC"
-
-#: services/Vmware/ServiceProviderVC.py:31
-msgid "Password of the user of the VC"
-msgstr "Contraseña del usuario de VC"
-
-#: services/Vmware/ServiceProviderVC.py:32
-msgid "Timeout in seconds of connection to VC"
-msgstr "Timeout en segundos"
-
-#: services/Vmware/ServiceProviderVC.py:33
-msgid "Macs range"
-msgstr "Rango de Macs"
-
-#: services/Vmware/ServiceProviderVC.py:34
-msgid "Range of valids macs for created machines"
-msgstr "Rango válido de macs para las máquinas creadas"
-
-#: services/Vmware/ServiceProviderVC.py:39
-msgid "VMWare Virtual Center Provider"
-msgstr "Proveedor para VMWare Virtual Center"
-
-#: services/Vmware/ServiceProviderVC.py:41
-msgid "Provides connection to Virtual Center Services"
-msgstr "Provee conexión a servicios basados en VMWare Virtual Center"
-
-#: services/Vmware/ServiceProviderVC.py:111
-msgid "Error testing connection"
-msgstr "Error comprobando la conexión"
-
-#: services/Vmware/ServiceProviderVC.py:114
-msgid "VmwareVC Provider: "
-msgstr "Proveedor VmwareVC:"
-
-#: services/Vmware/ServiceProviderVC.py:120
-msgid "Connection params ok"
-msgstr "Parametros de conexión correctos"
-
-#: services/Vmware/ServiceProviderVC.py:121
-msgid "Connection failed. Check connection params"
-msgstr "La conexión ha fallado. Compruebe los parámetros."
-
-#: services/Vmware/VCLinkedCloneService.py:28
-msgid "Datacenter"
-msgstr "Datacenter "
-
-#: services/Vmware/VCLinkedCloneService.py:34
-msgid "Datacenter containing base machine"
-msgstr "Datacenter que contiene la máquina de base"
-
-#: services/Vmware/VCLinkedCloneService.py:36
-msgid "Network"
-msgstr "Red"
-
-#: services/Vmware/VCLinkedCloneService.py:37
-msgid ""
-"If more than 1 interface is found in machine, use one on this network as main"
-msgstr ""
-"Si hay mas de un interfaz en la máquina virtual, use el que esté en esta red "
-"como principal."
-
-#: services/Vmware/VCLinkedCloneService.py:38
-msgid "Pub. Resource Pool"
-msgstr "Pool de despliegue"
-
-#: services/Vmware/VCLinkedCloneService.py:38
-msgid "Resource Pool where deploy clones"
-msgstr "Pool de recursos donde desplegar los clones"
-
-#: services/Vmware/VCLinkedCloneService.py:39
-msgid "Clones Folder"
-msgstr "Carpeta de clones"
-
-#: services/Vmware/VCLinkedCloneService.py:39
-msgid "Folder where deploy clones"
-msgstr "Carpeta donde desplegar los clones"
-
-#: services/Vmware/VCLinkedCloneService.py:40
-msgid "Resource Pool"
-msgstr "Pool de recursos"
-
-#: services/Vmware/VCLinkedCloneService.py:46
-msgid "Resource Pool containing base machine"
-msgstr "Pool de recursos que contiene la máquina de base"
-
-#: services/Vmware/VCLinkedCloneService.py:48
-msgid "Base Machine"
-msgstr "Máquina de base "
-
-#: services/Vmware/VCLinkedCloneService.py:48
-msgid "Base machine for this service"
-msgstr "Máquina de base para este servicio"
-
-#: services/Vmware/VCLinkedCloneService.py:49
-msgid "Memory (Mb)"
-msgstr "Memoria (Mb)"
-
-#: services/Vmware/VCLinkedCloneService.py:50
-msgid "Memory for machines deployed from this service"
-msgstr "Memoria para maquinas desplegadas desde este servicio"
-
-#: services/Vmware/VCLinkedCloneService.py:51
-msgid "Datastores"
-msgstr "Almacenamientos"
-
-#: services/Vmware/VCLinkedCloneService.py:52
-msgid "Datastores where to put incrementals"
-msgstr "Almacenamientos donde colocar los incrementales"
-
-#: services/Vmware/VCLinkedCloneService.py:53
-msgid "Machine Names"
-msgstr "Nombres de máquinas"
-
-#: services/Vmware/VCLinkedCloneService.py:53
-msgid "Base name for clones from this machine"
-msgstr "Nombre base para los clones de la máquina base"
-
-#: services/Vmware/VCLinkedCloneService.py:54
-msgid "Name Length"
-msgstr "Longitud del nombre"
-
-#: services/Vmware/VCLinkedCloneService.py:55
-msgid "Length of numeric part for the names of this machines (betwen 3 and 6"
-msgstr ""
-"Longitud de la parte numérica de los nombres de esta maquinaria (entre 3 y 6"
-
-#: services/Vmware/VCLinkedCloneService.py:62
-msgid "VMWare Linked clone base"
-msgstr "Servicio basado en VMWare Linked Clones"
-
-#: services/Vmware/VCLinkedCloneService.py:64
-msgid ""
-"This service provides access to Linked Clones machines on a Virtual Center"
-msgstr "Este servicio provee acceso a linked clones sobre Virtual Center"
-
-#: services/Vmware/VCLinkedCloneService.py:70
-msgid "Number of desired machines to keep running waiting for a user"
-msgstr "Número de máquinas a manatener en ejecución esperando a un usuario"
-
-#: services/Vmware/VCLinkedCloneService.py:72
-msgid "Number of desired machines to keep suspended waiting for use"
-msgstr "Número de maquinas a mantener suspendidas esperando asignación"
-
-#: services/Vmware/VCLinkedCloneService.py:93
-msgid "The length of basename plus length must not be greater than 15"
-msgstr "La longitud de basename más longitud no debe ser superior a 15"
-
-#: services/Vmware/VCLinkedCloneService.py:95
-msgid "The machine name can't be only numbers"
-msgstr "El nombre del equipo no puede ser sólo números"
 
 #: templates/404.html:4 templates/404.html.py:7
 msgid "Page not found"
@@ -912,6 +648,14 @@ msgstr "Lo sentimos, pero no se encontró la página solicitada."
 #: templates/uds/base.html:7
 msgid "UDS"
 msgstr "UDS"
+
+#: templates/uds/detectJava.html:6
+msgid "Login redirection"
+msgstr ""
+
+#: templates/uds/detectJava.html:38
+msgid "Go to main page"
+msgstr ""
 
 #: templates/uds/downloads.html:8 templates/uds/snippets/admin_user.html:7
 msgid "Downloads"
@@ -1030,28 +774,24 @@ msgid "NX Transport for direct connection"
 msgstr "Transporte NX para conexión directa"
 
 #: transports/NX/NXTransport.py:60 transports/RDP/RDPTransport.py:36
-#: transports/RDP/TSRDPTransport.py:40 transports/RGS/RGSTransport.py:41
-#: transports/RGS/TRGSTransport.py:46 transports/TSNX/TSNXTransport.py:65
+#: transports/RDP/TSRDPTransport.py:40 transports/TSNX/TSNXTransport.py:65
 msgid "Empty creds"
 msgstr "Sin credenciales"
 
 #: transports/NX/NXTransport.py:60 transports/RDP/RDPTransport.py:36
-#: transports/RDP/TSRDPTransport.py:40 transports/RGS/RGSTransport.py:41
-#: transports/RGS/TRGSTransport.py:46 transports/TSNX/TSNXTransport.py:65
+#: transports/RDP/TSRDPTransport.py:40 transports/TSNX/TSNXTransport.py:65
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
 "Si está activada, las credenciales utilizadas para conectar estarán vacías"
 
 #: transports/NX/NXTransport.py:61 transports/RDP/RDPTransport.py:37
-#: transports/RDP/TSRDPTransport.py:41 transports/RGS/RGSTransport.py:42
-#: transports/RGS/TRGSTransport.py:47 transports/TSNX/TSNXTransport.py:66
+#: transports/RDP/TSRDPTransport.py:41 transports/TSNX/TSNXTransport.py:66
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
 "Si no está vacio, este nombre de usuario será utilizado como credencial fija"
 
 #: transports/NX/NXTransport.py:62 transports/RDP/RDPTransport.py:38
-#: transports/RDP/TSRDPTransport.py:42 transports/RGS/RGSTransport.py:43
-#: transports/RGS/TRGSTransport.py:48 transports/TSNX/TSNXTransport.py:67
+#: transports/RDP/TSRDPTransport.py:42 transports/TSNX/TSNXTransport.py:67
 msgid "If not empty, this password will be always used as credential"
 msgstr "Si no está vacio, este password será utiizado como credencial fija"
 
@@ -1095,11 +835,11 @@ msgstr "Memoria Caché"
 msgid "Cache size en Mb keept at memory"
 msgstr "Tamaño  del Caché en Mb a mantener en memoria"
 
-#: transports/NX/__init__.py:42 transports/TSNX/__init__.py:42
+#: transports/NX/__init__.py:40 transports/TSNX/__init__.py:40
 msgid "NX Protocol"
 msgstr "Protocolo NX"
 
-#: transports/NX/__init__.py:48
+#: transports/NX/__init__.py:46
 msgid "UDS Actor connector for NX <b>(requires nomachine packages)</b>"
 msgstr "Conector de UDS Actor para NX <b>(requiere nomachine paquetes)</b>"
 
@@ -1128,7 +868,6 @@ msgid "RDP Transport for direct connection"
 msgstr "Transporte RDP para conexión directa"
 
 #: transports/RDP/RDPTransport.py:39 transports/RDP/TSRDPTransport.py:43
-#: transports/RGS/RGSTransport.py:44 transports/RGS/TRGSTransport.py:49
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
 "\\user)"
@@ -1181,13 +920,11 @@ msgstr "Transporte RDP (vía túnel)"
 msgid "RDP Transport for tunneled connection"
 msgstr "Transporte RDP para conexión vía túnel"
 
-#: transports/RDP/TSRDPTransport.py:37 transports/RGS/TRGSTransport.py:43
-#: transports/TSNX/TSNXTransport.py:62
+#: transports/RDP/TSRDPTransport.py:37 transports/TSNX/TSNXTransport.py:62
 msgid "Tunnel server"
 msgstr "Servidor de túnel"
 
-#: transports/RDP/TSRDPTransport.py:37 transports/RGS/TRGSTransport.py:43
-#: transports/TSNX/TSNXTransport.py:62
+#: transports/RDP/TSRDPTransport.py:37 transports/TSNX/TSNXTransport.py:62
 msgid ""
 "IP or Hostname of tunnel server send to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
@@ -1195,13 +932,11 @@ msgstr ""
 "IP o nombre de host del servidor de túnel enviar a dispositivo de cliente "
 "(ip \"pública\") y puerto. (utilice el formato HOST: puerto)"
 
-#: transports/RDP/TSRDPTransport.py:38 transports/RGS/TRGSTransport.py:44
-#: transports/TSNX/TSNXTransport.py:63
+#: transports/RDP/TSRDPTransport.py:38 transports/TSNX/TSNXTransport.py:63
 msgid "Tunnel host check"
 msgstr "Verificación de host de túnel"
 
-#: transports/RDP/TSRDPTransport.py:38 transports/RGS/TRGSTransport.py:44
-#: transports/TSNX/TSNXTransport.py:63
+#: transports/RDP/TSRDPTransport.py:38 transports/TSNX/TSNXTransport.py:63
 msgid ""
 "If not empty, this server will be used to check if service is running before "
 "assigning it to user. (use HOST:PORT format)"
@@ -1209,7 +944,7 @@ msgstr ""
 "Si no vacía, este servidor se utilizará para comprobar si el servicio se "
 "ejecuta antes de asignarle al usuario. (utilice el formato HOST: puerto)"
 
-#: transports/RDP/__init__.py:20
+#: transports/RDP/__init__.py:17
 msgid "Remote Desktop Protocol"
 msgstr "Protocolo de Escritorio remoto (RDP)"
 
@@ -1217,121 +952,12 @@ msgstr "Protocolo de Escritorio remoto (RDP)"
 msgid "In order to use this service, you should first install CoRD."
 msgstr "Para poder utilizar este servicio, primero debe instalar CoRD."
 
-#: transports/RDP/web.py:84 transports/RGS/web.py:82
+#: transports/RDP/web.py:84
 msgid "You can obtain it from"
 msgstr "Puede obtenerlo de"
 
 #: transports/RDP/web.py:84
 msgid "CoRD Website"
-msgstr "Sitio Web de CoRD"
-
-#: transports/RGS/RGSTransport.py:34
-#, fuzzy
-msgid "RGS Transport (direct)"
-msgstr "Transporte RDP (directo)"
-
-#: transports/RGS/RGSTransport.py:36
-#, fuzzy
-msgid "RGS Transport for direct connection"
-msgstr "Transporte RDP para conexión directa"
-
-#: transports/RGS/RGSTransport.py:45 transports/RGS/TRGSTransport.py:50
-msgid "Image quality"
-msgstr "Calidad de imagen"
-
-#: transports/RGS/RGSTransport.py:46 transports/RGS/TRGSTransport.py:51
-msgid "Quality of image codec (0-100)"
-msgstr "Calidad del códec de imagen (0-100)"
-
-#: transports/RGS/RGSTransport.py:47 transports/RGS/TRGSTransport.py:52
-msgid "Adjustable Quality"
-msgstr "Calidad ajustable"
-
-#: transports/RGS/RGSTransport.py:48 transports/RGS/TRGSTransport.py:53
-msgid "If checked, the image quality will be adjustable with bandwidth"
-msgstr ""
-"Si está activada, la calidad de imagen será ajustable con ancho de banda"
-
-#: transports/RGS/RGSTransport.py:49 transports/RGS/TRGSTransport.py:54
-msgid "Min. Adjustable Quality"
-msgstr "Mín. calidad ajustable"
-
-#: transports/RGS/RGSTransport.py:50 transports/RGS/TRGSTransport.py:55
-msgid ""
-"The lowest image quality applied to images to maintain the minimum update "
-"rate."
-msgstr ""
-"La menor calidad de imagen aplicada a las imágenes para mantener la "
-"actualización mínima tasa."
-
-#: transports/RGS/RGSTransport.py:51 transports/RGS/TRGSTransport.py:56
-msgid "Adjustable Frame Rate"
-msgstr "Ajustable velocidad de fotogramas"
-
-#: transports/RGS/RGSTransport.py:52 transports/RGS/TRGSTransport.py:57
-msgid "Update rate threshold to begin adjusting image quality"
-msgstr ""
-"Umbral de velocidad de actualización para comenzar el ajuste de calidad de "
-"imagen"
-
-#: transports/RGS/RGSTransport.py:53 transports/RGS/TRGSTransport.py:58
-msgid "Match Local Resolution"
-msgstr "Resolución Local de partido"
-
-#: transports/RGS/RGSTransport.py:54 transports/RGS/TRGSTransport.py:59
-msgid ""
-"Change the Sender's resolution to match the Receiver's resolution when "
-"connecting"
-msgstr ""
-"Cambiar la resolución del remitente para que coincida con la resolución del "
-"receptor cuando conexión"
-
-#: transports/RGS/RGSTransport.py:55 transports/RGS/TRGSTransport.py:60
-msgid "Redirect USB"
-msgstr "Redirección USB"
-
-#: transports/RGS/RGSTransport.py:56 transports/RGS/TRGSTransport.py:61
-msgid "If checked, the USB will be redirected."
-msgstr "Si está activada, se redirigirá el USB."
-
-#: transports/RGS/RGSTransport.py:57 transports/RGS/TRGSTransport.py:62
-msgid "Redirect Audio"
-msgstr "Redirección de Audio"
-
-#: transports/RGS/RGSTransport.py:58 transports/RGS/TRGSTransport.py:63
-#, fuzzy
-msgid "If checked, the Audio will be redirected."
-msgstr ""
-"Si está activada, las credenciales utilizadas para conectar estarán vacías"
-
-#: transports/RGS/RGSTransport.py:59 transports/RGS/TRGSTransport.py:64
-msgid "Redirect Mic"
-msgstr "Redirigir Mic"
-
-#: transports/RGS/RGSTransport.py:60 transports/RGS/TRGSTransport.py:65
-#, fuzzy
-msgid "If checked, the Mic will be redirected."
-msgstr ""
-"Si está activada, las credenciales utilizadas para conectar estarán vacías"
-
-#: transports/RGS/TRGSTransport.py:36
-#, fuzzy
-msgid "RGS Transport (tunneled)"
-msgstr "Transporte RDP (vía túnel)"
-
-#: transports/RGS/TRGSTransport.py:38
-#, fuzzy
-msgid "RGS Transport for tunneled connection"
-msgstr "Transporte RDP para conexión vía túnel"
-
-#: transports/RGS/web.py:81
-#, fuzzy
-msgid "In order to use this service, you should first install RGS Receiver."
-msgstr "Para poder utilizar este servicio, primero debe instalar CoRD."
-
-#: transports/RGS/web.py:82
-#, fuzzy
-msgid "HP Website"
 msgstr "Sitio Web de CoRD"
 
 #: transports/TSNX/TSNXTransport.py:55
@@ -1342,23 +968,23 @@ msgstr "Transporte NX (vía túnel)"
 msgid "NX Transport for tunneled connection"
 msgstr "Transporte NX para conexión vía túnel"
 
-#: web/errors.py:53
+#: web/errors.py:58
 msgid "Unknown error"
 msgstr "Error desconocido"
 
-#: web/errors.py:54
+#: web/errors.py:59
 msgid "Transport not found"
 msgstr "Transporte no hallado"
 
-#: web/errors.py:55
+#: web/errors.py:60
 msgid "Service not found"
 msgstr "Servicio no hallado"
 
-#: web/errors.py:56 xmlrpc/auths/AdminAuth.py:147
+#: web/errors.py:61 xmlrpc/auths/AdminAuth.py:171
 msgid "Access denied"
 msgstr "Acceso denegado"
 
-#: web/errors.py:57
+#: web/errors.py:62
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -1366,62 +992,74 @@ msgstr ""
 "Servicio invalido. El servicio no está disponible en estos momentos. Por "
 "favor, intentelo de nuevo pasado unos instantes."
 
-#: web/errors.py:58
+#: web/errors.py:63
 msgid "Maximum services limit reached. Please, contact administrator"
 msgstr ""
 "Número máximo de servicios alcanzado. Por favor, contacte con su "
 "administrador."
 
-#: web/errors.py:59
+#: web/errors.py:64
 msgid "You need to enable cookies to let this application work"
 msgstr "Necesita habilitar los cookies para permitir funcionar esta aplicación"
 
-#: web/errors.py:60
+#: web/errors.py:65
 msgid "User service not found"
 msgstr "Servicio de usuario no hallado"
 
-#: web/forms/LoginForm.py:61
-msgid "Authenticator"
+#: web/errors.py:66
+#, fuzzy
+msgid "Authenticator not found"
 msgstr "Autenticador"
 
-#: xmlrpc/auths/AdminAuth.py:91
-msgid "Credentials no longer valid"
-msgstr "Las credenciales ya no son válidas"
-
-#: xmlrpc/auths/AdminAuth.py:125
-msgid "Administration"
-msgstr "Administración"
-
-#: xmlrpc/auths/AdminAuth.py:140
-msgid "Invalid credentials"
-msgstr "Credenciales Invalidas"
-
-#: xmlrpc/auths/AdminAuth.py:145
+#: web/errors.py:67 xmlrpc/auths/AdminAuth.py:169
 msgid "Invalid authenticator"
 msgstr "Autenticador Invalido"
 
-#: xmlrpc/auths/Authenticators.py:104
+#: web/views.py:334
+#, fuzzy
+msgid "Authenticator do not provides information"
+msgstr "El autenticador no existe"
+
+#: web/forms/LoginForm.py:59
+msgid "Authenticator"
+msgstr "Autenticador"
+
+#: xmlrpc/auths/AdminAuth.py:113
+msgid "Credentials no longer valid"
+msgstr "Las credenciales ya no son válidas"
+
+#: xmlrpc/auths/AdminAuth.py:149
+msgid "Administration"
+msgstr "Administración"
+
+#: xmlrpc/auths/AdminAuth.py:164
+msgid "Invalid credentials"
+msgstr "Credenciales Invalidas"
+
+#: xmlrpc/auths/Authenticators.py:106
 msgid "Authenticator does not exists"
 msgstr "El autenticador no existe"
 
-#: xmlrpc/auths/Authenticators.py:158 xmlrpc/osmanagers/OSManagers.py:115
-#: xmlrpc/services/ServiceProviders.py:115 xmlrpc/services/Services.py:159
-#: xmlrpc/transports/Networks.py:86 xmlrpc/transports/Networks.py:97
+#: xmlrpc/auths/Authenticators.py:161 xmlrpc/osmanagers/OSManagers.py:115
+#: xmlrpc/services/ServiceProviders.py:115
+#: xmlrpc/services/ServiceProviders.py:139 xmlrpc/services/Services.py:159
+#: xmlrpc/services/Services.py:183 xmlrpc/transports/Networks.py:86
+#: xmlrpc/transports/Networks.py:97
 #, python-format
 msgid "Name %s already exists"
 msgstr "El nombre %s ya existe"
 
-#: xmlrpc/auths/Authenticators.py:229
+#: xmlrpc/auths/Authenticators.py:234
 msgid "Authenticator do not supports search"
 msgstr "El autenticador no soporta búsquedas"
 
-#: xmlrpc/auths/Authenticators.py:235
+#: xmlrpc/auths/Authenticators.py:240
 msgid "Specified authenticator do not exists anymore. Please, reload gui"
 msgstr ""
 "Hacer autenticador especificado no existe ya. Por favor, vuelva a cargar la "
 "interfaz gráfica de usuario"
 
-#: xmlrpc/auths/Authenticators.py:239
+#: xmlrpc/auths/Authenticators.py:244
 msgid "BUG: Reached a point that should never have been reached!!!"
 msgstr "BUG: Llegado a un punto que no debe nunca han alcanzado!!!"
 
@@ -1467,25 +1105,25 @@ msgstr "El transporte no existe"
 msgid "Deployed service does not exists"
 msgstr "El servicio desplegado no existe"
 
-#: xmlrpc/services/ServiceProviders.py:142
+#: xmlrpc/services/ServiceProviders.py:154
 msgid "Can't delete service provider with services associated"
 msgstr "No se puede borrar un proveedor de servicios con servicios asociados"
 
-#: xmlrpc/services/ServiceProviders.py:145
+#: xmlrpc/services/ServiceProviders.py:157
 msgid "Can't locate the service provider"
 msgstr "No puedo hallar el proveedor de servicios"
 
-#: xmlrpc/services/ServiceProviders.py:145 xmlrpc/services/Services.py:189
+#: xmlrpc/services/ServiceProviders.py:157 xmlrpc/services/Services.py:201
 #: xmlrpc/transports/Networks.py:70 xmlrpc/transports/Networks.py:78
 #: xmlrpc/transports/Networks.py:95
 msgid "Please, refresh interface"
 msgstr "Por favor, refresque la interfaz."
 
-#: xmlrpc/services/Services.py:186
+#: xmlrpc/services/Services.py:198
 msgid "Can't delete services with deployed services associated"
 msgstr "No se puede borrar un servicio con servicios desplegados asociados"
 
-#: xmlrpc/services/Services.py:189
+#: xmlrpc/services/Services.py:201
 msgid "Can't locate the service"
 msgstr "No puedo hallar el servicio"
 
@@ -1523,6 +1161,283 @@ msgstr "No puedo hallar el transporte"
 #: xmlrpc/transports/Networks.py:78 xmlrpc/transports/Networks.py:95
 msgid "Can't locate the network"
 msgstr "No puedo hallar la red"
+
+#~ msgid "If checked, will use a ssl connection to Active Directory"
+#~ msgstr "Si está activada, utilizará una conexión ssl con Active Directory"
+
+#~ msgid ""
+#~ "Username with read privileges on the base selected (use USER@DOMAIN.DOM "
+#~ "form for this)"
+#~ msgstr ""
+#~ "Usuario con derechos de lectura en la base seleccionada (utilice la forma "
+#~ "USUARIO@DOMINIO.DOM para este elemento)"
+
+#~ msgid "Active Directory Authenticator"
+#~ msgstr "Autenticador Active Directory"
+
+#, fuzzy
+#~ msgid "Authenticate against Active Directory"
+#~ msgstr "Autenticador Active Directory"
+
+#~ msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
+#~ msgstr ""
+#~ "Debe especificar el nombre de usuario en la forma NOMBREUSUARIO@DOMINIO."
+#~ "DOM"
+
+#~ msgid "Domain seems to be incorrect, please check it"
+#~ msgstr "El dominio parece ser incorrecto, por favor, compruebelo"
+
+#~ msgid "Ldap does not seem an Active Directory (do not have user objects)"
+#~ msgstr ""
+#~ "El ldap indicado no parece un Active Directory (no tiene objetos de "
+#~ "usuario)"
+
+#~ msgid "Ldap does not seem an Active Directory (no not have group objects)"
+#~ msgstr ""
+#~ "El ldap indicado no parece un Active Directory (no no tienen objetos de "
+#~ "grupo)"
+
+#~ msgid ""
+#~ "Ldap does not seem an Active Directory (do not have any user nor groups)"
+#~ msgstr ""
+#~ "El ldap indicado no parece un Active Directory (no tiene ningún usuario "
+#~ "ni grupo)"
+
+#, fuzzy
+#~ msgid "Admin user"
+#~ msgstr "Admin"
+
+#, fuzzy
+#~ msgid "Username with read privileges on the eDirectory"
+#~ msgstr "Usuario con privilegios de lectura en la base elegida"
+
+#, fuzzy
+#~ msgid "eDirectory Authenticator"
+#~ msgstr "Autenticador Active Directory"
+
+#, fuzzy
+#~ msgid "Authenticate against eDirectory"
+#~ msgstr "Autenticador Active Directory"
+
+#~ msgid "Expected group attribute "
+#~ msgstr "Atributo de grupo esperado "
+
+#, fuzzy
+#~ msgid ""
+#~ "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
+#~ msgstr ""
+#~ "El atributo del id de usuario o la clase de usuario LDAP son "
+#~ "probablemente incorrectos(no se puede encontrar ningún usuario con ambas "
+#~ "condiciones)"
+
+#~ msgid "None OS Manager"
+#~ msgstr "Ningún gestor de OS"
+
+#~ msgid "Os Manager with no actions"
+#~ msgstr "Gestor de OS que no realiza ninguna acción"
+
+#~ msgid "Local"
+#~ msgstr "Local"
+
+#~ msgid "Remote"
+#~ msgstr "Remoto"
+
+#~ msgid "Publication"
+#~ msgstr "Publicación"
+
+#~ msgid "UDS Publication for {0} created at {1}"
+#~ msgstr "Publicación de UDS para {0} creado en {1}"
+
+#~ msgid "VMWare Virtual Center Provider"
+#~ msgstr "Proveedor para VMWare Virtual Center"
+
+#~ msgid "Provides connection to Virtual Center Services"
+#~ msgstr "Provee conexión a servicios basados en VMWare Virtual Center"
+
+#~ msgid "Error testing connection"
+#~ msgstr "Error comprobando la conexión"
+
+#~ msgid "VmwareVC Provider: "
+#~ msgstr "Proveedor VmwareVC:"
+
+#~ msgid "Connection params ok"
+#~ msgstr "Parametros de conexión correctos"
+
+#~ msgid "Connection failed. Check connection params"
+#~ msgstr "La conexión ha fallado. Compruebe los parámetros."
+
+#~ msgid "Datacenter"
+#~ msgstr "Datacenter "
+
+#~ msgid "Datacenter containing base machine"
+#~ msgstr "Datacenter que contiene la máquina de base"
+
+#~ msgid "Network"
+#~ msgstr "Red"
+
+#~ msgid ""
+#~ "If more than 1 interface is found in machine, use one on this network as "
+#~ "main"
+#~ msgstr ""
+#~ "Si hay mas de un interfaz en la máquina virtual, use el que esté en esta "
+#~ "red como principal."
+
+#~ msgid "Pub. Resource Pool"
+#~ msgstr "Pool de despliegue"
+
+#~ msgid "Resource Pool where deploy clones"
+#~ msgstr "Pool de recursos donde desplegar los clones"
+
+#~ msgid "Clones Folder"
+#~ msgstr "Carpeta de clones"
+
+#~ msgid "Folder where deploy clones"
+#~ msgstr "Carpeta donde desplegar los clones"
+
+#~ msgid "Resource Pool"
+#~ msgstr "Pool de recursos"
+
+#~ msgid "Resource Pool containing base machine"
+#~ msgstr "Pool de recursos que contiene la máquina de base"
+
+#~ msgid "Base Machine"
+#~ msgstr "Máquina de base "
+
+#~ msgid "Base machine for this service"
+#~ msgstr "Máquina de base para este servicio"
+
+#~ msgid "Memory (Mb)"
+#~ msgstr "Memoria (Mb)"
+
+#~ msgid "Memory for machines deployed from this service"
+#~ msgstr "Memoria para maquinas desplegadas desde este servicio"
+
+#~ msgid "Datastores"
+#~ msgstr "Almacenamientos"
+
+#~ msgid "Datastores where to put incrementals"
+#~ msgstr "Almacenamientos donde colocar los incrementales"
+
+#~ msgid "Machine Names"
+#~ msgstr "Nombres de máquinas"
+
+#~ msgid "Base name for clones from this machine"
+#~ msgstr "Nombre base para los clones de la máquina base"
+
+#~ msgid "Name Length"
+#~ msgstr "Longitud del nombre"
+
+#~ msgid ""
+#~ "Length of numeric part for the names of this machines (betwen 3 and 6"
+#~ msgstr ""
+#~ "Longitud de la parte numérica de los nombres de esta maquinaria (entre 3 "
+#~ "y 6"
+
+#~ msgid "VMWare Linked clone base"
+#~ msgstr "Servicio basado en VMWare Linked Clones"
+
+#~ msgid ""
+#~ "This service provides access to Linked Clones machines on a Virtual Center"
+#~ msgstr "Este servicio provee acceso a linked clones sobre Virtual Center"
+
+#~ msgid "Number of desired machines to keep running waiting for a user"
+#~ msgstr "Número de máquinas a manatener en ejecución esperando a un usuario"
+
+#~ msgid "Number of desired machines to keep suspended waiting for use"
+#~ msgstr "Número de maquinas a mantener suspendidas esperando asignación"
+
+#~ msgid "The length of basename plus length must not be greater than 15"
+#~ msgstr "La longitud de basename más longitud no debe ser superior a 15"
+
+#~ msgid "The machine name can't be only numbers"
+#~ msgstr "El nombre del equipo no puede ser sólo números"
+
+#, fuzzy
+#~ msgid "RGS Transport (direct)"
+#~ msgstr "Transporte RDP (directo)"
+
+#, fuzzy
+#~ msgid "RGS Transport for direct connection"
+#~ msgstr "Transporte RDP para conexión directa"
+
+#~ msgid "Image quality"
+#~ msgstr "Calidad de imagen"
+
+#~ msgid "Quality of image codec (0-100)"
+#~ msgstr "Calidad del códec de imagen (0-100)"
+
+#~ msgid "Adjustable Quality"
+#~ msgstr "Calidad ajustable"
+
+#~ msgid "If checked, the image quality will be adjustable with bandwidth"
+#~ msgstr ""
+#~ "Si está activada, la calidad de imagen será ajustable con ancho de banda"
+
+#~ msgid "Min. Adjustable Quality"
+#~ msgstr "Mín. calidad ajustable"
+
+#~ msgid ""
+#~ "The lowest image quality applied to images to maintain the minimum update "
+#~ "rate."
+#~ msgstr ""
+#~ "La menor calidad de imagen aplicada a las imágenes para mantener la "
+#~ "actualización mínima tasa."
+
+#~ msgid "Adjustable Frame Rate"
+#~ msgstr "Ajustable velocidad de fotogramas"
+
+#~ msgid "Update rate threshold to begin adjusting image quality"
+#~ msgstr ""
+#~ "Umbral de velocidad de actualización para comenzar el ajuste de calidad "
+#~ "de imagen"
+
+#~ msgid "Match Local Resolution"
+#~ msgstr "Resolución Local de partido"
+
+#~ msgid ""
+#~ "Change the Sender's resolution to match the Receiver's resolution when "
+#~ "connecting"
+#~ msgstr ""
+#~ "Cambiar la resolución del remitente para que coincida con la resolución "
+#~ "del receptor cuando conexión"
+
+#~ msgid "Redirect USB"
+#~ msgstr "Redirección USB"
+
+#~ msgid "If checked, the USB will be redirected."
+#~ msgstr "Si está activada, se redirigirá el USB."
+
+#~ msgid "Redirect Audio"
+#~ msgstr "Redirección de Audio"
+
+#, fuzzy
+#~ msgid "If checked, the Audio will be redirected."
+#~ msgstr ""
+#~ "Si está activada, las credenciales utilizadas para conectar estarán vacías"
+
+#~ msgid "Redirect Mic"
+#~ msgstr "Redirigir Mic"
+
+#, fuzzy
+#~ msgid "If checked, the Mic will be redirected."
+#~ msgstr ""
+#~ "Si está activada, las credenciales utilizadas para conectar estarán vacías"
+
+#, fuzzy
+#~ msgid "RGS Transport (tunneled)"
+#~ msgstr "Transporte RDP (vía túnel)"
+
+#, fuzzy
+#~ msgid "RGS Transport for tunneled connection"
+#~ msgstr "Transporte RDP para conexión vía túnel"
+
+#, fuzzy
+#~ msgid "In order to use this service, you should first install RGS Receiver."
+#~ msgstr "Para poder utilizar este servicio, primero debe instalar CoRD."
+
+#, fuzzy
+#~ msgid "HP Website"
+#~ msgstr "Sitio Web de CoRD"
 
 #~ msgid "Base Service"
 #~ msgstr "Servicio Base"
