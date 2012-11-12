@@ -64,7 +64,7 @@ class JobThread(threading.Thread):
             except:
                 # Erased from database, nothing hapens
                 # logger.exception(e)
-                logger.info('Database acces locked... Retrying')
+                logger.info('Database access locked... Retrying')
                 time.sleep(1)
         
     
