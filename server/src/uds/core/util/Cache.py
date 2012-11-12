@@ -50,7 +50,6 @@ class Cache(object):
     
     def __getKey(self, key):
         import os
-        logger.debug(os.environ)
         h = hashlib.md5()
         h.update(self._owner + key)
         return h.hexdigest()

@@ -48,22 +48,34 @@ class JobThread(threading.Thread):
         self._jobInstance = jobInstance
         self._dbJobId = dbJob.id
         
-    @transaction.commit_on_success
     def run(self):
         try:
             self._jobInstance.execute()
         except Exception:
             logger.debug("Exception executing job {0}".format(self._dbJobId))
-        try:
-            job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)
-            job.state = State.FOR_EXECUTE
-            job.owner_server = ''
-            job.next_execution = getSqlDatetime() + timedelta(seconds = job.frecuency) 
-            # Update state and last execution time at database
-            job.save()
-        except Exception as e:
-            # Erased from database, nothing hapens
-            logger.exception(e)
+        self.save()
+    
+    def save(self):
+        done = False
+        while done is False:
+            try:
+                self.__save()
+                done = True
+            except:
+                # Erased from database, nothing hapens
+                # logger.exception(e)
+                logger.info('Database acces locked... Retrying')
+                time.sleep(1)
+        
+    
+    @transaction.commit_on_success
+    def __save(self):
+        job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)
+        job.state = State.FOR_EXECUTE
+        job.owner_server = ''
+        job.next_execution = getSqlDatetime() + timedelta(seconds = job.frecuency) 
+        # Update state and last execution time at database
+        job.save()
 
 class Scheduler(object):
     granularity = 2 # We check for cron jobs every THIS seconds
