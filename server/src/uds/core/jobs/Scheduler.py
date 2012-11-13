@@ -53,13 +53,13 @@ class JobThread(threading.Thread):
             self._jobInstance.execute()
         except Exception:
             logger.debug("Exception executing job {0}".format(self._dbJobId))
-        self.save()
+        self.jobDone()
     
-    def save(self):
+    def jobDone(self):
         done = False
         while done is False:
             try:
-                self.__save()
+                self.__updateDb()
                 done = True
             except:
                 # Erased from database, nothing hapens
@@ -69,7 +69,7 @@ class JobThread(threading.Thread):
         
     
     @transaction.commit_on_success
-    def __save(self):
+    def __updateDb(self):
         job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)
         job.state = State.FOR_EXECUTE
         job.owner_server = ''
