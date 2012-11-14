@@ -129,6 +129,7 @@ class Client(object):
         Obtains the cluster info
 
         Args:
+            datacenterId: Id of the cluster to get information about it
             force: If true, force to update the cache, if false, tries to first
             get data from cache and, if valid, return this.
             
@@ -161,9 +162,10 @@ class Client(object):
         
     def getDatacenterInfo(self, datacenterId, force = False):
         '''
-        Obtains the cluster info
+        Obtains the datacenter info
 
         Args:
+            datacenterId: Id of the datacenter to get information about it
             force: If true, force to update the cache, if false, tries to first
             get data from cache and, if valid, return this.
             
@@ -209,8 +211,94 @@ class Client(object):
             
             self._cache.put(dcKey, res, Client.CACHE_TIME_HIGH)
             return res
-        except Exception as e:
-            print e
+        finally:
+            lock.release()
+            
+    def getStorageInfo(self, storageId, force = False):
+        '''
+        Obtains the datacenter info
+
+        Args:
+            datacenterId: Id of the datacenter to get information about it
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+            
+        Returns
+        
+            A dictionary with following values
+               'id' -> Storage id
+               'name' -> Storage name
+               'type' -> Storage type ('data', 'iso')
+               'available' -> Space available, in bytes
+               'used' -> Space used, in bytes
+               # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
+                  
+        '''
+        sdKey = self.__getKey('o-sd'+storageId)
+        val = self._cache.get(sdKey)
+        
+        if val is not None and force is False:
+            return val
+        
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+        
+            dd = api.storagedomains.get(id=storageId)
+            
+            
+            
+            res = { 'id' : dd.get_id(), 'name' : dd.get_name(), 'type' : dd.get_type(), 
+                    'available' : dd.get_available(), 'used' : dd.get_used() 
+                    }
+                        
+            self._cache.put(sdKey, res, Client.CACHE_TIME_LOW)
+            return res
         finally:
             lock.release()
 
+
+    def publish(self, name, vmId, clusterId, storageId):
+        '''
+        Publish the machine (makes a template from it so we can create COWs) and returns the template id of
+        the creating machine
+        
+        Args:
+            name: Name of the machine (care, only ascii characters and no spaces!!!)
+            vmId: id of the machine to be published
+            clusterId: id of the cluster that will hold the machine
+            storageId: id of the storage tuat will contain the publication AND linked clones
+            
+        Returns
+            Raises an exception if operation could not be acomplished, or returns the id of the template being created.
+        '''
+        
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            storage = api.storagedomains.get(id=storageId)
+            cluster = api.clusters.get(id=clusterId)
+            vm = api.vms.get(id=vmId)
+            
+            if vm.get_status().get_state() != 'down':
+                raise Exception('Machine must be in down state to publish it')
+            
+            api.templates.add(params.Template(storage_domain=storage, origin = 'UDS', name=name, vm=vm, cluster=cluster))
+            return api.templates.get(name=name).get_id()
+        finally:
+            lock.release()
+        
+        
+    def getPublishState(self, templateId):
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            return api.templates.get(id=templateId).get_status().get_state()
+        finally:
+            lock.release()
+        
