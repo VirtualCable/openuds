@@ -172,9 +172,17 @@ class Client(object):
             A dictionary with following values
                 'name'
                 'id'
-                'storage_type'
-                'storage_format'
+                'storage_type' -> ('isisi', 'nfs', ....)
+                'storage_format' -> ('v1', v2')
                 'description'
+                'storage' -> array of dictionaries, with:
+                   'id' -> Storage id
+                   'name' -> Storage name
+                   'type' -> Storage type ('data', 'iso')
+                   'available' -> Space available, in bytes
+                   'used' -> Space used, in bytes
+                   'active' -> True or False
+                  
         '''
         dcKey = self.__getKey('o-dc'+datacenterId)
         val = self._cache.get(dcKey)
@@ -188,9 +196,21 @@ class Client(object):
             api = self.__getApi()
             
             d = api.datacenters.get(id=datacenterId)
+            storage = []
+            for dd in d.storagedomains.list():
+                storage.append( { 'id' : dd.get_id(), 'name' : dd.get_name(), 'type' : dd.get_type(), 
+                                  'available' : dd.get_available(), 'used' : dd.get_used(), 
+                                  'active' : dd.get_status().get_state() == 'active' } )
+            
+            
             res = { 'name' : d.get_name(), 'id' : d.get_id(), 'storage_type' : d.get_storage_type(), 
-                     'storage_format' : d.get_storage_format(), 'description' : d.get_description() }
+                    'storage_format' : d.get_storage_format(), 'description' : d.get_description(),
+                    'storage' : storage }
+            
             self._cache.put(dcKey, res, Client.CACHE_TIME_HIGH)
+            return res
+        except Exception as e:
+            print e
         finally:
             lock.release()
 

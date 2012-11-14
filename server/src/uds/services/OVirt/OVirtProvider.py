@@ -125,8 +125,8 @@ class Provider(ServiceProvider):
     @staticmethod
     def test(env, data):
         '''
-        Create your test method here so the admin can push the "check" button
-        and this gets executed.
+        Test ovirt Connectivity
+        
         Args:
             env: environment passed for testing (temporal environment passed)
             
@@ -138,11 +138,6 @@ class Provider(ServiceProvider):
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
         
-        In this case, wi well do nothing more that use the provider params
-        
-        Note also that this is an static method, that will be invoked using
-        the admin user provided data via administration client, and a temporary
-        environment that will be erased after invoking this method
         '''
         #try:
         #    # We instantiate the provider, but this may fail...
