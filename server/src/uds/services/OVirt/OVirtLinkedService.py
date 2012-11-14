@@ -44,34 +44,18 @@ logger = logging.getLogger(__name__)
 
 class OVirtLinkedService(Service):
     '''
-    Basic service, the first part (variables) include the description of the service.
+    oVirt Linked clones service. This is based on creating a template from selected vm, and then use it to 
     
-    Remember to fill all variables needed, but at least you must define:
-        * typeName
-        * typeType
-        * typeDescription
-        * iconFile (defaults to service.png)
-        * publicationType, type of publication in case it needs publication. 
-          If this is not provided, core will assume that the service do not 
-          needs publishing.
-        * deployedType, type of deployed user service. Do not forget this!!!
-        
-    The rest of them can be ommited, but its recommended that you fill all
-    declarations shown in this sample (that in fact, are all)
-    
-    This description informs the core what this service really provides,
-    and how this is done. Look at description of class variables for more
-    information.
     
     '''
     #: Name to show the administrator. This string will be translated BEFORE
     #: sending it to administration interface, so don't forget to
     #: mark it as translatable (using ugettext_noop)
-    typeName = translatable('Sample Service One') 
+    typeName = translatable('oVirt Linked Clone') 
     #: Type used internally to identify this provider
-    typeType = 'SampleService1'
+    typeType = 'oVirtLinkedService'
     #: Description shown at administration interface for this provider
-    typeDescription = translatable('Sample (and dummy) service ONE')
+    typeDescription = translatable('oVirt Services based on templates and COW')
     #: Icon file used as icon for this provider. This string will be translated 
     #: BEFORE sending it to administration interface, so don't forget to
     #: mark it as translatable (using ugettext_noop)
@@ -85,27 +69,27 @@ class OVirtLinkedService(Service):
     #: If we need to generate "cache" for this service, so users can access the 
     #: provided services faster. Is usesCache is True, you will need also 
     #: set publicationType, do take care about that!
-    usesCache = False 
+    usesCache = True
     #: Tooltip shown to user when this item is pointed at admin interface, none 
     #: because we don't use it
-    cacheTooltip = translatable('None')
+    cacheTooltip = translatable('Number of desired machines to keep running waiting for a user')
     #: If we need to generate a "Level 2" cache for this service (i.e., L1 
     #: could be running machines and L2 suspended machines) 
     usesCache_L2 = False 
     #: Tooltip shown to user when this item is pointed at admin interface, None 
     #: also because we don't use it
-    cacheTooltip_L2 = translatable('None') 
+    cacheTooltip_L2 = translatable('Number of desired machines to keep suspended waiting for use') 
       
     #: If the service needs a s.o. manager (managers are related to agents 
     #: provided by services itselfs, i.e. virtual machines with actors)
-    needsManager = False 
+    needsManager = True
     #: If true, the system can't do an automatic assignation of a deployed user 
     #: service from this service
     mustAssignManually = False 
 
     #: Types of publications (preparated data for deploys) 
     #: In our case, we do no need a publication, so this is None
-    publicationType = None
+    publicationType = OVirtPublication
     #: Types of deploys (services in cache and/or assigned to users)
     deployedType = OVirtLinkedDeployment
     
@@ -113,25 +97,9 @@ class OVirtLinkedService(Service):
     # If we don't indicate an order, the output order of fields will be
     # "random"
     
-    colour = gui.ChoiceField(order = 1,
-                 label = translatable('Colour'),
-                 tooltip = translatable('Colour of the field'),
-                 # In this case, the choice can have none value selected by default
-                 required = True, 
-                 values = [ gui.choiceItem('red', 'Red'),
-                     gui.choiceItem('green', 'Green'),
-                     gui.choiceItem('blue', 'Blue'),
-                     gui.choiceItem('nonsense', 'Blagenta')
-                 ],
-                 defvalue = '1' # Default value is the ID of the choicefield
-             )
+    machine = gui.ChoiceField(label = _("Base Machine"), order = 6, tooltip = _('Base machine for this service'), required = True )
     
-    passw = gui.PasswordField(order = 2,
-                label = translatable('Password'),
-                tooltip = translatable('Password for testing purposes'),
-                required = True,
-                defvalue = '1234' #: Default password are nonsense?? :-)
-            )
+    
 
     baseName = gui.TextField(order = 3,
                           label = translatable('Services names'),

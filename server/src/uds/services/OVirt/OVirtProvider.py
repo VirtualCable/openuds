@@ -38,10 +38,13 @@ from uds.core.services import ServiceProvider
 from OVirtLinkedService import OVirtLinkedService
 from uds.core.ui import gui
 
+from client import oVirtClient
+
 import logging
 
 logger = logging.getLogger(__name__)
 
+CACHE_TIME_FOR_SERVER = 1800
 
 class Provider(ServiceProvider):
     '''
@@ -85,36 +88,39 @@ class Provider(ServiceProvider):
     # If we don't indicate an order, the output order of fields will be
     # "random"
     host = gui.TextField(length=64, label = _('Host'), order = 1, tooltip = _('oVirt Server IP or Hostname'), required = True)
-    port = gui.NumericField(length=5, label = _('Port'), defvalue = '443', order = 2, tooltip = _('VMWare VC Server Port (usually 443)'), required = True)
-    username = gui.TextField(length=32, label = _('Username'), order = 3, tooltip = _('User with valid privileges on VC'), required = True)
-    password = gui.PasswordField(lenth=32, label = _('Password'), order = 4, tooltip = _('Password of the user of the VC'), required = True)
+    username = gui.TextField(length=32, label = _('Username'), order = 3, tooltip = _('User with valid privileges on oVirt, (use "user@domain" form'), required = True, defvalue='admin@internal')
+    password = gui.PasswordField(lenth=32, label = _('Password'), order = 4, tooltip = _('Password of the user of oVirt'), required = True)
     timeout = gui.NumericField(length=3, label = _('Timeout'), defvalue = '10', order = 5, tooltip = _('Timeout in seconds of connection to VC'), required = True)
-    macsRange = gui.TextField(length=36, label = _('Macs range'), defvalue = '00:50:56:00:00:00-00:50:56:3F:FF:FF', order = 6, rdonly = True,  
+    macsRange = gui.TextField(length=36, label = _('Macs range'), defvalue = '52:54:00:00:00:00-52:54:00:FF:FF:FF', order = 6, rdonly = True,  
                               tooltip = _('Range of valids macs for created machines'), required = True)
 
     
     
+    # oVirt engine, right now, only permits a connection to one server and only one per instance
+    # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
+    # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
+    # and this way all will be fine
+    def __getApi(self):
+        '''
+        Returns the connection API object for oVirt (using ovirtsdk)
+        '''
+        if self._api is None:
+            self._api =  oVirtClient.Client(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache())
+        return self._api
+
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values = None):
         '''
-        We will use the "autosave" feature for form fields, that is more than
-        enought for most providers. (We simply need to store data provided by user
-        and, maybe, initialize some kind of connection with this values).
-        
-        Normally provider values are rally used at sevice level, cause we never
-        instantiate nothing except a service from a provider.
+        We will use the "autosave" feature for form fields
         '''
-        
-        # If you say meth is alive, you are wrong!!! (i guess..)
-        # values are only passed from administration client. Internals 
-        # instantiations are always empty.
-        #if values is not None and self.methAlive.isTrue():
-        #    raise ServiceProvider.ValidationException(_('Methuselah is not alive!!! :-)'))
 
-    # Marshal and unmarshal are defaults ones, also enought
+        # Just reset _api connection variable                
+        self._api = None
+
+    def testConnection(self):
+        api = self.__getApi()
+        return api.test()
     
-    # As we use "autosave" fields feature, dictValues is also provided by
-    # base class so we don't have to mess with all those things...
     
     @staticmethod
     def test(env, data):
@@ -150,17 +156,12 @@ class Provider(ServiceProvider):
         #    logger.exception("Exception caugth!!!")
         #    return [False, str(e)]
         #return [True, _('Nothing tested, but all went fine..')]
-        return [True, _('Connection test successful')]
-
-    # Congratulations!!!, the needed part of your first simple provider is done!
-    # Now you can go to administration panel, and check it
-    #
-    # From now onwards, we implement our own methods, that will be used by, 
-    # for example, services derived from this provider
-    def host(self):
-        '''
-        Sample method, in fact in this we just return 
-        the value of host field, that is an string
-        '''
-        return self.remoteHost.value
+        ov = Provider(env, data)
+        if ov.testConnection() is True:
+            return [True, _('Connection test successful')]
+        return [False, _("Connection failed. Check connection params")]
     
+
+
+    
+
