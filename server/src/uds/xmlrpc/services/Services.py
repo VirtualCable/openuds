@@ -103,6 +103,7 @@ def getAllServices(credentials):
     for serv in Service.objects.all().order_by('name'):
         try:
             val = dictFromService(serv)
+            val['name'] = serv.provider.name + '\\' + val['name']
             res.append(val)
         except Exception, e:
             logger.debug(e)
