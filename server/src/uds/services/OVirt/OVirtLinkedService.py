@@ -42,6 +42,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from Helpers import oVirtHelpers
+
 class OVirtLinkedService(Service):
     '''
     oVirt Linked clones service. This is based on creating a template from selected vm, and then use it to 
@@ -93,21 +95,25 @@ class OVirtLinkedService(Service):
     #: Types of deploys (services in cache and/or assigned to users)
     deployedType = OVirtLinkedDeployment
     
-    # Now the form part, this service will have only two "dummy" fields
-    # If we don't indicate an order, the output order of fields will be
-    # "random"
+    # Now the form part
+    machine = gui.ChoiceField(label=translatable("Base Machine"), order = 1, tooltip = _('Service base machine'), required = True)
+    cluster = gui.ChoiceField(label=translatable("Cluster"), order = 2, 
+        fills = {
+            'callbackName' : 'ovFillResourcesFromCluster', 
+            'function' : oVirtHelpers.getResources, 
+            'parameters' : ['cluster', 'ov', 'ev']
+            },
+        tooltip = translatable("Cluster to contain services"),  required = True                 
+    )
     
-    machine = gui.ChoiceField(label = _("Base Machine"), order = 6, tooltip = _('Base machine for this service'), required = True )
+    datastore =  gui.ChoiceField(label = translatable("Datastore Domain"), rdonly = False, order = 3, 
+                                       tooltip = translatable('Datastore domain where to publish and put incrementals'), required = True)
+    baseName = gui.TextField(label = translatable('Machine Names'), rdonly = False, order = 4, tooltip = ('Base name for clones from this machine'), required = True)
+    lenName = gui.NumericField(length = 1, label = translatable('Name Length'), defvalue = 3, order = 5, 
+                               tooltip = translatable('Length of numeric part for the names of this machines (betwen 3 and 6'), required = True)
     
-    
-
-    baseName = gui.TextField(order = 3,
-                          label = translatable('Services names'),
-                          tooltip = translatable('Base name for this user services'),
-                          # In this case, the choice can have none value selected by default
-                          required = True, 
-                          defvalue = '' # Default value is the ID of the choicefield
-             )
+    ov = gui.HiddenField()
+    ev = gui.HiddenField() # We need to keep the env so we can instantiate the Provider
     
     def initialize(self, values):
         '''
@@ -116,40 +122,27 @@ class OVirtLinkedService(Service):
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
         '''
-        
-        # We don't need to check anything, bat because this is a sample, we do
-        # As in provider, we receive values only at new Service creation,
-        # so we only need to validate params if values is not None
         if values is not None:
-            if self.colour.value == 'nonsense':
-                raise Service.ValidationException('The selected colour is invalid!!!')
-        
-        
-    # Services itself are non testeable right now, so we don't even have
-    # to provide one!!!
-        
+            length = int(self.lenName.value)
+            if len(self.baseName.value) + length > 15:
+                raise Service.ValidationException(_('The length of basename plus length must not be greater than 15'))
+            if self.baseName.value.isdigit():
+                raise Service.ValidationException(_('The machine name can\'t be only numbers'))
 
-    # Congratulations!!!, the needed part of your first simple service is done!
-    # Now you can go to administration panel, and check it
-    #
-    # From now onwards, we implement our own methods, that will be used by, 
-    # for example, services derived from this provider
-    
-    def getColour(self):
-        '''
-        Simply returns colour, for deployed user services.
+        machines = self.parent().getMachines()
+        vals = []
+        for m in machines:
+            vals.append( gui.choiceItem( m['id'], m['name'] ))
+        self.machine.setValues(vals)
         
-        Remember that choiceField.value returns the id part of the ChoiceItem
-        '''
-        return self.colour.value
-    
-    def getPassw(self):
-        '''
-        Simply returns passwd, for deloyed user services
-        '''
-        return self.passw.value
-    
-    def getBaseName(self):
-        '''
-        '''
-        return self.baseName.value
+        clusters = self.parent().getClusters()
+        vals = []
+        for c in clusters:
+            vals.append( gui.choiceItem(c['id'],  c['name'] ) )
+        self.cluster.setValues(vals)
+            
+        
+    def initGui(self):
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env().key()
+        

@@ -92,7 +92,6 @@ class Client(object):
             get data from cache and, if valid, return this.
             
         Returns
-        
             An array of dictionaries, containing:
                 'name'
                 'id'
@@ -124,6 +123,60 @@ class Client(object):
         finally:
             lock.release()
             
+    def getClusters(self, force = False):
+        '''
+        Obtains the list of clusters inside ovirt
+        
+        Args:
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+            
+        Returns
+            Filters out clusters not attached to any datacenter
+            An array of dictionaries, containing:
+                'name'
+                'id'
+                'datacenter_id'
+        
+        '''
+        clsKey = self.__getKey('o-clusters')
+        val = self._cache.get(clsKey)
+        
+        if val is not None and force is False:
+            return val
+        
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            clusters = api.clusters.list()
+            
+            res = []
+            
+            for cluster in clusters:
+                dc = cluster.get_data_center()
+                
+                if dc is not None:
+                    dc = dc.get_id()
+                    
+                val = { 'name' : cluster.get_name(), 'id' : cluster.get_id(), 'datacenter_id' : dc }
+
+                # Updates cache info for every single cluster
+                clKey = self.__getKey('o-cluster'+cluster.get_id())
+                self._cache.put(clKey, val)
+                
+                if dc is not None:
+                    res.append(val)
+                
+            self._cache.put(clsKey, res, Client.CACHE_TIME_HIGH)
+            
+            return res
+        
+        finally:
+            lock.release()
+        
+            
     def getClusterInfo(self, clusterId, force = False):
         '''
         Obtains the cluster info
@@ -138,7 +191,6 @@ class Client(object):
             A dictionary with following values
                 'name'
                 'id'
-                'description'
                 'datacenter_id'
         '''
         clKey = self.__getKey('o-cluster'+clusterId)
@@ -154,7 +206,12 @@ class Client(object):
             
             c = api.clusters.get(id=clusterId)
             
-            res = { 'name' : c.get_name(), 'id' : c.get_id(), 'datacenter_id' : c.get_data_center().get_id() }
+            dc = c.get_data_center()
+            
+            if dc is not None:
+                dc = dc.get_id()
+            
+            res = { 'name' : c.get_name(), 'id' : c.get_id(), 'datacenter_id' : dc }
             self._cache.put(clKey, res, Client.CACHE_TIME_HIGH)
             return res
         finally:

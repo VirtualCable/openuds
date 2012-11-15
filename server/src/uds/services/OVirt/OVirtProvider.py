@@ -118,9 +118,120 @@ class Provider(ServiceProvider):
         self._api = None
 
     def testConnection(self):
-        api = self.__getApi()
-        return api.test()
+        '''
+        Test that conection to oVirt server is fine
+        
+        Returns
+        
+            True if all went fine, false if id didn't
+        '''
+        
+        return self.__getApi().test()
     
+    def getMachines(self, force = False):
+        '''
+        Obtains the list of machines inside oVirt.
+        Machines starting with UDS are filtered out
+
+        Args:
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+        
+        Returns
+            An array of dictionaries, containing:
+                'name'
+                'id'
+                'cluster_id'
+        '''
+        
+        return self.__getApi().getVms(force)
+    
+    def getClusters(self, force = False):
+        '''
+        Obtains the list of clusters inside oVirt.
+        
+        Args:
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+        
+        Returns
+            Filters out clusters not attached to any datacenter
+            An array of dictionaries, containing:
+                'name'
+                'id'
+                'datacenter_id'
+        '''
+        
+        return self.__getApi().getClusters(force)
+    
+    def getClusterInfo(self, clusterId, force = False):
+        '''
+        Obtains the cluster info
+
+        Args:
+            datacenterId: Id of the cluster to get information about it
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+            
+        Returns
+        
+            A dictionary with following values
+                'name'
+                'id'
+                'datacenter_id'
+        '''
+        return self.__getApi().getClusterInfo(clusterId, force)
+        
+    def getDatacenterInfo(self, datacenterId, force = False):
+        '''
+        Obtains the datacenter info
+
+        Args:
+            datacenterId: Id of the datacenter to get information about it
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+            
+        Returns
+        
+            A dictionary with following values
+                'name'
+                'id'
+                'storage_type' -> ('isisi', 'nfs', ....)
+                'storage_format' -> ('v1', v2')
+                'description'
+                'storage' -> array of dictionaries, with:
+                   'id' -> Storage id
+                   'name' -> Storage name
+                   'type' -> Storage type ('data', 'iso')
+                   'available' -> Space available, in bytes
+                   'used' -> Space used, in bytes
+                   'active' -> True or False
+                  
+        '''
+        return self.__getApi().getDatacenterInfo(datacenterId, force)
+    
+    def getStorageInfo(self, storageId, force = False):
+        '''
+        Obtains the datacenter info
+
+        Args:
+            datacenterId: Id of the datacenter to get information about it
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+            
+        Returns
+        
+            A dictionary with following values
+               'id' -> Storage id
+               'name' -> Storage name
+               'type' -> Storage type ('data', 'iso')
+               'available' -> Space available, in bytes
+               'used' -> Space used, in bytes
+               # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
+                  
+        '''
+        return self.__getApi().getStorageInfo(storageId, force)
+
     
     @staticmethod
     def test(env, data):
