@@ -734,7 +734,7 @@ class UserInterface(object):
         arr = []
         for k, v in self._gui.iteritems():
             if v.isType(gui.InputField.HIDDEN_TYPE):
-                pass
+                continue
             if v.isType(gui.InputField.EDITABLE_LIST):
                 val = '\001' + cPickle.dumps(v.value)
             else:
@@ -752,6 +752,7 @@ class UserInterface(object):
             return
         for txt in values.decode('zip').split('\002'):
             k, v = txt.split('\003')
+            logger.debug('k: {0}, v:{1}'.format(k,v))
             if self._gui.has_key(k):
                 if v[0] == '\001':
                     val = cPickle.loads(v[1:])
