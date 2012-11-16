@@ -752,9 +752,8 @@ class UserInterface(object):
             return
         for txt in values.decode('zip').split('\002'):
             k, v = txt.split('\003')
-            logger.debug('k: {0}, v:{1}'.format(k,v))
             if self._gui.has_key(k):
-                if v[0] == '\001':
+                if v[0] == '\001' and len(v) > 1:
                     val = cPickle.loads(v[1:])
                 else:
                     val = v
