@@ -753,10 +753,13 @@ class UserInterface(object):
         for txt in values.decode('zip').split('\002'):
             k, v = txt.split('\003')
             if self._gui.has_key(k):
-                if v[0] == '\001' and len(v) > 1:
-                    val = cPickle.loads(v[1:])
-                else:
-                    val = v
+                try:
+                    if v[0] == '\001':
+                        val = cPickle.loads(v[1:])
+                    else:
+                        val = v
+                except:
+                    val = ''
                 self._gui[k].value = val
     
     @classmethod
