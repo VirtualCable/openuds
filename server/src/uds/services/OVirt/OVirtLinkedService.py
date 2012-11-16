@@ -129,6 +129,14 @@ class OVirtLinkedService(Service):
             if self.baseName.value.isdigit():
                 raise Service.ValidationException(_('The machine name can\'t be only numbers'))
 
+    def initGui(self):
+        '''
+        Loads required values inside
+        '''
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env().key()
+        
+
         machines = self.parent().getMachines()
         vals = []
         for m in machines:
@@ -140,9 +148,44 @@ class OVirtLinkedService(Service):
         for c in clusters:
             vals.append( gui.choiceItem(c['id'],  c['name'] ) )
         self.cluster.setValues(vals)
+        
+    def sanitizeVmName(self, name):
+        '''
+        Ovirt only allows machine names with [a-zA-Z0-9_-]
+        '''
+        import re
+        return re.sub("[^a-zA-Z0-9_-]", "_", name)
+    
+    def makeTemplate(self, name, comments):
+        '''
+        Invokes makeTemplate from parent provider, completing params
+        
+        Args:
+            name: Name to assign to template (must be previously "sanitized"
+            comments: Comments (UTF-8) to add to template
             
+        Returns:
+            template Id of the template created
+            
+        Raises an exception if operation fails.
+        '''
+        return self.parent().makeTemplate(name, comments, self.machine.value, self.cluster.value, self.datastore.value)
+    
+    def getTemplateState(self, templateId):
+        '''
+        Invokes getTemplateState from parent provider
         
-    def initGui(self):
-        self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env().key()
+        Args:
+            templateId: templateId to remove
+            
+        Returns nothing
         
+        Raises an exception if operation fails.
+        '''
+        return self.parent().getTemplateState(templateId)
+
+    def removeTemplate(self, templateId):
+        '''
+        invokes removeTemplate from parent provider
+        '''
+        return self.parent().removeTemplate(templateId)

@@ -316,7 +316,7 @@ class Client(object):
             lock.release()
 
 
-    def publish(self, name, vmId, clusterId, storageId):
+    def makeTemplate(self, name, comments, vmId, clusterId, storageId):
         '''
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -330,6 +330,7 @@ class Client(object):
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         '''
+        print "n: {0}, c: {1}, vm: {2}, cl: {3}, st: {3}".format(name, comments, vmId, clusterId, storageId)
         
         try:
             lock.acquire(True)
@@ -337,25 +338,67 @@ class Client(object):
             api = self.__getApi()
             
             storage = api.storagedomains.get(id=storageId)
+            storage_domain = params.StorageDomain(storage)
+            
             cluster = api.clusters.get(id=clusterId)
             vm = api.vms.get(id=vmId)
             
             if vm.get_status().get_state() != 'down':
                 raise Exception('Machine must be in down state to publish it')
+
+            template = params.Template(name=name,storage_domain=storage_domain, vm=vm, cluster=cluster, description=comments)
             
-            api.templates.add(params.Template(storage_domain=storage, origin = 'UDS', name=name, vm=vm, cluster=cluster))
+            api.templates.add(template)
+            
             return api.templates.get(name=name).get_id()
         finally:
             lock.release()
         
         
-    def getPublishState(self, templateId):
+    def getTemplateState(self, templateId):
+        '''
+        Returns current template state.
+        
+        Returned values could be:
+            ok
+            locked
+            removed
+            
+        (don't know if ovirt returns something more right now, will test what happens when template can't be published)
+        '''
         try:
             lock.acquire(True)
             
             api = self.__getApi()
             
-            return api.templates.get(id=templateId).get_status().get_state()
+            template = api.templates.get(id=templateId)
+            
+            if template is None:
+                return 'removed'
+            
+            return template.get_status().get_state()
+            
         finally:
             lock.release()
+            
+    def removeTemplate(self, templateId):
+        '''
+        Removes a template from ovirt server
+        
+        Returns nothing, and raises an Exception if it fails
+        '''
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            template = api.templates.get(id=templateId)
+            if template is None:
+                raise Exception('Template does not exists')
+            
+            template.delete()
+            # This returns nothing, if it fails it raises an exception
+        finally:
+            lock.release()
+        
         

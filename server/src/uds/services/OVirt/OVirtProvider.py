@@ -232,6 +232,43 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().getStorageInfo(storageId, force)
 
+    def makeTemplate(self, name, comments, vmId, clusterId, storageId):
+        '''
+        Publish the machine (makes a template from it so we can create COWs) and returns the template id of
+        the creating machine
+        
+        Args:
+            name: Name of the machine (care, only ascii characters and no spaces!!!)
+            vmId: id of the machine to be published
+            clusterId: id of the cluster that will hold the machine
+            storageId: id of the storage tuat will contain the publication AND linked clones
+            
+        Returns
+            Raises an exception if operation could not be acomplished, or returns the id of the template being created.
+        '''
+        return self.__getApi().makeTemplate(name, comments, vmId, clusterId, storageId)
+    
+    def getTemplateState(self, templateId):
+        '''
+        Returns current template state.
+        
+        Returned values could be:
+            ok
+            locked
+            removed
+            
+        (don't know if ovirt returns something more right now, will test what happens when template can't be published)
+        '''
+        return self.__getApi().getTemplateState(templateId)
+
+    def removeTemplate(self, templateId):
+        '''
+        Removes a template from ovirt server
+        
+        Returns nothing, and raises an Exception if it fails
+        '''
+        return self.__getApi().removeTemplate(templateId)
+        
     
     @staticmethod
     def test(env, data):
