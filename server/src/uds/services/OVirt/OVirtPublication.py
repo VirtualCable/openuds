@@ -166,10 +166,8 @@ class OVirtPublication(Publication):
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def getBaseName(self):
+    def getTemplateId(self):
         '''
-        This sample method (just for this sample publication), provides
-        the name generater for this publication. This is just a sample, and 
-        this will do the work
+        Returns the template id associated with the publication
         '''
-        return self._name
+        return self._templateId

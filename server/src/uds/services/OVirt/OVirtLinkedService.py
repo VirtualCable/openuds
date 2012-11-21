@@ -177,15 +177,53 @@ class OVirtLinkedService(Service):
         
         Args:
             templateId: templateId to remove
-            
+        
         Returns nothing
         
         Raises an exception if operation fails.
         '''
         return self.parent().getTemplateState(templateId)
+    
+    def deployFromTemplate(self, name, comments, templateId):
+        '''
+        Deploys a virtual machine on selected cluster from selected template
+        
+        Args:
+            name: Name (sanitized) of the machine
+            comments: Comments for machine
+            templateId: Id of the template to deploy from
+            
+        Returns:
+            Id of the machine being created form template 
+        '''
+        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value)
+    
+    def getMachineState(self, machineId):
+        '''
+        Invokes getMachineState from parent provider
+        (returns if machine is "active" or "inactive"
+        
+        Args:
+            machineId: If of the machine to get state
+            
+        Returns:
+            'down': Machine is not running
+            'unknown': Machine is not known
+            'powering_up': Machine is powering up
+            'up': Machine is up and running
+            'saving_state': Machine is "suspending"
+            'suspended': Machine is suspended
+            'restoring_state': Machine is restoring state (unsuspending)
+            'powering_down': Machine is powering down
+            'image_locked': Machine is creating/cloning and is not usable
+        '''
+        return self.parent().getMachineState(machineId)
 
     def removeTemplate(self, templateId):
         '''
         invokes removeTemplate from parent provider
         '''
         return self.parent().removeTemplate(templateId)
+
+    def getMacRange(self):
+        return self.parent().getMacRange()

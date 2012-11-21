@@ -337,8 +337,8 @@ class Client(object):
             
             api = self.__getApi()
             
-            storage = api.storagedomains.get(id=storageId)
-            storage_domain = params.StorageDomain(storage)
+            #storage = api.storagedomains.get(id=storageId)
+            storage_domain = params.StorageDomain(id=storageId)
             
             cluster = api.clusters.get(id=clusterId)
             vm = api.vms.get(id=vmId)
@@ -348,9 +348,9 @@ class Client(object):
 
             template = params.Template(name=name,storage_domain=storage_domain, vm=vm, cluster=cluster, description=comments)
             
-            api.templates.add(template)
+            return api.templates.add(template).get_id()
             
-            return api.templates.get(name=name).get_id()
+            #return api.templates.get(name=name).get_id()
         finally:
             lock.release()
         
@@ -358,6 +358,7 @@ class Client(object):
     def getTemplateState(self, templateId):
         '''
         Returns current template state.
+        This method do not uses cache at all (it always tries to get template state from oVirt server)
         
         Returned values could be:
             ok
@@ -381,6 +382,42 @@ class Client(object):
         finally:
             lock.release()
             
+    def deployFromTemplate(self, name, comments, templateId, clusterId):
+        '''
+        Deploys a virtual machine on selected cluster from selected template
+        
+        Args:
+            name: Name (sanitized) of the machine
+            comments: Comments for machine
+            templateId: Id of the template to deploy from
+            clusterId: Id of the cluster to deploy to
+            
+        Returns:
+            Id of the machine being created form template 
+        '''
+        try:
+            lock.acquire(True)
+
+            api = self.__getApi()
+            
+            cluster = api.clusters.get(id=clusterId)
+            template = api.templates.get(id=templateId)
+            
+            if cluster is None:
+                raise Exception('Cluster not found')
+            
+            if template is None:
+                raise Exception('Template not found')
+            
+            par = params.VM(name=name, cluster=cluster, template=template, description=comments)
+            
+            params.Display()
+            
+            return api.vms.add(par).get_id()
+            
+        finally:
+            lock.release()
+            
     def removeTemplate(self, templateId):
         '''
         Removes a template from ovirt server
@@ -400,5 +437,51 @@ class Client(object):
             # This returns nothing, if it fails it raises an exception
         finally:
             lock.release()
+            
         
+    def getMachineState(self, machineId):
+        '''
+        Returns current state of a machine (running, suspended, ...).
+        This method do not uses cache at all (it always tries to get machine state from oVirt server)
+        
+        Args:
+            machineId: Id of the machine to get status
+        
+        Returns:
+            'down': Machine is not running
+            'unknown': Machine is not known
+            'powering_up': Machine is powering up
+            'up': Machine is up and running
+            'saving_state': Machine is "suspending"
+            'suspended': Machine is suspended
+            'restoring_state': Machine is restoring state (unsuspending)
+            'powering_down': Machine is powering down
+            
+        '''
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            vm = api.vms.get(id=machineId)
+            
+            if vm is None or vm.get_status() is None:
+                return 'unknown'
+            
+            return vm.get_status().get_state()
+        
+        finally:
+            lock.release()
+            
+        
+    def powerOnMachine(self, machineId):
+        '''
+        Tries to power on a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        
+        '''
         

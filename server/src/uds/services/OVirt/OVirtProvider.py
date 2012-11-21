@@ -34,6 +34,7 @@ Created on Jun 22, 2012
 '''
 
 from django.utils.translation import ugettext_noop as translatable, ugettext as _
+from uds.core.util.State import State
 from uds.core.services import ServiceProvider
 from OVirtLinkedService import OVirtLinkedService
 from uds.core.ui import gui
@@ -260,6 +261,29 @@ class Provider(ServiceProvider):
         (don't know if ovirt returns something more right now, will test what happens when template can't be published)
         '''
         return self.__getApi().getTemplateState(templateId)
+    
+    def getMachineState(self, machineId):
+        '''
+        Returns the state of the machine
+        This method do not uses cache at all (it always tries to get machine state from oVirt server)
+        
+        Args:
+            machineId: Id of the machine to get state
+
+        Returns:
+            'down': Machine is not running
+            'unknown': Machine is not known
+            'powering_up': Machine is powering up
+            'up': Machine is up and running
+            'saving_state': Machine is "suspending"
+            'suspended': Machine is suspended
+            'restoring_state': Machine is restoring state (unsuspending)
+            'powering_down': Machine is powering down
+            
+        '''
+        return self.__getApi().getMachineState(machineId)
+        
+        return State.INACTIVE
 
     def removeTemplate(self, templateId):
         '''
@@ -269,6 +293,23 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().removeTemplate(templateId)
         
+    def deployFromTemplate(self, name, comments, templateId, clusterId):
+        '''
+        Deploys a virtual machine on selected cluster from selected template
+        
+        Args:
+            name: Name (sanitized) of the machine
+            comments: Comments for machine
+            templateId: Id of the template to deploy from
+            clusterId: Id of the cluster to deploy to
+            
+        Returns:
+            Id of the machine being created form template 
+        '''
+        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId)
+        
+    def getMacRange(self):
+        return self.macsRange.value
     
     @staticmethod
     def test(env, data):
