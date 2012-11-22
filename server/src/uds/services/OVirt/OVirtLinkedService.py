@@ -77,7 +77,7 @@ class OVirtLinkedService(Service):
     cacheTooltip = translatable('Number of desired machines to keep running waiting for a user')
     #: If we need to generate a "Level 2" cache for this service (i.e., L1 
     #: could be running machines and L2 suspended machines) 
-    usesCache_L2 = False 
+    usesCache_L2 = True 
     #: Tooltip shown to user when this item is pointed at admin interface, None 
     #: also because we don't use it
     cacheTooltip_L2 = translatable('Number of desired machines to keep suspended waiting for use') 
@@ -109,7 +109,7 @@ class OVirtLinkedService(Service):
     datastore =  gui.ChoiceField(label = translatable("Datastore Domain"), rdonly = False, order = 3, 
                                        tooltip = translatable('Datastore domain where to publish and put incrementals'), required = True)
     baseName = gui.TextField(label = translatable('Machine Names'), rdonly = False, order = 4, tooltip = ('Base name for clones from this machine'), required = True)
-    lenName = gui.NumericField(length = 1, label = translatable('Name Length'), defvalue = 3, order = 5, 
+    lenName = gui.NumericField(length = 1, label = translatable('Name Length'), defvalue = 5, order = 5, 
                                tooltip = translatable('Length of numeric part for the names of this machines (betwen 3 and 6'), required = True)
     
     ov = gui.HiddenField()
@@ -197,6 +197,12 @@ class OVirtLinkedService(Service):
             Id of the machine being created form template 
         '''
         return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value)
+
+    def removeTemplate(self, templateId):
+        '''
+        invokes removeTemplate from parent provider
+        '''
+        return self.parent().removeTemplate(templateId)
     
     def getMachineState(self, machineId):
         '''
@@ -207,23 +213,77 @@ class OVirtLinkedService(Service):
             machineId: If of the machine to get state
             
         Returns:
-            'down': Machine is not running
-            'unknown': Machine is not known
-            'powering_up': Machine is powering up
-            'up': Machine is up and running
-            'saving_state': Machine is "suspending"
-            'suspended': Machine is suspended
-            'restoring_state': Machine is restoring state (unsuspending)
-            'powering_down': Machine is powering down
-            'image_locked': Machine is creating/cloning and is not usable
+            one of this values:
+             unassigned, down, up, powering_up, powered_down, 
+             paused, migrating_from, migrating_to, unknown, not_responding, 
+             wait_for_launch, reboot_in_progress, saving_state, restoring_state, 
+             suspended, image_illegal, image_locked or powering_down
+             Also can return'unknown' if Machine is not known
         '''
         return self.parent().getMachineState(machineId)
+    
+    def startMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to oVirt.
+        
+        This start also "resume" suspended/paused machines
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        return self.parent().startMachine(machineId)
 
-    def removeTemplate(self, templateId):
+    def stopMachine(self, machineId):
         '''
-        invokes removeTemplate from parent provider
+        Tries to start a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
         '''
-        return self.parent().removeTemplate(templateId)
+        return self.parent().stopMachine(machineId)
+        
+    def suspendMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        return self.parent().suspendMachine(machineId)
+    
+    def removeMachine(self, machineId):
+        '''
+        Tries to delete a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        return self.parent().removeMachine(machineId)
 
     def getMacRange(self):
+        '''
+        Returns de selected mac range
+        '''
         return self.parent().getMacRange()
+    
+    def getBaseName(self):
+        '''
+        Returns the base name
+        '''
+        return self.baseName.value
+    
+    def getLenName(self):
+        '''
+        Returns the length of numbers part
+        '''
+        return int(self.lenName.value)
+    
+    

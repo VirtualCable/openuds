@@ -271,15 +271,12 @@ class Provider(ServiceProvider):
             machineId: Id of the machine to get state
 
         Returns:
-            'down': Machine is not running
-            'unknown': Machine is not known
-            'powering_up': Machine is powering up
-            'up': Machine is up and running
-            'saving_state': Machine is "suspending"
-            'suspended': Machine is suspended
-            'restoring_state': Machine is restoring state (unsuspending)
-            'powering_down': Machine is powering down
-            
+            one of this values:
+             unassigned, down, up, powering_up, powered_down, 
+             paused, migrating_from, migrating_to, unknown, not_responding, 
+             wait_for_launch, reboot_in_progress, saving_state, restoring_state, 
+             suspended, image_illegal, image_locked or powering_down
+             Also can return'unknown' if Machine is not known
         '''
         return self.__getApi().getMachineState(machineId)
         
@@ -308,6 +305,52 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId)
         
+    def startMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to oVirt.
+        
+        This start also "resume" suspended/paused machines
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        return self.__getApi().startMachine(machineId)
+
+    def stopMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        return self.__getApi().stopMachine(machineId)
+        
+    def suspendMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        return self.__getApi().suspendMachine(machineId)
+    
+    def removeMachine(self, machineId):
+        '''
+        Tries to delete a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        return self.__getApi().removeMachine(machineId)
+    
     def getMacRange(self):
         return self.macsRange.value
     

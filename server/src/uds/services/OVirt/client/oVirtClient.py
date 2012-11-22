@@ -9,6 +9,7 @@ from ovirtsdk.api import API
 
 import threading
 import logging
+import ovirtsdk
 
 logger = logging.getLogger(__name__)
 
@@ -316,21 +317,21 @@ class Client(object):
             lock.release()
 
 
-    def makeTemplate(self, name, comments, vmId, clusterId, storageId):
+    def makeTemplate(self, name, comments, machineId, clusterId, storageId):
         '''
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
         
         Args:
             name: Name of the machine (care, only ascii characters and no spaces!!!)
-            vmId: id of the machine to be published
+            machineId: id of the machine to be published
             clusterId: id of the cluster that will hold the machine
             storageId: id of the storage tuat will contain the publication AND linked clones
             
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         '''
-        print "n: {0}, c: {1}, vm: {2}, cl: {3}, st: {3}".format(name, comments, vmId, clusterId, storageId)
+        print "n: {0}, c: {1}, vm: {2}, cl: {3}, st: {3}".format(name, comments, machineId, clusterId, storageId)
         
         try:
             lock.acquire(True)
@@ -341,11 +342,18 @@ class Client(object):
             storage_domain = params.StorageDomain(id=storageId)
             
             cluster = api.clusters.get(id=clusterId)
-            vm = api.vms.get(id=vmId)
+            vm = api.vms.get(id=machineId)
+
+            if vm is None:
+                raise Exception('Machine not found')
+
+            if cluster is None:
+                raise Exception('Cluster not found')
+
             
             if vm.get_status().get_state() != 'down':
                 raise Exception('Machine must be in down state to publish it')
-
+            
             template = params.Template(name=name,storage_domain=storage_domain, vm=vm, cluster=cluster, description=comments)
             
             return api.templates.add(template).get_id()
@@ -400,8 +408,8 @@ class Client(object):
 
             api = self.__getApi()
             
-            cluster = api.clusters.get(id=clusterId)
-            template = api.templates.get(id=templateId)
+            cluster = params.Cluster(id=clusterId)
+            template = params.Template(id=templateId)
             
             if cluster is None:
                 raise Exception('Cluster not found')
@@ -437,7 +445,6 @@ class Client(object):
             # This returns nothing, if it fails it raises an exception
         finally:
             lock.release()
-            
         
     def getMachineState(self, machineId):
         '''
@@ -448,15 +455,12 @@ class Client(object):
             machineId: Id of the machine to get status
         
         Returns:
-            'down': Machine is not running
-            'unknown': Machine is not known
-            'powering_up': Machine is powering up
-            'up': Machine is up and running
-            'saving_state': Machine is "suspending"
-            'suspended': Machine is suspended
-            'restoring_state': Machine is restoring state (unsuspending)
-            'powering_down': Machine is powering down
-            
+            one of this values:
+             unassigned, down, up, powering_up, powered_down, 
+             paused, migrating_from, migrating_to, unknown, not_responding, 
+             wait_for_launch, reboot_in_progress, saving_state, restoring_state, 
+             suspended, image_illegal, image_locked or powering_down
+             Also can return'unknown' if Machine is not known
         '''
         try:
             lock.acquire(True)
@@ -472,16 +476,102 @@ class Client(object):
         
         finally:
             lock.release()
-            
         
-    def powerOnMachine(self, machineId):
+    def startMachine(self, machineId):
         '''
-        Tries to power on a machine. No check is done, it is simply requested to oVirt
+        Tries to start a machine. No check is done, it is simply requested to oVirt.
+        
+        This start also "resume" suspended/paused machines
         
         Args:
             machineId: Id of the machine
             
         Returns:
-        
         '''
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            vm = api.vms.get(id=machineId)
+
+            if vm is None:
+                raise Exception('Machine not found')
+            
+            vm.start()
+            
+        finally:
+            lock.release()
+
+    def stopMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to oVirt
         
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            vm = api.vms.get(id=machineId)
+
+            if vm is None:
+                raise Exception('Machine not found')
+            
+            vm.stop()
+            
+        finally:
+            lock.release()
+        
+    def suspendMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            vm = api.vms.get(id=machineId)
+
+            if vm is None:
+                raise Exception('Machine not found')
+            
+            vm.suspend()
+            
+        finally:
+            lock.release()
+
+    def removeMachine(self, machineId):
+        '''
+        Tries to delete a machine. No check is done, it is simply requested to oVirt
+        
+        Args:
+            machineId: Id of the machine
+            
+        Returns:
+        '''
+        try:
+            lock.acquire(True)
+            
+            api = self.__getApi()
+            
+            vm = api.vms.get(id=machineId)
+
+            if vm is None:
+                raise Exception('Machine not found')
+            
+            vm.delete()
+            
+        finally:
+            lock.release()
+            

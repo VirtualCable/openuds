@@ -33,11 +33,12 @@
 
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
+import cPickle
 import logging
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opWait, opError, opFinish, opRetry = range(8)
+opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(9)
 
 class OVirtLinkedDeployment(UserDeployment):
     '''
@@ -57,24 +58,27 @@ class OVirtLinkedDeployment(UserDeployment):
     def initialize(self):
         self._name = ''
         self._ip = ''
+        self._mac = ''
         self._vmid = ''
         self._reason = ''
         self._queue = []
-        self._destroyAfter = 'f'
 
     # Serializable needed methods        
     def marshal(self):
         '''
         Does nothing right here, we will use envoronment storage in this sample
         '''
-        return ''
+        return '\1'.join( ['v1', self._name, self._ip, self._mac, self._vmid, self._reason, cPickle.dumps(self._queue)] )
     
     def unmarshal(self, str_):
         '''
         Does nothing here also, all data are keeped at environment storage
         '''
-        pass
-    
+        logger.debug('Data: {0}'.format(str_))
+        vals = str_.split('\1')
+        if vals[0] == 'v1':
+            self._name, self._ip, self._mac, self._vmid, self._reason, queue = vals[1:]
+            self._queue = cPickle.loads(queue)
 
     def getName(self):
         '''
@@ -165,7 +169,8 @@ class OVirtLinkedDeployment(UserDeployment):
             return self.__error('Machine is not available anymore')
         
         if state not in ('up', 'powering_up', 'restoring_state'):
-            return self.__powerOn()
+            self._queue = [ opStart, opFinish ]
+            return self.__executeQueue()
         
         self.cache().put('ready', '1')
         return State.FINISHED
@@ -177,30 +182,39 @@ class OVirtLinkedDeployment(UserDeployment):
             logger.debug('Machine is ready. Moving to level 2')
             self.__popCurrentOp() # Remove current state
             return self.__executeQueue()
-            
-        #if self._squeue.getCurrent() == stWaitReady:
-        #    logger.debug('Move to level 2, suspending machine')
-        #    return self.moveToCache(self.L2_CACHE)
+        # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
+
+    def deployForUser(self, user):
+        '''
+        Deploys an service instance for an user.
+        '''
+        logger.debug('Deploying for user')
+        self.__initQueueForDeploy(False)
+        return self.__executeQueue()
     
-    def __executeQueue(self):
-        op = self.__getCurrentOp()
-        
-        if op == opError:
-            return State.ERROR
-        
-        if op == opFinish:
-            return State.FINISHED
-        
-        if op == opCreate:
-            return self.__create()
-    
+    def deployForCache(self, cacheLevel):
+        '''
+        Deploys an service instance for cache
+        '''
+        self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
+        return self.__executeQueue()
+
     def __initQueueForDeploy(self, forLevel2 = False):
         
         if forLevel2 is False:
             self._queue = [opCreate, opStart, opFinish]
         else:
             self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
+            
+    def __checkMachineState(self, chkState):
+        logger.debug('Checking that state of machine {0} is {1}'.format(self._vmid, chkState))
+        state = self.service().getMachineState(self._vmid)
+        
+        if state != chkState:
+            return State.RUNNING
+        
+        return State.FINISHED
         
     def __getCurrentOp(self):
         if len(self._queue) == 0:
@@ -228,10 +242,43 @@ class OVirtLinkedDeployment(UserDeployment):
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
         '''
+        logger.debug('Setting error state, reason: {0}'.format(reason))
+        
         self._queue = [opError]
         self._reason = str(reason)
         return State.ERROR
-    
+
+    def __executeQueue(self):
+        self.__debugQueue('executeQueue')
+        op = self.__getCurrentOp()
+        
+        if op == opError:
+            return State.ERROR
+        
+        if op == opFinish:
+            return State.FINISHED
+        
+        fncs = { opCreate: self.__create, 
+                 opRetry: self.__retry,
+                 opStart: self.__startMachine,
+                 opStop: self.__stopMachine,
+                 opSuspend: self.__suspendMachine,
+                 opWait: self.__wait,
+                 opRemove: self.__remove
+               }
+        
+        try:
+            execFnc = fncs.get(op, None)
+            
+            if execFnc is None:
+                return self.__error('Unknown operation found at execution queue ({0})'.format(op)) 
+            
+            state = execFnc()
+            
+            return state
+        except Exception as e:
+            return self.__error(e)
+        
     # Queue execution methods
     def __retry(self):
         '''
@@ -241,6 +288,12 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         return State.FINISHED
     
+    def __wait(self):
+        '''
+        Executes opWait, it simply waits something "external" to end
+        '''
+        return State.RUNNING
+    
     def __create(self):
         '''
         Deploys a machine from template for user/cache
@@ -249,56 +302,106 @@ class OVirtLinkedDeployment(UserDeployment):
         name = self.service().sanitizeVmName('UDS service ' + self.getName())
         comments = 'UDS Linked clone for'
         
-        try:
-            self._vmid = self.service().deployFromTemplate(name, comments, templateId)
-            if self._vmid is None:
-                raise Exception('Can\'t create machine')
-        except Exception as e:
-            return self.__error(e)
-        
+        self._vmid = self.service().deployFromTemplate(name, comments, templateId)
+        if self._vmid is None:
+            raise Exception('Can\'t create machine')
+    
         return State.RUNNING
     
-    def __powerOn(self):
+    def __remove(self):
+        '''
+        Removes a machine from system
+        '''
+        state = self.service().getMachineState(self._vmid)
+        
+        if state != 'down' and state != 'suspended':
+            self.__pushFrontOp(opStop)
+            return State.RUNNING
+        
+        self.service().removeMachine(self._vmid)
+        return State.RUNNING
+    
+    def __startMachine(self):
         '''
         Powers on the machine
         '''
-        state = self.service.getMachineState(self._vmid)
-        if state == 'down':
-            pass
+        state = self.service().getMachineState(self._vmid)
+        if state == 'up':
+            return State.FINISHED
         
-    def deployForUser(self, user):
+        if state != 'down':
+            self.__pushFrontOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
+            return State.FINISHED
+        
+        self.service().startMachine(self._vmid)
+        return State.RUNNING
+        
+    def __stopMachine(self):
         '''
-        Deploys an service instance for an user.
+        Powers off the machine
         '''
-        self.__initQueueForDeploy(False)
-        return self.__executeQueue()
+        state = self.service().getMachineState(self._vmid)
+        if state == 'down':
+            return State.FINISHED
+        
+        if state != 'up':
+            self.__pushBackOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
+            return State.FINISHED
+        
+        self.service().stopMachine(self._vmid)
+        return State.RUNNING
     
-    def deployForCache(self, cacheLevel):
+    def __suspendMachine(self):
         '''
-        Deploys an service instance for cache
+        Suspends the machine
         '''
-        forLevel2 = cacheLevel == self.L2_CACHE 
-        self.__initQueueForDeploy(forLevel2)
-        return self.__executeQueue()
-    
-    def __checkDeploy(self):
+        state = self.service().getMachineState(self._vmid)
+        if state == 'suspended':
+            return State.FINISHED
+        
+        if state != 'up':
+            self.__pushBackOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
+            return State.FINISHED
+        
+        self.service().suspendMachine(self._vmid)
+        return State.RUNNING
+        
+    # Check methods
+    def __checkCreate(self):
         '''
         Checks the state of a deploy for an user or cache
         '''
-        try:
-            state = self.service().getMachineState(self._vmid)
-            if state != 'down':
-                return State.RUNNING
-        except Exception as e:
-            return self.__error(e)
-        
-        return State.FINISHED
-            
+        return self.__checkMachineState('down')
+    
+    def __checkStart(self):
+        '''
+        Checks if machine has started
+        '''
+        return self.__checkMachineState('up')
+    
+    def __checkStop(self):
+        '''
+        Checks if machine has stoped
+        '''
+        return self.__checkMachineState('down')
+    
+    def __checkSuspend(self):
+        '''
+        Check if the machine has suspended
+        '''
+        return self.__checkMachineState('suspended')
+    
+    def __checkRemoved(self):
+        '''
+        Checks if a machine has been removed
+        '''
+        return self.__checkMachineState('unknown')
     
     def checkState(self):
         '''
         Check what operation is going on, and acts acordly to it
         '''
+        self.__debugQueue('checkState')
         op = self.__getCurrentOp()
         
         if op == opError:
@@ -307,56 +410,43 @@ class OVirtLinkedDeployment(UserDeployment):
         if op == opFinish: 
             return State.FINISHED
         
-        res = None
+        fncs = { opCreate: self.__checkCreate,
+                 opRetry: self.__retry,
+                 opWait: self.__wait,
+                 opStart: self.__checkStart,
+                 opStop: self.__checkStop,
+                 opSuspend: self.__checkSuspend,
+                 opRemove: self.__checkRemoved
+                }
         
-        if op == opCreate:
-            res = self.__checkDeploy()
-        
-        if op == opStart:
-            res = self.__checkPowerOn()
+        try:
+            chkFnc = fncs.get(op, None)
             
-        if op == opStop:
-            res = self.__checkPowerOff()
+            if chkFnc is None:
+                return self.__error('Unknown operation found at check queue ({0})'.format(op))
             
-        if op == opWait:
-            res = State.RUNNING
+            state = chkFnc()
+            if state == State.FINISHED:
+                self.__popCurrentOp() # Remove runing op
+                return self.__executeQueue()
             
-        if op == opSuspend:
-            res = self.__checkSuspend()
-
-        if res is None:
-            return self.__error('Unexpected operation found')
-            
-        if res == State.FINISHED:
-            self.__popCurrentOp()
-            return State.RUNNING
-        return res
-        
+            return state
+        except Exception as e:
+            return self.__error(e)
     
     def finish(self):
         '''
         Invoked when the core notices that the deployment of a service has finished.
         (No matter wether it is for cache or for an user)
         
-        This gives the oportunity to make something at that moment.
-        :note: You can also make these operations at checkState, this is really
-        not needed, but can be provided (default implementation of base class does
-        nothing) 
         '''
-        # Note that this is not really needed, is just a sample of storage use
-        self.storage().remove('count')
+        pass
         
     def assignToUser(self, user):
         '''
         This method is invoked whenever a cache item gets assigned to an user.
         This gives the User Deployment an oportunity to do whatever actions
         are required so the service puts at a correct state for using by a service.
-        
-        In our sample, the service is always ready, so this does nothing.
-        
-        This is not a task method. All level 1 cache items can be diretly
-        assigned to an user with no more work needed, but, if something is needed,
-        here you can do whatever you need
         '''
         pass
     
@@ -364,35 +454,20 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
-        
-        Default implementation does nothing, so if you are going to do nothing,
-        you don't need to implement it.
-        
-        The responability of notifying it is of os manager actor, and it's 
-        directly invoked by os managers (right now, linux os manager and windows
-        os manager)
-        
+
         The user provided is just an string, that is provided by actor.
         '''
         # We store the value at storage, but never get used, just an example
-        self.storage().saveData('user', user)
+        pass
         
     def userLoggedOut(self, user):
         '''
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.
         
-        Default implementation does nothing, so if you are going to do nothing,
-        you don't need to implement it.
-        
-        The responability of notifying it is of os manager actor, and it's 
-        directly invoked by os managers (right now, linux os manager and windows
-        os manager)
-        
         The user provided is just an string, that is provided by actor.
         '''
-        # We do nothing more that remove the user
-        self.storage().remove('user')
+        pass
     
     def reasonOfError(self):
         '''
@@ -402,18 +477,24 @@ class OVirtLinkedDeployment(UserDeployment):
         for it, and it will be asked everytime it's needed to be shown to the
         user (when the administation asks for it).
         '''
-        return self.storage().readData('error') or 'No error'
+        return self._reason
     
     def destroy(self):
         '''
-        This is a task method. As that, the excepted return values are
-        State values RUNNING, FINISHED or ERROR.
-        
         Invoked for destroying a deployed service
-        Do whatever needed here, as deleting associated data if needed (i.e. a copy of the machine, snapshots, etc...)
-        @return: State.FINISHED if no more checks/steps for deployment are needed, State.RUNNING if more steps are needed (steps checked using checkState)
         ''' 
-        return State.FINISHED
+        
+        # If executing something, wait until finished to remove it
+        # We simply replace the execution queue
+        op = self.__getCurrentOp()
+        
+        if op == opFinish or op == opWait:
+            self._queue = [opStop, opRemove]
+            return self.__executeQueue()
+        
+        self._queue = [op, opStop, opRemove]
+        # Do not execute anything.here, just continue normally
+        return State.RUNNING
 
     def cancel(self):
         '''
@@ -425,5 +506,22 @@ class OVirtLinkedDeployment(UserDeployment):
         When administrator requests it, the cancel is "delayed" and not
         invoked directly.
         '''
-        return State.FINISHED
+        return self.destroy()
+        
+    
+    @staticmethod
+    def __op2str(op):
+        return { opCreate: 'create',
+                 opStart: 'start',
+                 opStop: 'stop',
+                 opSuspend: 'suspend', 
+                 opRemove: 'remove',
+                 opWait: 'wait',
+                 opError: 'error',
+                 opFinish: 'finish',
+                 opRetry: 'retry'
+                }.get(op, '????')
+                
+    def __debugQueue(self, txt):
+        logger.debug('Queue at {0}: {1}'.format(txt,[OVirtLinkedDeployment.__op2str(op) for op in self._queue ])) 
         
