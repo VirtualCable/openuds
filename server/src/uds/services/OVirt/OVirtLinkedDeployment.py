@@ -38,7 +38,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(9)
+opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opChangeMac = range(10)
 
 class OVirtLinkedDeployment(UserDeployment):
     '''
@@ -203,13 +203,17 @@ class OVirtLinkedDeployment(UserDeployment):
     def __initQueueForDeploy(self, forLevel2 = False):
         
         if forLevel2 is False:
-            self._queue = [opCreate, opStart, opFinish]
+            self._queue = [opCreate, opChangeMac, opStart, opFinish]
         else:
-            self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
             
     def __checkMachineState(self, chkState):
         logger.debug('Checking that state of machine {0} is {1}'.format(self._vmid, chkState))
         state = self.service().getMachineState(self._vmid)
+        
+        # If we want to check an state and machine does not exists (except in case that we whant to check this)
+        if state == 'unknown' and chkState != 'unknown':
+            return self.__error('Machine not found')
         
         if state != chkState:
             return State.RUNNING
@@ -249,7 +253,7 @@ class OVirtLinkedDeployment(UserDeployment):
         return State.ERROR
 
     def __executeQueue(self):
-        self.__debugQueue('executeQueue')
+        self.__debug('executeQueue')
         op = self.__getCurrentOp()
         
         if op == opError:
@@ -259,12 +263,13 @@ class OVirtLinkedDeployment(UserDeployment):
             return State.FINISHED
         
         fncs = { opCreate: self.__create, 
-                 opRetry: self.__retry,
+                 opRetry: self.__retry,        
                  opStart: self.__startMachine,
                  opStop: self.__stopMachine,
                  opSuspend: self.__suspendMachine,
                  opWait: self.__wait,
-                 opRemove: self.__remove
+                 opRemove: self.__remove,
+                 opChangeMac: self.__changeMac
                }
         
         try:
@@ -273,9 +278,9 @@ class OVirtLinkedDeployment(UserDeployment):
             if execFnc is None:
                 return self.__error('Unknown operation found at execution queue ({0})'.format(op)) 
             
-            state = execFnc()
+            execFnc()
             
-            return state
+            return State.RUNNING
         except Exception as e:
             return self.__error(e)
         
@@ -285,6 +290,8 @@ class OVirtLinkedDeployment(UserDeployment):
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
         checkState method will "pop" first item when a check operation returns State.FINISHED
+        
+        At executeQueue this return value will be ignored, and it will only be used at checkState
         '''
         return State.FINISHED
     
@@ -306,65 +313,76 @@ class OVirtLinkedDeployment(UserDeployment):
         if self._vmid is None:
             raise Exception('Can\'t create machine')
     
-        return State.RUNNING
-    
     def __remove(self):
         '''
         Removes a machine from system
         '''
         state = self.service().getMachineState(self._vmid)
         
+        if state == 'unknown':
+            raise Exception('Machine not found')
+        
         if state != 'down' and state != 'suspended':
             self.__pushFrontOp(opStop)
-            return State.RUNNING
-        
-        self.service().removeMachine(self._vmid)
-        return State.RUNNING
+        else:
+            self.service().removeMachine(self._vmid)
     
     def __startMachine(self):
         '''
         Powers on the machine
         '''
         state = self.service().getMachineState(self._vmid)
-        if state == 'up':
-            return State.FINISHED
+
+        if state == 'unknown':
+            raise Exception('Machine not found')
+        
+        if state == 'up': # Already started, return
+            return
         
         if state != 'down':
-            self.__pushFrontOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
-            return State.FINISHED
-        
-        self.service().startMachine(self._vmid)
-        return State.RUNNING
+            self.__pushFrontOp(opRetry) # Will call "check Retry", that will finish inmediatly and again call this one
+        else:
+            self.service().startMachine(self._vmid)
         
     def __stopMachine(self):
         '''
         Powers off the machine
         '''
         state = self.service().getMachineState(self._vmid)
-        if state == 'down':
-            return State.FINISHED
+
+        if state == 'unknown':
+            raise Exception('Machine not found')
+        
+        if state == 'down': # Already stoped, return
+            return
         
         if state != 'up':
-            self.__pushBackOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
-            return State.FINISHED
-        
-        self.service().stopMachine(self._vmid)
-        return State.RUNNING
+            self.__pushBackOp(opRetry) # Will call "check Retry", that will finish inmediatly and again call this one
+        else:
+            self.service().stopMachine(self._vmid)
     
     def __suspendMachine(self):
         '''
         Suspends the machine
         '''
         state = self.service().getMachineState(self._vmid)
-        if state == 'suspended':
-            return State.FINISHED
+
+        if state == 'unknown':
+            raise Exception('Machine not found')
+        
+        if state == 'suspended': # Already suspended, return
+            return
         
         if state != 'up':
             self.__pushBackOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
-            return State.FINISHED
+        else:
+            self.service().suspendMachine(self._vmid)
         
-        self.service().suspendMachine(self._vmid)
-        return State.RUNNING
+    def __changeMac(self):
+        '''
+        Changes the mac of the first nic
+        '''
+        self.service().updateMachineMac(self._vmid, self.getUniqueId())
         
     # Check methods
     def __checkCreate(self):
@@ -397,11 +415,19 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         return self.__checkMachineState('unknown')
     
+    def __checkMac(self):
+        '''
+        Checks if change mac operation has finished.
+        
+        Changing nic configuration es 1-step operation, so when we check it here, it is already done
+        '''
+        return State.FINISHED
+    
     def checkState(self):
         '''
         Check what operation is going on, and acts acordly to it
         '''
-        self.__debugQueue('checkState')
+        self.__debug('checkState')
         op = self.__getCurrentOp()
         
         if op == opError:
@@ -416,7 +442,8 @@ class OVirtLinkedDeployment(UserDeployment):
                  opStart: self.__checkStart,
                  opStop: self.__checkStop,
                  opSuspend: self.__checkSuspend,
-                 opRemove: self.__checkRemoved
+                 opRemove: self.__checkRemoved,
+                 opChangeMac: self.__checkMac
                 }
         
         try:
@@ -438,8 +465,8 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         Invoked when the core notices that the deployment of a service has finished.
         (No matter wether it is for cache or for an user)
-        
         '''
+        self.__debug('finish')
         pass
         
     def assignToUser(self, user):
@@ -483,16 +510,19 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         Invoked for destroying a deployed service
         ''' 
-        
+        self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
         op = self.__getCurrentOp()
         
-        if op == opFinish or op == opWait:
-            self._queue = [opStop, opRemove]
-            return self.__executeQueue()
+        if op == opError:
+            return self.__error('Machine is already in error state!')
         
-        self._queue = [op, opStop, opRemove]
+        if op == opFinish or op == opWait:
+            self._queue = [opStop, opRemove, opFinish]
+            return self.__executeQueue()
+       
+        self._queue = [op, opStop, opRemove, opFinish]
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
@@ -519,9 +549,14 @@ class OVirtLinkedDeployment(UserDeployment):
                  opWait: 'wait',
                  opError: 'error',
                  opFinish: 'finish',
-                 opRetry: 'retry'
+                 opRetry: 'retry',
+                 opChangeMac: 'changing mac'
                 }.get(op, '????')
                 
-    def __debugQueue(self, txt):
+    def __debug(self, txt):
+        logger.debug('_name {0}: {1}'.format(txt, self._name))
+        logger.debug('_ip {0}: {1}'.format(txt, self._ip))
+        logger.debug('_mac {0}: {1}'.format(txt, self._mac))
+        logger.debug('_vmid {0}: {1}'.format(txt, self._vmid))
         logger.debug('Queue at {0}: {1}'.format(txt,[OVirtLinkedDeployment.__op2str(op) for op in self._queue ])) 
         

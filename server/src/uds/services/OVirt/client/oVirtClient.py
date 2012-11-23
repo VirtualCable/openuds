@@ -10,6 +10,7 @@ from ovirtsdk.api import API
 import threading
 import logging
 import ovirtsdk
+from roman import OutOfRangeError
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ class Client(object):
                 pass
         
         cached_api_key = aKey
-        cached_api = API(url='https://'+self._host, username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=False)
+        cached_api = API(url='https://'+self._host, username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
         return cached_api
 
     def __init__(self, host, username, password, timeout, cache):
@@ -317,7 +318,7 @@ class Client(object):
             lock.release()
 
 
-    def makeTemplate(self, name, comments, machineId, clusterId, storageId):
+    def makeTemplate(self, name, comments, machineId, clusterId, storageId, displayType):
         '''
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -327,19 +328,18 @@ class Client(object):
             machineId: id of the machine to be published
             clusterId: id of the cluster that will hold the machine
             storageId: id of the storage tuat will contain the publication AND linked clones
+            displayType: type of display (for oVirt admin interface only)
             
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         '''
-        print "n: {0}, c: {1}, vm: {2}, cl: {3}, st: {3}".format(name, comments, machineId, clusterId, storageId)
+        logger.debug("n: {0}, c: {1}, vm: {2}, cl: {3}, st: {3}, dt: {4}".format(name, comments, machineId, clusterId, storageId, displayType))
         
         try:
             lock.acquire(True)
             
             api = self.__getApi()
             
-            #storage = api.storagedomains.get(id=storageId)
-            storage_domain = params.StorageDomain(id=storageId)
             
             cluster = api.clusters.get(id=clusterId)
             vm = api.vms.get(id=machineId)
@@ -350,14 +350,27 @@ class Client(object):
             if cluster is None:
                 raise Exception('Cluster not found')
 
-            
             if vm.get_status().get_state() != 'down':
                 raise Exception('Machine must be in down state to publish it')
             
-            template = params.Template(name=name,storage_domain=storage_domain, vm=vm, cluster=cluster, description=comments)
+            # Create disks description to be created in specified storage domain, one for each disk
+            sd = params.StorageDomains(storage_domain=[params.StorageDomain(id=storageId)])
+            
+            dsks = []
+            for dsk in vm.disks.list():
+                dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd))
+            
+            disks = params.Disks(disk=dsks)    
+
+            # Create display description
+            display = params.Display(type_=displayType)
+            
+            template = params.Template(name=name, vm=params.VM(id=vm.get_id(), disks=disks), 
+                                       cluster=params.Cluster(id=cluster.get_id()), description=comments,
+                                       display=display)
             
             return api.templates.add(template).get_id()
-            
+        
             #return api.templates.get(name=name).get_id()
         finally:
             lock.release()
@@ -390,7 +403,7 @@ class Client(object):
         finally:
             lock.release()
             
-    def deployFromTemplate(self, name, comments, templateId, clusterId):
+    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType):
         '''
         Deploys a virtual machine on selected cluster from selected template
         
@@ -410,16 +423,9 @@ class Client(object):
             
             cluster = params.Cluster(id=clusterId)
             template = params.Template(id=templateId)
+            display = params.Display(type_=displayType)
             
-            if cluster is None:
-                raise Exception('Cluster not found')
-            
-            if template is None:
-                raise Exception('Template not found')
-            
-            par = params.VM(name=name, cluster=cluster, template=template, description=comments)
-            
-            params.Display()
+            par = params.VM(name=name, cluster=cluster, template=template, description=comments, display=display)
             
             return api.vms.add(par).get_id()
             
@@ -550,7 +556,7 @@ class Client(object):
             
         finally:
             lock.release()
-
+            
     def removeMachine(self, machineId):
         '''
         Tries to delete a machine. No check is done, it is simply requested to oVirt
@@ -574,4 +580,30 @@ class Client(object):
             
         finally:
             lock.release()
+
+    def updateMachineMac(self, machineId, macAddres):
+        '''
+        Changes the mac address of first nic of the machine to the one specified
+        '''
+        try:
+            lock.acquire(True)
             
+            api = self.__getApi()
+            
+            vm = api.vms.get(id=machineId)
+
+            if vm is None:
+                raise Exception('Machine not found')
+            
+            nic = vm.nics.list()[0] # If has no nic, will raise an exception (IndexError)
+            
+            nic.get_mac().set_address(macAddres)
+            
+            nic.update() # Updates the nic
+            
+        except IndexError:
+            raise Exception('Machine do not have network interfaces!!')
+            
+        finally:
+            lock.release()
+        

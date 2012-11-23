@@ -233,21 +233,22 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().getStorageInfo(storageId, force)
 
-    def makeTemplate(self, name, comments, vmId, clusterId, storageId):
+    def makeTemplate(self, name, comments, machineId, clusterId, storageId, displayType):
         '''
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
         
         Args:
             name: Name of the machine (care, only ascii characters and no spaces!!!)
-            vmId: id of the machine to be published
+            machineId: id of the machine to be published
             clusterId: id of the cluster that will hold the machine
             storageId: id of the storage tuat will contain the publication AND linked clones
+            displayType: type of display (for oVirt admin interface only)
             
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         '''
-        return self.__getApi().makeTemplate(name, comments, vmId, clusterId, storageId)
+        return self.__getApi().makeTemplate(name, comments, machineId, clusterId, storageId, displayType)
     
     def getTemplateState(self, templateId):
         '''
@@ -290,7 +291,7 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().removeTemplate(templateId)
         
-    def deployFromTemplate(self, name, comments, templateId, clusterId):
+    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType):
         '''
         Deploys a virtual machine on selected cluster from selected template
         
@@ -303,7 +304,7 @@ class Provider(ServiceProvider):
         Returns:
             Id of the machine being created form template 
         '''
-        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId)
+        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType)
         
     def startMachine(self, machineId):
         '''
@@ -350,6 +351,12 @@ class Provider(ServiceProvider):
         Returns:
         '''
         return self.__getApi().removeMachine(machineId)
+    
+    def updateMachineMac(self, machineId, macAddres):
+        '''
+        Changes the mac address of first nic of the machine to the one specified
+        '''
+        return self.__getApi().updateMachineMac(machineId, macAddres)
     
     def getMacRange(self):
         return self.macsRange.value

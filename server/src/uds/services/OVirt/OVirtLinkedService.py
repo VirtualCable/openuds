@@ -112,6 +112,14 @@ class OVirtLinkedService(Service):
     lenName = gui.NumericField(length = 1, label = translatable('Name Length'), defvalue = 5, order = 5, 
                                tooltip = translatable('Length of numeric part for the names of this machines (betwen 3 and 6'), required = True)
     
+    display = gui.ChoiceField(label = translatable('Display'), rdonly = False, order = 6,
+                 tooltip = translatable('Display type (only for administration pourposses)'),
+                 values = [ gui.choiceItem('spice', 'Spice'),
+                     gui.choiceItem('vnc', 'Vnc')
+                 ],
+                 defvalue = '1' # Default value is the ID of the choicefield
+              ) 
+    
     ov = gui.HiddenField()
     ev = gui.HiddenField() # We need to keep the env so we can instantiate the Provider
     
@@ -169,7 +177,7 @@ class OVirtLinkedService(Service):
             
         Raises an exception if operation fails.
         '''
-        return self.parent().makeTemplate(name, comments, self.machine.value, self.cluster.value, self.datastore.value)
+        return self.parent().makeTemplate(name, comments, self.machine.value, self.cluster.value, self.datastore.value, self.display.value)
     
     def getTemplateState(self, templateId):
         '''
@@ -196,7 +204,7 @@ class OVirtLinkedService(Service):
         Returns:
             Id of the machine being created form template 
         '''
-        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value)
+        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value, self.display.value)
 
     def removeTemplate(self, templateId):
         '''
@@ -267,6 +275,12 @@ class OVirtLinkedService(Service):
         Returns:
         '''
         return self.parent().removeMachine(machineId)
+    
+    def updateMachineMac(self, machineId, macAddres):
+        '''
+        Changes the mac address of first nic of the machine to the one specified
+        '''
+        return self.parent().updateMachineMac(machineId, macAddres)
 
     def getMacRange(self):
         '''
@@ -286,4 +300,9 @@ class OVirtLinkedService(Service):
         '''
         return int(self.lenName.value)
     
+    def getDisplay(self):
+        '''
+        Returns the selected display type (for created machines, for administration 
+        '''
+        return self.display.value
     
