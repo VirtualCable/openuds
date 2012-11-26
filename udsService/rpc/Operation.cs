@@ -80,6 +80,8 @@ namespace uds
         internal const int TOKEN_QUERY = 0x00000008;
         internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
         internal const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
+        internal const string SE_SECURITY_NAME = "SeSecurityPrivilege";
+        internal const string SE_TCB_NAME = "SeTcbPrivilege";
 
         public const int EWX_LOGOFF = 0x00000000;
         public const int EWX_SHUTDOWN = 0x00000001;
@@ -154,12 +156,16 @@ namespace uds
         public static bool ChangeUserPassword(string user, string oldPass, string newPass)
         {
             try {
+
                 logger.Debug("Setting new password for user " + user + " to " + newPass);
-                uint res = NetUserChangePassword(null, user, oldPass, newPass);
+
+                Info.DomainInfo info = Info.Computer.GetDomainInfo();
+
+                uint res = NetUserChangePassword(info.ComputerName, user, oldPass, newPass);
                 logger.Debug("Result of changeUserPassword: " + res);
 
                 if( res != 0 )
-                    logger.Error("Could not change password for user \"" + user + "\" (using password \"" + newPass + "\"), result: " + res);
+                    logger.Error("Could not change password for user \"" + user + "\" (using password \"" + newPass + "\") at \"" + info.ComputerName + "\", result: " + res);
 
                 return res == 0;
             }
