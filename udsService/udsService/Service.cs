@@ -156,7 +156,7 @@ namespace uds.Services
                         Rename(parms[0], null, null, null);
                     else if (parms.Length == 4)
                         // Rename, and also change user password
-                        Rename(parms[0], parms[1], parms[2], parms[2]);
+                        Rename(parms[0], parms[1], parms[2], parms[3]);
                     else
                     {
                         logger.Error("Unrecognized parameters: " + data[1]);
