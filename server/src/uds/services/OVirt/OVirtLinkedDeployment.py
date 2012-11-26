@@ -485,6 +485,20 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         pass
     
+    def moveToCache(self, newLevel):
+        '''
+        Moves machines between cache levels
+        '''
+        if opRemove in self._queue:
+            return State.RUNNING
+        
+        if newLevel == self.L1_CACHE:
+            self._queue = [opStart, opFinish]
+        else:
+            self._queue = [opStart, opSuspend, opFinish]
+            
+        return self.__executeQueue()
+    
     def userLoggedIn(self, user):
         '''
         This method must be available so os managers can invoke it whenever
