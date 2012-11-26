@@ -105,7 +105,7 @@ class RDPTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
     
-    def renderForHtml(self, id, ip, os, user, password):
+    def renderForHtml(self,  userService, id, ip, os, user, password):
         # We use helper to keep this clean
         username = user.getUsernameForAuth()
         prefs = user.prefs('rdp')
@@ -132,6 +132,9 @@ class RDPTransport(Transport):
         extra = { 'width': width, 'height' : height, 'depth' : depth, 
             'printers' : self._allowPrinters, 'smartcards' : self._allowSmartcards, 
             'drives' : self._allowDrives, 'serials' : self._allowSerials, 'compression':True }
+            
+        # Fix username/password acording to os manager
+        username, password = userService.processUserPassword(username, password)
             
         return generateHtmlForRdp(self, id, os, ip, '3389', username, password, domain, extra)
         

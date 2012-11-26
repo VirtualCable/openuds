@@ -116,7 +116,7 @@ class TSRDPTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
     
-    def renderForHtml(self, id, ip, os, user, password):
+    def renderForHtml(self, userService, id, ip, os, user, password):
         # We use helper to keep this clean
         username = user.getUsernameForAuth()
         prefs = user.prefs('rdp')
@@ -155,6 +155,9 @@ class TSRDPTransport(Transport):
             'printers' : self._allowPrinters, 'smartcards' : self._allowSmartcards, 
             'drives' : self._allowDrives, 'serials' : self._allowSerials,
             'tun': tun, 'compression':True }
+            
+        # Fix username/password acording to os manager
+        username, password = userService.processUserPassword(username, password)
             
         return generateHtmlForRdp(self, id, os, ip, '-1', username, password, domain, extra)
         

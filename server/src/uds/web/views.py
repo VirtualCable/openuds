@@ -222,7 +222,7 @@ def service(request, idService, idTransport):
             if ip is not None:
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
-                    transport = itrans.renderForHtml(scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
+                    transport = itrans.renderForHtml(ads, scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
                     return render_to_response('uds/show_transport.html', {'transport' : transport, 'nolang' : True }, context_instance=RequestContext(request))
                 else:
                     logger.debug('Transport is not ready for user service {0}'.format(ads))

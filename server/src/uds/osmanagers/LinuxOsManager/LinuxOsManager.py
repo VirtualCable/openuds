@@ -67,13 +67,13 @@ class LinuxOsManager(osmanagers.OSManager):
         '''
         gets name from deployed
         '''
-        si = service.getInstance()
-        name = si.getName()
-        service.updateData(si)
-        return name
+        return service.getName()
         
     def infoVal(self,service):
         return 'rename:' + self.getName(service)
+
+    def infoValue(self,service):
+        return 'rename\r' + self.getName(service)
     
     def notifyIp(self, uid, si, data):
         # Notifies IP to deployed
@@ -87,7 +87,8 @@ class LinuxOsManager(osmanagers.OSManager):
     def process(self,service,msg, data):
         '''
         We understand this messages:
-        * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class)
+        * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), old method
+        * msg = information, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), new method
         * msg = logon, data = Username, Informs that the username has logged in inside the machine
         * msg = logoff, data = Username, Informs that the username has logged out of the machine 
         * msg = ready, data = None, Informs machine ready to be used
@@ -99,8 +100,13 @@ class LinuxOsManager(osmanagers.OSManager):
         notifyReady = False
         doRemove = False
         state = service.os_state
+        
+        # Old "info" state, will be removed in a near future
         if msg == "info":
             ret = self.infoVal(service)
+            state = State.PREPARING
+        elif msg == "information":
+            ret = self.infoValue(service)
             state = State.PREPARING
         elif msg == "login":
             si = service.getInstance()

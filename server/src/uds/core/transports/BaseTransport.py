@@ -101,9 +101,10 @@ class Transport(Module):
         '''
         return cls.supportedOss.count(osName) > 0
     
-    def renderForHtml(self, id, ip, os, user, password):
+    def renderForHtml(self, userService, id, ip, os, user, password):
         '''
         Requests the html rendering of connector for the destination ip, (dbUser) and password
+        @param: userService: DeployedUserService for witch we are rendering the connection (db model)
         @param id: id of the transport
         @param ip: ip of the destination
         @param user: user (dbUser) logged in

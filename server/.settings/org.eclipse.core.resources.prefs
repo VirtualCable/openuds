@@ -105,6 +105,7 @@ encoding//src/uds/models.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/LinuxOsManager.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/__init__.py=utf-8
 encoding//src/uds/osmanagers/WindowsOsManager/WinDomainOsManager.py=utf-8
+encoding//src/uds/osmanagers/WindowsOsManager/WinRandomPassOsManager.py=utf-8
 encoding//src/uds/osmanagers/WindowsOsManager/WindowsOsManager.py=utf-8
 encoding//src/uds/osmanagers/WindowsOsManager/__init__.py=utf-8
 encoding//src/uds/osmanagers/__init__.py=utf-8

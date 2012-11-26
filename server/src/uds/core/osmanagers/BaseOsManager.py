@@ -116,6 +116,23 @@ class OSManager(Module):
         '''
         pass
     
+    def processUserPassword(self, service, username, password):
+        '''
+        This will be invoked prior to passsing username/password to Transport.
+        
+        This method allows us to "change" username and/or password "on the fly".
+        One example of use of this is an OS Manager that creates a random password for an user. 
+        In that case, this method, if the username passed in is the same as the os manager changes the password for, return the changed password.
+        
+        MUST Return:
+            An array with 2 elements, [newUserName, newPassword].
+            Default method simplt does nothing with in parameters, just returns it. (So, if your os manager does not need this,
+            simply do not implement it)
+            
+        Note: This method is, right now, invoked by Transports directly. So if you implement a Transport, remember to invoke this
+        '''
+        return [username, password]
+    
     def destroy(self):
         '''
         Invoked when OS Manager is deleted

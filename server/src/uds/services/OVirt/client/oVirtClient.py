@@ -421,6 +421,8 @@ class Client(object):
 
             api = self.__getApi()
             
+            logger.debug('Deploying machine {0}'.format(name))
+            
             cluster = params.Cluster(id=clusterId)
             template = params.Template(id=templateId)
             display = params.Display(type_=displayType)

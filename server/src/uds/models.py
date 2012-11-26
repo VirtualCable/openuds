@@ -1073,7 +1073,7 @@ class DeployedServicePublication(models.Model):
         if self.data != '' and self.data is not None:
             dpl.unserialize(self.data)
         return dpl
-         
+    
     def updateData(self, dsp):
         '''
         Updates the data field with the serialized uds.core.services.Publication 
@@ -1236,6 +1236,57 @@ class UserService(models.Model):
         :note: This method do not saves the updated record, just updates the field
         '''
         self.data = us.serialize()
+
+    def getName(self):
+        '''
+        Returns the name of the user deployed service
+        '''
+        if self.friendly_name == '':
+            si = self.getInstance()
+            self.friendly_name = si.getName()
+            self.updateData(si)
+        
+        return self.friendly_name
+        
+    def getUniqueId(self):
+        '''
+        Returns the unique id of the user deployed service
+        '''
+        if self.unique_id == '':
+            si = self.getInstance()
+            self.unique_id = si.getUniqueId()
+            self.updateData(si)
+        return self.unique_id
+         
+    def storeValue(self, name, value):
+        '''
+        Stores a value inside custom storage
+        
+        Args:
+            name: Name of the value to store
+            value: Value of the value to store
+        '''
+        self.getEnvironment().storage().put(name, value)
+    
+    def recoverValue(self, name):
+        '''
+        Recovers a value from custom storage
+        
+        Args:
+            name: Name of values to recover
+            
+        Returns:
+            Stored value, None if no value was stored
+        '''
+        return self.getEnvironment().storage().get(name)
+    
+    def processUserPassword(self, username, password):
+        ds = self.deployed_service
+        serviceInstance = ds.service.getInstance()
+        if serviceInstance.needsManager is False:
+            return [username, password]
+        
+        return ds.osmanager.getInstance().processUserPassword(self, username, password)
         
     def setState(self, state):
         '''

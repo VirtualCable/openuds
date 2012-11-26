@@ -204,6 +204,7 @@ class OVirtLinkedService(Service):
         Returns:
             Id of the machine being created form template 
         '''
+        logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
         return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value, self.display.value)
 
     def removeTemplate(self, templateId):

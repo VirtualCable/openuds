@@ -215,10 +215,17 @@ class OVirtLinkedDeployment(UserDeployment):
         if state == 'unknown' and chkState != 'unknown':
             return self.__error('Machine not found')
         
-        if state != chkState:
-            return State.RUNNING
+        ret = State.RUNNING
+        if type(chkState) is list:
+            for cks in chkState:
+                if state == cks:
+                    ret = State.FINISHED
+                    break
+        else:
+            if state == chkState:
+                ret = State.FINISHED
         
-        return State.FINISHED
+        return ret
         
     def __getCurrentOp(self):
         if len(self._queue) == 0:
@@ -306,8 +313,8 @@ class OVirtLinkedDeployment(UserDeployment):
         Deploys a machine from template for user/cache
         '''
         templateId =  self.publication().getTemplateId()
-        name = self.service().sanitizeVmName('UDS service ' + self.getName())
-        comments = 'UDS Linked clone for'
+        name = self.service().sanitizeVmName(self.getName()) # oVirt don't let us to create machines with more than 15 chars!!!
+        comments = 'UDS Linked clone'
         
         self._vmid = self.service().deployFromTemplate(name, comments, templateId)
         if self._vmid is None:
@@ -322,8 +329,9 @@ class OVirtLinkedDeployment(UserDeployment):
         if state == 'unknown':
             raise Exception('Machine not found')
         
-        if state != 'down' and state != 'suspended':
+        if state != 'down':
             self.__pushFrontOp(opStop)
+            self.__executeQueue()
         else:
             self.service().removeMachine(self._vmid)
     
@@ -356,7 +364,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if state == 'down': # Already stoped, return
             return
         
-        if state != 'up':
+        if state != 'up' and state != 'suspended':
             self.__pushBackOp(opRetry) # Will call "check Retry", that will finish inmediatly and again call this one
         else:
             self.service().stopMachine(self._vmid)
