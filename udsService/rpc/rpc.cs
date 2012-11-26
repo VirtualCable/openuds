@@ -18,7 +18,7 @@ namespace uds
 
         private const string LOGON_MSG = "logon";
         private const string LOGOFF_MSG = "logoff";
-        private const string INFO_MSG = "info";
+        private const string INFO_MSG = "information";
         private const string READY_MSG = "ready";
         private const string IP_MSG = "ip";
 

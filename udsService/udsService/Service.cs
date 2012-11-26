@@ -127,10 +127,18 @@ namespace uds.Services
                 rpc.ResetManager();
                 return;
             }
-            // Message is in the form "action:params", where we can identify:
-            // rename:computername
-            // domain:computername\tdomain\tou\tuserToAuth\tpassToAuth
-            string[] data = action.Split(':');
+
+            // Important note:
+            // Remove ":" as separator, due to the posibility that ":"  can be used as part of a password
+            // Old ":" is now '\r'
+            // In order to keep compatibility, getInfo will invoke rcp "information", so old actors "versions"
+            // will keep invoking "info" and return the old ":" separator way
+
+            // Message is in the form "action\rparams", where we can identify:
+            // rename\rcomputername  --- > Just rename
+            // rename\rcomputername\tuser\toldPass\tnewPass --> Rename with user password changing
+            // domain:computername\tdomain\tou\tuserToAuth\tpassToAuth --> Rename and add machine to domain
+            string[] data = action.Split('\r');
             if (data.Length != 2)
             {
                 logger.Error("Unrecognized instruction: \"" + action + "\"");
@@ -138,14 +146,27 @@ namespace uds.Services
                 return;
             }
 
+            string[] parms = data[1].Split('\t');
+
             switch (data[0])
             {
                 case "rename":
-                    Rename(data[1]);
+                    if (parms.Length == 1 )
+                        // Do not have to change user password
+                        Rename(parms[0], null, null, null);
+                    else if (parms.Length == 4)
+                        // Rename, and also change user password
+                        Rename(parms[0], parms[1], parms[2], parms[2]);
+                    else
+                    {
+                        logger.Error("Unrecognized parameters: " + data[1]);
+                        rpc.ResetManager();
+                        return;
+                    }
+
                     break;
                 case "domain":
                     {
-                        string[] parms = data[1].Split('\t');
                         if (parms.Length != 5)
                         {
                             logger.Error("Unrecognized parameters: " + data[1]);
@@ -213,23 +234,37 @@ namespace uds.Services
             }
         }
 
-        private void Rename(string name)
+        private void Rename(string name, string user, string oldPass, string newPass)
         {
             logger.Info("Requested renaming of computer to \"" + name + "\"");
             // name and newName can be different case, but still same
             Info.DomainInfo info = Info.Computer.GetDomainInfo();
+
             if ( string.Equals(info.ComputerName, name, StringComparison.CurrentCultureIgnoreCase))
             {
                 logger.Debug("Computer do not needs to be renamed");
                 rpc.SetReady();
                 return;
             }
+
+            // Set user password if provided
+            if (user != null)
+            {
+                if (Operation.ChangeUserPassword(user, oldPass, newPass) == false)
+                {
+                    logger.Error("Could not change password to " + newPass + " for user " + user);
+                    rpc.ResetManager();
+                    return;
+                }
+            }
+
             if (Operation.RenameComputer(name) == false)
             {
                 logger.Error("Could not rename machine to \"" + name + "\"");
                 rpc.ResetManager();
                 return;
             }
+
             Reboot();
         }
 

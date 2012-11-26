@@ -35,6 +35,16 @@ namespace uds
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         internal static extern bool ExitWindowsEx(int flg, int rea);
 
+        [DllImport("netapi32.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall,
+            SetLastError = true)]
+        static extern uint NetUserChangePassword(
+        [MarshalAs(UnmanagedType.LPWStr)] string domainname,
+        [MarshalAs(UnmanagedType.LPWStr)] string username,
+        [MarshalAs(UnmanagedType.LPWStr)] string oldpassword,
+        [MarshalAs(UnmanagedType.LPWStr)] string newpassword
+        );
+
+
         [Flags]
         public enum JoinOptions
         {
@@ -141,5 +151,23 @@ namespace uds
 
         }
 
+        public static bool ChangeUserPassword(string user, string oldPass, string newPass)
+        {
+            try {
+                logger.Debug("Setting new password for user " + user + " to " + newPass);
+                uint res = NetUserChangePassword(null, user, oldPass, newPass);
+                logger.Debug("Result of changeUserPassword: " + res);
+
+                if( res != 0 )
+                    logger.Error("Could not change password for user \"" + user + "\" (using password \"" + newPass + "\"), result: " + res);
+
+                return res == 0;
+            }
+            catch  (Exception e)
+            {
+                logger.Error("Exception at change user password", e);
+                return false;
+            }
+        }
    }
 }
