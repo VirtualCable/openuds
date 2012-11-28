@@ -9,8 +9,6 @@ from ovirtsdk.api import API
 
 import threading
 import logging
-import ovirtsdk
-from roman import OutOfRangeError
 
 logger = logging.getLogger(__name__)
 
