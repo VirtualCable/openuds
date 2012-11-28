@@ -360,8 +360,8 @@ class Client(object):
             for dsk in vm.disks.list():
                 dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd))
             
-            disks = params.Disks(disk=dsks)    
-
+            disks = params.Disks(disk=dsks)
+                
             # Create display description
             display = params.Display(type_=displayType)
             
