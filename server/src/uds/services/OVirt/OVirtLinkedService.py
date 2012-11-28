@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext_noop as translatable, ugettext as _
+from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.services import Service
 from OVirtPublication import OVirtPublication
 from OVirtLinkedDeployment import OVirtLinkedDeployment
@@ -52,15 +52,15 @@ class OVirtLinkedService(Service):
     '''
     #: Name to show the administrator. This string will be translated BEFORE
     #: sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
-    typeName = translatable('oVirt Linked Clone') 
+    #: mark it as _ (using ugettext_noop)
+    typeName = _('oVirt Linked Clone') 
     #: Type used internally to identify this provider
     typeType = 'oVirtLinkedService'
     #: Description shown at administration interface for this provider
-    typeDescription = translatable('oVirt Services based on templates and COW')
+    typeDescription = _('oVirt Services based on templates and COW')
     #: Icon file used as icon for this provider. This string will be translated 
     #: BEFORE sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
+    #: mark it as _ (using ugettext_noop)
     iconFile = 'service.png'
     
     # Functional related data
@@ -74,13 +74,13 @@ class OVirtLinkedService(Service):
     usesCache = True
     #: Tooltip shown to user when this item is pointed at admin interface, none 
     #: because we don't use it
-    cacheTooltip = translatable('Number of desired machines to keep running waiting for a user')
+    cacheTooltip = _('Number of desired machines to keep running waiting for a user')
     #: If we need to generate a "Level 2" cache for this service (i.e., L1 
     #: could be running machines and L2 suspended machines) 
     usesCache_L2 = True 
     #: Tooltip shown to user when this item is pointed at admin interface, None 
     #: also because we don't use it
-    cacheTooltip_L2 = translatable('Number of desired machines to keep suspended waiting for use') 
+    cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use') 
       
     #: If the service needs a s.o. manager (managers are related to agents 
     #: provided by services itselfs, i.e. virtual machines with actors)
@@ -96,24 +96,31 @@ class OVirtLinkedService(Service):
     deployedType = OVirtLinkedDeployment
     
     # Now the form part
-    machine = gui.ChoiceField(label=translatable("Base Machine"), order = 1, tooltip = _('Service base machine'), required = True)
-    cluster = gui.ChoiceField(label=translatable("Cluster"), order = 2, 
+    machine = gui.ChoiceField(label=_("Base Machine"), order = 1, tooltip = _('Service base machine'), required = True)
+    cluster = gui.ChoiceField(label=_("Cluster"), order = 2, 
         fills = {
             'callbackName' : 'ovFillResourcesFromCluster', 
             'function' : oVirtHelpers.getResources, 
             'parameters' : ['cluster', 'ov', 'ev']
             },
-        tooltip = translatable("Cluster to contain services"),  required = True                 
+        tooltip = _("Cluster to contain services"),  required = True                 
     )
     
-    datastore =  gui.ChoiceField(label = translatable("Datastore Domain"), rdonly = False, order = 3, 
-                                       tooltip = translatable('Datastore domain where to publish and put incrementals'), required = True)
-    baseName = gui.TextField(label = translatable('Machine Names'), rdonly = False, order = 4, tooltip = ('Base name for clones from this machine'), required = True)
-    lenName = gui.NumericField(length = 1, label = translatable('Name Length'), defvalue = 5, order = 5, 
-                               tooltip = translatable('Length of numeric part for the names of this machines (betwen 3 and 6'), required = True)
+    datastore =  gui.ChoiceField(label = _("Datastore Domain"), rdonly = False, order = 3, 
+                                       tooltip = _('Datastore domain where to publish and put incrementals'), required = True)
     
-    display = gui.ChoiceField(label = translatable('Display'), rdonly = False, order = 6,
-                 tooltip = translatable('Display type (only for administration pourposses)'),
+    memory = gui.NumericField(label = _("Memory (Mb)"), length = 4, defvalue = 512, rdonly = False, order = 4, 
+                              tooltip = _('Memory assigned to machines'), required = True)
+
+    memoryGuaranteed = gui.NumericField(label = _("Memory Guaranteed (Mb)"), length = 4, defvalue = 256, rdonly = False, order = 5, 
+                              tooltip = _('Physical memory guaranteed to machines'), required = True)
+    
+    baseName = gui.TextField(label = _('Machine Names'), rdonly = False, order = 6, tooltip = ('Base name for clones from this machine'), required = True)
+    lenName = gui.NumericField(length = 1, label = _('Name Length'), defvalue = 5, order = 7, 
+                               tooltip = _('Length of numeric part for the names of this machines (betwen 3 and 6'), required = True)
+    
+    display = gui.ChoiceField(label = _('Display'), rdonly = False, order = 8,
+                 tooltip = _('Display type (only for administration pourposses)'),
                  values = [ gui.choiceItem('spice', 'Spice'),
                      gui.choiceItem('vnc', 'Vnc')
                  ],

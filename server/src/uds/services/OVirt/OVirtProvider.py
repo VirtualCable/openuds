@@ -33,7 +33,7 @@ Created on Jun 22, 2012
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext_noop as translatable, ugettext as _
+from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.util.State import State
 from uds.core.services import ServiceProvider
 from OVirtLinkedService import OVirtLinkedService
@@ -68,15 +68,15 @@ class Provider(ServiceProvider):
     offers = [OVirtLinkedService]
     #: Name to show the administrator. This string will be translated BEFORE
     #: sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
-    typeName = translatable('oVirt Platform Provider') 
+    #: mark it as _ (using ugettext_noop)
+    typeName = _('oVirt Platform Provider') 
     #: Type used internally to identify this provider
     typeType = 'oVirtPlatform'
     #: Description shown at administration interface for this provider
-    typeDescription = translatable('oVirt platform service provider')
+    typeDescription = _('oVirt platform service provider')
     #: Icon file used as icon for this provider. This string will be translated 
     #: BEFORE sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
+    #: mark it as _ (using ugettext_noop)
     iconFile = 'provider.png'
     
     # now comes the form fields
@@ -89,7 +89,7 @@ class Provider(ServiceProvider):
     # If we don't indicate an order, the output order of fields will be
     # "random"
     host = gui.TextField(length=64, label = _('Host'), order = 1, tooltip = _('oVirt Server IP or Hostname'), required = True)
-    username = gui.TextField(length=32, label = _('Username'), order = 3, tooltip = _('User with valid privileges on oVirt, (use "user@domain" form'), required = True, defvalue='admin@internal')
+    username = gui.TextField(length=32, label = _('Username'), order = 3, tooltip = _('User with valid privileges on oVirt, (use "user@domain" form)'), required = True, defvalue='admin@internal')
     password = gui.PasswordField(lenth=32, label = _('Password'), order = 4, tooltip = _('Password of the user of oVirt'), required = True)
     timeout = gui.NumericField(length=3, label = _('Timeout'), defvalue = '10', order = 5, tooltip = _('Timeout in seconds of connection to VC'), required = True)
     macsRange = gui.TextField(length=36, label = _('Macs range'), defvalue = '52:54:00:00:00:00-52:54:00:FF:FF:FF', order = 6, rdonly = True,  
