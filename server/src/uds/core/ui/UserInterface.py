@@ -258,6 +258,17 @@ class gui(object):
             data['tooltip'] = _(data['tooltip'])
             return data
             
+        @property
+        def defValue(self):
+            '''
+            Returns the default value for this field
+            '''
+            return self._data['defvalue']
+        
+        @defValue.setter
+        def defValue(self, defValue):
+            self.setDefValue(defValue)
+            
         def setDefValue(self, defValue):
             '''
             Sets the default value of the field·
@@ -266,6 +277,7 @@ class gui(object):
                 defValue: Default value (string)
             '''
             self._data['defvalue'] = defValue
+            
     
     class TextField(InputField):
         '''
@@ -750,6 +762,11 @@ class UserInterface(object):
         '''
         if values == '': # Has nothing
             return
+        
+        # Set all values to defaults ones
+        for k in self._gui.iterkeys():
+            self._gui[k].value = self._gui[k].defValue 
+        
         for txt in values.decode('zip').split('\002'):
             k, v = txt.split('\003')
             if self._gui.has_key(k):
