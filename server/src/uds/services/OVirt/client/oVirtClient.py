@@ -257,9 +257,14 @@ class Client(object):
             d = api.datacenters.get(id=datacenterId)
             storage = []
             for dd in d.storagedomains.list():
+                try:
+                    active = dd.get_status().get_state()
+                except:
+                    active = 'inactive'
+                    
                 storage.append( { 'id' : dd.get_id(), 'name' : dd.get_name(), 'type' : dd.get_type(), 
                                   'available' : dd.get_available(), 'used' : dd.get_used(), 
-                                  'active' : dd.get_status().get_state() == 'active' } )
+                                  'active' : active == 'active' } )
             
             
             res = { 'name' : d.get_name(), 'id' : d.get_id(), 'storage_type' : d.get_storage_type(), 
@@ -401,7 +406,7 @@ class Client(object):
         finally:
             lock.release()
             
-    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType):
+    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB):
         '''
         Deploys a virtual machine on selected cluster from selected template
         
@@ -410,10 +415,15 @@ class Client(object):
             comments: Comments for machine
             templateId: Id of the template to deploy from
             clusterId: Id of the cluster to deploy to
+            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
+            memoryMB: Memory requested for machine, in MB
+            guaranteedMB: Minimum memory guaranteed for this machine
             
         Returns:
             Id of the machine being created form template 
         '''
+        logger.debug('Deploying machine with name "{0}" from template {1} at cluster {2} with display {3}, memory {4} and guaranteed {5}'.format(
+                        name, templateId, clusterId, displayType, memoryMB, guaranteedMB))
         try:
             lock.acquire(True)
 
@@ -425,7 +435,9 @@ class Client(object):
             template = params.Template(id=templateId)
             display = params.Display(type_=displayType)
             
-            par = params.VM(name=name, cluster=cluster, template=template, description=comments, display=display)
+            memoryPolicy = params.MemoryPolicy(guaranteed=guaranteedMB*1024*1024)
+            par = params.VM(name=name, cluster=cluster, template=template, description=comments, 
+                            display=display, type_='desktop', memory=memoryMB*1024*1024, memory_policy=memoryPolicy)
             
             return api.vms.add(par).get_id()
             

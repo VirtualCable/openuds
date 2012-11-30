@@ -148,14 +148,20 @@ class OVirtLinkedService(Service):
         '''
         Loads required values inside
         '''
-        self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env().key()
         
-
+        # Here we have to use "default values", cause values aren't used at form initialization 
+        # This is that value is always '', so if we want to change something, we have to do it
+        # at defValue
+        self.ov.defValue = self.parent().serialize()
+        self.ev.defValue = self.parent().env().key()
+        
         machines = self.parent().getMachines()
         vals = []
         for m in machines:
             vals.append( gui.choiceItem( m['id'], m['name'] ))
+            
+        # This is not the same case, values is not the "value" of the field, but
+        # the list of values shown because this is a "ChoiceField" 
         self.machine.setValues(vals)
         
         clusters = self.parent().getClusters()
@@ -207,12 +213,16 @@ class OVirtLinkedService(Service):
             name: Name (sanitized) of the machine
             comments: Comments for machine
             templateId: Id of the template to deploy from
+            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
+            memoryMB: Memory requested for machine, in MB
+            guaranteedMB: Minimum memory guaranteed for this machine
             
         Returns:
             Id of the machine being created form template 
         '''
         logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
-        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value, self.display.value)
+        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value, 
+                                                self.display.value, int(self.memory.value), int(self.memoryGuaranteed.value))
 
     def removeTemplate(self, templateId):
         '''

@@ -765,6 +765,9 @@ class UserInterface(object):
         
         # Set all values to defaults ones
         for k in self._gui.iterkeys():
+            if self._gui[k].isType(gui.InputField.HIDDEN_TYPE): # Do not fills the value of hidden fields, those will not be deserialized
+                continue
+            
             self._gui[k].value = self._gui[k].defValue 
         
         for txt in values.decode('zip').split('\002'):

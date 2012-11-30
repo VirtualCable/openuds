@@ -52,9 +52,9 @@ class OVirtLinkedDeployment(UserDeployment):
     
     '''
     
-    #: Recheck every five seconds by default (for task methods)
-    suggestedTime = 5
-
+    #: Recheck every six seconds by default (for task methods)
+    suggestedTime = 6
+    
     def initialize(self):
         self._name = ''
         self._ip = ''
@@ -74,7 +74,6 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         Does nothing here also, all data are keeped at environment storage
         '''
-        logger.debug('Data: {0}'.format(str_))
         vals = str_.split('\1')
         if vals[0] == 'v1':
             self._name, self._ip, self._mac, self._vmid, self._reason, queue = vals[1:]
@@ -245,7 +244,7 @@ class OVirtLinkedDeployment(UserDeployment):
         
     def __pushBackOp(self, op):
         self._queue.append(op)
-    
+        
     def __error(self, reason):
         '''
         Internal method to set object as error state
@@ -347,7 +346,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if state == 'up': # Already started, return
             return
         
-        if state != 'down':
+        if state != 'down' and state != 'suspended':
             self.__pushFrontOp(opRetry) # Will call "check Retry", that will finish inmediatly and again call this one
         else:
             self.service().startMachine(self._vmid)
@@ -365,7 +364,7 @@ class OVirtLinkedDeployment(UserDeployment):
             return
         
         if state != 'up' and state != 'suspended':
-            self.__pushBackOp(opRetry) # Will call "check Retry", that will finish inmediatly and again call this one
+            self.__pushFrontOp(opRetry) # Will call "check Retry", that will finish inmediatly and again call this one
         else:
             self.service().stopMachine(self._vmid)
     
@@ -382,7 +381,7 @@ class OVirtLinkedDeployment(UserDeployment):
             return
         
         if state != 'up':
-            self.__pushBackOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
+            self.__pushFrontOp(opRetry) # Remember here, the return State.FINISH will make this retry be "poped" right ar return
         else:
             self.service().suspendMachine(self._vmid)
         

@@ -291,7 +291,7 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().removeTemplate(templateId)
         
-    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType):
+    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB):
         '''
         Deploys a virtual machine on selected cluster from selected template
         
@@ -300,11 +300,14 @@ class Provider(ServiceProvider):
             comments: Comments for machine
             templateId: Id of the template to deploy from
             clusterId: Id of the cluster to deploy to
+            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
+            memoryMB: Memory requested for machine, in MB
+            guaranteedMB: Minimum memory guaranteed for this machine
             
         Returns:
             Id of the machine being created form template 
         '''
-        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType)
+        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB)
         
     def startMachine(self, machineId):
         '''
