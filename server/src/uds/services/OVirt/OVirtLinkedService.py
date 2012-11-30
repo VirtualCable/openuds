@@ -53,11 +53,11 @@ class OVirtLinkedService(Service):
     #: Name to show the administrator. This string will be translated BEFORE
     #: sending it to administration interface, so don't forget to
     #: mark it as _ (using ugettext_noop)
-    typeName = _('oVirt Linked Clone') 
+    typeName = _('oVirt Linked Clone (Experimental)') 
     #: Type used internally to identify this provider
     typeType = 'oVirtLinkedService'
     #: Description shown at administration interface for this provider
-    typeDescription = _('oVirt Services based on templates and COW')
+    typeDescription = _('oVirt Services based on templates and COW (experimental)')
     #: Icon file used as icon for this provider. This string will be translated 
     #: BEFORE sending it to administration interface, so don't forget to
     #: mark it as _ (using ugettext_noop)
