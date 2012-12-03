@@ -116,6 +116,14 @@ class OSManager(Module):
         '''
         pass
     
+    @classmethod
+    def transformsUserOrPasswordForService(cls):
+        '''
+        Helper method that informs if the os manager transforms the username and/or the password.
+        This is used from DeployedService 
+        '''
+        return cls.processUserPassword != OSManager.processUserPassword
+    
     def processUserPassword(self, service, username, password):
         '''
         This will be invoked prior to passsing username/password to Transport.

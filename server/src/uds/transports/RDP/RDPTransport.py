@@ -105,6 +105,31 @@ class RDPTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
     
+    def getConnectionInfo(self, service, user, password):
+        from uds.core.transports import protocols
+        
+        username = user.getUsernameForAuth()
+        
+        proc = username.split('@')
+        if len(proc) > 1:
+            domain = proc[1]
+        else:
+            domain = ''
+            
+        username = proc[0]
+        if self._fixedName is not '':
+            username = self._fixedName
+        if self._fixedPassword is not '':
+            password = self._fixedPassword
+        if self._fixedDomain is not '':
+            domain = self._fixedDomain;
+        if self._useEmptyCreds is True:
+            username, password, domain = '','',''
+         
+        username, password = service.processUserPassword(username, password)
+        
+        return {'protocol': protocols.RDP, 'username': username, 'password': password, 'domain': domain} 
+    
     def renderForHtml(self,  userService, id, ip, os, user, password):
         # We use helper to keep this clean
         username = user.getUsernameForAuth()

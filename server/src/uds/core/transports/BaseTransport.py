@@ -109,7 +109,7 @@ class Transport(Module):
         '''
         return cls.getConnectionInfo != Transport.getConnectionInfo
     
-    def getConnectionInfo(self, userService, user, password):
+    def getConnectionInfo(self, service, user, password):
         '''
         This method must provide information about connection. 
         We don't have to implement it, but if we wont to allow some types of connections
@@ -117,7 +117,7 @@ class Transport(Module):
         kind of terminals/application will not work
 
         Args:
-            userService: DeployedUserService for witch we are rendering the connection (db model)
+            userService: DeployedUserService for witch we are rendering the connection (db model), or DeployedService (db model)
             user: user (dbUser) logged in
             pass: password used in authentication
         
@@ -125,8 +125,14 @@ class Transport(Module):
             'protocol': protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
             'username': username (transformed if needed to) used to login to service
             'password': password (transformed if needed to) used to login to service
+            'domain': domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
+            
+        :note: The provided service can be an user service or an deployed service (parent of user services).
+               I have implemented processUserPassword in both so in most cases we do not need if the service is
+               DeployedService or UserService. In case of processUserPassword for an DeployedService, no transformation
+               is done, because there is no relation at that level between user and service.
         '''
-        return {'protocol': protocols.NONE, 'usename': '', 'password': ''}
+        return {'protocol': protocols.NONE, 'username': '', 'password': '', 'domain': ''}
         
     def renderForHtml(self, userService, id, ip, os, user, password):
         '''

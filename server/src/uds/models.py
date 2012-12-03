@@ -832,6 +832,20 @@ class DeployedService(models.Model):
         except Exception:
             return None
         
+    def transformsUserOrPasswordForService(self):
+        return self.osmanager.getType().transformsUserOrPasswordForService()
+
+    def processUserPassword(self, username, password):
+        '''
+        This method is provided for consistency between UserService and DeployedService
+        There is no posibility to check the username and password that a user will use to
+        connect to a service at this level, because here there is no relation between both.
+        
+        The only function of this method is allow Transport to transform username/password in
+        getConnectionInfo without knowing if it is requested by a DeployedService or an UserService 
+        '''
+        return [username, password]
+        
     def setState(self, state, save = True):
         '''
         Updates the state of this object and, optionally, saves it
@@ -1280,7 +1294,31 @@ class UserService(models.Model):
         '''
         return self.getEnvironment().storage().get(name)
     
+    def transformsUserOrPasswordForService(self):
+        '''
+        If the os manager changes the username or the password, this will return True
+        '''
+        return self.deployed_service.transformsUserOrPasswordForService()
+    
     def processUserPassword(self, username, password):
+        '''
+        Before accessing a service by a transport, we can request
+        the service to "transform" the username & password that the transport
+        will use to connect to that service.
+        
+        This method is here so transport USE it before using the username/password
+        provided by user or by own transport configuration.
+        
+        Args:
+            username: the username that will be used to connect to service
+            password: the password that will be used to connect to service
+            
+        Return:
+            An array of two elements, first is transformed username, second is
+            transformed password.
+        
+        :note: This method MUST be invoked by transport before using credentials passed to getHtml.
+        '''
         ds = self.deployed_service
         serviceInstance = ds.service.getInstance()
         if serviceInstance.needsManager is False:
