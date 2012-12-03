@@ -34,6 +34,7 @@
 from django.utils.translation import ugettext as _
 from uds.core.util import OsDetector
 from uds.core import Module
+import protocols
 
 class Transport(Module):
     '''
@@ -101,6 +102,32 @@ class Transport(Module):
         '''
         return cls.supportedOss.count(osName) > 0
     
+    @classmethod
+    def providesConnetionInfo(cls):
+        '''
+        Helper method to check if transport provides information about connection
+        '''
+        return cls.getConnectionInfo != Transport.getConnectionInfo
+    
+    def getConnectionInfo(self, userService, user, password):
+        '''
+        This method must provide information about connection. 
+        We don't have to implement it, but if we wont to allow some types of connections
+        (such as Client applications, some kinds of TC, etc... we must provide it or those
+        kind of terminals/application will not work
+
+        Args:
+            userService: DeployedUserService for witch we are rendering the connection (db model)
+            user: user (dbUser) logged in
+            pass: password used in authentication
+        
+        The expected result from this method is a dictionary, containing at least:
+            'protocol': protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
+            'username': username (transformed if needed to) used to login to service
+            'password': password (transformed if needed to) used to login to service
+        '''
+        return {'protocol': protocols.NONE, 'usename': '', 'password': ''}
+        
     def renderForHtml(self, userService, id, ip, os, user, password):
         '''
         Requests the html rendering of connector for the destination ip, (dbUser) and password

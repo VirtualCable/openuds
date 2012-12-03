@@ -84,12 +84,19 @@ class IPAuth(Authenticator):
                 groupsManager.validate(g)
 
     def authenticate(self, username, credentials, groupsManager):
+        # If credentials is a dict, that can't be sent directly from web interface, we allow entering
+        # We use this "trick" so authenticators
         if self.cache().get(username) == credentials:
             self.cache().remove(username)
             self.getGroups(username, groupsManager)
             return True
         return False
         
+    def internalAuthenticate(self,username, credentials, groupsManager):
+        self.getGroups(username, groupsManager)
+        if len(groupsManager.getValidGroups()) > 0 and self.dbAuthenticator().isValidUser(username, True):
+            return True
+        return False
         
     @staticmethod
     def test(env, data):

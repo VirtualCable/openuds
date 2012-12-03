@@ -11,7 +11,7 @@
 
 from django.conf.urls.defaults import patterns, include
 
-urlpatterns = patterns('uds.dispatchers.pam.views',
-     (r'^pam$', 'pam'),
+urlpatterns = patterns(__package__,
+     (r'^pam$', 'views.pam'),
     )
             

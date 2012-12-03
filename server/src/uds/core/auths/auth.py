@@ -105,7 +105,7 @@ def __registerUser(authenticator, authInstance, username):
     return None
     
 
-def authenticate(username, password, authenticator):
+def authenticate(username, password, authenticator, useInternalAuthenticate = False):
     '''
     Given an username, password and authenticator, try to authenticate user
     @param username: username to authenticate
@@ -116,7 +116,12 @@ def authenticate(username, password, authenticator):
     logger.debug('Authenticating user {0} with authenticator {1}'.format(username, authenticator))
     gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
-    if authInstance.authenticate(username, password, gm) == False:
+    if useInternalAuthenticate is False:
+        res = authInstance.authenticate(username, password, gm)
+    else:
+        res = authInstance.internalAuthenticate(username, password, gm)
+    
+    if res is False:
         return None
     
     logger.debug('Groups manager: {0}'.format(gm))

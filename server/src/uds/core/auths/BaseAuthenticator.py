@@ -219,6 +219,13 @@ class Authenticator(Module):
         '''
         return cls.getHtml != Authenticator.getHtml
     
+    @classmethod
+    def canCheckUserPassword(cls):
+        '''
+        Helper method to query if a class can do a login using credentials
+        '''
+        return cls.authenticate != Authenticator.authenticate
+        
     def searchUsers(self, pattern):
         '''
         If you provide this method, the user will be allowed to search users,
@@ -275,7 +282,7 @@ class Authenticator(Module):
         
         Args:
             username: User name to authenticate
-            credentilas: Credentials for this user, (password, pki, or whatever needs to be used)
+            credentilas: Credentials for this user, (password, pki, or whatever needs to be used). (string)
             groupManager: Group manager to modify with groups to which this users belongs to.
         
         Returns:
@@ -294,6 +301,42 @@ class Authenticator(Module):
                we let the authenticator decide inside wich groups of UDS this users is included.
         '''
         return False
+    
+    def internalAuthenticate(self,username, credentials, groupsManager):
+        '''
+        This method is provided so "plugins" (For example, a custom dispatcher), can test
+        the username/credentials in an alternative way.
+        
+        For example, ip authenticator generates, inside the custom html, a 1 time password
+        that will be used to authenticate the ip. If we create a custom dispatcher and we want
+        to auth the user without the html part being displayed, we have a big problem.
+        
+        Using this method, the authenticator has the oportunitiy to, (for example, in case of
+        IP auth), ignore "credentials"
+        
+        Args:
+            username: User name to authenticate
+            credentilas: Credentials for this user, (password, pki, or whatever needs to be used). (string)
+            groupManager: Group manager to modify with groups to which this users belongs to.
+        
+        Returns:
+            True if authentication success, False if don't.
+            By default, internalAuthenticate simply invokes authenticate, but this method
+            is here so you can provide your own method if needed 
+        
+        See uds.core.auths.GroupsManager
+        
+        :note: This method must check not only that the user has valid credentials, but also
+               check the valid groups from groupsManager.
+               If this method returns false, of method getValidGroups of the groupsManager
+               passed into this method has no elements, the user will be considered invalid.
+               So remember to check validity of groups this user belongs to (inside the authenticator,
+               not inside UDS) using groupsManager.validate(group to which this users belongs to).
+               
+               This is done in this way, because UDS has only a subset of groups for this user, and
+               we let the authenticator decide inside wich groups of UDS this users is included.
+        '''
+        return self.authenticate(username, credentials, groupsManager)
     
     def logout(self, username):
         '''
