@@ -177,12 +177,11 @@ class UserServiceManager(object):
 
     
     @transaction.commit_on_success
-    def __checkMaxDeployedReached(self, deployedServicePublication):
+    def __checkMaxDeployedReached(self, deployedService):
         '''
         Checks if maxDeployed for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
         '''
-        deployedService = deployedServicePublication.deployed_service
         serviceInstance = deployedService.service.getInstance()
         # Early return, so no database count is needed
         if serviceInstance.maxDeployed == Service.UNLIMITED:
@@ -196,25 +195,25 @@ class UserServiceManager(object):
                 )
         
     
-    def __createCacheAtDb(self, deployedService, cacheLevel):
+    def __createCacheAtDb(self, deployedServicePublication, cacheLevel):
         '''
         Private method to instatiate a cache element at database with default states
         '''
         # Checks if maxDeployed has been reached and if so, raises an exception
-        self.__checkMaxDeployedReached(deployedService)
+        self.__checkMaxDeployedReached(deployedServicePublication.deployed_service)
         now = getSqlDatetime()
-        return deployedService.userServices.create(cache_level = cacheLevel, state = State.PREPARING, os_state = State.PREPARING, 
-                                               state_date=now, creation_date=now, data = '', deployed_service = deployedService.deployed_service, 
+        return deployedServicePublication.userServices.create(cache_level = cacheLevel, state = State.PREPARING, os_state = State.PREPARING, 
+                                               state_date=now, creation_date=now, data = '', deployed_service = deployedServicePublication.deployed_service, 
                                                user = None, in_use = False )
         
-    def __createAssignedAtDb(self, deployedService, user):
+    def __createAssignedAtDb(self, deployedServicePublication, user):
         '''
         Private method to instatiate an assigned element at database with default state
         '''
-        self.__checkMaxDeployedReached(deployedService)
+        self.__checkMaxDeployedReached(deployedServicePublication.deployed_service)
         now = getSqlDatetime()
-        return deployedService.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
-                                       state_date=now, creation_date=now, data='', deployed_service=deployedService.deployed_service, user=user, in_use=False)
+        return deployedServicePublication.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
+                                       state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service, user=user, in_use=False)
         
     def __createAssignedAtDbForNoPublication(self, deployedService, user):
         self.__checkMaxDeployedReached(deployedService)
