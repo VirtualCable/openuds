@@ -41,6 +41,7 @@ import services # to make sure that the packages are initialized at this point
 import auths # To make sure that the packages are initialized at this point
 import osmanagers # To make sure that packages are initialized at this point
 import transports # To make sure that packages are initialized at this point
+import dispatchers
 import models
 
 

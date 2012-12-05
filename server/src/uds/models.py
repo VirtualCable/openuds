@@ -1678,24 +1678,28 @@ class Network(models.Model):
         '''
         convert decimal dotted quad string to long integer
         '''
-    
-        hexn = ''.join(["%02X" % long(i) for i in ip.split('.')])
-        return long(hexn, 16)
+        try:
+            hexn = ''.join(["%02X" % long(i) for i in ip.split('.')])
+            return long(hexn, 16)
+        except:
+            return 0 # Invalid values will map to "0.0.0.0" --> 0
     
     @staticmethod
     def longToIp(n):
         '''
         convert long int to dotted quad string
         '''
-        
-        d = 256 * 256 * 256
-        q = []
-        while d > 0:
-            m,n = divmod(n,d)
-            q.append(str(m))
-            d = d/256
-
-        return '.'.join(q)
+        try:
+            d = 256 * 256 * 256
+            q = []
+            while d > 0:
+                m,n = divmod(n,d)
+                q.append(str(m))
+                d = d/256
+    
+            return '.'.join(q)
+        except:
+            return '0.0.0.0' # Invalid values will map to "0.0.0.0"
 
     @staticmethod
     def networksFor(ip):

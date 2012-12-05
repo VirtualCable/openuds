@@ -216,6 +216,11 @@ class UserServiceManager(object):
                                        state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service, user=user, in_use=False)
         
     def __createAssignedAtDbForNoPublication(self, deployedService, user):
+        '''
+        __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
+        There is cases where deployed services do not have publications (do not need them), so we need this method to create
+        an UserService with no publications, and create them from an DeployedService
+        '''
         self.__checkMaxDeployedReached(deployedService)
         now = getSqlDatetime()
         return deployedService.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,

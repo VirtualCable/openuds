@@ -39,16 +39,22 @@ import uds.dispatchers
 logger = logging.getLogger(__name__)
 
 
+patterns = []
+
 def loadModulesUrls():
-    patterns = []
-    try:
-        modName = 'uds.dispatchers'
-        pkgpath = os.path.dirname(sys.modules[modName].__file__)
-        for _, name, _ in pkgutil.iter_modules([pkgpath]):
-            fullModName = '%s.%s.urls' % (modName, name)
-            mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], -1)
-            patterns += mod.urlpatterns
-    except Exception, e:
-        logger.debug(e)
-        pass
+    logger.debug('Looking for dispatching modules')
+    global patterns
+    if len(patterns) == 0:
+        try:
+            modName = 'uds.dispatchers'
+            pkgpath = os.path.dirname(sys.modules[modName].__file__)
+            for _, name, _ in pkgutil.iter_modules([pkgpath]):
+                fullModName = '%s.%s.urls' % (modName, name)
+                mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], -1)
+                patterns += mod.urlpatterns
+        except Exception, e:
+            logger.debug(e)
+            pass
+        
     return patterns
+    
