@@ -37,6 +37,7 @@ from uds.core.jobs.JobsFactory import JobsFactory
 from uds.core.Environment import Environment
 from uds.core.util.db.LockingManager import LockingManager
 from uds.core.util.State import State
+from uds.core.util import log
 from uds.core.services.Exceptions import InvalidServiceException
 from datetime import datetime, timedelta
 
@@ -1176,6 +1177,9 @@ class UserService(models.Model):
     in_use_date = models.DateTimeField(default=NEVER)
     cache_level = models.PositiveSmallIntegerField(db_index=True, default=0) # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
 
+    src_hostname = models.CharField(max_length=64, default='')
+    src_ip = models.CharField(max_length=15, default='')
+
     objects = LockingManager()
 
     class Meta:
@@ -1293,6 +1297,39 @@ class UserService(models.Model):
             Stored value, None if no value was stored
         '''
         return self.getEnvironment().storage().get(name)
+    
+    def setConnectionSource(self, ip, hostname=''):
+        '''
+        Notifies that the last access to this service was initiated from provided params
+        
+        Args:
+            ip: Ip from where the connection was initiated
+            hostname: Hostname from where the connection was initiated
+            
+        Returns:
+            Nothing
+        '''
+        self.src_ip = ip
+        self.src_hostname = hostname
+        self.save()
+    
+    def getConnectionSource(self):
+        '''
+        Returns stored connection source data (ip & hostname)
+        
+        Returns:
+            An array of two elements, first is the ip & second is the hostname
+            
+        :note: If the transport did not notified this data, this may be "empty"
+        '''
+        return [self.src_ip, self.src_hostname]
+    
+    def doLog(self, level, message, source = log.INTERNAL):
+        if type(level) is not int:
+            level = log.logLevelFromStr(level)
+        
+        self.log.create(created = getSqlDatetime(), source = source, level = level, data = message)
+        
     
     def transformsUserOrPasswordForService(self):
         '''
@@ -1449,7 +1486,7 @@ class UserService(models.Model):
             usi = us.getInstance()
             if usi.service().mustAssignManually is False:
                 continue
-            res.append({ 'id' : us.id, 'name' : usi.getName(), 'transports' : us.deployed_service.transports })
+            res.append({ 'id' : us.id, 'name' : usi.getName(), 'transports' : us.deployed_service.transports, 'service' : us })
         return res
 
     def __unicode__(self):
@@ -1473,10 +1510,36 @@ class UserService(models.Model):
         
         logger.debug('Deleted user service {0}'.format(toDelete))
         
-        
-
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(UserService.beforeDelete, sender = UserService)
+
+# Especific loggin information for an user service
+class UserServiceLog(models.Model):
+    '''
+    This class represents the log associated with an user service.
+    
+    This log is mainly used to keep track of log infor relative to the service
+    (such as when a user access a machine, 
+    of information related to 
+    '''
+
+    user_service = models.ForeignKey(UserService, on_delete=models.CASCADE, related_name = 'log')
+    
+    created = models.DateField(auto_now_add=True, db_index=True)
+    source = models.CharField(max_length=16, default='internal', db_index=True)    
+    level = models.PositiveSmallIntegerField(default=0, db_index=True)
+    data = models.CharField(max_length=255, default='')
+    
+    
+    class Meta:
+        '''
+        Meta class to declare db table
+        '''
+        db_table = 'uds__us_log'
+    
+
+    def __unicode__(self):
+        return "Log of {0}: {1} - {2} - {3} - {4}".format(self.user_service.name, self.created, self.source, self.level, self.data)
 
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)

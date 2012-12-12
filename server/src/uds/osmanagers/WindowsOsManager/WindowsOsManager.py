@@ -14,6 +14,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util.State import State
+from uds.core.util import log
 
 import logging
 
@@ -84,6 +85,15 @@ class WindowsOsManager(osmanagers.OSManager):
             if key.lower() == uid.lower():
                 si.setIp(val)
                 break
+            
+    def doLog(self, service, data):
+        # Stores a log associated with this service
+        try:
+            msg, level = data.split('\t')
+            service.doLog(level, msg, log.ACTOR)
+        except:
+            service.doLog(log.ERROR, "do not understand {0}".format(data), log.ACTOR)
+        
         
     def process(self,service,msg, data):
         '''
@@ -107,10 +117,15 @@ class WindowsOsManager(osmanagers.OSManager):
         elif msg == "information":
             ret = self.infoValue(service)
             state = State.PREPARING
+        elif msg == "log":
+            self.doLog(service, data)
         elif msg == "logon":
             si = service.getInstance()
             si.userLoggedIn(data)
             service.updateData(si)
+            # We get the service logged hostname & ip and returns this
+            ip, hostname = service.getConnectionSource()
+            ret = "{0}\t{1}".format(ip, hostname)
             inUse = True
         elif msg == "logoff":
             si = service.getInstance()

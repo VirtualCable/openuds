@@ -111,6 +111,8 @@ def authenticate(username, password, authenticator, useInternalAuthenticate = Fa
     @param username: username to authenticate
     @param password: password to authenticate this user
     @param authenticator: Authenticator (database object) used to authenticate with provided credentials
+    @param useInternalAuthenticate: If True, tries to authenticate user using "internalAuthenticate". If false, it uses "authenticate".
+                                    This is so because in some situations we may want to use a "trusted" method (internalAuthenticate is never invoked directly from web)
     @return: None if authentication fails, User object (database object) if authentication is o.k. 
     '''
     logger.debug('Authenticating user {0} with authenticator {1}'.format(username, authenticator))

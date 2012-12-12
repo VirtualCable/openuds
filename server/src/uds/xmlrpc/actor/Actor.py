@@ -33,7 +33,7 @@
 
 from django.db import transaction
 from uds.models import UserService, State
-from uds.core.util import Log
+from uds.core.util import log
 
 import logging
 
@@ -70,7 +70,7 @@ def message(id_, message, data):
                 uniqueId = services[0].unique_id
                 serviceIp = ''
                 username = ''
-                Log.useLog(type_, uniqueId , serviceIp, username)
+                log.useLog(type_, uniqueId , serviceIp, username)
     except Exception as e:
         logger.error("Exception at message (client): {0}".format(e))
         res = ""
