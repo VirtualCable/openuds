@@ -36,6 +36,34 @@ import logging
 logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
+# Logging levels
+OTHER,DEBUG,INFO,WARN,ERROR,FATAL = (10000*(x+1) for x in xrange(6))
+
+# Logging sources
+INTERNAL,ACTOR,TRANSPORT = ('internal', 'actor', 'transport')
+
+# Names for defined log levels
+__nameLevels = {
+     'DEBUG': DEBUG,
+     'INFO': INFO,
+     'WARN': WARN,
+     'ERROR': ERROR,
+     'FATAL': FATAL,
+     'OTHER': OTHER
+    }
+
+# Reverse dict of names
+__valueLevels = dict((v,k) for k, v in __nameLevels.iteritems())
+
+def logLevelFromStr(str):
+    '''
+    Gets the numeric log level from an string.
+    '''
+    return __nameLevels.get(str, OTHER)
+
+def logStrFromLevel(level):
+    return __valueLevels.get(level, 'OTHER')
+    
 
 def useLog(type_, serviceUniqueId, serviceIp, username):
     useLogger.info('|'.join([type_, serviceUniqueId, serviceIp, username]))
