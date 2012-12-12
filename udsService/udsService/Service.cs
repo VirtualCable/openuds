@@ -22,7 +22,30 @@ namespace uds.Services
         private static void SensLogon_Logon(string userName)
         {
             logger.Info("User " + userName + " has logged in");
-            rpc.Logon(userName);
+            string[] data = rpc.Logon(userName);
+            if (data.Length == 2)
+            {
+                try
+                {
+                    string WindowsDir = Environment.GetEnvironmentVariable("windir");
+                    System.IO.TextWriter file = new System.IO.StreamWriter(WindowsDir + "\\remoteh.txt", false);
+                    file.Write(data[1]);
+                    file.Close();
+                    file = new System.IO.StreamWriter(WindowsDir + "\\remoteip.txt", false);
+                    file.Write(data[0]);
+                    file.Close();
+                }
+                catch (Exception e)
+                {
+                    logger.Error("Remote information could not be saved", e);
+                    // But this continues...
+                }
+
+            }
+            else
+            {
+                logger.Error("Invalid data received at Logon notification: " + string.Join(",", data));
+            }
         }
 
 
@@ -30,6 +53,16 @@ namespace uds.Services
         {
             logger.Info("User " + userName + " has logged out");
             rpc.Logoff(userName);
+        }
+
+        private static void SensLogon_DisplayLock(string username)
+        {
+            logger.Info("User " + username + " has locked the display");
+        }
+
+        private static void SensLogon_DisplayUnlock(string username)
+        {
+            logger.Info("User " + username + " has unlocked the display");
         }
 
         public Service()
@@ -52,6 +85,8 @@ namespace uds.Services
             // Prepare SENS events
             Sens.SensLogon.Logon += SensLogon_Logon;
             Sens.SensLogon.Logoff += SensLogon_Logout;
+            Sens.SensLogon.DisplayLock += SensLogon_DisplayLock;
+            Sens.SensLogon.DisplayUnlock += SensLogon_DisplayUnlock;
 
             logger.Debug("Invoking base OnStart");
             // Invoke base OnStart
@@ -64,8 +99,10 @@ namespace uds.Services
             // Signal thread if already running
             _stopEvent.Set();
             // Prepare SENS events
-            Sens.SensLogon.Logon -= SensLogon_Logon;
+            Sens.SensLogon.DisplayUnlock -= SensLogon_DisplayUnlock;
+            Sens.SensLogon.DisplayLock -= SensLogon_DisplayLock;
             Sens.SensLogon.Logoff -= SensLogon_Logout;
+            Sens.SensLogon.Logon -= SensLogon_Logon;
 
             _thread.Join((2 + secsDelay) * 1000);
 
@@ -87,7 +124,7 @@ namespace uds.Services
                 }
                 catch (Exception e)
                 {
-                    logger.Debug("Exception!!!",e);
+                    logger.Error("Exception!!!",e);
                 }
                 if (interfaces == null)
                 {
@@ -101,8 +138,8 @@ namespace uds.Services
             }
             // We have now interfaces info, intialize the connection and try to connect
             // In fact, we do not use the interfaces received except for logging, initialize gets their own data from there
-            logger.Debug("Interfaces: " + string.Join(",", interfaces.ConvertAll<String>(i => i.mac + "=" + i.ip).ToArray()));
             rpc.Initialize(config.broker, config.ssl);
+            logger.Info("Interfaces: " + string.Join(",", interfaces.ConvertAll<String>(i => i.mac + "=" + i.ip).ToArray()));
             string action = null;
             while (action == null)
             {
@@ -242,7 +279,7 @@ namespace uds.Services
 
             if ( string.Equals(info.ComputerName, name, StringComparison.CurrentCultureIgnoreCase))
             {
-                logger.Debug("Computer do not needs to be renamed");
+                logger.Info("Computer do not needs to be renamed");
                 rpc.SetReady();
                 return;
             }
@@ -250,6 +287,7 @@ namespace uds.Services
             // Set user password if provided
             if (user != null)
             {
+                logger.Info("Setting password for user " + user);
                 if (Operation.ChangeUserPassword(user, oldPass, newPass) == false)
                 {
                     logger.Error("Could not change password to " + newPass + " for user " + user);
@@ -265,6 +303,7 @@ namespace uds.Services
                 return;
             }
 
+            logger.Info("Rebooting machine");
             Reboot();
         }
 

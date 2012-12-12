@@ -5,6 +5,8 @@ using System.ServiceProcess;
 using System.Diagnostics;
 using System.Linq;
 
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
+
 namespace uds.Services
 {
     class Application
@@ -45,7 +47,7 @@ namespace uds.Services
 
         static void Main(string[] args)
         {
-            log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo(AppDomain.CurrentDomain.BaseDirectory + "logging.cfg"));
+            logger.Debug("UDS Actor Started");
             config.LoadConfig(); // Loads configuration...
             // unlocks rpc
             rpc.Unlock(string.Join("", new string[] { "m", "a", "m", "0" }));

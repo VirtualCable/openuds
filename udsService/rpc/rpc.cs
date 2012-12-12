@@ -21,6 +21,7 @@ namespace uds
         private const string INFO_MSG = "information";
         private const string READY_MSG = "ready";
         private const string IP_MSG = "ip";
+        private const string LOG_MSG = "log";
 
         private rpc(string url)
         {
@@ -98,24 +99,23 @@ namespace uds
             return ret;
         }
 
-        public static void Logon(string username)
+        public static string[] Logon(string username)
         {
             if (rpc.Manager != null)
             {
-                logger.Debug("Invoking remote logon of user " + username);
+                logger.Info("Invoking remote logon of user " + username);
                 try
                 {
-                    rpc.Manager.Message(LOGON_MSG, username);
+                    return rpc.Manager.Message(LOGON_MSG, username).Split('\t');
                 }
                 catch (Exception)
                 {
-                    logger.Info("Could cont contact broker at " + rpc.Manager.service.Url);
+                    logger.Fatal("Could cont contact broker at " + rpc.Manager.service.Url);
+                    return new string[0];
                 }
             }
-            else
-            {
-                logger.Debug("Remote logon not invoked. RPC Disabled");
-            }
+            logger.Debug("Remote logon not invoked. RPC Disabled");
+            return new string[0];
         }
 
         public static void Logoff(string username)
@@ -194,6 +194,15 @@ namespace uds
                 }
             }
             return ok;
+        }
+
+        public static void Log(string msg, string Level)
+        {
+            if (rpc.Manager != null)
+            {
+                logger.Debug("Sending message " + msg + " of level " + Level);
+                rpc.Manager.Message(LOG_MSG, string.Join("\t", new string[] { msg, Level }));
+            }
         }
 
         public static void ResetId()

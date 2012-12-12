@@ -129,6 +129,11 @@
   <data name="ConnectionTest" xml:space="preserve">
     <value>Connection Test Result</value>
   </data>
+  <data name="ConnetionNotAvailable" xml:space="preserve">
+    <value>The provided parameters do not seems valid.
+The broker may be down.
+Are you sure that you want to save these parameters?</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>

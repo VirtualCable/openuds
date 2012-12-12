@@ -6,11 +6,14 @@ using System.Drawing;
 using System.Resources;
 using System.Text;
 using System.Windows.Forms;
+using log4net;
 
 namespace uds.gui.forms
 {
     public partial class Config : Form
     {
+        private static ILog logger = LogManager.GetLogger(typeof(config));
+
         public Config()
         {
             InitializeComponent();
@@ -51,6 +54,17 @@ namespace uds.gui.forms
         {
             config.broker = brokerAddress.Text;
             config.ssl = useSecureConnection.SelectedIndex == 0;
+
+            rpc.Initialize(config.broker, config.ssl);
+
+            if (rpc.Manager.Test() == false)
+            {
+                if (MessageBox.Show(Lang.ConnetionNotAvailable, Lang.ConnectionTest, MessageBoxButtons.OKCancel, MessageBoxIcon.Error) == DialogResult.Cancel)
+                    return;
+            }
+            else
+                logger.Info("Saved new broker configuration");
+
             config.SaveConfig();
             Close();
         }
