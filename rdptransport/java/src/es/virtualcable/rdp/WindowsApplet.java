@@ -46,7 +46,7 @@ public class WindowsApplet implements OsApplet {
 				tunPort = Integer.toString(FreePortFinder.findFreePort());
 			}
 			
-			// Notifies to broker the 
+			// Notifies to broker the hostname/ip
 			util.notifyHostname(baseUrl, params.get("is"));
 			
 			System.load(dllFileName);
