@@ -160,6 +160,7 @@ encoding//src/uds/transports/RDP/web.py=utf-8
 encoding//src/uds/transports/RGS-enterprise/RGSTransport.py=utf-8
 encoding//src/uds/transports/RGS-enterprise/TRGSTransport.py=utf-8
 encoding//src/uds/transports/RGS-enterprise/__init__.py=utf-8
+encoding//src/uds/transports/RGS-enterprise/web.py=utf-8
 encoding//src/uds/transports/RGS/RGSTransport.py=utf-8
 encoding//src/uds/transports/RGS/TRGSTransport.py=utf-8
 encoding//src/uds/transports/RGS/__init__.py=utf-8

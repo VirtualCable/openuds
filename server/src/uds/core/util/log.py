@@ -30,7 +30,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from uds.models import UserService, State
 import logging
 
 logger = logging.getLogger(__name__)
@@ -55,11 +54,11 @@ __nameLevels = {
 # Reverse dict of names
 __valueLevels = dict((v,k) for k, v in __nameLevels.iteritems())
 
-def logLevelFromStr(str):
+def logLevelFromStr(str_):
     '''
     Gets the numeric log level from an string.
     '''
-    return __nameLevels.get(str, OTHER)
+    return __nameLevels.get(str_.upper(), OTHER)
 
 def logStrFromLevel(level):
     return __valueLevels.get(level, 'OTHER')

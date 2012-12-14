@@ -158,7 +158,7 @@ class TSNXTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
     
-    def renderForHtml(self, userService, theId, ip, os, user, password):
+    def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
         
         prefs = user.prefs('nx')
         
@@ -194,7 +194,7 @@ class TSNXTransport(Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
             
-        return generateHtmlForNX(self, theId, username, password, extra)
+        return generateHtmlForNX(self, idUserService, idTransport, username, password, extra)
         
     def getHtmlComponent(self, theId, os, componentId):
         # We use helper to keep this clean

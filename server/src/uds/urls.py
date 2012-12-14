@@ -45,6 +45,8 @@ urlpatterns = patterns('uds',
     (r'^error/(?P<idError>.+)$', 'web.views.error'),
     # Transport component url
     (r'^transcomp/(?P<idTransport>.+)/(?P<componentId>.+)$', 'web.views.transcomp'),
+    # Service notification url
+    (r'^sernotify/(?P<idUserService>.+)/(?P<notification>.+)$', 'web.views.sernotify'),
     # Authenticators custom html
     (r'^customAuth/(?P<idAuth>.*)$', 'web.views.customAuth'),
     # Preferences

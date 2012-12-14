@@ -222,7 +222,7 @@ def service(request, idService, idTransport):
             if ip is not None:
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
-                    transport = itrans.renderForHtml(ads, scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
+                    transport = itrans.renderForHtml(ads, scrambleId(request, ads.id), scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
                     return render_to_response('uds/show_transport.html', {'transport' : transport, 'nolang' : True }, context_instance=RequestContext(request))
                 else:
                     logger.debug('Transport is not ready for user service {0}'.format(ads))
@@ -247,6 +247,32 @@ def transcomp(request, idTransport, componentId):
         return response
     except Exception, e:
         return errors.exceptionView(request, e)
+
+@webLoginRequired
+@transformId
+def sernotify(request, idUserService, notification):
+    try:
+        if notification == 'hostname':
+            hostname = request.GET.get('hostname', None)
+            ip = request.GET.get('ip', None)
+            if ip is not None and hostname is not None:
+                us = UserService.objects.get(pk=idUserService)
+                us.setConnectionSource(ip, hostname)
+            else:
+                return HttpResponse('Invalid request!', 'text/plain')
+        elif notification == "log":
+            message = request.GET.get('message', None)
+            level = request.GET.get('level', None)
+            if message is not None and level is not None:
+                from uds.core.util import log
+                us = UserService.objects.get(pk=idUserService)
+                us.doLog(level, message, log.TRANSPORT)
+            else:
+                return HttpResponse('Invalid request!', 'text/plain')
+    except Exception as e:
+        logger.exception("Exception")
+        return errors.errorView(request, e)
+    return HttpResponse('ok', mimetype='text/plain')
     
 
 @transformId

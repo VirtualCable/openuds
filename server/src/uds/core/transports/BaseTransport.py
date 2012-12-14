@@ -134,11 +134,12 @@ class Transport(Module):
         '''
         return {'protocol': protocols.NONE, 'username': '', 'password': '', 'domain': ''}
         
-    def renderForHtml(self, userService, id, ip, os, user, password):
+    def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
         '''
         Requests the html rendering of connector for the destination ip, (dbUser) and password
         @param: userService: DeployedUserService for witch we are rendering the connection (db model)
-        @param id: id of the transport
+        @param idUserService: id of the user service ((scrambled). You will need this to "notify" anythig to broker (such as log, hostname of client, ip, ...)
+        @param idTransport: id of the transport (scrambled)
         @param ip: ip of the destination
         @param user: user (dbUser) logged in
         @param pass: password used in authentication

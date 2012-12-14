@@ -53,8 +53,8 @@ def simpleScrambler(data):
     
 
 
-def generateHtmlForNX(transport, id, ip, user, password, extra):
-    applet = reverse('uds.web.views.transcomp', kwargs = { 'idTransport' : id, 'componentId' : '1' })
+def generateHtmlForNX(transport, idUserService, idTransport, ip, user, password, extra):
+    applet = reverse('uds.web.views.transcomp', kwargs = { 'idTransport' : idTransport, 'componentId' : '1' })
     # Gets the codebase, simply remove last char from applet
     codebase = applet[:-1]
     # We generate the "data" parameter
@@ -68,9 +68,10 @@ def generateHtmlForNX(transport, id, ip, user, password, extra):
         'cacheDisk:' + extra['cacheDisk'],
         'cacheMem:' + extra['cacheMem'],
         'width:' + str(extra['width']),
-        'height:' + str(extra['height'])
+        'height:' + str(extra['height']),
+        'is:' + idUserService
         ]))
-    res = '<div id="applet"><applet code="NxTransportApplet.class" codebase="%s" archive="%s" width="140" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
+    res = '<div idTransport="applet"><applet code="NxTransportApplet.class" codebase="%s" archive="%s" width="140" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
     res += '<div><p>' + _('In order to use this transport, you need to install first Nomachine Nx Client version 3.5.x') + '</p>'
     res += '<p>' + _('you can obtain it for your platform from') + '<a href="http://www.nomachine.com/download.php">' + _('nochamine web site') + '</a></p></div>'
     return res

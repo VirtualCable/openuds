@@ -52,9 +52,9 @@ def scramble(data):
     
 
 
-def generateHtmlForRdp(transport, id, os, ip, port, user, password, domain, extra):
+def generateHtmlForRdp(transport, idUserService, idTransport, os, ip, port, user, password, domain, extra):
     isMac = os['OS'] == OsDetector.Macintosh
-    applet = reverse('uds.web.views.transcomp', kwargs = { 'idTransport' : id, 'componentId' : '1' })
+    applet = reverse('uds.web.views.transcomp', kwargs = { 'idTransport' : idTransport, 'componentId' : '1' })
     logger.debug('Applet: {0}'.format(applet))
     # Gets the codebase, simply remove last char from applet
     codebase = applet[:-1]
@@ -72,13 +72,14 @@ def generateHtmlForRdp(transport, id, os, ip, port, user, password, domain, extr
           'w:' + str(extra['width']),
           'h:' + str(extra['height']),
           'c:' + str(extra['depth']),
-          'cr:' + (extra['compression'] and '1' or '0')
+          'cr:' + (extra['compression'] and '1' or '0'),
+          'is:' + idUserService
          ]
     if extra.has_key('tun'):
         data.append('tun:' + extra['tun'])
         
     data = scramble('\t'.join(data))
-    res = '<div id="applet"><applet code="RdpApplet.class" codebase="%s" archive="%s" width="200" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
+    res = '<div idTransport="applet"><applet code="RdpApplet.class" codebase="%s" archive="%s" width="200" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
     if isMac is True:
         res += ('<div><p>' + _('In order to use this service, you should first install CoRD.') + '</p>'
                 '<p>' + _('You can obtain it from') + ' <a href="http://cord.sourceforge.net/">' + _('CoRD Website') + '</a></p>' 

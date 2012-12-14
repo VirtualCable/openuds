@@ -41,8 +41,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 def dictFromCachedDeployedService(cs):
+    if cs.publication is not None:
+        revision = str(cs.publication.revision)
+    else:
+        revision = ''
+
     res = { 'idParent' : str(cs.deployed_service_id), 'id' : str(cs.id), 'uniqueId' : cs.unique_id, 'friendlyName' : cs.friendly_name, 'state' : cs.state, 'osState': cs.os_state, 'stateDate' : cs.state_date, 
-            'creationDate' : cs.creation_date, 'cacheLevel' : str(cs.cache_level), 'revision' : str(cs.publication.revision) }
+            'creationDate' : cs.creation_date, 'cacheLevel' : str(cs.cache_level), 'revision' : revision }
     return res
 
 def dictFromAssignedDeployedService(ads):
@@ -52,7 +57,8 @@ def dictFromAssignedDeployedService(ads):
         revision = ''
     
     res = { 'idParent' : str(ads.deployed_service_id), 'id' : str(ads.id), 'uniqueId' : ads.unique_id, 'friendlyName' : ads.friendly_name, 'state' : ads.state, 'osState': ads.os_state, 'stateDate' : ads.state_date, 
-            'creationDate' : ads.creation_date, 'revision' : revision, 'user': ads.user.manager.name + "-" + ads.user.name, 'inUse': ads.in_use, 'inUseDate': ads.in_use_date }
+            'creationDate' : ads.creation_date, 'revision' : revision, 'user': ads.user.manager.name + "-" + ads.user.name, 'inUse': ads.in_use, 'inUseDate': ads.in_use_date,
+            'sourceHost' : ads.src_hostname, 'sourceIp': ads.src_ip }
     return res
 
 @needs_credentials

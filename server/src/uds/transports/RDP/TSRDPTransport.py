@@ -116,7 +116,7 @@ class TSRDPTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
     
-    def renderForHtml(self, userService, id, ip, os, user, password):
+    def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
         # We use helper to keep this clean
         username = user.getUsernameForAuth()
         prefs = user.prefs('rdp')
@@ -159,7 +159,7 @@ class TSRDPTransport(Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
             
-        return generateHtmlForRdp(self, id, os, ip, '-1', username, password, domain, extra)
+        return generateHtmlForRdp(self, idUserService, idTransport, os, ip, '-1', username, password, domain, extra)
         
     def getHtmlComponent(self, id, os, componentId):
         # We use helper to keep this clean
