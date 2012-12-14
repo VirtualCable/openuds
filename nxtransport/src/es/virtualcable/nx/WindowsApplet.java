@@ -11,7 +11,7 @@ public class WindowsApplet implements OsApplet {
 
 	private Hashtable<String,String> params;
 	private String tmpDir = "";
-	// private String baseUrl = "";
+	private String baseUrl = "";
 	private String nxFileName = "";
 	private String scrWidth;
 	private String scrHeight;
@@ -19,7 +19,7 @@ public class WindowsApplet implements OsApplet {
 	public void setParameters(Hashtable<String, String> parameters, String urlBase, 
 			int screenWidth, int screenHeight) {
 		params = parameters;
-		// baseUrl = urlBase;
+		baseUrl = urlBase;
 		scrWidth = Integer.toString(screenWidth);
 		scrHeight = Integer.toString(screenHeight);		
 	}
@@ -34,6 +34,9 @@ public class WindowsApplet implements OsApplet {
 			String height = params.get("height");
 			boolean fullScreen = false;
 		
+			// Notifies to broker the hostname/ip
+			util.notifyHostname(baseUrl, params.get("is"));
+			
 			if( width.equals("-1"))
 			{
 				width = scrWidth;
