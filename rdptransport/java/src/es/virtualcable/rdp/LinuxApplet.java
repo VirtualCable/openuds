@@ -46,6 +46,10 @@ public class LinuxApplet implements OsApplet {
 			boolean redirectAudio = params.get("au").equals("1");
 			boolean compression = params.get("cr").equals("1");
 			
+			
+			// Notifies to broker the 
+			util.notifyHostname(baseUrl, params.get("is"));
+			
 			String home = System.getProperty("user.home");
 
 			ArrayList<String> exec = new ArrayList<String>();

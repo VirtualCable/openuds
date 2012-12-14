@@ -40,6 +40,7 @@ public class RdpApplet extends Applet {
 						
 						Hashtable<String,String> params = parseParams(unscramble(getParameter("data")));
 						String baseUrl = getCodeBase().toString();
+						
 						if( params.get("tun") != null )
 							appletStr = "UDS RDP Tunnel Connector";
 						

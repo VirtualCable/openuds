@@ -97,6 +97,9 @@ public class MacApplet implements OsApplet {
 			
 			//String home = System.getProperty("user.home");
 
+			// Notifies to broker the 
+			util.notifyHostname(baseUrl, params.get("is"));
+			
 			ArrayList<String> exec = new ArrayList<String>();
 			
 			if(params.get("tun") != null)
