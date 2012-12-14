@@ -27,7 +27,8 @@ public class MacApplet implements OsApplet {
 		nxFileName  = tmpDir  + UUID.randomUUID().toString() + ".nxs";			
 		jarFileName  = tmpDir + UUID.randomUUID().toString() + ".jar";
 		
-		//System.out.println(nxFileName);
+		// Notifies to broker the hostname/ip
+		util.notifyHostname(baseUrl, params.get("is"));
 		
 		String width = params.get("width");
 		String height = params.get("height");
