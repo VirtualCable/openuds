@@ -69,6 +69,7 @@ class UserServiceRemover(Job):
 
     @transaction.commit_on_success        
     def run(self):
-        removables = UserService.objects.filter(state=State.REMOVABLE)[0:UserServiceRemover.removeAtOnce]
+        removeFrom = getSqlDatetime() - timedelta(seconds=10) # We keep at least 30 seconds the machine before removing it, so we avoid connections errors
+        removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom)[0:UserServiceRemover.removeAtOnce]
         for us in removables:
             UserServiceManager.manager().remove(us)
