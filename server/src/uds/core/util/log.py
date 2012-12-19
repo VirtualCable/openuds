@@ -41,14 +41,16 @@ OTHER,DEBUG,INFO,WARN,ERROR,FATAL = (10000*(x+1) for x in xrange(6))
 # Logging sources
 INTERNAL,ACTOR,TRANSPORT = ('internal', 'actor', 'transport')
 
+OTHERSTR,DEBUGSTR,INFOSTR,WARNSTR,ERRORSTR,FATALSTR = ('OTHER', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')
+
 # Names for defined log levels
 __nameLevels = {
-     'DEBUG': DEBUG,
-     'INFO': INFO,
-     'WARN': WARN,
-     'ERROR': ERROR,
-     'FATAL': FATAL,
-     'OTHER': OTHER
+     DEBUGSTR: DEBUG,
+     INFOSTR: INFO,
+     WARNSTR: WARN,
+     ERRORSTR: ERROR,
+     FATALSTR: FATAL,
+     OTHERSTR: OTHER
     }
 
 # Reverse dict of names

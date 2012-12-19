@@ -123,6 +123,7 @@ class WindowsOsManager(osmanagers.OSManager):
             si = service.getInstance()
             si.userLoggedIn(data)
             service.updateData(si)
+            self.doLog(service, 'User {0} has logged IN\t{1}'.format(data, log.INFOSTR))
             # We get the service logged hostname & ip and returns this
             ip, hostname = service.getConnectionSource()
             ret = "{0}\t{1}".format(ip, hostname)
@@ -131,6 +132,7 @@ class WindowsOsManager(osmanagers.OSManager):
             si = service.getInstance()
             si.userLoggedOut(data)
             service.updateData(si)
+            self.doLog(service, 'User {0} has logged OUT\t{1}'.format(data, log.INFOSTR))
             if self._onLogout == 'remove':
                 doRemove = True
         elif msg == "ip":
