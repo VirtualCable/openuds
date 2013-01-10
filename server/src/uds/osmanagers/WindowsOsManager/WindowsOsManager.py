@@ -86,13 +86,13 @@ class WindowsOsManager(osmanagers.OSManager):
                 si.setIp(val)
                 break
             
-    def doLog(self, service, data):
+    def doLog(self, service, data, origin = log.OSMANAGER):
         # Stores a log associated with this service
         try:
             msg, level = data.split('\t')
-            service.doLog(level, msg, log.ACTOR)
+            service.doLog(level, msg, origin)
         except:
-            service.doLog(log.ERROR, "do not understand {0}".format(data), log.ACTOR)
+            service.doLog(log.ERROR, "do not understand {0}".format(data), log.TRANSPORT)
         
         
     def process(self,service,msg, data):
@@ -118,7 +118,7 @@ class WindowsOsManager(osmanagers.OSManager):
             ret = self.infoValue(service)
             state = State.PREPARING
         elif msg == "log":
-            self.doLog(service, data)
+            self.doLog(service, data, log.ACTOR)
         elif msg == "logon":
             si = service.getInstance()
             si.userLoggedIn(data)
