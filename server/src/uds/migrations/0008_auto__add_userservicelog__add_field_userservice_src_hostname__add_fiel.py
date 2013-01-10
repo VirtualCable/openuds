@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table('uds__us_log', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user_service', self.gf('django.db.models.fields.related.ForeignKey')(related_name='log', to=orm['uds.UserService'])),
-            ('created', self.gf('django.db.models.fields.DateField')(auto_now_add=True, db_index=True, blank=True)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
             ('source', self.gf('django.db.models.fields.CharField')(default='internal', max_length=16, db_index=True)),
             ('level', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, db_index=True)),
             ('data', self.gf('django.db.models.fields.CharField')(default='', max_length=255)),

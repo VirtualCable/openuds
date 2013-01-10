@@ -1525,7 +1525,7 @@ class UserServiceLog(models.Model):
 
     user_service = models.ForeignKey(UserService, on_delete=models.CASCADE, related_name = 'log')
     
-    created = models.DateField(auto_now_add=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)    
     level = models.PositiveSmallIntegerField(default=0, db_index=True)
     data = models.CharField(max_length=255, default='')
