@@ -98,6 +98,7 @@ def login(request):
                     # Add the "java supported" flag to session
                     request.session['java'] = java
                     request.session['OS'] = os
+                    logger.debug('Navigator supports java? {0}'.format(java))
                     __authLog(request, authenticator, user.name, java, os, 'Logged in')
                     return response
     else:
@@ -265,8 +266,10 @@ def sernotify(request, idUserService, notification):
             level = request.GET.get('level', None)
             if message is not None and level is not None:
                 from uds.core.util import log
+                from uds.core.managers import logManager
+                
                 us = UserService.objects.get(pk=idUserService)
-                us.doLog(level, message, log.TRANSPORT)
+                logManager().doLog(us, level, message, log.TRANSPORT)
             else:
                 return HttpResponse('Invalid request!', 'text/plain')
     except Exception as e:

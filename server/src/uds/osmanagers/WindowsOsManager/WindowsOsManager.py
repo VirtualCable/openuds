@@ -88,11 +88,13 @@ class WindowsOsManager(osmanagers.OSManager):
             
     def doLog(self, service, data, origin = log.OSMANAGER):
         # Stores a log associated with this service
+        from uds.core.managers import logManager
         try:
+            
             msg, level = data.split('\t')
-            service.doLog(level, msg, origin)
+            logManager().doLog(service, level, msg, origin)
         except:
-            service.doLog(log.ERROR, "do not understand {0}".format(data), log.TRANSPORT)
+            logManager().doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
         
         
     def process(self,service,msg, data):

@@ -52,6 +52,7 @@ from auths.Users import registerUserFunctions
 from auths.UserPreferences import registerPreferencesFunctions
 from tools.Cache import registerCacheFunctions
 from tools.Config import registerConfigurationFunctions
+from log.logs import registerLogFunctions
 
 import logging
 
@@ -142,3 +143,4 @@ registerActorFunctions(dispatcher)
 registerPreferencesFunctions(dispatcher)
 registerCacheFunctions(dispatcher)
 registerConfigurationFunctions(dispatcher)
+registerLogFunctions(dispatcher)

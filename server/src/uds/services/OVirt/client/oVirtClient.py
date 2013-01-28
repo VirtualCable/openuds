@@ -60,10 +60,14 @@ class Client(object):
             except:
                 # Nothing happens, may it was already disconnected
                 pass
-        
-        cached_api_key = aKey
-        cached_api = API(url='https://'+self._host, username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
-        return cached_api
+        try:
+            cached_api_key = aKey
+            cached_api = API(url='https://'+self._host, username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
+            return cached_api
+        except:
+            cached_api_key = None
+            raise Exception("Can't connet to server at {0}".format(self._host))
+            
 
     def __init__(self, host, username, password, timeout, cache):
         self._host = host

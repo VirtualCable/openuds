@@ -1324,13 +1324,6 @@ class UserService(models.Model):
         '''
         return [self.src_ip, self.src_hostname]
     
-    def doLog(self, level, message, source = log.INTERNAL):
-        if type(level) is not int:
-            level = log.logLevelFromStr(level)
-        
-        self.log.create(created = getSqlDatetime(), source = source, level = level, data = message)
-        
-    
     def transformsUserOrPasswordForService(self):
         '''
         If the os manager changes the username or the password, this will return True
@@ -1539,7 +1532,7 @@ class UserServiceLog(models.Model):
     
 
     def __unicode__(self):
-        return "Log of {0}: {1} - {2} - {3} - {4}".format(self.user_service.name, self.created, self.source, self.level, self.data)
+        return "Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.user_service.friendly_name, self.user_service.id, self.created, self.source, self.level, self.data)
 
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)

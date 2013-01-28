@@ -31,7 +31,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'OPTIONS': { 
             #'init_command': 'SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
-            'init_command' : 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+            'init_command' : 'SET storage_engine=MYISAM, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
         },
         'NAME': 'dbuds',                      # Or path to database file if using sqlite3.
         'USER': 'dbuds',                      # Not used with sqlite3.

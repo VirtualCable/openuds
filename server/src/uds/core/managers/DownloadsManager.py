@@ -69,17 +69,17 @@ class DownloadsManager(object):
         @param path: path to file
         @params zip: If download as zip 
         '''
-        id = str(uuid.uuid5(self._namespace, name))
-        self._downloadables[id] = { 'name': name, 'comment' : comment, 'path' : path, 'mime' : mime }
+        _id = str(uuid.uuid5(self._namespace, name))
+        self._downloadables[_id] = { 'name': name, 'comment' : comment, 'path' : path, 'mime' : mime }
         
     def getDownloadables(self):
         return self._downloadables
     
     
-    def send(self, request, id):
-        if self._downloadables.has_key(id) is False:
+    def send(self, request, _id):
+        if self._downloadables.has_key(_id) is False:
             return Http404()
-        return self.__send_file(request, self._downloadables[id]['name'], self._downloadables[id]['path'], self._downloadables[id]['mime']);
+        return self.__send_file(request, self._downloadables[_id]['name'], self._downloadables[_id]['path'], self._downloadables[_id]['mime']);
     
     def __send_file(self, request, name, filename, mime):
         """                                                                         

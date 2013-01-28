@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2013 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, 
@@ -28,25 +28,28 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-UDS managers (downloads, users preferences, publications, ...)
-
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-def cryptoManager():
-    from CryptoManager import CryptoManager
-    return CryptoManager.manager() 
+from django.utils.translation import ugettext as _
+from ..auths.AdminAuth import needs_credentials
+from ..util.Exceptions import FindException
+from uds.core.managers import logManager
+from uds.models import UserService
 
+import logging
 
-def taskManager():
-    from TaskManager import TaskManager
-    return TaskManager
+logger = logging.getLogger(__name__)
 
-
-def downloadsManager():
-    from DownloadsManager import DownloadsManager
-    return DownloadsManager.manager()
-
-def logManager():
-    from LogManager import LogManager
-    return LogManager.manager()
+@needs_credentials
+def getUserServiceLogs(credentials, id):
+    logger.debug('getUserServiceLogs called')
+    try:
+        us = UserService.objects.get(pk=id)
+        return logManager().getLogs(us)
+    except Exception:
+        raise FindException(_('Service does not exists'))
+    
+# Registers XML RPC Methods
+def registerLogFunctions(dispatcher):
+    dispatcher.register_function(getUserServiceLogs, 'getUserServiceLogs')

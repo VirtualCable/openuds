@@ -39,8 +39,9 @@ from ..util.Exceptions import DeleteException, FindException, ValidationExceptio
 from ..util.Helpers import dictFromData
 from ..auths.AdminAuth import needs_credentials
 from uds.core.Environment import Environment
-import logging
 from uds.core import osmanagers
+
+import logging
 
 logger = logging.getLogger(__name__)
 
