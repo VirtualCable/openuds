@@ -60,7 +60,7 @@ class WinDomainOsManager(WindowsOsManager):
         return 'domain:{0}\t{1}\t{2}\t{3}\t{4}'.format( self.getName(service), self._domain, self._ou, self._account, self._password)
 
     def infoValue(self, service):
-        return 'domain:\r{0}\t{1}\t{2}\t{3}\t{4}'.format( self.getName(service), self._domain, self._ou, self._account, self._password)
+        return 'domain\r{0}\t{1}\t{2}\t{3}\t{4}'.format( self.getName(service), self._domain, self._ou, self._account, self._password)
         
     def marshal(self):
         base = super(WinDomainOsManager,self).marshal()
