@@ -39,7 +39,7 @@ useLogger = logging.getLogger('useLog')
 OTHER,DEBUG,INFO,WARN,ERROR,FATAL = (10000*(x+1) for x in xrange(6))
 
 # Logging sources
-INTERNAL,ACTOR,TRANSPORT, OSMANAGER = ('internal', 'actor', 'transport', 'osmanager')
+INTERNAL,ACTOR,TRANSPORT, OSMANAGER, UNKNOWN, WEB = ('internal', 'actor', 'transport', 'osmanager', 'unknown', 'web')
 
 OTHERSTR,DEBUGSTR,INFOSTR,WARNSTR,ERRORSTR,FATALSTR = ('OTHER', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')
 

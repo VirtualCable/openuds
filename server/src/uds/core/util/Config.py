@@ -218,7 +218,7 @@ class GlobalConfig:
     # Custom HTML for login page
     CUSTOM_HTML_LOGIN = Config.section(GLOBAL_SECTION).valueLong('customHtmlLogin', '')
     # Maximum logs per user service
-    MAX_USERSERVICE_LOGS = Config.section(GLOBAL_SECTION).value('maxLogPerUserService', '100')
+    MAX_LOGS_PER_ELEMENT = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100')
     
     initDone = False
     
@@ -249,7 +249,7 @@ class GlobalConfig:
             GlobalConfig.REDIRECT_TO_HTTPS.get()
             GlobalConfig.MAX_INITIALIZING_TIME.get()
             GlobalConfig.CUSTOM_HTML_LOGIN.get()
-            GlobalConfig.MAX_USERSERVICE_LOGS.get()
+            GlobalConfig.MAX_LOGS_PER_ELEMENT.get()
         except:
             logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
             

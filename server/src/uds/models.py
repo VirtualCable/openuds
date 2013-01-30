@@ -435,10 +435,10 @@ class Transport(models.Model):
         if self.nets_positive:
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() > 0
         else:
-            return self.networks.exclude(net_start__lte=ip, net_end__gte=ip).count() > 0
+            return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
     
     def __unicode__(self):
-        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
     
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -1507,7 +1507,7 @@ class UserService(models.Model):
 signals.pre_delete.connect(UserService.beforeDelete, sender = UserService)
 
 # Especific loggin information for an user service
-class UserServiceLog(models.Model):
+class Log(models.Model):
     '''
     This class represents the log associated with an user service.
     
@@ -1516,7 +1516,8 @@ class UserServiceLog(models.Model):
     of information related to 
     '''
 
-    user_service = models.ForeignKey(UserService, on_delete=models.CASCADE, related_name = 'log')
+    owner_id = models.IntegerField(db_index=True, default=0)
+    owner_type = models.IntegerField(db_index=True, default=0)
     
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)    
@@ -1528,11 +1529,11 @@ class UserServiceLog(models.Model):
         '''
         Meta class to declare db table
         '''
-        db_table = 'uds__us_log'
+        db_table = 'uds_log'
     
 
     def __unicode__(self):
-        return "Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.user_service.friendly_name, self.user_service.id, self.created, self.source, self.level, self.data)
+        return "Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
 
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)

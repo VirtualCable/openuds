@@ -31,11 +31,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from uds.models import Log
 from uds.core.util import log
 from uds.core.util.Config import GlobalConfig
 import logging
 
 logger = logging.getLogger(__name__)
+
+OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR = xrange(8)
 
 class LogManager(object):
     '''
@@ -60,21 +63,24 @@ class LogManager(object):
         '''
         from uds.models import getSqlDatetime
         
+        
+        qs = Log.objects.filter(owner_id = userService.id, owner_type = OT_USERSERVICE)
         # First, ensure we do not have more than requested logs, and we can put one more log item
-        if userService.log.count() >= GlobalConfig.MAX_USERSERVICE_LOGS.getInt():
-            for i in userService.log.all().order_by('-created',)[GlobalConfig.MAX_USERSERVICE_LOGS.getInt()-1:]: i.delete()
+        if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
+            for i in qs.order_by('-created',)[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()-1:]: i.delete()
             
         # now, we add new log
-        userService.log.create(created = getSqlDatetime(), source = source, level = level, data = message)
+        Log.objects.create(owner_type = OT_USERSERVICE, owner_id = userService.id, created = getSqlDatetime(), source = source, level = level, data = message)
         
-    def __getUserServiceLogs(self, userService):
+    def __getUserServiceLogs(self, userService, limit):
         '''
         Get all logs associated with an user service, ordered by date
         '''
-        return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in userService.log.all().order_by('created')]
+        qs = Log.objects.filter(owner_id = userService.id, owner_type = OT_USERSERVICE)
+        return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in qs.order_by('created')][:limit]
 
     
-    def doLog(self, wichObject, level, message, source = log.INTERNAL):
+    def doLog(self, wichObject, level, message, source = log.UNKNOWN):
         '''
         Do the logging for the requested object.
         
@@ -91,10 +97,10 @@ class LogManager(object):
             logger.debug('Requested doLog for a type of object not covered: {0}'.format(wichObject))
             
         
-    def getLogs(self, wichObject):
+    def getLogs(self, wichObject, limit = GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()):
         from uds.models import UserService
         
         if type(wichObject) is UserService:
-            return self.__getUserServiceLogs(wichObject)
+            return self.__getUserServiceLogs(wichObject, limit)
         else:
             logger.debug('Requested getLogs for a type of object not covered: {0}'.format(wichObject))
