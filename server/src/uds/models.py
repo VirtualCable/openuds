@@ -40,6 +40,7 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.services.Exceptions import InvalidServiceException
 from datetime import datetime, timedelta
+from uds.core.managers import logManager
 
 import logging
 
@@ -128,7 +129,7 @@ class Provider(models.Model):
         return services.factory().lookup(self.data_type)
     
     def __unicode__(self):
-        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
     
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -146,6 +147,9 @@ class Provider(models.Model):
             s = toDelete.getInstance()
             s.destroy()
             s.env().clearRelatedData()
+            
+        # Clears related logs
+        logManager().clearLogs(toDelete)
         
         logger.debug('Before delete service provider '.format(toDelete))
     
@@ -215,7 +219,7 @@ class Service(models.Model):
         return self.provider.getType().getServiceByType(self.data_type)
     
     def __unicode__(self):
-        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
     
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -233,6 +237,9 @@ class Service(models.Model):
             s = toDelete.getInstance()
             s.destroy()
             s.env().clearRelatedData()
+        
+        # Clears related logs
+        logManager().clearLogs(toDelete)
         
         logger.debug('Before delete service '.format(toDelete))
     
@@ -302,7 +309,7 @@ class OSManager(models.Model):
         
     
     def __unicode__(self):
-        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
     
     def remove(self):
         '''
@@ -590,7 +597,7 @@ class Authenticator(models.Model):
             return falseIfNotExists
     
     def __unicode__(self):
-        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
     
     @staticmethod
     def all():
@@ -615,6 +622,9 @@ class Authenticator(models.Model):
             s = toDelete.getInstance()
             s.destroy()
             s.env().clearRelatedData()
+        
+        # Clears related logs
+        logManager().clearLogs(toDelete)
         
         logger.debug('Before delete auth '.format(toDelete))
     
@@ -701,7 +711,7 @@ class User(models.Model):
         return self.getManager().logout(self.name)
     
     def __unicode__(self):
-        return "User {0} from auth {1}".format(self.name, self.manager.name)
+        return u"User {0} from auth {1}".format(self.name, self.manager.name)
 
 
     @staticmethod
@@ -719,6 +729,9 @@ class User(models.Model):
         # first, we invoke removeUser. If this raises an exception, user will not
         # be removed
         toDelete.getManager().removeUser(toDelete.name)
+        
+        # Remove related logs
+        logManager().clearLogs(toDelete)
         
         # Removes all user services assigned to this user (unassign it and mark for removal)
         for us in toDelete.userServices.all():
@@ -756,7 +769,7 @@ class Group(models.Model):
         return self.manager.getInstance()
 
     def __unicode__(self):
-        return "Group {0} from auth {1}".format(self.name, self.manager.name)
+        return u"Group {0} from auth {1}".format(self.name, self.manager.name)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -774,6 +787,8 @@ class Group(models.Model):
         # be removed
         toDelete.getManager().removeGroup(toDelete.name)
 
+        # Clears related logs
+        logManager().clearLogs(toDelete)
         
         logger.debug('Deleted group {0}'.format(toDelete))
 
@@ -1013,10 +1028,13 @@ class DeployedService(models.Model):
         toDelete = kwargs['instance']
         toDelete.getEnvironment().clearRelatedData()
         
+        # Clears related logs
+        logManager().clearLogs(toDelete)
+        
         logger.debug('Deleting Deployed Service {0}'.format(toDelete))
         
     def __unicode__(self):
-        return "Deployed service {0}({1}) with {2} as initial, {3} as L1 cache, {4} as L2 cache, {5} as max".format(
+        return u"Deployed service {0}({1}) with {2} as initial, {3} as L1 cache, {4} as L2 cache, {5} as max".format(
                         self.name, self.id, self.initial_srvs, self.cache_l1_srvs, self.cache_l2_srvs, self.max_srvs)
     
 
@@ -1143,9 +1161,13 @@ class DeployedServicePublication(models.Model):
         toDelete = kwargs['instance']
         toDelete.getEnvironment().clearRelatedData()
         
-        # Destroy method is invoked directly by PublicationManager,
+        # Delete method is invoked directly by PublicationManager,
         # Destroying a publication is not obligatory an 1 step action.
-        # It's handled as "publish", and as so, it 
+        # It's handled as "publish", and as so, it can be a multi-step process
+        
+        # Clears related logs
+        logManager().clearLogs(toDelete)
+        
         
         logger.debug('Deleted publication {0}'.format(toDelete))
         
@@ -1497,6 +1519,9 @@ class UserService(models.Model):
         '''
         toDelete = kwargs['instance']
         toDelete.getEnvironment().clearRelatedData()
+        
+        # Clear related logs to this user service
+        logManager().clearLogs(toDelete)
         
         # TODO: Check if this invokation goes here
         #toDelete.getInstance()

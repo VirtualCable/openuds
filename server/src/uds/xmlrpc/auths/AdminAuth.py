@@ -158,7 +158,7 @@ def login(username, password, idAuth, locale, request):
     logger.info("Validating user {0} with authenticator {1} with locale {2}".format(username, idAuth, locale))
     activate(locale)
     if idAuth == ADMIN_AUTH:
-        if GlobalConfig.SUPER_USER_LOGIN.get() == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
+        if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
             return makeCredentials(idAuth, username, locale, True)
         else:
             raise AuthException(_('Invalid credentials'))
