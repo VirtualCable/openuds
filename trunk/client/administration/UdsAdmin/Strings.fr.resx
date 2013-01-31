@@ -1,0 +1,475 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="active" xml:space="preserve">
+    <value>Activée</value>
+  </data>
+  <data name="allowedGroups" xml:space="preserve">
+    <value>Accueilli des groupes</value>
+  </data>
+  <data name="allowedGroupsToolTip" xml:space="preserve">
+    <value>Groupes autorisés à accéder à ce service</value>
+  </data>
+  <data name="assignedServices" xml:space="preserve">
+    <value>Services assignées</value>
+  </data>
+  <data name="assignedServicesToolTip" xml:space="preserve">
+    <value>Indique les services de ce type actuellement assigné aux utilisateurs</value>
+  </data>
+  <data name="blocked" xml:space="preserve">
+    <value>Bloqué</value>
+  </data>
+  <data name="cache" xml:space="preserve">
+    <value>Cache</value>
+  </data>
+  <data name="cacheServicesToolTip" xml:space="preserve">
+    <value>Services actuellement dans le cache</value>
+  </data>
+  <data name="cantConnect" xml:space="preserve">
+    <value>Impossible de se connecter au serveur. Vérifiez svp, serveur et réessayer</value>
+  </data>
+  <data name="changeLanguage" xml:space="preserve">
+    <value>Vous voulez vraiment changer la langue d'interface cours?. Modifications prendront effet au prochain redémarrage</value>
+  </data>
+  <data name="checkAuthenticator" xml:space="preserve">
+    <value>Vérifiez l'authentificateur</value>
+  </data>
+  <data name="checkOSManager" xml:space="preserve">
+    <value>Vérifiez le gestionnaire de l'OS</value>
+  </data>
+  <data name="checkServiceProvider" xml:space="preserve">
+    <value>Fournisseur de services de vérification</value>
+  </data>
+  <data name="deleteItem" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="deletionFailed" xml:space="preserve">
+    <value>Suppression a échoué</value>
+  </data>
+  <data name="publications" xml:space="preserve">
+    <value>Publications</value>
+  </data>
+  <data name="publicationsToolTip" xml:space="preserve">
+    <value>Publications faites de ce service déployé</value>
+  </data>
+  <data name="disable" xml:space="preserve">
+    <value>Désactiver</value>
+  </data>
+  <data name="duplicatedItem" xml:space="preserve">
+    <value>Élément dupliqué</value>
+  </data>
+  <data name="enable" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="error" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="groups" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="inactive" xml:space="preserve">
+    <value>Handicapés</value>
+  </data>
+  <data name="language" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="manageGroups" xml:space="preserve">
+    <value>Gérer des groupes pour cette authentificateur</value>
+  </data>
+  <data name="manageUsers" xml:space="preserve">
+    <value>Gestion des utilisateurs pour cette authentificateur</value>
+  </data>
+  <data name="modifying" xml:space="preserve">
+    <value>Modifiant</value>
+  </data>
+  <data name="modifyItem" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="needsAuthenticators" xml:space="preserve">
+    <value>Vous devez configurer au moins un authentificateur avant d'utiliser ce.</value>
+  </data>
+  <data name="needsOsManagers" xml:space="preserve">
+    <value>Vous devez définir le gestionnaire d'au moins un OS avant d'utiliser ce.</value>
+  </data>
+  <data name="needsServices" xml:space="preserve">
+    <value>Vous devez configurer au moins un Service avant d'utiliser ce.</value>
+  </data>
+  <data name="needsTransports" xml:space="preserve">
+    <value>Vous devez définir jusqu'à au moins un transport avant d'utiliser ce.</value>
+  </data>
+  <data name="newItem" xml:space="preserve">
+    <value>Nouveau</value>
+  </data>
+  <data name="newServiceProvider" xml:space="preserve">
+    <value>Nouveau fournisseur de services</value>
+  </data>
+  <data name="newVersionRequired" xml:space="preserve">
+    <value>Une nouvelle version de l'UDS Admin est obligée de communiquer avec le serveur</value>
+  </data>
+  <data name="services" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="specifyAuthenticator" xml:space="preserve">
+    <value>Vous devez spécifier l'authentificateur à utiliser</value>
+  </data>
+  <data name="specifyBaseService" xml:space="preserve">
+    <value>Vous devez spécifier le service à utiliser</value>
+  </data>
+  <data name="specifyOsManager" xml:space="preserve">
+    <value>Vous devez spécifier le OS Manager à utiliser</value>
+  </data>
+  <data name="users" xml:space="preserve">
+    <value>Utilisateurs</value>
+  </data>
+  <data name="view" xml:space="preserve">
+    <value>Avis</value>
+  </data>
+  <data name="cacheLevel" xml:space="preserve">
+    <value>Niveau de cache</value>
+  </data>
+  <data name="id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="owner" xml:space="preserve">
+    <value>Propriétaire</value>
+  </data>
+  <data name="publish" xml:space="preserve">
+    <value>Publier</value>
+  </data>
+  <data name="publicationFailed" xml:space="preserve">
+    <value>Publication a échoué</value>
+  </data>
+  <data name="publishQuestion" xml:space="preserve">
+    <value>Générer une nouvelle publication pour ce service ?</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="selectOnlyOne" xml:space="preserve">
+    <value>Sélectionner un seul élément pour effectuer cette opération.</value>
+  </data>
+  <data name="deployedService" xml:space="preserve">
+    <value>Service déployée</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>Aucun</value>
+  </data>
+  <data name="occopied" xml:space="preserve">
+    <value>Occupée</value>
+  </data>
+  <data name="removeQuestion" xml:space="preserve">
+    <value>Vous êtes certain que vous voulez supprimer cet élément ?</value>
+  </data>
+  <data name="yes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="osManager" xml:space="preserve">
+    <value>Gestionnaire de l'OS</value>
+  </data>
+  <data name="appWillTerminate" xml:space="preserve">
+    <value>L'application sera sortie maintenant</value>
+  </data>
+  <data name="authFailed" xml:space="preserve">
+    <value>Les informations d'identification fournies ne sont plus valides</value>
+  </data>
+  <data name="findFailed" xml:space="preserve">
+    <value>L'élément do il existe non plus. Veuillez actualiser gui (F5)</value>
+  </data>
+  <data name="invalidCredentials" xml:space="preserve">
+    <value>Informations d'identification non valides</value>
+  </data>
+  <data name="validationFailed" xml:space="preserve">
+    <value>Il y a des erreurs dans les données fournies</value>
+  </data>
+  <data name="stateActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="stateBlocked" xml:space="preserve">
+    <value>Bloqué</value>
+  </data>
+  <data name="stateCanceled" xml:space="preserve">
+    <value>Annulée</value>
+  </data>
+  <data name="stateCanceling" xml:space="preserve">
+    <value>Annulation</value>
+  </data>
+  <data name="stateError" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="stateInactive" xml:space="preserve">
+    <value>Inactif</value>
+  </data>
+  <data name="statePreparing" xml:space="preserve">
+    <value>Générant</value>
+  </data>
+  <data name="stateRemovable" xml:space="preserve">
+    <value>Attente d'enlèvement</value>
+  </data>
+  <data name="stateRemoved" xml:space="preserve">
+    <value>Supprimé</value>
+  </data>
+  <data name="stateRemoving" xml:space="preserve">
+    <value>Suppression</value>
+  </data>
+  <data name="stateUnknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="stateUsable" xml:space="preserve">
+    <value>Prêt</value>
+  </data>
+  <data name="waitingOsReady" xml:space="preserve">
+    <value>OS pour se préparer en attente</value>
+  </data>
+  <data name="assignToUser" xml:space="preserve">
+    <value>Assigner un Service à l'utilisateur</value>
+  </data>
+  <data name="serviceProviders" xml:space="preserve">
+    <value>Fournisseurs de services</value>
+  </data>
+  <data name="fieldRequired" xml:space="preserve">
+    <value>Champ « {0} » est requis</value>
+  </data>
+  <data name="nameRequired" xml:space="preserve">
+    <value>Le champ « nom » est requis</value>
+  </data>
+  <data name="groupRequired" xml:space="preserve">
+    <value>Vous devez sélectionner un groupe</value>
+  </data>
+  <data name="serviceRequired" xml:space="preserve">
+    <value>Vous devez sélectionner un service</value>
+  </data>
+  <data name="userRequired" xml:space="preserve">
+    <value>Vous devez sélectionner un utilisateur</value>
+  </data>
+  <data name="userPreferences" xml:space="preserve">
+    <value>Préférences de l'utilisateur</value>
+  </data>
+  <data name="transports" xml:space="preserve">
+    <value>Transports</value>
+  </data>
+  <data name="networks" xml:space="preserve">
+    <value>Réseaux</value>
+  </data>
+  <data name="invalidIpAddress" xml:space="preserve">
+    <value>Adresse Ip non valide</value>
+  </data>
+  <data name="netEnd" xml:space="preserve">
+    <value>Fin de réseau</value>
+  </data>
+  <data name="netStart" xml:space="preserve">
+    <value>Début du réseau</value>
+  </data>
+  <data name="netRangeError" xml:space="preserve">
+    <value>Fin du réseau doit être supérieure à démarrer réseau</value>
+  </data>
+  <data name="negativeNetCheck" xml:space="preserve">
+    <value>Transport non active pour les réseaux sélectionnés</value>
+  </data>
+  <data name="positiveNetCheck" xml:space="preserve">
+    <value>Transport actif pour les réseaux sélectionnés</value>
+  </data>
+  <data name="resultTestError" xml:space="preserve">
+    <value>Essai infructueux</value>
+  </data>
+  <data name="resultTestOk" xml:space="preserve">
+    <value>Test réussie</value>
+  </data>
+  <data name="authenticators" xml:space="preserve">
+    <value>Authentificateurs</value>
+  </data>
+  <data name="connectivity" xml:space="preserve">
+    <value>Connectivité</value>
+  </data>
+  <data name="deployedServices" xml:space="preserve">
+    <value>Services de déploiements</value>
+  </data>
+  <data name="osManagers" xml:space="preserve">
+    <value>Gestionnaires des OS</value>
+  </data>
+  <data name="errorInfo" xml:space="preserve">
+    <value>Obtenir des informations sur l'erreur</value>
+  </data>
+  <data name="downloadQuery" xml:space="preserve">
+    <value>Vous voulez télécharger et installer la nouvelle version ?</value>
+  </data>
+  <data name="downloadInfo" xml:space="preserve">
+    <value>Téléchargé {0} Ko {1} ko à {2:0.00} KB/s.</value>
+  </data>
+  <data name="exit" xml:space="preserve">
+    <value>Sortie</value>
+  </data>
+  <data name="importFilter" xml:space="preserve">
+    <value>Texte Files|*.txt|Tous les fichiers| *. *</value>
+  </data>
+  <data name="import" xml:space="preserve">
+    <value>Importer un fichier texte</value>
+  </data>
+  <data name="group" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="searchGroup" xml:space="preserve">
+    <value>Groupe de recherche</value>
+  </data>
+  <data name="searchUser" xml:space="preserve">
+    <value>Utilisateur de recherche</value>
+  </data>
+  <data name="user" xml:space="preserve">
+    <value>Utilisateur</value>
+  </data>
+  <data name="modificationFailed" xml:space="preserve">
+    <value>Modification a échoué</value>
+  </data>
+  <data name="titleAssignService" xml:space="preserve">
+    <value>Affecter le Service</value>
+  </data>
+  <data name="titleAssignNewGroup" xml:space="preserve">
+    <value>Assigner le nouveau groupe</value>
+  </data>
+  <data name="titleAuthenticator" xml:space="preserve">
+    <value>Authentificateur</value>
+  </data>
+  <data name="titleDeployedService" xml:space="preserve">
+    <value>Service de déploiement</value>
+  </data>
+  <data name="titleDownloader" xml:space="preserve">
+    <value>Téléchargeur</value>
+  </data>
+  <data name="titleGroup" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="titleLogin" xml:space="preserve">
+    <value>Connexion à l'Administration de l'UDS</value>
+  </data>
+  <data name="titleMain" xml:space="preserve">
+    <value>UDS Administration Client</value>
+  </data>
+  <data name="titleNetwork" xml:space="preserve">
+    <value>Réseau</value>
+  </data>
+  <data name="titleOsManager" xml:space="preserve">
+    <value>Gestionnaire de l'OS</value>
+  </data>
+  <data name="titleService" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="titleServiceProvider" xml:space="preserve">
+    <value>Fournisseur de services</value>
+  </data>
+  <data name="titleTransport" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="titleUser" xml:space="preserve">
+    <value>Utilisateur</value>
+  </data>
+  <data name="titleUserPreferences" xml:space="preserve">
+    <value>Préférences de l'utilisateur</value>
+  </data>
+  <data name="cacheFlushed" xml:space="preserve">
+    <value>Le cache a été vidé.</value>
+  </data>
+  <data name="stateLaunching" xml:space="preserve">
+    <value>Lancement de la publication</value>
+  </data>
+  <data name="transportRequired" xml:space="preserve">
+    <value>Vous devez sélectionner un transport</value>
+  </data>
+  <data name="titleConfiguration" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+</root>

@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+. /usr/share/debconf/confmodule
+
+Q=0
+Q_DONE=3
+
+nextState() {
+  if [[ $1 -eq 30 ]]; then
+    Q=$((Q-1))
+  else
+    Q=$((Q+1))
+  fi
+}
+
+if [[ -f /etc/udsactor/udsactor.cfg ]]; then
+  TMPFILE=$(mktemp /tmp/udsactor.cfg.XXXXX)
+  trap "rm -f $TMPFILE" 0
+  cat /etc/udsactor/udsactor.cfg | sed -e "s/\\[.*\\]//; s/ *= */=/; s/False/false/; s/True/true/" > $TMPFILE
+  . $TMPFILE
+  db_set udsactor/server $server
+  db_set udsactor/secure $ssl
+  db_set udsactor/timeout $timeout
+fi
+
+db_capb backup
+
+while [[ $Q -lt $Q_DONE ]]; do
+  case $Q in
+    0)
+      db_input high udsactor/server || true
+      db_go || true
+      nextState 0
+      ;;
+    1)
+      db_input high udsactor/secure || true
+      db_go || RET=$?
+      nextState $RET
+      ;;
+     2)
+      db_input high udsactor/timeout || true
+      db_go || RET=$?
+      nextState 0
+      ;;
+  esac
+done

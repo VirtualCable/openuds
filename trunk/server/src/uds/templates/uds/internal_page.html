@@ -1,0 +1,44 @@
+{% extends "uds/base.html" %}
+{% load i18n %}
+{% load static %}
+{% block script %}
+<script type="text/javascript">
+	$(document).ready(function() {
+      $('#admin ul').hide();
+	  $("#admin").click(function(){
+	  	var lista = $('#admin ul');
+	  	if (lista.is(":hidden")) {
+	  		lista.slideDown("fast");
+			
+		} else {
+			lista.hide();
+		}
+	  	
+	  	
+	  });
+	});
+	
+</script>
+{% endblock script %}
+{% block top %}
+			<div id="lheader">
+				<h1><a href="{% url uds.web.views.index %}">U<span>d</span>S</a></h1>
+			</div>
+			<div id="user">
+			{% trans "User" %} {{ user.real_name }}
+			</div>
+			{% if user.staff_member or user.is_admin %}
+			  {% include "uds/snippets/admin_user.html" %}
+			{% endif %}
+			<div id="prefs">
+			    <a href="{% url uds.web.views.prefs %}">{% trans "Preferences" %}</a>
+			</div>
+			{% if not nolang %}
+			  {% include "uds/snippets/lang.html" %}
+			{% endif %}
+			<div id="logout" class="last">
+				<a href="{% url uds.web.views.logout %}"><img src='{% get_static_prefix %}/img/exit.png' alt='{% trans "Log out" %}' title='{% trans "Log out" %}'/></a>
+			</div>
+			
+		
+{% endblock top %}

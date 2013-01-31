@@ -1,0 +1,85 @@
+{% extends "uds/internal_page.html" %}
+{% load i18n %}
+{% load static %}
+{% block script %}
+{{ block.super }}
+<script type="text/javascript">
+	$(document).ready(function() {
+      var spa = [ '<', 'span', '>', '<', '/span', '>'].join('');
+	  $("ul li ul").hide();
+	  $("ul li ul").before(spa);
+	  $("ul li span").click(function(){
+	  	var lista = $(this).parent().children("ul");
+	  	if (lista.is(":hidden")) {
+	  		lista.slideDown("fast");
+			$(this).addClass("ampli");
+		} else {
+			lista.hide();
+			$(this).removeClass("ampli");
+	  	}
+	  	
+	  	
+	  	});
+	});
+	
+	{% if not java %}
+	$(function() {
+		$('#jmessage').dialog({
+			autoOpen: false,
+			width: 500,
+			buttons: {
+				"Ok": function() { 
+					$(this).dialog("close"); 
+				}
+			}
+		});
+		$("a.nojava").click( function() {
+			$('#jmessage').dialog('open');
+			return false;
+		});
+		
+	});
+	{% endif %}
+	
+	
+
+</script>
+{% endblock script %}
+
+{% block content %}
+<div id="services"> 
+	<h2>{% trans "Services" %}</h2>
+	<ul>
+	{% for ser in services %}
+	  {% if ser.transports %}
+		<li>
+		  {% with trans=ser.transports|first %}
+		  <a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url uds.web.views.service idService=ser.id idTransport=trans.id %}">{{ ser.name }}</a>
+		  {% endwith %}
+		  <ul>
+		  {% for trans in ser.transports %}
+		    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url uds.web.views.service idService=ser.id idTransport=trans.id %}"><img src="{% url uds.web.views.transportIcon idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
+		  {% endfor %}
+		  </ul>
+		</li>
+	  {% endif %}
+	{% endfor %}
+	</ul>
+</div>
+{% if not java %}
+<div id="jmessage" title="{% trans "Java not found" %}">
+	<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
+	<p>{% trans "Please, install latest version from" %} <a href="http://www.java.com">{% trans "Java website" %}</a> {% trans "and restart browser" %}</p>
+</div>
+{% endif %}
+
+{% if user.isStaff %}
+  <div id="adminmsgs">
+	<div>{% trans "Ip" %}: {{ ip }}</li>
+	<div>{% trans "Networks" %}: {{ nets }}</div>
+	<div>{% trans "Transports" %}: {{ transports }}</div>
+	</div>
+    	 	
+  </div>
+{% endif %}
+{% endblock content %} 

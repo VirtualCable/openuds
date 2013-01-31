@@ -1,0 +1,38 @@
+#!/bin/sh
+
+. /usr/share/debconf/confmodule
+
+set -e
+
+case "$1" in
+    configure)
+        # Ensure actor is not running
+        db_get udsactor/server
+        server=$RET
+        db_get udsactor/secure
+        ssl=$RET
+        if [ "$ssl" = "true" ]; then ssl=True; else ssl=False; fi 
+        db_get udsactor/timeout
+        timeout=$RET
+        TMPFILE=$(mktemp /tmp/udsactor.cfg.XXXXX)
+        trap "rm -f $TMPFILE" 0
+        cat /etc/udsactor/udsactor.cfg | sed -e "s/server=.*/server=$server/; s/ssl=.*/ssl=$ssl/; s/timeout=.*/timeout=$timeout/" > $TMPFILE
+        cp $TMPFILE /etc/udsactor/udsactor.cfg
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+# Don't know why, but descriptors get "weird" when launched daemon, so we tell here to debconf to stop.
+# Solved not starting the service right now, defered to next reboot
+
+
+exit 0

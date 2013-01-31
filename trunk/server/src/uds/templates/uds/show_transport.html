@@ -1,0 +1,13 @@
+{% extends "uds/internal_page.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<div id="transport">
+{% autoescape off %} 
+{{ transport }}
+{% endautoescape %}
+</div>
+<br/>
+{% include "uds/snippets/back_to_list.html" %}
+{% endblock %}
