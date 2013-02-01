@@ -34,9 +34,10 @@
 from django.utils.translation import ugettext as _, activate
 from django.contrib.sessions.backends.db import SessionStore
 from uds.models import Authenticator
-from ..util.Exceptions import AuthException
+from uds.xmlrpc.util.Exceptions import AuthException
 from uds.core.util.Config import GlobalConfig
-from uds.core.auths.auth import authenticate
+from uds.core.util import log
+from uds.core.auths.auth import authenticate, getIp
 from functools import wraps
 from django.conf import settings
 import logging
@@ -75,6 +76,7 @@ class Credentials(object):
             return ''
         try:
             a = Authenticator.objects.get(pk=self.idAuth).getInstance()
+            log.doLog(self.user, log.INFO, 'Logged out from administration', log.WEB)
             return a.logout(self.user)
         except Exception:
             logger.exception('Exception at logout (managed)')
@@ -154,7 +156,9 @@ def login(username, password, idAuth, locale, request):
     '''
     Validates the user/password credentials, assign to it the specified locale for this session and returns a credentials response
     '''
-        
+    
+    getIp(request)
+    
     logger.info("Validating user {0} with authenticator {1} with locale {2}".format(username, idAuth, locale))
     activate(locale)
     if idAuth == ADMIN_AUTH:
@@ -167,8 +171,25 @@ def login(username, password, idAuth, locale, request):
         user = authenticate(username, password, auth)
     except Exception:
         raise AuthException(_('Invalid authenticator'))
-    if user is None or user.staff_member is False:
+    
+    if user is None:
+        log.doLog(auth, log.ERROR, 'Invalid credentials for {0} from {1}'.format(username, request.ip), log.ADMIN)
+        try:
+            user = auth.users.get(name=username)
+            log.doLog(user, log.ERROR, 'Invalid credentials from {0}'.format(request.ip), log.ADMIN)
+        except:
+            pass
         raise AuthException(_('Access denied'))
+    
+    if user.staff_member is False:
+        log.doLog(auth, log.ERROR, 'Access denied from {1}. User {0} is not membef of staff'.format(username, request.ip), log.ADMIN)
+        log.doLog(user, log.ERROR, 'Access denied from {0}. This user is not membef of staff'.format(request.ip), log.ADMIN)
+        
+        raise AuthException(_('Access denied'))
+    
+    log.doLog(auth, log.INFO, 'Access granted to user {0} from {1} to administration'.format(username, request.ip), log.ADMIN)
+    log.doLog(user, log.INFO, 'Access granted from {0} to administration'.format(request.ip), log.ADMIN)
+    
     return makeCredentials(idAuth, username, locale, user.is_admin)
         
 
