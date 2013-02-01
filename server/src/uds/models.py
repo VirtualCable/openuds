@@ -40,7 +40,6 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.services.Exceptions import InvalidServiceException
 from datetime import datetime, timedelta
-from uds.core.managers import logManager
 
 import logging
 
@@ -149,7 +148,7 @@ class Provider(models.Model):
             s.env().clearRelatedData()
             
         # Clears related logs
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         logger.debug('Before delete service provider '.format(toDelete))
     
@@ -239,7 +238,7 @@ class Service(models.Model):
             s.env().clearRelatedData()
         
         # Clears related logs
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         logger.debug('Before delete service '.format(toDelete))
     
@@ -624,7 +623,7 @@ class Authenticator(models.Model):
             s.env().clearRelatedData()
         
         # Clears related logs
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         logger.debug('Before delete auth '.format(toDelete))
     
@@ -731,7 +730,7 @@ class User(models.Model):
         toDelete.getManager().removeUser(toDelete.name)
         
         # Remove related logs
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         # Removes all user services assigned to this user (unassign it and mark for removal)
         for us in toDelete.userServices.all():
@@ -788,7 +787,7 @@ class Group(models.Model):
         toDelete.getManager().removeGroup(toDelete.name)
 
         # Clears related logs
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         logger.debug('Deleted group {0}'.format(toDelete))
 
@@ -1029,7 +1028,7 @@ class DeployedService(models.Model):
         toDelete.getEnvironment().clearRelatedData()
         
         # Clears related logs
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         logger.debug('Deleting Deployed Service {0}'.format(toDelete))
         
@@ -1166,7 +1165,7 @@ class DeployedServicePublication(models.Model):
         # It's handled as "publish", and as so, it can be a multi-step process
         
         # Clears related logs
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         
         logger.debug('Deleted publication {0}'.format(toDelete))
@@ -1521,7 +1520,7 @@ class UserService(models.Model):
         toDelete.getEnvironment().clearRelatedData()
         
         # Clear related logs to this user service
-        logManager().clearLogs(toDelete)
+        log.clearLogs(toDelete)
         
         # TODO: Check if this invokation goes here
         #toDelete.getInstance()

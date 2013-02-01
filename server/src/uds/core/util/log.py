@@ -39,9 +39,9 @@ useLogger = logging.getLogger('useLog')
 OTHER,DEBUG,INFO,WARN,ERROR,FATAL = (10000*(x+1) for x in xrange(6))
 
 # Logging sources
-INTERNAL,ACTOR,TRANSPORT, OSMANAGER, UNKNOWN, WEB = ('internal', 'actor', 'transport', 'osmanager', 'unknown', 'web')
+INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB = ('internal', 'actor', 'transport', 'osmanager', 'unknown', 'web')
 
-OTHERSTR,DEBUGSTR,INFOSTR,WARNSTR,ERRORSTR,FATALSTR = ('OTHER', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')
+OTHERSTR, DEBUGSTR, INFOSTR, WARNSTR, ERRORSTR, FATALSTR = ('OTHER', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')
 
 # Names for defined log levels
 __nameLevels = {
@@ -68,4 +68,28 @@ def logStrFromLevel(level):
 
 def useLog(type_, serviceUniqueId, serviceIp, username):
     useLogger.info('|'.join([type_, serviceUniqueId, serviceIp, username]))
+
+
+def doLog(wichObject, level, message, source = UNKNOWN):
+    from uds.core.managers import logManager
+    logManager().doLog(wichObject, level, message, source)
+        
     
+def getLogs(wichObject, limit = None):
+    '''
+    Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT) 
+    '''
+    from uds.core.managers import logManager
+    from uds.core.util.Config import GlobalConfig
+
+    if limit is None:
+        limit = GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()
+    
+    return logManager().getLogs(wichObject, limit)
+    
+def clearLogs(wichObject):
+    '''
+    Clears the logs associated with the object using the logManager
+    '''
+    from uds.core.managers import logManager
+    return logManager().clearLogs(wichObject)

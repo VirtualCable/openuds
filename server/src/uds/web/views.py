@@ -37,7 +37,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-from uds.core.auths.auth import getIp, webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback
+from uds.core.auths.auth import getIp, webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout
 from uds.models import Authenticator, DeployedService, Transport, UserService, Network
 from uds.web.forms.LoginForm import LoginForm
 from uds.core.managers.UserServiceManager import UserServiceManager
@@ -46,24 +46,22 @@ from uds.core.managers.DownloadsManager import DownloadsManager
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
+from uds.core.util import log
+
 from transformers import transformId, scrambleId
+
+
 import errors
 import logging
 import random
 import string
 
 logger = logging.getLogger(__name__)
-authLogger = logging.getLogger('__authLog')
 
-def __authLog(request, authenticator, userName, java, os, log):
-    '''
-    Logs authentication
-    '''
-    javaStr = java and 'Java' or 'No Java'
-    authLogger.info('|'.join([authenticator.name, userName, javaStr, os['OS'], log, request.META['HTTP_USER_AGENT']]))
 
 def login(request):
-    #request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt()) 
+    #request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
+    getIp(request) 
     if request.method == 'POST':
         if request.COOKIES.has_key('uds') is False:
             return errors.errorView(request, errors.COOKIES_NEEDED) # We need cookies to keep session data
@@ -81,7 +79,7 @@ def login(request):
                 tries = 0
             if tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
                 form.add_form_error('Too many authentication errors. User temporarily  blocked.')
-                __authLog(request, authenticator, userName, java, os, 'Temporarily blocked')
+                authLogLogin(request, authenticator, userName, java, os, 'Temporarily blocked')
             else:
                 user = authenticate(userName, form.cleaned_data['password'], authenticator )
                     
@@ -90,7 +88,7 @@ def login(request):
                     tries += 1
                     cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
                     form.add_form_error('Invalid credentials')
-                    __authLog(request, authenticator, userName, java, os, 'Invalid credentials')
+                    authLogLogin(request, authenticator, userName, java, os, 'Invalid credentials')
                 else:
                     cache.remove(cacheKey) # Valid login, remove cached tries
                     response = HttpResponseRedirect(reverse('uds.web.views.index'))
@@ -99,7 +97,7 @@ def login(request):
                     request.session['java'] = java
                     request.session['OS'] = os
                     logger.debug('Navigator supports java? {0}'.format(java))
-                    __authLog(request, authenticator, user.name, java, os, 'Logged in')
+                    authLogLogin(request, authenticator, user.name, java, os)
                     return response
     else:
         form = LoginForm()
@@ -125,6 +123,7 @@ def customAuth(request, idAuth):
 
 @webLoginRequired
 def logout(request):
+    authLogLogout(request)
     return webLogout(request, request.user.logout())
 
 @webLoginRequired
@@ -265,11 +264,8 @@ def sernotify(request, idUserService, notification):
             message = request.GET.get('message', None)
             level = request.GET.get('level', None)
             if message is not None and level is not None:
-                from uds.core.util import log
-                from uds.core.managers import logManager
-                
                 us = UserService.objects.get(pk=idUserService)
-                logManager().doLog(us, level, message, log.TRANSPORT)
+                log.doLog(us, level, message, log.TRANSPORT)
             else:
                 return HttpResponse('Invalid request!', 'text/plain')
     except Exception as e:
@@ -313,7 +309,7 @@ def authCallback(request, authName):
         os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
                 
         if user is None:
-            __authLog(request, authenticator, '{0}'.format(params), False, os, 'Invalid at auth callback')
+            authLogLogin(request, authenticator, '{0}'.format(params), False, os, 'Invalid at auth callback')
             raise auths.Exceptions.InvalidUserException()
 
         # Redirect to main page through java detection process, so UDS know the availability of java
@@ -371,7 +367,7 @@ def authJava(request, idAuth, hasJava):
     try:
         authenticator = Authenticator.objects.get(pk=idAuth)
         os = request.session['OS'] 
-        __authLog(request, authenticator, request.user.name, request.session['java'], os, 'Logged in')
+        authLogLogin(request, authenticator, request.user.name, request.session['java'], os)
         return HttpResponseRedirect(reverse('uds.web.views.index'))
         
     except Exception as e:

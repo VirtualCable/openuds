@@ -36,13 +36,17 @@ Provides useful functions for authenticating, used by web interface.
 from functools import wraps
 from django.http import HttpResponseRedirect
 from uds.core.util.Config import GlobalConfig
+from uds.core.util import log
 from uds.core import auths
 from uds.core.managers.CryptoManager import CryptoManager 
 from uds.core.util.State import State
 from uds.models import User
+
 import logging
 
 logger = logging.getLogger(__name__)
+authLogger = logging.getLogger('authLog')
+
 
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
@@ -220,4 +224,30 @@ def webLogout(request, exit_url = None):
         exit_url = GlobalConfig.LOGIN_URL.get()
     # Try to delete session
     return HttpResponseRedirect(request.build_absolute_uri(exit_url))
+
+def authLogLogin(request, authenticator, userName, java, os, logStr = ''):
+    '''
+    Logs authentication
+    '''
+    
+    if logStr == '':
+        logStr = 'Logged in'
+        
+    javaStr = java and 'Java' or 'No Java'
+    authLogger.info('|'.join([authenticator.name, userName, javaStr, os['OS'], logStr, request.META['HTTP_USER_AGENT']]))
+    level = (logStr == 'Logged in') and log.INFO or log.ERROR
+    log.doLog(authenticator, level, 'user {0} has {1} from {2} {3} java and os is {4}'.format(userName, logStr,
+          request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)
+    
+    try:
+        user = authenticator.users.get(name=userName)
+        log.doLog(user, level, '{0} from {1} {2} java and os is {3}'.format(logStr,
+                request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)
+    except:
+        pass
+        
+
+def authLogLogout(request):
+    log.doLog(request.user.manager, log.INFO, 'user {0} has logged out from {1}'.format(request.user.name, request.ip), log.WEB)
+    log.doLog(request.user, log.INFO, 'has logged out from {0}'.format(request.ip), log.WEB)
 

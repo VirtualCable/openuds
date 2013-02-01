@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+
 from uds.models import UserService
 from uds.models import DeployedServicePublication
 from uds.models import DeployedService
@@ -39,9 +40,10 @@ from uds.models import User
 from uds.models import Group
 from uds.models import Authenticator
 
-from uds.models import Log
 from uds.core.util import log
+
 from uds.core.util.Config import GlobalConfig
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -50,16 +52,16 @@ OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT
 
 # Dict for translations
 transDict = {
-    UserService : OT_USERSERVICE,
-    DeployedServicePublication : OT_PUBLICATION,
-    DeployedService : OT_DEPLOYED_SERVICE,
-    Service : OT_SERVICE,
-    Provider : OT_PROVIDER,
-    User : OT_USER,
-    Group : OT_GROUP,
-    Authenticator : OT_AUTHENTICATOR
-}
-
+        UserService : OT_USERSERVICE,
+        DeployedServicePublication : OT_PUBLICATION,
+        DeployedService : OT_DEPLOYED_SERVICE,
+        Service : OT_SERVICE,
+        Provider : OT_PROVIDER,
+        User : OT_USER,
+        Group : OT_GROUP,
+        Authenticator : OT_AUTHENTICATOR
+    }
+    
 class LogManager(object):
     '''
     Manager for logging (at database) events
@@ -80,6 +82,7 @@ class LogManager(object):
         Logs a message associated to owner
         '''
         from uds.models import getSqlDatetime
+        from uds.models import Log
         
         qs = Log.objects.filter(owner_id = owner_id, owner_type = owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
@@ -94,6 +97,8 @@ class LogManager(object):
         '''
         Get all logs associated with an user service, ordered by date
         '''
+        from uds.models import Log
+
         qs = Log.objects.filter(owner_id = owner_id, owner_type = owner_type)
         return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in reversed(qs.order_by('-created')[:limit])]
     
@@ -101,17 +106,18 @@ class LogManager(object):
         '''
         Clears all logs related to user service
         '''
+        from uds.models import Log
+
         Log.objects.filter(owner_id = owner_id, owner_type = owner_type).delete()
        
     
     
-    def doLog(self, wichObject, level, message, source = log.UNKNOWN):
+    def doLog(self, wichObject, level, message, source):
         '''
         Do the logging for the requested object.
         
         If the object provided do not accepts associated loggin, it simply ignores the request
         '''
-        
         if type(level) is not int:
             level = log.logLevelFromStr(level)
         
@@ -122,7 +128,7 @@ class LogManager(object):
             logger.debug('Requested doLog for a type of object not covered: {0}'.format(wichObject))
             
         
-    def getLogs(self, wichObject, limit = GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()):
+    def getLogs(self, wichObject, limit):
         '''
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT) 
         '''
