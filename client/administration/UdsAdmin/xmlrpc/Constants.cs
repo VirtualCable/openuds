@@ -60,5 +60,33 @@ namespace UdsAdmin.xmlrpc
         public const string STATE_ERROR = "E"; 
         public const string STATE_CANCELED = "C";
         public const string STATE_CANCELING = "K";
+
+        public const string LEVEL_OTHER = "OTHER";
+        public const int LEVEL_OTHER_I = 10000;
+        public const string LEVEL_DEBUG = "DEBUG";
+        public const int LEVEL_DEBUG_I = 20000;
+        public const string LEVEL_INFO = "INFO";
+        public const int LEVEL_INFO_I = 30000;
+        public const string LEVEL_WARN = "WARN";
+        public const int LEVEL_WARN_I = 40000;
+        public const string LEVEL_ERROR = "ERROR";
+        public const int LEVEL_ERROR_I = 50000;
+        public const string LEVEL_FATAL = "FATAL";
+        public const int LEVEL_FATAL_I = 60000;
+
+        public static string stringFromLevel(int level)
+        {
+            if (level >= LEVEL_FATAL_I)
+                return LEVEL_FATAL;
+            if (level >= LEVEL_ERROR_I)
+                return LEVEL_ERROR;
+            if (level >= LEVEL_WARN_I)
+                return LEVEL_WARN;
+            if (level >= LEVEL_INFO_I)
+                return LEVEL_INFO;
+            if (level >= LEVEL_DEBUG_I)
+                return LEVEL_DEBUG;
+            return LEVEL_OTHER;
+        }
     }
 }

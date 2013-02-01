@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2012 Virtual Cable S.L.
+// Copyright (c) 2012-2013 Virtual Cable S.L.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -99,31 +99,37 @@ namespace UdsAdmin.controls.panel
         {
             ColumnHeader userHeader = new ColumnHeader(); userHeader.Text = Strings.owner; userHeader.TextAlign = HorizontalAlignment.Center;
             ColumnHeader usedHeader = new ColumnHeader(); usedHeader.Text = Strings.occopied; usedHeader.TextAlign = HorizontalAlignment.Center;
-            listView.Columns.AddRange(new ColumnHeader[]{ userHeader, usedHeader});
+            ColumnHeader srcHostHeader = new ColumnHeader(); srcHostHeader.Text = Strings.sourceHost; srcHostHeader.TextAlign = HorizontalAlignment.Center;
+            ColumnHeader srcIpHeader = new ColumnHeader(); srcIpHeader.Text = Strings.sourceIp; srcIpHeader.TextAlign = HorizontalAlignment.Center;
+
+            listView.Columns.AddRange(new ColumnHeader[]{ userHeader, usedHeader, srcHostHeader, srcIpHeader});
         }
 
-        private ListViewItem getListViewItemFrom(xmlrpc.UserDeployedService uds)
+        private ListViewItem getListViewItemFrom(xmlrpc.UserService uds)
         {
             if (_cache == true)
                 return new ListViewItem(new string[] { uds.uniqueId, uds.friendlyName, uds.revision, uds.creationDate.ToString(), 
                     xmlrpc.Util.GetStringFromState(uds.state, uds.osState), uds.stateDate.ToString(), 
-                             ((xmlrpc.CachedDeployedService)uds).cacheLevel});
-            xmlrpc.AssignedDeployedService udss = (xmlrpc.AssignedDeployedService)uds;
+                             ((xmlrpc.CachedUserService)uds).cacheLevel});
+            xmlrpc.AssignedUserService udss = (xmlrpc.AssignedUserService)uds;
             return new ListViewItem(new string[] { uds.uniqueId, uds.friendlyName, uds.revision, uds.creationDate.ToString(), 
-                xmlrpc.Util.GetStringFromState(uds.state, uds.osState), uds.stateDate.ToString(), udss.user, udss.inUse ? Strings.yes : Strings.no} );
+                xmlrpc.Util.GetStringFromState(uds.state, uds.osState), uds.stateDate.ToString(), udss.user, udss.inUse ? Strings.yes : Strings.no, 
+                udss.sourceHost, udss.sourceIp} );
         }
 
         private void updateList()
         {
+            int[] selected = new int[listView.SelectedIndices.Count];
+            listView.SelectedIndices.CopyTo(selected, 0);
 
-            xmlrpc.UserDeployedService[] servs;
+            xmlrpc.UserService[] servs;
             if (_cache == true)
                 servs = xmlrpc.UdsAdminService.GetCachedDeployedServices(_parent);
             else
                 servs = xmlrpc.UdsAdminService.GetAssignedDeployedServices(_parent);
 
             List<ListViewItem> lst = new List<ListViewItem>();
-            foreach (xmlrpc.UserDeployedService uds in servs)
+            foreach (xmlrpc.UserService uds in servs)
             {
                 ListViewItem itm = getListViewItemFrom(uds);
                 itm.Tag = uds.id;
@@ -132,6 +138,17 @@ namespace UdsAdmin.controls.panel
             }
             listView.Items.Clear();
             listView.Items.AddRange(lst.ToArray());
+
+            foreach (int i in selected)
+            {
+                try
+                {
+                    listView.SelectedIndices.Add(i);
+                }
+                catch (Exception)
+                { }
+            }
+
         }
 
         private void assignToUser(object sender, EventArgs e)
@@ -206,6 +223,25 @@ namespace UdsAdmin.controls.panel
                             i.Selected = true;
                     break;
             }
+        }
+
+        private void listView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            List<xmlrpc.LogEntry> data = new List<xmlrpc.LogEntry>();
+            foreach (ListViewItem i in listView.SelectedItems)
+            {
+                try
+                {
+                    xmlrpc.LogEntry[] logs = xmlrpc.UdsAdminService.GetUserServiceLogs((string)i.Tag);
+                    data.AddRange(logs);
+                }
+                catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+                {
+                    gui.UserNotifier.notifyRpcException(ex);
+                }
+
+            }
+            logViewer1.setLogs(data.ToArray());
         }
 
     }

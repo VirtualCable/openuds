@@ -68,7 +68,9 @@ namespace UdsAdmin.gui
             {
                 h.TextAlign = HorizontalAlignment.Left;
                 h.ImageKey = "empty";
-                h.Width = TextRenderer.MeasureText(h.Text, lst.Parent.Font).Width + 40;
+                int width = TextRenderer.MeasureText(h.Text, lst.Parent.Font).Width + 40;
+                if (width > h.Width)
+                    h.Width = width;
             }
         }
 

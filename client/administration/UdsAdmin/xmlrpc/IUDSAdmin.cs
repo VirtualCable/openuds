@@ -239,7 +239,7 @@ namespace UdsAdmin.xmlrpc
         Network[] GetNetworks(string credentials);
 
         [XmlRpcMethod("getNetworksForTransport")]
-        string[] getNetworksForTransport(string credentials, string id);
+        string[] GetNetworksForTransport(string credentials, string id);
 
         [XmlRpcMethod("setNetworksForTransport")]
         bool setNetworksForTransport(string credentials, string id, string[] networks);
@@ -301,13 +301,13 @@ namespace UdsAdmin.xmlrpc
         bool CancelPublication(string credentials, string id);
 
         [XmlRpcMethod("getCachedDeployedServices")]
-        CachedDeployedService[] GetCachedDeployedServices(string credentials, string idParent);
+        CachedUserService[] GetCachedDeployedServices(string credentials, string idParent);
 
         [XmlRpcMethod("getAssignedDeployedServices")]
-        AssignedDeployedService[] GetAssignedDeployedServices(string credentials, string idParent);
+        AssignedUserService[] GetAssignedDeployedServices(string credentials, string idParent);
 
         [XmlRpcMethod("getAssignableDeployedServices")]
-        AssignableDeployedService[] GetAssignableDeployedServices(string credentials, string idParent);
+        AssignableUserService[] GetAssignableDeployedServices(string credentials, string idParent);
 
         [XmlRpcMethod("removeUserService")]
         bool RemoveUserService(string credentials, string[] ids);
@@ -327,6 +327,16 @@ namespace UdsAdmin.xmlrpc
 
         [XmlRpcMethod("updateConfiguration")]
         bool UpdateConfiguration(string credentials, Configuration[] configuration);
+
+        // Log stuff
+        [XmlRpcMethod("getUserServiceLogs")]
+        LogEntry[] GetUserServiceLogs(string credentials, string id);
+
+        [XmlRpcMethod("getUserLogs")]
+        LogEntry[] GetUserLogs(string credentials, string id);
+
+        [XmlRpcMethod("getAuthLogs")]
+        LogEntry[] GetAuthLogs(string credentials, string id);
 
         // Callbacks invoker
         [XmlRpcMethod("chooseCallback")]
