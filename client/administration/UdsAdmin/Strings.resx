@@ -501,4 +501,10 @@
   <data name="cantModifyUsers" xml:space="preserve">
     <value>This authenticator do not allows the modification of users at administration interface</value>
   </data>
+  <data name="sourceHost" xml:space="preserve">
+    <value>Src Host</value>
+  </data>
+  <data name="sourceIp" xml:space="preserve">
+    <value>Src IP</value>
+  </data>
 </root>

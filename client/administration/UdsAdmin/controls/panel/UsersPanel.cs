@@ -129,6 +129,9 @@ namespace UdsAdmin.controls.panel
 
         private void updateList()
         {
+            int[] selected = new int[listView.SelectedIndices.Count];
+            listView.SelectedIndices.CopyTo(selected, 0);
+
             try
             {
                 xmlrpc.User[] usrs = xmlrpc.UdsAdminService.GetUsers(_auth.id);
@@ -147,6 +150,16 @@ namespace UdsAdmin.controls.panel
             catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
             {
                 gui.UserNotifier.notifyRpcException(ex);
+            }
+
+            foreach (int i in selected)
+            {
+                try
+                {
+                    listView.SelectedIndices.Add(i);
+                }
+                catch (Exception)
+                { }
             }
         }
 
@@ -255,6 +268,25 @@ namespace UdsAdmin.controls.panel
                             i.Selected = true;
                     break;
             }
+        }
+
+        private void listView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            List<xmlrpc.LogEntry> data = new List<xmlrpc.LogEntry>();
+            foreach (ListViewItem i in listView.SelectedItems)
+            {
+                try
+                {
+                    xmlrpc.LogEntry[] logs = xmlrpc.UdsAdminService.GetUserLogs((string)i.Tag);
+                    data.AddRange(logs);
+                }
+                catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+                {
+                    gui.UserNotifier.notifyRpcException(ex);
+                }
+
+            }
+            logViewer1.setLogs(data.ToArray());
         }
 
     }

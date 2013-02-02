@@ -337,7 +337,7 @@ namespace UdsAdmin.xmlrpc
         public string revision;
     }
 
-    public class UserDeployedService
+    public class UserService
     {
         public string idParent;
         public string id;
@@ -350,19 +350,21 @@ namespace UdsAdmin.xmlrpc
         public string revision;
     }
 
-    public class CachedDeployedService : UserDeployedService
+    public class CachedUserService : UserService
     {
         public string cacheLevel;
     }
 
-    public class AssignedDeployedService : UserDeployedService
+    public class AssignedUserService : UserService
     {
         public string user;
         public bool inUse;  
         public DateTime inUseDate;
+        public string sourceHost;
+        public string sourceIp;
     }
 
-    public class AssignableDeployedService
+    public class AssignableUserService
     {
         public string id;
         public string name;
@@ -398,6 +400,14 @@ namespace UdsAdmin.xmlrpc
             this.section = section; this.key = key; this.value = value; this.crypt = crypt; this.longText = longText;
         }
     };
+
+    public class LogEntry
+    {
+        public DateTime date;
+        public int level;
+        public string message;
+        public string source;
+    }
 
     public struct ChoiceCallback
     {

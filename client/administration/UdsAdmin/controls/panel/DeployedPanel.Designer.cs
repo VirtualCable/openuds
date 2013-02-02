@@ -29,30 +29,40 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployedPanel));
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.listView = new System.Windows.Forms.ListView();
             this.Id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.friendlyName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Revision = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.CreationDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.StatusDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.listView = new System.Windows.Forms.ListView();
-            this.friendlyName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Revision = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.logViewer1 = new UdsAdmin.controls.panel.LogViewer();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // Id
+            // splitContainer1
             // 
-            resources.ApplyResources(this.Id, "Id");
+            resources.ApplyResources(this.splitContainer1, "splitContainer1");
+            this.splitContainer1.Name = "splitContainer1";
             // 
-            // CreationDate
+            // splitContainer1.Panel1
             // 
-            resources.ApplyResources(this.CreationDate, "CreationDate");
+            this.splitContainer1.Panel1.Controls.Add(this.panel1);
             // 
-            // State
+            // splitContainer1.Panel2
             // 
-            resources.ApplyResources(this.State, "State");
+            this.splitContainer1.Panel2.Controls.Add(this.logViewer1);
             // 
-            // StatusDate
+            // panel1
             // 
-            resources.ApplyResources(this.StatusDate, "StatusDate");
+            this.panel1.Controls.Add(this.listView);
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Name = "panel1";
             // 
             // listView
             // 
@@ -70,9 +80,13 @@
             this.listView.Name = "listView";
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
+            this.listView.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
             this.listView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listView_KeyUp);
             this.listView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView_MouseUp);
+            // 
+            // Id
+            // 
+            resources.ApplyResources(this.Id, "Id");
             // 
             // friendlyName
             // 
@@ -82,25 +96,50 @@
             // 
             resources.ApplyResources(this.Revision, "Revision");
             // 
+            // CreationDate
+            // 
+            resources.ApplyResources(this.CreationDate, "CreationDate");
+            // 
+            // State
+            // 
+            resources.ApplyResources(this.State, "State");
+            // 
+            // StatusDate
+            // 
+            resources.ApplyResources(this.StatusDate, "StatusDate");
+            // 
+            // logViewer1
+            // 
+            resources.ApplyResources(this.logViewer1, "logViewer1");
+            this.logViewer1.Name = "logViewer1";
+            // 
             // DeployedPanel
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.listView);
+            this.Controls.Add(this.splitContainer1);
             this.Name = "DeployedPanel";
             this.VisibleChanged += new System.EventHandler(this.DeployedPanel_VisibleChanged);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private LogViewer logViewer1;
+        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.ColumnHeader Id;
+        private System.Windows.Forms.ColumnHeader friendlyName;
+        private System.Windows.Forms.ColumnHeader Revision;
         private System.Windows.Forms.ColumnHeader CreationDate;
         private System.Windows.Forms.ColumnHeader State;
         private System.Windows.Forms.ColumnHeader StatusDate;
-        private System.Windows.Forms.ColumnHeader Revision;
-        private System.Windows.Forms.ColumnHeader friendlyName;
+
     }
 }

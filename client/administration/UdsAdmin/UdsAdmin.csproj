@@ -95,6 +95,12 @@
     <Compile Include="controls\panel\AuthsPanel.Designer.cs">
       <DependentUpon>AuthsPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="controls\panel\LogViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\panel\LogViewer.Designer.cs">
+      <DependentUpon>LogViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="controls\panel\NetworksPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -420,6 +426,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="controls\panel\GroupsPanel.fr.resx">
       <DependentUpon>GroupsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\panel\LogViewer.de.resx">
+      <DependentUpon>LogViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\panel\LogViewer.es.resx">
+      <DependentUpon>LogViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\panel\LogViewer.fr.resx">
+      <DependentUpon>LogViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\panel\LogViewer.resx">
+      <DependentUpon>LogViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="controls\panel\NetworksPanel.de.resx">
       <DependentUpon>NetworksPanel.cs</DependentUpon>

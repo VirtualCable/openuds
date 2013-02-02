@@ -45,6 +45,8 @@ namespace UdsAdmin.gui
         public static Color BlockedColor = Color.Red;
         public static Color RunningColor = Color.Green;
         public static Color ErrorColor = Color.Red;
+        public static Color InfoColor = Color.Blue;
+        public static Color DebugColor = Color.Black;
         public static Color InactiveBackColor = Color.Red;
         public static Color InactiveForeColor = Color.Yellow;
         public static Color ActiveBackColor = Color.Green;
@@ -73,6 +75,17 @@ namespace UdsAdmin.gui
                 default:
                     return BlackColor;
             }
+        }
+
+        public static Color getColorForLogLevel(int level)
+        {
+            if (level >= xmlrpc.Constants.LEVEL_ERROR_I)
+                return ErrorColor;
+
+            if (level >= xmlrpc.Constants.LEVEL_INFO_I)
+                return InfoColor;
+
+            return DebugColor;
         }
     }
 }

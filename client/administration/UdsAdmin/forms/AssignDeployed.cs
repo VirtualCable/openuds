@@ -51,7 +51,7 @@ namespace UdsAdmin.forms
 
         private void AssignDeployed_Load(object sender, EventArgs e)
         {
-            xmlrpc.AssignableDeployedService[] services = xmlrpc.UdsAdminService.GetAssignableDeployedServices(_parent.id);
+            xmlrpc.AssignableUserService[] services = xmlrpc.UdsAdminService.GetAssignableDeployedServices(_parent.id);
             if (services.Length == 0)
             {
                 MessageBox.Show(Strings.error, Strings.services, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -93,7 +93,7 @@ namespace UdsAdmin.forms
 
             try {
                 xmlrpc.UdsAdminService.AssignDeployedService(_parent.id,
-                    ((xmlrpc.AssignableDeployedService)serviceCombo.SelectedItem).id,
+                    ((xmlrpc.AssignableUserService)serviceCombo.SelectedItem).id,
                     ((xmlrpc.User)userCombo.SelectedItem).id);
                 DialogResult = System.Windows.Forms.DialogResult.OK;
             }

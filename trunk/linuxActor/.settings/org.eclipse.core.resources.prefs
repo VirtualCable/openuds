@@ -1,8 +1,0 @@
-#Thu Nov 17 08:31:37 CET 2011
-eclipse.preferences.version=1
-encoding//src/actor.py=utf-8
-encoding//src/uds/actor/__init__.py=utf-8
-encoding//src/uds/actor/daemon.py=utf-8
-encoding//src/uds/actor/renamer/__init__.py=utf-8
-encoding//src/uds/actor/renamer/debian.py=utf-8
-encoding//src/uds/actor/rpc.py=utf-8

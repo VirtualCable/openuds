@@ -561,7 +561,7 @@ namespace UdsAdmin.xmlrpc
 
         public static string[] GetNetworksForTransport(string id)
         {
-            return s.getNetworksForTransport(credentials, id);
+            return s.GetNetworksForTransport(credentials, id);
         }
 
         public static bool SetNetworksForTransport(string id, string[] networks)
@@ -662,17 +662,17 @@ namespace UdsAdmin.xmlrpc
         }
 
 
-        public static CachedDeployedService[] GetCachedDeployedServices(DeployedService deployedService)
+        public static CachedUserService[] GetCachedDeployedServices(DeployedService deployedService)
         {
             return s.GetCachedDeployedServices(credentials, deployedService.id);
         }
 
-        public static AssignedDeployedService[] GetAssignedDeployedServices(DeployedService deployedService)
+        public static AssignedUserService[] GetAssignedDeployedServices(DeployedService deployedService)
         {
             return s.GetAssignedDeployedServices(credentials, deployedService.id);
         }
 
-        public static AssignableDeployedService[] GetAssignableDeployedServices(string idParent)
+        public static AssignableUserService[] GetAssignableDeployedServices(string idParent)
         {
             return s.GetAssignableDeployedServices(credentials, idParent);
         }
@@ -707,6 +707,22 @@ namespace UdsAdmin.xmlrpc
         public static bool UpdateConfiguration(Configuration[] configuration)
         {
             return s.UpdateConfiguration(credentials, configuration);
+        }
+
+        // Log methods
+        public static LogEntry[] GetUserServiceLogs(string id)
+        {
+            return s.GetUserServiceLogs(credentials, id);
+        }
+
+        public static LogEntry[] GetUserLogs(string id)
+        {
+            return s.GetUserLogs(credentials, id);
+        }
+
+        public static LogEntry[] GetAuthLogs(string id)
+        {
+            return s.GetAuthLogs(credentials, id);
         }
 
         // Calbacks

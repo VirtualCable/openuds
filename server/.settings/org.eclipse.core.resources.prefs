@@ -108,6 +108,8 @@ encoding//src/uds/migrations/0002_auto__del_unique_userpreference_name_module.py
 encoding//src/uds/migrations/0004_auto__add_field_deployedservice_state_date.py=utf-8
 encoding//src/uds/migrations/0005_auto__add_field_config_crypt.py=utf-8
 encoding//src/uds/migrations/0008_auto__add_userservicelog__add_field_userservice_src_hostname__add_fiel.py=utf-8
+encoding//src/uds/migrations/0009_auto__del_userservicelog__add_log.py=utf-8
+encoding//src/uds/migrations/0010_auto__add_field_log_owner_type.py=utf-8
 encoding//src/uds/models.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/LinuxOsManager.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/__init__.py=utf-8

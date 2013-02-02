@@ -35,6 +35,11 @@
             this.state = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lastAccess = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comments = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.logViewer1 = new UdsAdmin.controls.panel.LogViewer();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView
@@ -52,6 +57,7 @@
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
+            this.listView.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
             this.listView.DoubleClick += new System.EventHandler(this.modifyItem);
             this.listView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listView_KeyUp);
             this.listView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView_MouseUp);
@@ -80,13 +86,34 @@
             // 
             resources.ApplyResources(this.comments, "comments");
             // 
+            // splitContainer1
+            // 
+            resources.ApplyResources(this.splitContainer1, "splitContainer1");
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.listView);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.logViewer1);
+            // 
+            // logViewer1
+            // 
+            resources.ApplyResources(this.logViewer1, "logViewer1");
+            this.logViewer1.Name = "logViewer1";
+            // 
             // UsersPanel
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.listView);
+            this.Controls.Add(this.splitContainer1);
             this.Name = "UsersPanel";
             this.VisibleChanged += new System.EventHandler(this.UsersPanel_VisibleChanged);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -99,5 +126,7 @@
         private System.Windows.Forms.ColumnHeader state;
         private System.Windows.Forms.ColumnHeader lastAccess;
         private System.Windows.Forms.ColumnHeader comments;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private LogViewer logViewer1;
     }
 }

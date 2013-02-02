@@ -34,8 +34,11 @@
 from django.utils.translation import ugettext as _
 from ..auths.AdminAuth import needs_credentials
 from ..util.Exceptions import FindException
-from uds.core.managers import logManager
+from uds.core.util import log
+
 from uds.models import UserService
+from uds.models import User
+from uds.models import Authenticator
 
 import logging
 
@@ -43,13 +46,31 @@ logger = logging.getLogger(__name__)
 
 @needs_credentials
 def getUserServiceLogs(credentials, id):
-    logger.debug('getUserServiceLogs called')
     try:
         us = UserService.objects.get(pk=id)
-        return logManager().getLogs(us)
-    except Exception:
+        return log.getLogs(us)
+    except:
         raise FindException(_('Service does not exists'))
+    
+@needs_credentials
+def getUserLogs(credentials, id):
+    try:
+        user = User.objects.get(pk=id)
+        return log.getLogs(user)
+    except:
+        raise FindException('User does not exists')
+    
+@needs_credentials
+def getAuthLogs(credentials, id):
+    try:
+        auth = Authenticator.objects.get(pk=id)
+        return log.getLogs(auth)
+    except:
+        raise FindException('Authenticator does not exists')
+        
     
 # Registers XML RPC Methods
 def registerLogFunctions(dispatcher):
     dispatcher.register_function(getUserServiceLogs, 'getUserServiceLogs')
+    dispatcher.register_function(getUserLogs, 'getUserLogs')
+    dispatcher.register_function(getAuthLogs, 'getAuthLogs')

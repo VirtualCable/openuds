@@ -72,7 +72,6 @@
             // 
             resources.ApplyResources(this.treeActions, "treeActions");
             this.treeActions.HideSelection = false;
-            this.treeActions.MinimumSize = new System.Drawing.Size(200, 4);
             this.treeActions.Name = "treeActions";
             this.treeActions.ShowNodeToolTips = true;
             this.treeActions.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeActions_BeforeExpand);
