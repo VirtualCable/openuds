@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2013 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, 
@@ -28,29 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-UDS managers (downloads, users preferences, publications, ...)
-
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-def cryptoManager():
-    from CryptoManager import CryptoManager
-    return CryptoManager.manager() 
-
-
-def taskManager():
-    from TaskManager import TaskManager
-    return TaskManager
-
-
-def downloadsManager():
-    from DownloadsManager import DownloadsManager
-    return DownloadsManager.manager()
-
-def logManager():
-    from LogManager import LogManager
-    return LogManager.manager()
-
-def statsManager():
-    from StatsManager import StatsManager
-    return StatsManager.manager()

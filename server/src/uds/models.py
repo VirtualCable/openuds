@@ -35,7 +35,7 @@ from django.db import models
 from django.db.models import signals
 from uds.core.jobs.JobsFactory import JobsFactory
 from uds.core.Environment import Environment
-from uds.core.util.db.LockingManager import LockingManager
+from uds.core.db.LockingManager import LockingManager
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.services.Exceptions import InvalidServiceException
@@ -1533,17 +1533,16 @@ signals.pre_delete.connect(UserService.beforeDelete, sender = UserService)
 # Especific loggin information for an user service
 class Log(models.Model):
     '''
-    This class represents the log associated with an user service.
+    Log model associated with an object.
     
-    This log is mainly used to keep track of log infor relative to the service
-    (such as when a user access a machine, 
-    of information related to 
+    This log is mainly used to keep track of log relative to objects
+    (such as when a user access a machine, or information related to user logins/logout, errors, ...) 
     '''
 
     owner_id = models.IntegerField(db_index=True, default=0)
-    owner_type = models.IntegerField(db_index=True, default=0)
+    owner_type = models.SmallIntegerField(db_index=True, default=0)
     
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    created = models.DateTimeField(db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)    
     level = models.PositiveSmallIntegerField(default=0, db_index=True)
     data = models.CharField(max_length=255, default='')
@@ -1557,7 +1556,94 @@ class Log(models.Model):
     
 
     def __unicode__(self):
-        return "Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+        return u"Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+
+
+class StatsCounters(models.Model):
+    '''
+    Counter statistocs mpdes the counter statistics
+    '''
+    
+    owner_id = models.IntegerField(db_index=True, default=0)
+    owner_type = models.SmallIntegerField(db_index=True, default=0)
+    counter_type = models.SmallIntegerField(db_index=True, default=0)
+    stamp = models.DateTimeField(db_index=True)
+    value = models.IntegerField(db_index=True, default=0)
+    
+    class Meta:
+        '''
+        Meta class to declare db table
+        '''
+        db_table = 'uds_stats_c'
+    
+
+    @staticmethod
+    def get_grouped(owner_type, **kwargs):
+        '''
+        Returns the average stats grouped by interval for owner_type and owner_id (optional)
+        
+        '''
+        
+        filt = 'owner_type='+str(owner_type)
+        
+        owner_id = None
+        if kwargs.has_key('owner_id'):
+            owner_id = kwargs['owner_id']
+            filt = ' AND owner_id='+str(owner_id)
+            
+        since = kwargs.get('since', NEVER)
+        to = kwargs.get('to', getSqlDatetime())    
+            
+        interval = 600 # By default, group items in ten minutes interval (600 seconds)
+        
+        if kwargs.has_key('elements'):
+            elements = kwargs['elements']
+            
+            if owner_id is None:
+                q = StatsCounters.objects.filter(owner_type=owner_type,stamp__gte=since, stamp__lte=to)
+            else:
+                q = StatsCounters.objects.filter(owner_type=owner_type, owner_id=owner_id, stamp__gte=since, stamp__lte=to)
+                
+            if q.count() > elements:
+                first = q.order_by('stamp')[0].stamp
+                last = q.order_by('stamp').reverse()[0].stamp
+                interval = int(((last-first)/elements).total_seconds())
+
+        filt += ' AND stamp>=\'{0}\' AND stamp<=\'{1}\' GROUP BY CEIL(UNIX_TIMESTAMP(stamp)/{2}) ORDER BY stamp'.format(
+                            since.strftime('%Y-%m-%d %H:%M:%S'), to.strftime('%Y-%m-%d %H:%M:%S'), interval)
+            
+        query = ('SELECT id,-1 as owner_id,owner_type,counter_type,stamp,' 
+                        'CEIL(AVG(value)) AS value ' 
+                 'FROM {0} WHERE {1}').format(StatsCounters._meta.db_table, filt)
+        # We use result as an iterator
+        for n in StatsCounters.objects.raw(query):
+            yield n
+    
+
+    def __unicode__(self):
+        return u"Log of {0}({1}): {2} - {3} - {4}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)
+    
+    
+class StatsEvents(models.Model):
+    '''
+    Counter statistocs mpdes the counter statistics
+    '''
+    
+    owner_id = models.IntegerField(db_index=True, default=0)
+    owner_type = models.SmallIntegerField(db_index=True, default=0)
+    event_type = models.SmallIntegerField(db_index=True, default=0)
+    stamp = models.DateTimeField(db_index=True)
+    
+    class Meta:
+        '''
+        Meta class to declare db table
+        '''
+        db_table = 'uds_stats_e'
+    
+
+    def __unicode__(self):
+        return u"Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+
 
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
@@ -1597,7 +1683,7 @@ class Cache(models.Model):
             expired = "Expired"
         else:
             expired = "Active"
-        return "{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
+        return u"{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
   
 class Config(models.Model):
     '''
@@ -1618,7 +1704,7 @@ class Config(models.Model):
         unique_together = (('section', 'key'),)
     
     def __unicode__(self):
-        return "Config {0} = {1}".format(self.key, self.value)
+        return u"Config {0} = {1}".format(self.key, self.value)
     
 class Storage(models.Model):
     '''
@@ -1633,7 +1719,7 @@ class Storage(models.Model):
     objects = LockingManager()
     
     def __unicode__(self):
-        return "{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, str.join( '/', [self.attr1]))
+        return u"{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, str.join( '/', [self.attr1]))
     
 class UniqueId(models.Model):
     '''
@@ -1656,7 +1742,7 @@ class UniqueId(models.Model):
 
     
     def __unicode__(self):
-        return "{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)
+        return u"{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)
     
     
 class Scheduler(models.Model):
@@ -1716,7 +1802,7 @@ class Scheduler(models.Model):
 
     
     def __unicode__(self):
-        return "Scheduled task {0}, every {1}, last execution at {2}, state = {3}".format(self.name, self.frecuency, self.last_execution, self.state)
+        return u"Scheduled task {0}, every {1}, last execution at {2}, state = {3}".format(self.name, self.frecuency, self.last_execution, self.state)
 
 # Connects a pre deletion signal to Scheduler
 signals.pre_delete.connect(Scheduler.beforeDelete, sender = Scheduler)
@@ -1742,7 +1828,7 @@ class DelayedTask(models.Model):
     #objects = LockingManager()
 
     def __unicode__(self):
-        return "Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.owner_server)
+        return u"Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.owner_server)
     
 
 class Network(models.Model):
@@ -1839,5 +1925,5 @@ class Network(models.Model):
         self.save() 
     
     def __unicode__(self):
-        return 'Network {0} from {1} to {2}'.format(self.name, Network.longToIp(self.net_start), Network.longToIp(self.net_end))
+        return u'Network {0} from {1} to {2}'.format(self.name, Network.longToIp(self.net_start), Network.longToIp(self.net_end))
 
