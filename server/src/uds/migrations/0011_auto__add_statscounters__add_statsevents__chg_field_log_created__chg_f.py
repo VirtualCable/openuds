@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
             ('owner_id', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
             ('owner_type', self.gf('django.db.models.fields.SmallIntegerField')(default=0, db_index=True)),
             ('counter_type', self.gf('django.db.models.fields.SmallIntegerField')(default=0, db_index=True)),
-            ('stamp', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
+            ('stamp', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
             ('value', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
         ))
         db.send_create_signal('uds', ['StatsCounters'])
@@ -25,7 +25,7 @@ class Migration(SchemaMigration):
             ('owner_id', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
             ('owner_type', self.gf('django.db.models.fields.SmallIntegerField')(default=0, db_index=True)),
             ('event_type', self.gf('django.db.models.fields.SmallIntegerField')(default=0, db_index=True)),
-            ('stamp', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
+            ('stamp', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
         ))
         db.send_create_signal('uds', ['StatsEvents'])
 
@@ -182,7 +182,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner_id': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'owner_type': ('django.db.models.fields.SmallIntegerField', [], {'default': '0', 'db_index': 'True'}),
-            'stamp': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
+            'stamp': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'value': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'})
         },
         'uds.statsevents': {
@@ -191,7 +191,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner_id': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'owner_type': ('django.db.models.fields.SmallIntegerField', [], {'default': '0', 'db_index': 'True'}),
-            'stamp': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'})
+            'stamp': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'})
         },
         'uds.storage': {
             'Meta': {'object_name': 'Storage'},
