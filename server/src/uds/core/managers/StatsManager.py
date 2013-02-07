@@ -104,9 +104,13 @@ class StatsManager(object):
             Nothing       
         '''
         from uds.models import getSqlDatetime
+        import time
         
         if stamp is None:
             stamp = getSqlDatetime()
+        
+        # To Unix epoch
+        stamp = int(time.mktime(stamp.timetuple()))
         
         try:
             (owner_type, owner_id) = self.__getOwner(toWhat)

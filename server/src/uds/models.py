@@ -40,15 +40,17 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.services.Exceptions import InvalidServiceException
 from datetime import datetime, timedelta
+from time import mktime
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 NEVER = datetime(1972, 7, 1)
+NEVER_UNIX = int(mktime(NEVER.timetuple())) 
 
 
-def getSqlDatetime():
+def getSqlDatetime(unix=False):
     '''
     Returns the current date/time of the database server.
     
@@ -63,9 +65,11 @@ def getSqlDatetime():
     cursor = con.cursor()
     if con.vendor == 'mysql':
         cursor.execute('SELECT NOW()')
-        return cursor.fetchone()[0]
-    return datetime.now() # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
+        date = cursor.fetchone()[0]
+    else:
+        date = datetime.now() # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
     
+    return int(mktime(date.timetuple()))
     
 
 # Services
@@ -1567,7 +1571,7 @@ class StatsCounters(models.Model):
     owner_id = models.IntegerField(db_index=True, default=0)
     owner_type = models.SmallIntegerField(db_index=True, default=0)
     counter_type = models.SmallIntegerField(db_index=True, default=0)
-    stamp = models.DateTimeField(db_index=True)
+    stamp = models.IntegerField(db_index=True, default=0)
     value = models.IntegerField(db_index=True, default=0)
     
     class Meta:
@@ -1578,47 +1582,61 @@ class StatsCounters(models.Model):
     
 
     @staticmethod
-    def get_grouped(owner_type, **kwargs):
+    def get_grouped(owner_type, counter_type, **kwargs):
         '''
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
         
+        Note: if someone cant get this more optimized, please, contribute it!
         '''
         
-        filt = 'owner_type='+str(owner_type)
+        filt = 'owner_type'
+        if type(owner_type) in (list, tuple):
+            filt += ' in (' + ','.join((str(x) for x in owner_type)) + ')'
+        else:  
+            filt += '='+str(owner_type)
         
         owner_id = None
         if kwargs.has_key('owner_id'):
             owner_id = kwargs['owner_id']
             filt = ' AND owner_id='+str(owner_id)
+        
+        filt += ' AND counter_type='+str(counter_type)
             
-        since = kwargs.get('since', NEVER)
-        to = kwargs.get('to', getSqlDatetime())    
+        since = int(kwargs.get('since', NEVER_UNIX))
+        to = int(kwargs.get('to', getSqlDatetime(True)))    
             
         interval = 600 # By default, group items in ten minutes interval (600 seconds)
         
-        if kwargs.has_key('elements'):
-            elements = kwargs['elements']
+        if kwargs.has_key('limit'):
+            elements = kwargs['limit']
+            
+            # Protect for division a few lines below... :-)
+            if elements < 2:
+                elements = 2
             
             if owner_id is None:
-                q = StatsCounters.objects.filter(owner_type=owner_type,stamp__gte=since, stamp__lte=to)
+                q = StatsCounters.objects.filter(stamp__gte=since, stamp__lte=to)
             else:
-                q = StatsCounters.objects.filter(owner_type=owner_type, owner_id=owner_id, stamp__gte=since, stamp__lte=to)
+                q = StatsCounters.objects.filter(owner_id=owner_id, stamp__gte=since, stamp__lte=to)
+                
+            if type(owner_type) in (list, tuple):
+                q = q.filter(owner_type__in=owner_type)
+            else:
+                q = q.filter(owner_type=owner_type)
                 
             if q.count() > elements:
                 first = q.order_by('stamp')[0].stamp
                 last = q.order_by('stamp').reverse()[0].stamp
-                interval = int(((last-first)/elements).total_seconds())
+                interval = int((last-first)/(elements-1))
 
-        filt += ' AND stamp>=\'{0}\' AND stamp<=\'{1}\' GROUP BY CEIL(UNIX_TIMESTAMP(stamp)/{2}) ORDER BY stamp'.format(
-                            since.strftime('%Y-%m-%d %H:%M:%S'), to.strftime('%Y-%m-%d %H:%M:%S'), interval)
+        filt += ' AND stamp>={0} AND stamp<={1} GROUP BY CEIL(stamp/{2}) ORDER BY stamp'.format(
+                            since, to, interval)
             
-        query = ('SELECT id,-1 as owner_id,owner_type,counter_type,stamp,' 
+        query = ('SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type,stamp,' 
                         'CEIL(AVG(value)) AS value ' 
                  'FROM {0} WHERE {1}').format(StatsCounters._meta.db_table, filt)
         # We use result as an iterator
-        for n in StatsCounters.objects.raw(query):
-            yield n
-    
+        return StatsCounters.objects.raw(query)
 
     def __unicode__(self):
         return u"Log of {0}({1}): {2} - {3} - {4}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)
@@ -1632,7 +1650,7 @@ class StatsEvents(models.Model):
     owner_id = models.IntegerField(db_index=True, default=0)
     owner_type = models.SmallIntegerField(db_index=True, default=0)
     event_type = models.SmallIntegerField(db_index=True, default=0)
-    stamp = models.DateTimeField(db_index=True)
+    stamp = models.IntegerField(db_index=True, default=0)
     
     class Meta:
         '''
