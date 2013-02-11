@@ -1738,8 +1738,8 @@ class Config(models.Model):
     General configuration values model. Used to store global and specific modules configuration values.
     This model is managed via uds.core.util.Config.Config class
     '''
-    section = models.CharField(max_length=128)
-    key = models.CharField(max_length=64)
+    section = models.CharField(max_length=128, db_index=True)
+    key = models.CharField(max_length=64, db_index=True)
     value = models.TextField(default = '')
     crypt = models.BooleanField(default = False)
     long = models.BooleanField(default = False)

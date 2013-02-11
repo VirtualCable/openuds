@@ -115,6 +115,7 @@ encoding//src/uds/migrations/0005_auto__add_field_config_crypt.py=utf-8
 encoding//src/uds/migrations/0008_auto__add_userservicelog__add_field_userservice_src_hostname__add_fiel.py=utf-8
 encoding//src/uds/migrations/0009_auto__del_userservicelog__add_log.py=utf-8
 encoding//src/uds/migrations/0010_auto__add_field_log_owner_type.py=utf-8
+encoding//src/uds/migrations/0011_auto__add_statscounters__add_statsevents__chg_field_log_created__chg_f.py=utf-8
 encoding//src/uds/models.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/LinuxOsManager.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/__init__.py=utf-8
