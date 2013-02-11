@@ -1646,6 +1646,7 @@ class StatsCounters(models.Model):
         
         limit = kwargs.get('limit', None)
         
+        
         if limit is not None:
             limit = int(limit)
             elements = kwargs['limit']
@@ -1671,10 +1672,13 @@ class StatsCounters(models.Model):
 
         filt += ' AND stamp>={0} AND stamp<={1} GROUP BY CEIL(stamp/{2}) ORDER BY stamp'.format(
                             since, to, interval)
+
+        fnc = kwargs.get('use_max', False) and 'MAX' or 'AVG'
             
         query = ('SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type,stamp,' 
-                        'CEIL(AVG(value)) AS value ' 
-                 'FROM {0} WHERE {1}').format(StatsCounters._meta.db_table, filt)
+                        'CEIL({0}(value)) AS value ' 
+                 'FROM {1} WHERE {2}').format(fnc, StatsCounters._meta.db_table, filt)
+                 
         # We use result as an iterator
         return StatsCounters.objects.raw(query)
 

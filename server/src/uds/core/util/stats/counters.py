@@ -29,6 +29,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from django.utils.translation import ugettext_lazy as _
 from uds.core.managers import statsManager
 
 import logging
@@ -44,6 +45,7 @@ logger = logging.getLogger(__name__)
 __caRead = None
 __caWrite = None
 __transDict = None
+__typeTitles = None
 
 
 def addCounter(obj, counterType, counterValue, stamp = None):
@@ -82,6 +84,7 @@ def getCounters(obj, counterType, **kwargs):
     since = kwargs.get('since', None)
     to = kwargs.get('to', None)
     limit = kwargs.get('limit', 1000)
+    use_max = kwargs.get('use_max', False)
     
     readFncTbl = __caRead.get(type(obj), None)
 
@@ -98,9 +101,12 @@ def getCounters(obj, counterType, **kwargs):
     
     owner_ids = fnc(obj)
     
-    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, limit):
+    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, limit, use_max):
         val = (i.stamp, i.value)
         yield val
+        
+def getCounterTitle(counterType):
+    return __typeTitles.get(counterType, '').title()
 
 # Data initialization  
 def _initializeData():
@@ -114,6 +120,7 @@ def _initializeData():
     global __caWrite
     global __caRead
     global __transDict
+    global __typeTitles
     
     __caWrite = {
         CT_LOAD: (Provider,),
@@ -183,4 +190,12 @@ def _initializeData():
         Service : OT_SERVICE,
         Provider : OT_PROVIDER
     }
+    
+    # Titles of types
+    __typeTitles = {
+        CT_ASSIGNED: _('Assigned'),
+        CT_INUSE: _('In use'),
+        CT_LOAD: _('Load'),
+        CT_STORAGE: _('Storage')
+    } 
     

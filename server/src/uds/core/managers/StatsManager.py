@@ -112,7 +112,7 @@ class StatsManager(object):
         '''
         pass
     
-    def getCounters(self, ownerType, counterType, ownerIds, since, to, limit):
+    def getCounters(self, ownerType, counterType, ownerIds, since, to, limit, use_max = False):
         '''
         Retrieves counters from item
 
@@ -129,8 +129,13 @@ class StatsManager(object):
             Iterator, containing (date, counter) each element
         '''
         from uds.models import StatsCounters
+        import time
+        
+        # To Unix epoch
+        since = int(time.mktime(since.timetuple()))
+        to = int(time.mktime(to.timetuple()))
 
-        return StatsCounters.get_grouped(ownerType, counterType, owner_id = ownerIds, since = since, to = to, limit = limit)
+        return StatsCounters.get_grouped(ownerType, counterType, owner_id = ownerIds, since = since, to = to, limit = limit, use_max = use_max)
         
     
     def cleanupCounter(self):
