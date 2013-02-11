@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2013 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, 
@@ -30,53 +30,35 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from xmlrpclib import Fault
 
-AUTH_CLASS = 0x1000
-DATA_CLASS = 0x2000
-ACTION_CLASS = 0x3000
+from django.utils.translation import ugettext as _
+from ..auths.AdminAuth import needs_credentials
+from ..util.Exceptions import FindException
+from uds.core.util.stats import counters
+from uds.core.util.Cache import Cache
 
-FAIL = 0x0100
+from uds.models import DeployedService
 
-AUTH_FAILED = AUTH_CLASS | FAIL | 0x0001
-DUPLICATE_FAIL = DATA_CLASS | FAIL | 0x0001
-INSERT_FAIL = DATA_CLASS | FAIL | 0x0002
-DELETE_FAIL = DATA_CLASS | FAIL | 0x0003
-FIND_FAIL = DATA_CLASS | FAIL | 0x0004
-VALIDATION_FAIL = DATA_CLASS | FAIL | 0x0005
-PARAMETERS_FAIL = DATA_CLASS | FAIL | 0x0006
-MODIFY_FAIL = DATA_CLASS | FAIL | 0x0007
+import logging
 
-PUBLISH_FAIL = ACTION_CLASS | FAIL | 0x0001
+logger = logging.getLogger(__name__)
 
-CANCEL_FAIL = ACTION_CLASS | FAIL | 0x0001
+cache = Cache('StatsDispatcher')
 
-def AuthException(msg):
-    return Fault(AUTH_FAILED, msg)
-
-def DuplicateEntryException(msg):
-    return Fault(DUPLICATE_FAIL, msg)
-
-def InsertException(msg):
-    return Fault(INSERT_FAIL, msg)
-
-def FindException(msg):
-    return Fault(FIND_FAIL, msg)
-
-def DeleteException(msg):
-    return Fault(DELETE_FAIL, msg)
-
-def ModifyException(msg):
-    return Fault(MODIFY_FAIL, msg)
-
-def PublicationException(msg):
-    return Fault(PUBLISH_FAIL, msg)
-
-def CancelationException(msg):
-    return Fault(CANCEL_FAIL, msg)
-
-def ValidationException(msg):
-    return Fault(VALIDATION_FAIL, msg)
-
-def ParametersException(msg):
-    return Fault(PARAMETERS_FAIL, msg)
+@needs_credentials
+def getDeployedServiceCounters(credentials, id, counter_type, since, to, points, use_max):
+    try:
+        us = DeployedService.objects.get(pk=id)
+        logger.debug(us)
+        res = []
+        for x in counters.getCounters(us, counter_type, since=since, to=to, limit=points, use_max=use_max):
+            res.append({ 'stamp': x[0], 'value': x[1] })
+        return { 'title': counters.getCounterTitle(counter_type), 'data': res }
+        return ()
+    except:
+        logger.exception('exception')
+        raise FindException(_('Service does not exists'))
+    
+# Registers XML RPC Methods
+def registerStatsFunctions(dispatcher):
+    dispatcher.register_function(getDeployedServiceCounters, 'getDeployedServiceCounters')

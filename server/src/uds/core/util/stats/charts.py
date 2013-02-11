@@ -29,9 +29,12 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+
 import datetime
 import cairo
 import pycha.line
+import StringIO
+import time
 
 from uds.models import getSqlDatetime
 
@@ -56,7 +59,7 @@ def make(obj, counterType, **kwargs):
             
     limit = width
     
-    dataset1 = tuple(counters.getCounters(obj, counterType, since=since, to=to, limit=limit, use_max = kwargs.get('use_max', False)))
+    dataset1 = tuple((int(time.mktime(x[0].timetuple())), x[1]) for x in counters.getCounters(obj, counterType, since=since, to=to, limit=limit, use_max = kwargs.get('use_max', False)))
     
     if len(dataset1) == 0:
         dataset1 = ( (getSqlDatetime(True)-3600, 0), (getSqlDatetime(True), 0) )
@@ -69,10 +72,10 @@ def make(obj, counterType, **kwargs):
         xLabelFormat = '%H:%M'
     elif diffInterval <= 60*60*24*7:
         xLabelFormat = '%A'
-    
+   
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
     
-    dataset = ( ( counters.getCounterTitle(counterType).encode('ascii'), dataset1 ),)
+    dataset = ( ( counters.getCounterTitle(counterType).encode('iso-8859-1', errors='ignore'), dataset1 ),)
     
     options = {
          'axis': {
@@ -108,11 +111,11 @@ def make(obj, counterType, **kwargs):
     
     chart = pycha.line.LineChart(surface, options)
     chart.addDataset(dataset)
-    chart.minxval = dataset1[0][0]
     chart.render()
-    surface.write_to_png('/tmp/test.png')
     
-def _initialize():
-    global __typeTitles
+    output = StringIO.StringIO()
     
+    surface.write_to_png(output)
     
+    return output.getvalue()
+

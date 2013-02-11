@@ -31,6 +31,7 @@
 '''
 from django.utils.translation import ugettext_lazy as _
 from uds.core.managers import statsManager
+import datetime
 
 import logging
 
@@ -102,7 +103,7 @@ def getCounters(obj, counterType, **kwargs):
     owner_ids = fnc(obj)
     
     for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, limit, use_max):
-        val = (i.stamp, i.value)
+        val = (datetime.datetime.fromtimestamp(i.stamp), i.value)
         yield val
         
 def getCounterTitle(counterType):
