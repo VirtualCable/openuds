@@ -112,7 +112,7 @@ class StatsManager(object):
         '''
         pass
     
-    def getCounters(self, fromWhat, counterType, **kwargs):
+    def getCounters(self, ownerType, counterType, ownerIds, since, to, limit):
         '''
         Retrieves counters from item
 
@@ -130,7 +130,7 @@ class StatsManager(object):
         '''
         from uds.models import StatsCounters
 
-        StatsCounters.get_grouped(None, counterType)
+        return StatsCounters.get_grouped(ownerType, counterType, owner_id = ownerIds, since = since, to = to, limit = limit)
         
     
     def cleanupCounter(self):

@@ -1627,17 +1627,27 @@ class StatsCounters(models.Model):
         
         owner_id = None
         if kwargs.has_key('owner_id'):
-            owner_id = kwargs['owner_id']
-            filt = ' AND owner_id='+str(owner_id)
+            filt += ' AND OWNER_ID'
+            oid = kwargs['owner_id']
+            if type(oid) in (list, tuple):
+                filt += ' in (' + ','.join(str(x) for x in oid) + ')'
+            else:
+                filt += '='+str(oid)
         
         filt += ' AND counter_type='+str(counter_type)
-            
-        since = int(kwargs.get('since', NEVER_UNIX))
-        to = int(kwargs.get('to', getSqlDatetime(True)))    
+        
+        since = kwargs.get('since', None)
+        to = kwargs.get('to', None)
+        
+        since = since and int(since) or NEVER_UNIX
+        to = to and int(to) or getSqlDatetime(True)    
             
         interval = 600 # By default, group items in ten minutes interval (600 seconds)
         
-        if kwargs.has_key('limit'):
+        limit = kwargs.get('limit', None)
+        
+        if limit is not None:
+            limit = int(limit)
             elements = kwargs['limit']
             
             # Protect for division a few lines below... :-)

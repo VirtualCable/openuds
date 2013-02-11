@@ -53,12 +53,8 @@ def addCounter(obj, counterType, counterValue, stamp = None):
     Although any counter type can be added to any object, there is a relation that must be observed
     or, otherway, the stats will not be recoverable at all:
     
-        Object Type         Valid Counters Type
-        ----------          -------------------
-        Provider            CT_LOAD, CT_STORAGE
-        Service             None Right now
-        DeployedService     CT_ASSIGNED, CT_CACHE1, CT_CACHE2, CT_INUSE, CT_ERROR
         
+    note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     '''
     if type(obj) not in __caWrite.get(counterType, ()):
         logger.error('Type {0} does not accepts counter of type {1}',format(type(obj), counterValue))
@@ -68,15 +64,43 @@ def addCounter(obj, counterType, counterValue, stamp = None):
     
     
 def getCounters(obj, counterType, **kwargs):
+    '''
+    Get counters
     
-    fnc = __caRead.get(type)
+    Args:
+        obj: Obj for which to recover stats counters
+        counterType: type of counter to recover
+        since: (optional, defaults to 'Since beginning') Start date for counters to recover
+        to: (optional, defaults to 'Until end') En date for counter to recover
+        limit: (optional, defaults to 1000) Number of counter to recover. This is an 'At most' advice. The returned number of value
+               can be lower, or even 1 more than requested due to a division for retrieving object at database
+               
+    Returns:
+        A generator, that contains pairs of (stamp, value) tuples
+    '''
     
+    since = kwargs.get('since', None)
+    to = kwargs.get('to', None)
+    limit = kwargs.get('limit', 1000)
+    
+    readFncTbl = __caRead.get(type(obj), None)
 
-    pass
-  
-  
-  
-  
+    
+    if readFncTbl is None:
+        logger.error('Type {0} has no registered stats'.format(type(obj)))
+        return
+
+    fnc = readFncTbl.get(counterType, None)
+    
+    if fnc is None:
+        logger.error('Type {0} has no registerd stats of type {1}'.format(type(obj), counterType))
+        return
+    
+    owner_ids = fnc(obj)
+    
+    for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, limit):
+        val = (i.stamp, i.value)
+        yield val
 
 # Data initialization  
 def _initializeData():
@@ -88,6 +112,7 @@ def _initializeData():
     from uds.models import Provider, Service, DeployedService
     
     global __caWrite
+    global __caRead
     global __transDict
     
     __caWrite = {
