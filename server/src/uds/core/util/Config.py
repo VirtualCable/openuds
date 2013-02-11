@@ -180,7 +180,7 @@ class GlobalConfig:
     # Max number of services to be "preparing" at same time
     MAX_PREPARING_SERVICES = Config.section(GLOBAL_SECTION).value('maxPreparingServices', '15') # Defaults to 15 services at once (per service provider)
     # Max number of service to be at "removal" state at same time
-    MAX_REMOVING_SERVICES = Config.section(GLOBAL_SECTION).value('maxRemovinggServices', '15') # Defaults to 15 services at once (per service provider)
+    MAX_REMOVING_SERVICES = Config.section(GLOBAL_SECTION).value('maxRemovingServices', '15') # Defaults to 15 services at once (per service provider)
     # If we ignore limits (max....)
     IGNORE_LIMITS = Config.section(GLOBAL_SECTION).value('ignoreLimits', '0')
     # Number of services to initiate removal per run of CacheCleaner
@@ -221,7 +221,7 @@ class GlobalConfig:
     MAX_LOGS_PER_ELEMENT = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100')
     
     # Time to restrain a deployed service in case it gives some error at some point
-    RESTRAINT_TIME = Config.section(GLOBAL_SECTION).value('restainTime', '600')
+    RESTRAINT_TIME = Config.section(GLOBAL_SECTION).value('restrainTime', '600')
     
     initDone = False
     

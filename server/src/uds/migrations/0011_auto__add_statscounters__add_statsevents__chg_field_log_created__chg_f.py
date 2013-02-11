@@ -29,6 +29,9 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('uds', ['StatsEvents'])
 
+        # Adding index on 'UserService', fields ['state_date']
+        db.create_index('uds__user_service', ['state_date'])
+
 
         # Changing field 'Log.created'
         db.alter_column('uds_log', 'created', self.gf('django.db.models.fields.DateTimeField')())
@@ -37,6 +40,9 @@ class Migration(SchemaMigration):
         db.alter_column('uds_log', 'owner_type', self.gf('django.db.models.fields.SmallIntegerField')())
 
     def backwards(self, orm):
+        # Removing index on 'UserService', fields ['state_date']
+        db.delete_index('uds__user_service', ['state_date'])
+
         # Deleting model 'StatsCounters'
         db.delete_table('uds_stats_c')
 
@@ -254,7 +260,7 @@ class Migration(SchemaMigration):
             'src_hostname': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '64'}),
             'src_ip': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '15'}),
             'state': ('django.db.models.fields.CharField', [], {'default': "'P'", 'max_length': '1', 'db_index': 'True'}),
-            'state_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'state_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'unique_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128', 'db_index': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'userServices'", 'null': 'True', 'blank': 'True', 'to': "orm['uds.User']"})
         }

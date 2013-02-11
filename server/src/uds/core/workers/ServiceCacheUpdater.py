@@ -86,7 +86,7 @@ class ServiceCacheUpdater(Job):
                 continue
             
             if ds.isRestrained():
-                logger.debug('Deployed service {0} is restrained, will check this later')
+                logger.info('Deployed service {0} is restrained, will check this later'.format(ds.name))
                 continue
             
             # Get data related to actual state of cache

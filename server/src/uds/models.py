@@ -889,7 +889,7 @@ class DeployedService(models.Model):
         
         date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         
-        if self.userServices.filter(state=State.ERROR, state_date__ge=date).count() >= 3:
+        if self.userServices.filter(state=State.ERROR, state_date__gt=date).count() >= 3:
             return True
         
         return False
