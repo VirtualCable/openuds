@@ -52,7 +52,8 @@ class ServiceCacheUpdater(Job):
     if cache is not needed.
     This is included as a scheduled task that will run every X seconds, and scheduler will keep it so it will be only executed by one backend at a time
     '''
-    frecuency = GlobalConfig.CACHE_CHECK_DELAY.getInt() # Request run cache manager every configured seconds. If config value is changed, it will be used at next reload
+    frecuency = GlobalConfig.CACHE_CHECK_DELAY.getInt() # Request run cache manager every configured seconds (defaults to 20 seconds). 
+                                                        # If config value is changed, it will be used at next reload
     
     def __init__(self, environment):
         super(ServiceCacheUpdater,self).__init__(environment)
@@ -82,6 +83,10 @@ class ServiceCacheUpdater(Job):
             # If it has any running publication, do not generate cache anymore
             if ds.publications.filter(state=State.PREPARING).count() > 0:
                 logger.debug('Stopped cache generation for deployed service with publication running: {0}'.format(ds))
+                continue
+            
+            if ds.isRestrained():
+                logger.debug('Deployed service {0} is restrained, will check this later')
                 continue
             
             # Get data related to actual state of cache
@@ -174,6 +179,8 @@ class ServiceCacheUpdater(Job):
             except MaxServicesReachedException as e:
                 logger.error(str(e))
                 # TODO: When alerts are ready, notify this
+            except:
+                logger.exception()
         
     @transaction.autocommit
     def growL2Cache(self, ds, cacheL1, cacheL2, assigned):

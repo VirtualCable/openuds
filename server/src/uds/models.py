@@ -69,7 +69,10 @@ def getSqlDatetime(unix=False):
     else:
         date = datetime.now() # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
     
-    return int(mktime(date.timetuple()))
+    if unix:
+        return int(mktime(date.timetuple()))
+    else:
+        return date
     
 
 # Services
@@ -864,7 +867,34 @@ class DeployedService(models.Model):
         getConnectionInfo without knowing if it is requested by a DeployedService or an UserService 
         '''
         return [username, password]
+
+    def isRestrained(self):
+        '''
+        Maybe this deployed service is having problems, and that may block some task in some
+        situations.
         
+        To avoid this, we will use a "restrain" policy, where we restrain a deployed service for,
+        for example, create new cache elements is reduced.
+        
+        The policy to check is that if a Deployed Service has 3 errors in the last 20 Minutes (by default), it is
+        considered restrained.
+        
+        The time that a service is in restrain mode is 20 minutes by default (1200 secs), but it can be modified
+        at globalconfig variables
+        '''
+        from uds.core.util.Config import GlobalConfig
+        
+        if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
+            return False # Do not perform any restraint check if we set the globalconfig to 0 (or less)
+        
+        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        
+        if self.userServices.filter(state=State.ERROR, state_date__ge=date).count() >= 3:
+            return True
+        
+        return False
+        
+
     def setState(self, state, save = True):
         '''
         Updates the state of this object and, optionally, saves it
@@ -1194,7 +1224,7 @@ class UserService(models.Model):
     # We need to keep separated two differents os states so service operations (move beween caches, recover service) do not affects os manager state
     state = models.CharField(max_length=1, default=State.PREPARING, db_index = True) # We set index so filters at cache level executes faster
     os_state = models.CharField(max_length=1, default=State.PREPARING) # The valid values for this field are PREPARE and USABLE
-    state_date = models.DateTimeField(auto_now_add=True)
+    state_date = models.DateTimeField(auto_now_add=True, db_index = True)
     creation_date = models.DateTimeField(db_index = True)
     data = models.TextField(default='')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'userServices', null=True, blank=True, default = None)
@@ -1380,7 +1410,7 @@ class UserService(models.Model):
             return [username, password]
         
         return ds.osmanager.getInstance().processUserPassword(self, username, password)
-        
+    
     def setState(self, state):
         '''
         Updates the state of this object and, optionally, saves it

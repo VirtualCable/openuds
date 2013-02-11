@@ -228,12 +228,12 @@ class UserServiceManager(object):
         
     
     @transaction.commit_on_success
-    def createCacheFor(self, deployedService, cacheLevel):
+    def createCacheFor(self, deployedServicePublication, cacheLevel):
         '''
         Creates a new cache for the deployed service publication at level indicated
         '''
-        logger.debug('Creating a new cache element at level {0} for publication {1}'.format(cacheLevel, deployedService))
-        cache = self.__createCacheAtDb(deployedService, cacheLevel)
+        logger.debug('Creating a new cache element at level {0} for publication {1}'.format(cacheLevel, deployedServicePublication))
+        cache = self.__createCacheAtDb(deployedServicePublication, cacheLevel)
         ci = cache.getInstance()
         state = ci.deployForCache(cacheLevel)
             

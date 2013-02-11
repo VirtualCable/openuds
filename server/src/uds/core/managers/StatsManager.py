@@ -32,30 +32,13 @@
 
 from uds.models import Provider
 from uds.models import Service
-from uds.models import DeployedService
-from uds.models import StatsCounters
-from uds.models import StatsEvents
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-PROVIDER_OWNER_TYPE, SERVICE_OWNER_TYPE, DEPLOYED_OWNER_TYPE = xrange(3)
 
-# hierarchy of owners
-parentsDict = {
-        PROVIDER_OWNER_TYPE: None,
-        SERVICE_OWNER_TYPE: PROVIDER_OWNER_TYPE,
-        DEPLOYED_OWNER_TYPE: SERVICE_OWNER_TYPE,
-    }
-# Dict to convert objects to owner types
-# Dict for translations
-transDict = {
-        DeployedService : DEPLOYED_OWNER_TYPE,
-        Service : SERVICE_OWNER_TYPE,
-        Provider : PROVIDER_OWNER_TYPE
-    }
 
 
 class StatsManager(object):
@@ -78,16 +61,8 @@ class StatsManager(object):
         return StatsManager._manager
     
 
-    def __getOwner(self, fromObject):
-        '''
-        Gets the owner type/id for the specified object, or raises an exception if unknown
-        '''
-        owner_type = transDict[type(fromObject)]
-        owner_id = fromObject.id
-        return (owner_type, owner_id)
-    
     # Counter stats
-    def addCounter(self, toWhat, counterType, counterValue, stamp = None):
+    def addCounter(self, owner_type, owner_id, counterType, counterValue, stamp = None):
         '''
         Adds a new counter stats to database.
         
@@ -103,7 +78,7 @@ class StatsManager(object):
             
             Nothing       
         '''
-        from uds.models import getSqlDatetime
+        from uds.models import getSqlDatetime, StatsCounters
         import time
         
         if stamp is None:
@@ -113,13 +88,7 @@ class StatsManager(object):
         stamp = int(time.mktime(stamp.timetuple()))
         
         try:
-            (owner_type, owner_id) = self.__getOwner(toWhat)
-        except:
-            logger.error('Unhandled stats fo object type {0} and counter type {1}'.format(toWhat, counterType))
-            return
-        
-        try:
-            StatsCounters.objects.create(owner_id=owner_id, owner_type=owner_type, counter_type=counterType, value=counterValue, stamp=stamp)
+            StatsCounters.objects.create(owner_type=owner_type, owner_id=owner_id, counter_type=counterType, value=counterValue, stamp=stamp)
             return True
         except:
             logger.error('Exception handling stats saving (maybe database is full?)')
@@ -143,7 +112,7 @@ class StatsManager(object):
         '''
         pass
     
-    def getCounters(self, counterType, **kwargs):
+    def getCounters(self, fromWhat, counterType, **kwargs):
         '''
         Retrieves counters from item
 
@@ -159,6 +128,9 @@ class StatsManager(object):
             
             Iterator, containing (date, counter) each element
         '''
+        from uds.models import StatsCounters
+
+        StatsCounters.get_grouped(None, counterType)
         
     
     def cleanupCounter(self):

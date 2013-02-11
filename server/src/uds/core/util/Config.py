@@ -220,6 +220,9 @@ class GlobalConfig:
     # Maximum logs per user service
     MAX_LOGS_PER_ELEMENT = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100')
     
+    # Time to restrain a deployed service in case it gives some error at some point
+    RESTRAINT_TIME = Config.section(GLOBAL_SECTION).value('restainTime', '600')
+    
     initDone = False
     
     @staticmethod
@@ -250,6 +253,7 @@ class GlobalConfig:
             GlobalConfig.MAX_INITIALIZING_TIME.get()
             GlobalConfig.CUSTOM_HTML_LOGIN.get()
             GlobalConfig.MAX_LOGS_PER_ELEMENT.get()
+            GlobalConfig.RESTRAINT_TIME.get()
         except:
             logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
             

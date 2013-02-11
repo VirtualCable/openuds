@@ -33,6 +33,6 @@
 # Chart types
 CHART_TYPE_LINE, CHART_TYPE_AREA, CHART_TYPE_BAR = xrange(2)
 
-def makeChart(fromWhatStat, **kwargs):
+def make(fromWhatStat, **kwargs):
     
     pass
