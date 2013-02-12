@@ -691,5 +691,10 @@ namespace UdsAdmin.forms
             return new Point(form.Location.X + form.Width / 2 - f.Width / 2, form.Location.Y + form.Height / 2 - f.Height / 2);
         }
 
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            (new AboutBoxForm()).ShowDialog();
+        }
+
     }
 }

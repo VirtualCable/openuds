@@ -112,24 +112,24 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="$this.Text" xml:space="preserve">
-    <value>ListEditorFormfr</value>
+  <data name="btnImport.Text" xml:space="preserve">
+    <value>Importer un fichier</value>
   </data>
   <data name="btnRemove.Text" xml:space="preserve">
-    <value>Supprimer</value>
+    <value>Enlever</value>
   </data>
   <data name="btnAdd.Text" xml:space="preserve">
     <value>Ajouter</value>
   </data>
-  <data name="btnImport.Text" xml:space="preserve">
-    <value>Fichier d'importation</value>
-  </data>
   <data name="btnClose.Text" xml:space="preserve">
-    <value>Éditeur étroite</value>
+    <value>Fermer éditeur</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Éditeur</value>
   </data>
 </root>

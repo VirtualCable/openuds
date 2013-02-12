@@ -61,6 +61,11 @@ namespace UdsAdmin.xmlrpc
         public const string STATE_CANCELED = "C";
         public const string STATE_CANCELING = "K";
 
+        public const int COUNTER_LOAD_TYPE = 0;
+        public const int COUNTER_STORAGE = 1;
+        public const int COUNTER_ASSIGNED = 2;
+        public const int COUNTER_INUSE = 3;
+
         public const string LEVEL_OTHER = "OTHER";
         public const int LEVEL_OTHER_I = 10000;
         public const string LEVEL_DEBUG = "DEBUG";

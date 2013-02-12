@@ -41,6 +41,8 @@ namespace UdsAdmin.controls.panel
     public partial class DeployedServicePanel : UserControl
     {
         private string _dsId;
+        private DateTime shownToCharts = new DateTime();
+
         public DeployedServicePanel(xmlrpc.DeployedService ds)
         {
             _dsId = ds.id;
@@ -52,11 +54,15 @@ namespace UdsAdmin.controls.panel
         private void DeployedServicePanel_VisibleChanged(object sender, EventArgs e)
         {
             if (Visible == true)
-                updateData();
+                if (tabControl1.SelectedTab == tabPage2)
+                    updateCharts();
+                else
+                    updateData();
         }
 
         private void updateData()
         {
+            SuspendLayout();
             xmlrpc.DeployedService ds = xmlrpc.UdsAdminService.GetDeployedService(_dsId);
             lName.Text = ds.name;
             lComments.Text = ds.comments;
@@ -67,6 +73,63 @@ namespace UdsAdmin.controls.panel
             lState.Text = ds.state;
             lBaseService.Text = ds.serviceName;
             lOsManager.Text = ds.osManagerName;
+
+            ResumeLayout();
         }
+
+        private void updateCharts()
+        {
+            SuspendLayout();
+            DateTime now = DateTime.Now;
+            DateTime to = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
+            DateTime since = to.AddDays(-7);
+
+            if (to == shownToCharts)
+                return;
+
+            try
+            {
+                xmlrpc.StatCounter assigned = xmlrpc.UdsAdminService.GetDeployedServiceCounters(_dsId, xmlrpc.Constants.COUNTER_ASSIGNED, since, to, 400, true);
+                xmlrpc.StatCounter inUse = xmlrpc.UdsAdminService.GetDeployedServiceCounters(_dsId, xmlrpc.Constants.COUNTER_INUSE, since, to, 400, true);
+
+                assignedChart.clearSeries();
+                assignedChart.addSerie(assigned);
+                inUseChart.clearSeries();
+                inUseChart.addSerie(inUse);
+
+                shownToCharts = to;
+            }
+            catch (CookComputing.XmlRpc.XmlRpcFaultException e)
+            {
+                gui.UserNotifier.notifyRpcException(e);
+            }
+
+            ResumeLayout();
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab == tabPage2)
+            {
+                if (sender == null)
+                    shownToCharts = new DateTime();
+                updateCharts();
+            }
+            else
+                updateData();
+        }
+
+        private void tabControl1_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F5:
+                    tabControl1_SelectedIndexChanged(null, null);
+                    break;
+
+            }
+
+        }
+
     }
 }

@@ -338,6 +338,11 @@ namespace UdsAdmin.xmlrpc
         [XmlRpcMethod("getAuthLogs")]
         LogEntry[] GetAuthLogs(string credentials, string id);
 
+        // Statistics stuff
+        [XmlRpcMethod("getDeployedServiceCounters")]
+        StatCounter GetDeployedServiceCounters(string credentials, string id, int counter_type, DateTime since, DateTime to, int points, bool use_max);
+
+
         // Callbacks invoker
         [XmlRpcMethod("chooseCallback")]
         GuiFieldValue[] InvokeChooseCallback(string credentials, string name, GuiFieldValue[] parameters);

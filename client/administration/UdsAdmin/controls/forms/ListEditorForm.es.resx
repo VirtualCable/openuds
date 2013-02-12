@@ -112,21 +112,24 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnAdd.Text" xml:space="preserve">
-    <value>Añadir</value>
+  <data name="btnImport.Text" xml:space="preserve">
+    <value>Importar archivo</value>
   </data>
   <data name="btnRemove.Text" xml:space="preserve">
     <value>Quitar</value>
   </data>
-  <data name="btnImport.Text" xml:space="preserve">
-    <value>Archivo de importación</value>
+  <data name="btnAdd.Text" xml:space="preserve">
+    <value>Añadir</value>
   </data>
   <data name="btnClose.Text" xml:space="preserve">
     <value>Cerrar editor</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Editor</value>
   </data>
 </root>

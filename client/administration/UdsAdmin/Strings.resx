@@ -507,4 +507,7 @@
   <data name="sourceIp" xml:space="preserve">
     <value>Src IP</value>
   </data>
+  <data name="legend" xml:space="preserve">
+    <value>Legend</value>
+  </data>
 </root>
