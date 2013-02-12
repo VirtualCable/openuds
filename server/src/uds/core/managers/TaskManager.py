@@ -82,6 +82,7 @@ class TaskManager(object):
         from uds.core.workers.PublicationCleaner import PublicationInfoItemsCleaner, PublicationCleaner
         from uds.core.workers.CacheCleaner import CacheCleaner
         from uds.core.workers.DeployedServiceCleaner import DeployedServiceInfoItemsCleaner, DeployedServiceRemover
+        from uds.core.workers.StatsCollector import DeployedServiceStatsCollector
 
         logger.info("Registering sheduled tasks")
         TaskManager.registerJob('Service Cache Updater', ServiceCacheUpdater)
@@ -92,7 +93,7 @@ class TaskManager(object):
         TaskManager.registerJob('Utility Cache Cleaner', CacheCleaner)
         TaskManager.registerJob('Deployed Service Info Cleaner', DeployedServiceInfoItemsCleaner)
         TaskManager.registerJob('Deployed Service Cleaner', DeployedServiceRemover)
-                
+        TaskManager.registerJob('Deployed Service Stats', DeployedServiceStatsCollector)
     
     
     @staticmethod

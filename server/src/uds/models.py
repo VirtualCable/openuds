@@ -1679,6 +1679,8 @@ class StatsCounters(models.Model):
                         'CEIL({0}(value)) AS value ' 
                  'FROM {1} WHERE {2}').format(fnc, StatsCounters._meta.db_table, filt)
                  
+        logger.debug('Stats query: {0}'.format(query))
+                 
         # We use result as an iterator
         return StatsCounters.objects.raw(query)
 

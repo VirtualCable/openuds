@@ -168,15 +168,15 @@ class GlobalConfig:
     '''
     SESSION_EXPIRE_TIME = Config.section(GLOBAL_SECTION).value('sessionExpireTime', '24')  # Max session duration (in use) after a new publishment has been made
     # Delay between cache checks. reducing this number will increase cache generation speed but also will load service providers
-    CACHE_CHECK_DELAY = Config.section(GLOBAL_SECTION).value('cacheCheckDelay', '20') 
+    CACHE_CHECK_DELAY = Config.section(GLOBAL_SECTION).value('cacheCheckDelay', '19') 
     # Delayed task number of threads PER SERVER, with higher number of threads, deplayed task will complete sooner, but it will give more load to overall system
     DELAYED_TASKS_THREADS = Config.section(GLOBAL_SECTION).value('delayedTasksThreads', '2')
     # Number of scheduler threads running PER SERVER, with higher number of threads, deplayed task will complete sooner, but it will give more load to overall system
     SCHEDULER_THREADS = Config.section(GLOBAL_SECTION).value('schedulerThreads', '2')
     # Waiting time before removing "errored" and "removed" publications, cache, and user assigned machines. Time is in seconds
-    CLEANUP_CHECK = Config.section(GLOBAL_SECTION).value('cleanupCheck', '3600')
+    CLEANUP_CHECK = Config.section(GLOBAL_SECTION).value('cleanupCheck', '3607')
     # Time to maintaing "info state" items before removing it, in seconds
-    KEEP_INFO_TIME = Config.section(GLOBAL_SECTION).value('keepInfoTime', '14400') # Defaults to 2 days 172800?? better 4 hours xd
+    KEEP_INFO_TIME = Config.section(GLOBAL_SECTION).value('keepInfoTime', '14401') # Defaults to 2 days 172800?? better 4 hours xd
     # Max number of services to be "preparing" at same time
     MAX_PREPARING_SERVICES = Config.section(GLOBAL_SECTION).value('maxPreparingServices', '15') # Defaults to 15 services at once (per service provider)
     # Max number of service to be at "removal" state at same time
@@ -186,7 +186,7 @@ class GlobalConfig:
     # Number of services to initiate removal per run of CacheCleaner
     USER_SERVICE_CLEAN_NUMBER = Config.section(GLOBAL_SECTION).value('userServiceCleanNumber', '3') # Defaults to 3 per wun
     # Removal Check time for cache, publications and deployed services
-    REMOVAL_CHECK = Config.section(GLOBAL_SECTION).value('removalCheck', '30') # Defaults to 30 seconds
+    REMOVAL_CHECK = Config.section(GLOBAL_SECTION).value('removalCheck', '31') # Defaults to 30 seconds
     # Login URL
     LOGIN_URL = Config.section(GLOBAL_SECTION).value('loginUrl', '/login') # Defaults to /login 
     # Session duration
@@ -199,7 +199,7 @@ class GlobalConfig:
     ADMIN_IDLE_TIME = Config.section(GLOBAL_SECTION).value('adminIdleTime', '14400') # Defaults to 4 hous 
     # Time betwen checks of unused services by os managers
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least 1/2 of this time
-    CHECK_UNUSED_TIME = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '600') # Defaults to 10 minutes
+    CHECK_UNUSED_TIME = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631') # Defaults to 10 minutes
     # Default CSS Used
     CSS = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css')
     # Max logins before blocking an account

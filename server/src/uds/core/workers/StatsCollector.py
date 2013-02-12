@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2013 Virtual Cable S.L.
 # All rights reserved.
@@ -31,44 +30,38 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext as _
 from uds.models import DeployedService
-from ..auths.AdminAuth import needs_credentials
-from ..util.Exceptions import FindException
+from uds.core.util.State import State
 from uds.core.util.stats import counters
-from uds.core.util.Cache import Cache
-import cPickle
-import time
+from uds.core.jobs.Job import Job
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-cache = Cache('StatsDispatcher')
-
-@needs_credentials
-def getDeployedServiceCounters(credentials, id, counter_type, since, to, points, use_max):
-    try:
-        cacheKey = id + str(counter_type)+str(since)+str(to)+str(points)+str(use_max)
-        val = cache.get(cacheKey)
-        if val is None:
-        
-            us = DeployedService.objects.get(pk=id)
-            val = []
-            for x in counters.getCounters(us, counter_type, since=since, to=to, limit=points, use_max=use_max):
-                val.append({ 'stamp': x[0], 'value': x[1] })
-            if len(val) > 2:
-                cache.put(cacheKey, cPickle.dumps(val).encode('zip'), 3600)
-            else:
-                val = [{'stamp':since, 'value':0 }, {'stamp':to, 'value':0}]
-        else:
-            val = cPickle.loads(val.decode('zip'))
             
-        return { 'title': counters.getCounterTitle(counter_type), 'data': val }
-    except:
-        logger.exception('exception')
-        raise FindException(_('Service does not exists'))
+class DeployedServiceStatsCollector(Job):
     
-# Registers XML RPC Methods
-def registerStatsFunctions(dispatcher):
-    dispatcher.register_function(getDeployedServiceCounters, 'getDeployedServiceCounters')
+    frecuency = 599 # Once every ten minutes, 601 is prime
+    
+    def __init__(self, environment):
+        super(DeployedServiceStatsCollector,self).__init__(environment)
+    
+    def run(self):
+        logger.debug('Starting Deployed service stats collector')
+        
+        for ds in DeployedService.objects.filter(state = State.ACTIVE):
+            try:
+                fltr = ds.assignedUserServices().exclude(state__in=State.INFO_STATES)
+                assigned = fltr.count()
+                inUse = fltr.filter(in_use=True).count()
+                counters.addCounter(ds, counters.CT_ASSIGNED, assigned)
+                counters.addCounter(ds, counters.CT_INUSE, inUse)
+            except:
+                logger.exception('Getting counters for deployed service {0}'.format(ds))
+            
+        
+        logger.debug('Done Deployed service stats collector')
+        
+ 
+    

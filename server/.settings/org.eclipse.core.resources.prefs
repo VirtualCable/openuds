@@ -96,6 +96,7 @@ encoding//src/uds/core/workers/CacheCleaner.py=utf-8
 encoding//src/uds/core/workers/DeployedServiceCleaner.py=utf-8
 encoding//src/uds/core/workers/PublicationCleaner.py=utf-8
 encoding//src/uds/core/workers/ServiceCacheUpdater.py=utf-8
+encoding//src/uds/core/workers/StatsCollector.py=utf-8
 encoding//src/uds/core/workers/UserServiceCleaner.py=utf-8
 encoding//src/uds/dispatchers/__init__.py=utf-8
 encoding//src/uds/dispatchers/pam/urls.py=utf-8
