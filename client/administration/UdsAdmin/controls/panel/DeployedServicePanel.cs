@@ -150,5 +150,11 @@ namespace UdsAdmin.controls.panel
 
         }
 
+        private void DeployedServicePanel_Resize(object sender, EventArgs e)
+        {
+            // Workaround to "dock" not fitting the content correctly
+            tabControl1.Size = this.Size;
+        }
+
     }
 }

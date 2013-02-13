@@ -21,6 +21,8 @@ namespace UdsAdmin.controls.panel
         {
             InitializeComponent();
 
+            ResizeRedraw = true;
+
             listView.ListViewItemSorter = _listSorter = new gui.ListViewSorter(listView, new int[] { 3, 5 });
 
             levelFilterCombo.Items.AddRange(new string[] { xmlrpc.Constants.LEVEL_DEBUG, xmlrpc.Constants.LEVEL_INFO,

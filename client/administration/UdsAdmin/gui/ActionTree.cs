@@ -463,14 +463,17 @@ namespace UdsAdmin.gui
             // Hides all visible controls
             foreach (Control ctrl in panel.Controls)
                 ctrl.Hide();
+            //panel.Controls.Clear();
 
             string key = getKey(selected);
             if (panel.Controls.ContainsKey(key))
+            {
                 panel.Controls[key].Show();
+            }
             else // Don't exists, creates a new panel associated with the tree view and initializes it
             {
                 Control ctrl;
-                switch( selected.Name )
+                switch (selected.Name)
                 {
                     case USERS:
                         {

@@ -178,6 +178,11 @@ namespace UdsAdmin.controls.panel
             updateLogs();
         }
 
+        private void DeployedServicesPanel_Resize(object sender, EventArgs e)
+        {
+            // Workaround to "dock" not fitting the content correctly
+            tabControl1.Size = this.Size;
+        }
 
     }
 }

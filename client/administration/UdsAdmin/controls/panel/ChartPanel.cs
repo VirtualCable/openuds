@@ -14,6 +14,7 @@ namespace UdsAdmin.controls.panel
         public ChartPanel()
         {
             InitializeComponent();
+            ResizeRedraw = true;
         }
 
         protected override void Dispose(bool disposing)
@@ -28,8 +29,6 @@ namespace UdsAdmin.controls.panel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-
-            this.DoubleBuffered = true;
 
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();

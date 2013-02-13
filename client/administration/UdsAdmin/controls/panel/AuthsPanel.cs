@@ -131,5 +131,11 @@ namespace UdsAdmin.controls.panel
             logViewer1.setLogs(data.ToArray());
         }
 
+        private void AuthsPanel_Resize(object sender, EventArgs e)
+        {
+            // Workaround to "dock" not fitting the content correctly
+            splitContainer1.Size = this.Size;
+        }
+
     }
 }
