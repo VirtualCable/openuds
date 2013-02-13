@@ -57,7 +57,7 @@ InstallDir "UDS Administration Client"
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 1.0.0.0
+VIProductVersion 1.1.0.0
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "UDS Administration Client"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "${COMPANY}"
