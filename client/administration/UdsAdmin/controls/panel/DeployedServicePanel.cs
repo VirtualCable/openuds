@@ -74,6 +74,8 @@ namespace UdsAdmin.controls.panel
             lBaseService.Text = ds.serviceName;
             lOsManager.Text = ds.osManagerName;
 
+            updateLogs();
+
             ResumeLayout();
         }
 
@@ -89,8 +91,10 @@ namespace UdsAdmin.controls.panel
 
             try
             {
-                xmlrpc.StatCounter assigned = xmlrpc.UdsAdminService.GetDeployedServiceCounters(_dsId, xmlrpc.Constants.COUNTER_ASSIGNED, since, to, 400, true);
-                xmlrpc.StatCounter inUse = xmlrpc.UdsAdminService.GetDeployedServiceCounters(_dsId, xmlrpc.Constants.COUNTER_INUSE, since, to, 400, true);
+                xmlrpc.StatCounter assigned = xmlrpc.UdsAdminService.GetDeployedServiceCounters(_dsId,
+                    xmlrpc.Constants.COUNTER_ASSIGNED, since, to, Properties.Settings.Default.StatsItems, true);
+                xmlrpc.StatCounter inUse = xmlrpc.UdsAdminService.GetDeployedServiceCounters(_dsId,
+                    xmlrpc.Constants.COUNTER_INUSE, since, to, Properties.Settings.Default.StatsItems, true);
 
                 assignedChart.clearSeries();
                 assignedChart.addSerie(assigned);
@@ -105,6 +109,21 @@ namespace UdsAdmin.controls.panel
             }
 
             ResumeLayout();
+        }
+
+        private void updateLogs()
+        {
+            List<xmlrpc.LogEntry> data = new List<xmlrpc.LogEntry>();
+            try
+            {
+                xmlrpc.LogEntry[] logs = xmlrpc.UdsAdminService.GetDeployedServiceLogs(_dsId);
+                data.AddRange(logs);
+            }
+            catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+            {
+                gui.UserNotifier.notifyRpcException(ex);
+            }
+            logViewer1.setLogs(data.ToArray());
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)

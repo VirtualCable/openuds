@@ -200,6 +200,10 @@ namespace UdsAdmin.forms
             {
                 gui.ActionTree.showAssociatedPanel(splitContainer1.Panel2, treeActions, this);
             }
+            catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+            {
+                gui.UserNotifier.notifyRpcException(ex);
+            }
             catch (Exception)
             {
                 // Nothing done right now

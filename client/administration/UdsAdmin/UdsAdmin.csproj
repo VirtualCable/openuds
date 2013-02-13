@@ -90,6 +90,9 @@
     <Compile Include="controls\ListEditor.Designer.cs">
       <DependentUpon>ListEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="controls\SplitContainerEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="controls\panel\AuthsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

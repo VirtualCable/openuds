@@ -148,7 +148,7 @@
     <value>0, 0</value>
   </data>
   <data name="listView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>699, 216</value>
+    <value>737, 400</value>
   </data>
   <data name="listView.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -192,8 +192,11 @@
   <data name="logViewer1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="logViewer1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
   <data name="logViewer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>699, 59</value>
+    <value>737, 101</value>
   </data>
   <data name="logViewer1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -223,10 +226,13 @@
     <value>1</value>
   </data>
   <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>699, 279</value>
+    <value>737, 509</value>
   </data>
   <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>216</value>
+    <value>400</value>
+  </data>
+  <data name="splitContainer1.SplitterWidth" type="System.Int32, mscorlib">
+    <value>8</value>
   </data>
   <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -250,7 +256,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>699, 279</value>
+    <value>737, 509</value>
   </data>
   <data name="&gt;&gt;name.Name" xml:space="preserve">
     <value>name</value>

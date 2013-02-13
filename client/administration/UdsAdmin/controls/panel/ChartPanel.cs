@@ -29,6 +29,8 @@ namespace UdsAdmin.controls.panel
         {
             this.components = new System.ComponentModel.Container();
 
+            this.DoubleBuffered = true;
+
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
 

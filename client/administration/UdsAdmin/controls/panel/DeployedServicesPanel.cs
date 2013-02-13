@@ -41,6 +41,7 @@ namespace UdsAdmin.controls.panel
     public partial class DeployedServicesPanel : UserControl
     {
         gui.ListViewSorter _listSorter;
+        private DateTime shownToCharts = new DateTime();
 
         public DeployedServicesPanel()
         {
@@ -53,9 +54,10 @@ namespace UdsAdmin.controls.panel
         private void UsersPanel_VisibleChanged(object sender, EventArgs e)
         {
             if (Visible == true)
-            {
-                updateList();
-            }
+                if (tabControl1.SelectedTab == tabPage2)
+                    updateCharts();
+                else
+                    updateList();
         }
 
         private void updateList()
@@ -81,6 +83,62 @@ namespace UdsAdmin.controls.panel
                 gui.UserNotifier.notifyRpcException(ex);
             }
 
+            if (listView.Items.Count > 0)
+            {
+                listView.Items[0].Selected = listView.Items[0].Focused = true;
+                listView.Focus();
+            }
+        }
+
+        private void updateCharts()
+        {
+            SuspendLayout();
+            DateTime now = DateTime.Now;
+            DateTime to = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
+            DateTime since = to.AddDays(-7);
+
+            if (to == shownToCharts)
+                return;
+
+            try
+            {
+                xmlrpc.StatCounter assigned = xmlrpc.UdsAdminService.GetDeployedServiceCounters(xmlrpc.Constants.ALL, 
+                    xmlrpc.Constants.COUNTER_ASSIGNED, since, to, Properties.Settings.Default.StatsItems, true);
+                xmlrpc.StatCounter inUse = xmlrpc.UdsAdminService.GetDeployedServiceCounters(xmlrpc.Constants.ALL,
+                    xmlrpc.Constants.COUNTER_INUSE, since, to, Properties.Settings.Default.StatsItems, true);
+
+                assignedChart.clearSeries();
+                assignedChart.addSerie(assigned);
+                inUseChart.clearSeries();
+                inUseChart.addSerie(inUse);
+
+                shownToCharts = to;
+            }
+            catch (CookComputing.XmlRpc.XmlRpcFaultException e)
+            {
+                gui.UserNotifier.notifyRpcException(e);
+            }
+
+            ResumeLayout();
+        }
+
+        private void updateLogs()
+        {
+            List<xmlrpc.LogEntry> data = new List<xmlrpc.LogEntry>();
+            foreach (ListViewItem i in listView.SelectedItems)
+            {
+                try
+                {
+                    xmlrpc.LogEntry[] logs = xmlrpc.UdsAdminService.GetDeployedServiceLogs((string)i.Tag);
+                    data.AddRange(logs);
+                }
+                catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+                {
+                    gui.UserNotifier.notifyRpcException(ex);
+                }
+
+            }
+            logViewer1.setLogs(data.ToArray());
         }
 
         private void listView_KeyUp(object sender, KeyEventArgs e)
@@ -88,10 +146,10 @@ namespace UdsAdmin.controls.panel
             switch (e.KeyCode)
             {
                 case Keys.F5:
-                    updateList();
+                    tabControl1_SelectedIndexChanged(null, null);
                     break;
                 case Keys.E:
-                    if (e.Modifiers == Keys.Control)
+                    if (e.Modifiers == Keys.Control && tabControl1.SelectedTab == tabPage1)
                         foreach (ListViewItem i in listView.Items)
                             i.Selected = true;
                     break;
@@ -102,6 +160,24 @@ namespace UdsAdmin.controls.panel
         {
             _listSorter.ColumnClick(sender, e);
         }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab == tabPage2)
+            {
+                if (sender == null)
+                    shownToCharts = new DateTime();
+                updateCharts();
+            }
+            else
+                updateList();
+        }
+
+        private void listView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            updateLogs();
+        }
+
 
     }
 }

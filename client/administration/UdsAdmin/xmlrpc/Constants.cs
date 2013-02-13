@@ -66,6 +66,8 @@ namespace UdsAdmin.xmlrpc
         public const int COUNTER_ASSIGNED = 2;
         public const int COUNTER_INUSE = 3;
 
+        public const string ALL = "-1";
+
         public const string LEVEL_OTHER = "OTHER";
         public const int LEVEL_OTHER_I = 10000;
         public const string LEVEL_DEBUG = "DEBUG";

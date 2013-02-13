@@ -725,6 +725,11 @@ namespace UdsAdmin.xmlrpc
             return s.GetAuthLogs(credentials, id);
         }
 
+        public static LogEntry[] GetDeployedServiceLogs(string id)
+        {
+            return s.GetDeployedServiceLogs(credentials, id);
+        }
+
         // Stats methods
         public static StatCounter GetDeployedServiceCounters(string id, int counter_type, DateTime since, DateTime to, int points, bool use_max = false)
         {

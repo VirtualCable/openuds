@@ -492,4 +492,22 @@
   <data name="titleConfiguration" xml:space="preserve">
     <value>Configuración</value>
   </data>
+  <data name="cantCreateGroups" xml:space="preserve">
+    <value>Este autenticador no permite la creación de nuevos grupos en la interfaz de administración</value>
+  </data>
+  <data name="cantCreateUsers" xml:space="preserve">
+    <value>Este autenticador no permite la creación de nuevos usuarios en la interfaz de administración</value>
+  </data>
+  <data name="cantModifyUsers" xml:space="preserve">
+    <value>Este autenticador no permite la modificación de los usuarios en la interfaz de administración</value>
+  </data>
+  <data name="sourceHost" xml:space="preserve">
+    <value>Src Host</value>
+  </data>
+  <data name="sourceIp" xml:space="preserve">
+    <value>Src IP</value>
+  </data>
+  <data name="legend" xml:space="preserve">
+    <value>Leyenda</value>
+  </data>
 </root>

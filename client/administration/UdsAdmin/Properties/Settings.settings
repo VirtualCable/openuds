@@ -26,5 +26,8 @@
     <Setting Name="MaxControlWidth" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">320</Value>
     </Setting>
+    <Setting Name="StatsItems" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">200</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

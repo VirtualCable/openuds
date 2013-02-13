@@ -25,7 +25,7 @@ namespace UdsAdmin.controls.panel
 
             levelFilterCombo.Items.AddRange(new string[] { xmlrpc.Constants.LEVEL_DEBUG, xmlrpc.Constants.LEVEL_INFO,
                 xmlrpc.Constants.LEVEL_WARN, xmlrpc.Constants.LEVEL_ERROR, xmlrpc.Constants.LEVEL_FATAL });
-            levelFilterCombo.SelectedIndex = 0;
+            levelFilterCombo.SelectedIndex = 2;
         }
 
         public void setLogs(xmlrpc.LogEntry[] logs)
