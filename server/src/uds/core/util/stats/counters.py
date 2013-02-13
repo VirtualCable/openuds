@@ -25,6 +25,7 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+from uds.models import NEVER
 
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
@@ -77,13 +78,14 @@ def getCounters(obj, counterType, **kwargs):
         to: (optional, defaults to 'Until end') En date for counter to recover
         limit: (optional, defaults to 1000) Number of counter to recover. This is an 'At most' advice. The returned number of value
                can be lower, or even 1 more than requested due to a division for retrieving object at database
+        all: (optinal), indicates that get all counters for the type of obj passed in, not only for that obj. 
                
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     '''
     
-    since = kwargs.get('since', None)
-    to = kwargs.get('to', None)
+    since = kwargs.get('since', NEVER)
+    to = kwargs.get('to', datetime.datetime.now())
     limit = kwargs.get('limit', 1000)
     use_max = kwargs.get('use_max', False)
     
@@ -100,7 +102,11 @@ def getCounters(obj, counterType, **kwargs):
         logger.error('Type {0} has no registerd stats of type {1}'.format(type(obj), counterType))
         return
     
-    owner_ids = fnc(obj)
+    if kwargs.get('all', None) is not True:
+        owner_ids = fnc(obj)
+    else:
+        owner_ids = None
+        
     
     for i in statsManager().getCounters(__transDict[type(obj)], counterType, owner_ids, since, to, limit, use_max):
         val = (datetime.datetime.fromtimestamp(i.stamp), i.value)

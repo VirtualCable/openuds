@@ -36,6 +36,7 @@ from ..auths.AdminAuth import needs_credentials
 from ..util.Exceptions import FindException
 from uds.core.util import log
 
+from uds.models import DeployedService
 from uds.models import UserService
 from uds.models import User
 from uds.models import Authenticator
@@ -45,12 +46,22 @@ import logging
 logger = logging.getLogger(__name__)
 
 @needs_credentials
+def getDeployedServiceLogs(credentials, id):
+    try:
+        ds = DeployedService.objects.get(pk=id)
+        return log.getLogs(ds)
+    except:
+        logger.exception('Exception')
+        raise FindException(_('Deployed service does not exists'))
+
+
+@needs_credentials
 def getUserServiceLogs(credentials, id):
     try:
         us = UserService.objects.get(pk=id)
         return log.getLogs(us)
     except:
-        raise FindException(_('Service does not exists'))
+        raise FindException(_('User service does not exists'))
     
 @needs_credentials
 def getUserLogs(credentials, id):
@@ -71,6 +82,7 @@ def getAuthLogs(credentials, id):
     
 # Registers XML RPC Methods
 def registerLogFunctions(dispatcher):
+    dispatcher.register_function(getDeployedServiceLogs, 'getDeployedServiceLogs')
     dispatcher.register_function(getUserServiceLogs, 'getUserServiceLogs')
     dispatcher.register_function(getUserLogs, 'getUserLogs')
     dispatcher.register_function(getAuthLogs, 'getAuthLogs')

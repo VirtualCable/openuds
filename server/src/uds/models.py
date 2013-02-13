@@ -1626,7 +1626,7 @@ class StatsCounters(models.Model):
             filt += '='+str(owner_type)
         
         owner_id = None
-        if kwargs.has_key('owner_id'):
+        if kwargs.get('owner_id', None) is not None:
             filt += ' AND OWNER_ID'
             oid = kwargs['owner_id']
             if type(oid) in (list, tuple):

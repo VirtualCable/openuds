@@ -53,9 +53,14 @@ def getDeployedServiceCounters(credentials, id, counter_type, since, to, points,
         val = cache.get(cacheKey)
         if val is None:
         
-            us = DeployedService.objects.get(pk=id)
+            if id == '-1':
+                us = DeployedService()
+                all = True
+            else:
+                us = DeployedService.objects.get(pk=id)
+                all = False
             val = []
-            for x in counters.getCounters(us, counter_type, since=since, to=to, limit=points, use_max=use_max):
+            for x in counters.getCounters(us, counter_type, since=since, to=to, limit=points, use_max=use_max, all=all):
                 val.append({ 'stamp': x[0], 'value': x[1] })
             if len(val) > 2:
                 cache.put(cacheKey, cPickle.dumps(val).encode('zip'), 3600)
