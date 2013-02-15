@@ -111,7 +111,6 @@ def needs_credentials(xmlrpc_func):
         cred = validateCredentials(request, credentials) 
         if cred is not None:
             logger.debug('Credentials valid, executing')
-            logger.debug('args: {0}'.format(args))
             return xmlrpc_func(cred, *args, **kwargs)
         raise AuthException(_('Credentials no longer valid'))
     return _wrapped_xmlrcp_func
