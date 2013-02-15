@@ -102,6 +102,7 @@ class UserServiceOpChecker(DelayedTask):
             else:
                 # Canceled,
                 userService.setState(State.CANCELED)
+                userServiceInstance.osmanager().release(userService)
             userService.updateData(userServiceInstance)
         elif State.isErrored(state):
             checkLater = False

@@ -121,7 +121,7 @@ class WinDomainOsManager(WindowsOsManager):
             l = self.__connectLdap()
         except dns.resolver.NXDOMAIN: # No domain found, log it and pass
             logger.warn('Could not find _ldap._tcp.'+self._domain)
-            log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0] not found)".format(self._domain), log.OSMANAGER);
+            log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER);
         except ldap.LDAPError as e:
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER);
         
