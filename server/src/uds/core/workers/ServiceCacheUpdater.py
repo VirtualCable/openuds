@@ -180,7 +180,7 @@ class ServiceCacheUpdater(Job):
                 logger.error(str(e))
                 # TODO: When alerts are ready, notify this
             except:
-                logger.exception()
+                logger.exception('Exception')
         
     @transaction.autocommit
     def growL2Cache(self, ds, cacheL1, cacheL2, assigned):

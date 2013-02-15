@@ -40,13 +40,15 @@ class WinDomainOsManager(WindowsOsManager):
         super(WinDomainOsManager, self).__init__(environment, values)
         if values != None:
             if values['domain'] == '':
-                raise osmanagers.OSManager.ValidationException(_('Must provide a domain!!!'))
+                raise osmanagers.OSManager.ValidationException(_('Must provide a domain!'))
             if values['domain'].find('.') == -1:
                 raise osmanagers.OSManager.ValidationException(_('Must provide domain in FQDN'))
             if values['account'] == '':
-                raise osmanagers.OSManager.ValidationException(_('Must provide an account to add machines to domain!!!'))
+                raise osmanagers.OSManager.ValidationException(_('Must provide an account to add machines to domain!'))
+            if values['account'].find('\\') != -1:
+                raise osmanagers.OSManager.ValidationException(_('DOM\\USER form is not allowed!'))
             if values['password'] == '':
-                raise osmanagers.OSManager.ValidationException(_('Must provide a password for the account!!!'))
+                raise osmanagers.OSManager.ValidationException(_('Must provide a password for the account!'))
             self._domain = values['domain']
             self._ou = values['ou']
             self._account = values['account']
@@ -85,6 +87,7 @@ class WinDomainOsManager(WindowsOsManager):
         for server in servers:
 
             _str = ''
+            
             try:
                 uri = "%s://%s:%d" % ('ldap', str(server.target)[:-1], server.port)
                 logger.debug('URI: {0}'.format(uri))
@@ -95,7 +98,11 @@ class WinDomainOsManager(WindowsOsManager):
                 l.network_timeout = l.timeout = 5
                 l.protocol_version = ldap.VERSION3
                     
-                l.simple_bind_s(who = self._account+'@'+self._domain, cred = self._password)
+                account = self._account
+                if account.find('@') is False:
+                    account += '@' + self._domain
+                    
+                l.simple_bind_s(who = account, cred = self._password)
         
                 return l
             except ldap.LDAPError as e:
@@ -111,14 +118,22 @@ class WinDomainOsManager(WindowsOsManager):
         super(WinDomainOsManager,self).release(service)
         
         try:
-            ldap = self.__connectLdap()
+            l = self.__connectLdap()
         except dns.resolver.NXDOMAIN: # No domain found, log it and pass
             logger.warn('Could not find _ldap._tcp.'+self._domain)
             log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0] not found)".format(self._domain), log.OSMANAGER);
         except ldap.LDAPError as e:
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER);
         
-        # TODO: remove machine from active directory os, under ou or default location if not specified
+        #_filter = '(&(objectClass=computer)(sAMAccountName=%s$))' % service.friendly_name
+
+        try:
+            #  res = l.search_ext_s(base = self._ou, scope = ldap.SCOPE_SUBTREE, 
+            #                       filterstr = _filter)[0]
+            l.delete('cn={0},{1}'.format(service.friendly_name, self._ou))
+        except:
+            logger.exception('Not found: ')
+        
 
     def check(self):
         try:
