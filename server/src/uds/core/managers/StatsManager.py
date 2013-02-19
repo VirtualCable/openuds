@@ -30,15 +30,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from uds.models import Provider
-from uds.models import Service
+from uds.core.util.Config import GlobalConfig 
 
 import logging
 
 logger = logging.getLogger(__name__)
-
-
-
 
 
 class StatsManager(object):
@@ -138,11 +134,27 @@ class StatsManager(object):
         return StatsCounters.get_grouped(ownerType, counterType, owner_id = ownerIds, since = since, to = to, limit = limit, use_max = use_max)
         
     
-    def cleanupCounter(self):
+    def cleanupCounters(self):
         '''
         Removes all counters previous to configured max keep time for stat information from database.
         '''
-        pass
+        from uds.models import StatsCounters, getSqlDatetime, optimizeTable
+        from django.db import connection, transaction
+        import datetime
+        import time
+        
+        minTime = time.mktime( (getSqlDatetime() - datetime.timedelta(days = GlobalConfig.STATS_DURATION.getInt())).timetuple() )
+        dbTable = StatsCounters.__dict__['_meta'].db_table
+        
+        # Don't like how django executes this (recovers all IDS and lauches "DELETE .. WHERE id IN ...)
+        #StatsCounters.objects.filter(stamp__lt=minTime).delete()
+        # Used dict, cause environment says _meta is not known :-)
+        query = 'DELETE FROM {0} where STAMP < {1}'.format(dbTable, minTime)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        # This table will hold a big amount of data, and mayby we erase a a big number of records also.
+        # This will ensure table is in "good" shape (testing right now, will see at future)
+        optimizeTable(dbTable)
     
     # Event stats
     # Counter stats

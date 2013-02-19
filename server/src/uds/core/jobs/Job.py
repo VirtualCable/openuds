@@ -31,7 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from uds.models import Scheduler
 from uds.core import Environmentable
 import logging
 
@@ -40,7 +39,8 @@ logger = logging.getLogger(__name__)
 class Job(Environmentable):
     # Default frecuency, once a day. Remenber that precision will be based on "granurality" of Scheduler
     # If a job is used for delayed execution, this attribute is in fact ignored
-    frecuency = Scheduler.DAY
+    frecuency = 24*3600+3
+    friendly_name = 'Unknown'
     
     def __init__(self, environment):
         '''

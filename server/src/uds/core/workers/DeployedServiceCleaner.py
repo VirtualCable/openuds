@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 
 class DeployedServiceInfoItemsCleaner(Job):
     frecuency = GlobalConfig.CLEANUP_CHECK.getInt() # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
+    friendly_name = 'Deployed Service Info Cleaner'
     
     def __init__(self, environment):
         super(DeployedServiceInfoItemsCleaner,self).__init__(environment)
@@ -54,6 +55,7 @@ class DeployedServiceInfoItemsCleaner(Job):
 
 class DeployedServiceRemover(Job):
     frecuency = GlobalConfig.REMOVAL_CHECK.getInt() # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
+    friendly_name = 'Deployed Service Cleaner'
     
     def __init__(self, environment):
         super(DeployedServiceRemover,self).__init__(environment)

@@ -61,9 +61,9 @@ def getSqlDatetime(unix=False):
       * sqlite
     '''
     from django.db import connection
-    con = connection
-    cursor = con.cursor()
-    if con.vendor == 'mysql':
+    cursor = connection.cursor()
+    
+    if connection.vendor == 'mysql':
         cursor.execute('SELECT NOW()')
         date = cursor.fetchone()[0]
     else:
@@ -74,6 +74,12 @@ def getSqlDatetime(unix=False):
     else:
         return date
     
+def optimizeTable(dbTable):
+    from django.db import connection
+    cursor = connection.cursor()
+    
+    if connection.vendor == 'mysql':
+        cursor.execute('OPTIMIZE TABLE {0}'.format(dbTable))
 
 # Services
 class Provider(models.Model):

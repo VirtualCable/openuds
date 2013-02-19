@@ -77,32 +77,22 @@ class TaskManager(object):
     
     @staticmethod
     def registerScheduledTasks():
-        from uds.core.workers.ServiceCacheUpdater import ServiceCacheUpdater
-        from uds.core.workers.UserServiceCleaner import UserServiceInfoItemsCleaner, UserServiceRemover
-        from uds.core.workers.PublicationCleaner import PublicationInfoItemsCleaner, PublicationCleaner
-        from uds.core.workers.CacheCleaner import CacheCleaner
-        from uds.core.workers.DeployedServiceCleaner import DeployedServiceInfoItemsCleaner, DeployedServiceRemover
-        from uds.core.workers.StatsCollector import DeployedServiceStatsCollector
 
         logger.info("Registering sheduled tasks")
-        TaskManager.registerJob('Service Cache Updater', ServiceCacheUpdater)
-        TaskManager.registerJob('User Service Info Cleaner', UserServiceInfoItemsCleaner)
-        TaskManager.registerJob('User Service Cleaner', UserServiceRemover)
-        TaskManager.registerJob('Publications Info Cleaner', PublicationInfoItemsCleaner)
-        TaskManager.registerJob('Publication Cleaner', PublicationCleaner)
-        TaskManager.registerJob('Utility Cache Cleaner', CacheCleaner)
-        TaskManager.registerJob('Deployed Service Info Cleaner', DeployedServiceInfoItemsCleaner)
-        TaskManager.registerJob('Deployed Service Cleaner', DeployedServiceRemover)
-        TaskManager.registerJob('Deployed Service Stats', DeployedServiceStatsCollector)
-    
+        from uds.core import workers
+                         
     
     @staticmethod
     def run():
         TaskManager.keepRunning = True
         # Runs Scheduler in a separate thread and DelayedTasks here
         
+        TaskManager.registerScheduledTasks()
+        
         noSchedulers = GlobalConfig.SCHEDULER_THREADS.getInt()
         noDelayedTasks = GlobalConfig.DELAYED_TASKS_THREADS.getInt()
+        
+        logger.info('Starting {0} schedulers and {1} task executors'.format(noSchedulers, noDelayedTasks))
         
         threads = []
         for n in range(noSchedulers):

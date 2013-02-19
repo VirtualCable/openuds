@@ -41,6 +41,7 @@ logger = logging.getLogger(__name__)
 class CacheCleaner(Job):
     
     frecuency = 3600*24 # Once a day
+    friendly_name = 'Utility Cache Cleaner'
     
     def __init__(self, environment):
         super(CacheCleaner,self).__init__(environment)

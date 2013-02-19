@@ -41,12 +41,12 @@ logger = logging.getLogger(__name__)
 GLOBAL_SECTION = 'UDS'
     
 
-class Config:
+class Config(object):
     '''
     Keeps persistend configuration data
     '''
     
-    class _Value:
+    class _Value(object):
         def __init__(self, section, key, default = '', crypt = False, longText = False):
             self._section = section
             self._key = key
@@ -162,7 +162,7 @@ class Config:
         except Exception:
             pass
     
-class GlobalConfig:
+class GlobalConfig(object):
     '''
     Simple helper to keep track of global configuration
     '''
@@ -223,37 +223,19 @@ class GlobalConfig:
     # Time to restrain a deployed service in case it gives some error at some point
     RESTRAINT_TIME = Config.section(GLOBAL_SECTION).value('restrainTime', '600')
     
+    # Statistics duration, in days
+    STATS_DURATION = Config.section(GLOBAL_SECTION).value('statsDuration', '365')
+    
     initDone = False
     
     @staticmethod
     def initialize():
         try:
+            # All configurations are upper case 
             # Tries to initialize database data for global config so it is stored asap and get cached for use
-            GlobalConfig.SESSION_EXPIRE_TIME.get()
-            GlobalConfig.CACHE_CHECK_DELAY.get()
-            GlobalConfig.DELAYED_TASKS_THREADS.get()
-            GlobalConfig.SCHEDULER_THREADS.get()
-            GlobalConfig.CLEANUP_CHECK.get()
-            GlobalConfig.KEEP_INFO_TIME.get()
-            GlobalConfig.MAX_PREPARING_SERVICES.get()
-            GlobalConfig.MAX_REMOVING_SERVICES.get()
-            GlobalConfig.USER_SERVICE_CLEAN_NUMBER.get()
-            GlobalConfig.REMOVAL_CHECK.get()
-            GlobalConfig.LOGIN_URL.get()
-            GlobalConfig.USER_SESSION_LENGTH.get()
-            GlobalConfig.SUPER_USER_LOGIN.get()
-            GlobalConfig.SUPER_USER_PASS.get()
-            GlobalConfig.ADMIN_IDLE_TIME.get()
-            GlobalConfig.CHECK_UNUSED_TIME.get()
-            GlobalConfig.CSS.get()
-            GlobalConfig.MAX_LOGIN_TRIES.get()
-            GlobalConfig.LOGIN_BLOCK.get()
-            GlobalConfig.AUTORUN_SERVICE.get()
-            GlobalConfig.REDIRECT_TO_HTTPS.get()
-            GlobalConfig.MAX_INITIALIZING_TIME.get()
-            GlobalConfig.CUSTOM_HTML_LOGIN.get()
-            GlobalConfig.MAX_LOGS_PER_ELEMENT.get()
-            GlobalConfig.RESTRAINT_TIME.get()
+            for v in GlobalConfig.__dict__.itervalues():
+                if type(v) is Config._Value:
+                    v.get()
         except:
             logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
             
