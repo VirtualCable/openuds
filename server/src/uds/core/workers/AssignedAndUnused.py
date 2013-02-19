@@ -40,7 +40,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class AssignedAndUnused(Job):
+class AssignedAndUnused(object): # When derived from Job, it will be auto-registered
     frecuency = GlobalConfig.CHECK_UNUSED_TIME.getInt()
     friendly_name = 'Unused services checker'
     

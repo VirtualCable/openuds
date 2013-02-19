@@ -170,9 +170,9 @@ class GlobalConfig(object):
     # Delay between cache checks. reducing this number will increase cache generation speed but also will load service providers
     CACHE_CHECK_DELAY = Config.section(GLOBAL_SECTION).value('cacheCheckDelay', '19') 
     # Delayed task number of threads PER SERVER, with higher number of threads, deplayed task will complete sooner, but it will give more load to overall system
-    DELAYED_TASKS_THREADS = Config.section(GLOBAL_SECTION).value('delayedTasksThreads', '2')
+    DELAYED_TASKS_THREADS = Config.section(GLOBAL_SECTION).value('delayedTasksThreads', '4')
     # Number of scheduler threads running PER SERVER, with higher number of threads, deplayed task will complete sooner, but it will give more load to overall system
-    SCHEDULER_THREADS = Config.section(GLOBAL_SECTION).value('schedulerThreads', '2')
+    SCHEDULER_THREADS = Config.section(GLOBAL_SECTION).value('schedulerThreads', '3')
     # Waiting time before removing "errored" and "removed" publications, cache, and user assigned machines. Time is in seconds
     CLEANUP_CHECK = Config.section(GLOBAL_SECTION).value('cleanupCheck', '3607')
     # Time to maintaing "info state" items before removing it, in seconds
