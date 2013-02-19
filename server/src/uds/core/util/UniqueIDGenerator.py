@@ -36,6 +36,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+MAX_SEQ = 1000000000000000
+
 class UniqueIDGenerator(object):
     
     def __init__(self, typeName, owner, baseName = 'uds'):
@@ -45,10 +47,10 @@ class UniqueIDGenerator(object):
     def setBaseName(self, newBaseName):
         self._baseName = newBaseName
         
-    def __filter(self, rangeStart):
-        return dbUniqueId.objects.filter( basename = self._baseName, seq__gte=rangeStart )
+    def __filter(self, rangeStart, rangeEnd=MAX_SEQ):
+        return dbUniqueId.objects.filter( basename = self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd )
         
-    def get(self, rangeStart=0, rangeEnd=1000000000):
+    def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
         '''
         Tries to generate a new unique id in the range provided. This unique id
         is global to "unique ids' database
@@ -56,7 +58,7 @@ class UniqueIDGenerator(object):
         # First look for a name in the range defined
         try:
             dbUniqueId.objects.lock()
-            flt = self.__filter(rangeStart)
+            flt = self.__filter(rangeStart, rangeEnd)
             try:
                 item = flt.filter(assigned=False)[0]
                 dbUniqueId.objects.filter(id=item.id).update( owner = self._owner, assigned = True )
@@ -69,7 +71,7 @@ class UniqueIDGenerator(object):
                     seq = rangeStart
                 logger.debug('Found seq {0}'.format(seq))
                 if seq > rangeEnd:
-                    return None # No ids free in range
+                    return -1 # No ids free in range
                 dbUniqueId.objects.create( owner = self._owner, basename = self._baseName, seq = seq, assigned = True)
             return seq
         except Exception:

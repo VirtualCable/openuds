@@ -50,3 +50,7 @@ def downloadsManager():
 def logManager():
     from LogManager import LogManager
     return LogManager.manager()
+
+def statsManager():
+    from StatsManager import StatsManager
+    return StatsManager.manager()

@@ -35,20 +35,22 @@ from django.db import models
 from django.db.models import signals
 from uds.core.jobs.JobsFactory import JobsFactory
 from uds.core.Environment import Environment
-from uds.core.util.db.LockingManager import LockingManager
+from uds.core.db.LockingManager import LockingManager
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.services.Exceptions import InvalidServiceException
 from datetime import datetime, timedelta
+from time import mktime
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 NEVER = datetime(1972, 7, 1)
+NEVER_UNIX = int(mktime(NEVER.timetuple())) 
 
 
-def getSqlDatetime():
+def getSqlDatetime(unix=False):
     '''
     Returns the current date/time of the database server.
     
@@ -63,9 +65,14 @@ def getSqlDatetime():
     cursor = con.cursor()
     if con.vendor == 'mysql':
         cursor.execute('SELECT NOW()')
-        return cursor.fetchone()[0]
-    return datetime.now() # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
+        date = cursor.fetchone()[0]
+    else:
+        date = datetime.now() # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
     
+    if unix:
+        return int(mktime(date.timetuple()))
+    else:
+        return date
     
 
 # Services
@@ -860,7 +867,34 @@ class DeployedService(models.Model):
         getConnectionInfo without knowing if it is requested by a DeployedService or an UserService 
         '''
         return [username, password]
+
+    def isRestrained(self):
+        '''
+        Maybe this deployed service is having problems, and that may block some task in some
+        situations.
         
+        To avoid this, we will use a "restrain" policy, where we restrain a deployed service for,
+        for example, create new cache elements is reduced.
+        
+        The policy to check is that if a Deployed Service has 3 errors in the last 20 Minutes (by default), it is
+        considered restrained.
+        
+        The time that a service is in restrain mode is 20 minutes by default (1200 secs), but it can be modified
+        at globalconfig variables
+        '''
+        from uds.core.util.Config import GlobalConfig
+        
+        if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
+            return False # Do not perform any restraint check if we set the globalconfig to 0 (or less)
+        
+        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        
+        if self.userServices.filter(state=State.ERROR, state_date__gt=date).count() >= 3:
+            return True
+        
+        return False
+        
+
     def setState(self, state, save = True):
         '''
         Updates the state of this object and, optionally, saves it
@@ -1190,7 +1224,7 @@ class UserService(models.Model):
     # We need to keep separated two differents os states so service operations (move beween caches, recover service) do not affects os manager state
     state = models.CharField(max_length=1, default=State.PREPARING, db_index = True) # We set index so filters at cache level executes faster
     os_state = models.CharField(max_length=1, default=State.PREPARING) # The valid values for this field are PREPARE and USABLE
-    state_date = models.DateTimeField(auto_now_add=True)
+    state_date = models.DateTimeField(auto_now_add=True, db_index = True)
     creation_date = models.DateTimeField(db_index = True)
     data = models.TextField(default='')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'userServices', null=True, blank=True, default = None)
@@ -1376,7 +1410,7 @@ class UserService(models.Model):
             return [username, password]
         
         return ds.osmanager.getInstance().processUserPassword(self, username, password)
-        
+    
     def setState(self, state):
         '''
         Updates the state of this object and, optionally, saves it
@@ -1533,17 +1567,16 @@ signals.pre_delete.connect(UserService.beforeDelete, sender = UserService)
 # Especific loggin information for an user service
 class Log(models.Model):
     '''
-    This class represents the log associated with an user service.
+    Log model associated with an object.
     
-    This log is mainly used to keep track of log infor relative to the service
-    (such as when a user access a machine, 
-    of information related to 
+    This log is mainly used to keep track of log relative to objects
+    (such as when a user access a machine, or information related to user logins/logout, errors, ...) 
     '''
 
     owner_id = models.IntegerField(db_index=True, default=0)
-    owner_type = models.IntegerField(db_index=True, default=0)
+    owner_type = models.SmallIntegerField(db_index=True, default=0)
     
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    created = models.DateTimeField(db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)    
     level = models.PositiveSmallIntegerField(default=0, db_index=True)
     data = models.CharField(max_length=255, default='')
@@ -1557,7 +1590,124 @@ class Log(models.Model):
     
 
     def __unicode__(self):
-        return "Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+        return u"Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+
+
+class StatsCounters(models.Model):
+    '''
+    Counter statistocs mpdes the counter statistics
+    '''
+    
+    owner_id = models.IntegerField(db_index=True, default=0)
+    owner_type = models.SmallIntegerField(db_index=True, default=0)
+    counter_type = models.SmallIntegerField(db_index=True, default=0)
+    stamp = models.IntegerField(db_index=True, default=0)
+    value = models.IntegerField(db_index=True, default=0)
+    
+    class Meta:
+        '''
+        Meta class to declare db table
+        '''
+        db_table = 'uds_stats_c'
+    
+
+    @staticmethod
+    def get_grouped(owner_type, counter_type, **kwargs):
+        '''
+        Returns the average stats grouped by interval for owner_type and owner_id (optional)
+        
+        Note: if someone cant get this more optimized, please, contribute it!
+        '''
+        
+        filt = 'owner_type'
+        if type(owner_type) in (list, tuple):
+            filt += ' in (' + ','.join((str(x) for x in owner_type)) + ')'
+        else:  
+            filt += '='+str(owner_type)
+        
+        owner_id = None
+        if kwargs.get('owner_id', None) is not None:
+            filt += ' AND OWNER_ID'
+            oid = kwargs['owner_id']
+            if type(oid) in (list, tuple):
+                filt += ' in (' + ','.join(str(x) for x in oid) + ')'
+            else:
+                filt += '='+str(oid)
+        
+        filt += ' AND counter_type='+str(counter_type)
+        
+        since = kwargs.get('since', None)
+        to = kwargs.get('to', None)
+        
+        since = since and int(since) or NEVER_UNIX
+        to = to and int(to) or getSqlDatetime(True)    
+            
+        interval = 600 # By default, group items in ten minutes interval (600 seconds)
+        
+        limit = kwargs.get('limit', None)
+        
+        
+        if limit is not None:
+            limit = int(limit)
+            elements = kwargs['limit']
+            
+            # Protect for division a few lines below... :-)
+            if elements < 2:
+                elements = 2
+            
+            if owner_id is None:
+                q = StatsCounters.objects.filter(stamp__gte=since, stamp__lte=to)
+            else:
+                q = StatsCounters.objects.filter(owner_id=owner_id, stamp__gte=since, stamp__lte=to)
+                
+            if type(owner_type) in (list, tuple):
+                q = q.filter(owner_type__in=owner_type)
+            else:
+                q = q.filter(owner_type=owner_type)
+                
+            if q.count() > elements:
+                first = q.order_by('stamp')[0].stamp
+                last = q.order_by('stamp').reverse()[0].stamp
+                interval = int((last-first)/(elements-1))
+
+        filt += ' AND stamp>={0} AND stamp<={1} GROUP BY CEIL(stamp/{2}) ORDER BY stamp'.format(
+                            since, to, interval)
+
+        fnc = kwargs.get('use_max', False) and 'MAX' or 'AVG'
+            
+        query = ('SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type,stamp,' 
+                        'CEIL({0}(value)) AS value ' 
+                 'FROM {1} WHERE {2}').format(fnc, StatsCounters._meta.db_table, filt)
+                 
+        logger.debug('Stats query: {0}'.format(query))
+                 
+        # We use result as an iterator
+        return StatsCounters.objects.raw(query)
+
+    def __unicode__(self):
+        return u"Log of {0}({1}): {2} - {3} - {4}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)
+    
+    
+class StatsEvents(models.Model):
+    '''
+    Counter statistocs mpdes the counter statistics
+    '''
+    
+    owner_id = models.IntegerField(db_index=True, default=0)
+    owner_type = models.SmallIntegerField(db_index=True, default=0)
+    event_type = models.SmallIntegerField(db_index=True, default=0)
+    stamp = models.IntegerField(db_index=True, default=0)
+    
+    class Meta:
+        '''
+        Meta class to declare db table
+        '''
+        db_table = 'uds_stats_e'
+    
+
+    def __unicode__(self):
+        return u"Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+
 
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
@@ -1597,15 +1747,15 @@ class Cache(models.Model):
             expired = "Expired"
         else:
             expired = "Active"
-        return "{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
+        return u"{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
   
 class Config(models.Model):
     '''
     General configuration values model. Used to store global and specific modules configuration values.
     This model is managed via uds.core.util.Config.Config class
     '''
-    section = models.CharField(max_length=128)
-    key = models.CharField(max_length=64)
+    section = models.CharField(max_length=128, db_index=True)
+    key = models.CharField(max_length=64, db_index=True)
     value = models.TextField(default = '')
     crypt = models.BooleanField(default = False)
     long = models.BooleanField(default = False)
@@ -1618,7 +1768,7 @@ class Config(models.Model):
         unique_together = (('section', 'key'),)
     
     def __unicode__(self):
-        return "Config {0} = {1}".format(self.key, self.value)
+        return u"Config {0} = {1}".format(self.key, self.value)
     
 class Storage(models.Model):
     '''
@@ -1633,7 +1783,7 @@ class Storage(models.Model):
     objects = LockingManager()
     
     def __unicode__(self):
-        return "{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, str.join( '/', [self.attr1]))
+        return u"{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, str.join( '/', [self.attr1]))
     
 class UniqueId(models.Model):
     '''
@@ -1656,7 +1806,7 @@ class UniqueId(models.Model):
 
     
     def __unicode__(self):
-        return "{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)
+        return u"{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)
     
     
 class Scheduler(models.Model):
@@ -1716,7 +1866,7 @@ class Scheduler(models.Model):
 
     
     def __unicode__(self):
-        return "Scheduled task {0}, every {1}, last execution at {2}, state = {3}".format(self.name, self.frecuency, self.last_execution, self.state)
+        return u"Scheduled task {0}, every {1}, last execution at {2}, state = {3}".format(self.name, self.frecuency, self.last_execution, self.state)
 
 # Connects a pre deletion signal to Scheduler
 signals.pre_delete.connect(Scheduler.beforeDelete, sender = Scheduler)
@@ -1742,7 +1892,7 @@ class DelayedTask(models.Model):
     #objects = LockingManager()
 
     def __unicode__(self):
-        return "Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.owner_server)
+        return u"Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.owner_server)
     
 
 class Network(models.Model):
@@ -1839,5 +1989,5 @@ class Network(models.Model):
         self.save() 
     
     def __unicode__(self):
-        return 'Network {0} from {1} to {2}'.format(self.name, Network.longToIp(self.net_start), Network.longToIp(self.net_end))
+        return u'Network {0} from {1} to {2}'.format(self.name, Network.longToIp(self.net_start), Network.longToIp(self.net_end))
 

@@ -67,6 +67,7 @@ class Client(object):
         except:
             cached_api_key = None
             raise Exception("Can't connet to server at {0}".format(self._host))
+            return None
             
 
     def __init__(self, host, username, password, timeout, cache):

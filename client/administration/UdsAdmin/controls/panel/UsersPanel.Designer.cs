@@ -35,7 +35,7 @@
             this.state = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lastAccess = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comments = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer1 = new SplitContainerEx();
             this.logViewer1 = new UdsAdmin.controls.panel.LogViewer();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -126,7 +126,7 @@
         private System.Windows.Forms.ColumnHeader state;
         private System.Windows.Forms.ColumnHeader lastAccess;
         private System.Windows.Forms.ColumnHeader comments;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private SplitContainerEx splitContainer1;
         private LogViewer logViewer1;
     }
 }

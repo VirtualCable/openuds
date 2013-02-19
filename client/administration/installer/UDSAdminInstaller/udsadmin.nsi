@@ -10,7 +10,7 @@ Name "UDS Administration"
 !define URL http://www.virtualcable.es
 
 # MultiUser Symbol Definitions
-!define MULTIUSER_EXECUTIONLEVEL Standard
+!define MULTIUSER_EXECUTIONLEVEL Admin
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
 !define MULTIUSER_INSTALLMODE_INSTDIR "UDS Administration Client"
 !define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY "${REGKEY}"
@@ -57,7 +57,7 @@ InstallDir "UDS Administration Client"
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 1.0.0.0
+VIProductVersion 1.1.0.0
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "UDS Administration Client"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "${COMPANY}"
@@ -83,6 +83,13 @@ Section -Main SEC0000
     File ..\..\UdsAdmin\bin\Release\es\UdsAdmin.resources.dll
     SetOutPath $INSTDIR\fr
     File ..\..\UdsAdmin\bin\Release\fr\UdsAdmin.resources.dll
+
+    SetOutPath $TEMP
+    File MSChart.exe
+    System::Call "kernel32::CreateMutexA(i 0, i 0, t 'ChartInstall') i .r0 ?e"
+    ExecWait "$TEMP\MSChart.exe /q /log %temp%\msclog.htm /norestart" $0
+    Delete "$TEMP\MSChart.exe"
+
     WriteRegStr HKLM "${REGKEY}\Components" Main 1
 SectionEnd
 
@@ -142,6 +149,14 @@ SectionEnd
 Function .onInit
     InitPluginsDir
     StrCpy $StartMenuGroup "Virtual Cable\UDS Administration Client"
+
+    ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" SP
+    ${if} $0 != 1
+        MessageBox MB_OK "$(^NoDotNet)"
+        Abort
+    ${EndIf}
+
+
     !insertmacro MUI_LANGDLL_DISPLAY
     !insertmacro MULTIUSER_INIT
 FunctionEnd
@@ -155,9 +170,14 @@ Function un.onInit
 FunctionEnd
 
 # Installer Language Strings
-# TODO Update the Language Strings with the appropriate translations.
+
+LangString ^NoDotNet ${LANG_ENGLISH} ".NET 3.5 sp1 Required.$\nPlease, install it to proceed"
+LangString ^NoDotNet ${LANG_SPANISH} "Se requiere .NET 3.5 sp1.$\nPor favor, instalelo para proceder"
+LangString ^NoDotNet ${LANG_FRENCH} ".NET Framework 3.5 SP1 requis.$\nVeuillez, installez-le de procéder"
+LangString ^NoDotNet ${LANG_GERMAN} "Erforderlich ist. NET 3.5 sp1.$\nPor Bitte installieren Sie es, um fortzufahren"
+
 
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
-LangString ^UninstallLink ${LANG_SPANISH} "Uninstall $(^Name)"
-LangString ^UninstallLink ${LANG_FRENCH} "Uninstall $(^Name)"
-LangString ^UninstallLink ${LANG_GERMAN} "Uninstall $(^Name)"
+LangString ^UninstallLink ${LANG_SPANISH} "Desinstalar $(^Name)"
+LangString ^UninstallLink ${LANG_FRENCH} "Désinstaller $(^Name)"
+LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren $(^Name)"

@@ -344,7 +344,7 @@
     <value>Transporte</value>
   </data>
   <data name="networks" xml:space="preserve">
-    <value>Neworks</value>
+    <value>Aufstrebende</value>
   </data>
   <data name="invalidIpAddress" xml:space="preserve">
     <value>Ungültige IP-Adresse</value>
@@ -471,5 +471,23 @@
   </data>
   <data name="titleConfiguration" xml:space="preserve">
     <value>Konfiguration</value>
+  </data>
+  <data name="cantCreateGroups" xml:space="preserve">
+    <value>Diese Authentifikator nicht ermöglicht die Erstellung von neuen Gruppen im Administrations-Oberfläche</value>
+  </data>
+  <data name="cantCreateUsers" xml:space="preserve">
+    <value>Diese Authentifikator nicht ermöglicht die Erstellung von auf der Administrations-Oberfläche</value>
+  </data>
+  <data name="cantModifyUsers" xml:space="preserve">
+    <value>Diese Authentifikator nicht erlaubt die Änderung der Benutzer bei Administrations-Oberfläche</value>
+  </data>
+  <data name="sourceHost" xml:space="preserve">
+    <value>Src-Host</value>
+  </data>
+  <data name="sourceIp" xml:space="preserve">
+    <value>Quell-IP-</value>
+  </data>
+  <data name="legend" xml:space="preserve">
+    <value>Legende</value>
   </data>
 </root>

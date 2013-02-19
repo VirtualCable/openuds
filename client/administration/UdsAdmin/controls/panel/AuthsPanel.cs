@@ -60,9 +60,6 @@ namespace UdsAdmin.controls.panel
 
         private void updateList()
         {
-            int[] selected = new int[listView.SelectedIndices.Count];
-            listView.SelectedIndices.CopyTo(selected, 0);
-
             try
             {
                 xmlrpc.Authenticator[] auths = xmlrpc.UdsAdminService.GetAuthenticators();
@@ -82,14 +79,10 @@ namespace UdsAdmin.controls.panel
                 gui.UserNotifier.notifyRpcException(ex);
             }
 
-            foreach (int i in selected)
+            if (listView.Items.Count > 0)
             {
-                try
-                {
-                    listView.SelectedIndices.Add(i);
-                }
-                catch (Exception)
-                { }
+                listView.Items[0].Selected = listView.Items[0].Focused = true;
+                listView.Focus();
             }
         }
 
@@ -99,6 +92,7 @@ namespace UdsAdmin.controls.panel
             {
                 case Keys.F5:
                     updateList();
+                    updateLogs();
                     break;
                 case Keys.E:
                     if (e.Modifiers == Keys.Control)
@@ -115,6 +109,11 @@ namespace UdsAdmin.controls.panel
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            updateLogs();
+        }
+
+        private void updateLogs()
+        {
             List<xmlrpc.LogEntry> data = new List<xmlrpc.LogEntry>();
             foreach (ListViewItem i in listView.SelectedItems)
             {
@@ -130,6 +129,12 @@ namespace UdsAdmin.controls.panel
 
             }
             logViewer1.setLogs(data.ToArray());
+        }
+
+        private void AuthsPanel_Resize(object sender, EventArgs e)
+        {
+            // Workaround to "dock" not fitting the content correctly
+            splitContainer1.Size = this.Size;
         }
 
     }

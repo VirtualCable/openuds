@@ -75,6 +75,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -89,11 +90,17 @@
     <Compile Include="controls\ListEditor.Designer.cs">
       <DependentUpon>ListEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="controls\SplitContainerEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="controls\panel\AuthsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="controls\panel\AuthsPanel.Designer.cs">
       <DependentUpon>AuthsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="controls\panel\ChartPanel.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="controls\panel\LogViewer.cs">
       <SubType>UserControl</SubType>

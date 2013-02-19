@@ -58,10 +58,10 @@ def DuplicateEntryException(msg):
     return Fault(DUPLICATE_FAIL, msg)
 
 def InsertException(msg):
-    return Fault(FIND_FAIL, msg)
+    return Fault(INSERT_FAIL, msg)
 
 def FindException(msg):
-    return Fault()
+    return Fault(FIND_FAIL, msg)
 
 def DeleteException(msg):
     return Fault(DELETE_FAIL, msg)

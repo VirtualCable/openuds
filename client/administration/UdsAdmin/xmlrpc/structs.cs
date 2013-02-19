@@ -399,7 +399,7 @@ namespace UdsAdmin.xmlrpc
         {
             this.section = section; this.key = key; this.value = value; this.crypt = crypt; this.longText = longText;
         }
-    };
+    }
 
     public class LogEntry
     {
@@ -407,6 +407,19 @@ namespace UdsAdmin.xmlrpc
         public int level;
         public string message;
         public string source;
+    }
+
+    // Stats structures
+    public class StatCounterData
+    {
+        public DateTime stamp;
+        public int value;
+    }
+
+    public class StatCounter
+    {
+        public string title;
+        public StatCounterData[] data;
     }
 
     public struct ChoiceCallback

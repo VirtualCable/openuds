@@ -200,6 +200,10 @@ namespace UdsAdmin.forms
             {
                 gui.ActionTree.showAssociatedPanel(splitContainer1.Panel2, treeActions, this);
             }
+            catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+            {
+                gui.UserNotifier.notifyRpcException(ex);
+            }
             catch (Exception)
             {
                 // Nothing done right now
@@ -689,6 +693,11 @@ namespace UdsAdmin.forms
         public static Point centerLocation(Form f)
         {
             return new Point(form.Location.X + form.Width / 2 - f.Width / 2, form.Location.Y + form.Height / 2 - f.Height / 2);
+        }
+
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            (new AboutBoxForm()).ShowDialog();
         }
 
     }

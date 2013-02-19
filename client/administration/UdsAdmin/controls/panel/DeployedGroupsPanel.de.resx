@@ -112,21 +112,21 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="auth.Text" xml:space="preserve">
+    <value>Authenticator</value>
+  </data>
   <data name="name.Text" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="state.Text" xml:space="preserve">
-    <value>Staat</value>
+    <value>Zustand</value>
   </data>
   <data name="comments.Text" xml:space="preserve">
     <value>Kommentare</value>
-  </data>
-  <data name="auth.Text" xml:space="preserve">
-    <value>Authentifikator</value>
   </data>
 </root>

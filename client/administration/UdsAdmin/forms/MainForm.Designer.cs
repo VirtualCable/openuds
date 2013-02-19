@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer1 = new UdsAdmin.controls.SplitContainerEx();
             this.treeActions = new System.Windows.Forms.TreeView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -158,6 +158,7 @@
             // 
             this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
             resources.ApplyResources(this.aboutToolStripMenuItem1, "aboutToolStripMenuItem1");
+            this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.aboutToolStripMenuItem1_Click);
             // 
             // serviceProviderToolStripMenuItem
             // 
@@ -253,7 +254,7 @@
         private System.Windows.Forms.ToolStripMenuItem serviceProviderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newServiceProviderMenu;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private UdsAdmin.controls.SplitContainerEx splitContainer1;
         private System.Windows.Forms.TreeView treeActions;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem languageToolStripMenuItem;

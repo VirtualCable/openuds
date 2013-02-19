@@ -112,22 +112,13 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Id.Text" xml:space="preserve">
-    <value>ID</value>
-  </data>
-  <data name="CreationDate.Text" xml:space="preserve">
-    <value>Fecha de creación</value>
-  </data>
-  <data name="State.Text" xml:space="preserve">
-    <value>Estado</value>
-  </data>
-  <data name="StatusDate.Text" xml:space="preserve">
-    <value>Fecha de Estado</value>
+    <value>Identificación</value>
   </data>
   <data name="friendlyName.Text" xml:space="preserve">
     <value>Nombre descriptivo</value>
@@ -135,58 +126,13 @@
   <data name="Revision.Text" xml:space="preserve">
     <value>Revisión</value>
   </data>
-  <data name="&gt;&gt;listView.Name" xml:space="preserve">
-    <value>listView</value>
+  <data name="CreationDate.Text" xml:space="preserve">
+    <value>Fecha de creación de</value>
   </data>
-  <data name="&gt;&gt;listView.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="State.Text" xml:space="preserve">
+    <value>Estado</value>
   </data>
-  <data name="&gt;&gt;listView.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;listView.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;Id.Name" xml:space="preserve">
-    <value>Id</value>
-  </data>
-  <data name="&gt;&gt;Id.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;CreationDate.Name" xml:space="preserve">
-    <value>CreationDate</value>
-  </data>
-  <data name="&gt;&gt;CreationDate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;State.Name" xml:space="preserve">
-    <value>State</value>
-  </data>
-  <data name="&gt;&gt;State.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;StatusDate.Name" xml:space="preserve">
-    <value>StatusDate</value>
-  </data>
-  <data name="&gt;&gt;StatusDate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;friendlyName.Name" xml:space="preserve">
-    <value>friendlyName</value>
-  </data>
-  <data name="&gt;&gt;friendlyName.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;Revision.Name" xml:space="preserve">
-    <value>Revision</value>
-  </data>
-  <data name="&gt;&gt;Revision.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>DeployedPanel</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="StatusDate.Text" xml:space="preserve">
+    <value>Etapa Fecha</value>
   </data>
 </root>
