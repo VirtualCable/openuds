@@ -40,7 +40,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class AssignedAndUnused(object): # When derived from Job, it will be auto-registered
+class AssignedAndUnused(Job): 
     frecuency = GlobalConfig.CHECK_UNUSED_TIME.getInt()
     friendly_name = 'Unused services checker'
     
@@ -52,7 +52,7 @@ class AssignedAndUnused(object): # When derived from Job, it will be auto-regist
             osm = ds.osmanager.getInstance()
             if osm.processUnusedMachines is True:
                 logger.debug('Processing unused services for {0}'.format(osm))
-                since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.CHECK_UNUSED_TIME.getInt() / 2 )
+                since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.CHECK_UNUSED_TIME.getInt() )
                 for us in ds.assignedUserServices().select_for_update().filter(in_use=False,since_state__lt=since_state):
                     logger.debug('Found unused assigned service {0}'.format(us))
                     osm.processUnused(us)

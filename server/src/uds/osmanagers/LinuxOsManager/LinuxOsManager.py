@@ -45,12 +45,17 @@ class LinuxOsManager(osmanagers.OSManager):
     typeName = _('Linux OS Manager')
     typeType = 'LinuxManager'
     typeDescription = _('Os Manager to control linux virtual machines (basically renames machine and notify state)')
-    iconFile = 'losmanager.png' 
+    iconFile = 'losmanager.png'
+    
+     
 
     onLogout = gui.ChoiceField( label = _('On Logout'), order = 10, rdonly = False, tooltip = _('What to do when user logout from service'),
                      values = [ {'id' : 'keep', 'text' : _('Keep service assigned') }, 
                                 {'id' : 'remove', 'text' : _('Remove service') }
                                 ], defvalue = 'keep' )
+
+    def __setProcessUnusedMachines(self):
+        self.processUnusedMachines = self._onLogout == 'remove'
 
     def __init__(self,environment, values):
         super(LinuxOsManager, self).__init__(environment, values)
@@ -58,7 +63,8 @@ class LinuxOsManager(osmanagers.OSManager):
             self._onLogout = values['onLogout']
         else:
             self._onLogout = ''
-        
+
+        self.__setProcessUnusedMachines()        
             
     def release(self, service):
         pass
@@ -144,6 +150,15 @@ class LinuxOsManager(osmanagers.OSManager):
         logger.debug('Returning {0}'.format(ret))
         return ret
     
+    def processUnused(self, userService):
+        '''
+        This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
+        This function can update userService values. Normal operation will be remove machines if this state is not valid
+        '''
+        if self._onLogout == 'remove':
+            userService.remove()
+    
+    
     def checkState(self,service):
         logger.debug('Checking state for service {0}'.format(service))
         return State.RUNNING
@@ -158,6 +173,7 @@ class LinuxOsManager(osmanagers.OSManager):
         data = s.split('\t')
         if data[0] == 'v1':
             self._onLogout = data[1]
+        self.__setProcessUnusedMachines()        
         
     def valuesDict(self):
         return { 'onLogout' : self._onLogout }
