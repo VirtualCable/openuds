@@ -54,6 +54,7 @@ class ServiceCacheUpdater(Job):
     '''
     frecuency = GlobalConfig.CACHE_CHECK_DELAY.getInt() # Request run cache manager every configured seconds (defaults to 20 seconds). 
                                                         # If config value is changed, it will be used at next reload
+    friendly_name = 'Service Cache Updater'
     
     def __init__(self, environment):
         super(ServiceCacheUpdater,self).__init__(environment)

@@ -33,6 +33,7 @@
 from uds.models import DeployedService
 from uds.core.util.State import State
 from uds.core.util.stats import counters
+from uds.core.managers import StatsManager
 from uds.core.jobs.Job import Job
 
 import logging
@@ -43,6 +44,7 @@ logger = logging.getLogger(__name__)
 class DeployedServiceStatsCollector(Job):
     
     frecuency = 599 # Once every ten minutes, 601 is prime
+    friendly_name = 'Deployed Service Stats'
     
     def __init__(self, environment):
         super(DeployedServiceStatsCollector,self).__init__(environment)
@@ -64,4 +66,15 @@ class DeployedServiceStatsCollector(Job):
         logger.debug('Done Deployed service stats collector')
         
  
+class StatsCleaner(Job):
     
+    frecuency = 3600*24*15 # Ejecuted just once every 15 days
+    friendly_name = 'Statistic housekeeping'
+    
+    def run(self):
+        logger.debug('Starting statistics cleanup')
+        try:
+            StatsManager().cleanupCounters()
+        except:
+            logger.exception('Cleaning up counters')
+        logger.debug('Donde statistics cleanup')

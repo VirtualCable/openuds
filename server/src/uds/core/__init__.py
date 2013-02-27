@@ -41,8 +41,3 @@ import services
 import auths
 import transports
 
-def __init__():
-    from managers.TaskManager import TaskManager
-    TaskManager.registerScheduledTasks()
-    
-__init__()
