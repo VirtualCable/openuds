@@ -58,23 +58,33 @@ class LoginForm(BaseForm):
     password = forms.CharField(label=_('Password'), widget=forms.PasswordInput({'title': _('Password')}))
     authenticator = forms.ChoiceField(label=_('Authenticator'), choices = ())
     java = forms.CharField(widget = forms.HiddenInput())
-    standard = forms.CharField(widget = forms.HiddenInput())
+    standard = forms.CharField(widget = forms.HiddenInput(), required=False)
     nonStandard = forms.CharField(widget = forms.HiddenInput(), required=False)
     
     def __init__(self, *args, **kwargs):
         # If an specified login is passed in, retrieve it & remove it from kwargs dict
-        loginId = kwargs.get('smallName', None) 
+        smallName = kwargs.get('smallName', None) 
         if kwargs.has_key('smallName'):
             del kwargs['smallName']
             
-        logger.debug('Login id is "{0}"'.format(loginId))
+        logger.debug('smallName is "{0}"'.format(smallName))
         
         super(LoginForm, self).__init__(*args, **kwargs)
         choices = []
         nonStandard = []
         standard = []
         
-        for a in Authenticator.objects.all().order_by('priority'):
+        auths = None
+        if smallName is not None:
+            auths = Authenticator.objects.filter(small_name=smallName).order_by('priority', 'name')
+            if auths.count() == 0:
+                auths = Authenticator.objects.all().order_by('priority', 'name')[0:1]
+            logger.debug(auths)
+            logger.debug(list(auths))
+        else:
+            auths = Authenticator.objects.all().order_by('priority', 'name')
+            
+        for a in auths:
             if a.getType() is None:
                 continue
             choices.append( (a.id, a.name) )
@@ -82,6 +92,7 @@ class LoginForm(BaseForm):
                 nonStandard.append(str(a.id))
             else:
                 standard.append(str(a.id))
+            
         self.fields['authenticator'].choices = choices
         self.fields['nonStandard'].initial = ','.join(nonStandard)
         self.fields['standard'].initial = ','.join(standard)

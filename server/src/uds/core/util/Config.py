@@ -78,14 +78,14 @@ class Config(object):
             else:
                 return self._data
 
-        def getInt(self):
+        def getInt(self, force = False):
             try:
-                return int(self.get())
+                return int(self.get(force))
             except Exception:
                 return self._default
             
-        def getBool(self):
-            if self.get() == '0':
+        def getBool(self, force = False):
+            if self.get(force) == '0':
                 return False
             return True
         

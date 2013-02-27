@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
@@ -62,7 +63,23 @@ logger = logging.getLogger(__name__)
 def login(request, smallName=None):
     #request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
     
-    host = request.META['HTTP_HOST'] or request.META['']
+    host = request.META['HTTP_HOST'] or request.META['SERVER_NAME'] or 'auth_host' # Last one is a placeholder in case we can't locate host name
+    
+    # Get Authenticators limitation 
+    logger.debug('Host: {0}'.format(host))
+    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(True) is True:
+        if smallName is None:
+            try:
+                Authenticator.objects.get(small_name=host)
+                smallName = host
+            except:
+                try:
+                    smallName = Authenticator.objects.order_by('priority')[0].small_name
+                except: # There is no authenticators yet, simply allow global login to nowhere.. :-)
+                    smallName = None
+    
+    logger.debug('Small name: {0}'.format(smallName))
+    
     getIp(request) 
     if request.method == 'POST':
         if request.COOKIES.has_key('uds') is False:

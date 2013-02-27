@@ -194,7 +194,7 @@ class RegexLdap(Authenticator):
         logger.debug("Re: {0}".format(self._regex))
         regex = self._regex
         if regex.find('(') == -1:
-            regex = '(' + regex + ')'        
+            regex = '(' + regex + ')'
         rg = re.compile(self._regex)
         res = []
         for g in grps:
@@ -316,7 +316,7 @@ class RegexLdap(Authenticator):
         except Exception, e:
             logger.error("Exception found testing Simple LDAP auth {0}: {1}".format(e.__class__, e))
             return [False, "Error testing connection"]
-        
+    
     def testConnection(self):
         try:
             con = self.__connection()

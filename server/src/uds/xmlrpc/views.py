@@ -101,7 +101,7 @@ dispatcher = XMLRPCDispatcher()
 # csrf_exempt is needed because we don't expect xmlrcp to be called from a web form
 @csrf_exempt
 def xmlrpc(request):
-    if len(request.POST):
+    if request.method == "POST":
         response = dispatcher.dispatch(request)
     else:
         logger.error('XMLRPC invocation with GET method {0}'.format(request.path))
