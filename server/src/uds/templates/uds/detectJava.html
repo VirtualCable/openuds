@@ -18,7 +18,7 @@
 	
 	$(document).ready(function() {
 		var java = isJavaAvailable() ? "y" : "n";
-		window.location.replace("{% url uds.web.views.authJava idAuth=idAuth hasJava='' %}" + java);
+		window.location.replace("{% url "uds.web.views.authJava" idAuth=idAuth hasJava='' %}" + java);
 	   });
 	   
 	
@@ -27,7 +27,7 @@
 
 {% block top %}
 	<div id="lheader">
-		<h1><a href="{% url uds.web.views.index %}">U<span>d</span>S</a></h1>
+		<h1><a href="{% url "uds.web.views.index" %}">U<span>d</span>S</a></h1>
 	</div>
 	{% include "uds/snippets/lang.html" %}
 {% endblock %}
@@ -35,6 +35,6 @@
 {% block content %}
 
 <!--<div>
-<a href="<a href="{% url uds.web.views.index %}">{% trans "Go to main page" %}
+<a href="<a href="{% url "uds.web.views.index" %}">{% trans "Go to main page" %}
 </div>-->
 {% endblock %}

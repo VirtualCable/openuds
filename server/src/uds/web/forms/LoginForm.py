@@ -62,10 +62,18 @@ class LoginForm(BaseForm):
     nonStandard = forms.CharField(widget = forms.HiddenInput(), required=False)
     
     def __init__(self, *args, **kwargs):
+        # If an specified login is passed in, retrieve it & remove it from kwargs dict
+        loginId = kwargs.get('smallName', None) 
+        if kwargs.has_key('smallName'):
+            del kwargs['smallName']
+            
+        logger.debug('Login id is "{0}"'.format(loginId))
+        
         super(LoginForm, self).__init__(*args, **kwargs)
         choices = []
         nonStandard = []
         standard = []
+        
         for a in Authenticator.objects.all().order_by('priority'):
             if a.getType() is None:
                 continue

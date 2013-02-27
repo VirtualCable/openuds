@@ -493,6 +493,7 @@ class Authenticator(models.Model):
     data = models.TextField(default='')
     comments = models.TextField(default='')
     priority = models.IntegerField(default=0, db_index = True)
+    small_name = models.CharField(max_length=32, default='', unique = True)
 
     class Meta:
         '''

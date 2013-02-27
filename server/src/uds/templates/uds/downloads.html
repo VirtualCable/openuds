@@ -14,7 +14,7 @@
 <ul class="archivos">
 {% for f in files %}
 	<li>
-	  <a href="{% url uds.web.views.download idDownload=f.id %}">{{ f.name }}</a><dfn>{{ f.comment|safe }}</dfn>
+	  <a href="{% url "uds.web.views.download" idDownload=f.id %}">{{ f.name }}</a><dfn>{{ f.comment|safe }}</dfn>
 	</li>
 {% endfor %}
 </ul>

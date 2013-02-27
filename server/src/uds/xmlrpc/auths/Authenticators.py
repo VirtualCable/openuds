@@ -85,7 +85,7 @@ def getAuthenticators(credentials):
     for auth in Authenticator.objects.all().order_by('priority'):
         try:
             val = { 'id' : str(auth.id), 'name' : auth.name, 'comments' : auth.comments, 'type' : auth.data_type, 'typeName' : auth.getInstance().name(), 
-                   'priority' : str(auth.priority) }
+                   'priority' : str(auth.priority), 'smallName' : auth.small_name }
             res.append(val)
         except Exception, e:
             logger.debug("Exception: {0}".format(e))
@@ -151,7 +151,8 @@ def createAuthenticator(credentials, type, data):
     dict_['_request'] = credentials.request
     auth = None
     try:
-        auth = Authenticator.objects.create(name = dict_['name'], comments = dict_['comments'], data_type = type, priority=int(dict_['priority']))
+        auth = Authenticator.objects.create(name = dict_['name'], comments = dict_['comments'], 
+                                            data_type = type, priority=int(dict_['priority'], small_name=dict_['smallName']))
         auth.data = auth.getInstance(dict_).serialize()
         auth.save()
     except auths.Authenticator.ValidationException as e:
@@ -185,6 +186,7 @@ def modifyAuthenticator(credentials, id, data):
         auth.name = dict_['name']
         auth.comments = dict_['comments']
         auth.priority = int(dict_['priority'])
+        auth.small_name = dict_['smallName']
         auth.save()
     except auths.Authenticator.ValidationException as e:
         raise ValidationException(str(e))

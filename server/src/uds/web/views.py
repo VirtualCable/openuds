@@ -59,13 +59,15 @@ import string
 logger = logging.getLogger(__name__)
 
 
-def login(request):
+def login(request, smallName=None):
     #request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
+    
+    host = request.META['HTTP_HOST'] or request.META['']
     getIp(request) 
     if request.method == 'POST':
         if request.COOKIES.has_key('uds') is False:
             return errors.errorView(request, errors.COOKIES_NEEDED) # We need cookies to keep session data
-        form = LoginForm(request.POST)
+        form = LoginForm(request.POST, smallName=smallName)
         if form.is_valid():
             java = form.cleaned_data['java'] == 'y'
             os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
@@ -100,7 +102,7 @@ def login(request):
                     authLogLogin(request, authenticator, user.name, java, os)
                     return response
     else:
-        form = LoginForm()
+        form = LoginForm(smallName=smallName)
         
     response = render_to_response('uds/login.html', { 'form' : form, 'customHtml' : GlobalConfig.CUSTOM_HTML_LOGIN.get(True) }, 
                                   context_instance=RequestContext(request))

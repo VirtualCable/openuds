@@ -179,6 +179,11 @@ ROTATINGSIZE = 32*1024*1024 # 32 Megabytes before rotating files
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
+    'filters': {
+     'require_debug_false': {
+         '()': 'django.utils.log.RequireDebugFalse',
+     }
+    },
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
@@ -259,6 +264,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false']
         }
     },
     'loggers': {

@@ -37,6 +37,7 @@ from uds.core.util.modfinder import loadModulesUrls
 urlpatterns = patterns('uds',
     (r'^$', 'web.views.index'),
     (r'^login/$', 'web.views.login'),
+    (r'^login/(?P<smallName>.+)$', 'web.views.login'),
     (r'^logout$', 'web.views.logout'),
     (r'^service/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.service'),
     # Icons

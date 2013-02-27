@@ -4,7 +4,7 @@
 {% get_language_info for LANGUAGE_CODE as lang %}
 {% spaceless %}
 <div id="lang" class="last">
-<form id="form_language" action="{% url django.views.i18n.set_language %}" method="post">
+<form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
 {% csrf_token %}
 {% trans "Language" %}:
 <input id="id_language" type="hidden" name="language" value=""/>

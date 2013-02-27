@@ -4,7 +4,7 @@
 	<span>{% trans "Admin" %}</span>
     <ul>
         <!-- we can use as many LIs as we need -->
-		<li><a href="{% url uds.web.views.download idDownload='' %}">{% trans "Downloads" %}</a></li>
+		<li><a href="{% url "uds.web.views.download" idDownload='' %}">{% trans "Downloads" %}</a></li>
     </ul>
 </div>
 {% endspaceless %}

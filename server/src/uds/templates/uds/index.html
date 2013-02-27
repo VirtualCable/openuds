@@ -54,11 +54,11 @@
 	  {% if ser.transports %}
 		<li>
 		  {% with trans=ser.transports|first %}
-		  <a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url uds.web.views.service idService=ser.id idTransport=trans.id %}">{{ ser.name }}</a>
+		  <a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">{{ ser.name }}</a>
 		  {% endwith %}
 		  <ul>
 		  {% for trans in ser.transports %}
-		    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url uds.web.views.service idService=ser.id idTransport=trans.id %}"><img src="{% url uds.web.views.transportIcon idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
+		    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
 		  {% endfor %}
 		  </ul>
 		</li>

@@ -226,6 +226,9 @@ class GlobalConfig(object):
     # Statistics duration, in days
     STATS_DURATION = Config.section(GLOBAL_SECTION).value('statsDuration', '365')
     
+    # If disallow login using /login url, and must go to an authenticator
+    DISALLOW_GLOBAL_LOGIN = Config.section(GLOBAL_SECTION).value('disallowGlobalLogin', '0')
+    
     initDone = False
     
     @staticmethod

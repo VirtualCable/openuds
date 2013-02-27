@@ -57,6 +57,25 @@ class StatsManager(object):
         return StatsManager._manager
     
 
+    def __doCleanup(self, dbTable):
+        from uds.models import getSqlDatetime, optimizeTable
+        from django.db import connection, transaction
+        import datetime
+        import time
+        
+        minTime = time.mktime( (getSqlDatetime() - datetime.timedelta(days = GlobalConfig.STATS_DURATION.getInt())).timetuple() )
+        
+        # Don't like how django executes this (recovers all IDS and lauches "DELETE .. WHERE id IN ...)
+        #StatsCounters.objects.filter(stamp__lt=minTime).delete()
+        # Used dict, cause environment says _meta is not known :-)
+        query = 'DELETE FROM {0} where STAMP < {1}'.format(dbTable, minTime)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        # This table will hold a big amount of data, and mayby we erase a a big number of records also.
+        # This will ensure table is in "good" shape (testing right now, will see at future)
+        optimizeTable(dbTable)
+        
+
     # Counter stats
     def addCounter(self, owner_type, owner_id, counterType, counterValue, stamp = None):
         '''
@@ -64,8 +83,9 @@ class StatsManager(object):
         
         Args:
             
-            toWhat: if of the counter
-            counterType: The type of counter that will receive the value (i.e. STORAGE_COUNTER_TYPE, LOAD_COUNTER_TYPE
+            owner_type: type of owner (integer, from internal tables)
+            owner_id:  id of the owner
+            counterType: The type of counter that will receive the value (look at uds.core.util.stats.counters module)
             counterValue: Counter to store. Right now, this must be an integer value (-2G ~ 2G)
             stamp: if not None, this will be used as date for cuounter, else current date/time will be get
                    (this has a granurality of seconds)
@@ -87,26 +107,9 @@ class StatsManager(object):
             StatsCounters.objects.create(owner_type=owner_type, owner_id=owner_id, counter_type=counterType, value=counterValue, stamp=stamp)
             return True
         except:
-            logger.error('Exception handling stats saving (maybe database is full?)')
+            logger.error('Exception handling counter stats saving (maybe database is full?)')
         return False
          
-    
-    def removeCounters(self, fromWat):
-        '''
-        Removes counters from item
-
-        Args:
-            
-            fromWhat: if of the counter
-            counter: Counter to store. Right now, this must be an integer value (-2G ~ 2G)
-            stamp: if not None, this will be used as date for cuounter, else current date/time will be get
-                   (this has a granurality of seconds)
-
-        Returns:
-            
-            Nothing       
-        '''
-        pass
     
     def getCounters(self, ownerType, counterType, ownerIds, since, to, limit, use_max = False):
         '''
@@ -138,34 +141,19 @@ class StatsManager(object):
         '''
         Removes all counters previous to configured max keep time for stat information from database.
         '''
-        from uds.models import StatsCounters, getSqlDatetime, optimizeTable
-        from django.db import connection, transaction
-        import datetime
-        import time
+        from uds.models import StatsCounters
         
-        minTime = time.mktime( (getSqlDatetime() - datetime.timedelta(days = GlobalConfig.STATS_DURATION.getInt())).timetuple() )
-        dbTable = StatsCounters.__dict__['_meta'].db_table
-        
-        # Don't like how django executes this (recovers all IDS and lauches "DELETE .. WHERE id IN ...)
-        #StatsCounters.objects.filter(stamp__lt=minTime).delete()
-        # Used dict, cause environment says _meta is not known :-)
-        query = 'DELETE FROM {0} where STAMP < {1}'.format(dbTable, minTime)
-        cursor = connection.cursor()
-        cursor.execute(query)
-        # This table will hold a big amount of data, and mayby we erase a a big number of records also.
-        # This will ensure table is in "good" shape (testing right now, will see at future)
-        optimizeTable(dbTable)
+        self.__doCleanup(StatsCounters.__dict__['_meta'].db_table)
     
     # Event stats
     # Counter stats
-    def addEvent(self, toWhat, stamp = None):
+    def addEvent(self, owner_type, owner_id, eventType, stamp = None):
         '''
-        Adds a new counter stat to database.
+        Adds a new event stat to database.
         
         Args:
             
             toWhat: if of the counter
-            counter: Counter to store. Right now, this must be an integer value (-2G ~ 2G)
             stamp: if not None, this will be used as date for cuounter, else current date/time will be get
                    (this has a granurality of seconds)
 
@@ -175,25 +163,21 @@ class StatsManager(object):
                    
 
         '''
-        pass
-    
-    def removeEvents(self, fromWhat):
-        '''
-        Removes counters from item
-
-        Args:
-            
-            toWhat: if of the counter
-            counter: Counter to store. Right now, this must be an integer value (-2G ~ 2G)
-            stamp: if not None, this will be used as date for cuounter, else current date/time will be get
-                   (this has a granurality of seconds)
-
-        Returns:
-            
-            Nothing       
-        '''
-        pass
-    
+        from uds.models import getSqlDatetime, StatsEvents
+        import time
+        
+        if stamp is None:
+            stamp = getSqlDatetime()
+        
+        # To Unix epoch
+        stamp = int(time.mktime(stamp.timetuple()))
+        
+        try:
+            StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp)
+            return True
+        except:
+            logger.error('Exception handling event stats saving (maybe database is full?)')
+        return False
     
     def getEvents(self, fromWhat, **kwargs):
         '''
@@ -212,8 +196,10 @@ class StatsManager(object):
     
     def cleanupEvents(self):
         '''
-        Removes all counters previous to configured max keep time for stat information from database.
+        Removes all events previous to configured max keep time for stat information from database.
         '''
-        pass
+        from uds.models import StatsEvents
+        
+        self.__doCleanup(StatsEvents.__dict__['_meta'].db_table)
 
     
