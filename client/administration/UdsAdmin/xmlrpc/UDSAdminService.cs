@@ -66,6 +66,17 @@ namespace UdsAdmin.xmlrpc
             data[len + 2] = new GuiFieldValue("priority", priority.ToString());
         }
 
+        private static void insertNameCommentsPrioritySmallName(string name, string comments, int priority, string smallName, ref GuiFieldValue[] data)
+        {
+            int len = data.Length;
+            Array.Resize(ref data, len + 4);
+            data[len] = new GuiFieldValue("name", name);
+            data[len + 1] = new GuiFieldValue("comments", comments);
+            data[len + 2] = new GuiFieldValue("priority", priority.ToString());
+            data[len + 3] = new GuiFieldValue("smallName", smallName);
+        }
+
+
         private static void insertNameComments(string name, string comments, ref GuiFieldValue[] data)
         {
             int len = data.Length;
@@ -304,16 +315,16 @@ namespace UdsAdmin.xmlrpc
             return s.GetAuthenticatorGroups(credentials, id);
         }
 
-        public static bool CreateAuthenticator(string name, string comments, string type, int priority, GuiFieldValue[] data)
+        public static bool CreateAuthenticator(string name, string comments, string type, int priority, string smallName, GuiFieldValue[] data)
         {
-            insertNameCommentsPriority(name, comments, priority, ref data);
+            insertNameCommentsPrioritySmallName(name, comments, priority, smallName, ref data);
 
             return s.CreateAuthenticator(credentials, type, data);
         }
 
-        public static bool ModifyAuthenticator(string name, string comments, int priority, string id, GuiFieldValue[] data)
+        public static bool ModifyAuthenticator(string name, string comments, int priority, string id, string smallName, GuiFieldValue[] data)
         {
-            insertNameCommentsPriority(name, comments, priority, ref data);
+            insertNameCommentsPrioritySmallName(name, comments, priority, smallName, ref data);
 
             return s.ModifyAuthenticator(credentials, id, data);
         }

@@ -330,7 +330,7 @@ namespace UdsAdmin.forms
                     {
                         xmlrpc.Authenticator auth = (xmlrpc.Authenticator)treeActions.SelectedNode.Tag;
                         AuthenticatorForm dlg = new AuthenticatorForm(auth.typeName, auth.type, getIcon(_authenticatorsTypes, auth.type));
-                        dlg.setData(auth.name, auth.comments, auth.id, xmlrpc.UdsAdminService.GetAuthenticator(auth.id));
+                        dlg.setData(auth.name, auth.comments, auth.id, auth.smallName, xmlrpc.UdsAdminService.GetAuthenticator(auth.id));
                         if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                             updateAuthenticatorsTree();
                         break;

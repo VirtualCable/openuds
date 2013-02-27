@@ -199,7 +199,7 @@
     <value>splitContainer1</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
-    <value>UdsAdmin.controls.SplitContainerEx, UdsAdmin, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>UdsAdmin.controls.SplitContainerEx, UdsAdmin, Version=1.1.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
     <value>$this</value>

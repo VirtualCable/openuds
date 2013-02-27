@@ -510,4 +510,7 @@
   <data name="legend" xml:space="preserve">
     <value>Legend</value>
   </data>
+  <data name="smallNameRequired" xml:space="preserve">
+    <value>An small name with at most 8 chars and using A-Z,a-z,0-9 -_ chars is required</value>
+  </data>
 </root>

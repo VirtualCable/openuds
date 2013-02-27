@@ -45,6 +45,7 @@ namespace UdsAdmin.forms
         xmlrpc.GuiFieldValue[] _fldValues;
         string _authenticatorName;
         string _authenticatorType;
+        System.Text.RegularExpressions.Regex smallNameRe;
 
         public AuthenticatorForm(string providerName, string providerType, Icon icon)
         {
@@ -56,12 +57,14 @@ namespace UdsAdmin.forms
             _authenticatorType = providerType;
             Icon = icon;
             Text = Strings.titleAuthenticator;
+            smallNameRe = new System.Text.RegularExpressions.Regex("^[A-Za-z0-9_:.-]+$");
         }
 
-        public void setData(string name, string comments, string id, xmlrpc.GuiFieldValue[] data)
+        public void setData(string name, string comments, string id, string smallName, xmlrpc.GuiFieldValue[] data)
         {
             this.name.Text = name;
             this.comments.Text = comments;
+            this.smallName.Text = smallName;
             this._id = id;
             this.priority.Value = Convert.ToInt32(xmlrpc.GuiFieldValue.getData(data, "priority"));
             _fldValues = data;
@@ -71,6 +74,8 @@ namespace UdsAdmin.forms
         {
             _flds = xmlrpc.UdsAdminService.GetAuthenticatorGui(_authenticatorType);
             Size sz = gui.DinamycFieldsManager.PutFields(dataPanel, _flds, _fldValues);
+            if (sz.Width < groupData.Size.Width)
+                sz.Width = groupData.Size.Width;
             groupData.Size = new Size(sz.Width, 32 + sz.Height);
             Size wSize = new Size();
             wSize.Width = Size.Width;
@@ -95,6 +100,22 @@ namespace UdsAdmin.forms
                 gui.UserNotifier.notifyError(Strings.nameRequired);
                 return;
             }
+
+            if (smallName.Text.Trim().Length == 0)
+            {
+                Random rnd = new Random();
+                string str = "";
+                for (int i = 0; i < 8; i++)
+                    str += (char)('A' + rnd.Next(0, 26));
+                smallName.Text = str;
+            }
+
+            if (smallNameRe.IsMatch(smallName.Text) == false)
+            {
+                gui.UserNotifier.notifyError(Strings.smallNameRequired);
+                return;
+            }
+
             xmlrpc.GuiFieldValue[] data;
             try {
                 data = gui.DinamycFieldsManager.ReadFields(dataPanel, _flds);
@@ -107,10 +128,10 @@ namespace UdsAdmin.forms
 
             try {
                 if (_id == null)
-                    xmlrpc.UdsAdminService.CreateAuthenticator(name.Text, comments.Text, _authenticatorType, Convert.ToInt32(priority.Value), data);
+                    xmlrpc.UdsAdminService.CreateAuthenticator(name.Text, comments.Text, _authenticatorType, Convert.ToInt32(priority.Value), smallName.Text, data);
                 else
                 {
-                    xmlrpc.UdsAdminService.ModifyAuthenticator(name.Text, comments.Text, Convert.ToInt32(priority.Value), _id, data);
+                    xmlrpc.UdsAdminService.ModifyAuthenticator(name.Text, comments.Text, Convert.ToInt32(priority.Value), _id, smallName.Text, data);
                 }
                 DialogResult = System.Windows.Forms.DialogResult.OK;
             }

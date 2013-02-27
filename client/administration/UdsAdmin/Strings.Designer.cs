@@ -844,6 +844,15 @@ namespace UdsAdmin {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a An small name with at most 8 chars and using A-Z,a-z,0-9 -_ chars is required.
+        /// </summary>
+        internal static string smallNameRequired {
+            get {
+                return ResourceManager.GetString("smallNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Src Host.
         /// </summary>
         internal static string sourceHost {

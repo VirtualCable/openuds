@@ -225,6 +225,7 @@ namespace UdsAdmin.xmlrpc
     public class Authenticator : BaseItemData
     {
         public string priority;
+        public string smallName;
     }
 
     public class Group

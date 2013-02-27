@@ -33,12 +33,14 @@
             this.dataPanel = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.comments = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.name = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.priority = new System.Windows.Forms.NumericUpDown();
+            this.smallName = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.accept = new System.Windows.Forms.Button();
             this.cancel = new System.Windows.Forms.Button();
@@ -74,13 +76,20 @@
             // tableLayoutPanel2
             // 
             resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
+            this.tableLayoutPanel2.Controls.Add(this.label4, 0, 3);
             this.tableLayoutPanel2.Controls.Add(this.label3, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.comments, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.name, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.priority, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.smallName, 1, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
             // 
             // label3
             // 
@@ -126,6 +135,11 @@
             0,
             0,
             0});
+            // 
+            // smallName
+            // 
+            resources.ApplyResources(this.smallName, "smallName");
+            this.smallName.Name = "smallName";
             // 
             // tableLayoutPanel1
             // 
@@ -202,6 +216,8 @@
         private System.Windows.Forms.Button test;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown priority;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox smallName;
 
     }
 }
