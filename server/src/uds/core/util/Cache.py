@@ -76,6 +76,9 @@ class Cache(object):
             dbCache.objects.get(pk=key).delete()
         except dbCache.DoesNotExist:
             logger.debug('key not found')
+            
+    def clean(self):
+        Cache.delete(self._owner)
     
     @transaction.autocommit
     def put(self, skey, value, validity = None):

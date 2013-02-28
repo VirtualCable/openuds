@@ -190,6 +190,9 @@ def modifyAuthenticator(credentials, id, data):
         auth.save()
     except auths.Authenticator.ValidationException as e:
         raise ValidationException(str(e))
+    except Exception as e:
+        logger.exception(e)
+        raise ValidationException(str(e))
     
     return True
     

@@ -99,6 +99,8 @@ class TSNXTransport(Transport):
     def __init__(self, environment, values = None):
         super(TSNXTransport, self).__init__(environment, values)
         if values != None:
+            if values['tunnelServer'].find(':') == -1:
+                raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
             self._tunnelServer = values['tunnelServer']
             self._tunnelCheckServer = values['tunnelCheckServer']
             self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])

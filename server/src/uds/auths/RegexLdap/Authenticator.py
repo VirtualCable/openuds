@@ -34,7 +34,7 @@
 '''
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
-from uds.core.auths import Authenticator
+from uds.core import auths
 import ldap, re
 
 import logging
@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 LDAP_RESULT_LIMIT = 50
 
-class RegexLdap(Authenticator):
+class RegexLdap(auths.Authenticator):
     
     host = gui.TextField(length=64, label = _('Host'), order = 1, tooltip = _('VMWare VC Server IP or Hostname'), required = True)
     port = gui.NumericField(length=5, label = _('Port'), defvalue = '389', order = 2, tooltip = _('Ldap port (389 for non ssl, 636 for ssl normally'), required = True)
@@ -55,9 +55,9 @@ class RegexLdap(Authenticator):
     ldapBase = gui.TextField(length=64, label = _('Base'), order = 7, tooltip = _('Common search base (used for "users" and "groups"'), required = True)
     userClass = gui.TextField(length=64, label = _('User class'), defvalue = 'posixAccount', order = 8, tooltip = _('Class for LDAP users (normally posixAccount)'), required = True)
     userIdAttr = gui.TextField(length=64, label = _('User Id Attr'), defvalue = 'uid', order = 9, tooltip = _('Attribute that contains the user id'), required = True)
-    userNameAttr = gui.TextField(length=64, label = _('User Name Attr'), defvalue = 'uid', order = 10, tooltip = _('Attributes that contains the user name (list of comma separated values)'), required = True)
-    groupNameAttr = gui.TextField(length=64, label = _('Group Name Attr'), defvalue = 'cn', order = 11, tooltip = _('Attribute that contains the group name'), required = True)
-    regex = gui.TextField(length=64, label = _('Regular Exp. for groups'), defvalue = '^(.*)', order = 12, tooltip = _('Regular Expression to extract the group name'), required = True)
+    userNameAttr = gui.TextField(length=64, label = _('User Name Attr'), multiline=2, defvalue = 'uid', order = 10, tooltip = _('Attributes that contains the user name (list of comma separated values)'), required = True)
+    groupNameAttr = gui.TextField(length=64, label = _('Group Name Attr'), multiline=2, defvalue = 'cn', order = 11, tooltip = _('Attribute that contains the group name'), required = True)
+    #regex = gui.TextField(length=64, label = _('Regular Exp. for groups'), defvalue = '^(.*)', order = 12, tooltip = _('Regular Expression to extract the group name'), required = True)
 
     typeName = _('Regex LDAP Authenticator') 
     typeType = 'RegexLdapAuthenticator'
@@ -78,6 +78,10 @@ class RegexLdap(Authenticator):
     def __init__(self, dbAuth, environment, values = None):
         super(RegexLdap, self).__init__(dbAuth, environment, values)
         if values != None:
+            self.__validateField(values['userNameAttr'], str(self.userNameAttr.label))
+            self.__validateField(values['userIdAttr'], str(self.userIdAttr.label))
+            self.__validateField(values['groupNameAttr'], str(self.groupNameAttr.label))
+            
             self._host = values['host']
             self._port = values['port']
             self._ssl = gui.strToBool(values['ssl'])
@@ -88,12 +92,9 @@ class RegexLdap(Authenticator):
             self._userClass = values['userClass']
             self._userIdAttr = values['userIdAttr']
             self._groupNameAttr = values['groupNameAttr']
-            self._regex = values['regex']
+            #self._regex = values['regex']
             self._userNameAttr = values['userNameAttr']
-            try:
-                re.search(self._regex, '')
-            except:
-                raise Authenticator.ValidationException(_('Invalid regular expression'))
+            
         else:
             self._host = None
             self._port = None
@@ -105,34 +106,85 @@ class RegexLdap(Authenticator):
             self._userClass = None
             self._userIdAttr = None
             self._groupNameAttr = None
-            self._regex = None
+            #self._regex = None
             self._userNameAttr = None
         self._connection = None
+
+    def __validateField(self, field, fieldLabel):
+        '''
+        Validates the multi line fields refering to attributes
+        '''
+        import re
+        for line in field.splitlines():
+            if line.find('=') != -1:
+                attr, pattern = line.split('=')[0:2]
+                if pattern.find('(') == -1:
+                    pattern = '(' + pattern + ')'
+                try:
+                    re.search(pattern, '')
+                except:
+                    raise auths.Authenticator.ValidationException('Invalid pattern in {0}: {1}'.format(fieldLabel, line))
+                
+    
+    def __processField(self, field, attributes):
+        import re
+        res = []
+        for line in field.splitlines():
+            if line.find('=') != -1:
+                attr, pattern = line.split('=')[0:2]
+                attr = attr.lower()
+                # if pattern do not have groups, define one with full re
+                if pattern.find('(') == -1:
+                    pattern = '(' + pattern + ')'
+                val = attributes.get(attr, [])
+                
+                for v in val:
+                    try:
+                        logger.debug('Pattern: {0}'.format(pattern))
+                        srch = re.search(pattern, v)
+                        logger.debug(srch)
+                        if srch is None:
+                            continue
+                        res.append(''.join(srch.groups()))
+                    except Exception as e:
+                        logger.warn('Invalid regular expression')
+                        logger.debug(e)
+                        break
+            else:
+                res += attributes.get(line, [])
+        return res
             
     def valuesDict(self):
         return { 'host' : self._host, 'port' : self._port, 'ssl' : gui.boolToStr(self._ssl),
                 'username' : self._username, 'password' : self._password, 'timeout' : self._timeout,
                 'ldapBase' : self._ldapBase, 'userClass' : self._userClass, 
-                'userIdAttr' : self._userIdAttr, 'groupNameAttr' : self._groupNameAttr, 'regex' : self._regex,
+                'userIdAttr' : self._userIdAttr, 'groupNameAttr' : self._groupNameAttr, 
                 'userNameAttr' : self._userNameAttr
                   }
 
     def __str__(self):
-        return "Ldap Auth: {0}:{1}@{2}:{3}, base = {4}, userClass = {5}, userIdAttr = {6}, groupNameAttr = {7}, reg.ex. = {8}, userName attr = {9}".format(
-                self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, self._regex,
+        return "Ldap Auth: {0}:{1}@{2}:{3}, base = {4}, userClass = {5}, userIdAttr = {6}, groupNameAttr = {7}, userName attr = {8}".format(
+                self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, 
                 self._userNameAttr)
     
     def marshal(self):
-        return str.join('\t', ['v1', 
+        return str.join('\t', ['v2', 
                 self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
-                self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, self._regex, self._userNameAttr ])
+                self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, self._userNameAttr ])
     
     def unmarshal(self, val):
         data = val.split('\t')
         if data[0] == 'v1':
             logger.debug("Data: {0}".format(data[1:]))
-            self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, self._regex, self._userNameAttr = data[1:]
-            self._ssl = gui.strToBool(self._ssl)    
+            self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, _regex, self._userNameAttr = data[1:]
+            self._ssl = gui.strToBool(self._ssl)
+            self._groupNameAttr = self._groupNameAttr + '=' + _regex 
+            self._userNameAttr = '\n'.join(self._userNameAttr.split(','))
+        elif data[0] == 'v2':
+            logger.debug("Data v2: {0}".format(data[1:]))
+            self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, self._userNameAttr = data[1:]
+            self._ssl = gui.strToBool(self._ssl)
+            
         
     def __connection(self, username = None, password = None):
         if self._connection is None or username is not None: # We want this method also to check credentials
@@ -146,6 +198,7 @@ class RegexLdap(Authenticator):
                 uri = "%s://%s%s" % (schema, self._host, port)
                 logger.debug('Ldap uri: {0}'.format(uri))
                 l = ldap.initialize(uri=uri)
+                l.set_option(ldap.OPT_REFERRALS, 0)
                 l.network_timeout = l.timeout = int(self._timeout)
                 l.protocol_version = ldap.VERSION3
                 
@@ -173,12 +226,18 @@ class RegexLdap(Authenticator):
         try:
             con = self.__connection()
             filter = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, username)
-            attrlist = self._userNameAttr.split(',') + [self._userIdAttr, self._groupNameAttr]
+            attrlist = [self._userIdAttr]
+            for i in self._userNameAttr.split('\n'):
+                attrlist.append( i.split('=')[0].lower() )
+            for i in self._groupNameAttr.split('\n'):
+                attrlist.append( i.split('=')[0].lower() )
+            
             logger.debug('Getuser filter: {0}, attr list: {1}'.format(filter, attrlist))
             res = con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, 
                              filterstr = filter, attrlist = attrlist, sizelimit = LDAP_RESULT_LIMIT)[0]
             usr = dict(( k, '' ) for k in attrlist)
-            usr.update(res[1])
+            dct = { k.lower(): v for k, v in res[1].iteritems() }
+            usr.update(dct)
             usr.update( {'dn' : res[0], '_id' : username })
             logger.debug('Usr: {0}'.format(usr))
             return usr
@@ -187,26 +246,11 @@ class RegexLdap(Authenticator):
             return None
         
     def __getGroups(self, usr):
-        grps = usr[self._groupNameAttr]
-        if type(grps) is not list:
-            grps = [grps]
-        logger.debug("Groups: {0}".format(grps))
-        logger.debug("Re: {0}".format(self._regex))
-        regex = self._regex
-        if regex.find('(') == -1:
-            regex = '(' + regex + ')'
-        rg = re.compile(self._regex)
-        res = []
-        for g in grps:
-            ma = rg.search(g)
-            if ma is not None:
-                for m in ma.groups():
-                    res.append(m)
-        logger.debug('Res: {0}'.format(res))
-        return res
+        return self.__processField(self._groupNameAttr, usr)
         
     def __getUserRealName(self, usr):
-        return ' '.join([ (type(usr.get(id_, '')) is list and ' '.join(( str(k) for k in usr.get(id_, ''))) or str(usr.get(id_, ''))) for id_ in self._userNameAttr.split(',') ]).strip()
+        return ' '.join(self.__processField(self._userNameAttr, usr))
+        #return ' '.join([ (type(usr.get(id_, '')) is list and ' '.join(( str(k) for k in usr.get(id_, ''))) or str(usr.get(id_, ''))) for id_ in self._userNameAttr.split(',') ]).strip()
             
     def authenticate(self, username, credentials, groupsManager):
         '''
@@ -299,10 +343,14 @@ class RegexLdap(Authenticator):
             con = self.__connection()
             res = []
             for r in con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, filterstr = '(&(objectClass=%s)(%s=%s*))' % (self._userClass, self._userIdAttr, pattern), sizelimit=LDAP_RESULT_LIMIT):
-                usrId = r[1].get(self._userIdAttr, '')
-                usrId = type(usrId) == list and usrId[0] or usrId
-                res.append( { 'id' :   usrId, 
-                              'name' : self.__getUserRealName(r[1])  } )
+                if r[0] is not None: # Must have a dn, we do not accept references to other
+                    dct = { k.lower(): v for k, v in r[1].iteritems() }
+                    logger.debug('R: {0}'.format(dct)) 
+                    usrId = dct.get(self._userIdAttr.lower(), '')
+                    usrId = type(usrId) == list and usrId[0] or usrId
+                    res.append( { 'id' :   usrId, 
+                                  'name' : self.__getUserRealName(dct)  } )
+            logger.debug(res)
             return res
         except Exception, e:
             logger.exception("Exception: ")
@@ -336,40 +384,26 @@ class RegexLdap(Authenticator):
             # If found 1 or more, all right
             pass
 
-        try:
-            if len(con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, filterstr = '(objectClass=%s)' % self._groupClass, sizelimit=1)) == 1:
-                raise Exception()
-            return [False, _('Ldap group class seems to be incorrect (no group found by that class)')]
-        except Exception, e:
-            # If found 1 or more, all right
-            pass
-
-        try:
-            if len(con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, filterstr = '(%s=*)' % self._userIdAttr, sizelimit=1)) == 1:
-                raise Exception()
-            return [False, _('Ldap user id attribute seems to be incorrect (no user found by that attribute)')]
-        except Exception, e:
-            # If found 1 or more, all right
-            pass
-        
-        try:
-            if self._groupNameAttr == 'dn':
-                raise Exception() # Can't search entries by dn, so this is not possible and dn is always retrieved
-            if len(con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, filterstr = '(%s=*)' % self._groupNameAttr, sizelimit=1)) == 1:
-                raise Exception()
-            return [False, _('Ldap group id attribute seems to be incorrect (no group found by that attribute)')]
-        except Exception, e:
-            # If found 1 or more, all right
-            pass
-        
         # Now test objectclass and attribute of users
         try:
             if len(con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, filterstr = '(&(objectClass=%s)(%s=*))' % (self._userClass, self._userIdAttr), sizelimit=1)) == 1:
                 raise Exception()
-            return [False, _('Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)')]
+            return [False, _('Ldap user id attr is probably wrong (can\'t find any user with both conditions)')]
         except Exception as e:
             # If found 1 or more, all right
             pass
+        
+        for grpNameAttr in self._groupNameAttr.split('\n'):
+            vals = grpNameAttr.split('=')[0]
+            if vals == 'dn':
+                continue
+            try:
+                if len(con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, filterstr = '(%s=*)' % vals, sizelimit=1)) == 1:
+                    continue
+            except:
+                continue
+            return [False, _('Ldap group id attribute seems to be incorrect (no group found by that attribute)')]
+        
             
         # Now try to test regular expression to see if it matches anything (
         try:

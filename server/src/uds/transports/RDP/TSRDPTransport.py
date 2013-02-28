@@ -49,6 +49,8 @@ class TSRDPTransport(Transport):
     def __init__(self, environment, values = None):
         super(TSRDPTransport, self).__init__(environment, values)
         if values != None:
+            if values['tunnelServer'].find(':') == -1:
+                raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
             self._tunnelServer = values['tunnelServer']
             self._tunnelCheckServer = values['tunnelCheckServer']
             self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
@@ -59,6 +61,7 @@ class TSRDPTransport(Transport):
             self._allowPrinters = gui.strToBool(values['allowPrinters'])
             self._allowDrives = gui.strToBool(values['allowDrives'])
             self._allowSerials = gui.strToBool(values['allowSerials'])
+            
         else:
             self._tunnelServer = ''
             self._tunnelCheckServer = ''

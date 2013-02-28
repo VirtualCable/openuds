@@ -278,6 +278,10 @@ class gui(object):
             '''
             self._data['defvalue'] = defValue
             
+        @property
+        def label(self):
+            return self._data['label']
+            
     
     class TextField(InputField):
         '''

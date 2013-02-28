@@ -48,11 +48,11 @@ class AssignedAndUnused(Job):
         super(AssignedAndUnused,self).__init__(environment)
     
     def run(self):
+        since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.CHECK_UNUSED_TIME.getInt() )
         for ds in DeployedService.objects.all():
             osm = ds.osmanager.getInstance()
             if osm.processUnusedMachines is True:
                 logger.debug('Processing unused services for {0}'.format(osm))
-                since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.CHECK_UNUSED_TIME.getInt() )
-                for us in ds.assignedUserServices().select_for_update().filter(in_use=False,since_state__lt=since_state):
+                for us in ds.assignedUserServices().select_for_update().filter(in_use=False,since_state__lt=since_state, state=State.USABLE):
                     logger.debug('Found unused assigned service {0}'.format(us))
                     osm.processUnused(us)

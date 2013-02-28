@@ -198,7 +198,8 @@ class GlobalConfig(object):
     # Idle time before closing session on admin
     ADMIN_IDLE_TIME = Config.section(GLOBAL_SECTION).value('adminIdleTime', '14400') # Defaults to 4 hous 
     # Time betwen checks of unused services by os managers
-    # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least 1/2 of this time
+    # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time
+    # (only if os manager asks for this characteristic)
     CHECK_UNUSED_TIME = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631') # Defaults to 10 minutes
     # Default CSS Used
     CSS = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css')
@@ -219,13 +220,10 @@ class GlobalConfig(object):
     CUSTOM_HTML_LOGIN = Config.section(GLOBAL_SECTION).valueLong('customHtmlLogin', '')
     # Maximum logs per user service
     MAX_LOGS_PER_ELEMENT = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100')
-    
     # Time to restrain a deployed service in case it gives some error at some point
     RESTRAINT_TIME = Config.section(GLOBAL_SECTION).value('restrainTime', '600')
-    
     # Statistics duration, in days
     STATS_DURATION = Config.section(GLOBAL_SECTION).value('statsDuration', '365')
-    
     # If disallow login using /login url, and must go to an authenticator
     DISALLOW_GLOBAL_LOGIN = Config.section(GLOBAL_SECTION).value('disallowGlobalLogin', '0')
     
