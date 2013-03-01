@@ -1386,6 +1386,9 @@ class UserService(models.Model):
         '''
         return [self.src_ip, self.src_hostname]
     
+    def needsOsManager(self):
+        return self.deployed_service.osmanager is not None
+    
     def transformsUserOrPasswordForService(self):
         '''
         If the os manager changes the username or the password, this will return True
@@ -1545,7 +1548,7 @@ class UserService(models.Model):
         return res
 
     def __unicode__(self):
-        return "User service {0}, cache_level {1}, user {2}".format(self.id, self.cache_level, self.user)
+        return "User service {0}, cache_level {1}, user {2}, name {3}".format(self.id, self.cache_level, self.user, self.friendly_name)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

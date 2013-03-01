@@ -30,7 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
+import datetime
 import logging
 
 logger = logging.getLogger(__name__)
@@ -73,6 +73,8 @@ class JobsFactory(object):
                     logger.debug('Already added {0}'.format(name))
                     job = Scheduler.objects.get(name=name)
                     job.frecuency = type_.frecuency
+                    if job.next_execution > job.last_execution + datetime.timedelta(seconds = type_.frecuency):
+                        job.next_execution = job.last_execution + datetime.timedelta(seconds = type_.frecuency);
                     job.save()
         except Exception, e:
             logger.debug('Exception at ensureJobsInDatabase in JobsFactory: {0}, {1}'.format(e.__class__, e))

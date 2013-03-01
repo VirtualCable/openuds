@@ -172,16 +172,26 @@ class ServiceCacheUpdater(Job):
         logger.debug("Growing L1 cache creating a new service for {0}".format(ds))
         # First, we try to assign from L2 cache
         if cacheL2 > 0:
-            cache = ds.cachedUserServices().select_for_update().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date')[0]
-            cache.moveToLevel(services.UserDeployment.L1_CACHE)
-        else:
-            try:
-                UserServiceManager.manager().createCacheFor(ds.activePublication(), services.UserDeployment.L1_CACHE)
-            except MaxServicesReachedException as e:
-                logger.error(str(e))
-                # TODO: When alerts are ready, notify this
-            except:
-                logger.exception('Exception')
+            valid = None
+            for n in ds.cachedUserServices().select_for_update().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date'):
+                if n.needsOsManager():
+                    if State.isUsable(n.state) is False or State.isUsable(n.os_state):
+                        valid = n
+                        break
+                else:
+                    valid = n
+                    break
+                
+            if valid is not None:
+                valid.moveToLevel(services.UserDeployment.L1_CACHE)
+                return
+        try:
+            UserServiceManager.manager().createCacheFor(ds.activePublication(), services.UserDeployment.L1_CACHE)
+        except MaxServicesReachedException as e:
+            logger.error(str(e))
+            # TODO: When alerts are ready, notify this
+        except:
+            logger.exception('Exception')
         
     @transaction.autocommit
     def growL2Cache(self, ds, cacheL1, cacheL2, assigned):
@@ -208,11 +218,22 @@ class ServiceCacheUpdater(Job):
             return
         
         if cacheL2 < ds.cache_l2_srvs:
-            cacheItems[0].moveToLevel(services.UserDeployment.L2_CACHE)
-        else:
-            # TODO: Look first for non finished cache items and cancel them
-            cache = cacheItems[0]
-            cache.removeOrCancel()
+            valid = None
+            for n in cacheItems:
+                if n.needsOsManager():
+                    if State.isUsable(n.state) is False or State.isUsable(n.os_state):
+                        valid = n
+                        break
+                else:
+                    valid = n
+                    break
+                
+            if valid is not None:
+                valid.moveToLevel(services.UserDeployment.L2_CACHE)
+                return
+        
+        cache = cacheItems[0]
+        cache.removeOrCancel()
                 
     def reduceL2Cache(self, ds, cacheL1, cacheL2, assigned):
         logger.debug("Reducing L2 cache erasing a service in cache for {0}".format(ds))

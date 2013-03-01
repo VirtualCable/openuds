@@ -40,26 +40,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class AssignedAndUnused(Job): 
-    frecuency = GlobalConfig.CHECK_UNUSED_TIME.getInt()
+class HangedCleaner(object): 
+    frecuency = 3600
     friendly_name = 'Unused services checker'
     
     def __init__(self, environment):
-        super(AssignedAndUnused,self).__init__(environment)
+        super(HangedCleaner,self).__init__(environment)
     
     def run(self):
-        since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.CHECK_UNUSED_TIME.getInt() )
+        since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.MAX_INITIALIZING_TIME.getInt() )
         for ds in DeployedService.objects.all():
-            # If do not needs os manager, this is
-            if ds.osmanager is not None:
-                osm = ds.osmanager.getInstance()
-                if osm.processUnusedMachines is True:
-                    logger.debug('Processing unused services for {0}'.format(osm))
-                    for us in ds.assignedUserServices().select_for_update().filter(in_use=False,state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
-                        logger.debug('Found unused assigned service {0}'.format(us))
-                        osm.processUnused(us)
-            else: # No os manager, simply remove unused services in specified time
-                for us in ds.assignedUserServices().select_for_update().filter(in_use=False,state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
+            osm = ds.osmanager.getInstance()
+            if osm.processUnusedMachines is True:
+                logger.debug('Processing unused services for {0}'.format(osm))
+                for us in ds.assignedUserServices().select_for_update().filter(in_use=False,state_date__lt=since_state, state=State.USABLE):
                     logger.debug('Found unused assigned service {0}'.format(us))
-                    us.remove()
-    
+                    osm.processUnused(us)

@@ -69,51 +69,57 @@ class UserServiceOpChecker(DelayedTask):
         Checks the value returned from invocation to publish or checkPublishingState, updating the dsp database object
         Return True if it has to continue checking, False if finished
         '''
-        prevState = userService.state
-        userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
-        userService.friendly_name = userServiceInstance.getName()  # And name, both methods can modify serviceInstance, so we save it later
-        if State.isFinished(state):
-            checkLater = False
-            userServiceInstance.finish()
-            if State.isPreparing(prevState):
-                if userServiceInstance.service().publicationType is None or userService.publication == userService.deployed_service.activePublication():
-                    userService.setState(State.USABLE)
-                    # and make this usable if os manager says that it is usable, else it pass to configuring state
-                    if userServiceInstance.osmanager() is not None and userService.os_state == State.PREPARING: # If state is already "Usable", do not recheck it
-                        stateOs = userServiceInstance.osmanager().checkState(userService)
-                        # If state is finish, we need to notify the userService again that os has finished
-                        if State.isFinished(stateOs):
-                            state = userServiceInstance.notifyReadyFromOsManager('')
-                            userService.updateData(userServiceInstance)
+        try:
+            prevState = userService.state
+            userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
+            userService.friendly_name = userServiceInstance.getName()  # And name, both methods can modify serviceInstance, so we save it later
+            if State.isFinished(state):
+                checkLater = False
+                userServiceInstance.finish()
+                if State.isPreparing(prevState):
+                    if userServiceInstance.service().publicationType is None or userService.publication == userService.deployed_service.activePublication():
+                        userService.setState(State.USABLE)
+                        # and make this usable if os manager says that it is usable, else it pass to configuring state
+                        if userServiceInstance.osmanager() is not None and userService.os_state == State.PREPARING: # If state is already "Usable", do not recheck it
+                            stateOs = userServiceInstance.osmanager().checkState(userService)
+                            # If state is finish, we need to notify the userService again that os has finished
+                            if State.isFinished(stateOs):
+                                state = userServiceInstance.notifyReadyFromOsManager('')
+                                userService.updateData(userServiceInstance)
+                        else:
+                            stateOs = State.FINISHED
+                            
+                        if State.isRuning(stateOs):
+                            userService.setOsState(State.PREPARING)
+                        else:
+                            userService.setOsState(State.USABLE)
                     else:
-                        stateOs = State.FINISHED
-                        
-                    if State.isRuning(stateOs):
-                        userService.setOsState(State.PREPARING)
-                    else:
-                        userService.setOsState(State.USABLE)
+                        # We ignore OsManager info and if userService don't belong to "current" publication, mark it as removable
+                        userService.setState(State.REMOVABLE)
+                elif State.isRemoving(prevState):
+                    if userServiceInstance.osmanager() is not None:
+                        userServiceInstance.osmanager().release(userService)
+                    userService.setState(State.REMOVED)
                 else:
-                    # We ignore OsManager info and if userService don't belong to "current" publication, mark it as removable
-                    userService.setState(State.REMOVABLE)
-            elif State.isRemoving(prevState):
-                if userServiceInstance.osmanager() is not None:
+                    # Canceled,
+                    logger.debug("Canceled us {2}: {0}, {1}".format(prevState, State.toString(state), State.toString(userService)))
+                    userService.setState(State.CANCELED)
                     userServiceInstance.osmanager().release(userService)
-                userService.setState(State.REMOVED)
+                userService.updateData(userServiceInstance)
+            elif State.isErrored(state):
+                checkLater = False
+                userService.updateData(userServiceInstance)
+                userService.setState(State.ERROR)
             else:
-                # Canceled,
-                userService.setState(State.CANCELED)
-                userServiceInstance.osmanager().release(userService)
-            userService.updateData(userServiceInstance)
-        elif State.isErrored(state):
-            checkLater = False
-            userService.updateData(userServiceInstance)
+                checkLater = True  # The task is running
+                userService.updateData(userServiceInstance)
+            userService.save()
+            if checkLater:
+                UserServiceOpChecker.checkLater(userService, userServiceInstance)
+        except Exception as e:
+            logger.exception('Checkin service state')
             userService.setState(State.ERROR)
-        else:
-            checkLater = True  # The task is running
-            userService.updateData(userServiceInstance)
-        userService.save()
-        if checkLater:
-            UserServiceOpChecker.checkLater(userService, userServiceInstance)
+            userService.save()
     
     @staticmethod
     def checkLater(userService, ci):
@@ -290,6 +296,7 @@ class UserServiceManager(object):
         ci = cache.getInstance()
         state = ci.moveToCache(cacheLevel)
         cache.cache_level = cacheLevel
+        logger.debug('Service State: {0} {1} {2}'.format(State.toString(state), State.toString(cache.state), State.toString(cache.os_state)))
         if State.isRuning(state) and cache.isUsable():
             cache.setState(State.PREPARING)
             
@@ -305,7 +312,9 @@ class UserServiceManager(object):
         uService = UserService.objects.select_for_update().get(id=uService.id)
         logger.debug('Canceling uService {0} creation'.format(uService))
         if uService.isPreparing() == False:
-            raise OperationException(_('Can\'t cancel non running operation'))
+            logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
+            return self.remove(uService)
+        
         ui = uService.getInstance()
         # We simply notify service that it should cancel operation
         state = ui.cancel()

@@ -124,25 +124,39 @@ class RegexLdap(auths.Authenticator):
                     re.search(pattern, '')
                 except:
                     raise auths.Authenticator.ValidationException('Invalid pattern in {0}: {1}'.format(fieldLabel, line))
-                
+    
+    def __getAttrsFromField(self, field):
+        res = []            
+        for line in field.splitlines():
+            equalPos = line.find('=') 
+            if line.find('=') != -1:
+                attr = line[:equalPos]
+            else:
+                attr = line
+            res.append(attr)
+        return res
     
     def __processField(self, field, attributes):
         import re
         res = []
         for line in field.splitlines():
+            equalPos = line.find('=') 
             if line.find('=') != -1:
-                attr, pattern = line.split('=')[0:2]
+                attr, pattern = (line[:equalPos], line[equalPos+1:])
                 attr = attr.lower()
                 # if pattern do not have groups, define one with full re
                 if pattern.find('(') == -1:
                     pattern = '(' + pattern + ')'
                 val = attributes.get(attr, [])
+                if type(val) is not list: # May we have a single value
+                    val = [val]
+                
+                logger.debug('Pattern: {0}'.format(pattern))
                 
                 for v in val:
                     try:
-                        logger.debug('Pattern: {0}'.format(pattern))
-                        srch = re.search(pattern, v)
-                        logger.debug(srch)
+                        srch = re.search(pattern, v, re.IGNORECASE)
+                        logger.debug("Found against {0}: {1} ".format(v, srch))
                         if srch is None:
                             continue
                         res.append(''.join(srch.groups()))
@@ -226,11 +240,7 @@ class RegexLdap(auths.Authenticator):
         try:
             con = self.__connection()
             filter = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, username)
-            attrlist = [self._userIdAttr]
-            for i in self._userNameAttr.split('\n'):
-                attrlist.append( i.split('=')[0].lower() )
-            for i in self._groupNameAttr.split('\n'):
-                attrlist.append( i.split('=')[0].lower() )
+            attrlist = [self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
             
             logger.debug('Getuser filter: {0}, attr list: {1}'.format(filter, attrlist))
             res = con.search_ext_s(base = self._ldapBase, scope = ldap.SCOPE_SUBTREE, 

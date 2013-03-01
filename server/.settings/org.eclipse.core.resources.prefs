@@ -94,6 +94,7 @@ encoding//src/uds/core/util/stats/counters.py=utf-8
 encoding//src/uds/core/workers/AssignedAndUnused.py=utf-8
 encoding//src/uds/core/workers/CacheCleaner.py=utf-8
 encoding//src/uds/core/workers/DeployedServiceCleaner.py=utf-8
+encoding//src/uds/core/workers/HangedCleaner.py=utf-8
 encoding//src/uds/core/workers/PublicationCleaner.py=utf-8
 encoding//src/uds/core/workers/ServiceCacheUpdater.py=utf-8
 encoding//src/uds/core/workers/StatsCollector.py=utf-8

@@ -95,7 +95,7 @@ class Scheduler(object):
     
     def notifyTermination(self):
         self._keepRunning = False
-    
+
     @transaction.commit_manually
     def executeOneJob(self):
         '''
