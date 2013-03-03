@@ -17,12 +17,18 @@ public class TunnelServlet
     @Override
     protected GuacamoleTunnel doConnect(HttpServletRequest request)
         throws GuacamoleException {
+    	
+    	String data = request.getParameter("data");
+    	if( data == null )
+    		return null; 
+    	
+    	System.out.println("Valor: " + data);
 
         // Create our configuration
         GuacamoleConfiguration config = new GuacamoleConfiguration();
         config.setProtocol("rdp");
-        config.setParameter("hostname", "dc.ad.dkmon.com");
-        config.setParameter("username", "administrador");
+        config.setParameter("hostname", "w7adolfo");
+        config.setParameter("username", "admin");
         config.setParameter("password", "temporal");
 
         // Connect to guacd - everything is hard-coded here.
