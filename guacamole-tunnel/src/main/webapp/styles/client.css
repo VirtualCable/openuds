@@ -1,0 +1,60 @@
+
+/*
+ *  Guacamole - Clientless Remote Desktop
+ *  Copyright (C) 2010  Michael Jumper
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+body {
+    background: black;
+    font-family: FreeSans, Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+img {
+    border: none;
+}
+
+.software-cursor {
+    cursor: url('../images/mouse/dot.gif'),url('../images/mouse/blank.cur'),default;
+    overflow: hidden;
+}
+
+div.displayOuter {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: table;
+}
+
+div.displayMiddle {
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+div#display * {
+    position: relative;
+}
+
+div#display > * {
+    margin-left: auto;
+    margin-right: auto;
+}
+
