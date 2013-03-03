@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML>
+
+<!--
+    Guacamole - Clientless Remote Desktop
+    Copyright (C) 2010  Michael Jumper
+	
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+	
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+	<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+		<meta name="apple-mobile-web-app-capable" content="yes"/>
+		    
+        <title>Simple RDP Tunneling Test</title>
+
+        <!-- Client core scripts -->
+        <link rel="icon" type="image/png" href="images/guacamole-logo-64.png"/>
+        <link rel="stylesheet" type="text/css" href="styles/client.css"/>
+                 
+		<script type="text/javascript" src="guacamole-common-js/keyboard.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/mouse.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/layer.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/tunnel.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/audio.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/guacamole.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/oskeyboard.js"></script>
+
+    </head>
+
+    <body>
+
+        <!-- Display -->
+        <div class="displayOuter">
+            <div class="displayMiddle">
+                <div id="display">
+                </div>
+            </div>
+        </div>
+        
+       <div id="viewportClone"/>
+               
+        <!-- Init -->
+        <script type="text/javascript"> /* <![CDATA[ */
+ 			window.onload = function() {
+                window.setTimeout(function() {        
+		        	// Get parameter information, so we can retrieve connecton data
+		        	var data = window.location.search.substr(1);
+		
+		            // Get display div from document
+		            var display = document.getElementById("display");
+		
+		            // Instantiate client, using an HTTP tunnel for communications.
+		            var guac = new Guacamole.Client(
+		                new Guacamole.HTTPTunnel("tunnel")
+		            );
+		
+					
+		            // Add client to display div
+		            var inner = guac.getDisplay();
+		            inner.className = "software-cursor";
+		            
+		            // Error handler
+		            guac.onerror = function(error) {
+		                alert(error);
+		            };
+		
+					var optimal_width = window.innerWidth;
+					var optimal_height = window.innerHeight;
+					// Scale width/height to be at least 600x600
+					if (optimal_width < 600 || optimal_height < 600) {
+						var scale = Math.max(600 / optimal_width, 600 / optimal_height);
+						optimal_width = Math.floor(optimal_width * scale);
+						optimal_height = Math.floor(optimal_height * scale);
+					}
+					// Get entire query string, and pass to connect().
+					// Normally, only the "id" parameter is required, but
+					// all parameters should be preserved and passed on for
+					// the sake of authentication.
+					var connect_string = "data=" + data + "&width=" + optimal_width + "&height=" + optimal_height;
+					
+		            display.appendChild(inner);
+					
+					guac.connect(connect_string);
+			
+		            // Disconnect on close
+		            window.onunload = function() {
+		                guac.disconnect();
+		            }
+		
+		            // Mouse
+		            var mouse = new Guacamole.Mouse(inner);
+		
+		            mouse.onmousedown = 
+		            mouse.onmouseup   =
+		            mouse.onmousemove = function(mouseState) {
+		                guac.sendMouseState(mouseState);
+		            };
+		
+		            // Keyboard
+		            var keyboard = new Guacamole.Keyboard(document);
+		
+		            keyboard.onkeydown = function (keysym) {
+		                guac.sendKeyEvent(1, keysym);
+		            };
+		
+		            keyboard.onkeyup = function (keysym) {
+		                guac.sendKeyEvent(0, keysym);
+		            };
+				}, 0);
+          };
+        /* ]]> */ </script>
+ 
+    </body>
+ 
+</html>

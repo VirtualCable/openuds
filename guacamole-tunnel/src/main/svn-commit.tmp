@@ -1,0 +1,11 @@
+
+--This line, and those below, will be ignored--
+
+A  + webapp/index.xhtml
+A    webapp/styles
+A    webapp/styles/client.css
+A    webapp/images
+AM   webapp/images/guacamole-logo-64.png
+D    webapp/WEB-INF/index.html
+M    webapp/WEB-INF/web.xml
+D    webapp/index.html
