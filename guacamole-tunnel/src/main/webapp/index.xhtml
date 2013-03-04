@@ -58,7 +58,18 @@
  			window.onload = function() {
                 window.setTimeout(function() {        
 		        	// Get parameter information, so we can retrieve connecton data
-		        	var data = window.location.search.substr(1);
+		        	var params = window.location.search.substr(1);
+		        	var data = "";
+		        	var exitUrl = "";
+		        	var ioa = params.indexOf('&');
+		        	// URL is in the format ?XXXXXXXX&URL, where XXX is the id of the credential stored, and URL is the output URL
+		        	if( ioa != -1 ) {
+		        		data = params.substr(0,ioa);
+		        		exiturl = params.substr(ioa+1);
+		        	}
+		        	else {
+		        		data = params;
+		        	}
 		
 		            // Get display div from document
 		            var display = document.getElementById("display");
@@ -76,6 +87,12 @@
 		            // Error handler
 		            guac.onerror = function(error) {
 		                alert(error);
+		                window.location.assign(exiturl);
+		            };
+		            
+		            guac.onstatechange = function(state) {
+		            	if( state == 0 || state == 4 || state == 5 )
+		            		window.location.assign(exiturl);
 		            };
 		
 					var optimal_width = window.innerWidth;

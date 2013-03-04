@@ -34,25 +34,13 @@ public class TunnelServlet
     	if( data == null || width == null || height == null)
     		throw new GuacamoleException("Can't read required parameters");
     	
-    	HttpSession rSession = request.getSession();
-    	
-		@SuppressWarnings("unchecked")
-		Hashtable<String,String> params = (Hashtable<String,String>)rSession.getAttribute(data);
+		Hashtable<String,String> params = Util.readParameters(data);
 		
+		if( params == null ) {
+			System.out.println("Invalid credentials");
+			throw new GuacamoleException("Can't access required user credentials");
+		}
 		
-    	// Parameters not owned by user session, get them from remote server 
-    	// (one time shot at other side, so they can't be retrieved again)
-    	if( params == null ) {
-    		try {
-	    		params = Util.readParameters(data);
-	    		rSession.setAttribute(data, params);
-    		} catch(Exception e) {
-    			throw new GuacamoleException("Getting broker data", e);
-    		}
-    	}
-    	else
-    		System.out.println("Params got from session");
-
 		GuacamoleClientInformation info = new GuacamoleClientInformation();
 		info.setOptimalScreenWidth(Integer.parseInt(width));
 		info.setOptimalScreenHeight(Integer.parseInt(height));
