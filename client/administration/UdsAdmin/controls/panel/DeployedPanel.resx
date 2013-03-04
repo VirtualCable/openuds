@@ -223,7 +223,7 @@
     <value>logViewer1</value>
   </data>
   <data name="&gt;&gt;logViewer1.Type" xml:space="preserve">
-    <value>UdsAdmin.controls.panel.LogViewer, UdsAdmin, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>UdsAdmin.controls.panel.LogViewer, UdsAdmin, Version=1.1.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;logViewer1.Parent" xml:space="preserve">
     <value>splitContainer1.Panel2</value>
@@ -259,7 +259,7 @@
     <value>splitContainer1</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>UdsAdmin.controls.SplitContainerEx, UdsAdmin, Version=1.1.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
     <value>$this</value>

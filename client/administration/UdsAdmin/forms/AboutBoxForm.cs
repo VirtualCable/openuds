@@ -73,7 +73,11 @@ namespace UdsAdmin.forms
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+                string v = ver.Build.ToString() + '.' + ver.Major.ToString();
+                if (ver.Minor != 0)
+                    v += " update " + ver.Minor.ToString();
+                return v;
             }
         }
 

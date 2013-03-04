@@ -366,6 +366,11 @@ namespace UdsAdmin.xmlrpc
              return s.CreateGroup(credentials, grp);
         }
 
+        public static bool ModifyGroup(Group grp)
+        {
+            return s.ModifyGroup(credentials, grp);
+        }
+
         public static bool ChangeGroupsState(string[] ids, bool newState)
         {
             return s.ChangeGroupsState(credentials, ids, newState);

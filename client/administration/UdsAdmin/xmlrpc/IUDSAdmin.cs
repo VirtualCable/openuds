@@ -147,6 +147,9 @@ namespace UdsAdmin.xmlrpc
         [XmlRpcMethod("createGroup")]
         bool CreateGroup(string credentials, Group group);
 
+        [XmlRpcMethod("modifyGroup")]
+        bool ModifyGroup(string credentials, Group group);
+
         [XmlRpcMethod("changeGroupsState")]
         bool ChangeGroupsState(string credentials, string[] ids, bool newState);
 

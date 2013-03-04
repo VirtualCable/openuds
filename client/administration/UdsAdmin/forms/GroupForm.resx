@@ -193,7 +193,7 @@
     <value>71, 3</value>
   </data>
   <data name="name.Size" type="System.Drawing.Size, System.Drawing">
-    <value>229, 20</value>
+    <value>228, 20</value>
   </data>
   <data name="name.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -235,7 +235,7 @@
     <value>3</value>
   </data>
   <data name="searchButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>306, 3</value>
+    <value>305, 3</value>
   </data>
   <data name="searchButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>30, 19</value>
@@ -349,7 +349,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label3" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="name" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="comments" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="searchButton" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="groupLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="active" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,22,52252,Percent,77,47748,Absolute,69" /&gt;&lt;Rows Styles="Percent,30,Percent,30,Percent,40" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label3" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="name" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="comments" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="searchButton" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="groupLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="active" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,22,52252,Percent,77,47748,Absolute,70" /&gt;&lt;Rows Styles="Percent,30,Percent,30,Percent,40" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
     <value>3</value>

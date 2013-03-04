@@ -131,6 +131,7 @@ namespace UdsAdmin.controls.panel
                 {
                     xmlrpc.LogEntry[] logs = xmlrpc.UdsAdminService.GetDeployedServiceLogs((string)i.Tag);
                     data.AddRange(logs);
+                    break;
                 }
                 catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
                 {

@@ -228,8 +228,9 @@ namespace UdsAdmin.controls.panel
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
             List<xmlrpc.LogEntry> data = new List<xmlrpc.LogEntry>();
-            foreach (ListViewItem i in listView.SelectedItems)
+            if (listView.SelectedItems.Count == 1)
             {
+                ListViewItem i = listView.SelectedItems[0];
                 try
                 {
                     xmlrpc.LogEntry[] logs = xmlrpc.UdsAdminService.GetUserServiceLogs((string)i.Tag);
@@ -239,9 +240,8 @@ namespace UdsAdmin.controls.panel
                 {
                     gui.UserNotifier.notifyRpcException(ex);
                 }
-
+                logViewer1.setLogs(data.ToArray());
             }
-            logViewer1.setLogs(data.ToArray());
         }
 
     }

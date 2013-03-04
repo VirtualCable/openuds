@@ -55,6 +55,7 @@ namespace UdsAdmin.gui
         public const string SERVICE = "Service";
         public const string USERS = "Users";
         public const string GROUPS = "Groups";
+        public const string METAGROUPS = "MGroups";
         public const string ALLOWED_GROUPS = "AllowGroups";
         public const string ASSIGNED_SERVICES = "AssignService";
         public const string ASSIGNED_TRANSPORTS = "AssignedTransports";

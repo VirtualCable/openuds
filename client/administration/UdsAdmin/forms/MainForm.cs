@@ -525,7 +525,7 @@ namespace UdsAdmin.forms
                         }
                         else
                         {
-                            forms.GroupForm dlg = new GroupForm(auth, type);
+                            forms.GroupForm dlg = new GroupForm(auth, type, null);
                             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                                 treeActions_AfterSelect(null, null);
                         }

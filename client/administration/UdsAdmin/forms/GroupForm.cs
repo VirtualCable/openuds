@@ -42,11 +42,13 @@ namespace UdsAdmin.forms
     {
         private xmlrpc.Authenticator _auth;
         private xmlrpc.AuthenticatorType _authType;
+        private string _id;
 
-        public GroupForm(xmlrpc.Authenticator auth, xmlrpc.AuthenticatorType authType)
+        public GroupForm(xmlrpc.Authenticator auth, xmlrpc.AuthenticatorType authType, string groupId)
         {
             _auth = auth;
             _authType = authType;
+            _id = groupId;
             InitializeComponent();
             Text = Strings.titleGroup;
         }
@@ -66,6 +68,22 @@ namespace UdsAdmin.forms
                 check.Visible = false;
             }
             groupLabel.Text = _authType.groupNameLabel;
+            if (_id != null)
+            {
+                try
+                {
+                    xmlrpc.Group grp = xmlrpc.UdsAdminService.GetGroup(_id);
+                    name.Text = grp.name;
+                    comments.Text = grp.comments;
+                    active.Checked = grp.active;
+                }
+                catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+                {
+                    gui.UserNotifier.notifyRpcException(ex);
+                    Close();
+                }
+            }
+
             Location = MainForm.centerLocation(this);
         }
 
@@ -85,9 +103,18 @@ namespace UdsAdmin.forms
             }
             xmlrpc.Group grp = new xmlrpc.Group();
             grp.idParent = _auth.id; grp.id = ""; grp.name = name.Text; grp.comments = comments.Text; grp.active = active.Checked;
+
             try
             {
-                xmlrpc.UdsAdminService.CreateGroup(grp);
+                if (_id == null)
+                {
+                    xmlrpc.UdsAdminService.CreateGroup(grp);
+                }
+                else
+                {
+                    grp.id = _id;
+                    xmlrpc.UdsAdminService.ModifyGroup(grp);
+                }
                 DialogResult = System.Windows.Forms.DialogResult.OK;
             }
             catch (CookComputing.XmlRpc.XmlRpcFaultException ex)

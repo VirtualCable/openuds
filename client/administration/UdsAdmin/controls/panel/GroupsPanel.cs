@@ -56,6 +56,7 @@ namespace UdsAdmin.controls.panel
             _emptyMenu = new ContextMenuStrip();
             _fullMenu = new ContextMenuStrip();
 
+            ToolStripMenuItem modify = new ToolStripMenuItem(Strings.modifyItem); modify.Click += modifyItem; modify.Image = Images.groups16;
             ToolStripMenuItem enable = new ToolStripMenuItem(Strings.enable); enable.Click += enableItem; enable.Image = Images.apply16;
             ToolStripMenuItem disable = new ToolStripMenuItem(Strings.disable); disable.Click += disableItem; disable.Image = Images.cancel16;
             ToolStripSeparator sep = new ToolStripSeparator();
@@ -64,7 +65,7 @@ namespace UdsAdmin.controls.panel
             ToolStripMenuItem delete = new ToolStripMenuItem(Strings.deleteItem); delete.Click += deleteItem; delete.Image = Images.delete16;
 
             _emptyMenu.Items.Add(newG1);
-            _fullMenu.Items.AddRange(new ToolStripItem[] { enable, disable, sep, newG2, delete });
+            _fullMenu.Items.AddRange(new ToolStripItem[] { modify, enable, disable, sep, newG2, delete });
 
             listView.Columns[0].Text = _authType.groupNameLabel;
 
@@ -105,7 +106,18 @@ namespace UdsAdmin.controls.panel
 
         private void newItem(object sender, EventArgs e)
         {
-            UdsAdmin.forms.GroupForm form = new UdsAdmin.forms.GroupForm(_auth, _authType);
+            UdsAdmin.forms.GroupForm form = new UdsAdmin.forms.GroupForm(_auth, _authType, null);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                updateList();
+            }
+        }
+
+        private void modifyItem(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count != 1)
+                return;
+            UdsAdmin.forms.GroupForm form = new UdsAdmin.forms.GroupForm(_auth, _authType, (string)listView.SelectedItems[0].Tag);
             if (form.ShowDialog() == DialogResult.OK)
             {
                 updateList();
