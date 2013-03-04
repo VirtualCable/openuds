@@ -88,6 +88,26 @@ def createGroup(credentials, grp):
     return True
 
 @needs_credentials
+def modifyGroup(credentials, grp):
+    '''
+    Modifies an existing service provider with specified id and data
+    It's mandatory that data contains at least 'name' and 'comments'.
+    The expected structure is the same that provided at getServiceProvider
+    '''
+    try:
+        group = Group.objects.get(pk=grp['id'])
+        group.name = grp['name']
+        group.comments = grp['comments']
+        group.state = State.ACTIVE if grp['active'] == True else State.INACTIVE
+        group.save()
+    except IntegrityError:
+        raise DuplicateEntryException(grp['name'])
+    except Exception as e:
+        logger.exception(e)
+        raise(InsertException(str(e)))
+    return True
+
+@needs_credentials
 def removeGroups(credentials, ids):
     '''
     Deletes a group
@@ -109,6 +129,7 @@ def registerGroupsFunctions(dispatcher):
     dispatcher.register_function(getGroups, 'getGroups')
     dispatcher.register_function(getGroup, 'getGroup')
     dispatcher.register_function(createGroup, 'createGroup')
+    dispatcher.register_function(modifyGroup, 'modifyGroup')
     dispatcher.register_function(removeGroups, 'removeGroups')
     dispatcher.register_function(changeGroupsState, 'changeGroupsState')
     

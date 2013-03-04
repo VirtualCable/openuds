@@ -1455,6 +1455,7 @@ class UserService(models.Model):
             user: User to assing to (db record)
         '''
         self.cache_level = 0
+        self.state_date = getSqlDatetime()
         self.user = user
 
     def setInUse(self, state):
