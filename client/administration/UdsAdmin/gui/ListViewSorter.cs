@@ -58,11 +58,20 @@ namespace UdsAdmin.gui
 
 
             sortOrderImages = new ImageList();
+            
+            if( lst.SmallImageList != null )
+            {
+                foreach(string k in lst.SmallImageList.Images.Keys )
+                {
+                    sortOrderImages.Images.Add(k, lst.SmallImageList.Images[k]);
+                }
+            }
+
             sortOrderImages.ColorDepth = ColorDepth.Depth24Bit;
             sortOrderImages.Images.Add("up", Images.uparrow16);
             sortOrderImages.Images.Add("down", Images.downarrow16);
             sortOrderImages.Images.Add("empty", Images.empty16);
-            
+
             lst.SmallImageList = sortOrderImages;
             foreach (ColumnHeader h in lst.Columns)
             {

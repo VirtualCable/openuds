@@ -60,12 +60,14 @@ namespace UdsAdmin.controls.panel
             ToolStripMenuItem enable = new ToolStripMenuItem(Strings.enable); enable.Click += enableItem; enable.Image = Images.apply16;
             ToolStripMenuItem disable = new ToolStripMenuItem(Strings.disable); disable.Click += disableItem; disable.Image = Images.cancel16;
             ToolStripSeparator sep = new ToolStripSeparator();
-            ToolStripMenuItem newG1 = new ToolStripMenuItem(Strings.newItem); newG1.Click += newItem; newG1.Image = Images.new16;
-            ToolStripMenuItem newG2 = new ToolStripMenuItem(Strings.newItem); newG2.Click += newItem; newG2.Image = Images.new16;
+            ToolStripMenuItem newG1 = new ToolStripMenuItem(Strings.newItem); newG1.Click += newGroup; newG1.Image = Images.new16;
+            ToolStripMenuItem newMG1 = new ToolStripMenuItem(Strings.newMetaGroup); newMG1.Click += newMetaGroup; newMG1.Image = Images.new16;
+            ToolStripMenuItem newG2 = new ToolStripMenuItem(Strings.newItem); newG2.Click += newGroup; newG2.Image = Images.new16;
+            ToolStripMenuItem newMG2 = new ToolStripMenuItem(Strings.newMetaGroup); newMG2.Click += newMetaGroup; newMG2.Image = Images.new16;
             ToolStripMenuItem delete = new ToolStripMenuItem(Strings.deleteItem); delete.Click += deleteItem; delete.Image = Images.delete16;
 
-            _emptyMenu.Items.Add(newG1);
-            _fullMenu.Items.AddRange(new ToolStripItem[] { modify, enable, disable, sep, newG2, delete });
+            _emptyMenu.Items.AddRange(new ToolStripItem[] { newG1, newMG1 });
+            _fullMenu.Items.AddRange(new ToolStripItem[] { enable, disable, sep, newG2, newMG2, modify, delete });
 
             listView.Columns[0].Text = _authType.groupNameLabel;
 
@@ -89,9 +91,14 @@ namespace UdsAdmin.controls.panel
                 List<ListViewItem> lst = new List<ListViewItem>();
                 foreach (xmlrpc.Group grp in grps)
                 {
-                    ListViewItem itm = new ListViewItem(new string[]{grp.name, grp.active ? Strings.active : Strings.inactive , grp.comments});
+                    ListViewItem itm = new ListViewItem(new string[]{ grp.name, grp.active ? Strings.active : Strings.inactive , grp.comments});
+                    if (grp.isMeta == true)
+                    {
+                        itm.ImageKey = "meta";
+
+                    }
                     itm.ForeColor = grp.active ? gui.Colors.ActiveColor : gui.Colors.InactiveColor;
-                    itm.Tag = grp.id;
+                    itm.Tag = grp;
                     lst.Add(itm);
                 }
                 listView.Items.Clear();
@@ -104,9 +111,18 @@ namespace UdsAdmin.controls.panel
 
         }
 
-        private void newItem(object sender, EventArgs e)
+        private void newGroup(object sender, EventArgs e)
         {
             UdsAdmin.forms.GroupForm form = new UdsAdmin.forms.GroupForm(_auth, _authType, null);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                updateList();
+            }
+        }
+
+        private void newMetaGroup(object sender, EventArgs e)
+        {
+            UdsAdmin.forms.GroupMetaForm form = new UdsAdmin.forms.GroupMetaForm(_auth, null);
             if (form.ShowDialog() == DialogResult.OK)
             {
                 updateList();
@@ -117,8 +133,20 @@ namespace UdsAdmin.controls.panel
         {
             if (listView.SelectedItems.Count != 1)
                 return;
-            UdsAdmin.forms.GroupForm form = new UdsAdmin.forms.GroupForm(_auth, _authType, (string)listView.SelectedItems[0].Tag);
-            if (form.ShowDialog() == DialogResult.OK)
+
+            xmlrpc.Group group = (xmlrpc.Group)listView.SelectedItems[0].Tag;
+            DialogResult res = DialogResult.No;
+
+            if (group.isMeta == true)
+            {
+                res = (new UdsAdmin.forms.GroupMetaForm(_auth, group.id)).ShowDialog();
+            }
+            else
+            {
+                res = (new UdsAdmin.forms.GroupForm(_auth, _authType, group.id)).ShowDialog();
+            }
+
+            if (res == DialogResult.OK)
             {
                 updateList();
             }
@@ -134,7 +162,7 @@ namespace UdsAdmin.controls.panel
             int n = 0;
             foreach (ListViewItem i in listView.SelectedItems)
             {
-                ids[n++] = (string)i.Tag;
+                ids[n++] = ((xmlrpc.Group)i.Tag).id;
                 i.SubItems[1].Text = info;
                 i.ForeColor = col;
             }
@@ -160,7 +188,7 @@ namespace UdsAdmin.controls.panel
             int n = 0;
             foreach (ListViewItem i in listView.SelectedItems)
             {
-                ids[n++] = (string)i.Tag;
+                ids[n++] = ((xmlrpc.Group)i.Tag).id;
                 listView.Items.Remove(i);
             }
             xmlrpc.UdsAdminService.RemoveGroups(ids);

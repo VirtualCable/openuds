@@ -147,6 +147,22 @@
   <data name="listView.Size" type="System.Drawing.Size, System.Drawing">
     <value>583, 279</value>
   </data>
+  <metadata name="imageList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="imageList1.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAABA
+        AQAAAk1TRnQBSQFMAwEBAAEIAQABCAEAARABAAEQAQAE/wEZAQAI/wFCAU0BNgcAATYDAAEoAwABQAMA
+        ARADAAEBAQABGAYAAQz/AP8A/wAYAAO0AwADtAkAA7QDAAO0DwADtJMAA7QDAAO0AwADtAkAA7QPAAO0
+        kwADtAMAA7QDAAO0CQADtA8AA7STAAO0AwADtA8AA7QPAAO0nwADtAkAA7QPAAO0nwADtAkAA7QPAAO0
+        kwADtAMAA7QJAAO0CQADtP8A/wD/AP8AYAABQgFNAT4HAAE+AwABKAMAAUADAAEQAwABAQEAAQEFAAGA
+        FwAD/wEAAv8GAAL/BgAC/wYAAv8GAAGoAbYGAAGrAbYGAAGLAbYGAAGJAbAGAAGrAbYGAAGrAbYGAAGo
+        AQkGAAL/BgAC/wYAAv8GAAL/BgAC/wYACw==
+</value>
+  </data>
   <data name="listView.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -171,6 +187,12 @@
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
     <value>583, 279</value>
   </data>
+  <data name="&gt;&gt;auth.Name" xml:space="preserve">
+    <value>auth</value>
+  </data>
+  <data name="&gt;&gt;auth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;name.Name" xml:space="preserve">
     <value>name</value>
   </data>
@@ -189,11 +211,11 @@
   <data name="&gt;&gt;comments.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;auth.Name" xml:space="preserve">
-    <value>auth</value>
+  <data name="&gt;&gt;imageList1.Name" xml:space="preserve">
+    <value>imageList1</value>
   </data>
-  <data name="&gt;&gt;auth.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;imageList1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>DeployedGroupsPanel</value>

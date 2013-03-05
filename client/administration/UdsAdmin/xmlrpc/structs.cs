@@ -237,10 +237,19 @@ namespace UdsAdmin.xmlrpc
         public string name;
         public string comments;
         public bool active;
+        public bool isMeta;
+        [XmlRpcMissingMapping(MappingAction.Ignore)]
+        public string[] groupsIds; // If isMeta, this will hold to wich groups this makes references to
+
 
         public override string ToString()
         {
-            return name + ", " + comments;
+            string res = name;
+            if( isMeta == true )
+                res += "(meta)";
+            if (comments == null || comments == "")
+                res += " ," + comments;
+            return res;
         }
     }
 
@@ -264,7 +273,14 @@ namespace UdsAdmin.xmlrpc
 
         public override string ToString()
         {
-            return name + "(" + realName + ")" + ", " + comments;
+            string rn = "";
+            if (realName != null && realName != "")
+                rn = " (" + realName + ")";
+            string cmnts = "";
+            if (comments != null && comments != "")
+                cmnts = ", " + comments;
+
+            return name + rn + cmnts;
         }
     }
 

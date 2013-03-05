@@ -85,6 +85,8 @@ namespace UdsAdmin.controls.panel
             foreach (xmlrpc.Group grp in grps)
             {
                 ListViewItem itm = new ListViewItem(new string[]{grp.nameParent, grp.name, grp.active ? Strings.active : Strings.inactive , grp.comments});
+                if (grp.isMeta)
+                    itm.ImageKey = "meta";
                 itm.ForeColor = grp.active ? gui.Colors.ActiveColor : gui.Colors.InactiveColor;
                 itm.Tag = grp.id;
                 lst.Add(itm);

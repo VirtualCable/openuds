@@ -412,6 +412,15 @@ namespace UdsAdmin {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Group is not a Meta group!!!.
+        /// </summary>
+        internal static string groupIsNotMeta {
+            get {
+                return ResourceManager.GetString("groupIsNotMeta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a You need to select a group.
         /// </summary>
         internal static string groupRequired {
@@ -642,6 +651,15 @@ namespace UdsAdmin {
         internal static string newItem {
             get {
                 return ResourceManager.GetString("newItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a New meta group.
+        /// </summary>
+        internal static string newMetaGroup {
+            get {
+                return ResourceManager.GetString("newMetaGroup", resourceCulture);
             }
         }
         

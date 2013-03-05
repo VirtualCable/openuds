@@ -228,6 +228,7 @@
             // 
             // groupsList
             // 
+            this.groupsList.CheckOnClick = true;
             this.groupsList.FormattingEnabled = true;
             resources.ApplyResources(this.groupsList, "groupsList");
             this.groupsList.Name = "groupsList";

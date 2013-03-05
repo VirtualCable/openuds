@@ -204,9 +204,9 @@ namespace UdsAdmin.forms
             {
                 gui.UserNotifier.notifyRpcException(ex);
             }
-            catch (Exception)
+            catch (Exception ex2)
             {
-                // Nothing done right now
+                gui.UserNotifier.notifyError(ex2.Message);
             }
 
         }

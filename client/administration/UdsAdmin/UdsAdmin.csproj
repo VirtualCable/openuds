@@ -250,6 +250,12 @@
     <Compile Include="forms\FileDownloader.Designer.cs">
       <DependentUpon>FileDownloader.cs</DependentUpon>
     </Compile>
+    <Compile Include="forms\GroupMetaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\GroupMetaForm.Designer.cs">
+      <DependentUpon>GroupMetaForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="forms\NetworkForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -676,6 +682,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="forms\GroupForm.fr.resx">
       <DependentUpon>GroupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\GroupMetaForm.resx">
+      <DependentUpon>GroupMetaForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\LoginForm.de.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>

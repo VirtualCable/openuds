@@ -124,6 +124,8 @@ namespace UdsAdmin.forms
                             if (gg != null)
                                 active = gg.active;
                         }
+                        if (grp.isMeta == true)
+                            grp.name = grp.name + " (meta)";
                         groupsList.Items.Add(grp, active);
                     }
                 }
@@ -155,13 +157,16 @@ namespace UdsAdmin.forms
             {
                 if (_authType.isExternalSource == false)
                 {
-                    _user.groups = new xmlrpc.Group[groupsList.CheckedItems.Count];
-                    int n = 0;
+                    List<xmlrpc.Group> lst = new List<xmlrpc.Group>();
                     foreach (xmlrpc.Group grp in groupsList.CheckedItems)
                     {
-                        _user.groups[n++] = grp;
+                        if (grp.isMeta == false)
+                            lst.Add(grp);
                     }
+                    _user.groups = lst.ToArray();
                 }
+                else
+                    _user.groups = new xmlrpc.Group[0];
                 _user.idParent = _auth.id; _user.name = name.Text; _user.realName = realName.Text;
                 _user.comments = comments.Text; _user.state = states[state.SelectedIndex];
                 _user.password = password.Text;
