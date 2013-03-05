@@ -377,8 +377,6 @@ def authInfo(request, authName):
     except Exception:
         return HttpResponse(_('Authenticator do not provides information'))
     
-    
-
 @webLoginRequired
 @transformId
 def authJava(request, idAuth, hasJava):

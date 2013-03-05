@@ -63,6 +63,7 @@ class DeployedServiceRemover(Job):
     @transaction.commit_on_success
     def startRemovalOf(self, ds):
         # Get publications in course...., can be at most 1!!!
+        logger.debug('Removal process of {0}'.format(ds))
         
         publishing = ds.publications.filter(state=State.PREPARING)
         for p in publishing:
@@ -70,6 +71,7 @@ class DeployedServiceRemover(Job):
         # Now all publishments are canceling, let's try to cancel cache and assigned
         uServices = ds.userServices.filter(state=State.PREPARING)
         for u in uServices:
+            logger.debug('Canceling {0}'.format(u))
             u.cancel()
         # Nice start of removal, maybe we need to do some limitation later, but there should not be too much services nor publications cancelable at once
         ds.state = State.REMOVING
@@ -82,7 +84,8 @@ class DeployedServiceRemover(Job):
         # First, we remove all publications and user services in "info_state"
         ds.userServices.select_for_update().filter(state__in=State.INFO_STATES).delete()
         # Mark usable user services as removable
-        ds.userServices.select_for_update().filter(state=State.USABLE).update(state=State.REMOVABLE)
+        now = getSqlDatetime()
+        ds.userServices.select_for_update().filter(state=State.USABLE).update(state=State.REMOVABLE, state_date=now)
         
         # When no service is at database, we start with publications  
         if ds.userServices.all().count() == 0:

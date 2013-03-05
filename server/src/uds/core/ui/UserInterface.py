@@ -411,7 +411,12 @@ class gui(object):
         '''
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
+            self._isSerializable = options.get('serializable', '') != ''
             self._type(gui.InputField.HIDDEN_TYPE)
+        
+        def isSerializable(self):
+            return self._isSerializable
+        
 
     class CheckBoxField(InputField):
         '''
@@ -749,7 +754,9 @@ class UserInterface(object):
         '''
         arr = []
         for k, v in self._gui.iteritems():
-            if v.isType(gui.InputField.HIDDEN_TYPE):
+            logger.debug('serializing Key: {0}'.format(k))
+            if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
+                logger.debug('Field {0} is not serializable'.format(k))
                 continue
             if v.isType(gui.InputField.EDITABLE_LIST):
                 val = '\001' + cPickle.dumps(v.value)
@@ -769,7 +776,8 @@ class UserInterface(object):
         
         # Set all values to defaults ones
         for k in self._gui.iterkeys():
-            if self._gui[k].isType(gui.InputField.HIDDEN_TYPE): # Do not fills the value of hidden fields, those will not be deserialized
+            if self._gui[k].isType(gui.InputField.HIDDEN_TYPE) and self._gui[k].isSerializable() is False: 
+                logger.debug('Field {0} is not unserializable'.format(k))
                 continue
             
             self._gui[k].value = self._gui[k].defValue 
@@ -785,6 +793,7 @@ class UserInterface(object):
                 except:
                     val = ''
                 self._gui[k].value = val
+            logger.debug('Value for {0}:{1}'.format(k, val))
     
     @classmethod
     def guiDescription(cls, obj = None):

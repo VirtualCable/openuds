@@ -64,6 +64,9 @@ class StateQueue(object):
     def push_back(self, state):
         self._queue.append(state)
         
+    def push_front(self, state):
+        self._queue.insert(0, state)
+        
     def pop_front(self):
         if len(self._queue) > 0:
             return self._queue.pop(0)

@@ -735,7 +735,8 @@ class User(models.Model):
             yield g
         # Locate metagroups
         for g in Group.objects.filter(manager__id=self.manager.id, is_meta=True):
-            if g.groups.filter(id__in=grps).count() == g.groups.count():
+            gn = g.groups.filter(id__in=grps).count() 
+            if gn == g.groups.count(): # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g
     

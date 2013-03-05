@@ -60,7 +60,7 @@ class UniqueIDGenerator(object):
             dbUniqueId.objects.lock()
             flt = self.__filter(rangeStart, rangeEnd)
             try:
-                item = flt.filter(assigned=False)[0]
+                item = flt.filter(assigned=False).order_by('seq')[0]
                 dbUniqueId.objects.filter(id=item.id).update( owner = self._owner, assigned = True )
                 seq = item.seq
             except Exception, e: # No free element found

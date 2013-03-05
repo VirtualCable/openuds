@@ -94,7 +94,8 @@ class GroupsManager(object):
                 yield g['group']
         # Now, get metagroups and also return them
         for g in dbGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=False):
-            if g.groups.filter(id__in=lst).count() == g.groups.count():
+            gn = g.groups.filter(id__in=lst, state=State.ACTIVE).count() 
+            if gn == g.groups.count(): # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g
         
