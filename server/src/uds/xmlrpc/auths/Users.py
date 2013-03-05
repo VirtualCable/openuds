@@ -171,7 +171,7 @@ def getUserGroups(credentials, id):
     auth = user.manager.getInstance() 
     res = []
     #if auth.isExternalSource == False:
-    for grp in user.groups.all():
+    for grp in user.getGroups():
         res.append(dictFromGroup(grp))
     return res
     

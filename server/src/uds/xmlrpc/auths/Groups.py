@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from uds.models import Group, Authenticator, State
 from django.db import IntegrityError
@@ -42,8 +43,13 @@ logger = logging.getLogger(__name__)
 
 def dictFromGroup(grp):
     state = True if grp.state == State.ACTIVE else False
-    return { 'idParent' : str(grp.manager.id), 'nameParent': grp.manager.name,  'id' : str(grp.id), 'name' : grp.name, 
-                    'comments' : grp.comments, 'active' :  state }
+    dct = { 'idParent' : str(grp.manager.id), 'nameParent': grp.manager.name,  'id' : str(grp.id), 'name' : grp.name, 
+                    'comments' : grp.comments, 'active' :  state, 'isMeta' : grp.is_meta }
+    
+    if grp.is_meta is True:
+        dct['groupsIds'] = list(str(x.id) for x in grp.groups.all())
+        
+    return dct
 
 def getRealGroups(idParent):
     auth = Authenticator.objects.get(pk=idParent)
@@ -69,22 +75,72 @@ def getGroup(__, id_):
     grp = Group.objects.get(pk=id_)
     return dictFromGroup(grp)
 
-@needs_credentials
-def createGroup(credentials, grp):
-    '''
-    Creates a new group associated with an authenticator
-    '''
+def __createSimpleGroup(grp):
     auth = Authenticator.objects.get(pk=grp['idParent'])
     state = State.ACTIVE if grp['active'] == True else State.INACTIVE
     try:
         authInstance = auth.getInstance()
         authInstance.createGroup(grp) # Remenber, this throws an exception if there is an error
-        auth.groups.create(name = grp['name'], comments = grp['comments'], state = state)
+        auth.groups.create(name = grp['name'], comments = grp['comments'], state = state, is_meta = False)
     except IntegrityError:
         raise DuplicateEntryException(grp['name'])
     except AuthenticatorException, e:
         logger.debug(e)
         raise InsertException(str(e))
+    return True
+
+def __createMetaGroup(grp):
+    auth = Authenticator.objects.get(pk=grp['idParent'])
+    state = State.ACTIVE if grp['active'] == True else State.INACTIVE
+    try:
+        group = auth.groups.create(name = grp['name'], comments = grp['comments'], state = state, is_meta = True)
+        group.groups = grp['groupsIds']
+    except IntegrityError:
+        raise DuplicateEntryException(grp['name'])
+    except AuthenticatorException, e:
+        logger.debug(e)
+        raise InsertException(str(e))
+    return True
+
+@needs_credentials
+def createGroup(credentials, grp):
+    '''
+    Creates a new group associated with an authenticator
+    '''
+    if grp['isMeta'] == False:
+        return __createSimpleGroup(grp)
+    return __createMetaGroup(grp)
+
+def __modifySimpleGroup(grp):
+    try:
+        group = Group.objects.get(pk=grp['id'])
+        group.name = grp['name']
+        group.comments = grp['comments']
+        group.state = State.ACTIVE if grp['active'] == True else State.INACTIVE
+        group.is_meta = False;
+        group.groups.clear()
+        group.save()
+    except IntegrityError:
+        raise DuplicateEntryException(grp['name'])
+    except Exception as e:
+        logger.exception(e)
+        raise(InsertException(str(e)))
+    return True
+
+def __modifyMetaGroup(grp):
+    try:
+        group = Group.objects.get(pk=grp['id'])
+        group.name = grp['name']
+        group.comments = grp['comments']
+        group.state = State.ACTIVE if grp['active'] == True else State.INACTIVE
+        group.is_meta = True
+        group.groups = grp['groupsIds']
+        group.save()
+    except IntegrityError:
+        raise DuplicateEntryException(grp['name'])
+    except Exception as e:
+        logger.exception(e)
+        raise(InsertException(str(e)))
     return True
 
 @needs_credentials
@@ -94,18 +150,9 @@ def modifyGroup(credentials, grp):
     It's mandatory that data contains at least 'name' and 'comments'.
     The expected structure is the same that provided at getServiceProvider
     '''
-    try:
-        group = Group.objects.get(pk=grp['id'])
-        group.name = grp['name']
-        group.comments = grp['comments']
-        group.state = State.ACTIVE if grp['active'] == True else State.INACTIVE
-        group.save()
-    except IntegrityError:
-        raise DuplicateEntryException(grp['name'])
-    except Exception as e:
-        logger.exception(e)
-        raise(InsertException(str(e)))
-    return True
+    if grp['isMeta'] == False:
+        return __modifySimpleGroup(grp)
+    return __modifyMetaGroup(grp)
 
 @needs_credentials
 def removeGroups(credentials, ids):

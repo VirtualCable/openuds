@@ -77,12 +77,16 @@ class User(object):
                 self._groups = self._groupsManager().getValidGroups()
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
                 usr = DbUser.objects.get(pk=self._dbUser.id)
-                usr.groups = [ g.dbGroup() for g in self._groups ]
+                lst = ()
+                for g in self._groups:
+                    if g.dbGroup().is_meta == False:
+                        lst += (g.id,)
+                usr.groups = lst
             else:
                 # From db
                 usr = DbUser.objects.get(pk=self._dbUser.id)
                 self._groups = []
-                for g in usr.groups.all():
+                for g in usr.getGroups():
                     self._groups.append(Group(g))
         return self._groups
             

@@ -32,7 +32,8 @@
 '''
 
 from uds.core.util.State import State
-from Group import Group
+from uds.models import Group as dbGroup
+from Group import Group 
 import logging
 
 logger = logging.getLogger(__name__)
@@ -63,8 +64,9 @@ class GroupsManager(object):
         The dbAuthenticator is the database record of the authenticator
         to which this groupsManager will be associated
         '''
+        self._dbAuthenticator = dbAuthenticator
         self._groups = {}  # We just get active groups, inactive aren't visible to this class
-        for g in dbAuthenticator.groups.filter(state = State.ACTIVE):
+        for g in dbAuthenticator.groups.filter(state = State.ACTIVE, is_meta = False):
             self._groups[g.name.lower()] = { 'group': Group(g), 'valid': False }
 
     def contains(self, groupName):
@@ -85,11 +87,17 @@ class GroupsManager(object):
         '''
         returns the list of valid groups (:py:class:uds.core.auths.Group.Group)
         '''
-        res = []
+        lst = ()
         for g in self._groups.itervalues():
             if g['valid'] is True:
-                res.append(g['group'])
-        return res
+                lst += (g['group'].dbGroup().id,)
+                yield g['group']
+        # Now, get metagroups and also return them
+        for g in dbGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=False):
+            if g.groups.filter(id__in=lst).count() == g.groups.count():
+                # This group matches
+                yield g
+        
     
     def hasValidGroups(self):
         '''

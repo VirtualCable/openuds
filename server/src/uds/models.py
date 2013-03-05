@@ -31,6 +31,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from __future__ import unicode_literals
+ 
 from django.db import models
 from django.db.models import signals
 from uds.core.jobs.JobsFactory import JobsFactory
@@ -723,8 +725,22 @@ class User(models.Model):
         '''
         return self.getManager().logout(self.name)
     
+    def getGroups(self):
+        '''
+        returns the groups (and metagroups) this user belongs to
+        '''
+        grps = list()
+        for g in self.groups.filter(is_meta=False):
+            grps += (g.id,)
+            yield g
+        # Locate metagroups
+        for g in Group.objects.filter(manager__id=self.manager.id, is_meta=True):
+            if g.groups.filter(id__in=grps).count() == g.groups.count():
+                # This group matches
+                yield g
+    
     def __unicode__(self):
-        return u"User {0} from auth {1}".format(self.name, self.manager.name)
+        return u"User {0}(id:{1}) from auth {2}".format(self.name, self.id, self.manager.name)
 
 
     @staticmethod
@@ -753,6 +769,7 @@ class User(models.Model):
             
         
         logger.debug('Deleted user {0}'.format(toDelete))
+        
 
 signals.pre_delete.connect(User.beforeDelete, sender = User)
 
@@ -765,6 +782,8 @@ class Group(models.Model):
     state = models.CharField(max_length = 1, default = State.ACTIVE, db_index = True)
     comments = models.CharField(max_length = 256, default = '')
     users = models.ManyToManyField(User, related_name='groups')
+    is_meta = models.BooleanField(default=False, db_index=True)
+    groups = models.ManyToManyField('self', symmetrical=False)
 
     class Meta:
         '''
@@ -782,7 +801,10 @@ class Group(models.Model):
         return self.manager.getInstance()
 
     def __unicode__(self):
-        return u"Group {0} from auth {1}".format(self.name, self.manager.name)
+        if self.is_meta:
+            return "Meta group {0}(id:{1}) with groups {2}".format(self.name, self.id, list(self.groups.all()))
+        else:
+            return "Group {0}(id:{1}) from auth {2}".format(self.name, self.id, self.manager.name)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
