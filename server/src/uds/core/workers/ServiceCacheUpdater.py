@@ -39,6 +39,7 @@ from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.services.Exceptions import MaxServicesReachedException
 from uds.models import DeployedService
 from uds.core import services
+from uds.core.util import log
 from uds.core.jobs.Job import Job
 import logging
 
@@ -87,6 +88,7 @@ class ServiceCacheUpdater(Job):
                 continue
             
             if ds.isRestrained():
+                log.doLog(ds, log.ERROR, 'Deployed service is restrained due to errors', log.INTERNAL)
                 logger.info('Deployed service {0} is restrained, will check this later'.format(ds.name))
                 continue
             

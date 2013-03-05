@@ -211,6 +211,13 @@ class UserDeployment(Environmentable, Serializable):
         '''
         return self._dbService
     
+    def doLog(self, level, message):
+        '''
+        Logs a message with requested level associated with this service
+        '''
+        from uds.core.util import log
+        log.doLog(self._dbService, level, message, log.SERVICE)
+    
     def macGenerator(self):
         '''
         Utility method to access provided macs generator (inside environment)
