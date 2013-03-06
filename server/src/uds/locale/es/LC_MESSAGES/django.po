@@ -26,13 +26,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Adolfo Gómez <dkmaster at dkmon dot com>, 2012.
+# Adolfo Gómez <dkmaster at dkmon dot com>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-03-06 08:08+0100\n"
-"PO-Revision-Date: 2012-11-28 10:28+0100\n"
+"PO-Revision-Date: 2013-03-06 08:17+0100\n"
 "Last-Translator: \n"
 "Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
 "Language: es\n"
@@ -216,7 +216,6 @@ msgstr ""
 "por esa clase)"
 
 #: auths/RegexLdap/Authenticator.py:401
-#, fuzzy
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
@@ -239,9 +238,8 @@ msgstr ""
 "exito"
 
 #: auths/SimpleLDAP/Authenticator.py:49
-#, fuzzy
 msgid "Ldap Server IP or Hostname"
-msgstr "IP o nombre DNS del servidor oVirt"
+msgstr "IP o nombre FQDN del servidor LDAP"
 
 #: auths/SimpleLDAP/Authenticator.py:59
 msgid "Group class"
@@ -372,7 +370,9 @@ msgstr "32 bits"
 
 #: core/managers/UserServiceManager.py:315
 msgid "Cancel requested for a non running operation, doing remove instead"
-msgstr "Cancelación solicitada para una operación no corriente, haciendo eliminar en su lugar"
+msgstr ""
+"Cancelación solicitada para una operación no corriente, haciendo eliminar en "
+"su lugar"
 
 #: core/managers/UserServiceManager.py:336
 msgid "Can't remove a non active element"
@@ -460,9 +460,8 @@ msgid "Assigned"
 msgstr "Asignado"
 
 #: core/util/stats/counters.py:204
-#, fuzzy
 msgid "In use"
-msgstr "Usuario Administrador"
+msgstr "En uso"
 
 #: core/util/stats/counters.py:205
 msgid "Load"
@@ -524,11 +523,10 @@ msgid "Domain"
 msgstr "Dominio"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
-#, fuzzy
 msgid "Domain to join machines to (use FQDN form, netbios name not allowed)"
 msgstr ""
-"Dominio al que unir las máquinas (es preferible utilizar la forma DNS del "
-"dominio)"
+"Dominio al que unir las máquinas (use la forma FQDN, no se permite el nombre "
+"netbios)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:33
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:29
@@ -556,28 +554,24 @@ msgstr ""
 "de utilizarlo)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:43
-#, fuzzy
 msgid "Must provide a domain!"
 msgstr "Debe indicar un dominio!!!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:45
-#, fuzzy
 msgid "Must provide domain in FQDN"
-msgstr "Debe indicar un dominio!!!"
+msgstr "Debe indicar el dominio en forma FQDN"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:47
-#, fuzzy
 msgid "Must provide an account to add machines to domain!"
-msgstr "Debe indicar una cuenta para añadir máquinas al dominio!!!"
+msgstr "Debe indicar una cuenta para añadir máquinas al dominio!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:49
 msgid "DOM\\USER form is not allowed!"
 msgstr "Forma DOM\\USER no está permitido!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:51
-#, fuzzy
 msgid "Must provide a password for the account!"
-msgstr "Debe indicar una contraseña para la cuenta!!!"
+msgstr "Debe indicar una contraseña para la cuenta!"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:142
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:151
@@ -586,7 +580,9 @@ msgstr "Compruebe el error {0}"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:144
 msgid "Could not find server parameters (_ldap._tcp.{0} can'r be resolved)"
-msgstr "No se pudo encontrar parámetros del servidor (_ldap._tcp. {}resolverse 0} can'r)"
+msgstr ""
+"No se pudo encontrar parámetros del servidor (_ldap._tcp. {}resolverse 0} "
+"can'r)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:154
 msgid "Server check was successful"
@@ -667,14 +663,12 @@ msgstr ""
 "framework 3.5 sp1)</b>"
 
 #: services/OVirt/OVirtLinkedService.py:56
-#, fuzzy
 msgid "oVirt Linked Clone (Experimental)"
-msgstr "Servicio basado en oVirt Clones COW"
+msgstr "Clon enlazado de ovirt (Experimental)"
 
 #: services/OVirt/OVirtLinkedService.py:60
-#, fuzzy
 msgid "oVirt Services based on templates and COW (experimental)"
-msgstr "Servicioes oVirt basadoes en plantillas y COW"
+msgstr "Servicios oVirt basados en plantillas y COW (Experimental)"
 
 #: services/OVirt/OVirtLinkedService.py:77
 msgid "Number of desired machines to keep running waiting for a user"
@@ -1259,9 +1253,8 @@ msgid "Deployed service does not exists"
 msgstr "El servicio desplegado no existe"
 
 #: xmlrpc/log/logs.py:64
-#, fuzzy
 msgid "User service does not exists"
-msgstr "El servicio desplegado no existe"
+msgstr "El servicio de usuario no existe"
 
 #: xmlrpc/osmanagers/OSManagers.py:130
 msgid "This os mnager is being used by deployed services"
@@ -1351,9 +1344,8 @@ msgid "User deployed service not found!!!"
 msgstr "Servicio de usuario no hallado!!!"
 
 #: xmlrpc/stats/stats.py:75
-#, fuzzy
 msgid "Service does not exists"
-msgstr "El servicio desplegado no existe"
+msgstr "El servicio no existe"
 
 #: xmlrpc/transports/Networks.py:70
 msgid "Can't locate the transport"
