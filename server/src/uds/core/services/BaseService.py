@@ -197,6 +197,23 @@ class Service(Module):
         returned are not repeated... :-)
         '''
         raise Exception('The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(self.__class__.__name__))
+    
+    def macGenerator(self):
+        '''
+        Utility method to access provided macs generator (inside environment)
+        
+        Returns the environment unique mac addresses generator
+        '''
+        return self.idGenerators('mac')
+        
+    def nameGenerator(self):
+        '''
+        Utility method to access provided names generator (inside environment)
+        
+        Returns the environment unique name generator
+        '''
+        return self.idGenerators('name')
+    
         
     def __str__(self):
         '''

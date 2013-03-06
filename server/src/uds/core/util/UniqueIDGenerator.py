@@ -80,6 +80,23 @@ class UniqueIDGenerator(object):
         finally:
             dbUniqueId.objects.unlock()
 
+    def transfer(self, seq, toUidGen):
+        try:
+            dbUniqueId.objects.lock()
+            
+            obj = dbUniqueId.objects.get( owner=self._owner, seq=seq)
+            obj.owner = toUidGen._owner
+            obj.basename = toUidGen._baseName
+            obj.save()
+            
+            return True
+        except:
+            logger.exception('EXCEPTION AT transfer')
+            return False
+        finally:
+            dbUniqueId.objects.unlock()
+            
+
     def free(self, seq):
         try:
             logger.debug('Freeing seq {0} from {1}  ({2})'.format(seq, self._owner, self._baseName))

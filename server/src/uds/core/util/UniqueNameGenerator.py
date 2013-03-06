@@ -50,6 +50,9 @@ class UniqueNameGenerator(UniqueIDGenerator):
         maxVal = 10**length - 1
         return self.__toName(super(UniqueNameGenerator, self).get(minVal, maxVal), length)
     
+    def transfer(self, baseName, name, toUNGen):
+        self.setBaseName(baseName)
+        super(UniqueNameGenerator, self).transfer(int(name[len(self._baseName):]), toUNGen)
         
     def free(self, baseName, name):
         self.setBaseName(baseName)

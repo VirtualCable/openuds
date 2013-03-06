@@ -192,7 +192,10 @@ class Service(models.Model):
         '''
         Returns an environment valid for the record this object represents
         '''
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id) 
+        from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
+        from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
+        
+        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id, {'mac' : UniqueMacGenerator, 'name' : UniqueNameGenerator }) 
     
     def getInstance(self, values = None):
         '''

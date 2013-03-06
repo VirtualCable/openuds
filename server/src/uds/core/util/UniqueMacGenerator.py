@@ -53,6 +53,9 @@ class UniqueMacGenerator(UniqueIDGenerator):
         lastMac = self.__toInt(lastMac)
         return self.__toMac(super(UniqueMacGenerator, self).get(firstMac, lastMac))
     
+    def transfer(self, mac, toUMgen):
+        super(UniqueMacGenerator, self).transfer( self.__toInt(mac), toUMgen )
+    
     def free(self, mac):
         super(UniqueMacGenerator, self).free( self.__toInt(mac) )
     
