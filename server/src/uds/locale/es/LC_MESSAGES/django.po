@@ -31,7 +31,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-12 15:59+0100\n"
+"POT-Creation-Date: 2013-03-06 08:08+0100\n"
 "PO-Revision-Date: 2012-11-28 10:28+0100\n"
 "Last-Translator: \n"
 "Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
@@ -75,9 +75,9 @@ msgstr "Las estructuras internas parecen correctas"
 msgid "Host"
 msgstr "Servidor "
 
-#: auths/RegexLdap/Authenticator.py:49 auths/SimpleLDAP/Authenticator.py:49
-msgid "VMWare VC Server IP or Hostname"
-msgstr "IP o nombre DNS del servidor VMWare VC"
+#: auths/RegexLdap/Authenticator.py:49
+msgid "Ldap Server Host"
+msgstr "Servidor de LDAP"
 
 #: auths/RegexLdap/Authenticator.py:50 auths/SimpleLDAP/Authenticator.py:50
 msgid "Port"
@@ -109,7 +109,7 @@ msgstr "Usuario con privilegios de lectura en la base elegida"
 
 #: auths/RegexLdap/Authenticator.py:53 auths/RegexLdap/Authenticator.py:76
 #: auths/SimpleLDAP/Authenticator.py:53 auths/SimpleLDAP/Authenticator.py:77
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:31
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:30
 #: services/OVirt/OVirtProvider.py:93 transports/NX/NXTransport.py:62
 #: transports/RDP/RDPTransport.py:38 transports/RDP/TSRDPTransport.py:42
@@ -172,14 +172,6 @@ msgstr "Atr. de nombre de Grupo"
 msgid "Attribute that contains the group name"
 msgstr "Atributo que contiene el nombre del grupo"
 
-#: auths/RegexLdap/Authenticator.py:60
-msgid "Regular Exp. for groups"
-msgstr "EXP. regular para grupos"
-
-#: auths/RegexLdap/Authenticator.py:60
-msgid "Regular Expression to extract the group name"
-msgstr "Expresión regular para extraer el nombre del grupo"
-
 #: auths/RegexLdap/Authenticator.py:62
 msgid "Regex LDAP Authenticator"
 msgstr "Autenticador Regex LDAP"
@@ -199,49 +191,40 @@ msgstr "Usuario"
 msgid "Group"
 msgstr "Grupo"
 
-#: auths/RegexLdap/Authenticator.py:96
-msgid "Invalid regular expression"
-msgstr "Expresión regular inválida"
-
-#: auths/RegexLdap/Authenticator.py:159 auths/SimpleLDAP/Authenticator.py:158
+#: auths/RegexLdap/Authenticator.py:226 auths/SimpleLDAP/Authenticator.py:158
 msgid "Ldap connection error: "
 msgstr "Error de conexión al ldap: "
 
-#: auths/RegexLdap/Authenticator.py:249 auths/RegexLdap/Authenticator.py:292
+#: auths/RegexLdap/Authenticator.py:303 auths/RegexLdap/Authenticator.py:346
 #: auths/SimpleLDAP/Authenticator.py:269 auths/SimpleLDAP/Authenticator.py:313
 msgid "Username not found"
 msgstr "Nombre de usuario no hallado"
 
-#: auths/RegexLdap/Authenticator.py:309 auths/SimpleLDAP/Authenticator.py:328
+#: auths/RegexLdap/Authenticator.py:367 auths/SimpleLDAP/Authenticator.py:328
 #: auths/SimpleLDAP/Authenticator.py:342
 msgid "Too many results, be more specific"
 msgstr "Demasiados resultados, sea más específico"
 
-#: auths/RegexLdap/Authenticator.py:329 auths/SimpleLDAP/Authenticator.py:363
+#: auths/RegexLdap/Authenticator.py:387 auths/SimpleLDAP/Authenticator.py:363
 msgid "Ldap search base is incorrect"
 msgstr "La base de búsqueda ldap es incorrecta"
 
-#: auths/RegexLdap/Authenticator.py:334 auths/SimpleLDAP/Authenticator.py:368
+#: auths/RegexLdap/Authenticator.py:392 auths/SimpleLDAP/Authenticator.py:368
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "La clase de usuario de LDAP parece ser incorrecta (ningún usuario encontrado "
 "por esa clase)"
 
-#: auths/RegexLdap/Authenticator.py:342 auths/SimpleLDAP/Authenticator.py:376
-msgid "Ldap group class seems to be incorrect (no group found by that class)"
-msgstr ""
-"La clase de grupo LDAP parece ser incorrecta (ningún grupo encontrado por "
-"esa clase)"
-
-#: auths/RegexLdap/Authenticator.py:350 auths/SimpleLDAP/Authenticator.py:384
+#: auths/RegexLdap/Authenticator.py:401
+#, fuzzy
 msgid ""
-"Ldap user id attribute seems to be incorrect (no user found by that "
-"attribute)"
+"Ldap user id attr is probably wrong (can't find any user with both "
+"conditions)"
 msgstr ""
-"El atributo de id de usuario de ldap parece ser incorrecto (ningún usuario "
-"encontrado por atributo)"
+"El atributo del id de usuario o la clase de usuario LDAP son probablemente "
+"incorrectos(no se puede encontrar ningún usuario con ambas condiciones)"
 
-#: auths/RegexLdap/Authenticator.py:360 auths/SimpleLDAP/Authenticator.py:392
+#: auths/RegexLdap/Authenticator.py:415 auths/SimpleLDAP/Authenticator.py:392
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -249,19 +232,16 @@ msgstr ""
 "Atributo de id de grupo ldap parece ser incorrecto (ningún grupo encontrado "
 "por atributo)"
 
-#: auths/RegexLdap/Authenticator.py:369 auths/SimpleLDAP/Authenticator.py:401
-msgid ""
-"Ldap user class or user id attr is probably wrong (can't find any user with "
-"both conditions)"
-msgstr ""
-"El atributo del id de usuario o la clase de usuario LDAP son probablemente "
-"incorrectos(no se puede encontrar ningún usuario con ambas condiciones)"
-
-#: auths/RegexLdap/Authenticator.py:384 auths/SimpleLDAP/Authenticator.py:423
+#: auths/RegexLdap/Authenticator.py:428 auths/SimpleLDAP/Authenticator.py:423
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr ""
 "Los parámetros de conexión parecen correctos, la prueba fue ejecutado con "
 "exito"
+
+#: auths/SimpleLDAP/Authenticator.py:49
+#, fuzzy
+msgid "Ldap Server IP or Hostname"
+msgstr "IP o nombre DNS del servidor oVirt"
 
 #: auths/SimpleLDAP/Authenticator.py:59
 msgid "Group class"
@@ -298,6 +278,28 @@ msgstr "Autenticador LDAP Simple"
 #: auths/SimpleLDAP/Authenticator.py:302
 msgid "Group not found"
 msgstr "Grupo no hallado"
+
+#: auths/SimpleLDAP/Authenticator.py:376
+msgid "Ldap group class seems to be incorrect (no group found by that class)"
+msgstr ""
+"La clase de grupo LDAP parece ser incorrecta (ningún grupo encontrado por "
+"esa clase)"
+
+#: auths/SimpleLDAP/Authenticator.py:384
+msgid ""
+"Ldap user id attribute seems to be incorrect (no user found by that "
+"attribute)"
+msgstr ""
+"El atributo de id de usuario de ldap parece ser incorrecto (ningún usuario "
+"encontrado por atributo)"
+
+#: auths/SimpleLDAP/Authenticator.py:401
+msgid ""
+"Ldap user class or user id attr is probably wrong (can't find any user with "
+"both conditions)"
+msgstr ""
+"El atributo del id de usuario o la clase de usuario LDAP son probablemente "
+"incorrectos(no se puede encontrar ningún usuario con ambas condiciones)"
 
 #: auths/SimpleLDAP/Authenticator.py:410
 msgid ""
@@ -368,15 +370,15 @@ msgstr "24 bits"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:307
-msgid "Can't cancel non running operation"
-msgstr "No se puede cancelar una operación que no está en curso"
+#: core/managers/UserServiceManager.py:315
+msgid "Cancel requested for a non running operation, doing remove instead"
+msgstr "Cancelación solicitada para una operación no corriente, haciendo eliminar en su lugar"
 
-#: core/managers/UserServiceManager.py:326
+#: core/managers/UserServiceManager.py:336
 msgid "Can't remove a non active element"
 msgstr "No se puede eliminar un elemento que no está activo"
 
-#: core/managers/UserServiceManager.py:339
+#: core/managers/UserServiceManager.py:349
 msgid "Can't remove nor cancel {0} cause its states doesn't allows it"
 msgstr "No se puede eliminar o cancelar {0} porque sus estados no lo permiten"
 
@@ -453,20 +455,20 @@ msgstr "Finalizado"
 msgid "Waiting execution"
 msgstr "En espera de ejecución"
 
-#: core/util/stats/counters.py:197
+#: core/util/stats/counters.py:203
 msgid "Assigned"
 msgstr "Asignado"
 
-#: core/util/stats/counters.py:198
+#: core/util/stats/counters.py:204
 #, fuzzy
 msgid "In use"
 msgstr "Usuario Administrador"
 
-#: core/util/stats/counters.py:199
+#: core/util/stats/counters.py:205
 msgid "Load"
 msgstr "Carga"
 
-#: core/util/stats/counters.py:200
+#: core/util/stats/counters.py:206
 msgid "Storage"
 msgstr "Almacenamiento de información"
 
@@ -482,22 +484,22 @@ msgstr ""
 "Gestor de s.o. para controlar maquinas virtuales con linux (basicamente "
 "renombra las máquinas y notifica los estados)"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:50
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:52
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:42
 msgid "On Logout"
 msgstr "Al salir"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:50
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:52
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:42
 msgid "What to do when user logout from service"
 msgstr "Que acción realizar cuando el usuario abandone el servicio"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:51
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:53
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:43
 msgid "Keep service assigned"
 msgstr "Mantener el servicio asignado"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:52
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:54
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:44
 msgid "Remove service"
 msgstr "Eliminar servicio"
@@ -506,45 +508,46 @@ msgstr "Eliminar servicio"
 msgid "UDS Actor for linux machines <b>(Requires python 2.6 or greater)"
 msgstr "Actor para las máquinas Linux <b>(Precisa python 2.6 o mayor)</b>"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:23
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:26
 msgid "Windows Domain OS Manager"
 msgstr "Gestor para Windows con dominio"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:25
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:28
 msgid ""
 "Os Manager to control windows machines with domain. (Basically renames "
 "machine)"
 msgstr "Gestor de s.o. para controlar maquinas windows con dominio."
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:29
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
 #: transports/RDP/RDPTransport.py:39 transports/RDP/TSRDPTransport.py:43
 msgid "Domain"
 msgstr "Dominio"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:29
-msgid "Domain to join machines to (better use dns form of domain)"
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
+#, fuzzy
+msgid "Domain to join machines to (use FQDN form, netbios name not allowed)"
 msgstr ""
 "Dominio al que unir las máquinas (es preferible utilizar la forma DNS del "
 "dominio)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:30
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:33
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:29
 msgid "Account"
 msgstr "Cuenta"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:30
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:33
 msgid "Account with rights to add machines to domain"
 msgstr "Cuenta con derecho para añadir máquinas al dominio"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:31
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
 msgid "Password of the account"
 msgstr "Contraseña de la cuenta"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid "OU"
 msgstr "OU"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it)"
@@ -552,18 +555,62 @@ msgstr ""
 "Unidad organizativa donde crear las máquinas del dominio (compruebelo antes "
 "de utilizarlo)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
-msgid "Must provide a domain!!!"
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:43
+#, fuzzy
+msgid "Must provide a domain!"
 msgstr "Debe indicar un dominio!!!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:42
-msgid "Must provide an account to add machines to domain!!!"
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:45
+#, fuzzy
+msgid "Must provide domain in FQDN"
+msgstr "Debe indicar un dominio!!!"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:47
+#, fuzzy
+msgid "Must provide an account to add machines to domain!"
 msgstr "Debe indicar una cuenta para añadir máquinas al dominio!!!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:44
-#: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:41
-msgid "Must provide a password for the account!!!"
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:49
+msgid "DOM\\USER form is not allowed!"
+msgstr "Forma DOM\\USER no está permitido!"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:51
+#, fuzzy
+msgid "Must provide a password for the account!"
 msgstr "Debe indicar una contraseña para la cuenta!!!"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:142
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:151
+msgid "Check error: {0}"
+msgstr "Compruebe el error {0}"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:144
+msgid "Could not find server parameters (_ldap._tcp.{0} can'r be resolved)"
+msgstr "No se pudo encontrar parámetros del servidor (_ldap._tcp. {}resolverse 0} can'r)"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:154
+msgid "Server check was successful"
+msgstr "Control de servidor tuvo éxito"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:166
+msgid "Could not access AD using LDAP ({0})"
+msgstr "No podrían acceder anuncio utilizando LDAP ({0})"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:178
+msgid "The default path {0} for computers was not found!!!"
+msgstr "No se encontró la ruta por defecto {0} para equipos!!!"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:180
+msgid "The ou path {0} was not found!!!"
+msgstr "No se encontró el camino ou {0}!"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:182
+msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
+msgstr "No se pudo comprobar parámetros (_ldap._tcp. {}resolverse 0} can'r)"
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:187
+msgid "All parameters seems to work fine."
+msgstr "Todos los parámetros parece funcionar bien."
 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:23
 msgid "Windows Random Password OS Manager"
@@ -586,6 +633,10 @@ msgstr "Contraseña (la fijada en la plantilla) del usuario"
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:39
 msgid "Must provide an user account!!!"
 msgstr "Debe indicar una cuenta de usuario!!!"
+
+#: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:41
+msgid "Must provide a password for the account!!!"
+msgstr "Debe indicar una contraseña para la cuenta!!!"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:37
 msgid "Windows Basic OS Manager"
@@ -1081,6 +1132,10 @@ msgstr ""
 "Si no vacía, este servidor se utilizará para comprobar si el servicio se "
 "ejecuta antes de asignarle al usuario. (utilice el formato HOST: puerto)"
 
+#: transports/RDP/TSRDPTransport.py:53 transports/TSNX/TSNXTransport.py:103
+msgid "Must use HOST:PORT in Tunnel Server Field"
+msgstr "Debe utilizar HOST: puerto en el campo servidor de túnel"
+
 #: transports/RDP/__init__.py:17
 msgid "Remote Desktop Protocol"
 msgstr "Protocolo de Escritorio remoto (RDP)"
@@ -1117,8 +1172,8 @@ msgstr "Transporte no hallado"
 msgid "Service not found"
 msgstr "Servicio no hallado"
 
-#: web/errors.py:61 xmlrpc/auths/AdminAuth.py:183
-#: xmlrpc/auths/AdminAuth.py:189
+#: web/errors.py:61 xmlrpc/auths/AdminAuth.py:182
+#: xmlrpc/auths/AdminAuth.py:188
 msgid "Access denied"
 msgstr "Acceso denegado"
 
@@ -1148,11 +1203,11 @@ msgstr "Servicio de usuario no hallado"
 msgid "Authenticator not found"
 msgstr "Autenticador no hallado"
 
-#: web/errors.py:67 xmlrpc/auths/AdminAuth.py:174
+#: web/errors.py:67 xmlrpc/auths/AdminAuth.py:173
 msgid "Invalid authenticator"
 msgstr "Autenticador Invalido"
 
-#: web/views.py:359
+#: web/views.py:383
 msgid "Authenticator do not provides information"
 msgstr "El autenticador no proporciona información alguna"
 
@@ -1160,15 +1215,15 @@ msgstr "El autenticador no proporciona información alguna"
 msgid "Authenticator"
 msgstr "Autenticador"
 
-#: xmlrpc/auths/AdminAuth.py:116
+#: xmlrpc/auths/AdminAuth.py:115
 msgid "Credentials no longer valid"
 msgstr "Las credenciales ya no son válidas"
 
-#: xmlrpc/auths/AdminAuth.py:152
+#: xmlrpc/auths/AdminAuth.py:151
 msgid "Administration"
 msgstr "Administración"
 
-#: xmlrpc/auths/AdminAuth.py:169
+#: xmlrpc/auths/AdminAuth.py:168
 msgid "Invalid credentials"
 msgstr "Credenciales Invalidas"
 
@@ -1176,7 +1231,7 @@ msgstr "Credenciales Invalidas"
 msgid "Authenticator does not exists"
 msgstr "El autenticador no existe"
 
-#: xmlrpc/auths/Authenticators.py:161 xmlrpc/osmanagers/OSManagers.py:116
+#: xmlrpc/auths/Authenticators.py:162 xmlrpc/osmanagers/OSManagers.py:116
 #: xmlrpc/services/ServiceProviders.py:115
 #: xmlrpc/services/ServiceProviders.py:139 xmlrpc/services/Services.py:160
 #: xmlrpc/services/Services.py:184 xmlrpc/transports/Networks.py:86
@@ -1185,23 +1240,27 @@ msgstr "El autenticador no existe"
 msgid "Name %s already exists"
 msgstr "El nombre %s ya existe"
 
-#: xmlrpc/auths/Authenticators.py:234
+#: xmlrpc/auths/Authenticators.py:239
 msgid "Authenticator do not supports search"
 msgstr "El autenticador no soporta búsquedas"
 
-#: xmlrpc/auths/Authenticators.py:240
+#: xmlrpc/auths/Authenticators.py:245
 msgid "Specified authenticator do not exists anymore. Please, reload gui"
 msgstr ""
 "Hacer autenticador especificado no existe ya. Por favor, vuelva a cargar la "
 "interfaz gráfica de usuario"
 
-#: xmlrpc/auths/Authenticators.py:244
+#: xmlrpc/auths/Authenticators.py:249
 msgid "BUG: Reached a point that should never have been reached!!!"
 msgstr "BUG: Llegado a un punto que no debe nunca han alcanzado!!!"
 
-#: xmlrpc/log/logs.py:53 xmlrpc/stats/stats.py:70
+#: xmlrpc/log/logs.py:55 xmlrpc/services/DeployedServices.py:281
+msgid "Deployed service does not exists"
+msgstr "El servicio desplegado no existe"
+
+#: xmlrpc/log/logs.py:64
 #, fuzzy
-msgid "Service does not exists"
+msgid "User service does not exists"
 msgstr "El servicio desplegado no existe"
 
 #: xmlrpc/osmanagers/OSManagers.py:130
@@ -1241,10 +1300,6 @@ msgstr "No puedo hallar el servicio desplegado"
 #: xmlrpc/services/DeployedServices.py:250
 msgid "Transport does not exists"
 msgstr "El transporte no existe"
-
-#: xmlrpc/services/DeployedServices.py:281
-msgid "Deployed service does not exists"
-msgstr "El servicio desplegado no existe"
 
 #: xmlrpc/services/ServiceProviders.py:154
 msgid "Can't delete service provider with services associated"
@@ -1295,6 +1350,11 @@ msgstr "Sin errores"
 msgid "User deployed service not found!!!"
 msgstr "Servicio de usuario no hallado!!!"
 
+#: xmlrpc/stats/stats.py:75
+#, fuzzy
+msgid "Service does not exists"
+msgstr "El servicio desplegado no existe"
+
 #: xmlrpc/transports/Networks.py:70
 msgid "Can't locate the transport"
 msgstr "No puedo hallar el transporte"
@@ -1302,6 +1362,21 @@ msgstr "No puedo hallar el transporte"
 #: xmlrpc/transports/Networks.py:78 xmlrpc/transports/Networks.py:95
 msgid "Can't locate the network"
 msgstr "No puedo hallar la red"
+
+#~ msgid "VMWare VC Server IP or Hostname"
+#~ msgstr "IP o nombre DNS del servidor VMWare VC"
+
+#~ msgid "Regular Exp. for groups"
+#~ msgstr "EXP. regular para grupos"
+
+#~ msgid "Regular Expression to extract the group name"
+#~ msgstr "Expresión regular para extraer el nombre del grupo"
+
+#~ msgid "Invalid regular expression"
+#~ msgstr "Expresión regular inválida"
+
+#~ msgid "Can't cancel non running operation"
+#~ msgstr "No se puede cancelar una operación que no está en curso"
 
 #~ msgid "If checked, will use a ssl connection to Active Directory"
 #~ msgstr "Si está activada, utilizará una conexión ssl con Active Directory"
