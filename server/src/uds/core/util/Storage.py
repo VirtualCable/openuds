@@ -34,6 +34,7 @@
 from uds.models import Storage as dbStorage
 import hashlib
 import logging
+import cPickle
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,9 @@ class Storage(object):
         
     def put(self, skey, data):
         return self.saveData(skey, data)
+    
+    def putPickle(self, skey, data):
+        return self.saveData(skey, cPickle.dumps(data))
         
     def updateData(self, skey, data, attr1 = None):
         self.saveData(skey, data, attr1)
@@ -78,6 +82,9 @@ class Storage(object):
         
     def get(self, skey):
         return self.readData(skey)
+    
+    def getPickle(self, skey):
+        return cPickle.loads(self.readData(skey))
         
     def remove(self, skey):
         try:

@@ -220,8 +220,11 @@ class GlobalConfig(object):
     CUSTOM_HTML_LOGIN = Config.section(GLOBAL_SECTION).valueLong('customHtmlLogin', '')
     # Maximum logs per user service
     MAX_LOGS_PER_ELEMENT = Config.section(GLOBAL_SECTION).value('maxLogPerElement', '100')
-    # Time to restrain a deployed service in case it gives some error at some point
+    # Time to restrain a deployed service in case it gives some errors at some point
     RESTRAINT_TIME = Config.section(GLOBAL_SECTION).value('restrainTime', '600')
+    # Number of errors that must occurr in RESTRAIN_TIME to restrain deployed service
+    RESTRAINT_COUNT = Config.section(GLOBAL_SECTION).value('restrainCount', '3')
+
     # Statistics duration, in days
     STATS_DURATION = Config.section(GLOBAL_SECTION).value('statsDuration', '365')
     # If disallow login using /login url, and must go to an authenticator

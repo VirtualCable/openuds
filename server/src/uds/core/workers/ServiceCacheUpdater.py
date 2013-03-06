@@ -88,7 +88,7 @@ class ServiceCacheUpdater(Job):
                 continue
             
             if ds.isRestrained():
-                log.doLog(ds, log.ERROR, 'Deployed service is restrained due to errors', log.INTERNAL)
+                log.doLog(ds, log.WARN, 'Deployed service is restrained due to errors', log.INTERNAL)
                 logger.info('Deployed service {0} is restrained, will check this later'.format(ds.name))
                 continue
             

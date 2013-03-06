@@ -218,6 +218,7 @@ def prefs(request):
 @webLoginRequired
 @transformId
 def service(request, idService, idTransport):
+    # TODO: Cache hit performance can be done here, we can log event of "got" and event of "failed"
     kind, idService = idService[0], idService[1:]
     try:
         logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
@@ -234,19 +235,23 @@ def service(request, idService, idTransport):
         trans = Transport.objects.get(pk=idTransport)
         # Test if the service is ready
         if ads.isReady():
-            logger.debug('Ads is Ready')
+            log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
             # If ready, show transport for this service, if also ready ofc
             iads = ads.getInstance()
             ip = iads.getIp()
             if ip is not None:
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
+                    log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
                     transport = itrans.renderForHtml(ads, scrambleId(request, ads.id), scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
                     return render_to_response('uds/show_transport.html', {'transport' : transport, 'nolang' : True }, context_instance=RequestContext(request))
                 else:
+                    log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
                     logger.debug('Transport is not ready for user service {0}'.format(ads))
             else:
                 logger.debug('Ip not available from user service {0}'.format(ads))
+        else:
+            log.doLog(ads, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(request.user.name, request.ip), log.WEB)
         # Not ready, show message and return to this page in a while
         return render_to_response('uds/service_not_ready.html', context_instance=RequestContext(request))
     except Exception, e:

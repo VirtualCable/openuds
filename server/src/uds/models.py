@@ -919,7 +919,7 @@ class DeployedService(models.Model):
         
         date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         
-        if self.userServices.filter(state=State.ERROR, state_date__gt=date).count() >= 3:
+        if self.userServices.filter(state=State.ERROR, state_date__gt=date).count() >= GlobalConfig.RESTRAINT_COUNT.getInt():
             return True
         
         return False
@@ -1006,7 +1006,7 @@ class DeployedService(models.Model):
         
         logger.debug('User: {0}'.format(user.id))
         logger.debug('DeployedService: {0}'.format(self.id))
-        if len( set(user.groups.all()) & set(self.assignedGroups.all()) ) == 0:
+        if len( set(user.getGroups()) & set(self.assignedGroups.all()) ) == 0:
             raise auths.Exceptions.InvalidUserException()
         if self.activePublication() is None and self.service.getType().publicationType is not None:
             raise InvalidServiceException()

@@ -30,29 +30,34 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
+from django.db.models import Q
 from uds.core.util.Config import GlobalConfig
 from uds.models import DeployedService, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs.Job import Job
+from uds.core.util import log
 from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
 
-class HangedCleaner(object): 
-    frecuency = 3600
-    friendly_name = 'Unused services checker'
+class HangedCleaner(Job): 
+    frecuency = GlobalConfig.MAX_INITIALIZING_TIME.getInt()
+    friendly_name = 'Hanged services checker'
     
     def __init__(self, environment):
         super(HangedCleaner,self).__init__(environment)
     
     def run(self):
         since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.MAX_INITIALIZING_TIME.getInt() )
-        for ds in DeployedService.objects.all():
-            osm = ds.osmanager.getInstance()
-            if osm.processUnusedMachines is True:
-                logger.debug('Processing unused services for {0}'.format(osm))
-                for us in ds.assignedUserServices().select_for_update().filter(in_use=False,state_date__lt=since_state, state=State.USABLE):
-                    logger.debug('Found unused assigned service {0}'.format(us))
-                    osm.processUnused(us)
+        # Filter for locating machine not ready
+        flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING)
+        
+        for ds in DeployedService.objects.exclude(osmanager=None, state__in=State.VALID_STATES):
+            logger.debug('Searching for hanged services for {0}'.format(ds))
+            for us in ds.userServices.filter(flt):
+                logger.debug('Found hanged service {0}'.format(us))
+                log.doLog(us, log.ERROR, 'User Service seems to be hanged. Removing it.', log.INTERNAL)
+                log.doLog(ds, log.ERROR, 'Removing user service {0} because it seems to be hanged'.format(us.friendly_name))
+                us.removeOrCancel()
+        
