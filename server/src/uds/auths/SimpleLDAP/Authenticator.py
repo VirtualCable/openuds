@@ -46,7 +46,7 @@ LDAP_RESULT_LIMIT = 50
 
 class SimpleLDAPAuthenticator(Authenticator):
     
-    host = gui.TextField(length=64, label = _('Host'), order = 1, tooltip = _('VMWare VC Server IP or Hostname'), required = True)
+    host = gui.TextField(length=64, label = _('Host'), order = 1, tooltip = _('Ldap Server IP or Hostname'), required = True)
     port = gui.NumericField(length=5, label = _('Port'), defvalue = '389', order = 2, tooltip = _('Ldap port (389 for non ssl, 636 for ssl normally'), required = True)
     ssl = gui.CheckBoxField(label = _('Use SSL'), order = 3, tooltip = _('If checked, will use a ssl connection to ldap (if port is 389, will use in fact port 636)'))
     username = gui.TextField(length=64, label = _('Ldap User'), order = 4, tooltip = _('Username with read privileges on the base selected'), required = True)
