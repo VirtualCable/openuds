@@ -325,7 +325,8 @@ def authCallback(request, authName):
         params = request.GET.copy()
         params.update(request.POST)
         params['_request'] = request
-        params['_session'] = request.session
+        #params['_session'] = request.session
+        #params['_user'] = request.user
         
         logger.debug('Auth callback for {0} with params {1}'.format(authenticator, params.keys()))
         
