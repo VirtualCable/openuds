@@ -57,7 +57,7 @@ class UserServiceInfoItemsCleaner(Job):
         
     @transaction.commit_on_success
     def run(self):
-        removeFrom = getSqlDatetime() - timedelta(seconds = GlobalConfig.KEEP_INFO_TIME.getInt())
+        removeFrom = getSqlDatetime() - timedelta(seconds = GlobalConfig.KEEP_INFO_TIME.getInt(True))
         logger.debug('Removing information user services from {0}'.format(removeFrom))
         UserService.objects.select_for_update().filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
         
