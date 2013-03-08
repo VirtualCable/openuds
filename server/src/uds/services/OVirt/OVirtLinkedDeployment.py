@@ -33,6 +33,8 @@
 
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
+from uds.core.util import log
+
 import cPickle
 import logging
 
@@ -253,6 +255,15 @@ class OVirtLinkedDeployment(UserDeployment):
             State.ERROR, so we can do "return self.__error(reason)"
         '''
         logger.debug('Setting error state, reason: {0}'.format(reason))
+        self.doLog(log.ERROR, reason)
+        
+        if self._vmid != '': # Powers off
+            try:
+                state = self.service().getMachineState(self._vmid)
+                if state == 'up' and state == 'suspended':
+                    self.service().stopMachine(self._vmid)
+            except:
+                logger.debug('Can\t set machine state to stopped')
         
         self._queue = [opError]
         self._reason = str(reason)

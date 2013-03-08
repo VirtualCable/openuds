@@ -325,6 +325,7 @@ def authCallback(request, authName):
         params = request.GET.copy()
         params.update(request.POST)
         params['_request'] = request
+        params['_session'] = request.session
         
         logger.debug('Auth callback for {0} with params {1}'.format(authenticator, params.keys()))
         
@@ -348,6 +349,8 @@ def authCallback(request, authName):
         return response
     except auths.Exceptions.Redirect as e:
         return HttpResponseRedirect(request.build_absolute_uri(str(e)))
+    except auths.Exceptions.Logout as e:
+        return webLogout(request, request.build_absolute_uri(str(e)))
     except Exception as e:
         logger.exception('authCallback')
         return errors.exceptionView(request, e)

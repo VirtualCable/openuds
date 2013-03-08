@@ -52,5 +52,11 @@ class InvalidAuthenticatorException(Exception):
 class Redirect(Exception):
     '''
     This exception indicates that a redirect is required.
-    Used in authUrlCallback to indicate that no use has been authenticated, but redirect is needed
+    Used in authUrlCallback to indicate that redirect is needed
     '''
+    
+class Logout(Exception):
+    '''
+    This exceptions redirects logouts an user and redirects to an url
+    '''
+    

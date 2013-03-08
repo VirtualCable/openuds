@@ -30,8 +30,10 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from uds.models import UniqueId as dbUniqueId
+from uds.models import getSqlDatetime
 import logging
 
 logger = logging.getLogger(__name__)
@@ -56,12 +58,13 @@ class UniqueIDGenerator(object):
         is global to "unique ids' database
         '''
         # First look for a name in the range defined
+        stamp = getSqlDatetime(True) 
         try:
             dbUniqueId.objects.lock()
             flt = self.__filter(rangeStart, rangeEnd)
             try:
                 item = flt.filter(assigned=False).order_by('seq')[0]
-                dbUniqueId.objects.filter(id=item.id).update( owner = self._owner, assigned = True )
+                dbUniqueId.objects.filter(id=item.id).update( owner = self._owner, assigned = True, stamp = stamp )
                 seq = item.seq
             except Exception, e: # No free element found
                 try:
@@ -72,7 +75,7 @@ class UniqueIDGenerator(object):
                 logger.debug('Found seq {0}'.format(seq))
                 if seq > rangeEnd:
                     return -1 # No ids free in range
-                dbUniqueId.objects.create( owner = self._owner, basename = self._baseName, seq = seq, assigned = True)
+                dbUniqueId.objects.create( owner = self._owner, basename = self._baseName, seq = seq, assigned = True, stamp = stamp)
             return seq
         except Exception:
             logger.exception('Generating unique id sequence')
@@ -87,6 +90,7 @@ class UniqueIDGenerator(object):
             obj = dbUniqueId.objects.get( owner=self._owner, seq=seq)
             obj.owner = toUidGen._owner
             obj.basename = toUidGen._baseName
+            obj.stamp = getSqlDatetime(True)
             obj.save()
             
             return True
@@ -101,7 +105,7 @@ class UniqueIDGenerator(object):
         try:
             logger.debug('Freeing seq {0} from {1}  ({2})'.format(seq, self._owner, self._baseName))
             dbUniqueId.objects.lock()
-            flt = self.__filter(0).filter(owner = self._owner, seq=seq).update(owner='', assigned=False)
+            flt = self.__filter(0).filter(owner = self._owner, seq=seq).update(owner='', assigned=False, stamp = getSqlDatetime(True))
             if flt > 0:
                 self.__purge()
         finally:
@@ -120,8 +124,17 @@ class UniqueIDGenerator(object):
     def release(self):
         try:
             dbUniqueId.objects.lock()
-            dbUniqueId.objects.filter(owner=self._owner).update(assigned=False, owner='')
+            dbUniqueId.objects.filter(owner=self._owner).update(assigned=False, owner='', stamp = getSqlDatetime(True))
             self.__purge()
         finally:
             dbUniqueId.objects.unlock()
     
+    def releaseOlderThan(self, stamp):
+        stamp = getSqlDatetime(True)
+        try:
+            dbUniqueId.objects.lock()
+            dbUniqueId.objects.filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp = stamp)
+            self.__purge()
+        finally:
+            dbUniqueId.objects.unlock()
+            

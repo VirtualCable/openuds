@@ -142,6 +142,9 @@ class Provider(models.Model):
         '''
         return services.factory().lookup(self.data_type)
     
+    def isOfType(self, type_):
+        return self.data_type == type_
+    
     def __unicode__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
     
@@ -234,6 +237,9 @@ class Service(models.Model):
         :note: We only need to get info from this, not access specific data (class specific info)
         '''
         return self.provider.getType().getServiceByType(self.data_type)
+
+    def isOfType(self, type_):
+        return self.data_type == type_
     
     def __unicode__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
@@ -323,10 +329,9 @@ class OSManager(models.Model):
         # We only need to get info from this, not access specific data (class specific info)
         from uds.core import osmanagers
         return osmanagers.factory().lookup(self.data_type)
-        
-    
-    def __unicode__(self):
-        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+
+    def isOfType(self, type_):
+        return self.data_type == type_
     
     def remove(self):
         '''
@@ -343,6 +348,9 @@ class OSManager(models.Model):
             return False
         self.delete()
         return True
+
+    def __unicode__(self):
+        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
     
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -1831,6 +1839,7 @@ class UniqueId(models.Model):
     basename = models.CharField(max_length = 32, db_index = True)
     seq = models.BigIntegerField(db_index=True)
     assigned = models.BooleanField(db_index=True, default = True)
+    stamp = models.IntegerField(db_index=True, default = 0)
 
     objects = LockingManager()
 
