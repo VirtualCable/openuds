@@ -74,13 +74,14 @@ class User(object):
         if self._groups == None:
             if self._manager.isExternalSource == True:
                 self._manager.getGroups(self._dbUser.name, self._groupsManager())
-                self._groups = self._groupsManager().getValidGroups()
+                self._groups = list(self._groupsManager().getValidGroups())
+                logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
                 usr = DbUser.objects.get(pk=self._dbUser.id)
                 lst = ()
                 for g in self._groups:
                     if g.dbGroup().is_meta == False:
-                        lst += (g.id,)
+                        lst += (g.dbGroup().id,)
                 usr.groups = lst
             else:
                 # From db

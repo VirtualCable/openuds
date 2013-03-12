@@ -152,7 +152,7 @@ def createAuthenticator(credentials, type, data):
     auth = None
     try:
         auth = Authenticator.objects.create(name = dict_['name'], comments = dict_['comments'], 
-                                            data_type = type, priority=int(dict_['priority'], small_name=dict_['smallName']))
+                                            data_type = type, priority=int(dict_['priority']), small_name=dict_['smallName'])
         auth.data = auth.getInstance(dict_).serialize()
         auth.save()
     except auths.Authenticator.ValidationException as e:

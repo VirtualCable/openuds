@@ -99,9 +99,11 @@ class WinDomainOsManager(WindowsOsManager):
                 l.protocol_version = ldap.VERSION3
                     
                 account = self._account
-                if account.find('@') is False:
+                if account.find('@') == -1:
                     account += '@' + self._domain
-                    
+                
+                logger.debug('Account data: {0}, {1}, {2}, {3}'.format(self._account, self._domain, account, self._password))
+                
                 l.simple_bind_s(who = account, cred = self._password)
         
                 return l
@@ -123,6 +125,7 @@ class WinDomainOsManager(WindowsOsManager):
             logger.warn('Could not find _ldap._tcp.'+self._domain)
             log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER);
         except ldap.LDAPError as e:
+            logger.exception('Ldap Exception caught')
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER);
         
         #_filter = '(&(objectClass=computer)(sAMAccountName=%s$))' % service.friendly_name

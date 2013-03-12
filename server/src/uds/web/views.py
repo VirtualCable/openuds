@@ -152,7 +152,7 @@ def index(request):
     java = request.session['java']
     
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
-    groups = request.user.getGroups()
+    groups = list(request.user.getGroups())
     availServices = DeployedService.getDeployedServicesForGroups(groups)
     availUserServices = UserService.getUserAssignedServices(request.user)
     

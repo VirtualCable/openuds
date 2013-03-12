@@ -34,7 +34,7 @@
 from django.db import IntegrityError
 from uds.models import User as DbUser, Group as DbGroup, Authenticator as DbAuthenticator, State
 from uds.core.managers.CryptoManager import CryptoManager
-from ..util.Exceptions import DuplicateEntryException, InsertException
+from ..util.Exceptions import DuplicateEntryException, InsertException, ParametersException
 from uds.core.auths.Exceptions import AuthenticatorException, InvalidUserException
 from AdminAuth import needs_credentials
 from Groups import dictFromGroup
@@ -72,13 +72,17 @@ def getUsers(credentials, idParent):
 def getUser(credentials, id):
     '''
     '''
-    usr = User(DbUser.objects.get(pk=id))
-    
-    grps = []
-    for g in usr.groups():
-        grps.append(dictFromGroup(g.dbGroup()))
-    logger.debug(grps)
-    return dictFromUser(usr.dbUser(), grps)
+    try:
+        usr = User(DbUser.objects.get(pk=id))
+        grps = []
+        for g in usr.groups():
+            logger.debug(g)
+            grps.append(dictFromGroup(g.dbGroup()))
+        logger.debug(grps)
+        return dictFromUser(usr.dbUser(), grps)
+    except Exception as e:
+        logger.exception('Unhandled exception')
+        raise ParametersException(str(e))
 
 @needs_credentials
 def createUser(credentials, usr):
