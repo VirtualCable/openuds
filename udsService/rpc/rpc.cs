@@ -161,7 +161,7 @@ namespace uds
             bool ok = false;
             if (rpc.Manager != null)
             {
-                logger.Debug("Informing broker of ready state");
+                logger.Info("Machine is Ready");
                 try
                 {
                     List<Info.Computer.InterfaceInfo> interfaces = Info.Computer.GetInterfacesInfo();
@@ -205,9 +205,21 @@ namespace uds
             }
         }
 
+        public static void FlushLoggers()
+        {
+            log4net.Repository.ILoggerRepository rep = LogManager.GetRepository();
+            foreach (log4net.Appender.IAppender appender in rep.GetAppenders())
+            {
+                var buffered = appender as log4net.Appender.BufferingAppenderSkeleton;
+                if (buffered != null)
+                    buffered.Flush();
+            }
+        }
+
         public static void ResetId()
         {
             logger.Debug("Reseting ID of rpc");
+            FlushLoggers();
             if (rpc.Manager != null)
                 rpc.Manager._id = null;
         }
@@ -215,6 +227,7 @@ namespace uds
         public static void ResetManager()
         {
             logger.Debug("Disabling rpc");
+            FlushLoggers();
             rpc._manager = null;
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using log4net;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace uds
 {
@@ -21,6 +22,20 @@ namespace uds
 
         [DllImport("kernel32.dll", ExactSpelling = true)]
         internal static extern IntPtr GetCurrentProcess();
+
+        const uint FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
+        const uint FORMAT_MESSAGE_IGNORE_INSERTS  = 0x00000200;
+        const uint FORMAT_MESSAGE_FROM_SYSTEM    = 0x00001000;
+        const uint FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
+        const uint FORMAT_MESSAGE_FROM_HMODULE = 0x00000800;
+        const uint FORMAT_MESSAGE_FROM_STRING = 0x00000400;
+
+        [DllImport("Kernel32.dll", SetLastError = true)]
+        static extern uint FormatMessage(uint dwFlags, IntPtr lpSource, uint dwMessageId, uint dwLanguageId, ref IntPtr lpBuffer,
+           uint nSize, IntPtr pArguments);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr LocalFree(IntPtr hMem);
 
         [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
         internal static extern bool OpenProcessToken(IntPtr h, int acc, ref IntPtr phtok);
@@ -59,7 +74,7 @@ namespace uds
             NETSETUP_DEFER_SPN_SET = 0x10000000
         }
 
-        [DllImport("netapi32.dll", CharSet = CharSet.Unicode)]
+        [DllImport("netapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
         static extern uint NetJoinDomain(string lpServer, string lpDomain, string lpAccountOU, string lpAccount, string lpPassword, JoinOptions NameType);
 
         enum COMPUTER_NAME_FORMAT
@@ -73,7 +88,7 @@ namespace uds
             ComputerNamePhysicalDnsDomain,
             ComputerNamePhysicalDnsFullyQualified,
         }
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError=true)]
         static extern bool SetComputerNameEx(COMPUTER_NAME_FORMAT NameType, string lpBuffer);
 
         internal const int SE_PRIVILEGE_ENABLED = 0x00000002;
@@ -92,7 +107,6 @@ namespace uds
 
         public static bool Reboot(int flg = EWX_FORCEIFHUNG|EWX_REBOOT)
         {
-            logger.Debug("Rebooting computer");
             bool ok;
             TokPriv1Luid tp;
             IntPtr hproc = GetCurrentProcess();
@@ -105,12 +119,30 @@ namespace uds
             ok = AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
             ok = ExitWindowsEx(flg, 0);
             logger.Debug("Result: " + ok.ToString());
+            if (ok)
+                logger.Info("Rebooting computer");
+            else
+                logger.Error("Could not reboot machine. (Error " + ok.ToString() + ")");
+
             return ok;
+        }
+
+        private static bool waitAfterError(string op, bool useGetLastError, ManualResetEvent waitEvent, TimeSpan retryDelay)
+        {
+            if (useGetLastError)
+                logger.Error("Error at " + op + ": " + GetLastErrorStr() + ". Retrying in " + retryDelay.Seconds.ToString() + " secs");
+            else
+                logger.Error("Error at " + op + ". Retrying in " + retryDelay.Seconds.ToString() + " secs");
+
+            if (waitEvent.WaitOne(retryDelay))
+                return false;
+
+            return true;
         }
 
         public static bool RenameComputer(string newName)
         {
-            logger.Debug("Renaming computer to \"" + newName + "\"");
+            logger.Info("Renaming computer to \"" + newName + "\"");
             try
             {
                 return SetComputerNameEx(COMPUTER_NAME_FORMAT.ComputerNamePhysicalDnsHostname, newName);
@@ -119,6 +151,16 @@ namespace uds
             {
                 return false;
             }
+        }
+
+        public static bool RenameComputer(string newName, ManualResetEvent waitEvent, TimeSpan retryDelay)
+        {
+            while (RenameComputer(newName) == false)
+            {
+                if (waitAfterError("Rename", true, waitEvent, retryDelay) == false)
+                    return false;
+            }
+            return true;
         }
 
         public static bool JoinDomain(string domain, string ou, string account, string password, bool oneStep = false)
@@ -130,7 +172,7 @@ namespace uds
                 else
                     account = domain + "\\" + account;
             }
-            logger.Debug("Joining domain: \"" + domain + "\", \"" + ou + "\", \"" + account + "\", \"" + password + "\"" + ", oneStep = " + oneStep.ToString());
+            logger.Info("Joining domain: \"" + domain + "\", \"" + ou + "\", \"" + account + "\", \"" + "*****" + "\"" + ", oneStep = " + oneStep.ToString());
             // Flag NETSETUP_JOIN_WITH_NEW_NAME not supported on win xp/2000
             JoinOptions flags = JoinOptions.NETSETUP_ACCT_CREATE | JoinOptions.NETSETUP_DOMAIN_JOIN_IF_JOINED | JoinOptions.NETSETUP_JOIN_DOMAIN;
 
@@ -142,6 +184,18 @@ namespace uds
             try
             {
                 uint res = NetJoinDomain(null, domain, ou, account, password, flags);
+                if (res == 2224)
+                {
+                    flags = JoinOptions.NETSETUP_DOMAIN_JOIN_IF_JOINED | JoinOptions.NETSETUP_JOIN_DOMAIN;
+                    logger.Info("Existing account for machine found, reusing it");
+                    res = NetJoinDomain(null, domain, null, account, password, flags);
+                }
+                if (res != 0)
+                {
+                    logger.Error("Error joining domain:" + GetLastErrorStr((int)res));
+                }
+                else
+                    logger.Info("Successfully joined domain");
                 logger.Debug("Result of join: " + res);
                 return res == 0;
             }
@@ -151,6 +205,16 @@ namespace uds
                 return false;
             }
 
+        }
+
+        public static bool JoinDomain(string domain, string ou, string account, string password, bool oneStep, ManualResetEvent waitEvent, TimeSpan retryDelay)
+        {
+            while (JoinDomain(domain, ou, account, password, oneStep) == false)
+            {
+                if (waitAfterError("Join domain", true, waitEvent, retryDelay) == false)
+                    return false;
+            }
+            return true;
         }
 
         public static bool ChangeUserPassword(string user, string oldPass, string newPass)
@@ -174,6 +238,34 @@ namespace uds
                 logger.Error("Exception at change user password", e);
                 return false;
             }
+        }
+
+        private static string GetLastErrorStr(int nLastError=-1)
+        {
+            if(nLastError == -1)
+                nLastError = Marshal.GetLastWin32Error();
+
+            IntPtr lpMsgBuf = IntPtr.Zero;
+
+            uint dwChars = FormatMessage(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                IntPtr.Zero,
+                (uint)nLastError,
+                0, // Default language
+                ref lpMsgBuf,
+                0,
+                IntPtr.Zero);
+            if (dwChars == 0)
+            {
+                return "(unknown)";
+            }
+
+            string sRet = Marshal.PtrToStringAnsi(lpMsgBuf);
+
+            // Free the buffer.
+            lpMsgBuf = LocalFree(lpMsgBuf);
+            return sRet;
+
         }
    }
 }
