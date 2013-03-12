@@ -38,6 +38,7 @@ from uds.core.jobs.DelayedTask import DelayedTask
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
 from uds.core.services.Exceptions import OperationException
 from uds.core.util.State import State
+from uds.core.util import log
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import MaxServicesReachedException
 from uds.models import UserService, getSqlDatetime
@@ -118,6 +119,7 @@ class UserServiceOpChecker(DelayedTask):
                 UserServiceOpChecker.checkLater(userService, userServiceInstance)
         except Exception as e:
             logger.exception('Checkin service state')
+            log.doLog(userService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             userService.setState(State.ERROR)
             userService.save()
     
@@ -137,6 +139,7 @@ class UserServiceOpChecker(DelayedTask):
     @transaction.commit_manually
     def run(self):
         logger.debug('Checking user service finished {0}'.format(self._svrId))
+        uService = None
         try:
             uService = UserService.objects.select_for_update().get(pk=self._svrId)
             if uService.state != self._state:
@@ -154,6 +157,8 @@ class UserServiceOpChecker(DelayedTask):
         except Exception, e:
             # Exception caught, mark service as errored
             logger.exception("Error {0}, {1} :".format(e.__class__, e))
+            if uService is not None:
+                log.doLog(uService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             try:
                 uService.setState(State.ERROR)
                 uService.save()
