@@ -777,9 +777,8 @@ class UserInterface(object):
         # Set all values to defaults ones
         for k in self._gui.iterkeys():
             if self._gui[k].isType(gui.InputField.HIDDEN_TYPE) and self._gui[k].isSerializable() is False: 
-                logger.debug('Field {0} is not unserializable'.format(k))
+                #logger.debug('Field {0} is not unserializable'.format(k))
                 continue
-            
             self._gui[k].value = self._gui[k].defValue 
         
         for txt in values.decode('zip').split('\002'):
@@ -793,7 +792,7 @@ class UserInterface(object):
                 except:
                     val = ''
                 self._gui[k].value = val
-            logger.debug('Value for {0}:{1}'.format(k, val))
+            #logger.debug('Value for {0}:{1}'.format(k, val))
     
     @classmethod
     def guiDescription(cls, obj = None):
