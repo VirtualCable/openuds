@@ -151,4 +151,7 @@
   <data name="label3.Text" xml:space="preserve">
     <value>Prioridad</value>
   </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Nombre pequeño</value>
+  </data>
 </root>

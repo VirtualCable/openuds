@@ -27,7 +27,7 @@ namespace UdsAdmin.controls.panel
 
             levelFilterCombo.Items.AddRange(new string[] { xmlrpc.Constants.LEVEL_DEBUG, xmlrpc.Constants.LEVEL_INFO,
                 xmlrpc.Constants.LEVEL_WARN, xmlrpc.Constants.LEVEL_ERROR, xmlrpc.Constants.LEVEL_FATAL });
-            levelFilterCombo.SelectedIndex = 2;
+            levelFilterCombo.SelectedIndex = 1;
         }
 
         public void setLogs(xmlrpc.LogEntry[] logs)
@@ -40,6 +40,7 @@ namespace UdsAdmin.controls.panel
         {
             if( logs == null )
                 return;
+            listView.BeginUpdate();
 
             List<ListViewItem> lst = new List<ListViewItem>();
             int minLevel = levelIndex[levelFilterCombo.SelectedIndex];
@@ -56,6 +57,10 @@ namespace UdsAdmin.controls.panel
             }
             listView.Items.Clear();
             listView.Items.AddRange(lst.ToArray());
+            if (listView.Items.Count > 0)
+                listView.TopItem = listView.Items[listView.Items.Count - 1];
+
+            listView.EndUpdate();
         }
 
 

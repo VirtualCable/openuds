@@ -683,6 +683,15 @@
     <EmbeddedResource Include="forms\GroupForm.fr.resx">
       <DependentUpon>GroupForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="forms\GroupMetaForm.de.resx">
+      <DependentUpon>GroupMetaForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\GroupMetaForm.es.resx">
+      <DependentUpon>GroupMetaForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\GroupMetaForm.fr.resx">
+      <DependentUpon>GroupMetaForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="forms\GroupMetaForm.resx">
       <DependentUpon>GroupMetaForm.cs</DependentUpon>
     </EmbeddedResource>

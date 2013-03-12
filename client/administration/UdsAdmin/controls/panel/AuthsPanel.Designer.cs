@@ -36,6 +36,7 @@
             this.comments = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.priority = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.logViewer1 = new UdsAdmin.controls.panel.LogViewer();
+            this.smallName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -60,6 +61,7 @@
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.name,
             this.typeName,
+            this.smallName,
             this.comments,
             this.priority});
             resources.ApplyResources(this.listView, "listView");
@@ -95,6 +97,10 @@
             resources.ApplyResources(this.logViewer1, "logViewer1");
             this.logViewer1.Name = "logViewer1";
             // 
+            // smallName
+            // 
+            resources.ApplyResources(this.smallName, "smallName");
+            // 
             // AuthsPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -119,5 +125,6 @@
         private System.Windows.Forms.ColumnHeader priority;
         private SplitContainerEx splitContainer1;
         private LogViewer logViewer1;
+        private System.Windows.Forms.ColumnHeader smallName;
     }
 }

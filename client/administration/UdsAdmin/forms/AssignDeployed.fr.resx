@@ -132,4 +132,7 @@
   <data name="userLabel.Text" xml:space="preserve">
     <value>Nom d'utilisateur</value>
   </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Authentificateur</value>
+  </data>
 </root>

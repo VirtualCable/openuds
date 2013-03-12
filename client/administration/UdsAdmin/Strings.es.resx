@@ -510,4 +510,16 @@
   <data name="legend" xml:space="preserve">
     <value>Leyenda</value>
   </data>
+  <data name="smallNameRequired" xml:space="preserve">
+    <value>Un nombre pequeño con menos de 8 caracteres y A-z, a-z, 0-9-_ caracteres se requiere</value>
+  </data>
+  <data name="newMetaGroup" xml:space="preserve">
+    <value>Nuevo grupo meta</value>
+  </data>
+  <data name="groupIsNotMeta" xml:space="preserve">
+    <value>Grupo no es un grupo Meta!</value>
+  </data>
+  <data name="confirmDelete" xml:space="preserve">
+    <value>¿Está seguro que desea eliminar las máquinas?</value>
+  </data>
 </root>

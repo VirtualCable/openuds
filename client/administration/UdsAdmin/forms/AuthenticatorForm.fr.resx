@@ -151,4 +151,7 @@
   <data name="test.Text" xml:space="preserve">
     <value>Test</value>
   </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Petit nom</value>
+  </data>
 </root>

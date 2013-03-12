@@ -519,4 +519,7 @@
   <data name="groupIsNotMeta" xml:space="preserve">
     <value>Group is not a Meta group!!!</value>
   </data>
+  <data name="confirmDelete" xml:space="preserve">
+    <value>Are you sure do you want to delete selected items?</value>
+  </data>
 </root>
