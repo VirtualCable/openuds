@@ -490,4 +490,16 @@
   <data name="legend" xml:space="preserve">
     <value>Legende</value>
   </data>
+  <data name="smallNameRequired" xml:space="preserve">
+    <value>Einen kleinen Namen mit maximal 8 Zeichen, wobei A-Z, a-Z, 0-9-_-Chars ist erforderlich</value>
+  </data>
+  <data name="newMetaGroup" xml:space="preserve">
+    <value>Neue Meta-Gruppe</value>
+  </data>
+  <data name="groupIsNotMeta" xml:space="preserve">
+    <value>Ist keine Meta-Gruppe!!!</value>
+  </data>
+  <data name="confirmDelete" xml:space="preserve">
+    <value>Sind Sie sicher wollen Sie ausgewählten Rechner löschen?</value>
+  </data>
 </root>

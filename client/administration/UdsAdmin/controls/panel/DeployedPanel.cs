@@ -169,6 +169,10 @@ namespace UdsAdmin.controls.panel
         {
             if (listView.SelectedItems.Count == 0)
                 return;
+
+            if (MessageBox.Show(Strings.confirmDelete, Strings.removeQuestion, MessageBoxButtons.YesNo) == DialogResult.No)
+                return;
+
             string[] ids = new string[listView.SelectedItems.Count];
             int n = 0;
             foreach (ListViewItem i in listView.SelectedItems)

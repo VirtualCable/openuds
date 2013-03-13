@@ -100,7 +100,7 @@ class LogManager(object):
         from uds.models import Log
 
         qs = Log.objects.filter(owner_id = owner_id, owner_type = owner_type)
-        return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in reversed(qs.order_by('-created')[:limit])]
+        return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in reversed(qs.order_by('-created', '-id')[:limit])]
     
     def __clearLogs(self, owner_type, owner_id):
         '''

@@ -244,4 +244,7 @@
   <data name="toolStripButton1.ToolTipText" xml:space="preserve">
     <value>Borra la caché</value>
   </data>
+  <data name="configurationToolStripMenuItem.Text" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
 </root>

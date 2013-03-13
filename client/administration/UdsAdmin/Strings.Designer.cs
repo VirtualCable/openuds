@@ -268,6 +268,15 @@ namespace UdsAdmin {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Are you sure do you want to delete selected items?.
+        /// </summary>
+        internal static string confirmDelete {
+            get {
+                return ResourceManager.GetString("confirmDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Connectivity.
         /// </summary>
         internal static string connectivity {

@@ -66,7 +66,7 @@ namespace UdsAdmin.controls.panel
                 List<ListViewItem> lst = new List<ListViewItem>();
                 foreach (xmlrpc.Authenticator auth in auths)
                 {
-                    ListViewItem itm = new ListViewItem(new string[] { auth.name, auth.typeName, auth.comments, auth.priority });
+                    ListViewItem itm = new ListViewItem(new string[] { auth.name, auth.typeName, auth.smallName, auth.comments, auth.priority });
                     itm.ForeColor = gui.Colors.ActiveColor;
                     itm.Tag = auth.id;
                     lst.Add(itm);

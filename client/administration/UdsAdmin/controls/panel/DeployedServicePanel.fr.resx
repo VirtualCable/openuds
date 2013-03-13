@@ -783,4 +783,10 @@
   <data name="" xml:space="preserve">
     <value>    </value>
   </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>Générales</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>Statistiques</value>
+  </data>
 </root>

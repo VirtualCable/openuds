@@ -337,6 +337,8 @@ namespace UdsAdmin.forms
                     }
                 case gui.ActionTree.DELETE_ACTION:
                     {
+                        if (MessageBox.Show(Strings.confirmDelete, Strings.removeQuestion, MessageBoxButtons.YesNo) == DialogResult.No)
+                            break;
                         xmlrpc.Authenticator auth = (xmlrpc.Authenticator)treeActions.SelectedNode.Tag;
                         xmlrpc.UdsAdminService.RemoveAuthenticator(auth.id);
                         updateAuthenticatorsTree();
