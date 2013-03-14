@@ -167,4 +167,3 @@ class TSRDPTransport(Transport):
     def getHtmlComponent(self, id, os, componentId):
         # We use helper to keep this clean
         return getHtmlComponent(self.__module__, componentId)
-    
