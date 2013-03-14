@@ -935,6 +935,27 @@ class DeployedService(models.Model):
         
         return False
         
+    def storeValue(self, name, value):
+        '''
+        Stores a value inside custom storage
+        
+        Args:
+            name: Name of the value to store
+            value: Value of the value to store
+        '''
+        self.getEnvironment().storage().put(name, value)
+    
+    def recoverValue(self, name):
+        '''
+        Recovers a value from custom storage
+        
+        Args:
+            name: Name of values to recover
+            
+        Returns:
+            Stored value, None if no value was stored
+        '''
+        return self.getEnvironment().storage().get(name)
 
     def setState(self, state, save = True):
         '''

@@ -64,6 +64,12 @@ class ServiceCacheUpdater(Job):
     def calcProportion(max, actual):
         return actual * 10000 / max
 
+    @staticmethod
+    def __notifyRestrain(deployedService):
+        log.doLog(deployedService, log.WARN, 'Deployed service is restrained due to errors', log.INTERNAL)
+        logger.info('Deployed service {0} is restrained, will check this later'.format(deployedService.name))
+    
+
     def bestDeployedServiceNeedingCacheUpdate(self):
         # State filter for cached and inAssigned objects
         # First we get all deployed services that could need cache generation
@@ -88,8 +94,7 @@ class ServiceCacheUpdater(Job):
                 continue
             
             if ds.isRestrained():
-                log.doLog(ds, log.WARN, 'Deployed service is restrained due to errors', log.INTERNAL)
-                logger.info('Deployed service {0} is restrained, will check this later'.format(ds.name))
+                ServiceCacheUpdater.__notifyRestrain(ds)
                 continue
             
             # Get data related to actual state of cache

@@ -77,7 +77,7 @@ class LogManager(object):
             LogManager._manager = LogManager()
         return LogManager._manager
 
-    def __log(self, owner_type, owner_id, level, message, source):
+    def __log(self, owner_type, owner_id, level, message, source, avoidDuplicates):
         '''
         Logs a message associated to owner
         '''
@@ -87,7 +87,17 @@ class LogManager(object):
         qs = Log.objects.filter(owner_id = owner_id, owner_type = owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
         if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
-            for i in qs.order_by('-created',)[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()-1:]: i.delete()
+            for i in qs.order_by('-created',)[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()-1:]: 
+                i.delete()
+        
+        if avoidDuplicates is True:
+            try:
+                lg = Log.objects.filter(owner_id = owner_id, owner_type = owner_type, level = level,  source = source).order_by('-created', '-id')[0]
+                if lg.message == message:
+                    # Do not log again, already logged
+                    return
+            except: # Do not exists log
+                pass
             
         # now, we add new log
         Log.objects.create(owner_type = owner_type, owner_id = owner_id, created = getSqlDatetime(), source = source, level = level, data = message)
@@ -112,7 +122,7 @@ class LogManager(object):
        
     
     
-    def doLog(self, wichObject, level, message, source):
+    def doLog(self, wichObject, level, message, source, avoidDuplicates = True):
         '''
         Do the logging for the requested object.
         
@@ -123,7 +133,7 @@ class LogManager(object):
         
         owner_type = transDict.get(type(wichObject), None)
         if owner_type is not None: 
-            self.__log(owner_type, wichObject.id, level, message, source)
+            self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)
         else:
             logger.debug('Requested doLog for a type of object not covered: {0}'.format(wichObject))
             
