@@ -70,9 +70,9 @@ def useLog(type_, serviceUniqueId, serviceIp, username):
     useLogger.info('|'.join([type_, serviceUniqueId, serviceIp, username]))
 
 
-def doLog(wichObject, level, message, source = UNKNOWN):
+def doLog(wichObject, level, message, source = UNKNOWN, avoidDuplicates = True):
     from uds.core.managers import logManager
-    logManager().doLog(wichObject, level, message, source)
+    logManager().doLog(wichObject, level, message, source, avoidDuplicates)
         
     
 def getLogs(wichObject, limit = None):
