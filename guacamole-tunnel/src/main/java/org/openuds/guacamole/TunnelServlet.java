@@ -2,6 +2,7 @@ package org.openuds.guacamole;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,6 +23,24 @@ public class TunnelServlet
 	 * 
 	 */
 	private static final long serialVersionUID = 2010742981126080080L;
+	private static final String UDS_PATH = "/guacamole/";
+	
+	
+	private static Properties config = null;
+	
+	private String getConfigValue(String value) throws GuacamoleException {
+		if( config == null ) {
+			try {
+				config = new Properties();
+				config.load(getServletContext().getResourceAsStream("/WEB-INF/tunnel.properties"));
+			} catch( Exception e ) {
+				throw new GuacamoleException(e.getMessage(), e);
+			}
+		}
+		
+		return config.getProperty(value);
+			
+	}
 	
 	@Override
     protected GuacamoleTunnel doConnect(HttpServletRequest request)
@@ -34,7 +53,8 @@ public class TunnelServlet
     	if( data == null || width == null || height == null)
     		throw new GuacamoleException("Can't read required parameters");
     	
-		Hashtable<String,String> params = Util.readParameters(data);
+    	
+		Hashtable<String,String> params = Util.readParameters( getConfigValue("uds") + UDS_PATH + data);
 		
 		if( params == null ) {
 			System.out.println("Invalid credentials");
