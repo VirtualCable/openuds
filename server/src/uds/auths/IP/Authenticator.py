@@ -109,7 +109,7 @@ class IPAuth(Authenticator):
         # doAutoLogin = Config.section('IPAUTH').value('autoLogin', '0').getBool()
         gm = GroupsManager(self.dbAuthenticator())
         self.getGroups(request.ip, gm)
-        if len(list(gm.getValidGroups())) > 0 and self.dbAuthenticator().isValidUser(request.ip, True):
+        if gm.hasValidGroups() and self.dbAuthenticator().isValidUser(request.ip, True):
             passw = ''.join(random.choice(string.letters + string.digits) for __ in xrange(12))
             self.cache().put(request.ip, passw)
             return '<script type="text/javascript">$("#id_user").val("' + request.ip + '");$("#id_password").val("' + passw  + '");$("#loginform").submit();</script>'
