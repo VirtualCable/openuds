@@ -39,7 +39,6 @@ logger = logging.getLogger(__name__)
 
 # We will use the cache to "hold" the tickets valid for users
 
-# Create your views here.
 def pam(request):
     response = ''
     cache = Cache('pam')

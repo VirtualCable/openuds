@@ -33,7 +33,8 @@
 
 from uds.core.util.State import State
 from uds.models import Group as dbGroup
-from Group import Group 
+from Group import Group
+import inspect 
 import logging
 
 logger = logging.getLogger(__name__)
@@ -132,7 +133,7 @@ class GroupsManager(object):
         Returns nothing, it changes the groups this groups contains attributes,
         so they reflect the known groups that are considered valid.
         '''
-        if type(groupName) is tuple or type(groupName) is list:
+        if type(groupName) is tuple or type(groupName) is list or inspect.isgenerator(groupName):
             for n in groupName:
                 self.validate(n)
         else:

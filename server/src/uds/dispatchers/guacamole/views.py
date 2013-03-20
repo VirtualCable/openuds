@@ -31,3 +31,19 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from django.http import HttpResponseNotAllowed, HttpResponse
+from uds.core.util.Cache import Cache
+import logging
+
+logger = logging.getLogger(__name__)
+
+# We will use the cache to "hold" the tickets valid for users
+
+def guacamole(request, tunnelId):
+    logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
+    
+    cache = Cache("guacamole")
+    
+    response = 'protocol\trdp\rhostname\tw7adolfo\rusername\tadmin\rpassword\ttemporal'
+    
+    return HttpResponse(response, content_type='text/plain')
