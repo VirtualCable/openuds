@@ -75,7 +75,6 @@ class IPAuth(Authenticator):
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
         # The ranges are stored in group names
         ip = Network.ipToLong(ip)
-        g = []
         for g in groupsManager.getGroupsNames():
             rangeStart, rangeEnd = g.split('-')
             rangeStart = Network.ipToLong(rangeStart)
@@ -100,7 +99,7 @@ class IPAuth(Authenticator):
         
     @staticmethod
     def test(env, data):
-        return "Internal structures seems ok"
+        return _("All seems fine in the authenticator.")
     
     def check(self):
         return _("All seems fine in the authenticator.")
