@@ -78,11 +78,6 @@ public class TunnelServlet
         	config.setParameter(key, params.get(key));
         }
         
-        
-        //config.setParameter("hostname", "w7adolfo");
-        //config.setParameter("username", "admin");
-        //config.setParameter("password", "temporal");
-
         // Connect to guacd - everything is hard-coded here.
         GuacamoleSocket socket = new ConfiguredGuacamoleSocket(
                 new InetGuacamoleSocket("localhost", 4822),
