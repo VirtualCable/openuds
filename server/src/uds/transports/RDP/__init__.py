@@ -31,10 +31,10 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
-from uds.transports.RDP.RDPTransport import RDPTransport
-from uds.transports.RDP.TSRDPTransport import TSRDPTransport
 from django.utils.translation import ugettext_noop as _
+from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
+from RDPTransport import RDPTransport
+from TSRDPTransport import TSRDPTransport
 
 UserPrefsManager.manager().registerPrefs('rdp', _('Remote Desktop Protocol'), 
                                           [ 

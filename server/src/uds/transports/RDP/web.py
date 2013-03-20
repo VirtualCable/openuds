@@ -79,7 +79,7 @@ def generateHtmlForRdp(transport, idUserService, idTransport, os, ip, port, user
         data.append('tun:' + extra['tun'])
         
     data = scramble('\t'.join(data))
-    res = '<div idTransport="applet"><applet code="RdpApplet.class" codebase="%s" archive="%s" width="200" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
+    res = '<div id="applet"><applet code="RdpApplet.class" codebase="%s" archive="%s" width="200" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
     if isMac is True:
         res += ('<div><p>' + _('In order to use this service, you should first install CoRD.') + '</p>'
                 '<p>' + _('You can obtain it from') + ' <a href="http://cord.sourceforge.net/">' + _('CoRD Website') + '</a></p>' 

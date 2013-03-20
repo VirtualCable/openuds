@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2013 Virtual Cable S.L.
+# Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, 
@@ -31,35 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.http import HttpResponse
-from uds.core.util.Cache import Cache
-import logging
-
-logger = logging.getLogger(__name__)
-
-ERROR = "ERROR"
-CONTENT_TYPE = 'text/plain'
-
-# We will use the cache to "hold" the tickets valid for users
-
-def dict2resp(dct):
-    return '\r'.join(( k + '\t' + v  for k, v in dct.iteritems()))
-
-def guacamole(request, tunnelId):
-    logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
-    
-    cache = Cache('guacamole')
-    
-    val = cache.get(tunnelId, None)
-    
-    if val is None:
-        return HttpResponse(ERROR, content_type=CONTENT_TYPE)
-    
-    # Remove key from cache, just 1 use
-    # Cache has a limit lifetime, so we will allow to "reload" the page  
-    # cache.remove(tunnelId) 
-    
-    #response = 'protocol\trdp\rhostname\tw7adolfo\rusername\tadmin\rpassword\ttemporal'
-    response = dict2resp(val)
-    
-    return HttpResponse(response, content_type=CONTENT_TYPE)
+from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
+from HTML5RDP import HTML5RDPTransport
+from django.utils.translation import ugettext_noop as _
