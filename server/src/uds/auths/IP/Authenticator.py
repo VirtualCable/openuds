@@ -94,7 +94,7 @@ class IPAuth(Authenticator):
         
     def internalAuthenticate(self,username, credentials, groupsManager):
         self.getGroups(username, groupsManager)
-        if len(groupsManager.getValidGroups()) > 0 and self.dbAuthenticator().isValidUser(username, True):
+        if groupsManager.hasValidGroups() and self.dbAuthenticator().isValidUser(username, True):
             return True
         return False
         
