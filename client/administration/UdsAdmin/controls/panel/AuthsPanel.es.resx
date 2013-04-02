@@ -129,4 +129,7 @@
   <data name="priority.Text" xml:space="preserve">
     <value>Prioridad</value>
   </data>
+  <data name="smallName.Text" xml:space="preserve">
+    <value>Nombre corto</value>
+  </data>
 </root>

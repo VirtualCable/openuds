@@ -101,14 +101,14 @@ namespace UdsAdmin.forms
                 return;
             }
 
-            if (smallName.Text.Trim().Length == 0)
+            /*if (smallName.Text.Trim().Length == 0)
             {
                 Random rnd = new Random();
                 string str = "";
                 for (int i = 0; i < 8; i++)
                     str += (char)('A' + rnd.Next(0, 26));
                 smallName.Text = str;
-            }
+            }*/
 
             if (smallNameRe.IsMatch(smallName.Text) == false)
             {
