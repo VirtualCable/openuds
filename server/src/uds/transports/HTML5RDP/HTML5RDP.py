@@ -31,9 +31,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.util.Cache import Cache
+from uds.core.util import net
 from uds.core.transports.BaseTransport import Transport
 from uds.core.util import connection
 
@@ -54,7 +57,9 @@ class HTML5RDPTransport(Transport):
     iconFile = 'rdp.png' 
     needsJava = False  # If this transport needs java for rendering
 
-    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order = 1, tooltip = _('Host of the tunnel server (use http/http & port if needed)'), defvalue = 'https://')
+    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order = 1, tooltip = _('Host of the tunnel server (use http/http & port if needed)'), defvalue = 'https://', length = 64)
+    allowRequestsFrom = gui.TextField(label=_('Allowed hosts'), order = 1, tooltip = _('Hosts allowed to ask for credentials for users (use * for all host, but not recommended). Comma separated list'), 
+                                      defvalue = '*', length = 256)
     useEmptyCreds = gui.CheckBoxField(label = _('Empty creds'), order = 2, tooltip = _('If checked, the credentials used to connect will be emtpy'))
     fixedName = gui.TextField(label=_('Username'), order = 3, tooltip = _('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order = 4, tooltip = _('If not empty, this password will be always used as credential'))
@@ -66,6 +71,10 @@ class HTML5RDPTransport(Transport):
         a = ''
         if self.guacamoleServer.value[0:4] != 'http':
             raise Transport.ValidationException(_('The server must be http or https'))
+        try:
+            net.networksFromString(self.allowRequestsFrom.value)
+        except Exception as e:
+            raise Transport.ValidationException(_('Invalid network: {0}').format(str(e)))
 
     # Same check as normal RDP transport
     def isAvailableFor(self, ip):
@@ -115,7 +124,7 @@ class HTML5RDPTransport(Transport):
                 username = username + '@' + username
                 
         # Build params dict
-        params = { 'protocol':'rdp', 'hostname':ip, 'username': username, 'password': password }
+        params = { 'protocol':'rdp', 'hostname':ip, 'username': username, 'password': password, 'allow-from': self.allowRequestsFrom.value }
         
         logger.debug('RDP Params: {0}'.format(params))
                 

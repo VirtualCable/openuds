@@ -30,6 +30,7 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 def __init__():
     '''

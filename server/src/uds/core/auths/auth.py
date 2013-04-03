@@ -33,6 +33,8 @@ Provides useful functions for authenticating, used by web interface.
  
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+
 from functools import wraps
 from django.http import HttpResponseRedirect
 from uds.core.util.Config import GlobalConfig

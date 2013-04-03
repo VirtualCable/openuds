@@ -40,6 +40,7 @@ from uds.core.Environment import Environment
 from uds.core.db.LockingManager import LockingManager
 from uds.core.util.State import State
 from uds.core.util import log
+from uds.core.util import net
 from uds.core.services.Exceptions import InvalidServiceException
 from datetime import datetime, timedelta
 from time import mktime
@@ -463,7 +464,7 @@ class Transport(models.Model):
         '''
         if self.networks.count() == 0:
             return True
-        ip = Network.ipToLong(ip)
+        ip = net.ipToLong(ip)
         if self.nets_positive:
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() > 0
         else:
@@ -1972,39 +1973,11 @@ class Network(models.Model):
     transports = models.ManyToManyField(Transport, related_name='networks', db_table='uds_net_trans')
 
     @staticmethod
-    def ipToLong(ip):
-        '''
-        convert decimal dotted quad string to long integer
-        '''
-        try:
-            hexn = ''.join(["%02X" % long(i) for i in ip.split('.')])
-            return long(hexn, 16)
-        except:
-            return 0 # Invalid values will map to "0.0.0.0" --> 0
-    
-    @staticmethod
-    def longToIp(n):
-        '''
-        convert long int to dotted quad string
-        '''
-        try:
-            d = 256 * 256 * 256
-            q = []
-            while d > 0:
-                m,n = divmod(n,d)
-                q.append(str(m))
-                d = d/256
-    
-            return '.'.join(q)
-        except:
-            return '0.0.0.0' # Invalid values will map to "0.0.0.0"
-
-    @staticmethod
     def networksFor(ip):
         '''
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         '''
-        ip = Network.ipToLong(ip)
+        ip = net.ipToLong(ip)
         return Network.objects.filter(net_start__lte=ip, net_end__gte=ip)
     
     @staticmethod
@@ -2017,7 +1990,7 @@ class Network(models.Model):
             
             netEnd: Network end
         '''
-        return Network.objects.create(name=name, net_start = Network.ipToLong(netStart), net_end = Network.ipToLong(netEnd)) 
+        return Network.objects.create(name=name, net_start = net.ipToLong(netStart), net_end = Network.ipToLong(netEnd)) 
 
     @property    
     def netStart(self):
@@ -2027,7 +2000,7 @@ class Network(models.Model):
         Returns:
             string representing the dotted quad of this network start
         '''
-        return Network.longToIp(self.net_start)
+        return net.longToIp(self.net_start)
     
     @property
     def netEnd(self):
@@ -2037,7 +2010,7 @@ class Network(models.Model):
         Returns:
             string representing the dotted quad of this network end
         '''
-        return Network.longToIp(self.net_end)
+        return net.longToIp(self.net_end)
 
     def update(self, name, netStart, netEnd):
         '''
@@ -2051,10 +2024,10 @@ class Network(models.Model):
             netEnd: new Network end (quad dotted)
         '''
         self.name = name
-        self.net_start = Network.ipToLong(netStart)
-        self.net_end = Network.ipToLong(netEnd)
+        self.net_start = net.ipToLong(netStart)
+        self.net_end = net.ipToLong(netEnd)
         self.save() 
     
     def __unicode__(self):
-        return u'Network {0} from {1} to {2}'.format(self.name, Network.longToIp(self.net_start), Network.longToIp(self.net_end))
+        return u'Network {0} from {1} to {2}'.format(self.name, net.longToIp(self.net_start), net.longToIp(self.net_end))
 

@@ -31,8 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from __future__ import unicode_literals
+
 from django.http import HttpResponse
 from uds.core.util.Cache import Cache
+from uds.core.util import net
 import logging
 
 logger = logging.getLogger(__name__)
@@ -47,19 +50,31 @@ def dict2resp(dct):
 
 def guacamole(request, tunnelId):
     logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
+
+    try:    
+        cache = Cache('guacamole')
+        
+        val = cache.get(tunnelId, None)
     
-    cache = Cache('guacamole')
-    
-    val = cache.get(tunnelId, None)
-    
-    if val is None:
+        # Ensure request for credentials are allowed
+        allowFrom = val['allow-from'].replace(' ', '')
+        # and remove allow-from from parameters
+        del val['allow-from']
+        
+        allowFrom = net.networksFromString(allowFrom)
+        
+
+        # Remove key from cache, just 1 use
+        # Cache has a limit lifetime, so we will allow to "reload" the page  
+        # cache.remove(tunnelId) 
+        
+        #response = 'protocol\trdp\rhostname\tw7adolfo\rusername\tadmin\rpassword\ttemporal'
+        response = dict2resp(val)
+
+    except:
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
+
     
-    # Remove key from cache, just 1 use
-    # Cache has a limit lifetime, so we will allow to "reload" the page  
-    # cache.remove(tunnelId) 
     
-    #response = 'protocol\trdp\rhostname\tw7adolfo\rusername\tadmin\rpassword\ttemporal'
-    response = dict2resp(val)
     
     return HttpResponse(response, content_type=CONTENT_TYPE)
