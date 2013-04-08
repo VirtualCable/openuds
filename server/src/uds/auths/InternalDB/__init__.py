@@ -33,5 +33,4 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from Authenticator import InternalDBAuth
-from IPInternal import IPInternalAuth
 
