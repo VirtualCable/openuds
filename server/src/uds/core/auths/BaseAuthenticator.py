@@ -302,6 +302,21 @@ class Authenticator(Module):
         '''
         return False
     
+    def transformUsername(self, username):
+        '''
+        On login, this method get called so we can "transform" provided user name.
+        
+        Args:
+            username: Username to transform
+        
+        Returns
+            Transformed user name
+            
+        :note: You don't need to implement this method if your authenticator (as most authenticators does), does not
+               transforms username.
+        '''
+        return username
+    
     def internalAuthenticate(self,username, credentials, groupsManager):
         '''
         This method is provided so "plugins" (For example, a custom dispatcher), can test

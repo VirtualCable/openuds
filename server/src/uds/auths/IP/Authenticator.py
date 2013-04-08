@@ -61,7 +61,7 @@ class IPAuth(Authenticator):
         return res
 
     def __str__(self):
-        return "Internal IP Authenticator"
+        return "IP Authenticator"
     
     def marshal(self):
         return "v1"

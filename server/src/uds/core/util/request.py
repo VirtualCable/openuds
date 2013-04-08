@@ -27,11 +27,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+'''
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-@author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
-from Authenticator import InternalDBAuth
-from IPInternal import IPInternalAuth
+import threading
+_requests = {}
 
+def getRequest():
+    return _requests[threading._get_ident()]
+
+class GlobalRequestMiddleware(object):
+    def process_request(self, request):
+        _requests[threading._get_ident()] = request
+        return None
+    

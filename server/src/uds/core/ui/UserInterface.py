@@ -774,25 +774,28 @@ class UserInterface(object):
         if values == '': # Has nothing
             return
         
-        # Set all values to defaults ones
-        for k in self._gui.iterkeys():
-            if self._gui[k].isType(gui.InputField.HIDDEN_TYPE) and self._gui[k].isSerializable() is False: 
-                #logger.debug('Field {0} is not unserializable'.format(k))
-                continue
-            self._gui[k].value = self._gui[k].defValue 
-        
-        for txt in values.decode('zip').split('\002'):
-            k, v = txt.split('\003')
-            if self._gui.has_key(k):
-                try:
-                    if v[0] == '\001':
-                        val = cPickle.loads(v[1:])
-                    else:
-                        val = v
-                except:
-                    val = ''
-                self._gui[k].value = val
-            #logger.debug('Value for {0}:{1}'.format(k, val))
+        try:
+            # Set all values to defaults ones
+            for k in self._gui.iterkeys():
+                if self._gui[k].isType(gui.InputField.HIDDEN_TYPE) and self._gui[k].isSerializable() is False: 
+                    #logger.debug('Field {0} is not unserializable'.format(k))
+                    continue
+                self._gui[k].value = self._gui[k].defValue 
+            
+            for txt in values.decode('zip').split('\002'):
+                k, v = txt.split('\003')
+                if self._gui.has_key(k):
+                    try:
+                        if v[0] == '\001':
+                            val = cPickle.loads(v[1:])
+                        else:
+                            val = v
+                    except:
+                        val = ''
+                    self._gui[k].value = val
+                #logger.debug('Value for {0}:{1}'.format(k, val))
+        except:
+            logger.info('Seralized data invalid: {0}'.format(values))
     
     @classmethod
     def guiDescription(cls, obj = None):

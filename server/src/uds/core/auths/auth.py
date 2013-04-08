@@ -102,6 +102,9 @@ def __registerUser(authenticator, authInstance, username):
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
     authenticate will return false, if external and return true, will create a reference in database
     '''
+    username = authInstance.transformUsername(username)
+    logger.debug('Transformed username: {0}'.format(username))
+    
     usr = authenticator.getOrCreateUser(username, authInstance.getRealName(username))
     if usr is not None and State.isActive(usr.state):
         # Now we update database groups for this user

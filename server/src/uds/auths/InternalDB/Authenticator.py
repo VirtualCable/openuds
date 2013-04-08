@@ -34,9 +34,10 @@
 '''
 from django.utils.translation import ugettext_noop as _
 from uds.core.auths import Authenticator
-from uds.core.managers.CryptoManager import CryptoManager
 from uds.models import Authenticator as dbAuthenticator
+from uds.core.ui import gui
 from uds.core.util.State import State
+import dns
 import hashlib
 import logging
 
@@ -55,26 +56,41 @@ class InternalDBAuth(Authenticator):
     # This is the only internal source
     isExternalSource = False
 
+    differentForEachHost = gui.CheckBoxField(label = _('Different user for each host'), order = 1, tooltip = _('If checked, each host will have a different user name'), defvalue = "false", rdonly = True)
+    reverseDns = gui.CheckBoxField(label = _('Reverse DNS'), order = 2, tooltip = _('If checked, the host will be reversed dns'), defvalue = "false", rdonly = True)
 
-    def __init__(self, dbAuth, environment, values = None):
-        super(InternalDBAuth, self).__init__(dbAuth, environment, values)
-        # Ignore values
-    
-    def valuesDict(self):
-        res = {}
-        return res
+    def initialize(self, values):
+        if values is None:
+            return
 
-    def __str__(self):
-        return "Internal DB Authenticator Authenticator"
-    
-    def marshal(self):
-        return "v1"
-    
-    def unmarshal(self, str_):
-        data = str_.split('\t')
-        if data[0] == 'v1':
-            pass
-        
+    def getIp(self, ip):
+        if self.reverseDns.isTrue():
+            try:
+                return str(dns.resolver.query(dns.reversename.from_address(ip), 'PTR')[0])
+            except:
+                pass
+        return ip
+                
+    def transformUsername(self, username):
+        from uds.core.util.request import getRequest
+        if self.differentForEachHost.isTrue():        
+            newUsername = self.getIp(getRequest().ip) + '-' + username
+            # Duplicate basic user into username.
+            auth = self.dbAuthenticator()
+            # "Derived" users will belong to no group at all, because we will extract groups from "base" user
+            # This way also, we protect from using forged "ip" + "username", because those will belong in fact to no group
+            # and access will be denied 
+            try:
+                usr = auth.users.get(name=username, state=State.ACTIVE)
+                usr.id = None
+                usr.name = newUsername
+                usr.save()
+            except:
+                logger.exception('Exception')
+            username = newUsername
+            
+        return username
+
     def authenticate(self, username, credentials, groupsManager):
         logger.debug('Username: {0}, Password: {1}'.format(username, credentials))
         auth = self.dbAuthenticator()
@@ -101,6 +117,8 @@ class InternalDBAuth(Authenticator):
     def check(self):
         return _("All seems fine in the authenticator.")
 
+    def __str__(self):
+        return "Internal DB Authenticator Authenticator"
         
             
     

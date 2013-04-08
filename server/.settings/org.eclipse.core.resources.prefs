@@ -89,6 +89,7 @@ encoding//src/uds/core/util/connection.py=utf-8
 encoding//src/uds/core/util/log.py=utf-8
 encoding//src/uds/core/util/modfinder.py=utf-8
 encoding//src/uds/core/util/net.py=utf-8
+encoding//src/uds/core/util/request.py=utf-8
 encoding//src/uds/core/util/stats/__init__.py=utf-8
 encoding//src/uds/core/util/stats/charts.py=utf-8
 encoding//src/uds/core/util/stats/counters.py=utf-8
