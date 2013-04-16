@@ -39,8 +39,8 @@ from exceptions import ValueError
 reCIDR = re.compile('^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$')
 reMask = re.compile('^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})netmask([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 re1Asterisk = re.compile('^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
-re2Asterisk = re.compile('^([0-9]{1,3})\.([0-9]{1,3})\.\*(\.\*)?$')
-re3Asterisk = re.compile('^([0-9]{1,3})\.\*(\.\*)?(\.\*)?$')
+re2Asterisk = re.compile('^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
+re3Asterisk = re.compile('^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
 reRange = re.compile('^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})-([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 reHost = re.compile('^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 
@@ -84,6 +84,9 @@ def networksFromString(strNets, allowMultipleNetworks = True):
     If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
     '''
+    
+    inputString = strNets
+    
     def check(*args):
         for n in args:
             if int(n) < 0 or int(n) > 255:
@@ -103,13 +106,17 @@ def networksFromString(strNets, allowMultipleNetworks = True):
             v |= 1<<(31-n) 
         return v
     
-    nets = strNets.replace(' ', '')
     if allowMultipleNetworks is True:
         res = []
-        for strNet in re.split('[;,]',nets):
+        for strNet in re.split('[;,]', strNets):
             if strNet != '':
                 res.append(networksFromString(strNet, False))
         return res
+
+    strNets = strNets.replace(' ', '')
+    
+    if strNets == '*':
+        return (0, 4294967295)
 
     try:    
         # Test patterns
@@ -127,16 +134,48 @@ def networksFromString(strNets, allowMultipleNetworks = True):
         m = reMask.match(strNets)
         if m is not None:
             check(*m.groups())
-            val = toNum(*(m.group(i+1) for i in xrange(4)))
-            bits = toNum(*(m.group(i+5) for i in xrange(4)))
+            val = toNum(*(m.groups()[0:4]))
+            bits = toNum(*(m.groups()[4:8]))
             noBits = ~bits & 0xffffffff
             return (val&bits, val|noBits)
+        
+        m = reRange.match(strNets)
+        if m is not None:
+            check(*m.groups())
+            val = toNum(*(m.groups()[0:4]))
+            val2 = toNum(*(m.groups()[4:8]))
+            if val2 < val:
+                raise Exception()
+            return (val, val2)
+        
+        m = reHost.match(strNets)
+        if m is not None:
+            check(*m.groups())
+            val = toNum(*m.groups())
+            return (val, val)
+
+        for v in ((re1Asterisk, 3), (re2Asterisk, 2), (re3Asterisk, 1)):
+            m = v[0].match(strNets) 
+            if m is not None:
+                check(*m.groups())
+                val = toNum(*(m.groups()[0:v[1]+1]))
+                bits = maskFromBits(v[1]*8)
+                noBits = ~bits & 0xffffffff
+                return (val&bits, val|noBits)
             
         # No pattern recognized, invalid network
         raise Exception()
     except:
-        raise ValueError(nets)
-    
+        raise ValueError(inputString)
     
 
-    
+def ipInNetwork(ip, network):
+    if isinstance(ip,unicode) or isinstance(ip,str):
+        ip = ipToLong(ip)
+    if isinstance(network,unicode) or isinstance(network,str):
+        network = networksFromString(network)
+        
+    for net in network:
+        if ip >= net[0] and ip <= net[1]:
+            return True
+    return False

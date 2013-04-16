@@ -189,7 +189,7 @@ def authInfoUrl(authenticator):
     Helper method, so we can get the info url for an authenticator
     '''
     from django.core.urlresolvers import reverse
-    if type(authenticator) is str:
+    if isinstance(authenticator,unicode) or isinstance(authenticator, str):
         name = authenticator
     else:
         name = authenticator.name
