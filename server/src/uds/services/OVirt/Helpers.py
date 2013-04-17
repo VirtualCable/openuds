@@ -4,7 +4,8 @@ Created on Nov 15, 2012
 @author: dkmaster
 '''
 
-from django.utils.translation import ugettext as _
+from __future__ import unicode_literals
+
 import logging
 
 logger = logging.getLogger(__name__)

@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError 
@@ -51,8 +52,8 @@ def getOSManagersTypes(credentials):
     Returns the types of services providers registered in system
     '''
     res = []
-    for type in OSManagersFactory.factory().providers().values():
-        val = { 'name' : type.name(), 'type' : type.type(), 'description' : type.description(), 'icon' : type.icon() }
+    for type_ in OSManagersFactory.factory().providers().values():
+        val = { 'name' : type_.name(), 'type' : type_.type(), 'description' : type_.description(), 'icon' : type_.icon() }
         res.append(val)
     return res
 
@@ -71,19 +72,19 @@ def getOSManagers(credentials):
     return res
 
 @needs_credentials
-def getOSManagerGui(credentials, type):
+def getOSManagerGui(credentials, type_):
     '''
     Returns the description of an gui for the specified service provider
     '''
-    spType = OSManagersFactory.factory().lookup(type)
+    spType = OSManagersFactory.factory().lookup(type_)
     return spType.guiDescription()
 
 @needs_credentials
-def getOSManager(credentials, id):
+def getOSManager(credentials, id_):
     '''
     Returns the specified service provider (at database)
     '''
-    data = OSManager.objects.get(pk=id)
+    data = OSManager.objects.get(pk=id_)
     res = [ 
            { 'name' : 'name', 'value' : data.name },
            { 'name' : 'comments', 'value' : data.comments },
@@ -97,52 +98,52 @@ def getOSManager(credentials, id):
     return res
 
 @needs_credentials
-def createOSManager(credentials, type, data):
+def createOSManager(credentials, type_, data):
     '''
-    Creates a new service provider with specified type and data
+    Creates a new service provider with specified type_ and data
     It's mandatory that data contains at least 'name' and 'comments'.
     The expected structure is the same that provided at getServiceProvider
     '''
-    dict = dictFromData(data)
+    dct = dictFromData(data)
     try:
         # First create data without serialization, then serialies data with correct environment
-        sp = OSManager.objects.create(name = dict['name'], comments = dict['comments'], data_type = type)
-        sp.data = sp.getInstance(dict).serialize()
+        sp = OSManager.objects.create(name = dct['name'], comments = dct['comments'], data_type = type_)
+        sp.data = sp.getInstance(dct).serialize()
         sp.save()
     except osmanagers.OSManager.ValidationException, e:
         sp.delete()
         raise ValidationException(str(e))
     except IntegrityError: # Must be exception at creation
-        raise InsertException(_('Name %s already exists') % (dict['name']))
+        raise InsertException(_('Name %s already exists') % (dct['name']))
     return True
 
 @needs_credentials
-def modifyOSManager(credentials, id, data):
+def modifyOSManager(credentials, id_, data):
     '''
-    Modifies an existing service provider with specified id and data
+    Modifies an existing service provider with specified id_ and data
     It's mandatory that data contains at least 'name' and 'comments'.
     The expected structure is the same that provided at getServiceProvider
     '''
-    osm = OSManager.objects.get(pk=id)
+    osm = OSManager.objects.get(pk=id_)
     dps = osm.deployedServices.all().count()
     if dps > 0:
         errorDps =  ','.join([ o.name for o in osm.deployedServices.all()])
         raise ModifyException(_('This os mnager is being used by deployed services') + ' ' + errorDps)
-    dict = dictFromData(data)
-    sp = osm.getInstance(dict)
+    dct = dictFromData(data)
+    sp = osm.getInstance(dct)
     osm.data = sp.serialize()
-    osm.name = dict['name']
-    osm.comments = dict['comments']
+    osm.name = dct['name']
+    osm.comments = dct['comments']
     osm.save()
     return True
     
 @needs_credentials
-def removeOSManager(credentials, id):
+def removeOSManager(credentials, id_):
     '''
-    Removes from os manager with specified id
+    Removes from os manager with specified id_
     '''
     try:
-        if OSManager.objects.get(pk=id).remove() == False:
+        if OSManager.objects.get(pk=id_).remove() == False:
             raise DeleteException(_('There is deployed services using this os manager'))
     except OSManager.DoesNotExist:
         raise FindException(_('Can\'t find os manager'))
@@ -150,23 +151,23 @@ def removeOSManager(credentials, id):
     return True
 
 @needs_credentials
-def testOsManager(credentials, type, data):
+def testOsManager(credentials, type_, data):
     '''
-    invokes the test function of the specified service provider type, with the suplied data
+    invokes the test function of the specified service provider type_, with the suplied data
     '''
-    logger.debug("Testing service provider, type: {0}, data:{1}".format(type, data))
-    spType = OSManagersFactory.factory().lookup(type)
+    logger.debug("Testing service provider, type_: {0}, data:{1}".format(type_, data))
+    spType = OSManagersFactory.factory().lookup(type_)
     # We need an "temporary" environment to test this service
-    dict = dictFromData(data)
-    res = spType.test(Environment.getTempEnv(), dict)
+    dct = dictFromData(data)
+    res = spType.test(Environment.getTempEnv(), dct)
     return {'ok' : res[0], 'message' : res[1]}
 
 @needs_credentials
-def checkOSManager(credentials, id):
+def checkOSManager(credentials, id_):
     '''
     Invokes the check function of the specified service provider
     '''
-    prov = OSManager.objects.get(id=id)
+    prov = OSManager.objects.get(pk=id_)
     sp = prov.getInstance()
     return sp.check()
     

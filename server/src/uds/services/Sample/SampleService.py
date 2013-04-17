@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext_noop as translatable, ugettext as _
+from django.utils.translation import ugettext_noop as translatable
 from uds.core.services import Service
 from SamplePublication import SamplePublication
 from SampleUserDeploymentOne import SampleUserDeploymentOne

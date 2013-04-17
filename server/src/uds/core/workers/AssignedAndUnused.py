@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
 from uds.models import DeployedService, getSqlDatetime

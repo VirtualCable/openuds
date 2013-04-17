@@ -56,11 +56,11 @@ def transformId(view_func):
     return _wrapped_view
 
 
-def scrambleId(request, id):
+def scrambleId(request, id_):
     if request.session.get(SCRAMBLE_SES) == None:
-        request.session[SCRAMBLE_SES] =  ''.join(random.choice(string.letters) for i in xrange(SCRAMBLE_LEN))
-    return base64.b64encode(str(id) + request.session.get(SCRAMBLE_SES)).encode('hex')
+        request.session[SCRAMBLE_SES] =  ''.join(random.choice(string.letters) for _ in xrange(SCRAMBLE_LEN))
+    return base64.b64encode(str(id_) + request.session.get(SCRAMBLE_SES)).encode('hex')
 
-def unscrambleId(request, id):
-    idd = base64.b64decode(id.decode('hex'))
+def unscrambleId(request, id_):
+    idd = base64.b64decode(id_.decode('hex'))
     return idd[:-SCRAMBLE_LEN]

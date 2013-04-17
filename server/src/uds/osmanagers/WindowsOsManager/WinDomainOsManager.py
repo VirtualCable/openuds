@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core import osmanagers
-from WindowsOsManager import WindowsOsManager, scrambleMsg
+from WindowsOsManager import WindowsOsManager
 from uds.core.util import log
 import dns.resolver
 import ldap
@@ -124,7 +124,7 @@ class WinDomainOsManager(WindowsOsManager):
         except dns.resolver.NXDOMAIN: # No domain found, log it and pass
             logger.warn('Could not find _ldap._tcp.'+self._domain)
             log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER);
-        except ldap.LDAPError as e:
+        except ldap.LDAPError:
             logger.exception('Ldap Exception caught')
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER);
         
@@ -149,7 +149,7 @@ class WinDomainOsManager(WindowsOsManager):
             logger.exception('Exception ')
             return [False, str(e)]
         try:
-            r = l.search_st(self._ou, ldap.SCOPE_BASE)
+            l.search_st(self._ou, ldap.SCOPE_BASE)
         except ldap.LDAPError as e:
             return _('Check error: {0}').format(self.__getLdapError(e))
             
@@ -213,10 +213,10 @@ class WinDomainOsManager(WindowsOsManager):
             super(WinDomainOsManager, self).unmarshal(data[5].decode('hex'))
         
     def valuesDict(self):
-        dict = super(WinDomainOsManager,self).valuesDict()
-        dict['domain'] = self._domain
-        dict['ou'] = self._ou
-        dict['account'] = self._account
-        dict['password'] = self._password
-        return dict
+        dct = super(WinDomainOsManager,self).valuesDict()
+        dct['domain'] = self._domain
+        dct['ou'] = self._ou
+        dct['account'] = self._account
+        dct['password'] = self._password
+        return dct
     

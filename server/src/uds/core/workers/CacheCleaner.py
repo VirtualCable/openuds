@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from uds.core.util.Cache import Cache
 from uds.core.jobs.Job import Job

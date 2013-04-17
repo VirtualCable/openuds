@@ -29,6 +29,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from uds.models import DeployedService
 from uds.core.util.State import State
