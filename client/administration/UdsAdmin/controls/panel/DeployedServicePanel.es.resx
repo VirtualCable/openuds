@@ -325,7 +325,7 @@
     <value>13</value>
   </data>
   <data name="cacheLabel.Text" xml:space="preserve">
-    <value>Servicios para mantener en la memoria caché</value>
+    <value>Servicios a mantener en la memoria caché</value>
   </data>
   <data name="&gt;&gt;cacheLabel.Name" xml:space="preserve">
     <value>cacheLabel</value>
@@ -358,7 +358,7 @@
     <value>14</value>
   </data>
   <data name="cacheL2Label.Text" xml:space="preserve">
-    <value>Servicios para mantener en la memoria caché L2</value>
+    <value>Servicios a mantener en la memoria caché L2</value>
   </data>
   <data name="&gt;&gt;cacheL2Label.Name" xml:space="preserve">
     <value>cacheL2Label</value>

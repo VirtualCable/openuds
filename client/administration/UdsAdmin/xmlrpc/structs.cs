@@ -307,17 +307,16 @@ namespace UdsAdmin.xmlrpc
     {
         public string id;
         public string name;
-        public string netStart;
-        public string netEnd;
+        public string netRange;
 
         public Network()
         {
-            id = name = netStart = netEnd = "";
+            id = name = netRange = "";
         }
 
         public override string ToString()
         {
-            return name;
+            return String.Format("{0} ({1})", name, netRange);
         }
     }
 

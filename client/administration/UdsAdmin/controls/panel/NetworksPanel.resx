@@ -120,17 +120,17 @@
   <data name="name.Text" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="rangeStart.Text" xml:space="preserve">
-    <value>Range Start</value>
+  <data name="netRange.Text" xml:space="preserve">
+    <value>Network Range</value>
   </data>
-  <data name="rangeEnd.Text" xml:space="preserve">
-    <value>Range End</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="netRange.Width" type="System.Int32, mscorlib">
+    <value>320</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="listView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="listView.LabelWrap" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -171,16 +171,10 @@
   <data name="&gt;&gt;name.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;rangeStart.Name" xml:space="preserve">
-    <value>rangeStart</value>
+  <data name="&gt;&gt;netRange.Name" xml:space="preserve">
+    <value>netRange</value>
   </data>
-  <data name="&gt;&gt;rangeStart.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;rangeEnd.Name" xml:space="preserve">
-    <value>rangeEnd</value>
-  </data>
-  <data name="&gt;&gt;rangeEnd.Type" xml:space="preserve">
+  <data name="&gt;&gt;netRange.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

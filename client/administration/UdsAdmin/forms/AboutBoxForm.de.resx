@@ -819,7 +819,7 @@
     <value>24</value>
   </data>
   <data name="okButton.Text" xml:space="preserve">
-    <value>&amp; Akzeptieren</value>
+    <value>&amp;Akzeptieren</value>
   </data>
   <data name="&gt;&gt;okButton.Name" xml:space="preserve">
     <value>okButton</value>

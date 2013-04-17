@@ -127,12 +127,12 @@
     <value>Revisión</value>
   </data>
   <data name="CreationDate.Text" xml:space="preserve">
-    <value>Fecha de creación de</value>
+    <value>Fecha de creación</value>
   </data>
   <data name="State.Text" xml:space="preserve">
     <value>Estado</value>
   </data>
   <data name="StatusDate.Text" xml:space="preserve">
-    <value>Etapa Fecha</value>
+    <value>Fecha Estado</value>
   </data>
 </root>

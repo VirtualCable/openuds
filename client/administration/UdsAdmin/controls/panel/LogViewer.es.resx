@@ -130,7 +130,7 @@
     <value>mensaje</value>
   </data>
   <data name="source.Text" xml:space="preserve">
-    <value>fuente</value>
+    <value>origen</value>
   </data>
   <data name="date.Text" xml:space="preserve">
     <value>fecha</value>

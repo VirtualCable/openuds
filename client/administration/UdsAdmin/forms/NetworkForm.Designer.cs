@@ -33,12 +33,10 @@
             this.accept = new System.Windows.Forms.Button();
             this.cancel = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupLabel = new System.Windows.Forms.Label();
             this.name = new System.Windows.Forms.TextBox();
-            this.netStart = new System.Windows.Forms.TextBox();
-            this.netEnd = new System.Windows.Forms.TextBox();
+            this.netRange = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -67,18 +65,11 @@
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.groupLabel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.name, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.netStart, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.netEnd, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.netRange, 1, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            // 
-            // label3
-            // 
-            resources.ApplyResources(this.label3, "label3");
-            this.label3.Name = "label3";
             // 
             // label2
             // 
@@ -95,15 +86,10 @@
             resources.ApplyResources(this.name, "name");
             this.name.Name = "name";
             // 
-            // netStart
+            // netRange
             // 
-            resources.ApplyResources(this.netStart, "netStart");
-            this.netStart.Name = "netStart";
-            // 
-            // netEnd
-            // 
-            resources.ApplyResources(this.netEnd, "netEnd");
-            this.netEnd.Name = "netEnd";
+            resources.ApplyResources(this.netRange, "netRange");
+            this.netRange.Name = "netRange";
             // 
             // NetworkForm
             // 
@@ -128,11 +114,9 @@
         private System.Windows.Forms.Button accept;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label groupLabel;
         private System.Windows.Forms.TextBox name;
-        private System.Windows.Forms.TextBox netStart;
-        private System.Windows.Forms.TextBox netEnd;
+        private System.Windows.Forms.TextBox netRange;
     }
 }

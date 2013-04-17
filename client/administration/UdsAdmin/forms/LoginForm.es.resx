@@ -148,4 +148,13 @@
   <data name="label4.Text" xml:space="preserve">
     <value>Autenticador</value>
   </data>
+  <data name="connectButton.Text" xml:space="preserve">
+    <value>Conectar</value>
+  </data>
+  <data name="exitButton.Text" xml:space="preserve">
+    <value>Salida</value>
+  </data>
+  <data name="extendButton.Text" xml:space="preserve">
+    <value>&gt;&gt;&gt;</value>
+  </data>
 </root>

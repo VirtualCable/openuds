@@ -54,9 +54,10 @@ namespace UdsAdmin.controls.panel
             ToolStripMenuItem newG1 = new ToolStripMenuItem(Strings.newItem); newG1.Click += newItem; newG1.Image = Images.new16;
             ToolStripMenuItem newG2 = new ToolStripMenuItem(Strings.newItem); newG2.Click += newItem; newG2.Image = Images.new16;
             ToolStripMenuItem delete = new ToolStripMenuItem(Strings.deleteItem); delete.Click += deleteItem; delete.Image = Images.delete16;
+            ToolStripMenuItem modify = new ToolStripMenuItem(Strings.modifyItem); modify.Click += modifyItem;
 
             _emptyMenu.Items.Add(newG1);
-            _fullMenu.Items.AddRange(new ToolStripItem[] { newG2, delete });
+            _fullMenu.Items.AddRange(new ToolStripItem[] { modify, newG2, delete });
 
             listView.ListViewItemSorter = _listSorter = new gui.ListViewSorter(listView);
 
@@ -79,9 +80,9 @@ namespace UdsAdmin.controls.panel
                 List<ListViewItem> lst = new List<ListViewItem>();
                 foreach (xmlrpc.Network net in nets)
                 {
-                    ListViewItem itm = new ListViewItem(new string[]{net.name, net.netStart, net.netEnd});
+                    ListViewItem itm = new ListViewItem(new string[]{net.name, net.netRange});
                     itm.ForeColor = gui.Colors.ActiveColor;
-                    itm.Tag = net;
+                    itm.Tag = net.id;
                     lst.Add(itm);
                 }
                 listView.Items.Clear();
@@ -90,6 +91,16 @@ namespace UdsAdmin.controls.panel
             catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
             {
                 gui.UserNotifier.notifyRpcException(ex);
+            }
+        }
+
+        private void modifyItem(object sender, EventArgs e)
+        {
+            xmlrpc.Network net = xmlrpc.UdsAdminService.GetNetwork((string)(listView.SelectedItems[0].Tag));
+            UdsAdmin.forms.NetworkForm form = new UdsAdmin.forms.NetworkForm(net);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                updateList();
             }
         }
 
@@ -110,7 +121,7 @@ namespace UdsAdmin.controls.panel
             int n = 0;
             foreach (ListViewItem i in listView.SelectedItems)
             {
-                ids[n++] = ((xmlrpc.Network)i.Tag).id;
+                ids[n++] = (string)i.Tag;
                 listView.Items.Remove(i);
             }
             xmlrpc.UdsAdminService.RemoveNetworks(ids); 

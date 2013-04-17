@@ -51,52 +51,23 @@ namespace UdsAdmin.forms
             else
                 _net = new xmlrpc.Network();
 
-            netStart.KeyPress += HandleKeyPress;
-            netEnd.KeyPress += HandleKeyPress;
-
             Text = Strings.titleNetwork;
         }
 
         private void NetworkForm_Load(object sender, EventArgs e)
         {
-            if (_net == null)
+            if (_net != null)
             {
                 name.Text = _net.name;
-                netStart.Text = _net.netStart;
-                netEnd.Text = _net.netEnd;
+                netRange.Text = _net.netRange;
             }
             Location = MainForm.centerLocation(this);
         }
 
         private void accept_Click(object sender, EventArgs e)
         {
-            if (name.Text.Trim().Length == 0)
-            {
-                gui.UserNotifier.notifyError(Strings.nameRequired);
-                return;
-            }
-            System.Net.IPAddress ip;
-            System.Net.IPAddress ip2;
-            if (System.Net.IPAddress.TryParse(netStart.Text, out ip) == false)
-            {
-                MessageBox.Show(Strings.invalidIpAddress, Strings.netStart, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (System.Net.IPAddress.TryParse(netEnd.Text, out ip2) == false)
-            {
-                MessageBox.Show(Strings.invalidIpAddress, Strings.netEnd, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            
-            if (ip.Address > ip2.Address)
-            {
-                MessageBox.Show(Strings.netRangeError, Strings.netStart + "/" + Strings.netEnd, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             _net.name = name.Text;
-            _net.netStart = netStart.Text;
-            _net.netEnd = netEnd.Text;
+            _net.netRange = netRange.Text;
             try {
                 if (_net.id == "")
                 {
@@ -113,12 +84,6 @@ namespace UdsAdmin.forms
                 gui.UserNotifier.notifyRpcException(ex);
             }
 
-        }
-
-        private void HandleKeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!(char.IsDigit(e.KeyChar) || char.IsControl(e.KeyChar)) && e.KeyChar != '.')
-                e.Handled = true;
         }
 
     }

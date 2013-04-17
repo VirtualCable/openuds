@@ -31,8 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NetworksPanel));
             this.listView = new System.Windows.Forms.ListView();
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rangeStart = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rangeEnd = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.netRange = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // listView
@@ -40,8 +39,7 @@
             this.listView.AutoArrange = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.name,
-            this.rangeStart,
-            this.rangeEnd});
+            this.netRange});
             resources.ApplyResources(this.listView, "listView");
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
@@ -57,15 +55,9 @@
             resources.ApplyResources(this.name, "name");
             this.name.Width = global::UdsAdmin.Properties.Settings.Default.wNameCol;
             // 
-            // rangeStart
+            // netRange
             // 
-            resources.ApplyResources(this.rangeStart, "rangeStart");
-            this.rangeStart.Width = global::UdsAdmin.Properties.Settings.Default.wStateCol;
-            // 
-            // rangeEnd
-            // 
-            resources.ApplyResources(this.rangeEnd, "rangeEnd");
-            this.rangeEnd.Width = global::UdsAdmin.Properties.Settings.Default.wCommentsCol;
+            resources.ApplyResources(this.netRange, "netRange");
             // 
             // NetworksPanel
             // 
@@ -82,7 +74,6 @@
 
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.ColumnHeader name;
-        private System.Windows.Forms.ColumnHeader rangeStart;
-        private System.Windows.Forms.ColumnHeader rangeEnd;
+        private System.Windows.Forms.ColumnHeader netRange;
     }
 }
