@@ -126,6 +126,7 @@ encoding//src/uds/migrations/0010_auto__add_field_log_owner_type.py=utf-8
 encoding//src/uds/migrations/0011_auto__add_statscounters__add_statsevents__chg_field_log_created__chg_f.py=utf-8
 encoding//src/uds/migrations/0012_auto__add_field_authenticator_small_name.py=utf-8
 encoding//src/uds/migrations/0013_auto__add_field_group_is_meta__add_field_uniqueid_stamp.py=utf-8
+encoding//src/uds/migrations/0014_auto__add_field_network_net_string.py=utf-8
 encoding//src/uds/models.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/LinuxOsManager.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/__init__.py=utf-8

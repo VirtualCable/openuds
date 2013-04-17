@@ -50,8 +50,8 @@ def getServiceProvidersTypes(credentials):
     Returns the types of services providers registered in system
     '''
     res = []
-    for type in ServiceProviderFactory.factory().providers().values():
-        val = { 'name' : _(type.name()), 'type' : type.type(), 'description' : _(type.description()), 'icon' : type.icon() }
+    for type_ in ServiceProviderFactory.factory().providers().values():
+        val = { 'name' : _(type_.name()), 'type' : type_.type(), 'description' : _(type_.description()), 'icon' : type_.icon() }
         res.append(val)
     return res
 
@@ -70,19 +70,19 @@ def getServiceProviders(credentials):
     return res
 
 @needs_credentials
-def getServiceProviderGui(credentials, type):
+def getServiceProviderGui(credentials, type_):
     '''
     Returns the description of an gui for the specified service provider
     '''
-    spType = ServiceProviderFactory.factory().lookup(type)
+    spType = ServiceProviderFactory.factory().lookup(type_)
     return spType.guiDescription()
 
 @needs_credentials
-def getServiceProvider(credentials, id):
+def getServiceProvider(credentials, id_):
     '''
     Returns the specified service provider (at database)
     '''
-    data = Provider.objects.get(pk=id)
+    data = Provider.objects.get(pk=id_)
     res = [ 
            { 'name' : 'name', 'value' : data.name },
            { 'name' : 'comments', 'value' : data.comments },
@@ -96,7 +96,7 @@ def getServiceProvider(credentials, id):
     return res
 
 @needs_credentials
-def createServiceProvider(credentials, type, data):
+def createServiceProvider(credentials, type_, data):
     '''
     Creates a new service provider with specified type and data
     It's mandatory that data contains at least 'name' and 'comments'.
@@ -105,7 +105,7 @@ def createServiceProvider(credentials, type, data):
     try:
         dic = dictFromData(data)
         # First create data without serialization, then serialies data with correct environment
-        sp = Provider.objects.create(name = dic['name'], comments = dic['comments'], data_type = type)
+        sp = Provider.objects.create(name = dic['name'], comments = dic['comments'], data_type = type_)
         sp.data = sp.getInstance(dic).serialize()
         sp.save()
     except services.ServiceProvider.ValidationException as e:
@@ -119,14 +119,14 @@ def createServiceProvider(credentials, type, data):
     return True
 
 @needs_credentials
-def modifyServiceProvider(credentials, id, data):
+def modifyServiceProvider(credentials, id_, data):
     '''
     Modifies an existing service provider with specified id and data
     It's mandatory that data contains at least 'name' and 'comments'.
     The expected structure is the same that provided at getServiceProvider
     '''
     try:
-        prov = Provider.objects.get(pk=id)
+        prov = Provider.objects.get(pk=id_)
         dic = dictFromData(data)
         sp = prov.getInstance(dic)
         prov.data = sp.serialize()
@@ -144,12 +144,12 @@ def modifyServiceProvider(credentials, id, data):
     return True
     
 @needs_credentials
-def removeServiceProvider(credentials, id):
+def removeServiceProvider(credentials, id_):
     '''
     Removes from database provider with specified id
     '''
     try:
-        prov = Provider.objects.get(pk=id)
+        prov = Provider.objects.get(pk=id_)
         if prov.services.count() > 0:
             raise DeleteException(_('Can\'t delete service provider with services associated'))
         prov.delete()
@@ -158,35 +158,35 @@ def removeServiceProvider(credentials, id):
     return True
 
 @needs_credentials
-def getOffersFromServiceProvider(credentials, type):
+def getOffersFromServiceProvider(credentials, type_):
     '''
     Returns the services offered from the provider
     '''
-    spType = ServiceProviderFactory.factory().lookup(type)
+    spType = ServiceProviderFactory.factory().lookup(type_)
     res = []
-    for type in spType.getServicesTypes():
-        val = { 'name' : _(type.name()), 'type' : type.type(), 'description' : _(type.description()), 'icon' : type.icon() }
+    for t in spType.getServicesTypes():
+        val = { 'name' : _(t.name()), 'type' : t.type(), 'description' : _(t.description()), 'icon' : t.icon() }
         res.append(val)
     return res
 
 @needs_credentials
-def testServiceProvider(credentials, type, data):
+def testServiceProvider(credentials, type_, data):
     '''
     invokes the test function of the specified service provider type, with the suplied data
     '''
     logger.debug("Testing service provider, type: {0}, data:{1}".format(type, data))
-    spType = ServiceProviderFactory.factory().lookup(type)
+    spType = ServiceProviderFactory.factory().lookup(type_)
     # We need an "temporary" environment to test this service
-    dict = dictFromData(data)
-    res = spType.test(Environment.getTempEnv(), dict)
+    dct = dictFromData(data)
+    res = spType.test(Environment.getTempEnv(), dct)
     return {'ok' : res[0], 'message' : res[1]}
 
 @needs_credentials
-def checkServiceProvider(credentials, id):
+def checkServiceProvider(credentials, id_):
     '''
     Invokes the check function of the specified service provider
     '''
-    prov = Provider.objects.get(id=id)
+    prov = Provider.objects.get(id=id_)
     sp = prov.getInstance()
     return sp.check()
     

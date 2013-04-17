@@ -30,18 +30,19 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError 
 from uds.models import Network, Transport
-from ..util.Exceptions import InsertException, FindException, DeleteException
-from ..auths.AdminAuth import needs_credentials
+from uds.xmlrpc.util.Exceptions import InsertException, FindException, DeleteException
+from uds.xmlrpc.auths.AdminAuth import needs_credentials
 import logging
 
 logger = logging.getLogger(__name__)
 
 def dictFromNetwork(net):
-    return  { 'id' : str(net.id), 'name' : net.name, 'netStart' : net.netStart, 'netEnd' : net.netEnd }
+    return  { 'id' : str(net.id), 'name' : net.name, 'netRange' : net.net_string }
 
 @needs_credentials
 def getNetworks(credentials):
@@ -54,26 +55,26 @@ def getNetworks(credentials):
     return res
 
 @needs_credentials
-def getNetworksForTransport(credentials, id):
+def getNetworksForTransport(credentials, id_):
     try:
-        res = [ str(n.id) for n in Transport.objects.get(pk=id).networks.all().order_by('name') ]
+        res = [ str(n.id) for n in Transport.objects.get(pk=id_).networks.all().order_by('name') ]
     except Exception:
         res = []
     return res
 
 @needs_credentials
-def setNetworksForTransport(credentials, id, networks):
+def setNetworksForTransport(credentials, id_, networks):
     try:
-        trans = Transport.objects.get(pk=id)
+        trans = Transport.objects.get(pk=id_)
         trans.networks = Network.objects.filter(id__in=networks)
     except Transport.DoesNotExist:
         raise FindException(_('Can\'t locate the transport') + '.' + _('Please, refresh interface'))
     return True
 
 @needs_credentials
-def getNetwork(credentials, id):
+def getNetwork(credentials, id_):
     try:
-        net = Network.objects.get(pk=id)
+        net = Network.objects.get(pk=id_)
     except Network.DoesNotExist:
         raise FindException(_('Can\'t locate the network') + '.' + _('Please, refresh interface'))
     return dictFromNetwork(net)
@@ -81,7 +82,7 @@ def getNetwork(credentials, id):
 @needs_credentials
 def createNetwork(credentials, network):
     try:
-        net = Network.create(network['name'], network['netStart'], network['netEnd'])
+        Network.create(network['name'], network['netRange'])
     except IntegrityError:
         raise InsertException(_('Name %s already exists') % (network['name']))
     return True
@@ -90,7 +91,7 @@ def createNetwork(credentials, network):
 def modifyNetwork(credentials, network):
     try:
         net = Network.objects.get(pk=network['id'])
-        net.update(network['name'], network['netStart'], network['netEnd'])
+        net.update(network['name'], network['netRange'])
     except Network.DoesNotExist:
         raise FindException(_('Can\'t locate the network') + '.' + _('Please, refresh interface'))
     except IntegrityError:
@@ -99,7 +100,10 @@ def modifyNetwork(credentials, network):
 
 @needs_credentials
 def removeNetworks(credentials, ids):
-    Network.objects.filter(id__in=ids).delete()
+    try:
+        Network.objects.filter(id__in=ids).delete()
+    except Exception as e:
+        raise DeleteException(unicode(e))
     return True
 
 def registerNetworksFunctions(dispatcher):

@@ -32,11 +32,12 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.auths import Authenticator
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.util import net
-from uds.core.util.Config import Config
 import logging, random, string
 
 logger = logging.getLogger(__name__)
@@ -52,35 +53,22 @@ class IPAuth(Authenticator):
     groupNameLabel = _('IP Range')
     isExternalSource = True
 
-    def __init__(self, dbAuth, environment, values = None):
-        super(IPAuth, self).__init__(dbAuth, environment, values)
-        # Ignore values
-    
-    def valuesDict(self):
-        res = {}
-        return res
 
-    def __str__(self):
+    def initialize(self, values):
+        pass
+    
+    def __unicode__(self):
         return "IP Authenticator"
     
-    def marshal(self):
-        return "v1"
-    
-    def unmarshal(self, str_):
-        data = str_.split('\t')
-        if data[0] == 'v1':
-            pass
-        
     def getGroups(self, ip, groupsManager):
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
         # The ranges are stored in group names
-        ip = net.ipToLong(ip)
         for g in groupsManager.getGroupsNames():
-            rangeStart, rangeEnd = g.split('-')
-            rangeStart = net.ipToLong(rangeStart)
-            rangeEnd = net.ipToLong(rangeEnd)
-            if ip >= rangeStart and ip <= rangeEnd:
-                groupsManager.validate(g)
+            try:
+                if net.ipInNetwork(ip, g):
+                    groupsManager.validate(g)
+            except Exception as e:
+                logger.error('Invalid network for IP auth: {0}'.format(unicode(e)))
 
     def authenticate(self, username, credentials, groupsManager):
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering

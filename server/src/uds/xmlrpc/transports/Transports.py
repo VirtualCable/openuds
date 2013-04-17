@@ -31,14 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext as _
-from uds.models import Transport, DeployedService
+from uds.models import Transport
 from uds.core.transports.TransportsFactory import TransportsFactory
 from uds.core.ui.UserInterface import gui
 from ..util.Helpers import dictFromData
 from ..auths.AdminAuth import needs_credentials
-from ..util.Exceptions import FindException
-from uds.core.Environment import Environment
 import logging
 
 logger = logging.getLogger(__name__)
@@ -61,8 +58,8 @@ def getTransportsTypes(credentials):
     Returns the types of services providers registered in system
     '''
     res = []
-    for type in TransportsFactory.factory().providers().values():
-        val = { 'name' : type.name(), 'type' : type.type(), 'description' : type.description(), 'icon' : type.icon() }
+    for type_ in TransportsFactory.factory().providers().values():
+        val = { 'name' : type_.name(), 'type' : type_.type(), 'description' : type_.description(), 'icon' : type_.icon() }
         res.append(val)
     return res
 
@@ -81,19 +78,19 @@ def getTransports(credentials):
 
 
 @needs_credentials
-def getTransportGui(credentials, type):
+def getTransportGui(credentials, type_):
     '''
     Returns the description of an gui for the specified service provider
     '''
-    spType = TransportsFactory.factory().lookup(type)
+    spType = TransportsFactory.factory().lookup(type_)
     return spType.guiDescription()
 
 @needs_credentials
-def getTransport(credentials, id):
+def getTransport(credentials, id_):
     '''
     Returns the specified service provider (at database)
     '''
-    data = Transport.objects.get(pk=id)
+    data = Transport.objects.get(pk=id_)
     res = [ 
            { 'name' : 'name', 'value' : data.name },
            { 'name' : 'comments', 'value' : data.comments },
@@ -109,44 +106,44 @@ def getTransport(credentials, id):
     return res
 
 @needs_credentials
-def createTransport(credentials, type, data):
+def createTransport(credentials, type_, data):
     '''
     Creates a new service provider with specified type and data
     It's mandatory that data contains at least 'name' and 'comments'.
     The expected structure is the same that provided at getServiceProvider
     '''
-    dict = dictFromData(data)
+    dct = dictFromData(data)
     # First create data without serialization, then serialies data with correct environment
-    sp = Transport.objects.create(name = dict['name'], comments = dict['comments'], data_type = type, 
-                                  priority=int(dict['priority']), nets_positive=gui.strToBool(dict['positiveNet']) )
-    sp.data = sp.getInstance(dict).serialize()
+    sp = Transport.objects.create(name = dct['name'], comments = dct['comments'], data_type = type_, 
+                                  priority=int(dct['priority']), nets_positive=gui.strToBool(dct['positiveNet']) )
+    sp.data = sp.getInstance(dct).serialize()
     sp.save()
     return str(sp.id)
 
 @needs_credentials
-def modifyTransport(credentials, id, data):
+def modifyTransport(credentials, id_, data):
     '''
     Modifies an existing service provider with specified id and data
     It's mandatory that data contains at least 'name' and 'comments'.
     The expected structure is the same that provided at getServiceProvider
     '''
-    trans = Transport.objects.get(pk=id)
-    dict = dictFromData(data)
-    sp = trans.getInstance(dict)
+    trans = Transport.objects.get(pk=id_)
+    dct = dictFromData(data)
+    sp = trans.getInstance(dct)
     trans.data = sp.serialize()
-    trans.name = dict['name']
-    trans.comments = dict['comments']
-    trans.priority = int(dict['priority'])
-    trans.nets_positive = gui.strToBool(dict['positiveNet'])
+    trans.name = dct['name']
+    trans.comments = dct['comments']
+    trans.priority = int(dct['priority'])
+    trans.nets_positive = gui.strToBool(dct['positiveNet'])
     trans.save()
     return True
     
 @needs_credentials
-def removeTransport(credentials, id):
+def removeTransport(credentials, id_):
     '''
     Removes from database provider with specified id
     '''
-    Transport.objects.get(pk=id).delete()
+    Transport.objects.get(pk=id_).delete()
     return True
 
 

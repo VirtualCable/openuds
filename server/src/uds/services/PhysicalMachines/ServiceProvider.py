@@ -61,8 +61,8 @@ class PhysicalMachinesProvider(services.ServiceProvider):
         '''
         return str.join( '\t', [ 'v1' ] ) 
     
-    def unmarshal(self, str):
-        data = str.split('\t')
+    def unmarshal(self, str_):
+        data = str_.split('\t')
         if data[0] == 'v1':
             pass
         

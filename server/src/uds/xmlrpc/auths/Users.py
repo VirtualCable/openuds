@@ -30,29 +30,28 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.db import IntegrityError
-from uds.models import User as DbUser, Group as DbGroup, Authenticator as DbAuthenticator, State
+from uds.models import User as DbUser, Group as DbGroup, Authenticator as DbAuthenticator
 from uds.core.managers.CryptoManager import CryptoManager
-from ..util.Exceptions import DuplicateEntryException, InsertException, ParametersException
-from uds.core.auths.Exceptions import AuthenticatorException, InvalidUserException
+from uds.xmlrpc.util.Exceptions import DuplicateEntryException, InsertException, ParametersException, FindException
 from AdminAuth import needs_credentials
 from Groups import dictFromGroup
 from uds.core.auths.User import User
-import hashlib
 import logging
 
 logger = logging.getLogger(__name__)
 INVALID_PASS = '@#&&/%&$%&/adffa'
 
 def dictFromUser(usr, groups = None):
-    dict = { 'idParent' : str(usr.manager.id), 'nameParent' : usr.manager.name,  'id' : str(usr.id), 'name' : usr.name, 'realName' : usr.real_name,
+    dct = { 'idParent' : str(usr.manager.id), 'nameParent' : usr.manager.name,  'id' : str(usr.id), 'name' : usr.name, 'realName' : usr.real_name,
                     'comments' : usr.comments, 'state' :  usr.state, 'lastAccess' : usr.last_access, 'password' : INVALID_PASS, 'oldPassword' : INVALID_PASS,
                     'staffMember' : usr.staff_member, 'isAdmin' : usr.is_admin }
     if groups != None:
-        dict['groups'] = groups
-    logger.debug('Dict: {0}'.format(dict))
-    return dict
+        dct['groups'] = groups
+    logger.debug('Dict: {0}'.format(dct))
+    return dct
 
 @needs_credentials
 def getUsers(credentials, idParent):
@@ -69,11 +68,11 @@ def getUsers(credentials, idParent):
     return res
 
 @needs_credentials
-def getUser(credentials, id):
+def getUser(credentials, id_):
     '''
     '''
     try:
-        usr = User(DbUser.objects.get(pk=id))
+        usr = User(DbUser.objects.get(pk=id_))
         grps = []
         for g in usr.groups():
             logger.debug(g)
@@ -167,17 +166,21 @@ def removeUsers(credentials, ids):
     return True
 
 @needs_credentials
-def getUserGroups(credentials, id):
+def getUserGroups(credentials, id_):
     '''
     Get groups assigned to this user
     '''
-    user = DbUser.objects.get(pk=id)
-    auth = user.manager.getInstance() 
-    res = []
-    #if auth.isExternalSource == False:
-    for grp in user.getGroups():
-        res.append(dictFromGroup(grp))
-    return res
+    try:
+        user = DbUser.objects.get(pk=id_)
+        #auth = user.manager.getInstance() 
+        res = []
+        #if auth.isExternalSource == False:
+        for grp in user.getGroups():
+            res.append(dictFromGroup(grp))
+        return res
+    except Exception as e:
+        logger.exception(e)
+        raise FindException(str(e))
     
 @needs_credentials
 def changeUsersState(credentials, ids, newState):

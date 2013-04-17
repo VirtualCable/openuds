@@ -1970,6 +1970,7 @@ class Network(models.Model):
     name = models.CharField(max_length = 64, unique = True)
     net_start = models.BigIntegerField(db_index = True)
     net_end = models.BigIntegerField(db_index = True)
+    net_string = models.CharField(max_length = 128, default = '')
     transports = models.ManyToManyField(Transport, related_name='networks', db_table='uds_net_trans')
 
     @staticmethod
@@ -1981,7 +1982,7 @@ class Network(models.Model):
         return Network.objects.filter(net_start__lte=ip, net_end__gte=ip)
     
     @staticmethod
-    def create(name, netStart, netEnd):
+    def create(name, netRange):
         '''
         Creates an network record, with the specified net start and net end (dotted quad)
         
@@ -1990,7 +1991,8 @@ class Network(models.Model):
             
             netEnd: Network end
         '''
-        return Network.objects.create(name=name, net_start = net.ipToLong(netStart), net_end = Network.ipToLong(netEnd)) 
+        nr = net.networksFromString(netRange, False)
+        return Network.objects.create(name=name, net_start = nr[0], net_end = nr[1], net_string = netRange) 
 
     @property    
     def netStart(self):
@@ -2012,7 +2014,7 @@ class Network(models.Model):
         '''
         return net.longToIp(self.net_end)
 
-    def update(self, name, netStart, netEnd):
+    def update(self, name, netRange):
         '''
         Updated this network with provided values
         
@@ -2024,10 +2026,12 @@ class Network(models.Model):
             netEnd: new Network end (quad dotted)
         '''
         self.name = name
-        self.net_start = net.ipToLong(netStart)
-        self.net_end = net.ipToLong(netEnd)
+        nr = net.networksFromString(netRange, False)
+        self.net_start = nr[0]
+        self.net_end = nr[1]
+        self.net_string = netRange
         self.save() 
     
     def __unicode__(self):
-        return u'Network {0} from {1} to {2}'.format(self.name, net.longToIp(self.net_start), net.longToIp(self.net_end))
+        return u'Network {0} ({1}) from {2} to {3}'.format(self.name, self.net_string, net.longToIp(self.net_start), net.longToIp(self.net_end))
 
