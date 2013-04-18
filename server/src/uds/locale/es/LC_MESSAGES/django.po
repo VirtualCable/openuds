@@ -31,7 +31,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-06 08:08+0100\n"
+"POT-Creation-Date: 2013-04-18 12:32+0200\n"
 "PO-Revision-Date: 2013-03-06 08:17+0100\n"
 "Last-Translator: \n"
 "Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
@@ -42,31 +42,50 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.4\n"
 
-#: auths/IP/Authenticator.py:45 auths/IP/Authenticator.py:47
+#: auths/IP/Authenticator.py:46 auths/IP/Authenticator.py:48
 msgid "IP Authenticator"
 msgstr "Autenticador por IP"
 
-#: auths/IP/Authenticator.py:51
+#: auths/IP/Authenticator.py:52
 msgid "IP"
 msgstr "IP "
 
-#: auths/IP/Authenticator.py:52
+#: auths/IP/Authenticator.py:53
 msgid "IP Range"
 msgstr "Intervalo IP"
 
-#: auths/IP/Authenticator.py:106 auths/InternalDB/Authenticator.py:102
+#: auths/IP/Authenticator.py:90 auths/IP/Authenticator.py:93
+#: auths/InternalDB/Authenticator.py:120
 msgid "All seems fine in the authenticator."
 msgstr "Parace que todo funciona correctamente en el autenticador. "
 
-#: auths/InternalDB/Authenticator.py:46
+#: auths/InternalDB/Authenticator.py:47
 msgid "Internal Database"
 msgstr "Base de datos interna"
 
-#: auths/InternalDB/Authenticator.py:48
+#: auths/InternalDB/Authenticator.py:49
 msgid "Internal dabasase authenticator. Doesn't uses external sources"
 msgstr "Dabasase interna autenticador. No utiliza fuentes externas"
 
-#: auths/InternalDB/Authenticator.py:99
+#: auths/InternalDB/Authenticator.py:59
+msgid "Different user for each host"
+msgstr "Usuario diferente para cada host"
+
+#: auths/InternalDB/Authenticator.py:59
+#, fuzzy
+msgid "If checked, each host will have a different user name"
+msgstr "Si está activado, el audio será redirigido al cliente"
+
+#: auths/InternalDB/Authenticator.py:60
+msgid "Reverse DNS"
+msgstr "Reverse DNS"
+
+#: auths/InternalDB/Authenticator.py:60
+#, fuzzy
+msgid "If checked, the host will be reversed dns"
+msgstr "Si está activado, el audio será redirigido al cliente"
+
+#: auths/InternalDB/Authenticator.py:117
 msgid "Internal structures seems ok"
 msgstr "Las estructuras internas parecen correctas"
 
@@ -111,9 +130,10 @@ msgstr "Usuario con privilegios de lectura en la base elegida"
 #: auths/SimpleLDAP/Authenticator.py:53 auths/SimpleLDAP/Authenticator.py:77
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:30
-#: services/OVirt/OVirtProvider.py:93 transports/NX/NXTransport.py:62
-#: transports/RDP/RDPTransport.py:38 transports/RDP/TSRDPTransport.py:42
-#: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:58
+#: services/OVirt/OVirtProvider.py:93 transports/HTML5RDP/HTML5RDP.py:65
+#: transports/NX/NXTransport.py:62 transports/RDP/RDPTransport.py:60
+#: transports/RDP/TSRDPTransport.py:64 transports/TSNX/TSNXTransport.py:67
+#: web/forms/LoginForm.py:58
 msgid "Password"
 msgstr "Contraseña"
 
@@ -181,9 +201,10 @@ msgid "Regular Expressions LDAP authenticator"
 msgstr "Autenticador LDAP de expresiones regulares"
 
 #: auths/RegexLdap/Authenticator.py:72 auths/SimpleLDAP/Authenticator.py:73
-#: services/OVirt/OVirtProvider.py:92 transports/NX/NXTransport.py:61
-#: transports/RDP/RDPTransport.py:37 transports/RDP/TSRDPTransport.py:41
-#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:57
+#: services/OVirt/OVirtProvider.py:92 transports/HTML5RDP/HTML5RDP.py:64
+#: transports/NX/NXTransport.py:61 transports/RDP/RDPTransport.py:59
+#: transports/RDP/TSRDPTransport.py:63 transports/TSNX/TSNXTransport.py:66
+#: web/forms/LoginForm.py:57
 msgid "Username"
 msgstr "Usuario"
 
@@ -313,11 +334,11 @@ msgid "Can't locate any group with the membership attribute specified"
 msgstr ""
 "No se puede localizar algún grupo con el atributo de pertenencia especificado"
 
-#: core/BaseModule.py:196
+#: core/BaseModule.py:197
 msgid "No connection checking method is implemented."
 msgstr "No se ha implementado ningun metodo de comprobación de conexión"
 
-#: core/BaseModule.py:253
+#: core/BaseModule.py:254
 msgid "No check method provided."
 msgstr "No se ha implementado ningún método de verificación."
 
@@ -368,17 +389,17 @@ msgstr "24 bits"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:315
+#: core/managers/UserServiceManager.py:320
 msgid "Cancel requested for a non running operation, doing remove instead"
 msgstr ""
 "Cancelación solicitada para una operación no corriente, haciendo eliminar en "
 "su lugar"
 
-#: core/managers/UserServiceManager.py:336
+#: core/managers/UserServiceManager.py:341
 msgid "Can't remove a non active element"
 msgstr "No se puede eliminar un elemento que no está activo"
 
-#: core/managers/UserServiceManager.py:349
+#: core/managers/UserServiceManager.py:354
 msgid "Can't remove nor cancel {0} cause its states doesn't allows it"
 msgstr "No se puede eliminar o cancelar {0} porque sus estados no lo permiten"
 
@@ -455,19 +476,19 @@ msgstr "Finalizado"
 msgid "Waiting execution"
 msgstr "En espera de ejecución"
 
-#: core/util/stats/counters.py:203
+#: core/util/stats/counters.py:205
 msgid "Assigned"
 msgstr "Asignado"
 
-#: core/util/stats/counters.py:204
+#: core/util/stats/counters.py:206
 msgid "In use"
 msgstr "En uso"
 
-#: core/util/stats/counters.py:205
+#: core/util/stats/counters.py:207
 msgid "Load"
 msgstr "Carga"
 
-#: core/util/stats/counters.py:206
+#: core/util/stats/counters.py:208
 msgid "Storage"
 msgstr "Almacenamiento de información"
 
@@ -518,7 +539,8 @@ msgid ""
 msgstr "Gestor de s.o. para controlar maquinas windows con dominio."
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
-#: transports/RDP/RDPTransport.py:39 transports/RDP/TSRDPTransport.py:43
+#: transports/HTML5RDP/HTML5RDP.py:66 transports/RDP/RDPTransport.py:61
+#: transports/RDP/TSRDPTransport.py:65
 msgid "Domain"
 msgstr "Dominio"
 
@@ -573,38 +595,38 @@ msgstr "Forma DOM\\USER no está permitido!"
 msgid "Must provide a password for the account!"
 msgstr "Debe indicar una contraseña para la cuenta!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:142
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:151
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:145
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:154
 msgid "Check error: {0}"
 msgstr "Compruebe el error {0}"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:144
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:147
 msgid "Could not find server parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr ""
 "No se pudo encontrar parámetros del servidor (_ldap._tcp. {}resolverse 0} "
 "can'r)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:154
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:157
 msgid "Server check was successful"
 msgstr "Control de servidor tuvo éxito"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:166
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:169
 msgid "Could not access AD using LDAP ({0})"
 msgstr "No podrían acceder anuncio utilizando LDAP ({0})"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:178
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:181
 msgid "The default path {0} for computers was not found!!!"
 msgstr "No se encontró la ruta por defecto {0} para equipos!!!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:180
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:183
 msgid "The ou path {0} was not found!!!"
 msgstr "No se encontró el camino ou {0}!"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:182
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:185
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr "No se pudo comprobar parámetros (_ldap._tcp. {}resolverse 0} can'r)"
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:187
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:190
 msgid "All parameters seems to work fine."
 msgstr "Todos los parámetros parece funcionar bien."
 
@@ -947,6 +969,80 @@ msgstr "Volver a la lista de servicios"
 msgid "Language"
 msgstr "Idioma"
 
+#: transports/HTML5RDP/HTML5RDP.py:54
+#, fuzzy
+msgid "HTML5 RDP Transport"
+msgstr "Transporte RDP (directo)"
+
+#: transports/HTML5RDP/HTML5RDP.py:56
+#, fuzzy
+msgid "RDP Transport using HTML5 client"
+msgstr "Transporte RDP (vía túnel)"
+
+#: transports/HTML5RDP/HTML5RDP.py:60
+#, fuzzy
+msgid "Tunnel Server"
+msgstr "Servidor de túnel"
+
+#: transports/HTML5RDP/HTML5RDP.py:60
+msgid "Host of the tunnel server (use http/https & port if needed)"
+msgstr "Host del servidor de túnel (http/https de uso & puerto si es necesario)"
+
+#: transports/HTML5RDP/HTML5RDP.py:61
+msgid "Allowed hosts"
+msgstr "Hosts permitidos"
+
+#: transports/HTML5RDP/HTML5RDP.py:61
+msgid ""
+"Hosts allowed to ask for credentials for users (use * for all host, but not "
+"recommended). Comma separated list"
+msgstr ""
+"Anfitriones permitieron para solicitar credenciales para los usuarios (use * de todos los host, pero no "
+"recomendado). Lista separada por comas"
+
+#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
+#: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
+#: transports/TSNX/TSNXTransport.py:65
+msgid "Empty creds"
+msgstr "Sin credenciales"
+
+#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
+#: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
+#: transports/TSNX/TSNXTransport.py:65
+msgid "If checked, the credentials used to connect will be emtpy"
+msgstr ""
+"Si está activada, las credenciales utilizadas para conectar estarán vacías"
+
+#: transports/HTML5RDP/HTML5RDP.py:64 transports/NX/NXTransport.py:61
+#: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
+#: transports/TSNX/TSNXTransport.py:66
+msgid "If not empty, this username will be always used as credential"
+msgstr ""
+"Si no está vacio, este nombre de usuario será utilizado como credencial fija"
+
+#: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
+#: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
+#: transports/TSNX/TSNXTransport.py:67
+msgid "If not empty, this password will be always used as credential"
+msgstr "Si no está vacio, este password será utiizado como credencial fija"
+
+#: transports/HTML5RDP/HTML5RDP.py:66 transports/RDP/RDPTransport.py:61
+#: transports/RDP/TSRDPTransport.py:65
+msgid ""
+"If not empty, this domain will be always used as credential (used as DOMAIN"
+"\\user)"
+msgstr ""
+"Si no está vacio, este domínio será usado como parte de las credenciales del "
+"usuario (usado como DOMAIN\\user)"
+
+#: transports/HTML5RDP/HTML5RDP.py:73
+msgid "The server must be http or https"
+msgstr "Debe ser el servidor http o https"
+
+#: transports/HTML5RDP/HTML5RDP.py:77
+msgid "Invalid network: {0}"
+msgstr "Red no válida: {0}"
+
 #: transports/NX/NXTransport.py:54
 msgid "NX Transport (direct)"
 msgstr "Transporte NX (directo)"
@@ -954,28 +1050,6 @@ msgstr "Transporte NX (directo)"
 #: transports/NX/NXTransport.py:56
 msgid "NX Transport for direct connection"
 msgstr "Transporte NX para conexión directa"
-
-#: transports/NX/NXTransport.py:60 transports/RDP/RDPTransport.py:36
-#: transports/RDP/TSRDPTransport.py:40 transports/TSNX/TSNXTransport.py:65
-msgid "Empty creds"
-msgstr "Sin credenciales"
-
-#: transports/NX/NXTransport.py:60 transports/RDP/RDPTransport.py:36
-#: transports/RDP/TSRDPTransport.py:40 transports/TSNX/TSNXTransport.py:65
-msgid "If checked, the credentials used to connect will be emtpy"
-msgstr ""
-"Si está activada, las credenciales utilizadas para conectar estarán vacías"
-
-#: transports/NX/NXTransport.py:61 transports/RDP/RDPTransport.py:37
-#: transports/RDP/TSRDPTransport.py:41 transports/TSNX/TSNXTransport.py:66
-msgid "If not empty, this username will be always used as credential"
-msgstr ""
-"Si no está vacio, este nombre de usuario será utilizado como credencial fija"
-
-#: transports/NX/NXTransport.py:62 transports/RDP/RDPTransport.py:38
-#: transports/RDP/TSRDPTransport.py:42 transports/TSNX/TSNXTransport.py:67
-msgid "If not empty, this password will be always used as credential"
-msgstr "Si no está vacio, este password será utiizado como credencial fija"
 
 #: transports/NX/NXTransport.py:63 transports/TSNX/TSNXTransport.py:68
 msgid "Listen port"
@@ -1041,72 +1115,64 @@ msgstr "Usted puede obtener para su plataforma de"
 msgid "nochamine web site"
 msgstr "Sitio Web de Nomachine"
 
-#: transports/RDP/RDPTransport.py:30
+#: transports/RDP/RDPTransport.py:52
 msgid "RDP Transport (direct)"
 msgstr "Transporte RDP (directo)"
 
-#: transports/RDP/RDPTransport.py:32
+#: transports/RDP/RDPTransport.py:54
 msgid "RDP Transport for direct connection"
 msgstr "Transporte RDP para conexión directa"
 
-#: transports/RDP/RDPTransport.py:39 transports/RDP/TSRDPTransport.py:43
-msgid ""
-"If not empty, this domain will be always used as credential (used as DOMAIN"
-"\\user)"
-msgstr ""
-"Si no está vacio, este domínio será usado como parte de las credenciales del "
-"usuario (usado como DOMAIN\\user)"
-
-#: transports/RDP/RDPTransport.py:40 transports/RDP/TSRDPTransport.py:44
+#: transports/RDP/RDPTransport.py:62 transports/RDP/TSRDPTransport.py:66
 msgid "Allow Smartcards"
 msgstr "Permitir tarjetas inteligentes"
 
-#: transports/RDP/RDPTransport.py:40 transports/RDP/TSRDPTransport.py:44
+#: transports/RDP/RDPTransport.py:62 transports/RDP/TSRDPTransport.py:66
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr ""
 "Si está marcado, este transporte permitirá el uso de tarjetas inteligentes"
 
-#: transports/RDP/RDPTransport.py:41 transports/RDP/TSRDPTransport.py:45
+#: transports/RDP/RDPTransport.py:63 transports/RDP/TSRDPTransport.py:67
 msgid "Allow Printers"
 msgstr "Permitir impresoras"
 
-#: transports/RDP/RDPTransport.py:41 transports/RDP/TSRDPTransport.py:45
+#: transports/RDP/RDPTransport.py:63 transports/RDP/TSRDPTransport.py:67
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
 "Si está marcado, este transporte permitirá el uso de impresoras remotas"
 
-#: transports/RDP/RDPTransport.py:42 transports/RDP/TSRDPTransport.py:46
+#: transports/RDP/RDPTransport.py:64 transports/RDP/TSRDPTransport.py:68
 msgid "Allow Drives"
 msgstr "Permitir unidades"
 
-#: transports/RDP/RDPTransport.py:42 transports/RDP/TSRDPTransport.py:46
+#: transports/RDP/RDPTransport.py:64 transports/RDP/TSRDPTransport.py:68
 msgid "If checked, this transport will allow the use of user drives"
 msgstr ""
 "Si está marcado, este transporte permitirá la redireccion de las unidades "
 "locales a la máquina remota"
 
-#: transports/RDP/RDPTransport.py:43 transports/RDP/TSRDPTransport.py:47
+#: transports/RDP/RDPTransport.py:65 transports/RDP/TSRDPTransport.py:69
 msgid "Allow Serials"
 msgstr "Permitir series"
 
-#: transports/RDP/RDPTransport.py:43 transports/RDP/TSRDPTransport.py:47
+#: transports/RDP/RDPTransport.py:65 transports/RDP/TSRDPTransport.py:69
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Si está marcado, este transporte permitirá la redirección de puertos serie"
 
-#: transports/RDP/TSRDPTransport.py:31
+#: transports/RDP/TSRDPTransport.py:53
 msgid "RDP Transport (tunneled)"
 msgstr "Transporte RDP (vía túnel)"
 
-#: transports/RDP/TSRDPTransport.py:33
+#: transports/RDP/TSRDPTransport.py:55
 msgid "RDP Transport for tunneled connection"
 msgstr "Transporte RDP para conexión vía túnel"
 
-#: transports/RDP/TSRDPTransport.py:37 transports/TSNX/TSNXTransport.py:62
+#: transports/RDP/TSRDPTransport.py:59 transports/TSNX/TSNXTransport.py:62
 msgid "Tunnel server"
 msgstr "Servidor de túnel"
 
-#: transports/RDP/TSRDPTransport.py:37 transports/TSNX/TSNXTransport.py:62
+#: transports/RDP/TSRDPTransport.py:59 transports/TSNX/TSNXTransport.py:62
 msgid ""
 "IP or Hostname of tunnel server send to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
@@ -1114,11 +1180,11 @@ msgstr ""
 "IP o nombre de host del servidor de túnel enviar a dispositivo de cliente "
 "(ip \"pública\") y puerto. (utilice el formato HOST: puerto)"
 
-#: transports/RDP/TSRDPTransport.py:38 transports/TSNX/TSNXTransport.py:63
+#: transports/RDP/TSRDPTransport.py:60 transports/TSNX/TSNXTransport.py:63
 msgid "Tunnel host check"
 msgstr "Verificación de host de túnel"
 
-#: transports/RDP/TSRDPTransport.py:38 transports/TSNX/TSNXTransport.py:63
+#: transports/RDP/TSRDPTransport.py:60 transports/TSNX/TSNXTransport.py:63
 msgid ""
 "If not empty, this server will be used to check if service is running before "
 "assigning it to user. (use HOST:PORT format)"
@@ -1126,11 +1192,11 @@ msgstr ""
 "Si no vacía, este servidor se utilizará para comprobar si el servicio se "
 "ejecuta antes de asignarle al usuario. (utilice el formato HOST: puerto)"
 
-#: transports/RDP/TSRDPTransport.py:53 transports/TSNX/TSNXTransport.py:103
+#: transports/RDP/TSRDPTransport.py:75 transports/TSNX/TSNXTransport.py:103
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Debe utilizar HOST: puerto en el campo servidor de túnel"
 
-#: transports/RDP/__init__.py:17
+#: transports/RDP/__init__.py:39
 msgid "Remote Desktop Protocol"
 msgstr "Protocolo de Escritorio remoto (RDP)"
 
@@ -1201,7 +1267,7 @@ msgstr "Autenticador no hallado"
 msgid "Invalid authenticator"
 msgstr "Autenticador Invalido"
 
-#: web/views.py:383
+#: web/views.py:387
 msgid "Authenticator do not provides information"
 msgstr "El autenticador no proporciona información alguna"
 
@@ -1221,30 +1287,30 @@ msgstr "Administración"
 msgid "Invalid credentials"
 msgstr "Credenciales Invalidas"
 
-#: xmlrpc/auths/Authenticators.py:106
+#: xmlrpc/auths/Authenticators.py:107
 msgid "Authenticator does not exists"
 msgstr "El autenticador no existe"
 
-#: xmlrpc/auths/Authenticators.py:162 xmlrpc/osmanagers/OSManagers.py:116
+#: xmlrpc/auths/Authenticators.py:163 xmlrpc/osmanagers/OSManagers.py:117
 #: xmlrpc/services/ServiceProviders.py:115
 #: xmlrpc/services/ServiceProviders.py:139 xmlrpc/services/Services.py:160
-#: xmlrpc/services/Services.py:184 xmlrpc/transports/Networks.py:86
-#: xmlrpc/transports/Networks.py:97
+#: xmlrpc/services/Services.py:184 xmlrpc/transports/Networks.py:87
+#: xmlrpc/transports/Networks.py:98
 #, python-format
 msgid "Name %s already exists"
 msgstr "El nombre %s ya existe"
 
-#: xmlrpc/auths/Authenticators.py:239
+#: xmlrpc/auths/Authenticators.py:240
 msgid "Authenticator do not supports search"
 msgstr "El autenticador no soporta búsquedas"
 
-#: xmlrpc/auths/Authenticators.py:245
+#: xmlrpc/auths/Authenticators.py:246
 msgid "Specified authenticator do not exists anymore. Please, reload gui"
 msgstr ""
 "Hacer autenticador especificado no existe ya. Por favor, vuelva a cargar la "
 "interfaz gráfica de usuario"
 
-#: xmlrpc/auths/Authenticators.py:249
+#: xmlrpc/auths/Authenticators.py:250
 msgid "BUG: Reached a point that should never have been reached!!!"
 msgstr "BUG: Llegado a un punto que no debe nunca han alcanzado!!!"
 
@@ -1256,15 +1322,15 @@ msgstr "El servicio desplegado no existe"
 msgid "User service does not exists"
 msgstr "El servicio de usuario no existe"
 
-#: xmlrpc/osmanagers/OSManagers.py:130
+#: xmlrpc/osmanagers/OSManagers.py:131
 msgid "This os mnager is being used by deployed services"
 msgstr "Este OS Manager está siendo utilizado por servicios desplegados"
 
-#: xmlrpc/osmanagers/OSManagers.py:146
+#: xmlrpc/osmanagers/OSManagers.py:147
 msgid "There is deployed services using this os manager"
 msgstr "Existen servicios desplegados que utilizan este gestor de SO"
 
-#: xmlrpc/osmanagers/OSManagers.py:148
+#: xmlrpc/osmanagers/OSManagers.py:149
 msgid "Can't find os manager"
 msgstr "No se puede hallar el gestor de SO"
 
@@ -1303,8 +1369,8 @@ msgid "Can't locate the service provider"
 msgstr "No puedo hallar el proveedor de servicios"
 
 #: xmlrpc/services/ServiceProviders.py:157 xmlrpc/services/Services.py:202
-#: xmlrpc/transports/Networks.py:70 xmlrpc/transports/Networks.py:78
-#: xmlrpc/transports/Networks.py:95
+#: xmlrpc/transports/Networks.py:71 xmlrpc/transports/Networks.py:79
+#: xmlrpc/transports/Networks.py:96
 msgid "Please, refresh interface"
 msgstr "Por favor, refresque la interfaz."
 
@@ -1347,11 +1413,11 @@ msgstr "Servicio de usuario no hallado!!!"
 msgid "Service does not exists"
 msgstr "El servicio no existe"
 
-#: xmlrpc/transports/Networks.py:70
+#: xmlrpc/transports/Networks.py:71
 msgid "Can't locate the transport"
 msgstr "No puedo hallar el transporte"
 
-#: xmlrpc/transports/Networks.py:78 xmlrpc/transports/Networks.py:95
+#: xmlrpc/transports/Networks.py:79 xmlrpc/transports/Networks.py:96
 msgid "Can't locate the network"
 msgstr "No puedo hallar la red"
 
@@ -1666,9 +1732,6 @@ msgstr "No puedo hallar la red"
 
 #~ msgid "Redirect Audio"
 #~ msgstr "Redirección de Audio"
-
-#~ msgid "If checked, the Audio will be redirected."
-#~ msgstr "Si está activado, el audio será redirigido al cliente"
 
 #~ msgid "Redirect Mic"
 #~ msgstr "Redirigir Mic"

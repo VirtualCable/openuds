@@ -1605,7 +1605,8 @@ class UserService(models.Model):
         return res
 
     def __unicode__(self):
-        return "User service {0}, cache_level {1}, user {2}, name {3}".format(self.id, self.cache_level, self.user, self.friendly_name)
+        return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,
+                            State.toString(self.state), State.toString(self.os_state))
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
