@@ -36,6 +36,7 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from uds.core.util.Cache import Cache
 from uds.core.util import net
+from uds.core.auths.auth import getIp
 import logging
 
 logger = logging.getLogger(__name__)
@@ -55,13 +56,22 @@ def guacamole(request, tunnelId):
         cache = Cache('guacamole')
         
         val = cache.get(tunnelId, None)
+        
+        logger.debug('Value of cache element: {0}'.format(val))
+
+        # Add request source ip to request object        
+        getIp(request)
     
         # Ensure request for credentials are allowed
         allowFrom = val['allow-from'].replace(' ', '')
         # and remove allow-from from parameters
         del val['allow-from']
         
-        allowFrom = net.networksFromString(allowFrom)
+        logger.debug('Checking validity of ip in network(s) {1}'.format(request.ip, allowFrom))
+        
+        if net.ipInNetwork(request.ip, allowFrom) is False:
+            logger.error('Ip {0} not allowed (not in range {1})'.format(request.ip, allowFrom))
+            raise Exception() # Ip not allowed
         
 
         # Remove key from cache, just 1 use
@@ -73,8 +83,5 @@ def guacamole(request, tunnelId):
 
     except:
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
-
-    
-    
     
     return HttpResponse(response, content_type=CONTENT_TYPE)
