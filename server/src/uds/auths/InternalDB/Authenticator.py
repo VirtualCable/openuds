@@ -83,6 +83,8 @@ class InternalDBAuth(Authenticator):
             try:
                 usr = auth.users.get(name=username, state=State.ACTIVE)
                 usr.id = None
+                if usr.real_name.strip() == '':
+                    usr.real_name = usr.name
                 usr.name = newUsername
                 usr.save()
             except:

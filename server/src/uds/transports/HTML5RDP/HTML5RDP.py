@@ -57,7 +57,7 @@ class HTML5RDPTransport(Transport):
     iconFile = 'rdp.png' 
     needsJava = False  # If this transport needs java for rendering
 
-    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order = 1, tooltip = _('Host of the tunnel server (use http/http & port if needed)'), defvalue = 'https://', length = 64)
+    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order = 1, tooltip = _('Host of the tunnel server (use http/https & port if needed)'), defvalue = 'https://', length = 64)
     allowRequestsFrom = gui.TextField(label=_('Allowed hosts'), order = 1, tooltip = _('Hosts allowed to ask for credentials for users (use * for all host, but not recommended). Comma separated list'), 
                                       defvalue = '*', length = 256)
     useEmptyCreds = gui.CheckBoxField(label = _('Empty creds'), order = 2, tooltip = _('If checked, the credentials used to connect will be emtpy'))

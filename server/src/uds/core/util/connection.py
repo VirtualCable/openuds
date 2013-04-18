@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 import logging
 import socket
@@ -39,7 +40,7 @@ logger = logging.getLogger(__name__)
 def testServer(host, port, timeOut = 4):
     try:
         logger.debug('Checking connection to {0}:{1} with {2} seconds timeout'.format(host, port, timeOut))
-        sock = socket.create_connection((host, port), timeOut)
+        sock = socket.create_connection((host, int(port)), timeOut)
         sock.close()
     except Exception, e:
         logger.debug('Exception checking {0}:{1} with {2} timeout: {3}'.format(host, port, timeOut, e))
