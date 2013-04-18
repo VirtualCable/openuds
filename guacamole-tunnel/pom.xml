@@ -7,7 +7,7 @@
     <groupId>net.sourceforge.guacamole</groupId>
     <artifactId>transport</artifactId>
     <packaging>war</packaging>
-    <version>0.7.0</version>
+    <version>1.2.0</version>
     <name>Guacamole Transport</name>
     <url>http://openuds.org/</url>
 
@@ -62,15 +62,14 @@
         <dependency>
             <groupId>net.sourceforge.guacamole</groupId>
             <artifactId>guacamole-common</artifactId>
-            <version>0.7.0</version>
-            <scope>compile</scope>
+            <version>0.8.0</version>
         </dependency>
 
         <!-- Guacamole JavaScript library -->
         <dependency>
             <groupId>net.sourceforge.guacamole</groupId>
             <artifactId>guacamole-common-js</artifactId>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
             <type>zip</type>
             <scope>runtime</scope>
         </dependency>
