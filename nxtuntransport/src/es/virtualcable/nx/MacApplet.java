@@ -10,7 +10,7 @@ import java.util.UUID;
 public class MacApplet implements OsApplet {
 
 	private final String[] paths = { "/Applications/NX Client for OSX.app/Contents/MacOS/" };
-	private final String nxclient = "nxclient";
+	private final String app = "OpenNXapp";
 
 	private Hashtable<String,String> params;
 	private String tmpDir = "";
@@ -67,17 +67,17 @@ public class MacApplet implements OsApplet {
 		
 		for(int i = 0; i < paths.length; i++ )
 		{
-			File f = new File(paths[i] + nxclient);
+			File f = new File(paths[i] + app);
 			if( f.exists() )
 			{
-				execPath = paths[i] + nxclient;
+				execPath = paths[i] + app;
 				break;
 			}
 		}
 
 		if( execPath.length() == 0 ) 
 		{
-			javax.swing.JOptionPane.showMessageDialog(null, "Can't find nxclient client.\nShould be at /Applications/NX Client for OSX.app/Contents/MacOS/\nPlease, install it");
+			javax.swing.JOptionPane.showMessageDialog(null, "Can't find OpenNXapp client.\nShould be at /Applications/NX Client for OSX.app/Contents/MacOS/\nPlease, install it");
 			System.err.println("Can't find nxclient.");
 			return;
 		}
@@ -100,7 +100,7 @@ public class MacApplet implements OsApplet {
 	private void executeTunnel(String nxCmd) throws IOException
 	{
 		String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-		String [] exec = { java, "-jar", jarFileName, tunPort, nxCmd, "--session", nxFileName }; 
+		String [] exec = { java, "-jar", jarFileName, tunPort, nxCmd, "--session", nxFileName, "--autologin", "--killerrors" };
 		ProcessBuilder pb = new ProcessBuilder( exec );
 		Map<String,String> env = pb.environment();
 		env.put("TPARAMS", params.get("tun"));
