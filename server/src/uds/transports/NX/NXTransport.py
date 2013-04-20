@@ -175,7 +175,7 @@ class NXTransport(Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
             
-        return generateHtmlForNX(self, idUserService, idTransport, ip, username, password, extra)
+        return generateHtmlForNX(self, idUserService, idTransport, ip, os, username, password, extra)
         
     def getHtmlComponent(self, theId, os, componentId):
         # We use helper to keep this clean

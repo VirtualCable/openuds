@@ -36,7 +36,7 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from uds.core.util.Cache import Cache
 from uds.core.util import net
-from uds.core.auths.auth import getIp
+from uds.core.auths import auth
 import logging
 
 logger = logging.getLogger(__name__)
@@ -49,6 +49,7 @@ CONTENT_TYPE = 'text/plain'
 def dict2resp(dct):
     return '\r'.join(( k + '\t' + v  for k, v in dct.iteritems()))
 
+@auth.trustedSourceRequired
 def guacamole(request, tunnelId):
     logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
 
@@ -57,23 +58,6 @@ def guacamole(request, tunnelId):
         
         val = cache.get(tunnelId, None)
         
-        logger.debug('Value of cache element: {0}'.format(val))
-
-        # Add request source ip to request object        
-        getIp(request)
-    
-        # Ensure request for credentials are allowed
-        allowFrom = val['allow-from'].replace(' ', '')
-        # and remove allow-from from parameters
-        del val['allow-from']
-        
-        logger.debug('Checking validity of ip in network(s) {1}'.format(request.ip, allowFrom))
-        
-        if net.ipInNetwork(request.ip, allowFrom) is False:
-            logger.error('Ip {0} not allowed (not in range {1})'.format(request.ip, allowFrom))
-            raise Exception() # Ip not allowed
-        
-
         # Remove key from cache, just 1 use
         # Cache has a limit lifetime, so we will allow to "reload" the page  
         # cache.remove(tunnelId) 

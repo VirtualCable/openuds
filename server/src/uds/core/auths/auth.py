@@ -36,7 +36,7 @@ Provides useful functions for authenticating, used by web interface.
 from __future__ import unicode_literals
 
 from functools import wraps
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import log
 from uds.core import auths
@@ -53,24 +53,25 @@ authLogger = logging.getLogger('authLog')
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
 
-def getIp(request):
+def getIp(request, translateProxy = True):
     '''
     Obtains the IP of a Django Request, even behind a proxy
     
     Returns the obtained IP, that is always be a valid ip address.
     '''
     try:
+        if translateProxy is False:
+            raise KeyError()        # Do not allow HTTP_X_FORWARDED_FOR
         request.ip = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0]
     except KeyError:
         request.ip = request.META['REMOTE_ADDR']
     return request.ip
 
-# Decorator to make easier protect pages
+# Decorator to make easier protect pages that needs to be logged in
 def webLoginRequired(view_func):
     '''
-    Decorator to set protection to acces page 
-    To use this decorator, the view must receive 'response' and 'user'
-    example: view(response, user)
+    Decorator to set protection to access page
+    Look for samples at uds.core.web.views 
     '''
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -95,6 +96,25 @@ def webLoginRequired(view_func):
         getIp(request)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+# Decorator to protect pages that needs to be accessed from "trusted sites"
+def trustedSourceRequired(view_func):
+    '''
+    Decorator to set protection to access page
+    look for sample at uds.dispatchers.pam  
+    '''
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        '''
+        Wrapped function for decorator
+        '''
+        from uds.core.util import net
+        getIp(request, False)
+        if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
+            return HttpResponseForbidden()
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
 
 def __registerUser(authenticator, authInstance, username):
     '''

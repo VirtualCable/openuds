@@ -32,7 +32,7 @@
 '''
 
 from ..auths.AdminAuth import needs_credentials
-from uds.core.util.Config import Config
+from uds.core.util.Config import Config, GLOBAL_SECTION, SECURITY_SECTION
 
 import logging
 
@@ -42,7 +42,10 @@ logger = logging.getLogger(__name__)
 def getConfiguration(credentials):
     res = []
     addCrypt = credentials.isAdmin
-    for cfg in Config.enumerate():
+
+    priorities = { GLOBAL_SECTION: 0, SECURITY_SECTION: 1 }
+    
+    for cfg in (v[0] for v in sorted([(x, priorities.get(x.section(), 20)) for x in Config.enumerate()], key = lambda c:c[1])):
         if cfg.isCrypted() is True and addCrypt is False:
             continue
         res.append( {'section': cfg.section(), 'key' : cfg.key(), 'value' : cfg.get(), 'crypt': cfg.isCrypted(), 'longText': cfg.isLongText() } )

@@ -33,12 +33,14 @@
 
 from django.http import HttpResponseNotAllowed, HttpResponse
 from uds.core.util.Cache import Cache
+from uds.core.auths import auth
 import logging
 
 logger = logging.getLogger(__name__)
 
 # We will use the cache to "hold" the tickets valid for users
 
+@auth.trustedSourceRequired
 def pam(request):
     response = ''
     cache = Cache('pam')

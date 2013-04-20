@@ -39,7 +39,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 GLOBAL_SECTION = 'UDS'
-    
+SECURITY_SECTION = 'Security'
 
 class Config(object):
     '''
@@ -230,16 +230,21 @@ class GlobalConfig(object):
     # If disallow login using /login url, and must go to an authenticator
     DISALLOW_GLOBAL_LOGIN = Config.section(GLOBAL_SECTION).value('disallowGlobalLogin', '0')
     
+    # Allowed "trusted sources" for request
+    TRUSTED_SOURCES = Config.section(SECURITY_SECTION).value('Trusted Hosts', '*')
+    
     initDone = False
     
     @staticmethod
     def initialize():
         try:
-            # All configurations are upper case 
-            # Tries to initialize database data for global config so it is stored asap and get cached for use
-            for v in GlobalConfig.__dict__.itervalues():
-                if type(v) is Config._Value:
-                    v.get()
+            if GlobalConfig.initDone is False:
+                # All configurations are upper case 
+                # Tries to initialize database data for global config so it is stored asap and get cached for use
+                for v in GlobalConfig.__dict__.itervalues():
+                    if type(v) is Config._Value:
+                        v.get()
+            GlobalConfig.initDone = True
         except:
             logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
             
