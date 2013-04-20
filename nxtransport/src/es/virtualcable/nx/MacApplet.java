@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.UUID;
 
+// Adapted to Mac OS X Lion by Virginio
+
 public class MacApplet implements OsApplet {
 	
-	private final String[] paths = { "/Applications/NX Client for OSX.app/Contents/MacOS/" };
-	private final String nxclient = "nxclient";
+	private final String[] paths = { "/Applications/OpenNX/OpenNX.app/Contents/MacOS/" };
+	private final String app = "OpenNXapp";
 	
 	private Hashtable<String,String> params;
 	private String tmpDir = "";
@@ -17,6 +19,7 @@ public class MacApplet implements OsApplet {
 	private String nxFileName = "";
 	private String scrWidth;
 	private String scrHeight;
+	private String msg;
 
 	public void start() {
 		tmpDir  = System.getProperty("java.io.tmpdir") + File.separator;
@@ -51,6 +54,7 @@ public class MacApplet implements OsApplet {
 		} catch (IOException e) {
 			javax.swing.JOptionPane.showMessageDialog(null, "Can't save nx temporal file: " + e.getMessage());
 			e.printStackTrace();
+			msg = "DISK_WRITE_ERROR";
 			return;
 		}
 		
@@ -58,25 +62,27 @@ public class MacApplet implements OsApplet {
 		
 		for(int i = 0; i < paths.length; i++ )
 		{
-			File f = new File(paths[i] + nxclient);
+			File f = new File(paths[i] + app);
 			if( f.exists() )
 			{
-				execPath = paths[i] + nxclient;
+				execPath = paths[i] + app;
 				break;
 			}
 		}
 		
 		if( execPath.length() == 0 ) 
 		{
-			javax.swing.JOptionPane.showMessageDialog(null, "Can't find nxclient client.\nShould be at /Applications/NX Client for OSX.app/Contents/MacOS/\nPlease, install it");
-			System.err.println("Can't find nxclient.");
+			javax.swing.JOptionPane.showMessageDialog(null, "Can't find OpenNX. Install it from http://opennx.net/");
+			System.err.println("Can't find OpenNX executable");
+			msg = "PROGRAM_NOT_FOUND";
 			return;
 		}
 		
 		ArrayList<String> exec = new ArrayList<String>();
 		exec.add(execPath);
-		exec.add("--session");
-		exec.add(nxFileName);
+		exec.add("--session=" + nxFileName);
+		exec.add("--autologin");
+		exec.add("--killerrors");
 		
 		try {
 			ProcessBuilder pb = new ProcessBuilder(exec);
@@ -84,6 +90,7 @@ public class MacApplet implements OsApplet {
 		} catch(Exception e) {
 			javax.swing.JOptionPane.showMessageDialog(null,"Exception at applet:\n" + e.getMessage());
 			e.printStackTrace();
+			msg = "APPLET_ERROR";
 			return;
 		}
 	}
@@ -102,6 +109,10 @@ public class MacApplet implements OsApplet {
 		baseUrl = urlBase;
 		scrWidth = Integer.toString(screenWidth);
 		scrHeight = Integer.toString(screenHeight);		
+	}
+
+	public String getMessage() {
+		return msg;
 	}
 
 }
