@@ -32,7 +32,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-18 12:32+0200\n"
-"PO-Revision-Date: 2013-03-06 08:17+0100\n"
+"PO-Revision-Date: 2013-04-22 06:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
 "Language: es\n"
@@ -72,18 +72,16 @@ msgid "Different user for each host"
 msgstr "Usuario diferente para cada host"
 
 #: auths/InternalDB/Authenticator.py:59
-#, fuzzy
 msgid "If checked, each host will have a different user name"
-msgstr "Si está activado, el audio será redirigido al cliente"
+msgstr "Si está activado, cada host generará un nombre de usuario diferente"
 
 #: auths/InternalDB/Authenticator.py:60
 msgid "Reverse DNS"
 msgstr "Reverse DNS"
 
 #: auths/InternalDB/Authenticator.py:60
-#, fuzzy
 msgid "If checked, the host will be reversed dns"
-msgstr "Si está activado, el audio será redirigido al cliente"
+msgstr "Si está activado, el nombre de host será resuelto de forma inversa"
 
 #: auths/InternalDB/Authenticator.py:117
 msgid "Internal structures seems ok"
@@ -970,14 +968,12 @@ msgid "Language"
 msgstr "Idioma"
 
 #: transports/HTML5RDP/HTML5RDP.py:54
-#, fuzzy
 msgid "HTML5 RDP Transport"
-msgstr "Transporte RDP (directo)"
+msgstr "Transporte RDP HTML5"
 
 #: transports/HTML5RDP/HTML5RDP.py:56
-#, fuzzy
 msgid "RDP Transport using HTML5 client"
-msgstr "Transporte RDP (vía túnel)"
+msgstr "Transporte RDP usando un cliente HTML5"
 
 #: transports/HTML5RDP/HTML5RDP.py:60
 #, fuzzy
@@ -986,7 +982,8 @@ msgstr "Servidor de túnel"
 
 #: transports/HTML5RDP/HTML5RDP.py:60
 msgid "Host of the tunnel server (use http/https & port if needed)"
-msgstr "Host del servidor de túnel (http/https de uso & puerto si es necesario)"
+msgstr ""
+"Host del servidor de túnel (http/https de uso & puerto si es necesario)"
 
 #: transports/HTML5RDP/HTML5RDP.py:61
 msgid "Allowed hosts"
@@ -997,7 +994,8 @@ msgid ""
 "Hosts allowed to ask for credentials for users (use * for all host, but not "
 "recommended). Comma separated list"
 msgstr ""
-"Anfitriones permitieron para solicitar credenciales para los usuarios (use * de todos los host, pero no "
+"Anfitriones permitieron para solicitar credenciales para los usuarios (use * "
+"de todos los host, pero no "
 "recomendado). Lista separada por comas"
 
 #: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
