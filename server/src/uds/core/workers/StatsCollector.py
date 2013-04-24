@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 from uds.models import DeployedService
 from uds.core.util.State import State
 from uds.core.util.stats import counters
-from uds.core.managers import StatsManager
+from uds.core.managers import statsManager
 from uds.core.jobs.Job import Job
 
 import logging
@@ -84,12 +84,12 @@ class StatsCleaner(Job):
     def run(self):
         logger.debug('Starting statistics cleanup')
         try:
-            StatsManager().cleanupCounters()
+            statsManager().cleanupCounters()
         except:
             logger.exception('Cleaning up counters')
             
         try:
-            StatsManager().cleanupEvents()
+            statsManager().cleanupEvents()
         except:
             logger.exception('Cleaning up events')
             
