@@ -82,7 +82,12 @@ class Config(object):
             try:
                 return int(self.get(force))
             except Exception:
-                return self._default
+                logger.error('Value for {0}.{1} is invalid (integer expected)'.format(self._section, self._key))
+                try:
+                    return int(self._default)
+                except:
+                    logger.error('Default value for {0}.{1} is also invalid (integer expected)'.format(self._section, self._key))
+                    return -1
             
         def getBool(self, force = False):
             if self.get(force) == '0':
