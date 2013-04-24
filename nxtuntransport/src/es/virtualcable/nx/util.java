@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class util {
 
@@ -93,6 +94,37 @@ public class util {
 		} catch(Exception e) {
 			System.out.println("Unable to get url? " + e.getMessage());
 		}
+	}
+	
+	
+	public static ArrayList<String> splitCommandLine(String cmd) {
+		boolean inQuotes = false;
+		ArrayList<String> res = new ArrayList<String>();
+		String tmp = "";
+		for( char c : cmd.toCharArray() ) {
+			if( c == '"' ) {
+				if( inQuotes ) {
+					res.add(tmp);
+					tmp = "";
+					inQuotes = false;
+					continue;
+				}
+				inQuotes = true;
+				continue;
+			}
+			if( c == ' ' && inQuotes == false) {
+				if( tmp.length() > 0 ) {
+					res.add(tmp);
+					tmp = "";
+					continue;
+				}
+				continue;
+			}
+			tmp += c;
+		}
+		if( tmp.length() > 0 )
+			res.add(tmp);
+		return res;
 	}
 	
 }

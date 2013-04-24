@@ -100,7 +100,7 @@ public class WindowsApplet implements OsApplet {
 	{
 		String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
 		String cmd = "\"" + java + "\" -jar " + jarFileName + " " + tunPort + " " + nxCmd;
-		ProcessBuilder pb = new ProcessBuilder( cmd );
+		ProcessBuilder pb = new ProcessBuilder( util.splitCommandLine(cmd ));
 		Map<String,String> env = pb.environment();
 		env.put("TPARAMS", params.get("tun"));
 		System.out.println("TPARAMS: " + params.get("tun"));
