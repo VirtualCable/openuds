@@ -69,9 +69,8 @@ public class WindowsApplet implements OsApplet {
 			{
 				nxFileName = nxFileName.replace("\\", "\\\\");
 				cmd = cmd.replaceAll("%1", nxFileName);
-				System.out.println(cmd);
-				// Process p = 
-				Runtime.getRuntime().exec( cmd );
+				ProcessBuilder pb = new ProcessBuilder(util.splitCommandLine(cmd));
+				pb.start();
 			}
 		} catch (Exception e) {
 			javax.swing.JOptionPane.showMessageDialog(null,"Exception at applet:\n" + e.getMessage());
