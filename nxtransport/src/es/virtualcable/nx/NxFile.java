@@ -111,7 +111,7 @@ public class NxFile {
 			"    <option key=\"Session\" value=\"unix\" />\n" +
 			"    <option key=\"Desktop\" value=\"{DESKTOP}\" />\n" +
 			"    <option key=\"Use default image encoding\" value=\"1\" />\n" +
-			"    <option key=\"Use render\" value=\"true\" />\n" +
+			"    <option key=\"Use render\" value=\"false\" />\n" +
 			"    <option key=\"Use taint\" value=\"true\" />\n" +
 			"    <option key=\"Virtual desktop\" value=\"false\" />\n" +
 			"    <option key=\"XAgent encoding\" value=\"true\" />\n" +
