@@ -27,7 +27,7 @@ public class WindowsApplet implements OsApplet {
 		params = parameters;
 		baseUrl = urlBase;
 		scrWidth = Integer.toString(screenWidth);
-		scrHeight = Integer.toString(screenHeight);		
+		scrHeight = Integer.toString(screenHeight);
 	}
 
 	public void start() {
