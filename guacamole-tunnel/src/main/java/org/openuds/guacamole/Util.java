@@ -8,8 +8,10 @@ import java.io.InputStreamReader;
 import java.security.cert.X509Certificate;
 import java.util.Hashtable;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -74,6 +76,9 @@ public class Util {
 			java.net.URL u = new java.net.URL(baseUrl + id);
 			java.net.URLConnection uc = u.openConnection();
 			
+			System.out.println(baseUrl);
+			System.out.println(uc);
+			
 			// If ignoring server certificates, disable ssl certificate checking
 			if( ignoreCert && uc instanceof HttpsURLConnection) {
 				((HttpsURLConnection)uc).setSSLSocketFactory( sslSocketFactory );
@@ -115,9 +120,50 @@ public class Util {
 	
 	
 	public static String getUrl(String url) {
+		return Util.getUrl(url, true);
+	}
+	
+	public static String getUrl(String url, boolean ignoreCert) {
 		try {
+			// SSL Part got from sample at http://code.google.com/p/misc-utils/wiki/JavaHttpsUrl
+		    final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+		        @Override
+		        public void checkClientTrusted( final X509Certificate[] chain, final String authType ) {
+		        }
+		        @Override
+		        public void checkServerTrusted( final X509Certificate[] chain, final String authType ) {
+		        }
+		        @Override
+		        public X509Certificate[] getAcceptedIssuers() {
+		            return null;
+		        }
+		    } };
+			    
+		    // Install the all-trusting trust manager
+		    final SSLContext sslContext = SSLContext.getInstance( "SSL" );
+		    sslContext.init( null, trustAllCerts, new java.security.SecureRandom() );
+		    // Create an ssl socket factory with our all-trusting manager
+		    final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+			
 			java.net.URL u = new java.net.URL(url);
-			BufferedReader in = new BufferedReader(new InputStreamReader(u.openStream()));
+			java.net.URLConnection uc = u.openConnection();
+			
+			System.out.println(url);
+			System.out.println(uc instanceof HttpsURLConnection);
+			
+			// If ignoring server certificates, disable ssl certificate checking and hostname checking
+			if( ignoreCert && uc instanceof HttpsURLConnection) {
+				((HttpsURLConnection)uc).setSSLSocketFactory( sslSocketFactory );
+				((HttpsURLConnection)uc).setHostnameVerifier(
+				        new HostnameVerifier() {
+							@Override
+							public boolean verify(String arg0, SSLSession arg1) {
+								return true;
+							}
+				        });
+			}
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 			StringBuilder data = new StringBuilder();
 			
 			String inputLine;
