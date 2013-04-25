@@ -50,6 +50,7 @@ public class Util {
 	
 	public static boolean download(String baseUrl, String id, String outputFileName, boolean ignoreCert)
 	{
+		// SSL Part got from sample at http://code.google.com/p/misc-utils/wiki/JavaHttpsUrl
 		try {
 		    final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 		        @Override
