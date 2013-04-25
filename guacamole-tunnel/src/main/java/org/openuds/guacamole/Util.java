@@ -5,7 +5,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.cert.X509Certificate;
 import java.util.Hashtable;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 public class Util {
 	
@@ -36,11 +43,41 @@ public class Util {
 	}
 	
 	
-	public static boolean download(String baseUrl, String id, String outputFileName)
+	public static boolean download(String baseUrl, String id, String outputFileName) 
+	{
+		return Util.download(baseUrl, id, outputFileName, true);
+	}
+	
+	public static boolean download(String baseUrl, String id, String outputFileName, boolean ignoreCert)
 	{
 		try {
+		    final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+		        @Override
+		        public void checkClientTrusted( final X509Certificate[] chain, final String authType ) {
+		        }
+		        @Override
+		        public void checkServerTrusted( final X509Certificate[] chain, final String authType ) {
+		        }
+		        @Override
+		        public X509Certificate[] getAcceptedIssuers() {
+		            return null;
+		        }
+		    } };
+		    
+		 // Install the all-trusting trust manager
+		    final SSLContext sslContext = SSLContext.getInstance( "SSL" );
+		    sslContext.init( null, trustAllCerts, new java.security.SecureRandom() );
+		    // Create an ssl socket factory with our all-trusting manager
+		    final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+			
 			java.net.URL u = new java.net.URL(baseUrl + id);
 			java.net.URLConnection uc = u.openConnection();
+			
+			// If ignoring server certificates, disable ssl certificate checking
+			if( ignoreCert && uc instanceof HttpsURLConnection) {
+				((HttpsURLConnection)uc).setSSLSocketFactory( sslSocketFactory );
+			}
+			
 		    String contentType = uc.getContentType();
 		    int contentLength = uc.getContentLength();
 		    if (contentType.startsWith("text/") || contentLength == -1) {
