@@ -30,6 +30,7 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 import cPickle
@@ -782,7 +783,11 @@ class UserInterface(object):
                     continue
                 self._gui[k].value = self._gui[k].defValue 
             
-            for txt in values.decode('zip').split('\002'):
+            values =  values.decode('zip')
+            if values == '': # Has nothing
+                return
+            
+            for txt in values.split('\002'):
                 k, v = txt.split('\003')
                 if self._gui.has_key(k):
                     try:
@@ -795,7 +800,8 @@ class UserInterface(object):
                     self._gui[k].value = val
                 #logger.debug('Value for {0}:{1}'.format(k, val))
         except:
-            logger.info('Seralized data invalid: {0}'.format(values))
+            # Values can contain invalid characters, so we log every single char
+            logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
     
     @classmethod
     def guiDescription(cls, obj = None):

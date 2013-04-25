@@ -48,23 +48,5 @@ class PhysicalMachinesProvider(services.ServiceProvider):
     from IPMachinesService import IPMachinesService
     offers = [IPMachinesService]
 
-    def __init__(self, environment, values = None):
-        '''
-        Initializes the Physical Machines Service Provider
-        @param values: a dictionary with the required values, that are the ones declared for gui 
-        '''
-        super(PhysicalMachinesProvider, self).__init__(environment, values)
-    
-    def marshal(self):
-        '''
-        Serializes the service provider data so we can store it in database
-        '''
-        return str.join( '\t', [ 'v1' ] ) 
-    
-    def unmarshal(self, str_):
-        data = str_.split('\t')
-        if data[0] == 'v1':
-            pass
-        
-    def __str__(self):
-        return "Physical Machines Provider: " +  self.marshal()
+    def __unicode__(self):
+        return "Physical Machines Provider"
