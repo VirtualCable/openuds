@@ -10,7 +10,7 @@ import es.virtualcable.rdp.util;
 
 public class WindowsApplet implements OsApplet {
 
-	private static final String MSTSC_CMD = "c:\\windows\\system32\\mstsc.exe";
+	private static final String MSTSC_CMD_REL = "\\system32\\mstsc.exe";
 	
 	private Hashtable<String,String> params;
 	private String scrWidth;
@@ -108,6 +108,7 @@ public class WindowsApplet implements OsApplet {
 	private void executeTunnel() throws IOException
 	{
 		String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
+		String MSTSC_CMD = System.getenv("SystemRoot") + MSTSC_CMD_REL;
 		String [] cmd = { java, "-jar", jarFileName, tunPort, MSTSC_CMD, rdpFileName };  
 		ProcessBuilder pb = new ProcessBuilder( cmd );
 		Map<String,String> env = pb.environment();
@@ -120,6 +121,7 @@ public class WindowsApplet implements OsApplet {
 	
 	private void executeDirect() throws IOException
 	{
+		String MSTSC_CMD = System.getenv("SystemRoot") + MSTSC_CMD_REL;
 		Runtime.getRuntime().exec( MSTSC_CMD + " \"" + rdpFileName + "\"" );
 	}
 	
