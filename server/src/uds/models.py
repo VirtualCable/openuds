@@ -743,7 +743,10 @@ class User(models.Model):
         returns the groups (and metagroups) this user belongs to
         '''
         if self.parent != -1:
-            usr = User.objects.get(id=self.parent)
+            try:
+                usr = User.objects.get(id=self.parent)
+            except: # If parent do not exists
+                usr = self
         else:
             usr = self
         
