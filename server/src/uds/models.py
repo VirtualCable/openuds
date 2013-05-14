@@ -671,6 +671,7 @@ class User(models.Model):
     staff_member = models.BooleanField(default = False) # Staff members can login to admin
     is_admin = models.BooleanField(default = False) # is true, this is a super-admin
     last_access = models.DateTimeField(default=NEVER)
+    parent = models.IntegerField(default=-1)
     
     class Meta:
         '''
@@ -741,12 +742,17 @@ class User(models.Model):
         '''
         returns the groups (and metagroups) this user belongs to
         '''
+        if self.parent != -1:
+            usr = User.objects.get(id=self.parent)
+        else:
+            usr = self
+        
         grps = list()
-        for g in self.groups.filter(is_meta=False):
+        for g in usr.groups.filter(is_meta=False):
             grps += (g.id,)
             yield g
         # Locate metagroups
-        for g in Group.objects.filter(manager__id=self.manager.id, is_meta=True):
+        for g in Group.objects.filter(manager__id=usr.manager.id, is_meta=True):
             gn = g.groups.filter(id__in=grps).count() 
             if gn == g.groups.count(): # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
