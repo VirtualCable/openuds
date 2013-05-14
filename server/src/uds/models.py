@@ -778,6 +778,9 @@ class User(models.Model):
         # be removed
         toDelete.getManager().removeUser(toDelete.name)
         
+        # now removes all "child" of this user, if it has children
+        User.objects.filter(parent=toDelete.id).delete()
+        
         # Remove related logs
         log.clearLogs(toDelete)
         
