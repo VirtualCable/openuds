@@ -138,7 +138,7 @@ def modifyUser(credentials, usr):
         user.state =  usr['state']
         user.save()
         # Now add/removes groups acordly
-        if auth.isExternalSource == False:
+        if auth.isExternalSource == False and user.parent == -1:
             newGrps = {}
             knownGrps = user.groups.all()
             # Add new groups, and keep a dict of all groups selected

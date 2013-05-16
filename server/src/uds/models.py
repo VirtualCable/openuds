@@ -1073,7 +1073,7 @@ class DeployedService(models.Model):
         # Now get deployed services that DO NOT NEED publication
         doNotNeedPublishing = [ t.type() for t in services.factory().servicesThatDoNotNeedPublication() ]
         list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state__exact=State.ACTIVE, service__data_type__in=doNotNeedPublishing, state = State.ACTIVE)
-        return [ r for r in list1 ] + [ r for r in list2 ]
+        return list(set([ r for r in list1 ] + [ r for r in list2 ]))
         
     
     def publish(self):

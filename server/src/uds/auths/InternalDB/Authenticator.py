@@ -90,7 +90,7 @@ class InternalDBAuth(Authenticator):
                 usr.parent = parent
                 usr.save()
             except:
-                logger.exception('Exception')
+                pass # User already exists
             username = newUsername
             
         return username

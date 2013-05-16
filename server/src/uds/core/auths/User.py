@@ -86,9 +86,7 @@ class User(object):
             else:
                 # From db
                 usr = DbUser.objects.get(pk=self._dbUser.id)
-                self._groups = []
-                for g in usr.getGroups():
-                    self._groups.append(Group(g))
+                self._groups = [Group(g) for g in usr.getGroups()]
         return self._groups
             
         
