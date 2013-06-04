@@ -95,7 +95,7 @@ public class LinuxApplet implements OsApplet {
 				exec.add("-g" + width + "x" + height);
 			
 			if (redirectSmartcards)
-				exec.add("-r scard"); 
+				exec.add("-rscard"); 
 			
 			exec.add("-TUDS-RDP");
 			exec.add("-P");
