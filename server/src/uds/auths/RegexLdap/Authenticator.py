@@ -55,8 +55,8 @@ class RegexLdap(auths.Authenticator):
     ldapBase = gui.TextField(length=64, label = _('Base'), order = 7, tooltip = _('Common search base (used for "users" and "groups"'), required = True)
     userClass = gui.TextField(length=64, label = _('User class'), defvalue = 'posixAccount', order = 8, tooltip = _('Class for LDAP users (normally posixAccount)'), required = True)
     userIdAttr = gui.TextField(length=64, label = _('User Id Attr'), defvalue = 'uid', order = 9, tooltip = _('Attribute that contains the user id'), required = True)
-    userNameAttr = gui.TextField(length=64, label = _('User Name Attr'), multiline=2, defvalue = 'uid', order = 10, tooltip = _('Attributes that contains the user name (list of comma separated values)'), required = True)
-    groupNameAttr = gui.TextField(length=64, label = _('Group Name Attr'), multiline=2, defvalue = 'cn', order = 11, tooltip = _('Attribute that contains the group name'), required = True)
+    userNameAttr = gui.TextField(length=640, label = _('User Name Attr'), multiline=2, defvalue = 'uid', order = 10, tooltip = _('Attributes that contains the user name (list of comma separated values)'), required = True)
+    groupNameAttr = gui.TextField(length=640, label = _('Group Name Attr'), multiline=2, defvalue = 'cn', order = 11, tooltip = _('Attribute that contains the group name'), required = True)
     #regex = gui.TextField(length=64, label = _('Regular Exp. for groups'), defvalue = '^(.*)', order = 12, tooltip = _('Regular Expression to extract the group name'), required = True)
 
     typeName = _('Regex LDAP Authenticator') 
@@ -129,7 +129,7 @@ class RegexLdap(auths.Authenticator):
         res = []            
         for line in field.splitlines():
             equalPos = line.find('=') 
-            if line.find('=') != -1:
+            if equalPos != -1:
                 attr = line[:equalPos]
             else:
                 attr = line
@@ -137,11 +137,10 @@ class RegexLdap(auths.Authenticator):
         return res
     
     def __processField(self, field, attributes):
-        import re
         res = []
         for line in field.splitlines():
             equalPos = line.find('=') 
-            if line.find('=') != -1:
+            if equalPos != -1:
                 attr, pattern = (line[:equalPos], line[equalPos+1:])
                 attr = attr.lower()
                 # if pattern do not have groups, define one with full re
