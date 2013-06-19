@@ -447,14 +447,13 @@ class UserServiceManager(object):
         UserServiceOpChecker.makeUnique(uService, ui, state)
         return False
 
-    @transaction.commit_on_success
     def checkForRemoval(self, uService):
-        uService = UserService.objects.select_for_update().get(id=uService.id)
+        #uService = UserService.objects.select_for_update().get(id=uService.id)
         if uService.publication == None:
             return
         if uService.publication.id != uService.deployed_service.activePublication().id:
             logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
-            uService.setState(State.REMOVABLE)
+            uService.remove()
             
                 
     def notifyReadyFromOsManager(self, uService, data):

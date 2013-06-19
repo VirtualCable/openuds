@@ -153,8 +153,10 @@ class WindowsOsManager(osmanagers.OSManager):
             notifyReady = True
             self.notifyIp(service.unique_id, si, data)
             service.updateData(si)
+            
         service.setInUse(inUse)
         service.setOsState(state)
+        
         # If notifyReady is not true, save state, let UserServiceManager do it for us else
         if doRemove is True:
             service.remove()
