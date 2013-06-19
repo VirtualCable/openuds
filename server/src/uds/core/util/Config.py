@@ -238,6 +238,10 @@ class GlobalConfig(object):
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES = Config.section(SECURITY_SECTION).value('Trusted Hosts', '*')
     
+    # How long will a service "in use" be allowed to exists once a new publication is launched, defaults to 3 days
+    # This is expressed in hours
+    KEEP_IN_USE_HOURS = Config.section(GLOBAL_SECTION).value('Keep In Use Hours', '72') 
+    
     initDone = False
     
     @staticmethod

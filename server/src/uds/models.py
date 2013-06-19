@@ -1006,7 +1006,7 @@ class DeployedService(models.Model):
         self.setState(State.REMOVED)
 
         
-    def markOldDeployedServicesAsRemovables(self, activePub):
+    def markOldUserServicesAsRemovables(self, activePub):
         '''
         Used when a new publication is finished.
         

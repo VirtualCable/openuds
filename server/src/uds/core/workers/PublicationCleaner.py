@@ -52,7 +52,7 @@ class PublicationInfoItemsCleaner(Job):
         super(PublicationInfoItemsCleaner,self).__init__(environment)
         
     def run(self):
-        removeFrom = getSqlDatetime() - timedelta(seconds = GlobalConfig.KEEP_INFO_TIME.getInt())
+        removeFrom = getSqlDatetime() - timedelta(seconds = GlobalConfig.KEEP_INFO_TIME.getInt(True))
         DeployedServicePublication.objects.filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
 
 class PublicationCleaner(Job):
@@ -63,13 +63,17 @@ class PublicationCleaner(Job):
         super(PublicationCleaner,self).__init__(environment)
         
     def run(self):
-        removables = DeployedServicePublication.objects.filter(state=State.REMOVABLE)[0:3]
+        removables = DeployedServicePublication.objects.filter(state=State.REMOVABLE)
         for removable in removables:
             try:
                 PublicationManager.manager().unpublish(removable)
             except PublishException: # Can say that it cant be removed right now
                 logger.debug('Delaying removal')
                 pass
-            
-
-    
+        # Now check too long "in use" services for all publications
+        now = getSqlDatetime()
+        removeFrom = now - timedelta(hours = GlobalConfig.KEEP_IN_USE_HOURS.getInt(True))
+        for dsp in removables.filter(state_date__lt=removeFrom):
+            dsp.deployed_service.filter(in_use=True).update(in_use=False, state_date=now)
+            dsp.deployed_service.markOldUserServicesAsRemovables(dsp)
+        
