@@ -448,6 +448,10 @@ class UserServiceManager(object):
         return False
 
     def checkForRemoval(self, uService):
+        '''
+        This method is used by UserService when a request for setInUse(False) is made
+        This checks that the service can continue existing or not
+        '''
         #uService = UserService.objects.select_for_update().get(id=uService.id)
         if uService.publication == None:
             return
