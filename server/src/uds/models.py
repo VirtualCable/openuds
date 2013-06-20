@@ -1279,6 +1279,9 @@ class DeployedServicePublication(models.Model):
         
         logger.debug('Deleted publication {0}'.format(toDelete))
         
+    def __unicode__(self):
+        return 'Publication {0}, rev {1}, state {2}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
+        
         
 
 # Connects a pre deletion signal to Authenticator

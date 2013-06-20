@@ -74,6 +74,7 @@ class PublicationCleaner(Job):
         now = getSqlDatetime()
         removeFrom = now - timedelta(hours = GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))
         for dsp in removables.filter(state_date__lt=removeFrom):
-            dsp.deployed_service.filter(in_use=True).update(in_use=False, state_date=now)
-            dsp.deployed_service.markOldUserServicesAsRemovables(dsp)
+            activePub = dsp.deployed_service.activePublication()
+            dsp.deployed_service.userServices.filter(in_use=True).update(in_use=False, state_date=now)
+            dsp.deployed_service.markOldUserServicesAsRemovables(activePub)
         

@@ -153,6 +153,28 @@ def getUserDeployedServiceError(credentials, idService):
         raise FindException(_('User deployed service not found!!!'))
     return error
 
+@needs_credentials
+def develAction(credentials, action, ids ):
+    logger.debug('Devel action invoked: {0} for {1}'.format(action, ids))
+    try:
+        for uds in UserService.objects.filter(id__in=ids):
+            if action == "inUse":
+                logger.debug('Setting {0} to in use'.format(uds.friendly_name))
+                uds.setInUse(True)
+            elif action == "releaseInUse":
+                logger.debug('Releasing in use from {0}'.format(uds.friendly_name))
+                uds.setState(State.USABLE)
+                uds.setInUse(False)
+            else:
+                logger.debug('Setting {0} to usable'.format(uds.friendly_name))
+                uds.setState(State.USABLE)
+                if uds.needsOsManager():
+                    uds.setOsState(State.USABLE)
+            uds.save()
+    except UserService.DoesNotExist:
+        raise FindException(_('User deployed service not found!!!'))
+    return True
+
 # Registers XML RPC Methods
 def registerUserDeployedServiceFunctions(dispatcher):
     dispatcher.register_function(getCachedDeployedServices, 'getCachedDeployedServices')
@@ -161,3 +183,4 @@ def registerUserDeployedServiceFunctions(dispatcher):
     dispatcher.register_function(assignDeployedService, 'assignDeployedService')
     dispatcher.register_function(removeUserService, 'removeUserService')
     dispatcher.register_function(getUserDeployedServiceError, 'getUserDeployedServiceError')
+    dispatcher.register_function(develAction, "develAction")
