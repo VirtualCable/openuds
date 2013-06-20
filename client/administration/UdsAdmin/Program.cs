@@ -44,6 +44,16 @@ namespace UdsAdmin
         [STAThread]
         static void Main()
         {
+            string[] args = Environment.GetCommandLineArgs();
+
+            foreach (string arg in args)
+            {
+                if (arg == "--enabledebug" || arg == "--enabledevel")
+                    UdsAdmin.Properties.Settings.Default.debug = true;
+                else if (arg == "--disabledebug" || arg == "--disabledevel")
+                    UdsAdmin.Properties.Settings.Default.debug = false;
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             CultureInfo culture = new CultureInfo(UdsAdmin.Properties.Settings.Default.Locale);

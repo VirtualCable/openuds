@@ -65,6 +65,15 @@ namespace UdsAdmin.controls.panel
             ToolStripMenuItem assign = new ToolStripMenuItem(Strings.assignToUser); assign.Click += assignToUser; assign.Image = Images.new16;
             _assignMenu.Items.AddRange(new ToolStripItem[] { assign });
 
+            if (UdsAdmin.Properties.Settings.Default.debug == true)
+            {
+                ToolStripSeparator sep = new ToolStripSeparator();
+                ToolStripMenuItem debug1 = new ToolStripMenuItem(Strings.setActive); debug1.Name = UdsAdmin.gui.ActionTree.SET_ACTIVE_ACTION; debug1.Click += develMenu;
+                ToolStripMenuItem debug2 = new ToolStripMenuItem(Strings.setInUse); debug2.Name = UdsAdmin.gui.ActionTree.SET_INUSE_ACTION; debug2.Click += develMenu;
+                ToolStripMenuItem debug3 = new ToolStripMenuItem(Strings.releaseInUse); debug3.Name = UdsAdmin.gui.ActionTree.RELEASE_INUSE_ACTION; debug3.Click += develMenu;
+                _deleteMenu.Items.AddRange(new ToolStripItem[] { sep, debug1, debug2, debug3 });
+            }
+
             // Adapt listview to cache or users
             if (cache)
             {
@@ -156,6 +165,31 @@ namespace UdsAdmin.controls.panel
             UdsAdmin.forms.AssignDeployed form = new UdsAdmin.forms.AssignDeployed(_parent);
             if (form.ShowDialog() == DialogResult.OK)
                 updateList();
+        }
+
+        private void develMenu(object sender, EventArgs e)
+        {
+            ToolStripMenuItem s = (ToolStripMenuItem)sender;
+
+            if (listView.SelectedItems.Count == 0)
+                return;
+
+            string[] ids = new string[listView.SelectedItems.Count];
+            int n = 0;
+
+            foreach (ListViewItem i in listView.SelectedItems)
+                ids[n++] = (string)i.Tag;
+
+            try
+            {
+                xmlrpc.UdsAdminService.DevelAction(s.Name, ids);
+            }
+            catch (CookComputing.XmlRpc.XmlRpcFaultException ex)
+            {
+                gui.UserNotifier.notifyRpcException(ex);
+            }
+
+            updateList();
         }
 
         private void infoItem(object sender, EventArgs e)

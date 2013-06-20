@@ -907,7 +907,7 @@
     <value>0, 0, 0, 0</value>
   </data>
   <data name="logViewer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>721, 69</value>
+    <value>721, 70</value>
   </data>
   <data name="logViewer1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -916,7 +916,7 @@
     <value>logViewer1</value>
   </data>
   <data name="&gt;&gt;logViewer1.Type" xml:space="preserve">
-    <value>UdsAdmin.controls.panel.LogViewer, UdsAdmin, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>UdsAdmin.controls.panel.LogViewer, UdsAdmin, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;logViewer1.Parent" xml:space="preserve">
     <value>splitContainer1.Panel2</value>
@@ -937,7 +937,7 @@
     <value>1</value>
   </data>
   <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>721, 474</value>
+    <value>721, 475</value>
   </data>
   <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
     <value>397</value>
@@ -952,7 +952,7 @@
     <value>splitContainer1</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
-    <value>UdsAdmin.controls.SplitContainerEx, UdsAdmin, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>UdsAdmin.controls.SplitContainerEx, UdsAdmin, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
     <value>tabPage1</value>
@@ -961,13 +961,13 @@
     <value>0</value>
   </data>
   <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 23</value>
+    <value>4, 22</value>
   </data>
   <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>727, 480</value>
+    <value>727, 481</value>
   </data>
   <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -997,7 +997,7 @@
     <value>3, 240</value>
   </data>
   <data name="inUseChart.Size" type="System.Drawing.Size, System.Drawing">
-    <value>715, 231</value>
+    <value>715, 232</value>
   </data>
   <data name="inUseChart.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -1006,7 +1006,7 @@
     <value>inUseChart</value>
   </data>
   <data name="&gt;&gt;inUseChart.Type" xml:space="preserve">
-    <value>UdsAdmin.controls.panel.ChartPanel, UdsAdmin, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>UdsAdmin.controls.panel.ChartPanel, UdsAdmin, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;inUseChart.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -1030,7 +1030,7 @@
     <value>assignedChart</value>
   </data>
   <data name="&gt;&gt;assignedChart.Type" xml:space="preserve">
-    <value>UdsAdmin.controls.panel.ChartPanel, UdsAdmin, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>UdsAdmin.controls.panel.ChartPanel, UdsAdmin, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;assignedChart.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -1048,7 +1048,7 @@
     <value>2</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>721, 474</value>
+    <value>721, 475</value>
   </data>
   <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -1069,13 +1069,13 @@
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="inUseChart" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="assignedChart" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,50,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 23</value>
+    <value>4, 22</value>
   </data>
   <data name="tabPage2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>727, 480</value>
+    <value>727, 481</value>
   </data>
   <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>

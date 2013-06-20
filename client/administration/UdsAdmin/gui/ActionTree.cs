@@ -72,6 +72,9 @@ namespace UdsAdmin.gui
         public const string DELETE_ACTION = "delete";
         public const string CHECK_ACTION = "test";
         public const string PUBLISH_ACTION = "publish";
+        public const string SET_ACTIVE_ACTION = "activate";
+        public const string SET_INUSE_ACTION = "inUse";
+        public const string RELEASE_INUSE_ACTION = "releaseInUse";
 
         private static Dictionary<string, xmlrpc.ServiceType[]> stCache = new Dictionary<string, xmlrpc.ServiceType[]>();
 

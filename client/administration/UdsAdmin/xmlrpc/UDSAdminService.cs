@@ -768,5 +768,12 @@ namespace UdsAdmin.xmlrpc
 
         }
 
+
+        // Devel stuff
+        public static bool DevelAction(string action, string[] ids)
+        {
+            return s.DevelAction(credentials, action, ids);
+        }
+
     }
 }

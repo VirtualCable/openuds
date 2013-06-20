@@ -183,6 +183,10 @@ namespace UdsAdmin.forms
             if (cacheServicesBox.Value > maxServicesBox.Value)
                 maxServicesBox.Value = cacheServicesBox.Value;
 
+            // If no L1 cache, L2 cache will not be used, so we reset it to 0
+            if (cacheL2ServicesBox.Value > 0 && cacheServicesBox.Value == 0)
+                cacheL2ServicesBox.Value = 0;
+
             _dps.initialServices = (int)initialServicesBox.Value;
             _dps.cacheL1 = (int)cacheServicesBox.Value;
             _dps.cacheL2 = (int)cacheL2ServicesBox.Value;

@@ -415,13 +415,13 @@
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label3" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="osManagerCombo" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="baseServiceCombo" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label9" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label8" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="nameBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="commentsBox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="Percent,25,Percent,25,Percent,25,Percent,25" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="Service.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 23</value>
+    <value>4, 22</value>
   </data>
   <data name="Service.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="Service.Size" type="System.Drawing.Size, System.Drawing">
-    <value>440, 197</value>
+    <value>440, 198</value>
   </data>
   <data name="Service.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -529,13 +529,13 @@
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label4" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="allowedTransports" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,20" /&gt;&lt;Rows Styles="Absolute,24,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="Transports.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 23</value>
+    <value>4, 22</value>
   </data>
   <data name="Transports.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="Transports.Size" type="System.Drawing.Size, System.Drawing">
-    <value>440, 197</value>
+    <value>440, 198</value>
   </data>
   <data name="Transports.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -829,13 +829,13 @@
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="cacheL2ServicesBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="cacheL2Label" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="cacheServicesBox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="cacheLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="initialServicesBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label7" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="maxServicesBox" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="Percent,25,Percent,25,Percent,25,Percent,25" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="Cache.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 23</value>
+    <value>4, 22</value>
   </data>
   <data name="Cache.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="Cache.Size" type="System.Drawing.Size, System.Drawing">
-    <value>440, 197</value>
+    <value>440, 198</value>
   </data>
   <data name="Cache.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
