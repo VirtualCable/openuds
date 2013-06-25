@@ -42,6 +42,8 @@ logger = logging.getLogger(__name__)
 
 opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opChangeMac = range(10)
 
+NO_MORE_NAMES = 'NO-NAME-ERROR'
+
 class OVirtLinkedDeployment(UserDeployment):
     '''
     This class generates the user consumable elements of the service tree.
@@ -103,7 +105,10 @@ class OVirtLinkedDeployment(UserDeployment):
         generate more names. (Generator are simple utility classes)
         '''
         if self._name  == '':
-            self._name = self.nameGenerator().get( self.service().getBaseName(), self.service().getLenName() )
+            try:
+                self._name = self.nameGenerator().get( self.service().getBaseName(), self.service().getLenName() )
+            except KeyError:
+                return NO_MORE_NAMES
         return self._name 
 
     
@@ -323,7 +328,11 @@ class OVirtLinkedDeployment(UserDeployment):
         Deploys a machine from template for user/cache
         '''
         templateId =  self.publication().getTemplateId()
-        name = self.service().sanitizeVmName(self.getName()) # oVirt don't let us to create machines with more than 15 chars!!!
+        name = self.getName()
+        if name == NO_MORE_NAMES:
+            raise Exception('No more names available for this service. (Increase digits for this service to fix)')
+        
+        name = self.service().sanitizeVmName(name) # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
         
         self._vmid = self.service().deployFromTemplate(name, comments, templateId)

@@ -29,5 +29,8 @@
     <Setting Name="StatsItems" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">200</Value>
     </Setting>
+    <Setting Name="debug" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

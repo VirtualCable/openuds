@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 50</value>
+    <value>0, 49</value>
   </data>
   <data name="treeActions.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -131,11 +131,8 @@
   <data name="treeActions.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="treeActions.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>200, 4</value>
-  </data>
   <data name="treeActions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 376</value>
+    <value>200, 377</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="treeActions.TabIndex" type="System.Int32, mscorlib">
@@ -184,7 +181,7 @@
     <value>32</value>
   </data>
   <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>610, 376</value>
+    <value>610, 377</value>
   </data>
   <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
     <value>146</value>
@@ -199,7 +196,7 @@
     <value>splitContainer1</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
-    <value>UdsAdmin.controls.SplitContainerEx, UdsAdmin, Version=1.1.1.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>UdsAdmin.controls.SplitContainerEx, UdsAdmin, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -238,61 +235,61 @@
     <value>133, 17</value>
   </metadata>
   <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>102, 22</value>
+    <value>92, 22</value>
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
   <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 21</value>
+    <value>37, 20</value>
   </data>
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>File</value>
   </data>
   <data name="englishToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="englishToolStripMenuItem1.Text" xml:space="preserve">
     <value>English</value>
   </data>
   <data name="spanishToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="spanishToolStripMenuItem1.Text" xml:space="preserve">
     <value>Spanish</value>
   </data>
   <data name="frenchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="frenchToolStripMenuItem.Text" xml:space="preserve">
     <value>French</value>
   </data>
   <data name="germanToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="germanToolStripMenuItem.Text" xml:space="preserve">
     <value>German</value>
   </data>
   <data name="languageToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="languageToolStripMenuItem1.Text" xml:space="preserve">
     <value>Language</value>
   </data>
   <data name="configurationToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="configurationToolStripMenuItem.Text" xml:space="preserve">
     <value>Configuration</value>
   </data>
   <data name="aboutToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="aboutToolStripMenuItem1.Text" xml:space="preserve">
     <value>About</value>
   </data>
   <data name="toolsToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 21</value>
+    <value>48, 20</value>
   </data>
   <data name="toolsToolStripMenuItem1.Text" xml:space="preserve">
     <value>Tools</value>
@@ -301,7 +298,7 @@
     <value>0, 0</value>
   </data>
   <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>610, 25</value>
+    <value>610, 24</value>
   </data>
   <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -322,13 +319,13 @@
     <value>3</value>
   </data>
   <data name="newServiceProviderMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 22</value>
+    <value>98, 22</value>
   </data>
   <data name="newServiceProviderMenu.Text" xml:space="preserve">
     <value>New</value>
   </data>
   <data name="testToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 22</value>
+    <value>98, 22</value>
   </data>
   <data name="serviceProviderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>103, 20</value>
@@ -340,13 +337,13 @@
     <value>32, 19</value>
   </data>
   <data name="spanishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>126, 22</value>
+    <value>115, 22</value>
   </data>
   <data name="spanishToolStripMenuItem.Text" xml:space="preserve">
     <value>Spanish</value>
   </data>
   <data name="englishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>126, 22</value>
+    <value>115, 22</value>
   </data>
   <data name="englishToolStripMenuItem.Text" xml:space="preserve">
     <value>English</value>
@@ -379,7 +376,7 @@
     <value>Clears the cache</value>
   </data>
   <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 25</value>
+    <value>0, 24</value>
   </data>
   <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
     <value>610, 25</value>

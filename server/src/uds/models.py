@@ -671,6 +671,7 @@ class User(models.Model):
     staff_member = models.BooleanField(default = False) # Staff members can login to admin
     is_admin = models.BooleanField(default = False) # is true, this is a super-admin
     last_access = models.DateTimeField(default=NEVER)
+    parent = models.IntegerField(default=-1)
     
     class Meta:
         '''
@@ -741,12 +742,20 @@ class User(models.Model):
         '''
         returns the groups (and metagroups) this user belongs to
         '''
+        if self.parent != -1:
+            try:
+                usr = User.objects.get(id=self.parent)
+            except: # If parent do not exists
+                usr = self
+        else:
+            usr = self
+        
         grps = list()
-        for g in self.groups.filter(is_meta=False):
+        for g in usr.groups.filter(is_meta=False):
             grps += (g.id,)
             yield g
         # Locate metagroups
-        for g in Group.objects.filter(manager__id=self.manager.id, is_meta=True):
+        for g in Group.objects.filter(manager__id=usr.manager.id, is_meta=True):
             gn = g.groups.filter(id__in=grps).count() 
             if gn == g.groups.count(): # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
@@ -771,6 +780,9 @@ class User(models.Model):
         # first, we invoke removeUser. If this raises an exception, user will not
         # be removed
         toDelete.getManager().removeUser(toDelete.name)
+        
+        # now removes all "child" of this user, if it has children
+        User.objects.filter(parent=toDelete.id).delete()
         
         # Remove related logs
         log.clearLogs(toDelete)
@@ -994,7 +1006,7 @@ class DeployedService(models.Model):
         self.setState(State.REMOVED)
 
         
-    def markOldDeployedServicesAsRemovables(self, activePub):
+    def markOldUserServicesAsRemovables(self, activePub):
         '''
         Used when a new publication is finished.
         
@@ -1061,7 +1073,7 @@ class DeployedService(models.Model):
         # Now get deployed services that DO NOT NEED publication
         doNotNeedPublishing = [ t.type() for t in services.factory().servicesThatDoNotNeedPublication() ]
         list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state__exact=State.ACTIVE, service__data_type__in=doNotNeedPublishing, state = State.ACTIVE)
-        return [ r for r in list1 ] + [ r for r in list2 ]
+        return list(set([ r for r in list1 ] + [ r for r in list2 ]))
         
     
     def publish(self):
@@ -1266,6 +1278,9 @@ class DeployedServicePublication(models.Model):
         
         
         logger.debug('Deleted publication {0}'.format(toDelete))
+        
+    def __unicode__(self):
+        return 'Publication {0}, rev {1}, state {2}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
         
         
 

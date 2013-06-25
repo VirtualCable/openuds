@@ -82,13 +82,15 @@ class InternalDBAuth(Authenticator):
             # and access will be denied 
             try:
                 usr = auth.users.get(name=username, state=State.ACTIVE)
+                parent = usr.id
                 usr.id = None
                 if usr.real_name.strip() == '':
                     usr.real_name = usr.name
                 usr.name = newUsername
+                usr.parent = parent
                 usr.save()
             except:
-                logger.exception('Exception')
+                pass # User already exists
             username = newUsername
             
         return username
@@ -101,6 +103,9 @@ class InternalDBAuth(Authenticator):
             if len(usr) == 0:
                 return False
             usr = usr[0]
+            if usr.parent != -1: # Direct auth not allowed for "derived" users
+                return False
+            
             # Internal Db Auth has its own groups, and if it active it is valid
             if usr.password == hashlib.sha1(credentials).hexdigest():
                 groupsManager.validate([g.name for g in usr.groups.all()])

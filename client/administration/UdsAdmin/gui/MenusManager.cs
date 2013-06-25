@@ -209,6 +209,7 @@ namespace UdsAdmin.gui
             ContextMenuStrip menu = new ContextMenuStrip();
             ToolStripMenuItem modify = new ToolStripMenuItem(Strings.modifyItem); modify.Name = ActionTree.MODIFY_ACTION; modify.Click += action;
             ToolStripMenuItem delete = new ToolStripMenuItem(Strings.deleteItem); delete.Name = ActionTree.DELETE_ACTION; delete.Click += action;
+
             menu.Items.AddRange(new ToolStripItem[] { modify, delete});
             if (dps.info.needsPublication)
             {
@@ -216,6 +217,7 @@ namespace UdsAdmin.gui
                 ToolStripMenuItem publish = new ToolStripMenuItem(Strings.publish); publish.Name = ActionTree.PUBLISH_ACTION; publish.Click += action;
                 menu.Items.AddRange(new ToolStripItem[] {sep, publish });
             }
+
             return menu;
         }
 

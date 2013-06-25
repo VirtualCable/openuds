@@ -522,4 +522,13 @@
   <data name="confirmDelete" xml:space="preserve">
     <value>Are you sure do you want to delete selected items?</value>
   </data>
+  <data name="releaseInUse" xml:space="preserve">
+    <value>Release "In use" state</value>
+  </data>
+  <data name="setActive" xml:space="preserve">
+    <value>Force to Active</value>
+  </data>
+  <data name="setInUse" xml:space="preserve">
+    <value>Simulate "In use"</value>
+  </data>
 </root>

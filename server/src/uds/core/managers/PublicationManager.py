@@ -88,7 +88,7 @@ class PublicationFinishChecker(DelayedTask):
             if State.isPreparing(prevState):
                 dsp.deployed_service.publications.filter(state=State.USABLE).update(state=State.REMOVABLE)
                 dsp.setState(State.USABLE)
-                dsp.deployed_service.markOldDeployedServicesAsRemovables(dsp)
+                dsp.deployed_service.markOldUserServicesAsRemovables(dsp)
             elif State.isRemoving(prevState):
                 dsp.setState(State.REMOVED)
             else: # State is canceling

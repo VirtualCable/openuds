@@ -354,6 +354,13 @@ namespace UdsAdmin.xmlrpc
         GuiFieldValue[] InvokeChooseCallback(string credentials, string name, GuiFieldValue[] parameters);
 
 
+
+        // Devel stuff
+        [XmlRpcMethod("develAction")]
+        bool DevelAction(string credentials, string action, string[] ids);
+
+
+
     }
 
 }

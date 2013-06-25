@@ -1,5 +1,7 @@
 package es.virtualcable.rdp;
 
+// More info about RDP files: http://technet.microsoft.com/en-us/library/ff393699%28WS.10%29.aspx
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;

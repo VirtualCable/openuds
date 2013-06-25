@@ -42,6 +42,8 @@ class UniqueNameGenerator(UniqueIDGenerator):
         super(UniqueNameGenerator, self).__init__('name', owner, )
         
     def __toName(self, seq, length):
+        if seq == -1:
+            raise KeyError('No more names available. Please, increase service digits.') 
         return "%s%0*d" % (self._baseName, length, seq) 
     
     def get(self, baseName, length=5):
