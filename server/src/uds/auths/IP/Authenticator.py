@@ -38,6 +38,8 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.auths import Authenticator
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.util import net
+from uds.core.util.request import getRequest
+
 import logging, random, string
 
 logger = logging.getLogger(__name__)
@@ -73,8 +75,7 @@ class IPAuth(Authenticator):
     def authenticate(self, username, credentials, groupsManager):
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
         # We use this "trick" so authenticators
-        if self.cache().get(username) == credentials:
-            self.cache().remove(username)
+        if username == getRequest().ip:
             self.getGroups(username, groupsManager)
             return True
         return False
@@ -97,8 +98,7 @@ class IPAuth(Authenticator):
         gm = GroupsManager(self.dbAuthenticator())
         self.getGroups(request.ip, gm)
         if gm.hasValidGroups() and self.dbAuthenticator().isValidUser(request.ip, True):
-            passw = ''.join(random.choice(string.letters + string.digits) for __ in xrange(12))
-            self.cache().put(request.ip, passw)
+            passw = ''
             return '<script type="text/javascript">$("#id_user").val("' + request.ip + '");$("#id_password").val("' + passw  + '");$("#loginform").submit();</script>'
         else:
             return '<div>This ip is not allowed to autologin (' + request.ip +')</div><script type="text/javascript">$("#backToLogin").click()</script>'
