@@ -135,6 +135,9 @@ class Authenticator(Module):
     #: an already existing user.
     passwordLabel = translatable('Password')
     
+    #: If this authenticators casues a temporal block of an user on repeated login failures
+    blockUserOnLoginFailures = True
+    
     from User import User
     from Group import Group
     

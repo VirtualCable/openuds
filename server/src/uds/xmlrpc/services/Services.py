@@ -114,11 +114,15 @@ def getServiceGui(credentials, idParent, type):
     '''
     Returns the description of an gui for the specified service provider
     '''
-    logger.debug('getServiceGui parameters: {0}, {1}'.format(idParent, type))
-    provider = Provider.objects.get(id=idParent).getInstance()
-    serviceType = provider.getServiceByType(type)
-    service = serviceType( Environment.getTempEnv(), provider)  # Instantiate it so it has the opportunity to alter gui description based on parent
-    return service.guiDescription(service)
+    try:
+        logger.debug('getServiceGui parameters: {0}, {1}'.format(idParent, type))
+        provider = Provider.objects.get(id=idParent).getInstance()
+        serviceType = provider.getServiceByType(type)
+        service = serviceType( Environment.getTempEnv(), provider)  # Instantiate it so it has the opportunity to alter gui description based on parent
+        return service.guiDescription(service)
+    except:
+        logger.exception('Exception at getServiceGui')
+        raise
 
 @needs_credentials
 def getService(credentials, id):

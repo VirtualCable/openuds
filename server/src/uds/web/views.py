@@ -96,7 +96,7 @@ def login(request, smallName=None):
             tries = cache.get(cacheKey)
             if tries is None:
                 tries = 0
-            if tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
+            if authenticator.getInstance().blockUserOnLoginFailures is True and tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
                 form.add_form_error('Too many authentication errors. User temporarily  blocked.')
                 authLogLogin(request, authenticator, userName, java, os, 'Temporarily blocked')
             else:

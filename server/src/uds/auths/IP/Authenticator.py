@@ -55,6 +55,7 @@ class IPAuth(Authenticator):
     groupNameLabel = _('IP Range')
     isExternalSource = True
 
+    blockUserOnLoginFailures = False
 
     def initialize(self, values):
         pass

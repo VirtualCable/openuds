@@ -735,10 +735,11 @@ class UserInterface(object):
         '''
         dic = {}
         for k, v in self._gui.iteritems():
-            if v.isType(gui.InputField.EDITABLE_LIST):
+            if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 dic[k] = gui.convertToChoices(v.value)
             else:
                 dic[k] = v.value
+        logger.debug('Dict: {0}'.format(dic))
         return dic
     
     
@@ -755,11 +756,12 @@ class UserInterface(object):
         '''
         arr = []
         for k, v in self._gui.iteritems():
-            logger.debug('serializing Key: {0}'.format(k))
+            logger.debug('serializing Key: {0}/{1}'.format(k, v.value))
             if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
                 logger.debug('Field {0} is not serializable'.format(k))
                 continue
-            if v.isType(gui.InputField.EDITABLE_LIST):
+            if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
+                logger.debug('Serializing value {0}'.format(v.value))
                 val = '\001' + cPickle.dumps(v.value)
             else:
                 val = v.value
@@ -792,7 +794,7 @@ class UserInterface(object):
                 if self._gui.has_key(k):
                     try:
                         if v[0] == '\001':
-                            val = cPickle.loads(v[1:])
+                            val = cPickle.loads(v[1:].encode('utf-8'))
                         else:
                             val = v
                     except:
@@ -820,4 +822,5 @@ class UserInterface(object):
         res = []
         for key, val in cls._gui.iteritems():
             res.append( { 'name' : key, 'gui' : val.guiDescription(), 'value' : '' },  )
+            
         return res
