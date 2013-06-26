@@ -90,6 +90,7 @@ class OVirtPublication(Publication):
         try:
             self._templateId = self.service().makeTemplate(self._name, comments)
         except Exception as e:
+            self._state = 'error'
             self._reason = str(e)
             return State.ERROR
         
@@ -151,6 +152,7 @@ class OVirtPublication(Publication):
         try:
             self.service().removeTemplate(self._templateId)
         except Exception as e:
+            self._state = 'error'
             self._reason = str(e)
             return State.ERROR
         
