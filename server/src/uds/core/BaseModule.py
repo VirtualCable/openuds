@@ -219,12 +219,24 @@ class Module(UserInterface, Environmentable, Serializable):
         valuesDict, you must also take account of values (dict) provided at the 
         __init__ method of your class.
         '''
+        #
         UserInterface.__init__(self, values)
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
     
     def __str__(self):
         return "Base Module"
+    
+    def isDirty(self):
+        '''
+        This method informs the core if the module has changed serializable data, 
+        and that must be re-serialized
+        
+        Default implemetation is that on every method call, module will be dirty
+        
+        Note: The implementation of this is a work in progress, so right now the module will be serialized out on every acess
+        '''
+        return True
     
     def marshal(self):
         '''

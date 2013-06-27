@@ -135,6 +135,7 @@ encoding//src/uds/osmanagers/WindowsOsManager/WinRandomPassOsManager.py=utf-8
 encoding//src/uds/osmanagers/WindowsOsManager/WindowsOsManager.py=utf-8
 encoding//src/uds/osmanagers/WindowsOsManager/__init__.py=utf-8
 encoding//src/uds/osmanagers/__init__.py=utf-8
+encoding//src/uds/services/HyperV_enterprise/HyperVLinkedDeployment.py=utf-8
 encoding//src/uds/services/HyperV_enterprise/HyperVLinkedService.py=utf-8
 encoding//src/uds/services/HyperV_enterprise/HyperVProvider.py=utf-8
 encoding//src/uds/services/HyperV_enterprise/HyperVPublication.py=utf-8
