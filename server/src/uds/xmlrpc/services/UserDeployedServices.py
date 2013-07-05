@@ -165,6 +165,9 @@ def develAction(credentials, action, ids ):
                 logger.debug('Releasing in use from {0}'.format(uds.friendly_name))
                 uds.setState(State.USABLE)
                 uds.setInUse(False)
+            elif action == 'notifyReady':
+                logger.debug('Notifying ready from os manager to {0}'.format(uds.friendly_name))
+                uds.getInstance().osmanager().process(uds, 'ready', '{0}=1.2.3.4'.format(uds.unique_id))
             else:
                 logger.debug('Setting {0} to usable'.format(uds.friendly_name))
                 uds.setState(State.USABLE)

@@ -265,7 +265,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if self._vmid != '': # Powers off
             try:
                 state = self.service().getMachineState(self._vmid)
-                if state == 'up' and state == 'suspended':
+                if state in ('up', 'suspended'):
                     self.service().stopMachine(self._vmid)
             except:
                 logger.debug('Can\t set machine state to stopped')
