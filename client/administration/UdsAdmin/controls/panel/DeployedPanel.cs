@@ -71,7 +71,8 @@ namespace UdsAdmin.controls.panel
                 ToolStripMenuItem debug1 = new ToolStripMenuItem(Strings.setActive); debug1.Name = UdsAdmin.gui.ActionTree.SET_ACTIVE_ACTION; debug1.Click += develMenu;
                 ToolStripMenuItem debug2 = new ToolStripMenuItem(Strings.setInUse); debug2.Name = UdsAdmin.gui.ActionTree.SET_INUSE_ACTION; debug2.Click += develMenu;
                 ToolStripMenuItem debug3 = new ToolStripMenuItem(Strings.releaseInUse); debug3.Name = UdsAdmin.gui.ActionTree.RELEASE_INUSE_ACTION; debug3.Click += develMenu;
-                _deleteMenu.Items.AddRange(new ToolStripItem[] { sep, debug1, debug2, debug3 });
+                ToolStripMenuItem debug4 = new ToolStripMenuItem(Strings.notifyReadyFromOsManager); debug4.Name = UdsAdmin.gui.ActionTree.NOTIFY_READY_FROM_OSMANAGER; debug4.Click += develMenu;
+                _deleteMenu.Items.AddRange(new ToolStripItem[] { sep, debug1, debug2, debug3, debug4 });
             }
 
             // Adapt listview to cache or users

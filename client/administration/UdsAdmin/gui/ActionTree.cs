@@ -75,6 +75,7 @@ namespace UdsAdmin.gui
         public const string SET_ACTIVE_ACTION = "activate";
         public const string SET_INUSE_ACTION = "inUse";
         public const string RELEASE_INUSE_ACTION = "releaseInUse";
+        public const string NOTIFY_READY_FROM_OSMANAGER = "notifyReady";
 
         private static Dictionary<string, xmlrpc.ServiceType[]> stCache = new Dictionary<string, xmlrpc.ServiceType[]>();
 

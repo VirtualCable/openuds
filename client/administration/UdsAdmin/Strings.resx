@@ -531,4 +531,7 @@
   <data name="setInUse" xml:space="preserve">
     <value>Simulate "In use"</value>
   </data>
+  <data name="notifyReadyFromOsManager" xml:space="preserve">
+    <value>Notify Ready from OS Manager</value>
+  </data>
 </root>

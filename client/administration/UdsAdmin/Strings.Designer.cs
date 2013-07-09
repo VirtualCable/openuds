@@ -700,6 +700,15 @@ namespace UdsAdmin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Notify Ready from OS Manager.
+        /// </summary>
+        internal static string notifyReadyFromOsManager {
+            get {
+                return ResourceManager.GetString("notifyReadyFromOsManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Occupied.
         /// </summary>
         internal static string occopied {

@@ -441,9 +441,6 @@
   <data name="&gt;&gt;Service.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="tableLayoutPanel3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
   <data name="tableLayoutPanel3.ColumnCount" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
@@ -484,7 +481,7 @@
     <value>3, 27</value>
   </data>
   <data name="allowedTransports.Size" type="System.Drawing.Size, System.Drawing">
-    <value>512, 154</value>
+    <value>428, 162</value>
   </data>
   <data name="allowedTransports.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -501,14 +498,17 @@
   <data name="&gt;&gt;allowedTransports.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="tableLayoutPanel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
   <data name="tableLayoutPanel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 7</value>
+    <value>3, 3</value>
   </data>
   <data name="tableLayoutPanel3.RowCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
   <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>518, 184</value>
+    <value>434, 192</value>
   </data>
   <data name="tableLayoutPanel3.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
