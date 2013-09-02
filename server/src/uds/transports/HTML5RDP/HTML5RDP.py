@@ -94,9 +94,9 @@ class HTML5RDPTransport(Transport):
         
         domain = ''
         if username.find('@') != -1:
-            domain = username[username.find('@')+1:]
+            username, domain = username.split('@')
         elif username.find('\\') != -1:
-            domain = username[:username.find('\\')]
+            domain, username = username.split('\\')
             
         if self.fixedName.value is not '':
             username = self.fixedName.value
@@ -114,8 +114,9 @@ class HTML5RDPTransport(Transport):
             if domain.find('.') == -1:
                 username = domain + '\\' + username
             else:
-                username = username + '@' + username
+                username = username + '@' + domain
                 
+
         # Build params dict
         params = { 'protocol':'rdp', 'hostname':ip, 'username': username, 'password': password }
         

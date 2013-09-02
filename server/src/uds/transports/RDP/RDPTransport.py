@@ -163,6 +163,7 @@ class RDPTransport(Transport):
         else:
             domain = ''
         username = proc[0]
+        
         if self._fixedName is not '':
             username = self._fixedName
         if self._fixedPassword is not '':
@@ -171,6 +172,11 @@ class RDPTransport(Transport):
             domain = self._fixedDomain;
         if self._useEmptyCreds is True:
             username, password, domain = '','',''
+            
+        if domain != '':
+            if domain.find('.') == -1: # Dotter domain form
+                username = username + '@' + domain
+                domain = ''
         
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
