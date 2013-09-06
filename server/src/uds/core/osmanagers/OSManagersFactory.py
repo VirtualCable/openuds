@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 import logging
 
@@ -50,8 +51,9 @@ class OSManagersFactory(object):
     def providers(self):
         return self._jobs
     
-    def insert(self, type):
-        self._jobs[type.type()] = type
+    def insert(self, type_):
+        logger.debug('Adding OS Manager {0} as {1}'.format(type_.type(), type_))
+        self._jobs[type_.type()] = type_
         
     def lookup(self, typeName):
         try:

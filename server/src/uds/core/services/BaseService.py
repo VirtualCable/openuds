@@ -30,7 +30,9 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from django.utils.translation import ugettext_noop as translatable
+from __future__ import unicode_literals
+
+from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 
 class Service(Module):
@@ -77,9 +79,9 @@ class Service(Module):
     #: Name of type, used at administration interface to identify this 
     #: service (i.e. Xen server, oVirt Server, ...)
     #: This string will be translated when provided to admin interface
-    #: using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    #: using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     #: if you want so it can be translated.
-    typeName = translatable('Base Service') 
+    typeName = _('Base Service') 
 
     #: Name of type used by Managers to identify this type of service
     #: We could have used here the Class name, but we decided that the 
@@ -89,9 +91,9 @@ class Service(Module):
 
     #: Description shown at administration level for this service.
     #: This string will be translated when provided to admin interface
-    #: using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    #: using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     #: if you want so it can be translated.
-    typeDescription = translatable('Base Service')
+    typeDescription = _('Base Service')
     
     #: Icon file, used to represent this service at administration interface
     #: This file should be at same folder as this class is, except if you provide
@@ -108,20 +110,20 @@ class Service(Module):
     #: If this class uses cache or not. If uses cache is true, means that the
     #: service can "prepare" some user deployments to allow quicker user access
     #: to services if he already do not have one.
-    #: If you set this to True, please, provide a translatable :py:attr:.cacheToolTip
+    #: If you set this to True, please, provide a _ :py:attr:.cacheToolTip
     usesCache = False 
     
     #: Tooltip to be used if services uses cache at administration interface, indicated by :py:attr:.usesCache
-    cacheTooltip = translatable('None') #: Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip = _('None') #: Tooltip shown to user when this item is pointed at admin interface
     
     #: If user deployments can be cached (see :py:attr:.usesCache), may he also can provide a secondary cache,
     #: that is no more that user deployments that are "almost ready" to be used, but preperably consumes less
     #: resources than L1 cache. This can give a boost to cache L1 recovering in case of peaks
-    #: in demand. If you set this to True, please, provide also  a translatable :py:attr:.cacheTooltip_L2
+    #: in demand. If you set this to True, please, provide also  a _ :py:attr:.cacheTooltip_L2
     usesCache_L2 = False #: If we need to generate a "Level 2" cache for this service (i.e., L1 could be running machines and L2 suspended machines)
     
     #: Tooltip to be used if services uses L2 cache at administration interface, indicated by :py:attr:.usesCache_L2
-    cacheTooltip_L2 = translatable('None') #: Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip_L2 = _('None') #: Tooltip shown to user when this item is pointed at admin interface
       
     #: If the service needs a o.s. manager (see os managers section)
     needsManager = False 

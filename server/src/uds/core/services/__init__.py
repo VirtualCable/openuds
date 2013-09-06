@@ -37,6 +37,10 @@ from BaseServiceProvider import ServiceProvider
 from BaseService import Service
 from BasePublication import Publication
 from BaseDeployed import UserDeployment
+
+from ClusteredServiceProvider import ClusteredServiceProvider
+from ClusteredService import ClusteredService
+ 
 import Exceptions
 
 def factory():

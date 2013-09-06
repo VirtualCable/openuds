@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.db import transaction
 from django.db.models import Q
@@ -102,7 +103,12 @@ class DelayedTaskRunner(object):
         now = datetime.now()
         exec_time = now + timedelta(seconds = delay)
         cls = instance.__class__
-        dbDelayedTask.objects.create(type = str(cls.__module__ + '.' + cls.__name__), instance = dumps(instance).encode(self.CODEC), 
+        instanceDump = dumps(instance).encode(self.CODEC)
+        typeName = str(cls.__module__ + '.' + cls.__name__)
+        
+        logger.debug('Inserting delayed task {0} with {1} bytes'.format(typeName, len(instanceDump)))
+        
+        dbDelayedTask.objects.create(type = typeName, instance = instanceDump, 
                                          insert_date = now, execution_delay = delay, execution_time = exec_time, tag = tag)
 
     def insert(self, instance, delay, tag = ''):

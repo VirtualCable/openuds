@@ -32,7 +32,7 @@ Base module for all authenticators
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from uds.core import Module
-from django.utils.translation import ugettext_noop as translatable
+from django.utils.translation import ugettext_noop as _
 from GroupsManager import GroupsManager
 from Exceptions import InvalidUserException
 import logging
@@ -83,19 +83,19 @@ class Authenticator(Module):
     so we have defined isExternalSource as True by default, that will be most 
     cases.
     
-    :note: All attributes that are "translatable" here means that they will be
+    :note: All attributes that are "_" here means that they will be
            translated when provided to administration interface, so remember
-           to mark them in your own authenticators as "translatable" using
-           ugettext_noop. We have aliased it here to "translatable" so it's 
+           to mark them in your own authenticators as "_" using
+           ugettext_noop. We have aliased it here to "_" so it's 
            easier to understand.
     '''
     
     #: Name of type, used at administration interface to identify this 
     #: authenticator (i.e. LDAP, SAML, ...)
     #: This string will be translated when provided to admin interface
-    #: using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    #: using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     #: if you want so it can be translated.
-    typeName = translatable('Base Authenticator')
+    typeName = _('Base Authenticator')
     
     #: Name of type used by Managers to identify this type of service
     #: We could have used here the Class name, but we decided that the 
@@ -105,9 +105,9 @@ class Authenticator(Module):
     
     #: Description shown at administration level for this authenticator.
     #: This string will be translated when provided to admin interface
-    #: using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    #: using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     #: if you want so it can be translated.
-    typeDescription = translatable('Base Authenticator')
+    typeDescription = _('Base Authenticator')
     
     
     #: Icon file, used to represent this authenticator at administration interface
@@ -125,15 +125,15 @@ class Authenticator(Module):
     needsPassword = False
     
     #: Label for username field, shown at administration interface user form.
-    userNameLabel = translatable('User name')
+    userNameLabel = _('User name')
     
     #: Label for group field, shown at administration interface user form.
-    groupNameLabel = translatable('Group name')
+    groupNameLabel = _('Group name')
     
     #: Label for password field, , shown at administration interface user form.
     #: Not needed for external authenticators (where credentials are stored with
     #: an already existing user.
-    passwordLabel = translatable('Password')
+    passwordLabel = _('Password')
     
     #: If this authenticators casues a temporal block of an user on repeated login failures
     blockUserOnLoginFailures = True
@@ -533,7 +533,7 @@ class Authenticator(Module):
                says that user can't be created manually
                
         '''
-        raise InvalidUserException(translatable('Users can\'t be created inside this authenticator'))
+        raise InvalidUserException(_('Users can\'t be created inside this authenticator'))
         
 
     def modifyUser(self, usrData):

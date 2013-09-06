@@ -33,7 +33,7 @@ Created on Jun 22, 2012
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext_noop as translatable, ugettext as _
+from django.utils.translation import ugettext_noop as _, ugettext as _
 from uds.core.services import ServiceProvider
 from SampleService import ServiceOne, ServiceTwo
 from uds.core.ui import gui
@@ -64,15 +64,15 @@ class Provider(ServiceProvider):
     offers = [ServiceOne, ServiceTwo]
     #: Name to show the administrator. This string will be translated BEFORE
     #: sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
-    typeName = translatable('Sample Provider') 
+    #: mark it as _ (using ugettext_noop)
+    typeName = _('Sample Provider') 
     #: Type used internally to identify this provider
     typeType = 'SampleProvider'
     #: Description shown at administration interface for this provider
-    typeDescription = translatable('Sample (and dummy) service provider')
+    typeDescription = _('Sample (and dummy) service provider')
     #: Icon file used as icon for this provider. This string will be translated 
     #: BEFORE sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
+    #: mark it as _ (using ugettext_noop)
     iconFile = 'provider.png'
     
     # now comes the form fields
@@ -86,18 +86,18 @@ class Provider(ServiceProvider):
     # "random"
     
     #: Remote host. Here core will translate label and tooltip, remember to
-    #: mark them as translatable using ugettext_noop.
+    #: mark them as _ using ugettext_noop.
     remoteHost = gui.TextField(oder=1,
                      length = 64,  
-                     label = translatable('Remote host'),
-                     tooltip = translatable('This fields contains a remote host'),
+                     label = _('Remote host'),
+                     tooltip = _('This fields contains a remote host'),
                      required = True,
                  )
     #: Name of your pet (sample, not really needed :-) )
     petName = gui.TextField(order=2,
                   length = 32,  
-                  label = translatable('Your pet\'s name'),
-                  tooltip = translatable('If you like, write the name of your pet'),
+                  label = _('Your pet\'s name'),
+                  tooltip = _('If you like, write the name of your pet'),
                   requred = False,
                   defvalue = 'Tux' #: This will not get translated
               )
@@ -106,16 +106,16 @@ class Provider(ServiceProvider):
     #: "Tiene mas años que matusalén"(is older than Methuselah)
     methAge = gui.NumericField(order = 3,
                   length = 4, # That is, max allowed value is 9999  
-                  label = translatable('Age of Methuselah'),
-                  tooltip = translatable('If you know it, please, tell me!!!'),
+                  label = _('Age of Methuselah'),
+                  tooltip = _('If you know it, please, tell me!!!'),
                   required = True, #: Numeric fields have always a value, so this not really needed
                   defvalue = '4500'
               )
      
     #: Is Methuselah istill alive?
     methAlive = gui.CheckBoxField(order = 4,
-                    label = translatable('Is Methuselah still alive?'),
-                    tooltip = translatable('If you fails, this will not get saved :-)'),
+                    label = _('Is Methuselah still alive?'),
+                    tooltip = _('If you fails, this will not get saved :-)'),
                     required = True, #: Also means nothing. Check boxes has always a value
                     defvalue = gui.TRUE #: By default, at new item, check this
                 ) 

@@ -71,7 +71,8 @@ class TaskManager(object):
         TaskManager.keepRunning = False
     
     @staticmethod
-    def registerJob(jobName, jobType):
+    def registerJob(jobType):
+        jobName = jobType.friendly_name
         jobs.factory().insert(jobName, jobType)
     
     

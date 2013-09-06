@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext_noop as translatable
+from django.utils.translation import ugettext_noop as _
 from uds.core.services import Service
 from SamplePublication import SamplePublication
 from SampleUserDeploymentOne import SampleUserDeploymentOne
@@ -67,15 +67,15 @@ class ServiceOne(Service):
     '''
     #: Name to show the administrator. This string will be translated BEFORE
     #: sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
-    typeName = translatable('Sample Service One') 
+    #: mark it as _ (using ugettext_noop)
+    typeName = _('Sample Service One') 
     #: Type used internally to identify this provider
     typeType = 'SampleService1'
     #: Description shown at administration interface for this provider
-    typeDescription = translatable('Sample (and dummy) service ONE')
+    typeDescription = _('Sample (and dummy) service ONE')
     #: Icon file used as icon for this provider. This string will be translated 
     #: BEFORE sending it to administration interface, so don't forget to
-    #: mark it as translatable (using ugettext_noop)
+    #: mark it as _ (using ugettext_noop)
     iconFile = 'service.png'
     
     # Functional related data
@@ -89,13 +89,13 @@ class ServiceOne(Service):
     usesCache = False 
     #: Tooltip shown to user when this item is pointed at admin interface, none 
     #: because we don't use it
-    cacheTooltip = translatable('None')
+    cacheTooltip = _('None')
     #: If we need to generate a "Level 2" cache for this service (i.e., L1 
     #: could be running machines and L2 suspended machines) 
     usesCache_L2 = False 
     #: Tooltip shown to user when this item is pointed at admin interface, None 
     #: also because we don't use it
-    cacheTooltip_L2 = translatable('None') 
+    cacheTooltip_L2 = _('None') 
       
     #: If the service needs a s.o. manager (managers are related to agents 
     #: provided by services itselfs, i.e. virtual machines with actors)
@@ -115,8 +115,8 @@ class ServiceOne(Service):
     # "random"
     
     colour = gui.ChoiceField(order = 1,
-                 label = translatable('Colour'),
-                 tooltip = translatable('Colour of the field'),
+                 label = _('Colour'),
+                 tooltip = _('Colour of the field'),
                  # In this case, the choice can have none value selected by default
                  required = True, 
                  values = [ gui.choiceItem('red', 'Red'),
@@ -128,15 +128,15 @@ class ServiceOne(Service):
              )
     
     passw = gui.PasswordField(order = 2,
-                label = translatable('Password'),
-                tooltip = translatable('Password for testing purposes'),
+                label = _('Password'),
+                tooltip = _('Password for testing purposes'),
                 required = True,
                 defvalue = '1234' #: Default password are nonsense?? :-)
             )
 
     baseName = gui.TextField(order = 3,
-                          label = translatable('Services names'),
-                          tooltip = translatable('Base name for this user services'),
+                          label = _('Services names'),
+                          tooltip = _('Base name for this user services'),
                           # In this case, the choice can have none value selected by default
                           required = True, 
                           defvalue = '' # Default value is the ID of the choicefield
@@ -193,17 +193,17 @@ class ServiceTwo(Service):
     '''
     Just a second service, no comments here (almost same that ServiceOne
     '''
-    typeName = translatable('Sample Service Two') 
+    typeName = _('Sample Service Two') 
     typeType = 'SampleService2'
-    typeDescription = translatable('Sample (and dummy) service ONE+ONE')
+    typeDescription = _('Sample (and dummy) service ONE+ONE')
     iconFile = 'provider.png' #: We reuse provider icon here :-)
     
     # Functional related data
     maxDeployed = 5
     usesCache = True
-    cacheTooltip = translatable('L1 cache for dummy elements')
+    cacheTooltip = _('L1 cache for dummy elements')
     usesCache_L2 = True
-    cacheTooltip_L2 = translatable('L2 cache for dummy elements')
+    cacheTooltip_L2 = _('L2 cache for dummy elements')
       
     needsManager = False
     mustAssignManually = False
@@ -217,7 +217,7 @@ class ServiceTwo(Service):
     
     
     # Gui, we will use here the EditableList field
-    names = gui.EditableList(label=translatable('List of names'))
+    names = gui.EditableList(label=_('List of names'))
     
     def __init__(self, environment, parent, values = None):
         '''

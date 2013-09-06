@@ -30,7 +30,7 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from django.utils.translation import ugettext_noop as translatable
+from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import auths
 
@@ -66,9 +66,9 @@ class SampleAuth(auths.Authenticator):
     #: Name of type, used at administration interface to identify this 
     #: authenticator (i.e. LDAP, SAML, ...)
     #: This string will be translated when provided to admin interface
-    #: using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    #: using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     #: if you want so it can be translated.
-    typeName = translatable('Sample Authenticator')
+    typeName = _('Sample Authenticator')
     
     #: Name of type used by Managers to identify this type of service
     #: We could have used here the Class name, but we decided that the 
@@ -78,9 +78,9 @@ class SampleAuth(auths.Authenticator):
     
     #: Description shown at administration level for this authenticator.
     #: This string will be translated when provided to admin interface
-    #: using ugettext, so you can mark it as "translatable" at derived classes (using ugettext_noop)
+    #: using ugettext, so you can mark it as "_" at derived classes (using ugettext_noop)
     #: if you want so it can be translated.
-    typeDescription = translatable('Sample dummy authenticator')
+    typeDescription = _('Sample dummy authenticator')
     
     
     #: Icon file, used to represent this authenticator at administration interface
@@ -99,16 +99,16 @@ class SampleAuth(auths.Authenticator):
     #: needsPassword = False
     
     #: Label for username field, shown at administration interface user form.
-    userNameLabel = translatable('Fake User')
+    userNameLabel = _('Fake User')
     
     # Label for group field, shown at administration interface user form.
-    groupNameLabel = translatable('Fake Group')
+    groupNameLabel = _('Fake Group')
     
     #: Definition of this type of authenticator form
     #: We will define a simple form where we will use a simple
     #: list editor to allow entering a few group names
     
-    groups = gui.EditableList(label=translatable('Groups'), values = ['Gods', 'Daemons', 'Mortals'])
+    groups = gui.EditableList(label=_('Groups'), values = ['Gods', 'Daemons', 'Mortals'])
     
     def initialize(self, values):
         '''
@@ -121,7 +121,7 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values is not None and len(self.groups.value) < 2:
-            raise auths.Authenticator.ValidationException(translatable('We need more that two items!'))
+            raise auths.Authenticator.ValidationException(_('We need more that two items!'))
         
     def searchUsers(self, pattern):
         '''
