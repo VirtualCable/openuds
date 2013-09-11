@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 GLOBAL_SECTION = 'UDS'
 SECURITY_SECTION = 'Security'
+CLUSTER_SECTION = 'Cluster'
 
 class Config(object):
     '''
@@ -237,6 +238,19 @@ class GlobalConfig(object):
     
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES = Config.section(SECURITY_SECTION).value('Trusted Hosts', '*')
+    
+    # Clusters related vars
+    
+    # Maximum desired CPU Load. If cpu is over this value, a migration of a service is "desirable"
+    CLUSTER_MIGRATE_CPULOAD = Config.section(CLUSTER_SECTION).value('Migration CPU Load', '80')
+    # Maximum CPU Load for a node to be elegible for destination of a migration
+    CLUSTER_ELEGIBLE_CPULOAD = Config.section(CLUSTER_SECTION).value('Destination CPU Load', '60')
+    # Minimum desired Memory free for a cluster node. If free memory (in %) is under this percentage,
+    # a migration of a service inside this node is "desirable"
+    CLUSTER_MIGRATE_MEMORYLOAD = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '20')
+    # Minimum Free memory for a node to be elegible for a destination of a migration
+    CLUSTER_ELEGIBLE_MEMORYLOAD = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '40')
+    
     
     initDone = False
     

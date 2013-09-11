@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -30,11 +29,13 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db import transaction
 from uds.core.jobs.DelayedTask import DelayedTask
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
+from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import PublishException
 from uds.models import DeployedServicePublication, getSqlDatetime, State
 import logging
@@ -42,6 +43,26 @@ import logging
 logger = logging.getLogger(__name__)
 
 PUBTAG = 'pm-'
+
+class PublicationOldMachinesCleaner(DelayedTask):
+    def __init__(self, publicationId):
+        super(PublicationOldMachinesCleaner,self).__init__()
+        self._id = publicationId
+        
+    def run(self):
+        try:
+            dsp = DeployedServicePublication.objects.get(pk=self._id)
+            if (dsp.state!=State.REMOVABLE):
+                logger.info('Already removed')
+            
+            now = getSqlDatetime()
+            activePub = dsp.deployed_service.activePublication()
+            dsp.deployed_service.userServices.filter(in_use=True).update(in_use=False, state_date=now)
+            dsp.deployed_service.markOldUserServicesAsRemovables(activePub)
+        except:
+            logger.info("Delayed task for {0} not executed because delayed task is already removed")
+            # Removed provider, no problem at all, no update is done
+            pass
 
 class PublicationLauncher(DelayedTask):
     def __init__(self, publish):
@@ -81,31 +102,40 @@ class PublicationFinishChecker(DelayedTask):
         Checks the value returned from invocation to publish or checkPublishingState, updating the dsp database object
         Return True if it has to continue checking, False if finished
         '''
-        prevState = dsp.state
-        checkLater = False
-        if  State.isFinished(state):
-            # Now we mark, if it exists, the previous usable publication as "Removable"
-            if State.isPreparing(prevState):
-                dsp.deployed_service.publications.filter(state=State.USABLE).update(state=State.REMOVABLE)
-                dsp.setState(State.USABLE)
-                dsp.deployed_service.markOldUserServicesAsRemovables(dsp)
-            elif State.isRemoving(prevState):
-                dsp.setState(State.REMOVED)
-            else: # State is canceling
-                dsp.setState(State.CANCELED)
-            # Mark all previous publications deployed services as removables
-            # and make this usable
-            pi.finish()
-            dsp.updateData(pi)  
-        elif State.isErrored(state):
-            dsp.updateData(pi)
-            dsp.state = State.ERROR
-        else:
-            checkLater = True  # The task is running
-            dsp.updateData(pi)
-            
-        dsp.save()
-        if checkLater:
+        try:
+            prevState = dsp.state
+            checkLater = False
+            if  State.isFinished(state):
+                # Now we mark, if it exists, the previous usable publication as "Removable"
+                if State.isPreparing(prevState):
+                    for old in dsp.deployed_service.publications.filter(state=State.USABLE):
+                        old.state=State.REMOVABLE
+                        old.save()
+                        pc = PublicationOldMachinesCleaner(old.id)
+                        pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True)*3600, 'pclean-'+str(old.id), True)
+                        
+                    dsp.setState(State.USABLE)
+                    dsp.deployed_service.markOldUserServicesAsRemovables(dsp)
+                elif State.isRemoving(prevState):
+                    dsp.setState(State.REMOVED)
+                else: # State is canceling
+                    dsp.setState(State.CANCELED)
+                # Mark all previous publications deployed services as removables
+                # and make this usable
+                pi.finish()
+                dsp.updateData(pi)  
+            elif State.isErrored(state):
+                dsp.updateData(pi)
+                dsp.state = State.ERROR
+            else:
+                checkLater = True  # The task is running
+                dsp.updateData(pi)
+                
+            dsp.save()
+            if checkLater:
+                PublicationFinishChecker.checkLater(dsp, pi)
+        except:
+            logger.exception('At checkAndUpdate for publication')
             PublicationFinishChecker.checkLater(dsp, pi)
     
     @staticmethod
@@ -131,7 +161,6 @@ class PublicationFinishChecker(DelayedTask):
                 PublicationFinishChecker.checkAndUpdateState(dsp, pi, state)
         except Exception, e:
             logger.debug('Deployed service not found (erased from database) {0} : {1}'.format(e.__class__, e))
-
 
 class PublicationManager(object):
     _manager = None

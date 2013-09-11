@@ -33,12 +33,14 @@
 from __future__ import unicode_literals
 
 from BaseServiceProvider import ServiceProvider
+from uds.core.util.Config import GlobalConfig
 from uds.core import managers
 
 import logging
 
 logger = logging.getLogger(__name__)
 
+HEIGHT_OF_CPU = 5
 
 class ClusteredServiceProvider(ServiceProvider):
     '''
@@ -52,16 +54,109 @@ class ClusteredServiceProvider(ServiceProvider):
     typeDescription = 'Base Clustered Service Provider'
     iconFile = 'provider.png'
     
+    balanceNodes = False         # If false, clustered provider will not try to balance nodes
     allowInUseMigration = False # If True, means that we can migrate a service while it is being used  
-
     
+    # This methods do not need to be overriden
     def clusterStats(self):
         stats = self.storage().getPickle('ClusterStats')
         if stats is None:
             stats = {}
         return stats
     
-    # This method must be overriden
+    
+    # This method do not need to be overriden, but can be if it is needed (taking care ofc :-) )
+    def getClusterOverloadedNodes(self):
+        '''
+        Checks if a migration is desired, based on nodes load
+        
+        This method will return:
+            Array of NodeName, preferably sorted by priority, with nodes that are "Overloaded".
+            This array, ofc, can be "empty"
+        '''
+        if self.balanceNodes is False:
+            return []
+        
+        overloadedNodes = []
+        nodesStats = self.clusterStats()
+        
+        maxCpuLoad = GlobalConfig.CLUSTER_MIGRATE_CPULOAD.getInt(True)
+        minFreeMemPercent = GlobalConfig.CLUSTER_MIGRATE_MEMORYLOAD.getInt(True)
+        
+        for nodeName, nodeStats in nodesStats.iteritems():
+            if nodeStats['freeMemory'] is None or nodeStats['totalMemory'] is None or nodeStats['cpuLoad'] is None:
+                continue
+            freeMemPercent = (nodeStats['freeMemory'] * 100) / nodeStats['totalMemory']
+            if nodeStats['cpuLoad'] > maxCpuLoad or freeMemPercent < minFreeMemPercent:
+                overloadedNodes.append(nodeName)
+                
+        # Helper to sort array
+        def getNodeStatsKey(name):
+            val = 0
+            if nodesStats[name]['cpuLoad']>maxCpuLoad:
+                val += HEIGHT_OF_CPU + nodesStats[name]['cpuLoad']
+            val += 100 - (nodeStats['freeMemory'] * 100) / nodeStats['totalMemory']
+            return val
+        
+        # Here we sort nodes so most overloaded servers are migrated first
+        return sorted(overloadedNodes, key=getNodeStatsKey)
+        
+    
+    # Same as before, this method do not need to be overriden,
+    def getClusterUnderloadedNodes(self):
+        '''
+        Checks which nodes of the cluster are elegible for destination of machines
+        This method is very similar to  getClusterOverloadedNodes, but this returns
+        a list of nodes where we can migrate the services. 
+        
+        This method will return:
+            Array of NodeName, preferably sorted by priority, with nodes that are "Underloaded"
+            This array, ofc, can be "empty"
+        '''
+        if self.balanceNodes is False:
+            return []
+        
+        underloadedNodes = []
+        nodesStats = self.clusterStats()
+        
+        maxCpuLoad = GlobalConfig.CLUSTER_ELEGIBLE_CPULOAD.getInt(True)
+        minFreeMemPercent = GlobalConfig.CLUSTER_ELEGIBLE_MEMORYLOAD.getInt(True)
+        
+        for nodeName, nodeStats in nodesStats.iteritems():
+            if nodeStats['freeMemory'] is None or nodeStats['totalMemory'] is None or nodeStats['cpuLoad'] is None:
+                continue
+            freeMemPercent = (nodeStats['freeMemory'] * 100) / nodeStats['totalMemory']
+            if nodeStats['cpuLoad'] < maxCpuLoad and freeMemPercent > minFreeMemPercent:
+                underloadedNodes.append(nodeName)
+                
+        # Helper to sort array
+        def getNodeStatsKey(name):
+            ns = nodesStats[name]
+            memUsePercent = (ns['freeMemory'] * 100) / ns['totalMemory']
+            # Percents of cpu is weighted over memory 
+            val =  (maxCpuLoad - ns['cpuLoad']) * HEIGHT_OF_CPU + (minFreeMemPercent - memUsePercent)
+            return -val
+        
+        # Here we sort nodes so most overloaded servers are migrated first
+        return sorted(underloadedNodes, key=getNodeStatsKey)
+        
+    def getClusterBestNodeForDeploy(self):
+        
+        nodesStats = self.clusterStats()
+        nodes = [name for name, v in nodesStats.iteritems()]
+        
+        def getNodeStatsKey(name):
+            ns = nodesStats[name]
+            if ns['freeMemory'] is None or ns['totalMemory'] is None or ns['cpuLoad'] is None:
+                return 0 # We will put last if do not knwo anything about a node
+            
+            memUsePercent = (ns['freeMemory'] * 100) / ns['totalMemory']
+            val = (100-ns['cpuLoad']) * HEIGHT_OF_CPU + (100-memUsePercent)
+            return -val
+        
+        return sorted(nodes, key=getNodeStatsKey)
+    
+    # This methods must be overriden
     def getClusterNodes(self):
         '''
         This method must be overriden.
@@ -88,7 +183,8 @@ class ClusteredServiceProvider(ServiceProvider):
         The units for elements are:
             * cpuLoad: Load of cpu of Node (use) in %. If server has more than one CPU, average can be used (Integer)
             * freeMemory: Unused memory (or usable memory) of node, expressed in Kb (Integer)
+            * totalMemory: Total memory of node, expressed in Kb (Integer)
         
         '''
-        return {'cpuLoad': None, 'freeMemory': None} # We could have used return {}, but i prefer this "sample template" 
+        return {'cpuLoad': None, 'freeMemory': None, 'totalMemory': None} # We could have used return {}, but i prefer this "sample template" 
     

@@ -67,7 +67,8 @@ class ClusterUpdateStatsTask(DelayedTask):
             stats = {}
             for node in nodes:
                 s = cluster.getClusterNodeLoad(node['id'])
-                stats[node['id']] = { 'cpuLoad': s.get('cpuLoad', None), 'freeMemory': s.get('freeMemory', None) } 
+                stats[node['id']] = { 'cpuLoad': s.get('cpuLoad', None), 'freeMemory': s.get('freeMemory', None),
+                                      'totalMemory': s.get('totalMemory') } 
             cluster.storage().putPickle('ClusterStats', stats)
         except:
             logger.exception('Exception')
@@ -78,7 +79,7 @@ class ClusterUpdateStatsTask(DelayedTask):
 # Job for managing ClusteredServiceProvider
 class ClusterUpdateStats(Job):
     frecuency = 60 # Once every 60 seconds
-    friendly_name = 'Clustered Providers Statistics Update'
+    friendly_name = 'Clustered Providers Statistics Updater'
     
     def __init__(self, environment):
         super(ClusterUpdateStats,self).__init__(environment)

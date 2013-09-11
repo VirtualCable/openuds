@@ -37,7 +37,8 @@ from uds.core.util.Config import GlobalConfig
 from uds.models import DeployedServicePublication, DeployedService, getSqlDatetime
 from uds.core.services.Exceptions import PublishException
 from uds.core.util.State import State
-from uds.core.jobs.Job import Job
+from uds.core.jobs import Job
+from uds.core.jobs import DelayedTask
 from datetime import timedelta
 import logging
 
@@ -47,14 +48,14 @@ logger = logging.getLogger(__name__)
 class PublicationInfoItemsCleaner(Job):
     frecuency = GlobalConfig.CLEANUP_CHECK.getInt() # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publications Info Cleaner'
-    
+    now = getSqlDatetime()
     def __init__(self, environment):
         super(PublicationInfoItemsCleaner,self).__init__(environment)
         
     def run(self):
         removeFrom = getSqlDatetime() - timedelta(seconds = GlobalConfig.KEEP_INFO_TIME.getInt(True))
         DeployedServicePublication.objects.filter(state__in=State.INFO_STATES, state_date__lt=removeFrom).delete()
-
+        
 class PublicationCleaner(Job):
     frecuency = GlobalConfig.REMOVAL_CHECK.getInt() # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Publication Cleaner'
@@ -70,11 +71,3 @@ class PublicationCleaner(Job):
             except PublishException: # Can say that it cant be removed right now
                 logger.debug('Delaying removal')
                 pass
-        # Now check too long "in use" services for all publications
-        now = getSqlDatetime()
-        removeFrom = now - timedelta(hours = GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))
-        for dsp in removables.filter(state_date__lt=removeFrom):
-            activePub = dsp.deployed_service.activePublication()
-            dsp.deployed_service.userServices.filter(in_use=True).update(in_use=False, state_date=now)
-            dsp.deployed_service.markOldUserServicesAsRemovables(activePub)
-        

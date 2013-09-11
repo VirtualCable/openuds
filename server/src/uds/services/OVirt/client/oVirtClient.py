@@ -374,8 +374,8 @@ class Client(object):
             display = params.Display(type_=displayType)
             
             template = params.Template(name=name, vm=params.VM(id=vm.get_id(), disks=disks), 
-                                       cluster=params.Cluster(id=cluster.get_id()), description=comments,
-                                       display=display)
+                                       cluster=params.Cluster(id=cluster.get_id()), description=comments)
+                                       #display=display)
             
             return api.templates.add(template).get_id()
         
@@ -442,7 +442,7 @@ class Client(object):
             
             memoryPolicy = params.MemoryPolicy(guaranteed=guaranteedMB*1024*1024)
             par = params.VM(name=name, cluster=cluster, template=template, description=comments, 
-                            display=display, type_='desktop', memory=memoryMB*1024*1024, memory_policy=memoryPolicy)
+                            type_='desktop', memory=memoryMB*1024*1024, memory_policy=memoryPolicy) # display=display,
             
             return api.vms.add(par).get_id()
             

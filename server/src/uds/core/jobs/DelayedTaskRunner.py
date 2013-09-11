@@ -106,7 +106,7 @@ class DelayedTaskRunner(object):
         instanceDump = dumps(instance).encode(self.CODEC)
         typeName = str(cls.__module__ + '.' + cls.__name__)
         
-        logger.debug('Inserting delayed task {0} with {1} bytes'.format(typeName, len(instanceDump)))
+        logger.debug('Inserting delayed task {0} with {1} bytes ({2})'.format(typeName, len(instanceDump), exec_time))
         
         dbDelayedTask.objects.create(type = typeName, instance = instanceDump, 
                                          insert_date = now, execution_delay = delay, execution_time = exec_time, tag = tag)
@@ -135,6 +135,10 @@ class DelayedTaskRunner(object):
             
     @transaction.commit_on_success
     def checkExists(self, tag):
+        
+        if tag == '' or tag is None:
+            return False
+        
         number = 0
         try:
             number = dbDelayedTask.objects.filter(tag=tag).count()
