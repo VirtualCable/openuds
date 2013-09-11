@@ -60,7 +60,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
             dsp.deployed_service.userServices.filter(in_use=True).update(in_use=False, state_date=now)
             dsp.deployed_service.markOldUserServicesAsRemovables(activePub)
         except:
-            logger.info("Delayed task for {0} not executed because delayed task is already removed")
+            logger.info("Machine removal for {0} not executed because publication is already removed")
             # Removed provider, no problem at all, no update is done
             pass
 

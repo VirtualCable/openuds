@@ -34,11 +34,10 @@ from __future__ import unicode_literals
 
 from uds.core.managers.PublicationManager import PublicationManager
 from uds.core.util.Config import GlobalConfig
-from uds.models import DeployedServicePublication, DeployedService, getSqlDatetime
+from uds.models import DeployedServicePublication, getSqlDatetime
 from uds.core.services.Exceptions import PublishException
 from uds.core.util.State import State
 from uds.core.jobs import Job
-from uds.core.jobs import DelayedTask
 from datetime import timedelta
 import logging
 
