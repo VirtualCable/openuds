@@ -32,7 +32,7 @@
 '''
 
 
-from django.utils.translation import ugettext_noop as _, ugettext
+from django.utils.translation import ugettext_noop as _
 
 # States for different objects. Not all objects supports all States
 class State(object):
@@ -41,25 +41,27 @@ class State(object):
     Take in consideration that objects do not have to support all states, they are here for commodity
     '''
     ACTIVE = 'A'
-    INACTIVE = 'I'
     BLOCKED = 'B'
-    LAUNCHING = 'L'
-    PREPARING = 'P' 
-    USABLE = 'U' 
-    REMOVABLE = 'R' 
-    REMOVING = 'M' 
-    REMOVED = 'S'
     CANCELED = 'C' 
-    CANCELING = 'K'
     ERROR = 'E'
-    RUNNING = 'W'
     FINISHED = 'F'
+    BALANCING = 'H'
+    INACTIVE = 'I'
+    CANCELING = 'K'
+    LAUNCHING = 'L'
+    REMOVING = 'M' 
+    PREPARING = 'P' 
+    REMOVABLE = 'R' 
+    REMOVED = 'S'
+    USABLE = 'U' 
+    RUNNING = 'W'
     FOR_EXECUTE = 'X'
     
     string = { ACTIVE: _('Active'), INACTIVE: _('Inactive'), BLOCKED: _('Blocked'), LAUNCHING: _('Waiting publication'), 
                PREPARING: _('In preparation'), USABLE: _('Valid'), 
                REMOVABLE: _('Waiting for removal'), REMOVING: _('Removing'),  REMOVED: _('Removed'), CANCELED: _('Canceled'), 
-               CANCELING: _('Canceling'), ERROR: _('Error'), RUNNING: _('Running'), FINISHED: _('Finished'), FOR_EXECUTE: _('Waiting execution') }
+               CANCELING: _('Canceling'), ERROR: _('Error'), RUNNING: _('Running'), FINISHED: _('Finished'), FOR_EXECUTE: _('Waiting execution'),
+               BALANCING: _('Balancing') }
     
     # States that are merely for "information" to the user. They don't contain any usable instance
     INFO_STATES = [REMOVED, CANCELED, ERROR]
