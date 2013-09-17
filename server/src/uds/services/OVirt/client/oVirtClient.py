@@ -51,8 +51,8 @@ class Client(object):
         '''
         global cached_api, cached_api_key 
         aKey = self.__getKey('o-host')
-        if cached_api_key == aKey:
-            return cached_api
+        #if cached_api_key == aKey:
+        #    return cached_api
         
         if cached_api is not None:
             try:
