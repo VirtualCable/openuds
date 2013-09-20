@@ -51,10 +51,10 @@ logger = logging.getLogger(__name__)
 USERSERVICE_TAG = 'cm-'
 
 class UserServiceOpChecker(DelayedTask):
-    def __init__(self, cache):
+    def __init__(self, service):
         super(UserServiceOpChecker,self).__init__()
-        self._svrId = cache.id
-        self._state = cache.state
+        self._svrId = service.id
+        self._state = service.state
 
     @staticmethod
     def makeUnique(userService, userServiceInstance, state):

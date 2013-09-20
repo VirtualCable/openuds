@@ -40,6 +40,8 @@ from BaseDeployed import UserDeployment
 
 from ClusteredServiceProvider import ClusteredServiceProvider
 from ClusteredService import ClusteredService
+from ClusteredPublication import ClusteredPublication
+from ClusteredUserDeployment import ClusteredUserDeployment
  
 import Exceptions
 

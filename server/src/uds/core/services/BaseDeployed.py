@@ -112,8 +112,8 @@ class UserDeployment(Environmentable, Serializable):
     def __init__(self, environment, **kwargs):
         '''
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, **kwargs)"
-        We want to use the env, cache and storage methods outside class. If not called, you must implement your own methods
-        cache and storage are "convenient" methods to access _env.cache() and _env.storage()
+        We want to use the env, service and storage methods outside class. If not called, you must implement your own methods
+        service and storage are "convenient" methods to access _env.service() and _env.storage()
         
         Invoking this from derived classes is a MUST, again, do not forget it or your
         module will probable never work.

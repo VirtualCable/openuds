@@ -31,10 +31,10 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
+#from __future__ import with_statement
 
 from BaseServiceProvider import ServiceProvider
 from uds.core.util.Config import GlobalConfig
-from uds.core import managers
 
 import logging
 
@@ -54,8 +54,10 @@ class ClusteredServiceProvider(ServiceProvider):
     typeDescription = 'Base Clustered Service Provider'
     iconFile = 'provider.png'
     
-    balanceNodes = False         # If false, clustered provider will not try to balance nodes
-    allowInUseMigration = False # If True, means that we can migrate a service while it is being used  
+    balanceNodes = False         # If false, clustered provider will not try to balance nodes (only tries to distribute services on best node on creation)
+    allowInUseMigration = False # If True, means that we can migrate a service while it is being used
+    canRegisterServiceOnNodeFailure = False # If can register a service on another node without accesing original node  
+    
     
     # This methods do not need to be overriden
     def clusterStats(self):
@@ -143,7 +145,7 @@ class ClusteredServiceProvider(ServiceProvider):
     def getClusterBestNodeForDeploy(self):
         
         nodesStats = self.clusterStats()
-        nodes = [name for name, v in nodesStats.iteritems()]
+        nodes = [name for name in nodesStats.iterkeys()]
         
         def getNodeStatsKey(name):
             ns = nodesStats[name]
@@ -155,6 +157,62 @@ class ClusteredServiceProvider(ServiceProvider):
             return -val
         
         return sorted(nodes, key=getNodeStatsKey)
+    
+    def getServicesForBalancing(self, clusterNode):
+        '''
+        Select machines from the specified nodes that can be "migrated" 
+        so we can balance nodes.
+        
+        This method returns a generator
+        
+        If load balancing is not enabled for this cluster, this method will return an empty generator 
+        
+        If allowInUseMigration is not enabled, this method will only return services not in use
+        
+        Only service "fully ready" (in State "active") are eligible for mitrations
+        
+        This method will return an array of services, db Objects, that are on the specified nodes
+        and are "ready" for migration. The calling method MUST lock for update the record and
+        update the state so it's not assigned while in migration (balancing operation)
+        '''
+        from uds.models import UserService
+        from uds.core.util.State import State
+        
+        if self.balanceNodes is False:
+            return []
+        
+        fltr = UserService.objects.filter(cluster_node=clusterNode, state=State.USABLE)
+        
+        if self.allowInUseMigration is False:
+            fltr = fltr.filter(in_use=False)
+            
+        res = []
+        for srvc in fltr:
+            res.append(srvc)
+            
+        return res
+
+    def locateClusterService(self, serviceInstance):
+        '''
+        This method tries to locate a service instance on every node
+        To make this, tries to connect to all nodes and look for service. 
+        
+        This method can be a bit "slow", because it has to ask  so we will probably redesign it using ThreadPool
+        '''
+        from uds.core.util.ThreadPool import ThreadPool
+        
+        node = None
+        def isInNode(n):
+            if serviceInstance.ensureExistsOnNode(n) is True:
+                node = n
+
+        pool = ThreadPool(10)
+                
+        for n in self.getClusterNodes():
+            pool.add_task(isInNode, n)
+            
+        pool.wait_completion()
+        return node
     
     # This methods must be overriden
     def getClusterNodes(self):

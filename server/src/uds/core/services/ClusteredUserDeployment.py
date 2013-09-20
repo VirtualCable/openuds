@@ -32,15 +32,22 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_noop as _
-from BaseService import Service
+from BaseDeployed import UserDeployment
+from uds.core.util.State import State
 
-class ClusteredService(Service):
-    typeName = _('Base Clustered Service') 
-    typeType = 'BaseClusteredService'
-    typeDescription = _('Base Clustered Service')
-    iconFile = 'service.png' 
+class ClusteredUserDeployment(UserDeployment):
     
-    # Utility methods
-    def getClusterBestNodeForDeploy(self):
-        return self.parent().getClusterBestNodeForDeploy()
+    def startMigration(self, dstNode):
+        return State.FINISHED
+    
+    def ensureExistsOnNode(self, node):
+        '''
+        Ensure that this method is reentrant, because it can be asked for existence in parallel
+        '''
+        return True
+
+    def __str__(self):
+        '''
+        Mainly used for debugging purposses
+        '''
+        return "Base Deployed Service" 

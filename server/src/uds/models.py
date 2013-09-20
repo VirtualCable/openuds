@@ -1312,8 +1312,10 @@ class UserService(models.Model):
 
     src_hostname = models.CharField(max_length=64, default='')
     src_ip = models.CharField(max_length=15, default='')
+    
+    cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True )
 
-    objects = LockingManager()
+    #objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
 
     class Meta:
         '''

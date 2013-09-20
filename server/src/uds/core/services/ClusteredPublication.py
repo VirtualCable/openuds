@@ -30,17 +30,20 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
+from BasePublication import Publication
 
-from django.utils.translation import ugettext_noop as _
-from BaseService import Service
-
-class ClusteredService(Service):
-    typeName = _('Base Clustered Service') 
-    typeType = 'BaseClusteredService'
-    typeDescription = _('Base Clustered Service')
-    iconFile = 'service.png' 
+class ClusteredPublication(Publication):
     
-    # Utility methods
-    def getClusterBestNodeForDeploy(self):
-        return self.parent().getClusterBestNodeForDeploy()
+    def __str__(self):
+        '''
+        String method, mainly used for debugging purposes
+        '''
+        return "Base Clustered Publication" 
+
+    # These methods must be overriden
+    def getNode(self):
+        '''
+        Returns on wich node this publication has been deployed
+        '''
+        raise Exception('getNode method of ClusteredPublication must be overriden!')
+
