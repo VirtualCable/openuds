@@ -139,32 +139,33 @@ class RegexLdap(auths.Authenticator):
     def __processField(self, field, attributes):
         res = []
         for line in field.splitlines():
-            equalPos = line.find('=') 
-            if equalPos != -1:
-                attr, pattern = (line[:equalPos], line[equalPos+1:])
-                attr = attr.lower()
-                # if pattern do not have groups, define one with full re
-                if pattern.find('(') == -1:
-                    pattern = '(' + pattern + ')'
-                val = attributes.get(attr, [])
-                if type(val) is not list: # May we have a single value
-                    val = [val]
-                
-                logger.debug('Pattern: {0}'.format(pattern))
-                
-                for v in val:
-                    try:
-                        srch = re.search(pattern, v, re.IGNORECASE)
-                        logger.debug("Found against {0}: {1} ".format(v, srch))
-                        if srch is None:
-                            continue
-                        res.append(''.join(srch.groups()))
-                    except Exception as e:
-                        logger.warn('Invalid regular expression')
-                        logger.debug(e)
-                        break
-            else:
-                res += attributes.get(line, [])
+            equalPos = line.find('=')
+            if equalPos == -1:
+                line = line + '=(.*)'
+                equalPos = line.find('=')
+            attr, pattern = (line[:equalPos], line[equalPos+1:])
+            attr = attr.lower()
+            # if pattern do not have groups, define one with full re
+            if pattern.find('(') == -1:
+                pattern = '(' + pattern + ')'
+            val = attributes.get(attr, [])
+            if type(val) is not list: # May we have a single value
+                val = [val]
+            
+            logger.debug('Pattern: {0}'.format(pattern))
+            
+            for vv in val:
+                try:
+                    v = vv.decode('utf-8')
+                    srch = re.search(pattern, v, re.IGNORECASE)
+                    logger.debug("Found against {0}: {1} ".format(v, srch))
+                    if srch is None:
+                        continue
+                    res.append(''.join(srch.groups()))
+                except Exception as e:
+                    logger.warn('Invalid regular expression')
+                    logger.debug(e)
+                    break
         return res
             
     def valuesDict(self):
