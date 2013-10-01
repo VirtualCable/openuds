@@ -161,6 +161,11 @@ class TSRDPTransport(Transport):
         if self._useEmptyCreds is True:
             username, password, domain = '','',''
         
+        if domain != '':
+            if domain.find('.') == -1: # Dotter domain form
+                username = username + '@' + domain
+                domain = ''
+        
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
         cache = Cache('pam')
