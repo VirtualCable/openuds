@@ -4,10 +4,10 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.sourceforge.guacamole</groupId>
+    <groupId>org.openuds.server</groupId>
     <artifactId>transport</artifactId>
     <packaging>war</packaging>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <name>Guacamole Transport</name>
     <url>http://openuds.org/</url>
 
@@ -36,7 +36,7 @@
                 <configuration>
                     <overlays>
                         <overlay>
-                            <groupId>net.sourceforge.guacamole</groupId>
+                            <groupId>org.glyptodon.guacamole</groupId>
                             <artifactId>guacamole-common-js</artifactId>
                             <type>zip</type>
                         </overlay>
@@ -60,16 +60,17 @@
 
         <!-- Main Guacamole library -->
         <dependency>
-            <groupId>net.sourceforge.guacamole</groupId>
+            <groupId>org.glyptodon.guacamole</groupId>
             <artifactId>guacamole-common</artifactId>
             <version>0.8.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Guacamole JavaScript library -->
         <dependency>
-            <groupId>net.sourceforge.guacamole</groupId>
+            <groupId>org.glyptodon.guacamole</groupId>
             <artifactId>guacamole-common-js</artifactId>
-            <version>0.7.2</version>
+            <version>0.7.4</version>
             <type>zip</type>
             <scope>runtime</scope>
         </dependency>
@@ -77,13 +78,4 @@
     </dependencies>
     
     
-  <repositories>
-        <!-- Main Guacamole repository -->
-        <repository>
-            <id>guac-dev</id>
-            <url>http://guac-dev.org/repo</url>
-        </repository>
-
-    </repositories>    
-
 </project>

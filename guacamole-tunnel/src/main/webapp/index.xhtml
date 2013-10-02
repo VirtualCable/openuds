@@ -44,6 +44,109 @@
         <script type="text/javascript" src="guacamole-common-js/audio.js"></script>
         <script type="text/javascript" src="guacamole-common-js/guacamole.js"></script>
         <script type="text/javascript" src="guacamole-common-js/oskeyboard.js"></script>
+        <script type="text/javascript"> /* <![CDATA[ */
+
+        /**
+        Get Audio supported items
+        */
+        GuacAudio = new (function() {
+
+            var codecs = [
+                'audio/ogg; codecs="vorbis"',
+                'audio/mp4; codecs="mp4a.40.5"',
+                'audio/mpeg; codecs="mp3"',
+                'audio/webm; codecs="vorbis"',
+                'audio/wav; codecs=1'
+            ];
+
+            var probably_supported = [];
+            var maybe_supported = [];
+
+            /**
+        * Array of all supported audio mimetypes, ordered by liklihood of
+        * working.
+        */
+            this.supported = [];
+            
+            // Build array of supported audio formats
+            codecs.forEach(function(mimetype) {
+
+                var audio = new Audio();
+                var support_level = audio.canPlayType(mimetype);
+
+                // Trim semicolon and trailer
+                var semicolon = mimetype.indexOf(";");
+                if (semicolon != -1)
+                    mimetype = mimetype.substring(0, semicolon);
+
+                // Partition by probably/maybe
+                if (support_level == "probably")
+                    probably_supported.push(mimetype);
+                else if (support_level == "maybe")
+                    maybe_supported.push(mimetype);
+
+            });
+
+            // Add probably supported types first
+            Array.prototype.push.apply(
+                this.supported, probably_supported);
+
+            // Prioritize "maybe" supported types second
+            Array.prototype.push.apply(
+                this.supported, maybe_supported);
+
+        })();
+
+        
+        GuacVideo = new (function() {
+
+            var codecs = [
+                'video/ogg; codecs="theora, vorbis"',
+                'video/mp4; codecs="avc1.4D401E, mp4a.40.5"',
+                'video/webm; codecs="vp8.0, vorbis"'
+            ];
+
+            var probably_supported = [];
+            var maybe_supported = [];
+
+            /**
+        * Array of all supported video mimetypes, ordered by liklihood of
+        * working.
+        */
+            this.supported = [];
+            
+            // Build array of supported audio formats
+            codecs.forEach(function(mimetype) {
+
+                var video = document.createElement("video");
+                var support_level = video.canPlayType(mimetype);
+
+                // Trim semicolon and trailer
+                var semicolon = mimetype.indexOf(";");
+                if (semicolon != -1)
+                    mimetype = mimetype.substring(0, semicolon);
+
+                // Partition by probably/maybe
+                if (support_level == "probably")
+                    probably_supported.push(mimetype);
+                else if (support_level == "maybe")
+                    maybe_supported.push(mimetype);
+
+            });
+
+            // Add probably supported types first
+            Array.prototype.push.apply(
+                this.supported, probably_supported);
+
+            // Prioritize "maybe" supported types second
+            Array.prototype.push.apply(
+                this.supported, maybe_supported);
+
+        })();
+        
+                                                     
+        /* ]]> */
+        </script>
 
     </head>
 
@@ -80,10 +183,21 @@
 		            // Get display div from document
 		            var display = document.getElementById("display");
 		
+		            var tunnel;
+		            
+		            // If WebSocket available, try to use it.
+                    if (window.WebSocket)
+                        tunnel = new Guacamole.ChainedTunnel(
+                            new Guacamole.WebSocketTunnel("websocket-tunnel"),
+                            new Guacamole.HTTPTunnel("tunnel")
+                        );
+
+                    // If no WebSocket, then use HTTP.
+                    else
+                        tunnel = new Guacamole.HTTPTunnel("tunnel")		            
+		            
 		            // Instantiate client, using an HTTP tunnel for communications.
-		            var guac = new Guacamole.Client(
-		                new Guacamole.HTTPTunnel("tunnel")
-		            );
+		            var guac = new Guacamole.Client(tunnel);
 		
 					
 		            // Add client to display div
@@ -115,6 +229,15 @@
 					// the sake of authentication.
 					var connect_string = "data=" + data + "&width=" + optimal_width + "&height=" + optimal_height;
 					
+					// Add audio mimetypes to connect_string
+                    GuacAudio.supported.forEach(function(mimetype) {
+                        connect_string += "&audio=" + encodeURIComponent(mimetype);
+                    });
+
+                 // Add video mimetypes to connect_string
+                    GuacVideo.supported.forEach(function(mimetype) {
+                        connect_string += "&video=" + encodeURIComponent(mimetype);
+                    });					
 		            display.appendChild(inner);
 					
 					guac.connect(connect_string);

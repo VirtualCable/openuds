@@ -3,12 +3,14 @@ package org.openuds.guacamole;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import net.sourceforge.guacamole.GuacamoleException;
 import net.sourceforge.guacamole.net.GuacamoleSocket;
 import net.sourceforge.guacamole.net.GuacamoleTunnel;
@@ -69,7 +71,6 @@ public class TunnelServlet
     	if( data == null || width == null || height == null)
     		throw new GuacamoleException("Can't read required parameters");
     	
-    	
 		Hashtable<String,String> params = Util.readParameters( getConfigValue(UDS) + UDS_PATH + data);
 		
 		if( params == null ) {
@@ -82,6 +83,16 @@ public class TunnelServlet
 		GuacamoleClientInformation info = new GuacamoleClientInformation();
 		info.setOptimalScreenWidth(Integer.parseInt(width));
 		info.setOptimalScreenHeight(Integer.parseInt(height));
+		
+		// Add audio mimetypes
+        String[] audio_mimetypes = request.getParameterValues("audio");
+        if (audio_mimetypes != null)
+            info.getAudioMimetypes().addAll(Arrays.asList(audio_mimetypes));
+        
+        // Add video mimetypes
+        String[] video_mimetypes = request.getParameterValues("video");
+        if (video_mimetypes != null)
+            info.getVideoMimetypes().addAll(Arrays.asList(video_mimetypes));       
     	
         // Create our configuration
         GuacamoleConfiguration config = new GuacamoleConfiguration();
