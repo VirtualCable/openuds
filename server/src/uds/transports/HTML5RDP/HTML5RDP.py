@@ -62,6 +62,7 @@ class HTML5RDPTransport(Transport):
     fixedName = gui.TextField(label=_('Username'), order = 3, tooltip = _('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order = 4, tooltip = _('If not empty, this password will be always used as credential'))
     fixedDomain = gui.TextField(label=_('Domain'), order = 5, tooltip = _('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
+    enableAudio = gui.CheckBoxField(label = _('Enable Audio'), order = 6, tooltip = _('If checked, the audio will be redirected to client (if client browser supports it)'))
 
     def initialize(self, values):
         if values is None:
@@ -120,8 +121,11 @@ class HTML5RDPTransport(Transport):
         # Build params dict
         params = { 'protocol':'rdp', 
                    'hostname':ip, 'username': username, 'password': password, 
-                   'ignore-cert': 'true' 
+                   'ignore-cert': 'true',
         }
+        
+        if self.enableAudio.isTrue() is False:
+            params['disable-audio'] = 'true'
         
         logger.debug('RDP Params: {0}'.format(params))
                 
