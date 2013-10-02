@@ -118,7 +118,10 @@ class HTML5RDPTransport(Transport):
                 
 
         # Build params dict
-        params = { 'protocol':'rdp', 'hostname':ip, 'username': username, 'password': password }
+        params = { 'protocol':'rdp', 
+                   'hostname':ip, 'username': username, 'password': password, 
+                   'ignore-cert': 'true' 
+        }
         
         logger.debug('RDP Params: {0}'.format(params))
                 
