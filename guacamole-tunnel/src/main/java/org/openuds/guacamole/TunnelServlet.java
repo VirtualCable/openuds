@@ -11,15 +11,15 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.sourceforge.guacamole.GuacamoleException;
-import net.sourceforge.guacamole.net.GuacamoleSocket;
-import net.sourceforge.guacamole.net.GuacamoleTunnel;
-import net.sourceforge.guacamole.net.InetGuacamoleSocket;
-import net.sourceforge.guacamole.protocol.ConfiguredGuacamoleSocket;
-import net.sourceforge.guacamole.protocol.GuacamoleClientInformation;
-import net.sourceforge.guacamole.protocol.GuacamoleConfiguration;
-import net.sourceforge.guacamole.servlet.GuacamoleHTTPTunnelServlet;
-import net.sourceforge.guacamole.servlet.GuacamoleSession;
+import org.glyptodon.guacamole.GuacamoleException;
+import org.glyptodon.guacamole.net.GuacamoleSocket;
+import org.glyptodon.guacamole.net.GuacamoleTunnel;
+import org.glyptodon.guacamole.net.InetGuacamoleSocket;
+import org.glyptodon.guacamole.protocol.ConfiguredGuacamoleSocket;
+import org.glyptodon.guacamole.protocol.GuacamoleClientInformation;
+import org.glyptodon.guacamole.protocol.GuacamoleConfiguration;
+import org.glyptodon.guacamole.servlet.GuacamoleHTTPTunnelServlet;
+import org.glyptodon.guacamole.servlet.GuacamoleSession;
 
 public class TunnelServlet
     extends GuacamoleHTTPTunnelServlet {
