@@ -55,3 +55,14 @@ class DelayedTask(Environmentable):
         You must provide your own "run" method to do whatever you need
         '''
         logging.debug("Base run of job called for class")
+
+    def register(self, suggestedTime, tag='', check=True):
+        '''
+        Utility method that allows to register a Delayedtask
+        '''
+        from DelayedTaskRunner import DelayedTaskRunner
+        
+        if check is True and DelayedTaskRunner.runner().checkExists(tag):
+            return
+        
+        DelayedTaskRunner.runner().insert(self, suggestedTime, tag)
