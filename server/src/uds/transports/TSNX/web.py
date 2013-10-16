@@ -71,7 +71,7 @@ def generateHtmlForNX(transport, idUserService, idTransport, user, password, ext
         'is:' + idUserService
         ]
     data = simpleScrambler( '\t'.join(data))
-    res = '<div idTransport="applet"><applet code="NxTunTransportApplet.class" codebase="%s" archive="%s" width="165" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
+    res = '<div idTransport="applet"><applet code="NxTunTransportApplet.class" codebase="%s" archive="%s" width="165" height="22"><param name="data" value="%s"/><param name="permissions" value="all-permissions"/></applet></div>' % (codebase, '1', data )
     res += '<div><p>In order to use this transport, you need to install first nomachine nx client version 3.5.x</p>'
     res += '<p>you can obtain it for your platform from <a href="http://www.nomachine.com/download.php">nochamine web site </a></p></div>'
     return res

@@ -79,7 +79,7 @@ def generateHtmlForNX(transport, idUserService, idTransport, ip, os, user, passw
     else:
         msg = '<p>' + _('In order to use this transport, you need to install first Nomachine Nx Client version 3.5.x') + '</p>'
         msg +='<p>' + _('you can obtain it for your platform from') + '<a href="http://www.nomachine.com/download.php">' + _('nochamine web site') + '</a></p>' 
-    res = '<div idTransport="applet"><applet code="NxTransportApplet.class" codebase="%s" archive="%s" width="140" height="22"><param name="data" value="%s"/></applet></div>' % (codebase, '1', data )
+    res = '<div idTransport="applet"><applet code="NxTransportApplet.class" codebase="%s" archive="%s" width="140" height="22"><param name="data" value="%s"/><param name="permissions" value="all-permissions"/></applet></div>' % (codebase, '1', data )
     res += '<div>' + msg + '</div>'
     return res
     
