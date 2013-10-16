@@ -189,6 +189,8 @@ def index(request):
                     trans.append({ 'id' : scrambleId(request, t.id), 'name' : t.name, 'needsJava' : typeTrans.needsJava  })
         services.append( {'id' : scrambleId(request, 'd' + str(svr.id)), 'name': svr.name, 'transports' : trans } )
         
+    services = sorted(services, key=lambda s: s['name'])
+        
     logger.debug('Services: {0}'.format(services))
     
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
