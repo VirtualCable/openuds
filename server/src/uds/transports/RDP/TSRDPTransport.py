@@ -145,6 +145,9 @@ class TSRDPTransport(Transport):
         # We use helper to keep this clean
         username = user.getUsernameForAuth()
         prefs = user.prefs('rdp')
+
+        if self._fixedName is not '':
+            username = self._fixedName
         
         proc = username.split('@')
         if len(proc) > 1:
@@ -152,8 +155,6 @@ class TSRDPTransport(Transport):
         else:
             domain = ''
         username = proc[0]
-        if self._fixedName is not '':
-            username = self._fixedName
         if self._fixedPassword is not '':
             password = self._fixedPassword
         if self._fixedDomain is not '':
