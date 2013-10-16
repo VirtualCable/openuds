@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Sealed: true
 Main-Class: es.virtualcable.sshtunnel.Laucher
-
+Permissions: all-permissions
