@@ -92,6 +92,9 @@ class HTML5RDPTransport(Transport):
         import uuid
         
         username = user.getUsernameForAuth()
+
+        if self.fixedName.value is not '':
+            username = self.fixedName.value
         
         domain = ''
         if username.find('@') != -1:
@@ -99,8 +102,6 @@ class HTML5RDPTransport(Transport):
         elif username.find('\\') != -1:
             domain, username = username.split('\\')
             
-        if self.fixedName.value is not '':
-            username = self.fixedName.value
         if self.fixedPassword.value is not '':
             password = self.fixedPassword.value
         if self.fixedDomain.value is not '':

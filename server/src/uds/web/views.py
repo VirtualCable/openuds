@@ -191,6 +191,8 @@ def index(request):
         
     logger.debug('Services: {0}'.format(services))
     
+    services = sorted(services, key=lambda s: s['name'])
+    
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
