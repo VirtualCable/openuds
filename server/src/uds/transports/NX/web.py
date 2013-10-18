@@ -76,10 +76,10 @@ def generateHtmlForNX(transport, idUserService, idTransport, ip, os, user, passw
         ]))
     if isMac is True:
         msg = '<p>' + _('In order to use this transport, you need to install first OpenNX Client for mac') + '</p>'
-        msg += '<p>' + _('You can oibtain it from ') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()) + _('OpenNx Website') + '</a></p>'
+        msg += '<p>' + _('You can oibtain it from ') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrlMACOS').get()) + _('OpenNx Website') + '</a></p>'
     else:
         msg = '<p>' + _('In order to use this transport, you need to install first Nomachine Nx Client version 3.5.x') + '</p>'
-        msg +='<p>' + _('you can obtain it for your platform from') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrl', 'http://www.nomachine.com/download-3').get()) + _('nochamine web site') + '</a></p>' 
+        msg +='<p>' + _('you can obtain it for your platform from') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrl').get()) + _('nochamine web site') + '</a></p>' 
     res = '<div idTransport="applet"><applet code="NxTransportApplet.class" codebase="%s" archive="%s" width="140" height="22"><param name="data" value="%s"/><param name="permissions" value="all-permissions"/></applet></div>' % (codebase, '1', data )
     res += '<div>' + msg + '</div>'
     return res
