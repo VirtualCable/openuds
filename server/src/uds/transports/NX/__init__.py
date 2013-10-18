@@ -33,9 +33,14 @@
 
 from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
 from uds.core.managers.DownloadsManager import DownloadsManager
+from uds.core.util.Config import Config
 from NXTransport import NXTransport
 from django.utils.translation import ugettext_noop as _
 import os.path, sys
+
+Config.section('NX').value('downloadUrl', 'http://www.nomachine.com/download-3').get()
+Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()
+
 
 UserPrefsManager.manager().registerPrefs('nx', _('NX Protocol'), 
                                           [ 

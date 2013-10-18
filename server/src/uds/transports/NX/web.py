@@ -34,6 +34,7 @@
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from uds.core.util import OsDetector
+from uds.core.util.Config import Config
 import logging, os, sys
 
 logger = logging.getLogger(__name__)
@@ -75,24 +76,24 @@ def generateHtmlForNX(transport, idUserService, idTransport, ip, os, user, passw
         ]))
     if isMac is True:
         msg = '<p>' + _('In order to use this transport, you need to install first OpenNX Client for mac') + '</p>'
-        msg += '<p>' + _('You can oibtain it from ') + '<a href="http://opennx.net/download.html">' + _('OpenNx Website') + '</a></p>'
+        msg += '<p>' + _('You can oibtain it from ') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()) + _('OpenNx Website') + '</a></p>'
     else:
         msg = '<p>' + _('In order to use this transport, you need to install first Nomachine Nx Client version 3.5.x') + '</p>'
-        msg +='<p>' + _('you can obtain it for your platform from') + '<a href="http://www.nomachine.com/download.php">' + _('nochamine web site') + '</a></p>' 
+        msg +='<p>' + _('you can obtain it for your platform from') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrl', 'http://www.nomachine.com/download-3').get()) + _('nochamine web site') + '</a></p>' 
     res = '<div idTransport="applet"><applet code="NxTransportApplet.class" codebase="%s" archive="%s" width="140" height="22"><param name="data" value="%s"/><param name="permissions" value="all-permissions"/></applet></div>' % (codebase, '1', data )
     res += '<div>' + msg + '</div>'
     return res
     
 
 def getHtmlComponent(module, componentId):
-    dict = { '1' : ['nxtransport.jar', 'application/java-archive' ]}
+    dct = { '1' : ['nxtransport.jar', 'application/java-archive' ]}
     
-    if dict.has_key(componentId) == False:
+    if dct.has_key(componentId) == False:
         return ['text/plain', 'no component']
-    fname = os.path.dirname(sys.modules[module].__file__) + '/applet/' + dict[componentId][0]
+    fname = os.path.dirname(sys.modules[module].__file__) + '/applet/' + dct[componentId][0]
     logger.debug('Loading component {0} from {1}'.format(componentId, fname))
 
     f = open(fname, 'rb')
     data = f.read()
     f.close()
-    return [ dict[componentId][1], data ]
+    return [ dct[componentId][1], data ]
