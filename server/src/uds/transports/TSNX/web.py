@@ -32,6 +32,9 @@
 '''
 
 from django.core.urlresolvers import reverse
+from uds.core.util.Config import Config
+from uds.core.util import OsDetector
+
 import logging, os, sys
 
 logger = logging.getLogger(__name__)
@@ -52,7 +55,8 @@ def simpleScrambler(data):
     
 
 
-def generateHtmlForNX(transport, idUserService, idTransport, user, password, extra):
+def generateHtmlForNX(transport, idUserService, idTransport, os, user, password, extra):
+    isMac = os['OS'] == OsDetector.Macintosh
     applet = reverse('uds.web.views.transcomp', kwargs = { 'idTransport' : idTransport, 'componentId' : '1' })
     # Gets the codebase, simply remove last char from applet
     codebase = applet[:-1]
@@ -71,9 +75,15 @@ def generateHtmlForNX(transport, idUserService, idTransport, user, password, ext
         'is:' + idUserService
         ]
     data = simpleScrambler( '\t'.join(data))
+    if isMac is True:
+        msg = '<p>' + _('In order to use this transport, you need to install first OpenNX Client for mac') + '</p>'
+        msg += '<p>' + _('You can oibtain it from ') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrlMACOS').get()) + _('OpenNx Website') + '</a></p>'
+    else:
+        msg = '<p>' + _('In order to use this transport, you need to install first Nomachine Nx Client version 3.5.x') + '</p>'
+        msg +='<p>' + _('you can obtain it for your platform from') + '<a href="{0}">'.format(Config.section('NX').value('downloadUrl').get()) + _('nochamine web site') + '</a></p>' 
+    
     res = '<div idTransport="applet"><applet code="NxTunTransportApplet.class" codebase="%s" archive="%s" width="165" height="22"><param name="data" value="%s"/><param name="permissions" value="all-permissions"/></applet></div>' % (codebase, '1', data )
-    res += '<div><p>In order to use this transport, you need to install first nomachine nx client version 3.5.x</p>'
-    res += '<p>you can obtain it for your platform from <a href="http://www.nomachine.com/download.php">nochamine web site </a></p></div>'
+    res += '<div>' + msg + '</div>'
     return res
     
 
