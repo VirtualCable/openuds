@@ -63,6 +63,11 @@
 			{% block body %}{% endblock %}
 			<!--  End of content -->
 		</div> <!-- End of container -->
+		<footer>
+		{% block footer %}
+			<div id="vcable"><a href="http://www.virtualcable.es">&copy; 2012-2014 Virtual Cable S.L.</a> </div>
+		{% endblock %}
+		</footer>
 		{% compress js %}
 		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>

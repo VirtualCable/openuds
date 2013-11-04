@@ -13,6 +13,23 @@ body {
 }
 
 
+footer {
+    padding:1.6% 2%;
+	margin-top:4em;
+	text-align:right;
+	min-height:1em;
+	position:absolute;
+	width:100%;
+	bottom:0;
+	
+}
+
+/* Sample "info" (footer) text, to be placed after (c) Virtualcable */
+/*#vcable:after {
+	content: "Testing text";
+}*/
+
+
 /* Login form */
 .form-signin
 {
@@ -20,13 +37,9 @@ body {
     padding: 15px;
     margin: 0 auto;
 }
-.form-signin .form-signin-heading, .form-signin .checkbox
+.form-signin .form-signin-heading, .form-signin
 {
     margin-bottom: 10px;
-}
-.form-signin .checkbox
-{
-    font-weight: normal;
 }
 .form-signin .form-control
 {
@@ -80,12 +93,4 @@ body {
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
-.need-help
-{
-    margin-top: 10px;
-}
-.new-account
-{
-    display: block;
-    margin-top: 10px;
-}
+
