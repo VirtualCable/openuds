@@ -1,0 +1,9 @@
+{% load i18n static %}
+	  		<!-- Collect the nav links, forms, and other content for toggling -->
+	  		<div class="collapse navbar-collapse navbar-ex1-collapse">
+	    		<ul class="nav navbar-nav">
+		  			<li{% if packages %} class="active"{% endif %}><a href="{% url 'fileshare.views.packages_view' %}">{% trans 'packages'|capfirst %}</a></li>
+		  			{% if user.is_staff %}<li><a href="/admin">{% trans 'administration'|capfirst %}</a></li>{% endif %}
+				</ul>
+				{% include "uds/html5/snippets/nav-right.html" with logout=True %}
+	  		</div><!-- /.navbar-collapse -->

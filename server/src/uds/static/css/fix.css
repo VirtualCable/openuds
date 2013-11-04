@@ -1,0 +1,15 @@
+.navbar-inverse .nav li.dropdown.open > .dropdown-toggle,
+.navbar-inverse .nav li.dropdown.active > .dropdown-toggle,
+.navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle,
+.navbar,
+.navbar-inverse .navbar-inner {
+    filter: none;
+    background-image: none;
+    /*z-index: auto; */ /* Fixes navbar dropdowns on ie <9 */
+}
+
+@media (max-width: 979px) {
+  body {
+    padding-top: 60px;
+  }
+}

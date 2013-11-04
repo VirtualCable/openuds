@@ -1,0 +1,25 @@
+{% load i18n html5 %}
+  	<form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+  	{% csrf_token %}
+  	<input id="id_language" type="hidden" name="language" value=""/>
+	<ul class="nav navbar-nav navbar-right">
+	  <li><a href="#">{% trans 'About' %}</a></li>
+      <li class="dropdown">
+      	{% for lang in LANGUAGES %}
+      	{% if lang.0  == LANGUAGE_CODE %}
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}<b class="caret"></b></a>
+        {% endif %}
+        {% endfor %}
+        <ul class="dropdown-menu">
+          {% for lang in LANGUAGES %}
+          {% if lang.0  != LANGUAGE_CODE %}
+          <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit()'><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}</a></li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </li>
+	  {% if logout %}
+	  <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> {% trans 'logout'|capfirst %}</a></li>
+	  {% endif %}
+    </ul>
+    </form>

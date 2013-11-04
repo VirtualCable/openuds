@@ -1,0 +1,8 @@
+{% extends 'uds/html5/snippets/navbar.html' %}
+{% load i18n static %}
+{% block navbar %}
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse navbar-ex1-collapse">
+	{% include "uds/html5/snippets/nav-right.html" with logout=False %}
+  </div><!-- /.navbar-collapse -->
+{% endblock %}

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.utils.safestring import mark_safe
 
 #
 # Copyright (c) 2012 Virtual Cable S.L.
@@ -40,6 +41,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+class CustomSelect(forms.Select):
+    def render(self, name, value, attrs=None):
+        if len(self.choices) < 2:
+            visible = 'style="display: none;"'
+        else:
+            visible = '';
+        res = '<select id="id_{0}" name="{0}" class="form-control"{1}>'.format(name, visible)
+        for choice in self.choices:
+            res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
+        res += '</select>'
+        return mark_safe(res)
+
 class BaseForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
@@ -52,11 +65,10 @@ class BaseForm(forms.Form):
             self._errors[NON_FIELD_ERRORS] = self.error_class()
         self._errors[NON_FIELD_ERRORS].append(message)
 
-
 class LoginForm(BaseForm):
-    user = forms.CharField(label=_('Username'), max_length=64)
-    password = forms.CharField(label=_('Password'), widget=forms.PasswordInput({'title': _('Password')}), required=False)
-    authenticator = forms.ChoiceField(label=_('Authenticator'), choices = ())
+    user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())
+    password = forms.CharField(label=_('Password'), widget=forms.PasswordInput(attrs={'title': _('Password')}), required=False)
+    authenticator = forms.ChoiceField(label=_('Authenticator'), choices = (), widget=CustomSelect())
     java = forms.CharField(widget = forms.HiddenInput())
     standard = forms.CharField(widget = forms.HiddenInput(), required=False)
     nonStandard = forms.CharField(widget = forms.HiddenInput(), required=False)

@@ -121,7 +121,7 @@ def login(request, smallName=None):
     else:
         form = LoginForm(smallName=smallName)
         
-    response = render_to_response('uds/login.html', { 'form' : form, 'customHtml' : GlobalConfig.CUSTOM_HTML_LOGIN.get(True) }, 
+    response = render_to_response('uds/html5/login.html', { 'form' : form, 'customHtml' : GlobalConfig.CUSTOM_HTML_LOGIN.get(True) }, 
                                   context_instance=RequestContext(request))
     if request.COOKIES.has_key('uds') is False:
         response.set_cookie('uds', ''.join(random.choice(string.letters + string.digits) for _ in xrange(32)))
