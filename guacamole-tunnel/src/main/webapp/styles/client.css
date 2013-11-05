@@ -33,6 +33,103 @@ img {
     overflow: hidden;
 }
 
+.guac-error .software-cursor {
+    cursor: default;
+}
+
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.event-target {
+    position: fixed;
+    opacity: 0;
+}
+
+/* Dialogs */
+
+div.dialogOuter {
+    display: table;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.75);
+}
+
+div.dialogMiddle {
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+div.dialog {
+    padding: 1em;
+
+    max-width: 75%;
+    text-align: left;
+
+    display: inline-block;
+}
+
+div.dialog h1 {
+    margin: 0;
+    margin-bottom: 0.25em;
+    text-align: center;
+}
+
+div.dialog div.buttons {
+    margin: 0;
+    margin-top: 0.5em;
+    text-align: center;
+}
+
+button {
+
+    border-style: solid;
+    border-width: 1px;
+
+    padding: 0.25em;
+    padding-right: 1em;
+    padding-left: 1em;
+
+}
+
+button:active {
+
+    padding-top: 0.35em;
+    padding-left: 1.1em;
+
+    padding-bottom: 0.15em;
+    padding-right: 0.9em;
+
+}
+
+button#reconnect {
+    display: none;
+}
+
+.guac-error button#reconnect {
+    display: inline;
+
+    background:   #200;
+    border-color: #822;
+    color:        #944; 
+}
+
+.guac-error button#reconnect:hover {
+    background:   #822;
+    border-color: #B33;
+    color:        black; 
+}
+
+
+div.dialog p {
+    margin: 0;
+}
+
 div.displayOuter {
     height: 100%;
     width: 100%;
@@ -58,3 +155,266 @@ div#display > * {
     margin-right: auto;
 }
 
+div.magnifier-background {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+div.magnifier {
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.75);
+    width: 50%;
+    height: 50%;
+    overflow: hidden;
+
+}
+
+.pan-overlay,
+.type-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.pan-overlay .indicator {
+    position: fixed;
+    background-size: 32px 32px;
+    -moz-background-size: 32px 32px;
+    -webkit-background-size: 32px 32px;
+    -khtml-background-size: 32px 32px;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+}
+
+.pan-overlay .indicator.up {
+
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+
+    background-image: url('../images/arrows/arrows-u.png');
+    
+}
+
+.pan-overlay .indicator.down {
+
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+
+    background-image: url('../images/arrows/arrows-d.png');
+    
+}
+
+.pan-overlay .indicator.left {
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 32px;
+
+    background-image: url('../images/arrows/arrows-l.png');
+    
+}
+
+.pan-overlay .indicator.right {
+
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 32px;
+
+    background-image: url('../images/arrows/arrows-r.png');
+    
+}
+
+/* Viewport Clone */
+
+div#viewportClone {
+    display: table;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    visibility: hidden;
+}
+
+.status {
+    text-shadow: 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black;
+    font-size: xx-large;
+    color: white;
+}
+
+.guac-error .status {
+    text-shadow: 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black;
+    color: #D44;
+}
+
+p.hint {
+    
+    border: 0.25em solid rgba(255, 255, 255, 0.25);
+    background: black;
+    opacity: 0.75;
+
+    color: white;
+
+    max-width: 10em;
+    padding: 1em;
+    margin: 1em;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    box-shadow: 0.25em 0.25em 0.25em rgba(0, 0, 0, 0.75);
+    
+}
+
+#notificationArea {
+    position: fixed;
+    right: 0.5em;
+    bottom: 0.5em;
+    max-width: 25%;
+    min-width: 10em;
+}
+
+.notification {
+
+    font-size: 0.9em;
+    
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: black;
+    opacity: 0.9;
+
+    color: white;
+
+    padding: 0.5em;
+    margin: 1em;
+    overflow: hidden;
+
+    box-shadow: 0.25em 0.25em 0.25em rgba(0, 0, 0, 0.75);
+ 
+}
+
+.notification div {
+    display: inline-block;
+}
+
+.notification .title-bar {
+    display: block;
+    white-space: nowrap;
+    font-weight: bold;
+
+    border-bottom: 1px solid white;
+    padding-bottom: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.notification .title-bar * {
+    vertical-align: middle;
+}
+
+.notification .caption {
+    color: silver;
+}
+
+.notification .close {
+
+    background: url('../images/action-icons/guac-close.png');
+    background-size: 10px 10px;
+    -moz-background-size: 10px 10px;
+    -webkit-background-size: 10px 10px;
+    -khtml-background-size: 10px 10px;
+
+    width: 10px;
+    height: 10px;
+
+    float: right;
+    cursor: pointer;
+
+}
+
+@keyframes progress {
+    from {background-position: 0px  0px;}
+    to   {background-position: 64px 0px;}
+}
+
+@-webkit-keyframes progress {
+    from {background-position: 0px  0px;}
+    to   {background-position: 64px 0px;}
+}
+
+.download.notification .caption {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.download.notification .progress,
+.download.notification .download {
+
+    margin-top: 1em;
+    margin-left: 0.75em;
+    padding: 0.25em;
+    min-width: 5em;
+    
+    border: 1px solid gray;
+    border-radius: 0.2em;
+
+    text-align: center;
+    float: right;
+
+}
+
+.download.notification .progress {
+
+    background: #444 url('../images/progress.png');
+    background-size: 16px 16px;
+    -moz-background-size: 16px 16px;
+    -webkit-background-size: 16px 16px;
+    -khtml-background-size: 16px 16px;
+
+    animation-name: progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    -webkit-animation-name: progress;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+
+}
+
+.download.notification .download {
+    background: rgb(16, 87, 153);
+    cursor: pointer;
+}
+
+#preload {
+    visibility: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}

@@ -84,6 +84,8 @@ public class TunnelServlet
 		info.setOptimalScreenWidth(Integer.parseInt(width));
 		info.setOptimalScreenHeight(Integer.parseInt(height));
 		
+		System.out.println("Optiomal size: " + width + "x" + height);
+		
 		// Add audio mimetypes
         String[] audio_mimetypes = request.getParameterValues("audio");
         if (audio_mimetypes != null)
@@ -98,13 +100,14 @@ public class TunnelServlet
         GuacamoleConfiguration config = new GuacamoleConfiguration();
         config.setProtocol(params.get("protocol"));
         
-        System.out.println("PArsing parameters");
+        System.out.println("Parsing parameters");
         
         Enumeration<String> keys = params.keys();
         while( keys.hasMoreElements() ) {
         	String key = keys.nextElement();
         	if( "protocol".equals(key) )
         		continue;
+        	System.out.println("Parameter " + key + ": " + params.get(key));
         	config.setParameter(key, params.get(key));
         }
         
