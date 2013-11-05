@@ -1,0 +1,25 @@
+{% extends "uds/html5/base.html" %}
+{% load i18n static html5 %}
+
+{% block js %}
+		<script type="text/javascript">
+			$(document).ready(function() {
+		      $('#admin ul').hide();
+			  $("#admin").click(function(){
+			  	var lista = $('#admin ul');
+			  	if (lista.is(":hidden")) {
+			  		lista.slideDown("fast");
+					
+				} else {
+					lista.hide();
+				}
+			  	
+			  	
+			  });
+			});
+			
+		</script>
+{% endblock %}
+{% block menu %}
+		{% include 'uds/html5/snippets/navbar_inner.html' %}
+{% endblock %}

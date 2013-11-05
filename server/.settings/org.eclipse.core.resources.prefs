@@ -79,6 +79,7 @@ encoding//src/uds/core/transports/TransportsFactory.py=utf-8
 encoding//src/uds/core/transports/__init__.py=utf-8
 encoding//src/uds/core/transports/protocols.py=utf-8
 encoding//src/uds/core/ui/UserInterface.py=utf-8
+encoding//src/uds/core/ui/theme.py=utf-8
 encoding//src/uds/core/util/AutoAttributes.py=utf-8
 encoding//src/uds/core/util/Cache.py=utf-8
 encoding//src/uds/core/util/Config.py=utf-8

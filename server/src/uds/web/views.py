@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
@@ -48,6 +49,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
 from uds.core.util import log
+from uds.core.ui import theme
 
 from transformers import transformId, scrambleId
 
@@ -121,7 +123,7 @@ def login(request, smallName=None):
     else:
         form = LoginForm(smallName=smallName)
         
-    response = render_to_response('uds/html5/login.html', { 'form' : form, 'customHtml' : GlobalConfig.CUSTOM_HTML_LOGIN.get(True) }, 
+    response = render_to_response(theme.template('login.html'), { 'form' : form, 'customHtml' : GlobalConfig.CUSTOM_HTML_LOGIN.get(True) }, 
                                   context_instance=RequestContext(request))
     if request.COOKIES.has_key('uds') is False:
         response.set_cookie('uds', ''.join(random.choice(string.letters + string.digits) for _ in xrange(32)))
@@ -203,7 +205,7 @@ def index(request):
                    )
             
     
-    return render_to_response('uds/index.html', 
+    return render_to_response(theme.template('index.html'), 
                               {'services' : services, 'java' : java, 'ip' : request.ip, 'nets' : nets,
                                 'transports' : validTrans }, 
                               context_instance=RequestContext(request))
@@ -415,3 +417,7 @@ def download(request, idDownload):
         return render_to_response('uds/downloads.html', { 'files' : files }, context_instance=RequestContext(request))
     
     return DownloadsManager.manager().send(request, idDownload)
+
+# Customization views
+def handler404(request):
+    return render(request, theme.template('404.html'))

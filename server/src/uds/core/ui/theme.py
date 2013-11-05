@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, 
@@ -28,43 +28,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
-from django.conf import settings
-from django.conf.urls.defaults import patterns, include
-from uds.core.util.modfinder import loadModulesUrls
+from uds.core.util.Config import GlobalConfig
 
-urlpatterns = patterns('uds',
-    (r'^$', 'web.views.index'),
-    (r'^login/$', 'web.views.login'),
-    (r'^login/(?P<smallName>.+)$', 'web.views.login'),
-    (r'^logout$', 'web.views.logout'),
-    (r'^service/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.service'),
-    # Icons
-    (r'^transicon/(?P<idTrans>.+)$', 'web.views.transportIcon'),
-    # Error URL
-    (r'^error/(?P<idError>.+)$', 'web.views.error'),
-    # Transport component url
-    (r'^transcomp/(?P<idTransport>.+)/(?P<componentId>.+)$', 'web.views.transcomp'),
-    # Service notification url
-    (r'^sernotify/(?P<idUserService>.+)/(?P<notification>.+)$', 'web.views.sernotify'),
-    # Authenticators custom html
-    (r'^customAuth/(?P<idAuth>.*)$', 'web.views.customAuth'),
-    # Preferences
-    (r'^prefs$', 'web.views.prefs'),
-    # Change Language
-    (r'^i18n/', include('django.conf.urls.i18n')),
-    # Downloadables
-    (r'^download/(?P<idDownload>.*)$', 'web.views.download'),
-    # XMLRPC Processor
-    (r'^xmlrpc$', 'xmlrpc.views.xmlrpc'),
-    # Custom authentication callback
-    (r'^auth/(?P<authName>.+)', 'web.views.authCallback'),
-    (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),
-    (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),
-    
-)
-
-# Append urls from special dispatcher
-urlpatterns += loadModulesUrls()
+def template(template_name):
+    theme_path = GlobalConfig.UDS_THEME.get(True)
+    if theme_path == 'default':
+        theme_path = ''
+    else:
+        theme_path += '/'
+        
+    return 'uds/{0}{1}'.format(theme_path, template_name)

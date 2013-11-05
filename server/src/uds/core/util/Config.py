@@ -251,6 +251,8 @@ class GlobalConfig(object):
     # Minimum Free memory for a node to be elegible for a destination of a migration
     CLUSTER_ELEGIBLE_MEMORYLOAD = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '40')
     
+    # Gui vars
+    UDS_THEME = Config.section(GLOBAL_SECTION).value('UDS Theme', 'html5')
     
     initDone = False
     
