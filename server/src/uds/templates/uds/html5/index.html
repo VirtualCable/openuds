@@ -1,33 +1,35 @@
 {% extends "uds/html5/internal_page.html" %}
 {% load i18n static html5 %}
+
+{% block css %}
+		<style>
+			.testing {
+				width: 95px;
+				height: 95px;
+				margin-bottom: 16px;
+				margin-left: 16px;
+				
+				background: rgb(255,255,255); /* Old browsers */
+				background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6+ */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(229,229,229,1))); /* Chrome,Safari4+ */
+				background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10+,Safari5.1+ */
+				background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* Opera 11.10+ */
+				background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* IE10+ */
+				background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* W3C */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+				overflow: hidden;
+			}		
+		</style>
+{% endblock %}
+
 {% block js %}
 		<script>
-		function squarifyMe(element) {
-			  squareItUp();
-			  window.onresize = function(element) {
-			    squareItUp();
-			  }
-			  
-			  function squareItUp() {
-			    $(element).height($(element).width());
-			  }
-			}
-		
 		$(function() {
-			squarifyMe('.square');
-			
 			{% if not java %}
-			$('#jmessage').dialog({
-				autoOpen: false,
-				width: 500,
-				buttons: {
-					"Ok": function() { 
-						$(this).dialog("close"); 
-					}
-				}
-			});
 			$("a.nojava").click( function() {
-				$('#jmessage').dialog('open');
+				$('#no-java-dialog').modal({
+					  keyboard: false
+					})
 				return false;
 			});
 			
@@ -38,16 +40,14 @@
 
 {% block body %}
 			<h2>{% trans "Services" %}</h2>
-			<ul>
-			 	<div class="row">
-				{% for ser in services %}
-			{% if forloop.counter0|divisibleby:2 == 1 %}
-			</div><div class="row">
-			{% endif %}
+			 	<div class="clearfix">
+			{% for ser in services %}
 				  {% if ser.transports %}
 					  {% with trans=ser.transports|first %}
-					  <div class="col-sm-6 col-md-4">
-					    <div class="thumbnail">
+					  {% if forloop.counter0 > 0 %} 
+					  {% endif %}
+					  <div class="pull-left">
+					    <div class="thumbnail testing">
 						  <a class="{% if not java and trans.needsJava %} nojava{% endif %}" href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">
 						  	<img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" class="" alt="{{ ser.name }}" />
 						  	<div class="caption">{{ ser.name }}</div>
@@ -64,10 +64,23 @@
 			</div>
 			
 {% if not java %}
-<div id="jmessage" title="{% trans "Java not found" %}">
-	<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
-	<p>{% trans "Please, install latest version from" %} <a href="http://www.java.com">{% trans "Java website" %}</a> {% trans "and restart browser" %}</p>
-</div>
+		<div class="modal fade" id="no-java-dialog">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title">{% trans "Java not found" %}</h4>
+		      </div>
+		      <div class="modal-body">
+				<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
+				<p>{% trans "Please, install latest version from" %} <a href="http://www.java.com" target="_blank">{% trans "Java website" %}</a> {% trans "and restart browser" %}</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 {% endif %}
 
 {% if user.isStaff %}

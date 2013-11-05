@@ -161,6 +161,8 @@ def index(request):
     # Information for administrators
     nets = ''
     validTrans = ''
+
+    logger.debug('OS: {0}'.format(os['OS']))
     
     if request.user.isStaff():
         nets = ','.join( [ n.name for n in Network.networksFor(request.ip) ])
@@ -205,10 +207,12 @@ def index(request):
                    )
             
     
-    return render_to_response(theme.template('index.html'), 
+    response = render_to_response(theme.template('index.html'), 
                               {'services' : services, 'java' : java, 'ip' : request.ip, 'nets' : nets,
                                 'transports' : validTrans }, 
                               context_instance=RequestContext(request))
+    return response
+
 
 @webLoginRequired
 def prefs(request):

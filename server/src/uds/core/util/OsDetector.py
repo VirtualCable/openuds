@@ -38,9 +38,10 @@ logger = logging.getLogger(__name__)
 Linux = 'Linux'
 Windows = 'Windows'
 Macintosh = 'Macintosh'
+Android = 'Android'
 
 
-knownOss = { 'Linux' : Linux, 'Windows' : Windows, 'Macintosh' : Macintosh }
+knownOss = { 'Linux' : Linux, 'Windows' : Windows, 'Macintosh' : Macintosh, 'Android': Android }
     
 def getOsFromUA(ua):
     '''
@@ -54,6 +55,7 @@ def getOsFromUA(ua):
             break
         except Exception:
             pass
-    logger.debug(res)
+    logger.debug('User-Agent: {0}'.format(ua))
+    logger.debug('Detected OS: {0}'.format(res))
     return res
     

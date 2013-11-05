@@ -47,11 +47,11 @@ class CustomSelect(forms.Select):
             visible = 'style="display: none;"'
         else:
             visible = '';
-        res = '<select id="id_{0}" name="{0}" class="form-control"{1}>'.format(name, visible)
+        res = '<select id="id_{0}" name="{0}" class="form-control">'.format(name)
         for choice in self.choices:
             res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
         res += '</select>'
-        return mark_safe('<div class="form-group"><label>' + unicode(_('authenticator')) + '</label>' +  res + '</div>')
+        return mark_safe('<div class="form-group"{0}><label>'.format(visible) + unicode(_('authenticator')) + '</label>' +  res + '</div>')
 
 class BaseForm(forms.Form):
     
