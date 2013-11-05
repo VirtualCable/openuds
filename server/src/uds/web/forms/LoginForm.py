@@ -51,7 +51,7 @@ class CustomSelect(forms.Select):
         for choice in self.choices:
             res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
         res += '</select>'
-        return mark_safe(res)
+        return mark_safe('<div class="form-group"><label>' + unicode(_('authenticator')) + '</label>' +  res + '</div>')
 
 class BaseForm(forms.Form):
     

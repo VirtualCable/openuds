@@ -2,7 +2,20 @@
 {% load i18n static html5 %}
 {% block js %}
 		<script>
+		function squarifyMe(element) {
+			  squareItUp();
+			  window.onresize = function(element) {
+			    squareItUp();
+			  }
+			  
+			  function squareItUp() {
+			    $(element).height($(element).width());
+			  }
+			}
+		
 		$(function() {
+			squarifyMe('.square');
+			
 			{% if not java %}
 			$('#jmessage').dialog({
 				autoOpen: false,
@@ -24,26 +37,32 @@
 {% endblock %}
 
 {% block body %}
-<div id="services"> 
-	<h2>{% trans "Services" %}</h2>
-	<ul>
-	{% for ser in services %}
-	  {{ forloop.counter }}
-	  {% if ser.transports %}
-		<li>
-		  {% with trans=ser.transports|first %}
-		  <a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">{{ ser.name }}</a>
-		  {% endwith %}
-		  <ul>
-		  {% for trans in ser.transports %}
-		    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
-		  {% endfor %}
-		  </ul>
-		</li>
-	  {% endif %}
-	{% endfor %}
-	</ul>
-</div>
+			<h2>{% trans "Services" %}</h2>
+			<ul>
+			 	<div class="row">
+				{% for ser in services %}
+			{% if forloop.counter0|divisibleby:2 == 1 %}
+			</div><div class="row">
+			{% endif %}
+				  {% if ser.transports %}
+					  {% with trans=ser.transports|first %}
+					  <div class="col-sm-6 col-md-4">
+					    <div class="thumbnail">
+						  <a class="{% if not java and trans.needsJava %} nojava{% endif %}" href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">
+						  	<img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" class="" alt="{{ ser.name }}" />
+						  	<div class="caption">{{ ser.name }}</div>
+						  </a>
+					    </div>
+					  </div>
+					  {% endwith %}
+					  <!-- 
+					  {% for trans in ser.transports %}
+					    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>  
+					  {% endfor %} -->
+				  {% endif %}
+				{% endfor %}
+			</div>
+			
 {% if not java %}
 <div id="jmessage" title="{% trans "Java not found" %}">
 	<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
