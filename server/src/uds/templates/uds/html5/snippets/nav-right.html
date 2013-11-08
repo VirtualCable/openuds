@@ -3,6 +3,9 @@
   	{% csrf_token %}
   	<input id="id_language" type="hidden" name="language" value=""/>
 	<ul class="nav navbar-nav navbar-right">
+        {% if user.staff_member or user.is_admin %}
+            <li><a href="{% url "uds.web.views.download" idDownload='' %}">{% trans "Downloads" %}</a></li>
+        {% endif %}
 	  <li><a href="#">{% trans 'About' %}</a></li>
       <li class="dropdown">
       	{% for lang in LANGUAGES %}
@@ -18,7 +21,7 @@
           {% endfor %}
         </ul>
       </li>
-	  {% if logout %}
+	  {% if user and not user.is_anonymous %}
 	  <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> {% trans 'logout'|capfirst %}</a></li>
 	  {% endif %}
     </ul>

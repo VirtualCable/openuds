@@ -1,0 +1,19 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans 'Service not ready' %}{% endblock %}
+{% block css %}
+		<style>
+		.center {text-align: center; margin-left: auto; margin-right: auto; margin-bottom: auto; margin-top: auto;}
+		</style>
+{% endblock %}
+{% block body %}
+      <div class="jumbotron center">
+          <h1> {% trans 'Service not ready' %}</h1>
+          <br />
+          <p>{% trans 'Service not ready at this moment. Please, try again in a while.' %}</p>
+          <h5>{% trans 'The service you has requested was not ready, and is being created right now. It will be availabe in a while ' %}</h5>
+          <br />
+          <a href="{% url 'uds.web.views.index' %}" class="btn btn-lg btn-info"><i class="fa fa-home"></i> {% trans "Back" %}</a>
+        </div>
+{% endblock %}
