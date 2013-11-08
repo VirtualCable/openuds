@@ -14,8 +14,7 @@
 {% block js %}
 <script>
 $(document).ready(function(){
-    var v = "{{ transport|escapejs }}";
-    $('#transport').append(v);
+    $('#transport').append("{{ transport|escapejs }}");
 });
 </script>
 {% endblock %}

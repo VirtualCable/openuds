@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.ui.UserInterface import gui
 from uds.core.util.Cache import Cache
 from uds.core.util import net
@@ -148,6 +148,6 @@ class HTML5RDPTransport(Transport):
             window.location = url;
         }})
         </script>
-        <div id='html5href' />
-        '''.format(url) 
+        <div>{1}...</div>
+        '''.format(url, ugettext('Launching HTML5 RDP connection'))
 

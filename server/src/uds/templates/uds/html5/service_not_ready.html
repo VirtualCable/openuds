@@ -1,7 +1,7 @@
 {% extends "uds/html5/templates/base.html" %}
 {% load i18n static %}
 
-{% block title %}{% trans 'Service not ready' %}{% endblock %}
+{% block title %}{% trans 'The service is not ready' %}{% endblock %}
 {% block css %}
 		<style>
 		.center {text-align: center; margin-left: auto; margin-right: auto; margin-bottom: auto; margin-top: auto;}
@@ -9,10 +9,10 @@
 {% endblock %}
 {% block body %}
       <div class="jumbotron center">
-          <h1> {% trans 'Service not ready' %}</h1>
+          <h1> {% trans 'The service is not ready' %}</h1>
           <br />
-          <p>{% trans 'Service not ready at this moment. Please, try again in a while.' %}</p>
-          <h5>{% trans 'The service you has requested was not ready, and is being created right now. It will be availabe in a while ' %}</h5>
+          <p>{% trans 'The service is not ready at this moment. Please, try it again after a few seconds.' %}</p>
+          <h5>{% trans 'The service you has requested was not ready, and is being created right now. It will be availabe shortly' %}</h5>
           <br />
           <a href="{% url 'uds.web.views.index' %}" class="btn btn-lg btn-info"><i class="fa fa-home"></i> {% trans "Back" %}</a>
         </div>

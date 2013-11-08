@@ -252,7 +252,7 @@ def service(request, idService, idTransport):
                 if itrans.isAvailableFor(ip):
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
                     transport = itrans.renderForHtml(ads, scrambleId(request, ads.id), scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
-                    return render_to_response('uds/show_transport.html', {'transport' : transport, 'nolang' : True }, context_instance=RequestContext(request))
+                    return render_to_response(theme.template('show_transport.html'), {'transport' : transport, 'nolang' : True }, context_instance=RequestContext(request))
                 else:
                     log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
                     logger.debug('Transport is not ready for user service {0}'.format(ads))
@@ -261,7 +261,7 @@ def service(request, idService, idTransport):
         else:
             log.doLog(ads, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(request.user.name, request.ip), log.WEB)
         # Not ready, show message and return to this page in a while
-        return render_to_response('uds/service_not_ready.html', context_instance=RequestContext(request))
+        return render_to_response(theme.template('service_not_ready.html'), context_instance=RequestContext(request))
     except Exception, e:
         logger.exception("Exception")
         return errors.exceptionView(request, e)
@@ -316,7 +316,7 @@ def transportIcon(request, idTrans):
 
 @transformId
 def error(request, idError):
-    return render_to_response('uds/error.html', {'errorString' : errors.errorString(idError)  }, context_instance=RequestContext(request))
+    return render_to_response(theme.template('error.html'), {'errorString' : errors.errorString(idError)  }, context_instance=RequestContext(request))
 
 @csrf_exempt
 def authCallback(request, authName):
@@ -347,7 +347,7 @@ def authCallback(request, authName):
             raise auths.Exceptions.InvalidUserException()
 
         # Redirect to main page through java detection process, so UDS know the availability of java
-        response = render_to_response('uds/detectJava.html', { 'idAuth' : scrambleId(request, authenticator.id)}, 
+        response = render_to_response(theme.template('detectJava.html'), { 'idAuth' : scrambleId(request, authenticator.id)}, 
                                       context_instance=RequestContext(request))
                 
         webLogin(request, response, user, '') # Password is unavailable in this case
@@ -418,7 +418,7 @@ def download(request, idDownload):
     if idDownload == '':
         files = [ { 'id' : key, 'name' : val['name'], 'comment' : _(val['comment']) } for key, val in DownloadsManager.manager().getDownloadables().items() ]
         logger.debug('Files: {0}'.format(files))
-        return render_to_response('uds/downloads.html', { 'files' : files }, context_instance=RequestContext(request))
+        return render_to_response(theme.template('downloads.html'), { 'files' : files }, context_instance=RequestContext(request))
     
     return DownloadsManager.manager().send(request, idDownload)
 

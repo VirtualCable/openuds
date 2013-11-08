@@ -32,8 +32,9 @@
 '''
 
 from functools import wraps
-import logging
 import base64, random, string
+
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +50,13 @@ def transformId(view_func):
     '''
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
+        import errors
         for k in kwargs.keys():
             if k[:2] == 'id':
-                kwargs[k] = unscrambleId(request, kwargs[k])
+                try:
+                    kwargs[k] = unscrambleId(request, kwargs[k])
+                except:
+                    return errors.errorView(request, errors.INVALID_REQUEST)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 

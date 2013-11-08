@@ -1,0 +1,21 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n %}
+
+{% block body %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {% trans "Downloads" %}
+    </div>
+    <div class="panel-body">
+    	<p>{% trans "This page contains a list of downloadables provided by different modules" %}</p>
+        <div class="list-group">
+          {% for f in files %}
+          <a class="list-group-item" href="{% url "uds.web.views.download" idDownload=f.id %}">
+            <h4 class="list-group-item-heading">{{ f.name }}</h4>
+            <p class="list-group-item-text">{{ f.comment|safe }}</p>
+          </a>
+          {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

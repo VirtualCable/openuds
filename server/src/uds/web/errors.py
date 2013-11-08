@@ -52,6 +52,7 @@ COOKIES_NEEDED = 6
 USER_SERVICE_NOT_FOUND = 7
 AUTHENTICATOR_NOT_FOUND = 8
 INVALID_CALLBACK = 9
+INVALID_REQUEST = 10
 
 
 strings = [ 
@@ -64,7 +65,8 @@ strings = [
            _('You need to enable cookies to let this application work'),
            _('User service not found'),
            _('Authenticator not found'),
-           _('Invalid authenticator')
+           _('Invalid authenticator'),
+           _('Invalid request received'),
         ]
 
 

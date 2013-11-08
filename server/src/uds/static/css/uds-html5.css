@@ -28,6 +28,11 @@ footer {
 	
 }
 
+#transport {
+	margin-top: 32px;
+	margin-bottom: 32px;
+}
+
 /* Sample "info" (footer) text, to be placed after (c) Virtualcable */
 /*#vcable:after {
 	content: "Testing text";

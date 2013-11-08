@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-04 16:35+0100\n"
+"POT-Creation-Date: 2013-11-08 14:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -132,7 +132,7 @@ msgstr "Benutzernamen mit lesen Berechtigungen auf der Basis ausgewählt"
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:30
 #: services/OVirt/OVirtProvider.py:94 services/Sample/SampleService.py:131
-#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:62
+#: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
 #: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
 #: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:70
 msgid "Password"
@@ -201,7 +201,7 @@ msgid "Regular Expressions LDAP authenticator"
 msgstr "Reguläre Ausdrücke LDAP-Authentifizierungsserver"
 
 #: auths/RegexLdap/Authenticator.py:72 auths/SimpleLDAP/Authenticator.py:73
-#: services/OVirt/OVirtProvider.py:93 transports/HTML5RDP/HTML5RDP.py:62
+#: services/OVirt/OVirtProvider.py:93 transports/HTML5RDP/HTML5RDP.py:64
 #: transports/NX/NXTransport.py:61 transports/RDP/RDPTransport.py:59
 #: transports/RDP/TSRDPTransport.py:63 transports/TSNX/TSNXTransport.py:66
 #: web/forms/LoginForm.py:69
@@ -401,31 +401,31 @@ msgstr ""
 "Publikationen mit Dienstleistungen im Prozess kann nicht Veröffentlichung "
 "rückgängig machen"
 
-#: core/managers/UserPrefsManager.py:254
+#: core/managers/UserPrefsManager.py:257
 msgid "Screen Size"
 msgstr "Bildschirmgröße"
 
-#: core/managers/UserPrefsManager.py:258
+#: core/managers/UserPrefsManager.py:261
 msgid "Full Screen"
 msgstr "Vollbild"
 
-#: core/managers/UserPrefsManager.py:261
+#: core/managers/UserPrefsManager.py:264
 msgid "Screen colors"
 msgstr "Bildschirmfarben"
 
-#: core/managers/UserPrefsManager.py:262
+#: core/managers/UserPrefsManager.py:265
 msgid "8 bits"
 msgstr "8 Bit"
 
-#: core/managers/UserPrefsManager.py:263
+#: core/managers/UserPrefsManager.py:266
 msgid "16 bits"
 msgstr "16 bits"
 
-#: core/managers/UserPrefsManager.py:264
+#: core/managers/UserPrefsManager.py:267
 msgid "24 bits"
 msgstr "24 Bit"
 
-#: core/managers/UserPrefsManager.py:265
+#: core/managers/UserPrefsManager.py:268
 msgid "32 bits"
 msgstr "32 bits"
 
@@ -602,7 +602,7 @@ msgstr ""
 "Maschine)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
-#: transports/HTML5RDP/HTML5RDP.py:64 transports/RDP/RDPTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:66 transports/RDP/RDPTransport.py:61
 #: transports/RDP/TSRDPTransport.py:65
 msgid "Domain"
 msgstr "Domäne"
@@ -1007,14 +1007,9 @@ msgstr "L2-Cache für Blindelemente"
 msgid "List of names"
 msgstr "Liste der Namen"
 
-#: templates/404.html:4 templates/404.html.py:7
+#: templates/404.html:3 templates/500.html:3
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
-
-#: templates/404.html:9
-msgid "Sorry, but the requested page could not be found."
-msgstr ""
-"Tut mir leid, aber die angeforderte Seite konnte nicht gefunden werden."
 
 #: templates/uds/base.html:7
 msgid "UDS"
@@ -1024,11 +1019,12 @@ msgstr "UDS"
 msgid "Login redirection"
 msgstr "Anmeldung-Umleitung"
 
-#: templates/uds/detectJava.html:38
+#: templates/uds/detectJava.html:38 templates/uds/html5/detectJava.html:27
 msgid "Go to main page"
 msgstr "Gehen Sie zur Hauptseite"
 
-#: templates/uds/downloads.html:8 templates/uds/snippets/admin_user.html:7
+#: templates/uds/downloads.html:8 templates/uds/html5/snippets/navbar.html:24
+#: templates/uds/snippets/admin_user.html:7
 msgid "Downloads"
 msgstr "Downloads"
 
@@ -1039,42 +1035,42 @@ msgstr ""
 "Diese Seite enthält eine Liste der Downloads von verschiedenen Modulen "
 "bereitgestellt"
 
-#: templates/uds/index.html:51
+#: templates/uds/index.html:51 templates/uds/html5/index.html:48
 msgid "Services"
 msgstr "Dienstleistungen"
 
-#: templates/uds/index.html:70
+#: templates/uds/index.html:70 templates/uds/html5/index.html:86
 msgid "Java not found"
 msgstr "Java nicht gefunden"
 
-#: templates/uds/index.html:71
+#: templates/uds/index.html:71 templates/uds/html5/index.html:89
 msgid ""
 "Java is not available on your browser, and the selected transport needs it."
 msgstr ""
 "Java ist nicht verfügbar in Ihrem Browser, und der ausgewählte Transport "
 "muss es."
 
-#: templates/uds/index.html:72
+#: templates/uds/index.html:72 templates/uds/html5/index.html:90
 msgid "Please, install latest version from"
 msgstr "Bitte installieren Sie neueste Version von"
 
-#: templates/uds/index.html:72
+#: templates/uds/index.html:72 templates/uds/html5/index.html:90
 msgid "Java website"
 msgstr "Java-website"
 
-#: templates/uds/index.html:72
+#: templates/uds/index.html:72 templates/uds/html5/index.html:90
 msgid "and restart browser"
 msgstr "und Browser neu starten"
 
-#: templates/uds/index.html:78
+#: templates/uds/index.html:78 templates/uds/html5/index.html:102
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/index.html:79
+#: templates/uds/index.html:79 templates/uds/html5/index.html:103
 msgid "Networks"
 msgstr "Netzwerke"
 
-#: templates/uds/index.html:80
+#: templates/uds/index.html:80 templates/uds/html5/index.html:104
 msgid "Transports"
 msgstr "Transporte"
 
@@ -1083,6 +1079,7 @@ msgid "User"
 msgstr "Benutzer"
 
 #: templates/uds/internal_page.html:34 templates/uds/prefs.html:12
+#: templates/uds/html5/snippets/navbar.html:16
 msgid "Preferences"
 msgstr "Einstellungen"
 
@@ -1090,7 +1087,7 @@ msgstr "Einstellungen"
 msgid "Log out"
 msgstr "Melden Sie sich ab"
 
-#: templates/uds/login.html:6 templates/uds/html5/login.html:4
+#: templates/uds/login.html:6
 msgid "Login to UDS"
 msgstr "Anmeldung für UDS"
 
@@ -1106,15 +1103,15 @@ msgstr "Login-Daten"
 msgid "Enter"
 msgstr "Geben Sie"
 
-#: templates/uds/login.html:93 templates/uds/html5/login.html:92
+#: templates/uds/login.html:93 templates/uds/html5/login.html:94
 msgid "Back to login"
 msgstr "Zurück zur Anmeldung"
 
-#: templates/uds/prefs.html:6
+#: templates/uds/prefs.html:6 templates/uds/html5/prefs.html:5
 msgid "UDS User Preferences"
 msgstr "UDS-Benutzereinstellungen"
 
-#: templates/uds/prefs.html:16
+#: templates/uds/prefs.html:16 templates/uds/html5/prefs.html:12
 msgid "Save Preferences"
 msgstr "Speichern Sie Einstellungen"
 
@@ -1124,71 +1121,105 @@ msgstr ""
 "Service im Moment nicht bereit. Bitte, versuchen Sie es noch einmal in eine "
 "Weile."
 
-#: templates/uds/html5/login.html:73
-msgid "Sign in to access UDS"
-msgstr "Melden Sie an, um Zugriff auf UDS"
+#: templates/uds/html5/detectJava.html:4
+msgid "Login redirection to UDS"
+msgstr "Login-Umleitung zu UDS"
 
-#: templates/uds/html5/login.html:82
+#: templates/uds/html5/index.html:4
+msgid "Available services list"
+msgstr "Liste der verfügbaren Dienste"
+
+#: templates/uds/html5/index.html:64
+msgid "transports"
+msgstr "Transporte"
+
+#: templates/uds/html5/login.html:4 templates/uds/html5/login.html.py:69
+msgid "Welcome to UDS"
+msgstr "Willkommen bei der UDS"
+
+#: templates/uds/html5/login.html:76
+msgid "invalid credentials"
+msgstr "Ungültiger Anmeldeinformationen"
+
+#: templates/uds/html5/login.html:84
 msgid "username"
 msgstr "Benutzername"
 
-#: templates/uds/html5/login.html:83
+#: templates/uds/html5/login.html:85
 msgid "password"
 msgstr "Passwort"
 
-#: templates/uds/html5/login.html:86
+#: templates/uds/html5/login.html:88
 msgid "Sign in"
 msgstr "Anmelden"
 
-#: templates/uds/html5/snippets/nav-right.html:6
-msgid "About"
-msgstr "Über"
+#: templates/uds/html5/prefs.html:11
+msgid "Cancel"
+msgstr "Abbrechen"
 
-#: templates/uds/html5/snippets/nav-right.html:22
-msgid "logout"
-msgstr "Logout"
+#: templates/uds/html5/service_not_ready.html:4
+#: templates/uds/html5/service_not_ready.html:12
+msgid "The service is not ready"
+msgstr "Der Dienst ist nicht bereit"
+
+#: templates/uds/html5/service_not_ready.html:14
+msgid ""
+"The service is not ready at this moment. Please, try it again after a few "
+"seconds."
+msgstr ""
+"Der Dienst ist im Moment nicht bereit. Bitte, versuchen Sie es erneut nach wenigen "
+"Sekunden."
+
+#: templates/uds/html5/service_not_ready.html:15
+msgid ""
+"The service you has requested was not ready, and is being created right now. "
+"It will be availabe shortly"
+msgstr ""
+"Der Service, den Sie angefordert hat war nicht bereit, und jetzt entsteht. "
+"Es wird in Kürze verfügbar sein."
+
+#: templates/uds/html5/service_not_ready.html:17
+msgid "Back"
+msgstr "Zurück"
+
+#: templates/uds/html5/show_transport.html:10
+#: templates/uds/snippets/back_to_list.html:3
+msgid "Back to services list"
+msgstr "Zurück zur Liste"
 
 #: templates/uds/html5/snippets/navbar.html:6
 msgid "toggle navigation"
 msgstr "Toggle navigation"
 
-#: templates/uds/html5/snippets/navbar_inner.html:5
-msgid "packages"
-msgstr "Pakete"
+#: templates/uds/html5/snippets/navbar.html:26
+msgid "About"
+msgstr "Über"
 
-#: templates/uds/html5/snippets/navbar_inner.html:6
-msgid "administration"
-msgstr "Verwaltung"
-
-#: templates/uds/html5/snippets/navbar_outter.html:7
-msgid "home"
-msgstr "Startseite"
+#: templates/uds/html5/snippets/navbar.html:42
+msgid "logout"
+msgstr "Logout"
 
 #: templates/uds/snippets/admin_user.html:4
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/uds/snippets/back_to_list.html:3
-msgid "Back to services list"
-msgstr "Zurück zur Liste"
-
 #: templates/uds/snippets/lang.html:9
 msgid "Language"
 msgstr "Sprache"
 
-#: transports/HTML5RDP/HTML5RDP.py:54
+#: transports/HTML5RDP/HTML5RDP.py:55
 msgid "HTML5 RDP Transport"
 msgstr "HTML5-RDP-Transport"
 
-#: transports/HTML5RDP/HTML5RDP.py:56
+#: transports/HTML5RDP/HTML5RDP.py:57
 msgid "RDP Transport using HTML5 client"
 msgstr "RDP-Transport mit HTML5-client"
 
-#: transports/HTML5RDP/HTML5RDP.py:60
+#: transports/HTML5RDP/HTML5RDP.py:62
 msgid "Tunnel Server"
 msgstr "Tunnelserver"
 
-#: transports/HTML5RDP/HTML5RDP.py:60
+#: transports/HTML5RDP/HTML5RDP.py:62
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -1196,13 +1227,13 @@ msgstr ""
 "Host des Tunnelservers (Verwendung http/Https & Port bei Bedarf) als "
 "zugänglich von Benutzern"
 
-#: transports/HTML5RDP/HTML5RDP.py:61 transports/NX/NXTransport.py:60
+#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
 #: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
 #: transports/TSNX/TSNXTransport.py:65
 msgid "Empty creds"
 msgstr "Leere creds"
 
-#: transports/HTML5RDP/HTML5RDP.py:61 transports/NX/NXTransport.py:60
+#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
 #: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
 #: transports/TSNX/TSNXTransport.py:65
 msgid "If checked, the credentials used to connect will be emtpy"
@@ -1210,7 +1241,7 @@ msgstr ""
 "Wenn diese Option aktiviert, werden die Anmeldeinformationen zum Herstellen "
 "einer leer sein."
 
-#: transports/HTML5RDP/HTML5RDP.py:62 transports/NX/NXTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:64 transports/NX/NXTransport.py:61
 #: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
 #: transports/TSNX/TSNXTransport.py:66
 msgid "If not empty, this username will be always used as credential"
@@ -1218,7 +1249,7 @@ msgstr ""
 "Wenn nicht leer ist, dieser Benutzername wird immer als verwendet "
 "Anmeldeinformationen"
 
-#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:62
+#: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
 #: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
 #: transports/TSNX/TSNXTransport.py:67
 msgid "If not empty, this password will be always used as credential"
@@ -1226,7 +1257,7 @@ msgstr ""
 "Wenn nicht leer ist, dieses Kennwort immer verwendet werden als "
 "Anmeldeinformationen"
 
-#: transports/HTML5RDP/HTML5RDP.py:64 transports/RDP/RDPTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:66 transports/RDP/RDPTransport.py:61
 #: transports/RDP/TSRDPTransport.py:65
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
@@ -1235,11 +1266,11 @@ msgstr ""
 "Wenn nicht leer ist, dieser Domäne immer verwendet werden als "
 "Anmeldeinformationen (als DOMAIN verwendet\\Benutzer)"
 
-#: transports/HTML5RDP/HTML5RDP.py:65
+#: transports/HTML5RDP/HTML5RDP.py:67
 msgid "Enable Audio"
 msgstr "Audio aktivieren"
 
-#: transports/HTML5RDP/HTML5RDP.py:65
+#: transports/HTML5RDP/HTML5RDP.py:67
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
@@ -1247,9 +1278,25 @@ msgstr ""
 "Wenn aktiviert, werden die Audiodaten auf Client weitergeleitet (wenn Client-"
 "Browser Es unterstützt)"
 
-#: transports/HTML5RDP/HTML5RDP.py:71
+#: transports/HTML5RDP/HTML5RDP.py:68
+msgid "Enable Printing"
+msgstr "Drucken aktivieren"
+
+#: transports/HTML5RDP/HTML5RDP.py:68
+msgid ""
+"If checked, the printing will be redirected to client (if client browser "
+"supports it)"
+msgstr ""
+"Wenn diese Option aktiviert, wird der Druck auf Client weitergeleitet (wenn "
+"Client-Browser Es unterstützt)"
+
+#: transports/HTML5RDP/HTML5RDP.py:74
 msgid "The server must be http or https"
 msgstr "Der Server muss http oder Https sein."
+
+#: transports/HTML5RDP/HTML5RDP.py:152
+msgid "Launching HTML5 RDP connection"
+msgstr "HTML5-RDP-Verbindung starten"
 
 #: transports/NX/NXTransport.py:54
 msgid "NX Transport (direct)"
@@ -1493,9 +1540,13 @@ msgstr "Authentifikator nicht gefunden"
 msgid "Invalid authenticator"
 msgstr "Ungültige Echtheitsbestätigung"
 
-#: web/views.py:389
+#: web/views.py:395
 msgid "Authenticator do not provides information"
 msgstr "Authentifikator informiert nicht"
+
+#: web/forms/LoginForm.py:54
+msgid "authenticator"
+msgstr "Authentifikator"
 
 #: web/forms/LoginForm.py:71
 msgid "Authenticator"
@@ -1648,270 +1699,3 @@ msgstr "Den Transport kann nicht gefunden werden."
 #: xmlrpc/transports/Networks.py:79 xmlrpc/transports/Networks.py:96
 msgid "Can't locate the network"
 msgstr "Das Netzwerk kann nicht gefunden werden."
-
-#~ msgid "Allowed hosts"
-#~ msgstr "Zulässigen hosts"
-
-#~ msgid ""
-#~ "Hosts allowed to ask for credentials for users (use * for all host, but "
-#~ "not recommended). Comma separated list"
-#~ msgstr ""
-#~ "Hosts erlaubt, Fragen zur Eingabe von Anmeldeinformationen für Benutzer "
-#~ "(verwenden * für alle, aber nicht Host empfohlen). Durch Kommas getrennte "
-#~ "Liste"
-
-#~ msgid "Invalid network: {0}"
-#~ msgstr "Ungültige Netzwerk: {0}"
-
-#~ msgid "VMWare VC Server IP or Hostname"
-#~ msgstr "VMWare VC Server IP oder Hostname"
-
-#~ msgid "Regular Exp. for groups"
-#~ msgstr "Regelmäßige EXP für Gruppen."
-
-#~ msgid "Regular Expression to extract the group name"
-#~ msgstr "Reguläre Ausdruck, der den Namen den Gruppe zu extrahieren"
-
-#~ msgid "Invalid regular expression"
-#~ msgstr "Ungültiger regulärer Ausdruck"
-
-#~ msgid "Can't cancel non running operation"
-#~ msgstr "Kann nicht nicht ausgeführten Vorgang abbrechen"
-
-#~ msgid "If checked, will use a ssl connection to Active Directory"
-#~ msgstr ""
-#~ "Wenn diese Option aktiviert ist, verwendet eine Ssl-Verbindung zum Ldap "
-#~ "(Wenn Port 389 ist, wird in Tatsache Port 636)"
-
-#~ msgid ""
-#~ "Username with read privileges on the base selected (use USER@DOMAIN.DOM "
-#~ "form for this)"
-#~ msgstr "Benutzernamen mit lesen Berechtigungen auf der Basis ausgewählt"
-
-#~ msgid "Active Directory Authenticator"
-#~ msgstr "Active Directory-Authenticator"
-
-#~ msgid "Authenticate against Active Directory"
-#~ msgstr "Mithilfe von Active Directory zu authentifizieren"
-
-#~ msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
-#~ msgstr ""
-#~ "Müssen den Benutzernamen in der Form Benutzername@Domäne angeben.DOM"
-
-#~ msgid "Domain seems to be incorrect, please check it"
-#~ msgstr "Domäne scheint falsch sein, bitte überprüfen es"
-
-#~ msgid "Ldap does not seem an Active Directory (do not have user objects)"
-#~ msgstr "LDAP scheint nicht Active Directory (keine Benutzerobjekte)"
-
-#~ msgid "Ldap does not seem an Active Directory (no not have group objects)"
-#~ msgstr ""
-#~ "LDAP scheint nicht Active Directory (Nein, nicht haben Gruppenobjekte)"
-
-#~ msgid ""
-#~ "Ldap does not seem an Active Directory (do not have any user nor groups)"
-#~ msgstr ""
-#~ "LDAP scheint nicht Active Directory (nicht haben keine Benutzer oder "
-#~ "Gruppen)"
-
-#~ msgid "Username with read privileges on the eDirectory"
-#~ msgstr "Benutzernamen mit lesen Berechtigungen für das eDirectory"
-
-#~ msgid "eDirectory Authenticator"
-#~ msgstr "eDirectory Authenticator"
-
-#~ msgid "Authenticate against eDirectory"
-#~ msgstr "Authentifizieren gegen eDirectory"
-
-#~ msgid "Expected group attribute "
-#~ msgstr "Erwartete Group-Attribut "
-
-#~ msgid ""
-#~ "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
-#~ msgstr ""
-#~ "LDAP-Benutzer Klasse oder Benutzer-Id-Attr ist vermutlich falsch (Ldap "
-#~ "ist eine eDirectory?)"
-
-#~ msgid "SAML Authenticator"
-#~ msgstr "SAML Authenticator"
-
-#~ msgid "SAML (v2.0) Authenticator"
-#~ msgstr "SAML (v2. 0) Authenticator"
-
-#~ msgid "User name attrs"
-#~ msgstr "Benutzer Name attrs"
-
-#~ msgid "Fields from where to extract user name"
-#~ msgstr "Felder aus wo Sie Benutzernamen extrahieren"
-
-#~ msgid "Fields from where to extract the groups"
-#~ msgstr "Felder von wo die Gruppen zu extrahieren"
-
-#~ msgid "Real name attrs"
-#~ msgstr "Richtiger Name attrs"
-
-#~ msgid "Fields from where to extract the real name"
-#~ msgstr "Felder aus wo man den richtigen Namen zu extrahieren"
-
-#~ msgid "Local"
-#~ msgstr "Lokale"
-
-#~ msgid "Publication"
-#~ msgstr "Veröffentlichung"
-
-#~ msgid "UDS Publication for {0} created at {1}"
-#~ msgstr "UDS-Publikation für {0} erstellt am {1}"
-
-#~ msgid "VMWare VC Server Port (usually 443)"
-#~ msgstr "VMWare VC Server Port (in der Regel 443)"
-
-#~ msgid "User with valid privileges on VC"
-#~ msgstr "Benutzer mit gültigen Berechtigungen für VC"
-
-#~ msgid "Password of the user of the VC"
-#~ msgstr "Kennwort des Benutzers des VC"
-
-#~ msgid "VMWare Virtual Center Provider"
-#~ msgstr "VMWare Virtual Center-Anbieter"
-
-#~ msgid "Provides connection to Virtual Center Services"
-#~ msgstr "Stellt Verbindung zu Virtual Center Services"
-
-#~ msgid "Error testing connection"
-#~ msgstr "Fehler testen Verbindung"
-
-#~ msgid "Connection params ok"
-#~ msgstr "Verbindung Params ok"
-
-#~ msgid "Datacenter"
-#~ msgstr "Datacenter"
-
-#~ msgid "Datacenter containing base machine"
-#~ msgstr "Datacenter mit Basismaschine"
-
-#~ msgid "Network"
-#~ msgstr "Netzwerk"
-
-#~ msgid ""
-#~ "If more than 1 interface is found in machine, use one on this network as "
-#~ "main"
-#~ msgstr ""
-#~ "Wenn mehr als 1 Schnittstelle in Maschine gefunden wird, verwenden Sie "
-#~ "eine in diesem Netzwerk als wichtigsten"
-
-#~ msgid "Pub. Resource Pool"
-#~ msgstr "Kneipe. Ressourcenpool"
-
-#~ msgid "Resource Pool where deploy clones"
-#~ msgstr "Ressourcen-Pool in der Klone bereitgestellt"
-
-#~ msgid "Clones Folder"
-#~ msgstr "Klone Ordner"
-
-#~ msgid "Folder where deploy clones"
-#~ msgstr "Ordner wo bereitstellen Klone"
-
-#~ msgid "Resource Pool"
-#~ msgstr "Ressourcenpool"
-
-#~ msgid "Resource Pool containing base machine"
-#~ msgstr "Ressource Pool mit Basismaschine"
-
-#~ msgid "Memory for machines deployed from this service"
-#~ msgstr "Speicher für Maschinen, die von diesem Dienst bereitgestellt"
-
-#~ msgid "Datastores"
-#~ msgstr "Datastores"
-
-#~ msgid "Datastores where to put incrementals"
-#~ msgstr "Datastores wo Sie inkrementelle Backups"
-
-#~ msgid "Base name for clones from this machine"
-#~ msgstr "Basisname für Clones von diesem Computer"
-
-#~ msgid "VMWare Linked clone base"
-#~ msgstr "VMWare Linked Clone base"
-
-#~ msgid ""
-#~ "This service provides access to Linked Clones machines on a Virtual Center"
-#~ msgstr ""
-#~ "Dieser Service ermöglicht den Zugriff auf verknüpfte Clones Maschinen auf "
-#~ "einen Virtual Center"
-
-#~ msgid "RGS Transport (direct)"
-#~ msgstr "RGS-Transport (direkt)"
-
-#~ msgid "RGS Transport for direct connection"
-#~ msgstr "RGS-Transport für den direkten Anschluss"
-
-#~ msgid "Image quality"
-#~ msgstr "Bildqualität"
-
-#~ msgid "Quality of image codec (0-100)"
-#~ msgstr "Qualität der Image-Codec (0-100)"
-
-#~ msgid "Adjustable Quality"
-#~ msgstr "Einstellbare Qualität"
-
-#~ msgid "If checked, the image quality will be adjustable with bandwidth"
-#~ msgstr ""
-#~ "Wenn diese Option aktiviert, wird die Bildqualität mit Bandbreite "
-#~ "einstellbar sein"
-
-#~ msgid "Min. Adjustable Quality"
-#~ msgstr "Min. einstellbare Qualität"
-
-#~ msgid ""
-#~ "The lowest image quality applied to images to maintain the minimum update "
-#~ "rate."
-#~ msgstr ""
-#~ "Die niedrigsten Bildqualität auf Bilder beibehalten das minimale Update "
-#~ "angewendet Preise."
-
-#~ msgid "Adjustable Frame Rate"
-#~ msgstr "Einstellbare Framerate"
-
-#~ msgid "Update rate threshold to begin adjusting image quality"
-#~ msgstr "Update-Rate Schwellenwert beginnen, Anpassen der Bildqualität"
-
-#~ msgid "Match Local Resolution"
-#~ msgstr "Spiel Ortsauflösung"
-
-#~ msgid ""
-#~ "Change the Sender's resolution to match the Receiver's resolution when "
-#~ "connecting"
-#~ msgstr ""
-#~ "Ändern des Absenders Auflösung Auflösung des Empfängers übereinstimmen "
-#~ "wenn verbinden"
-
-#~ msgid "Redirect USB"
-#~ msgstr "Umleitung USB"
-
-#~ msgid "If checked, the USB will be redirected."
-#~ msgstr "Wenn diese Option aktiviert, wird die USB umgeleitet werden."
-
-#~ msgid "Redirect Audio"
-#~ msgstr "Audio umleiten"
-
-#~ msgid "Redirect Mic"
-#~ msgstr "Umleitung Mic"
-
-#~ msgid "If checked, the Mic will be redirected."
-#~ msgstr "Wenn diese Option aktiviert, wird das Mikrofon umgeleitet."
-
-#~ msgid "RGS Transport (tunneled)"
-#~ msgstr "RGS-Transport (Tunneling)"
-
-#~ msgid "RGS Transport for tunneled connection"
-#~ msgstr "RGS-Transport für getunnelte Verbindung"
-
-#~ msgid "In order to use this service, you should first install RGS Receiver."
-#~ msgstr ""
-#~ "Um diesen Service zu nutzen, sollten Sie zunächst RGS-Empfänger "
-#~ "installieren."
-
-#~ msgid "None OS Manager"
-#~ msgstr "Keine OS Manager"
-
-#~ msgid "Os Manager with no actions"
-#~ msgstr "OS-Manager keine Aktionen"

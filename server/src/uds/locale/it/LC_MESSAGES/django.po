@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-04 16:35+0100\n"
+"POT-Creation-Date: 2013-11-08 14:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,7 +106,7 @@ msgstr "Nome utente con privilegi di lettura sulla base selezionata"
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:30
 #: services/OVirt/OVirtProvider.py:94 services/Sample/SampleService.py:131
-#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:62
+#: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
 #: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
 #: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:70
 msgid "Password"
@@ -175,7 +175,7 @@ msgid "Regular Expressions LDAP authenticator"
 msgstr "Autenticatore di LDAP di espressioni regolari"
 
 #: auths/RegexLdap/Authenticator.py:72 auths/SimpleLDAP/Authenticator.py:73
-#: services/OVirt/OVirtProvider.py:93 transports/HTML5RDP/HTML5RDP.py:62
+#: services/OVirt/OVirtProvider.py:93 transports/HTML5RDP/HTML5RDP.py:64
 #: transports/NX/NXTransport.py:61 transports/RDP/RDPTransport.py:59
 #: transports/RDP/TSRDPTransport.py:63 transports/TSNX/TSNXTransport.py:66
 #: web/forms/LoginForm.py:69
@@ -375,31 +375,31 @@ msgstr ""
 "Non è possibile annullare la pubblicazione di pubblicazioni con servizi nel "
 "processo di"
 
-#: core/managers/UserPrefsManager.py:254
+#: core/managers/UserPrefsManager.py:257
 msgid "Screen Size"
 msgstr "Dimensioni dello schermo"
 
-#: core/managers/UserPrefsManager.py:258
+#: core/managers/UserPrefsManager.py:261
 msgid "Full Screen"
 msgstr "Schermo intero"
 
-#: core/managers/UserPrefsManager.py:261
+#: core/managers/UserPrefsManager.py:264
 msgid "Screen colors"
 msgstr "Colori dello schermo"
 
-#: core/managers/UserPrefsManager.py:262
+#: core/managers/UserPrefsManager.py:265
 msgid "8 bits"
 msgstr "8 bit"
 
-#: core/managers/UserPrefsManager.py:263
+#: core/managers/UserPrefsManager.py:266
 msgid "16 bits"
 msgstr "16 bit"
 
-#: core/managers/UserPrefsManager.py:264
+#: core/managers/UserPrefsManager.py:267
 msgid "24 bits"
 msgstr "24 bit"
 
-#: core/managers/UserPrefsManager.py:265
+#: core/managers/UserPrefsManager.py:268
 msgid "32 bits"
 msgstr "32 bit"
 
@@ -574,7 +574,7 @@ msgstr ""
 "Rinomina macchina)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:32
-#: transports/HTML5RDP/HTML5RDP.py:64 transports/RDP/RDPTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:66 transports/RDP/RDPTransport.py:61
 #: transports/RDP/TSRDPTransport.py:65
 msgid "Domain"
 msgstr "Dominio"
@@ -974,13 +974,9 @@ msgstr "Cache L2 per elementi fittizi"
 msgid "List of names"
 msgstr "Elenco dei nomi"
 
-#: templates/404.html:4 templates/404.html.py:7
+#: templates/404.html:3 templates/500.html:3
 msgid "Page not found"
 msgstr "Pagina non trovata"
-
-#: templates/404.html:9
-msgid "Sorry, but the requested page could not be found."
-msgstr "Ci dispiace, ma non è possibile trovare la pagina richiesta."
 
 #: templates/uds/base.html:7
 msgid "UDS"
@@ -990,11 +986,12 @@ msgstr "UDS"
 msgid "Login redirection"
 msgstr "Reindirizzamento login"
 
-#: templates/uds/detectJava.html:38
+#: templates/uds/detectJava.html:38 templates/uds/html5/detectJava.html:27
 msgid "Go to main page"
 msgstr "Vai alla pagina principale"
 
-#: templates/uds/downloads.html:8 templates/uds/snippets/admin_user.html:7
+#: templates/uds/downloads.html:8 templates/uds/html5/snippets/navbar.html:24
+#: templates/uds/snippets/admin_user.html:7
 msgid "Downloads"
 msgstr "Download"
 
@@ -1004,42 +1001,42 @@ msgid ""
 msgstr ""
 "Questa pagina contiene un elenco di scaricabili forniti da diversi moduli"
 
-#: templates/uds/index.html:51
+#: templates/uds/index.html:51 templates/uds/html5/index.html:48
 msgid "Services"
 msgstr "Servizi"
 
-#: templates/uds/index.html:70
+#: templates/uds/index.html:70 templates/uds/html5/index.html:86
 msgid "Java not found"
 msgstr "Java non trovato"
 
-#: templates/uds/index.html:71
+#: templates/uds/index.html:71 templates/uds/html5/index.html:89
 msgid ""
 "Java is not available on your browser, and the selected transport needs it."
 msgstr ""
 "Java non è disponibile sul vostro browser, e il trasporto selezionato di cui "
 "ha bisogno."
 
-#: templates/uds/index.html:72
+#: templates/uds/index.html:72 templates/uds/html5/index.html:90
 msgid "Please, install latest version from"
 msgstr "Per favore, installare la versione più recente da"
 
-#: templates/uds/index.html:72
+#: templates/uds/index.html:72 templates/uds/html5/index.html:90
 msgid "Java website"
 msgstr "Sito Web Java"
 
-#: templates/uds/index.html:72
+#: templates/uds/index.html:72 templates/uds/html5/index.html:90
 msgid "and restart browser"
 msgstr "e riavviare il browser"
 
-#: templates/uds/index.html:78
+#: templates/uds/index.html:78 templates/uds/html5/index.html:102
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/index.html:79
+#: templates/uds/index.html:79 templates/uds/html5/index.html:103
 msgid "Networks"
 msgstr "Reti"
 
-#: templates/uds/index.html:80
+#: templates/uds/index.html:80 templates/uds/html5/index.html:104
 msgid "Transports"
 msgstr "Trasporti"
 
@@ -1048,6 +1045,7 @@ msgid "User"
 msgstr "Utente"
 
 #: templates/uds/internal_page.html:34 templates/uds/prefs.html:12
+#: templates/uds/html5/snippets/navbar.html:16
 msgid "Preferences"
 msgstr "Preferenze"
 
@@ -1055,7 +1053,7 @@ msgstr "Preferenze"
 msgid "Log out"
 msgstr "Logout"
 
-#: templates/uds/login.html:6 templates/uds/html5/login.html:4
+#: templates/uds/login.html:6
 msgid "Login to UDS"
 msgstr "Login per UDS"
 
@@ -1071,15 +1069,15 @@ msgstr "Dati login"
 msgid "Enter"
 msgstr "Inserisci"
 
-#: templates/uds/login.html:93 templates/uds/html5/login.html:92
+#: templates/uds/login.html:93 templates/uds/html5/login.html:94
 msgid "Back to login"
 msgstr "Torna al login"
 
-#: templates/uds/prefs.html:6
+#: templates/uds/prefs.html:6 templates/uds/html5/prefs.html:5
 msgid "UDS User Preferences"
 msgstr "UDS preferenze utente"
 
-#: templates/uds/prefs.html:16
+#: templates/uds/prefs.html:16 templates/uds/html5/prefs.html:12
 msgid "Save Preferences"
 msgstr "Salva preferenze"
 
@@ -1089,71 +1087,105 @@ msgstr ""
 "Servizio non pronta in questo momento. Per favore, provare nuovamente in un "
 "istante."
 
-#: templates/uds/html5/login.html:73
-msgid "Sign in to access UDS"
-msgstr "Accedi per accedere UDS"
+#: templates/uds/html5/detectJava.html:4
+msgid "Login redirection to UDS"
+msgstr "Reindirizzamento login a UDS"
 
-#: templates/uds/html5/login.html:82
+#: templates/uds/html5/index.html:4
+msgid "Available services list"
+msgstr "Elenco dei servizi disponibili"
+
+#: templates/uds/html5/index.html:64
+msgid "transports"
+msgstr "trasporti"
+
+#: templates/uds/html5/login.html:4 templates/uds/html5/login.html.py:69
+msgid "Welcome to UDS"
+msgstr "Benvenuti a UDS"
+
+#: templates/uds/html5/login.html:76
+msgid "invalid credentials"
+msgstr "credenziali non valide"
+
+#: templates/uds/html5/login.html:84
 msgid "username"
 msgstr "nome utente"
 
-#: templates/uds/html5/login.html:83
+#: templates/uds/html5/login.html:85
 msgid "password"
 msgstr "password"
 
-#: templates/uds/html5/login.html:86
+#: templates/uds/html5/login.html:88
 msgid "Sign in"
 msgstr "Accedi"
 
-#: templates/uds/html5/snippets/nav-right.html:6
-msgid "About"
-msgstr "Circa"
+#: templates/uds/html5/prefs.html:11
+msgid "Cancel"
+msgstr "Annulla"
 
-#: templates/uds/html5/snippets/nav-right.html:22
-msgid "logout"
-msgstr "logout"
+#: templates/uds/html5/service_not_ready.html:4
+#: templates/uds/html5/service_not_ready.html:12
+msgid "The service is not ready"
+msgstr "Il servizio non è pronto"
+
+#: templates/uds/html5/service_not_ready.html:14
+msgid ""
+"The service is not ready at this moment. Please, try it again after a few "
+"seconds."
+msgstr ""
+"Il servizio non è pronto in questo momento. Per favore, provare nuovamente dopo pochi "
+"secondi."
+
+#: templates/uds/html5/service_not_ready.html:15
+msgid ""
+"The service you has requested was not ready, and is being created right now. "
+"It will be availabe shortly"
+msgstr ""
+"Il servizio che ha richiesto non era pronto e sta creando adesso. Si "
+"renderanno presto disponibili"
+
+#: templates/uds/html5/service_not_ready.html:17
+msgid "Back"
+msgstr "Indietro"
+
+#: templates/uds/html5/show_transport.html:10
+#: templates/uds/snippets/back_to_list.html:3
+msgid "Back to services list"
+msgstr "Torna alla lista di servizi"
 
 #: templates/uds/html5/snippets/navbar.html:6
 msgid "toggle navigation"
 msgstr "navigazione Toggle"
 
-#: templates/uds/html5/snippets/navbar_inner.html:5
-msgid "packages"
-msgstr "pacchetti"
+#: templates/uds/html5/snippets/navbar.html:26
+msgid "About"
+msgstr "Circa"
 
-#: templates/uds/html5/snippets/navbar_inner.html:6
-msgid "administration"
-msgstr "amministrazione"
-
-#: templates/uds/html5/snippets/navbar_outter.html:7
-msgid "home"
-msgstr "Home"
+#: templates/uds/html5/snippets/navbar.html:42
+msgid "logout"
+msgstr "logout"
 
 #: templates/uds/snippets/admin_user.html:4
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/uds/snippets/back_to_list.html:3
-msgid "Back to services list"
-msgstr "Torna alla lista di servizi"
-
 #: templates/uds/snippets/lang.html:9
 msgid "Language"
 msgstr "Lingua"
 
-#: transports/HTML5RDP/HTML5RDP.py:54
+#: transports/HTML5RDP/HTML5RDP.py:55
 msgid "HTML5 RDP Transport"
 msgstr "HTML5 Trasporto RDP"
 
-#: transports/HTML5RDP/HTML5RDP.py:56
+#: transports/HTML5RDP/HTML5RDP.py:57
 msgid "RDP Transport using HTML5 client"
 msgstr "Trasporto di RDP utilizzando client di HTML5"
 
-#: transports/HTML5RDP/HTML5RDP.py:60
+#: transports/HTML5RDP/HTML5RDP.py:62
 msgid "Tunnel Server"
 msgstr "Server di tunnel"
 
-#: transports/HTML5RDP/HTML5RDP.py:60
+#: transports/HTML5RDP/HTML5RDP.py:62
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -1161,32 +1193,32 @@ msgstr ""
 "Hosting di server di tunnel (USA http/https & porta se necessario) come "
 "accessibile da parte degli utenti"
 
-#: transports/HTML5RDP/HTML5RDP.py:61 transports/NX/NXTransport.py:60
+#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
 #: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
 #: transports/TSNX/TSNXTransport.py:65
 msgid "Empty creds"
 msgstr "Vuoto creds"
 
-#: transports/HTML5RDP/HTML5RDP.py:61 transports/NX/NXTransport.py:60
+#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
 #: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
 #: transports/TSNX/TSNXTransport.py:65
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "Se selezionata, le credenziali utilizzate per connettersi sarà emtpy"
 
-#: transports/HTML5RDP/HTML5RDP.py:62 transports/NX/NXTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:64 transports/NX/NXTransport.py:61
 #: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
 #: transports/TSNX/TSNXTransport.py:66
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
 "Se non vuota, questo nome utente verrà sempre utilizzato come credenziale"
 
-#: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:62
+#: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
 #: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
 #: transports/TSNX/TSNXTransport.py:67
 msgid "If not empty, this password will be always used as credential"
 msgstr "Se non vuota, questa password verrà sempre utilizzata come credenziale"
 
-#: transports/HTML5RDP/HTML5RDP.py:64 transports/RDP/RDPTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:66 transports/RDP/RDPTransport.py:61
 #: transports/RDP/TSRDPTransport.py:65
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
@@ -1195,11 +1227,11 @@ msgstr ""
 "Se non vuota, questo dominio verrà sempre utilizzato come credenziale (usato "
 "come dominio\\User)"
 
-#: transports/HTML5RDP/HTML5RDP.py:65
+#: transports/HTML5RDP/HTML5RDP.py:67
 msgid "Enable Audio"
 msgstr "Abilitare Audio"
 
-#: transports/HTML5RDP/HTML5RDP.py:65
+#: transports/HTML5RDP/HTML5RDP.py:67
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
@@ -1207,9 +1239,25 @@ msgstr ""
 "Se selezionata, l'audio verrà reindirizzato al client (se browser client lo "
 "supporta)"
 
-#: transports/HTML5RDP/HTML5RDP.py:71
+#: transports/HTML5RDP/HTML5RDP.py:68
+msgid "Enable Printing"
+msgstr "Attivare la stampa"
+
+#: transports/HTML5RDP/HTML5RDP.py:68
+msgid ""
+"If checked, the printing will be redirected to client (if client browser "
+"supports it)"
+msgstr ""
+"Se selezionata, la stampa verrà reindirizzata al client (se browser client "
+"lo supporta)"
+
+#: transports/HTML5RDP/HTML5RDP.py:74
 msgid "The server must be http or https"
 msgstr "Il server deve essere http o https"
+
+#: transports/HTML5RDP/HTML5RDP.py:152
+msgid "Launching HTML5 RDP connection"
+msgstr "Lanciando la connessione RDP HTML5"
 
 #: transports/NX/NXTransport.py:54
 msgid "NX Transport (direct)"
@@ -1451,9 +1499,13 @@ msgstr "Autenticatore non trovato"
 msgid "Invalid authenticator"
 msgstr "Autenticatore non valido"
 
-#: web/views.py:389
+#: web/views.py:395
 msgid "Authenticator do not provides information"
 msgstr "Autenticatore do non fornisce informazioni"
+
+#: web/forms/LoginForm.py:54
+msgid "authenticator"
+msgstr "autenticatore"
 
 #: web/forms/LoginForm.py:71
 msgid "Authenticator"
