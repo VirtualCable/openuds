@@ -151,6 +151,7 @@ class UserPreference(object):
         self._name = kwargs['name']
         self._label = kwargs['label']
         self._defValue = kwargs['defvalue'] if kwargs.has_key('defvalue') else None
+        self._css = 'form-control'
         
     def getName(self):
         return self._name
@@ -177,7 +178,7 @@ class UserTextPreference(UserPreference):
         self._length = kwargs['length'] if kwargs.has_key('length') else None
         
     def formField(self, value):
-        return forms.CharField(label = _(self._label), initial = value)
+        return forms.CharField(label = _(self._label), initial = value, attrs = {'class': self._css})
         
         
 class UserNumericPreference(UserPreference):
@@ -188,7 +189,8 @@ class UserNumericPreference(UserPreference):
         self._max = kwargs['maxvalue'] if kwargs.has_key('maxvalue') else None
 
     def formField(self, value):
-        return forms.IntegerField(label = _(self._label), initial = value, min_value = self._min, max_value = self._max)
+        return forms.IntegerField(label = _(self._label), initial = value, min_value = self._min, max_value = self._max, 
+                                  widget = forms.TextInput(attrs = {'class': self._css}))
         
 class UserChoicePreference(UserPreference):
     TYPE = 'choice'
@@ -200,7 +202,8 @@ class UserChoicePreference(UserPreference):
         self._values = kwargs['values']
 
     def formField(self, value):
-        return forms.ChoiceField(label = _(self._label), initial = value, choices = self._values)
+        return forms.ChoiceField(label = _(self._label), initial = value, choices = self._values, 
+                                 widget = forms.Select(attrs = {'class': self._css}))
     
     def guiField(self, value):
         vals = []

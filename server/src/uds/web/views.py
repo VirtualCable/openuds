@@ -195,7 +195,7 @@ def index(request):
         
     logger.debug('Services: {0}'.format(services))
     
-    services = sorted(services, key=lambda s: s['name'])
+    services = sorted(services, key=lambda s: s['name'].upper())
     
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
         if request.session.get('autorunDone', '0') == '0':
@@ -220,7 +220,7 @@ def prefs(request):
         UserPrefsManager.manager().processRequestForUserPreferences(request.user, request.POST)
         return HttpResponseRedirect(reverse('uds.web.views.index'))
     prefs_form = UserPrefsManager().manager().getHtmlForUserPreferences(request.user)
-    return render_to_response('uds/prefs.html', {'prefs_form' : prefs_form }, context_instance=RequestContext(request))
+    return render_to_response(theme.template('prefs.html'), {'prefs_form' : prefs_form }, context_instance=RequestContext(request))
     
 
 @webLoginRequired
