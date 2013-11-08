@@ -98,12 +98,16 @@
 {% endif %}
 
 {% if user.isStaff %}
-  <div id="adminmsgs">
-	<div>{% trans "Ip" %}: {{ ip }}</li>
-	<div>{% trans "Networks" %}: {{ nets }}</div>
-	<div>{% trans "Transports" %}: {{ transports }}</div>
-	</div>
-    	 	
-  </div>
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                {% trans "Administrator info panel" %}
+            </div>
+            <div class="panel-body">
+                <p>{% trans "Ip" %}: {{ ip }}</p>
+                <p>{% trans "Networks" %}: {{ nets }}</p>
+                <p>{% trans "Transports" %}: {{ transports }}</p>
+        
+            </div>
+        </div>
 {% endif %}
 {% endblock %} 

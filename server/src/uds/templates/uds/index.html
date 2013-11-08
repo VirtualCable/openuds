@@ -75,11 +75,9 @@
 
 {% if user.isStaff %}
   <div id="adminmsgs">
-	<div>{% trans "Ip" %}: {{ ip }}</li>
-	<div>{% trans "Networks" %}: {{ nets }}</div>
-	<div>{% trans "Transports" %}: {{ transports }}</div>
-	</div>
-    	 	
+	<p>{% trans "Ip" %}: {{ ip }}</p>
+	<p>{% trans "Networks" %}: {{ nets }}</p>
+	<p>{% trans "Transports" %}: {{ transports }}</p>
   </div>
 {% endif %}
 {% endblock content %} 

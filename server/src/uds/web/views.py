@@ -142,6 +142,9 @@ def customAuth(request, idAuth):
         res = 'error'
     return HttpResponse(res, content_type = 'text/html')
 
+def about(request):
+    return render(request, theme.template('about.html'))
+
 @webLoginRequired
 def logout(request):
     authLogLogout(request)
