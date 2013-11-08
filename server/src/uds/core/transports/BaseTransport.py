@@ -54,7 +54,7 @@ class Transport(Module):
     # Windows
     # Macintosh
     # Linux
-    supportedOss = [OsDetector.Linux, OsDetector.Windows, OsDetector.Macintosh] # Supported operating systems
+    supportedOss = OsDetector.desktopOss # Supported operating systems
     
     # If this transport is visible via Web, via Thick Client or both
     webTransport = False

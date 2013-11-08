@@ -57,7 +57,7 @@ class HTML5RDPTransport(Transport):
     typeDescription = _('RDP Transport using HTML5 client')
     iconFile = 'rdp.png' 
     needsJava = False  # If this transport needs java for rendering
-    supportedOss = [OsDetector.Linux, OsDetector.Windows, OsDetector.Macintosh, OsDetector.Android]
+    supportedOss = OsDetector.allOss
 
     guacamoleServer = gui.TextField(label=_('Tunnel Server'), order = 1, tooltip = _('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue = 'https://', length = 64)
     useEmptyCreds = gui.CheckBoxField(label = _('Empty creds'), order = 2, tooltip = _('If checked, the credentials used to connect will be emtpy'))
@@ -65,6 +65,7 @@ class HTML5RDPTransport(Transport):
     fixedPassword = gui.PasswordField(label=_('Password'), order = 4, tooltip = _('If not empty, this password will be always used as credential'))
     fixedDomain = gui.TextField(label=_('Domain'), order = 5, tooltip = _('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
     enableAudio = gui.CheckBoxField(label = _('Enable Audio'), order = 6, tooltip = _('If checked, the audio will be redirected to client (if client browser supports it)'))
+    enablePrinting = gui.CheckBoxField(label = _('Enable Printing'), order = 6, tooltip = _('If checked, the printing will be redirected to client (if client browser supports it)'))
 
     def initialize(self, values):
         if values is None:
@@ -124,11 +125,14 @@ class HTML5RDPTransport(Transport):
         # Build params dict
         params = { 'protocol':'rdp', 
                    'hostname':ip, 'username': username, 'password': password, 
-                   'ignore-cert': 'true', 'enable-printing': 'true'
+                   'ignore-cert': 'true'
         }
         
         if self.enableAudio.isTrue() is False:
             params['disable-audio'] = 'true'
+            
+        if self.enablePrinting.isTrue() is True:
+            params['enable-printing'] = 'true'
         
         logger.debug('RDP Params: {0}'.format(params))
                 

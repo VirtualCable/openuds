@@ -39,9 +39,14 @@ Linux = 'Linux'
 Windows = 'Windows'
 Macintosh = 'Macintosh'
 Android = 'Android'
+iPad = 'iPad'
+iPhone = 'iPhone'
 
-
-knownOss = { 'Linux' : Linux, 'Windows' : Windows, 'Macintosh' : Macintosh, 'Android': Android }
+knownOss = { 'Linux' : Linux, 'Windows' : Windows, 'Macintosh' : Macintosh, 'Android': Android, 'iPad': iPad, 'iPhone': iPhone }
+    
+allOss = list(knownOss.values())
+desktopOss = [Linux, Windows, Macintosh]
+mobilesODD = list(set(allOss)-set(desktopOss))
     
 def getOsFromUA(ua):
     '''
