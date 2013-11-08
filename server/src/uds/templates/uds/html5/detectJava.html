@@ -1,0 +1,29 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Login redirection to UDS" %}{% endblock %}
+
+{% block script %}
+<script src="{% get_static_prefix %}js/PluginDetect_Java.js" type="text/javascript" ></script>
+<script type="text/javascript">
+	function isJavaAvailable() {
+		if( PluginDetect.isMinVersion('Java', '1,6,0,0','{% get_static_prefix %}/other/getJavaInfo.jar') == 1 )
+			return true;
+		
+		return false;  
+	}
+	
+	$(document).ready(function() {
+		var java = isJavaAvailable() ? "y" : "n";
+		window.location.replace("{% url "uds.web.views.authJava" idAuth=idAuth hasJava='' %}" + java);
+	   });
+	   
+	
+</script>	
+{% endblock %}
+
+{% block body %}
+<!--<div>
+<a href="<a href="{% url "uds.web.views.index" %}">{% trans "Go to main page" %}
+</div>-->
+{% endblock %}

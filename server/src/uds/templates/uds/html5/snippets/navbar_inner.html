@@ -3,7 +3,7 @@
 {% block navbar %}
 		 <div class="collapse navbar-collapse navbar-ex1-collapse">
 		 	<ul class="nav navbar-nav">
-		 		<li><a href="{% url "uds.web.views.prefs" %}">{% trans "User" %} {{ user.real_name }}</a></li>
+		 		<li><a href="{% url "uds.web.views.prefs" %}" title="{% trans 'Preferences' %}">{{ user.real_name }}</a></li>
 		 	</ul>
 			{% include "uds/html5/snippets/nav-right.html" with logout=True %}
 		 </div>

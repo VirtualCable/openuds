@@ -1,21 +1,14 @@
-{% extends "uds/internal_page.html" %}
+{% extends "uds/html5/templates/internal_page.html" %}
 {% load i18n %}
 {% load static %}
 
-{% block title %}
-{% trans "UDS User Preferences" %}
-{% endblock %}
+{% block title %}{% trans "UDS User Preferences" %}{% endblock %}
 
-{% block content %}
-	<div>
-		
-		<h2>{% trans "Preferences" %}</h2>
-		<form name="form1" method="post" action="">
-		{% csrf_token %}
-		{% autoescape off %}{{ prefs_form }}{% endautoescape %}
-		<input type="submit" name="submit" value="{% trans "Save Preferences" %}"/>
+{% block body %}
+		<form name="form1" method="post" class="form-preferences">
+    		{% csrf_token %}
+    		{% autoescape off %}{{ prefs_form }}{% endautoescape %}
+            <a href="{% url "uds.web.views.index" %}" class="btn btn-warning">{% trans "Cancel" %}</a>
+            <button type="submit" class="btn btn-success pull-right">{% trans "Save Preferences" %}</button>
 		</form>
-		{% include "uds/snippets/back_to_list.html" %}
-		
-	</div>
 {% endblock %}
