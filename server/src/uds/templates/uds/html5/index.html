@@ -1,25 +1,30 @@
 {% extends "uds/html5/internal_page.html" %}
 {% load i18n static html5 %}
 
+{% block title %}{% trans 'Available services list' %}
+
 {% block css %}
-		<style>
-			.testing {
-				width: 95px;
-				height: 95px;
-				margin-bottom: 16px;
-				margin-left: 16px;
-				
-				background: rgb(255,255,255); /* Old browsers */
-				background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6+ */
-				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(229,229,229,1))); /* Chrome,Safari4+ */
-				background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* Opera 11.10+ */
-				background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* IE10+ */
-				background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* W3C */
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
-				overflow: hidden;
-			}		
-		</style>
+        <style>
+            .list-btn-group {
+        		margin-bottom: 24px;  
+        		margin-right: 24px;
+            }
+            .list-btn {
+                padding-top: 24px;
+                height: 96px;
+                overflow: hidden;
+            }
+            .list-btn-reduced {
+                width: 96px;
+            }
+            .list-btn-normal {
+                width: 112px;
+            }
+            
+            .list-dropdown-toggle {
+                width: 16px;
+            }
+        </style>
 {% endblock %}
 
 {% block js %}
@@ -34,6 +39,7 @@
 			});
 			
 			{% endif %}
+			$(".btn-default").tooltip({container: 'body', placement: 'bottom'});
 		});
 		</script>
 {% endblock %}
@@ -43,22 +49,30 @@
 			 	<div class="clearfix">
 			{% for ser in services %}
 				  {% if ser.transports %}
-					  {% with trans=ser.transports|first %}
-					  {% if forloop.counter0 > 0 %} 
-					  {% endif %}
-					  <div class="pull-left">
-					    <div class="thumbnail testing">
-						  <a class="{% if not java and trans.needsJava %} nojava{% endif %}" href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">
-						  	<img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" class="" alt="{{ ser.name }}" />
-						  	<div class="caption">{{ ser.name }}</div>
-						  </a>
-					    </div>
-					  </div>
+					  {% with trans=ser.transports|first numTransports=ser.transports|length %}
+                     <div class="btn-group list-btn-group">
+                         <a class="{% if not java and trans.needsJava %} nojava{% endif %} btn list-btn btn-default list-btn-{% if numTransports > 1 %}reduced{% else %}normal{% endif %}"
+                            href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"
+                            title="{{ ser.name }}"
+                            data-toggle="tooltip">
+                                    <div><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" class="" alt="{{ ser.name }}" /></div>
+                                    <div>{{ ser.name|truncatechars:12 }}</div>
+                                  </a>
+                          {% if numTransports > 1 %}
+                          <button type="button" class="btn list-btn btn-default dropdown-toggle list-dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">{% trans 'transports' %}</span>
+                          </button>
+                          <ul class="dropdown-menu" role="menu">
+                              {% for trans in ser.transports %}
+                                {% if not forloop.first %}
+                                    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
+                                {% endif %}  
+                              {% endfor %}
+                          </ul>
+                          {% endif %}
+                    </div>					  
 					  {% endwith %}
-					  <!-- 
-					  {% for trans in ser.transports %}
-					    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>  
-					  {% endfor %} -->
 				  {% endif %}
 				{% endfor %}
 			</div>
