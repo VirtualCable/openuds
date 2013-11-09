@@ -83,6 +83,7 @@ encoding//src/uds/core/ui/theme.py=utf-8
 encoding//src/uds/core/util/AutoAttributes.py=utf-8
 encoding//src/uds/core/util/Cache.py=utf-8
 encoding//src/uds/core/util/Config.py=utf-8
+encoding//src/uds/core/util/Decorators.py=utf-8
 encoding//src/uds/core/util/OsDetector.py=utf-8
 encoding//src/uds/core/util/State.py=utf-8
 encoding//src/uds/core/util/StateQueue.py=utf-8

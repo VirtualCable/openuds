@@ -64,6 +64,7 @@ urlpatterns = patterns('uds',
     (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),
     (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),
     (r'^about', 'web.views.about'),
+    (r'^about', 'web.views.about'),
     
 )
 

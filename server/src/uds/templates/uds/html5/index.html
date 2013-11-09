@@ -39,7 +39,7 @@
 			});
 			
 			{% endif %}
-			$(".btn-default").tooltip({container: 'body', placement: 'bottom'});
+			$('.transport-caption-small').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
 		});
 		</script>
 {% endblock %}
@@ -55,8 +55,7 @@
                             href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"
                             title="{{ ser.name }}"
                             data-toggle="tooltip">
-                                    <div><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" class="" alt="{{ ser.name }}" /></div>
-                                    <div>{{ ser.name|truncatechars:12 }}</div>
+                                    <img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" class="transport" alt="{{ ser.name }}" />
                                   </a>
                           {% if numTransports > 1 %}
                           <button type="button" class="btn list-btn btn-default dropdown-toggle list-dropdown-toggle" data-toggle="dropdown">
@@ -71,6 +70,7 @@
                               {% endfor %}
                           </ul>
                           {% endif %}
+                          <div class="transport-caption{% if ser.name|length > 16 %}-small{% endif %} text-center" data-content="{{ser.name|capfirst}}">{{ ser.name|capfirst|truncatechars:16 }}</div>
                     </div>					  
 					  {% endwith %}
 				  {% endif %}
