@@ -774,7 +774,7 @@ GuacUI.Client.attach = function(guac) {
         blob.oncomplete = function() {
 
             download.ondownload = function() {
-                saveAs(blob.getBlob(), blob.name);
+                saveAs(blob.getBlob(), blob.name.replace(/[\u0080-\uffff]/g, "_").replace(/\s/g, "_"));
             };
 
             download.complete();
