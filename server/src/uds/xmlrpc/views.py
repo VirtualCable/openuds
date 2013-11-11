@@ -76,7 +76,7 @@ class XMLRPCDispatcher(SimpleXMLRPCDispatcher):
         
     def dispatch(self, request, **kwargs):
         import xmlrpclib
-        xml = request.raw_post_data
+        xml = request.body
         try:
             params, method = xmlrpclib.loads(xml)
             try:

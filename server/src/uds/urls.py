@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -32,8 +31,9 @@
 '''
 
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include
+from django.conf.urls import patterns, include
 from uds.core.util.modfinder import loadModulesUrls
+from uds import REST
 
 urlpatterns = patterns('uds',
     (r'^$', 'web.views.index'),
@@ -64,8 +64,7 @@ urlpatterns = patterns('uds',
     (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),
     (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),
     (r'^about', 'web.views.about'),
-    (r'^about', 'web.views.about'),
-    
+    (r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view()),
 )
 
 # Append urls from special dispatcher

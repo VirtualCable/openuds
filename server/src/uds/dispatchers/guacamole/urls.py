@@ -31,7 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.conf.urls.defaults import patterns, include
+from django.conf.urls import patterns
 
 urlpatterns = patterns(__package__,
     (r'^guacamole/(?P<tunnelId>.+)$', 'views.guacamole'),
