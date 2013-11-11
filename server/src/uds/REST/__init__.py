@@ -142,7 +142,7 @@ class Dispatcher(View):
     def initialize():
         '''
         This imports all packages that are descendant of this package, and, after that,
-        it register all subclases of service provider as 
+        it register all subclases of Handler. (In fact, it looks for packages inside "methods" package, child of this)
         '''
         import os.path, pkgutil
         import sys

@@ -33,10 +33,6 @@
 from __future__ import unicode_literals
 
 from django import template
-from django.utils import formats
-from django.conf import settings
-from django.utils.translation import get_language, ugettext as _
-from uds.core.util import html
 
 import logging
 
@@ -44,49 +40,10 @@ logger = logging.getLogger(__name__)
 
 register = template.Library()
 
-# locele related
-@register.filter(name='country')
-def country(lang):
-    if lang == 'en':
-        return 'US'
-    if lang == 'ja':
-        return 'JP'
-    
-    return lang.upper()
-
-
-# Browser related
-class IfBrowser(template.Node):
-    def __init__(self, nodelistTrue, nodelistFalse, browsers):
-        self._nodelistTrue = nodelistTrue
-        self._nodelistFalse = nodelistFalse
-        self._browsers = browsers
-        
-    def render(self, context):
-        for b in self._browsers:
-            if html.checkBrowser(context['request'].META['HTTP_USER_AGENT'],  b):
-                return self._nodelistTrue.render(context)
-        if self._nodelistFalse is None:
-            return ''
-        
-        return self._nodelistFalse.render(context)
-    
-@register.tag(name='ifbrowser')
-def ifbrowser(parser, token):
-    cmd = token.split_contents()
-    try:
-        browsers = cmd[1:]
-    except:
-        raise template.TemplateSyntaxError('{0} tag requires browsers to be checked')
-     
-    states = {}
-    
-    default_states = ['ifbrowser', 'else']
-    end_tag = 'endifbrowser' 
-
-    while token.contents != end_tag:
-        current = token.contents
-        states[current.split()[0]] = parser.parse(default_states + [end_tag])
-        token = parser.next_token()
-
-    return IfBrowser(states['ifbrowser'], states.get('else', None), browsers)
+@register.simple_tag(name=auth_token, takes_context=True)
+def auth_token(context):
+    '''
+    Returns the authentication token, and also ensures that 
+    '''
+    request = context['request']
+    return request.session.session_key

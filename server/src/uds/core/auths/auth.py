@@ -37,6 +37,8 @@ from __future__ import unicode_literals
 
 from functools import wraps
 from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.utils.translation import get_language
+
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import log
 from uds.core import auths
@@ -221,10 +223,13 @@ def webLogin(request, response, user, password):
     Helper function to, once the user is authenticated, store the information at the user session.
     @return: Always returns True
     '''
+    from uds.REST import Handler
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = CryptoManager.manager().xor(password.encode('utf-8'), request.COOKIES['uds'])
+    # Ensures that this user will have access througt REST api if logged in through web interface
+    Handler.storeSessionAuthdata(request.session, user.manager.small_name, user.name, get_language(), user.is_admin, user.staff_member)
     return True
 
 

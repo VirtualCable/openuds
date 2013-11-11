@@ -68,7 +68,7 @@ class Login(Handler):
             locale = self._params.get('locale', 'en')
             if auth == 'admin':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
-                    self.genAuthToken(-1, username, locale, True)
+                    self.genAuthToken(-1, username, locale, True, True)
                     return{'result': 'ok', 'token': self.getAuthToken()}
                 else:
                     raise Exception('Invalid credentials')

@@ -78,7 +78,7 @@ class Handler(object):
             except:
                 if settings.DEBUG:
                     if self._authToken == 'a':
-                        self.genAuthToken(-1, 'root', 'es', True)
+                        self.genAuthToken(-1, 'root', 'es', True, True)
                 else:
                     self._authToken = None
                     self._session = None
@@ -109,10 +109,15 @@ class Handler(object):
     def getAuthToken(self):
         return self._authToken
     
-    def genAuthToken(self, id_auth, username, locale, is_admin):
+    @staticmethod
+    def storeSessionAuthdata(session, id_auth, username, locale, is_admin, staff_member):
+        session['REST'] = { 'auth': id_auth, 'username': username, 'locale': locale,  'is_admin': is_admin, 'staff_member': staff_member }
+        
+    
+    def genAuthToken(self, id_auth, username, locale, is_admin, staf_member):
         session = SessionStore()
         session.set_expiry(GlobalConfig.ADMIN_IDLE_TIME.getInt())
-        session['REST'] = { 'auth': id_auth, 'username': username, 'locale': locale,  'is_admin': is_admin }
+        Handler.storeSessionAuthdata(session, id_auth, username, locale, is_admin, staf_member)
         session.save()
         self._authToken = session.session_key
         self._session = session
