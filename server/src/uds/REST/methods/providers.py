@@ -28,22 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-from django import template
-
-import logging
-
-logger = logging.getLogger(__name__)
-
-register = template.Library()
-
-@register.simple_tag(name='auth_token', takes_context=True)
-def auth_token(context):
-    '''
-    Returns the authentication token, and also ensures that 
-    '''
-    request = context['request']
-    return request.session.session_key
+from uds.REST import Handler, HandlerError

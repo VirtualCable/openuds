@@ -35,43 +35,6 @@ from django.conf.urls import patterns, include
 from uds.core.util.modfinder import loadModulesUrls
 from uds import REST
 
-urlpatterns = patterns('uds',
-    (r'^$', 'web.views.index'),
-    (r'^login/$', 'web.views.login'),
-    (r'^login/(?P<smallName>.+)$', 'web.views.login'),
-    (r'^logout$', 'web.views.logout'),
-    (r'^service/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.service'),
-    # Icons
-    (r'^transicon/(?P<idTrans>.+)$', 'web.views.transportIcon'),
-    # Error URL
-    (r'^error/(?P<idError>.+)$', 'web.views.error'),
-    # Transport component url
-    (r'^transcomp/(?P<idTransport>.+)/(?P<componentId>.+)$', 'web.views.transcomp'),
-    # Service notification url
-    (r'^sernotify/(?P<idUserService>.+)/(?P<notification>.+)$', 'web.views.sernotify'),
-    # Authenticators custom html
-    (r'^customAuth/(?P<idAuth>.*)$', 'web.views.customAuth'),
-    # Preferences
-    (r'^prefs$', 'web.views.prefs'),
-    # Change Language
-    (r'^i18n/', include('django.conf.urls.i18n')),
-    # Downloadables
-    (r'^download/(?P<idDownload>.*)$', 'web.views.download'),
-    # Custom authentication callback
-    (r'^auth/(?P<authName>.+)', 'web.views.authCallback'),
-    (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),
-    (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),
-    (r'^about', 'web.views.about'),
-
-    # XMLRPC Processor
-    (r'^xmlrpc$', 'xmlrpc.views.xmlrpc'),
-
-    # REST Api    
-    (r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view()),
-    
-    # Web admin GUI
-    (r'^adm/', include('uds.admin.urls')),
+urlpatterns = patterns('uds.admin.views',
+    (r'^$', 'index'),
 )
-
-# Append urls from special dispatchers
-urlpatterns += loadModulesUrls()

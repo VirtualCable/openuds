@@ -35,7 +35,7 @@ from django import http
 from django.views.generic.base import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, activate
 from django.conf import settings
 from handlers import Handler, HandlerError, AccessDenied
 
@@ -102,12 +102,18 @@ class Dispatcher(View):
             for l in settings.LANGUAGES:
                 if args[-1] == l[0]:
                     lang = l[0]
+                    activate(lang)
                     logger.error('Found lang {0}'.format(l))
                     args = args[:-1]
                     break
-        # Intantiate method handler and locate http_method dispatcher
+        # Instantiate method handler and locate http_method dispatcher
         try:
             handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)
+            # If no lang on request, try to get the one from 
+            if lang is None:
+                activate(handler.getValue('locale'))
+            else:
+                handler.setValue('locale', lang) # Update Locale if request had one
             
             operation = getattr(handler, http_method)
         except processors.ParametersException as e:
@@ -119,12 +125,13 @@ class Dispatcher(View):
                     allowedMethods.append(n)
             return http.HttpResponseNotAllowed(allowedMethods)
         except AccessDenied:
-            return http.HttpResponseForbidden('method access denied')
+            return http.HttpResponseForbidden('access denied')
         except:
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute {0} for {1}'.format(http_method, full_path))
             return http.HttpResponseServerError('Unexcepected error')
         
+            
         # Invokes the handler's operation, add headers to response and returns
         try:
             response = processor.getResponse(operation())

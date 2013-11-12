@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, 
@@ -41,11 +41,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Enclosed methods under /auth path
 
 class Login(Handler):
-    path = 'auth'
-    authenticated = False # By default, all handlers needs authentication
-    admin_method = False # By default, the methods will be accesible by anyone
+    path = 'auth' 
+    authenticated = False # Public method
     
     def post(self):
         '''
@@ -72,6 +72,7 @@ class Login(Handler):
                     return{'result': 'ok', 'token': self.getAuthToken()}
                 else:
                     raise Exception('Invalid credentials')
+            raise Exception('Invalid Credentials')
         except Exception as e:
             logger.exception('exception')
             return {'result': 'error', 'error': unicode(e)}
@@ -80,7 +81,6 @@ class Login(Handler):
 class Logout(Handler):
     path = 'auth'
     authenticated = True # By default, all handlers needs authentication
-    admin_method = False # By default, the methods will be accesible by anyone
     
     def get(self):
         # Remove auth token
@@ -90,9 +90,9 @@ class Logout(Handler):
     def post(self):
         return self.get()
     
-class Auth(Handler):
+class Auths(Handler):
+    path = 'auth'
     authenticated = False # By default, all handlers needs authentication
-    admin_method = False # By default, the methods will be accesible by anyone
     
     def auths(self):
         for a in Authenticator.all():

@@ -53,13 +53,14 @@ class Handler(object):
     name = None # If name is not used, name will be the class name in lower case
     path = None # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     authenticated = True # By default, all handlers needs authentication
-    only_admin = False # By default, the methods will be accesible by anyone
+    needs_admin = False # By default, the methods will be accessible by anyone if nothine else indicated
+    needs_staff = False # By default, staff 
     
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
     def __init__(self, request, path, operation, params, *args, **kwargs):
         
-        if self.only_admin:
-            self.authenticated = True # If only_admin, must also be authenticated
+        if self.needs_admin:
+            self.authenticated = True # If needs_admin, must also be authenticated
             
         self._request = request
         self._path = path
@@ -87,7 +88,10 @@ class Handler(object):
             if self._authToken is None:
                 raise AccessDenied()
             
-            if self.only_admin and not self.getValue('is_admin'):
+            if self.needs_admin and not self.getValue('is_admin'):
+                raise AccessDenied()
+            
+            if self.needs_staff and not self.getValue('staff_member'):
                 raise AccessDenied()
         
     def headers(self):
@@ -111,7 +115,9 @@ class Handler(object):
     
     @staticmethod
     def storeSessionAuthdata(session, id_auth, username, locale, is_admin, staff_member):
-        session['REST'] = { 'auth': id_auth, 'username': username, 'locale': locale,  'is_admin': is_admin, 'staff_member': staff_member }
+        session['REST'] = { 'auth': id_auth, 'username': username, 
+                           'locale': locale,  'is_admin': is_admin, 
+                           'staff_member': staff_member }
         
     
     def genAuthToken(self, id_auth, username, locale, is_admin, staf_member):
@@ -135,3 +141,11 @@ class Handler(object):
             return self._session['REST'].get(key)
         except:
             return None
+        
+    def setValue(self, key, value):
+        try:
+            self._session['REST'][key] = value
+            self._session.accessed = True
+            self._session.save()
+        except:
+            pass

@@ -415,7 +415,7 @@ def download(request, idDownload):
     Downloadables management
     '''
     if request.user.isStaff() is False:
-        return HttpResponseForbidden();
+        return HttpResponseForbidden(_('Forbidden'))
     
     if idDownload == '':
         files = [ { 'id' : key, 'name' : val['name'], 'comment' : _(val['comment']) } for key, val in DownloadsManager.manager().getDownloadables().items() ]

@@ -1,0 +1,71 @@
+{% load l10n i18n static html5 compress REST %}{% spaceless %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+<!DOCTYPE html>{% endspaceless %}
+<html lang='{{LANGUAGE_CODE}}'>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="robots" content="noindex, nofollow" />
+        {% block meta %}{% endblock %}
+
+        {% block icon %}<link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon" />{% endblock %}
+
+        {% compress css %}
+        <!-- Bootstrap -->
+        <link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/uds-html5.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
+        {% endcompress %}
+        
+        {% compress css %}
+        {% block css %}{% endblock %}
+        {% endcompress %}
+    </head>
+    
+    <body>
+        <!-- Navigation bar -->
+        {% block menu %}{% include 'uds/html5/snippets/navbar.html' %}{% endblock %}
+        <!-- End of menu -->
+        <div class="container">
+            {% block messages %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-dismissable {{ message.tags }}">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endblock %}
+            <!-- Content -->
+            {% block body %}{% endblock %}
+            <!--  End of content -->
+        </div> <!-- End of container -->
+        <footer>
+        {% block footer %}
+            <div id="vcable"><a href="http://www.virtualcable.es">&copy; 2012-2014 Virtual Cable S.L.</a> </div>
+        {% endblock %}
+        </footer>
+        {% compress js %}
+        <script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
+        <script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
+        <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
+        <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
+        <script>
+            var decimalSeparator = "{{ 1.1|localize|slice:"1:2" }}";
+            var authToken = "{% auth_token %}";
+        </script>
+        {% endcompress %}
+        
+        {% compress js %}
+        {% block js %}{% endblock %}
+        {% endcompress %}
+    </body>
+</html>
