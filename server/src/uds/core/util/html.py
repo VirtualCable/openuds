@@ -32,6 +32,7 @@
 '''
 from __future__ import unicode_literals
 
+import re
 import logging
 
 logger = logging.getLogger(__name__)
@@ -73,39 +74,80 @@ def extractKey(dictionary, key, **kwargs):
         value = default
     return value
 
+# Regular expressions for User Agents
+# These both are for Internet Explorer
+_msie = re.compile('MSIE ([0-9]+)\.([0-9]+)')
+_trident = re.compile('Trident/.*rv:([0-9]+)\.([0-9]+)')
+# Opera
+_opera = re.compile('OPR/([0-9]+)\.([0-9]+)')
+# Firefox
+_firefox = re.compile('Firefox/([0-9]+)\.([0-9]+)')
+# Chrome
+_chrome = re.compile('Chrome/([0-9]+)\.([0-9]+)')
+# Webkit in general
+_webkit = re.compile('AppleWebKit/([0-9]+)\.([0-9]+)')
+
+_browsers = {
+    'ie' : [_trident, _msie],
+    'opera': [_opera],
+    'firefox': [_firefox],
+    'chrome': [_chrome],
+    'webkit': [_webkit],
+}
+
 def checkBrowser(user_agent, browser):
     '''
     Known browsers right now:
     ie[version]
     ie<[version]
     '''
-    import re
     # Split brwosers we look for
-    needs_msie = False
-    needs_version = 6
-    needs = '='
+    needs_browser = None
+    needs_version = 0
+    needs = ''
     
-    if browser[:2] == 'ie':
-        needs_msie = True
-        if browser[2] == '<' or browser[2] == '>' or browser[2] == '=':
-            needs = browser[2]
-            needs_version = int(browser[3:])
-        else:
-            needs_version = int(browser[2:])
+    regexs = None
     
-    try:
-        if needs_msie:
-            msie = re.compile('MSIE ([0-9]+)\.([0-9]+)')
-            matches = msie.search(user_agent)
-            if matches is None:
-                return False
-            version = int(matches.groups()[0])
-            if needs == '<':
-                return version < needs_version
-            elif needs == '>':
-                return version > needs_version
+    for b, res in _browsers.iteritems():
+        if browser.startswith(b):
+            logger.debug('Found: {0}'.format(b))
+            regexs = res
+            browser = browser[len(b):]
+    
+    if regexs is None:
+        return False
+    
+    browser += ' ' # So we ensure we have at least beowser 0
+    
+    if browser[0] == '<' or browser[0] == '>' or browser[0] == '=':
+        needs = browser[0]
+        needs_version = int(browser[1:])
+    else:
+        try:
+            needs = '='
+            needs_version = int(browser)
+        except:
+            needs = ''
+            needs_version = 0
             
+    try:
+        matches = None
+        for r in regexs:
+            matches = r.search(user_agent)
+            if matches is not None:
+                break
+        if matches is None:
+            return False
+            
+        version = int(matches.groups()[0])
+        if needs == '<':
+            return version < needs_version
+        elif needs == '>':
+            return version > needs_version
+        elif needs == '=':
             return version == needs_version
+        
+        return True
     except:
         return False
         

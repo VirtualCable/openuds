@@ -29,12 +29,14 @@
                 width: 48px;
                 height: 48px;
             }
-            
-            {% ifbrowser ie<9 %}
+
+            /* We need to write under button */            
             .btn-group  {
                 max-width: 114px;
             }
             
+            {% ifbrowser firefox %}
+            {% else %}
             .btn .caret {
                 margin-left: -4px;
             }
@@ -60,6 +62,9 @@
 {% endblock %}
 
 {% block body %}
+        {% ifbrowser webkit %}
+        webkit!!!
+        {% endifbrowser %}
 			<h2>{% trans "Services" %}</h2>
 			 	<div class="clearfix">
 			{% for ser in services %}
@@ -121,7 +126,8 @@
                 <p>{% trans "Ip" %}: {{ ip }}</p>
                 <p>{% trans "Networks" %}: {{ nets }}</p>
                 <p>{% trans "Transports" %}: {{ transports }}</p>
-        
+                <p>{% trans "User Agent" %}: {{ request.META.HTTP_USER_AGENT }}</p>
+                <p>{% trans "OS" %}: {{ request.session.OS.OS }}</p>
             </div>
         </div>
 {% endif %}
