@@ -32,6 +32,10 @@
 '''
 from __future__ import unicode_literals
 
+from django import http
+from uds.core.util.html import checkBrowser
+from uds.web import errors
+
 from time import sleep
 from functools import wraps
 
@@ -54,3 +58,25 @@ def retryOnException(retries=3, delay = 0):
                         sleep(delay)
         return _wrapped_func
     return decorator
+
+
+# Decorator that protects pages that needs at least a browser version
+# Default is to deny IE < 9
+def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request:errors.errorView(request,errors.BROWSER_NOT_SUPPORTED)):
+    '''
+    Decorator to set protection to access page
+    Look for samples at uds.core.web.views 
+    '''
+    def wrap(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            '''
+            Wrapped function for decorator
+            '''
+            for b in browsers:
+                if checkBrowser(request.META['HTTP_USER_AGENT'], b):
+                    return errorResponse(request)
+    
+            return view_func(request, *args, **kwargs)
+        return _wrapped_view
+    return wrap

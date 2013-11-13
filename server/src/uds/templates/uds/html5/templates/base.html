@@ -1,4 +1,4 @@
-{% load l10n i18n static html5 compress %}{% spaceless %}
+{% load l10n i18n static html5 %}{% spaceless %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_available_languages as LANGUAGES %}
 <!DOCTYPE html>{% endspaceless %}
@@ -11,44 +11,46 @@
 		<meta name="robots" content="noindex, nofollow" />
 		{% block meta %}{% endblock %}
 
-		{% block icon %}<link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon" />{% endblock %}
+		{% block icon %}<link href="{% get_static_prefix %}img/favicon.png" rel="icon" type="image/x-icon" />{% endblock %}
 
-		{% compress css %}
 		<!-- Bootstrap -->
 		<link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
-		<link href="{% get_static_prefix %}css/uds-html5.css" rel="stylesheet" media="screen">
-		{% endcompress %}
 		
 		{% ifbrowser ie<9 %}
-			<script src="{% get_static_prefix %}/js/respond.min.js"></script>
+		<script src="{% get_static_prefix %}/js/respond.min.js"></script>
 		{% endifbrowser %}
 		
-		{% compress css %}
 		<link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
 		
 		{% ifbrowser ie<10 %}
-			<link href="{% get_static_prefix %}css/fix.css" rel="stylesheet" media="screen">
+		<link href="{% get_static_prefix %}css/fix.css" rel="stylesheet" media="screen">
 		{% endifbrowser %}
+
 		<link href="{% get_static_prefix %}css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
-		{% endcompress %}
+        <link href="{% get_static_prefix %}css/uds-html5.css" rel="stylesheet" media="screen">
 
 		{% ifbrowser ie<9 %}
-			<script src="{% get_static_prefix %}/js/html5shiv.js"></script>
+		<script src="{% get_static_prefix %}/js/html5shiv.js"></script>
 		{% endifbrowser %}
-
-		{% compress css %}
+        
 		{% block css %}{% endblock %}
-		{% endcompress %}
 	</head>
 	
 	<body>
 		<!-- Navigation bar -->
 		{% block menu %}{% include 'uds/html5/snippets/navbar.html' %}{% endblock %}
 		<!-- End of menu -->
-		<div class="container">
+        <div class="st-sticky-wrap">
+            <div class="container">
+            {% ifbrowser ie<10 %}
+            <div class="alert alert-dismissable alert-danger">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              {% trans 'Your browser is supported only partially. Please, upgrade it to a modern html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better)' %}
+            </div>
+            {% endifbrowser %}
 			{% block messages %}
 			{% if messages %}
 			{% for message in messages %}
@@ -62,13 +64,14 @@
 		 	<!-- Content -->
 			{% block body %}{% endblock %}
 			<!--  End of content -->
-		</div> <!-- End of container -->
+    		</div> <!-- End of container -->
+            <div class="st-sticky-push"></div>
+        </div>
 		<footer>
 		{% block footer %}
-			<div id="vcable"><a href="http://www.virtualcable.es">&copy; 2012-2014 Virtual Cable S.L.</a> </div>
+			<a href="http://www.virtualcable.es">&copy; 2012-2014 Virtual Cable S.L.U.</a>
 		{% endblock %}
 		</footer>
-		{% compress js %}
 		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
@@ -76,10 +79,7 @@
 		<script>
 			var decimalSeparator = "{{ 1.1|localize|slice:"1:2" }}";
 		</script>
-		{% endcompress %}
 		
-		{% compress js %}
 		{% block js %}{% endblock %}
-		{% endcompress %}
 	</body>
 </html>

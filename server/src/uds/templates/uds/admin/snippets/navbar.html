@@ -1,5 +1,5 @@
 {% load i18n html5 static %}
- 		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+ 		<nav class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -8,8 +8,28 @@
 	    			<span class="icon-bar"></span>
 	    			<span class="icon-bar"></span>
 	  			</button>
-	  			<a href="{% url 'uds.web.views.index' %}"><span class="navbar-brand">Universal Desktop Services</span></a>
+	  			<a href="{% url 'uds.admin.views.index' %}"><span class="navbar-brand">UDS Dashboard</span></a>
 			</div>
+            
+          <!-- Side bar -->
+          <ul class="nav navbar-nav side-nav">
+            <li class="active"><a href="{% url 'uds.admin.views.index' %}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a id="service_providers" href="#"><i class="fa fa-bar-chart-o"></i> {% trans 'Service providers' %}</a></li>
+            <li><a id="authenticators" href="#"><i class="fa fa-user"></i> {% trans 'Authenticators' %}</a></li>
+            <li><a href="#"><i class="fa fa-edit"></i> {% trans 'Os Managers' %}</a></li>
+            <li><a href="#"><i class="fa fa-font"></i> {% trans 'Connectivity' %}</a></li>
+            <li><a href=""><i class="fa fa-desktop"></i> {% trans 'Deployed services' %}</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-square-o-down"></i> Tools <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">{% trans 'Configuration' %}</a></li>
+                <li><a href="#">Another Item</a></li>
+                <li><a href="#">Third Item</a></li>
+                <li><a href="#">Last Item</a></li>
+              </ul>
+            </li>
+          </ul>
+            
              <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
                 </ul>
@@ -17,7 +37,6 @@
                 {% csrf_token %}
                 <input id="id_language" type="hidden" name="language" value=""/>
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#">{% trans 'About' %}</a></li>
                   <li class="dropdown">
                     {% for lang in LANGUAGES %}
                     {% if lang.0  == LANGUAGE_CODE %}
@@ -32,22 +51,13 @@
                       {% endfor %}
                     </ul>
                   </li>
-                  {% if user and not user.is_anonymous %}
                   <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ user.real_name }} <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-dashboard"></i> {{ user.real_name }} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{% url "uds.web.views.prefs" %}"><span class="fa fa-edit"></span> {% trans 'Preferences' %}</a></li>
-                    {% if user.staff_member or user.is_admin %}
-                        <li><a href="{% url "uds.web.views.download" idDownload='' %}"><span class="fa fa-download"></span> {% trans "Downloads" %}</a></li>
-                        {% ifbrowser ie<8 %} 
-                        {% else %}
-                        <li><a href="{% url "uds.admin.views.index" %}"><span class="fa fa-dashboard"></span> {% trans "Dashboard" %}</a></li>
-                        {% endifbrowser %}
-                    {% endif %}
+                        <li><a href="{% url 'uds.web.views.index' %}"><span class="fa fa-user"></span> {% trans 'Exit dashboard' %}</a></li>
                         <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> {% trans 'logout'|capfirst %}</a></li>
                     </ul>
                   </li>
-                  {% endif %}
 
                 </ul>
                 </form>

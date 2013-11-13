@@ -45,6 +45,8 @@ logger = logging.getLogger(__name__)
 
 __all__ = [ str(v) for v  in ['Handler', 'Dispatcher'] ]
 
+AUTH_TOKEN_HEADER = 'X-Auth-Token'
+
 class Dispatcher(View):
     services = { '' : None } # Will include a default /rest handler, but rigth now this will be fine
     
@@ -134,7 +136,10 @@ class Dispatcher(View):
             
         # Invokes the handler's operation, add headers to response and returns
         try:
-            response = processor.getResponse(operation())
+            if handler.raw: # Raw handlers will return an HttpResponse Object
+                response = operation()
+            else:
+                response = processor.getResponse(operation())
             for k, v in handler.headers().iteritems():
                 response[k] = v
             return response

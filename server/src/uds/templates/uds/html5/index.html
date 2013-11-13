@@ -1,10 +1,10 @@
 {% extends "uds/html5/templates/base.html" %}
-{% load i18n %}
+{% load i18n html5 %}
 
 {% block title %}{% trans 'Available services list' %}{% endblock %}
 
 {% block css %}
-        <style>
+        <style media="screen">
             .list-btn-group {
         		margin-bottom: 24px;  
         		margin-right: 24px;
@@ -24,6 +24,21 @@
             .list-dropdown-toggle {
                 width: 16px;
             }
+            
+            .transport {
+                width: 48px;
+                height: 48px;
+            }
+            
+            {% ifbrowser ie<9 %}
+            .btn-group  {
+                max-width: 114px;
+            }
+            
+            .btn .caret {
+                margin-left: -4px;
+            }
+            {% endifbrowser %}
         </style>
 {% endblock %}
 
@@ -70,7 +85,7 @@
                               {% endfor %}
                           </ul>
                           {% endif %}
-                          <div class="transport-caption{% if ser.name|length > 16 %}-small{% endif %} text-center" data-content="{{ser.name|capfirst}}">{{ ser.name|capfirst|truncatechars:16 }}</div>
+                        <div class="transport-caption{% if ser.name|length > 16 %}-small{% endif %} text-center" data-content="{{ser.name|capfirst}}">{{ ser.name|capfirst|truncatechars:16 }}</div>
                     </div>					  
 					  {% endwith %}
 				  {% endif %}

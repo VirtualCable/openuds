@@ -31,7 +31,7 @@
 '''
 
 from django.conf import settings
-from django.conf.urls import patterns, include
+from django.conf.urls import patterns, include, url
 from uds.core.util.modfinder import loadModulesUrls
 from uds import REST
 
@@ -67,7 +67,7 @@ urlpatterns = patterns('uds',
     (r'^xmlrpc$', 'xmlrpc.views.xmlrpc'),
 
     # REST Api    
-    (r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view()),
+    url(r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
     
     # Web admin GUI
     (r'^adm/', include('uds.admin.urls')),

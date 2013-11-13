@@ -32,4 +32,48 @@
 '''
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
+from uds.models import Provider
+from uds.core import services
+
 from uds.REST import Handler, HandlerError
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Enclosed methods under /auth path
+
+class Providers(Handler):
+    authenticated = True # Public method
+    
+    def provider_item(self, provider):
+        type_ = provider.getType()
+        return { 'id': provider.id,
+                 'name': provider.name, 
+                 'services_count': provider.services.count(),
+                 'type': type_.type(),
+                 'type_name': type_.name(),
+        }
+    
+    def getProviders(self, *args, **kwargs):
+        for provider in Provider.objects.filter(*args, **kwargs):
+            yield self.provider_item(provider)
+    
+    def get(self):
+        logger.error('getting providers')
+        return list(self.getProviders())
+
+class Types(Handler):
+    path = 'providers'
+    
+    def get(self):
+        res = []
+        for type_ in services.factory().providers().values():
+            val = { 'name' : _(type_.name()), 
+                    'type' : type_.type(), 
+                    'description' : _(type_.description()), 
+                    'icon' : type_.icon().replace('\n', '') }
+            res.append(val)
+        return res
+        

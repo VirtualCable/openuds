@@ -53,6 +53,7 @@ USER_SERVICE_NOT_FOUND = 7
 AUTHENTICATOR_NOT_FOUND = 8
 INVALID_CALLBACK = 9
 INVALID_REQUEST = 10
+BROWSER_NOT_SUPPORTED = 11
 
 
 strings = [ 
@@ -67,6 +68,7 @@ strings = [
            _('Authenticator not found'),
            _('Invalid authenticator'),
            _('Invalid request received'),
+           _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome')
         ]
 
 

@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django import template
+from uds.REST import AUTH_TOKEN_HEADER
 
 import logging
 
@@ -43,7 +44,11 @@ register = template.Library()
 @register.simple_tag(name='auth_token', takes_context=True)
 def auth_token(context):
     '''
-    Returns the authentication token, and also ensures that 
+    Returns the authentication token
     '''
     request = context['request']
     return request.session.session_key
+
+@register.simple_tag(name='auth_token_header')
+def auth_token_header():
+    return AUTH_TOKEN_HEADER

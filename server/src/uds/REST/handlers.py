@@ -50,6 +50,7 @@ class AccessDenied(HandlerError):
     pass
 
 class Handler(object):
+    raw = False # If true, Handler will return directly an HttpResponse Object
     name = None # If name is not used, name will be the class name in lower case
     path = None # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     authenticated = True # By default, all handlers needs authentication
@@ -61,6 +62,9 @@ class Handler(object):
         
         if self.needs_admin:
             self.authenticated = True # If needs_admin, must also be authenticated
+            
+        if self.needs_staff:
+            self.authenticated = True # Same for staff members
             
         self._request = request
         self._path = path
@@ -77,13 +81,11 @@ class Handler(object):
                 if not self._session.has_key('REST'):
                     raise Exception() # No valid session, so auth_token is also invalid
             except:
-                if settings.DEBUG:
-                    if self._authToken == 'a':
-                        self.genAuthToken(-1, 'root', 'es', True, True)
+                if settings.DEBUG: # Right now all users are valid
+                    self.genAuthToken(-1, 'root', 'es', True, True)
                 else:
                     self._authToken = None
                     self._session = None
-                
                 
             if self._authToken is None:
                 raise AccessDenied()
@@ -115,6 +117,9 @@ class Handler(object):
     
     @staticmethod
     def storeSessionAuthdata(session, id_auth, username, locale, is_admin, staff_member):
+        if is_admin:
+            staff_member = True # Make admins also staff members :-)
+            
         session['REST'] = { 'auth': id_auth, 'username': username, 
                            'locale': locale,  'is_admin': is_admin, 
                            'staff_member': staff_member }
