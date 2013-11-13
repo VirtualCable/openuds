@@ -1,6 +1,6 @@
 (function(api, $, undefined) {
 	 
-	// "private" methods
+	// "public" methods
 	api.doLog = function(data) {
 		if( api.debug  ) {
 			try {
@@ -12,7 +12,6 @@
 		}
 	}
 	
-	// "public" methods
 	api.getJson = function (path, success_fnc) {
 		url = api.url_for(path)
 		api.doLog('Ajax GET Json for "' + url + '"');
@@ -21,8 +20,8 @@
 			type: "GET",
 			dataType: "json",
 			success: function(data) {
-				api.doLog('Success on "' + url + '".');
-				api.doLog('Received ' + JSON.stringify(data));
+				api.doLog(gettext('Success on "') + url + '".');
+				api.doLog(gettext('Received ') + JSON.stringify(data));
 				if( success_fnc != undefined ){
 					api.doLog('Executing success method')
 					success_fnc(data);

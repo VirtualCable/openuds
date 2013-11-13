@@ -22,21 +22,7 @@
         		$(styles).appendTo('head');
         	});
         	
-        	api.providers.list(function(data){
-            	$('#content').html( '<div class="well"><table class="display" id="providers_table"></table></div>' );
-            	var arr = [];
-            	$.each(data, function(index, value){
-            		arr.push([value.name, value.type_name, value.services_count]);
-            	});
-                $('#providers_table').dataTable( {
-                    "aaData": arr,
-                    "aoColumns": [
-                        { "sTitle": "Name" },
-                        { "sTitle": "Type" },
-                        { "sTitle": "Number of Services" },
-                    ]
-                } );            	
-        	});
+        	gui.init();
         });
     </script>
 {% endblock %}

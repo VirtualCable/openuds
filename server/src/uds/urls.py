@@ -30,6 +30,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+js_info_dict = {
+    'domain': 'djangojs',
+    'packages': ('uds',),
+}
+
+
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from uds.core.util.modfinder import loadModulesUrls
@@ -71,6 +77,11 @@ urlpatterns = patterns('uds',
     
     # Web admin GUI
     (r'^adm/', include('uds.admin.urls')),
+    
+    # Internacionalization in javascript
+    # Javascript catalog
+    (r'^jsi18n/(?P<lang>.*)$', 'web.views.jsCatalog', js_info_dict),
+    
 )
 
 # Append urls from special dispatchers

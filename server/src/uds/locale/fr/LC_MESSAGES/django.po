@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-08 14:47+0100\n"
+"POT-Creation-Date: 2013-11-13 19:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,6 +41,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: admin/views.py:53 admin/views.py:61 web/views.py:422
+msgid "Forbidden"
+msgstr "Interdit"
 
 #: auths/IP/Authenticator.py:48 auths/IP/Authenticator.py:50
 msgid "IP Authenticator"
@@ -516,7 +520,8 @@ msgid "Canceling"
 msgstr "Annulation"
 
 #: core/util/State.py:63 templates/uds/error.html:6
-#: templates/uds/error.html.py:11
+#: templates/uds/error.html.py:11 templates/uds/html5/error.html:4
+#: templates/uds/html5/error.html.py:14
 msgid "Error"
 msgstr "Erreur"
 
@@ -1021,54 +1026,55 @@ msgstr "Redirection de connexion"
 msgid "Go to main page"
 msgstr "Aller à la page d'accueil"
 
-#: templates/uds/downloads.html:8 templates/uds/html5/snippets/navbar.html:24
+#: templates/uds/downloads.html:8 templates/uds/html5/downloads.html:7
+#: templates/uds/html5/snippets/navbar.html:41
 #: templates/uds/snippets/admin_user.html:7
 msgid "Downloads"
 msgstr "Téléchargements"
 
-#: templates/uds/downloads.html:11
+#: templates/uds/downloads.html:11 templates/uds/html5/downloads.html:10
 msgid ""
 "This page contains a list of downloadables provided by different modules"
 msgstr ""
 "Cette page contient une liste de téléchargeables fournis par différents "
 "modules"
 
-#: templates/uds/index.html:51 templates/uds/html5/index.html:48
+#: templates/uds/index.html:51 templates/uds/html5/index.html:63
 msgid "Services"
 msgstr "Services"
 
-#: templates/uds/index.html:70 templates/uds/html5/index.html:86
+#: templates/uds/index.html:70 templates/uds/html5/index.html:101
 msgid "Java not found"
 msgstr "Java non trouvé"
 
-#: templates/uds/index.html:71 templates/uds/html5/index.html:89
+#: templates/uds/index.html:71 templates/uds/html5/index.html:104
 msgid ""
 "Java is not available on your browser, and the selected transport needs it."
 msgstr ""
 "Java n'est pas disponible sur votre navigateur, et le transport sélectionné "
 "en a besoin."
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:90
+#: templates/uds/index.html:72 templates/uds/html5/index.html:105
 msgid "Please, install latest version from"
 msgstr "Veuillez installer une version plus récente de"
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:90
+#: templates/uds/index.html:72 templates/uds/html5/index.html:105
 msgid "Java website"
 msgstr "Site Web Java"
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:90
+#: templates/uds/index.html:72 templates/uds/html5/index.html:105
 msgid "and restart browser"
 msgstr "Redémarrez le navigateur"
 
-#: templates/uds/index.html:78 templates/uds/html5/index.html:102
+#: templates/uds/index.html:78 templates/uds/html5/index.html:121
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/index.html:79 templates/uds/html5/index.html:103
+#: templates/uds/index.html:79 templates/uds/html5/index.html:122
 msgid "Networks"
 msgstr "Réseaux"
 
-#: templates/uds/index.html:80 templates/uds/html5/index.html:104
+#: templates/uds/index.html:80 templates/uds/html5/index.html:123
 msgid "Transports"
 msgstr "Transports"
 
@@ -1077,7 +1083,7 @@ msgid "User"
 msgstr "Utilisateur"
 
 #: templates/uds/internal_page.html:34 templates/uds/prefs.html:12
-#: templates/uds/html5/snippets/navbar.html:16
+#: templates/uds/html5/snippets/navbar.html:39
 msgid "Preferences"
 msgstr "Préférences"
 
@@ -1119,17 +1125,69 @@ msgstr ""
 "Le service n'est pas prêt à ce moment. S'il vous plaît, essayez à nouveau de "
 "temps en temps."
 
+#: templates/uds/admin/snippets/navbar.html:6
+#: templates/uds/html5/snippets/navbar.html:6
+msgid "toggle navigation"
+msgstr "activer/désactiver navigation"
+
+#: templates/uds/admin/snippets/navbar.html:17
+msgid "Service providers"
+msgstr "Fournisseurs de services"
+
+#: templates/uds/admin/snippets/navbar.html:18
+msgid "Authenticators"
+msgstr "Authentificateurs"
+
+#: templates/uds/admin/snippets/navbar.html:19
+msgid "Os Managers"
+msgstr "Gestionnaires de système d'exploitation"
+
+#: templates/uds/admin/snippets/navbar.html:20
+msgid "Connectivity"
+msgstr "Connectivité"
+
+#: templates/uds/admin/snippets/navbar.html:21
+msgid "Deployed services"
+msgstr "Services déployés"
+
+#: templates/uds/admin/snippets/navbar.html:25
+msgid "Configuration"
+msgstr "Configuration"
+
+#: templates/uds/admin/snippets/navbar.html:57
+msgid "Exit dashboard"
+msgstr "Tableau de bord de sortie"
+
+#: templates/uds/admin/snippets/navbar.html:58
+#: templates/uds/html5/snippets/navbar.html:47
+msgid "logout"
+msgstr "logout"
+
 #: templates/uds/html5/detectJava.html:4
 msgid "Login redirection to UDS"
 msgstr "Redirection de connexion à l'UDS"
+
+#: templates/uds/html5/error.html:12
+msgid "An error occurred"
+msgstr "Une erreur s'est produite"
+
+#: templates/uds/html5/error.html:16
+#: templates/uds/html5/show_transport.html:10
+#: templates/uds/snippets/back_to_list.html:3
+msgid "Back to services list"
+msgstr "Retour à la liste de services"
 
 #: templates/uds/html5/index.html:4
 msgid "Available services list"
 msgstr "Liste des services disponibles"
 
-#: templates/uds/html5/index.html:64
+#: templates/uds/html5/index.html:78
 msgid "transports"
 msgstr "Transports"
+
+#: templates/uds/html5/index.html:118
+msgid "Administrator info panel"
+msgstr "Panneau info administrateur"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html.py:69
 msgid "Welcome to UDS"
@@ -1165,8 +1223,8 @@ msgid ""
 "The service is not ready at this moment. Please, try it again after a few "
 "seconds."
 msgstr ""
-"Le service n'est pas prêt à ce moment. S'il vous plaît, essayez à nouveau après quelques "
-"secondes."
+"Le service n'est pas prêt à ce moment. S'il vous plaît, essayez à nouveau "
+"après quelques secondes."
 
 #: templates/uds/html5/service_not_ready.html:15
 msgid ""
@@ -1180,22 +1238,22 @@ msgstr ""
 msgid "Back"
 msgstr "Précédent"
 
-#: templates/uds/html5/show_transport.html:10
-#: templates/uds/snippets/back_to_list.html:3
-msgid "Back to services list"
-msgstr "Retour à la liste de services"
-
-#: templates/uds/html5/snippets/navbar.html:6
-msgid "toggle navigation"
-msgstr "activer/désactiver navigation"
-
-#: templates/uds/html5/snippets/navbar.html:26
+#: templates/uds/html5/snippets/navbar.html:20
 msgid "About"
 msgstr "Sur"
 
-#: templates/uds/html5/snippets/navbar.html:42
-msgid "logout"
-msgstr "logout"
+#: templates/uds/html5/snippets/navbar.html:44
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#: templates/uds/html5/templates/base.html:51
+msgid ""
+"Your browser is supported only partially. Please, upgrade it to a modern "
+"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better)"
+msgstr ""
+"Votre navigateur est pris en charge que partiellement. S'il vous plaît, "
+"mettre à jour à un moderne HTML5 navigateur tel que Firefox, Chrome, "
+"Opera... (IE doit être de 10 ou mieux)"
 
 #: templates/uds/snippets/admin_user.html:4
 msgid "Admin"
@@ -1488,24 +1546,24 @@ msgstr "Transport NX (tunnel)"
 msgid "NX Transport for tunneled connection"
 msgstr "Transport NX pour connexion tunnelée"
 
-#: web/errors.py:58
+#: web/errors.py:60
 msgid "Unknown error"
 msgstr "Erreur inconnue"
 
-#: web/errors.py:59
+#: web/errors.py:61
 msgid "Transport not found"
 msgstr "Transport introuvable"
 
-#: web/errors.py:60
+#: web/errors.py:62
 msgid "Service not found"
 msgstr "Service introuvable"
 
-#: web/errors.py:61 xmlrpc/auths/AdminAuth.py:182
+#: web/errors.py:63 xmlrpc/auths/AdminAuth.py:182
 #: xmlrpc/auths/AdminAuth.py:188
 msgid "Access denied"
 msgstr "Accès refusé"
 
-#: web/errors.py:62
+#: web/errors.py:64
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -1513,28 +1571,40 @@ msgstr ""
 "Service non valide. Le service n'est pas disponible en ce moment. SVP, "
 "essayez plus tard"
 
-#: web/errors.py:63
+#: web/errors.py:65
 msgid "Maximum services limit reached. Please, contact administrator"
 msgstr ""
 "Limite de services maximale atteinte. Veuillez contacter administrateur"
 
-#: web/errors.py:64
+#: web/errors.py:66
 msgid "You need to enable cookies to let this application work"
 msgstr "Vous devez activer les cookies de laisser cette application"
 
-#: web/errors.py:65
+#: web/errors.py:67
 msgid "User service not found"
 msgstr "Service utilisateur introuvable"
 
-#: web/errors.py:66
+#: web/errors.py:68
 msgid "Authenticator not found"
 msgstr "Authentificateur introuvable"
 
-#: web/errors.py:67 xmlrpc/auths/AdminAuth.py:173
+#: web/errors.py:69 xmlrpc/auths/AdminAuth.py:173
 msgid "Invalid authenticator"
 msgstr "Authentificateur non valide"
 
-#: web/views.py:395
+#: web/errors.py:70
+msgid "Invalid request received"
+msgstr "Requête non valide reçu"
+
+#: web/errors.py:71
+msgid ""
+"Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
+"like Firefox or Chrome"
+msgstr ""
+"Votre navigateur n'est pas pris en charge. S'il vous plaît, mettre à niveau "
+"vers un navigateur modern de HTML5 comme Firefox ou Chrome"
+
+#: web/views.py:401
 msgid "Authenticator do not provides information"
 msgstr "Authentificateur ne fournit pas d'informations"
 

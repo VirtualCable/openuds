@@ -38,6 +38,10 @@ from django.shortcuts import render
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
+from django.utils import timezone
+from django.views.decorators.http import last_modified
+from django.views.i18n import javascript_catalog
+
 from uds.core.auths.auth import getIp, webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout
 from uds.models import Authenticator, DeployedService, Transport, UserService, Network
 from uds.web.forms.LoginForm import LoginForm
@@ -424,6 +428,7 @@ def download(request, idDownload):
     
     return DownloadsManager.manager().send(request, idDownload)
 
-# Customization views
-def handler404(request):
-    return render(request, theme.template('404.html'))
+last_modified_date = timezone.now()
+@last_modified(lambda req, **kw: last_modified_date)
+def jsCatalog(request, lang, domain='djangojs', packages=None):
+    return javascript_catalog(request, domain, packages)

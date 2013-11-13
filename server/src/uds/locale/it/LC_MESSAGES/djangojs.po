@@ -1,0 +1,83 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-11-13 19:50+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: static/adm/js/api.js:23
+msgid "Success on \""
+msgstr "Successo su\""
+
+#: static/adm/js/api.js:24
+msgid "Received "
+msgstr "Ricevuto "
+
+#: static/adm/js/gui.js:43
+msgid "Name"
+msgstr "Nome"
+
+#: static/adm/js/gui.js:44
+msgid "Type"
+msgstr "Tipo"
+
+#: static/adm/js/gui.js:45
+msgid "Number of Services"
+msgstr "Numero dei servizi"
+
+#: static/adm/js/gui.js:48
+msgid "Display _MENU_ records per page"
+msgstr "Visualizzare _MENU_ record per pagina"
+
+#: static/adm/js/gui.js:49
+msgid "Nothing found - sorry"
+msgstr "Trovato nulla - ci dispiace"
+
+#: static/adm/js/gui.js:50
+msgid "Showing _START_ to _END_ of _TOTAL_ records"
+msgstr "Mostrando _START_ a _END_ di record _TOTAL_"
+
+#: static/adm/js/gui.js:51
+msgid "Showing 0 to 0 of 0 records"
+msgstr "Mostrando 0-0 di 0 record"
+
+#: static/adm/js/gui.js:52
+msgid "(filtered from _MAX_ total records)"
+msgstr "(filtrato da record totale _MAX_)"
+
+#: static/adm/js/gui.js:53
+msgid "Please wait, processing"
+msgstr "Attendere prego, elaborazione"
+
+#: static/adm/js/gui.js:54
+msgid "Search"
+msgstr "Ricerca"
+
+#: static/adm/js/gui.js:56
+msgid "First"
+msgstr "Primo"
+
+#: static/adm/js/gui.js:57
+msgid "Last"
+msgstr "Ultima"
+
+#: static/adm/js/gui.js:58
+msgid "Next"
+msgstr "Prossimo"
+
+#: static/adm/js/gui.js:59
+msgid "Previous"
+msgstr "Precedente"

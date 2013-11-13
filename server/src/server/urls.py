@@ -8,6 +8,7 @@ from django.conf.urls import patterns, include
 # from django.contrib import admin
 # admin.autodiscover()
 
+
 urlpatterns = patterns('',
-    (r'^', include('uds.urls'))
+    (r'^', include('uds.urls')),
 )

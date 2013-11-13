@@ -57,17 +57,15 @@
         <script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
-
         <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
-
+        
+        <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
         <script src="{% get_static_prefix %}adm/js/templating.js"></script>
         
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui.js"></script>
 
         <script>
-        	// Access to thousands decimal separator
-            var decimalSeparator = "{{ 1.1|localize|slice:"1:2" }}";
-            
         	// Initialize a few settings
         	(function(api, $, undefined){
             	api.token = "{% auth_token %}";
