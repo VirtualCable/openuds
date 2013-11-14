@@ -28,13 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+@itemor: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
-from uds.models import Authenticator
-from uds.core import auths
+from uds.models import Transport
+from uds.core.transports import factory
 
 from uds.REST import Handler, HandlerError
 from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
@@ -43,31 +43,32 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /auth path
+# Enclosed methods under /item path
 
-class Authenticators(ModelHandlerMixin, Handler):
-    model = Authenticator
+class Transports(ModelHandlerMixin, Handler):
+    model = Transport
     
-    def item_as_dict(self, auth):
-        type_ = auth.getType()
-        return { 'id': auth.id,
-                 'name': auth.name, 
-                 'users_count': auth.users.count(),
+    def item_as_dict(self, item):
+        type_ = item.getType()
+        return { 'id': item.id,
+                 'name': item.name,
+                 'priority': item.priority, 
+                 'deployed_count': item.deployedServices.count(),
                  'type': type_.type(),
-                 'comments': auth.comments,
+                 'comments': item.comments
         }
 
 class Types(ModelTypeHandlerMixin, Handler):
-    path = 'authenticators'
+    path = 'transports'
     
     def enum_types(self):
-        return auths.factory().providers().values()
+        return factory().providers().values()
 
 class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'authenticators'
-    title =  _('Current authenticators')
+    path = 'transports'
+    title =  _('Current Transports')
     fields = [
             { 'name': {'title': _('Name'), 'visible': True } },
             { 'comments': {'title':  _('Comments')}},
-            { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
+            { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]

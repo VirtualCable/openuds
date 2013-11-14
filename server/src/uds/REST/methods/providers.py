@@ -54,12 +54,10 @@ class Providers(ModelHandlerMixin, Handler):
                  'services_count': provider.services.count(),
                  'type': type_.type(),
                  'comments': provider.comments,
-                 'type_name': type_.name(),
         }
 
 class Types(ModelTypeHandlerMixin, Handler):
     path = 'providers'
-    model = Provider
     
     def enum_types(self):
         return services.factory().providers().values()
@@ -68,7 +66,7 @@ class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'providers'
     title =  _('Current service providers')
     fields = [
-            { 'name': {'title': _('Name')} },
+            { 'name': {'title': _('Name') } },
             { 'comments': {'title':  _('Comments')}},
             { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}}
     ]

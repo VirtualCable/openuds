@@ -28,46 +28,45 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+@itemor: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
-from uds.models import Authenticator
-from uds.core import auths
+from uds.models import Network
 
 from uds.REST import Handler, HandlerError
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
+from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin, ModelFakeType
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /auth path
+# Enclosed methods under /item path
 
-class Authenticators(ModelHandlerMixin, Handler):
-    model = Authenticator
+class Networks(ModelHandlerMixin, Handler):
+    model = Network
     
-    def item_as_dict(self, auth):
-        type_ = auth.getType()
-        return { 'id': auth.id,
-                 'name': auth.name, 
-                 'users_count': auth.users.count(),
-                 'type': type_.type(),
-                 'comments': auth.comments,
+    def item_as_dict(self, item):
+        return { 'id': item.id,
+                 'name': item.name,
+                 'net_string': item.net_string, 
+                 'networks_count': item.transports.count(),
+                 'type': 'NetworkType',
         }
 
 class Types(ModelTypeHandlerMixin, Handler):
-    path = 'authenticators'
+    path = 'networks'
     
+    # Fake mathods, to yield self on enum types and get a "fake" type for Network 
     def enum_types(self):
-        return auths.factory().providers().values()
+        yield ModelFakeType('Network', 'NetworkType', 'A description of a network', '')
 
 class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'authenticators'
-    title =  _('Current authenticators')
+    path = 'networks'
+    title =  _('Current Networks')
     fields = [
             { 'name': {'title': _('Name'), 'visible': True } },
-            { 'comments': {'title':  _('Comments')}},
-            { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
+            { 'net_string': {'title':  _('Networks')}},
+            { 'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]

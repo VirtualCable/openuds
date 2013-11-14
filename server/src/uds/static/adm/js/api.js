@@ -100,4 +100,6 @@ BasicModelRest.prototype = {
 api.providers = new BasicModelRest('providers');
 //api.services = new BasicModelRest('services');
 api.authenticators = new BasicModelRest('authenticators');
-
+api.osmanagers = new BasicModelRest('osmanagers');
+api.transports = new BasicModelRest('transports');
+api.networks = new BasicModelRest('networks');

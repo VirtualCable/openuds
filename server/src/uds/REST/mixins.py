@@ -54,7 +54,10 @@ class ModelHandlerMixin(object):
     
     def getItems(self, *args, **kwargs):
         for item in self.model.objects.filter(*args, **kwargs):
-            yield self.item_as_dict(item)
+            try:
+                yield self.item_as_dict(item)
+            except:
+                logger.exception('Exception getting item from {0}'.format(self.model))
         
     def get(self):
         logger.debug('methot GET for {0}'.format(self.__class__.__name__))
@@ -72,7 +75,6 @@ class ModelTypeHandlerMixin(object):
     '''
     authenticated = True
     needs_staff = True
-    model = None
     
     def enum_types(self):
         pass
@@ -86,7 +88,10 @@ class ModelTypeHandlerMixin(object):
             
     def getTypes(self, *args, **kwargs):
         for type_ in self.enum_types():
-            yield self.type_as_dict(type_)
+            try:
+                yield self.type_as_dict(type_)
+            except:
+                logger.exception('Exception enumerating types')
             
     def get(self):
         return list(self.getTypes())
@@ -121,3 +126,13 @@ class ModelTableHandlerMixin(object):
                 fields.append({k1: dct})
         return { 'title': unicode(self.title),  'fields': fields };
     
+    
+# Fake type for models that do not needs typing
+class ModelFakeType(object):
+    def __init__(self, name, type_, description, icon):
+        self._name, self._type, self._description, self._icon = name, type_, description, icon
+    
+    def name(self): return self._name
+    def type(self): return self._type
+    def description(self): return self._description
+    def icon(self): return self._icon
