@@ -16,14 +16,12 @@
         <!-- Bootstrap -->
         <link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
 
         <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
 
-        <link href="{% get_static_prefix %}css/tables.css" rel="stylesheet" media="screen">
+        <!-- <link href="{% get_static_prefix %}css/tables.css" rel="stylesheet" media="screen"> -->
         <link href="{% get_static_prefix %}css/uds-admin.css" rel="stylesheet" media="screen">
         {% block css %}{% endblock %}
     </head>
@@ -34,21 +32,9 @@
         
         {% block menu %}{% include 'uds/admin/snippets/navbar.html' %}{% endblock %}
         <!-- End of menu -->
-                {% block messages %}
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-dismissable {{ message.tags }}">
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                  {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
-                {% endblock %}
                 <!-- Content -->
                  <div id="page-wrapper">
-                    <div id="content" class="fluid-container">
-                        {% block body %}{% endblock %}
-                    </div>
+                    {% block body %}{% endblock %}
                 </div>
                 <!--  End of content -->
         </div>
@@ -61,23 +47,24 @@
         
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
         <script src="{% get_static_prefix %}adm/js/templating.js"></script>
+
+        <script>
+            // Initialize a few settings, needed for api to work
+            (function(api, $, undefined){
+                api.token = "{% auth_token %}";
+                api.auth_header = "{% auth_token_header %}";
+                api.base_url = "{% url 'REST' '' %}";
+                
+                api.url_for = function(path) {
+                    return api.base_url + path;
+                }
+                
+            }(window.api = window.api || {}, jQuery));
+        </script>
         
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui.js"></script>
 
-        <script>
-        	// Initialize a few settings
-        	(function(api, $, undefined){
-            	api.token = "{% auth_token %}";
-            	api.auth_header = "{% auth_token_header %}";
-            	api.base_url = "{% url 'REST' '' %}";
-            	
-            	api.url_for = function(path) {
-            		return api.base_url + path;
-            	}
-            	
-        	}(window.api = window.api || {}, jQuery));
-        </script>
         
         {% block js %}{% endblock %}
     </body>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-13 19:50+0100\n"
+"POT-Creation-Date: 2013-11-14 11:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,58 +26,62 @@ msgstr "Sucesso na\""
 msgid "Received "
 msgstr "Recebido "
 
-#: static/adm/js/gui.js:43
-msgid "Name"
-msgstr "Nome"
-
-#: static/adm/js/gui.js:44
-msgid "Type"
-msgstr "Tipo"
-
-#: static/adm/js/gui.js:45
-msgid "Number of Services"
-msgstr "Número de serviços"
-
-#: static/adm/js/gui.js:48
+#: static/adm/js/gui.js:17
 msgid "Display _MENU_ records per page"
 msgstr "Exibir _MENU_ de registros por página"
 
-#: static/adm/js/gui.js:49
+#: static/adm/js/gui.js:18
 msgid "Nothing found - sorry"
 msgstr "Nada foi encontrado - Desculpe"
 
-#: static/adm/js/gui.js:50
-msgid "Showing _START_ to _END_ of _TOTAL_ records"
-msgstr "Mostrando _START_ para _END_ de registros _TOTAL_"
+#: static/adm/js/gui.js:19
+msgid "Showing record _START_ to _END_ of _TOTAL_"
+msgstr "Mostrando registro _START_ para _END_ de _TOTAL_"
 
-#: static/adm/js/gui.js:51
+#: static/adm/js/gui.js:20
 msgid "Showing 0 to 0 of 0 records"
 msgstr "Mostrando 0 a 0 de 0 registros"
 
-#: static/adm/js/gui.js:52
+#: static/adm/js/gui.js:21
 msgid "(filtered from _MAX_ total records)"
 msgstr "(filtrada de registros total de _MAX_)"
 
-#: static/adm/js/gui.js:53
+#: static/adm/js/gui.js:22
 msgid "Please wait, processing"
 msgstr "Aguarde, processamento"
 
-#: static/adm/js/gui.js:54
+#: static/adm/js/gui.js:23
 msgid "Search"
 msgstr "Pesquisa"
 
-#: static/adm/js/gui.js:56
+#: static/adm/js/gui.js:26
 msgid "First"
 msgstr "Primeiro"
 
-#: static/adm/js/gui.js:57
+#: static/adm/js/gui.js:27
 msgid "Last"
 msgstr "Última"
 
-#: static/adm/js/gui.js:58
+#: static/adm/js/gui.js:28
 msgid "Next"
 msgstr "Próxima"
 
-#: static/adm/js/gui.js:59
+#: static/adm/js/gui.js:29
 msgid "Previous"
 msgstr "Anterior"
+
+#: static/adm/js/gui.js:83
+msgid "Connectivity"
+msgstr "Conectividade"
+
+#: static/adm/js/gui.js:88
+msgid "Deployed services"
+msgstr "Serviços implantados"
+
+#: static/adm/js/gui.js:181
+msgid "Service Providers"
+msgstr "Prestadores de serviços"
+
+#: static/adm/js/gui.js:191
+msgid "Authenticators"
+msgstr "Autenticadores"

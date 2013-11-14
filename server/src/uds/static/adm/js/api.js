@@ -34,47 +34,70 @@
 	};
 	
 	// Public attributes 
-	api.debug = true;
+	api.debug = false;
 }(window.api = window.api || {}, jQuery));
 
 
+// Great part of UDS REST api provides same methods.
+// We will take advantage of this and save a lot of nonsense, prone to failure code :-)
 
-// Service providers related
-api.providers = (function($){
-	var pub = {};
-	
-	pub.cached_types = undefined;
-	
-	pub.list = function(success_fnc) {
-		api.getJson('providers',success_fnc);
-	}
-	
-	pub.types = function(success_fnc) {
-		// Cache types locally, will not change unless new broker version
-		if( pub.cached_types ) {
-			if( success_fnc ) {
-				success_fnc(pub.cached_types);
+function BasicModelRest(path) {
+	this.path = path;
+	this.cached_types = undefined;
+	this.cached_tableInfo = undefined;
+}
+
+BasicModelRest.prototype = {
+		get: function(options) {
+			if( options == undefined ){
+				options = {};
 			}
-		}
+			var path = this.path;
+			if( options.id != undefined )
+				path += '/' + options.id;
+			api.getJson(path, options.success);
+		},
+		types: function(success_fnc) {
+			// Cache types locally, will not change unless new broker version
+			if( this.cached_types ) {
+				if( success_fnc ) {
+					success_fnc(this.cached_types);
+				}
+			}
+			else {
+				var $this = this;
+				
+				api.getJson( this.path + '/types', function(data) {
+					$this.cached_types = data;
+					if( success_fnc ) {
+						success_fnc($this.cached_types);
+					}
+				});
+			}
+		},
 		
-		api.getJson('providers/types', function(data){
-			pub.cached_types = data;
-			if( success_fnc ) {
-				success_fnc(pub.cached_types);
+		tableInfo: function(success_fnc) {
+			// Cache types locally, will not change unless new broker version
+			if( this.cached_tableInfo ) {
+				if( success_fnc ) {
+					success_fnc(this.cached_tableInfo);
+				}
+				return;
 			}
-		});
-	}
-	
-	return pub;
-}(jQuery)); 
+			var $this = this;
+			
+			api.getJson( this.path + '/tableinfo', function(data) {
+				$this.cached_tableInfo = data;
+				if( success_fnc ) {
+					success_fnc($this.cached_tableInfo);
+				}
+			});
+			
+		},
 
+}
 
-// Service related
-api.services = (function($){
-	var pub = {};
-	
-	pub.get = function(success_fnc) {
-		return api.getJson('/rest/providers', success_fnc);
-	}
-	return pub;
-}(jQuery));
+api.providers = new BasicModelRest('providers');
+//api.services = new BasicModelRest('services');
+api.authenticators = new BasicModelRest('authenticators');
+

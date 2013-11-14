@@ -32,9 +32,9 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import Provider
-from uds.core import services
+from django.utils.translation import ugettext_lazy as _
+from uds.models import Authenticator
+from uds.core import auths
 
 from uds.REST import Handler, HandlerError
 from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
@@ -43,33 +43,35 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Enclosed methods under /auth path
 
-class Providers(ModelHandlerMixin, Handler):
-    model = Provider
+class Authenticators(ModelHandlerMixin, Handler):
+    model = Authenticator
     
-    def item_as_dict(self, provider):
-        type_ = provider.getType()
-        return { 'id': provider.id,
-                 'name': provider.name, 
-                 'services_count': provider.services.count(),
+    def item_as_dict(self, auth):
+        type_ = auth.getType()
+        return { 'id': auth.id,
+                 'name': auth.name, 
+                 'users_count': auth.users.count(),
                  'type': type_.type(),
-                 'comments': provider.comments,
+                 'comments': auth.comments,
                  'type_name': type_.name(),
         }
+    
+    
 
 class Types(ModelTypeHandlerMixin, Handler):
-    path = 'providers'
-    model = Provider
+    path = 'authenticators'
+    model = Authenticator
     
     def enum_types(self):
-        return services.factory().providers().values()
-    
+        return auths.factory().providers().values()
+
 class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'providers'
-    title =  _('Current service providers')
+    path = 'authenticators'
+    title =  _('Current authenticators')
     fields = [
-            { 'name': {'title': _('Name')} },
+            { 'name': {'title': _('Name'), 'visible': True } },
             { 'comments': {'title':  _('Comments')}},
-            { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}}
+            { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
     ]
-    

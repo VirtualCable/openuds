@@ -8,21 +8,9 @@
 {% block js %}
     <script>
         $(function() {
-        	
-        	// Preload styles for service providers
-        	api.providers.types(function(data){
-        		var styles = '<style media="screen">';
-        		$.each(data, function(index, value){
-        			var style = '.prov-' + value.type + 
-        				' { display:inline-block; background: url(data:image/png;base64,' + value.icon + '); ' +
-        				'width: 16px; height: 16px; } ';
-        			styles += style;
-        		});
-        		styles += '</style>'
-        		$(styles).appendTo('head');
-        	});
-        	
+			// Initialize gui        	
         	gui.init();
+        	
         });
     </script>
 {% endblock %}

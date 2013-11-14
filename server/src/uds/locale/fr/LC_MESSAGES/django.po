@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-13 19:50+0100\n"
+"POT-Creation-Date: 2013-11-14 11:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,6 +41,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: REST/methods/authenticators.py:72
+msgid "Current authenticators"
+msgstr "Authentificateurs actuels"
+
+#: REST/methods/authenticators.py:74 REST/methods/providers.py:71
+msgid "Name"
+msgstr "Nom"
+
+#: REST/methods/authenticators.py:75 REST/methods/providers.py:72
+msgid "Comments"
+msgstr "Commentaires"
+
+#: REST/methods/authenticators.py:76
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: REST/methods/providers.py:69
+msgid "Current service providers"
+msgstr "Fournisseurs de services actuels"
+
+#: REST/methods/providers.py:73 templates/uds/index.html:51
+#: templates/uds/html5/index.html:68
+msgid "Services"
+msgstr "Services"
 
 #: admin/views.py:53 admin/views.py:61 web/views.py:422
 msgid "Forbidden"
@@ -1039,42 +1064,38 @@ msgstr ""
 "Cette page contient une liste de téléchargeables fournis par différents "
 "modules"
 
-#: templates/uds/index.html:51 templates/uds/html5/index.html:63
-msgid "Services"
-msgstr "Services"
-
-#: templates/uds/index.html:70 templates/uds/html5/index.html:101
+#: templates/uds/index.html:70 templates/uds/html5/index.html:106
 msgid "Java not found"
 msgstr "Java non trouvé"
 
-#: templates/uds/index.html:71 templates/uds/html5/index.html:104
+#: templates/uds/index.html:71 templates/uds/html5/index.html:109
 msgid ""
 "Java is not available on your browser, and the selected transport needs it."
 msgstr ""
 "Java n'est pas disponible sur votre navigateur, et le transport sélectionné "
 "en a besoin."
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:105
+#: templates/uds/index.html:72 templates/uds/html5/index.html:110
 msgid "Please, install latest version from"
 msgstr "Veuillez installer une version plus récente de"
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:105
+#: templates/uds/index.html:72 templates/uds/html5/index.html:110
 msgid "Java website"
 msgstr "Site Web Java"
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:105
+#: templates/uds/index.html:72 templates/uds/html5/index.html:110
 msgid "and restart browser"
 msgstr "Redémarrez le navigateur"
 
-#: templates/uds/index.html:78 templates/uds/html5/index.html:121
+#: templates/uds/index.html:78 templates/uds/html5/index.html:126
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/index.html:79 templates/uds/html5/index.html:122
+#: templates/uds/index.html:79 templates/uds/html5/index.html:127
 msgid "Networks"
 msgstr "Réseaux"
 
-#: templates/uds/index.html:80 templates/uds/html5/index.html:123
+#: templates/uds/index.html:80 templates/uds/html5/index.html:128
 msgid "Transports"
 msgstr "Transports"
 
@@ -1138,10 +1159,6 @@ msgstr "Fournisseurs de services"
 msgid "Authenticators"
 msgstr "Authentificateurs"
 
-#: templates/uds/admin/snippets/navbar.html:19
-msgid "Os Managers"
-msgstr "Gestionnaires de système d'exploitation"
-
 #: templates/uds/admin/snippets/navbar.html:20
 msgid "Connectivity"
 msgstr "Connectivité"
@@ -1181,13 +1198,21 @@ msgstr "Retour à la liste de services"
 msgid "Available services list"
 msgstr "Liste des services disponibles"
 
-#: templates/uds/html5/index.html:78
+#: templates/uds/html5/index.html:83
 msgid "transports"
 msgstr "Transports"
 
-#: templates/uds/html5/index.html:118
+#: templates/uds/html5/index.html:123
 msgid "Administrator info panel"
 msgstr "Panneau info administrateur"
+
+#: templates/uds/html5/index.html:129
+msgid "User Agent"
+msgstr "User Agent"
+
+#: templates/uds/html5/index.html:130
+msgid "OS"
+msgstr "SYSTÈME D'EXPLOITATION"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html.py:69
 msgid "Welcome to UDS"
