@@ -42,7 +42,7 @@
 // We will take advantage of this and save a lot of nonsense, prone to failure code :-)
 
 function BasicModelRest(path) {
-	this.path = path;
+	this.path = path || "";
 	this.cached_types = undefined;
 	this.cached_tableInfo = undefined;
 }
@@ -95,11 +95,31 @@ BasicModelRest.prototype = {
 			
 		},
 
+};
+
+// For REST of type /auth/[id]/users, /services/[id]/users, ...
+function DetailModelRestApi(parentApi, path) {
+	this.parentPath = parentApi.path;
+	this.path = path;
 }
+
+DetailModelRestApi.prototype = {
+		detail: function(parentId) {
+			var rest = new BasicModelRest(this.parentPath + '/' + parentId + '/' + this.path);
+			rest.types = function() {
+				return []; // No types at all
+			}
+		}
+};
+
+
+// Populate api
 
 api.providers = new BasicModelRest('providers');
 //api.services = new BasicModelRest('services');
 api.authenticators = new BasicModelRest('authenticators');
+api.authenticators.users = new DetailModelRestApi(api.authenticators, 'users');
+
 api.osmanagers = new BasicModelRest('osmanagers');
 api.transports = new BasicModelRest('transports');
 api.networks = new BasicModelRest('networks');

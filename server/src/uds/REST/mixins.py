@@ -38,6 +38,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+class DetailHandler(object):
+    def __init__(self, parentHandler, path, *args, **kwargs):
+        self._parent = parentHandler
+        self._path = path
+        self._args = args
+        self._kwargs = kwargs
+
 class ModelHandlerMixin(object):
     '''
     Basic Handler for a model
@@ -46,7 +53,7 @@ class ModelHandlerMixin(object):
     '''
     authenticated = True
     needs_staff = True
-    
+    detail = None # Dictionary containing detail routing 
     model = None
     
     def item_as_dict(self, item):
@@ -58,13 +65,30 @@ class ModelHandlerMixin(object):
                 yield self.item_as_dict(item)
             except:
                 logger.exception('Exception getting item from {0}'.format(self.model))
+                
+    def processDetail(self):
+        logger.debug('Processing detail')
+        try:
+            item = self.model.objects.filter(pk=self._args[0])[0]
+            detailCls = self.detail[self._args[1]]
+            args = list(self._args[2:])
+            path = self._path + '/'.join(args[:2])
+            detail = detailCls(self, path, parent = item)
+            return getattr(detail, self._operation)()
+        except:
+            return {'error': 'method not found' }
         
     def get(self):
-        logger.debug('methot GET for {0}'.format(self.__class__.__name__))
+        logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) == 0:
             return list(self.getItems())
+
+        # If has detail and is requesting detail        
+        if self.detail is not None and len(self._args) > 1:
+            return self.processDetail()
+        
         try:
-            return list(self.getItems(pk=self._args[0]))[0]
+            item = list(self.getItems(pk=self._args[0]))[0]
         except:
             return {'error': 'not found' }
         

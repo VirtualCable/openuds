@@ -33,13 +33,11 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
-from uds.models import Authenticator
-from uds.core import auths
+from django.utils import formats
 
+from uds.models import User
 
-from users import Users
-from uds.REST import Handler, HandlerError
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
+from uds.REST.mixins import DetailHandler
 
 import logging
 
@@ -47,30 +45,38 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /auth path
 
-class Authenticators(ModelHandlerMixin, Handler):
-    model = Authenticator
-    detail = { 'users': Users }
+class Users(DetailHandler):
     
-    def item_as_dict(self, auth):
-        type_ = auth.getType()
-        return { 'id': auth.id,
-                 'name': auth.name, 
-                 'users_count': auth.users.count(),
-                 'type': type_.type(),
-                 'comments': auth.comments,
+    def user_as_dict(self, user):
+        return {
+            'id': user.id,
+            'name': user.name,
+            'real_name': user.real_name,
+            'comments': user.comments,
+            'state': user.state,
+            'staff_member': user.staff_member,
+            'is_admin': user.is_admin,
+            'last_access': formats.date_format(user.last_access, 'DATETIME_FORMAT'),
+            'parent': user.parent
         }
-
-class Types(ModelTypeHandlerMixin, Handler):
-    path = 'authenticators'
     
-    def enum_types(self):
-        return auths.factory().providers().values()
-
-class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'authenticators'
-    title =  _('Current authenticators')
-    fields = [
-            { 'name': {'title': _('Name'), 'visible': True } },
-            { 'comments': {'title':  _('Comments')}},
-            { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
-    ]
+    def get(self):
+        logger.debug(self._parent)
+        logger.debug(self._kwargs)
+        
+        # Extract authenticator
+        auth = self._kwargs['parent']
+        
+        try:
+            if len(self._args) == 0:
+                res = []
+                for u in auth.users.all():
+                    res.append(self.user_as_dict(u))
+                return res
+            else:
+                return  self.user_as_dict(auth.get(pk=self._args[0]))
+        except:
+            logger.exception('En users')
+            return { 'error': 'not found' }
+            
+        

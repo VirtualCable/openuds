@@ -121,7 +121,7 @@ GuiElement.prototype = {
 			gui.doLog('Initializing ' + this.name);
 			var $this = this;
         	this.rest.types(function(data){
-        		var styles = '<style media="screen">';
+        		var styles = '';
         		$.each(data, function(index, value){
         			var className = $this.name + '-' + value.type;
         			$this.types[value.type] = { css: className, name: value.name || '', description: value.description || '' };
@@ -131,8 +131,10 @@ GuiElement.prototype = {
         				'width: 16px; height: 16px; vertical-align: middle; } ';
         			styles += style;
         		});
-        		styles += '</style>'
-        		$(styles).appendTo('head');
+        		if(styles != '') {
+        			styles = '<style media="screen">' + styles + '</style>'
+        			$(styles).appendTo('head');
+        		}
         	});
 		},
 		table: function(options) {
@@ -190,18 +192,6 @@ GuiElement.prototype = {
 			        	}
 			        	
 			        	var btns = [
-							/*{
-							    "sExtends": "csv",
-							    "sTitle": title,
-							    "sFileName": title + '.csv',
-							},*/
-							/*{
-						    "sExtends": "pdf",
-						    "sTitle": title,
-						    "sPdfMessage": "Summary Info",
-						    "sFileName": title + '.pdf',
-						    "sPdfOrientation": "portrait"
-						},*/
 			        	];
 			        	
 			        	if( options.buttons ) {
@@ -262,7 +252,7 @@ GuiElement.prototype = {
 				        					"fnSelect": editSelected,
 				        					"fnClick": editFnc,
 				        					"sButtonClass": "disabled"
-				        				}
+				        				};
 				        				break;
 			        				case 'delete':
 				        				btn = {
@@ -271,7 +261,7 @@ GuiElement.prototype = {
 				        					"fnSelect": deleteSelected,
 				        					"fnClick": deleteFnc,
 				        					"sButtonClass": "disabled"
-				        				}
+				        				};
 				        				break;
 			        				case 'refresh':
 				        				btn = {
@@ -279,8 +269,24 @@ GuiElement.prototype = {
 				        					"sButtonText": gettext('Refresh'),
 				        					"fnClick": refreshFnc,
 				        					"sButtonClass": "btn-info"
-				        				}
+				        				};
 				        				break;
+			        				case 'csb':
+										btn = {
+			        						"sExtends": "csv",
+			        						"sTitle": title,
+			        						"sFileName": title + '.csv',
+										};
+										break;
+			        				case 'pdf':
+			        					btn = {
+										    "sExtends": "pdf",
+										    "sTitle": title,
+										    "sPdfMessage": "Summary Info",
+										    "sFileName": title + '.pdf',
+										    "sPdfOrientation": "portrait"
+			        					};
+			        					break;
 			        			}
 			        			
 			        			if( btn != undefined )		
@@ -343,6 +349,7 @@ gui.providers.link = function(event) {
 };
 
 gui.authenticators = new GuiElement(api.authenticators, 'auth');
+
 gui.authenticators.link = function(event) {
 	gui.clearWorkspace();
 	gui.appendToWorkspace(gui.breadcrumbs(gettext('Authenticators')));
@@ -381,7 +388,7 @@ gui.connectivity.link = function(event) {
 	gui.connectivity.transports.table({
 		rowSelect: 'multi',
 		container: 'ttbl',
-		buttons: ['edit', 'refresh', 'delete'],
+		buttons: ['edit', 'refresh', 'delete', 'pdf'],
 	});
 	gui.connectivity.networks.table({
 		rowSelect: 'single',
