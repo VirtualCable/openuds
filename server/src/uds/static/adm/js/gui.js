@@ -15,7 +15,7 @@
 	// Several convenience "constants"
 	gui.dataTablesLanguage = {
                 "sLengthMenu": gettext("_MENU_ records per page"),
-                "sZeroRecords": gettext("Nothing found - sorry"),
+                "sZeroRecords": gettext("Empty"),
                 "sInfo": gettext("Records _START_ to _END_ of _TOTAL_"),
                 "sInfoEmpty": gettext("No records"),
                 "sInfoFiltered": gettext("(filtered from _MAX_ total records)"),
@@ -88,13 +88,13 @@
 			           	];
 		$.each(sidebarLinks, function(index, value){
 			gui.doLog('Adding ' + value.id)
-			$('.'+value.id).unbind('click').click(value.exec);
-			// Navbar click so navbar is closed...
-            $('.nav a').on('click', function(){ 
-                if($('.navbar-toggle').css('display') !='none'){
+			$('.'+value.id).unbind('click').click(function(event) {
+                if($('.navbar-toggle').css('display') !='none') {
                     $(".navbar-toggle").trigger( "click" );
                 }
-            });
+                $('html, body').scrollTop(0);
+                value.exec(event);
+			});
 		});
 	}
 	
@@ -162,6 +162,8 @@ GuiElement.prototype = {
 							column.bVisible = options.visible;
 						if( options.sortable != undefined )
 							column.bSortable = options.sortable;
+						if( options.searchable != undefined )
+							column.bSearchable = options.searchable;
 
 						// Fix name columm so we can add a class icon
 						if( v == 'name' ) {
@@ -174,10 +176,17 @@ GuiElement.prototype = {
 				gui.doLog(columns);
 				
 				var processResponse = function(data) {
-					$.each(data, function(index, value){
-						var type = $this.types[value.type];
-						data[index].name = '<span class="' + type.css + '"> </span> ' + value.name
-					});
+					// If it has a "type" column
+					try {
+						if( data[0].type != undefined ) {
+							$.each(data, function(index, value){
+								var type = $this.types[value.type];
+								data[index].name = '<span class="' + type.css + '"> </span> ' + value.name
+							});
+						}
+					} catch (e) {
+						return;
+					}
 				};
 				
 				$this.rest.get({
@@ -319,6 +328,11 @@ GuiElement.prototype = {
 							
 			            });
 			            $('#' + tableId + '_filter input').addClass('form-control');
+						var tableTop = $('#'+tableId).offset().top;
+						gui.doLog(tableTop);
+						//$('html, body').animate({ scrollTop: tableTop });
+						if( options.scroll ) 
+							$('html, body').scrollTop(tableTop);
 					}
 				});
 			});
@@ -326,73 +340,3 @@ GuiElement.prototype = {
 		}
 		
 };
-
-// Compose gui API
-
-// Service providers
-gui.providers = new GuiElement(api.providers, 'provi'); 
-gui.providers.link = function(event) {
-	gui.clearWorkspace();
-	gui.appendToWorkspace(gui.breadcrumbs(gettext('Service Providers')));
-	
-	var tableId = gui.providers.table({
-		rowSelect: 'multi',
-		rowSelectFnc: function(nodes){
-			gui.doLog(nodes);
-			gui.doLog(this);
-			gui.doLog(this.fnGetSelectedData()); 
-		},
-		buttons: ['edit', 'refresh', 'delete'],
-	});
-	
-	return false;
-};
-
-gui.authenticators = new GuiElement(api.authenticators, 'auth');
-
-gui.authenticators.link = function(event) {
-	gui.clearWorkspace();
-	gui.appendToWorkspace(gui.breadcrumbs(gettext('Authenticators')));
-	
-	gui.authenticators.table({
-		rowSelect: 'single',
-		buttons: ['edit', 'refresh', 'delete'],
-	});
-	
-	return false;
-};
-
-gui.osmanagers = new GuiElement(api.osmanagers, 'osm');
-gui.osmanagers.link = function(event) {
-	gui.clearWorkspace();
-	gui.appendToWorkspace(gui.breadcrumbs('Os Managers'));
-	
-	gui.osmanagers.table({
-		rowSelect: 'single',
-		buttons: ['edit', 'refresh', 'delete'],
-	});
-	
-	return false;
-};
-
-gui.connectivity = {
-		transports: new GuiElement(api.transports, 'trans'),
-		networks: new GuiElement(api.networks, 'nets'),
-};
-
-gui.connectivity.link = function(event) {
-	gui.clearWorkspace();
-	gui.appendToWorkspace(gui.breadcrumbs(gettext('Connectivity')));
-	gui.appendToWorkspace('<div class="row"><div class="col-lg-6" id="ttbl"></div><div class="col-lg-6" id="ntbl"></div></div>');
-	
-	gui.connectivity.transports.table({
-		rowSelect: 'multi',
-		container: 'ttbl',
-		buttons: ['edit', 'refresh', 'delete', 'pdf'],
-	});
-	gui.connectivity.networks.table({
-		rowSelect: 'single',
-		container: 'ntbl',
-		buttons: ['edit', 'refresh', 'delete'],
-	});
-}

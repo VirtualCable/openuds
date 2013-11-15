@@ -38,12 +38,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Details do not have types at all
+# so, right now, we only process details petitions for Handling & tables info
 class DetailHandler(object):
     def __init__(self, parentHandler, path, *args, **kwargs):
         self._parent = parentHandler
         self._path = path
         self._args = args
         self._kwargs = kwargs
+        
+    # A detail handler must also return title & fields for tables
+    def getTitle(self):
+        return ''
+    
+    def getFields(self):
+        return []
 
 class ModelHandlerMixin(object):
     '''
@@ -61,7 +70,7 @@ class ModelHandlerMixin(object):
     
     def getItems(self, *args, **kwargs):
         for item in self.model.objects.filter(*args, **kwargs):
-            try:
+            try: 
                 yield self.item_as_dict(item)
             except:
                 logger.exception('Exception getting item from {0}'.format(self.model))
@@ -91,7 +100,8 @@ class ModelHandlerMixin(object):
             item = list(self.getItems(pk=self._args[0]))[0]
         except:
             return {'error': 'not found' }
-        
+
+
 class ModelTypeHandlerMixin(object):
     '''
     As With models, a lot of UDS model contains info about its class.
@@ -119,10 +129,12 @@ class ModelTypeHandlerMixin(object):
             
     def get(self):
         return list(self.getTypes())
+
     
 class ModelTableHandlerMixin(object):
     authenticated = True
     needs_staff = True
+    detail = None
     
     # Fields should have id of the field, type and length 
     # All options can be ommited
@@ -135,11 +147,29 @@ class ModelTableHandlerMixin(object):
 
     fields = []
     title = ''
+
+    def processDetail(self):
+        logger.debug('Processing detail for table')
+        try:
+            detailCls = self.detail[self._args[1]]
+            args = list(self._args[2:])
+            path = self._path + '/'.join(args[:2])
+            detail = detailCls(self, path, parent_id = self._args[0])
+            return (detail.getTitle(), detail.getFields())
+        except:
+            return ([], '')
     
     def get(self):
-        # Convert to unicode fields (ugettext_lazy needs to be rendered before passing it to Json
-        fields = [ { 'id' : {'visible': False } } ] # Always add id column as invisible 
-        for f in self.fields:
+        if len(self._args) > 1:
+            title, fields = self.processDetail()
+        else:
+            # Convert to unicode fields (ugettext_lazy needs to be rendered before passing it to Json
+            title = self.title
+            fields = self.fields # Always add id column as invisible
+            
+        processedFields = [{ 'id' : {'visible': False, 'sortable': False, 'searchable': False } }]
+            
+        for f in fields:
             for k1, v1 in f.iteritems():
                 dct = {}
                 for k2, v2 in v1.iteritems():
@@ -147,16 +177,6 @@ class ModelTableHandlerMixin(object):
                         dct[k2] = v2
                     else:
                         dct[k2] = unicode(v2)
-                fields.append({k1: dct})
-        return { 'title': unicode(self.title),  'fields': fields };
+                processedFields.append({k1: dct})
+        return { 'title': unicode(title),  'fields': processedFields };
     
-    
-# Fake type for models that do not needs typing
-class ModelFakeType(object):
-    def __init__(self, name, type_, description, icon):
-        self._name, self._type, self._description, self._icon = name, type_, description, icon
-    
-    def name(self): return self._name
-    def type(self): return self._type
-    def description(self): return self._description
-    def icon(self): return self._icon

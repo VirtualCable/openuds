@@ -68,6 +68,8 @@ class Types(ModelTypeHandlerMixin, Handler):
 
 class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'authenticators'
+    detail = { 'users': Users }
+    
     title =  _('Current authenticators')
     fields = [
             { 'name': {'title': _('Name'), 'visible': True } },

@@ -32,10 +32,10 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.utils import formats
 
-from uds.models import User
+from uds.models import Authenticator, User
 
 from uds.REST.mixins import DetailHandler
 
@@ -78,5 +78,21 @@ class Users(DetailHandler):
         except:
             logger.exception('En users')
             return { 'error': 'not found' }
+        
+    def getTitle(self):
+        try:
+            return _('Users of {0}').format(Authenticator.objects.get(pk=self._kwargs['parent_id']))
+        except:
+            return _('Current users')
+    
+    def getFields(self):
+        return [
+            { 'name': {'title': _('User Id'), 'visible': True } },
+            { 'real_name': { 'title': _('Name') } },
+            { 'comments': { 'title': _('Comments') } },
+            { 'state': { 'title': _('state') } },
+            { 'last_access': { 'title': _('Last access') } },
+        ]        
+     
             
         

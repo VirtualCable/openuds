@@ -31,6 +31,8 @@
 from __future__ import unicode_literals
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.template import RequestContext, loader
+
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
@@ -53,6 +55,19 @@ def index(request):
         return HttpResponseForbidden(_('Forbidden'))
     
     return render(request, 'uds/admin/index.html')
+
+@denyBrowsers(browsers=['ie<9'])
+@webLoginRequired
+def tmpl(request, template):
+    if request.user.isStaff() is False:
+        return HttpResponseForbidden(_('Forbidden'))
+    try:
+        t = loader.get_template('uds/admin/tmpl/' + template + ".html")
+        c = RequestContext(request)
+        resp = t.render(c)
+    except:
+        resp = _('requested a template that do not exists')
+    return HttpResponse(resp, content_type="text/plain");  
 
 @denyBrowsers(browsers=['ie<9'])
 @webLoginRequired

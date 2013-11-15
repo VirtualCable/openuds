@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 from uds.models import Network
 
 from uds.REST import Handler, HandlerError
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin, ModelFakeType
+from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
 
 import logging
 
@@ -52,7 +52,6 @@ class Networks(ModelHandlerMixin, Handler):
                  'name': item.name,
                  'net_string': item.net_string, 
                  'networks_count': item.transports.count(),
-                 'type': 'NetworkType',
         }
 
 class Types(ModelTypeHandlerMixin, Handler):
@@ -60,7 +59,7 @@ class Types(ModelTypeHandlerMixin, Handler):
     
     # Fake mathods, to yield self on enum types and get a "fake" type for Network 
     def enum_types(self):
-        yield ModelFakeType('Network', 'NetworkType', 'A description of a network', '')
+        return []
 
 class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'networks'

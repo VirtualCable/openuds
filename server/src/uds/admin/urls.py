@@ -37,5 +37,6 @@ from uds import REST
 
 urlpatterns = patterns('uds.admin.views',
     (r'^$', 'index'),
+    (r'^tmpl/(?P<template>[a-zA-Z0-9]*)$', 'tmpl'),
     (r'^sample$', 'sample'),
 )
