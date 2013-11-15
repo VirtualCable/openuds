@@ -32,7 +32,7 @@ from django.utils.safestring import mark_safe
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
 from django.forms.forms import NON_FIELD_ERRORS
 from django.forms.util import ErrorDict
@@ -47,7 +47,7 @@ class CustomSelect(forms.Select):
             visible = 'style="display: none;"'
         else:
             visible = '';
-        res = '<select id="id_{0}" name="{0}" class="form-control">'.format(name)
+        res = '<select id="id_{0}" name="{0}" class="selectpicker show-menu-arrow" data-header="{1}" data-size="8" data-width="100%" >'.format(name, ugettext('Select authenticator'))
         for choice in self.choices:
             res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
         res += '</select>'
