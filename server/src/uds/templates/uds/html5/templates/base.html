@@ -23,6 +23,7 @@
 		
 		<link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
 		
 		{% ifbrowser ie<10 %}
 		<link href="{% get_static_prefix %}css/fix.css" rel="stylesheet" media="screen">
@@ -72,12 +73,18 @@
 			<a href="http://www.virtualcable.es">&copy; 2012-2014 Virtual Cable S.L.U.</a>
 		{% endblock %}
 		</footer>
+        
+        <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
 		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
+        <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
+
 		<script>
-			var decimalSeparator = "{{ 1.1|localize|slice:"1:2" }}";
+			$(function(){
+				$('.selectpicker').selectpicker();
+			});
 		</script>
 		
 		{% block js %}{% endblock %}

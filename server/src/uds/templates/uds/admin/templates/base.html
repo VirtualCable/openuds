@@ -20,6 +20,8 @@
         <link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
 
         <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/dataTables.bootstrap.css" rel="stylesheet" media="screen">
 
         <!-- <link href="{% get_static_prefix %}css/tables.css" rel="stylesheet" media="screen"> -->
         <link href="{% get_static_prefix %}css/uds-admin.css" rel="stylesheet" media="screen">
@@ -39,13 +41,20 @@
                 <!--  End of content -->
         </div>
         </div>
+        <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
+        
         <script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
         <script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
         
-        <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
+        <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
+<!--         <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script> -->
+        
+        <script src="{% get_static_prefix %}adm/js/dataTables.bootstrap.js"></script>
+        
+        
         <script src="{% get_static_prefix %}adm/js/templating.js"></script>
 
         <script>
@@ -61,9 +70,16 @@
                 
             }(window.api = window.api || {}, jQuery));
         </script>
-        
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui.js"></script>
+        
+        <script>
+            $(function() {
+    			// Initialize gui        	
+            	gui.init();
+            	
+            });        
+        </script>
 
         
         {% block js %}{% endblock %}

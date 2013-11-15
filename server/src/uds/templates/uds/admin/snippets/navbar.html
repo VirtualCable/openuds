@@ -1,5 +1,5 @@
 {% load i18n html5 static %}
- 		<nav class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+ 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -12,26 +12,25 @@
 			</div>
             
           <!-- Side bar -->
-          <ul class="nav navbar-nav side-nav">
-            <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li><a class="lnk-service_providers" href="#"><i class="fa fa-bar-chart-o"></i> {% trans 'Service providers' %}</a></li>
-            <li><a class="lnk-authenticators" href="#"><i class="fa fa-user"></i> {% trans 'Authenticators' %}</a></li>
-            <li><a class="lnk-osmanagers" href="#"><i class="fa fa-edit"></i> Os Managers</a></li>
-            <li><a class="lnk-connectivity" href="#"><i class="fa fa-font"></i> {% trans 'Connectivity' %}</a></li>
-            <li><a class="lnk-deployed_services" href=""><i class="fa fa-desktop"></i> {% trans 'Deployed services' %}</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-square-o-down"></i> Tools <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">{% trans 'Configuration' %}</a></li>
-                <li><a href="#">Another Item</a></li>
-                <li><a href="#">Third Item</a></li>
-                <li><a href="#">Last Item</a></li>
+           <div class="collapse navbar-collapse navbar-ex1-collapse">
+              <ul class="nav navbar-nav side-nav">
+                <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a class="lnk-service_providers" href="#"><i class="fa fa-bar-chart-o"></i> {% trans 'Service providers' %}</a></li>
+                <li><a class="lnk-authenticators" href="#"><i class="fa fa-user"></i> {% trans 'Authenticators' %}</a></li>
+                <li><a class="lnk-osmanagers" href="#"><i class="fa fa-edit"></i> Os Managers</a></li>
+                <li><a class="lnk-connectivity" href="#"><i class="fa fa-font"></i> {% trans 'Connectivity' %}</a></li>
+                <li><a class="lnk-deployed_services" href=""><i class="fa fa-desktop"></i> {% trans 'Deployed services' %}</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-square-o-down"></i> Tools <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">{% trans 'Configuration' %}</a></li>
+                    <li><a href="#">Another Item</a></li>
+                    <li><a href="#">Third Item</a></li>
+                    <li><a href="#">Last Item</a></li>
+                  </ul>
+                </li>
               </ul>
-            </li>
-          </ul>
-            
-             <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-right navbar-user">
                 </ul>
                 <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
                 {% csrf_token %}
