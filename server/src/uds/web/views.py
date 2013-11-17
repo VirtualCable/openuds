@@ -431,4 +431,6 @@ def download(request, idDownload):
 last_modified_date = timezone.now()
 @last_modified(lambda req, **kw: last_modified_date)
 def jsCatalog(request, lang, domain='djangojs', packages=None):
+    if lang != '':
+        request.GET = { 'language': lang } # Fake args for catalog :-) 
     return javascript_catalog(request, domain, packages)

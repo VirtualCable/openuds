@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-14 11:59+0100\n"
+"POT-Creation-Date: 2013-11-17 04:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,70 +18,146 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: static/adm/js/api.js:23
-msgid "Success on \""
-msgstr "Erfolg auf\""
-
-#: static/adm/js/api.js:24
-msgid "Received "
-msgstr "Empfangen "
-
-#: static/adm/js/gui.js:17
-msgid "Display _MENU_ records per page"
-msgstr "_MENU_-Einträge pro Seite anzeigen"
-
-#: static/adm/js/gui.js:18
-msgid "Nothing found - sorry"
-msgstr "Nichts gefunden - sorry"
-
-#: static/adm/js/gui.js:19
-msgid "Showing record _START_ to _END_ of _TOTAL_"
-msgstr "Ergebnis Rekord _START_ zu _END_ von _TOTAL_"
-
-#: static/adm/js/gui.js:20
-msgid "Showing 0 to 0 of 0 records"
-msgstr "Anzeigen 0 bis 0 von 0 Einträge"
-
-#: static/adm/js/gui.js:21
-msgid "(filtered from _MAX_ total records)"
-msgstr "(von _MAX_ Datensätze gefiltert)"
-
-#: static/adm/js/gui.js:22
-msgid "Please wait, processing"
-msgstr "Bitte warten, Verarbeitung"
-
-#: static/adm/js/gui.js:23
-msgid "Search"
-msgstr "Suche"
-
-#: static/adm/js/gui.js:26
-msgid "First"
-msgstr "Erste"
-
-#: static/adm/js/gui.js:27
-msgid "Last"
-msgstr "Letzter"
-
-#: static/adm/js/gui.js:28
-msgid "Next"
-msgstr "Nächste"
-
-#: static/adm/js/gui.js:29
-msgid "Previous"
-msgstr "Vorherige"
-
-#: static/adm/js/gui.js:83
-msgid "Connectivity"
-msgstr "Konnektivität"
-
-#: static/adm/js/gui.js:88
-msgid "Deployed services"
-msgstr "Bereitgestellten Dienste"
-
-#: static/adm/js/gui.js:181
+#: static/adm/js/gui-elements.js:7
 msgid "Service Providers"
 msgstr "Service-Provider"
 
-#: static/adm/js/gui.js:191
-msgid "Authenticators"
-msgstr "Authentifikatoren"
+#: static/adm/js/gui-elements.js:81
+msgid "Connectivity"
+msgstr "Konnektivität"
+
+#: static/adm/js/gui.js:18
+msgid "_MENU_ records per page"
+msgstr "_MENU_ Datensätze pro Seite"
+
+#: static/adm/js/gui.js:19
+msgid "Empty"
+msgstr "Leer"
+
+#: static/adm/js/gui.js:20
+msgid "Records _START_ to _END_ of _TOTAL_"
+msgstr "Zeichnet _START_, _END_ von _TOTAL_"
+
+#: static/adm/js/gui.js:21
+msgid "No records"
+msgstr "Keine Datensätze"
+
+#: static/adm/js/gui.js:22
+msgid "(filtered from _MAX_ total records)"
+msgstr "(von _MAX_ Datensätze gefiltert)"
+
+#: static/adm/js/gui.js:23
+msgid "Please wait, processing"
+msgstr "Bitte warten, Verarbeitung"
+
+#: static/adm/js/gui.js:24
+msgid "Filter"
+msgstr "Filter"
+
+#: static/adm/js/gui.js:27
+msgid "First"
+msgstr "Erste"
+
+#: static/adm/js/gui.js:28
+msgid "Last"
+msgstr "Letzter"
+
+#: static/adm/js/gui.js:29
+msgid "Next"
+msgstr "Nächste"
+
+#: static/adm/js/gui.js:30
+msgid "Previous"
+msgstr "Vorherige"
+
+#: static/adm/js/gui.js:80
+msgid "Deployed services"
+msgstr "Bereitgestellten Dienste"
+
+#: static/adm/js/gui.js:349
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: static/adm/js/gui.js:358
+msgid "Delete"
+msgstr "Löschen"
+
+#: static/adm/js/gui.js:367
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+#: static/adm/js/strftime.js:30
+msgid "Sunday"
+msgstr "Sonntag"
+
+#: static/adm/js/strftime.js:30
+msgid "Monday"
+msgstr "Montag"
+
+#: static/adm/js/strftime.js:30
+msgid "Tuesday"
+msgstr "Dienstag"
+
+#: static/adm/js/strftime.js:31
+msgid "Wednesday"
+msgstr "Mittwoch"
+
+#: static/adm/js/strftime.js:31
+msgid "Thursday"
+msgstr "Donnerstag"
+
+#: static/adm/js/strftime.js:31
+msgid "Friday"
+msgstr "Freitag"
+
+#: static/adm/js/strftime.js:31
+msgid "Saturday"
+msgstr "Samstag"
+
+#: static/adm/js/strftime.js:32
+msgid "January"
+msgstr "Januar"
+
+#: static/adm/js/strftime.js:32
+msgid "February"
+msgstr "Februar"
+
+#: static/adm/js/strftime.js:32
+msgid "March"
+msgstr "März"
+
+#: static/adm/js/strftime.js:33
+msgid "April"
+msgstr "April"
+
+#: static/adm/js/strftime.js:33
+msgid "May"
+msgstr "Mai"
+
+#: static/adm/js/strftime.js:33
+msgid "June"
+msgstr "Juni"
+
+#: static/adm/js/strftime.js:33
+msgid "July"
+msgstr "Juli"
+
+#: static/adm/js/strftime.js:34
+msgid "August"
+msgstr "August"
+
+#: static/adm/js/strftime.js:34
+msgid "September"
+msgstr "September"
+
+#: static/adm/js/strftime.js:34
+msgid "October"
+msgstr "Oktober"
+
+#: static/adm/js/strftime.js:34
+msgid "November"
+msgstr "November"
+
+#: static/adm/js/strftime.js:35
+msgid "December"
+msgstr "Dezember"

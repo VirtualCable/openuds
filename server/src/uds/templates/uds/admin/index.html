@@ -9,9 +9,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="robots" content="noindex, nofollow" />
-        {% block meta %}{% endblock %}
 
-        {% block icon %}<link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon" />{% endblock %}
+        <link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon" />
 
         <!-- Bootstrap -->
         <link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -23,9 +22,8 @@
         <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/dataTables.bootstrap.css" rel="stylesheet" media="screen">
         
-        <!-- <link href="{% get_static_prefix %}css/tables.css" rel="stylesheet" media="screen"> -->
+        <link href="{% get_static_prefix %}css/tables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/uds-admin.css" rel="stylesheet" media="screen">
-        {% block css %}{% endblock %}
     </head>
     
     <body>
@@ -50,13 +48,14 @@
         <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
 
         <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
+
+        <!-- strftime -->
+        <script src="{% get_static_prefix %}adm/js/strftime.js"></script>
+        
 <!--         <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script> -->
         
         <script src="{% get_static_prefix %}adm/js/dataTables.bootstrap.js"></script>
         
-        
-        <script src="{% get_static_prefix %}adm/js/templating.js"></script>
-
         <script>
             // Initialize a few settings, needed for api to work
             (function(api, $, undefined){
@@ -76,7 +75,7 @@
         
         <script>
             $(function() {
-    			// Initialize gui        	
+    			// Initialize gui        
             	gui.init();
             	
             });        

@@ -65,7 +65,7 @@ class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'networks'
     title =  _('Current Networks')
     fields = [
-            { 'name': {'title': _('Name'), 'visible': True } },
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success' } },
             { 'net_string': {'title':  _('Networks')}},
             { 'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]

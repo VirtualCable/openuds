@@ -81,7 +81,6 @@ class Login(Handler):
 class Logout(Handler):
     path = 'auth'
     authenticated = True # By default, all handlers needs authentication
-    needs_staff = True # By default, staff 
     
     def get(self):
         # Remove auth token
@@ -103,4 +102,10 @@ class Auths(Handler):
     def get(self):
         return list(self.auths())
         
-        
+class Locale(Handler):
+    authenticated = True
+    
+    def get(self):
+        if len(self._args) > 0:
+            self.setValue('locale', self._args[1])
+        return ''

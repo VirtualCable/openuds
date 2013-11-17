@@ -68,7 +68,7 @@ class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'osmanagers'
     title =  _('Current OS Managers')
     fields = [
-            { 'name': {'title': _('Name'), 'visible': True } },
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
             { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]

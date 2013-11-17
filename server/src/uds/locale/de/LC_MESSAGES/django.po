@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-14 11:59+0100\n"
+"POT-Creation-Date: 2013-11-17 04:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,34 +42,85 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: REST/methods/authenticators.py:72
+#: REST/methods/authenticators.py:73
 msgid "Current authenticators"
 msgstr "Aktuelle Authentifikatoren"
 
-#: REST/methods/authenticators.py:74 REST/methods/providers.py:71
+#: REST/methods/authenticators.py:75 REST/methods/networks.py:68
+#: REST/methods/osmanagers.py:71 REST/methods/providers.py:69
+#: REST/methods/transports.py:71 REST/methods/users.py:77
 msgid "Name"
 msgstr "Name"
 
-#: REST/methods/authenticators.py:75 REST/methods/providers.py:72
+#: REST/methods/authenticators.py:76 REST/methods/osmanagers.py:72
+#: REST/methods/providers.py:70 REST/methods/transports.py:72
+#: REST/methods/users.py:78
 msgid "Comments"
 msgstr "Kommentare"
 
-#: REST/methods/authenticators.py:76
+#: REST/methods/authenticators.py:77
 msgid "Users"
 msgstr "Benutzer"
 
-#: REST/methods/providers.py:69
+#: REST/methods/networks.py:66
+msgid "Current Networks"
+msgstr "Aktuellen Netze"
+
+#: REST/methods/networks.py:69 templates/uds/index.html:79
+#: templates/uds/html5/index.html:127
+msgid "Networks"
+msgstr "Netzwerke"
+
+#: REST/methods/networks.py:70 REST/methods/osmanagers.py:73
+#: REST/methods/transports.py:73
+msgid "Used by"
+msgstr "Von verwendet"
+
+#: REST/methods/osmanagers.py:69
+msgid "Current OS Managers"
+msgstr "Aktuelle OS-Manager"
+
+#: REST/methods/providers.py:67
 msgid "Current service providers"
 msgstr "Aktuelle Service-Provider"
 
-#: REST/methods/providers.py:73 templates/uds/index.html:51
+#: REST/methods/providers.py:71 templates/uds/index.html:51
 #: templates/uds/html5/index.html:68
 msgid "Services"
 msgstr "Dienstleistungen"
 
-#: admin/views.py:53 admin/views.py:61 web/views.py:422
+#: REST/methods/transports.py:69
+msgid "Current Transports"
+msgstr "Aktuelle Transporte"
+
+#: REST/methods/users.py:70
+#, python-brace-format
+msgid "Users of {0}"
+msgstr "Benutzer von {0}"
+
+#: REST/methods/users.py:72
+msgid "Current users"
+msgstr "Momentane Benutzer"
+
+#: REST/methods/users.py:76
+msgid "User Id"
+msgstr "Benutzer-Id"
+
+#: REST/methods/users.py:79
+msgid "state"
+msgstr "Zustand"
+
+#: REST/methods/users.py:80
+msgid "Last access"
+msgstr "Zuletzt online"
+
+#: admin/views.py:55 admin/views.py:63 admin/views.py:76 web/views.py:422
 msgid "Forbidden"
 msgstr "Verboten"
+
+#: admin/views.py:69
+msgid "requested a template that do not exists"
+msgstr "gefordert, dass eine Vorlage, die nicht vorhanden ist"
 
 #: auths/IP/Authenticator.py:48 auths/IP/Authenticator.py:50
 msgid "IP Authenticator"
@@ -162,8 +213,9 @@ msgstr "Benutzernamen mit lesen Berechtigungen auf der Basis ausgewählt"
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:30
 #: services/OVirt/OVirtProvider.py:94 services/Sample/SampleService.py:131
 #: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
-#: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
-#: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:70
+#: transports/NX/TSNXTransport.py:67 transports/RDP/RDPTransport.py:60
+#: transports/RDP/TSRDPTransport.py:64 transports/TSNX/TSNXTransport.py:67
+#: web/forms/LoginForm.py:70
 msgid "Password"
 msgstr "Passwort"
 
@@ -231,9 +283,9 @@ msgstr "Reguläre Ausdrücke LDAP-Authentifizierungsserver"
 
 #: auths/RegexLdap/Authenticator.py:72 auths/SimpleLDAP/Authenticator.py:73
 #: services/OVirt/OVirtProvider.py:93 transports/HTML5RDP/HTML5RDP.py:64
-#: transports/NX/NXTransport.py:61 transports/RDP/RDPTransport.py:59
-#: transports/RDP/TSRDPTransport.py:63 transports/TSNX/TSNXTransport.py:66
-#: web/forms/LoginForm.py:69
+#: transports/NX/NXTransport.py:61 transports/NX/TSNXTransport.py:66
+#: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
+#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:69
 msgid "Username"
 msgstr "Benutzername"
 
@@ -1093,10 +1145,6 @@ msgstr "und Browser neu starten"
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/index.html:79 templates/uds/html5/index.html:127
-msgid "Networks"
-msgstr "Netzwerke"
-
 #: templates/uds/index.html:80 templates/uds/html5/index.html:128
 msgid "Transports"
 msgstr "Transporte"
@@ -1153,34 +1201,43 @@ msgstr ""
 msgid "toggle navigation"
 msgstr "Toggle navigation"
 
-#: templates/uds/admin/snippets/navbar.html:17
+#: templates/uds/admin/snippets/navbar.html:18
 msgid "Service providers"
 msgstr "Service-Provider"
 
-#: templates/uds/admin/snippets/navbar.html:18
+#: templates/uds/admin/snippets/navbar.html:19
+#: templates/uds/admin/tmpl/authenticators.html:4
 msgid "Authenticators"
 msgstr "Authentifikatoren"
 
-#: templates/uds/admin/snippets/navbar.html:20
+#: templates/uds/admin/snippets/navbar.html:21
 msgid "Connectivity"
 msgstr "Konnektivität"
 
-#: templates/uds/admin/snippets/navbar.html:21
+#: templates/uds/admin/snippets/navbar.html:22
 msgid "Deployed services"
 msgstr "Bereitgestellten Dienste"
 
-#: templates/uds/admin/snippets/navbar.html:25
+#: templates/uds/admin/snippets/navbar.html:26
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: templates/uds/admin/snippets/navbar.html:57
+#: templates/uds/admin/snippets/navbar.html:56
 msgid "Exit dashboard"
 msgstr "Ausfahrt dashboard"
 
-#: templates/uds/admin/snippets/navbar.html:58
+#: templates/uds/admin/snippets/navbar.html:57
 #: templates/uds/html5/snippets/navbar.html:47
 msgid "logout"
 msgstr "Logout"
+
+#: templates/uds/admin/tmpl/authenticators.html:4
+msgid "administration of authenticators"
+msgstr "Verwaltung von Authentifikatoren"
+
+#: templates/uds/admin/tmpl/dashboard.html:4
+msgid "overview"
+msgstr "Übersicht"
 
 #: templates/uds/html5/detectJava.html:4
 msgid "Login redirection to UDS"
@@ -1273,7 +1330,7 @@ msgstr "Über"
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: templates/uds/html5/templates/base.html:51
+#: templates/uds/html5/templates/base.html:52
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
 "html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better)"
@@ -1311,30 +1368,30 @@ msgstr ""
 "zugänglich von Benutzern"
 
 #: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
-#: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
-#: transports/TSNX/TSNXTransport.py:65
+#: transports/NX/TSNXTransport.py:65 transports/RDP/RDPTransport.py:58
+#: transports/RDP/TSRDPTransport.py:62 transports/TSNX/TSNXTransport.py:65
 msgid "Empty creds"
 msgstr "Leere creds"
 
 #: transports/HTML5RDP/HTML5RDP.py:63 transports/NX/NXTransport.py:60
-#: transports/RDP/RDPTransport.py:58 transports/RDP/TSRDPTransport.py:62
-#: transports/TSNX/TSNXTransport.py:65
+#: transports/NX/TSNXTransport.py:65 transports/RDP/RDPTransport.py:58
+#: transports/RDP/TSRDPTransport.py:62 transports/TSNX/TSNXTransport.py:65
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
 "Wenn diese Option aktiviert, werden die Anmeldeinformationen zum Herstellen "
 "einer leer sein."
 
 #: transports/HTML5RDP/HTML5RDP.py:64 transports/NX/NXTransport.py:61
-#: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
-#: transports/TSNX/TSNXTransport.py:66
+#: transports/NX/TSNXTransport.py:66 transports/RDP/RDPTransport.py:59
+#: transports/RDP/TSRDPTransport.py:63 transports/TSNX/TSNXTransport.py:66
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
 "Wenn nicht leer ist, dieser Benutzername wird immer als verwendet "
 "Anmeldeinformationen"
 
 #: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
-#: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
-#: transports/TSNX/TSNXTransport.py:67
+#: transports/NX/TSNXTransport.py:67 transports/RDP/RDPTransport.py:60
+#: transports/RDP/TSRDPTransport.py:64 transports/TSNX/TSNXTransport.py:67
 msgid "If not empty, this password will be always used as credential"
 msgstr ""
 "Wenn nicht leer ist, dieses Kennwort immer verwendet werden als "
@@ -1389,45 +1446,97 @@ msgstr "NX Transport (direkt)"
 msgid "NX Transport for direct connection"
 msgstr "NX-Transport für den direkten Anschluss"
 
-#: transports/NX/NXTransport.py:63 transports/TSNX/TSNXTransport.py:68
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:68
+#: transports/TSNX/TSNXTransport.py:68
 msgid "Listen port"
 msgstr "-Listenanschluss"
 
-#: transports/NX/NXTransport.py:63 transports/TSNX/TSNXTransport.py:68
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:68
+#: transports/TSNX/TSNXTransport.py:68
 msgid "Listening port of NX (ssh) at client machine"
 msgstr "Hören Port des NX (ssh) bei Client-Rechner"
 
-#: transports/NX/NXTransport.py:64 transports/TSNX/TSNXTransport.py:69
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:69
+#: transports/TSNX/TSNXTransport.py:69
 msgid "Connection"
 msgstr "Verbindung"
 
-#: transports/NX/NXTransport.py:64 transports/TSNX/TSNXTransport.py:69
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:69
+#: transports/TSNX/TSNXTransport.py:69
 msgid "Connection speed for this transport (quality)"
 msgstr "Verbindungsgeschwindigkeit für diesen Transport (Qualität)"
 
-#: transports/NX/NXTransport.py:71 transports/TSNX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:71 transports/NX/TSNXTransport.py:76
+#: transports/TSNX/TSNXTransport.py:76
 msgid "Session"
 msgstr "Sitzung"
 
-#: transports/NX/NXTransport.py:71 transports/TSNX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:71 transports/NX/TSNXTransport.py:76
+#: transports/TSNX/TSNXTransport.py:76
 msgid "Desktop session"
 msgstr "Desktop-Sitzung"
 
-#: transports/NX/NXTransport.py:76 transports/TSNX/TSNXTransport.py:81
+#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:81
+#: transports/TSNX/TSNXTransport.py:81
 msgid "Disk Cache"
 msgstr "Festplatten-Cache"
 
-#: transports/NX/NXTransport.py:76 transports/TSNX/TSNXTransport.py:81
+#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:81
+#: transports/TSNX/TSNXTransport.py:81
 msgid "Cache size en Mb stored at disk"
 msgstr "Cache-Größe de Mb auf der Festplatte gespeichert"
 
-#: transports/NX/NXTransport.py:84 transports/TSNX/TSNXTransport.py:89
+#: transports/NX/NXTransport.py:84 transports/NX/TSNXTransport.py:89
+#: transports/TSNX/TSNXTransport.py:89
 msgid "Memory Cache"
 msgstr "Memory-Caches"
 
-#: transports/NX/NXTransport.py:84 transports/TSNX/TSNXTransport.py:89
+#: transports/NX/NXTransport.py:84 transports/NX/TSNXTransport.py:89
+#: transports/TSNX/TSNXTransport.py:89
 msgid "Cache size en Mb keept at memory"
 msgstr "Cache Größe de Mb Keept auf Speicher"
+
+#: transports/NX/TSNXTransport.py:55 transports/TSNX/TSNXTransport.py:55
+msgid "NX Transport (tunneled)"
+msgstr "NX-Transport (Tunneling)"
+
+#: transports/NX/TSNXTransport.py:57 transports/TSNX/TSNXTransport.py:57
+msgid "NX Transport for tunneled connection"
+msgstr "NX-Transport für getunnelte Verbindung"
+
+#: transports/NX/TSNXTransport.py:62 transports/RDP/TSRDPTransport.py:59
+#: transports/TSNX/TSNXTransport.py:62
+msgid "Tunnel server"
+msgstr "Tunnel-server"
+
+#: transports/NX/TSNXTransport.py:62 transports/RDP/TSRDPTransport.py:59
+#: transports/TSNX/TSNXTransport.py:62
+msgid ""
+"IP or Hostname of tunnel server send to client device (\"public\" ip) and "
+"port. (use HOST:PORT format)"
+msgstr ""
+"IP-Adresse oder Hostname des Tunnel-Server senden an Client-Gerät "
+"(\"öffentliche\" IP-Adresse) und Port. (verwenden Sie HOST: PORT-Format)"
+
+#: transports/NX/TSNXTransport.py:63 transports/RDP/TSRDPTransport.py:60
+#: transports/TSNX/TSNXTransport.py:63
+msgid "Tunnel host check"
+msgstr "Tunnel Host-Prüfung"
+
+#: transports/NX/TSNXTransport.py:63 transports/RDP/TSRDPTransport.py:60
+#: transports/TSNX/TSNXTransport.py:63
+msgid ""
+"If not empty, this server will be used to check if service is running before "
+"assigning it to user. (use HOST:PORT format)"
+msgstr ""
+"Wenn nicht leer ist, wird dieser Server zu überprüfen, ob der Dienst "
+"ausgeführt wird, bevor Sie verwendet werden Benutzer zuweisen. (verwenden "
+"Sie HOST: PORT-Format)"
+
+#: transports/NX/TSNXTransport.py:103 transports/RDP/TSRDPTransport.py:75
+#: transports/TSNX/TSNXTransport.py:103
+msgid "Must use HOST:PORT in Tunnel Server Field"
+msgstr "HOST: PORT muss in Feld der Tunnel-Server verwendet werden."
 
 #: transports/NX/__init__.py:45 transports/TSNX/__init__.py:44
 msgid "NX Protocol"
@@ -1525,35 +1634,6 @@ msgstr "RDP-Verkehr (Tunneling)"
 msgid "RDP Transport for tunneled connection"
 msgstr "RDP-Verkehr für getunnelte Verbindung"
 
-#: transports/RDP/TSRDPTransport.py:59 transports/TSNX/TSNXTransport.py:62
-msgid "Tunnel server"
-msgstr "Tunnel-server"
-
-#: transports/RDP/TSRDPTransport.py:59 transports/TSNX/TSNXTransport.py:62
-msgid ""
-"IP or Hostname of tunnel server send to client device (\"public\" ip) and "
-"port. (use HOST:PORT format)"
-msgstr ""
-"IP-Adresse oder Hostname des Tunnel-Server senden an Client-Gerät "
-"(\"öffentliche\" IP-Adresse) und Port. (verwenden Sie HOST: PORT-Format)"
-
-#: transports/RDP/TSRDPTransport.py:60 transports/TSNX/TSNXTransport.py:63
-msgid "Tunnel host check"
-msgstr "Tunnel Host-Prüfung"
-
-#: transports/RDP/TSRDPTransport.py:60 transports/TSNX/TSNXTransport.py:63
-msgid ""
-"If not empty, this server will be used to check if service is running before "
-"assigning it to user. (use HOST:PORT format)"
-msgstr ""
-"Wenn nicht leer ist, wird dieser Server zu überprüfen, ob der Dienst "
-"ausgeführt wird, bevor Sie verwendet werden Benutzer zuweisen. (verwenden "
-"Sie HOST: PORT-Format)"
-
-#: transports/RDP/TSRDPTransport.py:75 transports/TSNX/TSNXTransport.py:103
-msgid "Must use HOST:PORT in Tunnel Server Field"
-msgstr "HOST: PORT muss in Feld der Tunnel-Server verwendet werden."
-
 #: transports/RDP/__init__.py:39
 msgid "Remote Desktop Protocol"
 msgstr "Remote Desktop-Protokoll"
@@ -1569,14 +1649,6 @@ msgstr "Erhalten Sie es aus"
 #: transports/RDP/web.py:85
 msgid "CoRD Website"
 msgstr "CoRD-Website"
-
-#: transports/TSNX/TSNXTransport.py:55
-msgid "NX Transport (tunneled)"
-msgstr "NX-Transport (Tunneling)"
-
-#: transports/TSNX/TSNXTransport.py:57
-msgid "NX Transport for tunneled connection"
-msgstr "NX-Transport für getunnelte Verbindung"
 
 #: web/errors.py:60
 msgid "Unknown error"
@@ -1638,6 +1710,10 @@ msgstr ""
 #: web/views.py:401
 msgid "Authenticator do not provides information"
 msgstr "Authentifikator informiert nicht"
+
+#: web/forms/LoginForm.py:50
+msgid "Select authenticator"
+msgstr "Wählen Sie Authentifikator"
 
 #: web/forms/LoginForm.py:54
 msgid "authenticator"

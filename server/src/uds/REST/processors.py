@@ -32,12 +32,14 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils import simplejson
+#from django.utils import simplejson
+import ujson as json
 from django import http
 
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class ParametersException(Exception):
     pass
@@ -69,7 +71,7 @@ class JsonProcessor(ContentProcessor):
         try:
             if len(self._request.body) == 0:
                 return {}
-            res = simplejson.loads(self._request.body)
+            res = json.loads(self._request.body)
             logger.debug(res)
             return res
         except Exception as e:
@@ -77,7 +79,7 @@ class JsonProcessor(ContentProcessor):
             raise ParametersException(unicode(e))
     
     def render(self, obj):
-        return simplejson.dumps(obj)
+        return json.dumps(obj)
 
 # ---------------
 # Json Processor

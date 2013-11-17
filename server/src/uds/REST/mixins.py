@@ -173,7 +173,7 @@ class ModelTableHandlerMixin(object):
             for k1, v1 in f.iteritems():
                 dct = {}
                 for k2, v2 in v1.iteritems():
-                    if type(v2) in (bool, int, long, float, unicode):
+                    if type(v2) in (bool, int, long, float, unicode, list, tuple, dict):
                         dct[k2] = v2
                     else:
                         dct[k2] = unicode(v2)

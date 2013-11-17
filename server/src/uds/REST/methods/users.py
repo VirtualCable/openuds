@@ -32,8 +32,10 @@
 '''
 from __future__ import unicode_literals
 
+import time
 from django.utils.translation import ugettext as _
 from django.utils import formats
+from uds.core.util.State import State
 
 from uds.models import Authenticator, User
 
@@ -47,19 +49,6 @@ logger = logging.getLogger(__name__)
 
 class Users(DetailHandler):
     
-    def user_as_dict(self, user):
-        return {
-            'id': user.id,
-            'name': user.name,
-            'real_name': user.real_name,
-            'comments': user.comments,
-            'state': user.state,
-            'staff_member': user.staff_member,
-            'is_admin': user.is_admin,
-            'last_access': formats.date_format(user.last_access, 'DATETIME_FORMAT'),
-            'parent': user.parent
-        }
-    
     def get(self):
         logger.debug(self._parent)
         logger.debug(self._kwargs)
@@ -69,12 +58,9 @@ class Users(DetailHandler):
         
         try:
             if len(self._args) == 0:
-                res = []
-                for u in auth.users.all():
-                    res.append(self.user_as_dict(u))
-                return res
+                return list(auth.users.all().values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent'))
             else:
-                return  self.user_as_dict(auth.get(pk=self._args[0]))
+                return auth.get(pk=self._args[0]).values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent')
         except:
             logger.exception('En users')
             return { 'error': 'not found' }
@@ -87,12 +73,11 @@ class Users(DetailHandler):
     
     def getFields(self):
         return [
-            { 'name': {'title': _('User Id'), 'visible': True } },
+            { 'name': {'title': _('User Id'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-user text-success' } },
             { 'real_name': { 'title': _('Name') } },
             { 'comments': { 'title': _('Comments') } },
-            { 'state': { 'title': _('state') } },
-            { 'last_access': { 'title': _('Last access') } },
+            { 'state': { 'title': _('state'), 'type': 'dict', 'dict': State.dictionary() } },
+            { 'last_access': { 'title': _('Last access'), 'type': 'datetime' } },
         ]        
-     
-            
+
         

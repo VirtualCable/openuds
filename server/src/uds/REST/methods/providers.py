@@ -66,7 +66,7 @@ class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'providers'
     title =  _('Current service providers')
     fields = [
-            { 'name': {'title': _('Name') } },
+            { 'name': {'title': _('Name'), 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
             { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}}
     ]

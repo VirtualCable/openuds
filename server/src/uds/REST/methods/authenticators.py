@@ -72,7 +72,7 @@ class TableInfo(ModelTableHandlerMixin, Handler):
     
     title =  _('Current authenticators')
     fields = [
-            { 'name': {'title': _('Name'), 'visible': True } },
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
             { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
     ]

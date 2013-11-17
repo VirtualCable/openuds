@@ -32,7 +32,7 @@
 '''
 
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import ugettext_noop as _, ugettext
 
 # States for different objects. Not all objects supports all States
 class State(object):
@@ -134,4 +134,14 @@ class State(object):
             return State.string[state]
         except Exception:
             return ''
+        
+    @staticmethod
+    def dictionary():
+        '''
+        Returns a dictionary with current active locale translation of States to States String
+        '''
+        res = {}
+        for k, v in State.string.iteritems():
+            res[k] = ugettext(v)
+        return res
     

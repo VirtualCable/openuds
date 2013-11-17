@@ -39,6 +39,7 @@ from django.utils.translation import ugettext as _, activate
 from django.conf import settings
 from handlers import Handler, HandlerError, AccessDenied
 
+import time
 import logging
 
 logger = logging.getLogger(__name__)
@@ -136,10 +137,14 @@ class Dispatcher(View):
             
         # Invokes the handler's operation, add headers to response and returns
         try:
-            if handler.raw: # Raw handlers will return an HttpResponse Object
-                response = operation()
-            else:
-                response = processor.getResponse(operation())
+            start = time.time();
+            response = operation()
+            logger.debug('Execution time for method: {0}'.format(time.time() - start))
+            
+            if not handler.raw: # Raw handlers will return an HttpResponse Object
+                start = time.time()
+                response = processor.getResponse(response)
+            logger.debug('Execution time for encoding: {0}'.format(time.time() - start))
             for k, v in handler.headers().iteritems():
                 response[k] = v
             return response

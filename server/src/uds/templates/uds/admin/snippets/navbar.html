@@ -45,7 +45,8 @@
                     <ul class="dropdown-menu">
                       {% for lang in LANGUAGES %}
                       {% if lang.0  != LANGUAGE_CODE %}
-                      <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit()'><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}</a></li>
+                      <!--  here we force an update of locale of REST api -->
+                      <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); api.locale.get({id:"{{ lang.0 }}", success:function(){ $("#form_language").submit() }});'><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}</a></li>
                       {% endif %}
                       {% endfor %}
                     </ul>
