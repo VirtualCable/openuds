@@ -185,6 +185,8 @@ GuiElement.prototype = {
         
         // Icon renderer, based on type (created on init methods in styles)
         var renderTypeIcon = function(data, type, value){
+            gui.doLog(type);
+            gui.doLog(data);
             if( type == 'display' ) {
                 var css = $this.types[value.type].css;
                 return '<span class="' + css + '"></span> ' + renderEmptyCell(data);
@@ -276,7 +278,7 @@ GuiElement.prototype = {
             });
             // If styles already exists, remove them before adding new ones
             $('style-' + tableId).remove();
-            $('<style id="style-' + tableId + '" media="screen">@media (max-width: 979px) { ' + respStyles.join('') + '};</style>').appendTo('head')
+            $('<style id="style-' + tableId + '" media="screen">@media (max-width: 979px) { ' + respStyles.join('') + '};</style>').appendTo('head');
 
             $this.rest.get({
                 success : function(data) {
@@ -369,22 +371,63 @@ GuiElement.prototype = {
                                     "sButtonClass" : "btn-info"
                                 };
                                 break;
-                            case 'csb':
+                            case 'xls':
+                                btn = {
+                                    "sExtends" : "text",
+                                    "sButtonText" : 'xls',
+                                    "fnClick" : function(){
+                                        // Simple export, based on http://jsfiddle.net/lesson8/wVejP/
+                                        var uri = 'data:application/vnd.ms-excel;base64,',
+                                            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name><%= worksheet %></x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table border="1"><%= table %></table></body></html>',
+                                            base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))); };
+                                            
+                                            table = '<thead>';
+                                            $.each(columns, function(index, heading){
+                                                if( heading.bVisible === false ) {
+                                                    return;
+                                                }
+                                                table += '<th><b>' + heading.sTitle + '</b></th>';
+                                            });
+                                            table += '</thead><tbody>';
+                                            $.each(data, function(index, row) {
+                                                var tr = '';
+                                                $.each(columns, function(index, col){
+                                                    if( col.bVisible === false ) {
+                                                        return;
+                                                    }
+                                                    tr += '<td>' + row[col.mData] + '</td>';
+                                                });
+                                                table += '<tr>' + tr + '</tr>';
+                                            });
+                                            table += '</tbody>';
+                                            var ctx = {worksheet: title, table: table};
+                                            window.location.href = uri + base64(api.templates.evaluate(template, ctx));
+                                    },
+                                    "sButtonClass" : "btn-info"
+                                };
+                            /*case 'csv': 
                                 btn = {
                                     "sExtends" : "csv",
                                     "sTitle" : title,
                                     "sFileName" : title + '.csv',
                                 };
-                                break;
-                            case 'pdf':
+                                break;*/
+                            /*case 'pdf':
                                 btn = {
                                     "sExtends" : "pdf",
                                     "sTitle" : title,
                                     "sPdfMessage" : "Summary Info",
+                                    "fnCellRender": function(value, col, node, dattaIndex) {
+                                        // All tables handled by this needs an "id" on col 0
+                                        // So, we return empty values for col 0
+                                        if(col === 0)
+                                            return '';
+                                        return value.toString().replace(/(<([^>]+)>)/ig, '');
+                                    },
                                     "sFileName" : title + '.pdf',
                                     "sPdfOrientation" : "portrait"
                                 };
-                                break;
+                                break;*/
                             }
 
                             if (btn !== undefined)
@@ -418,9 +461,10 @@ GuiElement.prototype = {
 
                     });
                     $('#' + tableId + '_filter input').addClass('form-control');
-                    var tableTop = $('#' + tableId).offset().top;
-                    if (options.scroll)
+                    if (options.scroll !== undefined ) {
+                        var tableTop = $('#' + tableId).offset().top;
                         $('html, body').scrollTop(tableTop);
+                    }
                 }
             });
         });
