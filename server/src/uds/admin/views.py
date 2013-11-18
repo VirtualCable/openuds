@@ -65,7 +65,8 @@ def tmpl(request, template):
         t = loader.get_template('uds/admin/tmpl/' + template + ".html")
         c = RequestContext(request)
         resp = t.render(c)
-    except:
+    except Exception as e:
+        logger.debug('Exception getting template: {0}'.format(e))
         resp = _('requested a template that do not exists')
     return HttpResponse(resp, content_type="text/plain");  
 

@@ -82,9 +82,10 @@ table.tablesorter thead tr th:hover {
   height: 100%;
 }
 
-.tbl-button-active {
-	font-weight: bolder;
+.btn3d-tables {
+	margin-top:0px;
 }
+
 
 /* Edit Below to Customize Widths > 768px */
 @media (min-width:768px) {

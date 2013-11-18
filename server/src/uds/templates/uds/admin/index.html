@@ -23,6 +23,7 @@
         <link href="{% get_static_prefix %}adm/css/dataTables.bootstrap.css" rel="stylesheet" media="screen">
         
         <link href="{% get_static_prefix %}css/tables.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/buttons.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/uds-admin.css" rel="stylesheet" media="screen">
     </head>
     
@@ -70,6 +71,17 @@
             }(window.api = window.api || {}, jQuery));
         </script>
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
+        
+        <!--  templates related, inserts itself into api -->
+        <script src="{% get_static_prefix %}adm/js/templates.js"></script>
+        
+        <!--  export to xls, inserts itself into api -->
+        <script src="{% get_static_prefix %}adm/js/spreadsheet.js"></script>
+        
+        <!-- utilities attached to api -->
+        <script src="{% get_static_prefix %}adm/js/tools.js"></script>
+        
+        
         <script src="{% get_static_prefix %}adm/js/gui.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-elements.js"></script>
         

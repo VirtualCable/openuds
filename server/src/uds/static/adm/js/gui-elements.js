@@ -13,7 +13,7 @@ gui.providers.link = function(event) {
             gui.doLog(this);
             gui.doLog(this.fnGetSelectedData());
         },
-        buttons : [ 'edit', 'refresh', 'delete' ],
+        buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
     });
 
     return false;
@@ -37,14 +37,14 @@ gui.authenticators.link = function(event) {
         gui.authenticators.table({
             container : 'auths-placeholder',
             rowSelect : 'single',
-            buttons : [ 'edit', 'refresh', 'delete' ],
+            buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
             onRowSelect : function(nodes) {
                 var id = this.fnGetSelectedData()[0].id;
                 var user = new GuiElement(api.authenticators.users.detail(id), 'users');
                 user.table({
                     container : 'users-placeholder',
                     rowSelect : 'multi',
-                    buttons : [ 'edit', 'refresh', 'delete' ],
+                    buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
                     scroll : true,
                 });
                 return false;
@@ -65,7 +65,7 @@ gui.osmanagers.link = function(event) {
 
     gui.osmanagers.table({
         rowSelect : 'single',
-        buttons : [ 'edit', 'refresh', 'delete' ],
+        buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
     });
 
     return false;
@@ -77,19 +77,23 @@ gui.connectivity = {
 };
 
 gui.connectivity.link = function(event) {
-    gui.clearWorkspace();
-    gui.appendToWorkspace(gui.breadcrumbs(gettext('Connectivity')));
-    gui
-            .appendToWorkspace('<div class="row"><div class="col-lg-6" id="ttbl"></div><div class="col-lg-6" id="ntbl"></div></div>');
+    api.templates.get('connectivity', function(tmpl) {
+        gui.clearWorkspace();
+        gui.appendToWorkspace(api.templates.evaluate(tmpl, {
+            transports : 'transports-placeholder',
+            networks : 'networks-placeholder'
+        }));
 
-    gui.connectivity.transports.table({
-        rowSelect : 'multi',
-        container : 'ttbl',
-        buttons : [ 'edit', 'refresh', 'delete', 'pdf' ],
+        gui.connectivity.transports.table({
+            rowSelect : 'multi',
+            container : 'transports-placeholder',
+            buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+        });
+        gui.connectivity.networks.table({
+            rowSelect : 'multi',
+            container : 'networks-placeholder',
+            buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+        });
     });
-    gui.connectivity.networks.table({
-        rowSelect : 'multi',
-        container : 'ntbl',
-        buttons : [ 'edit', 'refresh', 'delete' ],
-    });
+      
 };

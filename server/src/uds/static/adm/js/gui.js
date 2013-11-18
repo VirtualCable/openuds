@@ -185,8 +185,6 @@ GuiElement.prototype = {
         
         // Icon renderer, based on type (created on init methods in styles)
         var renderTypeIcon = function(data, type, value){
-            gui.doLog(type);
-            gui.doLog(data);
             if( type == 'display' ) {
                 var css = $this.types[value.type].css;
                 return '<span class="' + css + '"></span> ' + renderEmptyCell(data);
@@ -351,7 +349,7 @@ GuiElement.prototype = {
                                     "sButtonText" : gettext('Edit'),
                                     "fnSelect" : editSelected,
                                     "fnClick" : editFnc,
-                                    "sButtonClass" : "disabled"
+                                    "sButtonClass" : "disabled btn3d btn3d-tables"
                                 };
                                 break;
                             case 'delete':
@@ -360,7 +358,7 @@ GuiElement.prototype = {
                                     "sButtonText" : gettext('Delete'),
                                     "fnSelect" : deleteSelected,
                                     "fnClick" : deleteFnc,
-                                    "sButtonClass" : "disabled"
+                                    "sButtonClass" : "disabled btn3d btn3d-tables"
                                 };
                                 break;
                             case 'refresh':
@@ -368,7 +366,7 @@ GuiElement.prototype = {
                                     "sExtends" : "text",
                                     "sButtonText" : gettext('Refresh'),
                                     "fnClick" : refreshFnc,
-                                    "sButtonClass" : "btn-info"
+                                    "sButtonClass" : "btn-info btn3d btn3d-tables"
                                 };
                                 break;
                             case 'xls':
@@ -376,34 +374,42 @@ GuiElement.prototype = {
                                     "sExtends" : "text",
                                     "sButtonText" : 'xls',
                                     "fnClick" : function(){
-                                        // Simple export, based on http://jsfiddle.net/lesson8/wVejP/
-                                        var uri = 'data:application/vnd.ms-excel;base64,',
-                                            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name><%= worksheet %></x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table border="1"><%= table %></table></body></html>',
-                                            base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))); };
-                                            
-                                            table = '<thead>';
+                                        api.templates.get('spreadsheet', function(tmpl) {
+                                            var styles = { 'bold': 's21', };
+                                            var uri = 'data:application/vnd.ms-excel;base64,',
+                                                base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))); };
+                                                
+                                            var headings = [], rows = [];
                                             $.each(columns, function(index, heading){
                                                 if( heading.bVisible === false ) {
                                                     return;
                                                 }
-                                                table += '<th><b>' + heading.sTitle + '</b></th>';
+                                                headings.push(api.spreadsheet.cell(heading.sTitle, 'String', styles.bold));
                                             });
-                                            table += '</thead><tbody>';
+                                            rows.push(api.spreadsheet.row(headings));
                                             $.each(data, function(index, row) {
-                                                var tr = '';
+                                                var cells = [];
                                                 $.each(columns, function(index, col){
                                                     if( col.bVisible === false ) {
                                                         return;
                                                     }
-                                                    tr += '<td>' + row[col.mData] + '</td>';
+                                                    var type = col.sType == 'numeric' ? 'Number':'String';
+                                                    cells.push(api.spreadsheet.cell(row[col.mData], type));
                                                 });
-                                                table += '<tr>' + tr + '</tr>';
+                                                rows.push(api.spreadsheet.row(cells));
                                             });
-                                            table += '</tbody>';
-                                            var ctx = {worksheet: title, table: table};
-                                            window.location.href = uri + base64(api.templates.evaluate(template, ctx));
+                                            
+                                            var ctx = {
+                                                creation_date: (new Date()).toISOString(),
+                                                worksheet: title,
+                                                columns_count: headings.length,
+                                                rows_count: rows.length,
+                                                rows: rows.join('\n')
+                                            };
+                                            window.location.href = uri + base64(api.templates.evaluate(tmpl, ctx));
+                                        });
                                     },
-                                    "sButtonClass" : "btn-info"
+                                    "sButtonClass" : "btn-info btn3d btn3d-tables"
                                 };
                             /*case 'csv': 
                                 btn = {
@@ -457,7 +463,7 @@ GuiElement.prototype = {
                         // First is upper row,
                         // second row is lower
                         // (pagination) row
-                        "sDom" : "<'row'<'col-xs-6'T><'col-xs-6'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
+                        "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
 
                     });
                     $('#' + tableId + '_filter input').addClass('form-control');

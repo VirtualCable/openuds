@@ -1,0 +1,16 @@
+{% load i18n html5 static %}
+<div class="row">
+  <div class="col-xs-12">
+    <h1>{% trans 'Connectivity' %} <small>{% trans 'overview' %}</small></h1>
+    <ol class="breadcrumb">
+      <li><a id="lnk-dashboard" href=""><i class="fa fa-dashboard"></i> Dashboard</a></li>
+    </ol>
+  </div>
+</div><!-- /.row -->
+
+<div class="row">
+    <div class="col-lg-6" id="<%= transports %>">
+    </div>
+    <div class="col-lg-6" id="<%= networks %>">
+    </div>
+</div>
