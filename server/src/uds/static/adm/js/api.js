@@ -11,7 +11,12 @@
 
         }
     };
-
+    
+    // Returns a cache object (for easy caching requests, templates, etc...)
+    api.cache = function(cacheName) {
+        return new Cache(cacheName);
+    };
+    
     api.getJson = function(path, success_fnc) {
         url = api.url_for(path);
         api.doLog('Ajax GET Json for "' + url + '"');
@@ -36,6 +41,33 @@
     // Public attributes
     api.debug = false;
 }(window.api = window.api || {}, jQuery));
+
+
+// Cache related
+function Cache(cacheName) {
+    api.cacheTable = api.cacheTable || {};
+    
+    api.cacheTable[cacheName] = api.cacheTable[cacheName] || {};
+
+    this.name = cacheName;
+    this.cache = api.cacheTable[cacheName];
+}
+
+Cache.prototype = {
+        get: function(key, not_found_fnc){
+            not_found_fnc = not_found_fnc || function() { return undefined; };
+        
+            if( this.cache[key] === undefined ) {
+                this.cache[key] = not_found_fnc();
+            }
+            return this.cache[key];
+        },
+    
+    put: function(key, value) {
+            this.cache[key] = value;
+        },
+};
+
 
 // Great part of UDS REST api provides same methods.
 // We will take advantage of this and save a lot of nonsense, prone to failure

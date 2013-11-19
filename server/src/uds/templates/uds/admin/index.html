@@ -46,6 +46,7 @@
         <script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
 
         <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
@@ -68,6 +69,7 @@
                 api.token = "{% auth_token %}";
                 api.auth_header = "{% auth_token_header %}";
                 api.base_url = "{% url 'REST' '' %}";
+                api.img_url = "{% get_static_prefix %}adm/img/";
                 
                 api.url_for = function(path) {
                     return api.base_url + path;
@@ -75,8 +77,8 @@
                 
             }(window.api = window.api || {}, jQuery));
         </script>
-        
-        <script src="{% get_static_prefix %}adm/js/cache.js"></script>
+
+        <!-- First all api related stuff -->        
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
         
         <!--  templates related, inserts itself into api -->

@@ -69,11 +69,6 @@
     };
 
     // Links methods
-    gui.dashboard = function() {
-        gui.clearWorkspace();
-        gui.appendToWorkspace(gui.breadcrumbs('Dasboard'));
-        gui.doLog(this);
-    };
 
     gui.deployed_services = function() {
         gui.clearWorkspace();
@@ -83,7 +78,7 @@
     gui.setLinksEvents = function() {
         var sidebarLinks = [ {
             id : 'lnk-dashboard',
-            exec : gui.dashboard
+            exec : gui.dashboard.link,
         }, {
             id : 'lnk-service_providers',
             exec : gui.providers.link
@@ -114,11 +109,17 @@
 
     gui.init = function() {
         gui.setLinksEvents();
+        gui.dashboard.link();
     };
 
     // Public attributes
     gui.debug = true;
 }(window.gui = window.gui || {}, jQuery));
+
+function BasicGuiElement(name) {
+    "use strict";
+    this.name = name;
+}
 
 function GuiElement(restItem, name) {
     "use strict";
@@ -308,16 +309,23 @@ GuiElement.prototype = {
                         var refreshFnc = function(btn) {
                             // Refreshes table content
                             var tbl = $('#' + tableId).dataTable();
-                            var width = $(btn).width();
+                            /*var width = $(btn).width();
                             var saved = $(btn).html();
-                            /*$(btn).addClass('disabled').html('<span class="fa fa-spinner fa-spin"></span>')
+                            $(btn).addClass('disabled').html('<span class="fa fa-spinner fa-spin"></span>')
                                     .width(width);*/
-                            onRefresh();
+                            if( data.length > 1000 )
+                                api.tools.blockUI();
+                            
+                            onRefresh($this);
+                            
                             $this.rest.get({
                                 success : function(data) {
-                                    tbl.fnClearTable();
-                                    tbl.fnAddData(data);
                                     /*$(btn).removeClass('disabled').width('').html(saved);*/
+                                    setTimeout( function() {
+                                        tbl.fnClearTable();
+                                        tbl.fnAddData(data);
+                                        api.tools.unblockUI();
+                                    }, 0);
                                 }
                             });
                         };
@@ -326,17 +334,17 @@ GuiElement.prototype = {
                         var editSelected = function(btn, obj, node) {
                             var sel = this.fnGetSelectedData();
                             if (sel.length == 1) {
-                                $(btn).removeClass('disabled').addClass('btn-info');
+                                $(btn).removeClass('disabled').addClass('btn3d-success');
                             } else {
-                                $(btn).removeClass('btn-info').addClass('disabled');
+                                $(btn).removeClass('btn3d-success').addClass('disabled');
                             }
                         };
                         var deleteSelected = function(btn, obj, node) {
                             var sel = this.fnGetSelectedData();
                             if (sel.length > 0) {
-                                $(btn).removeClass('disabled').addClass('btn-warning');
+                                $(btn).removeClass('disabled').addClass('btn3d-warning');
                             } else {
-                                $(btn).removeClass('btn-warning').addClass('disabled');
+                                $(btn).removeClass('btn3d-warning').addClass('disabled');
                             }
                         };
 
@@ -366,7 +374,7 @@ GuiElement.prototype = {
                                     "sExtends" : "text",
                                     "sButtonText" : gettext('Refresh'),
                                     "fnClick" : refreshFnc,
-                                    "sButtonClass" : "btn-info btn3d btn3d-tables"
+                                    "sButtonClass" : "btn3d-primary btn3d btn3d-tables"
                                 };
                                 break;
                             case 'xls':
@@ -413,7 +421,7 @@ GuiElement.prototype = {
                                             }, 20);
                                         });
                                     },
-                                    "sButtonClass" : "btn-info btn3d btn3d-tables"
+                                    "sButtonClass" : "btn3d-info btn3d btn3d-tables"
                                 };
                             /*case 'csv': 
                                 btn = {
@@ -470,10 +478,17 @@ GuiElement.prototype = {
                         "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
 
                     });
-                    $('#' + tableId + '_filter input').addClass('form-control');
+                    // Fix 3dbuttons
+                    api.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
+                    // Fix form 
+                    //$('#' + tableId + '_filter input').addClass('form-control');
                     if (options.scroll !== undefined ) {
                         var tableTop = $('#' + tableId).offset().top;
                         $('html, body').scrollTop(tableTop);
+                    }
+                    // if table rendered event
+                    if( options.onLoad ) {
+                        options.onLoad($this);
                     }
                 }
             });

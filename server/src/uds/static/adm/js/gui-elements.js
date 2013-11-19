@@ -1,8 +1,34 @@
+/* jshint strict: true */
 // Compose gui elements
+
+gui.dashboard = new BasicGuiElement('Dashboard');
+gui.dashboard.link = function(event) {
+    "use strict";
+    gui.clearWorkspace();
+    api.templates.get('dashboard', function(tmpl) {
+        gui.doLog('enter dashboard');
+        gui.appendToWorkspace(api.templates.evaluate(tmpl, {
+        }));
+        gui.setLinksEvents();
+        
+        $.each($('.btn3d'), function() {
+           console.log(this); 
+           var counter = 0;
+           $(this).click(function(){
+               counter += 1;
+               $(this).text($(this).text().split(' ')[0] + ' ' + counter);
+               /*$('<span>Click ' + counter + ' on ' + $(this).text() + '<b>--</b></span>').appendTo('#out');*/
+           });
+        });
+        
+        api.tools.fix3dButtons('#test');
+    });
+};
 
 // Service providers
 gui.providers = new GuiElement(api.providers, 'provi');
 gui.providers.link = function(event) {
+    "use strict";
     gui.clearWorkspace();
     gui.appendToWorkspace(gui.breadcrumbs(gettext('Service Providers')));
 
@@ -25,6 +51,7 @@ gui.providers.link = function(event) {
 gui.authenticators = new GuiElement(api.authenticators, 'auth');
 
 gui.authenticators.link = function(event) {
+    "use strict";
     gui.doLog('enter auths');
     api.templates.get('authenticators', function(tmpl) {
         gui.clearWorkspace();
@@ -39,6 +66,7 @@ gui.authenticators.link = function(event) {
             rowSelect : 'single',
             buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
             onRowSelect : function(nodes) {
+                api.tools.blockUI();
                 var id = this.fnGetSelectedData()[0].id;
                 var user = new GuiElement(api.authenticators.detail(id, 'users'), 'users');
                 user.table({
@@ -46,6 +74,9 @@ gui.authenticators.link = function(event) {
                     rowSelect : 'multi',
                     buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
                     scroll : true,
+                    onLoad: function(k) {
+                        api.tools.unblockUI();
+                    },
                 });
                 return false;
             },
@@ -60,6 +91,7 @@ gui.authenticators.link = function(event) {
 
 gui.osmanagers = new GuiElement(api.osmanagers, 'osm');
 gui.osmanagers.link = function(event) {
+    "use strict";
     gui.clearWorkspace();
     gui.appendToWorkspace(gui.breadcrumbs('Os Managers'));
 
@@ -77,6 +109,7 @@ gui.connectivity = {
 };
 
 gui.connectivity.link = function(event) {
+    "use strict";
     api.templates.get('connectivity', function(tmpl) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {

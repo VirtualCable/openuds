@@ -84,6 +84,12 @@ table.tablesorter thead tr th:hover {
 
 .btn3d-tables {
 	margin-top:0px;
+	margin-botton: 8px;
+	margin-right: 8px;
+}
+
+.btn-group-3d {
+	margin-bottom:12px;
 }
 
 
