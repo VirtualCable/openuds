@@ -310,14 +310,14 @@ GuiElement.prototype = {
                             var tbl = $('#' + tableId).dataTable();
                             var width = $(btn).width();
                             var saved = $(btn).html();
-                            $(btn).addClass('disabled').html('<span class="fa fa-spinner fa-spin"></span>')
-                                    .width(width);
+                            /*$(btn).addClass('disabled').html('<span class="fa fa-spinner fa-spin"></span>')
+                                    .width(width);*/
                             onRefresh();
                             $this.rest.get({
                                 success : function(data) {
                                     tbl.fnClearTable();
                                     tbl.fnAddData(data);
-                                    $(btn).removeClass('disabled').html(saved);
+                                    /*$(btn).removeClass('disabled').width('').html(saved);*/
                                 }
                             });
                         };
@@ -406,7 +406,11 @@ GuiElement.prototype = {
                                                 rows_count: rows.length,
                                                 rows: rows.join('\n')
                                             };
-                                            window.location.href = uri + base64(api.templates.evaluate(tmpl, ctx));
+                                            // window.location.href = uri + base64(api.templates.evaluate(tmpl, ctx));
+                                            setTimeout( function() {
+                                                saveAs(new Blob([api.templates.evaluate(tmpl, ctx)], 
+                                                        {type: 'application/vnd.ms-excel'} ), title + '.xls')
+                                            }, 20);
                                         });
                                     },
                                     "sButtonClass" : "btn-info btn3d btn3d-tables"

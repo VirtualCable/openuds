@@ -41,92 +41,89 @@
 // We will take advantage of this and save a lot of nonsense, prone to failure
 // code :-)
 
-function BasicModelRest(path) {
-    this.path = path || "";
-    this.cached_types = undefined;
-    this.cached_tableInfo = undefined;
+function BasicModelRest(path, options) {
+    options = options || {};
+    path = path || '';
+    // Requests paths
+    this.path = path;
+    this.getPath = options.getPath || path;
+    this.typesPath = options.typesPath || (path + '/types');
+    this.tableInfoPath = options.tableInfoPath || (path + '/tableinfo');
+    this.cache = api.cache('bmr'+path);
 }
 
 BasicModelRest.prototype = {
-    get : function(options, alternate_url) {
-        if (options === undefined) {
-            options = {};
-        }
-        var path = alternate_url || this.path;
+    get : function(options) {
+        options = options || {};
+        
+        var path = this.getPath;
         if (options.id !== undefined)
             path += '/' + options.id;
         api.getJson(path, options.success);
     },
-    types : function(success_fnc, alternate_url) {
+    types : function(success_fnc) {
         // Cache types locally, will not change unless new broker version
-        if (this.cached_types) {
-            if (success_fnc) {
-                success_fnc(this.cached_types);
-            }
+        sucess_fnc = success_fnc || function(data){};
+        if( this.typesPath == '.' ) {
+            success_fnc({});
+            return;
+        }
+        if (this.cache.get('types')) {
+            success_fnc(this.cache.get('types'));
         } else {
             var $this = this;
-            var path = this.path + '/types';
-            if (alternate_url !== undefined)
-                path = alternate_url;
+            var path = this.typesPath;
             api.getJson(path, function(data) {
-                $this.cached_types = data;
-                if (success_fnc) {
-                    success_fnc($this.cached_types);
-                }
+                $this.cache.put('types', data);
+                success_fnc(data);
             });
         }
     },
 
-    tableInfo : function(success_fnc, alternate_url) {
+    tableInfo : function(success_fnc) {
+        var path = this.tableInfoPath;
         // Cache types locally, will not change unless new broker version
-        if (this.cached_tableInfo) {
+        if( this.cache.get(path) ) {
             if (success_fnc) {
-                success_fnc(this.cached_tableInfo);
+                success_fnc(this.cache.get(path));
             }
             return;
         }
-        var $this = this;
-        var path = this.path + '/tableinfo';
-        if (alternate_url !== undefined)
-            path = alternate_url;
 
+        var $this = this;
         api.getJson(path, function(data) {
-            $this.cached_tableInfo = data;
-            if (success_fnc) {
-                success_fnc($this.cached_tableInfo);
-            }
+            $this.cache.put(path, data);
+            success_fnc(data);
         });
 
     },
+    
+    detail: function(id, child) {
+        return new DetailModelRestApi(this, id, child);
+    }
 
 };
 
 // For REST of type /auth/[id]/users, /services/[id]/users, ...
-function DetailModelRestApi(parentApi, path) {
-    this.parentPath = parentApi.path;
-    this.path = path;
+function DetailModelRestApi(parentApi, parentId, model) {
+    this.base = new BasicModelRest(undefined, {
+        getPath: [parentApi.path, parentId, model].join('/'),
+        typesPath: '.', // We do not has this on details
+        tableInfoPath: [parentApi.path, 'tableinfo', parentId, model].join('/'),
+    });
 }
 
 DetailModelRestApi.prototype = {
     // Generates a basic model with fixed methods for "detail" models
-    detail : function(parentId) {
-        var $this = this;
-        var rest = new BasicModelRest(this.parentPath + '/' + parentId + '/' + this.path);
-
-        // Overwrite types, detail do not have types
-        rest.types = function() {
-            return []; // No types at all
-        };
-
-        // And overwrite tableInfo
-        var parentTableInfo = rest.tableInfo;
-        rest.tableInfo = function(success_fnc, alternate_url) {
-            if (alternate_url === undefined)
-                alternate_url = $this.parentPath + '/tableinfo/' + parentId + '/' + $this.path;
-            parentTableInfo(success_fnc, alternate_url);
-        };
-        return rest;
-    }
+    get: function(options) {
+        return this.base.get(options);
+    },
+    types: function(success_fnc) {
+        return this.base.types(success_fnc);
+    },
+    tableInfo: function(success_fnc) { 
+        return this.base.tableInfo(success_fnc);
+    },
 };
 
 // Populate api
@@ -134,7 +131,6 @@ DetailModelRestApi.prototype = {
 api.providers = new BasicModelRest('providers');
 // api.services = new BasicModelRest('services');
 api.authenticators = new BasicModelRest('authenticators');
-api.authenticators.users = new DetailModelRestApi(api.authenticators, 'users');
 
 api.osmanagers = new BasicModelRest('osmanagers');
 api.transports = new BasicModelRest('transports');

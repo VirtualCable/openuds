@@ -50,6 +50,11 @@
 
         <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
 
+        <!--  for "save" from javascript -->
+        <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
+        <script src="{% get_static_prefix %}adm/js/FileSaver.js"></script>
+        
+
         <!-- strftime -->
         <script src="{% get_static_prefix %}adm/js/strftime.js"></script>
         
@@ -70,6 +75,8 @@
                 
             }(window.api = window.api || {}, jQuery));
         </script>
+        
+        <script src="{% get_static_prefix %}adm/js/cache.js"></script>
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
         
         <!--  templates related, inserts itself into api -->

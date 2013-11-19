@@ -8,11 +8,12 @@
                             // '?', data will not be cached and always
                             // re-requested. We do not care about lang, because page will reload on language change
     templates.get = function(name, success_fnc) {
+        var $this = this;
         api.doLog('Getting tempkate ' + name);
-        if (name.indexOf('?') != -1) {
-            if (templates.cache[name] !== undefined) {
+        if (name.indexOf('?') == -1) {
+            if ($this.cache[name] !== undefined) {
                 if (success_fnc !== undefined) {
-                    success_fnc(templates.cache[name]);
+                    success_fnc($this.cache[name]);
                 }
                 return;
             }
@@ -22,7 +23,7 @@
             type : "GET",
             dataType : "text",
             success : function(data) {
-                templates.cache[name] = data;
+                $this.cache[name] = data;
                 api.doLog('Success getting template "' + name + '".');
                 api.doLog('Received: ' + data);
                 if (success_fnc !== undefined) {

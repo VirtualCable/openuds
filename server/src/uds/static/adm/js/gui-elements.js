@@ -40,7 +40,7 @@ gui.authenticators.link = function(event) {
             buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
             onRowSelect : function(nodes) {
                 var id = this.fnGetSelectedData()[0].id;
-                var user = new GuiElement(api.authenticators.users.detail(id), 'users');
+                var user = new GuiElement(api.authenticators.detail(id, 'users'), 'users');
                 user.table({
                     container : 'users-placeholder',
                     rowSelect : 'multi',

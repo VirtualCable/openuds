@@ -67,7 +67,7 @@ class Users(DetailHandler):
         
     def getTitle(self):
         try:
-            return _('Users of {0}').format(Authenticator.objects.get(pk=self._kwargs['parent_id']))
+            return _('Users of {0}').format(Authenticator.objects.get(pk=self._kwargs['parent_id']).name)
         except:
             return _('Current users')
     
