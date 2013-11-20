@@ -22,7 +22,7 @@
             
             /* If Mousedown registers a temporal mouseUp event on parent, to lauch button click */ 
             $this.mousedown(function(event){
-                $this.parent().mouseup(function(e){
+                $('body').mouseup(function(e){
                     // Remove temporal mouseup handler
                     $(this).unbind('mouseup');
                     

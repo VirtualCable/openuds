@@ -17,28 +17,43 @@
     
     // Several convenience "constants" for tables
     gui.config.dataTablesLanguage = {
-        "sLengthMenu" : gettext("_MENU_ records per page"),
-        "sZeroRecords" : gettext("Empty"),
-        "sInfo" : gettext("Records _START_ to _END_ of _TOTAL_"),
-        "sInfoEmpty" : gettext("No records"),
-        "sInfoFiltered" : gettext("(filtered from _MAX_ total records)"),
-        "sProcessing" : gettext("Please wait, processing"),
-        "sSearch" : gettext("Filter"),
-        "sInfoThousands" : django.formats.THOUSAND_SEPARATOR,
-        "oPaginate" : {
-            "sFirst" : gettext("First"),
-            "sLast" : gettext("Last"),
-            "sNext" : gettext("Next"),
-            "sPrevious" : gettext("Previous"),
+        'sLengthMenu' : gettext('_MENU_ records per page'),
+        'sZeroRecords' : gettext('Empty'),
+        'sInfo' : gettext('Records _START_ to _END_ of _TOTAL_'),
+        'sInfoEmpty' : gettext('No records'),
+        'sInfoFiltered' : gettext('(filtered from _MAX_ total records)'),
+        'sProcessing' : gettext('Please wait, processing'),
+        'sSearch' : gettext('Filter'),
+        'sInfoThousands' : django.formats.THOUSAND_SEPARATOR,
+        'oPaginate' : {
+            'sFirst' : gettext('First'),
+            'sLast' : gettext('Last'),
+            'sNext' : gettext('Next'),
+            'sPrevious' : gettext('Previous'),
         }
     };
     
-    gui.config.dataTableButtonsText = {
-        'new': '<span class="fa fa-pencil"></span> <span class="label-tbl-button">' + gettext('New') + '</span>',
-        'edit': '<span class="fa fa-edit"></span> <span class="label-tbl-button">' + gettext('Edit') + '</span>',
-        'delete': '<span class="fa fa-eraser"></span> <span class="label-tbl-button">' + gettext('Delete') + '</span>',
-        'refresh': '<span class="fa fa-refresh"></span> <span class="label-tbl-button">' + gettext('Refresh') + '</span>',
-        'xls': '<span class="fa fa-save"></span> <span class="label-tbl-button">' + gettext('Xls') + '</span>',
+    gui.config.dataTableButtons = {
+        'new': {
+            text: '<span class="fa fa-pencil"></span> <span class="label-tbl-button">' + gettext('New') + '</span>',
+            css: 'btn3d btn3d-primary btn3d-tables',
+        },
+        'edit': { 
+            text: '<span class="fa fa-edit"></span> <span class="label-tbl-button">' + gettext('Edit') + '</span>',
+            css: 'disabled btn3d-default btn3d btn3d-tables',
+        },
+        'delete': {
+            text: '<span class="fa fa-eraser"></span> <span class="label-tbl-button">' + gettext('Delete') + '</span>',
+            css: 'disabled btn3d-default btn3d btn3d-tables',
+        },
+        'refresh': {
+            text: '<span class="fa fa-refresh"></span> <span class="label-tbl-button">' + gettext('Refresh') + '</span>',
+            css: 'btn3d-primary btn3d btn3d-tables',
+        },
+        'xls': {
+            text: '<span class="fa fa-save"></span> <span class="label-tbl-button">' + gettext('Xls') + '</span>',
+            css: 'btn3d-info btn3d btn3d-tables',
+        },
     };
 
     gui.table = function(title, table_id, options) {
@@ -396,42 +411,42 @@ GuiElement.prototype = {
                                 case 'new':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gui.config.dataTableButtonsText['new'],
+                                        "sButtonText" : gui.config.dataTableButtons['new'].text,
                                         "fnSelect" : deleteSelected,
                                         "fnClick" : clickHandlerFor(options.onDelete, 'delete'),
-                                        "sButtonClass" : "disabled btn3d btn3d-tables"
+                                        "sButtonClass" : gui.config.dataTableButtons['new'].css,
                                     };
                                     break;
                                 case 'edit':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gui.config.dataTableButtonsText['edit'],
+                                        "sButtonText" : gui.config.dataTableButtons.edit.text,
                                         "fnSelect" : editSelected,
                                         "fnClick" : clickHandlerFor(options.onEdit, 'edit'),
-                                        "sButtonClass" : "disabled btn3d btn3d-tables"
+                                        "sButtonClass" : gui.config.dataTableButtons.edit.css,
                                     };
                                     break;
                                 case 'delete':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gui.config.dataTableButtonsText['delete'],
+                                        "sButtonText" : gui.config.dataTableButtons['delete'].text,
                                         "fnSelect" : deleteSelected,
                                         "fnClick" : clickHandlerFor(options.onDelete, 'delete'),
-                                        "sButtonClass" : "disabled btn3d btn3d-tables"
+                                        "sButtonClass" : gui.config.dataTableButtons['delete'].css,
                                     };
                                     break;
                                 case 'refresh':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gui.config.dataTableButtonsText['refresh'],
+                                        "sButtonText" : gui.config.dataTableButtons.refresh.text,
                                         "fnClick" : refreshFnc,
-                                        "sButtonClass" : "btn3d-primary btn3d btn3d-tables"
+                                        "sButtonClass" : gui.config.dataTableButtons.refresh.css,
                                     };
                                     break;
                                 case 'xls':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gui.config.dataTableButtonsText['xls'],
+                                        "sButtonText" : gui.config.dataTableButtons.xls.text,
                                         "fnClick" : function(){
                                             api.templates.get('spreadsheet', function(tmpl) {
                                                 var styles = { 'bold': 's21', };
@@ -471,7 +486,7 @@ GuiElement.prototype = {
                                                 }, 20);
                                             });
                                         },
-                                        "sButtonClass" : "btn3d-info btn3d btn3d-tables"
+                                        "sButtonClass" : gui.config.dataTableButtons.xls.css,
                                     };
                                 }
     
