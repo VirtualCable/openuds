@@ -55,10 +55,6 @@
         <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
         <script src="{% get_static_prefix %}adm/js/FileSaver.js"></script>
         
-
-        <!-- strftime -->
-        <script src="{% get_static_prefix %}adm/js/strftime.js"></script>
-        
 <!--         <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script> -->
         
         <script src="{% get_static_prefix %}adm/js/dataTables.bootstrap.js"></script>
@@ -80,18 +76,22 @@
 
         <!-- First all api related stuff -->        
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
+
+        <!-- utilities attached to api -->
+        <script src="{% get_static_prefix %}adm/js/api-tools.js"></script>
         
         <!--  templates related, inserts itself into api -->
         <script src="{% get_static_prefix %}adm/js/templates.js"></script>
         
         <!--  export to xls, inserts itself into api -->
-        <script src="{% get_static_prefix %}adm/js/spreadsheet.js"></script>
+        <script src="{% get_static_prefix %}adm/js/api-spreadsheet.js"></script>
         
-        <!-- utilities attached to api -->
-        <script src="{% get_static_prefix %}adm/js/tools.js"></script>
         
         
         <script src="{% get_static_prefix %}adm/js/gui.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui-fields.js"></script>
+        
+        <!-- user interface management -->
         <script src="{% get_static_prefix %}adm/js/gui-elements.js"></script>
         
         <script>

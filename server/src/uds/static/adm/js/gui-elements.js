@@ -34,8 +34,8 @@ gui.providers.link = function(event) {
 
     var tableId = gui.providers.table({
         rowSelect : 'multi',
-        rowSelectFnc : function(nodes) {
-            gui.doLog(nodes);
+        rowSelectFnc : function(data) {
+            gui.doLog(data);
             gui.doLog(this);
             gui.doLog(this.fnGetSelectedData());
         },
@@ -65,15 +65,15 @@ gui.authenticators.link = function(event) {
             container : 'auths-placeholder',
             rowSelect : 'single',
             buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
-            onRowSelect : function(nodes) {
+            onRowSelect : function(selected) {
                 api.tools.blockUI();
-                var id = this.fnGetSelectedData()[0].id;
+                var id = selected[0].id;
                 var user = new GuiElement(api.authenticators.detail(id, 'users'), 'users');
                 user.table({
                     container : 'users-placeholder',
                     rowSelect : 'multi',
                     buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
-                    scroll : true,
+                    scrollToTable : true,
                     onLoad: function(k) {
                         api.tools.unblockUI();
                     },

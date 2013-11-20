@@ -12,9 +12,11 @@
 
         }
     };
-
-    // Several convenience "constants"
-    gui.dataTablesLanguage = {
+    
+    gui.config = gui.config || {};
+    
+    // Several convenience "constants" for tables
+    gui.config.dataTablesLanguage = {
         "sLengthMenu" : gettext("_MENU_ records per page"),
         "sZeroRecords" : gettext("Empty"),
         "sInfo" : gettext("Records _START_ to _END_ of _TOTAL_"),
@@ -29,6 +31,14 @@
             "sNext" : gettext("Next"),
             "sPrevious" : gettext("Previous"),
         }
+    };
+    
+    gui.config.dataTableButtonsText = {
+        'new': '<span class="fa fa-pencil"></span> <span class="label-tbl-button">' + gettext('New') + '</span>',
+        'edit': '<span class="fa fa-edit"></span> <span class="label-tbl-button">' + gettext('Edit') + '</span>',
+        'delete': '<span class="fa fa-eraser"></span> <span class="label-tbl-button">' + gettext('Delete') + '</span>',
+        'refresh': '<span class="fa fa-refresh"></span> <span class="label-tbl-button">' + gettext('Refresh') + '</span>',
+        'xls': '<span class="fa fa-save"></span> <span class="label-tbl-button">' + gettext('Xls') + '</span>',
     };
 
     gui.table = function(title, table_id, options) {
@@ -158,19 +168,48 @@ GuiElement.prototype = {
             },
         });
     },
+    // Options: dictionary
+    //   container: container ID of parent for the table. If undefined, table will be appended to workspace
+    //   buttons: array of visible buttons (strings), valid are [ 'new', 'edit', 'refresh', 'delete', 'xls' ],
+    //   rowSelect: type of allowed row selection, valid values are 'single' and 'multi'
+    //   scrollToTable: if True, will scroll page to show table
+    //   
+    //   onLoad: Event (function). If defined, will be invoked when table is fully loaded.
+    //           Receives 1 parameter, that is the gui element (GuiElement) used to render table
+    //   onRowSelect: Event (function). If defined, will be invoked when a row of table is selected
+    //                Receives 3 parameters:
+    //                   1.- the array of selected items data (objects, as got from api...get)
+    //                   2.- the DataTable that raised the event
+    //                   3.- the DataTableTools that raised the event
+    //   onRowDeselect: Event (function). If defined, will be invoked when a row of table is deselected
+    //                Receives 3 parameters:
+    //                   1.- the array of selected items data (objects, as got from api...get)
+    //                   2.- the DataTable that raised the event
+    //                   3.- the DataTableTools that raised the event
+    //   onNew: Event (function). If defined, will be invoked when "new" button is pressed
+    //                Receives 4 parameters:
+    //                   1.- the selected item data (single object, as got from api...get)
+    //                   2.- the event that fired this (new, delete, edit, ..)
+    //                   3.- the DataTable that raised the event
+    //                   4.- the DataTableTools that raised the event
+    //   onEdit: Event (function). If defined, will be invoked when "edit" button is pressed
+    //                Receives 4 parameters:
+    //                   1.- the selected item data (single object, as got from api...get)
+    //                   2.- the event that fired this (new, delete, edit, ..)
+    //                   3.- the DataTable that raised the event
+    //                   4.- the DataTableTools that raised the event
+    //   onDelete: Event (function). If defined, will be invoked when "delete" button is pressed
+    //                Receives 4 parameters:
+    //                   1.- the selected item data (single object, as got from api...get)
+    //                   2.- the event that fired this (new, delete, edit, ..)
+    //                   4.- the DataTable that raised the event
+    //                   5.- the DataTableTools that raised the event
     table : function(options) {
         "use strict";
-        // Options (all are optionals)
-        // rowSelect: 'single' or 'multi'
-        // container: ID of the element that will hold this table (will be
-        // emptied)
-        // rowSelectFnc: function to invoke on row selection. receives 1 array -
-        // node : TR elements that were selected
-        // rowDeselectFnc: function to invoke on row deselection. receives 1
-        // array - node : TR elements that were selected
+        options = options || {};
         gui.doLog('Composing table for ' + this.name);
         var tableId = this.name + '-table';
-        var $this = this;
+        var $this = this; // Store this for child functions
 
         // Empty cells transform
         var renderEmptyCell = function(data) {
@@ -212,21 +251,28 @@ GuiElement.prototype = {
                     return dict[data] || renderEmptyCell('');
             };
         };
-        
         this.rest.tableInfo({
             success: function(data) {
                 var title = data.title;
                 var columns = [];
                 $.each(data.fields, function(index, value) {
                     for ( var v in value) {
-                        var options = value[v];
+                        var opts = value[v];
                         var column = {
                             mData : v,
                         };
-                        column.sTitle = options.title;
+                        column.sTitle = opts.title;
                         column.mRender = renderEmptyCell;
-                        if (options.type !== undefined) {
-                            switch(options.type) {
+                        if (opts.width)
+                            column.sWidth = opts.width;
+                        column.bVisible = opts.visible === undefined ? true : opts.visible;
+                        if (opts.sortable !== undefined)
+                            column.bSortable = opts.sortable;
+                        if (opts.searchable !== undefined)
+                            column.bSearchable = opts.searchable;
+                        
+                        if (opts.type !== undefined && column.bVisible ) {
+                            switch(opts.type) {
                                 case 'date':
                                     column.sType = 'date';
                                     column.mRender = renderDate(api.tools.djangoFormat(get_format('SHORT_DATE_FORMAT')));
@@ -243,31 +289,23 @@ GuiElement.prototype = {
                                     column.mRender = renderTypeIcon;
                                     break;
                                 case 'icon':
-                                    if( options.icon !== undefined ) {
-                                        column.mRender = renderIcon(options.icon);
+                                    if( opts.icon !== undefined ) {
+                                        column.mRender = renderIcon(opts.icon);
                                     }
                                     break;
                                 case 'dict':
-                                    if( options.dict !== undefined ) {
-                                        column.mRender = renderTextTransform(options.dict);
+                                    if( opts.dict !== undefined ) {
+                                        column.mRender = renderTextTransform(opts.dict);
                                     }
                                     break;
                                 default:
-                                    column.sType = options.type;
+                                    column.sType = opts.type;
                             }
                         }
-                        if (options.width)
-                            column.sWidth = options.width;
-                        if (options.visible !== undefined)
-                            column.bVisible = options.visible;
-                        if (options.sortable !== undefined)
-                            column.bSortable = options.sortable;
-                        if (options.searchable !== undefined)
-                            column.bSearchable = options.searchable;
                         columns.push(column);
                     }
                 });
-                // Generate styles for responsibe table, just the name of fields
+                // Generate styles for responsible table, just the name of fields
                 var respStyles = [];
                 var counter = 0;
                 $.each(columns, function(col, value) {
@@ -295,17 +333,18 @@ GuiElement.prototype = {
                         var btns = [];
     
                         if (options.buttons) {
+                            var clickHandlerFor = function(handler, action) {
+                                var handleFnc = handler || function(val, action, tbl, tbltools) {gui.doLog('Default handler called for ' + action + ': ' + JSON.stringify(val));};
+                                return function(btn) {
+                                    var tblTools = this;
+                                    var table = $('#' + tableId).dataTable();
+                                    var val = this.fnGetSelectedData()[0];
+                                    setTimeout(function() {
+                                        handleFnc(val, action, table, tblTools);
+                                    }, 0);
+                                };
+                            };
     
-                            // methods for buttons click
-                            var editFnc = function() {
-                                gui.doLog('Edit');
-                                gui.doLog(this);
-                            };
-                            var deleteFnc = function() {
-                                gui.doLog('Delete');
-                                gui.doLog(this);
-                            };
-                            
                             // What execute on refresh button push
                             var onRefresh = options.onRefresh || function(){};
     
@@ -354,28 +393,37 @@ GuiElement.prototype = {
                             $.each(options.buttons, function(index, value) {
                                 var btn;
                                 switch (value) {
+                                case 'new':
+                                    btn = {
+                                        "sExtends" : "text",
+                                        "sButtonText" : gui.config.dataTableButtonsText['new'],
+                                        "fnSelect" : deleteSelected,
+                                        "fnClick" : clickHandlerFor(options.onDelete, 'delete'),
+                                        "sButtonClass" : "disabled btn3d btn3d-tables"
+                                    };
+                                    break;
                                 case 'edit':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gettext('Edit'),
+                                        "sButtonText" : gui.config.dataTableButtonsText['edit'],
                                         "fnSelect" : editSelected,
-                                        "fnClick" : editFnc,
+                                        "fnClick" : clickHandlerFor(options.onEdit, 'edit'),
                                         "sButtonClass" : "disabled btn3d btn3d-tables"
                                     };
                                     break;
                                 case 'delete':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gettext('Delete'),
+                                        "sButtonText" : gui.config.dataTableButtonsText['delete'],
                                         "fnSelect" : deleteSelected,
-                                        "fnClick" : deleteFnc,
+                                        "fnClick" : clickHandlerFor(options.onDelete, 'delete'),
                                         "sButtonClass" : "disabled btn3d btn3d-tables"
                                     };
                                     break;
                                 case 'refresh':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : gettext('Refresh'),
+                                        "sButtonText" : gui.config.dataTableButtonsText['refresh'],
                                         "fnClick" : refreshFnc,
                                         "sButtonClass" : "btn3d-primary btn3d btn3d-tables"
                                     };
@@ -383,7 +431,7 @@ GuiElement.prototype = {
                                 case 'xls':
                                     btn = {
                                         "sExtends" : "text",
-                                        "sButtonText" : 'xls',
+                                        "sButtonText" : gui.config.dataTableButtonsText['xls'],
                                         "fnClick" : function(){
                                             api.templates.get('spreadsheet', function(tmpl) {
                                                 var styles = { 'bold': 's21', };
@@ -417,7 +465,6 @@ GuiElement.prototype = {
                                                     rows_count: rows.length,
                                                     rows: rows.join('\n')
                                                 };
-                                                // window.location.href = uri + base64(api.templates.evaluate(tmpl, ctx));
                                                 setTimeout( function() {
                                                     saveAs(new Blob([api.templates.evaluate(tmpl, ctx)], 
                                                             {type: 'application/vnd.ms-excel'} ), title + '.xls');
@@ -437,20 +484,29 @@ GuiElement.prototype = {
                         var oTableTools = {
                             "aButtons" : btns
                         };
+                        
+                        // Type of row selection 
                         if (options.rowSelect) {
                             oTableTools.sRowSelect = options.rowSelect;
                         }
+                        
                         if (options.onRowSelect) {
-                            oTableTools.fnRowSelected = options.onRowSelect;
+                            var rowSelectedFnc = options.onRowSelect;
+                            oTableTools.fnRowSelected = function() {
+                                rowSelectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), this);
+                            };
                         }
                         if (options.onRowDeselect) {
-                            oTableTools.fnRowDeselected = options.onRowDeselect;
+                            var rowDeselectedFnc = options.onRowDeselect;
+                            oTableTools.fnRowDeselected = function() {
+                                rowDeselectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), this);
+                            };
                         }
     
                         $('#' + tableId).dataTable({
                             "aaData" : data,
                             "aoColumns" : columns,
-                            "oLanguage" : gui.dataTablesLanguage,
+                            "oLanguage" : gui.config.dataTablesLanguage,
                             "oTableTools" : oTableTools,
                             // First is upper row,
                             // second row is lower
@@ -462,7 +518,7 @@ GuiElement.prototype = {
                         api.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
                         // Fix form 
                         //$('#' + tableId + '_filter input').addClass('form-control');
-                        if (options.scroll !== undefined ) {
+                        if (options.scrollToTable === true ) {
                             var tableTop = $('#' + tableId).offset().top;
                             $('html, body').scrollTop(tableTop);
                         }

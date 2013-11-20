@@ -145,6 +145,41 @@ class ModelTypeHandlerMixin(object):
         
         if self._args[1] == 'gui':
             gui = self.getGui(self._args[0])
+            # Add name default description, at top of form
+            gui.insert(0, {
+                 'name': 'name', 
+                 'value':'', 
+                 'gui': {
+                    'required':True,
+                    'defvalue':'',
+                    'value':'',
+                    'label': _('Name'),
+                    'length': 128,
+                    'multiline': 0,
+                    'tooltip': _('Name of this element'),
+                    'rdonly': False,
+                    'type': 'text',
+                    'order': 1
+                 }  
+            })
+            # And comments
+            gui.insert(1, {
+                 'name': 'comments', 
+                 'value':'', 
+                 'gui': {
+                    'required':True,
+                    'defvalue':'',
+                    'value':'',
+                    'label': _('Comments'),
+                    'length': 256,
+                    'multiline': 0,
+                    'tooltip': _('Comments for this element'),
+                    'rdonly': False,
+                    'type': 'text',
+                    'order': 1
+                 }  
+            })
+
             logger.debug("GUI: {0}".format(gui))
             return gui
 

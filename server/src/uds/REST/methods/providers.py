@@ -36,7 +36,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider
 from uds.core import services
 
-from uds.REST import Handler, HandlerError
+from uds.REST import Handler, NotFound
 from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
 
 import logging
@@ -62,12 +62,18 @@ class Types(ModelTypeHandlerMixin, Handler):
     def enum_types(self):
         return services.factory().providers().values()
     
+    def getGui(self, type_):
+        try:
+            return services.factory().lookup(type_).guiDescription()
+        except:
+            raise NotFound('type not found')
+    
 class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'providers'
     title =  _('Current service providers')
     fields = [
             { 'name': {'title': _('Name'), 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
-            { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}}
+            { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
     ]
     
