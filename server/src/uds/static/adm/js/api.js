@@ -13,9 +13,20 @@
         }
     };
     
+    // Cache table
+    api.cacheTable = {};
+    
     // Returns a cache object (for easy caching requests, templates, etc...)
     api.cache = function(cacheName) {
         return new Cache(cacheName);
+    };
+    
+    api.cache.clear = function(cacheName) {
+        if( cacheName === undefined ) {
+            api.cacheTable = {};
+        } else {
+            api.cacheTable[cacheName] = {};
+        }
     };
     
     api.getJson = function(path, options) {
@@ -40,15 +51,13 @@
     };
 
     // Public attributes
-    api.debug = true;
+    api.debug = false;
 }(window.api = window.api || {}, jQuery));
 
 
 // Cache related
 function Cache(cacheName) {
     "use strict";
-    api.cacheTable = api.cacheTable || {};
-    
     api.cacheTable[cacheName] = api.cacheTable[cacheName] || {};
 
     this.name = cacheName;
@@ -141,6 +150,10 @@ BasicModelRest.prototype = {
         });
     },
     gui: function(typeName, options) {
+        // GUI returns a dict, that contains:
+        // name: Name of the field
+        // value: value of the field (selected element in choice, text for inputs, etc....)
+        // gui: Description of the field (type, value or values, defvalue, ....
         "use strict";
         options = options || {};
         var path = [this.typesPath, typeName, 'gui'].join('/');

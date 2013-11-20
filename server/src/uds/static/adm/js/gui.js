@@ -182,7 +182,7 @@ GuiElement.prototype = {
         // Datetime renderer (with specified format)
         var renderDate = function(format) {
             return function(data, type, full) {
-                return strftime(format, new Date(data*1000));
+                return api.tools.strftime(format, new Date(data*1000));
             };
         };
         
@@ -229,14 +229,14 @@ GuiElement.prototype = {
                             switch(options.type) {
                                 case 'date':
                                     column.sType = 'date';
-                                    column.mRender = renderDate(djangoFormat(get_format('SHORT_DATE_FORMAT')));
+                                    column.mRender = renderDate(api.tools.djangoFormat(get_format('SHORT_DATE_FORMAT')));
                                     break;
                                 case 'datetime':
                                     column.sType = 'date';
-                                    column.mRender = renderDate(djangoFormat(get_format('SHORT_DATETIME_FORMAT')));
+                                    column.mRender = renderDate(api.tools.djangoFormat(get_format('SHORT_DATETIME_FORMAT')));
                                     break;
                                 case 'time':
-                                    column.mRender = renderDate(djangoFormat(get_format('TIME_FORMAT')));
+                                    column.mRender = renderDate(api.tools.djangoFormat(get_format('TIME_FORMAT')));
                                     break;
                                 case 'iconType':
                                     //columnt.sType = 'html'; // html is default, so this is not needed
