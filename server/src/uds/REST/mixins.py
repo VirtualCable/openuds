@@ -32,6 +32,7 @@
 '''
 from __future__ import unicode_literals
 
+from handlers import NotFound
 from django.utils.translation import ugettext as _
 
 import logging
@@ -85,7 +86,7 @@ class ModelHandlerMixin(object):
             detail = detailCls(self, path, parent = item)
             return getattr(detail, self._operation)()
         except:
-            return {'error': 'method not found' }
+            raise NotFound('method not found')
         
     def get(self):
         logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
@@ -97,10 +98,9 @@ class ModelHandlerMixin(object):
             return self.processDetail()
         
         try:
-            item = list(self.getItems(pk=self._args[0]))[0]
+            return list(self.getItems(pk=self._args[0]))[0]
         except:
-            return {'error': 'not found' }
-
+            raise NotFound('item not found')
 
 class ModelTypeHandlerMixin(object):
     '''
@@ -122,13 +122,31 @@ class ModelTypeHandlerMixin(object):
             
     def getTypes(self, *args, **kwargs):
         for type_ in self.enum_types():
-            try:
-                yield self.type_as_dict(type_)
-            except:
-                logger.exception('Exception enumerating types')
+            yield self.type_as_dict(type_)
             
     def get(self):
-        return list(self.getTypes())
+        logger.debug(self._args)
+        nArgs = len(self._args)
+        if nArgs == 0:
+            return list(self.getTypes())
+        
+        found = None
+        for v in self.getTypes():
+            if v['type'] == self._args[0]:
+                found = v
+                break
+        
+        if found is None:
+            raise NotFound('type not found')
+        
+        logger.debug('Found type {0}'.format(v))
+        if nArgs == 1:
+            return found
+        
+        if self._args[1] == 'gui':
+            gui = self.getGui(self._args[0])
+            logger.debug("GUI: {0}".format(gui))
+            return gui
 
     
 class ModelTableHandlerMixin(object):

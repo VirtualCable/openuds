@@ -1,5 +1,6 @@
+/* jshint strict: true */
 (function(api, $, undefined) {
-
+    "use strict";
     // "public" methods
     api.doLog = function(data) {
         if (api.debug) {
@@ -17,8 +18,11 @@
         return new Cache(cacheName);
     };
     
-    api.getJson = function(path, success_fnc) {
-        url = api.url_for(path);
+    api.getJson = function(path, options) {
+        options = options || {};
+        var success_fnc = options.success || function(){}; 
+            
+        var url = api.url_for(path);
         api.doLog('Ajax GET Json for "' + url + '"');
         $.ajax({
             url : url,
@@ -27,10 +31,7 @@
             success : function(data) {
                 api.doLog('Success on "' + url + '".');
                 api.doLog('Received ' + JSON.stringify(data));
-                if (success_fnc !== undefined) {
-                    api.doLog('Executing success method');
-                    success_fnc(data);
-                }
+                success_fnc(data);
             },
             beforeSend : function(request) {
                 request.setRequestHeader(api.auth_header, api.token);
@@ -39,12 +40,13 @@
     };
 
     // Public attributes
-    api.debug = false;
+    api.debug = true;
 }(window.api = window.api || {}, jQuery));
 
 
 // Cache related
 function Cache(cacheName) {
+    "use strict";
     api.cacheTable = api.cacheTable || {};
     
     api.cacheTable[cacheName] = api.cacheTable[cacheName] || {};
@@ -55,6 +57,7 @@ function Cache(cacheName) {
 
 Cache.prototype = {
         get: function(key, not_found_fnc){
+            "use strict";
             not_found_fnc = not_found_fnc || function() { return undefined; };
         
             if( this.cache[key] === undefined ) {
@@ -64,7 +67,8 @@ Cache.prototype = {
         },
     
     put: function(key, value) {
-            this.cache[key] = value;
+        "use strict";
+        this.cache[key] = value;
         },
 };
 
@@ -74,6 +78,7 @@ Cache.prototype = {
 // code :-)
 
 function BasicModelRest(path, options) {
+    "use strict";
     options = options || {};
     path = path || '';
     // Requests paths
@@ -85,34 +90,70 @@ function BasicModelRest(path, options) {
 }
 
 BasicModelRest.prototype = {
+    // options:
+    // cacheKey: '.' --> do not cache
+    //           undefined -- > use path as key
+    //           success: success fnc to execute in case of success
+    _requestPath: function(path, options) {
+        "use strict";
+        options = options || {};
+        var success_fnc = options.success || function(){api.doLog('success not provided for '+path);};
+        var cacheKey = options.cacheKey || path;
+        
+        if( path == '.' ) {
+            success_fnc({});
+            return;
+        }
+        
+        if (cacheKey != '.' && this.cache.get(cacheKey)) {
+            success_fnc(this.cache.get(cacheKey));
+        } else {
+            var $this = this;
+            api.getJson(path, { 
+                success: function(data) {
+                    if( cacheKey != '.' ) {
+                        $this.cache.put(cacheKey, data);
+                    }
+                    success_fnc(data);
+                },
+            });
+        }
+    },
     get : function(options) {
+        "use strict";
         options = options || {};
         
         var path = this.getPath;
         if (options.id !== undefined)
             path += '/' + options.id;
-        api.getJson(path, options.success);
+        return this._requestPath(path, {
+            cacheKey: '.', // Right now, do not cache this
+            success: options.success,
+            
+        });
     },
-    types : function(success_fnc) {
-        // Cache types locally, will not change unless new broker version
-        sucess_fnc = success_fnc || function(data){};
-        if( this.typesPath == '.' ) {
-            success_fnc({});
-            return;
-        }
-        if (this.cache.get('types')) {
-            success_fnc(this.cache.get('types'));
-        } else {
-            var $this = this;
-            var path = this.typesPath;
-            api.getJson(path, function(data) {
-                $this.cache.put('types', data);
-                success_fnc(data);
-            });
-        }
+    types : function(options) {
+        "use strict";
+        options = options || {};
+        return this._requestPath(this.typesPath, {
+            cacheKey: 'type',
+            success: options.success,
+        });
     },
-
-    tableInfo : function(success_fnc) {
+    gui: function(typeName, options) {
+        "use strict";
+        options = options || {};
+        var path = [this.typesPath, typeName, 'gui'].join('/');
+        return this._requestPath(path, {
+            cacheKey: typeName + '-gui',
+            success: options.success,
+        });
+    },
+    tableInfo : function(options) {
+        "use strict";
+        options = options || {};
+        var success_fnc = options.success || function(){api.doLog('success not provided for tableInfo');};
+        
         var path = this.tableInfoPath;
         // Cache types locally, will not change unless new broker version
         if( this.cache.get(path) ) {
@@ -123,14 +164,17 @@ BasicModelRest.prototype = {
         }
 
         var $this = this;
-        api.getJson(path, function(data) {
-            $this.cache.put(path, data);
-            success_fnc(data);
+        api.getJson(path, {
+            success: function(data) {
+                        $this.cache.put(path, data);
+                        success_fnc(data);
+                    },
         });
 
     },
     
     detail: function(id, child) {
+        "use strict";
         return new DetailModelRestApi(this, id, child);
     }
 
@@ -138,6 +182,7 @@ BasicModelRest.prototype = {
 
 // For REST of type /auth/[id]/users, /services/[id]/users, ...
 function DetailModelRestApi(parentApi, parentId, model) {
+    "use strict";
     this.base = new BasicModelRest(undefined, {
         getPath: [parentApi.path, parentId, model].join('/'),
         typesPath: '.', // We do not has this on details
@@ -148,13 +193,16 @@ function DetailModelRestApi(parentApi, parentId, model) {
 DetailModelRestApi.prototype = {
     // Generates a basic model with fixed methods for "detail" models
     get: function(options) {
+        "use strict";
         return this.base.get(options);
     },
-    types: function(success_fnc) {
-        return this.base.types(success_fnc);
+    types: function(options) {
+        "use strict";
+        return this.base.types(options);
     },
-    tableInfo: function(success_fnc) { 
-        return this.base.tableInfo(success_fnc);
+    tableInfo: function(options) { 
+        "use strict";
+        return this.base.tableInfo(options);
     },
 };
 

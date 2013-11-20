@@ -43,7 +43,7 @@
     };
     
     tools.blockUI = function(message) {
-        message = message || '<h1><span class="fa fa-spinner fa-spin"></span> ' + gettext('Just a moment...') + '</h1>'
+        message = message || '<h1><span class="fa fa-spinner fa-spin"></span> ' + gettext('Just a moment...') + '</h1>';
         $.blockUI({ message: message });
     };
     

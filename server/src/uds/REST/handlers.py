@@ -46,6 +46,9 @@ AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'
 class HandlerError(Exception):
     pass
 
+class NotFound(HandlerError):
+    pass
+
 class AccessDenied(HandlerError):
     pass
 

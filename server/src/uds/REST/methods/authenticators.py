@@ -38,7 +38,7 @@ from uds.core import auths
 
 
 from users import Users
-from uds.REST import Handler, HandlerError
+from uds.REST import Handler, NotFound
 from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
 
 import logging
@@ -65,6 +65,13 @@ class Types(ModelTypeHandlerMixin, Handler):
     
     def enum_types(self):
         return auths.factory().providers().values()
+    
+    def getGui(self, type_):
+        try:
+            return auths.factory().lookup(type_).guiDescription()
+        except:
+            raise NotFound('type not found')
+
 
 class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'authenticators'

@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import get_language, ugettext as _
 import cPickle
 import logging
 
@@ -255,8 +255,8 @@ class gui(object):
             alter original values.
             '''
             data = self._data.copy()
-            data['label'] = _(data['label'])
-            data['tooltip'] = _(data['tooltip'])
+            data['label'] = data['label'] != '' and _(data['label']) or ''
+            data['tooltip'] = data['tooltip'] != '' and _(data['tooltip']) or ''
             return data
             
         @property
@@ -816,6 +816,7 @@ class UserInterface(object):
             object: If not none, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
         '''
+        logger.debug('Active languaje for gui translation: {0}'.format(get_language()))
         if obj is not None:
             obj.initGui()  # We give the "oportunity" to fill necesary gui data before providing it to client
         

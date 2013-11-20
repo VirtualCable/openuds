@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 04:21+0100\n"
+"POT-Creation-Date: 2013-11-20 04:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,13 +18,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: static/adm/js/gui-elements.js:7
+#: static/adm/js/gui-elements.js:33
 msgid "Service Providers"
 msgstr "Fornitori di servizi"
-
-#: static/adm/js/gui-elements.js:81
-msgid "Connectivity"
-msgstr "Connettività"
 
 #: static/adm/js/gui.js:18
 msgid "_MENU_ records per page"
@@ -70,19 +66,19 @@ msgstr "Prossimo"
 msgid "Previous"
 msgstr "Precedente"
 
-#: static/adm/js/gui.js:80
+#: static/adm/js/gui.js:75
 msgid "Deployed services"
 msgstr "Servizi distribuiti"
 
-#: static/adm/js/gui.js:349
+#: static/adm/js/gui.js:360
 msgid "Edit"
 msgstr "Modifica"
 
-#: static/adm/js/gui.js:358
+#: static/adm/js/gui.js:369
 msgid "Delete"
 msgstr "Eliminare"
 
-#: static/adm/js/gui.js:367
+#: static/adm/js/gui.js:378
 msgid "Refresh"
 msgstr "Aggiornamento"
 
@@ -161,3 +157,7 @@ msgstr "Novembre"
 #: static/adm/js/strftime.js:35
 msgid "December"
 msgstr "Dicembre"
+
+#: static/adm/js/tools.js:46
+msgid "Just a moment..."
+msgstr "Solo un momento..."
