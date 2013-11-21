@@ -37,7 +37,7 @@ from uds.models import Authenticator
 from uds.core import auths
 
 
-from users import Users
+from users_groups import Users, Groups
 from uds.REST import Handler, NotFound
 from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
 
@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 class Authenticators(ModelHandlerMixin, Handler):
     model = Authenticator
-    detail = { 'users': Users }
+    detail = { 'users': Users, 'groups':Groups }
     
     def item_as_dict(self, auth):
         type_ = auth.getType()
@@ -75,7 +75,7 @@ class Types(ModelTypeHandlerMixin, Handler):
 
 class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'authenticators'
-    detail = { 'users': Users }
+    detail = { 'users': Users, 'groups':Groups }
     
     title =  _('Current authenticators')
     fields = [

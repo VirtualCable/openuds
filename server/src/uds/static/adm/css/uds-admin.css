@@ -36,7 +36,7 @@ body {
 	display: none;
 }
 
-/* chevrons for collapsable pannels */
+/* collapsable && closeable pannels */
 .chevron:before {
   content: "\f139";
 }
@@ -48,6 +48,10 @@ body {
 	cursor: pointer;
 }
 
+#minimized {
+	margin-top: 0.6em;
+	margin-bottom: 0.3em;
+}
 
 /* Edit Below to Customize Widths > 768px */
 @media (min-width:768px) {

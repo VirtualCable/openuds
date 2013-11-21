@@ -84,13 +84,34 @@
 
         return '<div class="row"><div class="col-lg-12"><ol class="breadcrumb">' + list + "</ol></div></div>";
     };
+    
+    gui.minimizePanel = function(panelId) {
+        var title = $(panelId).attr('data-minimized');
+        $(panelId).hide('slow', function(){
+            $('<span class="label label-primary panel-icon"><b class="fa fa-plus-square-o"></b> ' + title + '</span>')
+                .appendTo('#minimized')
+                .click(function(){
+                    this.remove();
+                    $(panelId).show('slow');
+                });
+        });
+    };
 
+    gui.modal = function(id, title, content) {
+        return api.templates.evaluate('tmpl_modal', {
+            id: id,
+            title: title,
+            content: content
+        });
+    };
+    
     gui.clearWorkspace = function() {
-        $('#page-wrapper').empty();
+        $('#content').empty();
+        $('#minimized').empty();
     };
 
     gui.appendToWorkspace = function(data) {
-        $(data).appendTo('#page-wrapper');
+        $(data).appendTo('#content');
     };
 
     // Links methods
@@ -333,6 +354,7 @@ GuiElement.prototype = {
     
                 $this.rest.get({
                     success : function(data) {
+                        var refreshFnc;
                         var table = gui.table(title, tableId);
                         if (options.container === undefined) {
                             gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
@@ -376,7 +398,7 @@ GuiElement.prototype = {
                             // What execute on refresh button push
                             var onRefresh = options.onRefresh || function(){};
     
-                            var refreshFnc = function() {
+                            refreshFnc = function() {
                                 // Refreshes table content
                                 var tbl = $('#' + tableId).dataTable();
                                 // Clears selection first

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
@@ -38,6 +37,7 @@ from uds.core.util.State import State
 
 from uds.models import Authenticator
 
+from uds.REST.handlers import HandlerError
 from uds.REST.mixins import DetailHandler
 
 import logging
@@ -49,9 +49,6 @@ logger = logging.getLogger(__name__)
 class Users(DetailHandler):
     
     def get(self):
-        logger.debug(self._parent)
-        logger.debug(self._kwargs)
-        
         # Extract authenticator
         auth = self._kwargs['parent']
         
@@ -79,4 +76,30 @@ class Users(DetailHandler):
             { 'last_access': { 'title': _('Last access'), 'type': 'datetime' } },
         ]        
 
+class Groups(DetailHandler):
+    def get(self):
+        # Extract authenticator
+        auth = self._kwargs['parent']
         
+        try:
+            if len(self._args) == 0:
+                return list(auth.groups.all().values('id','name', 'comments','state','is_meta'))
+            else:
+                return auth.get(pk=self._args[0]).values('id','name', 'comments','state','is_meta')
+        except:
+            logger.exception('REST groups')
+            raise HandlerError('exception')
+        
+    def getTitle(self):
+        try:
+            return _('Groups of {0}').format(Authenticator.objects.get(pk=self._kwargs['parent_id']).name)
+        except:
+            return _('Current groups')
+    
+    def getFields(self):
+        return [
+            { 'name': {'title': _('User Id'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-group text-success' } },
+            { 'comments': { 'title': _('Comments') } },
+            { 'state': { 'title': _('state'), 'type': 'dict', 'dict': State.dictionary() } },
+        ]        
+    

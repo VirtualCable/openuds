@@ -19,6 +19,7 @@
                 return;
              // Let's check if a "preloaded template" exists                
             } else if( document.getElementById('tmpl_' + name) ) { 
+                $this.cache.put(name, 'tmpl_' + name); // In fact, this is not neccesary...
                 success_fnc('tmpl_' + name);
                 return;
             }
@@ -28,7 +29,7 @@
             type : "GET",
             dataType : "text",
             success : function(data) {
-                var cachedId = name;
+                var cachedId = 'tmpl_' + name;
                 $this.cache.put('_' + cachedId, $this.evaluate(data));
                 $this.cache.put(name, cachedId);
                 api.doLog('Success getting template "' + name + '".');

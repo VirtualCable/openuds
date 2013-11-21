@@ -146,7 +146,7 @@ class ModelTypeHandlerMixin(object):
         if self._args[1] == 'gui':
             gui = self.getGui(self._args[0])
             # Add name default description, at top of form
-            gui.insert(0, {
+            gui.append({
                  'name': 'name', 
                  'value':'', 
                  'gui': {
@@ -159,11 +159,11 @@ class ModelTypeHandlerMixin(object):
                     'tooltip': _('Name of this element'),
                     'rdonly': False,
                     'type': 'text',
-                    'order': 1
+                    'order': -2
                  }  
             })
             # And comments
-            gui.insert(1, {
+            gui.append({
                  'name': 'comments', 
                  'value':'', 
                  'gui': {
@@ -176,12 +176,14 @@ class ModelTypeHandlerMixin(object):
                     'tooltip': _('Comments for this element'),
                     'rdonly': False,
                     'type': 'text',
-                    'order': 1
+                    'order': -1
                  }  
             })
+            
+            
 
             logger.debug("GUI: {0}".format(gui))
-            return gui
+            return sorted(gui, key=lambda f: f['gui']['order']);
 
     
 class ModelTableHandlerMixin(object):

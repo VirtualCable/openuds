@@ -35,7 +35,13 @@
         <!-- End of menu -->
                 <!-- Content -->
                  <div id="page-wrapper">
+                    <div id="content">
                     {% block body %}{% endblock %}
+                    </div>
+                    <div class="row">
+                        <div id="minimized" class="col-lg-12">
+                        </div>
+                    </div>
                 </div>
                 <!--  End of content -->
         </div>
@@ -101,10 +107,24 @@
             });        
         </script>
         {% block js %}{% endblock %}
-        <!-- templates -->
         {% js_template_path 'uds/admin/tmpl' %}
+        <!-- preloading of templates -->
+        <!-- page contents -->
         {% js_template 'dashboard' %}
         {% js_template 'authenticators' %}
+        <!-- components -->
         {% js_template 'table' %}
+        {% js_template 'modal' %}
+        <!-- fields -->
+        {% js_template 'fld/checkbox' %}
+        {% js_template 'fld/choice' %}
+        {% js_template 'fld/editlist' %}
+        {% js_template 'fld/hidden' %}
+        {% js_template 'fld/multichoice' %}
+        {% js_template 'fld/numeric' %}
+        {% js_template 'fld/password' %}
+        {% js_template 'fld/text' %}
+        {% js_template 'fld/textbox' %}
+        
     </body>
 </html>

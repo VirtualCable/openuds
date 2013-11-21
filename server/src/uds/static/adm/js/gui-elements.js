@@ -37,7 +37,13 @@ gui.providers.link = function(event) {
         onEdit: function(value, event, table) {
             gui.providers.rest.gui(value.type, {
                success: function(data){
-                   gui.fields(data);
+                   var form = gui.fields(data);
+                   gui.appendToWorkspace(gui.modal('edit_modal', gettext('Edit service provider'), form));
+                   $('#edit_modal').modal()
+                       .on('hidden.bs.modal', function () {
+                           $('#edit_modal').remove();
+                       })
+;
                },
             });
         },
@@ -59,7 +65,8 @@ gui.authenticators.link = function(event) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {
             auths : 'auths-placeholder',
-            users : 'users-placeholder'
+            users : 'users-placeholder',
+            groups: 'groups-placeholder',
         }));
         gui.setLinksEvents();
 
@@ -71,6 +78,15 @@ gui.authenticators.link = function(event) {
                 api.tools.blockUI();
                 var id = selected[0].id;
                 var user = new GuiElement(api.authenticators.detail(id, 'users'), 'users');
+                var group = new GuiElement(api.authenticators.detail(id, 'groups'), 'groups');
+                group.table({
+                    container : 'groups-placeholder',
+                    rowSelect : 'multi',
+                    buttons : [ 'edit', 'delete', 'xls' ],
+                    onLoad: function(k) {
+                        api.tools.unblockUI();
+                    },
+                });
                 user.table({
                     container : 'users-placeholder',
                     rowSelect : 'multi',
@@ -84,6 +100,19 @@ gui.authenticators.link = function(event) {
             },
             onRefresh : function() {
                 $('#users-placeholder').empty(); // Remove detail on parent refresh
+            },
+            onEdit: function(value, event, table) {
+                gui.authenticators.rest.gui(value.type, {
+                   success: function(data){
+                       var form = gui.fields(data);
+                       gui.appendToWorkspace(gui.modal('edit_modal', gettext('Edit authenticator'), form));
+                       $('#edit_modal').modal()
+                           .on('hidden.bs.modal', function () {
+                               $('#edit_modal').remove();
+                           })
+    ;
+                   },
+                });
             },
         });
     });
