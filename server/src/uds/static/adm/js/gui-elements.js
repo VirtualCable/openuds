@@ -34,10 +34,12 @@ gui.providers.link = function(event) {
 
     var tableId = gui.providers.table({
         rowSelect : 'multi',
-        rowSelectFnc : function(data) {
-            gui.doLog(data);
-            gui.doLog(this);
-            gui.doLog(this.fnGetSelectedData());
+        onEdit: function(value, event, table) {
+            gui.providers.rest.gui(value.type, {
+               success: function(data){
+                   gui.fields(data);
+               },
+            });
         },
         buttons : [ 'edit', 'delete', 'xls' ],
     });

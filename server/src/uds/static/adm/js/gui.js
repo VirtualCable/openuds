@@ -9,7 +9,6 @@
             } catch (e) {
                 // nothing can be logged
             }
-
         }
     };
     
@@ -59,20 +58,16 @@
     gui.table = function(title, table_id, options) {
         options = options || {};
         var size = options.size || 12;
-        var icon = options.icon || 'table';
         var panelId = 'panel-' + table_id;
 
         return {
-           text: '<div class="panel panel-primary" id="' + panelId + '">' +
-                 '<div class="panel-heading">' +
-                 '<h3 class="panel-title"><span class="fa fa-' + icon + '"></span> ' + title + 
-                 '<span class="panel-icon fa fa-dot-circle-o pull-right" onclick="$(\'#'+panelId + '\').remove();"> </span>' +
-                 '<span class="panel-icon fa chevron pull-right" data-toggle="collapse" data-target="#' + panelId  + ' > div.panel-body"> </span>' +
-                 '<span class="panel-icon fa fa-refresh pull-right"> </span>' +
-                 '</h3>' +
-                 '</div>' +
-                 '<div class="panel-body collapse in"><table class="table table-striped table-bordered table-hover" id="' +
-                 table_id + '" border="0" cellpadding="0" cellspacing="0" width="100%"></table></div></div>',
+           text: api.templates.evaluate('tmpl_table', {
+                     panelId: panelId,
+                     icon: options.icon || 'table',
+                     size: options.size || 12,
+                     title: title,
+                     table_id: table_id
+                 }),
            panelId: panelId,
            refreshSelector: '#' + panelId + ' span.fa-refresh'
         };
@@ -350,7 +345,7 @@ GuiElement.prototype = {
     
                         if (options.buttons) {
                             var clickHandlerFor = function(handler, action) {
-                                var handleFnc = handler || function(val, action, tbl, tbltools) {gui.doLog('Default handler called for ' + action + ': ' + JSON.stringify(val));};
+                                var handleFnc = handler || function(val, action, tbl) {gui.doLog('Default handler called for ' + action + ': ' + JSON.stringify(val));};
                                 return function(btn) {
                                     var tbl = $('#' + tableId).dataTable();
                                     var val = this.fnGetSelectedData()[0];
