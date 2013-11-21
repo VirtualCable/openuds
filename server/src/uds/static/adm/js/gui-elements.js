@@ -39,7 +39,7 @@ gui.providers.link = function(event) {
             gui.doLog(this);
             gui.doLog(this.fnGetSelectedData());
         },
-        buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+        buttons : [ 'edit', 'delete', 'xls' ],
     });
 
     return false;
@@ -64,7 +64,7 @@ gui.authenticators.link = function(event) {
         gui.authenticators.table({
             container : 'auths-placeholder',
             rowSelect : 'single',
-            buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+            buttons : [ 'edit', 'delete', 'xls' ],
             onRowSelect : function(selected) {
                 api.tools.blockUI();
                 var id = selected[0].id;
@@ -72,7 +72,7 @@ gui.authenticators.link = function(event) {
                 user.table({
                     container : 'users-placeholder',
                     rowSelect : 'multi',
-                    buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+                    buttons : [ 'edit', 'delete', 'xls' ],
                     scrollToTable : true,
                     onLoad: function(k) {
                         api.tools.unblockUI();
@@ -97,7 +97,7 @@ gui.osmanagers.link = function(event) {
 
     gui.osmanagers.table({
         rowSelect : 'single',
-        buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+        buttons : [ 'edit', 'delete', 'xls' ],
     });
 
     return false;
@@ -120,12 +120,12 @@ gui.connectivity.link = function(event) {
         gui.connectivity.transports.table({
             rowSelect : 'multi',
             container : 'transports-placeholder',
-            buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+            buttons : [ 'edit', 'delete', 'xls' ],
         });
         gui.connectivity.networks.table({
             rowSelect : 'multi',
             container : 'networks-placeholder',
-            buttons : [ 'edit', 'refresh', 'delete', 'xls' ],
+            buttons : [ 'edit', 'delete', 'xls' ],
         });
     });
       

@@ -32,12 +32,11 @@
 '''
 from __future__ import unicode_literals
 
-import time
+#import time
 from django.utils.translation import ugettext as _
-from django.utils import formats
 from uds.core.util.State import State
 
-from uds.models import Authenticator, User
+from uds.models import Authenticator
 
 from uds.REST.mixins import DetailHandler
 

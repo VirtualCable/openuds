@@ -55,22 +55,27 @@
             css: 'btn3d-info btn3d btn3d-tables',
         },
     };
-
+    
     gui.table = function(title, table_id, options) {
-        if (options === undefined)
-            options = {
-                'size' : 12,
-                'icon' : 'table'
-            };
-        if (options.size === undefined)
-            options.size = 12;
-        if (options.icon === undefined)
-            options.icon = 'table';
+        options = options || {};
+        var size = options.size || 12;
+        var icon = options.icon || 'table';
+        var panelId = 'panel-' + table_id;
 
-        return '<div class="panel panel-primary"><div class="panel-heading">' +
-                '<h3 class="panel-title"><span class="fa fa-' + options.icon + '"></span> ' + title + '</h3></div>' +
-                '<div class="panel-body"><table class="table table-striped table-bordered table-hover" id="' +
-                table_id + '" border="0" cellpadding="0" cellspacing="0" width="100%"></table></div></div>';
+        return {
+           text: '<div class="panel panel-primary" id="' + panelId + '">' +
+                 '<div class="panel-heading">' +
+                 '<h3 class="panel-title"><span class="fa fa-' + icon + '"></span> ' + title + 
+                 '<span class="panel-icon fa fa-dot-circle-o pull-right" onclick="$(\'#'+panelId + '\').remove();"> </span>' +
+                 '<span class="panel-icon fa chevron pull-right" data-toggle="collapse" data-target="#' + panelId  + ' > div.panel-body"> </span>' +
+                 '<span class="panel-icon fa fa-refresh pull-right"> </span>' +
+                 '</h3>' +
+                 '</div>' +
+                 '<div class="panel-body collapse in"><table class="table table-striped table-bordered table-hover" id="' +
+                 table_id + '" border="0" cellpadding="0" cellspacing="0" width="100%"></table></div></div>',
+           panelId: panelId,
+           refreshSelector: '#' + panelId + ' span.fa-refresh'
+        };
     };
 
     gui.breadcrumbs = function(path) {
@@ -200,25 +205,21 @@ GuiElement.prototype = {
     //                Receives 3 parameters:
     //                   1.- the array of selected items data (objects, as got from api...get)
     //                   2.- the DataTable that raised the event
-    //                   3.- the DataTableTools that raised the event
     //   onNew: Event (function). If defined, will be invoked when "new" button is pressed
     //                Receives 4 parameters:
     //                   1.- the selected item data (single object, as got from api...get)
     //                   2.- the event that fired this (new, delete, edit, ..)
     //                   3.- the DataTable that raised the event
-    //                   4.- the DataTableTools that raised the event
     //   onEdit: Event (function). If defined, will be invoked when "edit" button is pressed
     //                Receives 4 parameters:
     //                   1.- the selected item data (single object, as got from api...get)
     //                   2.- the event that fired this (new, delete, edit, ..)
     //                   3.- the DataTable that raised the event
-    //                   4.- the DataTableTools that raised the event
     //   onDelete: Event (function). If defined, will be invoked when "delete" button is pressed
     //                Receives 4 parameters:
     //                   1.- the selected item data (single object, as got from api...get)
     //                   2.- the event that fired this (new, delete, edit, ..)
     //                   4.- the DataTable that raised the event
-    //                   5.- the DataTableTools that raised the event
     table : function(options) {
         "use strict";
         options = options || {};
@@ -339,10 +340,10 @@ GuiElement.prototype = {
                     success : function(data) {
                         var table = gui.table(title, tableId);
                         if (options.container === undefined) {
-                            gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table + '</div></div>');
+                            gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
                         } else {
                             $('#' + options.container).empty();
-                            $('#' + options.container).append(table);
+                            $('#' + options.container).append(table.text);
                         }
     
                         var btns = [];
@@ -351,42 +352,14 @@ GuiElement.prototype = {
                             var clickHandlerFor = function(handler, action) {
                                 var handleFnc = handler || function(val, action, tbl, tbltools) {gui.doLog('Default handler called for ' + action + ': ' + JSON.stringify(val));};
                                 return function(btn) {
-                                    var tblTools = this;
-                                    var table = $('#' + tableId).dataTable();
+                                    var tbl = $('#' + tableId).dataTable();
                                     var val = this.fnGetSelectedData()[0];
                                     setTimeout(function() {
-                                        handleFnc(val, action, table, tblTools);
+                                        handleFnc(val, action, tbl);
                                     }, 0);
                                 };
                             };
-    
-                            // What execute on refresh button push
-                            var onRefresh = options.onRefresh || function(){};
-    
-                            var refreshFnc = function(btn) {
-                                // Refreshes table content
-                                var tbl = $('#' + tableId).dataTable();
-                                /*var width = $(btn).width();
-                                var saved = $(btn).html();
-                                $(btn).addClass('disabled').html('<span class="fa fa-spinner fa-spin"></span>')
-                                        .width(width);*/
-                                if( data.length > 1000 )
-                                    api.tools.blockUI();
-                                
-                                onRefresh($this);
-                                
-                                $this.rest.get({
-                                    success : function(data) {
-                                        /*$(btn).removeClass('disabled').width('').html(saved);*/
-                                        setTimeout( function() {
-                                            tbl.fnClearTable();
-                                            tbl.fnAddData(data);
-                                            api.tools.unblockUI();
-                                        }, 0);
-                                    }
-                                });
-                            };
-    
+
                             // methods for buttons on row select
                             var editSelected = function(btn, obj, node) {
                                 var sel = this.fnGetSelectedData();
@@ -403,6 +376,31 @@ GuiElement.prototype = {
                                 } else {
                                     $(btn).removeClass('btn3d-warning').addClass('disabled');
                                 }
+                            };
+                            
+                            // What execute on refresh button push
+                            var onRefresh = options.onRefresh || function(){};
+    
+                            var refreshFnc = function() {
+                                // Refreshes table content
+                                var tbl = $('#' + tableId).dataTable();
+                                // Clears selection first
+                                TableTools.fnGetInstance(tableId).fnSelectNone();
+                                if( data.length > 1000 )
+                                    api.tools.blockUI();
+                                
+                                $this.rest.get({
+                                    success : function(data) {
+                                        /*$(btn).removeClass('disabled').width('').html(saved);*/
+                                        setTimeout( function() {
+                                            tbl.fnClearTable();
+                                            tbl.fnAddData(data);
+                                            onRefresh($this);
+                                            api.tools.unblockUI();
+                                        }, 0);
+                                    }
+                                });
+                                return false; // This may be used on button or href, better disable execution of it
                             };
     
                             $.each(options.buttons, function(index, value) {
@@ -532,7 +530,10 @@ GuiElement.prototype = {
                         // Fix 3dbuttons
                         api.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
                         // Fix form 
-                        //$('#' + tableId + '_filter input').addClass('form-control');
+                        $('#' + tableId + '_filter input').addClass('form-control');
+                        // Add refresh action to panel
+                        $(table.refreshSelector).click(refreshFnc);
+                        
                         if (options.scrollToTable === true ) {
                             var tableTop = $('#' + tableId).offset().top;
                             $('html, body').scrollTop(tableTop);
