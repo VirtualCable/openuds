@@ -60,7 +60,7 @@
     };
 
     // Simple JavaScript Templating, using HandleBars
-    api.templates.evaluate = function (str, context) {
+    api.templates.evaluate = function(str, context) {
         // Figure out if we're getting a template, or if we need to
         // load the template - and be sure to cache the result.
         var cached;

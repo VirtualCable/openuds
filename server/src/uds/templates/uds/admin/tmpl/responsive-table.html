@@ -1,0 +1,10 @@
+{% verbatim %}
+<style id="style-{{ tableId }}" media="screen">
+@media (max-width: 768px) {
+    {{#each columns }}
+    #{{ tableId }} td:nth-of-type({{@index}}):before { content: "{{ this.sTitle }}"}\n');
+                respStyles.push('#' + tableId + ' td:nth-of-type(' + counter + '):empty { background-color: red ;}\n');
+    {{/each }} 
+};
+</style>
+{% endverbatim %}

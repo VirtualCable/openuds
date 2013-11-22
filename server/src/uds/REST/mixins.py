@@ -91,11 +91,22 @@ class ModelHandlerMixin(object):
     def get(self):
         logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) == 0:
+            result = []
+            for val in self.model.objects.all():
+                res = self.item_as_dict(val)
+                if hasattr(val, 'getInstance'):
+                    for key, value in val.getInstance().valuesDict().iteritems():
+                        res[key] = value
+                result.append(res)
+            return result
+
+        if self._args[0] == 'overview':
             return list(self.getItems())
 
         # If has detail and is requesting detail        
         if self.detail is not None and len(self._args) > 1:
             return self.processDetail()
+        
         
         try:
             val = self.model.objects.get(pk=self._args[0])

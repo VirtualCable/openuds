@@ -139,6 +139,6 @@ if ($.fn.DataTable.TableTools) {
             "button" : "li",
             "liner" : "a"
         },
-        "button" : "button",
+//        "button" : "button",
     });
 }

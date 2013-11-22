@@ -128,28 +128,50 @@ BasicModelRest.prototype = {
             });
         }
     },
-    get : function(options) {
+    get : function(success_fnc, options) {
         "use strict";
         options = options || {};
         
         var path = this.getPath;
-        if (options.id !== undefined)
+        if ( options.id )
             path += '/' + options.id;
         return this._requestPath(path, {
-            cacheKey: '.', // Right now, do not cache this
-            success: options.success,
+            cacheKey: '.', // Right now, do not cache any "get" method
+            success: success_fnc,
             
         });
     },
-    types : function(options) {
+    list: function(success_fnc, options) {  // This is "almost" an alias for get
+        "use strict";
+        options = options || {};
+        return this.get(success_fnc, {
+            id: '',
+        });
+    },
+    overview: function(success_fnc, options) {
+        "use strict";
+        options = options || {};
+        return this.get(success_fnc, {
+            id: 'overview',
+        });
+    },
+    item: function(itemId, success_fnc, options) {
+        "use strict";
+        options = options || {};
+        return this.get(success_fnc, {
+            id: itemId,
+        });
+        
+    },
+    types : function(success_fnc, options) {
         "use strict";
         options = options || {};
         return this._requestPath(this.typesPath, {
             cacheKey: 'type',
-            success: options.success,
+            success: success_fnc,
         });
     },
-    gui: function(typeName, options) {
+    gui: function(typeName, success_fnc, options) {
         // GUI returns a dict, that contains:
         // name: Name of the field
         // value: value of the field (selected element in choice, text for inputs, etc....)
@@ -159,31 +181,18 @@ BasicModelRest.prototype = {
         var path = [this.typesPath, typeName, 'gui'].join('/');
         return this._requestPath(path, {
             cacheKey: typeName + '-gui',
-            success: options.success,
+            success: success_fnc,
         });
     },
-    tableInfo : function(options) {
+    tableInfo : function(success_fnc, options) {
         "use strict";
         options = options || {};
-        var success_fnc = options.success || function(){api.doLog('success not provided for tableInfo');};
+        success_fnc = success_fnc || function(){api.doLog('success not provided for tableInfo');};
         
         var path = this.tableInfoPath;
-        // Cache types locally, will not change unless new broker version
-        if( this.cache.get(path) ) {
-            if (success_fnc) {
-                success_fnc(this.cache.get(path));
-            }
-            return;
-        }
-
-        var $this = this;
-        api.getJson(path, {
-            success: function(data) {
-                        $this.cache.put(path, data);
-                        success_fnc(data);
-                    },
+        this._requestPath(path, {
+            success: success_fnc,
         });
-
     },
     
     detail: function(id, child) {
@@ -209,14 +218,27 @@ DetailModelRestApi.prototype = {
         "use strict";
         return this.base.get(options);
     },
-    types: function(options) {
-        "use strict";
-        return this.base.types(options);
-    },
     tableInfo: function(options) { 
         "use strict";
         return this.base.tableInfo(options);
     },
+    list: function(success_fnc, options) {  // This is "almost" an alias for get
+        "use strict";
+        return this.base.list(success_fnc, options);
+    },
+    overview: function(success_fnc, options) {
+        "use strict";
+        return this.base.overview(success_fnc, options);
+    },
+    item: function(itemId, success_fnc, options) {
+        "use strict";
+        return this.base.item(success_fnc, options);
+    },
+    types: function(options) {
+        "use strict";
+        return this.base.types(options);
+    },
+    
 };
 
 // Populate api
