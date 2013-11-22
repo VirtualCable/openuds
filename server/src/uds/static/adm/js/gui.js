@@ -105,6 +105,36 @@
         });
     };
     
+    gui.launchModal = function(title, content, onSuccess) {
+        var id = Math.random().toString().split('.')[1];
+        gui.appendToWorkspace(gui.modal(id, title, content));
+        id = '#' + id; // for jQuery
+        // For "beauty" switches, initialize them now
+        $(id + ' .make-switch').bootstrapSwitch();
+        // Activate "cool" selects
+        $(id + ' .selectpicker').selectpicker();
+        // TEST: cooller on mobile devices
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+            $(id + ' .selectpicker').selectpicker('mobile');
+            }        
+        // Activate tooltips
+        $(id + ' [data-toggle="tooltip"]').tooltip({delay: 500, placement: 'auto right'});
+        // And catch "accept" (default is "Save" in fact) button click
+        $(id + ' .button-accept').click(function(){
+            if( onSuccess ) {
+                if( onSuccess(id + ' form') === false ) // Some error may have ocurred, do not close dialog 
+                    return;
+            }
+            $(id).modal('hide');
+        });
+        
+        // Launch modal
+        $(id).modal()
+             .on('hidden.bs.modal', function () {
+                 $(id).remove();
+             });
+    };
+    
     gui.clearWorkspace = function() {
         $('#content').empty();
         $('#minimized').empty();

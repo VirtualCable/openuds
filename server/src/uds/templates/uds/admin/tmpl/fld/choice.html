@@ -1,0 +1,11 @@
+{% extends "uds/admin/tmpl/fld/form-group.html" %}
+{% load i18n %}
+{% block field %}
+{% verbatim %}
+<select class="selectpicker show-menu-arrow {{ css }}" name="{{ name }}" id="{{ name }}_field">
+    {{#each values }}
+    <option value="{{ id }}"{{# ifequals id ../value }}selected{{/ ifequals }}>{{ text }}</option>
+    {{/each}}
+</select>
+{% endverbatim %}
+{% endblock %}

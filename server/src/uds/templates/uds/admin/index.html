@@ -17,6 +17,7 @@
         <link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
 
         <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
@@ -33,29 +34,32 @@
         
         {% block menu %}{% include 'uds/admin/snippets/navbar.html' %}{% endblock %}
         <!-- End of menu -->
-                <!-- Content -->
-                 <div id="page-wrapper">
-                    <div id="content">
-                    {% block body %}{% endblock %}
-                    </div>
-                    <div class="row">
-                        <div id="minimized" class="col-lg-12">
-                        </div>
-                    </div>
+        <!-- Content -->
+             <div id="page-wrapper">
+                <div id="content">
+                {% block body %}{% endblock %}
                 </div>
-                <!--  End of content -->
-        </div>
-        </div>
+                <div class="row">
+                    <div id="minimized" class="col-lg-12">
+                </div>
+                </div>
+            </div>
+         </div>
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
         
         <script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
         <script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
+        <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
 
         <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
+        
+        <!-- template engine -->
+        <script src="{% get_static_prefix %}adm/js/handlebars-v1.1.2.js"></script>
+        
 
         <!--  for "save" from javascript -->
         <script src="{% get_static_prefix %}adm/js/Blob.js"></script>

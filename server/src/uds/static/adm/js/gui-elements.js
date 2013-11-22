@@ -33,7 +33,7 @@ gui.providers.link = function(event) {
     gui.appendToWorkspace(gui.breadcrumbs(gettext('Service Providers')));
 
     var tableId = gui.providers.table({
-        rowSelect : 'multi',
+        rowSelect : 'single',
         onEdit: function(value, event, table) {
             gui.providers.rest.gui(value.type, {
                success: function(data){
@@ -105,12 +105,7 @@ gui.authenticators.link = function(event) {
                 gui.authenticators.rest.gui(value.type, {
                    success: function(data){
                        var form = gui.fields(data);
-                       gui.appendToWorkspace(gui.modal('edit_modal', gettext('Edit authenticator'), form));
-                       $('#edit_modal').modal()
-                           .on('hidden.bs.modal', function () {
-                               $('#edit_modal').remove();
-                           })
-    ;
+                       gui.launchModal(gettext('Edit authenticator')+' '+value.name, form);
                    },
                 });
             },
@@ -152,6 +147,23 @@ gui.connectivity.link = function(event) {
             rowSelect : 'multi',
             container : 'transports-placeholder',
             buttons : [ 'edit', 'delete', 'xls' ],
+            onEdit: function(value, event, table) {
+                gui.connectivity.transports.rest.gui(value.type, {
+                   success: function(itemGui){
+                       gui.connectivity.transports.rest.get({
+                           id:value.id,
+                           success: function(item) {
+                               var form = gui.fields(itemGui, item);
+                               gui.launchModal(gettext('Edit transport')+' '+value.name,form, function(form_selector) {
+                                   var fields = gui.fields.read(form_selector);
+                                   return false;
+                               });
+                           },
+                       });
+                   },
+                });
+            },
+
         });
         gui.connectivity.networks.table({
             rowSelect : 'multi',

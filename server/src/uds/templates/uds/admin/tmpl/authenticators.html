@@ -1,19 +1,21 @@
-{% load i18n html5 static %}
+{% load i18n %}
 <div class="row">
   <div class="col-xs-12">
-    <h1>{% trans 'Authenticators' %} <small>{% trans 'administration of authenticators' %}</small></h1>
+    <h1>{% trans 'Authenticators' %}</h1>
     <ol class="breadcrumb">
       <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
       <li>otra cosa</li>
     </ol>
   </div>
 </div><!-- /.row -->
+{% verbatim %}
 <div class="row">
-    <div id="<%= auths %>" class="col-xs-12"></div>
+    <div id="{{ auths }}" class="col-xs-12"></div>
 </div>
 <div class="row">
-    <div id="<%= groups %>" class="col-xs-12"></div>
+    <div id="{{ groups }}" class="col-xs-12"></div>
 </div>
 <div class="row">
-    <div id="<%= users %>" class="col-xs-12"></div>
+    <div id="{{ users }}" class="col-xs-12"></div>
 </div>
+{% endverbatim %}

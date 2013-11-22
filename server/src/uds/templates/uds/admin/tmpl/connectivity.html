@@ -1,4 +1,4 @@
-{% load i18n html5 static %}
+{% load i18n %}
 <div class="row">
   <div class="col-xs-12">
     <h1>{% trans 'Connectivity' %} <small>{% trans 'overview' %}</small></h1>
@@ -7,10 +7,11 @@
     </ol>
   </div>
 </div><!-- /.row -->
-
+{% verbatim %}
 <div class="row">
-    <div class="col-lg-6" id="<%= transports %>">
+    <div class="col-lg-6" id="{{ transports }}">
     </div>
-    <div class="col-lg-6" id="<%= networks %>">
+    <div class="col-lg-6" id="{{ networks }}">
     </div>
 </div>
+{% endverbatim %}

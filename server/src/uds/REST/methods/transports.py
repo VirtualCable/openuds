@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 from uds.models import Transport
 from uds.core.transports import factory
 
-from uds.REST import Handler, HandlerError
+from uds.REST import Handler, NotFound
 from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
 
 import logging
@@ -52,10 +52,11 @@ class Transports(ModelHandlerMixin, Handler):
         type_ = item.getType()
         return { 'id': item.id,
                  'name': item.name,
+                 'comments': item.comments,
                  'priority': item.priority, 
+                 'nets_positive': item.nets_positive,
                  'deployed_count': item.deployedServices.count(),
                  'type': type_.type(),
-                 'comments': item.comments
         }
 
 class Types(ModelTypeHandlerMixin, Handler):
@@ -63,6 +64,13 @@ class Types(ModelTypeHandlerMixin, Handler):
     
     def enum_types(self):
         return factory().providers().values()
+    
+    def getGui(self, type_):
+        try:
+            return factory().lookup(type_).guiDescription()
+        except:
+            raise NotFound('type not found')
+    
 
 class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'transports'

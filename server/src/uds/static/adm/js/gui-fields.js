@@ -3,15 +3,17 @@
     "use strict";
 
     // Returns a form that will manage a gui description (new or edit)
-    gui.fields = function(item_description) {
-        var form = '<form class="form-horizontal" role="form">';
-        // item_description is expected to have fields sorted by .gui.order (REST api returns them sorted)
-        $.each(item_description, function(index, f){
-            
+    gui.fields = function(itemGui, item) {
+        var editing = item !== undefined; // Locate real Editing
+        item = item || {id:''};
+        var form = '<form class="form-horizontal" role="form">' +
+                   '<input type="hidden" name="id" class="modal_field_data" value="' + item.id + '">';
+        // itemGui is expected to have fields sorted by .gui.order (REST api returns them sorted)
+        $.each(itemGui, function(index, f){
             gui.doLog(f);
-            var editing = false; // Locate real Editing
+            gui.doLog(item[f.name]);
             form += api.templates.evaluate('tmpl_fld_'+f.gui.type, {
-                value: f.value || f.gui.value || f.gui.defvalue, // If no value present, use default value
+                value: item[f.name] || f.gui.value || f.gui.defvalue, // If no value present, use default value
                 values: f.gui.values,
                 label: f.gui.label,
                 length: f.gui.length,
@@ -21,10 +23,28 @@
                 tooltip: f.gui.tooltip,
                 type: f.gui.type,
                 name: f.name,
+                css: 'modal_field_data',
             });
         });
         form += '</form>';
         return form;
+    };
+    
+    // Reads fields from a form
+    gui.fields.read = function(formSelector) {
+        var res = {};
+        $(formSelector + ' .modal_field_data').each(function(i, field) {
+            var $field = $(field);
+            if( $field.attr('name') ) { // Is a valid field
+                if( $field.attr('type') == 'checkbox') {
+                    res[$field.attr('name')] = $field.is(':checked');
+                } else {
+                    res[$field.attr('name')] = $field.val();
+                }
+            }
+        });
+        gui.doLog(res);
+        return res;
     };
 
 }(window.gui = window.gui || {}, jQuery));

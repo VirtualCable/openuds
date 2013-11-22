@@ -1,3 +1,4 @@
+{% verbatim %}
 <?xml version="1.0"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook
@@ -9,7 +10,7 @@
   <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
     <Author>UDS Administration</Author>
     <LastAuthor>UDS Administration Interface</LastAuthor>
-    <Created><%= creation_date %></Created>
+    <Created>{{ creation_date }}</Created>
     <Company>UDS</Company>
     <Version>1.0</Version>
   </DocumentProperties>
@@ -34,10 +35,10 @@
       <Font x:Family="Verdana" ss:Bold="1" />
     </Style>
   </Styles>
-  <Worksheet ss:Name="<%= worksheet %>">
-    <Table ss:ExpandedColumnCount="<%= columns_count %>" ss:ExpandedRowCount="<%= rows_count %>"
+  <Worksheet ss:Name="{{ worksheet }}">
+    <Table ss:ExpandedColumnCount="{{ columns_count }}" ss:ExpandedRowCount="{{ rows_count }}"
            x:FullColumns="1" x:FullRows="1">
-      <%= rows %>           
+      {{{ rows }}}           
     </Table>
     <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
       <Print>
@@ -58,3 +59,4 @@
     </WorksheetOptions>
   </Worksheet>
 </Workbook>
+{% endverbatim %}

@@ -98,7 +98,12 @@ class ModelHandlerMixin(object):
             return self.processDetail()
         
         try:
-            return list(self.getItems(pk=self._args[0]))[0]
+            val = self.model.objects.get(pk=self._args[0])
+            res = self.item_as_dict(val)
+            if hasattr(val, 'getInstance'):
+                for key, value in val.getInstance().valuesDict().iteritems():
+                    res[key] = value
+            return res 
         except:
             raise NotFound('item not found')
 
