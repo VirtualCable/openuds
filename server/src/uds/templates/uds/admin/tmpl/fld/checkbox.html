@@ -3,7 +3,7 @@
 {% block field %}
         <div class="make-switch" data-on-label="{% trans 'Yes' %}" data-off-label="{% trans 'No' %}">
  {% verbatim %}
-            <input type="checkbox" class="{{ css }}" name="{{ name }}" id="{{ name }}_field" {{# ifequals value true }}checked{{/ ifequals }}>
+            <input type="checkbox" class="{{ css }}" name="{{ name }}" id="{{ name }}_field"{{# ifequals value true }} checked{{/ ifequals }}{{# if readonly }} disabled{{/ if }}>
         </div>
 {% endverbatim %}
 {% endblock %}

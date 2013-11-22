@@ -18,7 +18,7 @@
                 label: f.gui.label,
                 length: f.gui.length,
                 multiline: f.gui.multiline,
-                rdonly: editing ? f.gui.rdonly : false, // rdonly applies just to editing
+                readonly: editing ? f.gui.rdonly : false, // rdonly applies just to editing
                 required: f.gui.required,
                 tooltip: f.gui.tooltip,
                 type: f.gui.type,

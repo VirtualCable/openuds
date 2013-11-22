@@ -2,6 +2,6 @@
 {% load i18n %}
 {% block field %}
 {% verbatim %}
-        <input type="numeric" name="{{ name }}" class="form-control {{ css }}" id="{{ name }}_field" placeholder="{{ tooltip }}" value="{{ value }}">
+        <input type="numeric" name="{{ name }}" class="form-control {{ css }}" id="{{ name }}_field" placeholder="{{ tooltip }}" value="{{ value }}"{{# if readonly }} readonly{{/ if }}>
 {% endverbatim %}
 {% endblock %}
