@@ -9,6 +9,7 @@
     // Registers Handlebar useful helpers
     
     // Equal comparision (like if helper, but with comparation)
+    // Use as block as {{#ifequals [element] [element]}}....{{/ifequals}}
     Handlebars.registerHelper('ifequals', function(context1, context2, options) {
         console.log('Comparing ', context1, ' with ', context2);
         if(context1 == context2) {
@@ -18,6 +19,22 @@
         }
       });    
     
+    // Counters. 
+    // Create a counter with {{counter [id] [startValue]}}
+    // increment the counter with {{inc_counter [id]}}
+    // get the counter value tiwh {{get_counter [id}}
+    // Values are stored on current 
+    Handlebars.registerHelper('set_counter', function(id, value, options){
+        options.data['_counter_'+id] = value;
+    });
+    
+    Handlebars.registerHelper('get_counter', function(id, options){
+        return options.data['_counter_'+id];
+    });
+    
+    Handlebars.registerHelper('inc_counter', function(id, options){
+        options.data['_counter_'+id] += 1;
+    });
     
     api.templates = {};
     // Now initialize templates api
@@ -40,7 +57,7 @@
             }
         }
         $.ajax({
-            url : api.template_url + name,
+            url : api.url_for(name,'template'),
             type : "GET",
             dataType : "text",
             success : function(data) { 

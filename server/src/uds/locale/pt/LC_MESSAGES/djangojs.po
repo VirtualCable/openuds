@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-20 04:05+0100\n"
+"POT-Creation-Date: 2013-11-23 22:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,146 +18,234 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: static/adm/js/api-tools.js:46
+msgid "Just a moment..."
+msgstr "Só um momento..."
+
+#: static/adm/js/api-tools.js:75
+msgid "Sunday"
+msgstr "Domingo"
+
+#: static/adm/js/api-tools.js:75
+msgid "Monday"
+msgstr "Segunda-feira"
+
+#: static/adm/js/api-tools.js:75
+msgid "Tuesday"
+msgstr "Terça-feira"
+
+#: static/adm/js/api-tools.js:75
+msgid "Wednesday"
+msgstr "Quarta-feira"
+
+#: static/adm/js/api-tools.js:76
+msgid "Thursday"
+msgstr "Quinta-feira"
+
+#: static/adm/js/api-tools.js:76
+msgid "Friday"
+msgstr "Sexta-feira"
+
+#: static/adm/js/api-tools.js:76
+msgid "Saturday"
+msgstr "Sábado"
+
+#: static/adm/js/api-tools.js:77
+msgid "January"
+msgstr "Janeiro de"
+
+#: static/adm/js/api-tools.js:77
+msgid "February"
+msgstr "Fevereiro"
+
+#: static/adm/js/api-tools.js:77
+msgid "March"
+msgstr "Março de"
+
+#: static/adm/js/api-tools.js:77
+msgid "April"
+msgstr "Abril"
+
+#: static/adm/js/api-tools.js:77
+msgid "May"
+msgstr "Maio"
+
+#: static/adm/js/api-tools.js:78
+msgid "June"
+msgstr "Junho de"
+
+#: static/adm/js/api-tools.js:78
+msgid "July"
+msgstr "Julho"
+
+#: static/adm/js/api-tools.js:78
+msgid "August"
+msgstr "Agosto"
+
+#: static/adm/js/api-tools.js:78
+msgid "September"
+msgstr "Setembro"
+
+#: static/adm/js/api-tools.js:78
+msgid "October"
+msgstr "Outubro"
+
+#: static/adm/js/api-tools.js:79
+msgid "November"
+msgstr "Novembro"
+
+#: static/adm/js/api-tools.js:79
+msgid "December"
+msgstr "Dezembro de"
+
+#: static/adm/js/dataTables.bootstrap.js:6 static/adm/js/gui.js:19
+msgid "_MENU_ records per page"
+msgstr "Registros _MENU_ por página"
+
 #: static/adm/js/gui-elements.js:33
 msgid "Service Providers"
 msgstr "Prestadores de serviços"
 
-#: static/adm/js/gui.js:18
-msgid "_MENU_ records per page"
-msgstr "Registros _MENU_ por página"
+#: static/adm/js/gui-elements.js:40
+msgid "Edit service provider"
+msgstr "Editar Provedor de serviço"
 
-#: static/adm/js/gui.js:19
+#: static/adm/js/gui-elements.js:104
+msgid "Edit authenticator"
+msgstr "Editar autenticador"
+
+#: static/adm/js/gui-elements.js:149
+msgid "Edit transport"
+msgstr "Editar transportes"
+
+#: static/adm/js/gui-elements.js:159
+msgid "New transport"
+msgstr "Novo transporte"
+
+#: static/adm/js/gui.js:20
 msgid "Empty"
 msgstr "Vazio"
 
-#: static/adm/js/gui.js:20
+#: static/adm/js/gui.js:21
 msgid "Records _START_ to _END_ of _TOTAL_"
 msgstr "Registros _START_ para _END_ de _TOTAL_"
 
-#: static/adm/js/gui.js:21
+#: static/adm/js/gui.js:22
 msgid "No records"
 msgstr "Não há registros"
 
-#: static/adm/js/gui.js:22
+#: static/adm/js/gui.js:23
 msgid "(filtered from _MAX_ total records)"
 msgstr "(filtrada de registros total de _MAX_)"
 
-#: static/adm/js/gui.js:23
+#: static/adm/js/gui.js:24
 msgid "Please wait, processing"
 msgstr "Aguarde, processamento"
 
-#: static/adm/js/gui.js:24
+#: static/adm/js/gui.js:25
 msgid "Filter"
 msgstr "Filtro"
 
-#: static/adm/js/gui.js:27
+#: static/adm/js/gui.js:28
 msgid "First"
 msgstr "Primeiro"
 
-#: static/adm/js/gui.js:28
+#: static/adm/js/gui.js:29
 msgid "Last"
 msgstr "Última"
 
-#: static/adm/js/gui.js:29
+#: static/adm/js/gui.js:30
 msgid "Next"
 msgstr "Próxima"
 
-#: static/adm/js/gui.js:30
+#: static/adm/js/gui.js:31
 msgid "Previous"
 msgstr "Anterior"
 
-#: static/adm/js/gui.js:75
-msgid "Deployed services"
-msgstr "Serviços implantados"
+#: static/adm/js/gui.js:37
+msgid "New"
+msgstr "Novo"
 
-#: static/adm/js/gui.js:360
+#: static/adm/js/gui.js:41
 msgid "Edit"
 msgstr "Editar"
 
-#: static/adm/js/gui.js:369
+#: static/adm/js/gui.js:45
 msgid "Delete"
 msgstr "Excluir"
 
-#: static/adm/js/gui.js:378
+#: static/adm/js/gui.js:49
 msgid "Refresh"
 msgstr "Atualização"
 
-#: static/adm/js/strftime.js:30
-msgid "Sunday"
-msgstr "Domingo"
+#: static/adm/js/gui.js:53
+msgid "Xls"
+msgstr "Xls"
 
-#: static/adm/js/strftime.js:30
-msgid "Monday"
-msgstr "Segunda-feira"
+#: static/adm/js/gui.js:166
+msgid "Deployed services"
+msgstr "Serviços implantados"
 
-#: static/adm/js/strftime.js:30
-msgid "Tuesday"
-msgstr "Terça-feira"
+#: static/adm/js/gui.js:204
+msgid "This field is required."
+msgstr "Este campo é obrigatório."
 
-#: static/adm/js/strftime.js:31
-msgid "Wednesday"
-msgstr "Quarta-feira"
+#: static/adm/js/gui.js:205
+msgid "Please fix this field."
+msgstr "Por favor corrigi este campo."
 
-#: static/adm/js/strftime.js:31
-msgid "Thursday"
-msgstr "Quinta-feira"
+#: static/adm/js/gui.js:206
+msgid "Please enter a valid email address."
+msgstr "Por favor insira um endereço de email válido."
 
-#: static/adm/js/strftime.js:31
-msgid "Friday"
-msgstr "Sexta-feira"
+#: static/adm/js/gui.js:207
+msgid "Please enter a valid URL."
+msgstr "Por favor introduza um URL válido."
 
-#: static/adm/js/strftime.js:31
-msgid "Saturday"
-msgstr "Sábado"
+#: static/adm/js/gui.js:208
+msgid "Please enter a valid date."
+msgstr "Por favor introduza uma data válida."
 
-#: static/adm/js/strftime.js:32
-msgid "January"
-msgstr "Janeiro de"
+#: static/adm/js/gui.js:209
+msgid "Please enter a valid date (ISO)."
+msgstr "Por favor introduza uma data válida (ISO)."
 
-#: static/adm/js/strftime.js:32
-msgid "February"
-msgstr "Fevereiro"
+#: static/adm/js/gui.js:210
+msgid "Please enter a valid number."
+msgstr "Por favor, insira um número válido."
 
-#: static/adm/js/strftime.js:32
-msgid "March"
-msgstr "Março de"
+#: static/adm/js/gui.js:211
+msgid "Please enter only digits."
+msgstr "Por favor, digite somente dígitos."
 
-#: static/adm/js/strftime.js:33
-msgid "April"
-msgstr "Abril"
+#: static/adm/js/gui.js:212
+msgid "Please enter a valid credit card number."
+msgstr "Por favor, insira um número válido de cartão de crédito."
 
-#: static/adm/js/strftime.js:33
-msgid "May"
-msgstr "Maio"
+#: static/adm/js/gui.js:213
+msgid "Please enter the same value again."
+msgstr "Digite novamente o mesmo valor."
 
-#: static/adm/js/strftime.js:33
-msgid "June"
-msgstr "Junho de"
+#: static/adm/js/gui.js:214
+msgid "Please enter no more than {0} characters."
+msgstr "Não mais de {0} caracteres digite."
 
-#: static/adm/js/strftime.js:33
-msgid "July"
-msgstr "Julho"
+#: static/adm/js/gui.js:215
+msgid "Please enter at least {0} characters."
+msgstr "Por favor, insira pelo menos {0} caracteres."
 
-#: static/adm/js/strftime.js:34
-msgid "August"
-msgstr "Agosto"
+#: static/adm/js/gui.js:216
+msgid "Please enter a value between {0} and {1} characters long."
+msgstr "Por favor, insira um valor entre {0} e {1} caracteres longo."
 
-#: static/adm/js/strftime.js:34
-msgid "September"
-msgstr "Setembro"
+#: static/adm/js/gui.js:217
+msgid "Please enter a value between {0} and {1}."
+msgstr "Por favor, insira um valor entre {0} e {1}."
 
-#: static/adm/js/strftime.js:34
-msgid "October"
-msgstr "Outubro"
+#: static/adm/js/gui.js:218
+msgid "Please enter a value less than or equal to {0}."
+msgstr "Por favor digite um valor menor ou igual a {0}."
 
-#: static/adm/js/strftime.js:34
-msgid "November"
-msgstr "Novembro"
-
-#: static/adm/js/strftime.js:35
-msgid "December"
-msgstr "Dezembro de"
-
-#: static/adm/js/tools.js:46
-msgid "Just a moment..."
-msgstr "Só um momento..."
+#: static/adm/js/gui.js:219
+msgid "Please enter a value greater than or equal to {0}."
+msgstr "Por favor, insira um valor maior ou igual a {0}."

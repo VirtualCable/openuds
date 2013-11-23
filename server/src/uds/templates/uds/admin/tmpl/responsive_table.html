@@ -1,0 +1,13 @@
+{% verbatim %}
+<style id="style-{{ tableId }}" media="screen">
+@media (max-width: 768px) {
+    {{set_counter 0 0}}
+    {{#each columns }}
+    {{#if bVisible}}
+    {{inc_counter 0}}
+    #{{ ../../tableId }} td:nth-of-type({{get_counter 0}}):before { content: "{{ this.sTitle }}"; }
+    {{/if}}
+    {{/each }} 
+};
+</style>
+{% endverbatim %}

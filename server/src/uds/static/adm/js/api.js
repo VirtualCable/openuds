@@ -2,14 +2,13 @@
 (function(api, $, undefined) {
     "use strict";
     // "public" methods
-    api.doLog = function(data) {
+    api.doLog = function() {
         if (api.debug) {
             try {
-                console.log(data);
+                console.log.apply(window, arguments);
             } catch (e) {
                 // nothing can be logged
             }
-
         }
     };
     
@@ -29,6 +28,18 @@
         }
     };
     
+    api.url_for = function(path, type) {
+        switch(type) {
+            case 'template':
+                return api.config.template_url + path;
+            case undefined:
+            case 'rest':
+                return api.config.base_url + path;
+            default:
+                throw new Exception('Type of url not found: ' + type);
+        }
+    };
+    
     api.getJson = function(path, options) {
         options = options || {};
         var success_fnc = options.success || function(){}; 
@@ -45,7 +56,7 @@
                 success_fnc(data);
             },
             beforeSend : function(request) {
-                request.setRequestHeader(api.auth_header, api.token);
+                request.setRequestHeader(api.config.auth_header, api.config.token);
             },
         });
     };

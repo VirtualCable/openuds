@@ -1,7 +1,2 @@
-{% extends "uds/admin/tmpl/fld/form-group.html" %}
-{% load i18n %}
-{% block field %}
-{% verbatim %}
-        <input type="text" class="form-control {{ css }}" name="{{ name }}" id="{{ name }}_field" placeholder="{{ tooltip }}" value="{{ value }}"{{# if readonly }} readonly{{/ if }}>
-{% endverbatim %}
-{% endblock %}
+{% extends "uds/admin/tmpl/fld/basic-input.html" %}
+{% block type %}text{% endblock %}

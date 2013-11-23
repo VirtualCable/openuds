@@ -22,10 +22,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# Compressor settings (for css/js)
-COMPRESS_ENABLED = True
-COMPRESS_OUTPUT_DIR = 'cache'
-
 #USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https') # For testing begind a reverse proxy
 
@@ -46,7 +42,6 @@ DATABASES = {
     }
 }
 #DB_SECTION_END
-
 ALLOWED_HOSTS = '*'
 
 # Local time zone for this installation. Choices can be found here:
@@ -146,13 +141,15 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'uds.core.util.request.GlobalRequestMiddleware',
+    'uds.core.util.middleware.XUACompatibleMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -177,7 +174,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'south',
-    'compressor',
     'uds',
 )
 
@@ -232,6 +228,17 @@ LOGGING = {
             'backupCount': 3,
             'encoding': 'utf-8'
         },
+
+        'database':{
+            'level':'ERROR',
+            'class':'logging.handlers.RotatingFileHandler',
+            'formatter': 'simple',
+            'filename': LOGDIR + '/' + 'db.log',
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8'
+        },
                  
         'servicesFile':{
             'level':'DEBUG',
@@ -270,11 +277,6 @@ LOGGING = {
             'level':'DEBUG',
             'class':'logging.StreamHandler',
             'formatter': 'simple'
-        },
-        'database':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
-            'formatter': 'database'
         },
         'mail_admins': {
             'level': 'ERROR',

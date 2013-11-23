@@ -5,7 +5,7 @@
     gui.doLog = function() {
         if (gui.debug) {
             try {
-                console.log(arguments);
+                console.log.apply(window, arguments);
             } catch (e) {
                 // nothing can be logged
             }
@@ -105,10 +105,14 @@
         });
     };
     
-    gui.launchModal = function(title, content, onSuccess) {
-        var id = Math.random().toString().split('.')[1];
+    gui.launchModalForm = function(title, content, onSuccess) {
+        var id = Math.random().toString().split('.')[1]; // Get a random ID for this modal
         gui.appendToWorkspace(gui.modal(id, title, content));
         id = '#' + id; // for jQuery
+        
+        // Get form
+        var $form = $(id + ' form'); 
+        
         // For "beauty" switches, initialize them now
         $(id + ' .make-switch').bootstrapSwitch();
         // Activate "cool" selects
@@ -116,11 +120,28 @@
         // TEST: cooller on mobile devices
         if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
             $(id + ' .selectpicker').selectpicker('mobile');
-            }        
+        }
         // Activate tooltips
-        $(id + ' [data-toggle="tooltip"]').tooltip({delay: 500, placement: 'auto right'});
+        $(id + ' [data-toggle="tooltip"]').tooltip({delay: {show: 1000, hide: 100}, placement: 'auto right'});
+        
+        // Validation
+        $form.validate({
+            debug: true,
+            errorClass: 'text-danger',
+            validClass: 'has-success',
+            highlight: function(element) {
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            success: function(element) {
+                $(element).closest('.form-group').removeClass('has-error');
+                $(element).remove();
+            },
+        }); 
+        
         // And catch "accept" (default is "Save" in fact) button click
         $(id + ' .button-accept').click(function(){
+            if( !$form.valid() )
+                return;
             if( onSuccess ) {
                 if( onSuccess(id + ' form') === false ) // Some error may have ocurred, do not close dialog 
                     return;
@@ -184,6 +205,26 @@
     };
 
     gui.init = function() {
+        // Load jquery validator strings
+        $.extend($.validator.messages, {
+            required: gettext("This field is required."),
+            remote: gettext("Please fix this field."),
+            email: gettext("Please enter a valid email address."),
+            url: gettext("Please enter a valid URL."),
+            date: gettext("Please enter a valid date."),
+            dateISO: gettext("Please enter a valid date (ISO)."),
+            number: gettext("Please enter a valid number."),
+            digits: gettext("Please enter only digits."),
+            creditcard: gettext("Please enter a valid credit card number."),
+            equalTo: gettext("Please enter the same value again."),
+            maxlength: $.validator.format(gettext("Please enter no more than {0} characters.")),
+            minlength: $.validator.format(gettext("Please enter at least {0} characters.")),
+            rangelength: $.validator.format(gettext("Please enter a value between {0} and {1} characters long.")),
+            range: $.validator.format(gettext("Please enter a value between {0} and {1}.")),
+            max: $.validator.format(gettext("Please enter a value less than or equal to {0}.")),
+            min: $.validator.format(gettext("Please enter a value greater than or equal to {0}."))
+        });
+        
         gui.setLinksEvents();
         gui.dashboard.link();
     };
@@ -266,7 +307,7 @@ GuiElement.prototype = {
     //                   4.- the DataTable that raised the event
     table : function(options) {
         "use strict";
-        console.log('Types: ', this.types);
+        gui.doLog('Types: ', this.types);
         options = options || {};
         gui.doLog('Composing table for ' + this.name);
         var tableId = this.name + '-table';
@@ -365,19 +406,12 @@ GuiElement.prototype = {
                     columns.push(column);
                 }
             });
-            // Generate styles for responsible table, just the name of fields (append header to table)
-            var respStyles = [];
-            var counter = 0;
-            $.each(columns, function(col, value) {
-                if( value.bVisible === false )
-                    return;
-                counter += 1;
-                respStyles.push('#' + tableId + ' td:nth-of-type(' + counter + '):before { content: "' + 
-                        (value.sTitle || '') + '";}\n');
-            });
-            // If styles already exists, remove them before adding new ones
-            $('style-' + tableId).remove();
-            $('<style id="style-' + tableId + '" media="screen">@media (max-width: 768px) { ' + respStyles.join('') + '};</style>').appendTo('head');
+            // Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
+            $('#style-' + tableId).remove();  // Remove existing style for table before adding new one
+            $(api.templates.evaluate('tmpl_responsive_table', {
+                tableId: tableId,
+                columns: columns,
+            })).appendTo('head');
 
             $this.rest.overview(function(data) {
                     var table = gui.table(title, tableId);
@@ -463,11 +497,21 @@ GuiElement.prototype = {
                                 } else {
                                     // This table has "types, so we create a dropdown with Types
                                     var newButtons = [];
-                                    $.each($this.types, function(i, val){
+                                    // Order buttons by name, much more easy for users... :-)
+                                    var order = [];
+                                    $.each($this.types, function(k, v){
+                                       order.push({
+                                           type: k,
+                                           css: v.css,
+                                           name: v.name,
+                                           description: v.description,
+                                       }); 
+                                    });
+                                    $.each(order.sort(function(a,b){return a.name.localeCompare(b.name);}), function(i, val){
                                        newButtons.push({
                                                "sExtends" : "text",
-                                               "sButtonText" : '<span class="' + val.css + '"></span> ' + val.name,
-                                               "fnClick" : clickHandlerFor(options.onNew, i, true),
+                                               "sButtonText" : '<span class="' + val.css + '"></span> <span data-toggle="tooltip" data-title="' + val.description + '">' + val.name + '</span>',
+                                               "fnClick" : clickHandlerFor(options.onNew, val.type, true),
                                        });
                                     });
                                     btn = {
@@ -551,8 +595,9 @@ GuiElement.prototype = {
                                 };
                             }
 
-                            if (btn !== undefined)
+                            if(btn) {
                                 btns.push(btn);
+                            }
                         });
                     }
 
@@ -596,6 +641,12 @@ GuiElement.prototype = {
                     $('#' + tableId + '_filter input').addClass('form-control');
                     // Add refresh action to panel
                     $(table.refreshSelector).click(refreshFnc);
+                    // Add tooltips to "new" buttons
+                    $('.DTTT_dropdown [data-toggle="tooltip"]').tooltip({
+                        container:'body',
+                        delay: { show: 1000, hide: 100},
+                        placement: 'auto right',
+                    });
                     
                     if (options.scrollToTable === true ) {
                         var tableTop = $('#' + tableId).offset().top;

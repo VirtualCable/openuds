@@ -132,7 +132,7 @@ div.DTTT .btn:hover {
 }
 
 ul.DTTT_dropdown.dropdown-menu {
-  z-index: 2003;
+  z-index: 2013;
 }
 
 ul.DTTT_dropdown.dropdown-menu a {
@@ -146,10 +146,11 @@ ul.DTTT_dropdown.dropdown-menu li {
 ul.DTTT_dropdown.dropdown-menu li:hover a {
 	background-color: #0088cc;
 	color: white !important;
+	cursor: pointer;
 }
 
 div.DTTT_collection_background {
-	z-index: 2002;	
+	z-index: 2009;	
 }
 
 /* TableTools information display */

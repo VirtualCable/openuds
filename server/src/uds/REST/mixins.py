@@ -183,7 +183,7 @@ class ModelTypeHandlerMixin(object):
                  'name': 'comments', 
                  'value':'', 
                  'gui': {
-                    'required':True,
+                    'required':False,
                     'defvalue':'',
                     'value':'',
                     'label': _('Comments'),

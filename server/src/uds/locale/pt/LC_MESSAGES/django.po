@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-20 04:05+0100\n"
+"POT-Creation-Date: 2013-11-23 22:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,21 +18,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: REST/methods/authenticators.py:80
-msgid "Current authenticators"
-msgstr "Autenticadores atuais"
-
-#: REST/methods/authenticators.py:82 REST/methods/networks.py:68
-#: REST/methods/osmanagers.py:71 REST/methods/providers.py:69
-#: REST/methods/transports.py:71 REST/methods/users.py:77
+#: REST/mixins.py:172 REST/methods/authenticators.py:82
+#: REST/methods/networks.py:68 REST/methods/osmanagers.py:71
+#: REST/methods/providers.py:75 REST/methods/transports.py:79
+#: REST/methods/users_groups.py:73
 msgid "Name"
 msgstr "Nome"
 
-#: REST/methods/authenticators.py:83 REST/methods/osmanagers.py:72
-#: REST/methods/providers.py:70 REST/methods/transports.py:72
-#: REST/methods/users.py:78
+#: REST/mixins.py:175
+msgid "Name of this element"
+msgstr "Nome deste elemento"
+
+#: REST/mixins.py:189 REST/methods/authenticators.py:83
+#: REST/methods/osmanagers.py:72 REST/methods/providers.py:76
+#: REST/methods/transports.py:80 REST/methods/users_groups.py:74
+#: REST/methods/users_groups.py:102
 msgid "Comments"
 msgstr "Comentários"
+
+#: REST/mixins.py:192
+msgid "Comments for this element"
+msgstr "Comentários para este elemento"
+
+#: REST/methods/authenticators.py:80
+msgid "Current authenticators"
+msgstr "Autenticadores atuais"
 
 #: REST/methods/authenticators.py:84
 msgid "Users"
@@ -48,7 +58,7 @@ msgid "Networks"
 msgstr "Redes"
 
 #: REST/methods/networks.py:70 REST/methods/osmanagers.py:73
-#: REST/methods/transports.py:73
+#: REST/methods/transports.py:81
 msgid "Used by"
 msgstr "Usado por"
 
@@ -56,39 +66,48 @@ msgstr "Usado por"
 msgid "Current OS Managers"
 msgstr "Atual OS gerentes"
 
-#: REST/methods/providers.py:67
+#: REST/methods/providers.py:73
 msgid "Current service providers"
 msgstr "Provedores de serviço atual"
 
-#: REST/methods/providers.py:71 templates/uds/index.html:51
+#: REST/methods/providers.py:77 templates/uds/index.html:51
 #: templates/uds/html5/index.html:68
 msgid "Services"
 msgstr "Serviços"
 
-#: REST/methods/transports.py:69
+#: REST/methods/transports.py:77
 msgid "Current Transports"
 msgstr "Atuais transportes"
 
-#: REST/methods/users.py:70
+#: REST/methods/users_groups.py:66
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "Usuários de {0}"
 
-#: REST/methods/users.py:72
+#: REST/methods/users_groups.py:68
 msgid "Current users"
 msgstr "Usuários atuais"
 
-#: REST/methods/users.py:76
+#: REST/methods/users_groups.py:72 REST/methods/users_groups.py:101
 msgid "User Id"
 msgstr "Id de usuário"
 
-#: REST/methods/users.py:79
+#: REST/methods/users_groups.py:75 REST/methods/users_groups.py:103
 msgid "state"
 msgstr "Estado"
 
-#: REST/methods/users.py:80
+#: REST/methods/users_groups.py:76
 msgid "Last access"
 msgstr "Último acesso"
+
+#: REST/methods/users_groups.py:95
+#, python-brace-format
+msgid "Groups of {0}"
+msgstr "Grupos de {0}"
+
+#: REST/methods/users_groups.py:97
+msgid "Current groups"
+msgstr "Grupos atuais"
 
 #: admin/views.py:55 admin/views.py:63 admin/views.py:77 web/views.py:422
 msgid "Forbidden"
@@ -140,8 +159,8 @@ msgid ""
 "Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
 "for this)"
 msgstr ""
-"Nome de usuário com privilégios de leitura da base selecionada (uso USER@DOMAIN.Formulário de DOM "
-"para isso)"
+"Nome de usuário com privilégios de leitura da base selecionada (uso "
+"USER@DOMAIN.Formulário de DOM para isso)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:34
 #: auths/ActiveDirectory_enterprise/Authenticator.py:52
@@ -265,8 +284,7 @@ msgstr "Não parece um Active Directory LDAP (não não têm objetos de grupo)"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:472
 msgid ""
 "Ldap does not seem an Active Directory (do not have any user nor groups)"
-msgstr ""
-"Não parece um Active Directory LDAP (não tem nenhum usuário ou grupos)"
+msgstr "Não parece um Active Directory LDAP (não tem nenhum usuário ou grupos)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:477
 #: auths/EDirectory_enterprise/Authenticator.py:358
@@ -345,7 +363,8 @@ msgstr "Atributo esperado grupo "
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr ""
-"LDAP usuário classe ou usuário id attr provavelmente está errado (Ldap é do eDirectory?)"
+"LDAP usuário classe ou usuário id attr provavelmente está errado (Ldap é do "
+"eDirectory?)"
 
 #: auths/IP/Authenticator.py:48 auths/IP/Authenticator.py:50
 msgid "IP Authenticator"
@@ -506,7 +525,8 @@ msgstr "Metadados do IDP"
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
-"Você pode entrar aqui a URL ou os metadados do IDP ou os metadados em si (xml)"
+"Você pode entrar aqui a URL ou os metadados do IDP ou os metadados em si "
+"(xml)"
 
 #: auths/SAML_enterprise/SAML.py:127
 msgid "Entity ID"
@@ -514,7 +534,9 @@ msgstr "ID da entidade"
 
 #: auths/SAML_enterprise/SAML.py:128
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
-msgstr "ID do SP. Se deixado em branco, este será gerado automaticamente do servidor URL"
+msgstr ""
+"ID do SP. Se deixado em branco, este será gerado automaticamente do servidor "
+"URL"
 
 #: auths/SAML_enterprise/SAML.py:130
 msgid "User name attrs"
@@ -557,8 +579,8 @@ msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr ""
-"A chave privada deve ser um válido PEM (PEM chaves privadas começa com---BEGIN "
-"RSA PRIVATE KEY--"
+"A chave privada deve ser um válido PEM (PEM chaves privadas começa com---"
+"BEGIN RSA PRIVATE KEY--"
 
 #: auths/SAML_enterprise/SAML.py:197
 #, python-brace-format
@@ -1129,7 +1151,8 @@ msgstr "Cluster Hyper-v ligada Clone (Experimental)"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:58
 msgid "Hyper Services based on templates and differential disks (experimental)"
-msgstr "Hiper serviços baseados em modelos e discos diferenciais (experimentais)"
+msgstr ""
+"Hiper serviços baseados em modelos e discos diferenciais (experimentais)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
 #: services/HyperV_enterprise/HyperVLinkedService.py:75
@@ -1172,7 +1195,8 @@ msgstr "Rede"
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
-"Se mais de 1 relação encontra-se na máquina, utilize um nesta rede como principal"
+"Se mais de 1 relação encontra-se na máquina, utilize um nesta rede como "
+"principal"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:101
@@ -1250,7 +1274,9 @@ msgstr "Provedor de serviço de Cluster Hyper-v"
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:81
 msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
-msgstr "Hyper-v Server IP ou nome do host (habilite o primeiro acesso do WS-Management)"
+msgstr ""
+"Hyper-v Server IP ou nome do host (habilite o primeiro acesso do WS-"
+"Management)"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:82
@@ -1621,7 +1647,8 @@ msgstr "Base de clones vinculados da VMWare"
 msgid ""
 "This service provides access to Linked Clones machines on a Virtual Center"
 msgstr ""
-"Este serviço fornece acesso a máquinas de Clones vinculados em um Virtual Center"
+"Este serviço fornece acesso a máquinas de Clones vinculados em um Virtual "
+"Center"
 
 #: templates/404.html:3 templates/500.html:3
 msgid "Page not found"
@@ -1756,14 +1783,26 @@ msgstr "Painel de saída"
 msgid "logout"
 msgstr "logout"
 
-#: templates/uds/admin/tmpl/authenticators.html:4
-msgid "administration of authenticators"
-msgstr "Administração de autenticadores"
-
 #: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/dashboard.html:4
 msgid "overview"
 msgstr "Visão geral"
+
+#: templates/uds/admin/tmpl/modal.html:18
+msgid "Close"
+msgstr "Fechar"
+
+#: templates/uds/admin/tmpl/modal.html:25
+msgid "Save"
+msgstr "Salvar"
+
+#: templates/uds/admin/tmpl/fld/checkbox.html:4
+msgid "Yes"
+msgstr "Sim"
+
+#: templates/uds/admin/tmpl/fld/checkbox.html:4
+msgid "No"
+msgstr "Não"
 
 #: templates/uds/html5/detectJava.html:4
 msgid "Login redirection to UDS"
@@ -2221,8 +2260,8 @@ msgid ""
 "The lowest image quality applied to images to maintain the minimum update "
 "rate."
 msgstr ""
-"A qualidade de imagem mais baixa aplicada às imagens para manter a atualização mínima "
-"taxa."
+"A qualidade de imagem mais baixa aplicada às imagens para manter a "
+"atualização mínima taxa."
 
 #: transports/RGS-enterprise/RGSTransport.py:51
 #: transports/RGS-enterprise/TRGSTransport.py:56
@@ -2232,7 +2271,8 @@ msgstr "Taxa de Frame ajustável"
 #: transports/RGS-enterprise/RGSTransport.py:52
 #: transports/RGS-enterprise/TRGSTransport.py:57
 msgid "Update rate threshold to begin adjusting image quality"
-msgstr "Limite de taxa de atualização para começar a ajustar a qualidade da imagem"
+msgstr ""
+"Limite de taxa de atualização para começar a ajustar a qualidade da imagem"
 
 #: transports/RGS-enterprise/RGSTransport.py:53
 #: transports/RGS-enterprise/TRGSTransport.py:58
@@ -2245,8 +2285,8 @@ msgid ""
 "Change the Sender's resolution to match the Receiver's resolution when "
 "connecting"
 msgstr ""
-"Alterar a resolução do remetente para coincidir com a resolução do receptor quando "
-"Conectando-se"
+"Alterar a resolução do remetente para coincidir com a resolução do receptor "
+"quando Conectando-se"
 
 #: transports/RGS-enterprise/RGSTransport.py:55
 #: transports/RGS-enterprise/TRGSTransport.py:60

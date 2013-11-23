@@ -12,6 +12,10 @@
         $.each(itemGui, function(index, f){
             gui.doLog(f);
             gui.doLog(item[f.name]);
+            // Fix multiline text fields to textbox
+            if( f.gui.type == 'text' && f.gui.multiline ) {
+                f.gui.type = 'textbox';
+            }
             form += api.templates.evaluate('tmpl_fld_'+f.gui.type, {
                 value: item[f.name] || f.gui.value || f.gui.defvalue, // If no value present, use default value
                 values: f.gui.values,

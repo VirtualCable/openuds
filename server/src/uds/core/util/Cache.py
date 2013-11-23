@@ -30,7 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
+from __future__ import unicode_literals
 from django.db import transaction
 from uds.models import Cache as dbCache, getSqlDatetime
 from datetime import datetime, timedelta

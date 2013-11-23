@@ -4,13 +4,12 @@
 <!DOCTYPE html>{% endspaceless %}
 <html lang='{{LANGUAGE_CODE}}'>
     <head>
-        <title>{% block title %}{% endblock %}</title>
+        <title>UDS Dashboard</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="robots" content="noindex, nofollow" />
+        <meta name="robots" content="noindex, nofollow">
 
-        <link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon">
 
         <!-- Bootstrap -->
         <link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -52,6 +51,7 @@
         <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery.validate.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
 
@@ -72,15 +72,15 @@
         <script>
             // Initialize a few settings, needed for api to work
             (function(api, $, undefined){
-                api.token = "{% auth_token %}";
-                api.auth_header = "{% auth_token_header %}";
-                api.base_url = "{% url 'REST' '' %}";
-                api.template_url = "{% url 'uds.admin.views.tmpl' '' %}";
-                api.img_url = "{% get_static_prefix %}adm/img/";
+                api.config = {
+                    token: "{% auth_token %}",
+                    auth_header: "{% auth_token_header %}",
+                    lang: "LANGUAGE_CODE",
+                    base_url: "{% url 'REST' '' %}",
+                    template_url: "{% url 'uds.admin.views.tmpl' '' %}",
+                    img_url: "{% get_static_prefix %}adm/img/",
+                };
                 
-                api.url_for = function(path) {
-                    return api.base_url + path;
-                }
                 
             }(window.api = window.api || {}, jQuery));
         </script>
@@ -119,6 +119,7 @@
         <!-- components -->
         {% js_template 'table' %}
         {% js_template 'modal' %}
+        {% js_template 'responsive_table' %}
         <!-- fields -->
         {% js_template 'fld/checkbox' %}
         {% js_template 'fld/choice' %}

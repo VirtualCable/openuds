@@ -88,7 +88,7 @@ gui.authenticators.link = function(event) {
                     container : 'users-placeholder',
                     rowSelect : 'multi',
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
-                    scrollToTable : true,
+                    scrollToTable : false,
                     onLoad: function(k) {
                         api.tools.unblockUI();
                     },
@@ -101,7 +101,7 @@ gui.authenticators.link = function(event) {
             onEdit: function(value, event, table) {
                 gui.authenticators.rest.gui(value.type, function(data){
                        var form = gui.fields(data);
-                       gui.launchModal(gettext('Edit authenticator')+' '+value.name, form);
+                       gui.launchModalForm(gettext('Edit authenticator')+' '+value.name, form);
                    });
             },
         });
@@ -146,7 +146,7 @@ gui.connectivity.link = function(event) {
                 gui.connectivity.transports.rest.gui(value.type, function(itemGui){
                        gui.connectivity.transports.rest.item(value.id, function(item) {
                                var form = gui.fields(itemGui, item);
-                               gui.launchModal(gettext('Edit transport')+' '+value.name,form, function(form_selector) {
+                               gui.launchModalForm(gettext('Edit transport')+' '+value.name,form, function(form_selector) {
                                    var fields = gui.fields.read(form_selector);
                                    return false;
                                });
@@ -154,7 +154,13 @@ gui.connectivity.link = function(event) {
                    });
             },
             onNew: function(type) {
-                gui.doLog(type);
+                gui.connectivity.transports.rest.gui(type, function(itemGui) {
+                    var form = gui.fields(itemGui);
+                    gui.launchModalForm(gettext('New transport'), form, function(form_selector) {
+                        var fields = gui.fields.read(form_selector);
+                        return false;
+                    });
+                });
             },
         });
         gui.connectivity.networks.table({

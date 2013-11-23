@@ -33,7 +33,9 @@
 from __future__ import unicode_literals
 
 from django import template
+from django.conf import settings
 from uds.REST import AUTH_TOKEN_HEADER
+import re
 
 import logging
 
@@ -61,5 +63,8 @@ def js_template_path(context, path):
 @register.simple_tag(name='js_template', takes_context=True)
 def js_template(context, template_name, template_id = None):
     template_id = (template_id or 'tmpl_' + template_name).replace('/', '_')
-    tmpl = template.loader.get_template(context['template_path'] + '/' +  template_name + '.html')
-    return '<script id="{0}" type="text/html">\n'.format(template_id) + tmpl.render(context) + '\n</script>'
+    tmpl = template.loader.get_template(context['template_path'] + '/' +  template_name + '.html').render(context)
+    # Clean tmpl
+    if not settings.DEBUG:
+        tmpl = re.sub('\s+', ' ', tmpl)
+    return '<script id="{0}" type="template/uds">{1}</script>'.format(template_id, tmpl)

@@ -3,7 +3,7 @@ $.extend(true, $.fn.dataTable.defaults, {
     "sDom" : "<'row'<'col-xs-6'l><'col-xs-6'f>r>t<'row'<'col-xs-6'i><'col-xs-6'p>>",
     "sPaginationType" : "bootstrap",
     "oLanguage" : {
-        "sLengthMenu" : "_MENU_ records per page"
+        "sLengthMenu" : gettext("_MENU_ records per page")
     }
 });
 
@@ -73,6 +73,12 @@ $.extend($.fn.dataTableExt.oPagination, {
                 iStart = oPaging.iPage - iHalf + 1;
                 iEnd = iStart + iListLength - 1;
             }
+            
+            var fnClick = function(e) {
+                e.preventDefault();
+                oSettings._iDisplayStart = (parseInt($('a', this).text(), 10) - 1) * oPaging.iLength;
+                fnDraw(oSettings);
+            };
 
             for (i = 0, ien = an.length; i < ien; i++) {
                 // Remove the middle elements
@@ -82,11 +88,7 @@ $.extend($.fn.dataTableExt.oPagination, {
                 for (j = iStart; j <= iEnd; j++) {
                     sClass = (j == oPaging.iPage + 1) ? 'class="active"' : '';
                     $('<li ' + sClass + '><a href="#">' + j + '</a></li>').insertBefore($('li:last', an[i])[0]).bind(
-                            'click', function(e) {
-                                e.preventDefault();
-                                oSettings._iDisplayStart = (parseInt($('a', this).text(), 10) - 1) * oPaging.iLength;
-                                fnDraw(oSettings);
-                            });
+                            'click', fnClick);
                 }
 
                 // Add / remove disabled classes from the static elements

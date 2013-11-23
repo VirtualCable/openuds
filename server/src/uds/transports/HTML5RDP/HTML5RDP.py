@@ -59,7 +59,7 @@ class HTML5RDPTransport(Transport):
     needsJava = False  # If this transport needs java for rendering
     supportedOss = OsDetector.allOss
 
-    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order = 1, tooltip = _('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue = 'https://', length = 64)
+    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order = 1, tooltip = _('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue = 'https://', length = 64, required=True)
     useEmptyCreds = gui.CheckBoxField(label = _('Empty creds'), order = 2, tooltip = _('If checked, the credentials used to connect will be emtpy'))
     fixedName = gui.TextField(label=_('Username'), order = 3, tooltip = _('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order = 4, tooltip = _('If not empty, this password will be always used as credential'))
