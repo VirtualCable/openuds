@@ -1,4 +1,5 @@
 /* jshint strict: true */
+// Operations commmon to most elements
 function BasicGuiElement(name) {
     "use strict";
     this.name = name;
@@ -79,6 +80,10 @@ GuiElement.prototype = {
         var tableId = this.name + '-table';
         var $this = this; // Store this for child functions
 
+        // ---------------
+        // Cells renderers
+        // ---------------
+        
         // Empty cells transform
         var renderEmptyCell = function(data) {
             if( data === '' )
@@ -119,7 +124,8 @@ GuiElement.prototype = {
                     return dict[data] || renderEmptyCell('');
             };
         };
-        this.rest.tableInfo(function(data) {
+        
+        this.rest.tableInfo(function(data) { // Gets tableinfo data (columns, title, visibility of fields, etc...
             var title = data.title;
             var columns = [];
             $.each(data.fields, function(index, value) {
@@ -179,7 +185,7 @@ GuiElement.prototype = {
                 columns: columns,
             })).appendTo('head');
 
-            $this.rest.overview(function(data) {
+            $this.rest.overview(function(data) { // Gets "overview" data for table (table contents, but resume form)
                     var table = gui.table(title, tableId);
                     if (options.container === undefined) {
                         gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
@@ -199,21 +205,21 @@ GuiElement.prototype = {
                         if( data.length > 1000 )
                             api.tools.blockUI();
                         
-                        $this.rest.overview(function(data) {
-                                /*$(btn).removeClass('disabled').width('').html(saved);*/
+                        $this.rest.overview(function(data) {  // Restore overview
                                 setTimeout( function() {
                                     tbl.fnClearTable();
                                     tbl.fnAddData(data);
                                     onRefresh($this);
                                     api.tools.unblockUI();
                                 }, 0);
-                            });
+                            });  // End restore overview
                         return false; // This may be used on button or href, better disable execution of it
                     };
                     
                     var btns = [];
                     
                     if (options.buttons) {
+                        // Generic click handler generator for this table
                         var clickHandlerFor = function(handler, action, newHandler) {
                             var handleFnc = handler || function(val, action, tbl) {gui.doLog('Default handler called for ', action);};
                             return function(btn) {
@@ -247,7 +253,7 @@ GuiElement.prototype = {
                             }
                         };
                         
-                        $.each(options.buttons, function(index, value) {
+                        $.each(options.buttons, function(index, value) { // Iterate through button definition
                             var btn;
                             switch (value) {
                             case 'new':
@@ -313,10 +319,10 @@ GuiElement.prototype = {
                                 };
                                 break;
                             case 'xls':
-                                btn = {
+                                btn = { 
                                     "sExtends" : "text",
                                     "sButtonText" : gui.config.dataTableButtons.xls.text,
-                                    "fnClick" : function(){
+                                    "fnClick" : function() {  // Export to excel
                                         api.templates.get('spreadsheet', function(tmpl) {
                                             var styles = { 'bold': 's21', };
                                             var uri = 'data:application/vnd.ms-excel;base64,',
@@ -354,7 +360,7 @@ GuiElement.prototype = {
                                                         {type: 'application/vnd.ms-excel'} ), title + '.xls');
                                             }, 20);
                                         });
-                                    },
+                                    }, // End export to excell
                                     "sButtonClass" : gui.config.dataTableButtons.xls.css,
                                 };
                             }
@@ -362,7 +368,7 @@ GuiElement.prototype = {
                             if(btn) {
                                 btns.push(btn);
                             }
-                        });
+                        });  // End buttoon iteration
                     }
 
                     // Initializes oTableTools
@@ -420,8 +426,8 @@ GuiElement.prototype = {
                     if( options.onLoad ) {
                         options.onLoad($this);
                     }
-                });
-            });
+                }); // End Overview data
+            }); // End Tableinfo data
         return '#' + tableId;
     }
 

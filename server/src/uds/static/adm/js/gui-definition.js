@@ -164,9 +164,8 @@ gui.connectivity.link = function(event) {
                         gui.connectivity.transports.rest.create(fields, function(data) { // Success on put
                             closeFnc();
                             refreshFnc();
-                        }, function(jqXHR, textStatus, errorThrown) { // fail on put
-                            gui.launchModal(gettext('Error creating transport'), jqXHR.responseText, ' ');
-                        });
+                        }, gui.failRequestModalFnc(gettext('Error creating transport')) // Fail on put, show modal message
+                        );
                     });
                 });
             },

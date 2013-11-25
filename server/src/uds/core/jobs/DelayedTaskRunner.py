@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.db.models import Q
-from uds.models import DelayedTask as dbDelayedTask
+from uds.models import DelayedTask as dbDelayedTask, getSqlDatetime
 from uds.core.util.Decorators import retryOnException
 from ..Environment import Environment
 from socket import gethostname
@@ -78,29 +78,28 @@ class DelayedTaskRunner(object):
             DelayedTaskRunner._runner = DelayedTaskRunner()
         return DelayedTaskRunner._runner
 
-    @transaction.commit_manually
     def executeOneDelayedTask(self):
-        now = datetime.now()
+        now = getSqlDatetime()
         filt = Q(execution_time__lt=now) | Q(insert_date__gt=now)
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
         taskInstance = None
         try:
-            task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]
-            task.delete()
-            transaction.commit()
+            with transaction.atomic(): # Encloses 
+                task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]
+                task.delete()
             taskInstance = loads(task.instance.decode(self.CODEC))
         except Exception:
-            # No task waiting, nice
-            transaction.rollback()
+            # Transaction have been rolled back using the "with atomic", so here just return
+            # Note that is taskInstance can't be loaded, this task will not be retried
+            return
         
         if taskInstance != None:
             env = Environment.getEnvForType(taskInstance.__class__)
             taskInstance.setEnv(env)
             DelayedTaskThread(taskInstance).start()
 
-    @transaction.commit_on_success
     def __insert(self, instance, delay, tag):
-        now = datetime.now()
+        now = getSqlDatetime()
         exec_time = now + timedelta(seconds = delay)
         cls = instance.__class__
         instanceDump = dumps(instance).encode(self.CODEC)
@@ -120,20 +119,20 @@ class DelayedTaskRunner(object):
                 break
             except Exception, e:
                 logger.info('Exception inserting a delayed task {0}: {1}'.format(str(e.__class__), e))
+                time.sleep(1) # Wait a bit before next try...
         # If retries == 0, this is a big error
         if retries == 0:
             logger.error("Could not insert delayed task!!!! {0} {1} {2}".format(instance, delay, tag))
             return False
         return True
             
-    @transaction.commit_on_success
+    @transaction.atomic
     def remove(self, tag):
         try:
             dbDelayedTask.objects.select_for_update().filter(tag=tag).delete()
         except Exception as e:
             logger.exception('Exception removing a delayed task {0}: {1}'.format(str(e.__class__), e))
             
-    @transaction.commit_on_success
     def checkExists(self, tag):
         
         if tag == '' or tag is None:

@@ -129,21 +129,41 @@ class ModelHandlerMixin(object):
                 del self._params[key]
         except KeyError as e:
             raise RequestError('needed parameter not found in data {0}'.format(unicode(e)))
-        try:
-            item = self.model.objects.create(**args);
-        except: # Duplicate key probably
-            raise RequestError('Element already exists (duplicate key error)')
         
+        if len(args) == 0: # create new
+            isNew = False
+            try:
+                item = self.model.objects.create(**args);
+                res = self.item_as_dict(item)
+            except: # Duplicate key probably
+                raise RequestError('Element already exists (duplicate key error)')
+            
+        elif len(args) == 1:
+            try:
+                item = self.model.objects.get(pk=self._args[0]);
+                # Update "general" values
+                item.update(**args)
+                res = self.item_as_dict(item)
+            except:
+                raise RequestError('Element {0} do not exists anymore'.format(self._args[0]))
+        else:
+            raise RequestError('incorrect invocation to PUT')
+
         try:
+            isNew = True
             if self._params.has_key('data_type'): # Needs to store instance
                 item.data_type = self._params['data_type'] 
                 item.data = item.getInstance(self._params).serialize()
+                
+            for key, value in item.getInstance().valuesDict().iteritems():
+                res[key] = value
+            
             item.save()
         except Exception as e:
             item.delete() # Remove pre-saved element
             raise RequestError(unicode(e))
         
-        return {'id': item.id }
+        return res 
     
     def delete(self):
         logger.debug('method DELETE for {0}, {1}'.format(self.__class__.__name__, self._args))

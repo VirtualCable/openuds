@@ -32,6 +32,8 @@
 '''
 from __future__ import unicode_literals
 
+from django.db import transaction
+
 from uds.core.util.Config import GlobalConfig
 from uds.models import DeployedService, getSqlDatetime
 from uds.core.util.State import State
@@ -52,15 +54,16 @@ class AssignedAndUnused(Job):
         since_state = getSqlDatetime() - timedelta( seconds = GlobalConfig.CHECK_UNUSED_TIME.getInt() )
         for ds in DeployedService.objects.all():
             # If do not needs os manager, this is
-            if ds.osmanager is not None:
-                osm = ds.osmanager.getInstance()
-                if osm.processUnusedMachines is True:
-                    logger.debug('Processing unused services for {0}'.format(osm))
+            with transaction.atomic():
+                if ds.osmanager is not None:
+                    osm = ds.osmanager.getInstance()
+                    if osm.processUnusedMachines is True:
+                        logger.debug('Processing unused services for {0}'.format(osm))
+                        for us in ds.assignedUserServices().select_for_update().filter(in_use=False,state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
+                            logger.debug('Found unused assigned service {0}'.format(us))
+                            osm.processUnused(us)
+                else: # No os manager, simply remove unused services in specified time
                     for us in ds.assignedUserServices().select_for_update().filter(in_use=False,state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
                         logger.debug('Found unused assigned service {0}'.format(us))
-                        osm.processUnused(us)
-            else: # No os manager, simply remove unused services in specified time
-                for us in ds.assignedUserServices().select_for_update().filter(in_use=False,state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
-                    logger.debug('Found unused assigned service {0}'.format(us))
-                    us.remove()
+                        us.remove()
     

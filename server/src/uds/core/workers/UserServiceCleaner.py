@@ -56,7 +56,7 @@ class UserServiceInfoItemsCleaner(Job):
     def __init__(self, environment):
         super(UserServiceInfoItemsCleaner,self).__init__(environment)
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def run(self):
         removeFrom = getSqlDatetime() - timedelta(seconds = GlobalConfig.KEEP_INFO_TIME.getInt(True))
         logger.debug('Removing information user services from {0}'.format(removeFrom))
@@ -72,7 +72,7 @@ class UserServiceRemover(Job):
     def __init__(self, environment):
         super(UserServiceRemover,self).__init__(environment)
 
-    @transaction.commit_on_success        
+    @transaction.atomic        
     def run(self):
         removeFrom = getSqlDatetime() - timedelta(seconds=10) # We keep at least 30 seconds the machine before removing it, so we avoid connections errors
         removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom)[0:UserServiceRemover.removeAtOnce]

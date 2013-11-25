@@ -112,7 +112,7 @@
         gui.appendToWorkspace(gui.modal(id, title, content, actionButton, closeButton));
         id = '#' + id; // for jQuery
         
-        $(id).modal()
+        $(id).modal({keyboard: false})
         .on('hidden.bs.modal', function () {
             $(id).remove();
         });
@@ -165,7 +165,7 @@
         });
         
         // Launch modal
-        $(id).modal()
+        $(id).modal({keyboard: false})
              .on('hidden.bs.modal', function () {
                  $(id).remove();
              });
@@ -179,6 +179,12 @@
             }));            
         });
         gui.setLinksEvents();
+    };
+    
+    gui.failRequestModalFnc = function(title) {
+        return function(jqXHR, textStatus, errorThrown) { // fail on put
+            gui.launchModal(title, jqXHR.responseText, ' ');
+        };
     };
     
     gui.clearWorkspace = function() {

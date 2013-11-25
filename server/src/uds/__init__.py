@@ -31,11 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-
-
-from django.dispatch import dispatcher
-from django.db.models import signals
-
 # Make sure that all services are "available" at service startup
 import services # to make sure that the packages are initialized at this point
 import auths # To make sure that the packages are initialized at this point
@@ -45,22 +40,3 @@ import dispatchers
 import models
 
 
-def modify_MySQL_storage(sender, **kwargs):
-    from django.db import connection
-    cursor = connection.cursor()
-    
-    innoDbTables = ( models.UserService, models.DeployedService, models.DeployedServicePublication,
-                     models.Scheduler, models.DelayedTask, )
-    dicTables = { k._meta.db_table: True for k in innoDbTables }
-
-    for model in kwargs['created_models']:
-        db_table=model._meta.db_table
-        if dicTables.has_key(db_table):
-            stmt = 'ALTER TABLE %s ENGINE=%s' % (db_table,'InnoDB')
-            cursor.execute(stmt)
-        # sets charset to utf8
-        stmt = 'ALTER TABLE %s CHARACTER SET \'utf8\' COLLATE \'utf8_general_ci\'' % db_table
-        cursor.execute(stmt)
-    
-
-signals.post_syncdb.connect(modify_MySQL_storage, sender=models)

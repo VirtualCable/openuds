@@ -70,7 +70,7 @@ class ServiceCacheUpdater(Job):
         log.doLog(deployedService, log.WARN, 'Deployed service is restrained due to errors', log.INTERNAL)
         logger.info('Deployed service {0} is restrained, will check this later'.format(deployedService.name))
     
-
+    @transaction.atomic
     def bestDeployedServiceNeedingCacheUpdate(self):
         # State filter for cached and inAssigned objects
         # First we get all deployed services that could need cache generation
@@ -168,7 +168,7 @@ class ServiceCacheUpdater(Job):
         # We also return calculated values so we can reuse then
         return selected, cachedL1, cachedL2, assigned
     
-    @transaction.autocommit
+    @transaction.atomic
     def growL1Cache(self, ds, cacheL1, cacheL2, assigned):
         '''
         This method tries to enlarge L1 cache.
@@ -201,7 +201,7 @@ class ServiceCacheUpdater(Job):
         except:
             logger.exception('Exception')
         
-    @transaction.autocommit
+    @transaction.atomic
     def growL2Cache(self, ds, cacheL1, cacheL2, assigned):
         '''
         Tries to grow L2 cache of service.
@@ -217,6 +217,7 @@ class ServiceCacheUpdater(Job):
             logger.error(str(e))
             # TODO: When alerts are ready, notify this
             
+    @transaction.atomic
     def reduceL1Cache(self, ds, cacheL1, cacheL2, assigned):
         logger.debug("Reducing L1 cache erasing a service in cache for {0}".format(ds))
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
@@ -243,6 +244,7 @@ class ServiceCacheUpdater(Job):
         cache = cacheItems[0]
         cache.removeOrCancel()
                 
+    @transaction.atomic
     def reduceL2Cache(self, ds, cacheL1, cacheL2, assigned):
         logger.debug("Reducing L2 cache erasing a service in cache for {0}".format(ds))
         if cacheL2 > 0:

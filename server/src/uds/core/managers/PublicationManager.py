@@ -69,7 +69,7 @@ class PublicationLauncher(DelayedTask):
         super(PublicationLauncher,self).__init__()
         self._publishId = publish.id
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def run(self):
         logger.debug('Publishing')
         try:
@@ -147,7 +147,7 @@ class PublicationFinishChecker(DelayedTask):
         '''
         DelayedTaskRunner.runner().insert(PublicationFinishChecker(dsp), pi.suggestedTime, PUBTAG + str(dsp.id))
     
-    @transaction.commit_on_success
+    @transaction.atomic
     def run(self):
         logger.debug('Checking publication finished {0}'.format(self._publishId))
         try :
@@ -175,7 +175,7 @@ class PublicationManager(object):
         return PublicationManager._manager
         
     
-    @transaction.commit_on_success
+    @transaction.atomic
     def publish(self, deployedService):
         if deployedService.publications.select_for_update().filter(state__in=State.PUBLISH_STATES).count() > 0:
             raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
@@ -187,7 +187,7 @@ class PublicationManager(object):
             logger.debug('Caught exception at publish: {0}'.format(e))
             raise PublishException(str(e))
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def cancel(self,dsp):
         dsp = DeployedServicePublication.objects.select_for_update().get(id=dsp.id)
         if dsp.state not in State.PUBLISH_STATES:
@@ -207,6 +207,7 @@ class PublicationManager(object):
         except Exception, e:
             raise PublishException(str(e))
         
+    @transaction.atomic
     def unpublish(self, dsp):
         if State.isUsable(dsp.state) == False and State.isRemovable(dsp.state) == False:
             raise PublishException(_('Can\'t unpublish non usable publication'))

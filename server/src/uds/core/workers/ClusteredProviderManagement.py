@@ -105,6 +105,7 @@ class ClusterMigrationTask(DelayedTask):
         self._state = service.state
         
     @staticmethod
+    @transaction.atomic
     def checkAndUpdateState(userService, userServiceInstance, state):
         '''
         Checks the value returned from invocation to publish or checkPublishingState, updating the dsp database object
@@ -146,7 +147,7 @@ class ClusterMigrationTask(DelayedTask):
         DelayedTaskRunner.runner().insert(ClusterUpdateStats(userService), userServiceInstance.suggestedTime, ClusterUpdateStats + str(userService.id))
         
 
-    @transaction.commit_manually
+    @transaction.atomic
     def run(self):
         logger.debug('Checking user service finished migrating {0}'.format(self._serviceId))
         uService = None
@@ -155,7 +156,6 @@ class ClusterMigrationTask(DelayedTask):
             if uService.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
                 # This item is no longer valid, returning will not check it again (no checkLater called)
-                transaction.rollback()
                 return
                 
             ci = uService.getInstance()
@@ -174,7 +174,6 @@ class ClusterMigrationTask(DelayedTask):
                 uService.save()
             except Exception:
                 logger.error('Can\'t update state of uService object')
-        transaction.commit()
         
 class ClusterBalancingTask(DelayedTask):
     def __init(self, providerId):
@@ -182,7 +181,7 @@ class ClusterBalancingTask(DelayedTask):
         self._id = providerId
         
     @staticmethod
-    @transaction.commit_manually
+    @transaction.atomic
     def migrate(serviceId, toNode):
         try:
             service = UserService.objects.select_for_update().get(pk=serviceId)
@@ -203,7 +202,6 @@ class ClusterBalancingTask(DelayedTask):
                 service.save()
             except:
                 logger.exception('Setting error state at migration init')
-        transaction.commit()
         
     def run(self):
         try:

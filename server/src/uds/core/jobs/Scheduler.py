@@ -62,13 +62,12 @@ class JobThread(threading.Thread):
                 self.__updateDb()
                 done = True
             except:
-                # Erased from database, nothing hapens
-                # logger.exception(e)
+                # Databases locked, maybe because we are on a multitask environment, let's try again in a while
                 logger.info('Database access locked... Retrying')
                 time.sleep(1)
         
     
-    @transaction.commit_on_success
+    @transaction.atomic
     def __updateDb(self):
         job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)
         job.state = State.FOR_EXECUTE
@@ -96,34 +95,31 @@ class Scheduler(object):
     def notifyTermination(self):
         self._keepRunning = False
 
-    @transaction.commit_manually
     def executeOneJob(self):
         '''
         Looks for a job and executes it
         '''
         jobInstance = None
         try:
-            now = getSqlDatetime() # Datetimes are based on database server times
-            filter = Q(state = State.FOR_EXECUTE) & (Q(owner_server = self._hostname) | Q(owner_server = '')) & (Q(last_execution__gt = now) | Q(next_execution__lt = now))
-            # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
-            # This params are all set inside filter (look at __init__)
-            job = dbScheduler.objects.select_for_update().filter(filter).order_by('next_execution')[0]
-            jobInstance = job.getInstance()
-            
-            if jobInstance == None:
-                logger.error('Job instance can\'t be resolved for {0}, removing it'.format(job))
-                job.delete()
-                transaction.commit()
-                return
-            logger.debug('Executing job:>{0}<'.format(job.name))
-            job.state = State.RUNNING
-            job.owner_server = self._hostname
-            job.last_execution = now
-            job.save()
-            transaction.commit()
+            with transaction.atomic():
+                now = getSqlDatetime() # Datetimes are based on database server times
+                filter = Q(state = State.FOR_EXECUTE) & (Q(owner_server = self._hostname) | Q(owner_server = '')) & (Q(last_execution__gt = now) | Q(next_execution__lt = now))
+                # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
+                # This params are all set inside filter (look at __init__)
+                job = dbScheduler.objects.select_for_update().filter(filter).order_by('next_execution')[0]
+                jobInstance = job.getInstance()
+                
+                if jobInstance == None:
+                    logger.error('Job instance can\'t be resolved for {0}, removing it'.format(job))
+                    job.delete()
+                    return
+                logger.debug('Executing job:>{0}<'.format(job.name))
+                job.state = State.RUNNING
+                job.owner_server = self._hostname
+                job.last_execution = now
+                job.save()
             JobThread(jobInstance, job).start() # Do not instatiate thread, just run it
         except IndexError:
-            transaction.rollback()
             # Do nothing, there is no jobs for execution            
             return
         except DatabaseError:
@@ -131,10 +127,9 @@ class Scheduler(object):
             # This in fact means that we have to retry operation, and retry will happen on main loop
             # Look at this http://dev.mysql.com/doc/refman/5.0/en/innodb-deadlocks.html
             # I have got some deadlock errors, but looking at that url, i found that it is not so abnormal
-            logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem)')
-            transaction.rollback() # So django do not complains about this
+            logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def releaseOwnShedules(self):
         '''
         Releases all scheduleds being executed by this scheduler

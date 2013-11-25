@@ -57,6 +57,7 @@ class UserServiceOpChecker(DelayedTask):
         self._state = service.state
 
     @staticmethod
+    @transaction.atomic
     def makeUnique(userService, userServiceInstance, state):
         '''
         This method makes sure that there will be only one delayedtask related to the userService indicated
@@ -65,6 +66,7 @@ class UserServiceOpChecker(DelayedTask):
         UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
     
     @staticmethod
+    @transaction.atomic
     def checkAndUpdateState(userService, userServiceInstance, state):
         '''
         Checks the value returned from invocation to publish or checkPublishingState, updating the dsp database object
@@ -124,6 +126,7 @@ class UserServiceOpChecker(DelayedTask):
             userService.save()
     
     @staticmethod
+    @transaction.atomic
     def checkLater(userService, ci):
         '''
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
@@ -134,9 +137,8 @@ class UserServiceOpChecker(DelayedTask):
         if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + str(userService.id)):
             return
         DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + str(userService.id))
-        
 
-    @transaction.commit_manually
+    @transaction.atomic
     def run(self):
         logger.debug('Checking user service finished {0}'.format(self._svrId))
         uService = None
@@ -145,9 +147,7 @@ class UserServiceOpChecker(DelayedTask):
             if uService.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
                 # This item is no longer valid, returning will not check it again (no checkLater called)
-                transaction.rollback()
                 return
-                
             ci = uService.getInstance()
             logger.debug("uService instance class: {0}".format(ci.__class__))
             state = ci.checkState()
@@ -164,7 +164,6 @@ class UserServiceOpChecker(DelayedTask):
                 uService.save()
             except Exception:
                 logger.error('Can\'t update state of uService object')
-        transaction.commit()
 
 
 class UserServiceManager(object):
@@ -188,7 +187,7 @@ class UserServiceManager(object):
         return Q(state__in=[State.PREPARING, State.USABLE])
 
     
-    @transaction.commit_on_success
+    @transaction.atomic
     def __checkMaxDeployedReached(self, deployedService):
         '''
         Checks if maxDeployed for the service has been reached, and, if so,
@@ -207,6 +206,7 @@ class UserServiceManager(object):
                 )
         
     
+    @transaction.atomic
     def __createCacheAtDb(self, deployedServicePublication, cacheLevel):
         '''
         Private method to instatiate a cache element at database with default states
@@ -218,6 +218,7 @@ class UserServiceManager(object):
                                                state_date=now, creation_date=now, data = '', deployed_service = deployedServicePublication.deployed_service, 
                                                user = None, in_use = False )
         
+    @transaction.atomic
     def __createAssignedAtDb(self, deployedServicePublication, user):
         '''
         Private method to instatiate an assigned element at database with default state
@@ -227,6 +228,7 @@ class UserServiceManager(object):
         return deployedServicePublication.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
                                        state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service, user=user, in_use=False)
         
+    @transaction.atomic
     def __createAssignedAtDbForNoPublication(self, deployedService, user):
         '''
         __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
@@ -239,7 +241,7 @@ class UserServiceManager(object):
                                        state_date=now, creation_date=now, data='', publication=None, user=user, in_use=False)
         
     
-    @transaction.commit_on_success
+    @transaction.atomic
     def createCacheFor(self, deployedServicePublication, cacheLevel):
         '''
         Creates a new cache for the deployed service publication at level indicated
@@ -252,7 +254,7 @@ class UserServiceManager(object):
         UserServiceOpChecker.checkAndUpdateState(cache, ci, state)
         return cache
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def createAssignedFor(self, ds, user):
         '''
         Creates a new assigned deployed service for the publication and user indicated
@@ -272,7 +274,7 @@ class UserServiceManager(object):
             
         return assigned
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def createAssignable(self, ds, deployed, user):
         '''
         Creates an assignable service
@@ -290,7 +292,7 @@ class UserServiceManager(object):
         
         
     
-    @transaction.commit_on_success
+    @transaction.atomic
     def moveToLevel(self, cache, cacheLevel):
         '''
         Moves a cache element from one level to another
@@ -308,7 +310,7 @@ class UserServiceManager(object):
         UserServiceOpChecker.makeUnique(cache, ci, state)
         transaction.commit()
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def cancel(self, uService):
         '''
         Cancels a user service creation
@@ -329,7 +331,7 @@ class UserServiceManager(object):
         return uService
 
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def remove(self, uService):
         '''
         Removes a uService element
@@ -353,12 +355,12 @@ class UserServiceManager(object):
         else:
             raise OperationException(_('Can\'t remove nor cancel {0} cause its states doesn\'t allows it'))
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def removeInfoItems(self, dsp):
         dsp.cachedDeployedService.select_for_update().filter(state__in=State.INFO_STATES).delete()
         
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def getAssignationForUser(self, ds, user):
         # First, we try to locate an already assigned service
         existing = ds.assignedUserServices().filter(user=user,state__in=State.VALID_STATES)
@@ -427,7 +429,7 @@ class UserServiceManager(object):
             return False
         return True
         
-    @transaction.commit_on_success
+    @transaction.atomic
     def isReady(self, uService):
         UserService.objects.update()
         uService = UserService.objects.select_for_update().get(id=uService.id)
