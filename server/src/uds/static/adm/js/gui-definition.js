@@ -153,12 +153,20 @@ gui.connectivity.link = function(event) {
                            });
                    });
             },
-            onNew: function(type) {
+            onNew: function(type, table, refreshFnc) {
                 gui.connectivity.transports.rest.gui(type, function(itemGui) {
                     var form = gui.fields(itemGui);
-                    gui.launchModalForm(gettext('New transport'), form, function(form_selector) {
+                    gui.launchModalForm(gettext('New transport'), form, function(form_selector, closeFnc) {
                         var fields = gui.fields.read(form_selector);
-                        return false;
+                        // Append "own" fields, in this case data_type
+                        fields.data_type = type;
+                        fields.nets_positive = false;
+                        gui.connectivity.transports.rest.create(fields, function(data) { // Success on put
+                            closeFnc();
+                            refreshFnc();
+                        }, function(jqXHR, textStatus, errorThrown) { // fail on put
+                            gui.launchModal(gettext('Error creating transport'), jqXHR.responseText, ' ');
+                        });
                     });
                 });
             },

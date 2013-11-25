@@ -1,0 +1,10 @@
+{% load i18n %}
+
+<div class="jumbotron text-center">
+    <h1> {% trans 'Error on request' %}</h1>
+    <br />
+    {% verbatim %}<p>{{ error }}</p>{% endverbatim %}
+    <h5>{% trans 'There was an error requesting data from server, please, try again' %}</h5>
+    <br />
+    <a href="#" class="btn btn-lg btn-info lnk-dashboard"><i class="fa fa-dashboard"></i> {% trans "Dashboard" %}</a>
+</div>

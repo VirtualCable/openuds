@@ -125,7 +125,9 @@ class gui(object):
         Returns:
             True if the string is "true" (case insensitive), False else.
         '''
-        if str_.lower() == gui.TRUE:
+        if isinstance(str_, bool):
+            return str_
+        if unicode(str_).lower() == gui.TRUE:
             return True
         return False
 

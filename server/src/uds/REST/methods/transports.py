@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Transport
 from uds.core.transports import factory
 
@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 
 class Transports(ModelHandlerMixin, Handler):
     model = Transport
+    save_fields = ['name', 'comments', 'priority', 'nets_positive']
     
     def item_as_dict(self, item):
         type_ = item.getType()
@@ -58,16 +59,27 @@ class Transports(ModelHandlerMixin, Handler):
                  'deployed_count': item.deployedServices.count(),
                  'type': type_.type(),
         }
+        
+        
 
 class Types(ModelTypeHandlerMixin, Handler):
     path = 'transports'
+    has_comments = True
     
     def enum_types(self):
         return factory().providers().values()
     
     def getGui(self, type_):
         try:
-            return factory().lookup(type_).guiDescription()
+            return self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments']), {
+                       'name': 'priority',
+                       'required': True,
+                       'value': '1',
+                       'label': ugettext('Priority'),
+                       'tooltip': ugettext('Priority of this transport'),
+                       'type': 'numeric',
+                       'order': 100, # At end
+                   })
         except:
             raise NotFound('type not found')
     
@@ -78,5 +90,6 @@ class TableInfo(ModelTableHandlerMixin, Handler):
     fields = [
             { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
+            { 'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em' }},
             { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]

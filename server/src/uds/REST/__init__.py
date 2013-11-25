@@ -37,7 +37,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _, activate
 from django.conf import settings
-from handlers import Handler, HandlerError, AccessDenied, NotFound
+from handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError
 
 import time
 import logging
@@ -148,12 +148,14 @@ class Dispatcher(View):
             for k, v in handler.headers().iteritems():
                 response[k] = v
             return response
-        except HandlerError as e:
-            return http.HttpResponseBadRequest(unicode(e))
+        except RequestError as e:
+            return http.HttpResponseServerError(unicode(e))
         except AccessDenied as e:
             return http.HttpResponseForbidden(unicode(e))
         except NotFound as e:
             return http.Http404(unicode(e))
+        except HandlerError as e:
+            return http.HttpResponseBadRequest(unicode(e))
         except Exception as e:
             logger.exception('Error processing request')
             return http.HttpResponseServerError(unicode(e))

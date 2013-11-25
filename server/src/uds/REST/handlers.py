@@ -32,7 +32,6 @@
 '''
 from __future__ import unicode_literals
 from django.contrib.sessions.backends.db import SessionStore
-from django.utils.translation import activate
 from django.conf import settings
 
 from uds.core.util.Config import GlobalConfig
@@ -50,6 +49,9 @@ class NotFound(HandlerError):
     pass
 
 class AccessDenied(HandlerError):
+    pass
+
+class RequestError(HandlerError):
     pass
 
 class Handler(object):

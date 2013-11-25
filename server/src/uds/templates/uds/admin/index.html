@@ -51,7 +51,7 @@
         <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.validate.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
 
@@ -99,15 +99,17 @@
         
         <script src="{% get_static_prefix %}adm/js/gui.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-fields.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui-element.js"></script>
         
         <!-- user interface management -->
-        <script src="{% get_static_prefix %}adm/js/gui-elements.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui-definition.js"></script>
         
         <script>
             $(function() {
     			// Initialize gui
             	gui.init();
-            	
+            	// set default error function
+            	api.defaultFail = gui.failRequestMessageFnc;
             });        
         </script>
         {% block js %}{% endblock %}
@@ -116,6 +118,8 @@
         <!-- page contents -->
         {% js_template 'dashboard' %}
         {% js_template 'authenticators' %}
+        <!-- utility pages -->
+        {% js_template 'request_failed' %}
         <!-- components -->
         {% js_template 'table' %}
         {% js_template 'modal' %}

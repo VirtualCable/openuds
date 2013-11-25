@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from handlers import NotFound
+from handlers import NotFound, RequestError
 from django.utils.translation import ugettext as _
 
 import logging
@@ -65,6 +65,8 @@ class ModelHandlerMixin(object):
     needs_staff = True
     detail = None # Dictionary containing detail routing 
     model = None
+    save_fields = []
+
     
     def item_as_dict(self, item):
         pass
@@ -117,6 +119,37 @@ class ModelHandlerMixin(object):
             return res 
         except:
             raise NotFound('item not found')
+        
+    def put(self):
+        logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
+        args = {}
+        try:
+            for key in self.save_fields:
+                args[key] = self._params[key]
+                del self._params[key]
+        except KeyError as e:
+            raise RequestError('needed parameter not found in data {0}'.format(unicode(e)))
+        try:
+            item = self.model.objects.create(**args);
+        except: # Duplicate key probably
+            raise RequestError('Element already exists (duplicate key error)')
+        
+        try:
+            if self._params.has_key('data_type'): # Needs to store instance
+                item.data_type = self._params['data_type'] 
+                item.data = item.getInstance(self._params).serialize()
+            item.save()
+        except Exception as e:
+            item.delete() # Remove pre-saved element
+            raise RequestError(unicode(e))
+        
+        return {'id': item.id }
+    
+    def delete(self):
+        logger.debug('method DELETE for {0}, {1}'.format(self.__class__.__name__, self._args))
+        if len(self._args) != 1:
+            raise RequestError('Delete need an argument')
+        return 'deleted'
 
 class ModelTypeHandlerMixin(object):
     '''
@@ -125,6 +158,7 @@ class ModelTypeHandlerMixin(object):
     '''
     authenticated = True
     needs_staff = True
+    has_comments = False
     
     def enum_types(self):
         pass
@@ -139,6 +173,46 @@ class ModelTypeHandlerMixin(object):
     def getTypes(self, *args, **kwargs):
         for type_ in self.enum_types():
             yield self.type_as_dict(type_)
+            
+    def addField(self, gui, field):
+        gui.append({
+            'name': field.get('name', ''),
+            'value': '',
+            'gui': {
+                'required': field.get('required', False),
+                'defvalue': field.get('value', ''),
+                'value': field.get('value', ''),
+                'label': field.get('label', ''),
+                'length': field.get('length', 128),
+                'multiline': field.get('multiline', 0),
+                'tooltip': field.get('tooltip', ''),
+                'rdonly': field.get('rdonly', False),
+                'type': field.get('type', 'text'),
+                'order': field.get('order', 0),
+                'values': field.get('values', [])
+            }
+        })
+        return gui
+            
+    def addDefaultFields(self, gui, flds):
+        if 'name' in flds:
+            self.addField(gui, {
+                'name': 'name',
+                'required': True,
+                'label': _('Name'),
+                'tooltip': _('Name of this element'),
+                'order': -2,
+            })
+            # And maybe comments (only if model has this field)
+        if 'comments' in flds:
+            self.addField(gui, {
+                 'name': 'comments', 
+                 'label': _('Comments'),
+                 'tooltip': _('Comments for this element'),
+                 'length': 256,
+                 'order': -1,
+            })
+        return gui
             
     def get(self):
         logger.debug(self._args)
@@ -162,42 +236,7 @@ class ModelTypeHandlerMixin(object):
         if self._args[1] == 'gui':
             gui = self.getGui(self._args[0])
             # Add name default description, at top of form
-            gui.append({
-                 'name': 'name', 
-                 'value':'', 
-                 'gui': {
-                    'required':True,
-                    'defvalue':'',
-                    'value':'',
-                    'label': _('Name'),
-                    'length': 128,
-                    'multiline': 0,
-                    'tooltip': _('Name of this element'),
-                    'rdonly': False,
-                    'type': 'text',
-                    'order': -2
-                 }  
-            })
-            # And comments
-            gui.append({
-                 'name': 'comments', 
-                 'value':'', 
-                 'gui': {
-                    'required':False,
-                    'defvalue':'',
-                    'value':'',
-                    'label': _('Comments'),
-                    'length': 256,
-                    'multiline': 0,
-                    'tooltip': _('Comments for this element'),
-                    'rdonly': False,
-                    'type': 'text',
-                    'order': -1
-                 }  
-            })
             
-            
-
             logger.debug("GUI: {0}".format(gui))
             return sorted(gui, key=lambda f: f['gui']['order']);
 
