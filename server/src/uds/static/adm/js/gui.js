@@ -112,15 +112,15 @@
         gui.appendToWorkspace(gui.modal(id, title, content, actionButton, closeButton));
         id = '#' + id; // for jQuery
         
-        $(id).modal({keyboard: false})
+        $(id).modal()
         .on('hidden.bs.modal', function () {
             $(id).remove();
         });
     };
     
-    gui.launchModalForm = function(title, content, onSuccess) {
+    gui.launchModalForm = function(title, form, onSuccess) {
         var id = Math.random().toString().split('.')[1]; // Get a random ID for this modal
-        gui.appendToWorkspace(gui.modal(id, title, content));
+        gui.appendToWorkspace(gui.modal(id, title, form));
         id = '#' + id; // for jQuery
         
         // Get form

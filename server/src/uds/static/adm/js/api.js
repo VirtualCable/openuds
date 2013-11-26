@@ -96,7 +96,35 @@
                 request.setRequestHeader(api.config.auth_header, api.config.token);
             },
         });
-    };
+    };  // End putJson
+    
+
+    api.deleteJson = function(path, options) {
+        options = options || {};
+        var success_fnc = options.success || function(){}; 
+        var fail_fnc = options.fail || api.defaultFail;
+            
+        var url = api.url_for(path);
+        api.doLog('Ajax DELETE Json for "' + url + '"');
+        $.ajax({
+            url : url,
+            type : "DELETE",
+            dataType : "json",
+            success: function(data) {
+                api.doLog('Success on DELETE "' + url + '".');
+                api.doLog('Received ', data);
+                success_fnc(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                api.doLog('Error on DELETE "' + url + '". ', textStatus, ', ', errorThrown);
+                fail_fnc(jqXHR, textStatus, errorThrown);
+            },
+            beforeSend : function(request) {
+                request.setRequestHeader(api.config.auth_header, api.config.token);
+            },
+        });
+    };  // End putJson
+    
 
     // Public attributes
     api.debug = true;
@@ -142,6 +170,7 @@ function BasicModelRest(path, options) {
     this.path = path;
     this.getPath = options.getPath || path;
     this.putPath = options.putPath || path;
+    this.delPath = options.delPath || path;
     this.typesPath = options.typesPath || (path + '/types');
     this.tableInfoPath = options.tableInfoPath || (path + '/tableinfo');
     this.cache = api.cache('bmr'+path);
@@ -252,6 +281,20 @@ BasicModelRest.prototype = {
             success: success_fnc,
             fail: fail_fnc
          });
+    },
+    
+    // --------------
+    // Delete
+    // --------------
+    del: function(id, success_fnc, fail_fnc) {
+        "use strict";
+        
+        var path = this.delPath + '/' + id;
+        
+        api.deleteJson(path, {
+           success:  success_fnc,
+           fail: fail_fnc
+        });
     },
     
     // --------------

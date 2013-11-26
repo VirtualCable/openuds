@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from handlers import NotFound, RequestError
 from django.utils.translation import ugettext as _
+from django.db import IntegrityError
 
 import logging
 
@@ -66,8 +67,14 @@ class ModelHandlerMixin(object):
     detail = None # Dictionary containing detail routing 
     model = None
     save_fields = []
-
     
+    def __fillIntanceFields(self, item, res):
+        if hasattr(item, 'getInstance'):
+            for key, value in item.getInstance().valuesDict().iteritems():
+                value = {"true":True, "false":False}.get(value, value)
+                logger.debug('{0} = {1}'.format(key, value))
+                res[key] = value
+
     def item_as_dict(self, item):
         pass
     
@@ -96,9 +103,7 @@ class ModelHandlerMixin(object):
             result = []
             for val in self.model.objects.all():
                 res = self.item_as_dict(val)
-                if hasattr(val, 'getInstance'):
-                    for key, value in val.getInstance().valuesDict().iteritems():
-                        res[key] = value
+                self.__fillIntanceFields(val, res)
                 result.append(res)
             return result
 
@@ -109,14 +114,11 @@ class ModelHandlerMixin(object):
         if self.detail is not None and len(self._args) > 1:
             return self.processDetail()
         
-        
         try:
             val = self.model.objects.get(pk=self._args[0])
             res = self.item_as_dict(val)
-            if hasattr(val, 'getInstance'):
-                for key, value in val.getInstance().valuesDict().iteritems():
-                    res[key] = value
-            return res 
+            self.__fillIntanceFields(val, res)
+            return res
         except:
             raise NotFound('item not found')
         
@@ -129,46 +131,49 @@ class ModelHandlerMixin(object):
                 del self._params[key]
         except KeyError as e:
             raise RequestError('needed parameter not found in data {0}'.format(unicode(e)))
-        
-        if len(args) == 0: # create new
-            isNew = False
-            try:
-                item = self.model.objects.create(**args);
-                res = self.item_as_dict(item)
-            except: # Duplicate key probably
-                raise RequestError('Element already exists (duplicate key error)')
-            
-        elif len(args) == 1:
-            try:
-                item = self.model.objects.get(pk=self._args[0]);
-                # Update "general" values
-                item.update(**args)
-                res = self.item_as_dict(item)
-            except:
-                raise RequestError('Element {0} do not exists anymore'.format(self._args[0]))
-        else:
-            raise RequestError('incorrect invocation to PUT')
 
         try:
-            isNew = True
-            if self._params.has_key('data_type'): # Needs to store instance
-                item.data_type = self._params['data_type'] 
-                item.data = item.getInstance(self._params).serialize()
-                
-            for key, value in item.getInstance().valuesDict().iteritems():
-                res[key] = value
-            
-            item.save()
+            if len(self._args) == 0: # create new
+                item = self.model.objects.create(**args);
+            elif len(self._args) == 1:
+                # We have to take care with this case, update will efectively update records on db
+                item = self.model.objects.get(pk=self._args[0]);
+                item.__dict__.update(args) # Update fields from args
+            else:
+                raise Exception() # Incorrect invocation
+        except self.model.DoesNotExist: 
+            raise NotFound('Element do not exists')
+        except IntegrityError: # Duplicate key probably 
+            raise RequestError('Element already exists (duplicate key error)')
         except Exception as e:
-            item.delete() # Remove pre-saved element
-            raise RequestError(unicode(e))
+            raise RequestError('incorrect invocation to PUT')
+
+        # Store associated object if needed
+        if self._params.has_key('data_type'): # Needs to store instance
+            item.data_type = self._params['data_type'] 
+            item.data = item.getInstance(self._params).serialize()
+            
+        res = self.item_as_dict(item)
         
+        self.__fillIntanceFields(item, res)
+        
+        item.save()
+
         return res 
     
     def delete(self):
         logger.debug('method DELETE for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) != 1:
-            raise RequestError('Delete need an argument')
+            raise RequestError('Delete need one and only one argument')
+        try:
+            item = self.model.objects.get(pk=self._args[0]);
+            item.delete()
+        except self.model.DoesNotExist:
+            raise NotFound('Element do not exists')
+        except Exception as e:
+            logger.exception('delete')
+            raise RequestError('incorrect invocation to DELETE')
+        
         return 'deleted'
 
 class ModelTypeHandlerMixin(object):

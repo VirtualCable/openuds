@@ -3,11 +3,8 @@
     "use strict";
 
     // Returns a form that will manage a gui description (new or edit)
-    gui.fields = function(itemGui, item) {
-        var editing = item !== undefined; // Locate real Editing
-        item = item || {id:''};
-        var form = '<form class="form-horizontal" role="form">' +
-                   '<input type="hidden" name="id" class="modal_field_data" value="' + item.id + '">';
+    gui.fieldsToHtml = function(itemGui, item, editing) {
+        var html = '';
         // itemGui is expected to have fields sorted by .gui.order (REST api returns them sorted)
         $.each(itemGui, function(index, f){
             gui.doLog(f);
@@ -16,7 +13,7 @@
             if( f.gui.type == 'text' && f.gui.multiline ) {
                 f.gui.type = 'textbox';
             }
-            form += api.templates.evaluate('tmpl_fld_'+f.gui.type, {
+            html += api.templates.evaluate('tmpl_fld_'+f.gui.type, {
                 value: item[f.name] || f.gui.value || f.gui.defvalue, // If no value present, use default value
                 values: f.gui.values,
                 label: f.gui.label,
@@ -30,12 +27,27 @@
                 css: 'modal_field_data',
             });
         });
+        return html;
+    };
+    
+    gui.form = {};
+    
+    gui.form.fromFields = function(fields, item) {
+        var editing = item !== undefined; // Locate real Editing
+        item = item || {id:''};
+        var form = '<form class="form-horizontal" role="form">' +
+                   '<input type="hidden" name="id" class="modal_field_data" value="' + item.id + '">';
+        if( fields.tabs ) {
+            
+        } else {
+            form += gui.fieldsToHtml(fields, item, editing);
+        } 
         form += '</form>';
         return form;
     };
-    
+
     // Reads fields from a form
-    gui.fields.read = function(formSelector) {
+    gui.form.read = function(formSelector) {
         var res = {};
         $(formSelector + ' .modal_field_data').each(function(i, field) {
             var $field = $(field);
@@ -51,5 +63,6 @@
         return res;
     };
 
+    
 }(window.gui = window.gui || {}, jQuery));
 

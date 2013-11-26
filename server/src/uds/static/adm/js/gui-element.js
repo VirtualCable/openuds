@@ -19,12 +19,12 @@ GuiElement.prototype = {
     init : function() {
         "use strict";
         gui.doLog('Initializing ' + this.name);
-        var $this = this;
+        var self = this;
         this.rest.types(function(data) {
                 var styles = '';
                 $.each(data, function(index, value) {
-                    var className = $this.name + '-' + value.type;
-                    $this.types[value.type] = {
+                    var className = self.name + '-' + value.type;
+                    self.types[value.type] = {
                         css : className,
                         name : value.name || '',
                         description : value.description || ''
@@ -78,7 +78,7 @@ GuiElement.prototype = {
         options = options || {};
         gui.doLog('Composing table for ' + this.name);
         var tableId = this.name + '-table';
-        var $this = this; // Store this for child functions
+        var self = this; // Store this for child functions
 
         // ---------------
         // Cells renderers
@@ -101,7 +101,7 @@ GuiElement.prototype = {
         // Icon renderer, based on type (created on init methods in styles)
         var renderTypeIcon = function(data, type, value){
             if( type == 'display' ) {
-                var css = $this.types[value.type].css;
+                var css = self.types[value.type].css;
                 return '<span class="' + css + '"></span> ' + renderEmptyCell(data);
             } else {
                 return renderEmptyCell(data);
@@ -185,7 +185,7 @@ GuiElement.prototype = {
                 columns: columns,
             })).appendTo('head');
 
-            $this.rest.overview(function(data) { // Gets "overview" data for table (table contents, but resume form)
+            self.rest.overview(function(data) { // Gets "overview" data for table (table contents, but resume form)
                     var table = gui.table(title, tableId);
                     if (options.container === undefined) {
                         gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
@@ -205,11 +205,11 @@ GuiElement.prototype = {
                         if( data.length > 1000 )
                             api.tools.blockUI();
                         
-                        $this.rest.overview(function(data) {  // Restore overview
+                        self.rest.overview(function(data) {  // Restore overview
                                 setTimeout( function() {
                                     tbl.fnClearTable();
                                     tbl.fnAddData(data);
-                                    onRefresh($this);
+                                    onRefresh(self);
                                     api.tools.unblockUI();
                                 }, 0);
                             });  // End restore overview
@@ -257,7 +257,7 @@ GuiElement.prototype = {
                             var btn;
                             switch (value) {
                             case 'new':
-                                if(Object.keys($this.types).length === 0) {
+                                if(Object.keys(self.types).length === 0) {
                                     btn = {
                                         "sExtends" : "text",
                                         "sButtonText" : gui.config.dataTableButtons['new'].text,
@@ -269,7 +269,7 @@ GuiElement.prototype = {
                                     var newButtons = [];
                                     // Order buttons by name, much more easy for users... :-)
                                     var order = [];
-                                    $.each($this.types, function(k, v){
+                                    $.each(self.types, function(k, v){
                                        order.push({
                                            type: k,
                                            css: v.css,
@@ -424,7 +424,7 @@ GuiElement.prototype = {
                     }
                     // if table rendered event
                     if( options.onLoad ) {
-                        options.onLoad($this);
+                        options.onLoad(self);
                     }
                 }); // End Overview data
             }); // End Tableinfo data

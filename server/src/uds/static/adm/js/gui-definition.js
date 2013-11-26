@@ -139,15 +139,22 @@ gui.connectivity.link = function(event) {
         }));
 
         gui.connectivity.transports.table({
-            rowSelect : 'multi',
+            rowSelect : 'single',
             container : 'transports-placeholder',
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
-            onEdit: function(value, event, table) {
+            onEdit: function(value, event, table, refreshFnc) {
                 gui.connectivity.transports.rest.gui(value.type, function(itemGui){
                        gui.connectivity.transports.rest.item(value.id, function(item) {
-                               var form = gui.fields(itemGui, item);
-                               gui.launchModalForm(gettext('Edit transport')+' '+value.name,form, function(form_selector) {
-                                   var fields = gui.fields.read(form_selector);
+                               var form = gui.form.fromFields(itemGui, item);
+                               gui.launchModalForm(gettext('Edit transport')+' '+value.name,form, function(form_selector, closeFnc) {
+                                   var fields = gui.form.read(form_selector);
+                                   fields.data_type = value.type;
+                                   fields.nets_positive = false;
+                                   gui.connectivity.transports.rest.save(fields, function(data) { // Success on put
+                                       closeFnc();
+                                       refreshFnc();
+                                   }, gui.failRequestModalFnc(gettext('Error creating transport')) // Fail on put, show modal message
+                                   );
                                    return false;
                                });
                            });
@@ -155,9 +162,9 @@ gui.connectivity.link = function(event) {
             },
             onNew: function(type, table, refreshFnc) {
                 gui.connectivity.transports.rest.gui(type, function(itemGui) {
-                    var form = gui.fields(itemGui);
+                    var form = gui.form.fromFields(itemGui);
                     gui.launchModalForm(gettext('New transport'), form, function(form_selector, closeFnc) {
-                        var fields = gui.fields.read(form_selector);
+                        var fields = gui.form.read(form_selector);
                         // Append "own" fields, in this case data_type
                         fields.data_type = type;
                         fields.nets_positive = false;
@@ -168,6 +175,13 @@ gui.connectivity.link = function(event) {
                         );
                     });
                 });
+            },
+            onDelete: function(value, event, table, refreshFnc) {
+                // TODO: Add confirmation to deletion
+                gui.connectivity.transports.rest.del(value.id, function(){
+                    refreshFnc();
+                }, gui.failRequestModalFnc(gettext('Error removing transport'))
+                );
             },
         });
         gui.connectivity.networks.table({
