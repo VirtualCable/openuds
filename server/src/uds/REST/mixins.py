@@ -226,7 +226,7 @@ class ModelTypeHandlerMixin(object):
                 'required': True,
                 'label': _('Name'),
                 'tooltip': _('Name of this element'),
-                'order': -2,
+                'order': -100,
             })
             # And maybe comments (only if model has this field)
         if 'comments' in flds:
@@ -235,7 +235,7 @@ class ModelTypeHandlerMixin(object):
                  'label': _('Comments'),
                  'tooltip': _('Comments for this element'),
                  'length': 256,
-                 'order': -1,
+                 'order': -99,
             })
         return gui
             

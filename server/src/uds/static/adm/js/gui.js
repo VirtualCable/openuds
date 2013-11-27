@@ -119,7 +119,7 @@
     };
     
     gui.launchModalForm = function(title, form, onSuccess) {
-        var id = Math.random().toString().split('.')[1]; // Get a random ID for this modal
+        var id = 'modal-' + Math.random().toString().split('.')[1]; // Get a random ID for this modal
         gui.appendToWorkspace(gui.modal(id, title, form));
         id = '#' + id; // for jQuery
         

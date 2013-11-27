@@ -145,24 +145,48 @@ gui.connectivity.link = function(event) {
             onEdit: function(value, event, table, refreshFnc) {
                 gui.connectivity.transports.rest.gui(value.type, function(itemGui){
                        gui.connectivity.transports.rest.item(value.id, function(item) {
-                               var form = gui.form.fromFields(itemGui, item);
-                               gui.launchModalForm(gettext('Edit transport')+' '+value.name,form, function(form_selector, closeFnc) {
-                                   var fields = gui.form.read(form_selector);
-                                   fields.data_type = value.type;
-                                   fields.nets_positive = false;
-                                   gui.connectivity.transports.rest.save(fields, function(data) { // Success on put
-                                       closeFnc();
-                                       refreshFnc();
-                                   }, gui.failRequestModalFnc(gettext('Error creating transport')) // Fail on put, show modal message
-                                   );
-                                   return false;
-                               });
+                           var tabs = { 
+                                   tabs: [
+                                      {
+                                       title: 'General',
+                                       fields: itemGui,
+                                      },
+                                      {
+                                       title: 'Networks',
+                                       fields: [],
+                                      },
+                                   ]
+                               };
+                           var form = gui.form.fromFields(tabs, item);
+                           gui.launchModalForm(gettext('Edit transport')+' '+value.name,form, function(form_selector, closeFnc) {
+                               var fields = gui.form.read(form_selector);
+                               fields.data_type = value.type;
+                               fields.nets_positive = false;
+                               gui.connectivity.transports.rest.save(fields, function(data) { // Success on put
+                                   closeFnc();
+                                   refreshFnc();
+                               }, gui.failRequestModalFnc(gettext('Error creating transport')) // Fail on put, show modal message
+                               );
+                               return false;
                            });
+                       });
                    });
             },
             onNew: function(type, table, refreshFnc) {
                 gui.connectivity.transports.rest.gui(type, function(itemGui) {
-                    var form = gui.form.fromFields(itemGui);
+                    var tabs = { 
+                        tabs: [
+                           {
+                            title: 'General',
+                            fields: itemGui,
+                           },
+                           {
+                            title: 'Networks',
+                            fields: [],
+                           },
+                        ]
+                    };
+                    var form = gui.form.fromFields(tabs);
                     gui.launchModalForm(gettext('New transport'), form, function(form_selector, closeFnc) {
                         var fields = gui.form.read(form_selector);
                         // Append "own" fields, in this case data_type

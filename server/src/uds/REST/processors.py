@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-#from django.utils import simplejson
+#from django.utils import simplejson as json
 import ujson as json
 from django import http
 

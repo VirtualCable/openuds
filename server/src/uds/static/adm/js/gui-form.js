@@ -38,7 +38,16 @@
         var form = '<form class="form-horizontal" role="form">' +
                    '<input type="hidden" name="id" class="modal_field_data" value="' + item.id + '">';
         if( fields.tabs ) {
-            
+            var id = 'tab-' + Math.random().toString().split('.')[1]; // Get a random base ID for tab entries
+            var tabs = [];
+            var tabsContent = [];
+            var active = ' active in' ;
+            $.each(fields.tabs, function(index, tab){
+               tabsContent.push('<div class="tab-pane fade' + active + '" id="' + id + index + '">' + gui.fieldsToHtml(tab.fields, item)  + '</div>' );
+               tabs.push('<li><a href="#' + id + index + '" data-toggle="tab">' + tab.title + '</a></li>' );
+               active = '';
+            });
+            form += '<ul class="nav nav-tabs">' + tabs.join('\n') + '</ul><div class="tab-content">' + tabsContent.join('\n') + '</div>';
         } else {
             form += gui.fieldsToHtml(fields, item, editing);
         } 

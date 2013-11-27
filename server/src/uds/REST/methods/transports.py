@@ -56,10 +56,10 @@ class Transports(ModelHandlerMixin, Handler):
                  'comments': item.comments,
                  'priority': item.priority, 
                  'nets_positive': item.nets_positive,
+                 'networks': [ {'id': k.id} for k in item.networks.all() ],
                  'deployed_count': item.deployedServices.count(),
                  'type': type_.type(),
         }
-        
         
 
 class Types(ModelTypeHandlerMixin, Handler):
@@ -78,7 +78,7 @@ class Types(ModelTypeHandlerMixin, Handler):
                        'label': ugettext('Priority'),
                        'tooltip': ugettext('Priority of this transport'),
                        'type': 'numeric',
-                       'order': 100, # At end
+                       'order': -50, # At end
                    })
         except:
             raise NotFound('type not found')
