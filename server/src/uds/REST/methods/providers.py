@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider
+from services import Services 
 from uds.core import services
 
 from uds.REST import Handler, NotFound
@@ -46,12 +47,23 @@ logger = logging.getLogger(__name__)
 
 class Providers(ModelHandlerMixin, Handler):
     model = Provider
+    detail = { 'services': Services }
+    save_fields = ['name', 'comments']
     
     def item_as_dict(self, provider):
         type_ = provider.getType()
+        
+        # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
+        offers = [{ 
+            'name' : ugettext(t.name()), 
+            'type' : t.type(), 
+            'description' : ugettext(t.description()), 
+            'icon' : t.icon().replace('\n', '') } for t in type_.getServicesTypes()]
+        
         return { 'id': provider.id,
                  'name': provider.name, 
                  'services_count': provider.services.count(),
+                 'offers': offers,
                  'type': type_.type(),
                  'comments': provider.comments,
         }
@@ -64,13 +76,15 @@ class Types(ModelTypeHandlerMixin, Handler):
     
     def getGui(self, type_):
         try:
-            return services.factory().lookup(type_).guiDescription()
+            return self.addDefaultFields(services.factory().lookup(type_).guiDescription(), ['name', 'comments'])
         except:
             raise NotFound('type not found')
     
 class TableInfo(ModelTableHandlerMixin, Handler):
     path = 'providers'
+    detail = { 'services': Services }
     title =  _('Current service providers')
+    
     fields = [
             { 'name': {'title': _('Name'), 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},

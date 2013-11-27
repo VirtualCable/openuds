@@ -59,12 +59,16 @@ table.dataTable tr.even td.sorting_3 { background-color: blue; }*/
 	margin-bottom: 0.3em;
 }
 
+/* modal dialogs & related*/
 .modal-dialog {
     /* new custom width */
     width: 60%;
     
 }
 
+.tab-pane {
+    margin-top: 24px;
+}
 .tooltip {
 	z-index: 2014;
 }

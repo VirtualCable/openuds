@@ -15,6 +15,7 @@ encoding//src/uds/REST/methods/login_logout.py=utf-8
 encoding//src/uds/REST/methods/networks.py=utf-8
 encoding//src/uds/REST/methods/osmanagers.py=utf-8
 encoding//src/uds/REST/methods/providers.py=utf-8
+encoding//src/uds/REST/methods/services.py=utf-8
 encoding//src/uds/REST/methods/transports.py=utf-8
 encoding//src/uds/REST/methods/users_groups.py=utf-8
 encoding//src/uds/REST/mixins.py=utf-8

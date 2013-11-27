@@ -5,7 +5,7 @@ function BasicGuiElement(name) {
     this.name = name;
 }
 
-function GuiElement(restItem, name) {
+function GuiElement(restItem, name, typesFunction) {
     "use strict";
     this.rest = restItem;
     this.name = name;
@@ -22,6 +22,7 @@ GuiElement.prototype = {
         var self = this;
         this.rest.types(function(data) {
                 var styles = '';
+                var alreadyAttached =  $('#gui-style-'+self.name).length !== 0;
                 $.each(data, function(index, value) {
                     var className = self.name + '-' + value.type;
                     self.types[value.type] = {
@@ -30,12 +31,15 @@ GuiElement.prototype = {
                         description : value.description || ''
                     };
                     gui.doLog('Creating style for ' + className);
-                    var style = '.' + className + ' { display:inline-block; background: url(data:image/png;base64,' +
-                            value.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle; } ';
-                    styles += style;
+                    if( !alreadyAttached ) {
+                        var style = '.' + className + ' { display:inline-block; background: url(data:image/png;base64,' +
+                                value.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle; } ';
+                        styles += style;
+                    }
                 });
                 if (styles !== '') {
-                    styles = '<style media="screen">' + styles + '</style>';
+                    // If style already attached, do not re-attach it
+                    styles = '<style id="gui-style-' + self.name + '" media="screen">' + styles + '</style>';
                     $(styles).appendTo('head');
                 }
             });
@@ -101,7 +105,8 @@ GuiElement.prototype = {
         // Icon renderer, based on type (created on init methods in styles)
         var renderTypeIcon = function(data, type, value){
             if( type == 'display' ) {
-                var css = self.types[value.type].css;
+                self.types[value.type] = self.types[value.type] || {}
+                var css = self.types[value.type].css || 'fa fa-asterisk';
                 return '<span class="' + css + '"></span> ' + renderEmptyCell(data);
             } else {
                 return renderEmptyCell(data);

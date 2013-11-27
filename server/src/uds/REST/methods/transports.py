@@ -56,7 +56,7 @@ class Transports(ModelHandlerMixin, Handler):
                  'comments': item.comments,
                  'priority': item.priority, 
                  'nets_positive': item.nets_positive,
-                 'networks': [ {'id': k.id} for k in item.networks.all() ],
+                 'networks': [ n.id for n in item.networks.all() ],
                  'deployed_count': item.deployedServices.count(),
                  'type': type_.type(),
         }
@@ -64,7 +64,6 @@ class Transports(ModelHandlerMixin, Handler):
 
 class Types(ModelTypeHandlerMixin, Handler):
     path = 'transports'
-    has_comments = True
     
     def enum_types(self):
         return factory().providers().values()

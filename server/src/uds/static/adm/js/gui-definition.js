@@ -29,22 +29,60 @@ gui.dashboard.link = function(event) {
 gui.providers = new GuiElement(api.providers, 'provi');
 gui.providers.link = function(event) {
     "use strict";
-    gui.clearWorkspace();
-    gui.appendToWorkspace(gui.breadcrumbs(gettext('Service Providers')));
-
-    var tableId = gui.providers.table({
-        rowSelect : 'single',
-        onEdit: function(value, event, table) {
-            gui.providers.rest.gui(value.type, function(data) {
-                   var form = gui.fields(data);
-                   gui.appendToWorkspace(gui.modal('edit_modal', gettext('Edit service provider'), form));
-                   $('#edit_modal').modal()
-                       .on('hidden.bs.modal', function () {
-                           $('#edit_modal').remove();
+    api.templates.get('providers', function(tmpl) {
+        gui.clearWorkspace();
+        gui.appendToWorkspace(api.templates.evaluate(tmpl, {
+            providers : 'providers-placeholder',
+            services : 'services-placeholder',
+        }));
+        gui.setLinksEvents();
+    
+        var tableId = gui.providers.table({
+            container : 'providers-placeholder',
+            rowSelect : 'single',
+            onRowSelect : function(selected) {
+                api.tools.blockUI();
+                gui.doLog(selected[0]);
+                var id = selected[0].id;
+                // Options for detail, to initialize types correctly
+                var detail_options = {
+                    types: function(success_fnc, fail_fnc) {
+                        success_fnc(selected[0].offers);
+                    }
+                };
+                // Giving the name compossed with type, will ensure that only styles will be reattached once
+                var services = new GuiElement(api.providers.detail(id, 'services', detail_options), 'services-'+selected[0].type);
+                
+                services.table({
+                    container : 'services-placeholder',
+                    rowSelect : 'single',
+                    buttons : [ 'new', 'edit', 'delete', 'xls' ],
+                    scrollToTable : false,
+                    onLoad: function(k) {
+                        api.tools.unblockUI();
+                    },
+                });
+                return false;
+            },
+            buttons : [ 'new', 'edit', 'delete', 'xls' ],
+            onEdit: function(value, event, table, refreshFnc) {
+                gui.providers.rest.gui(value.type, function(itemGui){
+                       gui.providers.rest.item(value.id, function(item) {
+                           gui.forms.launchModal(gettext('Edit Service Provider')+' '+value.name, itemGui, item, function(form_selector, closeFnc) {
+                               var fields = gui.forms.read(form_selector);
+                               fields.data_type = value.type;
+                               fields.nets_positive = false;
+                               gui.providers.rest.save(fields, function(data) { // Success on put
+                                   closeFnc();
+                                   refreshFnc();
+                               }, gui.failRequestModalFnc(gettext('Error creating Service Provider')) // Fail on put, show modal message
+                               );
+                               return false;
+                           });
                        });
-               });
-        },
-        buttons : [ 'edit', 'delete', 'xls' ],
+                   });
+            },
+        });
     });
 
     return false;
@@ -157,9 +195,8 @@ gui.connectivity.link = function(event) {
                                       },
                                    ]
                                };
-                           var form = gui.form.fromFields(tabs, item);
-                           gui.launchModalForm(gettext('Edit transport')+' '+value.name,form, function(form_selector, closeFnc) {
-                               var fields = gui.form.read(form_selector);
+                           gui.forms.launchModal(gettext('Edit transport')+' '+value.name, tabs, item, function(form_selector, closeFnc) {
+                               var fields = gui.forms.read(form_selector);
                                fields.data_type = value.type;
                                fields.nets_positive = false;
                                gui.connectivity.transports.rest.save(fields, function(data) { // Success on put
@@ -182,12 +219,17 @@ gui.connectivity.link = function(event) {
                            },
                            {
                             title: 'Networks',
-                            fields: [],
+                            fields: [
+                                gui.forms.guiField('networks', 'multichoice', gettext('Available for networks'), 
+                                        gettext('Select networks that will see this transport'), [], []),
+                                gui.forms.guiField('nets_positive', 'checkbox', gettext('Transport active for selected networks'),
+                                        gettext('If active, transport will only be available on selected networks. If inactive, transport will be available form any net EXCEPT selected networks'),
+                                        true) 
+                            ],
                            },
                         ]
                     };
-                    var form = gui.form.fromFields(tabs);
-                    gui.launchModalForm(gettext('New transport'), form, function(form_selector, closeFnc) {
+                    gui.forms.launchModal(gettext('New transport'), tabs, undefined, function(form_selector, closeFnc) {
                         var fields = gui.form.read(form_selector);
                         // Append "own" fields, in this case data_type
                         fields.data_type = type;

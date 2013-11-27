@@ -331,16 +331,18 @@ BasicModelRest.prototype = {
         });
     },
     
-    detail: function(id, child) {
+    detail: function(id, child, options) {
         "use strict";
-        return new DetailModelRestApi(this, id, child);
+        options = options || {};
+        return new DetailModelRestApi(this, id, child, options);
     }
 
 };
 
 // For REST of type /auth/[id]/users, /services/[id]/users, ...
-function DetailModelRestApi(parentApi, parentId, model) {
+function DetailModelRestApi(parentApi, parentId, model, options) {
     "use strict";
+    this.options = options;
     this.base = new BasicModelRest(undefined, {
         getPath: [parentApi.path, parentId, model].join('/'),
         typesPath: '.', // We do not has this on details
@@ -350,29 +352,33 @@ function DetailModelRestApi(parentApi, parentId, model) {
 
 DetailModelRestApi.prototype = {
     // Generates a basic model with fixed methods for "detail" models
-    get: function(options) {
+    get: function(success_fnc, fail_fnc) {
         "use strict";
-        return this.base.get(options);
+        return this.base.get(success_fnc, fail_fnc);
     },
-    tableInfo: function(options) { 
+    tableInfo: function(success_fnc, fail_fnc) { 
         "use strict";
-        return this.base.tableInfo(options);
+        return this.base.tableInfo(success_fnc, fail_fnc);
     },
-    list: function(success_fnc, options) {  // This is "almost" an alias for get
+    list: function(success_fnc, fail_fnc) {  // This is "almost" an alias for get
         "use strict";
-        return this.base.list(success_fnc, options);
+        return this.base.list(success_fnc, fail_fnc);
     },
-    overview: function(success_fnc, options) {
+    overview: function(success_fnc, fail_fnc) {
         "use strict";
-        return this.base.overview(success_fnc, options);
+        return this.base.overview(success_fnc, fail_fnc);
     },
-    item: function(itemId, success_fnc, options) {
+    item: function(itemId, success_fnc, fail_fnc) {
         "use strict";
-        return this.base.item(success_fnc, options);
+        return this.base.item(success_fnc, fail_fnc);
     },
-    types: function(options) {
+    types: function(success_fnc, fail_fnc) {
         "use strict";
-        return this.base.types(options);
+        if( this.options.types ) {
+          this.options.types(success_fnc, fail_fnc);   
+        } else {
+            return this.base.types(success_fnc, fail_fnc);
+        }
     },
     
 };

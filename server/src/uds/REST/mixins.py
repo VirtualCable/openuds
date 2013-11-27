@@ -183,7 +183,6 @@ class ModelTypeHandlerMixin(object):
     '''
     authenticated = True
     needs_staff = True
-    has_comments = False
     
     def enum_types(self):
         pass

@@ -767,6 +767,10 @@ class UserInterface(object):
                 val = '\001' + cPickle.dumps(v.value)
             else:
                 val = v.value
+            if val is True:
+                val = gui.TRUE
+            elif val is False:
+                val = gui.FALSE
             arr.append(k + '\003' + val)
         return '\002'.join(arr).encode('zip')
     
