@@ -105,7 +105,7 @@ GuiElement.prototype = {
         // Icon renderer, based on type (created on init methods in styles)
         var renderTypeIcon = function(data, type, value){
             if( type == 'display' ) {
-                self.types[value.type] = self.types[value.type] || {}
+                self.types[value.type] = self.types[value.type] || {};
                 var css = self.types[value.type].css || 'fa fa-asterisk';
                 return '<span class="' + css + '"></span> ' + renderEmptyCell(data);
             } else {

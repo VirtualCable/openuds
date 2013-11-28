@@ -36,8 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 from uds.models import OSManager
 from uds.core.osmanagers import factory
 
-from uds.REST import Handler, HandlerError
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
+from uds.REST.model import ModelHandler
 
 import logging
 
@@ -45,8 +44,15 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /osm path
 
-class OsManagers(ModelHandlerMixin, Handler):
+class OsManagers(ModelHandler):
     model = OSManager
+
+    table_title =  _('Current OS Managers')
+    table_fields = [
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
+            { 'comments': {'title':  _('Comments')}},
+            { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+    ]
     
     def item_as_dict(self, osm):
         type_ = osm.getType()
@@ -56,19 +62,3 @@ class OsManagers(ModelHandlerMixin, Handler):
                  'type': type_.type(),
                  'comments': osm.comments,
         }
-
-class Types(ModelTypeHandlerMixin, Handler):
-    path = 'osmanagers'
-    model = OsManagers
-    
-    def enum_types(self):
-        return factory().providers().values()
-
-class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'osmanagers'
-    title =  _('Current OS Managers')
-    fields = [
-            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
-            { 'comments': {'title':  _('Comments')}},
-            { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
-    ]

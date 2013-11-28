@@ -35,8 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from uds.models import Network
 
-from uds.REST import Handler, HandlerError
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
+from uds.REST.model import ModelHandler
 
 import logging
 
@@ -44,8 +43,15 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
-class Networks(ModelHandlerMixin, Handler):
+class Networks(ModelHandler):
     model = Network
+
+    table_title =  _('Current Networks')
+    table_fields = [
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success' } },
+            { 'net_string': {'title':  _('Networks')}},
+            { 'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+    ]
     
     def item_as_dict(self, item):
         return { 'id': item.id,
@@ -53,19 +59,3 @@ class Networks(ModelHandlerMixin, Handler):
                  'net_string': item.net_string, 
                  'networks_count': item.transports.count(),
         }
-
-class Types(ModelTypeHandlerMixin, Handler):
-    path = 'networks'
-    
-    # Fake mathods, to yield self on enum types and get a "fake" type for Network 
-    def enum_types(self):
-        return []
-
-class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'networks'
-    title =  _('Current Networks')
-    fields = [
-            { 'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success' } },
-            { 'net_string': {'title':  _('Networks')}},
-            { 'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
-    ]

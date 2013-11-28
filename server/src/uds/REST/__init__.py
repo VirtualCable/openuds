@@ -153,13 +153,36 @@ class Dispatcher(View):
         except AccessDenied as e:
             return http.HttpResponseForbidden(unicode(e))
         except NotFound as e:
-            return http.Http404(unicode(e))
+            return http.HttpResponseNotFound(unicode(e))
         except HandlerError as e:
             return http.HttpResponseBadRequest(unicode(e))
         except Exception as e:
             logger.exception('Error processing request')
             return http.HttpResponseServerError(unicode(e))
 
+    @staticmethod
+    def registerSubclasses(classes):
+        for cls in classes:  
+            if len(cls.__subclasses__()) == 0: # Only classes that has not been inherited will be registered as Handlers
+                logger.debug('Found class {0}'.format(cls))
+                if cls.name is None:
+                    name = cls.__name__.lower()
+                else:
+                    name = cls.name
+                logger.debug('Adding handler {0} for method {1} in path {2}'.format(cls, name, cls.path))
+                service_node = Dispatcher.services
+                if cls.path is not None:
+                    for k in cls.path.split('/'):
+                        if service_node.get(k) is None:
+                            service_node[k] = { '' : None }
+                        service_node = service_node[k]
+                if service_node.get(name) is None:
+                    service_node[name] = { '' : None }
+                       
+                service_node[name][''] = cls
+            else:
+                Dispatcher.registerSubclasses(cls.__subclasses__())
+        
     # Initializes the dispatchers
     @staticmethod
     def initialize():
@@ -170,6 +193,8 @@ class Dispatcher(View):
         import os.path, pkgutil
         import sys
         
+        logger.debug('Loading Handlers')
+        
         # Dinamycally import children of this package. The __init__.py files must register, if needed, inside ServiceProviderFactory
         package = 'methods'
         
@@ -177,22 +202,6 @@ class Dispatcher(View):
         for _, name, _ in pkgutil.iter_modules([pkgpath]):
             __import__(__name__ + '.' + package +  '.' + name, globals(), locals(), [], -1)
             
-        for cls in Handler.__subclasses__():  # @UndefinedVariable
-            # Skip ClusteredServiceProvider
-            if cls.name is None:
-                name = cls.__name__.lower()
-            else:
-                name = cls.name
-            logger.debug('Adding handler {0} for method {1} in path {2}'.format(cls, name, cls.path))
-            service_node = Dispatcher.services
-            if cls.path is not None:
-                for k in cls.path.split('/'):
-                    if service_node.get(k) is None:
-                        service_node[k] = { '' : None }
-                    service_node = service_node[k]
-            if service_node.get(name) is None:
-                service_node[name] = { '' : None }
-                   
-            service_node[name][''] = cls
+        Dispatcher.registerSubclasses(Handler.__subclasses__())  # @UndefinedVariable
         
 Dispatcher.initialize()

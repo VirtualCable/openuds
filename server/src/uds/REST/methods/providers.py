@@ -37,18 +37,27 @@ from uds.models import Provider
 from services import Services 
 from uds.core import services
 
-from uds.REST import Handler, NotFound
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
+from uds.REST import NotFound
+from uds.REST.model import ModelHandler
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Providers(ModelHandlerMixin, Handler):
+class Providers(ModelHandler):
     model = Provider
     detail = { 'services': Services }
     save_fields = ['name', 'comments']
+    
+    table_title = _('Service providers')
+    
+    # Table info fields
+    table_fields = [
+            { 'name': {'title': _('Name'), 'type': 'iconType' } },
+            { 'comments': {'title':  _('Comments')}},
+            { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
+    ]
     
     def item_as_dict(self, provider):
         type_ = provider.getType()
@@ -68,26 +77,15 @@ class Providers(ModelHandlerMixin, Handler):
                  'comments': provider.comments,
         }
 
-class Types(ModelTypeHandlerMixin, Handler):
-    path = 'providers'
-    
+    # Types related
     def enum_types(self):
         return services.factory().providers().values()
-    
+        
+    # Gui related
     def getGui(self, type_):
         try:
             return self.addDefaultFields(services.factory().lookup(type_).guiDescription(), ['name', 'comments'])
         except:
             raise NotFound('type not found')
-    
-class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'providers'
-    detail = { 'services': Services }
-    title =  _('Current service providers')
-    
-    fields = [
-            { 'name': {'title': _('Name'), 'type': 'iconType' } },
-            { 'comments': {'title':  _('Comments')}},
-            { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
-    ]
-    
+       
+

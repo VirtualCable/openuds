@@ -46,9 +46,9 @@ gui.providers.link = function(event) {
                 var id = selected[0].id;
                 // Options for detail, to initialize types correctly
                 var detail_options = {
-                    types: function(success_fnc, fail_fnc) {
+                    /* types: function(success_fnc, fail_fnc) {
                         success_fnc(selected[0].offers);
-                    }
+                    }*/
                 };
                 // Giving the name compossed with type, will ensure that only styles will be reattached once
                 var services = new GuiElement(api.providers.detail(id, 'services', detail_options), 'services-'+selected[0].type);

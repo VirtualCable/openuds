@@ -39,7 +39,7 @@ from uds.core import auths
 
 from users_groups import Users, Groups
 from uds.REST import Handler, NotFound
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
+from uds.REST.model import ModelHandler
 
 import logging
 
@@ -47,9 +47,25 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /auth path
 
-class Authenticators(ModelHandlerMixin, Handler):
+class Authenticators(ModelHandler):
     model = Authenticator
     detail = { 'users': Users, 'groups':Groups }
+
+    table_title =  _('Current authenticators')
+    table_fields = [
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
+            { 'comments': {'title':  _('Comments')}},
+            { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
+    ]
+
+    def enum_types(self):
+        return auths.factory().providers().values()
+    
+    def getGui(self, type_):
+        try:
+            return auths.factory().lookup(type_).guiDescription()
+        except:
+            raise NotFound('type not found')
     
     def item_as_dict(self, auth):
         type_ = auth.getType()
@@ -59,27 +75,4 @@ class Authenticators(ModelHandlerMixin, Handler):
                  'type': type_.type(),
                  'comments': auth.comments,
         }
-
-class Types(ModelTypeHandlerMixin, Handler):
-    path = 'authenticators'
     
-    def enum_types(self):
-        return auths.factory().providers().values()
-    
-    def getGui(self, type_):
-        try:
-            return auths.factory().lookup(type_).guiDescription()
-        except:
-            raise NotFound('type not found')
-
-
-class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'authenticators'
-    detail = { 'users': Users, 'groups':Groups }
-    
-    title =  _('Current authenticators')
-    fields = [
-            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
-            { 'comments': {'title':  _('Comments')}},
-            { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
-    ]

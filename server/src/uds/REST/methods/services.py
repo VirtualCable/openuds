@@ -33,9 +33,11 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
-from uds.models import Provider
 
-from uds.REST.mixins import DetailHandler
+from uds.core.Environment import Environment
+
+from uds.REST.model import DetailHandler
+from uds.REST import NotFound
 
 import logging
 
@@ -44,21 +46,19 @@ logger = logging.getLogger(__name__)
 
 class Services(DetailHandler):
     
-    def get(self):
+    def getItems(self, parent, item):
         # Extract providerenticator
-        provider = self._kwargs['parent']
-        
         try:
-            if len(self._args) == 0:
+            if item is None:
                 return [{
                      'id':k.id, 
                      'name': k.name, 
                      'comments': k.comments, 
                      'type': k.data_type, 
                      'typeName' : _(k.getType().name())
-                     } for k in provider.services.all() ]
+                     } for k in parent.services.all() ]
             else:
-                with provider.get(pk=self._args[0]) as k:
+                with parent.get(pk=item) as k:
                     return {
                          'id':k.id, 
                          'name': k.name, 
@@ -70,15 +70,40 @@ class Services(DetailHandler):
             logger.exception('En services')
             return { 'error': 'not found' }
         
-    def getTitle(self):
+    def getTitle(self, parent):
         try:
-            return _('Services of {0}').format(Provider.objects.get(pk=self._kwargs['parent_id']).name)
+            return _('Services of {0}').format(parent.name)
         except:
             return _('Current services')
     
-    def getFields(self):
+    def getFields(self, parent):
         return [
             { 'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': { 'title': _('Comments') } },
             { 'type': {'title': _('Type') } }
-        ]        
+        ]
+        
+    def getTypes(self, parent, forType):
+        logger.debug('getTypes parameters: {0}, {1}'.format(parent, forType))
+        if forType is None:
+            offers = [{ 
+                'name' : _(t.name()), 
+                'type' : t.type(), 
+                'description' : _(t.description()), 
+                'icon' : t.icon().replace('\n', '') } for t in parent.getType().getServicesTypes()]
+        else:
+            offers = None # Do we really need to get one specific type?
+            for t in parent.getType().getServicesTypes():
+                if forType == t.type():
+                    offers = t
+                    break
+            if offers is None:
+                raise NotFound('type not found')
+                        
+        return offers # Default is that details do not have types
+        
+    def getGui(self, parent, forType):
+        logger.debug('getGui parameters: {0}, {1}'.format(parent, forType))
+        serviceType = parent.getServiceByType(type)
+        service = serviceType( Environment.getTempEnv(), parent)  # Instantiate it so it has the opportunity to alter gui description based on parent
+        return  self.addDefaultFields( service.guiDescription(service), ['name', 'comments'])

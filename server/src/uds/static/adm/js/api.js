@@ -172,6 +172,7 @@ function BasicModelRest(path, options) {
     this.putPath = options.putPath || path;
     this.delPath = options.delPath || path;
     this.typesPath = options.typesPath || (path + '/types');
+    this.guiPath = options.guiPath || (path + '/gui');
     this.tableInfoPath = options.tableInfoPath || (path + '/tableinfo');
     this.cache = api.cache('bmr'+path);
 }
@@ -303,7 +304,7 @@ BasicModelRest.prototype = {
     types : function(success_fnc, fail_fnc) {
         "use strict";
         return this._requestPath(this.typesPath, {
-            cacheKey: 'type',
+            cacheKey: this.typesPath,
             success: success_fnc,
         });
     },
@@ -313,9 +314,15 @@ BasicModelRest.prototype = {
         // value: value of the field (selected element in choice, text for inputs, etc....)
         // gui: Description of the field (type, value or values, defvalue, ....
         "use strict";
-        var path = [this.typesPath, typeName, 'gui'].join('/');
+        
+        var path;
+        if( typeName !== undefined ) {
+            path = [this.guiPath, typeName].join('/');
+        } else {
+            path = this.guiPath;
+        }
         return this._requestPath(path, {
-            cacheKey: typeName + '-gui',
+            cacheKey: path,
             success: success_fnc,
             fail: fail_fnc,
         });
@@ -345,8 +352,9 @@ function DetailModelRestApi(parentApi, parentId, model, options) {
     this.options = options;
     this.base = new BasicModelRest(undefined, {
         getPath: [parentApi.path, parentId, model].join('/'),
-        typesPath: '.', // We do not has this on details
-        tableInfoPath: [parentApi.path, 'tableinfo', parentId, model].join('/'),
+        typesPath: [parentApi.path, parentId, model, 'types'].join('/'), // Proably this will return nothing
+        guiPath: [parentApi.path, parentId, model].join('/'), // Proably this will return nothing
+        tableInfoPath: [parentApi.path, parentId, model, 'tableinfo'].join('/'),
     });
 }
 
@@ -379,6 +387,10 @@ DetailModelRestApi.prototype = {
         } else {
             return this.base.types(success_fnc, fail_fnc);
         }
+    },
+    gui: function(typeName, success_fnc, fail_fnc) { // Typename can be "undefined" to request MAIN gui (it it exists ofc..)
+        "use strict";
+        return this.base.gui(typeName, success_fnc, fail_fnc);
     },
     
 };

@@ -37,7 +37,7 @@ from uds.models import Transport
 from uds.core.transports import factory
 
 from uds.REST import Handler, NotFound
-from uds.REST.mixins import ModelHandlerMixin, ModelTypeHandlerMixin, ModelTableHandlerMixin
+from uds.REST.model import ModelHandler
 
 import logging
 
@@ -45,26 +45,18 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
-class Transports(ModelHandlerMixin, Handler):
+class Transports(ModelHandler):
     model = Transport
     save_fields = ['name', 'comments', 'priority', 'nets_positive']
-    
-    def item_as_dict(self, item):
-        type_ = item.getType()
-        return { 'id': item.id,
-                 'name': item.name,
-                 'comments': item.comments,
-                 'priority': item.priority, 
-                 'nets_positive': item.nets_positive,
-                 'networks': [ n.id for n in item.networks.all() ],
-                 'deployed_count': item.deployedServices.count(),
-                 'type': type_.type(),
-        }
-        
 
-class Types(ModelTypeHandlerMixin, Handler):
-    path = 'transports'
-    
+    table_title =  _('Current Transports')
+    table_fields = [
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
+            { 'comments': {'title':  _('Comments')}},
+            { 'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em' }},
+            { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+    ]
+
     def enum_types(self):
         return factory().providers().values()
     
@@ -82,13 +74,14 @@ class Types(ModelTypeHandlerMixin, Handler):
         except:
             raise NotFound('type not found')
     
-
-class TableInfo(ModelTableHandlerMixin, Handler):
-    path = 'transports'
-    title =  _('Current Transports')
-    fields = [
-            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
-            { 'comments': {'title':  _('Comments')}},
-            { 'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em' }},
-            { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
-    ]
+    def item_as_dict(self, item):
+        type_ = item.getType()
+        return { 'id': item.id,
+                 'name': item.name,
+                 'comments': item.comments,
+                 'priority': item.priority, 
+                 'nets_positive': item.nets_positive,
+                 'networks': [ n.id for n in item.networks.all() ],
+                 'deployed_count': item.deployedServices.count(),
+                 'type': type_.type(),
+        }

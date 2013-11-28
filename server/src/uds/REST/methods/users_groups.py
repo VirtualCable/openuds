@@ -38,7 +38,7 @@ from uds.core.util.State import State
 from uds.models import Authenticator
 
 from uds.REST.handlers import HandlerError
-from uds.REST.mixins import DetailHandler
+from uds.REST.model import DetailHandler
 
 import logging
 
