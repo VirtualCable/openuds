@@ -33,9 +33,9 @@
 from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
-from uds.models import Authenticator, User
+from uds.models import Authenticator
 
-from uds.REST import Handler, HandlerError
+from uds.REST import Handler
 
 import logging
 

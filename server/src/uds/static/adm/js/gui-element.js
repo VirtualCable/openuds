@@ -61,6 +61,11 @@ GuiElement.prototype = {
     //                Receives 3 parameters:
     //                   1.- the array of selected items data (objects, as got from api...get)
     //                   2.- the DataTable that raised the event
+    //   onCheck:    Event (function), 
+    //               It determines the state of buttons on selection: if returns "true", the indicated button will be enabled, and disabled if returns "false"
+    //               Receives 2 parameters:
+    //                   1.- the event fired, that can be "edit" or "delete"
+    //                   2.- the selected items data (array of selected elements, as got from api...get. In case of edit, array length will be 1)
     //   onNew: Event (function). If defined, will be invoked when "new" button is pressed
     //                Receives 4 parameters:
     //                   1.- the selected item data (single object, as got from api...get)
@@ -240,10 +245,14 @@ GuiElement.prototype = {
                             };
                         };
 
+                        var onCheck = options.onCheck || function() { return true }; // Default oncheck always returns true
+                        
                         // methods for buttons on row select
                         var editSelected = function(btn, obj, node) {
                             var sel = this.fnGetSelectedData();
-                            if (sel.length == 1) {
+                            var enable = sel.length == 1 ? onCheck("edit", sel) : false;
+                            
+                            if ( enable) {
                                 $(btn).removeClass('disabled').addClass('btn3d-success');
                             } else {
                                 $(btn).removeClass('btn3d-success').addClass('disabled');
@@ -251,7 +260,9 @@ GuiElement.prototype = {
                         };
                         var deleteSelected = function(btn, obj, node) {
                             var sel = this.fnGetSelectedData();
-                            if (sel.length > 0) {
+                            var enable = sel.length == 1 ? onCheck("delete", sel) : false;
+                            
+                            if (enable) {
                                 $(btn).removeClass('disabled').addClass('btn3d-warning');
                             } else {
                                 $(btn).removeClass('btn3d-warning').addClass('disabled');
@@ -434,6 +445,29 @@ GuiElement.prototype = {
                 }); // End Overview data
             }); // End Tableinfo data
         return '#' + tableId;
-    }
+    },
+    // "Generic" edit method to set onEdit table
+    typedEdit: function(modalTitle, modalErrorMsg, guiProcessor, fieldsProcessor) {
+        "use strict";
+        var self = this;
+        return function(value, event, table, refreshFnc) {
+            self.rest.gui(value.type, function(guiDefinition) {
+                var tabs = guiProcessor ? guiProcessor(guiDefinition) : guiDefinition;
+                self.rest.item(value.id, function(item) {
+                    gui.forms.launchModal(modalTitle+' <b>'+value.name+'</b>', tabs, item, function(form_selector, closeFnc) {
+                        var fields = gui.forms.read(form_selector);
+                        fields.data_type = value.type;
+                        fields = fieldsProcessor ? fieldsProcessor(fields) : fields; // Preprocess fields (probably generate tabs...)
+                        self.rest.save(fields, function(data) { // Success on put
+                            closeFnc();
+                            refreshFnc();
+                        }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
+                        return false;
+                       });
+                   });
+                
+            }, gui.failRequestModalFnc(modalErrorMsg));
+        };
+    },
 
 };

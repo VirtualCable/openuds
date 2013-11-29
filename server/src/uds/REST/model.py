@@ -152,14 +152,13 @@ class DetailHandler(BaseModelHandler):
             elif self._args[0] == 'tableinfo':
                 return self.processTableFields(self.getTitle(parent), self.getFields(parent))
             
-            raise RequestError('Invalid request')
-            
-            #return self.getItems(parent, self._args[0])
+            # try to get id
+            return self.getItems(parent, self._args[0])
         
         if nArgs == 2:
-            if self._args[1] == 'gui':
-                return self.getGui(parent, self._args[0])
-            elif self._args[1] == 'types':
+            if self._args[0] == 'gui':
+                return self.getGui(parent, self._args[1])
+            elif self._args[0] == 'types':
                 return self.getTypes(parent, self._args[1])
         
         return self.fallbackGet()
@@ -268,7 +267,7 @@ class ModelHandler(BaseModelHandler):
             path = self._path + '/'.join(args[:2])
             detail = detailCls(self, path, *args, parent = item)
             return getattr(detail, self._operation)()
-        except:
+        except AttributeError:
             raise NotFound('method not found')
         
     def get(self):
@@ -300,7 +299,7 @@ class ModelHandler(BaseModelHandler):
                 raise NotFound('item not found')
             
         # nArgs > 1
-        # Request type info             
+        # Request type info or gui, or detail          
         if self._args[0] == TYPES:
             if nArgs != 2:
                 raise RequestError('invalid request')
@@ -347,6 +346,8 @@ class ModelHandler(BaseModelHandler):
         if self._params.has_key('data_type'): # Needs to store instance
             item.data_type = self._params['data_type'] 
             item.data = item.getInstance(self._params).serialize()
+            
+        item.save()
             
         res = self.item_as_dict(item)
         

@@ -50,6 +50,7 @@ logger = logging.getLogger(__name__)
 class Authenticators(ModelHandler):
     model = Authenticator
     detail = { 'users': Users, 'groups':Groups }
+    save_fields = ['name', 'comments']
 
     table_title =  _('Current authenticators')
     table_fields = [
@@ -63,7 +64,7 @@ class Authenticators(ModelHandler):
     
     def getGui(self, type_):
         try:
-            return auths.factory().lookup(type_).guiDescription()
+            return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments'])
         except:
             raise NotFound('type not found')
     

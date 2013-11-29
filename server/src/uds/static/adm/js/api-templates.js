@@ -11,7 +11,6 @@
     // Equal comparision (like if helper, but with comparation)
     // Use as block as {{#ifequals [element] [element]}}....{{/ifequals}}
     Handlebars.registerHelper('ifequals', function(context1, context2, options) {
-        console.log('Comparing ', context1, ' with ', context2);
         if(context1 == context2) {
             return options.fn(this);
         } else {

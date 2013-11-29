@@ -350,12 +350,7 @@ BasicModelRest.prototype = {
 function DetailModelRestApi(parentApi, parentId, model, options) {
     "use strict";
     this.options = options;
-    this.base = new BasicModelRest(undefined, {
-        getPath: [parentApi.path, parentId, model].join('/'),
-        typesPath: [parentApi.path, parentId, model, 'types'].join('/'), // Proably this will return nothing
-        guiPath: [parentApi.path, parentId, model].join('/'), // Proably this will return nothing
-        tableInfoPath: [parentApi.path, parentId, model, 'tableinfo'].join('/'),
-    });
+    this.base = new BasicModelRest([parentApi.path, parentId, model].join('/'));
 }
 
 DetailModelRestApi.prototype = {
@@ -378,7 +373,7 @@ DetailModelRestApi.prototype = {
     },
     item: function(itemId, success_fnc, fail_fnc) {
         "use strict";
-        return this.base.item(success_fnc, fail_fnc);
+        return this.base.item(itemId, success_fnc, fail_fnc);
     },
     types: function(success_fnc, fail_fnc) {
         "use strict";

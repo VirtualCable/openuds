@@ -40,23 +40,38 @@ gui.providers.link = function(event) {
         var tableId = gui.providers.table({
             container : 'providers-placeholder',
             rowSelect : 'single',
+            onCheck : function(check, items) { // Check if item can be deleted
+                if( check == 'delete' ) {
+                    for( var i in items ) {
+                        if( items[i].services_count > 0)
+                            return false;
+                    }
+                    return true;
+                }
+                return true;
+            },
             onRowSelect : function(selected) {
                 api.tools.blockUI();
                 gui.doLog(selected[0]);
                 var id = selected[0].id;
-                // Options for detail, to initialize types correctly
-                var detail_options = {
-                    /* types: function(success_fnc, fail_fnc) {
-                        success_fnc(selected[0].offers);
-                    }*/
-                };
                 // Giving the name compossed with type, will ensure that only styles will be reattached once
-                var services = new GuiElement(api.providers.detail(id, 'services', detail_options), 'services-'+selected[0].type);
+                var services = new GuiElement(api.providers.detail(id, 'services'), 'services-'+selected[0].type);
                 
                 services.table({
                     container : 'services-placeholder',
                     rowSelect : 'single',
+                    onCheck: function(check, items) {
+                        if( check == 'delete' ) {
+                            for( var i in items ) {
+                                if( items[i].deployed_services_count > 0)
+                                    return false;
+                            }
+                            return true;
+                        }
+                        return true;
+                    },
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
+                    onEdit : services.typedEdit(gettext('Edit service'), gettext('Error processing service')),
                     scrollToTable : false,
                     onLoad: function(k) {
                         api.tools.unblockUI();
@@ -65,23 +80,7 @@ gui.providers.link = function(event) {
                 return false;
             },
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
-            onEdit: function(value, event, table, refreshFnc) {
-                gui.providers.rest.gui(value.type, function(itemGui){
-                       gui.providers.rest.item(value.id, function(item) {
-                           gui.forms.launchModal(gettext('Edit Service Provider')+' '+value.name, itemGui, item, function(form_selector, closeFnc) {
-                               var fields = gui.forms.read(form_selector);
-                               fields.data_type = value.type;
-                               fields.nets_positive = false;
-                               gui.providers.rest.save(fields, function(data) { // Success on put
-                                   closeFnc();
-                                   refreshFnc();
-                               }, gui.failRequestModalFnc(gettext('Error creating Service Provider')) // Fail on put, show modal message
-                               );
-                               return false;
-                           });
-                       });
-                   });
-            },
+            onEdit: gui.providers.typedEdit(gettext('Edit provider'), gettext('Error processing provider')),
         });
     });
 
@@ -136,12 +135,8 @@ gui.authenticators.link = function(event) {
             onRefresh : function() {
                 $('#users-placeholder').empty(); // Remove detail on parent refresh
             },
-            onEdit: function(value, event, table) {
-                gui.authenticators.rest.gui(value.type, function(data){
-                       var form = gui.fields(data);
-                       gui.launchModalForm(gettext('Edit authenticator')+' '+value.name, form);
-                   });
-            },
+            onEdit: gui.authenticators.typedEdit(gettext('Edit authenticator'), gettext('Error processing authenticator')),
+            
         });
     });
 

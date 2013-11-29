@@ -203,6 +203,8 @@
             max: $.validator.format(gettext("Please enter a value less than or equal to {0}.")),
             min: $.validator.format(gettext("Please enter a value greater than or equal to {0}."))
         });
+        // Set blockui params
+        $.blockUI.defaults.baseZ = 2000;
         
         gui.setLinksEvents();
         gui.dashboard.link();

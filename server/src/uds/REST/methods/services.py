@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 from uds.core.Environment import Environment
 
 from uds.REST.model import DetailHandler
-from uds.REST import NotFound
+from uds.REST import NotFound, ResponseError
 
 import logging
 
@@ -55,7 +55,8 @@ class Services(DetailHandler):
                      'name': k.name, 
                      'comments': k.comments, 
                      'type': k.data_type, 
-                     'typeName' : _(k.getType().name())
+                     'typeName' : _(k.getType().name()),
+                     'deployed_services_count' : k.deployedServices.count(),
                      } for k in parent.services.all() ]
             else:
                 with parent.get(pk=item) as k:
@@ -64,7 +65,8 @@ class Services(DetailHandler):
                          'name': k.name, 
                          'comments': k.comments, 
                          'type': k.data_type, 
-                         'typeName' : _(k.getType().name())
+                         'typeName' : _(k.getType().name()),
+                         'deployed_services_count' : k.deployedServices.count(),
                          }
         except:
             logger.exception('En services')
@@ -80,7 +82,8 @@ class Services(DetailHandler):
         return [
             { 'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': { 'title': _('Comments') } },
-            { 'type': {'title': _('Type') } }
+            { 'type': {'title': _('Type') } },
+            { 'deployed_services_count': {'title': _('Deployed services'), 'type': 'numeric', 'width': '7em'}},
         ]
         
     def getTypes(self, parent, forType):
@@ -103,7 +106,12 @@ class Services(DetailHandler):
         return offers # Default is that details do not have types
         
     def getGui(self, parent, forType):
-        logger.debug('getGui parameters: {0}, {1}'.format(parent, forType))
-        serviceType = parent.getServiceByType(type)
-        service = serviceType( Environment.getTempEnv(), parent)  # Instantiate it so it has the opportunity to alter gui description based on parent
-        return  self.addDefaultFields( service.guiDescription(service), ['name', 'comments'])
+        try:
+            logger.debug('getGui parameters: {0}, {1}'.format(parent, forType))
+            parentInstance = parent.getInstance()
+            serviceType = parentInstance.getServiceByType(forType)
+            service = serviceType( Environment.getTempEnv(), parentInstance)  # Instantiate it so it has the opportunity to alter gui description based on parent
+            return  self.addDefaultFields( service.guiDescription(service), ['name', 'comments'])
+        except Exception as e:
+            logger.exception('getGui')
+            raise ResponseError(unicode(e))

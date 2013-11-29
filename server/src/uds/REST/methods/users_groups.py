@@ -48,26 +48,24 @@ logger = logging.getLogger(__name__)
 
 class Users(DetailHandler):
     
-    def get(self):
+    def getItems(self, parent, item):
         # Extract authenticator
-        auth = self._kwargs['parent']
-        
         try:
-            if len(self._args) == 0:
-                return list(auth.users.all().values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent'))
+            if item is None:
+                return list(parent.users.all().values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent'))
             else:
-                return auth.get(pk=self._args[0]).values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent')
+                return parent.get(pk=item).values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent')
         except:
             logger.exception('En users')
             return { 'error': 'not found' }
         
-    def getTitle(self):
+    def getTitle(self, parent):
         try:
             return _('Users of {0}').format(Authenticator.objects.get(pk=self._kwargs['parent_id']).name)
         except:
             return _('Current users')
     
-    def getFields(self):
+    def getFields(self, parent):
         return [
             { 'name': {'title': _('User Id'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-user text-success' } },
             { 'real_name': { 'title': _('Name') } },
@@ -77,26 +75,25 @@ class Users(DetailHandler):
         ]        
 
 class Groups(DetailHandler):
-    def get(self):
+    
+    def getItems(self, parent, item):
         # Extract authenticator
-        auth = self._kwargs['parent']
-        
         try:
-            if len(self._args) == 0:
-                return list(auth.groups.all().values('id','name', 'comments','state','is_meta'))
+            if item is None:
+                return list(parent.groups.all().values('id','name', 'comments','state','is_meta'))
             else:
-                return auth.get(pk=self._args[0]).values('id','name', 'comments','state','is_meta')
+                return parent.get(pk=item).values('id','name', 'comments','state','is_meta')
         except:
             logger.exception('REST groups')
             raise HandlerError('exception')
         
-    def getTitle(self):
+    def getTitle(self, parent):
         try:
             return _('Groups of {0}').format(Authenticator.objects.get(pk=self._kwargs['parent_id']).name)
         except:
             return _('Current groups')
     
-    def getFields(self):
+    def getFields(self, parent):
         return [
             { 'name': {'title': _('User Id'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-group text-success' } },
             { 'comments': { 'title': _('Comments') } },

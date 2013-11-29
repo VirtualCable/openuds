@@ -54,6 +54,9 @@ class AccessDenied(HandlerError):
 class RequestError(HandlerError):
     pass
 
+class ResponseError(HandlerError):
+    pass
+
 class Handler(object):
     raw = False # If true, Handler will return directly an HttpResponse Object
     name = None # If name is not used, name will be the class name in lower case
@@ -86,11 +89,8 @@ class Handler(object):
                 if not self._session.has_key('REST'):
                     raise Exception() # No valid session, so auth_token is also invalid
             except:
-                if settings.DEBUG: # Right now all users are valid
-                    self.genAuthToken(-1, 'root', 'es', True, True)
-                else:
-                    self._authToken = None
-                    self._session = None
+                self._authToken = None
+                self._session = None
                 
             if self._authToken is None:
                 raise AccessDenied()
