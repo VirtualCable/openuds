@@ -1,5 +1,29 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
-
+{% block field %}
+  {% verbatim %}<input type="text" id="{{ name }}_field" class="form-control cursor-pointer" value="{{ truncatechars 64 value }}" readonly>{% endverbatim %}
 {% verbatim %}
-{% endverbatim %}
+<input type="hidden" class="{{ css }}" name="{{ name }}" value="{{ value }}">
+{% endverbatim %}{% comment %}<script>/*This is a little trick to make IDE recognize sintax hightlight, will not be show on render :-)*/{% endcomment %}
+
+{% verbatim %}{{# javascript }}{% endverbatim %}
+(function(){
+    "use strict";
+    {% verbatim %}var id = '#{{ name }}_field';{% endverbatim %}
+    $(id).tooltip({
+        placement: 'bottom',
+        title: "{% trans 'Click to edit list' %}",
+        delay: { show: 500, hide: 100 },
+    });
+    $(id).click(function(){
+       var modalId = gui.launchModal(gettext('Edit list'), '');
+       $(modalId + ' .button-accept').click(function(){
+           alert('Save');
+           $(modalId).modal('hide');
+       })
+    });
+}());
+{% verbatim %}{{/ javascript }}{% endverbatim %}
+{% comment %}</script>{% endcomment %}
+
+{% endblock %}

@@ -121,6 +121,15 @@ class BaseModelHandler(Handler):
             raise RequestError('needed parameter not found in data {0}'.format(unicode(e)))
         
         return args
+
+    def fillIntanceFields(self, item, res):
+        if hasattr(item, 'getInstance'):
+            for key, value in item.getInstance().valuesDict().iteritems():
+                if type(value) in (unicode, str):
+                    value = {"true":True, "false":False}.get(value, value) # Translate "true" & "false" to True & False (booleans)
+                logger.debug('{0} = {1}'.format(key, value))
+                res[key] = value
+        return res
     
     # Exceptions
     def invalidRequestException(self):
@@ -164,20 +173,22 @@ class DetailHandler(BaseModelHandler):
         if nArgs == 1:
             if self._args[0] == OVERVIEW:
                 return self.getItems(parent, None)
-            elif self._args[0] == 'gui':
-                return self.getGui(parent, None)
-            elif self._args[0] == 'types':
+            elif self._args[0] == GUI:
+                gui = self.getGui(parent, None)
+                return sorted(gui, key=lambda f: f['gui']['order'])
+            elif self._args[0] == TYPES:
                 return self.getTypes(parent, None)
-            elif self._args[0] == 'tableinfo':
+            elif self._args[0] == TABLEINFO:
                 return self.processTableFields(self.getTitle(parent), self.getFields(parent))
             
             # try to get id
             return self.getItems(parent, self._args[0])
         
         if nArgs == 2:
-            if self._args[0] == 'gui':
-                return self.getGui(parent, self._args[1])
-            elif self._args[0] == 'types':
+            if self._args[0] == GUI:
+                gui = self.getGui(parent, self._args[1])
+                return sorted(gui, key=lambda f: f['gui']['order'])                
+            elif self._args[0] == TYPES:
                 return self.getTypes(parent, self._args[1])
         
         return self.fallbackGet()
@@ -330,13 +341,6 @@ class ModelHandler(BaseModelHandler):
             except:
                 logger.exception('Exception getting item from {0}'.format(self.model))
                 
-    def fillIntanceFields(self, item, res):
-        if hasattr(item, 'getInstance'):
-            for key, value in item.getInstance().valuesDict().iteritems():
-                value = {"true":True, "false":False}.get(value, value)
-                logger.debug('{0} = {1}'.format(key, value))
-                res[key] = value
-
     def get(self):
         logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
         nArgs = len(self._args)

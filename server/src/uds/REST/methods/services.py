@@ -61,7 +61,7 @@ class Services(DetailHandler):
                      } for k in parent.services.all() ]
             else:
                 k = parent.services.get(pk=item)
-                return {
+                val = {
                      'id':k.id, 
                      'name': k.name, 
                      'comments': k.comments, 
@@ -69,7 +69,9 @@ class Services(DetailHandler):
                      'typeName' : _(k.getType().name()),
                      'deployed_services_count' : k.deployedServices.count(),
                      }
+                return self.fillIntanceFields(k, val)
         except:
+            logger.exception('getItems')
             return { 'error': 'not found' }
         
     def saveItem(self, parent, item):

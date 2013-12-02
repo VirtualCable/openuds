@@ -54,6 +54,10 @@ table.dataTable tr.even td.sorting_3 { background-color: blue; }*/
 	cursor: pointer;
 }
 
+.cursor-pointer {
+	cursor: pointer !important;
+}
+
 #minimized {
 	margin-top: 0.6em;
 	margin-bottom: 0.3em;

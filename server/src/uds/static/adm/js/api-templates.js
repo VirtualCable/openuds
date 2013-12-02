@@ -35,6 +35,22 @@
         options.data['_counter_'+id] += 1;
     });
     
+    // For inserting "inline" javascript scripts, due to the fact that we cannot
+    // Insert "<script>...</script>" inside inline elements (they are already scripts)
+    Handlebars.registerHelper('javascript', function(options) {
+        return new Handlebars.SafeString('<script>' + options.fn(this) + '</script>');
+    });
+    
+    // Truncate chars, like django "truncatechars" filter
+    Handlebars.registerHelper('truncatechars', function(len, value) {
+        var val = value.toString(); // For Array objects, the toString method joins the array and returns one string containing each array element separated by commas
+        if(val.length > len) {
+            return val.substring(0, len-3) + "...";
+        } else {
+            return val;
+        }
+    });
+    
     api.templates = {};
     // Now initialize templates api
     api.templates.cache = new api.cache('tmpls'); // Will cache templates locally. If name contains
