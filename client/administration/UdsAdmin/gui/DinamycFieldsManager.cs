@@ -183,43 +183,50 @@ namespace UdsAdmin.gui
             int row = 0;
             foreach (xmlrpc.GuiField fld in fields)
             {
-                if (fld.gui.type != xmlrpc.Constants.HIDDEN_TYPE) // Hiden fields are textbox that don't appears and don't add rows..
+                try
                 {
-                    ToolTip tt = new ToolTip();
-                    // Creates the label
-                    Label label = new Label();
-                    label.AutoSize = true;
-                    label.Margin = new Padding(3, 6, 3, 6);
-                    label.Text = fld.gui.label;
-                    label.TextAlign = ContentAlignment.MiddleLeft;
-                    tt.SetToolTip(label, fld.gui.tooltip);
-                    panel.Controls.Add(label, 0, row);
-                    //panel.SetCellPosition(label, new TableLayoutPanelCellPosition(0, row));
-                    Control ctrl = ctrlTypeInfo[fld.gui.type].ctrlGenerator(fld, panel);
-                    ctrl.Dock = DockStyle.Fill;
-                    if (dict.ContainsKey(fld.name))
+                    if (fld.gui.type != xmlrpc.Constants.HIDDEN_TYPE) // Hiden fields are textbox that don't appears and don't add rows..
                     {
-                        // We have it in order
-                        ordererValues.Add(dict[fld.name]);
+                        ToolTip tt = new ToolTip();
+                        // Creates the label
+                        Label label = new Label();
+                        label.AutoSize = true;
+                        label.Margin = new Padding(3, 6, 3, 6);
+                        label.Text = fld.gui.label;
+                        label.TextAlign = ContentAlignment.MiddleLeft;
+                        tt.SetToolTip(label, fld.gui.tooltip);
+                        panel.Controls.Add(label, 0, row);
+                        //panel.SetCellPosition(label, new TableLayoutPanelCellPosition(0, row));
+                        Control ctrl = ctrlTypeInfo[fld.gui.type].ctrlGenerator(fld, panel);
+                        ctrl.Dock = DockStyle.Fill;
+                        if (dict.ContainsKey(fld.name))
+                        {
+                            // We have it in order
+                            ordererValues.Add(dict[fld.name]);
+                        }
+                        if (fld.gui.rdonly == true && values != null)
+                        {
+                            label.Enabled = false;
+                            ctrl.Enabled = false;
+                        }
+                        panel.Controls.Add(ctrl, 1, row);
+                        // panel.SetCellPosition(ctrl, new TableLayoutPanelCellPosition(1, row));
+                        row++;
                     }
-                    if (fld.gui.rdonly == true && values != null)
-                    {
-                        label.Enabled = false;
-                        ctrl.Enabled = false;
-                    }
-                    panel.Controls.Add(ctrl, 1, row);
-                    // panel.SetCellPosition(ctrl, new TableLayoutPanelCellPosition(1, row));
-                    row++;
-                }
-                else
-                {
-                    TextBox hidden = new TextBox();
-                    if (fld.value != "")
-                        hidden.Text = fld.value;
                     else
-                        hidden.Text = fld.gui.defvalue;
-                    hidden.Name = fld.name; hidden.Tag = fld; hidden.Visible = false;
-                    panel.Controls.Add(hidden, 0, 0);
+                    {
+                        TextBox hidden = new TextBox();
+                        if (fld.value != "")
+                            hidden.Text = fld.value;
+                        else
+                            hidden.Text = fld.gui.defvalue;
+                        hidden.Name = fld.name; hidden.Tag = fld; hidden.Visible = false;
+                        panel.Controls.Add(hidden, 0, 0);
+                    }
+                }
+                catch (Exception e)
+                {
+                    UdsAdmin.gui.UserNotifier.notifyError(e.Message);
                 }
             }
 
@@ -365,7 +372,7 @@ namespace UdsAdmin.gui
             Size sz = ctrlTypeInfo[fld.gui.type].sizeCalculator(fld);
             box.Width = sz.Width;
             box.Height = sz.Height;
-            foreach (xmlrpc.Choice ch in fld.gui.values)
+            foreach (xmlrpc.Choice ch in xmlrpc.Choice.fromValues(fld.gui.values))
             {
                 box.Items.Add(ch);
                 if (ch.id == fld.gui.defvalue)
@@ -377,26 +384,33 @@ namespace UdsAdmin.gui
                 // We create a delegate to support the callback for this combo box
                 box.SelectedIndexChanged += delegate(object sender, EventArgs args)
                 {
-                    xmlrpc.GuiFieldValue[] data = new xmlrpc.GuiFieldValue[fld.gui.fills.parameters.Length];
-                    int pos = 0;
-                    foreach (string parameter in fld.gui.fills.parameters)
+                    try
                     {
-                        Control[] ctrlParameter = container.Controls.Find(parameter, true);
-                        if (ctrlParameter.Length > 0)
+                        xmlrpc.GuiFieldValue[] data = new xmlrpc.GuiFieldValue[fld.gui.fills.parameters.Length];
+                        int pos = 0;
+                        foreach (string parameter in fld.gui.fills.parameters)
                         {
-                            xmlrpc.GuiField field = (xmlrpc.GuiField)ctrlParameter[0].Tag;
-                            data[pos++] = ctrlTypeInfo[field.gui.type].dataExtractor(ctrlParameter[0], field, false);
+                            Control[] ctrlParameter = container.Controls.Find(parameter, true);
+                            if (ctrlParameter.Length > 0)
+                            {
+                                xmlrpc.GuiField field = (xmlrpc.GuiField)ctrlParameter[0].Tag;
+                                data[pos++] = ctrlTypeInfo[field.gui.type].dataExtractor(ctrlParameter[0], field, false);
+                            }
+                        }
+                        xmlrpc.GuiFieldValue[] newData = xmlrpc.UdsAdminService.InvokeChooseCallback(fld.gui.fills.callbackName, data);
+                        foreach (xmlrpc.GuiFieldValue val in newData)
+                        {
+                            Control[] ctrlResult = container.Controls.Find(val.name, true);
+                            if (ctrlResult.Length > 0)
+                            {
+                                xmlrpc.GuiField field = (xmlrpc.GuiField)ctrlResult[0].Tag;
+                                ctrlTypeInfo[field.gui.type].dataWriter(ctrlResult[0], val);
+                            }
                         }
                     }
-                    xmlrpc.GuiFieldValue[] newData = xmlrpc.UdsAdminService.InvokeChooseCallback(fld.gui.fills.callbackName, data);
-                    foreach (xmlrpc.GuiFieldValue val in newData)
+                    catch (Exception e)
                     {
-                        Control[] ctrlResult = container.Controls.Find(val.name, true);
-                        if (ctrlResult.Length > 0)
-                        {
-                            xmlrpc.GuiField field = (xmlrpc.GuiField)ctrlResult[0].Tag;
-                            ctrlTypeInfo[field.gui.type].dataWriter(ctrlResult[0], val);
-                        }
+                        UdsAdmin.gui.UserNotifier.notifyError(e.Message);
                     }
                 };
             }
@@ -414,7 +428,7 @@ namespace UdsAdmin.gui
             Size sz = ctrlTypeInfo[fld.gui.type].sizeCalculator(fld);
             box.Width = sz.Width;
             box.Height = sz.Height;
-            foreach (xmlrpc.Choice ch in fld.gui.values)
+            foreach (xmlrpc.Choice ch in xmlrpc.Choice.fromValues(fld.gui.values))
             {
                 box.Items.Add(ch);
                 if (fld.gui.defvalue == ch.id)
@@ -433,8 +447,8 @@ namespace UdsAdmin.gui
             Size sz = ctrlTypeInfo[fld.gui.type].sizeCalculator(fld);
             lst.Width = sz.Width;
             List<string> vals = new List<string>();
-            foreach (xmlrpc.Choice ch in fld.gui.values)
-                vals.Add(ch.id);
+            foreach (String ch in fld.gui.values)
+                vals.Add(ch);
             lst.Items = vals;
 
             return lst;
@@ -564,12 +578,9 @@ namespace UdsAdmin.gui
         {
             controls.ListEditor lst = (controls.ListEditor)ctrl;
             List<string> vals = lst.Items;
-            xmlrpc.Choice[] selected = new xmlrpc.Choice[vals.Count];
-            for (int i = 0; i < vals.Count; i++)
-                selected[i] = new xmlrpc.Choice(vals[i], ""); // Returned values goes inside ids (the significant part of choices, text are used to display data to user)
-            if ( validate && fld.gui.required && selected.Length == 0)
+            if ( validate && fld.gui.required && vals.Count == 0)
                 throw new ValidationError(fld);
-            return new xmlrpc.GuiFieldValue(fld.name, selected);
+            return new xmlrpc.GuiFieldValue(fld.name, vals.ToArray());
         }
 
         private static xmlrpc.GuiFieldValue CheckBoxExtractor(Control ctrl, xmlrpc.GuiField fld, bool validate)
@@ -605,7 +616,7 @@ namespace UdsAdmin.gui
         {
             ComboBox box = (ComboBox)ctrl;
             box.Items.Clear();
-            foreach (xmlrpc.Choice ch in value.values)
+            foreach (xmlrpc.Choice ch in xmlrpc.Choice.fromValues(value.values))
             {
                 box.Items.Add(ch);
             }
@@ -619,7 +630,7 @@ namespace UdsAdmin.gui
         {
             ListBox box = (ListBox)ctrl;
             box.Items.Clear();
-            foreach (xmlrpc.Choice ch in value.values)
+            foreach (xmlrpc.Choice ch in xmlrpc.Choice.fromValues(value.values))
             {
                 box.Items.Add(ch);
             }
@@ -629,8 +640,8 @@ namespace UdsAdmin.gui
         {
             controls.ListEditor lst = (controls.ListEditor)ctrl;
             List<string> vals = new List<string>();
-            foreach (xmlrpc.Choice ch in value.values)
-                vals.Add(ch.text);
+            foreach (string ch in value.values)
+                vals.Add(ch);
             lst.Items = vals;
         }
 
@@ -670,7 +681,7 @@ namespace UdsAdmin.gui
             ListBox box = (ListBox)ctrl;
             box.BeginUpdate();
             box.ClearSelected();
-            foreach (xmlrpc.Choice val in value.values)
+            foreach (xmlrpc.Choice val in xmlrpc.Choice.fromValues(value.values))
                 box.SelectedItems.Add(val);
             box.EndUpdate();
         }
@@ -680,8 +691,8 @@ namespace UdsAdmin.gui
             // All items are "Selected" in editlist, i mean, we fill the list with this items
             controls.ListEditor lst = (controls.ListEditor)ctrl;
             List<string> vals = new List<string>();
-            foreach (xmlrpc.Choice ch in value.values)
-                vals.Add(ch.id);
+            foreach (String ch in value.values)
+                vals.Add(ch);
             lst.Items = vals;
 
         }

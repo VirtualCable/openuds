@@ -7,11 +7,11 @@ using System.Resources;
 // conjunto de atributos. Cambie estos atributos para modificar la información
 // asociada con un ensamblado.
 [assembly: AssemblyTitle("UDS Administration Client")]
-[assembly: AssemblyDescription("(c) 2012 Virtual Cable S.L.\nXML-RPC.NET Copyright (c) 2006 Charles Cook")]
+[assembly: AssemblyDescription("(c) 2012-2014 Virtual Cable S.L.\nXML-RPC.NET Copyright (c) 2006 Charles Cook")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Virtual Cable S.L.")]
 [assembly: AssemblyProduct("UDS Administration Client")]
-[assembly: AssemblyCopyright("Copyright © Virtual Cable 2012")]
+[assembly: AssemblyCopyright("Copyright © Virtual Cable 2012-2014")]
 [assembly: AssemblyTrademark("UDS Admin")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Resources;
 // Puede especificar todos los valores o establecer como predeterminados los números de versión de compilación y de revisión 
 // mediante el asterisco ('*'), como se muestra a continuación:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.4.0.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]

@@ -120,7 +120,7 @@ namespace UdsAdmin.xmlrpc
         public string type;
         // Choice values (available only for choices)
         [XmlRpcMissingMapping(MappingAction.Ignore)]
-        public Choice[] values;
+        public Object[] values;
 
         [XmlRpcMissingMapping(MappingAction.Ignore)]
         public ChoiceCallback fills;
@@ -153,7 +153,7 @@ namespace UdsAdmin.xmlrpc
         [XmlRpcMissingMapping(MappingAction.Ignore)]
         public string value;
         [XmlRpcMissingMapping(MappingAction.Ignore)]
-        public Choice[] values;
+        public Object[] values;
 
         public GuiFieldValue(string name, string value)
         {
@@ -166,8 +166,20 @@ namespace UdsAdmin.xmlrpc
         {
             this.name = name;
             this.value = null;
-            this.values = values;
+            this.values = new Object[values.Length];
+            for (int i = values.Length - 1; i >= 0; i--)
+                this.values[i] = values[i];
         }
+
+        public GuiFieldValue(string name, string[] values)
+        {
+            this.name = name;
+            this.value = null;
+            this.values = new Object[values.Length];
+            for (int i = values.Length - 1; i >= 0; i--)
+                this.values[i] = values[i];
+        }
+
 
         static public string getData(GuiFieldValue[] fields, string field)
         {
@@ -455,6 +467,12 @@ namespace UdsAdmin.xmlrpc
             this.text = text;
         }
 
+        public Choice(XmlRpcStruct s)
+        {
+            this.id = (string)s["id"];
+            this.text = (string)s["text"];
+        }
+
         public override string ToString()
         {
             return text;
@@ -471,6 +489,17 @@ namespace UdsAdmin.xmlrpc
         }
 
         public override int GetHashCode() { return 0; }
+
+        public static List<Choice> fromValues(Object[] values)
+        {
+            List<Choice> res = new List<Choice>(values.Length);
+            foreach (Object o in values)
+            {
+                Choice ch = new Choice((CookComputing.XmlRpc.XmlRpcStruct)o);
+                res.Add(ch);
+            }
+            return res;
+        }
     }
 
     // Comparators
