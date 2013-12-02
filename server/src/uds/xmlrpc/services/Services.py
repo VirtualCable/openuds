@@ -105,8 +105,8 @@ def getAllServices(credentials):
             val = dictFromService(serv)
             val['name'] = serv.provider.name + '\\' + val['name']
             res.append(val)
-        except Exception, e:
-            logger.debug(e)
+        except:
+            logger.exception('getAllServices')
     return res
 
 @needs_credentials
@@ -141,6 +141,7 @@ def getService(credentials, id):
             valtext = 'values'
         val = {'name' : key, valtext : value }
         res.append(val)
+    logger.debug('getService res: {0}'.format(res))
     return res
 
 @needs_credentials

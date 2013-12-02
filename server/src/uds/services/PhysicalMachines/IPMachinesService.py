@@ -70,7 +70,7 @@ class IPMachinesService(services.Service):
             
     
     def valuesDict(self):
-        return { 'ipList' : gui.convertToChoices(self._ips) }
+        return { 'ipList' : gui.convertToList(self._ips) }
 
     def marshal(self):
         self.storage().saveData('ips', cPickle.dumps(self._ips))

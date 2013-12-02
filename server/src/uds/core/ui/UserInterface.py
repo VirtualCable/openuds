@@ -95,6 +95,10 @@ class gui(object):
         return res
     
     @staticmethod
+    def convertToList(vals):
+        return [ unicode(v) for v in vals ] 
+    
+    @staticmethod
     def choiceItem(id_, text):
         '''
         Helper method to create a single choice item.
@@ -197,8 +201,6 @@ class gui(object):
         CHECKBOX_TYPE = 'checkbox'
         
         DEFAULT_LENTGH = 32 #: If length of some fields are not especified, this value is used as default
-        
-        
         
         def __init__(self, **options):
             self._data = {
@@ -638,7 +640,7 @@ class gui(object):
         
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
-            self._data['values'] = gui.convertToChoices(options['values']) if options.has_key('values') else []
+            self._data['values'] = gui.convertToList(options['values']) if options.has_key('values') else []
             self._type(gui.InputField.EDITABLE_LIST)
             
         def _setValue(self, values):
@@ -646,7 +648,7 @@ class gui(object):
             So we can override value setting at descendants
             '''
             super(self.__class__, self)._setValue(values)
-            self._data['values'] = gui.convertToChoices(values)
+            self._data['values'] = gui.convertToList(values)
         
 
             
@@ -680,9 +682,17 @@ class UserInterface(object):
     __metaclass__ = UserInterfaceType
     
     def __init__(self, values = None):
+        import copy
         #: If there is an array of elements to initialize, simply try to store values on form fields
+        # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
+        # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
+        self._gui = copy.deepcopy(self._gui)
+        for key, val in self._gui.iteritems():
+            setattr(self, key, val)
+            
         if values is not None:
             for k, v in self._gui.iteritems():
+                
                 if values.has_key(k):
                     v.value = values[k]
         
@@ -737,7 +747,9 @@ class UserInterface(object):
         '''
         dic = {}
         for k, v in self._gui.iteritems():
-            if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
+            if v.isType(gui.InputField.EDITABLE_LIST):
+                dic[k] = gui.convertToList(v.value)
+            elif v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 dic[k] = gui.convertToChoices(v.value)
             else:
                 dic[k] = v.value
@@ -823,11 +835,15 @@ class UserInterface(object):
                     This will only happen (not to be None) in Services.
         '''
         logger.debug('Active languaje for gui translation: {0}'.format(get_language()))
+        gui = cls
         if obj is not None:
             obj.initGui()  # We give the "oportunity" to fill necesary gui data before providing it to client
+            gui = obj
         
         res = []
-        for key, val in cls._gui.iteritems():
+        for key, val in gui._gui.iteritems():
+            logger.debug('{0} ### {1}'.format(key, val))
             res.append( { 'name' : key, 'gui' : val.guiDescription(), 'value' : '' },  )
             
+        logger.debug('>>>>>>>>>>>> Gui Description: {0} -- {1}'.format(obj, res))
         return res

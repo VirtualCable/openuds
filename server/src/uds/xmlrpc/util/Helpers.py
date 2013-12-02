@@ -39,19 +39,22 @@ logger = logging.getLogger(__name__)
 
 def dictFromData(data):
     '''
-    This function converts an array of dicts of type { 'name' : ..., 'value' : ...} to a single dict where keys are the "name"s and the values are the "value"s
+    This function converts an array of dicts of type { 'name' : ..., 'value' : ...} to a single dictionary where keys are the "name"s and the values are the "value"s
     example:
       data = [ { 'name' : 'var1', 'value' : 'value1' }, { 'name' : 'var2', 'value' : 'value2' }, 'name' : 'var3', 'values' : [ ...] ]
       this will return { 'var1' : 'value1', 'var2' : 'value2' } 
     '''
-    dict = {}
+    dictionary = {}
     for val in data:
         if val.has_key('value'):
-            dict[val['name']] = val['value']
+            dictionary[val['name']] = val['value']
         else:
             ary = []
             for value in val['values']:
-                ary.append(value['id'])
-            dict[val['name']] = ary
-    logger.debug("Dictionary obtained: {0} from {1}".format(dict, data))
-    return dict
+                if isinstance(value, dict):
+                    ary.append(value['id'])
+                else:
+                    ary.append(value)
+            dictionary[val['name']] = ary
+    logger.debug("Dictionary obtained: {0} from {1}".format(dictionary, data))
+    return dictionary
