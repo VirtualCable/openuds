@@ -37,7 +37,8 @@ from django.utils.translation import ugettext as _
 from uds.core.Environment import Environment
 
 from uds.REST.model import DetailHandler
-from uds.REST import NotFound, ResponseError
+from uds.REST import NotFound, ResponseError, RequestError
+from django.db import IntegrityError
 
 import logging
 
@@ -59,18 +60,50 @@ class Services(DetailHandler):
                      'deployed_services_count' : k.deployedServices.count(),
                      } for k in parent.services.all() ]
             else:
-                with parent.get(pk=item) as k:
-                    return {
-                         'id':k.id, 
-                         'name': k.name, 
-                         'comments': k.comments, 
-                         'type': k.data_type, 
-                         'typeName' : _(k.getType().name()),
-                         'deployed_services_count' : k.deployedServices.count(),
-                         }
+                k = parent.services.get(pk=item)
+                return {
+                     'id':k.id, 
+                     'name': k.name, 
+                     'comments': k.comments, 
+                     'type': k.data_type, 
+                     'typeName' : _(k.getType().name()),
+                     'deployed_services_count' : k.deployedServices.count(),
+                     }
         except:
-            logger.exception('En services')
             return { 'error': 'not found' }
+        
+    def saveItem(self, parent, item):
+        # Extract item db fields
+        # We need this fields for all
+        fields = self.readFieldsFromParams(['name', 'comments', 'data_type'])
+        try:
+            if item is None: # Create new
+                service = parent.services.create(**fields)
+            else:
+                service = parent.services.get(pk=item)
+                service.__dict__.update(fields)
+            service.save()
+        except self.model.DoesNotExist: 
+            raise NotFound('Item not found')
+        except IntegrityError: # Duplicate key probably 
+            raise RequestError('Element already exists (duplicate key error)')
+        except Exception:
+            raise RequestError('incorrect invocation to PUT')
+        
+        return self.getItems(parent, service.id)
+    
+    def deleteItem(self, parent, item):
+        try:
+            service = parent.services.get(pk=item)
+            
+            if service.deployedServices.count() != 0:
+                raise RequestError('Item has associated deployed services')
+            
+            service.delete()
+        except:
+            raise NotFound('service not found')
+        
+        return 'deleted'
         
     def getTitle(self, parent):
         try:

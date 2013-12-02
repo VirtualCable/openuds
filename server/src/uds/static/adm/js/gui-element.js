@@ -352,9 +352,9 @@ GuiElement.prototype = {
                                                 headings.push(api.spreadsheet.cell(heading.sTitle, 'String', styles.bold));
                                             });
                                             rows.push(api.spreadsheet.row(headings));
-                                            $.each(data, function(index, row) {
+                                            $.each(data, function(index1, row) {
                                                 var cells = [];
-                                                $.each(columns, function(index, col){
+                                                $.each(columns, function(index2, col){
                                                     if( col.bVisible === false ) {
                                                         return;
                                                     }
@@ -363,7 +363,6 @@ GuiElement.prototype = {
                                                 });
                                                 rows.push(api.spreadsheet.row(cells));
                                             });
-                                            
                                             var ctx = {
                                                 creation_date: (new Date()).toISOString(),
                                                 worksheet: title,
@@ -371,6 +370,7 @@ GuiElement.prototype = {
                                                 rows_count: rows.length,
                                                 rows: rows.join('\n')
                                             };
+                                            gui.doLog(ctx);
                                             setTimeout( function() {
                                                 saveAs(new Blob([api.templates.evaluate(tmpl, ctx)], 
                                                         {type: 'application/vnd.ms-excel'} ), title + '.xls');
@@ -446,28 +446,4 @@ GuiElement.prototype = {
             }); // End Tableinfo data
         return '#' + tableId;
     },
-    // "Generic" edit method to set onEdit table
-    typedEdit: function(modalTitle, modalErrorMsg, guiProcessor, fieldsProcessor) {
-        "use strict";
-        var self = this;
-        return function(value, event, table, refreshFnc) {
-            self.rest.gui(value.type, function(guiDefinition) {
-                var tabs = guiProcessor ? guiProcessor(guiDefinition) : guiDefinition;
-                self.rest.item(value.id, function(item) {
-                    gui.forms.launchModal(modalTitle+' <b>'+value.name+'</b>', tabs, item, function(form_selector, closeFnc) {
-                        var fields = gui.forms.read(form_selector);
-                        fields.data_type = value.type;
-                        fields = fieldsProcessor ? fieldsProcessor(fields) : fields; // Preprocess fields (probably generate tabs...)
-                        self.rest.save(fields, function(data) { // Success on put
-                            closeFnc();
-                            refreshFnc();
-                        }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
-                        return false;
-                       });
-                   });
-                
-            }, gui.failRequestModalFnc(modalErrorMsg));
-        };
-    },
-
 };

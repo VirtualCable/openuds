@@ -41,13 +41,13 @@ gui.providers.link = function(event) {
             container : 'providers-placeholder',
             rowSelect : 'single',
             onCheck : function(check, items) { // Check if item can be deleted
-                if( check == 'delete' ) {
+                /*if( check == 'delete' ) {
                     for( var i in items ) {
                         if( items[i].services_count > 0)
                             return false;
                     }
                     return true;
-                }
+                }*/
                 return true;
             },
             onRowSelect : function(selected) {
@@ -71,7 +71,9 @@ gui.providers.link = function(event) {
                         return true;
                     },
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
-                    onEdit : services.typedEdit(gettext('Edit service'), gettext('Error processing service')),
+                    onEdit : gui.methods.typedEdit(services, gettext('Edit service'), gettext('Error processing service')),
+                    onNew : gui.methods.typedNew(services, gettext('New service'), gettext('Error creating service')),
+                    onDelete: gui.methods.del(services, gettext('Delete service'), gettext('Error deleting service')),
                     scrollToTable : false,
                     onLoad: function(k) {
                         api.tools.unblockUI();
@@ -80,7 +82,9 @@ gui.providers.link = function(event) {
                 return false;
             },
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
-            onEdit: gui.providers.typedEdit(gettext('Edit provider'), gettext('Error processing provider')),
+            onNew : gui.methods.typedNew(gui.providers, gettext('New provider'), gettext('Error creating provider')),
+            onEdit: gui.methods.typedEdit(gui.providers, gettext('Edit provider'), gettext('Error processing provider')),
+            onDelete: gui.methods.del(gui.providers, gettext('Delete provider'), gettext('Error deleting provider')),
         });
     });
 
@@ -107,7 +111,7 @@ gui.authenticators.link = function(event) {
         gui.authenticators.table({
             container : 'auths-placeholder',
             rowSelect : 'single',
-            buttons : [ 'edit', 'delete', 'xls' ],
+            buttons : [ 'new', 'edit', 'delete', 'xls' ],
             onRowSelect : function(selected) {
                 api.tools.blockUI();
                 var id = selected[0].id;
@@ -135,7 +139,9 @@ gui.authenticators.link = function(event) {
             onRefresh : function() {
                 $('#users-placeholder').empty(); // Remove detail on parent refresh
             },
-            onEdit: gui.authenticators.typedEdit(gettext('Edit authenticator'), gettext('Error processing authenticator')),
+            onNew : gui.methods.typedNew(gui.authenticators, gettext('New authenticator'), gettext('Error creating authenticator')),
+            onEdit: gui.methods.typedEdit(gui.authenticators, gettext('Edit authenticator'), gettext('Error processing authenticator')),
+            onDelete: gui.methods.del(gui.authenticators, gettext('Delete authenticator'), gettext('Error deleting authenticator')),
             
         });
     });
@@ -241,8 +247,7 @@ gui.connectivity.link = function(event) {
                 // TODO: Add confirmation to deletion
                 gui.connectivity.transports.rest.del(value.id, function(){
                     refreshFnc();
-                }, gui.failRequestModalFnc(gettext('Error removing transport'))
-                );
+                }, gui.failRequestModalFnc(gettext('Error removing transport')) );
             },
         });
         gui.connectivity.networks.table({

@@ -116,8 +116,17 @@
         .on('hidden.bs.modal', function () {
             $(id).remove();
         });
+        return id;
     };
     
+    gui.alert = function(message, type) {
+        api.templates.get('alert', function(tmpl) {
+           $(api.templates.evaluate(tmpl, {
+               type: type,
+               message: message
+           })).appendTo('#alerts'); 
+        });
+    };
     
     gui.failRequestMessageFnc = function(jqXHR, textStatus, errorThrown) {
         api.templates.get('request_failed', function(tmpl) {
@@ -209,7 +218,71 @@
         gui.setLinksEvents();
         gui.dashboard.link();
     };
+    
+    // Generic "methods" for editing, creating, etc... 
+    
+    gui.methods = {};
+    
+    // "Generic" edit method to set onEdit table
+    gui.methods.typedEdit = function(parent, modalTitle, modalErrorMsg, guiProcessor, fieldsProcessor) {
+        var self = parent;
+        return function(value, event, table, refreshFnc) {
+            self.rest.gui(value.type, function(guiDefinition) {
+                var tabs = guiProcessor ? guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
+                self.rest.item(value.id, function(item) {
+                    gui.forms.launchModal(modalTitle+' <b>'+value.name+'</b>', tabs, item, function(form_selector, closeFnc) {
+                        var fields = gui.forms.read(form_selector);
+                        fields.data_type = value.type;
+                        fields = fieldsProcessor ? fieldsProcessor(fields) : fields; 
+                        self.rest.save(fields, function(data) { // Success on put
+                            closeFnc();
+                            refreshFnc();
+                            gui.alert(gettext('Edition successfully done'), 'success');
+                        }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
+                        return false;
+                       });
+                   });
+                
+            }, gui.failRequestModalFnc(modalErrorMsg));
+        };
+    };
 
+    // "Generic" new method to set onNew table
+    gui.methods.typedNew = function(parent, modalTitle, modalErrorMsg, guiProcessor, fieldsProcessor) { 
+        var self = parent;
+        return function(type, table, refreshFnc) {
+            self.rest.gui(type, function(guiDefinition) {
+                var tabs = guiProcessor ? guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
+                gui.forms.launchModal(modalTitle, tabs, undefined, function(form_selector, closeFnc) {
+                    var fields = gui.forms.read(form_selector);
+                    fields.data_type = type;
+                    fields = fieldsProcessor ? fieldsProcessor(fields) : fields; // P
+                    self.rest.create(fields, function(data) { // Success on put
+                        closeFnc();
+                        refreshFnc();
+                        gui.alert(gettext('Creation successfully done'), 'success');
+                    }, gui.failRequestModalFnc(modalErrorMsg) // Fail on put, show modal message
+                    );
+                });
+            });
+        };
+    };
+    
+    gui.methods.del = function(parent, modalTitle, modalErrorMsg) {
+        var self = parent;
+        return function(value, event, table, refreshFnc) {
+            var content = gettext('Are you sure do you want to delete ') + '<b>' + value.name + '</b>';
+            var modalId = gui.launchModal(modalTitle, content, '<button type="button" class="btn btn-danger button-accept">' + gettext('Delete') + '</button>');
+            $(modalId + ' .button-accept').click(function(){
+                $(modalId).modal('hide');
+                self.rest.del(value.id, function(){
+                    refreshFnc();
+                    gui.alert(gettext('Deletion successfully done'), 'success');
+                }, gui.failRequestModalFnc(modalErrorMsg) );
+            });
+        };
+    };
+    
     // Public attributes
     gui.debug = true;
 }(window.gui = window.gui || {}, jQuery));

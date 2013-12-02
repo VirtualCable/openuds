@@ -43,7 +43,7 @@
     api.templates.get = function(name, success_fnc) {
         var $this = this;
         success_fnc = success_fnc || function(){};
-        api.doLog('Getting tempkate ' + name);
+        api.doLog('Getting template ' + name);
         if (name.indexOf('?') == -1) {
             if ($this.cache.get(name) ) {
                 success_fnc($this.cache.get(name));
@@ -64,7 +64,6 @@
                 $this.cache.put('_' + cachedId, $this.evaluate(data));
                 $this.cache.put(name, cachedId);
                 api.doLog('Success getting template "' + name + '".');
-                api.doLog('Received: ' + data);
                 success_fnc(cachedId);
             },
             fail: function( jqXHR, textStatus, errorThrown ) {

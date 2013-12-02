@@ -359,6 +359,34 @@ DetailModelRestApi.prototype = {
         "use strict";
         return this.base.get(success_fnc, fail_fnc);
     },
+    put: function(data, options) {
+        "use strict";
+        return this.base.put(data, options);
+    },
+    create: function(data, success_fnc, fail_fnc) {
+      "use strict";
+      
+      return this.put(data, {
+         success: success_fnc,
+         fail: fail_fnc
+      });
+    },
+    save: function(data, success_fnc, fail_fnc) {
+        "use strict";  
+
+        return this.put(data, {
+            id: data.id,
+            success: success_fnc,
+            fail: fail_fnc
+         });
+    },
+    // --------------
+    // Delete
+    // --------------
+    del: function(id, success_fnc, fail_fnc) {
+        "use strict";
+        return this.base.del(id, success_fnc, fail_fnc);
+    },
     tableInfo: function(success_fnc, fail_fnc) { 
         "use strict";
         return this.base.tableInfo(success_fnc, fail_fnc);

@@ -37,7 +37,7 @@ from uds.models import Provider
 from services import Services 
 from uds.core import services
 
-from uds.REST import NotFound
+from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
 import logging
@@ -77,6 +77,10 @@ class Providers(ModelHandler):
                  'comments': provider.comments,
         }
 
+    def checkDelete(self, item):
+        if item.services.count() > 0:
+            raise RequestError('Can\'t delete providers with services already associated')
+        
     # Types related
     def enum_types(self):
         return services.factory().providers().values()

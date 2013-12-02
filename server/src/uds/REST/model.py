@@ -111,32 +111,51 @@ class BaseModelHandler(Handler):
                 processedFields.append({k1: dct})
         return { 'title': unicode(title),  'fields': processedFields };
     
+    def readFieldsFromParams(self, fldList):
+        args = {}
+        try:
+            for key in fldList:
+                args[key] = self._params[key]
+                del self._params[key]
+        except KeyError as e:
+            raise RequestError('needed parameter not found in data {0}'.format(unicode(e)))
+        
+        return args
+    
+    # Exceptions
+    def invalidRequestException(self):
+        raise RequestError('Invalid Request')
 
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 class DetailHandler(BaseModelHandler):
     '''
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
-    Urls treated are:
+    Urls recognized for GET are:
     [path] --> get Items (all hopefully, this call is delegated to getItems)
     [path]/overview
     [path]/ID 
     [path]/gui
-    [path]/TYPE/gui
+    [path]/gui/TYPE
     [path]/types
     [path]/types/TYPE
-    [path]/tableinfo 
-    [path].... -->
+    [path]/tableinfo
+    For PUT:
+    [path] --> create NEW item
+    [path]/ID --> Modify existing item
+    For DELETE:
+    [path]/ID 
     '''
-    def __init__(self, parentHandler, path, *args, **kwargs):
+    def __init__(self, parentHandler, path, params, *args, **kwargs):
         self._parent = parentHandler
         self._path = path
+        self._params = params
         self._args = args
         self._kwargs = kwargs
 
     def get(self):
         # Process args
-        logger.debug("Detail args: {0}".format(self._args))
+        logger.debug("Detail args for GET: {0}".format(self._args))
         nArgs = len(self._args)
         parent = self._kwargs['parent']
         if nArgs == 0:
@@ -163,15 +182,54 @@ class DetailHandler(BaseModelHandler):
         
         return self.fallbackGet()
     
+    def put(self):
+        '''
+        Put is delegated to specific implementation
+        '''
+        logger.debug("Detail args for PUT: {0}, {1}".format(self._args, self._params))
+        
+        parent = self._kwargs['parent']
+        
+        if len(self._args) == 0:
+            # Create new
+            item = None
+        elif len(self._args) == 1:
+            item = self._args[0]
+        else:
+            self.invalidRequestException()
+            
+        return self.saveItem(parent, item)
+    
+    def delete(self):
+        '''
+        Put is delegated to specific implementation
+        '''
+        logger.debug("Detail args for DELETE: {0}".format(self._args))
+        
+        parent = self._kwargs['parent']
+        
+        if len(self._args) != 1:
+            self.invalidRequestException()
+            
+        return self.deleteItem(parent, self._args[0])
+        
     # Invoked if default get can't process request
     def fallbackGet(self):
-        raise RequestError('Invalid request')
+        raise self.invalidRequestException()
         
     # Default (as sample) getItems
     def getItems(self, parent, item):
-        if item is None:
+        if item is None: # Returns ALL detail items
             return []
-        return {}
+        return {} # Returns one item
+    
+    # Default save
+    def saveItem(self, parent, item):
+        self.invalidRequestException()
+        
+    # Default delete
+    def deleteItem(self, parent, item):
+        self.invalidRequestException()
         
     # A detail handler must also return title & fields for tables
     def getTitle(self, parent):
@@ -181,7 +239,7 @@ class DetailHandler(BaseModelHandler):
         return []
     
     def getGui(self, parent, forType):
-        raise RequestError('Gui not provided')
+        raise RequestError('Gui not provided for this type of object')
     
     def getTypes(self, parent, forType):
         return [] # Default is that details do not have types
@@ -214,24 +272,12 @@ class ModelHandler(BaseModelHandler):
     table_fields = []
     table_title = ''
     
-    def __fillIntanceFields(self, item, res):
-        if hasattr(item, 'getInstance'):
-            for key, value in item.getInstance().valuesDict().iteritems():
-                value = {"true":True, "false":False}.get(value, value)
-                logger.debug('{0} = {1}'.format(key, value))
-                res[key] = value
-
+    # This method must be override, depending on what is provided
+    
     # Data related
     def item_as_dict(self, item):
         pass
     
-    def getItems(self, *args, **kwargs):
-        for item in self.model.objects.filter(*args, **kwargs):
-            try: 
-                yield self.item_as_dict(item)
-            except:
-                logger.exception('Exception getting item from {0}'.format(self.model))
-                
     # types related
     def enum_types(self): # override this
         return []
@@ -255,7 +301,14 @@ class ModelHandler(BaseModelHandler):
     
     # gui related
     def getGui(self, type_):
-        raise RequestError('invalid request')
+        self.invalidRequestException()
+                
+    # Delete related, checks if the item can be deleted
+    # If it can't be so, raises an exception
+    def checkDelete(self, item):
+        pass
+    
+    # End overridable 
                 
     # Helper to process detail
     def processDetail(self):
@@ -265,11 +318,25 @@ class ModelHandler(BaseModelHandler):
             detailCls = self.detail[self._args[1]]
             args = list(self._args[2:])
             path = self._path + '/'.join(args[:2])
-            detail = detailCls(self, path, *args, parent = item)
+            detail = detailCls(self, path, self._params, *args, parent = item)
             return getattr(detail, self._operation)()
         except AttributeError:
             raise NotFound('method not found')
-        
+
+    def getItems(self, *args, **kwargs):
+        for item in self.model.objects.filter(*args, **kwargs):
+            try: 
+                yield self.item_as_dict(item)
+            except:
+                logger.exception('Exception getting item from {0}'.format(self.model))
+                
+    def fillIntanceFields(self, item, res):
+        if hasattr(item, 'getInstance'):
+            for key, value in item.getInstance().valuesDict().iteritems():
+                value = {"true":True, "false":False}.get(value, value)
+                logger.debug('{0} = {1}'.format(key, value))
+                res[key] = value
+
     def get(self):
         logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
         nArgs = len(self._args)
@@ -277,7 +344,7 @@ class ModelHandler(BaseModelHandler):
             result = []
             for val in self.model.objects.all():
                 res = self.item_as_dict(val)
-                self.__fillIntanceFields(val, res)
+                self.fillIntanceFields(val, res)
                 result.append(res)
             return result
         
@@ -293,7 +360,7 @@ class ModelHandler(BaseModelHandler):
             try:
                 val = self.model.objects.get(pk=self._args[0])
                 res = self.item_as_dict(val)
-                self.__fillIntanceFields(val, res)
+                self.fillIntanceFields(val, res)
                 return res
             except:
                 raise NotFound('item not found')
@@ -318,59 +385,56 @@ class ModelHandler(BaseModelHandler):
         
     def put(self):
         logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
-        args = {}
+        
+        if len(self._args) > 1: # Detail?
+            return self.processDetail()
         try:
-            for key in self.save_fields:
-                args[key] = self._params[key]
-                del self._params[key]
-        except KeyError as e:
-            raise RequestError('needed parameter not found in data {0}'.format(unicode(e)))
-
-        try:
+            # Extract fields
+            args = self.readFieldsFromParams(self.save_fields)
+            deleteOnError = False
             if len(self._args) == 0: # create new
-                item = self.model.objects.create(**args);
-            elif len(self._args) == 1:
+                item = self.model.objects.create(**args)
+                deleteOnError = True
+            else: # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
                 item = self.model.objects.get(pk=self._args[0]);
                 item.__dict__.update(args) # Update fields from args
-            else: # TODO: Maybe a detail put request
-                raise Exception() # Incorrect invocation
         except self.model.DoesNotExist: 
-            raise NotFound('Element do not exists')
+            raise NotFound('Item not found')
         except IntegrityError: # Duplicate key probably 
             raise RequestError('Element already exists (duplicate key error)')
-        except Exception as e:
+        except Exception:
             raise RequestError('incorrect invocation to PUT')
 
         # Store associated object if needed
-        if self._params.has_key('data_type'): # Needs to store instance
-            item.data_type = self._params['data_type'] 
-            item.data = item.getInstance(self._params).serialize()
-            
-        item.save()
-            
-        res = self.item_as_dict(item)
-        
-        self.__fillIntanceFields(item, res)
-        
-        item.save()
+        try:
+            if self._params.has_key('data_type'): # Needs to store instance
+                item.data_type = self._params['data_type']
+                item.data = item.getInstance(self._params).serialize()
+    
+            item.save()
+                
+            res = self.item_as_dict(item)
+            self.fillIntanceFields(item, res)
+        except:
+            if deleteOnError:
+                item.delete()
+            raise
 
         return res 
     
     def delete(self):
         logger.debug('method DELETE for {0}, {1}'.format(self.__class__.__name__, self._args))
-        if len(self._args) == 2: # TODO: Detail request
-            raise Exception()
+        if len(self._args) > 1: 
+            return self.processDetail()
+            
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
         try:
             item = self.model.objects.get(pk=self._args[0]);
+            self.checkDelete(item)
             item.delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists')
-        except Exception:
-            logger.exception('delete')
-            raise RequestError('incorrect invocation to DELETE')
         
         return 'deleted'
-

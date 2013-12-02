@@ -35,8 +35,9 @@
         <!-- End of menu -->
         <!-- Content -->
              <div id="page-wrapper">
+                <div id="alerts">
+                </div>
                 <div id="content">
-                {% block body %}{% endblock %}
                 </div>
                 <div class="row">
                     <div id="minimized" class="col-lg-12">
@@ -124,6 +125,7 @@
         {% js_template 'table' %}
         {% js_template 'modal' %}
         {% js_template 'responsive_table' %}
+        {% js_template 'alert' %}
         <!-- fields -->
         {% js_template 'fld/checkbox' %}
         {% js_template 'fld/choice' %}
