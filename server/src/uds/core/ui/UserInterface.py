@@ -686,8 +686,8 @@ class UserInterface(object):
         #: If there is an array of elements to initialize, simply try to store values on form fields
         # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
         # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
-        self._gui = copy.deepcopy(self._gui)
-        for key, val in self._gui.iteritems():
+        self._gui = copy.deepcopy(self._gui) # Ensure "gui" is our own instance, deep copied from base
+        for key, val in self._gui.iteritems(): # And refresg references to them
             setattr(self, key, val)
             
         if values is not None:

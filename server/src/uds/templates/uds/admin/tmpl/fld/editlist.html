@@ -1,29 +1,79 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
-{% block field %}
-  {% verbatim %}<input type="text" id="{{ name }}_field" class="form-control cursor-pointer" value="{{ truncatechars 64 value }}" readonly>{% endverbatim %}
-{% verbatim %}
-<input type="hidden" class="{{ css }}" name="{{ name }}" value="{{ value }}">
+{% block field %}{% verbatim %}
+    <input name="{{ name }}_nonused1" type="text" id="{{ name }}_field_txt" class="form-control cursor-pointer" value="{{ truncatechars 64 value }}" readonly>
+    <select id="{{ name }}_field_hdn" class="{{ css }} hidden" name="{{ name }}" multiple>
+    {{# each value }}
+        <option selected>{{ this }}</option>
+    {{/ each }}
+    </select>
 {% endverbatim %}{% comment %}<script>/*This is a little trick to make IDE recognize sintax hightlight, will not be show on render :-)*/{% endcomment %}
 
-{% verbatim %}{{# javascript }}{% endverbatim %}
+{% verbatim %}{{# javascript }}
 (function(){
     "use strict";
-    {% verbatim %}var id = '#{{ name }}_field';{% endverbatim %}
-    $(id).tooltip({
+    var id = '{{ name }}_field_';
+    var idTxt = '#' + id + 'txt';
+    var idHidden = '#' + id + 'hdn';
+    $(idTxt).tooltip({
         placement: 'bottom',
         title: "{% trans 'Click to edit list' %}",
         delay: { show: 500, hide: 100 },
     });
-    $(id).click(function(){
-       var modalId = gui.launchModal(gettext('Edit list'), '');
-       $(modalId + ' .button-accept').click(function(){
-           alert('Save');
-           $(modalId).modal('hide');
-       })
+    $(idTxt).click(function(){
+        var content = api.templates.evaluate('tmpl_fld_editlist_popup', {
+            id: id,
+            values: $(idHidden).val(),
+        });
+        
+        var formId = '#' + id + '_form';
+        var textId = '#' + id + '_text';
+        var addId = '#' + id + '_add';
+        var delId = '#' + id + '_del';
+        var delAllId = '#' + id + '_del_all';
+        var selectId = '#' + id + '_select';
+        
+        var modalId = gui.launchModal(gettext('Edit list'), content);
+        
+        $(addId).click(function(){
+            if( $(textId).val() != '' ) {
+ 	  			$(selectId).val([]);
+ 	  			$.each($(textId).val().split(','), function(index, value) {
+  	           		$(selectId).append('<option selected>' + value + '</option>');
+ 	  			});
+            }
+            $(textId).val(''); // Empty add textbox
+        });
+        
+        $(delAllId).click(function(){
+           $(selectId).empty(); 
+        });
+        
+        $(delId).click(function(){
+       		$(selectId + ' option:selected').remove();
+        });
+        
+        $(formId).submit(function(){
+            if( $(textId).val() != '' )
+                $(addId).click();
+            return false;
+        });
+        
+        $(modalId + ' .button-accept').click(function(){
+            $(idHidden).empty();
+            var txtArray = [];
+            $(selectId + ' option').each(function(index, element){
+               $(idHidden).append('<option selected>' + element.text + '</option>');
+               txtArray.push(element.text);
+            });
+            gui.doLog(txtArray);
+            var txt = txtArray.join(',').substring(0, 64);
+            $(idTxt).val(txt);
+            $(modalId).modal('hide');
+        });
     });
 }());
-{% verbatim %}{{/ javascript }}{% endverbatim %}
+{{/ javascript }}{% endverbatim %}
 {% comment %}</script>{% endcomment %}
 
 {% endblock %}

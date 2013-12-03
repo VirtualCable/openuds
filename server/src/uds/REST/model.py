@@ -356,7 +356,7 @@ class ModelHandler(BaseModelHandler):
             if self._args[0] == OVERVIEW:
                 return list(self.getItems())
             elif self._args[0] == TYPES:
-                    return list(self.getTypes())
+                return list(self.getTypes())
             elif self._args[0] == TABLEINFO:
                 return self.processTableFields(self.table_title, self.table_fields)
                 

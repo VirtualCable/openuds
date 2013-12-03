@@ -84,6 +84,8 @@ class Services(DetailHandler):
             else:
                 service = parent.services.get(pk=item)
                 service.__dict__.update(fields)
+                
+            service.data = service.getInstance(self._params).serialize()
             service.save()
         except self.model.DoesNotExist: 
             raise NotFound('Item not found')
