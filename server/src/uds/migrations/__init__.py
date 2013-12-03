@@ -8,10 +8,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Ensure tables that needs to be in InnoDB are so
-def modify_MySQL_storage(sender, **kwargs):
+def modify_MySQL_storage(*args, **kwargs):
     from django.db import connection
     cursor = connection.cursor()
-    logger.info('Converting table')
+    logger.info('Converting tables')
     
     innoDbTables = ( models.UserService, models.DeployedService, models.DeployedServicePublication,
                      models.Scheduler, models.DelayedTask, models.User, models.Group, models.Authenticator,
@@ -24,4 +24,4 @@ def modify_MySQL_storage(sender, **kwargs):
         stmt = 'ALTER TABLE %s CHARACTER SET \'utf8\' COLLATE \'utf8_general_ci\'' % db_table
         cursor.execute(stmt)
 
-signals.post_migrate.connect(modify_MySQL_storage)
+#signals.post_migrate.connect(modify_MySQL_storage)
