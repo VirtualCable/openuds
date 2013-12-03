@@ -367,41 +367,43 @@ class UserServiceManager(object):
         lenExisting = existing.count()
         if lenExisting > 0: # Already has 1 assigned
             logger.debug('Found assigned service from {0} to user {1}'.format(ds, user.name))
-            if existing[0].state == State.ERROR:
-                if lenExisting > 1:
-                    return existing[1]
-            else:
-                return existing[0]
+            return existing[0]
+            #if existing[0].state == State.ERROR:
+            #    if lenExisting > 1:
+            #        return existing[1]
+            #else:
+            #    return existing[0]
         
-        # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
-        cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.USABLE)[:1]
-        if len(cache) > 0:
-            cache = cache[0] # Database object
-            cache.assignToUser(user)
-            cache.save()     # Store assigned ASAP, we do not know how long assignToUser method of instance will take
-            logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
-            ci = cache.getInstance() # User Deployment instance
-            ci.assignToUser(user)
-            cache.updateData(ci)
-            cache.save()
-            return cache
-        # Now find if there is a preparing one
-        cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.PREPARING)[:1]
-        if len(cache) > 0:
-            cache = cache[0]
-            cache.assignToUser(user)
-            cache.save()
-            logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
-            cache.getInstance().assignToUser(user)
-            return cache
-        # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
-        ty = ds.service.getType()
-        if ty.usesCache is True:
-            inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
-            inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
-            totalL1Assigned = inCacheL1 + inAssigned
-            if totalL1Assigned >= ds.max_srvs:
-                raise MaxServicesReachedException()
+        with transaction.atomic():
+            # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
+            cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.USABLE)[:1]
+            if len(cache) > 0:
+                cache = cache[0] # Database object
+                cache.assignToUser(user)
+                cache.save()     # Store assigned ASAP, we do not know how long assignToUser method of instance will take
+                logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
+                ci = cache.getInstance() # User Deployment instance
+                ci.assignToUser(user)
+                cache.updateData(ci)
+                cache.save()
+                return cache
+            # Now find if there is a preparing one
+            cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.PREPARING)[:1]
+            if len(cache) > 0:
+                cache = cache[0]
+                cache.assignToUser(user)
+                cache.save()
+                logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
+                cache.getInstance().assignToUser(user)
+                return cache
+            # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
+            ty = ds.service.getType()
+            if ty.usesCache is True:
+                inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
+                inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
+                totalL1Assigned = inCacheL1 + inAssigned
+                if totalL1Assigned >= ds.max_srvs:
+                    raise MaxServicesReachedException()
         # Can create new service, create it
         return self.createAssignedFor(ds, user)
             

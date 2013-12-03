@@ -42,9 +42,9 @@ Android = 'Android'
 iPad = 'iPad'
 iPhone = 'iPhone'
 
-knownOss = { 'Linux' : Linux, 'Windows' : Windows, 'Macintosh' : Macintosh, 'Android': Android, 'iPad': iPad, 'iPhone': iPhone }
+knownOss = [ Android, Linux, Windows, Macintosh, iPad, iPhone  ] # Android is linux also, so it is cheched on first place
     
-allOss = list(knownOss.values())
+allOss = list(knownOss)
 desktopOss = [Linux, Windows, Macintosh]
 mobilesODD = list(set(allOss)-set(desktopOss))
     
@@ -53,10 +53,10 @@ def getOsFromUA(ua):
     Basic OS Client detector (very basic indeed :-))
     '''
     res = {'OS' : 'Unknown', 'Version' : 'unused' }
-    for k, v in knownOss.iteritems():
+    for os in knownOss:
         try:
-            ua.index(v)
-            res['OS'] = k
+            ua.index(os)
+            res['OS'] = os
             break
         except Exception:
             pass

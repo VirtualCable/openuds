@@ -56,7 +56,6 @@ from uds.core.ui import theme
 
 from transformers import transformId, scrambleId
 
-
 import errors
 import logging
 import random
@@ -185,7 +184,8 @@ def index(request):
     for svr in availUserServices:
         trans = []
         for t in svr.transports.all().order_by('priority'):
-            if t.validForIp(request.ip):
+            typeTrans = t.getType()
+            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
                 trans.append({ 'id' : scrambleId(request, t.id), 'name' : t.name, 'needsJava' : t.getType().needsJava })
         services.append( {'id' : scrambleId(request, 'a' + str(svr['id'])), 'name': svr['name'], 'transports' : trans } )
         

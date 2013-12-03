@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 class Services(DetailHandler):
     
     def getItems(self, parent, item):
-        # Extract providerenticator
+        # Extract provider
         try:
             if item is None:
                 return [{

@@ -36,6 +36,11 @@ from uds.core.util import OsDetector
 from uds.core import Module
 import protocols
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class Transport(Module):
     '''
     An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
@@ -100,6 +105,7 @@ class Transport(Module):
         Helper method to check if transport supports requested operating system.
         Class method
         '''
+        logger.debug('Checking suported os {0} against {1}'.format(osName, cls.supportedOss))
         return cls.supportedOss.count(osName) > 0
     
     @classmethod
