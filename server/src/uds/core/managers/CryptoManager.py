@@ -30,6 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from server.settings import RSA_KEY
 from Crypto.PublicKey import RSA
@@ -59,17 +60,18 @@ class CryptoManager(object):
     
     def encrypt(self, string):
         atfork()
-        return self._rsa.encrypt(string, '')[0].encode(CryptoManager.CODEC)
+        return self._rsa.encrypt(string.encode('utf-8'), '')[0].encode(CryptoManager.CODEC)
     
     def decrypt(self, string):
         atfork()
-        return self._rsa.decrypt(string.decode(CryptoManager.CODEC))
+        return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).decode('utf-8')
     
     def xor(self, s1, s2):
+        s1, s2 = s1.encode('utf-8'), s2.encode('utf-8')
         mult = (len(s1)/len(s2)) + 1
-        s1 = array.array('B', s1)
-        s2 = array.array('B', s2 * mult)
-        return array.array('B', (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()        
+        s1 = array.array(b'B', s1)
+        s2 = array.array(b'B', s2 * mult)
+        return array.array(b'B', (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()        
     
     def loadPrivateKey(self, rsaKey):
         try:

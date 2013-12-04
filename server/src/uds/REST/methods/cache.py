@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from uds.core.ui.UserInterface import gui
+from uds.core.util.Cache import Cache as uCache
 from uds.REST import Handler, RequestError, NotFound
 
 import logging
@@ -41,17 +41,34 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /auth path
 
-class Callback(Handler):
-    path = 'gui' 
+class Cache(Handler):
     authenticated = True # Public method
     needs_staff = True #  
     
     def get(self):
+        '''
+        This login uses parameters to generate auth token
+        The alternative is to use the template tag inside "REST" that is called auth_token, that extracts an auth token from an user session
+        We can use any of this forms due to the fact that the auth token is in fact a session key
+        Parameters:
+            mandatory:
+                username:
+                password:
+                auth:
+            optional:
+                locale: (defaults to "en")
+        Result:
+            on success: { 'result': 'ok', 'auth': [auth_code] }
+            on error: { 'result: 'error', 'error': [error string] }
+        '''
+        
+        logger.debug('Params: {0}'.format(self._params))
+        if len(self._args) == 0:
+            return {}
+        
         if len(self._args) != 1:
             raise RequestError('Invalid Request')
         
-        if gui.callbacks.has_key(self._args[0]):
-            return gui.callbacks[self._args[0]](self._params)
         
-        raise NotFound('callback {0} not found'.format(self._args[0]))
-    
+        uCache.purge()
+        return 'done'

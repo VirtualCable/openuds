@@ -151,32 +151,41 @@
     };
 
     gui.setLinksEvents = function() {
-        var sidebarLinks = [ {
-            id : 'lnk-dashboard',
-            exec : gui.dashboard.link,
-        }, {
-            id : 'lnk-service_providers',
-            exec : gui.providers.link
-        }, {
-            id : 'lnk-authenticators',
-            exec : gui.authenticators.link
-        }, {
-            id : 'lnk-osmanagers',
-            exec : gui.osmanagers.link
-        }, {
-            id : 'lnk-connectivity',
-            exec : gui.connectivity.link
-        }, {
-            id : 'lnk-deployed_services',
-            exec : gui.deployed_services
-        }, ];
+        var sidebarLinks = [ 
+            {
+                id : 'lnk-dashboard',
+                exec : gui.dashboard.link,
+            }, {
+                id : 'lnk-service_providers',
+                exec : gui.providers.link
+            }, {
+                id : 'lnk-authenticators',
+                exec : gui.authenticators.link
+            }, {
+                id : 'lnk-osmanagers',
+                exec : gui.osmanagers.link
+            }, {
+                id : 'lnk-connectivity',
+                exec : gui.connectivity.link
+            }, {
+                id : 'lnk-deployed_services',
+                exec : gui.deployed_services
+            }, {
+                id : 'lnk-clear_cache',
+                exec : gui.clear_cache.link,
+            },
+        ];
         $.each(sidebarLinks, function(index, value) {
             gui.doLog('Adding ' + value.id);
             $('.' + value.id).unbind('click').click(function(event) {
+                event.preventDefault();
                 if ($('.navbar-toggle').css('display') != 'none') {
                     $(".navbar-toggle").trigger("click");
                 }
                 $('html, body').scrollTop(0);
+                // Tabletools creates divs at end that do not get removed, here is a good place to ensure there is no garbage left behind
+                // And anyway, if this div does not exists, it creates a new one...
+                $('.DTTT_dropdown').remove();
                 value.exec(event);
             });
         });

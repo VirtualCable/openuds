@@ -243,7 +243,7 @@ gui.connectivity.link = function(event) {
                     });
                 });
             },
-            onDelete: function(value, event, table, refreshFnc) {
+            onDelete: function(value, event, table, refreshFncs) {
                 // TODO: Add confirmation to deletion
                 gui.connectivity.transports.rest.del(value.id, function(){
                     refreshFnc();
@@ -257,4 +257,16 @@ gui.connectivity.link = function(event) {
         });
     });
       
+};
+
+// Tools
+gui.clear_cache = new BasicGuiElement('Clear cache');
+gui.clear_cache.link = function() {
+    "use strict";
+    api.getJson('cache/flush', {
+        success: function() { 
+            gui.launchModal(gettext('Cache'), gettext('Cache has been flushed'), ' ' ); 
+        },
+    });
+    
 };
