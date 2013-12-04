@@ -110,7 +110,7 @@
     			// Initialize gui
             	gui.init();
             	// set default error function
-            	api.defaultFail = gui.failRequestMessageFnc;
+            	api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
             });        
         </script>
         {% block js %}{% endblock %}

@@ -1,5 +1,6 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
+{% comment %}The choice item MUST be a Select{% endcomment %}
 {% block field %}
 {% verbatim %}
 <select class="selectpicker show-menu-arrow {{ css }}" name="{{ name }}" id="{{ name }}_field" {{# if readonly }} disabled{{/ if }}>

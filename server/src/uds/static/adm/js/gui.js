@@ -128,22 +128,12 @@
         });
     };
     
-    gui.failRequestMessageFnc = function(jqXHR, textStatus, errorThrown) {
-        api.templates.get('request_failed', function(tmpl) {
-            gui.clearWorkspace();
-            gui.appendToWorkspace(api.templates.evaluate(tmpl, {
-                error: jqXHR.responseText,
-            }));            
-        });
-        gui.setLinksEvents();
-    };
-    
     gui.failRequestModalFnc = function(title) {
         return function(jqXHR, textStatus, errorThrown) { // fail on put
             gui.launchModal(title, jqXHR.responseText, ' ');
         };
     };
-    
+
     gui.clearWorkspace = function() {
         $('#content').empty();
         $('#minimized').empty();

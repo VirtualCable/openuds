@@ -179,7 +179,7 @@ function BasicModelRest(path, options) {
 
 BasicModelRest.prototype = {
     // options:
-    // cacheKey: '.' --> do not cache
+    // cacheKey: '.' --> do not cache (undefined will set cacheKey to current path)
     //           undefined -- > use path as key
     //           success: success fnc to execute in case of success
     _requestPath: function(path, options) {
@@ -322,7 +322,7 @@ BasicModelRest.prototype = {
             path = this.guiPath;
         }
         return this._requestPath(path, {
-            cacheKey: path,
+            cacheKey: '.', // Gui is not cacheable, it's dynamic and can change from call to call
             success: success_fnc,
             fail: fail_fnc,
         });

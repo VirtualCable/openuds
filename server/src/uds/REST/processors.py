@@ -50,6 +50,13 @@ class ContentProcessor(object):
     
     def __init__(self, request):
         self._request = request
+        
+    def processGetParameters(self):
+        if self._request.method != 'GET':
+            return {}
+        
+        return self._request.GET.copy()
+        
     
     def processParameters(self):
         return ''
@@ -70,7 +77,7 @@ class JsonProcessor(ContentProcessor):
     def processParameters(self):
         try:
             if len(self._request.body) == 0:
-                return {}
+                return self.processGetParameters()
             res = json.loads(self._request.body)
             logger.debug(res)
             return res
