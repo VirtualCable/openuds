@@ -1,5 +1,12 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
-
+{% comment %}The choice item MUST be a Select{% endcomment %}
+{% block field %}
 {% verbatim %}
+<select class="selectpicker show-menu-arrow {{ css }}" multiple data-style="btn-default" data-selected-text-format="count>3" data-width="100%" name="{{ name }}" id="{{ name }}_field" {{# if readonly }} disabled{{/ if }}>
+    {{#each values }}
+    <option value="{{ id }}"{{# ifequals id ../value }}selected{{/ ifequals }}>{{ text }}</option>
+    {{/each}}
+</select>
 {% endverbatim %}
+{% endblock %}
