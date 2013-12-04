@@ -29,6 +29,11 @@ gui.dashboard.link = function(event) {
 gui.providers = new GuiElement(api.providers, 'provi');
 gui.providers.link = function(event) {
     "use strict";
+    // Cleans up memory used by other datatables
+    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
+        $(tbl).dataTable().fnDestroy();
+    });
+    
     api.templates.get('providers', function(tmpl) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {
@@ -98,6 +103,10 @@ gui.authenticators = new GuiElement(api.authenticators, 'auth');
 
 gui.authenticators.link = function(event) {
     "use strict";
+    // Cleans up memory used by other datatables
+    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
+        $(tbl).dataTable().fnDestroy();
+    });
     gui.doLog('enter auths');
     api.templates.get('authenticators', function(tmpl) {
         gui.clearWorkspace();
@@ -152,6 +161,10 @@ gui.authenticators.link = function(event) {
 gui.osmanagers = new GuiElement(api.osmanagers, 'osm');
 gui.osmanagers.link = function(event) {
     "use strict";
+    // Cleans up memory used by other datatables
+    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
+        $(tbl).dataTable().fnDestroy();
+    });
     gui.clearWorkspace();
     gui.appendToWorkspace(gui.breadcrumbs('Os Managers'));
 
@@ -170,6 +183,10 @@ gui.connectivity = {
 
 gui.connectivity.link = function(event) {
     "use strict";
+    // Cleans up memory used by other datatables
+    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
+        $(tbl).dataTable().fnDestroy();
+    });
     api.templates.get('connectivity', function(tmpl) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {

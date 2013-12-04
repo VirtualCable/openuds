@@ -444,6 +444,8 @@ GuiElement.prototype = {
                     }
                 }); // End Overview data
             }); // End Tableinfo data
+        
+        $('.DTTT_dropdown').remove(); // Tabletools keep adding garbage to end of body on each new table creation, so we simply remove it on each new creation
         return '#' + tableId;
     },
 };
