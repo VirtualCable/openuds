@@ -38,7 +38,7 @@ from uds.core import auths
 
 
 from users_groups import Users, Groups
-from uds.REST import Handler, NotFound
+from uds.REST import NotFound
 from uds.REST.model import ModelHandler
 
 import logging
@@ -50,12 +50,14 @@ logger = logging.getLogger(__name__)
 class Authenticators(ModelHandler):
     model = Authenticator
     detail = { 'users': Users, 'groups':Groups }
-    save_fields = ['name', 'comments']
+    save_fields = ['name', 'comments', 'priority', 'small_name']
 
     table_title =  _('Current authenticators')
     table_fields = [
             { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
+            { 'priority': {'title':  _('Priority'), 'type': 'numeric', 'width': '5em'}},
+            { 'small_name': {'title':  _('Small name')}},
             { 'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
     ]
 
@@ -64,7 +66,7 @@ class Authenticators(ModelHandler):
     
     def getGui(self, type_):
         try:
-            return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments'])
+            return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments', 'priority', 'small_name'])
         except:
             raise NotFound('type not found')
     
@@ -72,8 +74,10 @@ class Authenticators(ModelHandler):
         type_ = auth.getType()
         return { 'id': auth.id,
                  'name': auth.name, 
+                 'comments': auth.comments,
+                 'priority': auth.priority,
+                 'small_name': auth.small_name,
                  'users_count': auth.users.count(),
                  'type': type_.type(),
-                 'comments': auth.comments,
         }
     

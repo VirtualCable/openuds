@@ -29,10 +29,6 @@ gui.dashboard.link = function(event) {
 gui.providers = new GuiElement(api.providers, 'provi');
 gui.providers.link = function(event) {
     "use strict";
-    // Cleans up memory used by other datatables
-    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
-        $(tbl).dataTable().fnDestroy();
-    });
     
     api.templates.get('providers', function(tmpl) {
         gui.clearWorkspace();
@@ -117,6 +113,20 @@ gui.authenticators.link = function(event) {
         }));
         gui.setLinksEvents();
 
+
+        // Button definition to trigger "Test" action
+        var testButton = {
+            buttons: [ 
+                { 
+                    text: gettext('Test authenticator'),
+                    css: 'btn-info',
+                    action: function(event, form_selector, closeFnc) {
+                        var fields = gui.forms.read(form_selector);
+                    }
+                }, 
+            ]
+        }; 
+        
         gui.authenticators.table({
             container : 'auths-placeholder',
             rowSelect : 'single',
@@ -148,8 +158,8 @@ gui.authenticators.link = function(event) {
             onRefresh : function() {
                 $('#users-placeholder').empty(); // Remove detail on parent refresh
             },
-            onNew : gui.methods.typedNew(gui.authenticators, gettext('New authenticator'), gettext('Error creating authenticator')),
-            onEdit: gui.methods.typedEdit(gui.authenticators, gettext('Edit authenticator'), gettext('Error processing authenticator')),
+            onNew : gui.methods.typedNew(gui.authenticators, gettext('New authenticator'), gettext('Error creating authenticator'),testButton),
+            onEdit: gui.methods.typedEdit(gui.authenticators, gettext('Edit authenticator'), gettext('Error processing authenticator'), testButton),
             onDelete: gui.methods.del(gui.authenticators, gettext('Delete authenticator'), gettext('Error deleting authenticator')),
             
         });
@@ -282,7 +292,7 @@ gui.clear_cache.link = function() {
     "use strict";
     api.getJson('cache/flush', {
         success: function() { 
-            gui.launchModal(gettext('Cache'), gettext('Cache has been flushed'), ' ' ); 
+            gui.launchModal(gettext('Cache'), gettext('Cache has been flushed'), { actionButton: ' ' } ); 
         },
     });
     

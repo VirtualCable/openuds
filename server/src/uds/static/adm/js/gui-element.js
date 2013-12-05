@@ -44,6 +44,7 @@ GuiElement.prototype = {
                 }
             });
     },
+    
     // Options: dictionary
     //   container: container ID of parent for the table. If undefined, table will be appended to workspace
     //   buttons: array of visible buttons (strings), valid are [ 'new', 'edit', 'refresh', 'delete', 'xls' ],
@@ -212,8 +213,8 @@ GuiElement.prototype = {
                         var tbl = $('#' + tableId).dataTable();
                         // Clears selection first
                         TableTools.fnGetInstance(tableId).fnSelectNone();
-                        if( data.length > 1000 )
-                            api.tools.blockUI();
+                        //if( data.length > 1000 )
+                        api.tools.blockUI();
                         
                         self.rest.overview(function(data) {  // Restore overview
                                 setTimeout( function() {
@@ -245,7 +246,7 @@ GuiElement.prototype = {
                             };
                         };
 
-                        var onCheck = options.onCheck || function() { return true }; // Default oncheck always returns true
+                        var onCheck = options.onCheck || function(){ return true; }; // Default oncheck always returns true
                         
                         // methods for buttons on row select
                         var editSelected = function(btn, obj, node) {
@@ -445,7 +446,6 @@ GuiElement.prototype = {
                 }); // End Overview data
             }); // End Tableinfo data
         
-        $('.DTTT_dropdown').remove(); // Tabletools keep adding garbage to end of body on each new table creation, so we simply remove it on each new creation
         return '#' + tableId;
     },
 };

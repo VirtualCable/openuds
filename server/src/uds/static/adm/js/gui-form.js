@@ -105,14 +105,6 @@
         var init = function(formSelector) {
             gui.doLog(formSelector, fillers);
             
-            /*var pos = 0;
-            var triggerChangeSequentially = function() {
-                if( pos >= fillers.length )
-                    return;
-                $(formSelector + ' [name="' + fillers[pos].name + '"]').trigger('change');
-                pos = pos + 1;
-            };*/
-            
             var onChange = function(filler) {
                 return function() {
                     gui.doLog('Onchange invoked for ', filler);
@@ -132,14 +124,13 @@
                                 $select.append('<option value="' + value.id + '">' + value.text + '</option>');
                             });
                             $select.val(originalValues[sel.name]);
-                            // Refresh selectpicker updated
+                            // Refresh selectpicker if item is such
                             if($select.hasClass('selectpicker'))
                                 $select.selectpicker('refresh');
                             // Trigger change for the changed item
                             $select.trigger('change');
                             
                         });
-                        //triggerChangeSequentially();
                     });
                 };
             };
@@ -148,7 +139,8 @@
             $.each(fillers, function(undefined, f) {
                 $(formSelector + ' [name="' + f.name + '"]').on('change', onChange(f));
             });
-            
+
+            // Trigger first filler if it exists, this will cascade rest of "changes" if they exists
             if( fillers.length )
                 $(formSelector + ' [name="' + fillers[0].name + '"]').trigger('change');
         };
@@ -173,14 +165,52 @@
         return res;
     };
 
-    gui.forms.launchModal = function(title, fields, item, onSuccess) {
+    // Options has this keys:
+    //   title
+    //   fields
+    //   item
+    //   success
+    //   buttons: Array of buttons to be added to footer, with:
+    //            text --> text of button
+    //            css  --> button style (btn-default, btn-warning, ...). If not defined, 'btn-default' will be used
+    //            action --> function to be executed. Will be passed 3 parameters: event, formSelector and closeFnc
+    //                       (use gui.forms.read(form selector) to get fields, closeFnc() to close form if desired)
+    // Failed operations will show a modal with server error
+    gui.forms.launchModal = function(options, onSuccess) {
+        options = options || {};
+        
         var id = 'modal-' + Math.random().toString().split('.')[1]; // Get a random ID for this modal
-        var ff = gui.forms.fromFields(fields, item);
-        gui.appendToWorkspace(gui.modal(id, title, ff.html));
+        var ff = gui.forms.fromFields(options.fields, options.item);
+        var footer = '';
+        var clickEventHandlers = [];
+        
+        if( options.buttons ) {
+            $.each(options.buttons, function(index, value){
+                var _id = id + '-footer-' + index;
+                var css = value.css || 'btn-default';
+                clickEventHandlers.push({id: '#' + _id, action: value.action });
+                footer +=  '<button id="' + _id + '" type="button" class="pull-left btn ' + css + '">' + value.text + '</button>';
+            });
+        }
+        gui.appendToWorkspace(gui.modal(id, options.title, ff.html, { footer: footer }));
         id = '#' + id; // for jQuery
+        
+        var formSelector = id + ' form';
+        var closeFnc = function(){$(id).modal('hide');};
         
         if( ff.init )
             ff.init(id);
+        
+        // Append click events for custom buttons on footer
+        $.each(clickEventHandlers, function(undefined, value){
+            if( value.action ) {
+                $(value.id).on('click', function(event){
+                    if( value.action(event, formSelector, closeFnc) == true ) {
+                        $(id).modal('hide');
+                    }
+                });
+            }
+        });
         
         // Get form
         var $form = $(id + ' form'); 
@@ -214,11 +244,11 @@
         $(id + ' .button-accept').click(function(){
             if( !$form.valid() )
                 return;
-            if( onSuccess ) {
-                onSuccess(id + ' form', function(){$(id).modal('hide');}); // Delegate close to to onSuccess  
+            if( options.success ) {
+                options.success(formSelector, closeFnc); // Delegate close to to onSuccess  
                     return;
             } else {
-                $(id).modal('hide');
+                closeFnc();
             }
             
         });

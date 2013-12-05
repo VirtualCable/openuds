@@ -79,7 +79,6 @@ class BaseModelHandler(Handler):
                 'tooltip': _('Name of this element'),
                 'order': -100,
             })
-            # And maybe comments (only if model has this field)
         if 'comments' in flds:
             self.addField(gui, {
                  'name': 'comments', 
@@ -88,6 +87,25 @@ class BaseModelHandler(Handler):
                  'length': 256,
                  'order': -99,
             })
+        if 'priority' in flds:
+            self.addField(gui, {
+                 'name': 'priority',
+                 'type': 'numeric', 
+                 'label': _('Priority'),
+                 'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
+                 'length': 4,
+                 'order': -98,
+            })
+        if 'small_name' in flds:
+            self.addField(gui, {
+                 'name': 'small_name',
+                 'type': 'text', 
+                 'label': _('Small name'),
+                 'tooltip': _('Small name of this element'),
+                 'length': 128,
+                 'order': -97,
+            })
+            
         return gui
 
     def type_as_dict(self, type_):

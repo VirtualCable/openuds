@@ -97,19 +97,23 @@
         });
     };
 
-    gui.modal = function(id, title, content, actionButton, closeButton) {
+    gui.modal = function(id, title, content, options) {
+        options = options || {};
         return api.templates.evaluate('tmpl_modal', {
             id: id,
             title: title,
             content: content,
-            button1: closeButton,
-            button2: actionButton
+            footer: options.footer,
+            button1: options.closeButton,
+            button2: options.actionButton,
+            
         });
     };
     
-    gui.launchModal = function(title, content, actionButton, closeButton) {
+    gui.launchModal = function(title, content, options) {
+        options = options || {};
         var id = Math.random().toString().split('.')[1]; // Get a random ID for this modal
-        gui.appendToWorkspace(gui.modal(id, title, content, actionButton, closeButton));
+        gui.appendToWorkspace(gui.modal(id, title, content, options));
         id = '#' + id; // for jQuery
         
         $(id).modal()
@@ -130,7 +134,7 @@
     
     gui.failRequestModalFnc = function(title) {
         return function(jqXHR, textStatus, errorThrown) { // fail on put
-            gui.launchModal(title, jqXHR.responseText, ' ');
+            gui.launchModal(title, jqXHR.responseText, { actionButton: ' '});
         };
     };
 
@@ -144,35 +148,56 @@
     };
 
     // Links methods
-
     gui.deployed_services = function() {
         gui.clearWorkspace();
         gui.appendToWorkspace(gui.breadcrumbs(gettext('Deployed services')));
     };
 
+    // Clean up several "internal" data
+    // I have discovered some "items" that are keep in memory, or that adds garbage to body (datatable && tabletools mainly)
+    // This place is where i add them to "clean" at least those things on page change
+    gui.cleanup = function() {
+        gui.doLog('Cleaning up things');
+        // Tabletools creates divs at end that do not get removed, here is a good place to ensure there is no garbage left behind
+        // And anyway, if this div does not exists, it creates a new one...
+        $('.DTTT_dropdown').remove(); // Tabletools keep adding garbage to end of body on each new table creation, so we simply remove it on each new creation
+        
+        // Destroy any created datatable
+        $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
+            $(tbl).dataTable().fnDestroy();
+        });
+    };
+    
     gui.setLinksEvents = function() {
         var sidebarLinks = [ 
             {
                 id : 'lnk-dashboard',
                 exec : gui.dashboard.link,
+                cleanup: true,
             }, {
                 id : 'lnk-service_providers',
-                exec : gui.providers.link
+                exec : gui.providers.link,
+                cleanup: true,
             }, {
                 id : 'lnk-authenticators',
-                exec : gui.authenticators.link
+                exec : gui.authenticators.link,
+                cleanup: true,
             }, {
                 id : 'lnk-osmanagers',
-                exec : gui.osmanagers.link
+                exec : gui.osmanagers.link,
+                cleanup: true,
             }, {
                 id : 'lnk-connectivity',
-                exec : gui.connectivity.link
+                exec : gui.connectivity.link,
+                cleanup: true,
             }, {
                 id : 'lnk-deployed_services',
-                exec : gui.deployed_services
+                exec : gui.deployed_services,
+                cleanup: true,
             }, {
                 id : 'lnk-clear_cache',
                 exec : gui.clear_cache.link,
+                cleanup: false,
             },
         ];
         $.each(sidebarLinks, function(index, value) {
@@ -182,10 +207,10 @@
                 if ($('.navbar-toggle').css('display') != 'none') {
                     $(".navbar-toggle").trigger("click");
                 }
+                if( value.cleanup ) {
+                    gui.cleanup();
+                }
                 $('html, body').scrollTop(0);
-                // Tabletools creates divs at end that do not get removed, here is a good place to ensure there is no garbage left behind
-                // And anyway, if this div does not exists, it creates a new one...
-                $('.DTTT_dropdown').remove();
                 value.exec(event);
             });
         });
@@ -223,45 +248,56 @@
     gui.methods = {};
     
     // "Generic" edit method to set onEdit table
-    gui.methods.typedEdit = function(parent, modalTitle, modalErrorMsg, guiProcessor, fieldsProcessor) {
+    gui.methods.typedEdit = function(parent, modalTitle, modalErrorMsg, options) {
+        options = options || {}
         var self = parent;
         return function(value, event, table, refreshFnc) {
             self.rest.gui(value.type, function(guiDefinition) {
-                var tabs = guiProcessor ? guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
+                var tabs = options.guiProcessor ? options.guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
                 self.rest.item(value.id, function(item) {
-                    gui.forms.launchModal(modalTitle+' <b>'+value.name+'</b>', tabs, item, function(form_selector, closeFnc) {
-                        var fields = gui.forms.read(form_selector);
-                        fields.data_type = value.type;
-                        fields = fieldsProcessor ? fieldsProcessor(fields) : fields; 
-                        self.rest.save(fields, function(data) { // Success on put
-                            closeFnc();
-                            refreshFnc();
-                            gui.alert(gettext('Edition successfully done'), 'success');
-                        }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
-                        return false;
-                       });
-                   });
-                
+                    gui.forms.launchModal({
+                        title: modalTitle+' <b>'+value.name+'</b>', 
+                        fields: tabs, 
+                        item: item, 
+                        buttons: options.buttons,
+                        success: function(form_selector, closeFnc) {
+                            var fields = gui.forms.read(form_selector);
+                            fields.data_type = value.type;
+                            fields = options.fieldsProcessor ? options.fieldsProcessor(fields) : fields; 
+                            self.rest.save(fields, function(data) { // Success on put
+                                closeFnc();
+                                refreshFnc();
+                                gui.alert(gettext('Edition successfully done'), 'success');
+                            }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
+                       },
+                    });
+                });
             }, gui.failRequestModalFnc(modalErrorMsg));
         };
     };
 
     // "Generic" new method to set onNew table
-    gui.methods.typedNew = function(parent, modalTitle, modalErrorMsg, guiProcessor, fieldsProcessor) { 
+    gui.methods.typedNew = function(parent, modalTitle, modalErrorMsg, options) {
+        options = options || {};
         var self = parent;
         return function(type, table, refreshFnc) {
             self.rest.gui(type, function(guiDefinition) {
-                var tabs = guiProcessor ? guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
-                gui.forms.launchModal(modalTitle, tabs, undefined, function(form_selector, closeFnc) {
-                    var fields = gui.forms.read(form_selector);
-                    fields.data_type = type;
-                    fields = fieldsProcessor ? fieldsProcessor(fields) : fields; // P
-                    self.rest.create(fields, function(data) { // Success on put
-                        closeFnc();
-                        refreshFnc();
-                        gui.alert(gettext('Creation successfully done'), 'success');
-                    }, gui.failRequestModalFnc(modalErrorMsg) // Fail on put, show modal message
-                    );
+                var tabs = options.guiProcessor ? options.guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
+                gui.forms.launchModal({
+                    title: modalTitle, 
+                    fields: tabs, 
+                    item: undefined, 
+                    buttons: options.buttons,
+                    success: function(form_selector, closeFnc) {
+                        var fields = gui.forms.read(form_selector);
+                        fields.data_type = type;
+                        fields = options.fieldsProcessor ? options.fieldsProcessor(fields) : fields; // Process fields before creating?
+                        self.rest.create(fields, function(data) { // Success on put
+                            closeFnc();
+                            refreshFnc();
+                            gui.alert(gettext('Creation successfully done'), 'success');
+                        }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
+                    },
                 });
             });
         };
@@ -271,7 +307,7 @@
         var self = parent;
         return function(value, event, table, refreshFnc) {
             var content = gettext('Are you sure do you want to delete ') + '<b>' + value.name + '</b>';
-            var modalId = gui.launchModal(modalTitle, content, '<button type="button" class="btn btn-danger button-accept">' + gettext('Delete') + '</button>');
+            var modalId = gui.launchModal(modalTitle, content, { actionButton: '<button type="button" class="btn btn-danger button-accept">' + gettext('Delete') + '</button>'});
             $(modalId + ' .button-accept').click(function(){
                 $(modalId).modal('hide');
                 self.rest.del(value.id, function(){

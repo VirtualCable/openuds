@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@denyBrowsers(browsers=['ie<9'])
+@denyBrowsers(browsers=['ie<10'])
 @webLoginRequired
 def index(request):
     if request.user.isStaff() is False:
