@@ -37,6 +37,8 @@ gui.providers.link = function(event) {
                 css: 'btn-info',
             },
     };
+    
+    var prevTables = [];
 
     api.templates.get('providers', function(tmpl) {
         gui.clearWorkspace();
@@ -62,11 +64,20 @@ gui.providers.link = function(event) {
             onRowSelect : function(selected) {
                 api.tools.blockUI();
                 gui.doLog(selected[0]);
+                
+                $.each(prevTables, function(undefined, tbl){
+                    var $tbl = $(tbl).dataTable();
+                    $tbl.fnClearTable();
+                    $tbl.fnDestroy();
+                });
+                prevTables = [];
+                $('#services-placeholder').empty();
+                
                 var id = selected[0].id;
                 // Giving the name compossed with type, will ensure that only styles will be reattached once
                 var services = new GuiElement(api.providers.detail(id, 'services'), 'services-'+selected[0].type);
                 
-                services.table({
+                var servicesTable = services.table({
                     container : 'services-placeholder',
                     rowSelect : 'single',
                     onCheck: function(check, items) {
@@ -88,7 +99,8 @@ gui.providers.link = function(event) {
                         api.tools.unblockUI();
                     },
                 });
-                return false;
+                
+                prevTables.push(servicesTable);
             },
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
             onNew : gui.methods.typedNew(gui.providers, gettext('New provider'), gettext('Error creating provider'), testButton),
@@ -138,9 +150,9 @@ gui.authenticators.link = function(event) {
                 // To do so, we empty previous table contents before storing new table contents
                 // Anyway, TabletTools will keep "leaking" memory, but we can handle a little "leak" that will be fixed as soon as we change the section
                 $.each(prevTables, function(undefined, tbl){
-                    var tbl = $(tbl).dataTable();
-                    tbl.fnClearTable();
-                    tbl.fnDestroy();
+                    var $tbl = $(tbl).dataTable();
+                    $tbl.fnClearTable();
+                    $tbl.fnDestroy();
                 });
                 
                 $('#users-placeholder').empty();
