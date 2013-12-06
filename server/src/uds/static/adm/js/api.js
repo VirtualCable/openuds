@@ -54,7 +54,7 @@
         api.doLog('Ajax GET Json for "' + url + '"');
         $.ajax({
             url : url,
-            type : "GET",
+            type : options.method || "GET", // Will use GET if no method provided
             dataType : "json",
             success : function(data) {
                 api.doLog('Success on GET "' + url + '".');
@@ -80,7 +80,7 @@
         api.doLog('Ajax PUT Json for "' + url + '"');
         $.ajax({
             url : url,
-            type : "PUT",
+            type : options.method || "PUT", // Will use PUT if no method provided 
             dataType : "json",
             data: JSON.stringify(data),
             success: function(data) {
@@ -170,6 +170,7 @@ function BasicModelRest(path, options) {
     this.path = path;
     this.getPath = options.getPath || path;
     this.putPath = options.putPath || path;
+    this.testPath = options.testPath || (path + '/test');
     this.delPath = options.delPath || path;
     this.typesPath = options.typesPath || (path + '/types');
     this.guiPath = options.guiPath || (path + '/gui');
@@ -284,6 +285,20 @@ BasicModelRest.prototype = {
          });
     },
     
+    // Testing
+    test: function(type, data, success_fnc, fail_fnc) {
+        "use strict";
+        
+        var path = this.testPath + '/' + type;
+        
+        api.putJson(path, data, {
+           success:  success_fnc,
+           fail: fail_fnc,
+           method: 'POST'
+        });
+    },
+    
+    
     // --------------
     // Delete
     // --------------
@@ -379,6 +394,12 @@ DetailModelRestApi.prototype = {
             success: success_fnc,
             fail: fail_fnc
          });
+    },
+    // Testing
+    test: function(type, data, success_fnc, fail_fnc) {
+        "use strict";  
+
+        return this.base.test(type, data, success_fnc, fail_fnc);
     },
     // --------------
     // Delete

@@ -29,7 +29,15 @@ gui.dashboard.link = function(event) {
 gui.providers = new GuiElement(api.providers, 'provi');
 gui.providers.link = function(event) {
     "use strict";
-    
+
+    // Button definition to trigger "Test" action
+    var testButton = {
+            testButton: {
+                text: gettext('Test provider'),
+                css: 'btn-info',
+            },
+    };
+
     api.templates.get('providers', function(tmpl) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {
@@ -83,8 +91,8 @@ gui.providers.link = function(event) {
                 return false;
             },
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
-            onNew : gui.methods.typedNew(gui.providers, gettext('New provider'), gettext('Error creating provider')),
-            onEdit: gui.methods.typedEdit(gui.providers, gettext('Edit provider'), gettext('Error processing provider')),
+            onNew : gui.methods.typedNew(gui.providers, gettext('New provider'), gettext('Error creating provider'), testButton),
+            onEdit: gui.methods.typedEdit(gui.providers, gettext('Edit provider'), gettext('Error processing provider'), testButton),
             onDelete: gui.methods.del(gui.providers, gettext('Delete provider'), gettext('Error deleting provider')),
         });
     });
@@ -99,10 +107,15 @@ gui.authenticators = new GuiElement(api.authenticators, 'auth');
 
 gui.authenticators.link = function(event) {
     "use strict";
-    // Cleans up memory used by other datatables
-    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
-        $(tbl).dataTable().fnDestroy();
-    });
+
+    // Button definition to trigger "Test" action
+    var testButton = {
+            testButton: {
+                text: gettext('Test authenticator'),
+                css: 'btn-info',
+            },
+    };
+    
     gui.doLog('enter auths');
     api.templates.get('authenticators', function(tmpl) {
         gui.clearWorkspace();
@@ -113,20 +126,6 @@ gui.authenticators.link = function(event) {
         }));
         gui.setLinksEvents();
 
-
-        // Button definition to trigger "Test" action
-        var testButton = {
-            buttons: [ 
-                { 
-                    text: gettext('Test authenticator'),
-                    css: 'btn-info',
-                    action: function(event, form_selector, closeFnc) {
-                        var fields = gui.forms.read(form_selector);
-                    }
-                }, 
-            ]
-        }; 
-        
         gui.authenticators.table({
             container : 'auths-placeholder',
             rowSelect : 'single',

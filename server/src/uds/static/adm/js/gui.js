@@ -247,24 +247,43 @@
     
     gui.methods = {};
     
+    gui.methods.typedTestButton = function(rest, text, css, type) {
+        return [ 
+                { 
+                    text: text,
+                    css: css,
+                    action: function(event, form_selector, closeFnc) {
+                        var fields = gui.forms.read(form_selector);
+                        gui.doLog('Fields: ', fields);
+                        rest.test(type, fields, function(data){
+                            gui.launchModal(gettext('Test result'), data, { actionButton: ' '});                            
+                        }, gui.failRequestModalFnc(gettext('Test error')))
+                    }
+                }, 
+            ];
+    };
+    
     // "Generic" edit method to set onEdit table
     gui.methods.typedEdit = function(parent, modalTitle, modalErrorMsg, options) {
-        options = options || {}
-        var self = parent;
+        options = options || {};
         return function(value, event, table, refreshFnc) {
-            self.rest.gui(value.type, function(guiDefinition) {
+            parent.rest.gui(value.type, function(guiDefinition) {
+                var buttons;
+                if( options.testButton ) {
+                    buttons = gui.methods.typedTestButton(parent.rest, options.testButton.text, options.testButton.css, value.type);
+                }
                 var tabs = options.guiProcessor ? options.guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
-                self.rest.item(value.id, function(item) {
+                parent.rest.item(value.id, function(item) {
                     gui.forms.launchModal({
                         title: modalTitle+' <b>'+value.name+'</b>', 
                         fields: tabs, 
                         item: item, 
-                        buttons: options.buttons,
+                        buttons: buttons,
                         success: function(form_selector, closeFnc) {
                             var fields = gui.forms.read(form_selector);
                             fields.data_type = value.type;
                             fields = options.fieldsProcessor ? options.fieldsProcessor(fields) : fields; 
-                            self.rest.save(fields, function(data) { // Success on put
+                            parent.rest.save(fields, function(data) { // Success on put
                                 closeFnc();
                                 refreshFnc();
                                 gui.alert(gettext('Edition successfully done'), 'success');
@@ -282,12 +301,16 @@
         var self = parent;
         return function(type, table, refreshFnc) {
             self.rest.gui(type, function(guiDefinition) {
+                var buttons;
+                if( options.testButton ) {
+                    buttons = gui.methods.typedTestButton(parent.rest, options.testButton.text, options.testButton.css, type);
+                }
                 var tabs = options.guiProcessor ? options.guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
                 gui.forms.launchModal({
                     title: modalTitle, 
                     fields: tabs, 
                     item: undefined, 
-                    buttons: options.buttons,
+                    buttons: buttons,
                     success: function(form_selector, closeFnc) {
                         var fields = gui.forms.read(form_selector);
                         fields.data_type = type;

@@ -229,6 +229,12 @@ class DetailHandler(BaseModelHandler):
             
         return self.saveItem(parent, item)
     
+    def post(self):
+        '''
+        Post will be used for, for example, testing 
+        '''
+        raise NotFound('TODO: do it :-)')
+    
     def delete(self):
         '''
         Put is delegated to specific implementation
@@ -404,6 +410,15 @@ class ModelHandler(BaseModelHandler):
             return self.processDetail()
         
         raise RequestError('invalid request')
+    
+    def post(self):
+        # right now 
+        logger.debug('method POST for {0}, {1}'.format(self.__class__.__name__, self._args))
+        if len(self._args) == 2:
+            if self._args[0] == 'test':
+                return 'tested'
+        
+        raise NotFound('Method not found')
         
     def put(self):
         logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
