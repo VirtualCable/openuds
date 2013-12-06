@@ -30,19 +30,19 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import re
 import logging
 
 logger = logging.getLogger(__name__)
 
 Linux = 'Linux'
+WindowsPhone = 'Windows Phone'
 Windows = 'Windows'
 Macintosh = 'Macintosh'
 Android = 'Android'
 iPad = 'iPad'
 iPhone = 'iPhone'
 
-knownOss = [ Android, Linux, Windows, Macintosh, iPad, iPhone  ] # Android is linux also, so it is cheched on first place
+knownOss = [ WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone  ] # Android is linux also, so it is cheched on first place
     
 allOss = list(knownOss)
 desktopOss = [Linux, Windows, Macintosh]

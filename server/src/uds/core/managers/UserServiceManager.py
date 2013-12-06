@@ -360,7 +360,6 @@ class UserServiceManager(object):
         dsp.cachedDeployedService.select_for_update().filter(state__in=State.INFO_STATES).delete()
         
 
-    @transaction.atomic
     def getAssignationForUser(self, ds, user):
         # First, we try to locate an already assigned service
         existing = ds.assignedUserServices().filter(user=user,state__in=State.VALID_STATES)

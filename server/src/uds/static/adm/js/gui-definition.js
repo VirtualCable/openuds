@@ -116,6 +116,8 @@ gui.authenticators.link = function(event) {
             },
     };
     
+    var prevTables = [];
+    
     gui.doLog('enter auths');
     api.templates.get('authenticators', function(tmpl) {
         gui.clearWorkspace();
@@ -131,11 +133,26 @@ gui.authenticators.link = function(event) {
             rowSelect : 'single',
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
             onRowSelect : function(selected) {
+                
+                // We can have lots of users, so memory can grow up rapidly if we do not keep thins clena
+                // To do so, we empty previous table contents before storing new table contents
+                // Anyway, TabletTools will keep "leaking" memory, but we can handle a little "leak" that will be fixed as soon as we change the section
+                $.each(prevTables, function(undefined, tbl){
+                    var tbl = $(tbl).dataTable();
+                    tbl.fnClearTable();
+                    tbl.fnDestroy();
+                });
+                
+                $('#users-placeholder').empty();
+                $('#groups-placeholder').empty();
+
+                prevTables = [];
+                
                 api.tools.blockUI();
                 var id = selected[0].id;
                 var user = new GuiElement(api.authenticators.detail(id, 'users'), 'users');
                 var group = new GuiElement(api.authenticators.detail(id, 'groups'), 'groups');
-                group.table({
+                var grpTable = group.table({
                     container : 'groups-placeholder',
                     rowSelect : 'multi',
                     buttons : [ 'edit', 'delete', 'xls' ],
@@ -143,7 +160,7 @@ gui.authenticators.link = function(event) {
                         api.tools.unblockUI();
                     },
                 });
-                user.table({
+                var usrTable = user.table({
                     container : 'users-placeholder',
                     rowSelect : 'multi',
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
@@ -152,6 +169,11 @@ gui.authenticators.link = function(event) {
                         api.tools.unblockUI();
                     },
                 });
+                
+                // So we can destroy the tables beforing adding new ones
+                prevTables.push(grpTable);
+                prevTables.push(usrTable);
+                
                 return false;
             },
             onRefresh : function() {

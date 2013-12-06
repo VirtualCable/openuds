@@ -155,16 +155,21 @@
 
     // Clean up several "internal" data
     // I have discovered some "items" that are keep in memory, or that adds garbage to body (datatable && tabletools mainly)
-    // This place is where i add them to "clean" at least those things on page change
+    // Whenever we change "section", we clean up as much as we can, so we can keep things as clean as possible
+    // Main problem where comming with "tabletools" and keeping references to all instances created
     gui.cleanup = function() {
         gui.doLog('Cleaning up things');
         // Tabletools creates divs at end that do not get removed, here is a good place to ensure there is no garbage left behind
         // And anyway, if this div does not exists, it creates a new one...
         $('.DTTT_dropdown').remove(); // Tabletools keep adding garbage to end of body on each new table creation, so we simply remove it on each new creation
+        TableTools._aInstances = []; // Same for internal references
+        TableTools._aListeners = [];
         
         // Destroy any created datatable
         $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
-            $(tbl).dataTable().fnDestroy();
+            var $tbl = $(tbl).dataTable();
+            $tbl.fnClearTable(); // Removing data first makes things much faster
+            $tbl.fnDestroy();
         });
     };
     
