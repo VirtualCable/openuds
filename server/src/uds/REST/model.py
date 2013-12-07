@@ -260,6 +260,7 @@ class DetailHandler(BaseModelHandler):
     
     # Default save
     def saveItem(self, parent, item):
+        logger.debug('Default saveItem handler caller for {0}'.format(self._path))
         self.invalidRequestException()
         
     # Default delete
@@ -354,9 +355,11 @@ class ModelHandler(BaseModelHandler):
             args = list(self._args[2:])
             path = self._path + '/'.join(args[:2])
             detail = detailCls(self, path, self._params, *args, parent = item)
-            return getattr(detail, self._operation)()
+            method = getattr(detail, self._operation)
         except AttributeError:
             raise NotFound('method not found')
+            
+        return method()
 
     def getItems(self, *args, **kwargs):
         for item in self.model.objects.filter(*args, **kwargs):

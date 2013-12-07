@@ -50,6 +50,7 @@ GuiElement.prototype = {
     //   buttons: array of visible buttons (strings), valid are [ 'new', 'edit', 'refresh', 'delete', 'xls' ],
     //   rowSelect: type of allowed row selection, valid values are 'single' and 'multi'
     //   scrollToTable: if True, will scroll page to show table
+    //   deferedRender: if True, datatable will be created with "bDeferRender": true, that will improve a lot creation
     //   
     //   onLoad: Event (function). If defined, will be invoked when table is fully loaded.
     //           Receives 1 parameter, that is the gui element (GuiElement) used to render table
@@ -214,14 +215,14 @@ GuiElement.prototype = {
                         // Clears selection first
                         TableTools.fnGetInstance(tableId).fnSelectNone();
                         //if( data.length > 1000 )
-                        api.tools.blockUI();
+                        gui.tools.blockUI();
                         
                         self.rest.overview(function(data) {  // Restore overview
                                 setTimeout( function() {
                                     tbl.fnClearTable();
                                     tbl.fnAddData(data);
                                     onRefresh(self);
-                                    api.tools.unblockUI();
+                                    gui.tools.unblockUI();
                                 }, 0);
                             });  // End restore overview
                         return false; // This may be used on button or href, better disable execution of it
@@ -390,13 +391,9 @@ GuiElement.prototype = {
 
                     // Initializes oTableTools
                     var oTableTools = {
-                        "aButtons" : btns
+                        "aButtons" : btns,
+                        "sRowSelect": options.rowSelect || 'single',
                     };
-                    
-                    // Type of row selection 
-                    if (options.rowSelect) {
-                        oTableTools.sRowSelect = options.rowSelect;
-                    }
                     
                     if (options.onRowSelect) {
                         var rowSelectedFnc = options.onRowSelect;
@@ -420,10 +417,10 @@ GuiElement.prototype = {
                         // second row is lower
                         // (pagination) row
                         "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
-
+                        "bDeferRender": options.deferedRender || false,
                     });
                     // Fix 3dbuttons
-                    api.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
+                    gui.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
                     // Fix form 
                     $('#' + tableId + '_filter input').addClass('form-control');
                     // Add refresh action to panel

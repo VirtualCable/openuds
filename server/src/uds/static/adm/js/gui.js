@@ -27,8 +27,8 @@
         'oPaginate' : {
             'sFirst' : gettext('First'),
             'sLast' : gettext('Last'),
-            'sNext' : gettext('Next'),
-            'sPrevious' : gettext('Previous'),
+            'sNext' : '',
+            'sPrevious' : '',
         }
     };
     
@@ -123,18 +123,15 @@
         return id;
     };
     
-    gui.alert = function(message, type) {
-        api.templates.get('alert', function(tmpl) {
-           $(api.templates.evaluate(tmpl, {
-               type: type,
-               message: message
-           })).appendTo('#alerts'); 
-        });
+    gui.notify = function(message, type) {
+        gui.launchModal('<b class="text-'+ type + '">' + gettext('Message') + '</b>', '<span class="text-' + type + '">' + message + '</span>', {actionButton: ' '});
     };
     
-    gui.failRequestModalFnc = function(title) {
+    gui.failRequestModalFnc = function(title, unblock) {
         return function(jqXHR, textStatus, errorThrown) { // fail on put
-            gui.launchModal(title, jqXHR.responseText, { actionButton: ' '});
+            if( unblock )
+                gui.tools.unblockUI();
+            gui.launchModal('<b class="text-danger">' + title + '</b>', jqXHR.responseText, { actionButton: ' '});
         };
     };
 
@@ -262,8 +259,8 @@
                         gui.doLog('Fields: ', fields);
                         rest.test(type, fields, function(data){
                             gui.launchModal(gettext('Test result'), data, { actionButton: ' '});                            
-                        }, gui.failRequestModalFnc(gettext('Test error')))
-                    }
+                        }, gui.failRequestModalFnc(gettext('Test error')));
+                    },
                 }, 
             ];
     };
@@ -272,6 +269,7 @@
     gui.methods.typedEdit = function(parent, modalTitle, modalErrorMsg, options) {
         options = options || {};
         return function(value, event, table, refreshFnc) {
+            gui.tools.blockUI();
             parent.rest.gui(value.type, function(guiDefinition) {
                 var buttons;
                 if( options.testButton ) {
@@ -279,6 +277,7 @@
                 }
                 var tabs = options.guiProcessor ? options.guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
                 parent.rest.item(value.id, function(item) {
+                    gui.tools.unblockUI();
                     gui.forms.launchModal({
                         title: modalTitle+' <b>'+value.name+'</b>', 
                         fields: tabs, 
@@ -291,12 +290,12 @@
                             parent.rest.save(fields, function(data) { // Success on put
                                 closeFnc();
                                 refreshFnc();
-                                gui.alert(gettext('Edition successfully done'), 'success');
-                            }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
+                                gui.notify(gettext('Edition successfully done'), 'success');
+                            }, gui.failRequestModalFnc(modalErrorMsg, true)); // Fail on put, show modal message
                        },
                     });
                 });
-            }, gui.failRequestModalFnc(modalErrorMsg));
+            }, gui.failRequestModalFnc(modalErrorMsg, true));
         };
     };
 
@@ -305,7 +304,9 @@
         options = options || {};
         var self = parent;
         return function(type, table, refreshFnc) {
+            gui.tools.blockUI();
             self.rest.gui(type, function(guiDefinition) {
+                gui.tools.unblockUI();
                 var buttons;
                 if( options.testButton ) {
                     buttons = gui.methods.typedTestButton(parent.rest, options.testButton.text, options.testButton.css, type);
@@ -323,11 +324,11 @@
                         self.rest.create(fields, function(data) { // Success on put
                             closeFnc();
                             refreshFnc();
-                            gui.alert(gettext('Creation successfully done'), 'success');
-                        }, gui.failRequestModalFnc(modalErrorMsg)); // Fail on put, show modal message
+                            gui.notify(gettext('Creation successfully done'), 'success');
+                        }, gui.failRequestModalFnc(modalErrorMsg, true)); // Fail on put, show modal message
                     },
                 });
-            });
+            }, gui.failRequestModalFnc(modalErrorMsg, true));
         };
     };
     
@@ -340,7 +341,7 @@
                 $(modalId).modal('hide');
                 self.rest.del(value.id, function(){
                     refreshFnc();
-                    gui.alert(gettext('Deletion successfully done'), 'success');
+                    gui.notify(gettext('Item deleted'), 'success');
                 }, gui.failRequestModalFnc(modalErrorMsg) );
             });
         };

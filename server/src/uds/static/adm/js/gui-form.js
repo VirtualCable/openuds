@@ -154,10 +154,13 @@
         $(formSelector + ' .modal_field_data').each(function(i, field) {
             var $field = $(field);
             if( $field.attr('name') ) { // Is a valid field
+                var name = $field.attr('name');
                 if( $field.attr('type') == 'checkbox') {
-                    res[$field.attr('name')] = $field.is(':checked');
+                    res[name] = $field.is(':checked');
                 } else {
-                    res[$field.attr('name')] = $field.val();
+                    res[name] = $field.val();
+                    if( res[name] === null && $field.is('select') )
+                        res[name] = [];
                 }
             }
         });
@@ -205,9 +208,7 @@
         $.each(clickEventHandlers, function(undefined, value){
             if( value.action ) {
                 $(value.id).on('click', function(event){
-                    if( value.action(event, formSelector, closeFnc) == true ) {
-                        $(id).modal('hide');
-                    }
+                    value.action(event, formSelector, closeFnc);
                 });
             }
         });

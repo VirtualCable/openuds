@@ -21,7 +21,7 @@ gui.dashboard.link = function(event) {
            });
         });
         
-        api.tools.fix3dButtons('#test');
+        gui.tools.fix3dButtons('#test');
     });
 };
 
@@ -33,7 +33,7 @@ gui.providers.link = function(event) {
     // Button definition to trigger "Test" action
     var testButton = {
             testButton: {
-                text: gettext('Test provider'),
+                text: gettext('Test'),
                 css: 'btn-info',
             },
     };
@@ -62,7 +62,7 @@ gui.providers.link = function(event) {
                 return true;
             },
             onRowSelect : function(selected) {
-                api.tools.blockUI();
+                gui.tools.blockUI();
                 gui.doLog(selected[0]);
                 
                 $.each(prevTables, function(undefined, tbl){
@@ -91,12 +91,12 @@ gui.providers.link = function(event) {
                         return true;
                     },
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
-                    onEdit : gui.methods.typedEdit(services, gettext('Edit service'), gettext('Error processing service')),
-                    onNew : gui.methods.typedNew(services, gettext('New service'), gettext('Error creating service')),
-                    onDelete: gui.methods.del(services, gettext('Delete service'), gettext('Error deleting service')),
+                    onEdit : gui.methods.typedEdit(services, gettext('Edit service'), gettext('Error processing service'), testButton),
+                    onNew : gui.methods.typedNew(services, gettext('New service'), gettext('Error creating service'), testButton),
+                    onDelete: gui.methods.del(services, gettext('Delete service'), gettext('Error deleting service'), testButton),
                     scrollToTable : false,
                     onLoad: function(k) {
-                        api.tools.unblockUI();
+                        gui.tools.unblockUI();
                     },
                 });
                 
@@ -160,7 +160,7 @@ gui.authenticators.link = function(event) {
 
                 prevTables = [];
                 
-                api.tools.blockUI();
+                gui.tools.blockUI();
                 var id = selected[0].id;
                 var user = new GuiElement(api.authenticators.detail(id, 'users'), 'users');
                 var group = new GuiElement(api.authenticators.detail(id, 'groups'), 'groups');
@@ -169,16 +169,18 @@ gui.authenticators.link = function(event) {
                     rowSelect : 'multi',
                     buttons : [ 'edit', 'delete', 'xls' ],
                     onLoad: function(k) {
-                        api.tools.unblockUI();
+                        gui.tools.unblockUI();
                     },
                 });
+                // Use defered rendering for users, this table can be "huge"
                 var usrTable = user.table({
                     container : 'users-placeholder',
                     rowSelect : 'multi',
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
+                    deferedRender: true,
                     scrollToTable : false,
                     onLoad: function(k) {
-                        api.tools.unblockUI();
+                        gui.tools.unblockUI();
                     },
                 });
                 

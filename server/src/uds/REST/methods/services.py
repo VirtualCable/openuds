@@ -34,8 +34,9 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-from uds.core.Environment import Environment
+from uds.models import Service
 
+from uds.core.Environment import Environment
 from uds.REST.model import DetailHandler
 from uds.REST import NotFound, ResponseError, RequestError
 from django.db import IntegrityError
@@ -77,6 +78,7 @@ class Services(DetailHandler):
     def saveItem(self, parent, item):
         # Extract item db fields
         # We need this fields for all
+        logger.debug('Saving service {0} / {1}'.format(parent, item))
         fields = self.readFieldsFromParams(['name', 'comments', 'data_type'])
         try:
             if item is None: # Create new
@@ -87,11 +89,12 @@ class Services(DetailHandler):
                 
             service.data = service.getInstance(self._params).serialize()
             service.save()
-        except self.model.DoesNotExist: 
+        except Service.DoesNotExist: 
             raise NotFound('Item not found')
         except IntegrityError: # Duplicate key probably 
             raise RequestError('Element already exists (duplicate key error)')
         except Exception:
+            logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT')
         
         return self.getItems(parent, service.id)

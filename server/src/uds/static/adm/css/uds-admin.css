@@ -70,6 +70,14 @@ table.dataTable tr.even td.sorting_3 { background-color: blue; }*/
     
 }
 
+/*.modal-backdrop {
+	background-color: gray;
+}*/
+
+.modal {
+    overflow-y: auto;
+}
+
 .tab-pane {
     margin-top: 24px;
 }

@@ -133,6 +133,10 @@ if ($.fn.DataTable.TableTools) {
             "row" : "active"
         }
     });
+    
+    $.extend(true, $.fn.DataTable.TableTools.DEFAULTS, {
+        "aButtons": [],
+    });
 
     // Have the collection use a bootstrap compatible dropdown
     $.extend(true, $.fn.DataTable.TableTools.DEFAULTS.oTags, {
