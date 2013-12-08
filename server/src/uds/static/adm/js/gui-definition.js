@@ -25,7 +25,9 @@ gui.dashboard.link = function(event) {
     });
 };
 
+// ------------------------
 // Service providers
+// ------------------------
 gui.providers = new GuiElement(api.providers, 'provi');
 gui.providers.link = function(event) {
     "use strict";
@@ -38,7 +40,17 @@ gui.providers.link = function(event) {
             },
     };
     
-    var serviceLogTable;
+    var detailLogTable;
+    var clearDetailLog = function() {
+        if( detailLogTable ) {
+            var $tbl = $(detailLogTable).dataTable();
+            $tbl.fnClearTable();
+            $tbl.fnDestroy();
+            $('#services-log-placeholder').empty();
+            detailLogTable = undefined;
+        }
+    };
+    
     var prevTables = [];
     var clearDetails = function() {
         gui.doLog('Clearing details');
@@ -48,18 +60,11 @@ gui.providers.link = function(event) {
             $tbl.fnDestroy();
         });
         
-        if( serviceLogTable ) {
-            var $tbl = $(serviceLogTable).dataTable();
-            $tbl.fnClearTable();
-            $tbl.fnDestroy();
-            $('#services-log-placeholder').empty();
-            serviceLogTable = undefined;
-        }
+        clearDetailLog();
         
         prevTables = [];
         $('#services-placeholder').empty();
         $('#logs-placeholder').empty();
-        $('#services-log-placeholder').empty();
         
         $('#detail-placeholder').addClass('hidden');
     };
@@ -107,14 +112,9 @@ gui.providers.link = function(event) {
                         gui.tools.blockUI();
                         var sId = sselected[0].id;
                         
-                        if( serviceLogTable ) {
-                            var $tbl = $(serviceLogTable).dataTable();
-                            $tbl.fnClearTable();
-                            $tbl.fnDestroy();
-                            $('#services-log-placeholder').empty();
-                        }
+                        clearDetailLog();
                         
-                        serviceLogTable = services.logTable(sId, {
+                        detailLogTable = services.logTable(sId, {
                             container: 'services-log-placeholder',
                             onLoad: function() {
                                 gui.tools.unblockUI();
@@ -122,13 +122,7 @@ gui.providers.link = function(event) {
                         });
                     },
                     onRowDeselect : function() {
-                        if( serviceLogTable ) {
-                            var $tbl = $(serviceLogTable).dataTable();
-                            $tbl.fnClearTable();
-                            $tbl.fnDestroy();
-                            $('#services-log-placeholder').empty();
-                        }
-                        serviceLogTable = undefined;
+                        clearDetailLog();
                     },
                     onCheck: function(check, items) {
                         if( check == 'delete' ) {
@@ -167,9 +161,9 @@ gui.providers.link = function(event) {
     return false;
 };
 
-// --------------..
+//------------------------
 // Authenticators
-// ---------------
+//------------------------
 gui.authenticators = new GuiElement(api.authenticators, 'auth');
 
 gui.authenticators.link = function(event) {
@@ -183,6 +177,17 @@ gui.authenticators.link = function(event) {
             },
     };
     
+    var detailLogTable;
+    var clearDetailLog = function() {
+        if( detailLogTable ) {
+            var $tbl = $(detailLogTable).dataTable();
+            $tbl.fnClearTable();
+            $tbl.fnDestroy();
+            $('#user-log-placeholder').empty();
+            detailLogTable = undefined;
+        }
+    };
+    
     var prevTables = [];
     var clearDetails = function() {
         $.each(prevTables, function(undefined, tbl){
@@ -191,6 +196,8 @@ gui.authenticators.link = function(event) {
             $tbl.fnDestroy();
         });
         
+        clearDetailLog();
+
         $('#users-placeholder').empty();
         $('#groups-placeholder').empty();
         $('#logs-placeholder').empty();
@@ -206,6 +213,7 @@ gui.authenticators.link = function(event) {
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {
             auths : 'auths-placeholder',
             users : 'users-placeholder',
+            users_log : 'users-log-placeholder',
             groups: 'groups-placeholder',
             logs:   'logs-placeholder',
         }));
@@ -241,7 +249,7 @@ gui.authenticators.link = function(event) {
                 // Use defered rendering for users, this table can be "huge"
                 var usrTable = user.table({
                     container : 'users-placeholder',
-                    rowSelect : 'multi',
+                    rowSelect : 'single',
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
                     deferedRender: true,
                     scrollToTable : false,
@@ -274,6 +282,9 @@ gui.authenticators.link = function(event) {
     return false;
 };
 
+//------------------------
+// Os managers
+//------------------------
 gui.osmanagers = new GuiElement(api.osmanagers, 'osm');
 gui.osmanagers.link = function(event) {
     "use strict";
