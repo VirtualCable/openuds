@@ -45,10 +45,6 @@
             text: '<span class="fa fa-eraser"></span> <span class="label-tbl-button">' + gettext('Delete') + '</span>',
             css: 'disabled btn3d-default btn3d btn3d-tables',
         },
-        'refresh': {
-            text: '<span class="fa fa-refresh"></span> <span class="label-tbl-button">' + gettext('Refresh') + '</span>',
-            css: 'btn3d-primary btn3d btn3d-tables',
-        },
         'xls': {
             text: '<span class="fa fa-save"></span> <span class="label-tbl-button">' + gettext('Xls') + '</span>',
             css: 'btn3d-info btn3d btn3d-tables',
@@ -61,7 +57,7 @@
         var panelId = 'panel-' + table_id;
 
         return {
-           text: api.templates.evaluate('tmpl_table', {
+           text: api.templates.evaluate('tmpl_comp_table', {
                      panelId: panelId,
                      icon: options.icon || 'table',
                      size: options.size || 12,
@@ -85,21 +81,9 @@
         return '<div class="row"><div class="col-lg-12"><ol class="breadcrumb">' + list + "</ol></div></div>";
     };
     
-    gui.minimizePanel = function(panelId) {
-        var title = $(panelId).attr('data-minimized');
-        $(panelId).hide('slow', function(){
-            $('<span class="label label-primary panel-icon"><b class="fa fa-plus-square-o"></b> ' + title + '</span>')
-                .appendTo('#minimized')
-                .click(function(){
-                    this.remove();
-                    $(panelId).show('slow');
-                });
-        });
-    };
-
     gui.modal = function(id, title, content, options) {
         options = options || {};
-        return api.templates.evaluate('tmpl_modal', {
+        return api.templates.evaluate('tmpl_comp_modal', {
             id: id,
             title: title,
             content: content,

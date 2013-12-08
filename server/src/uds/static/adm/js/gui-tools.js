@@ -47,6 +47,28 @@
                 });
              });
         },
+        // Datetime renderer (with specified format)
+        renderDate : function(format) {
+            return function(data, type, full) {
+                return api.tools.strftime(format, new Date(data*1000));
+            };
+        },
+        // Log level rendererer
+        renderLogLovel : function() {
+            var levels = {
+                    10000 : 'OTHER',
+                    20000 : 'DEBUG',
+                    30000 : 'INFO',
+                    40000 : 'WARN',
+                    50000 : 'ERROR',
+                    60000 : 'FATAL'
+            };
+            
+            return function(data, type, full) {
+                return levels[data] || 'OTHER';
+            }
+        },
+
     };
     
 }(window.gui = window.gui || {}, jQuery));

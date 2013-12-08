@@ -12,7 +12,26 @@
 <div class="row">
     <div id="{{ providers }}" class="col-xs-12"></div>
 </div>
-<div class="row">
-    <div id="{{ services }}" class="col-xs-12"></div>
+<div id="detail-placeholder" class="row hidden">
+    <div class="col-xs-12">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#{{ services }}_tab" data-toggle="tab">{% endverbatim %}{% trans 'Services' %}{% verbatim %}</a></li>
+            <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
+        </ul>    
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="{{ services }}_tab">
+                <div class="row">
+                    <div class="col-xs-12" id="{{ services }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12" id="{{ services_log }}">
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="{{ logs }}">...</div>
+        </div>        
+    </div>
 </div>
+
 {% endverbatim %}

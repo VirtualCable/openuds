@@ -50,7 +50,7 @@ GuiElement.prototype = {
     //   buttons: array of visible buttons (strings), valid are [ 'new', 'edit', 'refresh', 'delete', 'xls' ],
     //   rowSelect: type of allowed row selection, valid values are 'single' and 'multi'
     //   scrollToTable: if True, will scroll page to show table
-    //   deferedRender: if True, datatable will be created with "bDeferRender": true, that will improve a lot creation
+    //   deferedRender: if True, datatable will be created with "bDeferRender": true, that will improve a lot creation of huge tables
     //   
     //   onLoad: Event (function). If defined, will be invoked when table is fully loaded.
     //           Receives 1 parameter, that is the gui element (GuiElement) used to render table
@@ -85,7 +85,7 @@ GuiElement.prototype = {
     //                   4.- the DataTable that raised the event
     table : function(options) {
         "use strict";
-        gui.doLog('Types: ', this.types);
+        
         options = options || {};
         gui.doLog('Composing table for ' + this.name);
         var tableId = this.name + '-table';
@@ -102,13 +102,6 @@ GuiElement.prototype = {
             return data;
         };
 
-        // Datetime renderer (with specified format)
-        var renderDate = function(format) {
-            return function(data, type, full) {
-                return api.tools.strftime(format, new Date(data*1000));
-            };
-        };
-        
         // Icon renderer, based on type (created on init methods in styles)
         var renderTypeIcon = function(data, type, value){
             if( type == 'display' ) {
@@ -160,14 +153,14 @@ GuiElement.prototype = {
                         switch(opts.type) {
                             case 'date':
                                 column.sType = 'date';
-                                column.mRender = renderDate(api.tools.djangoFormat(get_format('SHORT_DATE_FORMAT')));
+                                column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format('SHORT_DATE_FORMAT')));
                                 break;
                             case 'datetime':
                                 column.sType = 'date';
-                                column.mRender = renderDate(api.tools.djangoFormat(get_format('SHORT_DATETIME_FORMAT')));
+                                column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format('SHORT_DATETIME_FORMAT')));
                                 break;
                             case 'time':
-                                column.mRender = renderDate(api.tools.djangoFormat(get_format('TIME_FORMAT')));
+                                column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format('TIME_FORMAT')));
                                 break;
                             case 'iconType':
                                 //columnt.sType = 'html'; // html is default, so this is not needed
@@ -192,7 +185,7 @@ GuiElement.prototype = {
             });
             // Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
             $('#style-' + tableId).remove();  // Remove existing style for table before adding new one
-            $(api.templates.evaluate('tmpl_responsive_table', {
+            $(api.templates.evaluate('tmpl_comp_responsive_table', {
                 tableId: tableId,
                 columns: columns,
             })).appendTo('head');
@@ -392,19 +385,19 @@ GuiElement.prototype = {
                     // Initializes oTableTools
                     var oTableTools = {
                         "aButtons" : btns,
-                        "sRowSelect": options.rowSelect || 'single',
+                        "sRowSelect": options.rowSelect || 'none',
                     };
                     
                     if (options.onRowSelect) {
                         var rowSelectedFnc = options.onRowSelect;
                         oTableTools.fnRowSelected = function() {
-                            rowSelectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), this);
+                            rowSelectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
                         };
                     }
                     if (options.onRowDeselect) {
                         var rowDeselectedFnc = options.onRowDeselect;
                         oTableTools.fnRowDeselected = function() {
-                            rowDeselectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), this);
+                            rowDeselectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
                         };
                     }
 
@@ -425,6 +418,7 @@ GuiElement.prototype = {
                     $('#' + tableId + '_filter input').addClass('form-control');
                     // Add refresh action to panel
                     $(table.refreshSelector).click(refreshFnc);
+                    
                     // Add tooltips to "new" buttons
                     $('.DTTT_dropdown [data-toggle="tooltip"]').tooltip({
                         container:'body',
@@ -442,6 +436,80 @@ GuiElement.prototype = {
                     }
                 }); // End Overview data
             }); // End Tableinfo data
+        
+        return '#' + tableId;
+    },
+    logTable: function(itemId, options) {
+        "use strict";
+        options = options || {};
+        gui.doLog('Composing log for ' + this.name);
+        var tableId = this.name + '-table-log';
+        var self = this; // Store this for child functions
+
+        // Renderers for columns
+        var columns = [
+            {
+                "mData" : 'date',
+                "sTitle" : gettext('Date'),  
+                "mRender" : gui.tools.renderDate(api.tools.djangoFormat(get_format('SHORT_DATE_FORMAT') + ' ' + get_format('TIME_FORMAT'))),
+                "bSortable" : true,
+                "bSearchable" : true,
+            },
+            {
+                "mData" : 'level',
+                "sTitle" : gettext('level'),
+                "mRender" : gui.tools.renderLogLovel(),
+                "sWidth" : "5em",
+                "bSortable" : true,
+                "bSearchable" : true,
+            },
+            {
+                "mData" : 'source',
+                "sTitle" : gettext('source'),  
+                "sWidth" : "5em",
+                "bSortable" : true,
+                "bSearchable" : true,
+            },
+            {
+                "mData" : 'message',
+                "sTitle" : gettext('message'),  
+                "bSortable" : true,
+                "bSearchable" : true,
+            },
+        ];
+        
+        var table = gui.table(options.title || gettext('Logs'), tableId);
+        if (options.container === undefined) {
+            gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
+        } else {
+            $('#' + options.container).empty();
+            $('#' + options.container).append(table.text);
+        }
+        
+        // Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
+        $('#style-' + tableId).remove();  // Remove existing style for table before adding new one
+        $(api.templates.evaluate('tmpl_comp_responsive_table', {
+            tableId: tableId,
+            columns: columns,
+        })).appendTo('head');
+
+        self.rest.getLogs(itemId, function(data){
+            gui.doLog(data);
+
+            $('#' + tableId).dataTable({
+                "aaData" : data,
+                "oTableTools" : {"aButtons" : [],},
+                "aoColumns" : columns,
+                "oLanguage" : gui.config.dataTablesLanguage,
+                "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
+                "bDeferRender": options.deferedRender || false,
+            });
+            
+            // if table rendered event
+            if( options.onLoad ) {
+                options.onLoad(self);
+            }
+        });
         
         return '#' + tableId;
     },

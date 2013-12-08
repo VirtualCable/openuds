@@ -169,6 +169,7 @@ function BasicModelRest(path, options) {
     // Requests paths
     this.path = path;
     this.getPath = options.getPath || path;
+    this.logPath = options.logPath || path;
     this.putPath = options.putPath || path;
     this.testPath = options.testPath || (path + '/test');
     this.delPath = options.delPath || path;
@@ -244,6 +245,19 @@ BasicModelRest.prototype = {
         "use strict";
         return this.get({
             id: itemId,
+            success: success_fnc,
+            fail: fail_fnc
+        });
+        
+    },
+    // -------------
+    // Log methods
+    // -------------
+    getLogs: function(itemId, success_fnc, fail_fnc) {
+        "use strict";
+        var path = this.logPath + '/' + itemId + '/' + 'log';
+        return this._requestPath(path, {
+            cacheKey: '.',
             success: success_fnc,
             fail: fail_fnc
         });
@@ -374,6 +388,25 @@ DetailModelRestApi.prototype = {
         "use strict";
         return this.base.get(success_fnc, fail_fnc);
     },
+    list: function(success_fnc, fail_fnc) {  // This is "almost" an alias for get
+        "use strict";
+        return this.base.list(success_fnc, fail_fnc);
+    },
+    overview: function(success_fnc, fail_fnc) {
+        "use strict";
+        return this.base.overview(success_fnc, fail_fnc);
+    },
+    item: function(itemId, success_fnc, fail_fnc) {
+        "use strict";
+        return this.base.item(itemId, success_fnc, fail_fnc);
+    },
+    // -------------
+    // Log methods
+    // -------------
+    getLogs: function(itemId, success_fnc, fail_fnc) {
+        "use strict";
+        return this.base.getLogs(itemId, success_fnc, fail_fnc);
+    },
     put: function(data, options) {
         "use strict";
         return this.base.put(data, options);
@@ -411,18 +444,6 @@ DetailModelRestApi.prototype = {
     tableInfo: function(success_fnc, fail_fnc) { 
         "use strict";
         return this.base.tableInfo(success_fnc, fail_fnc);
-    },
-    list: function(success_fnc, fail_fnc) {  // This is "almost" an alias for get
-        "use strict";
-        return this.base.list(success_fnc, fail_fnc);
-    },
-    overview: function(success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.overview(success_fnc, fail_fnc);
-    },
-    item: function(itemId, success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.item(itemId, success_fnc, fail_fnc);
     },
     types: function(success_fnc, fail_fnc) {
         "use strict";

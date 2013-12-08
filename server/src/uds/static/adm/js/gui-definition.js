@@ -38,13 +38,39 @@ gui.providers.link = function(event) {
             },
     };
     
+    var serviceLogTable;
     var prevTables = [];
+    var clearDetails = function() {
+        gui.doLog('Clearing details');
+        $.each(prevTables, function(undefined, tbl){
+            var $tbl = $(tbl).dataTable();
+            $tbl.fnClearTable();
+            $tbl.fnDestroy();
+        });
+        
+        if( serviceLogTable ) {
+            var $tbl = $(serviceLogTable).dataTable();
+            $tbl.fnClearTable();
+            $tbl.fnDestroy();
+            $('#services-log-placeholder').empty();
+            serviceLogTable = undefined;
+        }
+        
+        prevTables = [];
+        $('#services-placeholder').empty();
+        $('#logs-placeholder').empty();
+        $('#services-log-placeholder').empty();
+        
+        $('#detail-placeholder').addClass('hidden');
+    };
 
     api.templates.get('providers', function(tmpl) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {
             providers : 'providers-placeholder',
             services : 'services-placeholder',
+            services_log : 'services-log-placeholder',
+            logs:   'logs-placeholder',
         }));
         gui.setLinksEvents();
     
@@ -61,17 +87,14 @@ gui.providers.link = function(event) {
                 }*/
                 return true;
             },
+            onRowDeselect: function() {
+                clearDetails();
+            },
             onRowSelect : function(selected) {
                 gui.tools.blockUI();
-                gui.doLog(selected[0]);
                 
-                $.each(prevTables, function(undefined, tbl){
-                    var $tbl = $(tbl).dataTable();
-                    $tbl.fnClearTable();
-                    $tbl.fnDestroy();
-                });
-                prevTables = [];
-                $('#services-placeholder').empty();
+                clearDetails();
+                $('#detail-placeholder').removeClass('hidden');
                 
                 var id = selected[0].id;
                 // Giving the name compossed with type, will ensure that only styles will be reattached once
@@ -80,6 +103,33 @@ gui.providers.link = function(event) {
                 var servicesTable = services.table({
                     container : 'services-placeholder',
                     rowSelect : 'single',
+                    onRowSelect: function(sselected) {
+                        gui.tools.blockUI();
+                        var sId = sselected[0].id;
+                        
+                        if( serviceLogTable ) {
+                            var $tbl = $(serviceLogTable).dataTable();
+                            $tbl.fnClearTable();
+                            $tbl.fnDestroy();
+                            $('#services-log-placeholder').empty();
+                        }
+                        
+                        serviceLogTable = services.logTable(sId, {
+                            container: 'services-log-placeholder',
+                            onLoad: function() {
+                                gui.tools.unblockUI();
+                            }
+                        });
+                    },
+                    onRowDeselect : function() {
+                        if( serviceLogTable ) {
+                            var $tbl = $(serviceLogTable).dataTable();
+                            $tbl.fnClearTable();
+                            $tbl.fnDestroy();
+                            $('#services-log-placeholder').empty();
+                        }
+                        serviceLogTable = undefined;
+                    },
                     onCheck: function(check, items) {
                         if( check == 'delete' ) {
                             for( var i in items ) {
@@ -100,7 +150,12 @@ gui.providers.link = function(event) {
                     },
                 });
                 
+                var logTable = gui.providers.logTable(id, {
+                    container : 'logs-placeholder',
+                });
+                
                 prevTables.push(servicesTable);
+                prevTables.push(logTable);
             },
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
             onNew : gui.methods.typedNew(gui.providers, gettext('New provider'), gettext('Error creating provider'), testButton),
@@ -129,6 +184,21 @@ gui.authenticators.link = function(event) {
     };
     
     var prevTables = [];
+    var clearDetails = function() {
+        $.each(prevTables, function(undefined, tbl){
+            var $tbl = $(tbl).dataTable();
+            $tbl.fnClearTable();
+            $tbl.fnDestroy();
+        });
+        
+        $('#users-placeholder').empty();
+        $('#groups-placeholder').empty();
+        $('#logs-placeholder').empty();
+        
+        $('#detail-placeholder').addClass('hidden');
+        
+        prevTables = [];
+    };
     
     gui.doLog('enter auths');
     api.templates.get('authenticators', function(tmpl) {
@@ -137,28 +207,24 @@ gui.authenticators.link = function(event) {
             auths : 'auths-placeholder',
             users : 'users-placeholder',
             groups: 'groups-placeholder',
+            logs:   'logs-placeholder',
         }));
         gui.setLinksEvents();
 
-        gui.authenticators.table({
+        var tableId = gui.authenticators.table({
             container : 'auths-placeholder',
             rowSelect : 'single',
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
+            onRowDeselect: function() {
+                clearDetails();
+            },
             onRowSelect : function(selected) {
                 
                 // We can have lots of users, so memory can grow up rapidly if we do not keep thins clena
                 // To do so, we empty previous table contents before storing new table contents
                 // Anyway, TabletTools will keep "leaking" memory, but we can handle a little "leak" that will be fixed as soon as we change the section
-                $.each(prevTables, function(undefined, tbl){
-                    var $tbl = $(tbl).dataTable();
-                    $tbl.fnClearTable();
-                    $tbl.fnDestroy();
-                });
-                
-                $('#users-placeholder').empty();
-                $('#groups-placeholder').empty();
-
-                prevTables = [];
+                clearDetails();
+                $('#detail-placeholder').removeClass('hidden');
                 
                 gui.tools.blockUI();
                 var id = selected[0].id;
@@ -184,9 +250,14 @@ gui.authenticators.link = function(event) {
                     },
                 });
                 
+                var logTable = gui.authenticators.logTable(id, {
+                    container : 'logs-placeholder',
+                });
+                
                 // So we can destroy the tables beforing adding new ones
                 prevTables.push(grpTable);
                 prevTables.push(usrTable);
+                prevTables.push(logTable);
                 
                 return false;
             },

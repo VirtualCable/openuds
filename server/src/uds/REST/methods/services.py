@@ -34,8 +34,10 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
+
 from uds.models import Service
 
+from uds.core.util import log
 from uds.core.Environment import Environment
 from uds.REST.model import DetailHandler
 from uds.REST import NotFound, ResponseError, RequestError
@@ -90,7 +92,7 @@ class Services(DetailHandler):
             service.data = service.getInstance(self._params).serialize()
             service.save()
         except Service.DoesNotExist: 
-            raise NotFound('Item not found')
+            self.invalidItemException()
         except IntegrityError: # Duplicate key probably 
             raise RequestError('Element already exists (duplicate key error)')
         except Exception:
@@ -108,7 +110,7 @@ class Services(DetailHandler):
             
             service.delete()
         except:
-            raise NotFound('service not found')
+            self.invalidItemException()
         
         return 'deleted'
         
@@ -155,3 +157,11 @@ class Services(DetailHandler):
         except Exception as e:
             logger.exception('getGui')
             raise ResponseError(unicode(e))
+
+    def getLogs(self, parent, item):
+        try:
+            item = parent.services.get(pk=item)
+            logger.debug('Getting logs for {0}'.format(item))
+            return log.getLogs(item)
+        except:
+            self.invalidItemException()

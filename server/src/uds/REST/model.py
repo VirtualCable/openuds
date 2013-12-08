@@ -37,6 +37,8 @@ from django.utils.translation import ugettext as _
 from django.db import IntegrityError
 from uds.REST.handlers import Handler 
 
+from uds.core.util import log
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,6 +48,7 @@ OVERVIEW = 'overview'
 TYPES = 'types'
 TABLEINFO = 'tableinfo'
 GUI = 'gui'
+LOG = 'log'
 
 # Base for Gui Related mixins
 class BaseModelHandler(Handler):
@@ -151,7 +154,13 @@ class BaseModelHandler(Handler):
     
     # Exceptions
     def invalidRequestException(self):
-        raise RequestError('Invalid Request')
+        raise RequestError(_('Invalid Request'))
+    
+    def invalidMethodException(self):
+        raise NotFound(_('Method not found'))
+    
+    def invalidItemException(self):
+        raise NotFound(_('Item not found'))
 
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
@@ -208,6 +217,8 @@ class DetailHandler(BaseModelHandler):
                 return sorted(gui, key=lambda f: f['gui']['order'])                
             elif self._args[0] == TYPES:
                 return self.getTypes(parent, self._args[1])
+            elif self._args[1] == LOG:
+                return self.getLogs(parent, self._args[0])
         
         return self.fallbackGet()
     
@@ -252,6 +263,7 @@ class DetailHandler(BaseModelHandler):
     def fallbackGet(self):
         raise self.invalidRequestException()
         
+    # Override this to provide functionality
     # Default (as sample) getItems
     def getItems(self, parent, item):
         if item is None: # Returns ALL detail items
@@ -279,6 +291,9 @@ class DetailHandler(BaseModelHandler):
     
     def getTypes(self, parent, forType):
         return [] # Default is that details do not have types
+    
+    def getLogs(self, parent, item):
+        self.invalidMethodException()
 
 class ModelHandler(BaseModelHandler):
     '''
@@ -335,6 +350,11 @@ class ModelHandler(BaseModelHandler):
         logger.debug('Found type {0}'.format(v))
         return found
     
+    # log related
+    def getLogs(self, item):
+        logger.debug('Default getLogs invoked')
+        return log.getLogs(item)
+    
     # gui related
     def getGui(self, type_):
         self.invalidRequestException()
@@ -357,7 +377,7 @@ class ModelHandler(BaseModelHandler):
             detail = detailCls(self, path, self._params, *args, parent = item)
             method = getattr(detail, self._operation)
         except AttributeError:
-            raise NotFound('method not found')
+            self.invalidMethodException()
             
         return method()
 
@@ -394,25 +414,33 @@ class ModelHandler(BaseModelHandler):
                 self.fillIntanceFields(val, res)
                 return res
             except:
-                raise NotFound('item not found')
+                self.invalidItemException()
             
         # nArgs > 1
         # Request type info or gui, or detail          
         if self._args[0] == TYPES:
             if nArgs != 2:
-                raise RequestError('invalid request')
+                self.invalidRequestException()
             return self.getType(self._args[1])
         elif self._args[0] == GUI:
             if nArgs != 2:
-                raise RequestError('invalid request')
+                self.invalidRequestException()
             gui = self.getGui(self._args[1])    
             return sorted(gui, key=lambda f: f['gui']['order'])
+        elif self._args[1] == LOG:
+            if nArgs != 2:
+                self.invalidRequestException()
+            try:
+                item = self.model.objects.filter(pk=self._args[0])[0]
+            except:
+                self.invalidItemException()
+            return self.getLogs(item)
 
         # If has detail and is requesting detail        
         if self.detail is not None:
             return self.processDetail()
         
-        raise RequestError('invalid request')
+        self.invalidRequestException()
     
     def post(self):
         # right now 
@@ -421,7 +449,7 @@ class ModelHandler(BaseModelHandler):
             if self._args[0] == 'test':
                 return 'tested'
         
-        raise NotFound('Method not found')
+        self.invalidMethodException()
         
     def put(self):
         logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
