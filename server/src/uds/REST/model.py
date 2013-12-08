@@ -119,18 +119,17 @@ class BaseModelHandler(Handler):
         }
         
     def processTableFields(self, title, fields):
-        processedFields = [{ 'id' : {'visible': False, 'sortable': False, 'searchable': False } }]
-            
-        for f in fields:
-            for k1, v1 in f.iteritems():
-                dct = {}
-                for k2, v2 in v1.iteritems():
-                    if type(v2) in (bool, int, long, float, unicode, list, tuple, dict):
-                        dct[k2] = v2
-                    else:
-                        dct[k2] = unicode(v2)
-                processedFields.append({k1: dct})
-        return { 'title': unicode(title),  'fields': processedFields };
+#        processedFields = [{ 'id' : {'visible': False, 'sortable': False, 'searchable': False } }]
+#         for f in fields:
+#             for k1, v1 in f.iteritems():
+#                 dct = {}
+#                 for k2, v2 in v1.iteritems():
+#                     if type(v2) in (bool, int, long, float, unicode, list, tuple, dict):
+#                         dct[k2] = v2
+#                     else:
+#                         dct[k2] = unicode(v2)
+#                 processedFields.append({k1: dct})
+        return { 'title': unicode(title),  'fields': fields };
     
     def readFieldsFromParams(self, fldList):
         args = {}

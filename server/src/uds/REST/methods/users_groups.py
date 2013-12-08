@@ -33,8 +33,10 @@ from __future__ import unicode_literals
 
 #import time
 from django.utils.translation import ugettext as _
+from django.forms.models import model_to_dict
 from uds.core.util.State import State
 
+from uds.core.util import log
 from uds.models import Authenticator
 
 from uds.REST.handlers import HandlerError
@@ -44,7 +46,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /auth path
+# Details of /auth
 
 class Users(DetailHandler):
     
@@ -54,10 +56,14 @@ class Users(DetailHandler):
             if item is None:
                 return list(parent.users.all().values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent'))
             else:
-                return parent.get(pk=item).values('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent')
+                u = parent.users.get(pk=item)
+                res = model_to_dict(u, fields = ('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent'))
+                res['groups'] = [g.id for g in u.groups.all()]
+                logger.debug('Item: {0}'.format(res))
+                return res
         except:
             logger.exception('En users')
-            return { 'error': 'not found' }
+            self.invalidItemException()
         
     def getTitle(self, parent):
         try:
@@ -72,7 +78,15 @@ class Users(DetailHandler):
             { 'comments': { 'title': _('Comments') } },
             { 'state': { 'title': _('state'), 'type': 'dict', 'dict': State.dictionary() } },
             { 'last_access': { 'title': _('Last access'), 'type': 'datetime' } },
-        ]        
+        ]
+        
+    def getLogs(self, parent, item):
+        try:
+            user = parent.users.get(pk=item)
+        except:
+            self.invalidItemException()
+            
+        return log.getLogs(user)
 
 class Groups(DetailHandler):
     
@@ -82,10 +96,10 @@ class Groups(DetailHandler):
             if item is None:
                 return list(parent.groups.all().values('id','name', 'comments','state','is_meta'))
             else:
-                return parent.get(pk=item).values('id','name', 'comments','state','is_meta')
+                return parent.groups.filter(pk=item).values('id','name', 'comments','state','is_meta')[0]
         except:
             logger.exception('REST groups')
-            raise HandlerError('exception')
+            self.invalidItemException()
         
     def getTitle(self, parent):
         try:

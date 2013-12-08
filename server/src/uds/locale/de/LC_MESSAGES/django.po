@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-23 22:34+0100\n"
+"POT-Creation-Date: 2013-12-08 19:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,94 +42,152 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: REST/mixins.py:172 REST/methods/authenticators.py:82
-#: REST/methods/networks.py:68 REST/methods/osmanagers.py:71
-#: REST/methods/providers.py:75 REST/methods/transports.py:79
-#: REST/methods/users_groups.py:73
+#: REST/model.py:81 REST/methods/authenticators.py:56
+#: REST/methods/networks.py:51 REST/methods/osmanagers.py:52
+#: REST/methods/providers.py:57 REST/methods/transports.py:54
+#: REST/methods/users_groups.py:72
 msgid "Name"
 msgstr "Name"
 
-#: REST/mixins.py:175
+#: REST/model.py:82
 msgid "Name of this element"
 msgstr "Name dieses Elements"
 
-#: REST/mixins.py:189 REST/methods/authenticators.py:83
-#: REST/methods/osmanagers.py:72 REST/methods/providers.py:76
-#: REST/methods/transports.py:80 REST/methods/users_groups.py:74
-#: REST/methods/users_groups.py:102
+#: REST/model.py:88 REST/methods/authenticators.py:57
+#: REST/methods/osmanagers.py:53 REST/methods/providers.py:58
+#: REST/methods/services.py:126 REST/methods/transports.py:55
+#: REST/methods/users_groups.py:73 REST/methods/users_groups.py:108
 msgid "Comments"
 msgstr "Kommentare"
 
-#: REST/mixins.py:192
+#: REST/model.py:89
 msgid "Comments for this element"
 msgstr "Kommentare für dieses element"
 
-#: REST/methods/authenticators.py:80
+#: REST/model.py:97 REST/methods/authenticators.py:58
+#: REST/methods/transports.py:56 REST/methods/transports.py:69
+msgid "Priority"
+msgstr "Priorität"
+
+#: REST/model.py:98
+msgid ""
+"Selects the priority of this element (lower number means higher priority)"
+msgstr ""
+"Bestimmt die Priorität dieses Elements (niedrigere Zahl bedeutet höhere Priorität)"
+
+#: REST/model.py:106 REST/methods/authenticators.py:59
+msgid "Small name"
+msgstr "Kleine Namen"
+
+#: REST/model.py:107
+msgid "Small name of this element"
+msgstr "Kleine Name dieses Elements"
+
+#: REST/model.py:157
+msgid "Invalid Request"
+msgstr "Ungültige Anforderung"
+
+#: REST/model.py:160
+msgid "Method not found"
+msgstr "Methode nicht gefunden"
+
+#: REST/model.py:163
+msgid "Item not found"
+msgstr "Element nicht gefunden"
+
+#: REST/methods/authenticators.py:54
 msgid "Current authenticators"
 msgstr "Aktuelle Authentifikatoren"
 
-#: REST/methods/authenticators.py:84
+#: REST/methods/authenticators.py:60
+#: templates/uds/admin/tmpl/authenticators.html:18
 msgid "Users"
 msgstr "Benutzer"
 
-#: REST/methods/networks.py:66
+#: REST/methods/networks.py:49
 msgid "Current Networks"
 msgstr "Aktuellen Netze"
 
-#: REST/methods/networks.py:69 templates/uds/index.html:79
-#: templates/uds/html5/index.html:127
+#: REST/methods/networks.py:52 templates/uds/index.html:79
+#: templates/uds/html5/index.html:124
 msgid "Networks"
 msgstr "Netzwerke"
 
-#: REST/methods/networks.py:70 REST/methods/osmanagers.py:73
-#: REST/methods/transports.py:81
+#: REST/methods/networks.py:53 REST/methods/osmanagers.py:54
+#: REST/methods/transports.py:57
 msgid "Used by"
 msgstr "Von verwendet"
 
-#: REST/methods/osmanagers.py:69
+#: REST/methods/osmanagers.py:50
 msgid "Current OS Managers"
 msgstr "Aktuelle OS-Manager"
 
-#: REST/methods/providers.py:73
-msgid "Current service providers"
-msgstr "Aktuelle Service-Provider"
+#: REST/methods/providers.py:53 templates/uds/admin/snippets/navbar.html:18
+msgid "Service providers"
+msgstr "Service-Provider"
 
-#: REST/methods/providers.py:77 templates/uds/index.html:51
-#: templates/uds/html5/index.html:68
+#: REST/methods/providers.py:59 templates/uds/index.html:51
+#: templates/uds/admin/tmpl/providers.html:18
+#: templates/uds/html5/index.html:65
 msgid "Services"
 msgstr "Dienstleistungen"
 
-#: REST/methods/transports.py:77
+#: REST/methods/services.py:119
+#, python-brace-format
+msgid "Services of {0}"
+msgstr "Dienstleistungen von {0}"
+
+#: REST/methods/services.py:121
+msgid "Current services"
+msgstr "Aktuelle Dienstleistungen"
+
+#: REST/methods/services.py:125
+msgid "Service name"
+msgstr "Dienstnamen"
+
+#: REST/methods/services.py:127
+msgid "Type"
+msgstr "Typ"
+
+#: REST/methods/services.py:128 templates/uds/admin/snippets/navbar.html:22
+msgid "Deployed services"
+msgstr "Bereitgestellten Dienste"
+
+#: REST/methods/transports.py:52
 msgid "Current Transports"
 msgstr "Aktuelle Transporte"
 
-#: REST/methods/users_groups.py:66
+#: REST/methods/transports.py:70
+msgid "Priority of this transport"
+msgstr "Priorität dieses Transportes"
+
+#: REST/methods/users_groups.py:65
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "Benutzer von {0}"
 
-#: REST/methods/users_groups.py:68
+#: REST/methods/users_groups.py:67
 msgid "Current users"
 msgstr "Momentane Benutzer"
 
-#: REST/methods/users_groups.py:72 REST/methods/users_groups.py:101
+#: REST/methods/users_groups.py:71 REST/methods/users_groups.py:107
 msgid "User Id"
 msgstr "Benutzer-Id"
 
-#: REST/methods/users_groups.py:75 REST/methods/users_groups.py:103
+#: REST/methods/users_groups.py:74 REST/methods/users_groups.py:109
 msgid "state"
 msgstr "Zustand"
 
-#: REST/methods/users_groups.py:76
+#: REST/methods/users_groups.py:75
 msgid "Last access"
 msgstr "Zuletzt online"
 
-#: REST/methods/users_groups.py:95
+#: REST/methods/users_groups.py:101
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Gruppen von {0}"
 
-#: REST/methods/users_groups.py:97
+#: REST/methods/users_groups.py:103
 msgid "Current groups"
 msgstr "Aktuelle Gruppen"
 
@@ -226,10 +284,8 @@ msgid "Timeout"
 msgstr "Timeout"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:35
-#: auths/EDirectory_enterprise/Authenticator.py:65
-#: auths/RegexLdap/Authenticator.py:54 auths/SimpleLDAP/Authenticator.py:54
-msgid "Timeout in seconds of connection to LDAP"
-msgstr "Timeout in Sekunden über LDAP-Verbindung"
+msgid "Timeout in seconds of connection to Active Directory"
+msgstr "Timeout in Sekunden der Verbindung mit Active Directory"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 msgid "Active Directory Authenticator"
@@ -268,10 +324,8 @@ msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Müssen der Benutzername in der Form USERNAME@DOMAIN angeben.DOM"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:164
-#: auths/EDirectory_enterprise/Authenticator.py:123
-#: auths/RegexLdap/Authenticator.py:226 auths/SimpleLDAP/Authenticator.py:158
-msgid "Ldap connection error: "
-msgstr "LDAP-Verbindungsfehler: "
+msgid "Active directory connection error: "
+msgstr "Active Directory-Verbindung-Fehler: "
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:344
 #: auths/ActiveDirectory_enterprise/Authenticator.py:390
@@ -300,18 +354,18 @@ msgid "Domain seems to be incorrect, please check it"
 msgstr "Domäne scheint nicht korrekt, bitte überprüfen es"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:456
-msgid "Ldap does not seem an Active Directory (do not have user objects)"
-msgstr "LDAP scheint kein Active Directory (Benutzerobjekte nicht haben)"
+msgid "Server does not seem an Active Directory (do not have user objects)"
+msgstr "Server scheint kein Active Directory (Benutzerobjekte nicht haben)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:464
-msgid "Ldap does not seem an Active Directory (no not have group objects)"
-msgstr "LDAP scheint kein Active Directory (Nein, nicht haben Gruppenobjekte)"
+msgid "Server does not seem an Active Directory (no not have group objects)"
+msgstr "Server scheint kein Active Directory (Nein, nicht haben Gruppenobjekte)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:472
 msgid ""
-"Ldap does not seem an Active Directory (do not have any user nor groups)"
+"Server does not seem an Active Directory (do not have any user nor groups)"
 msgstr ""
-"LDAP scheint kein Active Directory (haben noch keine Benutzer oder Gruppen)"
+"Server scheint kein Active Directory (haben noch keine Benutzer oder Gruppen)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:477
 #: auths/EDirectory_enterprise/Authenticator.py:358
@@ -353,6 +407,11 @@ msgstr "Admin-Benutzer"
 msgid "Username with read privileges on the eDirectory"
 msgstr "Benutzernamen mit lesen Berechtigungen für das eDirectory"
 
+#: auths/EDirectory_enterprise/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:54 auths/SimpleLDAP/Authenticator.py:54
+msgid "Timeout in seconds of connection to LDAP"
+msgstr "Timeout in Sekunden über LDAP-Verbindung"
+
 #: auths/EDirectory_enterprise/Authenticator.py:67
 msgid "eDirectory Authenticator"
 msgstr "eDirectory Authenticator"
@@ -360,6 +419,11 @@ msgstr "eDirectory Authenticator"
 #: auths/EDirectory_enterprise/Authenticator.py:69
 msgid "Authenticate against eDirectory"
 msgstr "Authentifizieren gegen eDirectory"
+
+#: auths/EDirectory_enterprise/Authenticator.py:123
+#: auths/RegexLdap/Authenticator.py:226 auths/SimpleLDAP/Authenticator.py:158
+msgid "Ldap connection error: "
+msgstr "LDAP-Verbindungsfehler: "
 
 #: auths/EDirectory_enterprise/Authenticator.py:323
 #: auths/RegexLdap/Authenticator.py:387 auths/SimpleLDAP/Authenticator.py:363
@@ -642,6 +706,7 @@ msgid "Fake Group"
 msgstr "Fake-Gruppe"
 
 #: auths/Sample/SampleAuth.py:111
+#: templates/uds/admin/tmpl/authenticators.html:19
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -748,11 +813,11 @@ msgstr ""
 msgid "Can't cancel non running publication"
 msgstr "Nicht ausgeführte Veröffentlichung kann nicht abgebrochen werden."
 
-#: core/managers/PublicationManager.py:212
+#: core/managers/PublicationManager.py:213
 msgid "Can't unpublish non usable publication"
 msgstr "Kann nicht nicht nutzbare Veröffentlichung aufheben"
 
-#: core/managers/PublicationManager.py:215
+#: core/managers/PublicationManager.py:216
 msgid "Can't unpublish publications with services in process"
 msgstr ""
 "Publikationen mit Dienstleistungen im Prozess kann nicht Veröffentlichung "
@@ -786,17 +851,17 @@ msgstr "24 Bit"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:320
+#: core/managers/UserServiceManager.py:322
 msgid "Cancel requested for a non running operation, doing remove instead"
 msgstr ""
 "Abbrechen angefordert für eine nicht ausgeführte Operation entfernen "
 "stattdessen tun"
 
-#: core/managers/UserServiceManager.py:341
+#: core/managers/UserServiceManager.py:343
 msgid "Can't remove a non active element"
 msgstr "Ein nicht aktive Element kann nicht entfernt werden."
 
-#: core/managers/UserServiceManager.py:354
+#: core/managers/UserServiceManager.py:356
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states doesn't allows it"
 msgstr ""
@@ -824,7 +889,7 @@ msgstr "Keine"
 msgid "Base Clustered Service"
 msgstr "Base gruppierten Dienst"
 
-#: core/transports/BaseTransport.py:147
+#: core/transports/BaseTransport.py:153
 msgid "Transport empty"
 msgstr "Transport leer"
 
@@ -1188,7 +1253,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
 #: services/HyperV_enterprise/HyperVLinkedService.py:75
 #: services/OVirt/OVirtLinkedService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:72
+#: services/Vmware_enterprise/VCLinkedCloneService.py:73
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
 "Anzahl der gewünschten Maschinen warten für einen Benutzer ausgeführt wird"
@@ -1196,7 +1261,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:81
 #: services/OVirt/OVirtLinkedService.py:83
-#: services/Vmware_enterprise/VCLinkedCloneService.py:74
+#: services/Vmware_enterprise/VCLinkedCloneService.py:75
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr ""
 "Anzahl der gewünschten Maschinen zu ausgesetzten Personen, die für die "
@@ -1205,7 +1270,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:97
 #: services/OVirt/OVirtLinkedService.py:99
-#: services/Vmware_enterprise/VCLinkedCloneService.py:50
+#: services/Vmware_enterprise/VCLinkedCloneService.py:51
 msgid "Base Machine"
 msgstr "Grundmaschine"
 
@@ -1217,13 +1282,13 @@ msgstr "Service-Grundmaschine"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
 #: services/HyperV_enterprise/HyperVLinkedService.py:98
-#: services/Vmware_enterprise/VCLinkedCloneService.py:38
+#: services/Vmware_enterprise/VCLinkedCloneService.py:39
 msgid "Network"
 msgstr "Netzwerk"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:99
-#: services/Vmware_enterprise/VCLinkedCloneService.py:39
+#: services/Vmware_enterprise/VCLinkedCloneService.py:40
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
@@ -1233,13 +1298,13 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:101
 #: services/OVirt/OVirtLinkedService.py:112
-#: services/Vmware_enterprise/VCLinkedCloneService.py:51
+#: services/Vmware_enterprise/VCLinkedCloneService.py:52
 msgid "Memory (Mb)"
 msgstr "Speicher (Mb)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
 #: services/HyperV_enterprise/HyperVLinkedService.py:102
-#: services/Vmware_enterprise/VCLinkedCloneService.py:52
+#: services/Vmware_enterprise/VCLinkedCloneService.py:53
 msgid "Memory for machines deployed from this service"
 msgstr "Speicher für Maschinen, die von diesem Dienst bereitgestellt"
 
@@ -1256,27 +1321,27 @@ msgstr "Datastores wohin mit inkrementellen & Publikationen"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:105
 #: services/OVirt/OVirtLinkedService.py:118
-#: services/Vmware_enterprise/VCLinkedCloneService.py:55
+#: services/Vmware_enterprise/VCLinkedCloneService.py:56
 msgid "Machine Names"
 msgstr "Computernamen"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:105
-#: services/Vmware_enterprise/VCLinkedCloneService.py:55
+#: services/Vmware_enterprise/VCLinkedCloneService.py:56
 msgid "Base name for clones from this machine"
 msgstr "Basisname für Clones von Maschine"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:106
 #: services/OVirt/OVirtLinkedService.py:119
-#: services/Vmware_enterprise/VCLinkedCloneService.py:56
+#: services/Vmware_enterprise/VCLinkedCloneService.py:57
 msgid "Name Length"
 msgstr "Länge des Dateinamens"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
 #: services/HyperV_enterprise/HyperVLinkedService.py:107
 #: services/OVirt/OVirtLinkedService.py:120
-#: services/Vmware_enterprise/VCLinkedCloneService.py:57
+#: services/Vmware_enterprise/VCLinkedCloneService.py:58
 msgid "Length of numeric part for the names of this machines (betwen 3 and 6"
 msgstr ""
 "Länge der numerische Teil für die Namen dieser Maschinen (zwischen 3 und 6"
@@ -1284,14 +1349,14 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:119
 #: services/OVirt/OVirtLinkedService.py:143
-#: services/Vmware_enterprise/VCLinkedCloneService.py:95
+#: services/Vmware_enterprise/VCLinkedCloneService.py:96
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "Die Länge der Basename plus Länge darf nicht größer als 15 sein."
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
 #: services/HyperV_enterprise/HyperVLinkedService.py:121
 #: services/OVirt/OVirtLinkedService.py:145
-#: services/Vmware_enterprise/VCLinkedCloneService.py:97
+#: services/Vmware_enterprise/VCLinkedCloneService.py:98
 msgid "The machine name can't be only numbers"
 msgstr "Der Computername kann nicht nur Zahlen sein."
 
@@ -1421,6 +1486,10 @@ msgstr "Display"
 #: services/OVirt/OVirtLinkedService.py:123
 msgid "Display type (only for administration pourposses)"
 msgstr "Displaytyp (nur für Verwaltung Pourposses)"
+
+#: services/OVirt/OVirtLinkedService.py:147
+msgid "The minimum allowed memory is 256 Mb"
+msgstr "Die minimale zulässige Speicher 256 Mb"
 
 #: services/OVirt/OVirtProvider.py:73
 msgid "oVirt Platform Provider"
@@ -1628,55 +1697,55 @@ msgstr "VmwareVC-Anbieter: "
 msgid "Connection params ok"
 msgstr "Verbindung Params ok"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:30
+#: services/Vmware_enterprise/VCLinkedCloneService.py:31
 msgid "Datacenter"
 msgstr "Datacenter"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:36
+#: services/Vmware_enterprise/VCLinkedCloneService.py:37
 msgid "Datacenter containing base machine"
 msgstr "Enthaltenden Datacenter-Grundmaschine"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:40
+#: services/Vmware_enterprise/VCLinkedCloneService.py:41
 msgid "Pub. Resource Pool"
 msgstr "Pub. Ressourcen-Pool"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:40
+#: services/Vmware_enterprise/VCLinkedCloneService.py:41
 msgid "Resource Pool where deploy clones"
 msgstr "Ressourcen-Pool wo bereitstellen Klone"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:41
+#: services/Vmware_enterprise/VCLinkedCloneService.py:42
 msgid "Clones Folder"
 msgstr "Klone Ordner"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:41
+#: services/Vmware_enterprise/VCLinkedCloneService.py:42
 msgid "Folder where deploy clones"
 msgstr "Ordner wo bereitstellen Klone"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:42
+#: services/Vmware_enterprise/VCLinkedCloneService.py:43
 msgid "Resource Pool"
 msgstr "Ressourcen-Pool"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:48
+#: services/Vmware_enterprise/VCLinkedCloneService.py:49
 msgid "Resource Pool containing base machine"
 msgstr "Ressource Pool enthaltenden Grundmaschine"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:50
+#: services/Vmware_enterprise/VCLinkedCloneService.py:51
 msgid "Base machine for this service"
 msgstr "Basismaschine für diesen Dienst"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:53
+#: services/Vmware_enterprise/VCLinkedCloneService.py:54
 msgid "Datastores"
 msgstr "Datastores"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:54
+#: services/Vmware_enterprise/VCLinkedCloneService.py:55
 msgid "Datastores where to put incrementals"
 msgstr "Datastores wo Sie inkrementelle Backups"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:64
+#: services/Vmware_enterprise/VCLinkedCloneService.py:65
 msgid "VMWare Linked clone base"
 msgstr "VMWare Linked Clone base"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:66
+#: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid ""
 "This service provides access to Linked Clones machines on a Virtual Center"
 msgstr ""
@@ -1712,34 +1781,34 @@ msgstr ""
 "Diese Seite enthält eine Liste der Downloads von verschiedenen Modulen "
 "bereitgestellt"
 
-#: templates/uds/index.html:70 templates/uds/html5/index.html:106
+#: templates/uds/index.html:70 templates/uds/html5/index.html:103
 msgid "Java not found"
 msgstr "Java nicht gefunden"
 
-#: templates/uds/index.html:71 templates/uds/html5/index.html:109
+#: templates/uds/index.html:71 templates/uds/html5/index.html:106
 msgid ""
 "Java is not available on your browser, and the selected transport needs it."
 msgstr ""
 "Java ist nicht verfügbar in Ihrem Browser, und der ausgewählte Transport "
 "muss es."
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:110
+#: templates/uds/index.html:72 templates/uds/html5/index.html:107
 msgid "Please, install latest version from"
 msgstr "Bitte installieren Sie neueste Version von"
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:110
+#: templates/uds/index.html:72 templates/uds/html5/index.html:107
 msgid "Java website"
 msgstr "Java-website"
 
-#: templates/uds/index.html:72 templates/uds/html5/index.html:110
+#: templates/uds/index.html:72 templates/uds/html5/index.html:107
 msgid "and restart browser"
 msgstr "und Browser neu starten"
 
-#: templates/uds/index.html:78 templates/uds/html5/index.html:126
+#: templates/uds/index.html:78 templates/uds/html5/index.html:123
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/index.html:80 templates/uds/html5/index.html:128
+#: templates/uds/index.html:80 templates/uds/html5/index.html:125
 msgid "Transports"
 msgstr "Transporte"
 
@@ -1781,13 +1850,8 @@ msgid "Save Preferences"
 msgstr "Speichern Sie Einstellungen"
 
 #: templates/uds/admin/snippets/navbar.html:6
-#: templates/uds/html5/snippets/navbar.html:6
-msgid "toggle navigation"
+msgid "Toggle navigation"
 msgstr "Toggle navigation"
-
-#: templates/uds/admin/snippets/navbar.html:18
-msgid "Service providers"
-msgstr "Service-Provider"
 
 #: templates/uds/admin/snippets/navbar.html:19
 #: templates/uds/admin/tmpl/authenticators.html:4
@@ -1799,33 +1863,55 @@ msgstr "Authentifikatoren"
 msgid "Connectivity"
 msgstr "Konnektivität"
 
-#: templates/uds/admin/snippets/navbar.html:22
-msgid "Deployed services"
-msgstr "Bereitgestellten Dienste"
-
 #: templates/uds/admin/snippets/navbar.html:26
 msgid "Configuration"
 msgstr "Konfiguration"
 
+#: templates/uds/admin/snippets/navbar.html:27
+msgid "Clear cache"
+msgstr "Cache löschen"
+
 #: templates/uds/admin/snippets/navbar.html:57
-msgid "Exit dashboard"
-msgstr "Ausfahrt dashboard"
+msgid "Exit"
+msgstr "Ausfahrt"
 
 #: templates/uds/admin/snippets/navbar.html:58
-#: templates/uds/html5/snippets/navbar.html:47
-msgid "logout"
+msgid "Logout"
 msgstr "Logout"
+
+#: templates/uds/admin/tmpl/authenticators.html:20
+#: templates/uds/admin/tmpl/providers.html:19
+msgid "Logs"
+msgstr "Protokolle"
 
 #: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/dashboard.html:4
 msgid "overview"
 msgstr "Übersicht"
 
-#: templates/uds/admin/tmpl/modal.html:18
+#: templates/uds/admin/tmpl/providers.html:4
+#: templates/uds/admin/tmpl/providers.html:7
+msgid "Providers"
+msgstr "Anbieter"
+
+#: templates/uds/admin/tmpl/request_failed.html:4
+msgid "Error on request"
+msgstr "Fehler auf Anfrage"
+
+#: templates/uds/admin/tmpl/request_failed.html:7
+msgid "There was an error requesting data from server, please, try again"
+msgstr "Fehler beim anfordern, dass Daten vom Server, bitte erneut versuchen"
+
+#: templates/uds/admin/tmpl/request_failed.html:9
+#: templates/uds/html5/snippets/navbar.html:44
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/uds/admin/tmpl/comp/modal.html:19
 msgid "Close"
 msgstr "Schließen"
 
-#: templates/uds/admin/tmpl/modal.html:25
+#: templates/uds/admin/tmpl/comp/modal.html:26
 msgid "Save"
 msgstr "Speichern"
 
@@ -1836,6 +1922,26 @@ msgstr "Ja"
 #: templates/uds/admin/tmpl/fld/checkbox.html:4
 msgid "No"
 msgstr "Nr."
+
+#: templates/uds/admin/tmpl/fld/editlist_popup.html:5
+msgid "Current list"
+msgstr "Aktuelle Liste"
+
+#: templates/uds/admin/tmpl/fld/editlist_popup.html:13
+msgid "Remove selected"
+msgstr "Markierte entfernen"
+
+#: templates/uds/admin/tmpl/fld/editlist_popup.html:14
+msgid "Remove all"
+msgstr "Entfernen Sie alle"
+
+#: templates/uds/admin/tmpl/fld/editlist_popup.html:19
+msgid "Add element"
+msgstr "Add-element"
+
+#: templates/uds/admin/tmpl/fld/editlist_popup.html:23
+msgid "Add"
+msgstr "Hinzufügen"
 
 #: templates/uds/html5/detectJava.html:4
 msgid "Login redirection to UDS"
@@ -1855,19 +1961,19 @@ msgstr "Zurück zur Liste"
 msgid "Available services list"
 msgstr "Liste der verfügbaren Dienste"
 
-#: templates/uds/html5/index.html:83
+#: templates/uds/html5/index.html:80
 msgid "transports"
 msgstr "Transporte"
 
-#: templates/uds/html5/index.html:123
+#: templates/uds/html5/index.html:120
 msgid "Administrator info panel"
 msgstr "Administrator-Info-Tafel"
 
-#: templates/uds/html5/index.html:129
+#: templates/uds/html5/index.html:126
 msgid "User Agent"
 msgstr "User-Agent"
 
-#: templates/uds/html5/index.html:130
+#: templates/uds/html5/index.html:127
 msgid "OS"
 msgstr "OS"
 
@@ -1920,13 +2026,17 @@ msgstr ""
 msgid "Back"
 msgstr "Zurück"
 
+#: templates/uds/html5/snippets/navbar.html:6
+msgid "toggle navigation"
+msgstr "Toggle navigation"
+
 #: templates/uds/html5/snippets/navbar.html:20
 msgid "About"
 msgstr "Über"
 
-#: templates/uds/html5/snippets/navbar.html:44
-msgid "Dashboard"
-msgstr "Dashboard"
+#: templates/uds/html5/snippets/navbar.html:47
+msgid "logout"
+msgstr "Logout"
 
 #: templates/uds/html5/templates/base.html:52
 msgid ""
@@ -2461,8 +2571,8 @@ msgstr "Authentifikator ist nicht vorhanden"
 
 #: xmlrpc/auths/Authenticators.py:163 xmlrpc/osmanagers/OSManagers.py:117
 #: xmlrpc/services/ServiceProviders.py:115
-#: xmlrpc/services/ServiceProviders.py:139 xmlrpc/services/Services.py:164
-#: xmlrpc/services/Services.py:188 xmlrpc/transports/Networks.py:87
+#: xmlrpc/services/ServiceProviders.py:139 xmlrpc/services/Services.py:165
+#: xmlrpc/services/Services.py:189 xmlrpc/transports/Networks.py:87
 #: xmlrpc/transports/Networks.py:98
 #, python-format
 msgid "Name %s already exists"
@@ -2535,19 +2645,19 @@ msgstr "Service-Provider kann nicht mit verbundenen Services gelöscht werden"
 msgid "Can't locate the service provider"
 msgstr "Der Diensteanbieter kann nicht gefunden werden."
 
-#: xmlrpc/services/ServiceProviders.py:157 xmlrpc/services/Services.py:206
+#: xmlrpc/services/ServiceProviders.py:157 xmlrpc/services/Services.py:207
 #: xmlrpc/transports/Networks.py:71 xmlrpc/transports/Networks.py:79
 #: xmlrpc/transports/Networks.py:96
 msgid "Please, refresh interface"
 msgstr "Bitte aktualisieren Sie Schnittstelle"
 
-#: xmlrpc/services/Services.py:203
+#: xmlrpc/services/Services.py:204
 msgid "Can't delete services with deployed services associated"
 msgstr ""
 "Dienstleistungen mit bereitgestellten Leistungen können nicht gelöscht "
 "werden."
 
-#: xmlrpc/services/Services.py:206
+#: xmlrpc/services/Services.py:207
 msgid "Can't locate the service"
 msgstr "Der Dienst kann nicht gesucht werden."
 

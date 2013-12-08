@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-23 22:34+0100\n"
+"POT-Creation-Date: 2013-12-08 19:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,83 +18,79 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: static/adm/js/api-tools.js:46
-msgid "Just a moment..."
-msgstr "Einen Moment..."
-
-#: static/adm/js/api-tools.js:75
+#: static/adm/js/api-tools.js:31
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: static/adm/js/api-tools.js:75
+#: static/adm/js/api-tools.js:31
 msgid "Monday"
 msgstr "Montag"
 
-#: static/adm/js/api-tools.js:75
+#: static/adm/js/api-tools.js:31
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: static/adm/js/api-tools.js:75
+#: static/adm/js/api-tools.js:31
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: static/adm/js/api-tools.js:76
+#: static/adm/js/api-tools.js:32
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: static/adm/js/api-tools.js:76
+#: static/adm/js/api-tools.js:32
 msgid "Friday"
 msgstr "Freitag"
 
-#: static/adm/js/api-tools.js:76
+#: static/adm/js/api-tools.js:32
 msgid "Saturday"
 msgstr "Samstag"
 
-#: static/adm/js/api-tools.js:77
+#: static/adm/js/api-tools.js:33
 msgid "January"
 msgstr "Januar"
 
-#: static/adm/js/api-tools.js:77
+#: static/adm/js/api-tools.js:33
 msgid "February"
 msgstr "Februar"
 
-#: static/adm/js/api-tools.js:77
+#: static/adm/js/api-tools.js:33
 msgid "March"
 msgstr "März"
 
-#: static/adm/js/api-tools.js:77
+#: static/adm/js/api-tools.js:33
 msgid "April"
 msgstr "April"
 
-#: static/adm/js/api-tools.js:77
+#: static/adm/js/api-tools.js:33
 msgid "May"
 msgstr "Mai"
 
-#: static/adm/js/api-tools.js:78
+#: static/adm/js/api-tools.js:34
 msgid "June"
 msgstr "Juni"
 
-#: static/adm/js/api-tools.js:78
+#: static/adm/js/api-tools.js:34
 msgid "July"
 msgstr "Juli"
 
-#: static/adm/js/api-tools.js:78
+#: static/adm/js/api-tools.js:34
 msgid "August"
 msgstr "August"
 
-#: static/adm/js/api-tools.js:78
+#: static/adm/js/api-tools.js:34
 msgid "September"
 msgstr "September"
 
-#: static/adm/js/api-tools.js:78
+#: static/adm/js/api-tools.js:34
 msgid "October"
 msgstr "Oktober"
 
-#: static/adm/js/api-tools.js:79
+#: static/adm/js/api-tools.js:35
 msgid "November"
 msgstr "November"
 
-#: static/adm/js/api-tools.js:79
+#: static/adm/js/api-tools.js:35
 msgid "December"
 msgstr "Dezember"
 
@@ -102,25 +98,153 @@ msgstr "Dezember"
 msgid "_MENU_ records per page"
 msgstr "_MENU_ Datensätze pro Seite"
 
-#: static/adm/js/gui-elements.js:33
-msgid "Service Providers"
-msgstr "Service-Provider"
+#: static/adm/js/gui-definition.js:38
+msgid "Test"
+msgstr "Test"
 
-#: static/adm/js/gui-elements.js:40
-msgid "Edit service provider"
-msgstr "Dienstleister bearbeiten"
+#: static/adm/js/gui-definition.js:140
+msgid "Edit service"
+msgstr "Bearbeiten service"
 
-#: static/adm/js/gui-elements.js:104
+#: static/adm/js/gui-definition.js:140
+msgid "Error processing service"
+msgstr "Fehler-Dienstleistung"
+
+#: static/adm/js/gui-definition.js:141
+msgid "New service"
+msgstr "Neuer service"
+
+#: static/adm/js/gui-definition.js:141
+msgid "Error creating service"
+msgstr "Fehler beim Erstellen des service"
+
+#: static/adm/js/gui-definition.js:142
+msgid "Delete service"
+msgstr "Dienst löschen"
+
+#: static/adm/js/gui-definition.js:142
+msgid "Error deleting service"
+msgstr "Fehler beim Löschen der Dienst"
+
+#: static/adm/js/gui-definition.js:157
+msgid "New provider"
+msgstr "Neuer Anbieter"
+
+#: static/adm/js/gui-definition.js:157
+msgid "Error creating provider"
+msgstr "Erstellen von Fehleranbieter"
+
+#: static/adm/js/gui-definition.js:158
+msgid "Edit provider"
+msgstr "Bearbeiten Anbieter"
+
+#: static/adm/js/gui-definition.js:158
+msgid "Error processing provider"
+msgstr "Fehleranbieter Verarbeitung"
+
+#: static/adm/js/gui-definition.js:159
+msgid "Delete provider"
+msgstr "Anbieter löschen"
+
+#: static/adm/js/gui-definition.js:159
+msgid "Error deleting provider"
+msgstr "Löschen von Fehleranbieter"
+
+#: static/adm/js/gui-definition.js:177
+msgid "Test authenticator"
+msgstr "Test-Authentifikator"
+
+#: static/adm/js/gui-definition.js:295
+msgid "New authenticator"
+msgstr "Neuen Authentifikator"
+
+#: static/adm/js/gui-definition.js:295
+msgid "Error creating authenticator"
+msgstr "Fehler erstellen Authentifikator"
+
+#: static/adm/js/gui-definition.js:296
 msgid "Edit authenticator"
 msgstr "Authentifikator bearbeiten"
 
-#: static/adm/js/gui-elements.js:149
+#: static/adm/js/gui-definition.js:296
+msgid "Error processing authenticator"
+msgstr "Fehler Verarbeitung Authentifikator"
+
+#: static/adm/js/gui-definition.js:297
+msgid "Delete authenticator"
+msgstr "Authentifikator löschen"
+
+#: static/adm/js/gui-definition.js:297
+msgid "Error deleting authenticator"
+msgstr "Fehler löschen Authentifikator"
+
+#: static/adm/js/gui-definition.js:363
 msgid "Edit transport"
 msgstr "Bearbeiten Verkehr"
 
-#: static/adm/js/gui-elements.js:159
+#: static/adm/js/gui-definition.js:370 static/adm/js/gui-definition.js.c:405
+msgid "Error creating transport"
+msgstr "Fehler beim Erstellen des transport"
+
+#: static/adm/js/gui-definition.js:388
+msgid "Available for networks"
+msgstr "Für Netzwerke verfügbar"
+
+#: static/adm/js/gui-definition.js:389
+msgid "Select networks that will see this transport"
+msgstr "Wählen Sie Netzwerke, die diesen Transport angezeigt wird"
+
+#: static/adm/js/gui-definition.js:390
+msgid "Transport active for selected networks"
+msgstr "Transport für ausgewählte Netzwerke aktiv"
+
+#: static/adm/js/gui-definition.js:391
+msgid ""
+"If active, transport will only be available on selected networks. If "
+"inactive, transport will be available form any net EXCEPT selected networks"
+msgstr ""
+"Wenn aktiv, werden Transport nur auf ausgewählten Netzen verfügbar. If "
+"inaktiv, Transport verfügbare Form werden alle außer ausgewählten Netzen net"
+
+#: static/adm/js/gui-definition.js:397
 msgid "New transport"
 msgstr "Neue Verkehrsmittel"
+
+#: static/adm/js/gui-definition.js:414
+msgid "Error removing transport"
+msgstr "Fehler beim Entfernen der Verkehr"
+
+#: static/adm/js/gui-definition.js:432
+msgid "Cache"
+msgstr "Cache"
+
+#: static/adm/js/gui-definition.js:432
+msgid "Cache has been flushed"
+msgstr "Cache geleert hat, wurde"
+
+#: static/adm/js/gui-element.js:471
+msgid "Date"
+msgstr "Datum"
+
+#: static/adm/js/gui-element.js:478
+msgid "level"
+msgstr "Ebene"
+
+#: static/adm/js/gui-element.js:486
+msgid "source"
+msgstr "Quelle"
+
+#: static/adm/js/gui-element.js:493
+msgid "message"
+msgstr "Nachricht"
+
+#: static/adm/js/gui-element.js:499
+msgid "Logs"
+msgstr "Protokolle"
+
+#: static/adm/js/gui-tools.js:7
+msgid "Just a moment..."
+msgstr "Einen Moment..."
 
 #: static/adm/js/gui.js:20
 msgid "Empty"
@@ -154,14 +278,6 @@ msgstr "Erste"
 msgid "Last"
 msgstr "Letzter"
 
-#: static/adm/js/gui.js:30
-msgid "Next"
-msgstr "Nächste"
-
-#: static/adm/js/gui.js:31
-msgid "Previous"
-msgstr "Vorherige"
-
 #: static/adm/js/gui.js:37
 msgid "New"
 msgstr "Neu"
@@ -170,82 +286,106 @@ msgstr "Neu"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: static/adm/js/gui.js:45
+#: static/adm/js/gui.js:45 static/adm/js/gui.js.c:322
 msgid "Delete"
 msgstr "Löschen"
 
 #: static/adm/js/gui.js:49
-msgid "Refresh"
-msgstr "Aktualisieren"
-
-#: static/adm/js/gui.js:53
 msgid "Xls"
 msgstr "Xls"
 
-#: static/adm/js/gui.js:166
+#: static/adm/js/gui.js:111
+msgid "Message"
+msgstr "Nachricht"
+
+#: static/adm/js/gui.js:133
 msgid "Deployed services"
 msgstr "Bereitgestellten Dienste"
 
-#: static/adm/js/gui.js:204
+#: static/adm/js/gui.js:207
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: static/adm/js/gui.js:205
+#: static/adm/js/gui.js:208
 msgid "Please fix this field."
 msgstr "Bitte korrigieren Sie in diesem Feld."
 
-#: static/adm/js/gui.js:206
+#: static/adm/js/gui.js:209
 msgid "Please enter a valid email address."
 msgstr "Bitte geben Sie eine gültige e-Mail-Adresse."
 
-#: static/adm/js/gui.js:207
+#: static/adm/js/gui.js:210
 msgid "Please enter a valid URL."
 msgstr "Bitte geben Sie eine gültige URL."
 
-#: static/adm/js/gui.js:208
+#: static/adm/js/gui.js:211
 msgid "Please enter a valid date."
 msgstr "Bitte geben Sie ein gültiges Datum."
 
-#: static/adm/js/gui.js:209
+#: static/adm/js/gui.js:212
 msgid "Please enter a valid date (ISO)."
 msgstr "Bitte geben Sie ein gültiges Datum (ISO)."
 
-#: static/adm/js/gui.js:210
+#: static/adm/js/gui.js:213
 msgid "Please enter a valid number."
 msgstr "Bitte geben Sie eine gültige Nummer."
 
-#: static/adm/js/gui.js:211
+#: static/adm/js/gui.js:214
 msgid "Please enter only digits."
 msgstr "Bitte geben Sie nur Ziffern."
 
-#: static/adm/js/gui.js:212
+#: static/adm/js/gui.js:215
 msgid "Please enter a valid credit card number."
 msgstr "Bitte geben Sie eine gültige Kreditkartennummer."
 
-#: static/adm/js/gui.js:213
+#: static/adm/js/gui.js:216
 msgid "Please enter the same value again."
 msgstr "Bitte geben Sie den gleichen Wert wieder."
 
-#: static/adm/js/gui.js:214
+#: static/adm/js/gui.js:217
 msgid "Please enter no more than {0} characters."
 msgstr "Bitte geben Sie nicht mehr als {0} Zeichen."
 
-#: static/adm/js/gui.js:215
+#: static/adm/js/gui.js:218
 msgid "Please enter at least {0} characters."
 msgstr "Bitte geben Sie mindestens {0} Zeichen."
 
-#: static/adm/js/gui.js:216
+#: static/adm/js/gui.js:219
 msgid "Please enter a value between {0} and {1} characters long."
 msgstr "Bitte geben Sie einen Wert zwischen {0} und {1} Zeichen lang."
 
-#: static/adm/js/gui.js:217
+#: static/adm/js/gui.js:220
 msgid "Please enter a value between {0} and {1}."
 msgstr "Bitte geben Sie einen Wert zwischen {0} und {1}."
 
-#: static/adm/js/gui.js:218
+#: static/adm/js/gui.js:221
 msgid "Please enter a value less than or equal to {0}."
 msgstr "Bitte geben Sie einen Wert kleiner oder gleich {0}."
 
-#: static/adm/js/gui.js:219
+#: static/adm/js/gui.js:222
 msgid "Please enter a value greater than or equal to {0}."
 msgstr "Bitte geben Sie einen Wert größer oder gleich {0}."
+
+#: static/adm/js/gui.js:244
+msgid "Test result"
+msgstr "Testergebnis"
+
+#: static/adm/js/gui.js:245
+msgid "Test error"
+msgstr "Test-Fehler"
+
+#: static/adm/js/gui.js:276
+msgid "Edition successfully done"
+msgstr "Edition erfolgreich durchgeführt"
+
+#: static/adm/js/gui.js:310
+msgid "Creation successfully done"
+msgstr "Erstellung erfolgreich durchgeführt"
+
+#: static/adm/js/gui.js:321
+msgid "Are you sure do you want to delete "
+msgstr "Bist du sicher wollen Sie löschen "
+
+#: static/adm/js/gui.js:327
+msgid "Item deleted"
+msgstr "Element gelöscht"

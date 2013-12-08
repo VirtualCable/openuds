@@ -34,6 +34,9 @@ from __future__ import unicode_literals
 
 #from django.utils import simplejson as json
 import ujson as json
+import datetime
+import time
+import types
 from django import http
 
 import logging
@@ -67,6 +70,29 @@ class ContentProcessor(object):
     def render(self, obj):
         return unicode(obj)
 
+    @staticmethod
+    def procesForRender(obj):
+        '''
+        Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
+        '''
+        if type(obj) in (bool, int, float, unicode):
+            return obj
+        elif isinstance(obj, long):
+            return int(obj)
+        elif isinstance(obj, dict):
+            res = {}
+            for k, v in obj.iteritems():
+                res[k] = ContentProcessor.procesForRender(v)
+            return res
+        elif type(obj) in (list, tuple, types.GeneratorType):
+            res = []
+            for v in obj:
+                res.append(ContentProcessor.procesForRender(v))
+            return res
+        elif isinstance(obj, datetime.datetime):
+            return  int(time.mktime(obj.timetuple()))
+        return unicode(obj)
+
 # ---------------
 # Json Processor
 # ---------------
@@ -84,9 +110,11 @@ class JsonProcessor(ContentProcessor):
         except Exception as e:
             logger.error('parsing json: {0}'.format(e))
             raise ParametersException(unicode(e))
+
     
     def render(self, obj):
-        return json.dumps(obj)
+        return json.dumps( ContentProcessor.procesForRender(obj))
+        #return json.dumps(obj)
 
 # ---------------
 # Json Processor

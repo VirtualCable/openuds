@@ -447,6 +447,24 @@ GuiElement.prototype = {
         var self = this; // Store this for child functions
 
         // Renderers for columns
+        
+        var refreshFnc = function() {
+            // Refreshes table content
+            var tbl = $('#' + tableId).dataTable();
+
+            gui.tools.blockUI();
+            
+            self.rest.getLogs(itemId, function(data) {
+                    setTimeout( function() {
+                        tbl.fnClearTable();
+                        tbl.fnAddData(data);
+                        gui.tools.unblockUI();
+                    }, 0);
+                });  // End restore overview
+            return false; // This may be used on button or href, better disable execution of it
+        };
+        
+        // Columns description
         var columns = [
             {
                 "mData" : 'date',
@@ -504,6 +522,12 @@ GuiElement.prototype = {
                 "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
                 "bDeferRender": options.deferedRender || false,
             });
+
+            // Fix form 
+            $('#' + tableId + '_filter input').addClass('form-control');
+            
+            // Add refresh action to panel
+            $(table.refreshSelector).click(refreshFnc);
             
             // if table rendered event
             if( options.onLoad ) {
