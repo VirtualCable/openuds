@@ -105,6 +105,7 @@ gui.providers.link = function(event) {
                 // Giving the name compossed with type, will ensure that only styles will be reattached once
                 var services = new GuiElement(api.providers.detail(id, 'services'), 'services-'+selected[0].type);
                 
+                var tmpLogTable;
                 var servicesTable = services.table({
                     container : 'services-placeholder',
                     rowSelect : 'single',
@@ -114,9 +115,10 @@ gui.providers.link = function(event) {
                         
                         clearDetailLog();
                         
-                        detailLogTable = services.logTable(sId, {
+                        tmpLogTable = services.logTable(sId, {
                             container: 'services-log-placeholder',
                             onLoad: function() {
+                                detailLogTable = tmpLogTable;
                                 gui.tools.unblockUI();
                             }
                         });
@@ -246,10 +248,28 @@ gui.authenticators.link = function(event) {
                         gui.tools.unblockUI();
                     },
                 });
+                var tmpLogTable;
                 // Use defered rendering for users, this table can be "huge"
                 var usrTable = user.table({
                     container : 'users-placeholder',
                     rowSelect : 'single',
+                    onRowSelect: function(uselected) {
+                        gui.tools.blockUI();
+                        var uId = uselected[0].id;
+                        
+                        clearDetailLog();
+                        
+                        tmpLogTable = user.logTable(uId, {
+                            container: 'users-log-placeholder',
+                            onLoad: function() {
+                                detailLogTable = tmpLogTable;
+                                gui.tools.unblockUI();
+                            }
+                        });
+                    },
+                    onRowDeselect : function() {
+                        clearDetailLog();
+                    },
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
                     deferedRender: true,
                     scrollToTable : false,

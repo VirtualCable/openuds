@@ -111,10 +111,9 @@
         gui.launchModal('<b class="text-'+ type + '">' + gettext('Message') + '</b>', '<span class="text-' + type + '">' + message + '</span>', {actionButton: ' '});
     };
     
-    gui.failRequestModalFnc = function(title, unblock) {
+    gui.failRequestModalFnc = function(title) {
         return function(jqXHR, textStatus, errorThrown) { // fail on put
-            if( unblock )
-                gui.tools.unblockUI();
+            gui.tools.unblockUI();
             gui.launchModal('<b class="text-danger">' + title + '</b>', jqXHR.responseText, { actionButton: ' '});
         };
     };
