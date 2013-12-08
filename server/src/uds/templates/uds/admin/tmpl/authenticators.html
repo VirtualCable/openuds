@@ -12,10 +12,18 @@
 <div class="row">
     <div id="{{ auths }}" class="col-xs-12"></div>
 </div>
-<div class="row">
-    <div id="{{ groups }}" class="col-xs-12"></div>
-</div>
-<div class="row">
-    <div id="{{ users }}" class="col-xs-12"></div>
+<div id="detail-placeholder" class="row hidden">
+    <div class="col-xs-12">
+        <ul class="nav nav-tabs">
+            <li><a href="#{{ users }}" data-toggle="tab">Users</a></li>
+            <li><a href="#{{ groups }}" data-toggle="tab">Groups</a></li>
+            <li><a href="#{{ logs }}" data-toggle="tab">Logs</a></li>
+        </ul>    
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="{{ users }}"></div>
+            <div class="tab-pane fade" id="{{ groups }}"></div>
+            <div class="tab-pane fade" id="{{ logs }}"></div>
+        </div>        
+    </div>
 </div>
 {% endverbatim %}

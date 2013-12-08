@@ -1,9 +1,7 @@
 {% verbatim %}
-<div class="panel panel-primary" id="{{ panelId }}" data-minimized="{{ title }}">
+<div class="panel panel-primary" id="{{ panelId }}">
     <div class="panel-heading">
         <h3 class="panel-title"><span class="fa fa-{{ icon }}"></span> {{ title }}
-            <span class="panel-icon fa fa-dot-circle-o pull-right" 
-                  onclick="gui.minimizePanel('#{{ panelId }}');"> </span>
             <span class="panel-icon fa chevron pull-right" data-toggle="collapse" 
                 data-target="#{{ panelId }} > div.panel-body"> </span>
             <span class="panel-icon fa fa-refresh pull-right"> </span>
