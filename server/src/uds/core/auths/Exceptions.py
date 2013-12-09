@@ -37,13 +37,13 @@ class AuthenticatorException(Exception):
     '''
     pass
     
-class InvalidUserException(Exception):
+class InvalidUserException(AuthenticatorException):
     '''
     Invalid user specified. The user cant access the requested service
     '''
     pass
 
-class InvalidAuthenticatorException(Exception):
+class InvalidAuthenticatorException(AuthenticatorException):
     '''
     Invalida authenticator has been specified
     '''

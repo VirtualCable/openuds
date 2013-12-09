@@ -37,8 +37,10 @@ from django.forms.models import model_to_dict
 from uds.core.util.State import State
 from django.db import IntegrityError
 
+from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import log
 from uds.models import Authenticator, User, Group
+from uds.core.auths.User import User as aUser
 from uds.REST import RequestError
 
 from uds.REST.model import DetailHandler
@@ -59,7 +61,8 @@ class Users(DetailHandler):
             else:
                 u = parent.users.get(pk=item)
                 res = model_to_dict(u, fields = ('id','name','real_name','comments','state','staff_member','is_admin','last_access','parent'))
-                res['groups'] = [g.id for g in u.groups.all()]
+                usr = aUser(u)
+                res['groups'] = [g.dbGroup().id for g in usr.groups()]
                 logger.debug('Item: {0}'.format(res))
                 return res
         except:
@@ -115,11 +118,23 @@ class Users(DetailHandler):
             self.invalidItemException()
         except IntegrityError: # Duplicate key probably 
             raise RequestError(_('User already exists (duplicate key error)'))
+        except AuthenticatorException as e:
+            raise RequestError(unicode(e))
         except Exception:
             logger.exception('Saving Service')
             self.invalidRequestException()
         
         return self.getItems(parent, user.id)
+    
+    def deleteItem(self, parent, item):
+        try:
+            service = parent.users.get(pk=item)
+            
+            service.delete()
+        except:
+            self.invalidItemException()
+        
+        return 'deleted'
 
 class Groups(DetailHandler):
     

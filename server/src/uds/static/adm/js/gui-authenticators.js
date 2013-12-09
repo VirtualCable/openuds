@@ -46,6 +46,28 @@ gui.authenticators.link = function(event) {
         prevTables = [];
     };
     
+    
+    // Search button event generator for user/group
+    var searchForm = function(modalId, model, title, searchLabel, resultsLabel, srcSelector) {
+        $(modalId + ' .button-search').on('click', function() {
+            api.templates.get('search', function(tmpl) { // Get form template
+                var modalId = gui.launchModal(title, api.templates.evaluate(tmpl, {
+                    search_label : searchLabel,
+                    results_label : resultsLabel,
+                }), { actionButton: '<button type="button" class="btn btn-success button-accept">' + gettext('Accept') + '</button>'});
+                var searchInput = modalId + ' input[name="search"]';
+                var resultsInput = modalId + ' select';
+                
+                $(searchInput).val($(srcSelector).val());
+                
+                $(modalId + ' .button-accept').on('click', function(){
+                    gui.doLog('Accepted'); 
+                });
+                
+            });
+        });  
+    };
+    
     api.templates.get('authenticators', function(tmpl) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {
@@ -123,7 +145,6 @@ gui.authenticators.link = function(event) {
                     },
                     onEdit: function(value, event, table, refreshFnc) {
                         var password = "#æð~¬~@æß”¢ß€~½¬@#~½¬@|"; // Garbage for password (to detect change)
-                        // Gets fields gui
                         gui.tools.blockUI();
                         api.templates.get('user', function(tmpl) { // Get form template
                             group.rest.overview(function(groups) { // Get groups
@@ -139,10 +160,13 @@ gui.authenticators.link = function(event) {
                                         state: item.state,
                                         staff_member: item.staff_member,
                                         is_admin: item.is_admin,
+                                        needs_password: type.needsPassword,
                                         password: type.needsPassword ? password : undefined,
                                         password_label: type.passwordLabel,
                                         groups_all: groups,
                                         groups: item.groups,
+                                        external: type.isExternal,
+                                        canSearchUsers: type.canSearchUsers,
                                     }));
                                     
                                     // Activate "custom" styles
@@ -160,6 +184,11 @@ gui.authenticators.link = function(event) {
                                     
                                     $(modalId + ' .button-accept').click(function(){
                                         var fields = gui.forms.read(modalId);
+                                        // If needs password, and password has changed
+                                        if( type.needsPassword ) {
+                                            if( fields.password == password)
+                                                delete fields.password;
+                                        }
                                         gui.doLog('Fields', fields);
                                         user.rest.save(fields, function(data) { // Success on put
                                             $(modalId).modal('hide');
@@ -171,8 +200,50 @@ gui.authenticators.link = function(event) {
                             });
                         });
                     },
-                    onNew: function(type, table, refreshFnc) {
-                    }
+                    onNew: function(undefined, table, refreshFnc) {
+                        gui.tools.blockUI();
+                        api.templates.get('user', function(tmpl) { // Get form template
+                            group.rest.overview(function(groups) { // Get groups
+                                // Creates modal
+                                var modalId = gui.launchModal(gettext('Edit user'), api.templates.evaluate(tmpl, {
+                                    username_label: type.userNameLabel,
+                                    needs_password: type.needsPassword,
+                                    password_label: type.passwordLabel,
+                                    groups_all: groups,
+                                    groups: [],
+                                    external: type.isExternal,
+                                    canSearchUsers: type.canSearchUsers,
+                                }));
+                                
+                                // Activate "custom" styles
+                                $(modalId + ' .make-switch').bootstrapSwitch();
+                                // Activate "cool" selects
+                                $(modalId + ' .selectpicker').selectpicker();
+                                // TEST: cooler on mobile devices
+                                if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+                                    $(modalId + ' .selectpicker').selectpicker('mobile');
+                                }
+                                // Activate tooltips
+                                $(modalId + ' [data-toggle="tooltip"]').tooltip({delay: {show: 1000, hide: 100}, placement: 'auto right'});
+                                
+                                gui.tools.unblockUI();
+                                
+                                searchForm(modalId, user, gettext('Search users'), gettext('User'), gettext('Users found'), modalId + ' input[name="name"]'); // Enable search button click, if it exist ofc
+                                
+                                $(modalId + ' .button-accept').click(function(){
+                                    var fields = gui.forms.read(modalId);
+                                    // If needs password, and password has changed
+                                    gui.doLog('Fields', fields);
+                                    user.rest.create(fields, function(data) { // Success on put
+                                        $(modalId).modal('hide');
+                                        refreshFnc();
+                                        gui.notify(gettext('User saved'), 'success');
+                                    }, gui.failRequestModalFnc("Error saving user", true));
+                                });
+                            });
+                        });
+                    },
+                    onDelete: gui.methods.del(user, gettext('Delete user'), gettext('Error deleting user')),
                 });
                 
                 var logTable = gui.authenticators.logTable(id, {

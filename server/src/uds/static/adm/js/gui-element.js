@@ -269,7 +269,7 @@ GuiElement.prototype = {
                                     btn = {
                                         "sExtends" : "text",
                                         "sButtonText" : gui.config.dataTableButtons['new'].text,
-                                        "fnClick" : clickHandlerFor(options.onNew, 'new'),
+                                        "fnClick" : clickHandlerFor(options.onNew, 'new', true),
                                         "sButtonClass" : gui.config.dataTableButtons['new'].css,
                                     };
                                 } else {

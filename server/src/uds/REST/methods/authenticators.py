@@ -70,6 +70,7 @@ class Authenticators(ModelHandler):
              'needsPassword' : type_.needsPassword, 'userNameLabel' : _(type_.userNameLabel), 
              'groupNameLabel' : _(type_.groupNameLabel), 'passwordLabel' : _(type_.passwordLabel),
              'canCreateUsers' : type_.createUser != auths.Authenticator.createUser,
+             'isExternal' : type_.isExternalSource,
         }
     
     def getGui(self, type_):
