@@ -24,6 +24,9 @@
         var originalValues = {}; // Initial stored values (defaults to "reset" form and also used on fillers callback to try to restore previous value)
         // itemGui is expected to have fields sorted by .gui.order (REST api returns them sorted)
         $.each(itemGui, function(index, f){
+            if( f.gui === undefined ) { // Not exactly a field, maybe some other info...
+                return;
+            }
             // Fix multiline text fields to textbox
             if( f.gui.type == 'text' && f.gui.multiline ) {
                 f.gui.type = 'textbox';

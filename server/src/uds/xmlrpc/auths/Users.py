@@ -50,7 +50,6 @@ def dictFromUser(usr, groups = None):
                     'staffMember' : usr.staff_member, 'isAdmin' : usr.is_admin }
     if groups != None:
         dct['groups'] = groups
-    logger.debug('Dict: {0}'.format(dct))
     return dct
 
 @needs_credentials

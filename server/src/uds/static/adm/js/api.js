@@ -127,7 +127,7 @@
     
 
     // Public attributes
-    api.debug = false;
+    api.debug = true;
 }(window.api = window.api || {}, jQuery));
 
 

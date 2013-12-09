@@ -35,11 +35,12 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 from django.forms.models import model_to_dict
 from uds.core.util.State import State
+from django.db import IntegrityError
 
 from uds.core.util import log
-from uds.models import Authenticator
+from uds.models import Authenticator, User, Group
+from uds.REST import RequestError
 
-from uds.REST.handlers import HandlerError
 from uds.REST.model import DetailHandler
 
 import logging
@@ -87,6 +88,38 @@ class Users(DetailHandler):
             self.invalidItemException()
             
         return log.getLogs(user)
+
+    def saveItem(self, parent, item):
+        # Extract item db fields
+        # We need this fields for all
+        logger.debug('Saving user {0} / {1}'.format(parent, item))
+        fields = self.readFieldsFromParams(['name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'groups'])
+        try:
+            auth = parent.getInstance()
+            groups = fields['groups']
+            del fields['groups'] # Not update this on user dict
+            if item is None: # Create new
+                auth.createUser(fields) # this throws an exception if there is an error (for example, this auth can't create users)
+                user = parent.users.create(**fields)
+            else:
+                auth.modifyUser(fields) # Notifies authenticator
+                user = parent.users.get(pk=item)
+                user.__dict__.update(fields)
+                
+            if auth.isExternalSource == False and user.parent == -1:
+                user.groups = Group.objects.filter(id__in=groups)
+                
+            user.save()
+            
+        except User.DoesNotExist: 
+            self.invalidItemException()
+        except IntegrityError: # Duplicate key probably 
+            raise RequestError(_('User already exists (duplicate key error)'))
+        except Exception:
+            logger.exception('Saving Service')
+            self.invalidRequestException()
+        
+        return self.getItems(parent, user.id)
 
 class Groups(DetailHandler):
     

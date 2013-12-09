@@ -111,12 +111,17 @@ class BaseModelHandler(Handler):
             
         return gui
 
+    def typeInfo(self, type_):
+        return {}
+
     def type_as_dict(self, type_):
-        return { 'name' : _(type_.name()), 
+        res = self.typeInfo(type_)
+        res.update( { 'name' : _(type_.name()), 
                  'type' : type_.type(), 
                  'description' : _(type_.description()), 
                  'icon' : type_.icon().replace('\n', '') 
-        }
+        })
+        return res
         
     def processTableFields(self, title, fields):
 #        processedFields = [{ 'id' : {'visible': False, 'sortable': False, 'searchable': False } }]

@@ -21,28 +21,25 @@ GuiElement.prototype = {
         gui.doLog('Initializing ' + this.name);
         var self = this;
         this.rest.types(function(data) {
-                var styles = '';
-                var alreadyAttached =  $('#gui-style-'+self.name).length !== 0;
-                $.each(data, function(index, value) {
-                    var className = self.name + '-' + value.type;
-                    self.types[value.type] = {
-                        css : className,
-                        name : value.name || '',
-                        description : value.description || ''
-                    };
-                    gui.doLog('Creating style for ' + className);
-                    if( !alreadyAttached ) {
-                        var style = '.' + className + ' { display:inline-block; background: url(data:image/png;base64,' +
-                                value.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle; } ';
-                        styles += style;
-                    }
-                });
-                if (styles !== '') {
-                    // If style already attached, do not re-attach it
-                    styles = '<style id="gui-style-' + self.name + '" media="screen">' + styles + '</style>';
-                    $(styles).appendTo('head');
+            var styles = '';
+            var alreadyAttached =  $('#gui-style-'+self.name).length !== 0;
+            $.each(data, function(index, value) {
+                var className = self.name + '-' + value.type;
+                self.types[value.type] = value;
+                self.types[value.type].css = className;
+                gui.doLog('Creating style for ' + className);
+                if( !alreadyAttached ) {
+                    var style = '.' + className + ' { display:inline-block; background: url(data:image/png;base64,' +
+                            value.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle; } ';
+                    styles += style;
                 }
             });
+            if (styles !== '') {
+                // If style already attached, do not re-attach it
+                styles = '<style id="gui-style-' + self.name + '" media="screen">' + styles + '</style>';
+                $(styles).appendTo('head');
+            }
+        });
     },
     
     // Options: dictionary

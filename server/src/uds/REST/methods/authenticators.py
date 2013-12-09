@@ -63,6 +63,15 @@ class Authenticators(ModelHandler):
     def enum_types(self):
         return auths.factory().providers().values()
     
+    def typeInfo(self, type_):
+        return { 
+             'canSearchUsers' : type_.searchUsers != auths.Authenticator.searchUsers, 
+             'canSearchGroups' : type_.searchGroups != auths.Authenticator.searchGroups,
+             'needsPassword' : type_.needsPassword, 'userNameLabel' : _(type_.userNameLabel), 
+             'groupNameLabel' : _(type_.groupNameLabel), 'passwordLabel' : _(type_.passwordLabel),
+             'canCreateUsers' : type_.createUser != auths.Authenticator.createUser,
+        }
+    
     def getGui(self, type_):
         try:
             return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments', 'priority', 'small_name'])

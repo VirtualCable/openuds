@@ -17,6 +17,18 @@
             return options.inverse(this);
         }
       });    
+
+    // Belongs comparision (similar to "if xxx in yyyyy")
+    // Use as block as {{#ifbelong [element] [group]}}....{{/ifbelongs}}
+    Handlebars.registerHelper('ifbelongs', function(context1, context2, options) {
+        gui.doLog('belongs', context1, context2);
+        if($.inArray(context1, context2) != -1) {
+            gui.doLog('belongs is true');
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+      });    
     
     // Counters. 
     // Create a counter with {{counter [id] [startValue]}}
@@ -61,7 +73,7 @@
         success_fnc = success_fnc || function(){};
         api.doLog('Getting template ' + name);
         if (name.indexOf('?') == -1) {
-            if ($this.cache.get(name) ) {
+            if ($this.cache.get(name+'-------') ) {
                 success_fnc($this.cache.get(name));
                 return;
              // Let's check if a "preloaded template" exists                
