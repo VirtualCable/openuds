@@ -116,7 +116,7 @@ if ($.fn.DataTable.TableTools) {
     $.extend(true, $.fn.DataTable.TableTools.classes, {
         "container" : "DTTT btn-group-3d",
         "buttons" : {
-            "normal" : "btn",
+            "normal" : "",
             "disabled" : "disabled"
         },
         "collection" : {
@@ -145,6 +145,7 @@ if ($.fn.DataTable.TableTools) {
             "button" : "li",
             "liner" : "a"
         },
+        "liner" : "div",
 //        "button" : "button",
     });
 }

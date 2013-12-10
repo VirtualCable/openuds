@@ -265,38 +265,38 @@ GuiElement.prototype = {
                             var btn;
                             switch (value) {
                             case 'new':
-                                if(Object.keys(self.types).length === 0) {
-                                    btn = {
-                                        "sExtends" : "text",
-                                        "sButtonText" : gui.config.dataTableButtons['new'].text,
-                                        "fnClick" : clickHandlerFor(options.onNew, 'new', true),
-                                        "sButtonClass" : gui.config.dataTableButtons['new'].css,
-                                    };
-                                } else {
-                                    // This table has "types, so we create a dropdown with Types
-                                    var newButtons = [];
-                                    // Order buttons by name, much more easy for users... :-)
-                                    var order = [];
+                                if(Object.keys(self.types).length !== 0) {
+                                    var menuId = gui.genRamdonId('dd-');
+                                    var ordered = [];
                                     $.each(self.types, function(k, v){
-                                       order.push({
+                                       ordered.push({
                                            type: k,
                                            css: v.css,
                                            name: v.name,
                                            description: v.description,
                                        }); 
                                     });
-                                    $.each(order.sort(function(a,b){return a.name.localeCompare(b.name);}), function(i, val){
-                                       newButtons.push({
-                                               "sExtends" : "text",
-                                               "sButtonText" : '<span class="' + val.css + '"></span> <span data-toggle="tooltip" data-title="' + val.description + '">' + val.name + '</span>',
-                                               "fnClick" : clickHandlerFor(options.onNew, val.type, true),
-                                       });
-                                    });
+                                    
+                                    ordered = ordered.sort(function(a,b){return a.name.localeCompare(b.name);});
+
                                     btn = {
-                                            "sExtends" : "collection",
-                                            "aButtons":  newButtons,
+                                            "sExtends" : "div",
+                                            "sButtonText" : api.templates.evaluate('tmpl_comp_dropdown', {
+                                                label: gui.config.dataTableButtons['new'].text,
+                                                css: gui.config.dataTableButtons['new'].css,
+                                                id: menuId,
+                                                tableId: tableId,
+                                                columns: columns,
+                                                menu: ordered,
+                                            }),
+                                    };
+                                    
+                                } else {
+                                    btn = {
+                                            "sExtends" : "text",
                                             "sButtonText" : gui.config.dataTableButtons['new'].text,
                                             "sButtonClass" : gui.config.dataTableButtons['new'].css,
+                                            "fnClick" : clickHandlerFor(options.onNew, 'new', true),
                                         };
                                 }
                                 break;
@@ -417,11 +417,23 @@ GuiElement.prototype = {
                     $(table.refreshSelector).click(refreshFnc);
                     
                     // Add tooltips to "new" buttons
-                    $('.DTTT_dropdown [data-toggle="tooltip"]').tooltip({
+                    $('#' + table.panelId + ' [data-toggle="tooltip"]').tooltip({
                         container:'body',
                         delay: { show: 1000, hide: 100},
                         placement: 'auto right',
                     });
+                    // And the handler of the new "dropdown" button links
+                    if( options.onNew ) {  // If onNew, set the handlers for dropdown
+                        $('#' + table.panelId + ' [data-type]').on('click', function(event){
+                            event.preventDefault();
+                            var tbl = $('#' + tableId).dataTable();
+                            // Executes "onNew" outside click event
+                            var type = $(this).attr('data-type');
+                            setTimeout(function() {
+                                options.onNew(type, tbl, refreshFnc);
+                            }, 0);
+                        });
+                    }
                     
                     if (options.scrollToTable === true ) {
                         var tableTop = $('#' + tableId).offset().top;

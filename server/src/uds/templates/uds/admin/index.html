@@ -99,8 +99,8 @@
         
         <!-- user interface management -->
         <script src="{% get_static_prefix %}adm/js/gui-definition.js"></script>
-        <script src="{% get_static_prefix %}adm/js/gui-service-providers.js"></script>
-        <script src="{% get_static_prefix %}adm/js/gui-authenticators.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui-d-service-providers.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui-d-authenticators.js"></script>
         
         <script>
             $(function() {
@@ -122,7 +122,7 @@
         {% js_template 'comp/table' %}
         {% js_template 'comp/modal' %}
         {% js_template 'comp/responsive_table' %}
-        {% js_template 'comp/alert' %}
+        {% js_template 'comp/dropdown' %}
         <!-- fields -->
         {% js_template 'fld/checkbox' %}
         {% js_template 'fld/choice' %}

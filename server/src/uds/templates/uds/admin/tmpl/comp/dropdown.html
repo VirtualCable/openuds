@@ -1,0 +1,14 @@
+{% load i18n %}
+{% verbatim %}
+<div class="dropdown">
+  <button class="{{ css }} dropdown-toggle" type="button" data-toggle="dropdown">
+    {{{ label }}}
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="">
+    {{# each menu }}
+        <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="tooltip" title="{{ description }}" href="#" data-type="{{ type }}">{{ name }}</a></li>
+    {{/ each }}
+  </ul>
+</div>
+{% endverbatim %}

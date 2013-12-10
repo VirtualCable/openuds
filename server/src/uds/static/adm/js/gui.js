@@ -35,20 +35,25 @@
     gui.config.dataTableButtons = {
         'new': {
             text: '<span class="fa fa-pencil"></span> <span class="label-tbl-button">' + gettext('New') + '</span>',
-            css: 'btn3d btn3d-primary btn3d-tables',
+            css: 'btn btn3d btn3d-primary btn3d-tables',
         },
         'edit': { 
             text: '<span class="fa fa-edit"></span> <span class="label-tbl-button">' + gettext('Edit') + '</span>',
-            css: 'disabled btn3d-default btn3d btn3d-tables',
+            css: 'btn disabled btn3d-default btn3d btn3d-tables',
         },
         'delete': {
             text: '<span class="fa fa-eraser"></span> <span class="label-tbl-button">' + gettext('Delete') + '</span>',
-            css: 'disabled btn3d-default btn3d btn3d-tables',
+            css: 'btn disabled btn3d-default btn3d btn3d-tables',
         },
         'xls': {
             text: '<span class="fa fa-save"></span> <span class="label-tbl-button">' + gettext('Xls') + '</span>',
-            css: 'btn3d-info btn3d btn3d-tables',
+            css: 'btn btn3d-info btn3d btn3d-tables',
         },
+    };
+    
+    gui.genRamdonId = function(prefix) {
+        prefix = prefix || '';
+        return prefix + Math.random().toString().split('.')[1];
     };
     
     gui.table = function(title, table_id, options) {
@@ -96,7 +101,7 @@
     
     gui.launchModal = function(title, content, options) {
         options = options || {};
-        var id = Math.random().toString().split('.')[1]; // Get a random ID for this modal
+        var id = gui.genRamdonId('modal-'); // Get a random ID for this modal
         gui.appendToWorkspace(gui.modal(id, title, content, options));
         id = '#' + id; // for jQuery
         
@@ -285,10 +290,9 @@
     // "Generic" new method to set onNew table
     gui.methods.typedNew = function(parent, modalTitle, modalErrorMsg, options) {
         options = options || {};
-        var self = parent;
         return function(type, table, refreshFnc) {
             gui.tools.blockUI();
-            self.rest.gui(type, function(guiDefinition) {
+            parent.rest.gui(type, function(guiDefinition) {
                 gui.tools.unblockUI();
                 var buttons;
                 if( options.testButton ) {
@@ -296,7 +300,7 @@
                 }
                 var tabs = options.guiProcessor ? options.guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
                 gui.forms.launchModal({
-                    title: modalTitle, 
+                    title: modalTitle + ' ' + gettext('of type') +' <b>' + parent.types[type].name + '</b>', 
                     fields: tabs, 
                     item: undefined, 
                     buttons: buttons,
@@ -304,7 +308,7 @@
                         var fields = gui.forms.read(form_selector);
                         fields.data_type = type;
                         fields = options.fieldsProcessor ? options.fieldsProcessor(fields) : fields; // Process fields before creating?
-                        self.rest.create(fields, function(data) { // Success on put
+                        parent.rest.create(fields, function(data) { // Success on put
                             closeFnc();
                             refreshFnc();
                             gui.notify(gettext('Creation successfully done'), 'success');

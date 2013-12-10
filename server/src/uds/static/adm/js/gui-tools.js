@@ -16,10 +16,13 @@
             selector += ' .btn3d';
             console.log(selector);
             $.each($(selector), function(index, value) {
+                // If no events associated, return
+                if( $._data(value, 'events') === undefined )
+                    return;
+
                 var $this = $(this);
                 
                 var clkEvents = [];
-                
                 // Store old click events, so we can reconstruct click chain later
                 $.each($._data(value, 'events').click, function(index, fnc) {
                     clkEvents.push(fnc);

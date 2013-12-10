@@ -92,8 +92,9 @@ div.dataTables_scrollFoot table {
 	border-top: none;
 }
 
-
-
+.DTTT_nonbutton {
+    display: inline-block;
+}
 
 /*
  * TableTools styles
