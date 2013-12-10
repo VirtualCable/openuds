@@ -7,7 +7,7 @@
         <label for="id_username" class="col-sm-2 control-label">{{ username_label }}</label>
         <div class="col-sm-10">
           {{# if canSearchUsers }}
-          {{# if username }}
+          {{# if id }}
           {{ else }}
           <div class="input-group">
           {{/ if }}
@@ -15,7 +15,7 @@
               <input name="name" value="{{ username }}" type="text" id="id_username" class="form-control modal_field_data" 
                      placeholder="{% endverbatim %}{% trans 'Username' %}{% verbatim %}"{{# if username }}readonly{{/ if }}>
           {{# if canSearchUsers }}
-          {{# if username }}
+          {{# if id }}
           {{ else }}
               <span class="input-group-btn">
                 <button class="btn btn-info button-search" type="button"><i class="fa fa-search"></i> {% endverbatim %}{% trans 'Search' %}{% verbatim %}</button>
@@ -79,7 +79,8 @@
         </div>
       </div>
       {{/ if }}
-    
+      
+      {{# if id }}
       <div class="form-group">
         <label for="id_password" class="col-sm-2 control-label">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</label>
         <div class="col-sm-10">
@@ -91,5 +92,21 @@
             </select>
         </div>
     </div>
+    {{ else }}
+    {{# if external }}
+    {{ else }}
+      <div class="form-group">
+        <label for="id_password" class="col-sm-2 control-label">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</label>
+        <div class="col-sm-10">
+            <select class="selectpicker show-menu-arrow modal_field_data" multiple data-style="btn-default" countSelectedText="{% endverbatim %}{% trans '{0} of {1} selected' %}{% verbatim %}" 
+                    data-selected-text-format="count>3" data-width="100%" name="groups" id="id_groups">
+                {{#each groups_all }}
+                <option value="{{ id }}"{{# ifbelongs id ../groups }}selected{{/ ifbelongs }}>{{ name }}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+    {{/ if }}
+    {{/ if }}
 </form>
 {% endverbatim %}

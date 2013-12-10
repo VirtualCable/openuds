@@ -48,8 +48,9 @@ gui.authenticators.link = function(event) {
     
     
     // Search button event generator for user/group
-    var searchForm = function(parentModalId, type, id, title, searchLabel, resultsLabel, srcSelector) {
+    var searchForm = function(parentModalId, type, id, title, searchLabel, resultsLabel) {
         var errorModal = gui.failRequestModalFnc(gettext('Search error'));
+        var srcSelector = parentModalId + ' input[name="name"]';
         
         $(parentModalId + ' .button-search').on('click', function() {
             api.templates.get('search', function(tmpl) { // Get form template
@@ -134,6 +135,8 @@ gui.authenticators.link = function(event) {
                 
                 var user = new GuiElement(api.authenticators.detail(id, 'users'), 'users');
                 var group = new GuiElement(api.authenticators.detail(id, 'groups'), 'groups');
+                
+                
                 var grpTable = group.table({
                     container : 'groups-placeholder',
                     rowSelect : 'single',
@@ -142,8 +145,8 @@ gui.authenticators.link = function(event) {
                         gui.tools.unblockUI();
                     },
                     onEdit: function(value, event, table, refreshFnc) {
-                        gui.tools.blockUI();
                         var exec = function(groups_all) {
+                            gui.tools.blockUI();
                             api.templates.get('group', function(tmpl) { // Get form template
                                 group.rest.item(value.id, function(item){ // Get item to edit
                                     // Creates modal
@@ -185,10 +188,48 @@ gui.authenticators.link = function(event) {
                         }
 
                     },
-                    onNew : function(type, table, refreshFnc) {
-                        alert(type);
-                        refreshFnc();
-                    }
+                    onNew : function(t, table, refreshFnc) {
+                        var exec = function(groups_all) {
+                            gui.tools.blockUI();
+                            api.templates.get('group', function(tmpl) { // Get form template
+                                // Creates modal
+                                var modalId = gui.launchModal(gettext('New group'), api.templates.evaluate(tmpl, {
+                                    type: t,
+                                    groupname_label: type.groupNameLabel,
+                                    external: type.isExternal,
+                                    canSearchGroups: type.canSearchGroups,
+                                    groups: [],
+                                    groups_all: groups_all
+                                }));
+                                gui.tools.unblockUI();
+                                
+                                gui.tools.applyCustoms(modalId);
+
+                                searchForm(modalId, 'group', id, gettext('Search groups'), gettext('Group'), gettext('Groups found')); // Enable search button click, if it exist ofc
+                                
+                                $(modalId + ' .button-accept').click(function(){
+                                    var fields = gui.forms.read(modalId);
+                                    gui.doLog('Fields', fields);
+                                    group.rest.create(fields, function(data) { // Success on put
+                                        $(modalId).modal('hide');
+                                        refreshFnc();
+                                        gui.notify(gettext('Group saved'), 'success');
+                                    }, gui.failRequestModalFnc("Error saving group", true));
+                                });
+                            });
+                        };
+                        if( t == 'meta' ) {
+                            // Meta will get all groups
+                            group.rest.overview(function(groups) {
+                                exec(groups);
+                            });
+                        } else {
+                            exec();
+                        }
+
+                    },
+                    onDelete: gui.methods.del(group, gettext('Delete group'), gettext('Error deleting group')),
+                    
                 });
                 var tmpLogTable;
                 
@@ -294,7 +335,7 @@ gui.authenticators.link = function(event) {
                                 
                                 gui.tools.unblockUI();
                                 
-                                searchForm(modalId, 'user', id, gettext('Search users'), gettext('User'), gettext('Users found'), modalId + ' input[name="name"]'); // Enable search button click, if it exist ofc
+                                searchForm(modalId, 'user', id, gettext('Search users'), gettext('User'), gettext('Users found')); // Enable search button click, if it exist ofc
                                 
                                 $(modalId + ' .button-accept').click(function(){
                                     var fields = gui.forms.read(modalId);

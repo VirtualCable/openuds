@@ -135,9 +135,9 @@ class Users(DetailHandler):
     
     def deleteItem(self, parent, item):
         try:
-            service = parent.users.get(pk=item)
+            user = parent.users.get(pk=item)
             
-            service.delete()
+            user.delete()
         except:
             self.invalidItemException()
         
@@ -212,10 +212,12 @@ class Groups(DetailHandler):
             fields = self.readFieldsFromParams(valid_fields)
             auth = parent.getInstance()
             if item is None: # Create new
-                auth.createGroup(fields) # this throws an exception if there is an error (for example, this auth can't create users)
+                if not is_meta:
+                    auth.createGroup(fields) # this throws an exception if there is an error (for example, this auth can't create users)
                 toSave = {}
                 for k in valid_fields:
                     toSave[k] = fields[k]
+                toSave['is_meta'] = is_meta
                 group = parent.groups.create(**toSave)
             else:
                 if not is_meta:
@@ -242,3 +244,13 @@ class Groups(DetailHandler):
             self.invalidRequestException()
         
         return self.getItems(parent, group.id)
+
+    def deleteItem(self, parent, item):
+        try:
+            group = parent.groups.get(pk=item)
+            
+            group.delete()
+        except:
+            self.invalidItemException()
+        
+        return 'deleted'
