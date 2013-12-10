@@ -369,6 +369,11 @@ class ModelHandler(BaseModelHandler):
     def checkDelete(self, item):
         pass
     
+    # Save related, checks if the item can be saved
+    # If it can't be saved, raises an exception
+    def checkSave(self, item):
+        pass
+    
     # End overridable 
                 
     # Helper to process detail
@@ -490,6 +495,9 @@ class ModelHandler(BaseModelHandler):
             raise RequestError('Element already exists (duplicate key error)')
         except Exception:
             raise RequestError('incorrect invocation to PUT')
+
+        if not deleteOnError: 
+            self.checkSave(item) # Will raise an exception if item can't be saved (only for modify operations..) 
 
         # Store associated object if needed
         try:

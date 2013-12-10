@@ -34,6 +34,7 @@
 from __future__ import unicode_literals
  
 from django.db import models
+from django.db import IntegrityError
 from django.db.models import signals
 from uds.core.jobs.JobsFactory import JobsFactory
 from uds.core.Environment import Environment
@@ -364,6 +365,8 @@ class OSManager(models.Model):
         :note: If destroy raises an exception, the deletion is not taken.
         '''
         toDelete = kwargs['instance']
+        if toDelete.deployedServices.count() > 0:
+            raise IntegrityError('Can\'t remove os managers with assigned deployed services')
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()

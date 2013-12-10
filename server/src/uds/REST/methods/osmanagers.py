@@ -32,8 +32,10 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import OSManager
+
+from uds.REST import NotFound, RequestError
 from uds.core.osmanagers import factory
 
 from uds.REST.model import ModelHandler
@@ -46,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 class OsManagers(ModelHandler):
     model = OSManager
+    save_fields = ['name', 'comments']
 
     table_title =  _('Current OS Managers')
     table_fields = [
@@ -62,3 +65,23 @@ class OsManagers(ModelHandler):
                  'type': type_.type(),
                  'comments': osm.comments,
         }
+        
+    def checkDelete(self, item):
+        if item.deployedServices.count() > 0:
+            raise RequestError(ugettext('Can\'t delete an OSManager with deployed services associated'))
+        
+    def checkSave(self, item):
+        if item.deployedServices.count() > 0:
+            raise RequestError(ugettext('Can\'t modify an OSManager with deployed services associated'))
+        
+        
+    # Types related
+    def enum_types(self):
+        return factory().providers().values()
+        
+    # Gui related
+    def getGui(self, type_):
+        try:
+            return self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments'])
+        except:
+            raise NotFound('type not found')

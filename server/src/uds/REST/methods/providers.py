@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider
-from services import Services 
+from services import Services as DetailServices 
 from uds.core import services
 
 from uds.REST import NotFound, RequestError
@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 class Providers(ModelHandler):
     model = Provider
-    detail = { 'services': Services }
+    detail = { 'services': DetailServices }
     save_fields = ['name', 'comments']
     
     table_title = _('Service providers')

@@ -7,7 +7,7 @@
   </button>
   <ul class="dropdown-menu" role="menu" aria-labelledby="">
     {{# each menu }}
-        <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="tooltip" title="{{ description }}" href="#" data-type="{{ type }}">{{ name }}</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="tooltip" title="{{ description }}" href="#" data-type="{{ type }}"><span class="{{ css }}"></span> {{ name }}</a></li>
     {{/ each }}
   </ul>
 </div>
