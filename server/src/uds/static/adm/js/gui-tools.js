@@ -50,6 +50,21 @@
                 });
              });
         },
+        applyCustoms: function(selector) {
+            // Activate "custom" styles
+            $(selector + ' .make-switch').bootstrapSwitch();
+            // Activate "cool" selects
+            $(selector + ' .selectpicker').selectpicker();
+            // TEST: cooler on mobile devices
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+                $(selector + ' .selectpicker').selectpicker('mobile');
+            }
+            // Activate tooltips
+            $(selector + ' [data-toggle="tooltip"]').tooltip({delay: {show: 1000, hide: 100}, placement: 'auto right'});
+            
+            // Fix 3d buttons
+            gui.tools.fix3dButtons(selector);
+        },
         // Datetime renderer (with specified format)
         renderDate : function(format) {
             return function(data, type, full) {

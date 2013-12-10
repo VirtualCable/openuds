@@ -120,6 +120,17 @@ GuiElement.prototype = {
                 }
             };
         };
+        // Custom icon based on type
+        var renderIconDict = function(iconDict) {
+            return function(data, type, value) {
+                if( type == 'display' ) {
+                    return '<span class="' + iconDict[value.type] + '"></span> ' + renderEmptyCell(data);
+                } else {
+                    return renderEmptyCell(data);
+                }
+            };
+        };
+        
         // Text transformation, dictionary based
         var renderTextTransform = function(dict) {
             return function(data, type, full) {
@@ -166,6 +177,10 @@ GuiElement.prototype = {
                             case 'icon':
                                 if( opts.icon !== undefined ) {
                                     column.mRender = renderIcon(opts.icon);
+                                }
+                            case 'icon_dict':
+                                if( opts.icon_dict !== undefined ) {
+                                    column.mRender = renderIconDict(opts.icon_dict);
                                 }
                                 break;
                             case 'dict':

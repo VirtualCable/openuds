@@ -113,10 +113,13 @@ def createGroup(credentials, grp):
 
 def __modifySimpleGroup(grp):
     try:
+        grp['state'] = State.ACTIVE if grp['active'] == True else State.INACTIVE
         group = Group.objects.get(pk=grp['id'])
-        group.name = grp['name']
+        authInstance = group.manager.getInstance()
+        authInstance.modifyGroup(grp)
+        #group.name = grp['name']
         group.comments = grp['comments']
-        group.state = State.ACTIVE if grp['active'] == True else State.INACTIVE
+        group.state = grp['state'] 
         group.is_meta = False;
         group.groups.clear()
         group.save()

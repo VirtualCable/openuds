@@ -61,10 +61,11 @@ gui.authenticators.link = function(event) {
                 var $searchInput = $(modalId + ' input[name="search"]');
                 var $select = $(modalId + ' select[name="results"]');
                 var $searchButton = $(modalId + ' .button-do-search'); 
+                var $saveButton = $(modalId + ' .button-accept'); 
                 
                 $searchInput.val($(srcSelector).val());
                 
-                $(modalId + ' .button-accept').on('click', function(){
+                $saveButton.on('click', function(){
                     var value = $select.val();
                     if( value ) {
                         $(srcSelector).val(value);
@@ -88,7 +89,12 @@ gui.authenticators.link = function(event) {
                     });
                 });
                 
-                if( $searchInput.val() != '') {
+                $(modalId + ' form').submit(function(event){
+                    event.preventDefault();
+                    $searchButton.click();
+                });
+                
+                if( $searchInput.val() !== '') {
                     $searchButton.click();
                 }
             });
@@ -130,11 +136,59 @@ gui.authenticators.link = function(event) {
                 var group = new GuiElement(api.authenticators.detail(id, 'groups'), 'groups');
                 var grpTable = group.table({
                     container : 'groups-placeholder',
-                    rowSelect : 'multi',
-                    buttons : [ 'edit', 'delete', 'xls' ],
+                    rowSelect : 'single',
+                    buttons : [ 'new', 'edit', 'delete', 'xls' ],
                     onLoad: function(k) {
                         gui.tools.unblockUI();
                     },
+                    onEdit: function(value, event, table, refreshFnc) {
+                        gui.tools.blockUI();
+                        var exec = function(groups_all) {
+                            api.templates.get('group', function(tmpl) { // Get form template
+                                group.rest.item(value.id, function(item){ // Get item to edit
+                                    // Creates modal
+                                    var modalId = gui.launchModal(gettext('Edit group') + ' <b>' + item.name + '</b>', api.templates.evaluate(tmpl, {
+                                        id: item.id,
+                                        type: item.type,
+                                        groupname: item.name, 
+                                        groupname_label: type.groupNameLabel,
+                                        comments: item.comments,
+                                        state: item.state,
+                                        external: type.isExternal,
+                                        canSearchGroups: type.canSearchGroups,
+                                        groups: item.groups,
+                                        groups_all: groups_all
+                                    }));
+                                    
+                                    gui.tools.applyCustoms(modalId);
+                                    gui.tools.unblockUI();
+                                    
+                                    $(modalId + ' .button-accept').click(function(){
+                                        var fields = gui.forms.read(modalId);
+                                        gui.doLog('Fields', fields);
+                                        group.rest.save(fields, function(data) { // Success on put
+                                            $(modalId).modal('hide');
+                                            refreshFnc();
+                                            gui.notify(gettext('Group saved'), 'success');
+                                        }, gui.failRequestModalFnc("Error saving group", true));
+                                    });
+                                });
+                            });
+                        };
+                        if( value.type == 'meta' ) {
+                            // Meta will get all groups
+                            group.rest.overview(function(groups) {
+                                exec(groups);
+                            });
+                        } else {
+                            exec();
+                        }
+
+                    },
+                    onNew : function(type, table, refreshFnc) {
+                        alert(type);
+                        refreshFnc();
+                    }
                 });
                 var tmpLogTable;
                 
@@ -181,7 +235,7 @@ gui.authenticators.link = function(event) {
                                 user.rest.item(value.id, function(item){ // Get item to edit
                                     
                                     // Creates modal
-                                    var modalId = gui.launchModal(gettext('Edit user'), api.templates.evaluate(tmpl, {
+                                    var modalId = gui.launchModal(gettext('Edit user') + ' <b>' + value.name + '</b>', api.templates.evaluate(tmpl, {
                                         id: item.id,
                                         username: item.name, 
                                         username_label: type.userNameLabel,
@@ -199,16 +253,7 @@ gui.authenticators.link = function(event) {
                                         canSearchUsers: type.canSearchUsers,
                                     }));
                                     
-                                    // Activate "custom" styles
-                                    $(modalId + ' .make-switch').bootstrapSwitch();
-                                    // Activate "cool" selects
-                                    $(modalId + ' .selectpicker').selectpicker();
-                                    // TEST: cooler on mobile devices
-                                    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
-                                        $(modalId + ' .selectpicker').selectpicker('mobile');
-                                    }
-                                    // Activate tooltips
-                                    $(modalId + ' [data-toggle="tooltip"]').tooltip({delay: {show: 1000, hide: 100}, placement: 'auto right'});
+                                    gui.tools.applyCustoms(modalId);
                                     
                                     gui.tools.unblockUI();
                                     
@@ -235,7 +280,7 @@ gui.authenticators.link = function(event) {
                         api.templates.get('user', function(tmpl) { // Get form template
                             group.rest.overview(function(groups) { // Get groups
                                 // Creates modal
-                                var modalId = gui.launchModal(gettext('Edit user'), api.templates.evaluate(tmpl, {
+                                var modalId = gui.launchModal(gettext('New user'), api.templates.evaluate(tmpl, {
                                     username_label: type.userNameLabel,
                                     needs_password: type.needsPassword,
                                     password_label: type.passwordLabel,
@@ -245,16 +290,7 @@ gui.authenticators.link = function(event) {
                                     canSearchUsers: type.canSearchUsers,
                                 }));
                                 
-                                // Activate "custom" styles
-                                $(modalId + ' .make-switch').bootstrapSwitch();
-                                // Activate "cool" selects
-                                $(modalId + ' .selectpicker').selectpicker();
-                                // TEST: cooler on mobile devices
-                                if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
-                                    $(modalId + ' .selectpicker').selectpicker('mobile');
-                                }
-                                // Activate tooltips
-                                $(modalId + ' [data-toggle="tooltip"]').tooltip({delay: {show: 1000, hide: 100}, placement: 'auto right'});
+                                gui.tools.applyCustoms(modalId);
                                 
                                 gui.tools.unblockUI();
                                 

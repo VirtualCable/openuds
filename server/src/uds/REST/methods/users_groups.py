@@ -77,7 +77,7 @@ class Users(DetailHandler):
     
     def getFields(self, parent):
         return [
-            { 'name': {'title': _('User Id'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-user text-success' } },
+            { 'name': {'title': _('Username'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-user text-success' } },
             { 'real_name': { 'title': _('Name') } },
             { 'comments': { 'title': _('Comments') } },
             { 'state': { 'title': _('state'), 'type': 'dict', 'dict': State.dictionary() } },
@@ -128,7 +128,7 @@ class Users(DetailHandler):
         except AuthenticatorException as e:
             raise RequestError(unicode(e))
         except Exception:
-            logger.exception('Saving Service')
+            logger.exception('Saving user')
             self.invalidRequestException()
         
         return self.getItems(parent, user.id)
@@ -148,10 +148,27 @@ class Groups(DetailHandler):
     def getItems(self, parent, item):
         # Extract authenticator
         try:
+            multi = False
             if item is None:
-                return list(parent.groups.all().values('id','name', 'comments','state','is_meta'))
+                multi = True
+                q = parent.groups.all()
             else:
-                return parent.groups.filter(pk=item).values('id','name', 'comments','state','is_meta')[0]
+                q = parent.groups.filter(pk=item)
+            res = []
+            for i in q:
+                val = {
+                    'id': i.id,
+                    'name': i.name,
+                    'comments': i.comments,
+                    'state': i.state,
+                    'type': i.is_meta and 'meta' or 'group'
+                }
+                if i.is_meta:
+                    val['groups'] = list(x.id for x in i.groups.all())
+                res.append(val)
+            if multi:
+                return res
+            return res[0]
         except:
             logger.exception('REST groups')
             self.invalidItemException()
@@ -164,8 +181,64 @@ class Groups(DetailHandler):
     
     def getFields(self, parent):
         return [
-            { 'name': {'title': _('User Id'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-group text-success' } },
+            { 'name': {'title': _('Group'), 'visible': True, 'type': 'icon_dict', 'icon_dict': {'group' : 'fa fa-group text-success', 'meta' : 'fa fa-gears text-info' } } },
             { 'comments': { 'title': _('Comments') } },
             { 'state': { 'title': _('state'), 'type': 'dict', 'dict': State.dictionary() } },
         ]        
     
+    def getTypes(self, parent, forType):
+        tDct = {
+            'group': { 'name': _('Group'), 'description': _('UDS Group') },
+            'meta' : { 'name': _('Meta group'), 'description': _('UDS Meta Group') },
+        }
+        types = [{ 
+            'name' : tDct[t]['name'], 
+            'type' : t, 
+            'description' : tDct[t]['description'], 
+            'icon' : '' } for t in tDct.keys()]
+        if forType is None:
+            return types
+        else:
+            try:
+                return types[forType]
+            except:
+                self.invalidRequestException()
+
+    def saveItem(self, parent, item):
+        try:
+            is_meta = self._params['type'] == 'meta'
+            logger.debug('Saving group {0} / {1}'.format(parent, item))
+            valid_fields = ['name', 'comments', 'state']
+            fields = self.readFieldsFromParams(valid_fields)
+            auth = parent.getInstance()
+            if item is None: # Create new
+                auth.createGroup(fields) # this throws an exception if there is an error (for example, this auth can't create users)
+                toSave = {}
+                for k in valid_fields:
+                    toSave[k] = fields[k]
+                group = parent.groups.create(**toSave)
+            else:
+                if not is_meta:
+                    auth.modifyGroup(fields)
+                toSave = {}
+                for k in valid_fields:
+                    toSave[k] = fields[k]
+                del toSave['name'] # Name can't be changed
+                group = parent.groups.get(pk=item)
+                group.__dict__.update(toSave)
+                
+            if is_meta:
+                group.groups = self._params['groups']
+                    
+            group.save()
+        except Group.DoesNotExist: 
+            self.invalidItemException()
+        except IntegrityError: # Duplicate key probably 
+            raise RequestError(_('User already exists (duplicate key error)'))
+        except AuthenticatorException as e:
+            raise RequestError(unicode(e))
+        except Exception:
+            logger.exception('Saving group')
+            self.invalidRequestException()
+        
+        return self.getItems(parent, group.id)

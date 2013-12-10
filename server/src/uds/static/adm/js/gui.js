@@ -42,7 +42,7 @@
             css: 'btn disabled btn3d-default btn3d btn3d-tables',
         },
         'delete': {
-            text: '<span class="fa fa-eraser"></span> <span class="label-tbl-button">' + gettext('Delete') + '</span>',
+            text: '<span class="fa fa-trash-o"></span> <span class="label-tbl-button">' + gettext('Delete') + '</span>',
             css: 'btn disabled btn3d-default btn3d btn3d-tables',
         },
         'xls': {
@@ -73,7 +73,7 @@
            refreshSelector: '#' + panelId + ' span.fa-refresh'
         };
     };
-
+    
     gui.breadcrumbs = function(path) {
         var items = path.split('/');
         var active = items.pop();

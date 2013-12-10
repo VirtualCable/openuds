@@ -1,0 +1,64 @@
+{% load i18n %}
+{% verbatim %}
+<form class="form-horizontal" role="form">
+      <input type="hidden" name="id" value="{{ id }}" class="modal_field_data">
+      <input type="hidden" name="type" value="{{ type }}" class="modal_field_data">
+      
+      <div class="form-group">
+        <label for="id_username" class="col-sm-2 control-label">{{ groupname_label }}</label>
+        <div class="col-sm-10">
+          {{# if canSearchGroups }}
+          {{# if groupname }}
+          {{ else }}
+          <div class="input-group">
+          {{/ if }}
+          {{/ if }}
+              <input name="name" value="{{ groupname }}" type="text" id="id_username" class="form-control modal_field_data" 
+                     placeholder="{% endverbatim %}{% trans 'Group name' %}{% verbatim %}"{{# if groupname }}readonly{{/ if }}>
+          {{# if canSearchGroups }}
+          {{# if groupname }}
+          {{ else }}
+              <span class="input-group-btn">
+                <button class="btn btn-info button-search" type="button"><i class="fa fa-search"></i> {% endverbatim %}{% trans 'Search' %}{% verbatim %}</button>
+              </span>
+          </div>
+          {{/ if }}
+          {{/ if }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="id_comments" class="col-sm-2 control-label">{% endverbatim %}{% trans 'comments' %}{% verbatim %}</label>
+        <div class="col-sm-10">
+          <input name="comments" value="{{ comments }}" type="text" id="id_comments" class="form-control modal_field_data" 
+                 placeholder="{% endverbatim %}{% trans 'Comments' %}{% verbatim %}">
+        </div>
+      </div>
+    
+      <div class="form-group">
+        <label for="id_state" class="col-sm-2 control-label">{% endverbatim %}{% trans 'State' %}{% verbatim %}</label>
+        <div class="col-sm-10">
+          <select name="state" class="selectpicker show-menu-arrow show-tick modal_field_data" data-style="btn-default" data-width="100%">
+            <option value="A"{{# ifequals state 'A'}} selected{{/ ifequals }}>{% endverbatim %}{% trans 'Enabled' %}{% verbatim %}</option>
+            <option value="I"{{# ifequals state 'I'}} selected{{/ ifequals }}>{% endverbatim %}{% trans 'Disabled' %}{% verbatim %}</option>
+          </select>
+        </div>
+      </div>
+      
+      {{# if groups }}
+      <div class="form-group">
+        <label for="id_state" class="col-sm-2 control-label">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</label>
+
+        <div class="col-sm-10">
+          <select multiple name="groups" class="selectpicker show-menu-arrow show-tick modal_field_data" data-style="btn-default" data-width="100%" id="id_state">
+            {{# each groups_all }}
+            {{# ifequals type 'group' }}
+                <option value="{{ id }}"{{# ifbelongs id ../../groups }} selected{{/ ifbelongs}}>{{ name }}</option>
+            {{/ ifequals }}
+            {{/ each }}
+          </select>
+        </div>
+      
+      </div>
+      {{/ if }}
+</form>
+{% endverbatim %}
