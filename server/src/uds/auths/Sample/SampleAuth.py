@@ -275,7 +275,7 @@ class SampleAuth(auths.Authenticator):
         to create new users "by hand", i mean, the "new" options from menus will dissapear.
         
         usrData is a dictionary that contains the input parameters from user, 
-        with at least name, realName, comments, state & password.
+        with at least name, real_name, comments, state & password.
         
         We can modify this parameters, we can modify ALL, but name is not recommended to 
         modify it unles you know what you are doing.
@@ -283,7 +283,7 @@ class SampleAuth(auths.Authenticator):
         Here, we will set the state to "Inactive" and realName to the same as username, but twice :-)
         '''
         from uds.core.util.State import State
-        usrData['realName'] = usrData['name'] + ' ' + usrData['name']
+        usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
         
     def modifyUser(self, usrData):
@@ -295,7 +295,7 @@ class SampleAuth(auths.Authenticator):
         it's valid).
         
         usrData is a dictionary that contains the input parameters from user, 
-        with at least name, realName, comments, state & password.
+        with at least name, real_name, comments, state & password.
         
         We can modify this parameters, we can modify ALL, but name is not recommended to 
         modify it unless you know what you are doing.
@@ -303,5 +303,5 @@ class SampleAuth(auths.Authenticator):
         Here, we will simply update the realName of the user, and (we have to take care
         this this kind of things) modify the userName to a new one, the original plus '-1'
         '''
-        usrData['realName'] = usrData['name'] + ' ' + usrData['name']
+        usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['name'] = usrData['name'] + '-1'

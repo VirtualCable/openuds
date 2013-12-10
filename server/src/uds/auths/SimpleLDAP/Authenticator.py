@@ -268,7 +268,7 @@ class SimpleLDAPAuthenticator(Authenticator):
         if res is None:
             raise AuthenticatorException(_('Username not found'))
         # Fills back realName field
-        usrData['realName'] = self.__getUserRealName(res)
+        usrData['real_name'] = self.__getUserRealName(res)
 
     def getRealName(self, username):
         '''

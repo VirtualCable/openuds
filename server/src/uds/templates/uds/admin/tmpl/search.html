@@ -1,17 +1,17 @@
 {% load i18n %}
 {% verbatim %}
-<form role="form">
+<form role="form" class="do-search-form">
     <div class="form-group">
-        <label for="id_srch_search">{{ search_label }}</label>
+        <label>{{ search_label }}</label>
         <div class="input-group">
             <input type="text" class="form-control" name="search">
             <span class="input-group-btn">
-                <button class="btn btn-info" type="button"><i class="fa fa-search"></i> {% endverbatim %}{% trans 'Search' %}{% verbatim %}</button>
+                <button class="btn btn-info button-do-search" type="button"><i class="fa fa-search"></i> {% endverbatim %}{% trans 'Search' %}{% verbatim %}</button>
             </span>
         </div><!-- /input-group -->
     </div>
     <div class="form-group">
-        <label for="id_srch_search">{{ results_label }}</label>
+        <label>{{ results_label }}</label>
         <select class="form-control" size="8" name="results">
         </select>
     </div>

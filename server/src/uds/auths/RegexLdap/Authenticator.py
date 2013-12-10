@@ -295,14 +295,14 @@ class RegexLdap(auths.Authenticator):
         External sources already has the user  cause they are managed externally, so, it can at most test if the users exists on external source
         before accepting it.
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
-        @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password 
+        @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, real_name, comments, state & password 
         @return:  Raises an exception (AuthException) it things didn't went fine 
         '''
         res = self.__getUser(usrData['name'])
         if res is None:
             raise AuthenticatorException(_('Username not found'))
         # Fills back realName field
-        usrData['realName'] = self.__getUserRealName(res)
+        usrData['real_name'] = self.__getUserRealName(res)
 
 
     def getRealName(self, username):

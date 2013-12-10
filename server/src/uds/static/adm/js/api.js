@@ -250,6 +250,15 @@ BasicModelRest.prototype = {
         });
         
     },
+    // Search
+    search: function(id, type, term, success_fnc, fail_fnc) {
+        "use strict";
+        return this.get({
+            id: id + '/search?type=' + encodeURIComponent(type) + '&term=' + encodeURIComponent(term),
+            success: success_fnc,
+            fail: fail_fnc
+        });
+    },
     // -------------
     // Log methods
     // -------------
@@ -311,8 +320,6 @@ BasicModelRest.prototype = {
            method: 'POST'
         });
     },
-    
-    
     // --------------
     // Delete
     // --------------

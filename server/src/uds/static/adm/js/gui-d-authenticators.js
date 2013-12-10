@@ -48,22 +48,49 @@ gui.authenticators.link = function(event) {
     
     
     // Search button event generator for user/group
-    var searchForm = function(modalId, model, title, searchLabel, resultsLabel, srcSelector) {
-        $(modalId + ' .button-search').on('click', function() {
+    var searchForm = function(parentModalId, type, id, title, searchLabel, resultsLabel, srcSelector) {
+        var errorModal = gui.failRequestModalFnc(gettext('Search error'));
+        
+        $(parentModalId + ' .button-search').on('click', function() {
             api.templates.get('search', function(tmpl) { // Get form template
                 var modalId = gui.launchModal(title, api.templates.evaluate(tmpl, {
                     search_label : searchLabel,
                     results_label : resultsLabel,
                 }), { actionButton: '<button type="button" class="btn btn-success button-accept">' + gettext('Accept') + '</button>'});
-                var searchInput = modalId + ' input[name="search"]';
-                var resultsInput = modalId + ' select';
                 
-                $(searchInput).val($(srcSelector).val());
+                var $searchInput = $(modalId + ' input[name="search"]');
+                var $select = $(modalId + ' select[name="results"]');
+                var $searchButton = $(modalId + ' .button-do-search'); 
+                
+                $searchInput.val($(srcSelector).val());
                 
                 $(modalId + ' .button-accept').on('click', function(){
-                    gui.doLog('Accepted'); 
+                    var value = $select.val();
+                    if( value ) {
+                        $(srcSelector).val(value);
+                        $(modalId).modal('hide');
+                    }
                 });
                 
+                $searchButton.on('click', function() {
+                    $searchButton.addClass('disabled');
+                    var term = $searchInput.val();
+                    api.authenticators.search(id, type, term, function(data) {
+                        $searchButton.removeClass('disabled');
+                        $select.empty();
+                        gui.doLog(data);
+                        $.each(data, function(undefined, value) {
+                            $select.append('<option value="' + value.id + '">' + value.id + ' (' +  value.name + ')</option>');
+                        });
+                    }, function(jqXHR, textStatus, errorThrown) {
+                        $searchButton.removeClass('disabled');
+                        errorModal(jqXHR, textStatus, errorThrown);
+                    });
+                });
+                
+                if( $searchInput.val() != '') {
+                    $searchButton.click();
+                }
             });
         });  
     };
@@ -143,8 +170,11 @@ gui.authenticators.link = function(event) {
                     onLoad: function(k) {
                         gui.tools.unblockUI();
                     },
+                    onRefresh : function() {
+                        $('#users-log-placeholder').empty(); // Remove logs on detail refresh
+                    },
                     onEdit: function(value, event, table, refreshFnc) {
-                        var password = "#æð~¬~@æß”¢ß€~½¬@#~½¬@|"; // Garbage for password (to detect change)
+                        var password = "#æð~¬ŋ@æß”¢€~½¬@#~þ¬@|"; // Garbage for password (to detect change)
                         gui.tools.blockUI();
                         api.templates.get('user', function(tmpl) { // Get form template
                             group.rest.overview(function(groups) { // Get groups
@@ -228,7 +258,7 @@ gui.authenticators.link = function(event) {
                                 
                                 gui.tools.unblockUI();
                                 
-                                searchForm(modalId, user, gettext('Search users'), gettext('User'), gettext('Users found'), modalId + ' input[name="name"]'); // Enable search button click, if it exist ofc
+                                searchForm(modalId, 'user', id, gettext('Search users'), gettext('User'), gettext('Users found'), modalId + ' input[name="name"]'); // Enable search button click, if it exist ofc
                                 
                                 $(modalId + ' .button-accept').click(function(){
                                     var fields = gui.forms.read(modalId);

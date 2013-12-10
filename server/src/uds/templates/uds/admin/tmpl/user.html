@@ -7,15 +7,21 @@
         <label for="id_username" class="col-sm-2 control-label">{{ username_label }}</label>
         <div class="col-sm-10">
           {{# if canSearchUsers }}
+          {{# if username }}
+          {{ else }}
           <div class="input-group">
+          {{/ if }}
           {{/ if }}
               <input name="name" value="{{ username }}" type="text" id="id_username" class="form-control modal_field_data" 
                      placeholder="{% endverbatim %}{% trans 'Username' %}{% verbatim %}"{{# if username }}readonly{{/ if }}>
           {{# if canSearchUsers }}
+          {{# if username }}
+          {{ else }}
               <span class="input-group-btn">
                 <button class="btn btn-info button-search" type="button"><i class="fa fa-search"></i> {% endverbatim %}{% trans 'Search' %}{% verbatim %}</button>
               </span>
           </div>
+          {{/ if }}
           {{/ if }}
         </div>
       </div>

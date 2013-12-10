@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 class Authenticators(ModelHandler):
     model = Authenticator
+    custom_methods = ['search']
     detail = { 'users': Users, 'groups':Groups }
     save_fields = ['name', 'comments', 'priority', 'small_name']
 
@@ -90,3 +91,24 @@ class Authenticators(ModelHandler):
                  'type': type_.type(),
         }
     
+    # Custom "search" method
+    def search(self, item):
+        try:
+            type_ = self._params['type']
+            if type_ not in ('user', 'group'):
+                self.invalidRequestException()
+                
+            term = self._params['term']
+
+            auth = item.getInstance()
+                
+            canDoSearch = type_ == 'user' and (auth.searchUsers != auths.Authenticator.searchUsers) or (auth.searchGroups != auths.Authenticator.searchGroups)
+            if canDoSearch is False:
+                self.invalidRequestException()
+                
+            if type_ == 'user':
+                return auth.searchUsers(term) 
+            else:
+                return auth.searchGroups(term)
+        except:
+            self.invalidRequestException()

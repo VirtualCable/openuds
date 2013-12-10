@@ -319,6 +319,7 @@ class ModelHandler(BaseModelHandler):
     needs_staff = True
     # Which model does this manage
     model = None
+    custom_methods = [] # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
     detail = None # Dictionary containing detail routing 
     # Put needed fields
@@ -380,6 +381,8 @@ class ModelHandler(BaseModelHandler):
             path = self._path + '/'.join(args[:2])
             detail = detailCls(self, path, self._params, *args, parent = item)
             method = getattr(detail, self._operation)
+        except KeyError:
+            self.invalidMethodException()
         except AttributeError:
             self.invalidMethodException()
             
@@ -435,10 +438,20 @@ class ModelHandler(BaseModelHandler):
             if nArgs != 2:
                 self.invalidRequestException()
             try:
-                item = self.model.objects.filter(pk=self._args[0])[0]
+                item = self.model.objects.get(pk=self._args[0])
             except:
                 self.invalidItemException()
             return self.getLogs(item)
+
+        # if has custom methods
+        if self._args[1] in self.custom_methods:
+            try:
+                operation = getattr(self, self._args[1])
+                item = self.model.objects.get(pk=self._args[0])
+            except:
+                self.invalidMethodException()
+                
+            return operation(item)
 
         # If has detail and is requesting detail        
         if self.detail is not None:

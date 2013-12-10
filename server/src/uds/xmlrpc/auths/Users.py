@@ -90,6 +90,7 @@ def createUser(credentials, usr):
     auth = DbAuthenticator.objects.get(pk=usr['idParent'])
     try:
         authInstance = auth.getInstance()
+        usr['real_name'] = usr['realName'] # Copy to keep this in the right place
         authInstance.createUser(usr) # Remenber, this throws an exception if there is an error
         staffMember = isAdmin = False
         if credentials.isAdmin is True:
@@ -99,7 +100,7 @@ def createUser(credentials, usr):
         if authInstance.needsPassword is True:
             password = CryptoManager.manager().hash(usr['password'])
             
-        user = auth.users.create(name = usr['name'], real_name = usr['realName'], comments = usr['comments'], state = usr['state'], 
+        user = auth.users.create(name = usr['name'], real_name = usr['real_name'], comments = usr['comments'], state = usr['state'], 
                                  password = password, staff_member = staffMember, is_admin = isAdmin)
         
         if authInstance.isExternalSource == False:
@@ -123,10 +124,11 @@ def modifyUser(credentials, usr):
     try:
         user = DbUser.objects.get(pk=usr['id'])
         auth = user.manager.getInstance()
+        usr['real_name'] = usr['realName'] # Copy to keep this in the right place
         auth.modifyUser(usr) # Notifies authenticator
         logger.debug(usr)
         user.name = usr['name']
-        user.real_name = usr['realName']
+        user.real_name = usr['real_name']
         user.comments = usr['comments']
         if credentials.isAdmin is True:
             logger.debug('Is an admin')

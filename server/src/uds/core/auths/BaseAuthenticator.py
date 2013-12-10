@@ -515,7 +515,7 @@ class Authenticator(Module):
         
         Args:
             usrData: Contains data received from user directly, that is a dictionary
-                     with at least: name, realName, comments, state & password.
+                     with at least: name, real_name, comments, state & password.
                      This is an in/out parameter, so you can modify, for example,
                      **realName** 
             
@@ -545,7 +545,7 @@ class Authenticator(Module):
         
         Args:
             usrData: Contains data received from user directly, that is a dictionary
-                     with at least: name, realName, comments, state & password.
+                     with at least: name, real_name, comments, state & password.
                      This is an in/out parameter, so you can modify, for example,
                      **realName** 
              
