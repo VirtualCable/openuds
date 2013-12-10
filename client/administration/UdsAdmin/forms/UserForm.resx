@@ -277,10 +277,10 @@
     <value>Fill</value>
   </data>
   <data name="realName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 32</value>
+    <value>86, 32</value>
   </data>
   <data name="realName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>283, 20</value>
+    <value>284, 20</value>
   </data>
   <data name="realName.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -361,7 +361,7 @@
     <value>Fill</value>
   </data>
   <data name="name.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 3</value>
+    <value>86, 3</value>
   </data>
   <data name="name.Size" type="System.Drawing.Size, System.Drawing">
     <value>215, 20</value>
@@ -385,10 +385,10 @@
     <value>Fill</value>
   </data>
   <data name="comments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 61</value>
+    <value>86, 61</value>
   </data>
   <data name="comments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>283, 20</value>
+    <value>284, 20</value>
   </data>
   <data name="comments.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -409,7 +409,7 @@
     <value>NoControl</value>
   </data>
   <data name="searchButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>308, 3</value>
+    <value>307, 3</value>
   </data>
   <data name="searchButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>30, 20</value>
@@ -466,10 +466,10 @@
     <value>Fill</value>
   </data>
   <data name="state.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 88</value>
+    <value>86, 88</value>
   </data>
   <data name="state.Size" type="System.Drawing.Size, System.Drawing">
-    <value>283, 21</value>
+    <value>284, 21</value>
   </data>
   <data name="state.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -610,10 +610,10 @@
     <value>Fill</value>
   </data>
   <data name="password.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 169</value>
+    <value>86, 169</value>
   </data>
   <data name="password.Size" type="System.Drawing.Size, System.Drawing">
-    <value>283, 20</value>
+    <value>284, 20</value>
   </data>
   <data name="password.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -637,7 +637,7 @@
     <value>Fill</value>
   </data>
   <data name="staffMember.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 115</value>
+    <value>86, 115</value>
   </data>
   <data name="staffMember.Size" type="System.Drawing.Size, System.Drawing">
     <value>215, 21</value>
@@ -664,7 +664,7 @@
     <value>Fill</value>
   </data>
   <data name="admin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 142</value>
+    <value>86, 142</value>
   </data>
   <data name="admin.Size" type="System.Drawing.Size, System.Drawing">
     <value>215, 21</value>
@@ -709,7 +709,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="realName" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="label4" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="name" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="comments" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="searchButton" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="userNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="state" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="passwordLabel" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="staffMemberLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="adminLabel" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="password" Row="6" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="staffMember" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="admin" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,27,54098,Percent,72,45902,Absolute,67" /&gt;&lt;Rows Styles="Percent,15,Percent,15,Percent,14,Percent,14,Percent,14,Percent,14,Percent,14,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="realName" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="label4" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="name" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="comments" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="searchButton" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="userNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="state" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="passwordLabel" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="staffMemberLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="adminLabel" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="password" Row="6" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="staffMember" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="admin" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,27,54098,Percent,72,45902,Absolute,68" /&gt;&lt;Rows Styles="Percent,15,Percent,15,Percent,14,Percent,14,Percent,14,Percent,14,Percent,14,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="user.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>

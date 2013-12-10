@@ -70,6 +70,8 @@ namespace UdsAdmin.forms
             groupLabel.Text = _authType.groupNameLabel;
             if (_id != null)
             {
+                searchButton.Enabled = false;
+                name.Enabled = false;
                 try
                 {
                     xmlrpc.Group grp = xmlrpc.UdsAdminService.GetGroup(_id);
