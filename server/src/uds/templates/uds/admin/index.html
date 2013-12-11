@@ -11,20 +11,25 @@
 
         <link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon">
 
+        {% if MINIFY != True %}
         <!-- Bootstrap -->
-        <link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/font-awesome.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/bootstrap-switch.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/bootstrap-select.min.css" rel="stylesheet" media="screen">
 
         <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/dataTables.bootstrap.css" rel="stylesheet" media="screen">
         
-        <link href="{% get_static_prefix %}css/tables.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/tables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/buttons.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/uds-admin.css" rel="stylesheet" media="screen">
+        {% else %}
+        <!-- minified css from: bootstrap, font-awesome, bootstrap-formhelper, bootstrap-select, bootstrap-switch, datatables, tabletools, tabletools.botstrap, uds CSSs  -->
+        <link href="{% get_static_prefix %}adm/css/admin.min.css" rel="stylesheet" media="screen">
+        {% endif %}
     </head>
     
     <body>
@@ -57,6 +62,7 @@
             }(window.api = window.api || {}, jQuery));
         </script>
         
+        {% if MINIFY != True %}
         <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
@@ -101,9 +107,9 @@
         <script src="{% get_static_prefix %}adm/js/gui-d-authenticators.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-d-osmanagers.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-d-connectivity.js"></script>
-        {% comment %}
+        {% else %}
         <script src="{% get_static_prefix %}adm/js/admin.min.js"></script>
-        {% endcomment %}
+        {% endif %}
         
         <script>
             $(function() {

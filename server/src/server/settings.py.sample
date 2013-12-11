@@ -15,6 +15,7 @@ SITE_ROOT = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+MINIFY = False
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
