@@ -73,7 +73,7 @@
         success_fnc = success_fnc || function(){};
         api.doLog('Getting template ' + name);
         if (name.indexOf('?') == -1) {
-            if ($this.cache.get(name+'-------') ) {
+            if ($this.cache.get(name) ) {
                 success_fnc($this.cache.get(name));
                 return;
              // Let's check if a "preloaded template" exists                

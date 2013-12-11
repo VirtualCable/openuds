@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models import Transport
+from uds.models import Transport, Network
 from uds.core.transports import factory
 
 from uds.REST import Handler, NotFound
@@ -62,17 +62,24 @@ class Transports(ModelHandler):
     
     def getGui(self, type_):
         try:
-            return self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments']), {
-                       'name': 'priority',
-                       'required': True,
-                       'value': '1',
-                       'label': ugettext('Priority'),
-                       'tooltip': ugettext('Priority of this transport'),
-                       'type': 'numeric',
-                       'order': -50, # At end
-                   })
+            return self.addField(self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'priority']), {
+                       'name': 'nets_positive',
+                       'value': True,
+                       'label': ugettext('Network access'),
+                       'tooltip': ugettext('If ACTIVE, the transport will be enabled for the selected networks.If INACTIVE, trans port will be disabled for selected networks'),
+                       'type': 'checkbox',
+                       'order': 100, # At end
+                   }), {
+                        'name': 'networks',
+                        'value': [],
+                        'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()), # TODO: We will fix this behavior after current admin client is fully removed 
+                        'label': ugettext('Networks'),
+                        'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
+                        'type': 'multichoice',
+                        'order': 101
+                  })
         except:
-            raise NotFound('type not found')
+            self.invalidItemException()
     
     def item_as_dict(self, item):
         type_ = item.getType()
@@ -81,7 +88,16 @@ class Transports(ModelHandler):
                  'comments': item.comments,
                  'priority': item.priority, 
                  'nets_positive': item.nets_positive,
-                 'networks': [ n.id for n in item.networks.all() ],
+                 'networks': [ { 'id': n.id } for n in item.networks.all() ],
                  'deployed_count': item.deployedServices.count(),
                  'type': type_.type(),
         }
+        
+    def afterSave(self, item):
+        try:
+            networks = self._params['networks']
+        except: # No networks passed in, this is ok
+            return
+        
+        logger.debug('Params: {0}'.format(networks))
+        item.networks = Network.objects.filter(id__in=networks)

@@ -374,6 +374,10 @@ class ModelHandler(BaseModelHandler):
     def checkSave(self, item):
         pass
     
+    # Invoked right after saved an item (no matter if new or edition)
+    def afterSave(self, item):
+        pass
+    
     # End overridable 
                 
     # Helper to process detail
@@ -513,6 +517,8 @@ class ModelHandler(BaseModelHandler):
             if deleteOnError:
                 item.delete()
             raise
+        
+        self.afterSave(item)
 
         return res 
     
