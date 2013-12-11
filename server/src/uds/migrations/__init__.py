@@ -15,7 +15,7 @@ def modify_MySQL_storage(*args, **kwargs):
     
     innoDbTables = ( models.UserService, models.DeployedService, models.DeployedServicePublication,
                      models.Scheduler, models.DelayedTask, models.User, models.Group, models.Authenticator,
-                     models.Service, models.Provider, )
+                     models.Service, models.Provider, models.Storage)
     for model in innoDbTables:
         db_table=model._meta.db_table
         stmt = 'ALTER TABLE %s ENGINE=%s' % (db_table,'InnoDB')

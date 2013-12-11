@@ -11,7 +11,7 @@ gui.providers.link = function(event) {
             },
     };
     
-    var detailLogTable;
+    var detailLogTable = null;
     var clearDetailLog = function() {
         if( detailLogTable ) {
             var $tbl = $(detailLogTable).dataTable();
@@ -76,7 +76,7 @@ gui.providers.link = function(event) {
                 // Giving the name compossed with type, will ensure that only styles will be reattached once
                 var services = new GuiElement(api.providers.detail(id, 'services'), 'services-'+selected[0].type);
                 
-                var tmpLogTable;
+                var tmpLogTable = null;
                 var servicesTable = services.table({
                     container : 'services-placeholder',
                     rowSelect : 'single',

@@ -41,28 +41,7 @@
          </div>
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
         
-        <script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
-        <script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
-        <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
-        <script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
-        <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
-
-        <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
-        
-        <!-- template engine -->
-        <script src="{% get_static_prefix %}adm/js/handlebars-v1.1.2.js"></script>
-        
-
-        <!--  for "save" from javascript -->
-        <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
-        <script src="{% get_static_prefix %}adm/js/FileSaver.js"></script>
-        
-<!--         <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script> -->
-        
-        <script src="{% get_static_prefix %}adm/js/dataTables.bootstrap.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery-2.0.3.min.js"></script>
         
         <script>
             // Initialize a few settings, needed for api to work
@@ -70,17 +49,36 @@
                 api.config = {
                     token: "{% auth_token %}",
                     auth_header: "{% auth_token_header %}",
-                    lang: "LANGUAGE_CODE",
+                    lang: "{{ LANGUAGE_CODE }}",
                     base_url: "{% url 'REST' '' %}",
                     template_url: "{% url 'uds.admin.views.tmpl' '' %}",
                     img_url: "{% get_static_prefix %}adm/img/",
                 };
-                
-                
             }(window.api = window.api || {}, jQuery));
         </script>
+        
+        <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
+        <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/bootstrap-select.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
 
-        <!-- First all api related stuff -->        
+        <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
+        
+        <!--  for "save" from javascript -->
+        <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
+        <script src="{% get_static_prefix %}adm/js/FileSaver.js"></script>
+        
+        <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script>
+        
+        <script src="{% get_static_prefix %}adm/js/dataTables.bootstrap.js"></script>
+                
+        <!-- template engine -->
+        <script src="{% get_static_prefix %}adm/js/handlebars-v1.1.2.js"></script>
+        
+        <!-- First all api related stuff -->
         <script src="{% get_static_prefix %}adm/js/api.js"></script>
 
         <!-- utilities attached to api -->
@@ -102,13 +100,17 @@
         <script src="{% get_static_prefix %}adm/js/gui-d-service-providers.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-d-authenticators.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-d-osmanagers.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui-d-connectivity.js"></script>
+        {% comment %}
+        <script src="{% get_static_prefix %}adm/js/admin.min.js"></script>
+        {% endcomment %}
         
         <script>
             $(function() {
-    			// Initialize gui
-            	gui.init();
             	// set default error function
             	api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
+    			// Initialize gui
+            	gui.init();
             });        
         </script>
         {% block js %}{% endblock %}

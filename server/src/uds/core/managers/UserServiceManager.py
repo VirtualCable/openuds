@@ -186,8 +186,6 @@ class UserServiceManager(object):
     def getStateFilter():
         return Q(state__in=[State.PREPARING, State.USABLE])
 
-    
-    @transaction.atomic
     def __checkMaxDeployedReached(self, deployedService):
         '''
         Checks if maxDeployed for the service has been reached, and, if so,
@@ -228,7 +226,6 @@ class UserServiceManager(object):
         return deployedServicePublication.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
                                        state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service, user=user, in_use=False)
         
-    @transaction.atomic
     def __createAssignedAtDbForNoPublication(self, deployedService, user):
         '''
         __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
@@ -254,7 +251,6 @@ class UserServiceManager(object):
         UserServiceOpChecker.checkAndUpdateState(cache, ci, state)
         return cache
         
-    @transaction.atomic
     def createAssignedFor(self, ds, user):
         '''
         Creates a new assigned deployed service for the publication and user indicated

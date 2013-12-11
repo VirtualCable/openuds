@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from django.db import transaction
 from uds.models import Storage as dbStorage
 import hashlib
 import logging
@@ -50,7 +51,7 @@ class Storage(object):
         h.update(str(key))
         return h.hexdigest()
 
-        
+    @transaction.atomic
     def saveData(self, skey, data, attr1 = None):
         key = self.__getKey(skey)
         data = data.encode(Storage.CODEC)
