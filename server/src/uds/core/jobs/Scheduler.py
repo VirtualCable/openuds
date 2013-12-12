@@ -101,23 +101,24 @@ class Scheduler(object):
         '''
         jobInstance = None
         try:
+            now = getSqlDatetime() # Datetimes are based on database server times
+            filter = Q(state = State.FOR_EXECUTE) & (Q(owner_server = self._hostname) | Q(owner_server = '')) & (Q(last_execution__gt = now) | Q(next_execution__lt = now))
             with transaction.atomic():
-                now = getSqlDatetime() # Datetimes are based on database server times
-                filter = Q(state = State.FOR_EXECUTE) & (Q(owner_server = self._hostname) | Q(owner_server = '')) & (Q(last_execution__gt = now) | Q(next_execution__lt = now))
                 # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
                 # This params are all set inside filter (look at __init__)
                 job = dbScheduler.objects.select_for_update().filter(filter).order_by('next_execution')[0]
-                jobInstance = job.getInstance()
-                
-                if jobInstance == None:
-                    logger.error('Job instance can\'t be resolved for {0}, removing it'.format(job))
-                    job.delete()
-                    return
-                logger.debug('Executing job:>{0}<'.format(job.name))
                 job.state = State.RUNNING
                 job.owner_server = self._hostname
                 job.last_execution = now
                 job.save()
+                
+            jobInstance = job.getInstance()
+            
+            if jobInstance == None:
+                logger.error('Job instance can\'t be resolved for {0}, removing it'.format(job))
+                job.delete()
+                return
+            logger.debug('Executing job:>{0}<'.format(job.name))
             JobThread(jobInstance, job).start() # Do not instatiate thread, just run it
         except IndexError:
             # Do nothing, there is no jobs for execution            

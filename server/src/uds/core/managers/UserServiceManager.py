@@ -216,7 +216,6 @@ class UserServiceManager(object):
                                                state_date=now, creation_date=now, data = '', deployed_service = deployedServicePublication.deployed_service, 
                                                user = None, in_use = False )
         
-    @transaction.atomic
     def __createAssignedAtDb(self, deployedServicePublication, user):
         '''
         Private method to instatiate an assigned element at database with default state
@@ -238,7 +237,6 @@ class UserServiceManager(object):
                                        state_date=now, creation_date=now, data='', publication=None, user=user, in_use=False)
         
     
-    @transaction.atomic
     def createCacheFor(self, deployedServicePublication, cacheLevel):
         '''
         Creates a new cache for the deployed service publication at level indicated
@@ -270,7 +268,6 @@ class UserServiceManager(object):
             
         return assigned
         
-    @transaction.atomic
     def createAssignable(self, ds, deployed, user):
         '''
         Creates an assignable service
@@ -304,7 +301,6 @@ class UserServiceManager(object):
             cache.setState(State.PREPARING)
             
         UserServiceOpChecker.makeUnique(cache, ci, state)
-        transaction.commit()
         
     @transaction.atomic
     def cancel(self, uService):

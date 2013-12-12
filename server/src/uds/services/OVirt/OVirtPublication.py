@@ -81,7 +81,7 @@ class OVirtPublication(Publication):
         '''
         Realizes the publication of the service
         '''
-        self._name = self.service().sanitizeVmName('UDS Publication' + ' ' + self.dsName() + "-" + str(self.revision()))
+        self._name = self.service().sanitizeVmName('UDSP ' + self.dsName() + "-" + str(self.revision()))
         comments = _('UDS pub for {0} at {1}').format( self.dsName(), str(datetime.now()).split('.')[0] )
         self._reason = '' # No error, no reason for it
         self._destroyAfter = 'f'

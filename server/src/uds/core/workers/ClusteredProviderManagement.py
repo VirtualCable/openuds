@@ -176,7 +176,7 @@ class ClusterMigrationTask(DelayedTask):
                 logger.error('Can\'t update state of uService object')
         
 class ClusterBalancingTask(DelayedTask):
-    def __init(self, providerId):
+    def __init__(self, providerId):
         super(ClusterBalancingTask, self).__init__()
         self._id = providerId
         
@@ -240,7 +240,7 @@ class ClusterBalancingJob(Job):
     frecuency = 90
     friendly_name = 'Clustered Providers Balancing job'
     
-    def __init(self, environment):
+    def __init__(self, environment):
         super(ClusterBalancingJob,self).__init__(environment)
 
     def run(self):

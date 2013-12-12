@@ -51,15 +51,16 @@ class Storage(object):
         h.update(str(key))
         return h.hexdigest()
 
-    @transaction.atomic
     def saveData(self, skey, data, attr1 = None):
         key = self.__getKey(skey)
         data = data.encode(Storage.CODEC)
         attr1 = '' if attr1 == None else attr1
         try:
-            dbStorage.objects.create(owner = self._owner, key = key, data = data, attr1 = attr1 )
+            with transaction.atomic():
+                dbStorage.objects.create(owner = self._owner, key = key, data = data, attr1 = attr1 )
         except Exception:
-            dbStorage.objects.filter(key=key).update(owner = self._owner, data = data, attr1 = attr1)
+            with transaction.atomic():
+                dbStorage.objects.filter(key=key).update(owner = self._owner, data = data, attr1 = attr1)
         logger.debug('Key saved')
         
     def put(self, skey, data):
