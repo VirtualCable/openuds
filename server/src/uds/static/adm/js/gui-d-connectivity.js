@@ -26,9 +26,12 @@ gui.connectivity.link = function(event) {
             onDelete: gui.methods.del(gui.connectivity.transports, gettext('Delete transport'), gettext('Error deleting transport')),
         });
         gui.connectivity.networks.table({
-            rowSelect : 'multi',
+            rowSelect : 'single',
             container : 'networks-placeholder',
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
+            onNew : gui.methods.typedNew(gui.connectivity.networks, gettext('New network'), gettext('Error creating network')),
+            onEdit: gui.methods.typedEdit(gui.connectivity.networks, gettext('Edit network'), gettext('Error processing network')),
+            onDelete: gui.methods.del(gui.connectivity.networks, gettext('Delete network'), gettext('Error deleting network')),
         });
     });
       

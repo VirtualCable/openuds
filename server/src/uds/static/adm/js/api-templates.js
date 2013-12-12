@@ -73,7 +73,7 @@
         success_fnc = success_fnc || function(){};
         api.doLog('Getting template ' + name);
         if (name.indexOf('?') == -1) {
-            if ($this.cache.get(name) ) {
+            if ($this.cache.get(name+'------') ) {
                 success_fnc($this.cache.get(name));
                 return;
              // Let's check if a "preloaded template" exists                
@@ -105,7 +105,7 @@
     // Simple JavaScript Templating, using HandleBars
     api.templates.evaluate = function(str, context) {
         // Figure out if we're getting a template, or if we need to
-        // load the template - and be sure to cache the result.
+        // load the template - and be sure to cache the result (compiled template).
         var cached;
         if( !/\W/.test(str) ) {
             cached = this.cache.get('_'+str);

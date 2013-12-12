@@ -320,13 +320,12 @@
     };
     
     gui.methods.del = function(parent, modalTitle, modalErrorMsg) {
-        var self = parent;
         return function(value, event, table, refreshFnc) {
             var content = gettext('Are you sure do you want to delete ') + '<b>' + value.name + '</b>';
             var modalId = gui.launchModal(modalTitle, content, { actionButton: '<button type="button" class="btn btn-danger button-accept">' + gettext('Delete') + '</button>'});
             $(modalId + ' .button-accept').click(function(){
                 $(modalId).modal('hide');
-                self.rest.del(value.id, function(){
+                parent.rest.del(value.id, function(){
                     refreshFnc();
                     gui.notify(gettext('Item deleted'), 'success');
                 }, gui.failRequestModalFnc(modalErrorMsg) );

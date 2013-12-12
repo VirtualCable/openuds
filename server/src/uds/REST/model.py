@@ -50,6 +50,10 @@ TABLEINFO = 'tableinfo'
 GUI = 'gui'
 LOG = 'log'
 
+# Exception to "rethrow" on save error
+class SaveException(Exception):
+    pass
+
 # Base for Gui Related mixins
 class BaseModelHandler(Handler):
     
@@ -328,7 +332,7 @@ class ModelHandler(BaseModelHandler):
     table_fields = []
     table_title = ''
     
-    # This method must be override, depending on what is provided
+    # This methods must be override, depending on what is provided
     
     # Data related
     def item_as_dict(self, item):
@@ -372,6 +376,10 @@ class ModelHandler(BaseModelHandler):
     # Save related, checks if the item can be saved
     # If it can't be saved, raises an exception
     def checkSave(self, item):
+        pass
+    
+    # Invoked to possibily fix fields (or add new one, or check
+    def beforeSave(self, fields):
         pass
     
     # Invoked right after saved an item (no matter if new or edition)
@@ -422,6 +430,8 @@ class ModelHandler(BaseModelHandler):
                 return list(self.getTypes())
             elif self._args[0] == TABLEINFO:
                 return self.processTableFields(self.table_title, self.table_fields)
+            elif self._args[0] == GUI:
+                return self.getGui(None)
                 
             # get item ID
             try:
@@ -485,6 +495,7 @@ class ModelHandler(BaseModelHandler):
         try:
             # Extract fields
             args = self.readFieldsFromParams(self.save_fields)
+            self.beforeSave(args)
             deleteOnError = False
             if len(self._args) == 0: # create new
                 item = self.model.objects.create(**args)
@@ -497,6 +508,8 @@ class ModelHandler(BaseModelHandler):
             raise NotFound('Item not found')
         except IntegrityError: # Duplicate key probably 
             raise RequestError('Element already exists (duplicate key error)')
+        except SaveException as e:
+            raise RequestError(unicode(e))
         except Exception:
             raise RequestError('incorrect invocation to PUT')
 

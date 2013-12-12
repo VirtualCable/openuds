@@ -32,10 +32,11 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Network
+from uds.core.util import net
 
-from uds.REST.model import ModelHandler
+from uds.REST.model import ModelHandler, SaveException
 
 import logging
 
@@ -45,13 +46,34 @@ logger = logging.getLogger(__name__)
 
 class Networks(ModelHandler):
     model = Network
+    save_fields = ['name', 'net_string']
 
     table_title =  _('Current Networks')
     table_fields = [
             { 'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success' } },
-            { 'net_string': {'title':  _('Networks')}},
+            { 'net_string': {'title':  _('Range')}},
             { 'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]
+    
+    def beforeSave(self, fields):
+        logger.debug('Before {0}'.format(fields))
+        try:
+            nr = net.networksFromString(fields['net_string'], False)
+            fields['net_start'] = nr[0]
+            fields['net_end'] = nr[1]
+        except Exception as e:
+            raise SaveException(ugettext('Invalid network: ') + unicode(e))
+        logger.debug('Processed {0}'.format(fields))
+    
+    def getGui(self, type_):
+        return self.addField(self.addDefaultFields([], ['name']),{
+                       'name': 'net_string',
+                       'value': True,
+                       'label': ugettext('Network range'),
+                       'tooltip': ugettext('Network range. Accepts most network definitions formats (range, subnet, host, etc...'),
+                       'type': 'text',
+                       'order': 100, # At end
+                   })
     
     def item_as_dict(self, item):
         return { 'id': item.id,
@@ -59,3 +81,4 @@ class Networks(ModelHandler):
                  'net_string': item.net_string, 
                  'networks_count': item.transports.count(),
         }
+        
