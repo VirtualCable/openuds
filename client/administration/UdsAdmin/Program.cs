@@ -46,7 +46,7 @@ namespace UdsAdmin
         {
             string[] args = Environment.GetCommandLineArgs();
 
-            UdsAdmin.Properties.Settings.Default.debug = true;
+            UdsAdmin.Properties.Settings.Default.debug = false;
             foreach (string arg in args)
             {
                 if (arg == "--enabledebug" || arg == "--enabledevel")

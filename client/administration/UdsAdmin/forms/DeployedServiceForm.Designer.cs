@@ -202,6 +202,11 @@
             // cacheL2ServicesBox
             // 
             resources.ApplyResources(this.cacheL2ServicesBox, "cacheL2ServicesBox");
+            this.cacheL2ServicesBox.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.cacheL2ServicesBox.Name = "cacheL2ServicesBox";
             // 
             // cacheL2Label
@@ -212,6 +217,11 @@
             // cacheServicesBox
             // 
             resources.ApplyResources(this.cacheServicesBox, "cacheServicesBox");
+            this.cacheServicesBox.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.cacheServicesBox.Name = "cacheServicesBox";
             // 
             // label5
@@ -227,6 +237,11 @@
             // initialServicesBox
             // 
             resources.ApplyResources(this.initialServicesBox, "initialServicesBox");
+            this.initialServicesBox.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.initialServicesBox.Name = "initialServicesBox";
             // 
             // label7
@@ -237,6 +252,11 @@
             // maxServicesBox
             // 
             resources.ApplyResources(this.maxServicesBox, "maxServicesBox");
+            this.maxServicesBox.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.maxServicesBox.Name = "maxServicesBox";
             // 
             // tableLayoutPanel1
