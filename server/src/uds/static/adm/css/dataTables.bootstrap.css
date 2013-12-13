@@ -105,9 +105,20 @@ div.dataTables_scrollFoot table {
 	color: white;
 }
 
-.table tbody tr.active:hover td,
-.table tbody tr.active:hover th {
-	background-color: #0075b0 !important;
+.table-striped > tbody > tr:nth-child(2n+1) > td { background-color: #d9edf7; }
+.table-striped > tbody > tr:nth-child(2n) > td { background-color: white; }
+
+.table-striped > tbody > tr:nth-child(2n+1) > td.sorting_1 { background-color: #b3dbef; }
+.table-striped > tbody > tr:nth-child(2n) > td.sorting_1 { background-color: #F5F5F5; }
+
+
+/*table.dataTable tr.odd td.sorting_1 { 	background-color:  #E5E5E5; }
+table.dataTable tr.even td.sorting_1 { 	background-color:  #F5F5F5; }*/
+
+.table tbody tr:hover td,
+.table tbody tr:hover th {
+	background-color: #08C !important;
+	color: white;
 }
 
 .table tbody tr.active a {

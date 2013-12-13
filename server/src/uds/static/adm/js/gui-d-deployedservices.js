@@ -11,6 +11,12 @@ gui.deployedservices.link = function(event) {
             deployed_services : 'deployed-services-placeholder',
         }));
         gui.setLinksEvents();
+
+        var tableId = gui.deployedservices.table({
+            container : 'deployed-services-placeholder',
+            rowSelect : 'single',
+            buttons : [ 'new', 'edit', 'delete', 'xls' ],
+        });
     });
 
       

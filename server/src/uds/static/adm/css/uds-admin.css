@@ -78,6 +78,21 @@ body {
 	z-index: 2014;
 }
 
+/* Tables */
+
+/* Tables "styling" */
+tr.row-state-A, tr.row-state-F, tr.row-state-U, tr.row-state-W {
+	color: black;
+}
+
+tr.row-state-B, tr.row-state-C, tr.row-state-E {
+	color: red;
+}
+
+tr.row-state-M, tr.row-state-R, tr.row-state-I {
+	color: #858585;
+}
+
 /* Edit Below to Customize Widths > 768px */
 @media (min-width:768px) {
 

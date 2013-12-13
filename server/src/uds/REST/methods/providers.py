@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import Provider
+from uds.models import Provider, UserService
 from services import Services as DetailServices 
 from uds.core import services
 
@@ -57,6 +57,7 @@ class Providers(ModelHandler):
             { 'name': {'title': _('Name'), 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
             { 'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
+            { 'user_services_count': {'title': _('User Services'), 'type': 'numeric', 'width': '8em'}},
     ]
     
     def item_as_dict(self, provider):
@@ -72,6 +73,7 @@ class Providers(ModelHandler):
         return { 'id': provider.id,
                  'name': provider.name, 
                  'services_count': provider.services.count(),
+                 'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).count(),
                  'offers': offers,
                  'type': type_.type(),
                  'comments': provider.comments,

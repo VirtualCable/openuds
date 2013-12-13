@@ -84,6 +84,9 @@ class Users(DetailHandler):
             { 'last_access': { 'title': _('Last access'), 'type': 'datetime' } },
         ]
         
+    def getRowStyle(self, parent):
+        return  { 'field': 'state', 'prefix': 'row-state-' }
+        
     def getLogs(self, parent, item):
         try:
             user = parent.users.get(pk=item)

@@ -57,7 +57,8 @@ class OsManagers(ModelHandler):
             { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]
     
-    def item_as_dict(self, osm):
+    @staticmethod
+    def osmToDict(osm):
         type_ = osm.getType()
         return { 'id': osm.id,
                  'name': osm.name, 
@@ -65,6 +66,9 @@ class OsManagers(ModelHandler):
                  'type': type_.type(),
                  'comments': osm.comments,
         }
+    
+    def item_as_dict(self, item):
+        return OsManagers.osmToDict(item)
         
     def checkDelete(self, item):
         if item.deployedServices.count() > 0:

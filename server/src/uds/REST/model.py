@@ -127,18 +127,8 @@ class BaseModelHandler(Handler):
         })
         return res
         
-    def processTableFields(self, title, fields):
-#        processedFields = [{ 'id' : {'visible': False, 'sortable': False, 'searchable': False } }]
-#         for f in fields:
-#             for k1, v1 in f.iteritems():
-#                 dct = {}
-#                 for k2, v2 in v1.iteritems():
-#                     if type(v2) in (bool, int, long, float, unicode, list, tuple, dict):
-#                         dct[k2] = v2
-#                     else:
-#                         dct[k2] = unicode(v2)
-#                 processedFields.append({k1: dct})
-        return { 'title': unicode(title),  'fields': fields };
+    def processTableFields(self, title, fields, row_style):
+        return { 'title': unicode(title),  'fields': fields, 'row-style': row_style };
     
     def readFieldsFromParams(self, fldList):
         args = {}
@@ -214,7 +204,7 @@ class DetailHandler(BaseModelHandler):
             elif self._args[0] == TYPES:
                 return self.getTypes(parent, None)
             elif self._args[0] == TABLEINFO:
-                return self.processTableFields(self.getTitle(parent), self.getFields(parent))
+                return self.processTableFields(self.getTitle(parent), self.getFields(parent), self.getRowStyle(parent))
             
             # try to get id
             return self.getItems(parent, self._args[0])
@@ -294,6 +284,9 @@ class DetailHandler(BaseModelHandler):
     def getFields(self, parent):
         return []
     
+    def getRowStyle(self, parent):
+        return {}
+    
     def getGui(self, parent, forType):
         raise RequestError('Gui not provided for this type of object')
     
@@ -330,6 +323,7 @@ class ModelHandler(BaseModelHandler):
     save_fields = []
     # Table info needed fields and title
     table_fields = []
+    table_row_style = {}
     table_title = ''
     
     # This methods must be override, depending on what is provided
@@ -429,7 +423,7 @@ class ModelHandler(BaseModelHandler):
             elif self._args[0] == TYPES:
                 return list(self.getTypes())
             elif self._args[0] == TABLEINFO:
-                return self.processTableFields(self.table_title, self.table_fields)
+                return self.processTableFields(self.table_title, self.table_fields, self.table_row_style)
             elif self._args[0] == GUI:
                 return self.getGui(None)
                 

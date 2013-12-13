@@ -36,17 +36,19 @@ from django.utils.translation import ugettext as _
 
 
 from uds.models import DeployedService, Service
-
+from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.Environment import Environment
 from uds.REST.model import ModelHandler
 from uds.REST import NotFound, ResponseError, RequestError
 from django.db import IntegrityError
 
+from services import Services
+from osmanagers import OsManagers
+
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 class DeployedServices(ModelHandler):
     model = DeployedService
@@ -54,16 +56,29 @@ class DeployedServices(ModelHandler):
 
     table_title =  _('Deployed services')
     table_fields = [
-            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
+            { 'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-laptop text-info' } },
+            { 'state': { 'title': _('state'), 'type': 'dict', 'dict': State.dictionary() } },
             { 'comments': {'title':  _('Comments')}},
     ]
+    table_row_style = { 'field': 'state', 'prefix': 'row-state-' }
     
     def item_as_dict(self, item):
-        type_ = item.getType()
-        return { 'id': item.id,
+        val = { 'id': item.id,
                  'name': item.name, 
                  'comments': item.comments,
+                 'state' : item.state,
+                 'service': Services.serviceToDict(item.service),
+                 'initial_srvs' : item.initial_srvs, 
+                 'cache_l1_srvs' : item.cache_l1_srvs,
+                 'cache_l2_srvs' : item.cache_l2_srvs, 
+                 'max_srvs' : item.max_srvs,
+                 'user_services_count': item.userServices.count(),
         }
+        
+        if item.osmanager is not None:
+            val['osmanager'] = OsManagers.osmToDict(item.osmanager)
+
+        return val
         
     # Gui related
     def getGui(self, type_):

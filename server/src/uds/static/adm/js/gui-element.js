@@ -139,6 +139,8 @@ GuiElement.prototype = {
         };
         
         this.rest.tableInfo(function(data) { // Gets tableinfo data (columns, title, visibility of fields, etc...
+            var row_style = data['row-style'];
+            gui.doLog(row_style);
             var title = data.title;
             var columns = [];
             $.each(data.fields, function(index, value) {
@@ -178,6 +180,7 @@ GuiElement.prototype = {
                                 if( opts.icon !== undefined ) {
                                     column.mRender = renderIcon(opts.icon);
                                 }
+                                break;
                             case 'icon_dict':
                                 if( opts.icon_dict !== undefined ) {
                                     column.mRender = renderIconDict(opts.icon_dict);
@@ -348,8 +351,6 @@ GuiElement.prototype = {
                                     "fnClick" : function() {  // Export to excel
                                         api.templates.get('spreadsheet', function(tmpl) {
                                             var styles = { 'bold': 's21', };
-                                            var uri = 'data:application/vnd.ms-excel;base64,',
-                                                base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))); };
                                                 
                                             var headings = [], rows = [];
                                             $.each(columns, function(index, heading){
@@ -412,8 +413,8 @@ GuiElement.prototype = {
                             rowDeselectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
                         };
                     }
-
-                    $('#' + tableId).dataTable({
+                    
+                    var dataTableOptions = {
                         "aaData" : data,
                         "aoColumns" : columns,
                         "oLanguage" : gui.config.dataTablesLanguage,
@@ -423,7 +424,21 @@ GuiElement.prototype = {
                         // (pagination) row
                         "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
                         "bDeferRender": options.deferedRender || false,
-                    });
+                    };
+
+                    // If row is "styled"
+                    if( row_style.field ) {
+                        var field = row_style.field;
+                        var dct = row_style.dict;
+                        var prefix = row_style.prefix;
+                        dataTableOptions["fnCreatedRow"] = function( nRow, aData, iDataIndex ) {
+                            var v = dct !== undefined ? dct[this.fnGetData(iDataIndex)[field]] : this.fnGetData(iDataIndex)[field];  
+                            $(nRow).addClass(prefix + v);
+                            gui.doLog(prefix + v);
+                        };
+                    }
+
+                    $('#' + tableId).dataTable(dataTableOptions);
                     // Fix 3dbuttons
                     gui.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
                     // Fix form 

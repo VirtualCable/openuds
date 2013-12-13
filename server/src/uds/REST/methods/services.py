@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 
-from uds.models import Service
+from uds.models import Service, UserService
 
 from uds.core.util import log
 from uds.core.Environment import Environment
@@ -50,32 +50,30 @@ logger = logging.getLogger(__name__)
 
 class Services(DetailHandler):
     
+    @staticmethod
+    def serviceToDict(item):
+        return {
+            'id':item.id, 
+            'name': item.name, 
+            'comments': item.comments, 
+            'type': item.data_type, 
+            'typeName' : _(item.getType().name()),
+            'deployed_services_count' : item.deployedServices.count(),
+            'user_services_count': UserService.objects.filter(deployed_service__service=item).count(),
+        }
+    
     def getItems(self, parent, item):
         # Extract provider
         try:
             if item is None:
-                return [{
-                     'id':k.id, 
-                     'name': k.name, 
-                     'comments': k.comments, 
-                     'type': k.data_type, 
-                     'typeName' : _(k.getType().name()),
-                     'deployed_services_count' : k.deployedServices.count(),
-                     } for k in parent.services.all() ]
+                return [Services.serviceToDict(k) for k in parent.services.all() ]
             else:
                 k = parent.services.get(pk=item)
-                val = {
-                     'id':k.id, 
-                     'name': k.name, 
-                     'comments': k.comments, 
-                     'type': k.data_type, 
-                     'typeName' : _(k.getType().name()),
-                     'deployed_services_count' : k.deployedServices.count(),
-                     }
+                val = Services.serviceToDict(k)
                 return self.fillIntanceFields(k, val)
         except:
             logger.exception('getItems')
-            return { 'error': 'not found' }
+            self.invalidItemException()
         
     def saveItem(self, parent, item):
         # Extract item db fields
@@ -126,6 +124,7 @@ class Services(DetailHandler):
             { 'comments': { 'title': _('Comments') } },
             { 'type': {'title': _('Type') } },
             { 'deployed_services_count': {'title': _('Deployed services'), 'type': 'numeric', 'width': '7em'}},
+            { 'user_services_count': {'title': _('User services'), 'type': 'numeric', 'width': '7em'}},
         ]
         
     def getTypes(self, parent, forType):
