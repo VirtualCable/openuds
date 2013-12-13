@@ -132,12 +132,6 @@
         $(data).appendTo('#content');
     };
 
-    // Links methods
-    gui.deployed_services = function() {
-        gui.clearWorkspace();
-        gui.appendToWorkspace(gui.breadcrumbs(gettext('Deployed services')));
-    };
-
     // Clean up several "internal" data
     // I have discovered some "items" that are keep in memory, or that adds garbage to body (datatable && tabletools mainly)
     // Whenever we change "section", we clean up as much as we can, so we can keep things as clean as possible
@@ -182,7 +176,7 @@
                 cleanup: true,
             }, {
                 id : 'lnk-deployed_services',
-                exec : gui.deployed_services,
+                exec : gui.deployedservices.link,
                 cleanup: true,
             }, {
                 id : 'lnk-clear_cache',

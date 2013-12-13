@@ -45,6 +45,7 @@ function minify_admin() {
        'gui-d-authenticators',
        'gui-d-osmanagers',
        'gui-d-connectivity',
+       'gui-d-deployedservices',
     ];
     
     var cssFiles = [

@@ -476,7 +476,4 @@ api.authenticators = new BasicModelRest('authenticators');
 api.osmanagers = new BasicModelRest('osmanagers');
 api.transports = new BasicModelRest('transports');
 api.networks = new BasicModelRest('networks');
-
-// Locale related
-api.locale = new BasicModelRest('locale');
-api.locale.tableInfo = api.locale.types = undefined;
+api.deployedservices = new BasicModelRest('deployedservices');

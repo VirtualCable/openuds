@@ -1,6 +1,6 @@
 /* jshint strict: true */
 
-// Compose gui elements
+// Basic GUI components
 gui.dashboard = new BasicGuiElement('Dashboard');
 gui.dashboard.link = function(event) {
     "use strict";

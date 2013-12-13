@@ -35,13 +35,6 @@ body {
 	display: none;
 }
 
-/*table.dataTable tr.odd td.sorting_1 { background-color: red; }
-table.dataTable tr.odd td.sorting_2 { background-color: red; }
-table.dataTable tr.odd td.sorting_3 { background-color: red; }
-table.dataTable tr.even td.sorting_1 { background-color: blue; }
-table.dataTable tr.even td.sorting_2 { background-color: blue; }
-table.dataTable tr.even td.sorting_3 { background-color: blue; }*/
-
 /* collapsable && closeable pannels */
 .chevron:before {  
   content: "\f139"; 

@@ -6,10 +6,6 @@ gui.connectivity = {
 
 gui.connectivity.link = function(event) {
     "use strict";
-    // Cleans up memory used by other datatables
-    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
-        $(tbl).dataTable().fnDestroy();
-    });
     api.templates.get('connectivity', function(tmpl) {
         gui.clearWorkspace();
         gui.appendToWorkspace(api.templates.evaluate(tmpl, {

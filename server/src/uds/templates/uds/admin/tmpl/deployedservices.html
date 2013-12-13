@@ -1,0 +1,38 @@
+{% load i18n %}
+<div class="row">
+  <div class="col-xs-12">
+    <h1>{% trans 'Deployed Services' %}</h1>
+    <ol class="breadcrumb">
+      <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+      <li>{% trans 'Deployed Services' %}</li>
+    </ol>
+  </div>
+</div><!-- /.row -->
+{% verbatim %}
+<div class="row">
+    <div id="{{ deployed_services }}" class="col-xs-12"></div>
+</div>
+<div id="detail-placeholder" class="row hidden">
+    <div class="col-xs-12">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#{{ users }}_tab" data-toggle="tab">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</a></li>
+            <li><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
+            <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
+        </ul>    
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="{{ users }}_tab">
+                <div class="row">
+                    <div class="col-xs-12" id="{{ users }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12" id="{{ users_log }}">
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="{{ groups }}"></div>
+            <div class="tab-pane fade" id="{{ logs }}">...</div>
+        </div>        
+    </div>
+</div>
+{% endverbatim %}
