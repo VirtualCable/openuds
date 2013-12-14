@@ -64,19 +64,19 @@ class DeployedServices(ModelHandler):
     
     def item_as_dict(self, item):
         val = { 'id': item.id,
-                 'name': item.name, 
-                 'comments': item.comments,
-                 'state' : item.state,
-                 'service': Services.serviceToDict(item.service),
-                 'initial_srvs' : item.initial_srvs, 
-                 'cache_l1_srvs' : item.cache_l1_srvs,
-                 'cache_l2_srvs' : item.cache_l2_srvs, 
-                 'max_srvs' : item.max_srvs,
-                 'user_services_count': item.userServices.count(),
+            'name': item.name, 
+            'comments': item.comments,
+            'state' : item.state,
+            'service_id': item.service_id,
+            'initial_srvs' : item.initial_srvs, 
+            'cache_l1_srvs' : item.cache_l1_srvs,
+            'cache_l2_srvs' : item.cache_l2_srvs, 
+            'max_srvs' : item.max_srvs,
+            'user_services_count': item.userServices.count(),
         }
         
         if item.osmanager is not None:
-            val['osmanager'] = OsManagers.osmToDict(item.osmanager)
+            val['osmanager_id'] = item.osmanager.id
 
         return val
         

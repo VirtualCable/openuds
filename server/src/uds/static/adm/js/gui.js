@@ -49,6 +49,10 @@
             text: '<span class="fa fa-save"></span> <span class="label-tbl-button">' + gettext('Xls') + '</span>',
             css: 'btn btn3d-info btn3d btn3d-tables',
         },
+        'custom': { 
+            text: null,
+            css: 'btn btn3d-default btn3d btn3d-tables',
+        },
     };
     
     gui.genRamdonId = function(prefix) {

@@ -45,10 +45,12 @@ GuiElement.prototype = {
     // Options: dictionary
     //   container: container ID of parent for the table. If undefined, table will be appended to workspace
     //   buttons: array of visible buttons (strings), valid are [ 'new', 'edit', 'refresh', 'delete', 'xls' ],
+    //            Can contain also objects with {'text': ..., 'fnc': ...}
     //   rowSelect: type of allowed row selection, valid values are 'single' and 'multi'
     //   scrollToTable: if True, will scroll page to show table
     //   deferedRender: if True, datatable will be created with "bDeferRender": true, that will improve a lot creation of huge tables
     //   
+    //   onData: Event (function). If defined, will be invoked on data load (to allow preprocess of data)
     //   onLoad: Event (function). If defined, will be invoked when table is fully loaded.
     //           Receives 1 parameter, that is the gui element (GuiElement) used to render table
     //   onRowSelect: Event (function). If defined, will be invoked when a row of table is selected
@@ -206,275 +208,311 @@ GuiElement.prototype = {
             })).appendTo('head');
 
             self.rest.overview(function(data) { // Gets "overview" data for table (table contents, but resume form)
-                    var table = gui.table(title, tableId);
-                    if (options.container === undefined) {
-                        gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
-                    } else {
-                        $('#' + options.container).empty();
-                        $('#' + options.container).append(table.text);
-                    }
+                if( options.onData ) {
+                    options.onData(data);
+                }
+            
+                var table = gui.table(title, tableId);
+                if (options.container === undefined) {
+                    gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
+                } else {
+                    $('#' + options.container).empty();
+                    $('#' + options.container).append(table.text);
+                }
 
-                    // What execute on refresh button push
-                    var onRefresh = options.onRefresh || function(){};
+                // What execute on refresh button push
+                var onRefresh = options.onRefresh || function(){};
 
-                    var refreshFnc = function() {
-                        // Refreshes table content
-                        var tbl = $('#' + tableId).dataTable();
-                        // Clears selection first
-                        TableTools.fnGetInstance(tableId).fnSelectNone();
-                        //if( data.length > 1000 )
-                        gui.tools.blockUI();
+                var refreshFnc = function() {
+                    // Refreshes table content
+                    var tbl = $('#' + tableId).dataTable();
+                    // Clears selection first
+                    TableTools.fnGetInstance(tableId).fnSelectNone();
+                    //if( data.length > 1000 )
+                    gui.tools.blockUI();
+                    
+                    self.rest.overview(function(data) {  // Restore overview
+                            setTimeout( function() {
+                                tbl.fnClearTable();
+                                tbl.fnAddData(data);
+                                onRefresh(self);
+                                gui.tools.unblockUI();
+                            }, 0);
+                        });  // End restore overview
+                    return false; // This may be used on button or href, better disable execution of it
+                };
+                
+                var btns = [];
+                
+                if (options.buttons) {
+                    // Generic click handler generator for this table
+                    var clickHandlerFor = function(handler, action, newHandler) {
+                        var handleFnc = handler || function(val, action, tbl) {gui.doLog('Default handler called for ', action);};
+                        return function(btn) {
+                            var tbl = $('#' + tableId).dataTable();
+                            var val = this.fnGetSelectedData()[0];
+                            setTimeout(function() {
+                                if( newHandler ) {
+                                    handleFnc(action, tbl, refreshFnc);
+                                } else {
+                                    handleFnc(val, action, tbl, refreshFnc);
+                                }
+                            }, 0);
+                        };
+                    };
+
+                    var onCheck = options.onCheck || function(){ return true; }; // Default oncheck always returns true
+                    
+                    // methods for buttons on row select
+                    var editSelected = function(btn, obj, node) {
+                        var sel = this.fnGetSelectedData();
+                        var enable = sel.length == 1 ? onCheck("edit", sel) : false;
                         
-                        self.rest.overview(function(data) {  // Restore overview
-                                setTimeout( function() {
-                                    tbl.fnClearTable();
-                                    tbl.fnAddData(data);
-                                    onRefresh(self);
-                                    gui.tools.unblockUI();
-                                }, 0);
-                            });  // End restore overview
-                        return false; // This may be used on button or href, better disable execution of it
+                        if ( enable) {
+                            $(btn).removeClass('disabled').addClass('btn3d-success');
+                        } else {
+                            $(btn).removeClass('btn3d-success').addClass('disabled');
+                        }
+                    };
+                    var deleteSelected = function(btn, obj, node) {
+                        var sel = this.fnGetSelectedData();
+                        var enable = sel.length == 1 ? onCheck("delete", sel) : false;
+                        
+                        if (enable) {
+                            $(btn).removeClass('disabled').addClass('btn3d-warning');
+                        } else {
+                            $(btn).removeClass('btn3d-warning').addClass('disabled');
+                        }
                     };
                     
-                    var btns = [];
-                    
-                    if (options.buttons) {
-                        // Generic click handler generator for this table
-                        var clickHandlerFor = function(handler, action, newHandler) {
-                            var handleFnc = handler || function(val, action, tbl) {gui.doLog('Default handler called for ', action);};
-                            return function(btn) {
-                                var tbl = $('#' + tableId).dataTable();
-                                var val = this.fnGetSelectedData()[0];
-                                setTimeout(function() {
-                                    if( newHandler ) {
-                                        handleFnc(action, tbl, refreshFnc);
-                                    } else {
-                                        handleFnc(val, action, tbl, refreshFnc);
-                                    }
-                                }, 0);
-                            };
-                        };
+                    $.each(options.buttons, function(index, value) { // Iterate through button definition
+                        var btn = null;
+                        switch (value) {
+                        case 'new':
+                            if(Object.keys(self.types).length !== 0) {
+                                var menuId = gui.genRamdonId('dd-');
+                                var ordered = [];
+                                $.each(self.types, function(k, v){
+                                   ordered.push({
+                                       type: k,
+                                       css: v.css,
+                                       name: v.name,
+                                       description: v.description,
+                                   }); 
+                                });
+                                
+                                ordered = ordered.sort(function(a,b){return a.name.localeCompare(b.name);});
 
-                        var onCheck = options.onCheck || function(){ return true; }; // Default oncheck always returns true
-                        
-                        // methods for buttons on row select
-                        var editSelected = function(btn, obj, node) {
-                            var sel = this.fnGetSelectedData();
-                            var enable = sel.length == 1 ? onCheck("edit", sel) : false;
-                            
-                            if ( enable) {
-                                $(btn).removeClass('disabled').addClass('btn3d-success');
+                                btn = {
+                                        "sExtends" : "div",
+                                        "sButtonText" : api.templates.evaluate('tmpl_comp_dropdown', {
+                                            label: gui.config.dataTableButtons['new'].text,
+                                            css: gui.config.dataTableButtons['new'].css,
+                                            id: menuId,
+                                            tableId: tableId,
+                                            columns: columns,
+                                            menu: ordered,
+                                        }),
+                                };
+                                
                             } else {
-                                $(btn).removeClass('btn3d-success').addClass('disabled');
-                            }
-                        };
-                        var deleteSelected = function(btn, obj, node) {
-                            var sel = this.fnGetSelectedData();
-                            var enable = sel.length == 1 ? onCheck("delete", sel) : false;
-                            
-                            if (enable) {
-                                $(btn).removeClass('disabled').addClass('btn3d-warning');
-                            } else {
-                                $(btn).removeClass('btn3d-warning').addClass('disabled');
-                            }
-                        };
-                        
-                        $.each(options.buttons, function(index, value) { // Iterate through button definition
-                            var btn;
-                            switch (value) {
-                            case 'new':
-                                if(Object.keys(self.types).length !== 0) {
-                                    var menuId = gui.genRamdonId('dd-');
-                                    var ordered = [];
-                                    $.each(self.types, function(k, v){
-                                       ordered.push({
-                                           type: k,
-                                           css: v.css,
-                                           name: v.name,
-                                           description: v.description,
-                                       }); 
-                                    });
-                                    
-                                    ordered = ordered.sort(function(a,b){return a.name.localeCompare(b.name);});
-
-                                    btn = {
-                                            "sExtends" : "div",
-                                            "sButtonText" : api.templates.evaluate('tmpl_comp_dropdown', {
-                                                label: gui.config.dataTableButtons['new'].text,
-                                                css: gui.config.dataTableButtons['new'].css,
-                                                id: menuId,
-                                                tableId: tableId,
-                                                columns: columns,
-                                                menu: ordered,
-                                            }),
+                                btn = {
+                                        "sExtends" : "text",
+                                        "sButtonText" : gui.config.dataTableButtons['new'].text,
+                                        "sButtonClass" : gui.config.dataTableButtons['new'].css,
+                                        "fnClick" : clickHandlerFor(options.onNew, 'new', true),
                                     };
-                                    
-                                } else {
-                                    btn = {
-                                            "sExtends" : "text",
-                                            "sButtonText" : gui.config.dataTableButtons['new'].text,
-                                            "sButtonClass" : gui.config.dataTableButtons['new'].css,
-                                            "fnClick" : clickHandlerFor(options.onNew, 'new', true),
-                                        };
-                                }
-                                break;
-                            case 'edit':
-                                btn = {
-                                    "sExtends" : "text",
-                                    "sButtonText" : gui.config.dataTableButtons.edit.text,
-                                    "fnSelect" : editSelected,
-                                    "fnClick" : clickHandlerFor(options.onEdit, 'edit'),
-                                    "sButtonClass" : gui.config.dataTableButtons.edit.css,
-                                };
-                                break;
-                            case 'delete':
-                                btn = {
-                                    "sExtends" : "text",
-                                    "sButtonText" : gui.config.dataTableButtons['delete'].text,
-                                    "fnSelect" : deleteSelected,
-                                    "fnClick" : clickHandlerFor(options.onDelete, 'delete'),
-                                    "sButtonClass" : gui.config.dataTableButtons['delete'].css,
-                                };
-                                break;
-                            case 'refresh':
-                                btn = {
-                                    "sExtends" : "text",
-                                    "sButtonText" : gui.config.dataTableButtons.refresh.text,
-                                    "fnClick" : refreshFnc,
-                                    "sButtonClass" : gui.config.dataTableButtons.refresh.css,
-                                };
-                                break;
-                            case 'xls':
-                                btn = { 
-                                    "sExtends" : "text",
-                                    "sButtonText" : gui.config.dataTableButtons.xls.text,
-                                    "fnClick" : function() {  // Export to excel
-                                        api.templates.get('spreadsheet', function(tmpl) {
-                                            var styles = { 'bold': 's21', };
-                                                
-                                            var headings = [], rows = [];
-                                            $.each(columns, function(index, heading){
-                                                if( heading.bVisible === false ) {
+                            }
+                            break;
+                        case 'edit':
+                            btn = {
+                                "sExtends" : "text",
+                                "sButtonText" : gui.config.dataTableButtons.edit.text,
+                                "fnSelect" : editSelected,
+                                "fnClick" : clickHandlerFor(options.onEdit, 'edit'),
+                                "sButtonClass" : gui.config.dataTableButtons.edit.css,
+                            };
+                            break;
+                        case 'delete':
+                            btn = {
+                                "sExtends" : "text",
+                                "sButtonText" : gui.config.dataTableButtons['delete'].text,
+                                "fnSelect" : deleteSelected,
+                                "fnClick" : clickHandlerFor(options.onDelete, 'delete'),
+                                "sButtonClass" : gui.config.dataTableButtons['delete'].css,
+                            };
+                            break;
+                        case 'refresh':
+                            btn = {
+                                "sExtends" : "text",
+                                "sButtonText" : gui.config.dataTableButtons.refresh.text,
+                                "fnClick" : refreshFnc,
+                                "sButtonClass" : gui.config.dataTableButtons.refresh.css,
+                            };
+                            break;
+                        case 'xls':
+                            btn = { 
+                                "sExtends" : "text",
+                                "sButtonText" : gui.config.dataTableButtons.xls.text,
+                                "fnClick" : function() {  // Export to excel
+                                    api.templates.get('spreadsheet', function(tmpl) {
+                                        var styles = { 'bold': 's21', };
+                                            
+                                        var headings = [], rows = [];
+                                        $.each(columns, function(index, heading){
+                                            if( heading.bVisible === false ) {
+                                                return;
+                                            }
+                                            headings.push(api.spreadsheet.cell(heading.sTitle, 'String', styles.bold));
+                                        });
+                                        rows.push(api.spreadsheet.row(headings));
+                                        $.each(data, function(index1, row) {
+                                            var cells = [];
+                                            $.each(columns, function(index2, col){
+                                                if( col.bVisible === false ) {
                                                     return;
                                                 }
-                                                headings.push(api.spreadsheet.cell(heading.sTitle, 'String', styles.bold));
+                                                var type = col.sType == 'numeric' ? 'Number':'String';
+                                                cells.push(api.spreadsheet.cell(row[col.mData], type));
                                             });
-                                            rows.push(api.spreadsheet.row(headings));
-                                            $.each(data, function(index1, row) {
-                                                var cells = [];
-                                                $.each(columns, function(index2, col){
-                                                    if( col.bVisible === false ) {
-                                                        return;
-                                                    }
-                                                    var type = col.sType == 'numeric' ? 'Number':'String';
-                                                    cells.push(api.spreadsheet.cell(row[col.mData], type));
-                                                });
-                                                rows.push(api.spreadsheet.row(cells));
-                                            });
-                                            var ctx = {
-                                                creation_date: (new Date()).toISOString(),
-                                                worksheet: title,
-                                                columns_count: headings.length,
-                                                rows_count: rows.length,
-                                                rows: rows.join('\n')
-                                            };
-                                            gui.doLog(ctx);
-                                            setTimeout( function() {
-                                                saveAs(new Blob([api.templates.evaluate(tmpl, ctx)], 
-                                                        {type: 'application/vnd.ms-excel'} ), title + '.xls');
-                                            }, 20);
+                                            rows.push(api.spreadsheet.row(cells));
                                         });
-                                    }, // End export to excell
-                                    "sButtonClass" : gui.config.dataTableButtons.xls.css,
+                                        var ctx = {
+                                            creation_date: (new Date()).toISOString(),
+                                            worksheet: title,
+                                            columns_count: headings.length,
+                                            rows_count: rows.length,
+                                            rows: rows.join('\n')
+                                        };
+                                        gui.doLog(ctx);
+                                        setTimeout( function() {
+                                            saveAs(new Blob([api.templates.evaluate(tmpl, ctx)], 
+                                                    {type: 'application/vnd.ms-excel'} ), title + '.xls');
+                                        }, 20);
+                                    });
+                                }, // End export to excell
+                                "sButtonClass" : gui.config.dataTableButtons.xls.css,
+                            };
+                            break;
+                            
+                        default: // Custom button, this has to be 
+                            try {
+                                var css = (value.css ? value.css + ' ' : '') + gui.config.dataTableButtons.custom.css;
+                                btn = {
+                                    "sExtends" : "text",
+                                    "sButtonText" : value.text,
+                                    "sButtonClass" :  css,
                                 };
+                                if( value.click ) {
+                                    btn.fnClick = function(btn) {
+                                        var tbl = $('#' + tableId).dataTable();
+                                        var val = this.fnGetSelectedData()[0];
+                                        setTimeout(function() {
+                                            value.click(val, value, btn, tbl, refreshFnc);
+                                        }, 0);
+                                    };
+                                }
+                                if( value.select ){
+                                    btn.fnSelect = function(btn) {
+                                        var tbl = $('#' + tableId).dataTable();
+                                        var val = this.fnGetSelectedData()[0];
+                                        setTimeout(function() {
+                                            value.select(val, value, btn, tbl, refreshFnc);
+                                        }, 0);
+                                    };
+                                }
+                            
+                            } catch (e) {
+                                gui.doLog('Button', value, e);
                             }
+                        }
 
-                            if(btn) {
-                                btns.push(btn);
-                            }
-                        });  // End buttoon iteration
-                    }
+                        if(btn) {
+                            btns.push(btn);
+                        }
+                    });  // End buttoon iteration
+                }
 
-                    // Initializes oTableTools
-                    var oTableTools = {
-                        "aButtons" : btns,
-                        "sRowSelect": options.rowSelect || 'none',
+                // Initializes oTableTools
+                var oTableTools = {
+                    "aButtons" : btns,
+                    "sRowSelect": options.rowSelect || 'none',
+                };
+                
+                if (options.onRowSelect) {
+                    var rowSelectedFnc = options.onRowSelect;
+                    oTableTools.fnRowSelected = function() {
+                        rowSelectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
                     };
-                    
-                    if (options.onRowSelect) {
-                        var rowSelectedFnc = options.onRowSelect;
-                        oTableTools.fnRowSelected = function() {
-                            rowSelectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
-                        };
-                    }
-                    if (options.onRowDeselect) {
-                        var rowDeselectedFnc = options.onRowDeselect;
-                        oTableTools.fnRowDeselected = function() {
-                            rowDeselectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
-                        };
-                    }
-                    
-                    var dataTableOptions = {
-                        "aaData" : data,
-                        "aoColumns" : columns,
-                        "oLanguage" : gui.config.dataTablesLanguage,
-                        "oTableTools" : oTableTools,
-                        // First is upper row,
-                        // second row is lower
-                        // (pagination) row
-                        "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
-                        "bDeferRender": options.deferedRender || false,
+                }
+                if (options.onRowDeselect) {
+                    var rowDeselectedFnc = options.onRowDeselect;
+                    oTableTools.fnRowDeselected = function() {
+                        rowDeselectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
                     };
+                }
+                
+                var dataTableOptions = {
+                    "aaData" : data,
+                    "aoColumns" : columns,
+                    "oLanguage" : gui.config.dataTablesLanguage,
+                    "oTableTools" : oTableTools,
+                    // First is upper row,
+                    // second row is lower
+                    // (pagination) row
+                    "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
+                    "bDeferRender": options.deferedRender || false,
+                };
 
-                    // If row is "styled"
-                    if( row_style.field ) {
-                        var field = row_style.field;
-                        var dct = row_style.dict;
-                        var prefix = row_style.prefix;
-                        dataTableOptions["fnCreatedRow"] = function( nRow, aData, iDataIndex ) {
-                            var v = dct !== undefined ? dct[this.fnGetData(iDataIndex)[field]] : this.fnGetData(iDataIndex)[field];  
-                            $(nRow).addClass(prefix + v);
-                            gui.doLog(prefix + v);
-                        };
-                    }
+                // If row is "styled"
+                if( row_style.field ) {
+                    var field = row_style.field;
+                    var dct = row_style.dict;
+                    var prefix = row_style.prefix;
+                    dataTableOptions.fnCreatedRow = function( nRow, aData, iDataIndex ) {
+                        var v = dct !== undefined ? dct[this.fnGetData(iDataIndex)[field]] : this.fnGetData(iDataIndex)[field];  
+                        $(nRow).addClass(prefix + v);
+                        gui.doLog(prefix + v);
+                    };
+                }
 
-                    $('#' + tableId).dataTable(dataTableOptions);
-                    // Fix 3dbuttons
-                    gui.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
-                    // Fix form 
-                    $('#' + tableId + '_filter input').addClass('form-control');
-                    // Add refresh action to panel
-                    $(table.refreshSelector).click(refreshFnc);
-                    
-                    // Add tooltips to "new" buttons
-                    $('#' + table.panelId + ' [data-toggle="tooltip"]').tooltip({
-                        container:'body',
-                        delay: { show: 1000, hide: 100},
-                        placement: 'auto right',
+                $('#' + tableId).dataTable(dataTableOptions);
+                // Fix 3dbuttons
+                gui.tools.fix3dButtons('#' + tableId + '_wrapper .btn-group-3d');
+                // Fix form 
+                $('#' + tableId + '_filter input').addClass('form-control');
+                // Add refresh action to panel
+                $(table.refreshSelector).click(refreshFnc);
+                
+                // Add tooltips to "new" buttons
+                $('#' + table.panelId + ' [data-toggle="tooltip"]').tooltip({
+                    container:'body',
+                    delay: { show: 1000, hide: 100},
+                    placement: 'auto right',
+                });
+                // And the handler of the new "dropdown" button links
+                if( options.onNew ) {  // If onNew, set the handlers for dropdown
+                    $('#' + table.panelId + ' [data-type]').on('click', function(event){
+                        event.preventDefault();
+                        var tbl = $('#' + tableId).dataTable();
+                        // Executes "onNew" outside click event
+                        var type = $(this).attr('data-type');
+                        setTimeout(function() {
+                            options.onNew(type, tbl, refreshFnc);
+                        }, 0);
                     });
-                    // And the handler of the new "dropdown" button links
-                    if( options.onNew ) {  // If onNew, set the handlers for dropdown
-                        $('#' + table.panelId + ' [data-type]').on('click', function(event){
-                            event.preventDefault();
-                            var tbl = $('#' + tableId).dataTable();
-                            // Executes "onNew" outside click event
-                            var type = $(this).attr('data-type');
-                            setTimeout(function() {
-                                options.onNew(type, tbl, refreshFnc);
-                            }, 0);
-                        });
-                    }
-                    
-                    if (options.scrollToTable === true ) {
-                        var tableTop = $('#' + tableId).offset().top;
-                        $('html, body').scrollTop(tableTop);
-                    }
-                    // if table rendered event
-                    if( options.onLoad ) {
-                        options.onLoad(self);
-                    }
-                }); // End Overview data
-            }); // End Tableinfo data
+                }
+                
+                if (options.scrollToTable === true ) {
+                    var tableTop = $('#' + tableId).offset().top;
+                    $('html, body').scrollTop(tableTop);
+                }
+                // if table rendered event
+                if( options.onLoad ) {
+                    options.onLoad(self);
+                }
+            }); // End Overview data
+        }); // End Tableinfo data
         
         return '#' + tableId;
     },
