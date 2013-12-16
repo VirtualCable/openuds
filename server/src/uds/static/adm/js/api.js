@@ -250,15 +250,6 @@ BasicModelRest.prototype = {
         });
         
     },
-    // Search
-    search: function(id, type, term, success_fnc, fail_fnc) {
-        "use strict";
-        return this.get({
-            id: id + '/search?type=' + encodeURIComponent(type) + '&term=' + encodeURIComponent(term),
-            success: success_fnc,
-            fail: fail_fnc
-        });
-    },
     // -------------
     // Log methods
     // -------------
@@ -470,10 +461,31 @@ DetailModelRestApi.prototype = {
 // Populate api
 
 api.providers = new BasicModelRest('providers');
+// all services method used in providers
+api.providers.allServices = function(success_fnc, fail_fnc) {
+    "use strict";
+    return this.get({
+        id: 'allservices',
+        success: success_fnc,
+        fail: fail_fnc
+    });
+};
+
+
 // api.services = new BasicModelRest('services');
 api.authenticators = new BasicModelRest('authenticators');
+// Search method used in authenticators
+api.authenticators.search = function(id, type, term, success_fnc, fail_fnc) {
+    "use strict";
+    return this.get({
+        id: id + '/search?type=' + encodeURIComponent(type) + '&term=' + encodeURIComponent(term),
+        success: success_fnc,
+        fail: fail_fnc
+    });
+};
 
 api.osmanagers = new BasicModelRest('osmanagers');
 api.transports = new BasicModelRest('transports');
 api.networks = new BasicModelRest('networks');
 api.deployedservices = new BasicModelRest('deployedservices');
+

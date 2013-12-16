@@ -417,6 +417,25 @@ class ModelHandler(BaseModelHandler):
                 result.append(res)
             return result
         
+        # if has custom methods, look for if this request matches any of them
+        for cm in self.custom_methods:
+            if nArgs > 1 and cm[1] is True: # Method needs parent (existing item)
+                if self._args[1] == cm[0]: 
+                    try:
+                        operation = getattr(self, self._args[1])
+                        item = self.model.objects.get(pk=self._args[0])
+                    except:
+                        self.invalidMethodException()
+                        
+                    return operation(item)
+            elif self._args[0] == cm[0]:
+                try:
+                    operation = getattr(self, self._args[0])
+                except:
+                    self.invalidMethodException()
+                    
+                return operation()
+        
         if nArgs == 1:
             if self._args[0] == OVERVIEW:
                 return list(self.getItems())
@@ -455,16 +474,6 @@ class ModelHandler(BaseModelHandler):
             except:
                 self.invalidItemException()
             return self.getLogs(item)
-
-        # if has custom methods
-        if self._args[1] in self.custom_methods:
-            try:
-                operation = getattr(self, self._args[1])
-                item = self.model.objects.get(pk=self._args[0])
-            except:
-                self.invalidMethodException()
-                
-            return operation(item)
 
         # If has detail and is requesting detail        
         if self.detail is not None:

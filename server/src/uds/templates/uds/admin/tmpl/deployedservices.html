@@ -15,22 +15,17 @@
 <div id="detail-placeholder" class="row hidden">
     <div class="col-xs-12">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#{{ users }}_tab" data-toggle="tab">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</a></li>
-            <li><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
+            <li class="active"><a href="#{{ assigned_services }}" data-toggle="tab">{% endverbatim %}{% trans 'Assigned services' %}{% verbatim %}</a></li>
+            <li id="{{ cache }}_tab"><a href="#{{ cache }}" data-toggle="tab">{% endverbatim %}{% trans 'Cache' %}{% verbatim %}</a></li>
+            <li id="{{ groups }}_tab"><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
+            <li><a href="#{{ transports }}" data-toggle="tab">{% endverbatim %}{% trans 'Transports' %}{% verbatim %}</a></li>
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
         </ul>    
         <div class="tab-content">
-            <div class="tab-pane fade in active" id="{{ users }}_tab">
-                <div class="row">
-                    <div class="col-xs-12" id="{{ users }}">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12" id="{{ users_log }}">
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane fade" id="{{ groups }}"></div>
+            <div class="tab-pane fade in active" id="{{ assigned_services }}">...</div>
+            <div class="tab-pane fade" id="{{ cache }}">...</div>
+            <div class="tab-pane fade" id="{{ groups }}">...</div>
+            <div class="tab-pane fade" id="{{ transports }}">...</div>
             <div class="tab-pane fade" id="{{ logs }}">...</div>
         </div>        
     </div>

@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import Provider, UserService
+from uds.models import Provider, Service, UserService
 from services import Services as DetailServices 
 from uds.core import services
 
@@ -48,6 +48,8 @@ logger = logging.getLogger(__name__)
 class Providers(ModelHandler):
     model = Provider
     detail = { 'services': DetailServices }
+    custom_methods = [('allservices', False)]
+    
     save_fields = ['name', 'comments']
     
     table_title = _('Service providers')
@@ -95,3 +97,6 @@ class Providers(ModelHandler):
             raise NotFound('type not found')
        
 
+    def allservices(self):
+        for s in Service.objects.all():
+            yield DetailServices.serviceToDict(s, True)

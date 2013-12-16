@@ -4,10 +4,6 @@
 gui.osmanagers = new GuiElement(api.osmanagers, 'osm');
 gui.osmanagers.link = function(event) {
     "use strict";
-    // Cleans up memory used by other datatables
-    $.each($.fn.dataTable.fnTables(), function(undefined, tbl){
-        $(tbl).dataTable().fnDestroy();
-    });
     gui.clearWorkspace();
     gui.appendToWorkspace(gui.breadcrumbs('Os Managers'));
 

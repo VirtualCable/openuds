@@ -35,16 +35,12 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 
-from uds.models import DeployedService, Service
+from uds.models import DeployedService
 from uds.core.util.State import State
 from uds.core.util import log
-from uds.core.Environment import Environment
 from uds.REST.model import ModelHandler
-from uds.REST import NotFound, ResponseError, RequestError
-from django.db import IntegrityError
-
-from services import Services
-from osmanagers import OsManagers
+from uds.REST import NotFound
+from user_services import AssignedService, CachedService
 
 import logging
 
@@ -52,14 +48,18 @@ logger = logging.getLogger(__name__)
 
 class DeployedServices(ModelHandler):
     model = DeployedService
+    detail = { 'services': AssignedService, 'cache': CachedService }
+
     save_fields = ['name', 'comments', 'service', 'osmanager', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
 
     table_title =  _('Deployed services')
     table_fields = [
-            { 'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-laptop text-info' } },
+            { 'name': {'title': _('Name') } },
+            { 'parent': {'title': _('Parent Service') } }, # Will process this field on client in fact, not sent by server
             { 'state': { 'title': _('state'), 'type': 'dict', 'dict': State.dictionary() } },
             { 'comments': {'title':  _('Comments')}},
     ]
+    # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = { 'field': 'state', 'prefix': 'row-state-' }
     
     def item_as_dict(self, item):

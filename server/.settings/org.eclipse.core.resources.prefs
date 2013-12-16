@@ -20,6 +20,7 @@ encoding//src/uds/REST/methods/osmanagers.py=utf-8
 encoding//src/uds/REST/methods/providers.py=utf-8
 encoding//src/uds/REST/methods/services.py=utf-8
 encoding//src/uds/REST/methods/transports.py=utf-8
+encoding//src/uds/REST/methods/user_services.py=utf-8
 encoding//src/uds/REST/methods/users_groups.py=utf-8
 encoding//src/uds/REST/model.py=utf-8
 encoding//src/uds/REST/processors.py=utf-8

@@ -100,11 +100,9 @@ class Users(DetailHandler):
         # We need this fields for all
         logger.debug('Saving user {0} / {1}'.format(parent, item))
         valid_fields = ['name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin']
-        fields = self.readFieldsFromParams(valid_fields + ['groups'])
+        fields = self.readFieldsFromParams(valid_fields)
         try:
             auth = parent.getInstance()
-            groups = fields['groups']
-            del fields['groups'] # Not update this on user dict
             if item is None: # Create new
                 auth.createUser(fields) # this throws an exception if there is an error (for example, this auth can't create users)
                 toSave = {}
@@ -120,6 +118,7 @@ class Users(DetailHandler):
                 user.__dict__.update(toSave)
                 
             if auth.isExternalSource == False and user.parent == -1:
+                groups = self.readFieldsFromParams(['groups'])['groups']
                 user.groups = Group.objects.filter(id__in=groups)
                 
             user.save()

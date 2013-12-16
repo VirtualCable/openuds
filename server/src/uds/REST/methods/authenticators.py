@@ -48,7 +48,8 @@ logger = logging.getLogger(__name__)
 
 class Authenticators(ModelHandler):
     model = Authenticator
-    custom_methods = ['search']
+    # Custom get method "search" that requires authenticator id
+    custom_methods = [('search', True)]
     detail = { 'users': Users, 'groups':Groups }
     save_fields = ['name', 'comments', 'priority', 'small_name']
 

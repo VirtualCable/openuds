@@ -51,16 +51,31 @@ logger = logging.getLogger(__name__)
 class Services(DetailHandler):
     
     @staticmethod
-    def serviceToDict(item):
-        return {
+    def serviceToDict(item, full=False):
+        retVal =  {
             'id':item.id, 
             'name': item.name, 
             'comments': item.comments, 
             'type': item.data_type, 
-            'typeName' : _(item.getType().name()),
+            'type_name' : _(item.getType().name()),
             'deployed_services_count' : item.deployedServices.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service=item).count(),
         }
+        if full:
+            info = item.getType()
+            retVal['info'] = {
+                'icon': info.icon().replace('\n', ''),
+                'needs_publication': info.publicationType is not None,
+                'max_deployed': info.maxDeployed,
+                'uses_cache': info.usesCache,
+                'uses_cache_l2': info.usesCache_L2,
+                'cache_tooltip': _(info.cacheTooltip),
+                'cache_tooltip_l2': _(info.cacheTooltip),
+                'needs_manager': info.needsManager,
+                'must_assign_manually': info.mustAssignManually,
+            }
+            
+        return retVal
     
     def getItems(self, parent, item):
         # Extract provider
@@ -122,7 +137,7 @@ class Services(DetailHandler):
         return [
             { 'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': { 'title': _('Comments') } },
-            { 'type': {'title': _('Type') } },
+            { 'type_name': {'title': _('Type') } },
             { 'deployed_services_count': {'title': _('Deployed services'), 'type': 'numeric', 'width': '7em'}},
             { 'user_services_count': {'title': _('User services'), 'type': 'numeric', 'width': '7em'}},
         ]

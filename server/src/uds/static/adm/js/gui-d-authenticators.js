@@ -14,14 +14,14 @@ gui.authenticators.link = function(event) {
     
     // Clears the log of the detail, in this case, the log of "users"
     // Memory saver :-)
-    var detailLogTable;
+    var detailLogTable = null;
     var clearDetailLog = function() {
         if( detailLogTable ) {
             var $tbl = $(detailLogTable).dataTable();
             $tbl.fnClearTable();
             $tbl.fnDestroy();
             $('#user-log-placeholder').empty();
-            detailLogTable = undefined;
+            detailLogTable = null;
         }
     };
     
