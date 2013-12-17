@@ -68,7 +68,7 @@
         // Datetime renderer (with specified format)
         renderDate : function(format) {
             return function(data, type, full) {
-                return api.tools.strftime(format, new Date(data*1000));
+                return '<span data-date="' + data + '">' + api.tools.strftime(format, new Date(data*1000)) + '</span>';
             };
         },
         // Log level rendererer

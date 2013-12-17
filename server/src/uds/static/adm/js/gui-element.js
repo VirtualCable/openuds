@@ -164,14 +164,15 @@ GuiElement.prototype = {
                     if (opts.type && column.bVisible ) {
                         switch(opts.type) {
                             case 'date':
-                                column.sType = 'date';
+                                column.sType = 'uds-date';
                                 column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format('SHORT_DATE_FORMAT')));
                                 break;
                             case 'datetime':
-                                column.sType = 'date';
+                                column.sType = 'uds-date';
                                 column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format('SHORT_DATETIME_FORMAT')));
                                 break;
                             case 'time':
+                                column.sType = 'uds-date';
                                 column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format('TIME_FORMAT')));
                                 break;
                             case 'iconType':
@@ -551,7 +552,9 @@ GuiElement.prototype = {
         var columns = [
             {
                 "mData" : 'date',
-                "sTitle" : gettext('Date'),  
+                "sTitle" : gettext('Date'),
+                "sType": "uds-date",
+                "asSorting":    [ 'desc', 'asc' ],
                 "mRender" : gui.tools.renderDate(api.tools.djangoFormat(get_format('SHORT_DATE_FORMAT') + ' ' + get_format('TIME_FORMAT'))),
                 "bSortable" : true,
                 "bSearchable" : true,

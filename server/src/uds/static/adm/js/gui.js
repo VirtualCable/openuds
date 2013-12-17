@@ -226,6 +226,20 @@
         });
         // Set blockui params
         $.blockUI.defaults.baseZ = 2000;
+
+        $.fn.dataTableExt.oSort['uds-date-pre'] = function( s ) {
+            return parseInt(s.split('"')[1]);
+        };
+        // Sort for "date" columns (our "dates" are in fact postfix dates rendered as dates with locale format
+        $.fn.dataTableExt.oSort['uds-date-asc']  = function(x,y) {
+            var val = ((x < y) ? -1 : ((x > y) ?  1 : 0));
+            return val;
+        };
+         
+        $.fn.dataTableExt.oSort['uds-date-desc'] = function(x,y) {
+            var val = ((x < y) ?  1 : ((x > y) ? -1 : 0));
+            return val;
+        };        
         
         gui.setLinksEvents();
         gui.dashboard.link();
@@ -334,4 +348,3 @@
     // Public attributes
     gui.debug = true;
 }(window.gui = window.gui || {}, jQuery));
-
