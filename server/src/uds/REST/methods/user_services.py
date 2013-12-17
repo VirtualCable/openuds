@@ -67,7 +67,7 @@ class AssignedService(DetailHandler):
         }
         
         if is_cache:
-            val['cacheLevel'] = item.cache_level
+            val['cache_level'] = item.cache_level
         else:
             val.update({  
                 'owner': item.user.manager.name + "-" + item.user.name, 
@@ -90,10 +90,7 @@ class AssignedService(DetailHandler):
             self.invalidItemException()
             
     def getTitle(self, parent):
-        try:
-            return _('Assigned Services of {0}').format(parent.name)
-        except:
-            return _('Assigned services')
+        return _('Assigned services')
     
     def getFields(self, parent):
         return [
@@ -119,3 +116,60 @@ class CachedService(AssignedService):
         except:
             logger.exception('getItems')
             self.invalidItemException()
+
+    def getTitle(self, parent):
+        return _('Cached services')
+
+    def getFields(self, parent):
+        return [
+            { 'creation_date': { 'title': _('Creation date'), 'type': 'datetime' } },
+            { 'revision': { 'title': _('Revision') } },
+            { 'unique_id': { 'title': 'Unique ID'} },
+            { 'friendly_name': {'title': _('Friendly name')} },
+            { 'state': { 'title': _('State'), 'type': 'dict', 'dict': State.dictionary() } },
+            { 'cache_level': { 'title': _('Cache level') } },
+        ]
+
+class Groups(DetailHandler):
+    def getItems(self, parent, item):
+        return [{
+            'id': i.id,
+            'name': i.name,
+            'comments': i.comments,
+            'state': i.state,
+            'type': i.is_meta and 'meta' or 'group',
+            'auth_name': i.manager.name,
+        } for i in parent.assignedGroups.all()]
+        
+    def getTitle(self, parent):
+        return _('Assigned groups')
+
+    def getFields(self, parent):
+        return [
+            # Note that this field is "self generated" on client table
+            { 'group_name': { 'title': _('Name'), 'type': 'icon_dict', 'icon_dict': {'group' : 'fa fa-group text-success', 'meta' : 'fa fa-gears text-info' } } },
+            { 'comments': { 'title': _('comments') } },
+            { 'state': { 'title': _('State'), 'type': 'dict', 'dict': State.dictionary() } },
+        ]
+        
+class Transports(DetailHandler):
+    def getItems(self, parent, item):
+        return [{
+            'id': i.id,
+            'name': i.name,
+            'type': self.type_as_dict(i.getType()),
+            'comments': i.comments,
+            'priority': i.priority,
+        } for i in parent.transports.all()]
+        
+    def getTitle(self, parent):
+        return _('Assigned transports')
+
+    def getFields(self, parent):
+        return [
+            { 'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em' } },
+            { 'name': {'title': _('Name')} },
+            { 'trans_type': {'title': _('Type') } },
+            { 'comments': {'title': _('Comments')}},
+        ]
+        

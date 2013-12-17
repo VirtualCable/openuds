@@ -40,15 +40,20 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import ModelHandler
 from uds.REST import NotFound
-from user_services import AssignedService, CachedService
+from user_services import AssignedService, CachedService, Groups, Transports
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-class DeployedServices(ModelHandler):
+class ServicesPool(ModelHandler):
     model = DeployedService
-    detail = { 'services': AssignedService, 'cache': CachedService }
+    detail = { 
+        'services': AssignedService, 
+        'cache': CachedService,
+        'groups':  Groups,
+        'transports': Transports,
+    }
 
     save_fields = ['name', 'comments', 'service', 'osmanager', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
 

@@ -82,10 +82,10 @@ GuiElement.prototype = {
     //                   1.- the selected item data (single object, as got from api...get)
     //                   2.- the event that fired this (new, delete, edit, ..)
     //                   4.- the DataTable that raised the event
-    table : function(options) {
+    table : function(tblParams) {
         "use strict";
         
-        options = options || {};
+        tblParams = tblParams || {};
         gui.doLog('Composing table for ' + this.name);
         var tableId = this.name + '-table';
         var self = this; // Store this for child functions
@@ -208,20 +208,20 @@ GuiElement.prototype = {
             })).appendTo('head');
 
             self.rest.overview(function(data) { // Gets "overview" data for table (table contents, but resume form)
-                if( options.onData ) {
-                    options.onData(data);
+                if( tblParams.onData ) {
+                    tblParams.onData(data);
                 }
             
                 var table = gui.table(title, tableId);
-                if (options.container === undefined) {
+                if (tblParams.container === undefined) {
                     gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
                 } else {
-                    $('#' + options.container).empty();
-                    $('#' + options.container).append(table.text);
+                    $('#' + tblParams.container).empty();
+                    $('#' + tblParams.container).append(table.text);
                 }
 
                 // What execute on refresh button push
-                var onRefresh = options.onRefresh || function(){};
+                var onRefresh = tblParams.onRefresh || function(){};
 
                 var refreshFnc = function() {
                     // Refreshes table content
@@ -232,19 +232,22 @@ GuiElement.prototype = {
                     gui.tools.blockUI();
                     
                     self.rest.overview(function(data) {  // Restore overview
-                            setTimeout( function() {
-                                tbl.fnClearTable();
-                                tbl.fnAddData(data);
-                                onRefresh(self);
-                                gui.tools.unblockUI();
-                            }, 0);
-                        });  // End restore overview
+                        if( tblParams.onData ) {
+                            tblParams.onData(data);
+                        }
+                        setTimeout( function() {
+                            tbl.fnClearTable();
+                            tbl.fnAddData(data);
+                            onRefresh(self);
+                            gui.tools.unblockUI();
+                        }, 0);
+                    });  // End restore overview
                     return false; // This may be used on button or href, better disable execution of it
                 };
                 
                 var btns = [];
                 
-                if (options.buttons) {
+                if (tblParams.buttons) {
                     // Generic click handler generator for this table
                     var clickHandlerFor = function(handler, action, newHandler) {
                         var handleFnc = handler || function(val, action, tbl) {gui.doLog('Default handler called for ', action);};
@@ -261,7 +264,7 @@ GuiElement.prototype = {
                         };
                     };
 
-                    var onCheck = options.onCheck || function(){ return true; }; // Default oncheck always returns true
+                    var onCheck = tblParams.onCheck || function(){ return true; }; // Default oncheck always returns true
                     
                     // methods for buttons on row select
                     var editSelected = function(btn, obj, node) {
@@ -285,7 +288,7 @@ GuiElement.prototype = {
                         }
                     };
                     
-                    $.each(options.buttons, function(index, value) { // Iterate through button definition
+                    $.each(tblParams.buttons, function(index, value) { // Iterate through button definition
                         var btn = null;
                         switch (value) {
                         case 'new':
@@ -320,7 +323,7 @@ GuiElement.prototype = {
                                         "sExtends" : "text",
                                         "sButtonText" : gui.config.dataTableButtons['new'].text,
                                         "sButtonClass" : gui.config.dataTableButtons['new'].css,
-                                        "fnClick" : clickHandlerFor(options.onNew, 'new', true),
+                                        "fnClick" : clickHandlerFor(tblParams.onNew, 'new', true),
                                     };
                             }
                             break;
@@ -329,7 +332,7 @@ GuiElement.prototype = {
                                 "sExtends" : "text",
                                 "sButtonText" : gui.config.dataTableButtons.edit.text,
                                 "fnSelect" : editSelected,
-                                "fnClick" : clickHandlerFor(options.onEdit, 'edit'),
+                                "fnClick" : clickHandlerFor(tblParams.onEdit, 'edit'),
                                 "sButtonClass" : gui.config.dataTableButtons.edit.css,
                             };
                             break;
@@ -338,7 +341,7 @@ GuiElement.prototype = {
                                 "sExtends" : "text",
                                 "sButtonText" : gui.config.dataTableButtons['delete'].text,
                                 "fnSelect" : deleteSelected,
-                                "fnClick" : clickHandlerFor(options.onDelete, 'delete'),
+                                "fnClick" : clickHandlerFor(tblParams.onDelete, 'delete'),
                                 "sButtonClass" : gui.config.dataTableButtons['delete'].css,
                             };
                             break;
@@ -436,17 +439,17 @@ GuiElement.prototype = {
                 // Initializes oTableTools
                 var oTableTools = {
                     "aButtons" : btns,
-                    "sRowSelect": options.rowSelect || 'none',
+                    "sRowSelect": tblParams.rowSelect || 'none',
                 };
                 
-                if (options.onRowSelect) {
-                    var rowSelectedFnc = options.onRowSelect;
+                if (tblParams.onRowSelect) {
+                    var rowSelectedFnc = tblParams.onRowSelect;
                     oTableTools.fnRowSelected = function() {
                         rowSelectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
                     };
                 }
-                if (options.onRowDeselect) {
-                    var rowDeselectedFnc = options.onRowDeselect;
+                if (tblParams.onRowDeselect) {
+                    var rowDeselectedFnc = tblParams.onRowDeselect;
                     oTableTools.fnRowDeselected = function() {
                         rowDeselectedFnc(this.fnGetSelectedData(), $('#' + tableId).dataTable(), self);
                     };
@@ -461,7 +464,7 @@ GuiElement.prototype = {
                     // second row is lower
                     // (pagination) row
                     "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
-                    "bDeferRender": options.deferedRender || false,
+                    "bDeferRender": tblParams.deferedRender || false,
                 };
 
                 // If row is "styled"
@@ -491,34 +494,34 @@ GuiElement.prototype = {
                     placement: 'auto right',
                 });
                 // And the handler of the new "dropdown" button links
-                if( options.onNew ) {  // If onNew, set the handlers for dropdown
+                if( tblParams.onNew ) {  // If onNew, set the handlers for dropdown
                     $('#' + table.panelId + ' [data-type]').on('click', function(event){
                         event.preventDefault();
                         var tbl = $('#' + tableId).dataTable();
                         // Executes "onNew" outside click event
                         var type = $(this).attr('data-type');
                         setTimeout(function() {
-                            options.onNew(type, tbl, refreshFnc);
+                            tblParams.onNew(type, tbl, refreshFnc);
                         }, 0);
                     });
                 }
                 
-                if (options.scrollToTable === true ) {
+                if (tblParams.scrollToTable === true ) {
                     var tableTop = $('#' + tableId).offset().top;
                     $('html, body').scrollTop(tableTop);
                 }
                 // if table rendered event
-                if( options.onLoad ) {
-                    options.onLoad(self);
+                if( tblParams.onLoad ) {
+                    tblParams.onLoad(self);
                 }
             }); // End Overview data
         }); // End Tableinfo data
         
         return '#' + tableId;
     },
-    logTable: function(itemId, options) {
+    logTable: function(itemId, tblParams) {
         "use strict";
-        options = options || {};
+        tblParams = tblParams || {};
         gui.doLog('Composing log for ' + this.name);
         var tableId = this.name + '-table-log';
         var self = this; // Store this for child functions
@@ -573,12 +576,12 @@ GuiElement.prototype = {
             },
         ];
         
-        var table = gui.table(options.title || gettext('Logs'), tableId);
-        if (options.container === undefined) {
+        var table = gui.table(tblParams.title || gettext('Logs'), tableId);
+        if (tblParams.container === undefined) {
             gui.appendToWorkspace('<div class="row"><div class="col-lg-12">' + table.text + '</div></div>');
         } else {
-            $('#' + options.container).empty();
-            $('#' + options.container).append(table.text);
+            $('#' + tblParams.container).empty();
+            $('#' + tblParams.container).append(table.text);
         }
         
         // Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
@@ -597,7 +600,7 @@ GuiElement.prototype = {
                 "aoColumns" : columns,
                 "oLanguage" : gui.config.dataTablesLanguage,
                 "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
-                "bDeferRender": options.deferedRender || false,
+                "bDeferRender": tblParams.deferedRender || false,
             });
 
             // Fix form 
@@ -607,8 +610,8 @@ GuiElement.prototype = {
             $(table.refreshSelector).click(refreshFnc);
             
             // if table rendered event
-            if( options.onLoad ) {
-                options.onLoad(self);
+            if( tblParams.onLoad ) {
+                tblParams.onLoad(self);
             }
         });
         

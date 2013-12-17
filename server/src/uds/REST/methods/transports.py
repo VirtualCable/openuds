@@ -51,9 +51,9 @@ class Transports(ModelHandler):
 
     table_title =  _('Current Transports')
     table_fields = [
+            { 'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em' }},
             { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
             { 'comments': {'title':  _('Comments')}},
-            { 'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em' }},
             { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]
 

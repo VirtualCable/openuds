@@ -1,8 +1,8 @@
 /* jshint strict: true */
-gui.deployedservices = new GuiElement(api.deployedservices, 'deployedservices');
+gui.servicesPool = new GuiElement(api.servicesPool, 'servicespool');
  
 
-gui.deployedservices.link = function(event) {
+gui.servicesPool.link = function(event) {
     "use strict";
     gui.clearWorkspace();
     
@@ -36,13 +36,14 @@ gui.deployedservices.link = function(event) {
         });
 
         gui.doLog('Available services', availableServices);
-        api.templates.get('deployedservices', function(tmpl) {
+        api.templates.get('services_pool', function(tmpl) {
             gui.appendToWorkspace(api.templates.evaluate(tmpl, {
                 deployed_services : 'deployed-services-placeholder',
                 assigned_services : 'assigned-services-placeholder',
                 cache : 'cache-placeholder',
                 groups : 'groups-placeholder',
-                transports : 'transports-placeholde',
+                transports : 'transports-placeholder',
+                publications: 'publications-placeholder',
                 logs : 'logs-placeholder',
             }));
             gui.setLinksEvents();
@@ -61,7 +62,7 @@ gui.deployedservices.link = function(event) {
                 gui.doLog('Select', counter.toString(), val, value);
             };
             
-            var tableId = gui.deployedservices.table({
+            var tableId = gui.servicesPool.table({
                 container : 'deployed-services-placeholder',
                 rowSelect : 'single',
                 buttons : [ 'new', 'edit', 'delete', { text: gettext('Test'), css: 'disabled', click: testClick, select: testSelect }, 'xls' ],
@@ -75,8 +76,9 @@ gui.deployedservices.link = function(event) {
                     clearDetails();
                     $('#detail-placeholder').removeClass('hidden');
                     // If service does not supports cache, do not show it
+                    var service = null;
                     try {
-                        var service = availableServices[dps.service_id];
+                        service = availableServices[dps.service_id];
                     } catch (e) {
                         gui.doLog('Exception on rowSelect', e);
                         gui.notify(gettext('Error processing deployed service'), 'danger');
@@ -87,28 +89,63 @@ gui.deployedservices.link = function(event) {
                     // Shows/hides cache
                     if( service.info.uses_cache || service.info.uses_cache_l2 ) {
                         $('#cache-placeholder_tab').removeClass('hidden');
-                        cachedItems = api.deployedservices.detail(dps.id, 'cache');
+                        cachedItems = new GuiElement(api.servicesPool.detail(dps.id, 'cache'), 'cache');
+                        var cachedItemsTable = cachedItems.table({
+                            container : 'cache-placeholder',
+                            rowSelect : 'single'
+                        });
+                        prevTables.push(cachedItemsTable);
                     } else {
                         $('#cache-placeholder_tab').addClass('hidden');
                     }
                     var groups = null;
                     // Shows/hides groups
-                    if( service.info.must_assign_manually ) {
+                    if( service.info.must_assign_manually === false ) {
                         $('#groups-placeholder_tab').removeClass('hidden');
-                        
+                        groups = new GuiElement(api.servicesPool.detail(dps.id, 'groups'), 'groups');
+                        var groupsTable = groups.table({
+                            container : 'groups-placeholder',
+                            rowSelect : 'single',
+                            onData: function(data) {
+                                $.each(data, function(undefined, value){
+                                    value.group_name = '<b>' + value.auth_name + '</b>\\' + value.name;
+                                });
+                            },
+                        });
+                        prevTables.push(groupsTable);
                     } else {
                         $('#groups-placeholder_tab').addClass('hidden');
                     }
                     
-                    var assignedServices =  new GuiElement(api.deployedservices.detail(dps.id, 'services'), 'services');
+                    var assignedServices =  new GuiElement(api.servicesPool.detail(dps.id, 'services'), 'services');
                     var assignedServicesTable = assignedServices.table({
                         container: 'assigned-services-placeholder',
                         rowSelect: 'single',
                     });
-                    
                     prevTables.push(assignedServicesTable);
+                    
+                    var transports =  new GuiElement(api.servicesPool.detail(dps.id, 'transports'), 'transports');
+                    var transportsTable = transports.table({
+                        container: 'transports-placeholder',
+                        rowSelect: 'single',
+                        onData: function(data) {
+                            $.each(data, function(undefined, value){
+                                var style = 'display:inline-block; background: url(data:image/png;base64,' +
+                                            value.type.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle;';
+                                value.trans_type = value.type.name;
+                                value.name = '<span style="' + style + '"></span> ' + value.name;
+                            });
+                        }
+                    });
+                    prevTables.push(transportsTable);
+                    
+                    if( service.info.needs_publication ) {
+                        $('#publications-placeholder_tab').removeClass('hidden');
+                    } else {
+                        $('#publications-placeholder_tab').addClass('hidden');
+                    }                    
                 },
-                // Preprocess data received to add "icon" to deployed service
+                // Pre-process data received to add "icon" to deployed service
                 onData: function(data) {
                     gui.doLog('onData', data);
                     $.each(data, function(index, value){
@@ -117,7 +154,7 @@ gui.deployedservices.link = function(event) {
                             var style = 'display:inline-block; background: url(data:image/png;base64,' +
                                 service.info.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle;';
                             
-                            value.name = '<span style="' + style + '"></span> ' +  value.name;
+                            value.name = '<span style="' + style + '"></span> ' + value.name;
                             
                             value.parent = service.name;
                         } catch (e) {

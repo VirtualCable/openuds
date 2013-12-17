@@ -70,7 +70,7 @@ class Services(DetailHandler):
                 'uses_cache': info.usesCache,
                 'uses_cache_l2': info.usesCache_L2,
                 'cache_tooltip': _(info.cacheTooltip),
-                'cache_tooltip_l2': _(info.cacheTooltip),
+                'cache_tooltip_l2': _(info.cacheTooltip_L2),
                 'needs_manager': info.needsManager,
                 'must_assign_manually': info.mustAssignManually,
             }

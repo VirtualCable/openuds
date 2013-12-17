@@ -180,7 +180,7 @@
                 cleanup: true,
             }, {
                 id : 'lnk-deployed_services',
-                exec : gui.deployedservices.link,
+                exec : gui.servicesPool.link,
                 cleanup: true,
             }, {
                 id : 'lnk-clear_cache',
