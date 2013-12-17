@@ -70,15 +70,15 @@ gui.servicesPool.link = function(event) {
                     clearDetails();
                 },
                 onRowSelect : function(selected) {
-                    var dps = selected[0];
-                    gui.doLog('Selected services pool', dps);
+                    var servPool = selected[0];
+                    gui.doLog('Selected services pool', servPool);
                     
                     clearDetails();
                     $('#detail-placeholder').removeClass('hidden');
                     // If service does not supports cache, do not show it
                     var service = null;
                     try {
-                        service = availableServices[dps.service_id];
+                        service = availableServices[servPool.service_id];
                     } catch (e) {
                         gui.doLog('Exception on rowSelect', e);
                         gui.notify(gettext('Error processing deployed service'), 'danger');
@@ -89,7 +89,7 @@ gui.servicesPool.link = function(event) {
                     // Shows/hides cache
                     if( service.info.uses_cache || service.info.uses_cache_l2 ) {
                         $('#cache-placeholder_tab').removeClass('hidden');
-                        cachedItems = new GuiElement(api.servicesPool.detail(dps.id, 'cache'), 'cache');
+                        cachedItems = new GuiElement(api.servicesPool.detail(servPool.id, 'cache'), 'cache');
                         var cachedItemsTable = cachedItems.table({
                             container : 'cache-placeholder',
                             rowSelect : 'single'
@@ -102,7 +102,7 @@ gui.servicesPool.link = function(event) {
                     // Shows/hides groups
                     if( service.info.must_assign_manually === false ) {
                         $('#groups-placeholder_tab').removeClass('hidden');
-                        groups = new GuiElement(api.servicesPool.detail(dps.id, 'groups'), 'groups');
+                        groups = new GuiElement(api.servicesPool.detail(servPool.id, 'groups'), 'groups');
                         var groupsTable = groups.table({
                             container : 'groups-placeholder',
                             rowSelect : 'single',
@@ -117,14 +117,14 @@ gui.servicesPool.link = function(event) {
                         $('#groups-placeholder_tab').addClass('hidden');
                     }
                     
-                    var assignedServices =  new GuiElement(api.servicesPool.detail(dps.id, 'services'), 'services');
+                    var assignedServices =  new GuiElement(api.servicesPool.detail(servPool.id, 'services'), 'services');
                     var assignedServicesTable = assignedServices.table({
                         container: 'assigned-services-placeholder',
                         rowSelect: 'single',
                     });
                     prevTables.push(assignedServicesTable);
                     
-                    var transports =  new GuiElement(api.servicesPool.detail(dps.id, 'transports'), 'transports');
+                    var transports =  new GuiElement(api.servicesPool.detail(servPool.id, 'transports'), 'transports');
                     var transportsTable = transports.table({
                         container: 'transports-placeholder',
                         rowSelect: 'single',
@@ -139,11 +139,25 @@ gui.servicesPool.link = function(event) {
                     });
                     prevTables.push(transportsTable);
                     
+                    var publications = null;
                     if( service.info.needs_publication ) {
                         $('#publications-placeholder_tab').removeClass('hidden');
+                        publications = new GuiElement(api.servicesPool.detail(servPool.id, 'publications'), 'publications');
+                        var publicationsTable = publications.table({
+                            container : 'publications-placeholder',
+                            rowSelect : 'single',
+                        });
+                        prevTables.push(publicationsTable);
+                        
                     } else {
                         $('#publications-placeholder_tab').addClass('hidden');
-                    }                    
+                    }
+                    
+                    var logTable = gui.servicesPool.logTable(servPool.id, {
+                        container : 'logs-placeholder',
+                    });
+                    
+                    prevTables.push(logTable);
                 },
                 // Pre-process data received to add "icon" to deployed service
                 onData: function(data) {
@@ -153,6 +167,11 @@ gui.servicesPool.link = function(event) {
                             var service = availableServices[value.service_id];
                             var style = 'display:inline-block; background: url(data:image/png;base64,' +
                                 service.info.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle;';
+
+                            if( value.restrained ) {
+                                value.name = '<span class="fa fa-exclamation text-danger"></span> ' + value.name;
+                                value.state = gettext('Restrained');
+                            }
                             
                             value.name = '<span style="' + style + '"></span> ' + value.name;
                             

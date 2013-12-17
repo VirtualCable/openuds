@@ -40,7 +40,7 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import ModelHandler
 from uds.REST import NotFound
-from user_services import AssignedService, CachedService, Groups, Transports
+from user_services import AssignedService, CachedService, Groups, Transports, Publications
 
 import logging
 
@@ -53,6 +53,7 @@ class ServicesPool(ModelHandler):
         'cache': CachedService,
         'groups':  Groups,
         'transports': Transports,
+        'publications': Publications,
     }
 
     save_fields = ['name', 'comments', 'service', 'osmanager', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
@@ -78,6 +79,7 @@ class ServicesPool(ModelHandler):
             'cache_l2_srvs' : item.cache_l2_srvs, 
             'max_srvs' : item.max_srvs,
             'user_services_count': item.userServices.count(),
+            'restrained': item.isRestrained(),
         }
         
         if item.osmanager is not None:
@@ -91,3 +93,8 @@ class ServicesPool(ModelHandler):
             return self.addDefaultFields(['name', 'comments'])
         except:
             raise NotFound('type not found')
+        
+    # Logs
+    def getLogs(self, item):
+        return log.getLogs(item)
+    

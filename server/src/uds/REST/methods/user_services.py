@@ -173,3 +173,28 @@ class Transports(DetailHandler):
             { 'comments': {'title': _('Comments')}},
         ]
         
+class Publications(DetailHandler):
+    def getItems(self, parent, item):
+        return [{
+            'id': i.id,
+            'revision': i.revision,
+            'publish_date': i.publish_date,
+            'state': i.state,
+            'reason': State.isErrored(i.state) and i.getInstance().reasonOfError() or '',
+            'state_date': i.state_date,
+        } for i in parent.publications.all()]
+        
+    def getTitle(self, parent):
+        return _('Publications')
+
+    def getFields(self, parent):
+        return [
+            { 'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em' } },
+            { 'publish_date': { 'title': _('Publish date'), 'type': 'datetime' } },
+            { 'state': { 'title': _('State'), 'type': 'dict', 'dict': State.dictionary() } },
+            { 'reason': {'title': _('Reason')}},
+        ]
+
+    def getRowStyle(self, parent):
+        return  { 'field': 'state', 'prefix': 'row-state-' }
+    

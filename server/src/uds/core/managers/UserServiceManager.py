@@ -302,17 +302,17 @@ class UserServiceManager(object):
             
         UserServiceOpChecker.makeUnique(cache, ci, state)
         
-    @transaction.atomic
     def cancel(self, uService):
         '''
         Cancels a user service creation
         @return: the Uservice canceling
         '''
-        uService = UserService.objects.select_for_update().get(id=uService.id)
-        logger.debug('Canceling uService {0} creation'.format(uService))
-        if uService.isPreparing() == False:
-            logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
-            return self.remove(uService)
+        with transaction.atomic():
+            uService = UserService.objects.select_for_update().get(id=uService.id)
+            logger.debug('Canceling uService {0} creation'.format(uService))
+            if uService.isPreparing() == False:
+                logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
+                return self.remove(uService)
         
         ui = uService.getInstance()
         # We simply notify service that it should cancel operation
@@ -323,16 +323,16 @@ class UserServiceManager(object):
         return uService
 
         
-    @transaction.atomic
     def remove(self, uService):
         '''
         Removes a uService element
         @return: the uService removed (marked for removal)
         '''
-        uService = UserService.objects.select_for_update().get(id=uService.id)
-        logger.debug('Removing uService {0}'.format(uService))
-        if uService.isUsable() == False and State.isRemovable(uService.state) == False:
-            raise OperationException(_('Can\'t remove a non active element'))
+        with transaction.atomic():
+            uService = UserService.objects.select_for_update().get(id=uService.id)
+            logger.debug('Removing uService {0}'.format(uService))
+            if uService.isUsable() == False and State.isRemovable(uService.state) == False:
+                raise OperationException(_('Can\'t remove a non active element'))
         
         ci = uService.getInstance()
         state = ci.destroy()

@@ -84,7 +84,7 @@
             
             return function(data, type, full) {
                 return levels[data] || 'OTHER';
-            }
+            };
         },
 
     };

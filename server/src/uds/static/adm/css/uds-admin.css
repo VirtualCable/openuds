@@ -81,6 +81,8 @@ body {
 /* Tables */
 
 /* Tables "styling" */
+
+/* States */
 tr.row-state-A, tr.row-state-F, tr.row-state-U, tr.row-state-W {
 	color: black;
 }
@@ -92,6 +94,27 @@ tr.row-state-B, tr.row-state-C, tr.row-state-E {
 tr.row-state-M, tr.row-state-R, tr.row-state-I {
 	color: #858585;
 }
+
+/* Logs */
+tr.log-WARN {
+	color: blue;
+}
+
+tr.log-DEBUG {
+	color: green;
+}
+
+tr.log-INFO, tr.log-OTHER {
+	color: black;
+}
+
+tr.log-ERROR, tr.log-FATAL {
+	color: red;
+}
+
+
+
+/* End tables styling */
 
 /* Edit Below to Customize Widths > 768px */
 @media (min-width:768px) {

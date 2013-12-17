@@ -136,7 +136,7 @@ GuiElement.prototype = {
         // Text transformation, dictionary based
         var renderTextTransform = function(dict) {
             return function(data, type, full) {
-                    return dict[data] || renderEmptyCell('');
+                    return dict[data] || renderEmptyCell(data);
             };
         };
         
@@ -544,6 +544,9 @@ GuiElement.prototype = {
             return false; // This may be used on button or href, better disable execution of it
         };
         
+        // Log level "translator" (renderer)
+        var logRenderer = gui.tools.renderLogLovel();
+        
         // Columns description
         var columns = [
             {
@@ -556,7 +559,7 @@ GuiElement.prototype = {
             {
                 "mData" : 'level',
                 "sTitle" : gettext('level'),
-                "mRender" : gui.tools.renderLogLovel(),
+                "mRender" : logRenderer,
                 "sWidth" : "5em",
                 "bSortable" : true,
                 "bSearchable" : true,
@@ -601,6 +604,10 @@ GuiElement.prototype = {
                 "oLanguage" : gui.config.dataTablesLanguage,
                 "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
                 "bDeferRender": tblParams.deferedRender || false,
+                "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                    var v = 'log-' + logRenderer(this.fnGetData(iDataIndex)['level']);  
+                    $(nRow).addClass(v);
+                },
             });
 
             // Fix form 
