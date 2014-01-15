@@ -458,9 +458,11 @@ GuiElement.prototype = {
                 
                 var dataTableOptions = {
                     "aaData" : data,
+                    "aaSorting": [[0, 'asc']],
                     "aoColumns" : columns,
                     "oLanguage" : gui.config.dataTablesLanguage,
                     "oTableTools" : oTableTools,
+                    "sPaginationType": "bootstrap",
                     // First is upper row,
                     // second row is lower
                     // (pagination) row
@@ -602,13 +604,14 @@ GuiElement.prototype = {
 
             $('#' + tableId).dataTable({
                 "aaData" : data,
+                "aaSorting": [[0, 'desc']],
                 "oTableTools" : {"aButtons" : [],},
                 "aoColumns" : columns,
                 "oLanguage" : gui.config.dataTablesLanguage,
                 "sDom" : "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>",
                 "bDeferRender": tblParams.deferedRender || false,
                 "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-                    var v = 'log-' + logRenderer(this.fnGetData(iDataIndex)['level']);  
+                    var v = 'log-' + logRenderer(this.fnGetData(iDataIndex).level);  
                     $(nRow).addClass(v);
                 },
             });

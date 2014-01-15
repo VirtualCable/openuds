@@ -25,10 +25,10 @@
         'sSearch' : gettext('Filter'),
         'sInfoThousands' : django.formats.THOUSAND_SEPARATOR,
         'oPaginate' : {
-            'sFirst' : gettext('First'),
-            'sLast' : gettext('Last'),
-            'sNext' : '',
-            'sPrevious' : '',
+            'sFirst' : '<span class="fa fa-fast-backward "></span> ',
+            'sLast' : '<span class="fa fa-fast-forward"></span> ',
+            'sNext' : '<span class="fa fa-forward"></span> ',
+            'sPrevious' : '<span class="fa fa-backward"></span> ',
         }
     };
     
