@@ -41,11 +41,11 @@ function minify_admin() {
        'gui-element',
        // Gui definition
        'gui-definition',
-       'gui-d-service-providers',
+       'gui-d-services',
        'gui-d-authenticators',
        'gui-d-osmanagers',
        'gui-d-connectivity',
-       'gui-d-deployedservices',
+       'gui-d-servicespools',
     ];
     
     var cssFiles = [

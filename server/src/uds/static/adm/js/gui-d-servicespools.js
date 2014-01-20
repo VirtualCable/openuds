@@ -47,7 +47,7 @@ gui.servicesPool.link = function(event) {
                 logs : 'logs-placeholder',
             }));
             gui.setLinksEvents();
-    
+            
             var testClick = function(val, value, btn, tbl, refreshFnc) {
                 gui.doLog(value);
             };
@@ -142,10 +142,34 @@ gui.servicesPool.link = function(event) {
                     var publications = null;
                     if( service.info.needs_publication ) {
                         $('#publications-placeholder_tab').removeClass('hidden');
-                        publications = new GuiElement(api.servicesPool.detail(servPool.id, 'publications'), 'publications');
+                        var pubApi = api.servicesPool.detail(servPool.id, 'publications');
+                        publications = new GuiElement(pubApi, 'publications');
                         var publicationsTable = publications.table({
                             container : 'publications-placeholder',
                             rowSelect : 'single',
+                            buttons : [ 'new', { 
+                                                    text: gettext('Cancel'), 
+                                                    css: 'disabled', 
+                                                    click: function(val, value, btn, tbl, refreshFnc) {
+                                                        gui.doLog(val);
+                                                    }, 
+                                                    select: function(val, value, btn, tbl, refreshFnc) {
+                                                        if( !val ) {
+                                                            $(btn).removeClass('btn3d-info').addClass('disabled');
+                                                            return;
+                                                        }
+                                                        if( ['P','W','L'].indexOf(val.state) > 0 ) { // Waiting for publication, Preparing or running
+                                                            $(btn).removeClass('disabled').addClass('btn3d-info');
+                                                        }
+                                                    },
+                                                }, 
+                                        'xls' ],
+                            onNew: function(action, tbl, refreshFnc) {
+                                gui.doLog('New publication');
+                                pubApi.invoke('publish', function(){
+                                    gui.doLog('Success');
+                                }, gui.failRequestModalFnc(gettext('Publication failed')) );
+                            },
                         });
                         prevTables.push(publicationsTable);
                         

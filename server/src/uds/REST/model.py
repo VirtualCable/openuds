@@ -159,10 +159,15 @@ class BaseModelHandler(Handler):
     
     def invalidItemException(self):
         raise NotFound(_('Item not found'))
+    
+    # Success methods
+    def success(self):
+        return 'done'
 
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 class DetailHandler(BaseModelHandler):
+    custom_methods = []
     '''
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -178,8 +183,11 @@ class DetailHandler(BaseModelHandler):
     [path] --> create NEW item
     [path]/ID --> Modify existing item
     For DELETE:
-    [path]/ID 
+    [path]/ID
+    
+    Also accepts GET methods for "custom" methods 
     '''
+    
     def __init__(self, parentHandler, path, params, *args, **kwargs):
         self._parent = parentHandler
         self._path = path
@@ -194,6 +202,16 @@ class DetailHandler(BaseModelHandler):
         parent = self._kwargs['parent']
         if nArgs == 0:
             return self.getItems(parent, None) 
+
+        # if has custom methods, look for if this request matches any of them
+        for cm in self.custom_methods:
+            if self._args[0] == cm:
+                try:
+                    operation = getattr(self, self._args[0])
+                except:
+                    self.invalidMethodException()
+                    
+                return operation(parent)
 
         if nArgs == 1:
             if self._args[0] == OVERVIEW:

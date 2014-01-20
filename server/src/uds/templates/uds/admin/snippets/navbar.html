@@ -15,7 +15,7 @@
            <div class="collapse navbar-collapse navbar-ex1-collapse">
               <ul class="nav navbar-nav side-nav">
                 <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                <li><a class="lnk-service_providers" href="#"><i class="fa fa-bar-chart-o"></i> {% trans 'Service providers' %}</a></li>
+                <li><a class="lnk-service_providers" href="#"><i class="fa fa-bar-chart-o"></i> {% trans 'Services' %}</a></li>
                 <li><a class="lnk-authenticators" href="#"><i class="fa fa-user"></i> {% trans 'Authenticators' %}</a></li>
                 <li><a class="lnk-osmanagers" href="#"><i class="fa fa-edit"></i> Os Managers</a></li>
                 <li><a class="lnk-connectivity" href="#"><i class="fa fa-font"></i> {% trans 'Connectivity' %}</a></li>
@@ -30,6 +30,7 @@
                   </ul>
                 </li>
               </ul>
+              
                 <ul class="nav navbar-nav navbar-right navbar-user">
                 </ul>
                 <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">

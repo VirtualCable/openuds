@@ -405,6 +405,7 @@ DetailModelRestApi.prototype = {
         "use strict";
         return this.base.getLogs(itemId, success_fnc, fail_fnc);
     },
+    // Put methods
     put: function(data, options) {
         "use strict";
         return this.base.put(data, options);
@@ -439,6 +440,7 @@ DetailModelRestApi.prototype = {
         "use strict";
         return this.base.del(id, success_fnc, fail_fnc);
     },
+    
     tableInfo: function(success_fnc, fail_fnc) { 
         "use strict";
         return this.base.tableInfo(success_fnc, fail_fnc);
@@ -454,6 +456,16 @@ DetailModelRestApi.prototype = {
     gui: function(typeName, success_fnc, fail_fnc) { // Typename can be "undefined" to request MAIN gui (it it exists ofc..)
         "use strict";
         return this.base.gui(typeName, success_fnc, fail_fnc);
+    },
+    
+    // Generic "Invoke" method (with no args, if needed, put them on "method" after "?" as normal url would be
+    invoke: function(method, success_fnc, fail_fnc) {
+        "use strict";
+        return this.base.get({
+            id: method,
+            success: success_fnc,
+            fail: fail_fnc
+        });
     },
     
 };

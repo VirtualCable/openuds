@@ -62,9 +62,10 @@ class Client(object):
                 pass
         try:
             cached_api_key = aKey
-            cached_api = API(url='https://'+self._host, username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
+            cached_api = API(url='https://'+self._host+'/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
             return cached_api
         except:
+            logger.exception('Exception connection ovirt at {0}'.format(self._host))
             cached_api_key = None
             raise Exception("Can't connet to server at {0}".format(self._host))
             return None

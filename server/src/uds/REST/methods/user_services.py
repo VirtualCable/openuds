@@ -174,6 +174,13 @@ class Transports(DetailHandler):
         ]
         
 class Publications(DetailHandler):
+    custom_methods=['publish']
+    
+    def publish(self, parent):
+        logger.debug('Custom "publish" invoked')
+        parent.publish()
+        return self.success()
+    
     def getItems(self, parent, item):
         return [{
             'id': i.id,
