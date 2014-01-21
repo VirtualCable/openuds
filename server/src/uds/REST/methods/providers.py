@@ -99,4 +99,7 @@ class Providers(ModelHandler):
 
     def allservices(self):
         for s in Service.objects.all():
-            yield DetailServices.serviceToDict(s, True)
+            try:
+                yield DetailServices.serviceToDict(s, True)
+            except:
+                logger.exception('Passed service cause type is unknown')

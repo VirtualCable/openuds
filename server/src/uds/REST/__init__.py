@@ -86,12 +86,13 @@ class Dispatcher(View):
             return http.HttpResponseNotFound('method not found')
             
         
-        # Guess content type from content type header or ".xxx" to method
+        # Guess content type from content type header (post) or ".xxx" to method
         try:
             p = full_path.split('.')
             processor = processors.available_processors_ext_dict[p[1]](request)
         except:
-            processor = processors.available_processors_mime_dict.get(request.META['CONTENT_TYPE'], processors.default_processor)(request)
+            # TODO: Extract processor from accept and/or content type?
+            processor = processors.available_processors_mime_dict.get(request.META.get('CONTENT_TYPE', 'json'), processors.default_processor)(request)
             
 
         # Obtain method to be invoked
