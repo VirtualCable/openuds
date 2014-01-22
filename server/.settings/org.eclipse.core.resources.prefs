@@ -157,6 +157,7 @@ encoding//src/uds/migrations/0013_auto__add_field_group_is_meta__add_field_uniqu
 encoding//src/uds/migrations/0014_auto__add_field_network_net_string.py=utf-8
 encoding//src/uds/migrations/0016_auto__add_field_userservice_cluster_node.py=utf-8
 encoding//src/uds/migrations/0017_change_tables.py=utf-8
+encoding//src/uds/migrations/0018_security_config.py=utf-8
 encoding//src/uds/models.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/LinuxOsManager.py=utf-8
 encoding//src/uds/osmanagers/LinuxOsManager/__init__.py=utf-8

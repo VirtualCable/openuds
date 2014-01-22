@@ -100,7 +100,11 @@ class LogManager(object):
                 pass
             
         # now, we add new log
-        Log.objects.create(owner_type = owner_type, owner_id = owner_id, created = getSqlDatetime(), source = source, level = level, data = message)
+        try:
+            Log.objects.create(owner_type = owner_type, owner_id = owner_id, created = getSqlDatetime(), source = source, level = level, data = message)
+        except:
+            # Some objects will not get logged, such as System administrator objects
+            pass
 
 
     def __getLogs(self, owner_type, owner_id, limit):

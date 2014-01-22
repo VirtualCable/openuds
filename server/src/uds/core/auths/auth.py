@@ -39,6 +39,7 @@ from functools import wraps
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.utils.translation import get_language
 
+from django.utils.translation import ugettext as _
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import log
 from uds.core import auths
@@ -51,9 +52,18 @@ import logging
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
 
-
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
+ROOT_ID = -20091204 # Any negative number will do the trick
+
+def getRootUser():
+    from uds.models import Authenticator
+    u = User(id=ROOT_ID, name=GlobalConfig.SUPER_USER_LOGIN.get(True), real_name=_('System Administrator'), state= State.ACTIVE, staff_member = True, is_admin = True )
+    u.manager = Authenticator()
+    u.getGroups = lambda: []
+    u.updateLastAccess = lambda: None
+    u.logout = lambda: None
+    return u    
 
 def getIp(request, translateProxy = True):
     '''
@@ -83,7 +93,10 @@ def webLoginRequired(view_func):
         user = request.session.get(USER_KEY)
         if user is not None:
             try:
-                user = User.objects.get(pk=user)
+                if user == ROOT_ID:
+                    user = getRootUser()
+                else: 
+                    user = User.objects.get(pk=user)
             except User.DoesNotExist:
                 user = None 
         if user is None:
@@ -147,6 +160,11 @@ def authenticate(username, password, authenticator, useInternalAuthenticate = Fa
     @return: None if authentication fails, User object (database object) if authentication is o.k. 
     '''
     logger.debug('Authenticating user {0} with authenticator {1}'.format(username, authenticator))
+    
+    # If global root auth is enabled && user/password is correct, 
+    if GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True) and username == GlobalConfig.SUPER_USER_LOGIN.get(True) and password == GlobalConfig.SUPER_USER_PASS.get(True):
+        return getRootUser()
+    
     gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
     if useInternalAuthenticate is False:
@@ -224,12 +242,17 @@ def webLogin(request, response, user, password):
     @return: Always returns True
     '''
     from uds import REST
+    
+    if user.id != ROOT_ID: # If not ROOT user (this user is not inside any authenticator)
+        manager_id = user.manager.id
+    else:
+        manager_id = -1
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = CryptoManager.manager().xor(password.encode('utf-8'), request.COOKIES['uds'])
     # Ensures that this user will have access througt REST api if logged in through web interface
-    REST.Handler.storeSessionAuthdata(request.session, user.manager.small_name, user.name, get_language(), user.is_admin, user.staff_member)
+    REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), user.is_admin, user.staff_member)
     return True
 
 
