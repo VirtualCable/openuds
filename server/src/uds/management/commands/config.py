@@ -32,7 +32,6 @@
 '''
 
 from django.core.management.base import BaseCommand
-from optparse import make_option
 from uds.core.util.Config import Config, GLOBAL_SECTION
 import logging
 

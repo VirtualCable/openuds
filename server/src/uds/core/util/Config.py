@@ -150,10 +150,11 @@ class Config(object):
     @staticmethod
     def enumerate():
         for cfg in dbConfig.objects.all():
+            logger.debug('{0}.{1}:{2}'.format(cfg.section, cfg.key, cfg.value))
             if cfg.crypt is True:
-                val = Config.section(cfg.section).valueCrypt(cfg.key, CryptoManager.manager().decrypt(cfg.value))
+                val = Config.section(cfg.section).valueCrypt(cfg.key)
             else:
-                val =  Config.section(cfg.section).value(cfg.key, cfg.value)
+                val =  Config.section(cfg.section).value(cfg.key)
             yield val
     
     @staticmethod
@@ -197,12 +198,14 @@ class GlobalConfig(object):
     # Login URL
     LOGIN_URL = Config.section(GLOBAL_SECTION).value('loginUrl', '/login') # Defaults to /login 
     # Session duration
-    USER_SESSION_LENGTH = Config.section(GLOBAL_SECTION).value('userSessionLength', '14400') # Defaults to 4 hours
+    USER_SESSION_LENGTH = Config.section(SECURITY_SECTION).value('userSessionLength', '14400') # Defaults to 4 hours
     # Superuser (do not need to be at database!!!)
-    SUPER_USER_LOGIN = Config.section(GLOBAL_SECTION).value('superUser', 'root') # Defaults to 4 hours
+    SUPER_USER_LOGIN = Config.section(SECURITY_SECTION).value('superUser', 'root') # Defaults to 4 hours
     # Superuser password (do not need to be at database!!!)
-    SUPER_USER_PASS = Config.section(GLOBAL_SECTION).valueCrypt('rootPass', 'udsmam0')
+    SUPER_USER_PASS = Config.section(SECURITY_SECTION).valueCrypt('rootPass', 'udsmam0')
     # Idle time before closing session on admin
+    SUPER_USER_ALLOW_WEBACCESS = Config.section(SECURITY_SECTION).value('Allow root web access', '1')
+    # Time an admi session can be idle before being "logged out"
     ADMIN_IDLE_TIME = Config.section(GLOBAL_SECTION).value('adminIdleTime', '14400') # Defaults to 4 hous 
     # Time betwen checks of unused services by os managers
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time

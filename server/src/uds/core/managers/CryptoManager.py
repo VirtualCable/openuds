@@ -32,11 +32,15 @@
 '''
 from __future__ import unicode_literals
 
-from server.settings import RSA_KEY
+from django.conf import settings
 from Crypto.PublicKey import RSA
 from OpenSSL import crypto
 from Crypto.Random import atfork
 import hashlib, array
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 # To generate an rsa key, first we need the crypt module
 # next, we do:
@@ -50,7 +54,7 @@ class CryptoManager(object):
     instance = None
     
     def __init__(self):
-        self._rsa = RSA.importKey(RSA_KEY)
+        self._rsa = RSA.importKey(settings.RSA_KEY)
     
     @staticmethod
     def manager():
@@ -63,8 +67,11 @@ class CryptoManager(object):
         return self._rsa.encrypt(string.encode('utf-8'), '')[0].encode(CryptoManager.CODEC)
     
     def decrypt(self, string):
-        atfork()
-        return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).decode('utf-8')
+        try:
+            atfork()
+            return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).encode('utf-8')
+        except:
+            return 'decript error'
     
     def xor(self, s1, s2):
         s1, s2 = s1.encode('utf-8'), s2.encode('utf-8')
