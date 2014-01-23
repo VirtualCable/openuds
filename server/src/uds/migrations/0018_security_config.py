@@ -6,6 +6,8 @@ from django.db import models
 
 from uds.core.util.Config import GLOBAL_SECTION, SECURITY_SECTION
 
+configKeys = ['superUser', 'rootPass', 'adminIdleTime', 'allowRootWebAccess', 'userSessionLength' ]
+
 class Migration(DataMigration):
 
     def forwards(self, orm):
@@ -15,15 +17,15 @@ class Migration(DataMigration):
         # and orm['appname.ModelName'] for models in other applications.
         if not db.dry_run:
             # Remove existing secirity values if they exists before "migrating" global ones
-            orm.Config.objects.filter(section=SECURITY_SECTION,key__in=['superUser', 'rootPass', 'adminIdleTime', 'Allow root web access', 'userSessionLength' ]).delete()
-            orm.Config.objects.filter(section=GLOBAL_SECTION,key__in=['superUser', 'rootPass', 'adminIdleTime', 'Allow root web access', 'userSessionLength' ]).update(section=SECURITY_SECTION)
+            orm.Config.objects.filter(section=SECURITY_SECTION,key__in=configKeys).delete()
+            orm.Config.objects.filter(section=GLOBAL_SECTION,key__in=configKeys).update(section=SECURITY_SECTION)
 
     def backwards(self, orm):
         "Write your backwards methods here."
         if not db.dry_run:
             # Remove existing global existing values if they exists before "migrating back" security ones
-            orm.Config.objects.filter(section=GLOBAL_SECTION,key__in=['superUser', 'rootPass', 'adminIdleTime', 'Allow root web access', 'userSessionLength' ]).delete()
-            orm.Config.objects.filter(section=SECURITY_SECTION,key__in=['superUser', 'rootPass', 'adminIdleTime', 'Allow root web access', 'userSessionLength' ]).update(section=GLOBAL_SECTION)
+            orm.Config.objects.filter(section=GLOBAL_SECTION,key__in=configKeys).delete()
+            orm.Config.objects.filter(section=SECURITY_SECTION,key__in=configKeys).update(section=GLOBAL_SECTION)
 
     models = {
         u'uds.authenticator': {

@@ -204,7 +204,7 @@ class GlobalConfig(object):
     # Superuser password (do not need to be at database!!!)
     SUPER_USER_PASS = Config.section(SECURITY_SECTION).valueCrypt('rootPass', 'udsmam0')
     # Idle time before closing session on admin
-    SUPER_USER_ALLOW_WEBACCESS = Config.section(SECURITY_SECTION).value('Allow root web access', '1')
+    SUPER_USER_ALLOW_WEBACCESS = Config.section(SECURITY_SECTION).value('allowRootWebAccess', '1')
     # Time an admi session can be idle before being "logged out"
     ADMIN_IDLE_TIME = Config.section(GLOBAL_SECTION).value('adminIdleTime', '14400') # Defaults to 4 hous 
     # Time betwen checks of unused services by os managers
