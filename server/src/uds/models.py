@@ -539,6 +539,10 @@ class Authenticator(models.Model):
         
         Raises:
         '''
+        from uds.core.auths import Authenticator as fakeAuth
+        if self.id is None:
+            return fakeAuth(self, None, values)
+        
         auType = self.getType()
         env = self.getEnvironment()
         auth = auType(self, env, values)

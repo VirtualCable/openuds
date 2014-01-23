@@ -17,15 +17,26 @@ class Migration(DataMigration):
         # and orm['appname.ModelName'] for models in other applications.
         if not db.dry_run:
             # Remove existing secirity values if they exists before "migrating" global ones
-            orm.Config.objects.filter(section=SECURITY_SECTION,key__in=configKeys).delete()
-            orm.Config.objects.filter(section=GLOBAL_SECTION,key__in=configKeys).update(section=SECURITY_SECTION)
+            for k in configKeys:
+                try:
+                    o = orm.Config.objects.get(section=GLOBAL_SECTION,key=k)
+                    orm.Config.objects.filter(section=SECURITY_SECTION,key=k).delete()
+                    o.section = SECURITY_SECTION
+                    o.save()
+                except:
+                    pass
 
     def backwards(self, orm):
         "Write your backwards methods here."
         if not db.dry_run:
-            # Remove existing global existing values if they exists before "migrating back" security ones
-            orm.Config.objects.filter(section=GLOBAL_SECTION,key__in=configKeys).delete()
-            orm.Config.objects.filter(section=SECURITY_SECTION,key__in=configKeys).update(section=GLOBAL_SECTION)
+            for k in configKeys:
+                try:
+                    o = orm.Config.objects.get(section=SECURITY_SECTION,key=k)
+                    orm.Config.objects.filter(section=GLOBAL_SECTION,key=k).delete()
+                    o.section = GLOBAL_SECTION
+                    o.save()
+                except:
+                    pass
 
     models = {
         u'uds.authenticator': {

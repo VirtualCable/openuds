@@ -68,7 +68,7 @@ class BaseForm(forms.Form):
 class LoginForm(BaseForm):
     user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())
     password = forms.CharField(label=_('Password'), widget=forms.PasswordInput(attrs={'title': _('Password')}), required=False)
-    authenticator = forms.ChoiceField(label=_('Authenticator'), choices = (), widget=CustomSelect())
+    authenticator = forms.ChoiceField(label=_('Authenticator'), choices = (), widget=CustomSelect(), required=False)
     java = forms.CharField(widget = forms.HiddenInput())
     standard = forms.CharField(widget = forms.HiddenInput(), required=False)
     nonStandard = forms.CharField(widget = forms.HiddenInput(), required=False)

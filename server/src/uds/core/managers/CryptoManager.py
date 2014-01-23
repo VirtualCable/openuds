@@ -71,6 +71,7 @@ class CryptoManager(object):
             atfork()
             return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).encode('utf-8')
         except:
+            logger.exception('Decripting')
             return 'decript error'
     
     def xor(self, s1, s2):
