@@ -231,7 +231,7 @@
         $.blockUI.defaults.baseZ = 2000;
 
         $.fn.dataTableExt.oSort['uds-date-pre'] = function( s ) {
-            return parseInt(s.split('"')[1]);
+            return parseInt(s.split('"')[1], 10);
         };
         // Sort for "date" columns (our "dates" are in fact postfix dates rendered as dates with locale format
         $.fn.dataTableExt.oSort['uds-date-asc']  = function(x,y) {
@@ -245,6 +245,10 @@
         };        
         
         gui.setLinksEvents();
+        gui.dashboard.link();
+    };
+    
+    gui.showDashboard = function() {
         gui.dashboard.link();
     };
     

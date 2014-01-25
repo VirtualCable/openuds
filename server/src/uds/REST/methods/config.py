@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 from uds.core.util.Config import Config as cfgConfig
 
-from uds.REST import Handler
+from uds.REST import Handler, AccessDenied
 
 import logging
 
@@ -59,4 +59,9 @@ class Config(Handler):
         logger.debug('Configuration: {0}'.format(res))
         return res
         
+    def put(self):
+        for section, secDict in self._params.iteritems():
+            for key, vals in secDict.iteritems():
+                cfgConfig.update( section, key, vals['value'] )
+        return 'done'
     
