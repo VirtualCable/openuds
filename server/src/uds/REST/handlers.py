@@ -159,3 +159,9 @@ class Handler(object):
             self._session.save()
         except:
             pass
+        
+    def is_admin(self):
+        return self.getValue('is_admin') and True or False
+    
+    def is_staff_member(self):
+        return self.getValue('staff_member') and True or False

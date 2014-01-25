@@ -6,7 +6,7 @@ from django.db import models
 
 from uds.core.util.Config import GLOBAL_SECTION, SECURITY_SECTION
 
-configKeys = ['superUser', 'rootPass', 'adminIdleTime', 'allowRootWebAccess', 'userSessionLength' ]
+configKeys = ['superUser', 'rootPass', 'adminIdleTime', 'allowRootWebAccess', 'userSessionLength', 'adminIdleTime' ]
 
 class Migration(DataMigration):
 

@@ -62,7 +62,6 @@
     
     gui.table = function(title, table_id, options) {
         options = options || {};
-        var size = options.size || 12;
         var panelId = 'panel-' + table_id;
 
         return {
@@ -185,6 +184,10 @@
             }, {
                 id : 'lnk-clear_cache',
                 exec : gui.clear_cache.link,
+                cleanup: false,
+            }, {
+                id : 'lnk-configuration',
+                exec : gui.configuration.link,
                 cleanup: false,
             },
         ];

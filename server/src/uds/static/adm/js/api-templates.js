@@ -8,6 +8,17 @@
     "use strict";
     // Registers Handlebar useful helpers
     
+    // Iterate thought dictionary
+    Handlebars.registerHelper('eachKey', function(context, options) {
+        var ret = "";
+        var first = true;
+        for(var prop in context) {
+            ret = ret + options.fn({key:prop,value:context[prop], first:first});
+            first = false;
+        }
+        return ret;
+    });    
+    
     // Equal comparision (like if helper, but with comparation)
     // Use as block as {{#ifequals [element] [element]}}....{{/ifequals}}
     Handlebars.registerHelper('ifequals', function(context1, context2, options) {
@@ -62,6 +73,13 @@
             return val;
         }
     });
+
+    // Remove white spaces
+    Handlebars.registerHelper('clean_whitespace', function(value) {
+        var val = value.toString(); // For Array objects, the toString method joins the array and returns one string containing each array element separated by commas
+        return val.replace(/ /g, '');
+    });
+    
     
     api.templates = {};
     // Now initialize templates api

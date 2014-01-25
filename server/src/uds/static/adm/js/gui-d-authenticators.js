@@ -301,6 +301,7 @@ gui.authenticators.link = function(event) {
                                     $(modalId + ' .button-accept').click(function(){
                                         var fields = gui.forms.read(modalId);
                                         // If needs password, and password has changed
+                                        gui.doLog('passwords', type.needsPassword, password, fields.password);
                                         if( type.needsPassword ) {
                                             if( fields.password == password)
                                                 delete fields.password;

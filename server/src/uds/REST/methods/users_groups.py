@@ -41,6 +41,7 @@ from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import log
 from uds.models import Authenticator, User, Group
 from uds.core.auths.User import User as aUser
+from uds.core.managers import cryptoManager
 from uds.REST import RequestError
 
 from uds.REST.model import DetailHandler
@@ -96,10 +97,12 @@ class Users(DetailHandler):
         return log.getLogs(user)
 
     def saveItem(self, parent, item):
-        # Extract item db fields
-        # We need this fields for all
         logger.debug('Saving user {0} / {1}'.format(parent, item))
         valid_fields = ['name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin']
+        if self._params.has_key('password'):
+            valid_fields.append('password')
+            self._params['password'] = cryptoManager().hash(self._params['password'])
+            
         fields = self.readFieldsFromParams(valid_fields)
         try:
             auth = parent.getInstance()

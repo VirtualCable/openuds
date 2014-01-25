@@ -32,60 +32,31 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import OSManager
+from uds.core.util.Config import Config as cfgConfig
 
-from uds.REST import NotFound, RequestError
-from uds.core.osmanagers import factory
-
-from uds.REST.model import ModelHandler
+from uds.REST import Handler
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /osm path
+# Enclosed methods under /auth path
 
-class OsManagers(ModelHandler):
-    model = OSManager
-    save_fields = ['name', 'comments']
+class Config(Handler):
+    needs_admin = True # By default, staff is lower level needed 
 
-    table_title =  _('Current OS Managers')
-    table_fields = [
-            { 'name': {'title': _('Name'), 'visible': True, 'type': 'iconType' } },
-            { 'comments': {'title':  _('Comments')}},
-            { 'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
-    ]
+    def get(self):
+        res = {}
+        addCrypt = self.is_admin()
     
-    @staticmethod
-    def osmToDict(osm):
-        type_ = osm.getType()
-        return { 'id': osm.id,
-                 'name': osm.name, 
-                 'deployed_count': osm.deployedServices.count(),
-                 'type': type_.type(),
-                 'comments': osm.comments,
-        }
+        for cfg in cfgConfig.enumerate():
+            if cfg.isCrypted() is True and addCrypt is False:
+                continue
+            # add section if it do not exists
+            if res.has_key(cfg.section()) is False:
+                res[cfg.section()] = {}
+            res[cfg.section()][cfg.key()] = { 'value' : cfg.get(), 'crypt': cfg.isCrypted(), 'longText': cfg.isLongText() }
+        logger.debug('Configuration: {0}'.format(res))
+        return res
+        
     
-    def item_as_dict(self, item):
-        return OsManagers.osmToDict(item)
-        
-    def checkDelete(self, item):
-        if item.deployedServices.count() > 0:
-            raise RequestError(ugettext('Can\'t delete an OSManager with deployed services associated'))
-        
-    def checkSave(self, item):
-        if item.deployedServices.count() > 0:
-            raise RequestError(ugettext('Can\'t modify an OSManager with deployed services associated'))
-        
-        
-    # Types related
-    def enum_types(self):
-        return factory().providers().values()
-        
-    # Gui related
-    def getGui(self, type_):
-        try:
-            return self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments'])
-        except:
-            raise NotFound('type not found')

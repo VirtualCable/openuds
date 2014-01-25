@@ -484,7 +484,6 @@ api.providers.allServices = function(success_fnc, fail_fnc) {
 };
 
 
-// api.services = new BasicModelRest('services');
 api.authenticators = new BasicModelRest('authenticators');
 // Search method used in authenticators
 api.authenticators.search = function(id, type, term, success_fnc, fail_fnc) {
@@ -501,3 +500,4 @@ api.transports = new BasicModelRest('transports');
 api.networks = new BasicModelRest('networks');
 api.servicesPool = new BasicModelRest('servicespool');
 
+api.configuration = new BasicModelRest('config');

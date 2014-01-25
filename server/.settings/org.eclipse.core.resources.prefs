@@ -12,6 +12,7 @@ encoding//src/uds/REST/__init__.py=utf-8
 encoding//src/uds/REST/handlers.py=utf-8
 encoding//src/uds/REST/methods/authenticators.py=utf-8
 encoding//src/uds/REST/methods/cache.py=utf-8
+encoding//src/uds/REST/methods/config.py=utf-8
 encoding//src/uds/REST/methods/gui_callback.py=utf-8
 encoding//src/uds/REST/methods/login_logout.py=utf-8
 encoding//src/uds/REST/methods/networks.py=utf-8

@@ -108,6 +108,7 @@
         <script src="{% get_static_prefix %}adm/js/gui-d-osmanagers.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-d-connectivity.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-d-servicespools.js"></script>
+        <script src="{% get_static_prefix %}adm/js/gui-d-config.js"></script>
         
         {% else %}
         <!-- minified js from: 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI',
@@ -132,6 +133,7 @@
         {% js_template 'authenticators' %}
         {% js_template 'connectivity' %}
         {% js_template 'services_pool' %}
+        {% js_template 'configuration' %}
         <!-- utility pages -->
         {% js_template 'request_failed' %}
         <!-- components -->

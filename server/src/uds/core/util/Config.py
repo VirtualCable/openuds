@@ -206,7 +206,7 @@ class GlobalConfig(object):
     # Idle time before closing session on admin
     SUPER_USER_ALLOW_WEBACCESS = Config.section(SECURITY_SECTION).value('allowRootWebAccess', '1')
     # Time an admi session can be idle before being "logged out"
-    ADMIN_IDLE_TIME = Config.section(GLOBAL_SECTION).value('adminIdleTime', '14400') # Defaults to 4 hous 
+    ADMIN_IDLE_TIME = Config.section(SECURITY_SECTION).value('adminIdleTime', '14400') # Defaults to 4 hous 
     # Time betwen checks of unused services by os managers
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time
     # (only if os manager asks for this characteristic)
