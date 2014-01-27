@@ -278,7 +278,7 @@
         return function(value, event, table, refreshFnc) {
             gui.tools.blockUI();
             parent.rest.gui(value.type, function(guiDefinition) {
-                var buttons;
+                var buttons = null;
                 if( options.testButton ) {
                     buttons = gui.methods.typedTestButton(parent.rest, options.testButton.text, options.testButton.css, value.type);
                 }
@@ -313,19 +313,25 @@
             gui.tools.blockUI();
             parent.rest.gui(type, function(guiDefinition) {
                 gui.tools.unblockUI();
-                var buttons;
+                var buttons = null;
                 if( options.testButton ) {
                     buttons = gui.methods.typedTestButton(parent.rest, options.testButton.text, options.testButton.css, type);
                 }
                 var tabs = options.guiProcessor ? options.guiProcessor(guiDefinition) : guiDefinition; // Preprocess fields (probably generate tabs...)
+                var title = modalTitle;
+                if( parent.types[type] !== undefined ) {
+                    title += ' ' + gettext('of type') +' <b>' + parent.types[type].name + '</b>';
+                }
                 gui.forms.launchModal({
-                    title: modalTitle + ' ' + gettext('of type') +' <b>' + parent.types[type].name + '</b>', 
+                    title: title, 
                     fields: tabs, 
                     item: undefined, 
                     buttons: buttons,
                     success: function(form_selector, closeFnc) {
                         var fields = gui.forms.read(form_selector);
-                        fields.data_type = type;
+                        if( parent.types[type] !== undefined ) {
+                            fields.data_type = type;
+                        }
                         fields = options.fieldsProcessor ? options.fieldsProcessor(fields) : fields; // Process fields before creating?
                         parent.rest.create(fields, function(data) { // Success on put
                             closeFnc();

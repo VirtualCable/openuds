@@ -35,8 +35,9 @@ from __future__ import unicode_literals
 from handlers import NotFound, RequestError
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError
-from uds.REST.handlers import Handler 
 
+from uds.core.ui.UserInterface import gui as uiGui
+from uds.REST.handlers import Handler 
 from uds.core.util import log
 
 import logging
@@ -70,7 +71,7 @@ class BaseModelHandler(Handler):
                 'multiline': field.get('multiline', 0),
                 'tooltip': field.get('tooltip', ''),
                 'rdonly': field.get('rdonly', False),
-                'type': field.get('type', 'text'),
+                'type': field.get('type', uiGui.InputField.TEXT_TYPE),
                 'order': field.get('order', 0),
                 'values': field.get('values', [])
             }
@@ -100,6 +101,8 @@ class BaseModelHandler(Handler):
                  'type': 'numeric', 
                  'label': _('Priority'),
                  'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
+                 'required': True,
+                 'value': 1,
                  'length': 4,
                  'order': -98,
             })
@@ -109,6 +112,7 @@ class BaseModelHandler(Handler):
                  'type': 'text', 
                  'label': _('Small name'),
                  'tooltip': _('Small name of this element'),
+                 'required': True,
                  'length': 128,
                  'order': -97,
             })

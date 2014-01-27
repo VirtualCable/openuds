@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Network
 from uds.core.util import net
+from uds.core.ui.UserInterface import gui
 
 from uds.REST.model import ModelHandler, SaveException
 
@@ -68,10 +69,10 @@ class Networks(ModelHandler):
     def getGui(self, type_):
         return self.addField(self.addDefaultFields([], ['name']),{
                        'name': 'net_string',
-                       'value': True,
+                       'value': '',
                        'label': ugettext('Network range'),
                        'tooltip': ugettext('Network range. Accepts most network definitions formats (range, subnet, host, etc...'),
-                       'type': 'text',
+                       'type': gui.InputField.TEXT_TYPE,
                        'order': 100, # At end
                    })
     

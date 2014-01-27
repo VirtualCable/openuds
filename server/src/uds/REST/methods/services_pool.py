@@ -35,11 +35,13 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 
-from uds.models import DeployedService
+from uds.models import DeployedService, OSManager, Service
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import ModelHandler
-from uds.REST import NotFound
+from django.utils.translation import ugettext
+from uds.REST import ResponseError
+from uds.core.ui.UserInterface import gui
 from user_services import AssignedService, CachedService, Groups, Transports, Publications
 
 import logging
@@ -89,10 +91,66 @@ class ServicesPool(ModelHandler):
         
     # Gui related
     def getGui(self, type_):
-        try:
-            return self.addDefaultFields(['name', 'comments'])
-        except:
-            raise NotFound('type not found')
+        if OSManager.objects.count() < 1: # No os managers, can't create db
+            raise ResponseError(ugettext('Create at least one OS Manager before creating a new service pool'))
+        if Service.objects.count() < 1:
+            raise ResponseError(ugettext('Create at least a service before creating a new service pool'))
+        
+        g = self.addDefaultFields([], ['name', 'comments'])
+        
+        for f in [{
+                     'name': 'service',
+                     'values': [ gui.choiceItem(v.id, v.name) for v in Service.objects.all() ],
+                     'label': ugettext('Base service'),
+                     'tooltip': ugettext('Service used as base of this service pool'),
+                     'type': gui.InputField.CHOICE_TYPE,
+                     'order': 100, # At end
+                  },{
+                     'name': 'osmanager',
+                     'values': [ gui.choiceItem(v.id, v.name) for v in OSManager.objects.all() ],
+                     'label': ugettext('OS Manager'),
+                     'tooltip': ugettext('OS Manager used as base of this service pool'),
+                     'type': gui.InputField.CHOICE_TYPE,
+                     'order': 101, # At end
+                  },{
+                       'name': 'initial_services',
+                       'value': '0',
+                       'label': ugettext('Initial available services'),
+                       'tooltip': ugettext('Services created initially for this service pool'),
+                       'type': gui.InputField.NUMERIC_TYPE,
+                       'order': 102, # At end
+                  },{
+                       'name': 'cached_services',
+                       'value': '0',
+                       'label': ugettext('Services to keep in cache'),
+                       'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
+                       'type': gui.InputField.NUMERIC_TYPE,
+                       'order': 103, # At end
+                  },{
+                       'name': 'cached_services_l2',
+                       'value': '0',
+                       'label': ugettext('Services to keep in L2 cache'),
+                       'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
+                       'type': gui.InputField.NUMERIC_TYPE,
+                       'order': 104, # At end
+                  },{
+                       'name': 'max_services',
+                       'value': '0',
+                       'label': ugettext('Maximum number of services to provide'),
+                       'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
+                       'type': gui.InputField.NUMERIC_TYPE,
+                       'order': 105, # At end
+                  },{
+                       'name': 'publish_on_save',
+                       'value': True,
+                       'label': ugettext('Publish on creation'),
+                       'tooltip': ugettext('If selected, will initiate the publication on service inmediatly pool after creation'),
+                       'type': gui.InputField.CHECKBOX_TYPE,
+                       'order': 106, # At end
+                  }]:
+            self.addField(g, f)
+        
+        return g
         
     # Logs
     def getLogs(self, item):

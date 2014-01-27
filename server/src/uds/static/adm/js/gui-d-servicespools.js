@@ -205,6 +205,9 @@ gui.servicesPool.link = function(event) {
                             value.parent = gettext('unknown (needs reload)');
                         }
                     });
+                },
+                onNew: function(type, table, refreshFnc) {
+                    gui.methods.typedNew(gui.servicesPool, gettext('New service pool'), gettext('Error deleting service pool'))(type, table, refreshFnc);
                 }
             });
         });
