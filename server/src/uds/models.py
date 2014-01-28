@@ -929,6 +929,23 @@ class DeployedService(models.Model):
         '''
         return [username, password]
 
+    @staticmethod
+    def getRestraineds():
+        from uds.core.util.Config import GlobalConfig
+        from django.db.models import Count
+        
+        if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
+            return [] # Do not perform any restraint check if we set the globalconfig to 0 (or less)
+        
+        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        min = GlobalConfig.RESTRAINT_COUNT.getInt()
+        
+        res = []
+        for v in UserService.objects.filter(state=State.ERROR, state_date__gt=date).values('deployed_service').annotate(how_many=Count('deployed_service')):
+            if v['how_many'] >= min:
+                res.append(v['deployed_service'])
+        return DeployedService.objects.filter(pk__in=res)
+
     def isRestrained(self):
         '''
         Maybe this deployed service is having problems, and that may block some task in some

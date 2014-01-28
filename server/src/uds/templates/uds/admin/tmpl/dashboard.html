@@ -1,4 +1,5 @@
 {% load i18n html5 static %}
+
 <div class="row">
   <div class="col-xs-12">
     <h1>Dashboard <small>{% trans 'overview' %}</small></h1>
@@ -7,16 +8,115 @@
     </ol>
   </div>
 </div><!-- /.row -->
-
-<div id="test" class="row">
-    <div class="col-xs-12">
-        <button class="btn btn3d-info btn3d">Botón</button>
-        <button class="btn btn3d-info btn3d">Botón-2</button>
-        <button class="btn btn3d-info btn3d">Botón-3</button>
-        <button class="btn btn-info">Test button</button>
-    </div>
-</div>
+{% verbatim %}
 <div class="row">
-    <div id="out" class="col-xs-12">
+  <div class="col-lg-3">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-6">
+            <i class="fa fa-key fa-5x"></i>
+          </div>
+          <div class="col-xs-6 text-right">
+            <p class="announcement-heading">{{ users }}</p>
+            <p class="announcement-text">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</p>
+          </div>
+        </div>
+      </div>
+      <a class="lnk-authenticators" href="#">
+        <div class="panel-footer announcement-bottom">
+          <div class="row">
+            <div class="col-xs-6">
+              {% endverbatim %}{% trans 'View Authenticators' %}{% verbatim %}
+            </div>
+            <div class="col-xs-6 text-right">
+              <i class="fa fa-arrow-circle-right"></i>
+            </div>
+          </div>
+        </div>
+      </a>
     </div>
-</div>
+  </div>
+  <div class="col-lg-3">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-6">
+            <i class="fa fa-desktop fa-5x"></i>
+          </div>
+          <div class="col-xs-6 text-right">
+            <p class="announcement-heading">{{ services }}</p>
+            <p class="announcement-text">{% endverbatim %}{% trans 'Services' %}{% verbatim %}</p>
+          </div>
+        </div>
+      </div>
+      <a class="lnk-service_providers" href="#">
+        <div class="panel-footer announcement-bottom">
+          <div class="row">
+            <div class="col-xs-6">
+              {% endverbatim %}{% trans 'View services' %}{% verbatim %}
+            </div>
+            <div class="col-xs-6 text-right">
+              <i class="fa fa-arrow-circle-right"></i>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-6">
+            <i class="fa fa-comments fa-5x"></i>
+          </div>
+          <div class="col-xs-6 text-right">
+            <p class="announcement-heading">{{ user_services }}</p>
+            <p class="announcement-text">{% endverbatim %}{% trans 'User services' %}{% verbatim %}</p>
+          </div>
+        </div>
+      </div>
+      <a class="lnk-deployed_services" href="#">
+        <div class="panel-footer announcement-bottom">
+          <div class="row">
+            <div class="col-xs-6">
+              {% endverbatim %}{% trans 'View services pools' %}{% verbatim %}
+            </div>
+            <div class="col-xs-6 text-right">
+              <i class="fa fa-arrow-circle-right"></i>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="panel panel-{{# if restrained_services_pools }}danger{{ else }}success{{/ if }}">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-6">
+            <i class="fa fa-heart fa-5x"></i>
+          </div>
+          <div class="col-xs-6 text-right">
+            <p class="announcement-heading">{{ restrained_services_pools }}</p>
+            <p class="announcement-text">{% endverbatim %}{% trans 'Restrained services pools' %}{% verbatim %}</p>
+          </div>
+        </div>
+      </div>
+      <a class="lnk-deployed_services" href="#">
+        <div class="panel-footer announcement-bottom">
+          <div class="row">
+            <div class="col-xs-6">
+              {% endverbatim %}{% trans 'View services pools' %}{% verbatim %}
+            </div>
+            <div class="col-xs-6 text-right">
+              <i class="fa fa-arrow-circle-right"></i>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div><!-- /.row -->
+{% endverbatim %}

@@ -41,6 +41,7 @@ function minify_admin() {
        'gui-element',
        // Gui definition
        'gui-definition',
+       'gui-d-dashboard',
        'gui-d-services',
        'gui-d-authenticators',
        'gui-d-osmanagers',

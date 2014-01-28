@@ -243,9 +243,11 @@
             var val = ((x < y) ?  1 : ((x > y) ? -1 : 0));
             return val;
         };        
-        
-        gui.setLinksEvents();
-        gui.dashboard.link();
+        // Wait a bit before activating links to give tome tine to initializations
+        setTimeout(function(){
+            gui.setLinksEvents();
+            gui.dashboard.link();
+        }, 500);
     };
     
     gui.showDashboard = function() {

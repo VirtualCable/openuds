@@ -501,3 +501,4 @@ api.networks = new BasicModelRest('networks');
 api.servicesPool = new BasicModelRest('servicespool');
 
 api.configuration = new BasicModelRest('config');
+api.system = new BasicModelRest('system');
