@@ -32,15 +32,57 @@
 '''
 from __future__ import unicode_literals
 
-from uds.models import User, Service, UserService, DeployedService
+from uds.models import User, Service, UserService, DeployedService, getSqlDatetime
 
-from uds.REST import Handler, RequestError 
+from uds.core.util.stats import counters
+from uds.core.util.Cache import Cache
+from uds.REST import Handler, RequestError, ResponseError
+import cPickle
+import time
+from datetime import timedelta
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /auth path
+cache = Cache('StatsDispatcher')
+
+# Enclosed methods under /syatem path
+POINTS = 300
+SINCE = 30 # Days
+USE_MAX = True
+
+
+def getServicesPoolsCounters(servicePool, counter_type):
+    try:
+        cacheKey = (servicePool and servicePool.id or 'all') + str(counter_type)
+        to = getSqlDatetime()
+        since = to - timedelta(days=SINCE) 
+        val = cache.get(cacheKey)
+        if val is None:
+        
+            if servicePool is None:
+                us = DeployedService()
+                complete = True # Get all deployed services stats
+            else:
+                us = servicePool
+                complete = False
+            val = []
+            for x in counters.getCounters(us, counter_type, since=since, to=to, limit=POINTS, use_max=USE_MAX, all=complete):
+                val.append({ 'stamp': x[0], 'value': int(x[1]) })
+            if len(val) > 2:
+                cache.put(cacheKey, cPickle.dumps(val).encode('zip'), 3600)
+            else:
+                val = [{'stamp':since, 'value':0 }, {'stamp':to, 'value':0}]
+        else:
+            val = cPickle.loads(val.decode('zip'))
+            
+        return val
+    except:
+        logger.exception('exception')
+        raise ResponseError('can\'t create stats for objects!!!')
+
+
 
 class System(Handler):
     needs_admin = True # By default, staff is lower level needed 
@@ -57,6 +99,7 @@ class System(Handler):
                 'services': services,
                 'user_services': user_services,
                 'restrained_services_pools': restrained_services_pools,
+                'user_services_assigned': getServicesPoolsCounters(None, counters.CT_ASSIGNED)
             }
 
         raise RequestError('invalid request')
