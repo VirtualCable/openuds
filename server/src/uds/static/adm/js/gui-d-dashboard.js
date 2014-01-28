@@ -14,15 +14,18 @@ gui.dashboard.link = function(event) {
             }));
             gui.setLinksEvents();
             
-            $.each($('.btn3d'), function() {
-               console.log(this); 
-               var counter = 0;
-               $(this).click(function(){
-                   counter += 1;
-                   $(this).text($(this).text().split(' ')[0] + ' ' + counter);
-                   /*$('<span>Click ' + counter + ' on ' + $(this).text() + '<b>--</b></span>').appendTo('#out');*/
-               });
-            });
+            var d1 = [];
+            for (var i = 0; i < 14; i += 0.5) {
+                    d1.push([i, Math.sin(i)]);
+            }
+
+            var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
+
+            // A null signifies separate line segments
+
+            var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
+
+            $.plot("#placeholder", [ d1, d2, d3 ]);            
         });
         
         gui.tools.fix3dButtons('#test');

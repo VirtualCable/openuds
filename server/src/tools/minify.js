@@ -22,6 +22,7 @@ function minify_admin() {
        'bootstrap-select.min',
        'jquery.validate.min',
        'jquery.blockUI',
+       'jquery.flot.min',
        'jquery.dataTables.min',
        'TableTools.min',
        'Blob',
