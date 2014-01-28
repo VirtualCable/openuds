@@ -501,4 +501,15 @@ api.networks = new BasicModelRest('networks');
 api.servicesPool = new BasicModelRest('servicespool');
 
 api.configuration = new BasicModelRest('config');
+
 api.system = new BasicModelRest('system');
+api.system.stats = function(type, success_fnc, fail_fnc) {
+    "use strict";
+    return this.get({
+        id: 'stats/' + type,
+        success: success_fnc,
+        fail: fail_fnc
+    });
+};
+
+

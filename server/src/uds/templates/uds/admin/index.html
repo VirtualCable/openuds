@@ -74,6 +74,7 @@
         <!-- Flost charts -->
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.resize.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.time.min.js"></script>
         
         <!-- Table tools -->
         <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
@@ -117,7 +118,7 @@
         <script src="{% get_static_prefix %}adm/js/gui-d-config.js"></script>
         
         {% else %}
-        <!-- minified js from: 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI',
+        <!-- minified js from: 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
             'jquery.dataTables.min', 'TableTools.min', 'Blob', 'FileSaver', 'ZeroClipboard', 'dataTables.bootstrap', 'handlebars-v1.1.2', UDS admin JS's -->
         <script src="{% get_static_prefix %}adm/js/admin.min.js"></script>
         {% endif %}

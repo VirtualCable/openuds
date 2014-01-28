@@ -14,18 +14,23 @@ gui.dashboard.link = function(event) {
             }));
             gui.setLinksEvents();
             
-            var d1 = [];
-            for (var i = 0; i < 14; i += 0.5) {
-                    d1.push([i, Math.sin(i)]);
-            }
+            $.each(['assigned', 'inuse'], function(index, stat){
+                api.system.stats(stat, function(data) {
+                    var d = [];
+                    $.each(data, function(index, value){
+                        d.push([value.stamp * 1000, value.value]);
+                    });
+                    gui.doLog('Data', d);
+                    
+                    $.plot('#placeholder-' + stat + '-chart', [d], {
+                        xaxis: { 
+                            mode: "time",
+                            timeformat: api.tools.djangoFormat(django.formats.SHORT_DATE_FORMAT)
+                        }
+                    });                
+                });
+            });
 
-            var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-
-            // A null signifies separate line segments
-
-            var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-
-            $.plot("#placeholder", [ d1, d2, d3 ]);            
         });
         
         gui.tools.fix3dButtons('#test');

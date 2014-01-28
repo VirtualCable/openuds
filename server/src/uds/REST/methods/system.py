@@ -48,8 +48,8 @@ logger = logging.getLogger(__name__)
 cache = Cache('StatsDispatcher')
 
 # Enclosed methods under /syatem path
-POINTS = 300
-SINCE = 1000 # Days
+POINTS = 365
+SINCE = 365 # Days
 USE_MAX = True
 
 

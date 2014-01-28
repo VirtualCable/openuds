@@ -96,7 +96,7 @@
       <div class="panel-heading">
         <div class="row">
           <div class="col-xs-6">
-            <i class="fa fa-heart fa-5x"></i>
+            <i class="fa fa-heart fa-5x" style="color: red"></i>
           </div>
           <div class="col-xs-6 text-right">
             <p class="announcement-heading">{{ restrained_services_pools }}</p>
@@ -121,14 +121,26 @@
 </div><!-- /.row -->
 
 <div class="row">
-  <div class="col-lg-12">
+  <div class="col-lg-6">
     <div class="panel panel-primary">
       <div class="panel-heading">
         <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> {% endverbatim %}{% trans 'Assigned services graph' %}{% verbatim %}</h3>
       </div>
       <div class="panel-body">
         <div class="chart-medium">
-          <div id="placeholder" class="chart-content"></div>
+          <div id="placeholder-assigned-chart" class="chart-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> {% endverbatim %}{% trans 'Used services graph' %}{% verbatim %}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="chart-medium">
+          <div id="placeholder-inuse-chart" class="chart-content"></div>
         </div>
       </div>
     </div>
