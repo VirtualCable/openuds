@@ -28,44 +28,50 @@ gui.servicesPools.link = function(event) {
     };
     
     // On change base service
-    var preFnc = function(forNewItem) {
-        return function(formId) {
-            var $fld = $(formId + ' [name="service_id"]');
-            var $osmFld = $(formId + ' [name="osmanager_id"]');
-            var selectors = [];
-            $.each(['initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'], function(index, value){
-                selectors.push(formId + ' [name="' + value + '"]');
-            });
-            var $cacheFlds = $(selectors.join(','));
-            var $cacheL2Fld = $(formId + ' [name="cache_l2_srvs"]');
-            $fld.on('change', function(event){
-                if($fld.val() != -1 ) {
-                    api.providers.service($fld.val(), function(data){
-                        gui.doLog('Onchange', data);
-                        if( data.info.needs_manager === false ) {
-                            $osmFld.prop('disabled', 'disabled');
+    var preFnc = function(formId) {
+        var $fld = $(formId + ' [name="service_id"]');
+        var $osmFld = $(formId + ' [name="osmanager_id"]');
+        var selectors = [];
+        $.each(['initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'], function(index, value){
+            selectors.push(formId + ' [name="' + value + '"]');
+        });
+        var $cacheFlds = $(selectors.join(','));
+        var $cacheL2Fld = $(formId + ' [name="cache_l2_srvs"]');
+        var $publishOnSaveFld = $(formId + ' [name="publish_on_save"]');
+        $fld.on('change', function(event){
+            if($fld.val() != -1 ) {
+                api.providers.service($fld.val(), function(data){
+                    gui.doLog('Onchange', data);
+                    if( data.info.needs_manager === false ) {
+                        $osmFld.prop('disabled', 'disabled');
+                    } else {
+                        $osmFld.prop('disabled', false);
+                    }
+                    
+                    if( data.info.uses_cache === false ) {
+                        $cacheFlds.prop('disabled', 'disabled');
+                    } else {
+                        $cacheFlds.prop('disabled', false);
+                        if( data.info.uses_cache_l2 === false ) {
+                            $cacheL2Fld.prop('disabled', 'disabled');
                         } else {
-                            $osmFld.prop('disabled', false);
+                            $cacheL2Fld.prop('disabled', false);
                         }
-                        if( data.info.uses_cache === false ) {
-                            $cacheFlds.prop('disabled', 'disabled');
-                        } else {
-                            $cacheFlds.prop('disabled', false);
-                            if( data.info.uses_cache_l2 == false ) {
-                                $cacheL2Fld.prop('disabled', 'disabled');
-                            } else {
-                                $cacheL2Fld.prop('disabled', false);
-                            }
-                        }
-                        
-                        if($osmFld.hasClass('selectpicker'))
-                            $osmFld.selectpicker('refresh');
-                        
-                        
-                    });
-                }
-            });
-        };
+                    }
+                    
+                    if( data.info.needs_publication === false ) {
+                        $publishOnSaveFld.bootstrapSwitch('setDisabled', true);
+                    } else {
+                        $publishOnSaveFld.bootstrapSwitch('setDisabled', false);
+                    } 
+                    
+                    if($osmFld.hasClass('selectpicker'))
+                        $osmFld.selectpicker('refresh');
+                    
+                    
+                });
+            }
+        });
     };
     
     // Fills up the list of available services
@@ -264,7 +270,7 @@ gui.servicesPools.link = function(event) {
                         gui.doLog(newDef);
                         return newDef;
                     },
-                    preprocessor: preFnc(true),
+                    preprocessor: preFnc,
                     }),
                 onEdit: gui.methods.typedEdit(gui.servicesPools, gettext('Edit service pool'), gettext('Error saving service pool')),
                 onDelete: gui.methods.del(gui.servicesPools, gettext('Delete service pool'), gettext('Error deleting service pool')),

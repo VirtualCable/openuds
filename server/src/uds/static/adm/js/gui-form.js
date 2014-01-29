@@ -218,7 +218,7 @@
         var $form = $(id + ' form'); 
         
         // For "beauty" switches, initialize them now
-        $(id + ' .make-switch').bootstrapSwitch();
+        $(id + ' [type="checkbox"]').bootstrapSwitch();
         // Activate "cool" selects
         $(id + ' .selectpicker').selectpicker();
         // TEST: cooller on mobile devices

@@ -1,9 +1,7 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
 {% block field %}
-        <div class="make-switch" data-on-label="{% trans 'Yes' %}" data-off-label="{% trans 'No' %}">
- {% verbatim %}
-            <input type="checkbox" class="{{ css }}" name="{{ name }}" id="{{ name }}_field"{{# ifequals value true }} checked{{/ ifequals }}{{# if readonly }} disabled{{/ if }}>
-        </div>
+{% verbatim %}
+    <input type="checkbox" data-on-label="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-label="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="{{ css }}" name="{{ name }}" id="{{ name }}_field"{{# ifequals value true }} checked{{/ ifequals }}{{# if readonly }} disabled{{/ if }}>
 {% endverbatim %}
 {% endblock %}
