@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from handlers import NotFound, RequestError
+from handlers import NotFound, RequestError, ResponseError
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError
 
@@ -338,7 +338,10 @@ class ModelHandler(BaseModelHandler):
     needs_staff = True
     # Which model does this manage
     model = None
-    custom_methods = [] # If this model respond to "custom" methods, we will declare them here
+    custom_methods = [] # If this model respond to "custom" methods, we will declare them here 
+                        # This is an array of tuples of two items, where first is method and second inticates if method needs parent id
+                        # For example ('services', True) -- > .../id_parent/services
+                        #             ('services', False) --> ..../services 
     # If this model has details, which ones
     detail = None # Dictionary containing detail routing 
     # Put needed fields
@@ -535,7 +538,10 @@ class ModelHandler(BaseModelHandler):
             raise RequestError('Element already exists (duplicate key error)')
         except SaveException as e:
             raise RequestError(unicode(e))
+        except (RequestError, ResponseError):
+            raise
         except Exception:
+            logger.exception('Exception on put')
             raise RequestError('incorrect invocation to PUT')
 
         if not deleteOnError: 

@@ -291,6 +291,7 @@
                         title: modalTitle+' <b>'+value.name+'</b>', 
                         fields: tabs, 
                         item: item, 
+                        preprocessor: options.preprocessor,
                         buttons: buttons,
                         success: function(form_selector, closeFnc) {
                             var fields = gui.forms.read(form_selector);
@@ -328,6 +329,7 @@
                     title: title, 
                     fields: tabs, 
                     item: undefined, 
+                    preprocessor: options.preprocessor,
                     buttons: buttons,
                     success: function(form_selector, closeFnc) {
                         var fields = gui.forms.read(form_selector);

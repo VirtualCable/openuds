@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 class Providers(ModelHandler):
     model = Provider
     detail = { 'services': DetailServices }
-    custom_methods = [('allservices', False)]
+    custom_methods = [('allservices', False), ('service', False)]
     
     save_fields = ['name', 'comments']
     
@@ -103,3 +103,9 @@ class Providers(ModelHandler):
                 yield DetailServices.serviceToDict(s, True)
             except:
                 logger.exception('Passed service cause type is unknown')
+                
+    def service(self):
+        try:
+            return DetailServices.serviceToDict(Service.objects.get(pk=self._args[1]), True)
+        except:
+            raise RequestError(ugettext('Service not found'))

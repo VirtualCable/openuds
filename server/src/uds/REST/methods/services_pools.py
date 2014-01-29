@@ -40,7 +40,7 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import ModelHandler
 from django.utils.translation import ugettext
-from uds.REST import ResponseError
+from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from user_services import AssignedService, CachedService, Groups, Transports, Publications
 
@@ -58,7 +58,7 @@ class ServicesPools(ModelHandler):
         'publications': Publications,
     }
 
-    save_fields = ['name', 'comments', 'service', 'osmanager', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
+    save_fields = ['name', 'comments', 'service_id', 'osmanager_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
 
     table_title =  _('Deployed services')
     table_fields = [
@@ -100,7 +100,7 @@ class ServicesPools(ModelHandler):
         
         for f in [{
                      'name': 'service_id',
-                     'values': [ gui.choiceItem(v.id, v.name) for v in Service.objects.all() ],
+                     'values': [gui.choiceItem(-1, '')] + [ gui.choiceItem(v.id, v.name) for v in Service.objects.all() ],
                      'label': ugettext('Base service'),
                      'tooltip': ugettext('Service used as base of this service pool'),
                      'type': gui.InputField.CHOICE_TYPE,
@@ -140,17 +140,35 @@ class ServicesPools(ModelHandler):
                        'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
                        'type': gui.InputField.NUMERIC_TYPE,
                        'order': 105, # At end
-                  },{
-                       'name': 'publish_on_save',
-                       'value': True,
-                       'label': ugettext('Publish on creation'),
-                       'tooltip': ugettext('If selected, will initiate the publication on service inmediatly pool after creation'),
-                       'type': gui.InputField.CHECKBOX_TYPE,
-                       'order': 106, # At end
                   }]:
             self.addField(g, f)
         
         return g
+        
+    def beforeSave(self, fields):
+        logger.debug('Before {0}'.format(fields))
+        logger.debug(self._args)
+        try:
+            try:
+                service = Service.objects.get(pk=fields['service_id'])
+                del fields['service_id']
+                fields['service'] = service
+            except:
+                raise RequestError(ugettext('Base service does not exists anymore'))
+            
+            try:
+                serviceType = service.getType()
+                if serviceType.needsManager is True:
+                    osmanager = OSManager.objects.get(pk=fields['osmanager_id'])
+                    fields['osmanager'] = osmanager
+                del fields['osmanager_id']
+            except:
+                raise RequestError(ugettext('This service requires an os manager'))
+            
+        except (RequestError, ResponseError):
+            raise
+        except Exception as e:
+            raise RequestError(str(e))
         
     # Logs
     def getLogs(self, item):

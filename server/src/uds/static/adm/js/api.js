@@ -483,6 +483,15 @@ api.providers.allServices = function(success_fnc, fail_fnc) {
     });
 };
 
+api.providers.service = function(id, success_fnc, fail_fnc) {
+    "use strict";
+    return this.get({
+        id: 'service/' + id,
+        success: success_fnc,
+        fail: fail_fnc
+    });
+};
+
 
 api.authenticators = new BasicModelRest('authenticators');
 // Search method used in authenticators

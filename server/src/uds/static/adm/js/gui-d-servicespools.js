@@ -27,6 +27,47 @@ gui.servicesPools.link = function(event) {
         prevTables = [];
     };
     
+    // On change base service
+    var preFnc = function(forNewItem) {
+        return function(formId) {
+            var $fld = $(formId + ' [name="service_id"]');
+            var $osmFld = $(formId + ' [name="osmanager_id"]');
+            var selectors = [];
+            $.each(['initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'], function(index, value){
+                selectors.push(formId + ' [name="' + value + '"]');
+            });
+            var $cacheFlds = $(selectors.join(','));
+            var $cacheL2Fld = $(formId + ' [name="cache_l2_srvs"]');
+            $fld.on('change', function(event){
+                if($fld.val() != -1 ) {
+                    api.providers.service($fld.val(), function(data){
+                        gui.doLog('Onchange', data);
+                        if( data.info.needs_manager === false ) {
+                            $osmFld.prop('disabled', 'disabled');
+                        } else {
+                            $osmFld.prop('disabled', false);
+                        }
+                        if( data.info.uses_cache === false ) {
+                            $cacheFlds.prop('disabled', 'disabled');
+                        } else {
+                            $cacheFlds.prop('disabled', false);
+                            if( data.info.uses_cache_l2 == false ) {
+                                $cacheL2Fld.prop('disabled', 'disabled');
+                            } else {
+                                $cacheL2Fld.prop('disabled', false);
+                            }
+                        }
+                        
+                        if($osmFld.hasClass('selectpicker'))
+                            $osmFld.selectpicker('refresh');
+                        
+                        
+                    });
+                }
+            });
+        };
+    };
+    
     // Fills up the list of available services
     api.providers.allServices(function(services){
         var availableServices = {};
@@ -206,7 +247,25 @@ gui.servicesPools.link = function(event) {
                         }
                     });
                 },
-                onNew: gui.methods.typedNew(gui.servicesPools, gettext('New service pool'), gettext('Error creating service pool')),
+                onNew: gui.methods.typedNew(gui.servicesPools, gettext('New service pool'), gettext('Error creating service pool'), {
+                    guiProcessor: function(guiDef) { // Create has "save on publish" field
+                        gui.doLog(guiDef);
+                        var newDef = [].concat(guiDef).concat([{
+                                'name': 'publish_on_save',
+                                'value': true,
+                                'gui': {
+                                    'label': gettext('Publish on creation'),
+                                    'tooltip': gettext('If selected, will initiate the publication on service inmediatly pool after creation'),
+                                    'type': 'checkbox',
+                                    'order': 150,
+                                    'defvalue': true,
+                                },
+                            }]);
+                        gui.doLog(newDef);
+                        return newDef;
+                    },
+                    preprocessor: preFnc(true),
+                    }),
                 onEdit: gui.methods.typedEdit(gui.servicesPools, gettext('Edit service pool'), gettext('Error saving service pool')),
                 onDelete: gui.methods.del(gui.servicesPools, gettext('Delete service pool'), gettext('Error deleting service pool')),
             });

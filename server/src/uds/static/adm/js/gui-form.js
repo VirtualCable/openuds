@@ -255,6 +255,11 @@
             
         });
         
+        // If preprocessors of modal (maybe custom event handlers)
+        if( options.preprocessor ) {
+            options.preprocessor(id);
+        }
+        
         // Launch modal
         $(id).modal({keyboard: false})
              .on('hidden.bs.modal', function () {
