@@ -498,7 +498,7 @@ api.authenticators.search = function(id, type, term, success_fnc, fail_fnc) {
 api.osmanagers = new BasicModelRest('osmanagers');
 api.transports = new BasicModelRest('transports');
 api.networks = new BasicModelRest('networks');
-api.servicesPool = new BasicModelRest('servicespool');
+api.servicesPools = new BasicModelRest('servicespools');
 
 api.configuration = new BasicModelRest('config');
 

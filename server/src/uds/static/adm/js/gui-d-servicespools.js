@@ -1,8 +1,8 @@
 /* jshint strict: true */
-gui.servicesPool = new GuiElement(api.servicesPool, 'servicespool');
+gui.servicesPools = new GuiElement(api.servicesPools, 'servicespools');
  
 
-gui.servicesPool.link = function(event) {
+gui.servicesPools.link = function(event) {
     "use strict";
     gui.clearWorkspace();
     
@@ -62,7 +62,7 @@ gui.servicesPool.link = function(event) {
                 gui.doLog('Select', counter.toString(), val, value);
             };
             
-            var tableId = gui.servicesPool.table({
+            var tableId = gui.servicesPools.table({
                 container : 'deployed-services-placeholder',
                 rowSelect : 'single',
                 buttons : [ 'new', 'edit', 'delete', { text: gettext('Test'), css: 'disabled', click: testClick, select: testSelect }, 'xls' ],
@@ -89,7 +89,7 @@ gui.servicesPool.link = function(event) {
                     // Shows/hides cache
                     if( service.info.uses_cache || service.info.uses_cache_l2 ) {
                         $('#cache-placeholder_tab').removeClass('hidden');
-                        cachedItems = new GuiElement(api.servicesPool.detail(servPool.id, 'cache'), 'cache');
+                        cachedItems = new GuiElement(api.servicesPools.detail(servPool.id, 'cache'), 'cache');
                         var cachedItemsTable = cachedItems.table({
                             container : 'cache-placeholder',
                             rowSelect : 'single'
@@ -102,7 +102,7 @@ gui.servicesPool.link = function(event) {
                     // Shows/hides groups
                     if( service.info.must_assign_manually === false ) {
                         $('#groups-placeholder_tab').removeClass('hidden');
-                        groups = new GuiElement(api.servicesPool.detail(servPool.id, 'groups'), 'groups');
+                        groups = new GuiElement(api.servicesPools.detail(servPool.id, 'groups'), 'groups');
                         var groupsTable = groups.table({
                             container : 'groups-placeholder',
                             rowSelect : 'single',
@@ -117,14 +117,14 @@ gui.servicesPool.link = function(event) {
                         $('#groups-placeholder_tab').addClass('hidden');
                     }
                     
-                    var assignedServices =  new GuiElement(api.servicesPool.detail(servPool.id, 'services'), 'services');
+                    var assignedServices =  new GuiElement(api.servicesPools.detail(servPool.id, 'services'), 'services');
                     var assignedServicesTable = assignedServices.table({
                         container: 'assigned-services-placeholder',
                         rowSelect: 'single',
                     });
                     prevTables.push(assignedServicesTable);
                     
-                    var transports =  new GuiElement(api.servicesPool.detail(servPool.id, 'transports'), 'transports');
+                    var transports =  new GuiElement(api.servicesPools.detail(servPool.id, 'transports'), 'transports');
                     var transportsTable = transports.table({
                         container: 'transports-placeholder',
                         rowSelect: 'single',
@@ -142,7 +142,7 @@ gui.servicesPool.link = function(event) {
                     var publications = null;
                     if( service.info.needs_publication ) {
                         $('#publications-placeholder_tab').removeClass('hidden');
-                        var pubApi = api.servicesPool.detail(servPool.id, 'publications');
+                        var pubApi = api.servicesPools.detail(servPool.id, 'publications');
                         publications = new GuiElement(pubApi, 'publications');
                         var publicationsTable = publications.table({
                             container : 'publications-placeholder',
@@ -177,7 +177,7 @@ gui.servicesPool.link = function(event) {
                         $('#publications-placeholder_tab').addClass('hidden');
                     }
                     
-                    var logTable = gui.servicesPool.logTable(servPool.id, {
+                    var logTable = gui.servicesPools.logTable(servPool.id, {
                         container : 'logs-placeholder',
                     });
                     
@@ -206,9 +206,9 @@ gui.servicesPool.link = function(event) {
                         }
                     });
                 },
-                onNew: function(type, table, refreshFnc) {
-                    gui.methods.typedNew(gui.servicesPool, gettext('New service pool'), gettext('Error deleting service pool'))(type, table, refreshFnc);
-                }
+                onNew: gui.methods.typedNew(gui.servicesPools, gettext('New service pool'), gettext('Error creating service pool')),
+                onEdit: gui.methods.typedEdit(gui.servicesPools, gettext('Edit service pool'), gettext('Error saving service pool')),
+                onDelete: gui.methods.del(gui.servicesPools, gettext('Delete service pool'), gettext('Error deleting service pool')),
             });
         });
     });

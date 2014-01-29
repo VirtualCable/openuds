@@ -110,8 +110,8 @@ class BaseModelHandler(Handler):
             self.addField(gui, {
                  'name': 'small_name',
                  'type': 'text', 
-                 'label': _('Small name'),
-                 'tooltip': _('Small name of this element'),
+                 'label': _('Short name'),
+                 'tooltip': _('Short name of this element'),
                  'required': True,
                  'length': 128,
                  'order': -97,

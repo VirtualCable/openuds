@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class ServicesPool(ModelHandler):
+class ServicesPools(ModelHandler):
     model = DeployedService
     detail = { 
         'services': AssignedService, 
@@ -99,42 +99,42 @@ class ServicesPool(ModelHandler):
         g = self.addDefaultFields([], ['name', 'comments'])
         
         for f in [{
-                     'name': 'service',
+                     'name': 'service_id',
                      'values': [ gui.choiceItem(v.id, v.name) for v in Service.objects.all() ],
                      'label': ugettext('Base service'),
                      'tooltip': ugettext('Service used as base of this service pool'),
                      'type': gui.InputField.CHOICE_TYPE,
                      'order': 100, # At end
                   },{
-                     'name': 'osmanager',
-                     'values': [ gui.choiceItem(v.id, v.name) for v in OSManager.objects.all() ],
+                     'name': 'osmanager_id',
+                     'values': [gui.choiceItem(-1, '')] + [ gui.choiceItem(v.id, v.name) for v in OSManager.objects.all() ],
                      'label': ugettext('OS Manager'),
                      'tooltip': ugettext('OS Manager used as base of this service pool'),
                      'type': gui.InputField.CHOICE_TYPE,
                      'order': 101, # At end
                   },{
-                       'name': 'initial_services',
+                       'name': 'initial_srvs',
                        'value': '0',
                        'label': ugettext('Initial available services'),
                        'tooltip': ugettext('Services created initially for this service pool'),
                        'type': gui.InputField.NUMERIC_TYPE,
                        'order': 102, # At end
                   },{
-                       'name': 'cached_services',
+                       'name': 'cache_l1_srvs',
                        'value': '0',
                        'label': ugettext('Services to keep in cache'),
                        'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
                        'type': gui.InputField.NUMERIC_TYPE,
                        'order': 103, # At end
                   },{
-                       'name': 'cached_services_l2',
+                       'name': 'cache_l2_srvs',
                        'value': '0',
                        'label': ugettext('Services to keep in L2 cache'),
                        'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
                        'type': gui.InputField.NUMERIC_TYPE,
                        'order': 104, # At end
                   },{
-                       'name': 'max_services',
+                       'name': 'max_srvs',
                        'value': '0',
                        'label': ugettext('Maximum number of services to provide'),
                        'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
