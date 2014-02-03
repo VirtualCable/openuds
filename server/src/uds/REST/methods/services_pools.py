@@ -104,6 +104,7 @@ class ServicesPools(ModelHandler):
                      'label': ugettext('Base service'),
                      'tooltip': ugettext('Service used as base of this service pool'),
                      'type': gui.InputField.CHOICE_TYPE,
+                     'rdonly' : True,
                      'order': 100, # At end
                   },{
                      'name': 'osmanager_id',
@@ -111,6 +112,7 @@ class ServicesPools(ModelHandler):
                      'label': ugettext('OS Manager'),
                      'tooltip': ugettext('OS Manager used as base of this service pool'),
                      'type': gui.InputField.CHOICE_TYPE,
+                     'rdonly' : True,
                      'order': 101, # At end
                   },{
                        'name': 'initial_srvs',

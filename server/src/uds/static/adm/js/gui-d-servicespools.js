@@ -16,8 +16,10 @@ gui.servicesPools.link = function(event) {
             $tbl.fnDestroy();
         });
         
-        $('#assigned-services-placeholder').empty();
-        $('#cache-placeholder').empty();
+        $('#assigned-services-placeholder_tbl').empty();
+        $('#assigned-services-placeholder_log').empty();
+        $('#cache-placeholder_tbl').empty();
+        $('#cache-placeholder_log').empty();
         $('#transports-placeholder').empty();
         $('#groups-placeholder').empty();
         $('#logs-placeholder').empty();
@@ -109,6 +111,9 @@ gui.servicesPools.link = function(event) {
                 gui.doLog('Select', counter.toString(), val, value);
             };
             
+            /*
+             * Services pools part
+             */
             var tableId = gui.servicesPools.table({
                 container : 'deployed-services-placeholder',
                 rowSelect : 'single',
@@ -122,7 +127,7 @@ gui.servicesPools.link = function(event) {
                     
                     clearDetails();
                     $('#detail-placeholder').removeClass('hidden');
-                    // If service does not supports cache, do not show it
+                    
                     var service = null;
                     try {
                         service = availableServices[servPool.service_id];
@@ -132,28 +137,54 @@ gui.servicesPools.link = function(event) {
                         return;
                     }
                     
+                    /* 
+                     * Cache Part
+                     */
+                    
                     var cachedItems = null;
+                    // If service does not supports cache, do not show it
                     // Shows/hides cache
                     if( service.info.uses_cache || service.info.uses_cache_l2 ) {
                         $('#cache-placeholder_tab').removeClass('hidden');
                         cachedItems = new GuiElement(api.servicesPools.detail(servPool.id, 'cache'), 'cache');
+                        // Cached items table
+                        var prevCacheLogTbl = null;
                         var cachedItemsTable = cachedItems.table({
-                            container : 'cache-placeholder',
-                            rowSelect : 'single'
+                            container : 'cache-placeholder_tbl',
+                            buttons : [ 'delete', 'xls' ],
+                            rowSelect : 'single',
+                            onRowSelect : function(selected) {
+                                var cached = selected[0];
+                                if( prevAssignedLogTbl ) {
+                                    var $tbl = $(prevCacheLogTbl).dataTable();
+                                    $tbl.fnClearTable();
+                                    $tbl.fnDestroy();
+                                }
+                                prevCacheLogTbl = cachedItems.logTable(cached.id, {
+                                    container : 'cache-placeholder_log',
+                                });
+                            } 
                         });
                         prevTables.push(cachedItemsTable);
                     } else {
                         $('#cache-placeholder_tab').addClass('hidden');
                     }
+                    
+                    /*
+                     * Groups part
+                     */
+                    
                     var groups = null;
                     // Shows/hides groups
                     if( service.info.must_assign_manually === false ) {
                         $('#groups-placeholder_tab').removeClass('hidden');
                         groups = new GuiElement(api.servicesPools.detail(servPool.id, 'groups'), 'groups');
+                        // Groups items table
                         var groupsTable = groups.table({
                             container : 'groups-placeholder',
                             rowSelect : 'single',
-                            onData: function(data) {
+                            buttons : [ 'new', 'delete', 'xls' ],
+                            onData : function(data) {
                                 $.each(data, function(undefined, value){
                                     value.group_name = '<b>' + value.auth_name + '</b>\\' + value.name;
                                 });
@@ -164,17 +195,41 @@ gui.servicesPools.link = function(event) {
                         $('#groups-placeholder_tab').addClass('hidden');
                     }
                     
+                    /*
+                     * Assigned services part
+                     */
+                    var prevAssignedLogTbl = null;
                     var assignedServices =  new GuiElement(api.servicesPools.detail(servPool.id, 'services'), 'services');
                     var assignedServicesTable = assignedServices.table({
-                        container: 'assigned-services-placeholder',
-                        rowSelect: 'single',
+                            container: 'assigned-services-placeholder_tbl',
+                            rowSelect: 'single',
+                            buttons: service.info.must_assign_manually ? ['new', 'delete', 'xls'] : ['delete', 'xls'],
+                            onRowSelect: function(selected) {
+                                var service = selected[0];
+                                if( prevAssignedLogTbl ) {
+                                    var $tbl = $(prevAssignedLogTbl).dataTable();
+                                    $tbl.fnClearTable();
+                                    $tbl.fnDestroy();
+                                }
+                                prevAssignedLogTbl = assignedServices.logTable(service.id, {
+                                    container : 'assigned-services-placeholder_log',
+                                });
+                            }
                     });
+                    // Log of assigned services (right under assigned services)
+                    
                     prevTables.push(assignedServicesTable);
                     
+                    /*
+                     * Transports part
+                     */
+                    
                     var transports =  new GuiElement(api.servicesPools.detail(servPool.id, 'transports'), 'transports');
+                    // Transports items table
                     var transportsTable = transports.table({
                         container: 'transports-placeholder',
                         rowSelect: 'single',
+                        buttons : [ 'new', 'delete', 'xls' ],
                         onData: function(data) {
                             $.each(data, function(undefined, value){
                                 var style = 'display:inline-block; background: url(data:image/png;base64,' +
@@ -186,11 +241,15 @@ gui.servicesPools.link = function(event) {
                     });
                     prevTables.push(transportsTable);
                     
+                    /*
+                     * Publications part
+                     */
                     var publications = null;
                     if( service.info.needs_publication ) {
                         $('#publications-placeholder_tab').removeClass('hidden');
                         var pubApi = api.servicesPools.detail(servPool.id, 'publications');
                         publications = new GuiElement(pubApi, 'publications');
+                        // Publications table
                         var publicationsTable = publications.table({
                             container : 'publications-placeholder',
                             rowSelect : 'single',
@@ -223,6 +282,10 @@ gui.servicesPools.link = function(event) {
                     } else {
                         $('#publications-placeholder_tab').addClass('hidden');
                     }
+                    
+                    /*
+                     * Log table
+                     */
                     
                     var logTable = gui.servicesPools.logTable(servPool.id, {
                         container : 'logs-placeholder',

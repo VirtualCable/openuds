@@ -23,8 +23,26 @@
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
         </ul>    
         <div class="tab-content">
-            <div class="tab-pane fade in active" id="{{ assigned_services }}">...</div>
-            <div class="tab-pane fade" id="{{ cache }}">...</div>
+            <div class="tab-pane fade in active" id="{{ assigned_services }}">
+                <div class="row">
+                    <div class="col-xs-12" id="{{ assigned_services }}_tbl">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12" id="{{ assigned_services }}_log">
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="{{ cache }}">
+                <div class="row">
+                    <div class="col-xs-12" id="{{ cache }}_tbl">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12" id="{{ cache }}_log">
+                    </div>
+                </div>
+            </div>
             <div class="tab-pane fade" id="{{ groups }}">...</div>
             <div class="tab-pane fade" id="{{ transports }}">...</div>
             <div class="tab-pane fade" id="{{ publications }}">...</div>

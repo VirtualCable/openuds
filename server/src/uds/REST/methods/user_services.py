@@ -101,6 +101,14 @@ class AssignedService(DetailHandler):
             { 'state': { 'title': _('State'), 'type': 'dict', 'dict': State.dictionary() } },
             { 'owner': { 'title': _('Owner') } },
         ]
+        
+    def getLogs(self, parent, item):
+        try:
+            item = parent.assignedUserServices().get(pk=item)
+            logger.debug('Getting logs for {0}'.format(item))
+            return log.getLogs(item)
+        except:
+            self.invalidItemException()
             
         
 class CachedService(AssignedService):
@@ -129,6 +137,14 @@ class CachedService(AssignedService):
             { 'state': { 'title': _('State'), 'type': 'dict', 'dict': State.dictionary() } },
             { 'cache_level': { 'title': _('Cache level') } },
         ]
+
+    def getLogs(self, parent, item):
+        try:
+            item = parent.cachedUserServices().get(pk=item)
+            logger.debug('Getting logs for {0}'.format(item))
+            return log.getLogs(item)
+        except:
+            self.invalidItemException()
 
 class Groups(DetailHandler):
     def getItems(self, parent, item):
