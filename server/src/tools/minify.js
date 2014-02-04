@@ -29,7 +29,7 @@ function minify_admin() {
        'FileSaver',
        'ZeroClipboard',
        'dataTables.bootstrap',
-       'handlebars-v1.1.2',
+       'handlebars-v1.3.0',
        // Api
        'api',
        'api-tools',

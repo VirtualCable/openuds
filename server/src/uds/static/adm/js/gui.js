@@ -89,6 +89,9 @@
         return '<div class="row"><div class="col-lg-12"><ol class="breadcrumb">' + list + "</ol></div></div>";
     };
     
+    // By default, actionButton has class "button-accept", so you can use returned id + this class to select it
+    // and do whatever is needed (for example, insert an "on click" event (this method returns id without '#'
+    // Example: $('#' + id + ' .button-accept').on('click', ...
     gui.modal = function(id, title, content, options) {
         options = options || {};
         return api.templates.evaluate('tmpl_comp_modal', {
@@ -102,6 +105,7 @@
         });
     };
     
+    // As previous, this creates the modal and shows it. in this case, the id of the modal returned already has '#'
     gui.launchModal = function(title, content, options) {
         options = options || {};
         var id = gui.genRamdonId('modal-'); // Get a random ID for this modal

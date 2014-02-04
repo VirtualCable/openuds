@@ -114,7 +114,7 @@ gui.servicesPools.link = function(event) {
             /*
              * Services pools part
              */
-            var tableId = gui.servicesPools.table({
+            var servicesPoolsTable = gui.servicesPools.table({
                 container : 'deployed-services-placeholder',
                 rowSelect : 'single',
                 buttons : [ 'new', 'edit', 'delete', { text: gettext('Test'), css: 'disabled', click: testClick, select: testSelect }, 'xls' ],
@@ -184,6 +184,39 @@ gui.servicesPools.link = function(event) {
                             container : 'groups-placeholder',
                             rowSelect : 'single',
                             buttons : [ 'new', 'delete', 'xls' ],
+                            onNew: function(value, event, table, refreshFnc) {
+                                
+                                api.templates.get('pool_add_group', function(tmpl){
+                                    api.authenticators.overview(function(data){
+                                        var modalId = gui.launchModal(gettext('Add group'),api.templates.evaluate(tmpl, {
+                                            auths: data,
+                                        }));
+                                        
+                                        $(modalId + ' #id_auth_select').on('change', function(event){
+                                            var auth = $(modalId + ' #id_auth_select').val();
+                                            
+                                            api.authenticators.detail(auth, 'groups').overview(function(data){
+                                                var $select = $(modalId + ' #id_group_select');
+                                                $select.empty();
+                                                
+                                                $.each(data, function(undefined, value){
+                                                    $select.append('<option value="' + value.id + '">' + value.name + '</option>');
+                                                });
+                                                // Refresh selectpicker if item is such
+                                                if($select.hasClass('selectpicker'))
+                                                    $select.selectpicker('refresh');
+                                            });
+                                        });
+                                        
+                                        $(modalId + ' .button-accept').on('click', function(event) {
+                                            alert(event);
+                                        });
+                                        // Makes form "beautyfull" :-)
+                                        gui.forms.beautify(modalId);
+                                    });
+                                });
+                                
+                            },
                             onData : function(data) {
                                 $.each(data, function(undefined, value){
                                     value.group_name = '<b>' + value.auth_name + '</b>\\' + value.name;

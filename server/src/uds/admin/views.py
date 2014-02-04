@@ -30,18 +30,14 @@
 '''
 from __future__ import unicode_literals
 
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.template import RequestContext, loader
 
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 
 from uds.core.auths.auth import webLoginRequired
-from uds.core.util import log
 from uds.core.util.Decorators import denyBrowsers
-from uds.web import errors
 
 import logging
 

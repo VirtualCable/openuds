@@ -33,6 +33,5 @@ gui.dashboard.link = function(event) {
 
         });
         
-        gui.tools.fix3dButtons('#test');
     });
 };

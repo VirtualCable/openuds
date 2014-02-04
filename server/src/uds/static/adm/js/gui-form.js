@@ -168,6 +168,20 @@
         gui.doLog(res);
         return res;
     };
+    
+    // Beautifies a form 
+    gui.forms.beautify = function(formSelector) {
+        // For "beauty" switches, initialize them now
+        $(formSelector + ' [type="checkbox"]').bootstrapSwitch();
+        // Activate "cool" selects
+        $(formSelector + ' .selectpicker').selectpicker();
+        // TEST: cooller on mobile devices
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+            $(formSelector + ' .selectpicker').selectpicker('mobile');
+        }
+        // Activate tooltips
+        $(formSelector + ' [data-toggle="tooltip"]').tooltip({delay: {show: 1000, hide: 100}, placement: 'auto right'});
+    };
 
     // Options has this keys:
     //   title
@@ -217,16 +231,7 @@
         // Get form
         var $form = $(id + ' form'); 
         
-        // For "beauty" switches, initialize them now
-        $(id + ' [type="checkbox"]').bootstrapSwitch();
-        // Activate "cool" selects
-        $(id + ' .selectpicker').selectpicker();
-        // TEST: cooller on mobile devices
-        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
-            $(id + ' .selectpicker').selectpicker('mobile');
-        }
-        // Activate tooltips
-        $(id + ' [data-toggle="tooltip"]').tooltip({delay: {show: 1000, hide: 100}, placement: 'auto right'});
+        gui.forms.beautify(id);
         
         // Validation
         $form.validate({
