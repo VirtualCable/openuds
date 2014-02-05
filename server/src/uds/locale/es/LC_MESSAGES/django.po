@@ -31,7 +31,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-08 19:29+0100\n"
+"POT-Creation-Date: 2014-02-05 10:32+0100\n"
 "PO-Revision-Date: 2013-04-22 06:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
@@ -42,160 +42,409 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.4\n"
 
-#: REST/model.py:81 REST/methods/authenticators.py:56
-#: REST/methods/networks.py:51 REST/methods/osmanagers.py:52
-#: REST/methods/providers.py:57 REST/methods/transports.py:54
-#: REST/methods/users_groups.py:72
+#: REST/model.py:86 REST/methods/authenticators.py:58
+#: REST/methods/networks.py:54 REST/methods/osmanagers.py:55
+#: REST/methods/providers.py:59 REST/methods/services_pools.py:65
+#: REST/methods/transports.py:55 REST/methods/user_services.py:161
+#: REST/methods/user_services.py:189 REST/methods/users_groups.py:82
+#: templates/uds/admin/tmpl/user.html:29 templates/uds/admin/tmpl/user.html:32
 msgid "Name"
 msgstr "Nombre"
 
-#: REST/model.py:82
+#: REST/model.py:87
 msgid "Name of this element"
 msgstr "Nombre de este elemento"
 
-#: REST/model.py:88 REST/methods/authenticators.py:57
-#: REST/methods/osmanagers.py:53 REST/methods/providers.py:58
-#: REST/methods/services.py:126 REST/methods/transports.py:55
-#: REST/methods/users_groups.py:73 REST/methods/users_groups.py:108
+#: REST/model.py:93 REST/methods/authenticators.py:59
+#: REST/methods/osmanagers.py:56 REST/methods/providers.py:60
+#: REST/methods/services.py:139 REST/methods/services_pools.py:68
+#: REST/methods/transports.py:56 REST/methods/user_services.py:191
+#: REST/methods/users_groups.py:83 REST/methods/users_groups.py:190
+#: templates/uds/admin/tmpl/group.html:37
+#: templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Comentarios"
 
-#: REST/model.py:89
+#: REST/model.py:94
 msgid "Comments for this element"
 msgstr "Comentarios para este elemento"
 
-#: REST/model.py:97 REST/methods/authenticators.py:58
-#: REST/methods/transports.py:56 REST/methods/transports.py:69
+#: REST/model.py:102 REST/methods/authenticators.py:60
+#: REST/methods/transports.py:54 REST/methods/user_services.py:188
 msgid "Priority"
 msgstr "Prioridad"
 
-#: REST/model.py:98
+#: REST/model.py:103
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
-"Selecciona la prioridad de este elemento (menor número significa mayor prioridad)"
+"Selecciona la prioridad de este elemento (menor número significa mayor "
+"prioridad)"
 
-#: REST/model.py:106 REST/methods/authenticators.py:59
-msgid "Small name"
-msgstr "Nombre pequeño"
+#: REST/model.py:113
+msgid "Short name"
+msgstr "Nombre corto"
 
-#: REST/model.py:107
-msgid "Small name of this element"
-msgstr "Pequeño nombre de este elemento"
+#: REST/model.py:114
+msgid "Short name of this element"
+msgstr "Nombre corto de este elemento"
 
-#: REST/model.py:157
+#: REST/model.py:159
 msgid "Invalid Request"
 msgstr "Solicitud inválida"
 
-#: REST/model.py:160
+#: REST/model.py:162
 msgid "Method not found"
 msgstr "Método no encontrado"
 
-#: REST/model.py:163
+#: REST/model.py:165
 msgid "Item not found"
 msgstr "Artículo no encontrado"
 
-#: REST/methods/authenticators.py:54
+#: REST/methods/authenticators.py:56
 msgid "Current authenticators"
 msgstr "Autenticadores actuales"
 
-#: REST/methods/authenticators.py:60
+#: REST/methods/authenticators.py:61
+msgid "Small name"
+msgstr "Nombre pequeño"
+
+#: REST/methods/authenticators.py:62
 #: templates/uds/admin/tmpl/authenticators.html:18
+#: templates/uds/admin/tmpl/dashboard.html:22
 msgid "Users"
 msgstr "Usuarios"
 
-#: REST/methods/networks.py:49
+#: REST/methods/networks.py:52
 msgid "Current Networks"
 msgstr "Redes actuales"
 
-#: REST/methods/networks.py:52 templates/uds/index.html:79
-#: templates/uds/html5/index.html:124
-msgid "Networks"
-msgstr "Redes"
+#: REST/methods/networks.py:55
+msgid "Range"
+msgstr "Gama"
 
-#: REST/methods/networks.py:53 REST/methods/osmanagers.py:54
+#: REST/methods/networks.py:56 REST/methods/osmanagers.py:57
 #: REST/methods/transports.py:57
 msgid "Used by"
 msgstr "Utilizado por"
 
-#: REST/methods/osmanagers.py:50
+#: REST/methods/networks.py:66
+msgid "Invalid network: "
+msgstr "Red no válida: "
+
+#: REST/methods/networks.py:73
+msgid "Network range"
+msgstr "Intervalo de red"
+
+#: REST/methods/networks.py:74
+msgid ""
+"Network range. Accepts most network definitions formats (range, subnet, "
+"host, etc..."
+msgstr ""
+"Rango de la red. Acepta la mayoría de formatos definiciones de red (gama, "
+"subred, host, etc..."
+
+#: REST/methods/osmanagers.py:53
 msgid "Current OS Managers"
 msgstr "Actual OS administradores"
 
-#: REST/methods/providers.py:53 templates/uds/admin/snippets/navbar.html:18
+#: REST/methods/osmanagers.py:75
+msgid "Can't delete an OSManager with deployed services associated"
+msgstr "No se puede eliminar un OSManager con desplegados servicios asociados"
+
+#: REST/methods/osmanagers.py:79
+msgid "Can't modify an OSManager with deployed services associated"
+msgstr "No se puede modificar un OSManager con desplegados servicios asociados"
+
+#: REST/methods/providers.py:55
 msgid "Service providers"
 msgstr "Proveedores de servicios"
 
-#: REST/methods/providers.py:59 templates/uds/index.html:51
+#: REST/methods/providers.py:61 templates/uds/index.html:51
+#: templates/uds/admin/snippets/navbar.html:18
+#: templates/uds/admin/tmpl/dashboard.html:49
+#: templates/uds/admin/tmpl/providers.html:4
+#: templates/uds/admin/tmpl/providers.html:7
 #: templates/uds/admin/tmpl/providers.html:18
 #: templates/uds/html5/index.html:65
 msgid "Services"
 msgstr "Servicios"
 
-#: REST/methods/services.py:119
+#: REST/methods/providers.py:62
+msgid "User Services"
+msgstr "Servicios de usuario"
+
+#: REST/methods/providers.py:111 dispatchers/wyse_enterprise/views.py:254
+#: dispatchers/wyse_enterprise/views.py:257 web/errors.py:62
+msgid "Service not found"
+msgstr "Servicio no hallado"
+
+#: REST/methods/services.py:132
 #, python-brace-format
 msgid "Services of {0}"
 msgstr "Servicios de {0}"
 
-#: REST/methods/services.py:121
+#: REST/methods/services.py:134
 msgid "Current services"
 msgstr "Servicios actuales"
 
-#: REST/methods/services.py:125
+#: REST/methods/services.py:138
 msgid "Service name"
 msgstr "Nombre del servicio"
 
-#: REST/methods/services.py:127
+#: REST/methods/services.py:140 REST/methods/user_services.py:190
 msgid "Type"
 msgstr "Tipo"
 
-#: REST/methods/services.py:128 templates/uds/admin/snippets/navbar.html:22
+#: REST/methods/services.py:141 REST/methods/services_pools.py:63
 msgid "Deployed services"
 msgstr "Servicios desplegados"
+
+#: REST/methods/services.py:142 templates/uds/admin/tmpl/dashboard.html:76
+msgid "User services"
+msgstr "Servicios de usuario"
+
+#: REST/methods/services_pools.py:66
+msgid "Parent Service"
+msgstr "Servicio de los padres"
+
+#: REST/methods/services_pools.py:67 REST/methods/users_groups.py:84
+#: REST/methods/users_groups.py:191
+msgid "state"
+msgstr "estado"
+
+#: REST/methods/services_pools.py:95
+msgid "Create at least one OS Manager before creating a new service pool"
+msgstr "Crear al menos un OS Manager antes de crear un nuevo grupo de servicio"
+
+#: REST/methods/services_pools.py:97
+msgid "Create at least a service before creating a new service pool"
+msgstr "Crear al menos un servicio antes de crear un nuevo grupo de servicio"
+
+#: REST/methods/services_pools.py:104
+msgid "Base service"
+msgstr "Servicio de base"
+
+#: REST/methods/services_pools.py:105
+msgid "Service used as base of this service pool"
+msgstr "Servicio utilizado como base de esta piscina de servicio"
+
+#: REST/methods/services_pools.py:112
+msgid "OS Manager"
+msgstr "OS Manager"
+
+#: REST/methods/services_pools.py:113
+msgid "OS Manager used as base of this service pool"
+msgstr "OS Manager utilizó como base de esta piscina de servicio"
+
+#: REST/methods/services_pools.py:120
+msgid "Initial available services"
+msgstr "Servicios disponibles iniciales"
+
+#: REST/methods/services_pools.py:121
+msgid "Services created initially for this service pool"
+msgstr "Servicios creados inicialmente para este grupo de servicio"
+
+#: REST/methods/services_pools.py:127
+msgid "Services to keep in cache"
+msgstr "Servicios para mantener en la memoria caché"
+
+#: REST/methods/services_pools.py:128
+msgid "Services keeped in cache for improved user service assignation"
+msgstr ""
+"Servicios keeped en caché para asignación de servicio de usuario mejorada"
+
+#: REST/methods/services_pools.py:134
+msgid "Services to keep in L2 cache"
+msgstr "Servicios para mantener en la memoria caché L2"
+
+#: REST/methods/services_pools.py:135
+msgid "Services keeped in cache of level2 for improved service generation"
+msgstr ""
+"Servicios keeped en la memoria caché de nivel 2 para mejorar la generación "
+"de servicios"
+
+#: REST/methods/services_pools.py:141
+msgid "Maximum number of services to provide"
+msgstr "Número máximo de servicios"
+
+#: REST/methods/services_pools.py:142
+msgid ""
+"Maximum number of service (assigned and L1 cache) that can be created for "
+"this service"
+msgstr ""
+"Número máximo de servicio (asignado y caché L1) que pueden crearse para Este "
+"servicio"
+
+#: REST/methods/services_pools.py:159
+msgid "Base service does not exists anymore"
+msgstr "Ya no existe servicio de base"
+
+#: REST/methods/services_pools.py:168
+msgid "This service requires an os manager"
+msgstr "Este servicio requiere un administrador de sistema operativo"
 
 #: REST/methods/transports.py:52
 msgid "Current Transports"
 msgstr "Transportes actuales"
 
-#: REST/methods/transports.py:70
-msgid "Priority of this transport"
-msgstr "Prioridad de este transporte"
+#: REST/methods/transports.py:68
+msgid "Network access"
+msgstr "Acceso a la red"
 
-#: REST/methods/users_groups.py:65
+#: REST/methods/transports.py:69
+msgid ""
+"If ACTIVE, the transport will be enabled for the selected networks.If "
+"INACTIVE, trans port will be disabled for selected networks"
+msgstr ""
+"Si está activo, se habilitará el transporte para las redes seleccionadas.If "
+"INACTIVO, Puerto trans se deshabilitará para redes seleccionadas"
+
+#: REST/methods/transports.py:76 templates/uds/index.html:79
+#: templates/uds/html5/index.html:124
+msgid "Networks"
+msgstr "Redes"
+
+#: REST/methods/transports.py:77
+msgid ""
+"Networks associated with this transport. If No network selected, will mean "
+"\"all networks\""
+msgstr ""
+"Redes asociadas con este transporte. Si no hay red seleccionada, significará "
+"\"todas las redes\""
+
+#: REST/methods/user_services.py:88
+#: templates/uds/admin/tmpl/services_pool.html:18
+msgid "Assigned services"
+msgstr "Servicios asignados"
+
+#: REST/methods/user_services.py:92 REST/methods/user_services.py:128
+msgid "Creation date"
+msgstr "Fecha de creación"
+
+#: REST/methods/user_services.py:93 REST/methods/user_services.py:129
+#: REST/methods/user_services.py:224
+msgid "Revision"
+msgstr "Revisión"
+
+#: REST/methods/user_services.py:95 REST/methods/user_services.py:131
+msgid "Friendly name"
+msgstr "Nombre descriptivo"
+
+#: REST/methods/user_services.py:96 REST/methods/user_services.py:132
+#: REST/methods/user_services.py:163 REST/methods/user_services.py:226
+#: templates/uds/admin/tmpl/group.html:42
+#: templates/uds/admin/tmpl/user.html:45
+msgid "State"
+msgstr "Estado"
+
+#: REST/methods/user_services.py:97
+msgid "Owner"
+msgstr "Propietario"
+
+#: REST/methods/user_services.py:124
+msgid "Cached services"
+msgstr "Servicios de caché"
+
+#: REST/methods/user_services.py:133
+msgid "Cache level"
+msgstr "Nivel de caché"
+
+#: REST/methods/user_services.py:156
+msgid "Assigned groups"
+msgstr "Grupos asignados"
+
+#: REST/methods/user_services.py:162 templates/uds/admin/tmpl/group.html:34
+#: templates/uds/admin/tmpl/user.html:37
+msgid "comments"
+msgstr "Comentarios"
+
+#: REST/methods/user_services.py:184
+msgid "Assigned transports"
+msgstr "Transportes asignados"
+
+#: REST/methods/user_services.py:220
+#: templates/uds/admin/tmpl/services_pool.html:22
+msgid "Publications"
+msgstr "Publicaciones"
+
+#: REST/methods/user_services.py:225
+msgid "Publish date"
+msgstr "Fecha de publicación"
+
+#: REST/methods/user_services.py:227
+msgid "Reason"
+msgstr "Razón"
+
+#: REST/methods/users_groups.py:75
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "Usuarios de {0}"
 
-#: REST/methods/users_groups.py:67
+#: REST/methods/users_groups.py:77
 msgid "Current users"
 msgstr "Usuarios actuales"
 
-#: REST/methods/users_groups.py:71 REST/methods/users_groups.py:107
-msgid "User Id"
-msgstr "Id de usuario"
+#: REST/methods/users_groups.py:81
+#: auths/ActiveDirectory_enterprise/Authenticator.py:48
+#: auths/EDirectory_enterprise/Authenticator.py:77
+#: auths/RegexLdap/Authenticator.py:72 auths/SimpleLDAP/Authenticator.py:73
+#: services/HyperV_enterprise/HyperVClusterProvider.py:91
+#: services/HyperV_enterprise/HyperVProvider.py:83
+#: services/OVirt/OVirtProvider.py:93
+#: services/Vmware_enterprise/ServiceProviderVC.py:30
+#: templates/uds/admin/tmpl/user.html:16 transports/HTML5RDP/HTML5RDP.py:64
+#: transports/NX/NXTransport.py:61 transports/NX/TSNXTransport.py:66
+#: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
+#: transports/RGS-enterprise/RGSTransport.py:42
+#: transports/RGS-enterprise/TRGSTransport.py:47
+#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:69
+msgid "Username"
+msgstr "Usuario"
 
-#: REST/methods/users_groups.py:74 REST/methods/users_groups.py:109
-msgid "state"
-msgstr "estado"
-
-#: REST/methods/users_groups.py:75
+#: REST/methods/users_groups.py:85
 msgid "Last access"
 msgstr "Último acceso"
 
-#: REST/methods/users_groups.py:101
+#: REST/methods/users_groups.py:132 REST/methods/users_groups.py:244
+msgid "User already exists (duplicate key error)"
+msgstr "Usuario ya existe (error de clave duplicada)"
+
+#: REST/methods/users_groups.py:183
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Grupos de {0}"
 
-#: REST/methods/users_groups.py:103
+#: REST/methods/users_groups.py:185
 msgid "Current groups"
 msgstr "Grupos actuales"
 
-#: admin/views.py:55 admin/views.py:63 admin/views.py:77 web/views.py:422
+#: REST/methods/users_groups.py:189 REST/methods/users_groups.py:196
+#: auths/ActiveDirectory_enterprise/Authenticator.py:50
+#: auths/EDirectory_enterprise/Authenticator.py:79
+#: auths/RegexLdap/Authenticator.py:74 auths/SAML_enterprise/SAML.py:114
+#: auths/SimpleLDAP/Authenticator.py:75
+#: templates/uds/admin/tmpl/pool_add_group.html:17
+msgid "Group"
+msgstr "Grupo"
+
+#: REST/methods/users_groups.py:196
+msgid "UDS Group"
+msgstr "Grupo de UDS"
+
+#: REST/methods/users_groups.py:197
+msgid "Meta group"
+msgstr "Grupo meta"
+
+#: REST/methods/users_groups.py:197
+msgid "UDS Meta Group"
+msgstr "UDS Meta Group"
+
+#: admin/views.py:51 admin/views.py:59 admin/views.py:73 web/views.py:425
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: admin/views.py:70
+#: admin/views.py:66
 msgid "requested a template that do not exists"
 msgstr "solicitó una plantilla que no existe"
 
@@ -256,9 +505,9 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/OVirt/OVirtProvider.py:94 services/Sample/SampleService.py:131
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
-#: transports/HTML5RDP/HTML5RDP.py:65 transports/NX/NXTransport.py:62
-#: transports/NX/TSNXTransport.py:67 transports/RDP/RDPTransport.py:60
-#: transports/RDP/TSRDPTransport.py:64
+#: templates/uds/admin/tmpl/user.html:78 transports/HTML5RDP/HTML5RDP.py:65
+#: transports/NX/NXTransport.py:62 transports/NX/TSNXTransport.py:67
+#: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
 #: transports/RGS-enterprise/RGSTransport.py:43
 #: transports/RGS-enterprise/TRGSTransport.py:48
 #: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:70
@@ -293,31 +542,8 @@ msgstr "Autenticador de Active Directory"
 msgid "Authenticate against Active Directory"
 msgstr "Autenticar con Active Directory"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:48
-#: auths/EDirectory_enterprise/Authenticator.py:77
-#: auths/RegexLdap/Authenticator.py:72 auths/SimpleLDAP/Authenticator.py:73
-#: services/HyperV_enterprise/HyperVClusterProvider.py:91
-#: services/HyperV_enterprise/HyperVProvider.py:83
-#: services/OVirt/OVirtProvider.py:93
-#: services/Vmware_enterprise/ServiceProviderVC.py:30
-#: transports/HTML5RDP/HTML5RDP.py:64 transports/NX/NXTransport.py:61
-#: transports/NX/TSNXTransport.py:66 transports/RDP/RDPTransport.py:59
-#: transports/RDP/TSRDPTransport.py:63
-#: transports/RGS-enterprise/RGSTransport.py:42
-#: transports/RGS-enterprise/TRGSTransport.py:47
-#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:69
-msgid "Username"
-msgstr "Usuario"
-
-#: auths/ActiveDirectory_enterprise/Authenticator.py:50
-#: auths/EDirectory_enterprise/Authenticator.py:79
-#: auths/RegexLdap/Authenticator.py:74 auths/SAML_enterprise/SAML.py:114
-#: auths/SimpleLDAP/Authenticator.py:75
-msgid "Group"
-msgstr "Grupo"
-
 #: auths/ActiveDirectory_enterprise/Authenticator.py:67
-#: auths/ActiveDirectory_enterprise/Authenticator.py:442
+#: auths/ActiveDirectory_enterprise/Authenticator.py:444
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr ""
 "Debe especificar el nombre de usuario en el formulario USERNAME@DOMAIN.DOM"
@@ -327,7 +553,7 @@ msgid "Active directory connection error: "
 msgstr "Error de conexión del directorio activo: "
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:344
-#: auths/ActiveDirectory_enterprise/Authenticator.py:390
+#: auths/ActiveDirectory_enterprise/Authenticator.py:392
 #: auths/EDirectory_enterprise/Authenticator.py:243
 #: auths/EDirectory_enterprise/Authenticator.py:286
 #: auths/RegexLdap/Authenticator.py:303 auths/RegexLdap/Authenticator.py:346
@@ -340,33 +566,34 @@ msgstr "Nombre de usuario no hallado"
 msgid "Group not found"
 msgstr "Grupo no hallado"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:410
-#: auths/ActiveDirectory_enterprise/Authenticator.py:428
+#: auths/ActiveDirectory_enterprise/Authenticator.py:412
+#: auths/ActiveDirectory_enterprise/Authenticator.py:430
 #: auths/EDirectory_enterprise/Authenticator.py:303
 #: auths/RegexLdap/Authenticator.py:367 auths/SimpleLDAP/Authenticator.py:328
 #: auths/SimpleLDAP/Authenticator.py:342
 msgid "Too many results, be more specific"
 msgstr "Demasiados resultados, sea más específico"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:451
+#: auths/ActiveDirectory_enterprise/Authenticator.py:453
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Dominio parece ser incorrecta, por favor compruebe lo"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:456
+#: auths/ActiveDirectory_enterprise/Authenticator.py:458
 msgid "Server does not seem an Active Directory (do not have user objects)"
-msgstr "Servidor no parece un Active Directory (no tienen los objetos de usuario)"
+msgstr ""
+"Servidor no parece un Active Directory (no tienen los objetos de usuario)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:464
+#: auths/ActiveDirectory_enterprise/Authenticator.py:466
 msgid "Server does not seem an Active Directory (no not have group objects)"
 msgstr "Servidor no parece un Active Directory (no tienen objetos de grupo)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:472
+#: auths/ActiveDirectory_enterprise/Authenticator.py:474
 msgid ""
 "Server does not seem an Active Directory (do not have any user nor groups)"
 msgstr ""
 "Servidor no parece un Active Directory (no tienen ningún usuario ni grupos)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:477
+#: auths/ActiveDirectory_enterprise/Authenticator.py:479
 #: auths/EDirectory_enterprise/Authenticator.py:358
 #: auths/RegexLdap/Authenticator.py:428 auths/SimpleLDAP/Authenticator.py:423
 msgid "Connection params seem correct, test was succesfully executed"
@@ -710,6 +937,9 @@ msgstr "Grupo falso"
 
 #: auths/Sample/SampleAuth.py:111
 #: templates/uds/admin/tmpl/authenticators.html:19
+#: templates/uds/admin/tmpl/group.html:53
+#: templates/uds/admin/tmpl/services_pool.html:20
+#: templates/uds/admin/tmpl/user.html:85 templates/uds/admin/tmpl/user.html:99
 msgid "Groups"
 msgstr "Grupos"
 
@@ -797,13 +1027,17 @@ msgstr "Base autenticador"
 msgid "User name"
 msgstr "Nombre de usuario"
 
-#: core/auths/BaseAuthenticator.py:131
+#: core/auths/BaseAuthenticator.py:131 templates/uds/admin/tmpl/group.html:19
 msgid "Group name"
 msgstr "Nombre del grupo"
 
 #: core/auths/BaseAuthenticator.py:536
 msgid "Users can't be created inside this authenticator"
 msgstr "Los usuarios no pueden ser creados dentro de esta autenticador"
+
+#: core/auths/auth.py:61
+msgid "System Administrator"
+msgstr "Administrador de sistemas"
 
 #: core/managers/PublicationManager.py:181
 msgid ""
@@ -852,17 +1086,17 @@ msgstr "24 bits"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:322
+#: core/managers/UserServiceManager.py:314
 msgid "Cancel requested for a non running operation, doing remove instead"
 msgstr ""
 "Cancelación solicitada para una operación no corriente, haciendo eliminar en "
 "su lugar"
 
-#: core/managers/UserServiceManager.py:343
+#: core/managers/UserServiceManager.py:335
 msgid "Can't remove a non active element"
 msgstr "No se puede eliminar un elemento que no está activo"
 
-#: core/managers/UserServiceManager.py:356
+#: core/managers/UserServiceManager.py:348
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states doesn't allows it"
 msgstr "No se puede eliminar o cancelar {0} porque sus estados no lo permiten"
@@ -900,7 +1134,7 @@ msgstr "Activo"
 msgid "Inactive"
 msgstr "Inactivo"
 
-#: core/util/State.py:60
+#: core/util/State.py:60 templates/uds/admin/tmpl/user.html:50
 msgid "Blocked"
 msgstr "Bloqueado"
 
@@ -1015,11 +1249,6 @@ msgstr "Solicitud inválida"
 #: dispatchers/wyse_enterprise/views.py:322
 msgid "Invalid credentials used"
 msgstr "Credenciales no válidas usadas"
-
-#: dispatchers/wyse_enterprise/views.py:254
-#: dispatchers/wyse_enterprise/views.py:257 web/errors.py:62
-msgid "Service not found"
-msgstr "Servicio no hallado"
 
 #: dispatchers/wyse_enterprise/views.py:271 web/errors.py:61
 msgid "Transport not found"
@@ -1428,12 +1657,12 @@ msgid "HyperV Linked Clone (Experimental)"
 msgstr "HyperV vinculado clon (Experimental)"
 
 #: services/HyperV_enterprise/HyperVProvider.py:62
-msgid "HyperV Platform Provider"
-msgstr "Proveedor de plataformas HyperV"
+msgid "HyperV Platform Provider (experimental)"
+msgstr "Proveedor de plataforma HyperV (experimental)"
 
 #: services/HyperV_enterprise/HyperVProvider.py:66
-msgid "HyperV platform service provider"
-msgstr "Proveedor de servicios de plataforma HyperV"
+msgid "HyperV platform service provider (experimental)"
+msgstr "Proveedor de servicios de plataforma HyperV (experimental)"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt Linked Clone (Experimental)"
@@ -1796,7 +2025,8 @@ msgstr "y reinicie el navegador"
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/index.html:80 templates/uds/html5/index.html:125
+#: templates/uds/index.html:80 templates/uds/admin/tmpl/services_pool.html:21
+#: templates/uds/html5/index.html:125
 msgid "Transports"
 msgstr "Transportes"
 
@@ -1852,35 +2082,90 @@ msgid "Connectivity"
 msgstr "Conectividad"
 
 #: templates/uds/admin/snippets/navbar.html:26
+#: templates/uds/admin/tmpl/configuration.html:7
 msgid "Configuration"
 msgstr "Configuración"
 
 #: templates/uds/admin/snippets/navbar.html:27
-msgid "Clear cache"
-msgstr "Caché de clara"
+msgid "Flush cache"
+msgstr "Vaciar caché"
 
-#: templates/uds/admin/snippets/navbar.html:57
+#: templates/uds/admin/snippets/navbar.html:56
 msgid "Exit"
 msgstr "Salida"
 
-#: templates/uds/admin/snippets/navbar.html:58
+#: templates/uds/admin/snippets/navbar.html:57
 msgid "Logout"
 msgstr "Logout"
 
 #: templates/uds/admin/tmpl/authenticators.html:20
 #: templates/uds/admin/tmpl/providers.html:19
+#: templates/uds/admin/tmpl/services_pool.html:23
 msgid "Logs"
 msgstr "Registros"
 
+#: templates/uds/admin/tmpl/configuration.html:4
+msgid "UDS Configuration"
+msgstr "Configuración de UDS"
+
+#: templates/uds/admin/tmpl/configuration.html:58
+#: templates/uds/admin/tmpl/comp/modal.html:26
+msgid "Save"
+msgstr "Salvar"
+
 #: templates/uds/admin/tmpl/connectivity.html:4
-#: templates/uds/admin/tmpl/dashboard.html:4
+#: templates/uds/admin/tmpl/dashboard.html:5
 msgid "overview"
 msgstr "Resumen"
 
-#: templates/uds/admin/tmpl/providers.html:4
-#: templates/uds/admin/tmpl/providers.html:7
-msgid "Providers"
-msgstr "Proveedores"
+#: templates/uds/admin/tmpl/dashboard.html:30
+msgid "View Authenticators"
+msgstr "Autenticadores de vista"
+
+#: templates/uds/admin/tmpl/dashboard.html:57
+msgid "View services"
+msgstr "Servicios de vista"
+
+#: templates/uds/admin/tmpl/dashboard.html:84
+#: templates/uds/admin/tmpl/dashboard.html:111
+msgid "View services pools"
+msgstr "Ver servicios de piscinas"
+
+#: templates/uds/admin/tmpl/dashboard.html:103
+msgid "Restrained services pools"
+msgstr "Servicios refrenadas piscinas"
+
+#: templates/uds/admin/tmpl/dashboard.html:127
+msgid "Assigned services graph"
+msgstr "Gráfico de servicios asignados"
+
+#: templates/uds/admin/tmpl/dashboard.html:139
+msgid "Used services graph"
+msgstr "Gráfico de servicios usados"
+
+#: templates/uds/admin/tmpl/group.html:25
+#: templates/uds/admin/tmpl/search.html:9
+#: templates/uds/admin/tmpl/user.html:21
+msgid "Search"
+msgstr "Búsqueda de"
+
+#: templates/uds/admin/tmpl/group.html:45
+#: templates/uds/admin/tmpl/user.html:48
+msgid "Enabled"
+msgstr "Habilitado"
+
+#: templates/uds/admin/tmpl/group.html:46
+#: templates/uds/admin/tmpl/user.html:49
+msgid "Disabled"
+msgstr "Discapacitados"
+
+#: templates/uds/admin/tmpl/pool_add_group.html:5 web/forms/LoginForm.py:71
+msgid "Authenticator"
+msgstr "Autenticador"
+
+#: templates/uds/admin/tmpl/pool_add_transport.html:5
+msgid "Transport"
+msgstr "Transporte"
 
 #: templates/uds/admin/tmpl/request_failed.html:4
 msgid "Error on request"
@@ -1888,28 +2173,54 @@ msgstr "Error en la solicitud"
 
 #: templates/uds/admin/tmpl/request_failed.html:7
 msgid "There was an error requesting data from server, please, try again"
-msgstr "Hubo un error solicitando datos del servidor, por favor, pruebe otra vez"
+msgstr ""
+"Hubo un error solicitando datos del servidor, por favor, pruebe otra vez"
 
 #: templates/uds/admin/tmpl/request_failed.html:9
 #: templates/uds/html5/snippets/navbar.html:44
 msgid "Dashboard"
 msgstr "Tablero de instrumentos"
 
-#: templates/uds/admin/tmpl/comp/modal.html:19
-msgid "Close"
-msgstr "Cerrar"
+#: templates/uds/admin/tmpl/services_pool.html:4
+msgid "Services Pools"
+msgstr "Servicios de piscinas"
 
-#: templates/uds/admin/tmpl/comp/modal.html:26
-msgid "Save"
-msgstr "Salvar"
+#: templates/uds/admin/tmpl/services_pool.html:7
+msgid "Deployed Services"
+msgstr "Servicios desplegados"
 
-#: templates/uds/admin/tmpl/fld/checkbox.html:4
+#: templates/uds/admin/tmpl/services_pool.html:19
+msgid "Cache"
+msgstr "Caché"
+
+#: templates/uds/admin/tmpl/user.html:56
+msgid "Staff member"
+msgstr "Miembro del personal"
+
+#: templates/uds/admin/tmpl/user.html:58 templates/uds/admin/tmpl/user.html:68
+#: templates/uds/admin/tmpl/fld/checkbox.html:5
 msgid "Yes"
 msgstr "Sí"
 
-#: templates/uds/admin/tmpl/fld/checkbox.html:4
+#: templates/uds/admin/tmpl/user.html:59 templates/uds/admin/tmpl/user.html:68
+#: templates/uds/admin/tmpl/fld/checkbox.html:5
 msgid "No"
 msgstr "No"
+
+#: templates/uds/admin/tmpl/user.html:66
+#: templates/uds/snippets/admin_user.html:4
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/uds/admin/tmpl/user.html:87
+#: templates/uds/admin/tmpl/user.html:101
+#, python-brace-format
+msgid "{0} of {1} selected"
+msgstr "{0} de {1} seleccionado"
+
+#: templates/uds/admin/tmpl/comp/modal.html:19
+msgid "Close"
+msgstr "Cerrar"
 
 #: templates/uds/admin/tmpl/fld/editlist_popup.html:5
 msgid "Current list"
@@ -2034,10 +2345,6 @@ msgstr ""
 "Su navegador es compatible sólo parcialmente. Por favor, actualice a un "
 "moderno HTML5 navegador como Firefox, Chrome, Opera... (IE debe ser 10 o "
 "mejor)"
-
-#: templates/uds/snippets/admin_user.html:4
-msgid "Admin"
-msgstr "Admin"
 
 #: templates/uds/snippets/lang.html:9
 msgid "Language"
@@ -2523,7 +2830,7 @@ msgstr ""
 "Su navegador no es compatible. Por favor, actualice a un navegador moderno "
 "de HTML5 como Firefox o Chrome"
 
-#: web/views.py:401
+#: web/views.py:404
 msgid "Authenticator do not provides information"
 msgstr "El autenticador no proporciona información alguna"
 
@@ -2534,10 +2841,6 @@ msgstr "Seleccione autenticador"
 #: web/forms/LoginForm.py:54
 msgid "authenticator"
 msgstr "autenticador"
-
-#: web/forms/LoginForm.py:71
-msgid "Authenticator"
-msgstr "Autenticador"
 
 #: xmlrpc/auths/AdminAuth.py:115
 msgid "Credentials no longer valid"

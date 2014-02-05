@@ -10,9 +10,9 @@ gui.osmanagers.link = function(event) {
     gui.osmanagers.table({
         rowSelect : 'single',
         buttons : [ 'new', 'edit', 'delete', 'xls' ],
-        onNew : gui.methods.typedNew(gui.osmanagers, gettext('New OSManager'), gettext('Error creating OSManager')),
-        onEdit: gui.methods.typedEdit(gui.osmanagers, gettext('Edit OSManager'), gettext('Error processing OSManager')),
-        onDelete: gui.methods.del(gui.osmanagers, gettext('Delete OSManager'), gettext('Error deleting OSManager')),
+        onNew : gui.methods.typedNew(gui.osmanagers, gettext('New OSManager'), gettext('OSManager creation error')),
+        onEdit: gui.methods.typedEdit(gui.osmanagers, gettext('Edit OSManager'), gettext('OSManager saving error')),
+        onDelete: gui.methods.del(gui.osmanagers, gettext('Delete OSManager'), gettext('OSManager deletion error')),
     });
 
     return false;

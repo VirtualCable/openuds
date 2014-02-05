@@ -198,6 +198,21 @@ class DetailHandler(BaseModelHandler):
         self._params = params
         self._args = args
         self._kwargs = kwargs
+        
+    def __checkCustom(self, check, parent, arg=None):
+        logger.debug('Checking custom method {0}'.format(check))
+        for cm in self.custom_methods:
+            if check == cm:
+                try:
+                    operation = getattr(self, cm)
+                except:
+                    self.invalidMethodException()
+                    
+                if arg is None:
+                    return operation(parent)
+                else:
+                    return operation(parent, arg)
+        return None
 
     def get(self):
         # Process args
@@ -208,14 +223,9 @@ class DetailHandler(BaseModelHandler):
             return self.getItems(parent, None) 
 
         # if has custom methods, look for if this request matches any of them
-        for cm in self.custom_methods:
-            if self._args[0] == cm:
-                try:
-                    operation = getattr(self, self._args[0])
-                except:
-                    self.invalidMethodException()
-                    
-                return operation(parent)
+        r = self.__checkCustom(self._args[0], parent)
+        if r is not None:
+            return r 
 
         if nArgs == 1:
             if self._args[0] == OVERVIEW:
@@ -239,6 +249,11 @@ class DetailHandler(BaseModelHandler):
                 return self.getTypes(parent, self._args[1])
             elif self._args[1] == LOG:
                 return self.getLogs(parent, self._args[0])
+            else:
+                r = self.__checkCustom(self._args[1], parent, self._args[0])
+                if r is not None:
+                    return r 
+                
         
         return self.fallbackGet()
     

@@ -129,6 +129,24 @@
             gui.launchModal('<b class="text-danger">' + title + '</b>', jqXHR.responseText, { actionButton: ' '});
         };
     };
+    
+    gui.promptModal = function(title, question, options) {
+        options = options || {};
+        options.actionButton = '<button type="button" class="btn btn-primary button-yes">' + (options.yesButton || gettext('yes')) + '</button>';
+        options.closeButton = '<button type="button" class="btn btn-danger button-no">' + (options.yesButton || gettext('no')) + '</button>';
+        var onYes = options.onYes || function(){};
+        var onNo = options.onNo || function(){};
+        
+        var modalId = gui.launchModal(title, question, options);
+        $(modalId + ' .button-yes').on('click', function(event){
+            $(modalId).modal('hide');
+            onYes();
+        });
+        $(modalId + ' .button-no').on('click', function(event){
+            $(modalId).modal('hide');
+            onNo();
+        });
+    };
 
     gui.clearWorkspace = function() {
         $('#content').empty();

@@ -108,9 +108,9 @@ gui.providers.link = function(event) {
                         return true;
                     },
                     buttons : [ 'new', 'edit', 'delete', 'xls' ],
-                    onEdit : gui.methods.typedEdit(services, gettext('Edit service'), gettext('Error processing service'), testButton),
-                    onNew : gui.methods.typedNew(services, gettext('New service'), gettext('Error creating service'), testButton),
-                    onDelete: gui.methods.del(services, gettext('Delete service'), gettext('Error deleting service'), testButton),
+                    onEdit : gui.methods.typedEdit(services, gettext('Edit service'), gettext('Service creation error'), testButton),
+                    onNew : gui.methods.typedNew(services, gettext('New service'), gettext('Service saving error'), testButton),
+                    onDelete: gui.methods.del(services, gettext('Delete service'), gettext('Service deletion error'), testButton),
                     scrollToTable : false,
                     onLoad: function(k) {
                         gui.tools.unblockUI();
@@ -125,9 +125,9 @@ gui.providers.link = function(event) {
                 prevTables.push(logTable);
             },
             buttons : [ 'new', 'edit', 'delete', 'xls' ],
-            onNew : gui.methods.typedNew(gui.providers, gettext('New provider'), gettext('Error creating provider'), testButton),
-            onEdit: gui.methods.typedEdit(gui.providers, gettext('Edit provider'), gettext('Error processing provider'), testButton),
-            onDelete: gui.methods.del(gui.providers, gettext('Delete provider'), gettext('Error deleting provider')),
+            onNew : gui.methods.typedNew(gui.providers, gettext('New services provider'), gettext('Services provider creation error'), testButton),
+            onEdit: gui.methods.typedEdit(gui.providers, gettext('Edit services provider'), gettext('Services Provider saving error'), testButton),
+            onDelete: gui.methods.del(gui.providers, gettext('Delete services provider'), gettext('Services Provider deletion error')),
         });
     });
 

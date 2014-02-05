@@ -35,16 +35,11 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 
-from uds.models import UserService
+from uds.models import UserService, Group, Transport, DeployedServicePublication
 from uds.core.util.State import State
 from uds.core.util import log
-from uds.core.Environment import Environment
 from uds.REST.model import DetailHandler
-from uds.REST import NotFound, ResponseError, RequestError
-from django.db import IntegrityError
-
-from services import Services
-from osmanagers import OsManagers
+from uds.REST import ResponseError, RequestError
 
 import logging
 
@@ -168,6 +163,13 @@ class Groups(DetailHandler):
             { 'state': { 'title': _('State'), 'type': 'dict', 'dict': State.dictionary() } },
         ]
         
+    def saveItem(self, parent, item):
+        parent.assignedGroups.add(Group.objects.get(pk=self._params['id']))
+        return self.success()
+    
+    def deleteItem(self, parent, item):
+        parent.assignedGroups.remove(Group.objects.get(pk=self._args[0]))
+        
 class Transports(DetailHandler):
     def getItems(self, parent, item):
         return [{
@@ -188,13 +190,29 @@ class Transports(DetailHandler):
             { 'trans_type': {'title': _('Type') } },
             { 'comments': {'title': _('Comments')}},
         ]
+
+    def saveItem(self, parent, item):
+        parent.transports.add(Transport.objects.get(pk=self._params['id']))
+        return self.success()
+    
+    def deleteItem(self, parent, item):
+        parent.transports.remove(Transport.objects.get(pk=self._args[0]))
         
 class Publications(DetailHandler):
-    custom_methods=['publish']
+    custom_methods=['publish', 'cancel']
     
     def publish(self, parent):
         logger.debug('Custom "publish" invoked')
         parent.publish()
+        return self.success()
+    
+    def cancel(self, parent, id):
+        try:
+            ds = DeployedServicePublication.objects.get(pk=id)
+            ds.cancel()
+        except Exception as e:
+            raise ResponseError(unicode(e))
+
         return self.success()
     
     def getItems(self, parent, item):

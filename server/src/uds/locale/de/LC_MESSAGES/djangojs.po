@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-08 19:29+0100\n"
+"POT-Creation-Date: 2014-02-05 10:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,147 +98,359 @@ msgstr "Dezember"
 msgid "_MENU_ records per page"
 msgstr "_MENU_ Datensätze pro Seite"
 
-#: static/adm/js/gui-definition.js:38
-msgid "Test"
-msgstr "Test"
-
-#: static/adm/js/gui-definition.js:140
-msgid "Edit service"
-msgstr "Bearbeiten service"
-
-#: static/adm/js/gui-definition.js:140
-msgid "Error processing service"
-msgstr "Fehler-Dienstleistung"
-
-#: static/adm/js/gui-definition.js:141
-msgid "New service"
-msgstr "Neuer service"
-
-#: static/adm/js/gui-definition.js:141
-msgid "Error creating service"
-msgstr "Fehler beim Erstellen des service"
-
-#: static/adm/js/gui-definition.js:142
-msgid "Delete service"
-msgstr "Dienst löschen"
-
-#: static/adm/js/gui-definition.js:142
-msgid "Error deleting service"
-msgstr "Fehler beim Löschen der Dienst"
-
-#: static/adm/js/gui-definition.js:157
-msgid "New provider"
-msgstr "Neuer Anbieter"
-
-#: static/adm/js/gui-definition.js:157
-msgid "Error creating provider"
-msgstr "Erstellen von Fehleranbieter"
-
-#: static/adm/js/gui-definition.js:158
-msgid "Edit provider"
-msgstr "Bearbeiten Anbieter"
-
-#: static/adm/js/gui-definition.js:158
-msgid "Error processing provider"
-msgstr "Fehleranbieter Verarbeitung"
-
-#: static/adm/js/gui-definition.js:159
-msgid "Delete provider"
-msgstr "Anbieter löschen"
-
-#: static/adm/js/gui-definition.js:159
-msgid "Error deleting provider"
-msgstr "Löschen von Fehleranbieter"
-
-#: static/adm/js/gui-definition.js:177
+#: static/adm/js/gui-d-authenticators.js:10
 msgid "Test authenticator"
 msgstr "Test-Authentifikator"
 
-#: static/adm/js/gui-definition.js:295
+#: static/adm/js/gui-d-authenticators.js:52
+msgid "Search error"
+msgstr "Suche Fehler"
+
+#: static/adm/js/gui-d-authenticators.js:60
+msgid "Accept"
+msgstr "Akzeptieren"
+
+#: static/adm/js/gui-d-authenticators.js:153
+msgid "Edit group"
+msgstr "Gruppe bearbeiten"
+
+#: static/adm/js/gui-d-authenticators.js:175
+#: static/adm/js/gui-d-authenticators.js:216
+msgid "Group saved"
+msgstr "Gruppe gespeichert"
+
+#: static/adm/js/gui-d-authenticators.js:196
+msgid "New group"
+msgstr "Neue Gruppe"
+
+#: static/adm/js/gui-d-authenticators.js:208
+msgid "Search groups"
+msgstr "Gruppen durchsuchen"
+
+#: static/adm/js/gui-d-authenticators.js:208
+msgid "Group"
+msgstr "Gruppe"
+
+#: static/adm/js/gui-d-authenticators.js:208
+msgid "Groups found"
+msgstr "Gruppen gefunden"
+
+#: static/adm/js/gui-d-authenticators.js:217
+msgid "Group saving error"
+msgstr "Gruppe speichern Fehler"
+
+#: static/adm/js/gui-d-authenticators.js:231
+msgid "Delete group"
+msgstr "Gruppe löschen"
+
+#: static/adm/js/gui-d-authenticators.js:231
+msgid "Group deletion error"
+msgstr "Gruppe löschen Fehler"
+
+#: static/adm/js/gui-d-authenticators.js:279
+msgid "Edit user"
+msgstr "Benutzer bearbeiten"
+
+#: static/adm/js/gui-d-authenticators.js:313
+#: static/adm/js/gui-d-authenticators.js:348
+msgid "User saved"
+msgstr "Benutzer gespeichert"
+
+#: static/adm/js/gui-d-authenticators.js:314
+#: static/adm/js/gui-d-authenticators.js:349
+msgid "User saving error"
+msgstr "Benutzer speichern Fehler"
+
+#: static/adm/js/gui-d-authenticators.js:325
+msgid "New user"
+msgstr "Neuer Benutzer"
+
+#: static/adm/js/gui-d-authenticators.js:339
+msgid "Search users"
+msgstr "Suche Mitglieder"
+
+#: static/adm/js/gui-d-authenticators.js:339
+msgid "User"
+msgstr "Benutzer"
+
+#: static/adm/js/gui-d-authenticators.js:339
+msgid "Users found"
+msgstr "Benutzer gefunden"
+
+#: static/adm/js/gui-d-authenticators.js:354
+msgid "Delete user"
+msgstr "Benutzer löschen"
+
+#: static/adm/js/gui-d-authenticators.js:354
+msgid "User deletion error"
+msgstr "Benutzer löschen Fehler"
+
+#: static/adm/js/gui-d-authenticators.js:371
 msgid "New authenticator"
 msgstr "Neuen Authentifikator"
 
-#: static/adm/js/gui-definition.js:295
-msgid "Error creating authenticator"
-msgstr "Fehler erstellen Authentifikator"
+#: static/adm/js/gui-d-authenticators.js:371
+msgid "Authenticator creation error"
+msgstr "Fehler beim Erstellen der Authentifikator"
 
-#: static/adm/js/gui-definition.js:296
+#: static/adm/js/gui-d-authenticators.js:372
 msgid "Edit authenticator"
 msgstr "Authentifikator bearbeiten"
 
-#: static/adm/js/gui-definition.js:296
-msgid "Error processing authenticator"
-msgstr "Fehler Verarbeitung Authentifikator"
+#: static/adm/js/gui-d-authenticators.js:372
+msgid "Authenticator saving error"
+msgstr "Authentifikator speichern Fehler"
 
-#: static/adm/js/gui-definition.js:297
+#: static/adm/js/gui-d-authenticators.js:373
 msgid "Delete authenticator"
 msgstr "Authentifikator löschen"
 
-#: static/adm/js/gui-definition.js:297
-msgid "Error deleting authenticator"
-msgstr "Fehler löschen Authentifikator"
+#: static/adm/js/gui-d-authenticators.js:373
+msgid "Authenticator deletion error"
+msgstr "Authentifikator löschen Fehler"
 
-#: static/adm/js/gui-definition.js:363
-msgid "Edit transport"
-msgstr "Bearbeiten Verkehr"
+#: static/adm/js/gui-d-config.js:42
+msgid "Configuration saved"
+msgstr "Gespeicherte Konfiguration"
 
-#: static/adm/js/gui-definition.js:370 static/adm/js/gui-definition.js.c:405
-msgid "Error creating transport"
-msgstr "Fehler beim Erstellen des transport"
-
-#: static/adm/js/gui-definition.js:388
-msgid "Available for networks"
-msgstr "Für Netzwerke verfügbar"
-
-#: static/adm/js/gui-definition.js:389
-msgid "Select networks that will see this transport"
-msgstr "Wählen Sie Netzwerke, die diesen Transport angezeigt wird"
-
-#: static/adm/js/gui-definition.js:390
-msgid "Transport active for selected networks"
-msgstr "Transport für ausgewählte Netzwerke aktiv"
-
-#: static/adm/js/gui-definition.js:391
-msgid ""
-"If active, transport will only be available on selected networks. If "
-"inactive, transport will be available form any net EXCEPT selected networks"
-msgstr ""
-"Wenn aktiv, werden Transport nur auf ausgewählten Netzen verfügbar. If "
-"inaktiv, Transport verfügbare Form werden alle außer ausgewählten Netzen net"
-
-#: static/adm/js/gui-definition.js:397
+#: static/adm/js/gui-d-connectivity.js:20
 msgid "New transport"
 msgstr "Neue Verkehrsmittel"
 
-#: static/adm/js/gui-definition.js:414
+#: static/adm/js/gui-d-connectivity.js:20
+msgid "Transport creation error"
+msgstr "Fehler beim Transport erstellen"
+
+#: static/adm/js/gui-d-connectivity.js:21
+msgid "Edit transport"
+msgstr "Bearbeiten Verkehr"
+
+#: static/adm/js/gui-d-connectivity.js:21
+msgid "Transport saving error"
+msgstr "Verkehr speichern Fehler"
+
+#: static/adm/js/gui-d-connectivity.js:22
+msgid "Delete transport"
+msgstr "Verkehr zu löschen"
+
+#: static/adm/js/gui-d-connectivity.js:22
+msgid "Transport deletion error"
+msgstr "Transportfehler löschen"
+
+#: static/adm/js/gui-d-connectivity.js:28
+msgid "New network"
+msgstr "Neues Netzwerk"
+
+#: static/adm/js/gui-d-connectivity.js:28
+msgid "Network creation error"
+msgstr "Fehler beim Netzwerk erstellen"
+
+#: static/adm/js/gui-d-connectivity.js:29
+msgid "Edit network"
+msgstr "Netzwerk bearbeiten"
+
+#: static/adm/js/gui-d-connectivity.js:29
+msgid "Network saving error"
+msgstr "Netzwerk Fehler"
+
+#: static/adm/js/gui-d-connectivity.js:30
+msgid "Delete network"
+msgstr "Netzwerk löschen"
+
+#: static/adm/js/gui-d-connectivity.js:30
+msgid "Network deletion error"
+msgstr "Netzwerkfehler löschen"
+
+#: static/adm/js/gui-d-osmanagers.js:13
+msgid "New OSManager"
+msgstr "Neue OSManager"
+
+#: static/adm/js/gui-d-osmanagers.js:13
+msgid "OSManager creation error"
+msgstr "Fehler beim Erstellen von OSManager"
+
+#: static/adm/js/gui-d-osmanagers.js:14
+msgid "Edit OSManager"
+msgstr "Bearbeiten OSManager"
+
+#: static/adm/js/gui-d-osmanagers.js:14
+msgid "OSManager saving error"
+msgstr "OSManager speichern Fehler"
+
+#: static/adm/js/gui-d-osmanagers.js:15
+msgid "Delete OSManager"
+msgstr "OSManager löschen"
+
+#: static/adm/js/gui-d-osmanagers.js:15
+msgid "OSManager deletion error"
+msgstr "OSManager löschen Fehler"
+
+#: static/adm/js/gui-d-services.js:9 static/adm/js/gui-d-servicespools.js:120
+msgid "Test"
+msgstr "Test"
+
+#: static/adm/js/gui-d-services.js:111
+msgid "Edit service"
+msgstr "Bearbeiten service"
+
+#: static/adm/js/gui-d-services.js:111
+msgid "Service creation error"
+msgstr "Fehler beim Erstellen von Service"
+
+#: static/adm/js/gui-d-services.js:112
+msgid "New service"
+msgstr "Neuer service"
+
+#: static/adm/js/gui-d-services.js:112
+msgid "Service saving error"
+msgstr "Service Fehler speichern"
+
+#: static/adm/js/gui-d-services.js:113
+msgid "Delete service"
+msgstr "Dienst löschen"
+
+#: static/adm/js/gui-d-services.js:113
+msgid "Service deletion error"
+msgstr "Dienstfehler löschen"
+
+#: static/adm/js/gui-d-services.js:128
+msgid "New services provider"
+msgstr "Neuer Anbieter für Dienste"
+
+#: static/adm/js/gui-d-services.js:128
+msgid "Services provider creation error"
+msgstr "Fehler beim Erstellen der Provider-Dienste"
+
+#: static/adm/js/gui-d-services.js:129
+msgid "Edit services provider"
+msgstr "Dienstleister bearbeiten"
+
+#: static/adm/js/gui-d-services.js:129
+msgid "Services Provider saving error"
+msgstr "Speichern von Fehler-Dienstleister"
+
+#: static/adm/js/gui-d-services.js:130
+msgid "Delete services provider"
+msgstr "Löschen-Dienstleister"
+
+#: static/adm/js/gui-d-services.js:130
+msgid "Services Provider deletion error"
+msgstr "Service Provider löschen Fehler"
+
+#: static/adm/js/gui-d-servicespools.js:136
+msgid "Error processing deployed service"
+msgstr "Fehler bereitgestellt Dienstleistung"
+
+#: static/adm/js/gui-d-servicespools.js:191
+msgid "Add group"
+msgstr "Gruppe hinzufügen"
+
+#: static/adm/js/gui-d-servicespools.js:215
+msgid "You must provide authenticator and group"
+msgstr "Sie müssen Authentifikator und Gruppe bereitstellen."
+
+#: static/adm/js/gui-d-servicespools.js:230
+msgid "Remove group from service pool"
+msgstr "Entfernen Sie die Gruppe aus Service-pool"
+
+#: static/adm/js/gui-d-servicespools.js:230
+msgid "Error removing group"
+msgstr "Fehler beim Entfernen Gruppe"
+
+#: static/adm/js/gui-d-servicespools.js:281
+msgid "Add transport"
+msgstr "Transport hinzufügen"
+
+#: static/adm/js/gui-d-servicespools.js:288
+msgid "You must provide a transport"
+msgstr "Sie müssen einen Transport bereitstellen."
+
+#: static/adm/js/gui-d-servicespools.js:303
+msgid "Remove transport from service pool"
+msgstr "Transport aus Service-Pool zu entfernen"
+
+#: static/adm/js/gui-d-servicespools.js:303
 msgid "Error removing transport"
 msgstr "Fehler beim Entfernen der Verkehr"
 
-#: static/adm/js/gui-definition.js:432
+#: static/adm/js/gui-d-servicespools.js:328
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: static/adm/js/gui-d-servicespools.js:349
+msgid "Publication failed"
+msgstr "Publikation fehlgeschlagen"
+
+#: static/adm/js/gui-d-servicespools.js:379
+msgid "Restrained"
+msgstr "Zurückhaltend"
+
+#: static/adm/js/gui-d-servicespools.js:387
+msgid "unknown (needs reload)"
+msgstr "unbekannt (muss neu laden)"
+
+#: static/adm/js/gui-d-servicespools.js:391
+msgid "New service pool"
+msgstr "Neue Service-pool"
+
+#: static/adm/js/gui-d-servicespools.js:391
+msgid "Error creating service pool"
+msgstr "Erstellen von Dienst Fehlervorrat."
+
+#: static/adm/js/gui-d-servicespools.js:398
+msgid "Publish on creation"
+msgstr "Bei der Erstellung zu veröffentlichen"
+
+#: static/adm/js/gui-d-servicespools.js:399
+msgid ""
+"If selected, will initiate the publication on service inmediatly pool after "
+"creation"
+msgstr ""
+"Wenn ausgewählt, wird die Publikation in Dienst-Inmediatly-Pool nach "
+"einleiten. Erstellung"
+
+#: static/adm/js/gui-d-servicespools.js:410 static/adm/js/gui.js:41
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: static/adm/js/gui-d-servicespools.js:410
+msgid "saving error"
+msgstr "Speichern von Fehler"
+
+#: static/adm/js/gui-d-servicespools.js:411 static/adm/js/gui.js:45
+#: static/adm/js/gui.js.c:358
+msgid "Delete"
+msgstr "Löschen"
+
+#: static/adm/js/gui-d-servicespools.js:411
+msgid "deletion error"
+msgstr "Fehler löschen"
+
+#: static/adm/js/gui-definition.js:11
 msgid "Cache"
 msgstr "Cache"
 
-#: static/adm/js/gui-definition.js:432
+#: static/adm/js/gui-definition.js:11
 msgid "Cache has been flushed"
 msgstr "Cache geleert hat, wurde"
 
-#: static/adm/js/gui-element.js:471
+#: static/adm/js/gui-element.js:557
 msgid "Date"
 msgstr "Datum"
 
-#: static/adm/js/gui-element.js:478
+#: static/adm/js/gui-element.js:566
 msgid "level"
 msgstr "Ebene"
 
-#: static/adm/js/gui-element.js:486
+#: static/adm/js/gui-element.js:574
 msgid "source"
 msgstr "Quelle"
 
-#: static/adm/js/gui-element.js:493
+#: static/adm/js/gui-element.js:581
 msgid "message"
 msgstr "Nachricht"
 
-#: static/adm/js/gui-element.js:499
+#: static/adm/js/gui-element.js:587
 msgid "Logs"
 msgstr "Protokolle"
 
@@ -270,122 +482,106 @@ msgstr "Bitte warten, Verarbeitung"
 msgid "Filter"
 msgstr "Filter"
 
-#: static/adm/js/gui.js:28
-msgid "First"
-msgstr "Erste"
-
-#: static/adm/js/gui.js:29
-msgid "Last"
-msgstr "Letzter"
-
 #: static/adm/js/gui.js:37
 msgid "New"
 msgstr "Neu"
-
-#: static/adm/js/gui.js:41
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: static/adm/js/gui.js:45 static/adm/js/gui.js.c:322
-msgid "Delete"
-msgstr "Löschen"
 
 #: static/adm/js/gui.js:49
 msgid "Xls"
 msgstr "Xls"
 
-#: static/adm/js/gui.js:111
+#: static/adm/js/gui.js:123
 msgid "Message"
 msgstr "Nachricht"
 
-#: static/adm/js/gui.js:133
-msgid "Deployed services"
-msgstr "Bereitgestellten Dienste"
-
-#: static/adm/js/gui.js:207
+#: static/adm/js/gui.js:217
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: static/adm/js/gui.js:208
+#: static/adm/js/gui.js:218
 msgid "Please fix this field."
 msgstr "Bitte korrigieren Sie in diesem Feld."
 
-#: static/adm/js/gui.js:209
+#: static/adm/js/gui.js:219
 msgid "Please enter a valid email address."
 msgstr "Bitte geben Sie eine gültige e-Mail-Adresse."
 
-#: static/adm/js/gui.js:210
+#: static/adm/js/gui.js:220
 msgid "Please enter a valid URL."
 msgstr "Bitte geben Sie eine gültige URL."
 
-#: static/adm/js/gui.js:211
+#: static/adm/js/gui.js:221
 msgid "Please enter a valid date."
 msgstr "Bitte geben Sie ein gültiges Datum."
 
-#: static/adm/js/gui.js:212
+#: static/adm/js/gui.js:222
 msgid "Please enter a valid date (ISO)."
 msgstr "Bitte geben Sie ein gültiges Datum (ISO)."
 
-#: static/adm/js/gui.js:213
+#: static/adm/js/gui.js:223
 msgid "Please enter a valid number."
 msgstr "Bitte geben Sie eine gültige Nummer."
 
-#: static/adm/js/gui.js:214
+#: static/adm/js/gui.js:224
 msgid "Please enter only digits."
 msgstr "Bitte geben Sie nur Ziffern."
 
-#: static/adm/js/gui.js:215
+#: static/adm/js/gui.js:225
 msgid "Please enter a valid credit card number."
 msgstr "Bitte geben Sie eine gültige Kreditkartennummer."
 
-#: static/adm/js/gui.js:216
+#: static/adm/js/gui.js:226
 msgid "Please enter the same value again."
 msgstr "Bitte geben Sie den gleichen Wert wieder."
 
-#: static/adm/js/gui.js:217
+#: static/adm/js/gui.js:227
 msgid "Please enter no more than {0} characters."
 msgstr "Bitte geben Sie nicht mehr als {0} Zeichen."
 
-#: static/adm/js/gui.js:218
+#: static/adm/js/gui.js:228
 msgid "Please enter at least {0} characters."
 msgstr "Bitte geben Sie mindestens {0} Zeichen."
 
-#: static/adm/js/gui.js:219
+#: static/adm/js/gui.js:229
 msgid "Please enter a value between {0} and {1} characters long."
 msgstr "Bitte geben Sie einen Wert zwischen {0} und {1} Zeichen lang."
 
-#: static/adm/js/gui.js:220
+#: static/adm/js/gui.js:230
 msgid "Please enter a value between {0} and {1}."
 msgstr "Bitte geben Sie einen Wert zwischen {0} und {1}."
 
-#: static/adm/js/gui.js:221
+#: static/adm/js/gui.js:231
 msgid "Please enter a value less than or equal to {0}."
 msgstr "Bitte geben Sie einen Wert kleiner oder gleich {0}."
 
-#: static/adm/js/gui.js:222
+#: static/adm/js/gui.js:232
 msgid "Please enter a value greater than or equal to {0}."
 msgstr "Bitte geben Sie einen Wert größer oder gleich {0}."
 
-#: static/adm/js/gui.js:244
+#: static/adm/js/gui.js:274
 msgid "Test result"
 msgstr "Testergebnis"
 
-#: static/adm/js/gui.js:245
+#: static/adm/js/gui.js:275
 msgid "Test error"
 msgstr "Test-Fehler"
 
-#: static/adm/js/gui.js:276
+#: static/adm/js/gui.js:307
 msgid "Edition successfully done"
 msgstr "Edition erfolgreich durchgeführt"
 
-#: static/adm/js/gui.js:310
+#: static/adm/js/gui.js:330
+msgid "of type"
+msgstr "vom Typ"
+
+#: static/adm/js/gui.js:347
 msgid "Creation successfully done"
 msgstr "Erstellung erfolgreich durchgeführt"
 
-#: static/adm/js/gui.js:321
+#: static/adm/js/gui.js:357
 msgid "Are you sure do you want to delete "
 msgstr "Bist du sicher wollen Sie löschen "
 
-#: static/adm/js/gui.js:327
+#: static/adm/js/gui.js:363
 msgid "Item deleted"
 msgstr "Element gelöscht"

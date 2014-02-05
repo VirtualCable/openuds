@@ -3,7 +3,7 @@
 // Basic GUI components
 
 // Tools
-gui.clear_cache = new BasicGuiElement('Clear cache');
+gui.clear_cache = new BasicGuiElement('Flush cache');
 gui.clear_cache.link = function() {
     "use strict";
     api.getJson('cache/flush', {

@@ -97,27 +97,13 @@ gui.servicesPools.link = function(event) {
             }));
             gui.setLinksEvents();
             
-            var testClick = function(val, value, btn, tbl, refreshFnc) {
-                gui.doLog(value);
-            };
-            var counter = 0;
-            var testSelect = function(val, value, btn, tbl, refreshFnc) {
-                if( !val ) {
-                    $(btn).removeClass('btn3d-info').addClass('disabled');
-                    return;
-                }
-                $(btn).removeClass('disabled').addClass('btn3d-info');
-                counter = counter + 1;
-                gui.doLog('Select', counter.toString(), val, value);
-            };
-            
             /*
              * Services pools part
              */
             var servicesPoolsTable = gui.servicesPools.table({
                 container : 'deployed-services-placeholder',
                 rowSelect : 'single',
-                buttons : [ 'new', 'edit', 'delete', { text: gettext('Test'), css: 'disabled', click: testClick, select: testSelect }, 'xls' ],
+                buttons : [ 'new', 'edit', 'delete', 'xls' ],
                 onRowDeselect: function() {
                     clearDetails();
                 },
@@ -133,7 +119,7 @@ gui.servicesPools.link = function(event) {
                         service = availableServices[servPool.service_id];
                     } catch (e) {
                         gui.doLog('Exception on rowSelect', e);
-                        gui.notify(gettext('Error processing deployed service'), 'danger');
+                        gui.notify('Service pool ' + gettext('error'), 'danger');
                         return;
                     }
                     
@@ -184,7 +170,7 @@ gui.servicesPools.link = function(event) {
                             container : 'groups-placeholder',
                             rowSelect : 'single',
                             buttons : [ 'new', 'delete', 'xls' ],
-                            onNew: function(value, event, table, refreshFnc) {
+                            onNew: function(value, table, refreshFnc) {
                                 
                                 api.templates.get('pool_add_group', function(tmpl){
                                     api.authenticators.overview(function(data){
@@ -209,14 +195,25 @@ gui.servicesPools.link = function(event) {
                                         });
                                         
                                         $(modalId + ' .button-accept').on('click', function(event) {
-                                            alert(event);
+                                            var auth = $(modalId + ' #id_auth_select').val();
+                                            var group = $(modalId + ' #id_group_select').val();
+                                            if( auth == -1 || group == -1 ) {
+                                                gui.notify(gettext('You must provide authenticator and group'), 'danger');
+                                            } else { // Save & close modal
+                                                groups.rest.create({id: group}, function(data){
+                                                    $(modalId).modal('hide');
+                                                    refreshFnc();
+                                                });
+                                                
+                                            }
                                         });
                                         // Makes form "beautyfull" :-)
-                                        gui.forms.beautify(modalId);
+                                        gui.tools.applyCustoms(modalId);
                                     });
                                 });
                                 
                             },
+                            onDelete: gui.methods.del(groups, gettext('Remove group'), gettext('Group removal error')),
                             onData : function(data) {
                                 $.each(data, function(undefined, value){
                                     value.group_name = '<b>' + value.auth_name + '</b>\\' + value.name;
@@ -263,6 +260,33 @@ gui.servicesPools.link = function(event) {
                         container: 'transports-placeholder',
                         rowSelect: 'single',
                         buttons : [ 'new', 'delete', 'xls' ],
+                        onNew: function(value, table, refreshFnc) {
+                            
+                            api.templates.get('pool_add_transport', function(tmpl){
+                                api.transports.overview(function(data){
+                                    var modalId = gui.launchModal(gettext('Add transport'),api.templates.evaluate(tmpl, {
+                                        transports: data,
+                                    }));
+                                    
+                                    $(modalId + ' .button-accept').on('click', function(event) {
+                                        var transport = $(modalId + ' #id_transport_select').val();
+                                        if( transport == -1 ) {
+                                            gui.notify(gettext('You must provide a transport'), 'danger');
+                                        } else { // Save & close modal
+                                            transports.rest.create({id: transport}, function(data){
+                                                $(modalId).modal('hide');
+                                                refreshFnc();
+                                            });
+                                            
+                                        }
+                                    });
+                                    // Makes form "beautyfull" :-)
+                                    gui.tools.applyCustoms(modalId);
+                                });
+                            });
+                            
+                        },
+                        onDelete: gui.methods.del(transports, gettext('Remove transport'), gettext('Transport removal error')),
                         onData: function(data) {
                             $.each(data, function(undefined, value){
                                 var style = 'display:inline-block; background: url(data:image/png;base64,' +
@@ -287,27 +311,36 @@ gui.servicesPools.link = function(event) {
                             container : 'publications-placeholder',
                             rowSelect : 'single',
                             buttons : [ 'new', { 
-                                                    text: gettext('Cancel'), 
-                                                    css: 'disabled', 
-                                                    click: function(val, value, btn, tbl, refreshFnc) {
-                                                        gui.doLog(val);
-                                                    }, 
-                                                    select: function(val, value, btn, tbl, refreshFnc) {
-                                                        if( !val ) {
-                                                            $(btn).removeClass('btn3d-info').addClass('disabled');
-                                                            return;
-                                                        }
-                                                        if( ['P','W','L'].indexOf(val.state) > 0 ) { // Waiting for publication, Preparing or running
-                                                            $(btn).removeClass('disabled').addClass('btn3d-info');
-                                                        }
-                                                    },
-                                                }, 
+                                            text: gettext('Cancel'), 
+                                            css: 'disabled', 
+                                            click: function(val, value, btn, tbl, refreshFnc) {
+                                                gui.promptModal(gettext('Publish'), gettext('Cancel publication'),{
+                                                    onYes: function() {
+                                                        pubApi.invoke( val.id + '/cancel', function(){
+                                                            refreshFnc();
+                                                        });
+                                                    }
+                                                });
+                                            }, 
+                                            select: function(val, value, btn, tbl, refreshFnc) {
+                                                if( !val ) {
+                                                    $(btn).removeClass('btn3d-info').addClass('disabled');
+                                                    return;
+                                                }
+                                                if( ['P','W','L'].indexOf(val.state) > 0 ) { // Waiting for publication, Preparing or running
+                                                    $(btn).removeClass('disabled').addClass('btn3d-info');
+                                                }
+                                            },
+                                        }, 
                                         'xls' ],
                             onNew: function(action, tbl, refreshFnc) {
-                                gui.doLog('New publication');
-                                pubApi.invoke('publish', function(){
-                                    gui.doLog('Success');
-                                }, gui.failRequestModalFnc(gettext('Publication failed')) );
+                                gui.promptModal(gettext('Publish'), gettext('Launch new publication?'), {
+                                    onYes: function() {
+                                        pubApi.invoke('publish', function(){
+                                            refreshFnc();
+                                        }, gui.failRequestModalFnc(gettext('Failed creating publication')) );
+                                    }
+                                });
                             },
                         });
                         prevTables.push(publicationsTable);
@@ -349,7 +382,7 @@ gui.servicesPools.link = function(event) {
                         }
                     });
                 },
-                onNew: gui.methods.typedNew(gui.servicesPools, gettext('New service pool'), gettext('Error creating service pool'), {
+                onNew: gui.methods.typedNew(gui.servicesPools, gettext('New service pool'), 'Service pool ' + gettext('creation error'), {
                     guiProcessor: function(guiDef) { // Create has "save on publish" field
                         gui.doLog(guiDef);
                         var newDef = [].concat(guiDef).concat([{
@@ -357,7 +390,7 @@ gui.servicesPools.link = function(event) {
                                 'value': true,
                                 'gui': {
                                     'label': gettext('Publish on creation'),
-                                    'tooltip': gettext('If selected, will initiate the publication on service inmediatly pool after creation'),
+                                    'tooltip': gettext('If selected, will initiate the publication inmediatly after creation'),
                                     'type': 'checkbox',
                                     'order': 150,
                                     'defvalue': true,
@@ -368,8 +401,8 @@ gui.servicesPools.link = function(event) {
                     },
                     preprocessor: preFnc,
                     }),
-                onEdit: gui.methods.typedEdit(gui.servicesPools, gettext('Edit service pool'), gettext('Error saving service pool')),
-                onDelete: gui.methods.del(gui.servicesPools, gettext('Delete service pool'), gettext('Error deleting service pool')),
+                onEdit: gui.methods.typedEdit(gui.servicesPools, gettext('Edit') + ' service pool', 'Service pool ' + gettext('saving error')),
+                onDelete: gui.methods.del(gui.servicesPools, gettext('Delete') + ' service pool', 'Service pool ' + gettext('deletion error')),
             });
         });
     });

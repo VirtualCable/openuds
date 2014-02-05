@@ -214,7 +214,7 @@ gui.authenticators.link = function(event) {
                                         $(modalId).modal('hide');
                                         refreshFnc();
                                         gui.notify(gettext('Group saved'), 'success');
-                                    }, gui.failRequestModalFnc("Error saving group", true));
+                                    }, gui.failRequestModalFnc(gettext("Group saving error"), true));
                                 });
                             });
                         };
@@ -228,10 +228,10 @@ gui.authenticators.link = function(event) {
                         }
 
                     },
-                    onDelete: gui.methods.del(group, gettext('Delete group'), gettext('Error deleting group')),
+                    onDelete: gui.methods.del(group, gettext('Delete group'), gettext('Group deletion error')),
                     
                 });
-                var tmpLogTable;
+                var tmpLogTable = null;
                 
                 // New button will only be shown on authenticators that can create new users
                 var usrButtons = ['edit', 'delete', 'xls'];
@@ -311,7 +311,7 @@ gui.authenticators.link = function(event) {
                                             $(modalId).modal('hide');
                                             refreshFnc();
                                             gui.notify(gettext('User saved'), 'success');
-                                        }, gui.failRequestModalFnc("Error saving user", true));
+                                        }, gui.failRequestModalFnc(gettext("User saving error"), true));
                                     });
                                 });
                             });
@@ -346,12 +346,12 @@ gui.authenticators.link = function(event) {
                                         $(modalId).modal('hide');
                                         refreshFnc();
                                         gui.notify(gettext('User saved'), 'success');
-                                    }, gui.failRequestModalFnc("Error saving user", true));
+                                    }, gui.failRequestModalFnc(gettext("User saving error"), true));
                                 });
                             });
                         });
                     },
-                    onDelete: gui.methods.del(user, gettext('Delete user'), gettext('Error deleting user')),
+                    onDelete: gui.methods.del(user, gettext('Delete user'), gettext('User deletion error')),
                 });
                 
                 var logTable = gui.authenticators.logTable(id, {
@@ -368,9 +368,9 @@ gui.authenticators.link = function(event) {
             onRefresh : function() {
                 $('#users-placeholder').empty(); // Remove detail on parent refresh
             },
-            onNew : gui.methods.typedNew(gui.authenticators, gettext('New authenticator'), gettext('Error creating authenticator'),testButton),
-            onEdit: gui.methods.typedEdit(gui.authenticators, gettext('Edit authenticator'), gettext('Error processing authenticator'), testButton),
-            onDelete: gui.methods.del(gui.authenticators, gettext('Delete authenticator'), gettext('Error deleting authenticator')),
+            onNew : gui.methods.typedNew(gui.authenticators, gettext('New authenticator'), gettext('Authenticator creation error'),testButton),
+            onEdit: gui.methods.typedEdit(gui.authenticators, gettext('Edit authenticator'), gettext('Authenticator saving error'), testButton),
+            onDelete: gui.methods.del(gui.authenticators, gettext('Delete authenticator'), gettext('Authenticator deletion error')),
             
         });
     });
