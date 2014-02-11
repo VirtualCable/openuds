@@ -49,6 +49,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
         super(PublicationOldMachinesCleaner,self).__init__()
         self._id = publicationId
         
+    @transaction.atomic
     def run(self):
         try:
             dsp = DeployedServicePublication.objects.get(pk=self._id)
@@ -69,14 +70,15 @@ class PublicationLauncher(DelayedTask):
         super(PublicationLauncher,self).__init__()
         self._publishId = publish.id
         
-    @transaction.atomic
     def run(self):
         logger.debug('Publishing')
         try:
-            dsp = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
-            if dsp.state != State.LAUNCHING: # If not preparing (may has been canceled by user) just return
-                return
-            dsp.state = State.PREPARING
+            with transaction.atomic():
+                dsp = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
+                if dsp.state != State.LAUNCHING: # If not preparing (may has been canceled by user) just return
+                    return
+                dsp.state = State.PREPARING
+                dsp.save()
             pi = dsp.getInstance()
             state = pi.publish()
             deployedService = dsp.deployed_service
@@ -175,10 +177,10 @@ class PublicationManager(object):
         return PublicationManager._manager
         
     
-    @transaction.atomic
     def publish(self, deployedService):
-        if deployedService.publications.select_for_update().filter(state__in=State.PUBLISH_STATES).count() > 0:
-            raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
+        with transaction.atomic():
+            if deployedService.publications.select_for_update().filter(state__in=State.PUBLISH_STATES).count() > 0:
+                raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
         try:
             now = getSqlDatetime()
             dsp = deployedService.publications.create(state = State.LAUNCHING, state_date = now, publish_date = now, revision = deployedService.current_pub_revision)

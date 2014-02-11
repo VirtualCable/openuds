@@ -57,7 +57,6 @@ class UserServiceOpChecker(DelayedTask):
         self._state = service.state
 
     @staticmethod
-    @transaction.atomic
     def makeUnique(userService, userServiceInstance, state):
         '''
         This method makes sure that there will be only one delayedtask related to the userService indicated
@@ -66,7 +65,6 @@ class UserServiceOpChecker(DelayedTask):
         UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
     
     @staticmethod
-    @transaction.atomic
     def checkAndUpdateState(userService, userServiceInstance, state):
         '''
         Checks the value returned from invocation to publish or checkPublishingState, updating the dsp database object
@@ -126,7 +124,6 @@ class UserServiceOpChecker(DelayedTask):
             userService.save()
     
     @staticmethod
-    @transaction.atomic
     def checkLater(userService, ci):
         '''
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
@@ -138,7 +135,6 @@ class UserServiceOpChecker(DelayedTask):
             return
         DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + str(userService.id))
 
-    @transaction.atomic
     def run(self):
         logger.debug('Checking user service finished {0}'.format(self._svrId))
         uService = None
@@ -204,7 +200,6 @@ class UserServiceManager(object):
                 )
         
     
-    @transaction.atomic
     def __createCacheAtDb(self, deployedServicePublication, cacheLevel):
         '''
         Private method to instatiate a cache element at database with default states
@@ -285,7 +280,6 @@ class UserServiceManager(object):
         
         
     
-    @transaction.atomic
     def moveToLevel(self, cache, cacheLevel):
         '''
         Moves a cache element from one level to another
@@ -307,12 +301,11 @@ class UserServiceManager(object):
         Cancels a user service creation
         @return: the Uservice canceling
         '''
-        with transaction.atomic():
-            uService = UserService.objects.select_for_update().get(id=uService.id)
-            logger.debug('Canceling uService {0} creation'.format(uService))
-            if uService.isPreparing() == False:
-                logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
-                return self.remove(uService)
+        uService = UserService.objects.select_for_update().get(id=uService.id)
+        logger.debug('Canceling uService {0} creation'.format(uService))
+        if uService.isPreparing() == False:
+            logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
+            return self.remove(uService)
         
         ui = uService.getInstance()
         # We simply notify service that it should cancel operation
@@ -328,11 +321,10 @@ class UserServiceManager(object):
         Removes a uService element
         @return: the uService removed (marked for removal)
         '''
-        with transaction.atomic():
-            uService = UserService.objects.select_for_update().get(id=uService.id)
-            logger.debug('Removing uService {0}'.format(uService))
-            if uService.isUsable() == False and State.isRemovable(uService.state) == False:
-                raise OperationException(_('Can\'t remove a non active element'))
+        uService = UserService.objects.select_for_update().get(id=uService.id)
+        logger.debug('Removing uService {0}'.format(uService))
+        if uService.isUsable() == False and State.isRemovable(uService.state) == False:
+            raise OperationException(_('Can\'t remove a non active element'))
         
         ci = uService.getInstance()
         state = ci.destroy()
@@ -347,7 +339,6 @@ class UserServiceManager(object):
         else:
             raise OperationException(_('Can\'t remove nor cancel {0} cause its states doesn\'t allows it'))
         
-    @transaction.atomic
     def removeInfoItems(self, dsp):
         dsp.cachedDeployedService.select_for_update().filter(state__in=State.INFO_STATES).delete()
         
@@ -365,36 +356,35 @@ class UserServiceManager(object):
             #else:
             #    return existing[0]
         
-        with transaction.atomic():
-            # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
-            cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.USABLE)[:1]
-            if len(cache) > 0:
-                cache = cache[0] # Database object
-                cache.assignToUser(user)
-                cache.save()     # Store assigned ASAP, we do not know how long assignToUser method of instance will take
-                logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
-                ci = cache.getInstance() # User Deployment instance
-                ci.assignToUser(user)
-                cache.updateData(ci)
-                cache.save()
-                return cache
-            # Now find if there is a preparing one
-            cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.PREPARING)[:1]
-            if len(cache) > 0:
-                cache = cache[0]
-                cache.assignToUser(user)
-                cache.save()
-                logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
-                cache.getInstance().assignToUser(user)
-                return cache
-            # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
-            ty = ds.service.getType()
-            if ty.usesCache is True:
-                inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
-                inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
-                totalL1Assigned = inCacheL1 + inAssigned
-                if totalL1Assigned >= ds.max_srvs:
-                    raise MaxServicesReachedException()
+        # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
+        cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.USABLE)[:1]
+        if len(cache) > 0:
+            cache = cache[0] # Database object
+            cache.assignToUser(user)
+            cache.save()     # Store assigned ASAP, we do not know how long assignToUser method of instance will take
+            logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
+            ci = cache.getInstance() # User Deployment instance
+            ci.assignToUser(user)
+            cache.updateData(ci)
+            cache.save()
+            return cache
+        # Now find if there is a preparing one
+        cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.PREPARING)[:1]
+        if len(cache) > 0:
+            cache = cache[0]
+            cache.assignToUser(user)
+            cache.save()
+            logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
+            cache.getInstance().assignToUser(user)
+            return cache
+        # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
+        ty = ds.service.getType()
+        if ty.usesCache is True:
+            inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
+            inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
+            totalL1Assigned = inCacheL1 + inAssigned
+            if totalL1Assigned >= ds.max_srvs:
+                raise MaxServicesReachedException()
         # Can create new service, create it
         return self.createAssignedFor(ds, user)
             
@@ -422,7 +412,6 @@ class UserServiceManager(object):
             return False
         return True
         
-    @transaction.atomic
     def isReady(self, uService):
         UserService.objects.update()
         uService = UserService.objects.select_for_update().get(id=uService.id)

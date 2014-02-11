@@ -26,13 +26,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Adolfo Gómez <dkmaster at dkmon dot com>, 2012, 2013.
+# Adolfo Gómez <dkmaster at dkmon dot com>, 2012, 2013, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 10:32+0100\n"
-"PO-Revision-Date: 2013-04-22 06:24+0200\n"
+"POT-Creation-Date: 2014-02-06 08:24+0100\n"
+"PO-Revision-Date: 2014-02-06 10:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
 "Language: es\n"
@@ -40,7 +40,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Generator: Lokalize 1.4\n"
+"X-Generator: Lokalize 1.5\n"
 
 #: REST/model.py:86 REST/methods/authenticators.py:58
 #: REST/methods/networks.py:54 REST/methods/osmanagers.py:55
@@ -99,7 +99,7 @@ msgstr "Método no encontrado"
 
 #: REST/model.py:165
 msgid "Item not found"
-msgstr "Artículo no encontrado"
+msgstr "Elemento no encontrado"
 
 #: REST/methods/authenticators.py:56
 msgid "Current authenticators"
@@ -121,7 +121,7 @@ msgstr "Redes actuales"
 
 #: REST/methods/networks.py:55
 msgid "Range"
-msgstr "Gama"
+msgstr "Rango"
 
 #: REST/methods/networks.py:56 REST/methods/osmanagers.py:57
 #: REST/methods/transports.py:57
@@ -134,27 +134,27 @@ msgstr "Red no válida: "
 
 #: REST/methods/networks.py:73
 msgid "Network range"
-msgstr "Intervalo de red"
+msgstr "Rango de la red"
 
 #: REST/methods/networks.py:74
 msgid ""
 "Network range. Accepts most network definitions formats (range, subnet, "
 "host, etc..."
 msgstr ""
-"Rango de la red. Acepta la mayoría de formatos definiciones de red (gama, "
+"Rango de la red. Acepta la mayoría de formatos definiciones de red (rango, "
 "subred, host, etc..."
 
 #: REST/methods/osmanagers.py:53
 msgid "Current OS Managers"
-msgstr "Actual OS administradores"
+msgstr "OS Managers Actuales"
 
 #: REST/methods/osmanagers.py:75
 msgid "Can't delete an OSManager with deployed services associated"
-msgstr "No se puede eliminar un OSManager con desplegados servicios asociados"
+msgstr "No se puede eliminar un OSManager con pools de servicios asociados"
 
 #: REST/methods/osmanagers.py:79
 msgid "Can't modify an OSManager with deployed services associated"
-msgstr "No se puede modificar un OSManager con desplegados servicios asociados"
+msgstr "No se puede modificar un OSManager con pools de servicios asociados"
 
 #: REST/methods/providers.py:55
 msgid "Service providers"
@@ -323,7 +323,7 @@ msgid "Creation date"
 msgstr "Fecha de creación"
 
 #: REST/methods/user_services.py:93 REST/methods/user_services.py:129
-#: REST/methods/user_services.py:224
+#: REST/methods/user_services.py:233
 msgid "Revision"
 msgstr "Revisión"
 
@@ -332,7 +332,7 @@ msgid "Friendly name"
 msgstr "Nombre descriptivo"
 
 #: REST/methods/user_services.py:96 REST/methods/user_services.py:132
-#: REST/methods/user_services.py:163 REST/methods/user_services.py:226
+#: REST/methods/user_services.py:163 REST/methods/user_services.py:235
 #: templates/uds/admin/tmpl/group.html:42
 #: templates/uds/admin/tmpl/user.html:45
 msgid "State"
@@ -363,16 +363,16 @@ msgstr "Comentarios"
 msgid "Assigned transports"
 msgstr "Transportes asignados"
 
-#: REST/methods/user_services.py:220
+#: REST/methods/user_services.py:229
 #: templates/uds/admin/tmpl/services_pool.html:22
 msgid "Publications"
 msgstr "Publicaciones"
 
-#: REST/methods/user_services.py:225
+#: REST/methods/user_services.py:234
 msgid "Publish date"
 msgstr "Fecha de publicación"
 
-#: REST/methods/user_services.py:227
+#: REST/methods/user_services.py:236
 msgid "Reason"
 msgstr "Razón"
 
@@ -2984,3 +2984,4 @@ msgstr "No puedo hallar el transporte"
 #: xmlrpc/transports/Networks.py:79 xmlrpc/transports/Networks.py:96
 msgid "Can't locate the network"
 msgstr "No puedo hallar la red"
+

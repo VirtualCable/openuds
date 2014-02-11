@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 10:32+0100\n"
+"POT-Creation-Date: 2014-02-06 08:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -300,7 +300,7 @@ msgid "Creation date"
 msgstr "Data di creazione"
 
 #: REST/methods/user_services.py:93 REST/methods/user_services.py:129
-#: REST/methods/user_services.py:224
+#: REST/methods/user_services.py:233
 msgid "Revision"
 msgstr "Revisione"
 
@@ -309,7 +309,7 @@ msgid "Friendly name"
 msgstr "Nome descrittivo"
 
 #: REST/methods/user_services.py:96 REST/methods/user_services.py:132
-#: REST/methods/user_services.py:163 REST/methods/user_services.py:226
+#: REST/methods/user_services.py:163 REST/methods/user_services.py:235
 #: templates/uds/admin/tmpl/group.html:42
 #: templates/uds/admin/tmpl/user.html:45
 msgid "State"
@@ -340,16 +340,16 @@ msgstr "Commenti"
 msgid "Assigned transports"
 msgstr "Trasporti assegnati"
 
-#: REST/methods/user_services.py:220
+#: REST/methods/user_services.py:229
 #: templates/uds/admin/tmpl/services_pool.html:22
 msgid "Publications"
 msgstr "Pubblicazioni"
 
-#: REST/methods/user_services.py:225
+#: REST/methods/user_services.py:234
 msgid "Publish date"
 msgstr "Data di pubblicazione"
 
-#: REST/methods/user_services.py:227
+#: REST/methods/user_services.py:236
 msgid "Reason"
 msgstr "Motivo"
 

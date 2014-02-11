@@ -80,7 +80,6 @@ class Cache(object):
     def clean(self):
         Cache.delete(self._owner)
     
-    @transaction.autocommit
     def put(self, skey, value, validity = None):
         #logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
         if validity == None:
@@ -100,7 +99,6 @@ class Cache(object):
             c.validity = validity
             c.save()
             
-    @transaction.autocommit
     def refresh(self, skey):
         #logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
         try:

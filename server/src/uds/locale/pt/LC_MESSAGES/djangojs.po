@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 10:32+0100\n"
+"POT-Creation-Date: 2014-02-06 08:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -285,7 +285,7 @@ msgstr "Excluir OSManager"
 msgid "OSManager deletion error"
 msgstr "OSManager erro de exclusão"
 
-#: static/adm/js/gui-d-services.js:9 static/adm/js/gui-d-servicespools.js:120
+#: static/adm/js/gui-d-services.js:9
 msgid "Test"
 msgstr "Teste"
 
@@ -337,92 +337,101 @@ msgstr "Exclua o provedor de serviços"
 msgid "Services Provider deletion error"
 msgstr "Erro de exclusão do provedor de serviços"
 
-#: static/adm/js/gui-d-servicespools.js:136
-msgid "Error processing deployed service"
-msgstr "Serviço de processamento implantado de erro"
+#: static/adm/js/gui-d-servicespools.js:122
+msgid "error"
+msgstr "erro"
 
-#: static/adm/js/gui-d-servicespools.js:191
+#: static/adm/js/gui-d-servicespools.js:177
 msgid "Add group"
 msgstr "Adicionar grupo"
 
-#: static/adm/js/gui-d-servicespools.js:215
+#: static/adm/js/gui-d-servicespools.js:201
 msgid "You must provide authenticator and group"
 msgstr "Você deve fornecer o autenticador e grupo"
 
-#: static/adm/js/gui-d-servicespools.js:230
-msgid "Remove group from service pool"
-msgstr "Remover grupo de pool de serviço"
+#: static/adm/js/gui-d-servicespools.js:216
+msgid "Remove group"
+msgstr "Remover grupo"
 
-#: static/adm/js/gui-d-servicespools.js:230
-msgid "Error removing group"
-msgstr "Grupo de remoção de erro"
+#: static/adm/js/gui-d-servicespools.js:216
+msgid "Group removal error"
+msgstr "Erro de remoção do grupo"
 
-#: static/adm/js/gui-d-servicespools.js:281
+#: static/adm/js/gui-d-servicespools.js:267
 msgid "Add transport"
 msgstr "Adicionar transporte"
 
-#: static/adm/js/gui-d-servicespools.js:288
+#: static/adm/js/gui-d-servicespools.js:274
 msgid "You must provide a transport"
 msgstr "Você deve fornecer um transporte"
 
-#: static/adm/js/gui-d-servicespools.js:303
-msgid "Remove transport from service pool"
-msgstr "Remova o transporte do pool de serviço"
+#: static/adm/js/gui-d-servicespools.js:289
+msgid "Remove transport"
+msgstr "Remover o transporte"
 
-#: static/adm/js/gui-d-servicespools.js:303
-msgid "Error removing transport"
-msgstr "Erro na remoção de transporte"
+#: static/adm/js/gui-d-servicespools.js:289
+msgid "Transport removal error"
+msgstr "Erro de remoção de transporte"
 
-#: static/adm/js/gui-d-servicespools.js:328
+#: static/adm/js/gui-d-servicespools.js:314
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: static/adm/js/gui-d-servicespools.js:349
-msgid "Publication failed"
-msgstr "Publicação falhada"
+#: static/adm/js/gui-d-servicespools.js:317
+#: static/adm/js/gui-d-servicespools.js:337
+msgid "Publish"
+msgstr "Publicar"
 
-#: static/adm/js/gui-d-servicespools.js:379
+#: static/adm/js/gui-d-servicespools.js:317
+msgid "Cancel publication"
+msgstr "Cancelar a publicação"
+
+#: static/adm/js/gui-d-servicespools.js:337
+msgid "Launch new publication?"
+msgstr "Lançamento nova publicação?"
+
+#: static/adm/js/gui-d-servicespools.js:341
+msgid "Failed creating publication"
+msgstr "Não conseguiu criar publicação"
+
+#: static/adm/js/gui-d-servicespools.js:373
 msgid "Restrained"
 msgstr "Contido"
 
-#: static/adm/js/gui-d-servicespools.js:387
+#: static/adm/js/gui-d-servicespools.js:381
 msgid "unknown (needs reload)"
 msgstr "desconhecido (precisa de recarregar)"
 
-#: static/adm/js/gui-d-servicespools.js:391
+#: static/adm/js/gui-d-servicespools.js:385
 msgid "New service pool"
 msgstr "Novo pool de serviço"
 
-#: static/adm/js/gui-d-servicespools.js:391
-msgid "Error creating service pool"
-msgstr "Criando pool de serviço erro"
+#: static/adm/js/gui-d-servicespools.js:385
+msgid "creation error"
+msgstr "erro de criação"
 
-#: static/adm/js/gui-d-servicespools.js:398
+#: static/adm/js/gui-d-servicespools.js:392
 msgid "Publish on creation"
 msgstr "Publicar na criação"
 
-#: static/adm/js/gui-d-servicespools.js:399
-msgid ""
-"If selected, will initiate the publication on service inmediatly pool after "
-"creation"
-msgstr ""
-"Se selecionado, irá iniciar a publicação na piscina de serviço imediatamente "
-"após a criação"
+#: static/adm/js/gui-d-servicespools.js:393
+msgid "If selected, will initiate the publication inmediatly after creation"
+msgstr "Se selecionado, irá iniciar a publicação imediatamente após a criação"
 
-#: static/adm/js/gui-d-servicespools.js:410 static/adm/js/gui.js:41
+#: static/adm/js/gui-d-servicespools.js:404 static/adm/js/gui.js:41
 msgid "Edit"
 msgstr "Editar"
 
-#: static/adm/js/gui-d-servicespools.js:410
+#: static/adm/js/gui-d-servicespools.js:404
 msgid "saving error"
 msgstr "salvando o erro"
 
-#: static/adm/js/gui-d-servicespools.js:411 static/adm/js/gui.js:45
-#: static/adm/js/gui.js.c:358
+#: static/adm/js/gui-d-servicespools.js:405 static/adm/js/gui.js:45
+#: static/adm/js/gui.js.c:376
 msgid "Delete"
 msgstr "Excluir"
 
-#: static/adm/js/gui-d-servicespools.js:411
+#: static/adm/js/gui-d-servicespools.js:405
 msgid "deletion error"
 msgstr "erro de exclusão"
 
@@ -494,94 +503,102 @@ msgstr "Xls"
 msgid "Message"
 msgstr "Mensagem"
 
-#: static/adm/js/gui.js:217
+#: static/adm/js/gui.js:135
+msgid "yes"
+msgstr "Sim"
+
+#: static/adm/js/gui.js:136
+msgid "no"
+msgstr "Não"
+
+#: static/adm/js/gui.js:235
 msgid "This field is required."
 msgstr "Este campo é obrigatório."
 
-#: static/adm/js/gui.js:218
+#: static/adm/js/gui.js:236
 msgid "Please fix this field."
 msgstr "Por favor corrigi este campo."
 
-#: static/adm/js/gui.js:219
+#: static/adm/js/gui.js:237
 msgid "Please enter a valid email address."
 msgstr "Por favor insira um endereço de email válido."
 
-#: static/adm/js/gui.js:220
+#: static/adm/js/gui.js:238
 msgid "Please enter a valid URL."
 msgstr "Por favor introduza um URL válido."
 
-#: static/adm/js/gui.js:221
+#: static/adm/js/gui.js:239
 msgid "Please enter a valid date."
 msgstr "Por favor introduza uma data válida."
 
-#: static/adm/js/gui.js:222
+#: static/adm/js/gui.js:240
 msgid "Please enter a valid date (ISO)."
 msgstr "Por favor introduza uma data válida (ISO)."
 
-#: static/adm/js/gui.js:223
+#: static/adm/js/gui.js:241
 msgid "Please enter a valid number."
 msgstr "Por favor, insira um número válido."
 
-#: static/adm/js/gui.js:224
+#: static/adm/js/gui.js:242
 msgid "Please enter only digits."
 msgstr "Por favor, digite somente dígitos."
 
-#: static/adm/js/gui.js:225
+#: static/adm/js/gui.js:243
 msgid "Please enter a valid credit card number."
 msgstr "Por favor, insira um número válido de cartão de crédito."
 
-#: static/adm/js/gui.js:226
+#: static/adm/js/gui.js:244
 msgid "Please enter the same value again."
 msgstr "Digite novamente o mesmo valor."
 
-#: static/adm/js/gui.js:227
+#: static/adm/js/gui.js:245
 msgid "Please enter no more than {0} characters."
 msgstr "Não mais de {0} caracteres digite."
 
-#: static/adm/js/gui.js:228
+#: static/adm/js/gui.js:246
 msgid "Please enter at least {0} characters."
 msgstr "Por favor, insira pelo menos {0} caracteres."
 
-#: static/adm/js/gui.js:229
+#: static/adm/js/gui.js:247
 msgid "Please enter a value between {0} and {1} characters long."
 msgstr "Por favor, insira um valor entre {0} e {1} caracteres longo."
 
-#: static/adm/js/gui.js:230
+#: static/adm/js/gui.js:248
 msgid "Please enter a value between {0} and {1}."
 msgstr "Por favor, insira um valor entre {0} e {1}."
 
-#: static/adm/js/gui.js:231
+#: static/adm/js/gui.js:249
 msgid "Please enter a value less than or equal to {0}."
 msgstr "Por favor digite um valor menor ou igual a {0}."
 
-#: static/adm/js/gui.js:232
+#: static/adm/js/gui.js:250
 msgid "Please enter a value greater than or equal to {0}."
 msgstr "Por favor, insira um valor maior ou igual a {0}."
 
-#: static/adm/js/gui.js:274
+#: static/adm/js/gui.js:292
 msgid "Test result"
 msgstr "Resultado do teste"
 
-#: static/adm/js/gui.js:275
+#: static/adm/js/gui.js:293
 msgid "Test error"
 msgstr "Erro de teste"
 
-#: static/adm/js/gui.js:307
+#: static/adm/js/gui.js:325
 msgid "Edition successfully done"
 msgstr "Edição com sucesso"
 
-#: static/adm/js/gui.js:330
+#: static/adm/js/gui.js:348
 msgid "of type"
 msgstr "do tipo"
 
-#: static/adm/js/gui.js:347
+#: static/adm/js/gui.js:365
 msgid "Creation successfully done"
 msgstr "Criação feita com sucesso"
 
-#: static/adm/js/gui.js:357
+#: static/adm/js/gui.js:375
 msgid "Are you sure do you want to delete "
 msgstr "Você tem certeza que quer excluir "
 
-#: static/adm/js/gui.js:363
+#: static/adm/js/gui.js:381
 msgid "Item deleted"
 msgstr "Item excluído"
