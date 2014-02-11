@@ -172,6 +172,9 @@ class ServicesPools(ModelHandler):
         except Exception as e:
             raise RequestError(str(e))
         
+    def deleteItem(self, item):
+        item.remove() # This will mark it for deletion, but in fact will not delete it directly
+        
     # Logs
     def getLogs(self, item):
         return log.getLogs(item)

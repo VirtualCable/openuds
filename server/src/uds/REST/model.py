@@ -591,8 +591,12 @@ class ModelHandler(BaseModelHandler):
         try:
             item = self.model.objects.get(pk=self._args[0]);
             self.checkDelete(item)
-            item.delete()
+            self.deleteItem(item)
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists')
         
         return 'deleted'
+
+    def deleteItem(self, item):
+            item.delete()
+        
