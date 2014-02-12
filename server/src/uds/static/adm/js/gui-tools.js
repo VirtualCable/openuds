@@ -52,7 +52,7 @@
         },
         applyCustoms: function(selector) {
             // Activate "custom" styles
-            $(selector + ' .make-switch').bootstrapSwitch();
+            $(selector + ' input:checkbox').bootstrapSwitch();
             // Activate "cool" selects
             $(selector + ' .selectpicker').selectpicker();
             // TEST: cooler on mobile devices
