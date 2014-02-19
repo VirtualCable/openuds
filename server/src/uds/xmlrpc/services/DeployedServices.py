@@ -43,6 +43,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def dictFromDeployedService(srv):
     if srv.service is not None:
         service = srv.service.getInstance()
@@ -56,16 +57,17 @@ def dictFromDeployedService(srv):
         osManagerName = ''
     transports = []
     for trans in srv.transports.order_by('name'):
-        transports.append( { 'id' : str(trans.id), 'name' : trans.name } )
+        transports.append({'id': str(trans.id), 'name': trans.name})
     groups = []
     for grp in srv.assignedGroups.order_by('name'):
-        groups.append( { 'id' : str(grp.id), 'name' : grp.name })
-    return { 'id' : str(srv.id), 'name' : srv.name, 'comments' : srv.comments, 'idService' : str(srv.service_id),  
-            'idOsManager' : str(srv.osmanager_id), 'initialServices' : srv.initial_srvs, 'cacheL1' : srv.cache_l1_srvs,
-            'cacheL2' : srv.cache_l2_srvs, 'maxServices' : srv.max_srvs, 'state': srv.state, 
-            'serviceName' : svrName, 'osManagerName' : osManagerName,
-            'transports' : transports, 'groups' : groups, 'info' : infoDictFromServiceInstance(service)
+        groups.append({'id': str(grp.id), 'name': grp.name})
+    return {'id': str(srv.id), 'name': srv.name, 'comments': srv.comments, 'idService': str(srv.service_id),
+            'idOsManager': str(srv.osmanager_id), 'initialServices': srv.initial_srvs, 'cacheL1': srv.cache_l1_srvs,
+            'cacheL2': srv.cache_l2_srvs, 'maxServices': srv.max_srvs, 'state': srv.state,
+            'serviceName': svrName, 'osManagerName': osManagerName,
+            'transports': transports, 'groups': groups, 'info': infoDictFromServiceInstance(service)
             }
+
 
 def addTransportsToDeployedService(deployedService, transports):
     '''
@@ -79,26 +81,28 @@ def addTransportsToDeployedService(deployedService, transports):
             logger.debug('Adding transport {0}'.format(transport))
             deployedService.transports.add(transport)
         except Exception:
-            pass # Silently ignore unknown transports ids
+            pass  # Silently ignore unknown transports ids
     return True
 
+
 @needs_credentials
-def getDeployedServices(credentials, all):
+def getDeployedServices(credentials, all_):
     '''
     Returns the available deployed services
     '''
     logger.debug('Returning list of deployed services')
     res = []
-    if all == True:
+    if all_ == True:
         dss = DeployedService.objects.all().order_by('name')
     else:
-        dss = DeployedService.objects.filter(state = State.ACTIVE).order_by('name')
+        dss = DeployedService.objects.filter(state=State.ACTIVE).order_by('name')
     for ds in dss:
         try:
             res.append(dictFromDeployedService(ds))
-        except Exception,e:
-            logger.debug('Exception: {0}'.format(e))
+        except Exception:
+            logger.exception('Exception adding deployed service')
     return res
+
 
 @needs_credentials
 def getDeployedService(credentials, id):

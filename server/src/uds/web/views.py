@@ -88,6 +88,7 @@ def login(request, smallName=None):
     if request.method == 'POST':
         if request.COOKIES.has_key('uds') is False:
             return errors.errorView(request, errors.COOKIES_NEEDED) # We need cookies to keep session data
+	request.session.cycle_key()
         form = LoginForm(request.POST, smallName=smallName)
         if form.is_valid():
             java = form.cleaned_data['java'] == 'y'
