@@ -93,8 +93,8 @@ class RDPTransport(Transport):
                                 gui.boolToStr(self._allowDrives), gui.boolToStr(self._allowSerials),
                                 self._fixedName, self._fixedPassword, self._fixedDomain ] ) 
     
-    def unmarshal(self, str):
-        data = str.split('\t')
+    def unmarshal(self, str_):
+        data = str_.split('\t')
         if data[0] == 'v1':
             self._useEmptyCreds = gui.strToBool(data[1])
             self._allowSmartcards = gui.strToBool(data[2])

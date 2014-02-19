@@ -70,7 +70,7 @@ class Serializable(object):
         In that case, initialize the object with default values
         
         Args:
-            str _ : String readed from persistent storage to deseralilize
+            str_ _ : String readed from persistent storage to deseralilize
 
         :note: This method must be overridden
         '''
