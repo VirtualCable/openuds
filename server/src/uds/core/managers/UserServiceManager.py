@@ -4,32 +4,33 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q
@@ -50,9 +51,10 @@ logger = logging.getLogger(__name__)
 
 USERSERVICE_TAG = 'cm-'
 
+
 class UserServiceOpChecker(DelayedTask):
     def __init__(self, service):
-        super(UserServiceOpChecker,self).__init__()
+        super(UserServiceOpChecker, self).__init__()
         self._svrId = service.id
         self._state = service.state
 
@@ -60,10 +62,10 @@ class UserServiceOpChecker(DelayedTask):
     def makeUnique(userService, userServiceInstance, state):
         '''
         This method makes sure that there will be only one delayedtask related to the userService indicated
-        ''' 
+        '''
         DelayedTaskRunner.runner().remove(USERSERVICE_TAG + str(userService.id))
         UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
-    
+
     @staticmethod
     def checkAndUpdateState(userService, userServiceInstance, state):
         '''
@@ -81,7 +83,7 @@ class UserServiceOpChecker(DelayedTask):
                     if userServiceInstance.service().publicationType is None or userService.publication == userService.deployed_service.activePublication():
                         userService.setState(State.USABLE)
                         # and make this usable if os manager says that it is usable, else it pass to configuring state
-                        if userServiceInstance.osmanager() is not None and userService.os_state == State.PREPARING: # If state is already "Usable", do not recheck it
+                        if userServiceInstance.osmanager() is not None and userService.os_state == State.PREPARING:  # If state is already "Usable", do not recheck it
                             stateOs = userServiceInstance.osmanager().checkState(userService)
                             # If state is finish, we need to notify the userService again that os has finished
                             if State.isFinished(stateOs):
@@ -89,7 +91,7 @@ class UserServiceOpChecker(DelayedTask):
                                 userService.updateData(userServiceInstance)
                         else:
                             stateOs = State.FINISHED
-                            
+
                         if State.isRuning(stateOs):
                             userService.setOsState(State.PREPARING)
                         else:
@@ -118,17 +120,17 @@ class UserServiceOpChecker(DelayedTask):
             if checkLater:
                 UserServiceOpChecker.checkLater(userService, userServiceInstance)
         except Exception as e:
-            logger.exception('Checkin service state')
+            logger.exception('Checking service state')
             log.doLog(userService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
             userService.setState(State.ERROR)
             userService.save()
-    
+
     @staticmethod
     def checkLater(userService, ci):
         '''
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
         @param dps: Database object for DeployedServicePublication
-        @param pi: Instance of Publication manager for the object  
+        @param pi: Instance of Publication manager for the object
         '''
         # Do not add task if already exists one that updates this service
         if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + str(userService.id)):
@@ -164,17 +166,17 @@ class UserServiceOpChecker(DelayedTask):
 
 class UserServiceManager(object):
     _manager = None
-    
+
     def __init__(self):
         pass
-    
+
     @staticmethod
     def manager():
         if UserServiceManager._manager == None:
             UserServiceManager._manager = UserServiceManager()
         return UserServiceManager._manager
 
-    @staticmethod    
+    @staticmethod
     def getCacheStateFilter(level):
         return  Q(cache_level=level) & UserServiceManager.getStateFilter()
 
@@ -191,15 +193,13 @@ class UserServiceManager(object):
         # Early return, so no database count is needed
         if serviceInstance.maxDeployed == Service.UNLIMITED:
             return
-        
+
         numberOfServices = deployedService.userServices.select_for_update().filter(
                                state__in=[State.PREPARING, State.USABLE]).count()
+
         if serviceInstance.maxDeployed <= numberOfServices:
-            raise MaxServicesReachedException(
-                    'Max number of allowed deployments for service reached'
-                )
-        
-    
+            raise MaxServicesReachedException('Max number of allowed deployments for service reached')
+
     def __createCacheAtDb(self, deployedServicePublication, cacheLevel):
         '''
         Private method to instatiate a cache element at database with default states
@@ -207,10 +207,10 @@ class UserServiceManager(object):
         # Checks if maxDeployed has been reached and if so, raises an exception
         self.__checkMaxDeployedReached(deployedServicePublication.deployed_service)
         now = getSqlDatetime()
-        return deployedServicePublication.userServices.create(cache_level = cacheLevel, state = State.PREPARING, os_state = State.PREPARING, 
-                                               state_date=now, creation_date=now, data = '', deployed_service = deployedServicePublication.deployed_service, 
-                                               user = None, in_use = False )
-        
+        return deployedServicePublication.userServices.create(cache_level=cacheLevel, state=State.PREPARING, os_state=State.PREPARING,
+                                               state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service,
+                                               user=None, in_use=False)
+
     def __createAssignedAtDb(self, deployedServicePublication, user):
         '''
         Private method to instatiate an assigned element at database with default state
@@ -219,7 +219,7 @@ class UserServiceManager(object):
         now = getSqlDatetime()
         return deployedServicePublication.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
                                        state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service, user=user, in_use=False)
-        
+
     def __createAssignedAtDbForNoPublication(self, deployedService, user):
         '''
         __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
@@ -230,8 +230,7 @@ class UserServiceManager(object):
         now = getSqlDatetime()
         return deployedService.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
                                        state_date=now, creation_date=now, data='', publication=None, user=user, in_use=False)
-        
-    
+
     def createCacheFor(self, deployedServicePublication, cacheLevel):
         '''
         Creates a new cache for the deployed service publication at level indicated
@@ -240,10 +239,10 @@ class UserServiceManager(object):
         cache = self.__createCacheAtDb(deployedServicePublication, cacheLevel)
         ci = cache.getInstance()
         state = ci.deployForCache(cacheLevel)
-            
+
         UserServiceOpChecker.checkAndUpdateState(cache, ci, state)
         return cache
-        
+
     def createAssignedFor(self, ds, user):
         '''
         Creates a new assigned deployed service for the publication and user indicated
@@ -254,15 +253,15 @@ class UserServiceManager(object):
             assigned = self.__createAssignedAtDb(dsp, user)
         else:
             logger.debug('Creating a new assigned element for user {0}'.format(user))
-            assigned = self.__createAssignedAtDbForNoPublication(ds, user)  
-            
+            assigned = self.__createAssignedAtDbForNoPublication(ds, user)
+
         ai = assigned.getInstance()
         state = ai.deployForUser(user)
-        
+
         UserServiceOpChecker.makeUnique(assigned, ai, state)
-            
+
         return assigned
-        
+
     def createAssignable(self, ds, deployed, user):
         '''
         Creates an assignable service
@@ -277,9 +276,7 @@ class UserServiceManager(object):
             logger.exception("Exception {0}".format(e))
         logger.debug("Assignable: {0}".format(assignable))
         return assignable
-        
-        
-    
+
     def moveToLevel(self, cache, cacheLevel):
         '''
         Moves a cache element from one level to another
@@ -293,9 +290,9 @@ class UserServiceManager(object):
         logger.debug('Service State: {0} {1} {2}'.format(State.toString(state), State.toString(cache.state), State.toString(cache.os_state)))
         if State.isRuning(state) and cache.isUsable():
             cache.setState(State.PREPARING)
-            
+
         UserServiceOpChecker.makeUnique(cache, ci, state)
-        
+
     def cancel(self, uService):
         '''
         Cancels a user service creation
@@ -306,7 +303,7 @@ class UserServiceManager(object):
         if uService.isPreparing() == False:
             logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
             return self.remove(uService)
-        
+
         ui = uService.getInstance()
         # We simply notify service that it should cancel operation
         state = ui.cancel()
@@ -315,7 +312,6 @@ class UserServiceManager(object):
         UserServiceOpChecker.makeUnique(uService, ui, state)
         return uService
 
-        
     def remove(self, uService):
         '''
         Removes a uService element
@@ -325,12 +321,12 @@ class UserServiceManager(object):
         logger.debug('Removing uService {0}'.format(uService))
         if uService.isUsable() == False and State.isRemovable(uService.state) == False:
             raise OperationException(_('Can\'t remove a non active element'))
-        
+
         ci = uService.getInstance()
         state = ci.destroy()
         uService.setState(State.REMOVING)
         UserServiceOpChecker.makeUnique(uService, ci, state)
-        
+
     def removeOrCancel(self, uService):
         if uService.isUsable() or State.isRemovable(uService.state):
             return self.remove(uService)
@@ -338,38 +334,37 @@ class UserServiceManager(object):
             return self.cancel(uService)
         else:
             raise OperationException(_('Can\'t remove nor cancel {0} cause its states doesn\'t allows it'))
-        
+
     def removeInfoItems(self, dsp):
         dsp.cachedDeployedService.select_for_update().filter(state__in=State.INFO_STATES).delete()
-        
 
     def getAssignationForUser(self, ds, user):
         # First, we try to locate an already assigned service
-        existing = ds.assignedUserServices().filter(user=user,state__in=State.VALID_STATES)
+        existing = ds.assignedUserServices().filter(user=user, state__in=State.VALID_STATES)
         lenExisting = existing.count()
-        if lenExisting > 0: # Already has 1 assigned
+        if lenExisting > 0:  # Already has 1 assigned
             logger.debug('Found assigned service from {0} to user {1}'.format(ds, user.name))
             return existing[0]
-            #if existing[0].state == State.ERROR:
+            # if existing[0].state == State.ERROR:
             #    if lenExisting > 1:
             #        return existing[1]
-            #else:
+            # else:
             #    return existing[0]
-        
+
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
-        cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.USABLE)[:1]
+        cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
         if len(cache) > 0:
-            cache = cache[0] # Database object
+            cache = cache[0]  # Database object
             cache.assignToUser(user)
-            cache.save()     # Store assigned ASAP, we do not know how long assignToUser method of instance will take
+            cache.save()  # Store assigned ASAP, we do not know how long assignToUser method of instance will take
             logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
-            ci = cache.getInstance() # User Deployment instance
+            ci = cache.getInstance()  # User Deployment instance
             ci.assignToUser(user)
             cache.updateData(ci)
             cache.save()
             return cache
         # Now find if there is a preparing one
-        cache = ds.cachedUserServices().select_for_update().filter(cache_level = services.UserDeployment.L1_CACHE, state = State.PREPARING)[:1]
+        cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
         if len(cache) > 0:
             cache = cache[0]
             cache.assignToUser(user)
@@ -387,13 +382,13 @@ class UserServiceManager(object):
                 raise MaxServicesReachedException()
         # Can create new service, create it
         return self.createAssignedFor(ds, user)
-            
+
     def getServicesInStateForProvider(self, provider_id, state):
         '''
         Returns the number of services of a service provider in the state indicated
         '''
         return UserService.objects.filter(deployed_service__service__provider__id=provider_id, state=state).count()
-    
+
     def canRemoveServiceFromDeployedService(self, ds):
         '''
         checks if we can do a "remove" from a deployed service
@@ -411,7 +406,7 @@ class UserServiceManager(object):
         if preparing >= GlobalConfig.MAX_PREPARING_SERVICES.getInt() and GlobalConfig.IGNORE_LIMITS.getBool() == False:
             return False
         return True
-        
+
     def isReady(self, uService):
         UserService.objects.update()
         uService = UserService.objects.select_for_update().get(id=uService.id)
@@ -436,14 +431,13 @@ class UserServiceManager(object):
         This method is used by UserService when a request for setInUse(False) is made
         This checks that the service can continue existing or not
         '''
-        #uService = UserService.objects.select_for_update().get(id=uService.id)
+        # uService = UserService.objects.select_for_update().get(id=uService.id)
         if uService.publication == None:
             return
         if uService.publication.id != uService.deployed_service.activePublication().id:
             logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
             uService.remove()
-            
-                
+
     def notifyReadyFromOsManager(self, uService, data):
         ui = uService.getInstance()
         logger.debug('Notifying user service ready state')
@@ -452,7 +446,6 @@ class UserServiceManager(object):
         uService.updateData(ui)
         if state == State.FINISHED:
             uService.save()
-        elif uService.state in (State.USABLE, State.PREPARING): # We don't want to get active deleting or deleted machines...
+        elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
             uService.setState(State.PREPARING)
             UserServiceOpChecker.makeUnique(uService, ui, state)
-        

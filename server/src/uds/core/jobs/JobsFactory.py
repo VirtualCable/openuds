@@ -56,7 +56,7 @@ class JobsFactory(object):
         return self._jobs
 
     def insert(self, name, type_):
-        logger.debug('Inserting job {0} of type {1}'.format(name, type_))
+        logger.debug('Inserting job {0} of type_ {1}'.format(name, type_))
         try:
             self._jobs[name] = type_
         except Exception, e:
