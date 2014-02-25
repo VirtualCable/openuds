@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# @PydevCodeAnalysisIgnore
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
@@ -43,7 +44,7 @@ class Migration(SchemaMigration):
 
         # Adding index on 'Config', fields ['key']
         db.create_index('uds_configuration', ['key'])
-        
+
         from uds.models import Config
         try:
             Config.objects.get(section='UDS', key='maxRemovinggServices').delete()

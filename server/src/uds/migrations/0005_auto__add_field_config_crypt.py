@@ -1,23 +1,24 @@
 # encoding: utf-8
+# @PydevCodeAnalysisIgnore
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    
+
     def forwards(self, orm):
-        
+
         # Adding field 'Config.crypt'
         db.add_column('uds_configuration', 'crypt', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
-    
-    
+
+
     def backwards(self, orm):
-        
+
         # Deleting field 'Config.crypt'
         db.delete_column('uds_configuration', 'crypt')
-    
-    
+
+
     models = {
         'uds.authenticator': {
             'Meta': {'object_name': 'Authenticator'},
@@ -197,5 +198,5 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'userServices'", 'null': 'True', 'blank': 'True', 'to': "orm['uds.User']"})
         }
     }
-    
+
     complete_apps = ['uds']

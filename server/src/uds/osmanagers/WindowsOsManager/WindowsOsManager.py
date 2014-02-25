@@ -8,6 +8,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
@@ -28,7 +29,7 @@ def scrambleMsg(data):
     res = []
     n = 0x32
     for c in data[::-1]:
-        res.append( chr(ord(c) ^ n) )
+        res.append(chr(ord(c) ^ n))
         n = (n + ord(c)) & 0xFF
     return "".join(res).encode('hex')
 
@@ -37,14 +38,21 @@ class WindowsOsManager(osmanagers.OSManager):
     typeName = _('Windows Basic OS Manager')
     typeType = 'WindowsManager'
     typeDescription = _('Os Manager to control windows machines without domain. (Basically renames machine)')
-    iconFile = 'wosmanager.png' 
-    
-    onLogout = gui.ChoiceField( label = _('On Logout'), order = 10, rdonly = False, tooltip = _('What to do when user logout from service'),
-                     values = [ {'id' : 'keep', 'text' : _('Keep service assigned') }, 
-                                {'id' : 'remove', 'text' : _('Remove service') }
-                                ], defvalue = 'keep' )
-                     
-    
+    iconFile = 'wosmanager.png'
+
+    onLogout = gui.ChoiceField(
+        label=_('On Logout'),
+        order=10,
+        rdonly=False,
+        tooltip=_('What to do when user logout from service'),
+        values=[
+            {'id': 'keep', 'text': _('Keep service assigned')},
+            {'id': 'remove', 'text': _('Remove service')}
+        ],
+        defvalue='keep'
+    )
+
+
     @staticmethod
     def validateLen(len):
         try:
@@ -54,11 +62,11 @@ class WindowsOsManager(osmanagers.OSManager):
         if len > 6 or len < 1:
             raise osmanagers.OSManager.ValidationException(_('Length must be betwen 1 and six'))
         return len
-    
+
     def __setProcessUnusedMachines(self):
         self.processUnusedMachines = self._onLogout == 'remove'
-    
-    def __init__(self,environment, values):
+
+    def __init__(self, environment, values):
         super(WindowsOsManager, self).__init__(environment, values)
         if values is not None:
             self._onLogout = values['onLogout']
@@ -66,22 +74,22 @@ class WindowsOsManager(osmanagers.OSManager):
             self._onLogout = ''
 
         self.__setProcessUnusedMachines()
-            
+
     def release(self, service):
         pass
-            
+
     def getName(self, service):
         '''
         gets name from deployed
         '''
         return service.getName()
-        
-    def infoVal(self,service):
+
+    def infoVal(self, service):
         return 'rename:' + self.getName(service)
 
-    def infoValue(self,service):
+    def infoValue(self, service):
         return 'rename\r' + self.getName(service)
-    
+
     def notifyIp(self, uid, si, data):
         # Notifies IP to deployed
         pairs = data.split(',')
@@ -90,24 +98,24 @@ class WindowsOsManager(osmanagers.OSManager):
             if key.lower() == uid.lower():
                 si.setIp(val)
                 break
-            
-    def doLog(self, service, data, origin = log.OSMANAGER):
+
+    def doLog(self, service, data, origin=log.OSMANAGER):
         # Stores a log associated with this service
         try:
-            
+
             msg, level = data.split('\t')
             log.doLog(service, level, msg, origin)
         except:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
-        
-        
-    def process(self,service,msg, data):
+
+
+    def process(self, service, msg, data):
         '''
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class) (old method)
         * msg = information, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class) (new method)
         * msg = logon, data = Username, Informs that the username has logged in inside the machine
-        * msg = logoff, data = Username, Informs that the username has logged out of the machine 
+        * msg = logoff, data = Username, Informs that the username has logged out of the machine
         * msg = ready, data = None, Informs machine ready to be used
         '''
         logger.info("Invoked WindowsOsManager for {0} with params: {1},{2}".format(service, msg, data))
@@ -153,10 +161,10 @@ class WindowsOsManager(osmanagers.OSManager):
             notifyReady = True
             self.notifyIp(service.unique_id, si, data)
             service.updateData(si)
-            
+
         service.setInUse(inUse)
         service.setOsState(state)
-        
+
         # If notifyReady is not true, save state, let UserServiceManager do it for us else
         if doRemove is True:
             service.remove()
@@ -167,7 +175,7 @@ class WindowsOsManager(osmanagers.OSManager):
                 UserServiceManager.manager().notifyReadyFromOsManager(service, '')
             logger.debug('Returning {0}'.format(ret))
         return scrambleMsg(ret)
-    
+
     def processUnused(self, userService):
         '''
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
@@ -175,8 +183,8 @@ class WindowsOsManager(osmanagers.OSManager):
         '''
         if self._onLogout == 'remove':
             userService.remove()
-    
-    def checkState(self,service):
+
+    def checkState(self, service):
         logger.debug('Checking state for service {0}'.format(service))
         return State.RUNNING
 
@@ -184,15 +192,14 @@ class WindowsOsManager(osmanagers.OSManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return str.join( '\t', [ 'v1', self._onLogout ] ) 
-    
+        return str.join('\t', [ 'v1', self._onLogout ])
+
     def unmarshal(self, s):
         data = s.split('\t')
         if data[0] == 'v1':
             self._onLogout = data[1]
-            
+
         self.__setProcessUnusedMachines()
-        
+
     def valuesDict(self):
         return { 'onLogout' : self._onLogout }
-    

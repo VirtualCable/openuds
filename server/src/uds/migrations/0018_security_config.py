@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# @PydevCodeAnalysisIgnore
 import datetime
 from south.db import db
 from south.v2 import DataMigration
@@ -12,15 +13,15 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName". 
+        # Note: Don't use "from appname.models import ModelName".
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
         if not db.dry_run:
             # Remove existing secirity values if they exists before "migrating" global ones
             for k in configKeys:
                 try:
-                    o = orm.Config.objects.get(section=GLOBAL_SECTION,key=k)
-                    orm.Config.objects.filter(section=SECURITY_SECTION,key=k).delete()
+                    o = orm.Config.objects.get(section=GLOBAL_SECTION, key=k)
+                    orm.Config.objects.filter(section=SECURITY_SECTION, key=k).delete()
                     o.section = SECURITY_SECTION
                     o.save()
                 except:
@@ -31,8 +32,8 @@ class Migration(DataMigration):
         if not db.dry_run:
             for k in configKeys:
                 try:
-                    o = orm.Config.objects.get(section=SECURITY_SECTION,key=k)
-                    orm.Config.objects.filter(section=GLOBAL_SECTION,key=k).delete()
+                    o = orm.Config.objects.get(section=SECURITY_SECTION, key=k)
+                    orm.Config.objects.filter(section=GLOBAL_SECTION, key=k).delete()
                     o.section = GLOBAL_SECTION
                     o.save()
                 except:

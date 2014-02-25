@@ -298,7 +298,7 @@ class UserServiceManager(object):
         Cancels a user service creation
         @return: the Uservice canceling
         '''
-        uService = UserService.objects.select_for_update().get(id=uService.id)
+        uService = UserService.objects.select_for_update().get(pk=uService.id)
         logger.debug('Canceling uService {0} creation'.format(uService))
         if uService.isPreparing() == False:
             logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))

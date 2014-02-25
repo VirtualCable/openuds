@@ -193,7 +193,7 @@ class PublicationManager(object):
 
     @transaction.atomic
     def cancel(self, dsp):
-        dsp = DeployedServicePublication.objects.select_for_update().get(id=dsp.id)
+        dsp = DeployedServicePublication.objects.select_for_update().get(pk=dsp.id)
         if dsp.state not in State.PUBLISH_STATES:
             raise PublishException(_('Can\'t cancel non running publication'))
 

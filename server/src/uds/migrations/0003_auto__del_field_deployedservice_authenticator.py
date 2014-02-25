@@ -1,23 +1,24 @@
 # encoding: utf-8
+# @PydevCodeAnalysisIgnore
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    
+
     def forwards(self, orm):
-        
+
         # Deleting field 'DeployedService.authenticator'
         db.delete_column('uds__deployed_service', 'authenticator_id')
-    
-    
+
+
     def backwards(self, orm):
-        
+
         # Adding field 'DeployedService.authenticator'
         db.add_column('uds__deployed_service', 'authenticator', self.gf('django.db.models.fields.related.ForeignKey')(related_name='deployedServices', null=True, to=orm['uds.Authenticator'], blank=True), keep_default=False)
-    
-    
+
+
     models = {
         'uds.authenticator': {
             'Meta': {'object_name': 'Authenticator'},
@@ -195,5 +196,5 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'userServices'", 'null': 'True', 'blank': 'True', 'to': "orm['uds.User']"})
         }
     }
-    
+
     complete_apps = ['uds']

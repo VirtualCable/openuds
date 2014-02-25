@@ -1,23 +1,24 @@
 # encoding: utf-8
+# @PydevCodeAnalysisIgnore
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    
+
     def forwards(self, orm):
-        
+
         # Changing field 'Storage.data'
         db.alter_column('uds_storage', 'data', self.gf('django.db.models.fields.TextField')())
-    
-    
+
+
     def backwards(self, orm):
-        
+
         # Changing field 'Storage.data'
         db.alter_column('uds_storage', 'data', self.gf('django.db.models.fields.CharField')(max_length=1024))
-    
-    
+
+
     models = {
         'uds.authenticator': {
             'Meta': {'object_name': 'Authenticator'},
@@ -197,5 +198,5 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'userServices'", 'null': 'True', 'blank': 'True', 'to': "orm['uds.User']"})
         }
     }
-    
+
     complete_apps = ['uds']
