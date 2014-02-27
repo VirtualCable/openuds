@@ -544,7 +544,7 @@ class gui(object):
         '''
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
-            self._data['values'] = options('values', [])
+            self._data['values'] = options.get('values', [])
             if 'fills' in options:
                 # Save fnc to register as callback
                 fills = options['fills']
