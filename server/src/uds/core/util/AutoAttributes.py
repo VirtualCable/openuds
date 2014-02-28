@@ -77,12 +77,12 @@ class AutoAttributes(Serializable):
         self.declare(**kwargs)
 
     def __getattribute__(self, name):
-        if name.startswith('_') and self.dict.has_key(name[1:]):
+        if name.startswith('_') and name[1:] in self.dict:
             return self.dict[name[1:]].getValue()
         return object.__getattribute__(self, name)
 
     def __setattr__(self, name, value):
-        if name.startswith('_') and self.dict.has_key(name[1:]):
+        if name.startswith('_') and name[1:] in self.dict:
             self.dict[name[1:]].setValue(value)
         else:
             object.__setattr__(self, name, value)
@@ -102,7 +102,7 @@ class AutoAttributes(Serializable):
         # We keep original data (maybe incomplete)
         for pair in data.decode(AutoAttributes.ACODEC).split('\2'):
             k, v = pair.split('\1')
-            self.dict[k] = cPickle.loads(v)
+            self.dict[k] = cPickle.loads(str(v))
 
     def __str__(self):
         str_ = '<AutoAttribute '

@@ -71,7 +71,7 @@ class DownloadsManager(object):
         @param path: path to file
         @params zip: If download as zip
         '''
-        _id = str(uuid.uuid5(self._namespace, name))
+        _id = uuid.uuid5(self._namespace, str(name))
         self._downloadables[_id] = {'name': name, 'comment': comment, 'path': path, 'mime': mime}
 
     def getDownloadables(self):

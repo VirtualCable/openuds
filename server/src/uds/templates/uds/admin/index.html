@@ -1,4 +1,4 @@
-{% load l10n i18n static html5 REST %}{% spaceless %}
+{% load l10n i18n static compress html5 REST %}{% spaceless %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_available_languages as LANGUAGES %}
 <!DOCTYPE html>{% endspaceless %}
@@ -11,7 +11,8 @@
 
         <link href="{% get_static_prefix %}img/favicon.ico" rel="icon" type="image/x-icon">
 
-        {% if MINIFY != True %}
+        <!-- minified css from: bootstrap, font-awesome, bootstrap-formhelper, bootstrap-select, bootstrap-switch, datatables, tabletools, tabletools.botstrap, uds CSSs  -->
+        {% compress css %}
         <!-- Bootstrap -->
         <link href="{% get_static_prefix %}adm/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/font-awesome.min.css" rel="stylesheet" media="screen">
@@ -26,10 +27,7 @@
         <link href="{% get_static_prefix %}adm/css/tables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/buttons.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/uds-admin.css" rel="stylesheet" media="screen">
-        {% else %}
-        <!-- minified css from: bootstrap, font-awesome, bootstrap-formhelper, bootstrap-select, bootstrap-switch, datatables, tabletools, tabletools.botstrap, uds CSSs  -->
-        <link href="{% get_static_prefix %}adm/css/admin.min.css" rel="stylesheet" media="screen">
-        {% endif %}
+        {% endcompress %}
     </head>
     
     <body>
@@ -44,8 +42,10 @@
                 </div>
             </div>
          </div>
+         
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
         
+        {% compress js %}
         <script src="{% get_static_prefix %}adm/js/jquery-2.0.3.min.js"></script>
         
         <script>
@@ -62,7 +62,8 @@
             }(window.api = window.api || {}, jQuery));
         </script>
         
-        {% if MINIFY != True %}
+        <!-- minified js from: 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
+            'jquery.dataTables.min', 'TableTools.min', 'Blob', 'FileSaver', 'ZeroClipboard', 'dataTables.bootstrap', 'handlebars-v1.1.2', UDS admin JS's -->
         <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
@@ -117,12 +118,6 @@
         <script src="{% get_static_prefix %}adm/js/gui-d-servicespools.js"></script>
         <script src="{% get_static_prefix %}adm/js/gui-d-config.js"></script>
         
-        {% else %}
-        <!-- minified js from: 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
-            'jquery.dataTables.min', 'TableTools.min', 'Blob', 'FileSaver', 'ZeroClipboard', 'dataTables.bootstrap', 'handlebars-v1.1.2', UDS admin JS's -->
-        <script src="{% get_static_prefix %}adm/js/admin.min.js"></script>
-        {% endif %}
-        
         <script>
             $(function() {
             	// set default error function
@@ -132,6 +127,8 @@
             });        
         </script>
         {% block js %}{% endblock %}
+        {% endcompress %}
+        
         {% js_template_path 'uds/admin/tmpl' %}
         <!-- preloading of templates -->
         <!-- page contents -->

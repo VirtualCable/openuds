@@ -118,6 +118,7 @@ encoding//src/uds/core/util/__init__.py=utf-8
 encoding//src/uds/core/util/connection.py=utf-8
 encoding//src/uds/core/util/html.py=utf-8
 encoding//src/uds/core/util/log.py=utf-8
+encoding//src/uds/core/util/middleware/__init__.py=utf-8
 encoding//src/uds/core/util/modfinder.py=utf-8
 encoding//src/uds/core/util/net.py=utf-8
 encoding//src/uds/core/util/request.py=utf-8

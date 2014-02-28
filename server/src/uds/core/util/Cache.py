@@ -62,7 +62,7 @@ class Cache(object):
             expired = now > c.created + timedelta(seconds=c.validity)
             if expired:
                 return defValue
-            val = cPickle.loads(c.value.decode(Cache.CODEC))
+            val = cPickle.loads(c.value.decode(Cache.CODEC).encode('utf-8'))
             return val
         except dbCache.DoesNotExist:
             logger.debug('key not found')

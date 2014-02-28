@@ -157,4 +157,4 @@ def checkBrowser(user_agent, browser):
 # debug setting in context
 def context(request):
     from django.conf import settings
-    return {'DEBUG': settings.DEBUG, 'MINIFY': settings.MINIFY}
+    return {'DEBUG': settings.DEBUG}

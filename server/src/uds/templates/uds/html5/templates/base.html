@@ -1,4 +1,4 @@
-{% load l10n i18n static html5 %}{% spaceless %}
+{% load l10n i18n static html5 compress %}{% spaceless %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_available_languages as LANGUAGES %}
 <!DOCTYPE html>{% endspaceless %}
@@ -14,13 +14,16 @@
 		{% block icon %}<link href="{% get_static_prefix %}img/favicon.png" rel="icon" type="image/x-icon" />{% endblock %}
 
 		<!-- Bootstrap -->
+        {% compress css %}
 		<link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
+        {% endcompress %}
 		
 		{% ifbrowser ie<9 %}
 		<script src="{% get_static_prefix %}/js/respond.min.js"></script>
 		{% endifbrowser %}
 		
+        {% compress css %}
 		<link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
@@ -32,12 +35,16 @@
 		<link href="{% get_static_prefix %}css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/uds-html5.css" rel="stylesheet" media="screen">
+        
+        {% endcompress %}
 
+        {% compress css %}
 		{% ifbrowser ie<9 %}
 		<script src="{% get_static_prefix %}/js/html5shiv.js"></script>
 		{% endifbrowser %}
         
 		{% block css %}{% endblock %}
+        {% endcompress %}
 	</head>
 	
 	<body>
@@ -75,6 +82,7 @@
 		</footer>
         
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
+        {% compress js %}
 		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
@@ -88,5 +96,7 @@
 		</script>
 		
 		{% block js %}{% endblock %}
+        {% endcompress %}
+        
 	</body>
 </html>
