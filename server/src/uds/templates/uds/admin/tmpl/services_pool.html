@@ -4,7 +4,7 @@
     <h1>{% trans 'Services Pools' %}</h1>
     <ol class="breadcrumb">
       <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-      <li>{% trans 'Deployed Services' %}</li>
+      <li>{% trans 'Services Pools' %}</li>
     </ol>
   </div>
 </div><!-- /.row -->
@@ -14,7 +14,7 @@
 </div>
 <div id="detail-placeholder" class="row hidden">
     <div class="col-xs-12">
-        <ul class="nav nav-tabs">
+        <ul class="bottom_tabs nav nav-tabs">
             <li class="active"><a href="#{{ assigned_services }}" data-toggle="tab">{% endverbatim %}{% trans 'Assigned services' %}{% verbatim %}</a></li>
             <li id="{{ cache }}_tab"><a href="#{{ cache }}" data-toggle="tab">{% endverbatim %}{% trans 'Cache' %}{% verbatim %}</a></li>
             <li id="{{ groups }}_tab"><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>

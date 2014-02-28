@@ -97,6 +97,15 @@ gui.servicesPools.link = function(event) {
             }));
             gui.setLinksEvents();
             
+            // Append tabs click events
+            $('.bottom_tabs').on('click', function(event){
+                gui.doLog(event.target);
+                setTimeout(function(){
+                    $($(event.target).attr('href') + ' span.fa-refresh').click();
+                }, 10);
+                
+            });
+            
             /*
              * Services pools part
              */
@@ -112,6 +121,7 @@ gui.servicesPools.link = function(event) {
                     gui.doLog('Selected services pool', servPool);
                     
                     clearDetails();
+                    
                     $('#detail-placeholder').removeClass('hidden');
                     
                     var service = null;
@@ -141,7 +151,7 @@ gui.servicesPools.link = function(event) {
                             rowSelect : 'single',
                             onRowSelect : function(selected) {
                                 var cached = selected[0];
-                                if( prevAssignedLogTbl ) {
+                                if( prevCacheLogTbl ) {
                                     var $tbl = $(prevCacheLogTbl).dataTable();
                                     $tbl.fnClearTable();
                                     $tbl.fnDestroy();
@@ -358,6 +368,7 @@ gui.servicesPools.link = function(event) {
                     });
                     
                     prevTables.push(logTable);
+                    
                 },
                 // Pre-process data received to add "icon" to deployed service
                 onData: function(data) {
@@ -404,6 +415,7 @@ gui.servicesPools.link = function(event) {
                 onEdit: gui.methods.typedEdit(gui.servicesPools, gettext('Edit') + ' service pool', 'Service pool ' + gettext('saving error')),
                 onDelete: gui.methods.del(gui.servicesPools, gettext('Delete') + ' service pool', 'Service pool ' + gettext('deletion error')),
             });
+            
         });
     });
       

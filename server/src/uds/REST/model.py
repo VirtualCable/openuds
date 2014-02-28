@@ -87,7 +87,7 @@ class BaseModelHandler(Handler):
                 'required': True,
                 'label': _('Name'),
                 'tooltip': _('Name of this element'),
-                'order':-100,
+                'order': 0 - 100,
             })
         if 'comments' in flds:
             self.addField(gui, {
@@ -95,7 +95,7 @@ class BaseModelHandler(Handler):
                  'label': _('Comments'),
                  'tooltip': _('Comments for this element'),
                  'length': 256,
-                 'order':-99,
+                 'order': 0 - 99,
             })
         if 'priority' in flds:
             self.addField(gui, {
@@ -106,7 +106,7 @@ class BaseModelHandler(Handler):
                  'required': True,
                  'value': 1,
                  'length': 4,
-                 'order':-98,
+                 'order': 0 - 98,
             })
         if 'small_name' in flds:
             self.addField(gui, {
@@ -116,7 +116,7 @@ class BaseModelHandler(Handler):
                  'tooltip': _('Short name of this element'),
                  'required': True,
                  'length': 128,
-                 'order':-97,
+                 'order': 0 - 97,
             })
 
         return gui

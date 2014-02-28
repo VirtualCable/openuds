@@ -49,7 +49,16 @@ gui.providers.link = function(event) {
             logs:   'logs-placeholder',
         }));
         gui.setLinksEvents();
-    
+
+        // Append tabs click events
+        $('.bottom_tabs').on('click', function(event){
+            gui.doLog(event.target);
+            setTimeout(function(){
+                $($(event.target).attr('href') + ' span.fa-refresh').click();
+            }, 10);
+            
+        });
+        
         var tableId = gui.providers.table({
             container : 'providers-placeholder',
             rowSelect : 'single',

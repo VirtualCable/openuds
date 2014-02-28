@@ -151,7 +151,7 @@ class ServicesPools(ModelHandler):
 
     def beforeSave(self, fields):
         logger.debug('Before {0}'.format(fields))
-        logger.debug(self._args)
+        logger.debug(self._params)
         try:
             try:
                 service = Service.objects.get(pk=fields['service_id'])
@@ -166,6 +166,11 @@ class ServicesPools(ModelHandler):
                     osmanager = OSManager.objects.get(pk=fields['osmanager_id'])
                     fields['osmanager'] = osmanager
                 del fields['osmanager_id']
+
+                if serviceType.usesCache == False:
+                    for k in ('initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'):
+                        fields[k] = 0
+
             except:
                 raise RequestError(ugettext('This service requires an os manager'))
 
@@ -173,6 +178,10 @@ class ServicesPools(ModelHandler):
             raise
         except Exception as e:
             raise RequestError(str(e))
+
+    def afterSave(self, item):
+        if self._params.get('publish_on_save', False) is True:
+            item.publish()
 
     def deleteItem(self, item):
         item.remove()  # This will mark it for deletion, but in fact will not delete it directly

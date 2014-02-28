@@ -4,7 +4,7 @@
     <h1>{% trans 'Authenticators' %}</h1>
     <ol class="breadcrumb">
       <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-      <li>otra cosa</li>
+      <li>{% trans 'Authenticators' %}</li>
     </ol>
   </div>
 </div><!-- /.row -->
@@ -14,7 +14,7 @@
 </div>
 <div id="detail-placeholder" class="row hidden">
     <div class="col-xs-12">
-        <ul class="nav nav-tabs">
+        <ul class="bottom_tabs nav nav-tabs">
             <li class="active"><a href="#{{ users }}_tab" data-toggle="tab">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</a></li>
             <li><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
