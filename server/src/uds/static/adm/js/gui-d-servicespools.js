@@ -159,7 +159,8 @@ gui.servicesPools.link = function(event) {
                                 prevCacheLogTbl = cachedItems.logTable(cached.id, {
                                     container : 'cache-placeholder_log',
                                 });
-                            } 
+                            },
+                            onDelete: gui.methods.del(cachedItems, gettext('Remove Cache element'), gettext('Deletion error')),
                         });
                         prevTables.push(cachedItemsTable);
                     } else {
@@ -254,7 +255,8 @@ gui.servicesPools.link = function(event) {
                                 prevAssignedLogTbl = assignedServices.logTable(service.id, {
                                     container : 'assigned-services-placeholder_log',
                                 });
-                            }
+                            },
+                            onDelete: gui.methods.del(assignedServices, gettext('Remove Assigned service'), gettext('Deletion error')),
                     });
                     // Log of assigned services (right under assigned services)
                     

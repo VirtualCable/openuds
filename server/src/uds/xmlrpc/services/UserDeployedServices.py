@@ -4,27 +4,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
@@ -40,32 +40,58 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def dictFromCachedDeployedService(cs):
     if cs.publication is not None:
         revision = str(cs.publication.revision)
     else:
         revision = ''
 
-    res = { 'idParent' : str(cs.deployed_service_id), 'id' : str(cs.id), 'uniqueId' : cs.unique_id, 'friendlyName' : cs.friendly_name, 'state' : cs.state, 'osState': cs.os_state, 'stateDate' : cs.state_date, 
-            'creationDate' : cs.creation_date, 'cacheLevel' : str(cs.cache_level), 'revision' : revision }
+    res = {
+        'idParent': str(cs.deployed_service_id),
+        'id': str(cs.id),
+        'uniqueId': cs.unique_id,
+        'friendlyName': cs.friendly_name,
+        'state': cs.state,
+        'osState': cs.os_state,
+        'stateDate': cs.state_date,
+        'creationDate': cs.creation_date,
+        'cacheLevel': str(cs.cache_level),
+        'revision': revision
+    }
     return res
+
 
 def dictFromAssignedDeployedService(ads):
     if ads.publication is not None:
         revision = str(ads.publication.revision)
     else:
         revision = ''
-    
-    res = { 'idParent' : str(ads.deployed_service_id), 'id' : str(ads.id), 'uniqueId' : ads.unique_id, 'friendlyName' : ads.friendly_name, 'state' : ads.state, 'osState': ads.os_state, 'stateDate' : ads.state_date, 
-            'creationDate' : ads.creation_date, 'revision' : revision, 'user': ads.user.manager.name + "-" + ads.user.name, 'inUse': ads.in_use, 'inUseDate': ads.in_use_date,
-            'sourceHost' : ads.src_hostname, 'sourceIp': ads.src_ip }
+
+    res = {
+        'idParent': str(ads.deployed_service_id),
+        'id': str(ads.id),
+        'uniqueId': ads.unique_id,
+        'friendlyName': ads.friendly_name,
+        'state': ads.state,
+        'osState': ads.os_state,
+        'stateDate': ads.state_date,
+        'creationDate': ads.creation_date,
+        'revision': revision,
+        'user': ads.user.manager.name + "-" + ads.user.name,
+        'inUse': ads.in_use,
+        'inUseDate': ads.in_use_date,
+        'sourceHost': ads.src_hostname,
+        'sourceIp': ads.src_ip
+    }
     return res
+
 
 @needs_credentials
 def getCachedDeployedServices(credentials, idParent):
-    
+
     dps = DeployedService.objects.get(pk=idParent)
-    
+
     res = []
     for cache in dps.cachedUserServices().order_by('-creation_date'):
         try:
@@ -75,11 +101,12 @@ def getCachedDeployedServices(credentials, idParent):
             logger.debug(e)
     return res
 
+
 @needs_credentials
 def getAssignedDeployedServices(credentials, idParent):
-    
+
     dps = DeployedService.objects.get(pk=idParent)
-    
+
     res = []
     for assigned in dps.assignedUserServices().order_by('-creation_date'):
         try:
@@ -90,9 +117,10 @@ def getAssignedDeployedServices(credentials, idParent):
     logger.debug(res)
     return res
 
+
 @needs_credentials
 def getAssignableDeployedServices(crecentials, idParent):
-    
+
     res = []
     try:
         dps = DeployedService.objects.get(pk=idParent)
@@ -103,10 +131,11 @@ def getAssignableDeployedServices(crecentials, idParent):
             raise FindException(_('This service don\'t allows assignations'))
         assignables = servInstance.requestServicesForAssignation()
         for ass in assignables:
-            res.append( {'id' : ass.getName(), 'name' : ass.getName() } )
+            res.append({'id': ass.getName(), 'name': ass.getName()})
     except DeployedService.DoesNotExist:
         raise FindException(_('Deployed service not found!!! (refresh interface)'))
     return res
+
 
 @needs_credentials
 def assignDeployedService(credentials, idParent, idDeployedUserService, idUser):
@@ -120,14 +149,15 @@ def assignDeployedService(credentials, idParent, idDeployedUserService, idUser):
         user = dps.authenticator.users.get(pk=idUser)
         assignables = servInstance.requestServicesForAssignation()
         for ass in assignables:
-            if ass.getName() == idDeployedUserService: # Found, create it
+            if ass.getName() == idDeployedUserService:  # Found, create it
                 UserServiceManager.manager().createAssignable(dps, ass, user)
     except DeployedService.DoesNotExist:
         raise FindException(_('Deployed service not found!!! (refresh interface)'))
     except User.DoesNotExist:
         raise FindException(_('User not found!!! (refresh interface)'))
-        
+
     return True
+
 
 @needs_credentials
 def removeUserService(cretentials, ids):
@@ -142,6 +172,7 @@ def removeUserService(cretentials, ids):
         return False
     return True
 
+
 @needs_credentials
 def getUserDeployedServiceError(credentials, idService):
     error = _('No error')
@@ -153,8 +184,9 @@ def getUserDeployedServiceError(credentials, idService):
         raise FindException(_('User deployed service not found!!!'))
     return error
 
+
 @needs_credentials
-def develAction(credentials, action, ids ):
+def develAction(credentials, action, ids):
     logger.debug('Devel action invoked: {0} for {1}'.format(action, ids))
     try:
         for uds in UserService.objects.filter(id__in=ids):
@@ -177,6 +209,7 @@ def develAction(credentials, action, ids ):
     except UserService.DoesNotExist:
         raise FindException(_('User deployed service not found!!!'))
     return True
+
 
 # Registers XML RPC Methods
 def registerUserDeployedServiceFunctions(dispatcher):

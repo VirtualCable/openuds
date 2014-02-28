@@ -78,7 +78,7 @@ class AssignedService(DetailHandler):
         # Extract provider
         try:
             if item is None:
-                return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all() ]
+                return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()]
             else:
                 return parent.assignedUserServices().get(pk=item)
         except:
@@ -105,6 +105,23 @@ class AssignedService(DetailHandler):
             return log.getLogs(item)
         except:
             self.invalidItemException()
+
+    def deleteItem(self, parent, item):
+        try:
+            service = parent.userServices.get(pk=item)
+        except:
+            logger.exception('deleteItem')
+            self.invalidItemException()
+
+        logger.debug('Deleting assigned service')
+        if service.state == State.USABLE:
+            service.remove()
+        elif service.state == State.PREPARING:
+            service.cancel()
+        else:
+            self.invalidItemException(_('Item is not removable'))
+
+        return self.success()
 
 
 class CachedService(AssignedService):
@@ -141,6 +158,7 @@ class CachedService(AssignedService):
             return log.getLogs(item)
         except:
             self.invalidItemException()
+
 
 class Groups(DetailHandler):
     def getItems(self, parent, item):

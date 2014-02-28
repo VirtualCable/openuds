@@ -372,7 +372,9 @@
     
     gui.methods.del = function(parent, modalTitle, modalErrorMsg) {
         return function(value, event, table, refreshFnc) {
-            var content = gettext('Are you sure do you want to delete ') + '<b>' + value.name + '</b>';
+            gui.doLog(value);
+            name = value.name || value.friendly_name;
+            var content = gettext('Are you sure do you want to delete ') + '<b>' + name + '</b>';
             var modalId = gui.launchModal(modalTitle, content, { actionButton: '<button type="button" class="btn btn-danger button-accept">' + gettext('Delete') + '</button>'});
             $(modalId + ' .button-accept').click(function(){
                 $(modalId).modal('hide');

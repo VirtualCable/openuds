@@ -168,8 +168,9 @@ class BaseModelHandler(Handler):
     def invalidMethodException(self):
         raise NotFound(_('Method not found'))
 
-    def invalidItemException(self):
-        raise NotFound(_('Item not found'))
+    def invalidItemException(self, msg=None):
+        msg = msg or _('Item not found')
+        raise NotFound(msg)
 
     # Success methods
     def success(self):
