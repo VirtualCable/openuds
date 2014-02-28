@@ -106,7 +106,7 @@ class AssignedService(DetailHandler):
         except:
             self.invalidItemException()
 
-    def deleteItem(self, parent, item):
+    def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
         try:
             service = parent.userServices.get(pk=item)
         except:

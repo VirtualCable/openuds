@@ -122,17 +122,24 @@ gui.servicesPools.link = function(event) {
                     
                     clearDetails();
                     
-                    $('#detail-placeholder').removeClass('hidden');
-                    
                     var service = null;
                     try {
                         service = availableServices[servPool.service_id];
+
                     } catch (e) {
                         gui.doLog('Exception on rowSelect', e);
                         gui.notify('Service pool ' + gettext('error'), 'danger');
                         return;
                     }
                     
+                    if( service !== null )
+                        $('#detail-placeholder').removeClass('hidden');
+                    else {
+                        $('#detail-placeholder').addClass('hidden');
+                        return;
+                    }
+                        
+
                     /* 
                      * Cache Part
                      */
@@ -378,6 +385,10 @@ gui.servicesPools.link = function(event) {
                     $.each(data, function(index, value){
                         try {
                             var service = availableServices[value.service_id];
+                            if( service === undefined ) {
+                                value.parent = gettext('undefined');
+                                return;
+                            }
                             var style = 'display:inline-block; background: url(data:image/png;base64,' +
                                 service.info.icon + '); ' + 'width: 16px; height: 16px; vertical-align: middle;';
 
