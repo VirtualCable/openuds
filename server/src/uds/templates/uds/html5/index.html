@@ -72,7 +72,7 @@
                             href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"
                             title="{{ ser.name }}"
                             data-toggle="tooltip">
-                                    <img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" class="transport" alt="{{ ser.name }}" />
+                                    <img src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" class="transport" alt="{{ ser.name }}" />
                                   </a>
                           {% if numTransports > 1 %}
                           <button type="button" class="btn list-btn btn-default dropdown-toggle list-dropdown-toggle" data-toggle="dropdown">

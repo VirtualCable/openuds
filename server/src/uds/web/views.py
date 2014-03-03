@@ -3,27 +3,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
@@ -65,11 +65,11 @@ logger = logging.getLogger(__name__)
 
 
 def login(request, smallName=None):
-    #request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
-    
-    host = request.META['HTTP_HOST'] or request.META['SERVER_NAME'] or 'auth_host' # Last one is a placeholder in case we can't locate host name
-    
-    # Get Authenticators limitation 
+    # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
+
+    host = request.META['HTTP_HOST'] or request.META['SERVER_NAME'] or 'auth_host'  # Last one is a placeholder in case we can't locate host name
+
+    # Get Authenticators limitation
     logger.debug('Host: {0}'.format(host))
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(True) is True:
         if smallName is None:
@@ -79,16 +79,16 @@ def login(request, smallName=None):
             except:
                 try:
                     smallName = Authenticator.objects.order_by('priority')[0].small_name
-                except: # There is no authenticators yet, simply allow global login to nowhere.. :-)
+                except:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
                     smallName = None
-    
+
     logger.debug('Small name: {0}'.format(smallName))
-    
-    getIp(request) 
+
+    getIp(request)
     if request.method == 'POST':
-        if request.COOKIES.has_key('uds') is False:
-            return errors.errorView(request, errors.COOKIES_NEEDED) # We need cookies to keep session data
-	request.session.cycle_key()
+        if 'uds' not in request.COOKIES:
+            return errors.errorView(request, errors.COOKIES_NEEDED)  # We need cookies to keep session data
+        request.session.cycle_key()
         form = LoginForm(request.POST, smallName=smallName)
         if form.is_valid():
             java = form.cleaned_data['java'] == 'y'
@@ -98,7 +98,7 @@ def login(request, smallName=None):
             except:
                 authenticator = Authenticator()
             userName = form.cleaned_data['user']
-            
+
             cache = Cache('auth')
             cacheKey = str(authenticator.id) + userName
             tries = cache.get(cacheKey)
@@ -108,8 +108,8 @@ def login(request, smallName=None):
                 form.add_form_error('Too many authentication errors. User temporarily  blocked.')
                 authLogLogin(request, authenticator, userName, java, os, 'Temporarily blocked')
             else:
-                user = authenticate(userName, form.cleaned_data['password'], authenticator )
-                    
+                user = authenticate(userName, form.cleaned_data['password'], authenticator)
+
                 if user is None:
                     logger.debug("Invalid credentials for user {0}".format(userName))
                     tries += 1
@@ -117,7 +117,7 @@ def login(request, smallName=None):
                     form.add_form_error('Invalid credentials')
                     authLogLogin(request, authenticator, userName, java, os, 'Invalid credentials')
                 else:
-                    cache.remove(cacheKey) # Valid login, remove cached tries
+                    cache.remove(cacheKey)  # Valid login, remove cached tries
                     response = HttpResponseRedirect(reverse('uds.web.views.index'))
                     webLogin(request, response, user, form.cleaned_data['password'])
                     # Add the "java supported" flag to session
@@ -128,12 +128,14 @@ def login(request, smallName=None):
                     return response
     else:
         form = LoginForm(smallName=smallName)
-        
-    response = render_to_response(theme.template('login.html'), { 'form' : form, 'customHtml' : GlobalConfig.CUSTOM_HTML_LOGIN.get(True) }, 
+
+    response = render_to_response(theme.template('login.html'), {'form': form, 'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True)},
                                   context_instance=RequestContext(request))
-    if request.COOKIES.has_key('uds') is False:
+
+    if 'uds' not in request.COOKIES:
         response.set_cookie('uds', ''.join(random.choice(string.letters + string.digits) for _ in xrange(32)))
-    return response    
+    return response
+
 
 def customAuth(request, idAuth):
     res = ''
@@ -146,41 +148,43 @@ def customAuth(request, idAuth):
     except Exception:
         logger.exception('customAuth')
         res = 'error'
-    return HttpResponse(res, content_type = 'text/html')
+    return HttpResponse(res, content_type='text/html')
+
 
 def about(request):
     return render(request, theme.template('about.html'))
+
 
 @webLoginRequired
 def logout(request):
     authLogLogout(request)
     return webLogout(request, request.user.logout())
 
+
 @webLoginRequired
 def index(request):
     # Session data
     os = request.session['OS']
     java = request.session['java']
-    
+
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
     availServices = DeployedService.getDeployedServicesForGroups(groups)
     availUserServices = UserService.getUserAssignedServices(request.user)
-    
+
     # Information for administrators
     nets = ''
     validTrans = ''
 
     logger.debug('OS: {0}'.format(os['OS']))
-    
+
     if request.user.isStaff():
-        nets = ','.join( [ n.name for n in Network.networksFor(request.ip) ])
+        nets = ','.join([n.name for n in Network.networksFor(request.ip)])
         tt = []
         for t in Transport.objects.all():
             if t.validForIp(request.ip):
                 tt.append(t.name)
         validTrans = ','.join(tt)
-
 
     # Extract required data to show to user
     services = []
@@ -190,9 +194,10 @@ def index(request):
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
             if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
-                trans.append({ 'id' : scrambleId(request, t.id), 'name' : t.name, 'needsJava' : t.getType().needsJava })
-        services.append( {'id' : scrambleId(request, 'a' + str(svr['id'])), 'name': svr['name'], 'transports' : trans } )
-        
+                trans.append({'id': scrambleId(request, t.id), 'name': t.name, 'needsJava': t.getType().needsJava})
+        imageId = len(trans) == 0 and 'x' or trans[0]['id']
+        services.append({'id': scrambleId(request, 'a' + str(svr['id'])), 'name': svr['name'], 'transports': trans, 'imageId': imageId})
+
     # Now generic user service
     for svr in availServices:
         trans = []
@@ -200,27 +205,25 @@ def index(request):
             if t.validForIp(request.ip):
                 typeTrans = t.getType()
                 if typeTrans.supportsOs(os['OS']):
-                    trans.append({ 'id' : scrambleId(request, t.id), 'name' : t.name, 'needsJava' : typeTrans.needsJava  })
-        services.append( {'id' : scrambleId(request, 'd' + str(svr.id)), 'name': svr.name, 'transports' : trans } )
-        
+                    trans.append({'id': scrambleId(request, t.id), 'name': t.name, 'needsJava': typeTrans.needsJava})
+        imageId = len(trans) == 0 and 'x' or trans[0]['id']
+        services.append({'id': scrambleId(request, 'd' + str(svr.id)), 'name': svr.name, 'transports': trans, 'imageId': imageId})
+
     logger.debug('Services: {0}'.format(services))
-    
+
     services = sorted(services, key=lambda s: s['name'].upper())
-    
+
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
-            return HttpResponseRedirect( 
-                     reverse('uds.web.views.service', kwargs={ 'idService': services[0]['id'],
-                                                        'idTransport' : services[0]['transports'][0]['id'] } 
-                             ) 
-                   )
-            
-    
-    response = render_to_response(theme.template('index.html'), 
-                              {'services' : services, 'java' : java, 'ip' : request.ip, 'nets' : nets,
-                                'transports' : validTrans }, 
-                              context_instance=RequestContext(request))
+            return HttpResponseRedirect(
+                reverse('uds.web.views.service', kwargs={'idService': services[0]['id'], 'idTransport': services[0]['transports'][0]['id']})
+            )
+
+    response = render_to_response(theme.template('index.html'),
+        {'services': services, 'java': java, 'ip': request.ip, 'nets' : nets, 'transports': validTrans},
+        context_instance=RequestContext(request)
+    )
     return response
 
 
@@ -231,7 +234,7 @@ def prefs(request):
         return HttpResponseRedirect(reverse('uds.web.views.index'))
     prefs_form = UserPrefsManager().manager().getHtmlForUserPreferences(request.user)
     return render_to_response(theme.template('prefs.html'), {'prefs_form' : prefs_form }, context_instance=RequestContext(request))
-    
+
 
 @webLoginRequired
 @transformId
@@ -240,7 +243,7 @@ def service(request, idService, idTransport):
     kind, idService = idService[0], idService[1:]
     try:
         logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
-        if kind == 'a': # This is an assigned service
+        if kind == 'a':  # This is an assigned service
             ads = UserService.objects.get(pk=idService)
         else:
             ds = DeployedService.objects.get(pk=idService)
@@ -275,7 +278,7 @@ def service(request, idService, idTransport):
     except Exception, e:
         logger.exception("Exception")
         return errors.exceptionView(request, e)
-    
+
 @webLoginRequired
 @transformId
 def transcomp(request, idTransport, componentId):
@@ -314,7 +317,7 @@ def sernotify(request, idUserService, notification):
         logger.exception("Exception")
         return errors.errorView(request, e)
     return HttpResponse('ok', mimetype='text/plain')
-    
+
 
 @transformId
 def transportIcon(request, idTrans):
@@ -323,6 +326,16 @@ def transportIcon(request, idTrans):
         return HttpResponse(icon, mimetype='image/png')
     except Exception:
         return HttpResponseRedirect('/static/img/unknown.png')
+
+
+@transformId
+def serviceImage(request, idImage):
+    try:
+        icon = Transport.objects.get(pk=idImage).getInstance().icon(False)
+        return HttpResponse(icon, mimetype='image/png')
+    except Exception:
+        return HttpResponseRedirect('/static/img/unknown.png')
+
 
 @transformId
 def error(request, idError):
@@ -333,9 +346,9 @@ def authCallback(request, authName):
     '''
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
-    
+
     This will invoke authCallback of the requested idAuth and, if this represents
-    an authenticator that has an authCallback 
+    an authenticator that has an authCallback
     '''
     from uds.core import auths
     try:
@@ -343,28 +356,28 @@ def authCallback(request, authName):
         params = request.GET.copy()
         params.update(request.POST)
         params['_request'] = request
-        #params['_session'] = request.session
-        #params['_user'] = request.user
-        
+        # params['_session'] = request.session
+        # params['_user'] = request.user
+
         logger.debug('Auth callback for {0} with params {1}'.format(authenticator, params.keys()))
-        
+
         user = authenticateViaCallback(authenticator, params)
 
         os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
-                
+
         if user is None:
             authLogLogin(request, authenticator, '{0}'.format(params), False, os, 'Invalid at auth callback')
             raise auths.Exceptions.InvalidUserException()
 
         # Redirect to main page through java detection process, so UDS know the availability of java
-        response = render_to_response(theme.template('detectJava.html'), { 'idAuth' : scrambleId(request, authenticator.id)}, 
+        response = render_to_response(theme.template('detectJava.html'), { 'idAuth' : scrambleId(request, authenticator.id)},
                                       context_instance=RequestContext(request))
-                
-        webLogin(request, response, user, '') # Password is unavailable in this case
+
+        webLogin(request, response, user, '')  # Password is unavailable in this case
         request.session['OS'] = os
         # Now we render an intermediate page, so we get Java support from user
         # It will only detect java, and them redirect to Java
-        
+
         return response
     except auths.Exceptions.Redirect as e:
         return HttpResponseRedirect(request.build_absolute_uri(str(e)))
@@ -373,12 +386,12 @@ def authCallback(request, authName):
     except Exception as e:
         logger.exception('authCallback')
         return errors.exceptionView(request, e)
-        
+
 @csrf_exempt
 def authInfo(request, authName):
     '''
     This url is provided so authenticators can provide info (such as SAML metadata)
-    
+
     This will invoke getInfo on requested authName. The search of the authenticator is done
     by name, so it's easier to access from external sources
     '''
@@ -387,33 +400,33 @@ def authInfo(request, authName):
         authenticator = Authenticator.objects.get(name=authName)
         authInstance = authenticator.getInstance()
         if authInstance.getInfo == auths.Authenticator.getInfo:
-            raise Exception() # This authenticator do not provides info
-        
+            raise Exception()  # This authenticator do not provides info
+
         params = request.GET.copy()
         params['_request'] = request
-        
+
         info = authInstance.getInfo(params)
-        
+
         if info is None:
-            raise Exception() # This auth do not provides info
-        
+            raise Exception()  # This auth do not provides info
+
         if type(info) is list or type(info) is tuple:
-            return HttpResponse(info[0], content_type = info[1])
-            
+            return HttpResponse(info[0], content_type=info[1])
+
         return HttpResponse(info)
     except Exception:
         return HttpResponse(_('Authenticator do not provides information'))
-    
+
 @webLoginRequired
 @transformId
 def authJava(request, idAuth, hasJava):
     request.session['java'] = hasJava == 'y'
     try:
         authenticator = Authenticator.objects.get(pk=idAuth)
-        os = request.session['OS'] 
+        os = request.session['OS']
         authLogLogin(request, authenticator, request.user.name, request.session['java'], os)
         return HttpResponseRedirect(reverse('uds.web.views.index'))
-        
+
     except Exception as e:
         return errors.exceptionView(request, e)
 
@@ -424,17 +437,17 @@ def download(request, idDownload):
     '''
     if request.user.isStaff() is False:
         return HttpResponseForbidden(_('Forbidden'))
-    
+
     if idDownload == '':
         files = [ { 'id' : key, 'name' : val['name'], 'comment' : _(val['comment']) } for key, val in DownloadsManager.manager().getDownloadables().items() ]
         logger.debug('Files: {0}'.format(files))
         return render_to_response(theme.template('downloads.html'), { 'files' : files }, context_instance=RequestContext(request))
-    
+
     return DownloadsManager.manager().send(request, idDownload)
 
 last_modified_date = timezone.now()
 @last_modified(lambda req, **kw: last_modified_date)
 def jsCatalog(request, lang, domain='djangojs', packages=None):
     if lang != '':
-        request.GET = { 'language': lang } # Fake args for catalog :-) 
+        request.GET = { 'language': lang }  # Fake args for catalog :-)
     return javascript_catalog(request, domain, packages)
