@@ -75,7 +75,7 @@ class WinRandomPassManager(WindowsOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return str.join('\t', ['v1', self._userAccount, CryptoManager.manager().encrypt(self._password), base.encode('hex')])
+        return '\t'.join(['v1', self._userAccount, CryptoManager.manager().encrypt(self._password), base.encode('hex')])
 
     def unmarshal(self, s):
         data = s.split('\t')

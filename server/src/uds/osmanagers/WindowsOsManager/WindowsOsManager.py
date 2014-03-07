@@ -108,7 +108,6 @@ class WindowsOsManager(osmanagers.OSManager):
         except:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
-
     def process(self, service, msg, data):
         '''
         We understand this messages:
@@ -192,7 +191,7 @@ class WindowsOsManager(osmanagers.OSManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return str.join('\t', [ 'v1', self._onLogout ])
+        return '\t'.join(['v1', self._onLogout])
 
     def unmarshal(self, s):
         data = s.split('\t')
@@ -202,4 +201,4 @@ class WindowsOsManager(osmanagers.OSManager):
         self.__setProcessUnusedMachines()
 
     def valuesDict(self):
-        return { 'onLogout' : self._onLogout }
+        return {'onLogout': self._onLogout}
