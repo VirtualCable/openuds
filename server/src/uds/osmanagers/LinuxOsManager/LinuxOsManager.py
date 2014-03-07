@@ -174,7 +174,7 @@ class LinuxOsManager(osmanagers.OSManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return str.join('\t', ['v1', self._onLogout])
+        return '\t'.join(['v1', self._onLogout])
 
     def unmarshal(self, s):
         data = s.split('\t')
