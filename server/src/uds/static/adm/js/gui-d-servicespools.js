@@ -75,6 +75,40 @@ gui.servicesPools.link = function(event) {
             }
         });
     };
+
+    // Fill "State" for cached and assigned services
+    var fillState = function(data) {
+        $.each(data, function(index, value){
+            if(value.state == 'U') {
+                if( value.os_state != '' && value.os_state != 'U')
+                    value.state = gettext('Waiting OS');
+                else
+                    value.state = gettext('Ready');
+                return;
+            }
+            if(value.state == 'R'){
+                value.state = gettext('Waiting for removal');
+                return;
+            }
+            if(value.state == 'M'){
+                value.state = gettext('Removing');
+                return;
+            }
+            if(value.state == 'S'){
+                value.state = gettext('Removed');
+                return;
+            }
+            if(value.state == 'E'){
+                value.state = gettext('Error');
+                return;
+            }
+            if(value.state == 'P'){
+                value.state = gettext('Generating');
+                return;
+            }
+            value.state = gettext('Unknown');
+        });
+    };
     
     // Fills up the list of available services
     api.providers.allServices(function(services){
@@ -156,6 +190,9 @@ gui.servicesPools.link = function(event) {
                             container : 'cache-placeholder_tbl',
                             buttons : [ 'delete', 'xls' ],
                             rowSelect : 'single',
+                            onData: function(data) {
+                                fillState(data);
+                            },
                             onRowSelect : function(selected) {
                                 var cached = selected[0];
                                 if( prevCacheLogTbl ) {

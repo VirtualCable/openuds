@@ -94,7 +94,7 @@ class AssignedService(DetailHandler):
             {'revision': {'title': _('Revision')}},
             {'unique_id': {'title': 'Unique ID'}},
             {'friendly_name': {'title': _('Friendly name')}},
-            {'state': {'title': _('State'), 'type': 'dict', 'dict': State.dictionary()}},
+            {'state': {'title': _('State')}},
             {'owner': {'title': _('Owner')}},
         ]
 
@@ -147,7 +147,7 @@ class CachedService(AssignedService):
             {'revision': {'title': _('Revision')}},
             {'unique_id': {'title': 'Unique ID'}},
             {'friendly_name': {'title': _('Friendly name')}},
-            {'state': {'title': _('State'), 'type': 'dict', 'dict': State.dictionary()}},
+            {'state': {'title': _('State')}},
             {'cache_level': {'title': _('Cache level')}},
         ]
 
