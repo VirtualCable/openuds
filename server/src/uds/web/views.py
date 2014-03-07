@@ -221,7 +221,7 @@ def index(request):
             )
 
     response = render_to_response(theme.template('index.html'),
-        {'services': services, 'java': java, 'ip': request.ip, 'nets' : nets, 'transports': validTrans},
+        {'services': services, 'java': java, 'ip': request.ip, 'nets': nets, 'transports': validTrans},
         context_instance=RequestContext(request)
     )
     return response
@@ -233,7 +233,7 @@ def prefs(request):
         UserPrefsManager.manager().processRequestForUserPreferences(request.user, request.POST)
         return HttpResponseRedirect(reverse('uds.web.views.index'))
     prefs_form = UserPrefsManager().manager().getHtmlForUserPreferences(request.user)
-    return render_to_response(theme.template('prefs.html'), {'prefs_form' : prefs_form }, context_instance=RequestContext(request))
+    return render_to_response(theme.template('prefs.html'), {'prefs_form': prefs_form}, context_instance=RequestContext(request))
 
 
 @webLoginRequired
@@ -265,7 +265,7 @@ def service(request, idService, idTransport):
                 if itrans.isAvailableFor(ip):
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
                     transport = itrans.renderForHtml(ads, scrambleId(request, ads.id), scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
-                    return render_to_response(theme.template('show_transport.html'), {'transport' : transport, 'nolang' : True }, context_instance=RequestContext(request))
+                    return render_to_response(theme.template('show_transport.html'), {'transport': transport, 'nolang': True}, context_instance=RequestContext(request))
                 else:
                     log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
                     logger.debug('Transport is not ready for user service {0}'.format(ads))
@@ -278,6 +278,7 @@ def service(request, idService, idTransport):
     except Exception, e:
         logger.exception("Exception")
         return errors.exceptionView(request, e)
+
 
 @webLoginRequired
 @transformId
@@ -292,6 +293,7 @@ def transcomp(request, idTransport, componentId):
         return response
     except Exception, e:
         return errors.exceptionView(request, e)
+
 
 @webLoginRequired
 @transformId
@@ -339,7 +341,8 @@ def serviceImage(request, idImage):
 
 @transformId
 def error(request, idError):
-    return render_to_response(theme.template('error.html'), {'errorString' : errors.errorString(idError)  }, context_instance=RequestContext(request))
+    return render_to_response(theme.template('error.html'), {'errorString': errors.errorString(idError)}, context_instance=RequestContext(request))
+
 
 @csrf_exempt
 def authCallback(request, authName):
@@ -370,7 +373,7 @@ def authCallback(request, authName):
             raise auths.Exceptions.InvalidUserException()
 
         # Redirect to main page through java detection process, so UDS know the availability of java
-        response = render_to_response(theme.template('detectJava.html'), { 'idAuth' : scrambleId(request, authenticator.id)},
+        response = render_to_response(theme.template('detectJava.html'), {'idAuth': scrambleId(request, authenticator.id)},
                                       context_instance=RequestContext(request))
 
         webLogin(request, response, user, '')  # Password is unavailable in this case
@@ -386,6 +389,7 @@ def authCallback(request, authName):
     except Exception as e:
         logger.exception('authCallback')
         return errors.exceptionView(request, e)
+
 
 @csrf_exempt
 def authInfo(request, authName):
@@ -417,6 +421,7 @@ def authInfo(request, authName):
     except Exception:
         return HttpResponse(_('Authenticator do not provides information'))
 
+
 @webLoginRequired
 @transformId
 def authJava(request, idAuth, hasJava):
@@ -430,6 +435,7 @@ def authJava(request, idAuth, hasJava):
     except Exception as e:
         return errors.exceptionView(request, e)
 
+
 @webLoginRequired
 def download(request, idDownload):
     '''
@@ -439,15 +445,17 @@ def download(request, idDownload):
         return HttpResponseForbidden(_('Forbidden'))
 
     if idDownload == '':
-        files = [ { 'id' : key, 'name' : val['name'], 'comment' : _(val['comment']) } for key, val in DownloadsManager.manager().getDownloadables().items() ]
+        files = [{'id': key, 'name': val['name'], 'comment': _(val['comment'])} for key, val in DownloadsManager.manager().getDownloadables().items()]
         logger.debug('Files: {0}'.format(files))
-        return render_to_response(theme.template('downloads.html'), { 'files' : files }, context_instance=RequestContext(request))
+        return render_to_response(theme.template('downloads.html'), {'files': files}, context_instance=RequestContext(request))
 
     return DownloadsManager.manager().send(request, idDownload)
 
 last_modified_date = timezone.now()
+
+
 @last_modified(lambda req, **kw: last_modified_date)
 def jsCatalog(request, lang, domain='djangojs', packages=None):
     if lang != '':
-        request.GET = { 'language': lang }  # Fake args for catalog :-)
+        request.GET = {'language': lang}  # Fake args for catalog :-)
     return javascript_catalog(request, domain, packages)

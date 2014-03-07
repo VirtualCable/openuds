@@ -185,12 +185,14 @@ COMPRESS_ENABLED = not DEBUG
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_PRECOMPILERS = (
     ('text/coffeescript', 'coffee --compile --stdio'),
-    ('text/less', 'lessc {infile} {outfile}'),
-    ('text/x-sass', 'sass {infile} {outfile}'),
-    ('text/x-scss', 'sass --scss {infile} {outfile}'),
-    ('text/stylus', 'stylus < {infile} > {outfile}'),
-    ('text/foobar', 'path.to.MyPrecompilerFilter'),
+    # ('text/less', 'lessc {infile} {outfile}'),
+    # ('text/x-sass', 'sass {infile} {outfile}'),
+    # ('text/x-scss', 'sass --scss {infile} {outfile}'),
+    # ('text/stylus', 'stylus < {infile} > {outfile}'),
+    # ('text/foobar', 'path.to.MyPrecompilerFilter'),
 )
+if DEBUG:
+    COMPRESS_DEBUG_TOGGLE = 'debug'
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
