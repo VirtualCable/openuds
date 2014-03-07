@@ -35,11 +35,11 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 
-from uds.models import UserService, Group, Transport, DeployedServicePublication
+from uds.models import Group, Transport, DeployedServicePublication
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import DetailHandler
-from uds.REST import ResponseError, RequestError
+from uds.REST import ResponseError
 
 import logging
 
@@ -147,7 +147,7 @@ class CachedService(AssignedService):
             {'revision': {'title': _('Revision')}},
             {'unique_id': {'title': 'Unique ID'}},
             {'friendly_name': {'title': _('Friendly name')}},
-            {'state': {'title': _('State')}},
+            {'state': {'title': _('State'), 'type': 'dict', 'dict': State.dictionary()}},
             {'cache_level': {'title': _('Cache level')}},
         ]
 

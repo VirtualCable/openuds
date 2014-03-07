@@ -32,14 +32,11 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
-
-
+from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import ModelHandler
-from django.utils.translation import ugettext
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from user_services import AssignedService, CachedService, Groups, Transports, Publications
@@ -61,7 +58,7 @@ class ServicesPools(ModelHandler):
 
     save_fields = ['name', 'comments', 'service_id', 'osmanager_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
 
-    table_title = _('Deployed services')
+    table_title = _('Service Pools')
     table_fields = [
         {'name': {'title': _('Name')}},
         {'parent': {'title': _('Parent Service')}},  # Will process this field on client in fact, not sent by server
