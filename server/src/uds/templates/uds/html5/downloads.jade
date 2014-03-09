@@ -1,0 +1,14 @@
+extends "uds/html5/templates/base.html"
+- load i18n
+block body
+  div.panel.panel-info
+    div.panel-heading
+      - trans "Downloads"
+    div.panel-body
+      p
+        - trans "This page contains a list of downloadables provided by different modules"
+        div.list-group
+          for f in files
+            a.list-group-item(href!="{% url "uds.web.views.download" idDownload=f.id %}")
+              h4.list-group-item-heading: f.name
+              p.list-group-item-text: {{ f.comment|safe }}

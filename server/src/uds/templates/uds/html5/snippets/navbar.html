@@ -41,10 +41,10 @@
                         <li><a href="{% url "uds.web.views.download" idDownload='' %}"><span class="fa fa-download"></span> {% trans "Downloads" %}</a></li>
                         {% ifbrowser ie<8 %} 
                         {% else %}
-                        <li><a href="{% url "uds.admin.views.index" %}"><span class="fa fa-dashboard"></span> {% trans "Dashboard" %}</a></li>
+                        <li><a href="{% url "uds.admin.views.index" %}"><span class="fa fa-dashboard"></span> Dashboard</a></li>
                         {% endifbrowser %}
                     {% endif %}
-                        <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> {% trans 'logout'|capfirst %}</a></li>
+                        <li><a href="{% url 'uds.web.views.logout' %}"><span class="fa fa-power-off text-danger"></span> {% trans 'Logout' %}</a></li>
                     </ul>
                   </li>
                   {% endif %}
