@@ -447,7 +447,7 @@ def download(request, idDownload):
     if idDownload == '':
         files = [{'id': key, 'name': val['name'], 'comment': _(val['comment'])} for key, val in DownloadsManager.manager().getDownloadables().items()]
         logger.debug('Files: {0}'.format(files))
-        return render_to_response(theme.template('downloads.jade'), {'files': files}, context_instance=RequestContext(request))
+        return render_to_response(theme.template('downloads.html'), {'files': files}, context_instance=RequestContext(request))
 
     return DownloadsManager.manager().send(request, idDownload)
 

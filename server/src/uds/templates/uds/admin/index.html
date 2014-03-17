@@ -45,7 +45,6 @@
          
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
         
-        {% compress js %}
         <script src="{% get_static_prefix %}adm/js/jquery-2.0.3.min.js"></script>
         
         <script>
@@ -61,7 +60,8 @@
                 };
             }(window.api = window.api || {}, jQuery));
         </script>
-        
+
+        {% compress js %}
         <!-- minified js from: 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
             'jquery.dataTables.min', 'TableTools.min', 'Blob', 'FileSaver', 'ZeroClipboard', 'dataTables.bootstrap', 'handlebars-v1.1.2', UDS admin JS's -->
         <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
