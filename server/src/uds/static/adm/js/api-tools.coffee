@@ -41,9 +41,9 @@ strftime = (fmt, d, locale) ->
 
 # locale is optional
 strftimeTZ = (fmt, d, locale, timezone) ->
-  if typeof locale is "number" and timezone is null
+  if typeof locale is "number" and timezone is undefined
     timezone = locale
-    locale = `undefined`
+    locale = undefined
   _strftime fmt, d, locale,
     timezone: timezone
 
@@ -68,7 +68,7 @@ _strftime = (fmt, d, locale, options) ->
   # d and locale are optional so check if d is really the locale
   if d and not quacksLikeDate(d)
     locale = d
-    d = `undefined`
+    d = undefined
   d = d or new Date()
   locale = locale or DefaultLocale
   locale.formats = locale.formats or {}
@@ -134,11 +134,11 @@ _strftime = (fmt, d, locale, options) ->
         day = Math.ceil((d.getTime() - y.getTime()) / (1000 * 60 * 60 * 24))
         pad day, 3
       when "k"
-        pad d.getHours(), (if padding is null then " " else padding)
+        pad d.getHours(), (if padding is undefined then " " else padding)
       when "L"
         pad Math.floor(timestamp % 1000), 3
       when "l"
-        pad hours12(d), (if padding is null then " " else padding)
+        pad hours12(d), (if padding is undefined then " " else padding)
       when "M"
         pad d.getMinutes(), padding
       when "m"
@@ -217,7 +217,7 @@ pad = (n, padding, length) ->
     padding = "0"
   
   # Defaults handle pad(n) and pad(n, <padding>)
-  padding = "0"  if padding is null
+  padding = "0"  if padding is undefined
   length = length or 2
   s = String(n)
   

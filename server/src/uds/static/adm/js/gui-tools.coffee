@@ -1,6 +1,8 @@
-# jshint strict: true 
-((gui, $, undefined_) ->
   "use strict"
+  @gui = @gui ? {}
+  $ = jQuery
+  gui = @gui
+
   gui.tools =
     blockUI: (message) ->
       message = message or "<h1><span class=\"fa fa-spinner fa-spin\"></span> " + gettext("Just a moment...") + "</h1>"
@@ -19,13 +21,15 @@
       $.each $(selector), (index, value) ->
         
         # If no events associated, return
-        return  if $._data(value, "events") is `undefined`
-        $this = $(this)
+        $this = $(@)
         clkEvents = []
         
         # Store old click events, so we can reconstruct click chain later
-        $.each $._data(value, "events").click, (index, fnc) ->
-          clkEvents.push fnc
+        try
+          $.each $._data(value, "events").click, (index, fnc) ->
+            clkEvents.push fnc
+            return
+        catch # no events associated ($._data(value, 'events') returns undefined)
           return
 
         $this.unbind "click"
@@ -103,4 +107,3 @@
         levels[data] or "OTHER"
 
   return
-) window.gui = window.gui or {}, jQuery

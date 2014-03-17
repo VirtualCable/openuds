@@ -90,7 +90,7 @@ api.templates.cache = new api.cache("tmpls") # Will cache templates locally. If 
 # '?', data will not be cached and always
 # re-requested. We do not care about lang, because page will reload on language change
 api.templates.get = (name, success_fnc) ->
-  $this = this
+  $this = @
   success_fnc = success_fnc or ->
 
   api.doLog "Getting template " + name
@@ -128,13 +128,14 @@ api.templates.get = (name, success_fnc) ->
 
 # Simple JavaScript Templating, using HandleBars
 api.templates.evaluate = (str, context) ->
-  
+  console.log "Evaluating ", str
   # Figure out if we're getting a template, or if we need to
   # load the template - and be sure to cache the result (compiled template).
   cached = undefined
   unless /\W/.test(str)
+    console.log @cache
     cached = @cache.get("_" + str)
-    if cached is `undefined`
+    if cached is undefined
       cached = api.templates.evaluate(document.getElementById(str).innerHTML)
       @cache.put "_" + str, cached
   template = cached or Handlebars.compile(str)

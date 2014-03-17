@@ -8,14 +8,14 @@ gui.providers.link = (event) ->
     text: gettext("Test")
     css: "btn-info"
 
-  detailLogTable = null
+  detailLogTable = undefined
   clearDetailLog = ->
     if detailLogTable
       $tbl = $(detailLogTable).dataTable()
       $tbl.fnClearTable()
       $tbl.fnDestroy()
       $("#services-log-placeholder").empty()
-      detailLogTable = `undefined`
+      detailLogTable = undefined
     return
 
   prevTables = []
@@ -78,7 +78,7 @@ gui.providers.link = (event) ->
         
         # Giving the name compossed with type, will ensure that only styles will be reattached once
         services = new GuiElement(api.providers.detail(id, "services"), "services-" + selected[0].type)
-        tmpLogTable = null
+        tmpLogTable = undefined
         servicesTable = services.table(
           container: "services-placeholder"
           rowSelect: "single"

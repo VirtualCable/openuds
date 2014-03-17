@@ -28,7 +28,7 @@ gui.configuration.link = ->
           unless $element.attr("data-val") is $element.val()
             section = $element.attr("data-section")
             key = $element.attr("data-key")
-            cfg[section] = {}  if cfg[section] is `undefined`
+            cfg[section] = {}  if cfg[section] is undefined
             cfg[section][key] = value: $element.val()
           return
 

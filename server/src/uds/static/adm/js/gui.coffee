@@ -47,7 +47,7 @@
       css: "btn btn3d-info btn3d btn3d-tables"
 
     custom:
-      text: null
+      text: undefined
       css: "btn btn3d-default btn3d btn3d-tables"
 
   gui.genRamdonId = (prefix) ->
@@ -306,7 +306,7 @@
     (value, event, table, refreshFnc) ->
       gui.tools.blockUI()
       parent.rest.gui value.type, ((guiDefinition) ->
-        buttons = null
+        buttons = undefined
         buttons = gui.methods.typedTestButton(parent.rest, options.testButton.text, options.testButton.css, value.type)  if options.testButton
         tabs = (if options.guiProcessor then options.guiProcessor(guiDefinition) else guiDefinition) # Preprocess fields (probably generate tabs...)
         parent.rest.item value.id, (item) ->
@@ -343,20 +343,20 @@
       gui.tools.blockUI()
       parent.rest.gui type, ((guiDefinition) ->
         gui.tools.unblockUI()
-        buttons = null
+        buttons = undefined
         buttons = gui.methods.typedTestButton(parent.rest, options.testButton.text, options.testButton.css, type)  if options.testButton
         tabs = (if options.guiProcessor then options.guiProcessor(guiDefinition) else guiDefinition) # Preprocess fields (probably generate tabs...)
         title = modalTitle
-        title += " " + gettext("of type") + " <b>" + parent.types[type].name + "</b>"  if parent.types[type] isnt `undefined`
+        title += " " + gettext("of type") + " <b>" + parent.types[type].name + "</b>"  if parent.types[type] isnt undefined
         gui.forms.launchModal
           title: title
           fields: tabs
-          item: `undefined`
+          item: undefined
           preprocessor: options.preprocessor
           buttons: buttons
           success: (form_selector, closeFnc) ->
             fields = gui.forms.read(form_selector)
-            fields.data_type = type  if parent.types[type] isnt `undefined`
+            fields.data_type = type  if parent.types[type] != undefined
             fields = (if options.fieldsProcessor then options.fieldsProcessor(fields) else fields) # Process fields before creating?
             parent.rest.create fields, ((data) -> # Success on put
               closeFnc()

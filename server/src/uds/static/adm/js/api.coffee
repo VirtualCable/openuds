@@ -17,7 +17,7 @@ api.cache = (cacheName) ->
   new Cache(cacheName)
 
 api.cache.clear = (cacheName) ->
-  if cacheName is `undefined`
+  if cacheName is undefined
     api.cacheTable = {}
   else
     api.cacheTable[cacheName] = {}
@@ -131,10 +131,10 @@ class Cache
 
   get: (key, not_found_fnc) ->
     not_found_fnc = not_found_fnc or ->
-      null
+      undefined
 
-    @cache[key] = not_found_fnc()  if @cache[key] is null
-    @cache[key]
+    @cache[key] = not_found_fnc()  if @cache[key] == undefined
+    @cache[key] or undefined
 
   put: (key, value) ->
     @cache[key] = value
@@ -275,7 +275,7 @@ class BasicModelRest
 
   gui: (typeName, success_fnc, fail_fnc) ->
     path = undefined
-    if typeName isnt `undefined`
+    if typeName isnt undefined
       path = [
         this.guiPath
         typeName

@@ -24,7 +24,7 @@
     # itemGui is expected to have fields sorted by .gui.order (REST api returns them sorted)
     $.each itemGui, (index, f) ->
       # Not exactly a field, maybe some other info...
-      return  if f.gui is `undefined`
+      return  if f.gui is undefined
       
       # Fix multiline text fields to textbox
       f.gui.type = "textbox"  if f.gui.type is "text" and f.gui.multiline
@@ -165,7 +165,7 @@
           res[name] = $field.is(":checked")
         else
           res[name] = $field.val()
-          res[name] = []  if res[name] is null and $field.is("select")
+          res[name] = []  if res[name] is undefined and $field.is("select")
       return
 
     gui.doLog res
@@ -265,7 +265,7 @@
   # simple gui generators
   gui.forms.guiField = (name, type, label, tooltip, value, values, length, multiline, readonly, required) ->
     length = length or 128
-    multiline = (if multiline isnt `undefined` then multiline else 0)
+    multiline = multiline ? 0
     readonly = readonly or false
     required = required or false
     name: name

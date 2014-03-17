@@ -145,9 +145,9 @@
           column.sTitle = opts.title
           column.mRender = renderEmptyCell
           column.sWidth = opts.width  if opts.width
-          column.bVisible = (if opts.visible is `undefined` then true else opts.visible)
-          column.bSortable = opts.sortable  if opts.sortable isnt `undefined`
-          column.bSearchable = opts.searchable  if opts.searchable isnt `undefined`
+          column.bVisible = (if opts.visible is undefined then true else opts.visible)
+          column.bSortable = opts.sortable  if opts.sortable isnt undefined
+          column.bSearchable = opts.searchable  if opts.searchable isnt undefined
           if opts.type and column.bVisible
             switch opts.type
               when "date"
@@ -164,11 +164,11 @@
                 #columnt.sType = 'html'; // html is default, so this is not needed
                 column.mRender = renderTypeIcon
               when "icon"
-                column.mRender = renderIcon(opts.icon)  if opts.icon isnt `undefined`
+                column.mRender = renderIcon(opts.icon)  if opts.icon isnt undefined
               when "icon_dict"
-                column.mRender = renderIconDict(opts.icon_dict)  if opts.icon_dict isnt `undefined`
+                column.mRender = renderIconDict(opts.icon_dict)  if opts.icon_dict isnt undefined
               when "dict"
-                column.mRender = renderTextTransform(opts.dict)  if opts.dict isnt `undefined`
+                column.mRender = renderTextTransform(opts.dict)  if opts.dict isnt undefined
               else
                 column.sType = opts.type
           columns.push column
@@ -184,7 +184,7 @@
       self.rest.overview (data) -> # Gets "overview" data for table (table contents, but resume form)
         tblParams.onData data  if tblParams.onData
         table = gui.table(title, tableId)
-        if tblParams.container is `undefined`
+        if tblParams.container is undefined
           gui.appendToWorkspace "<div class=\"row\"><div class=\"col-lg-12\">" + table.text + "</div></div>"
         else
           $("#" + tblParams.container).empty()
@@ -262,7 +262,7 @@
             return
 
           $.each tblParams.buttons, (index, value) -> # Iterate through button definition
-            btn = null
+            btn = undefined
             switch value
               when "new"
                 if Object.keys(self.types).length isnt 0
@@ -434,7 +434,7 @@
           dct = row_style.dict
           prefix = row_style.prefix
           dataTableOptions.fnCreatedRow = (nRow, aData, iDataIndex) ->
-            v = (if dct isnt `undefined` then dct[@fnGetData(iDataIndex)[field]] else @fnGetData(iDataIndex)[field])
+            v = (if dct isnt undefined then dct[@fnGetData(iDataIndex)[field]] else @fnGetData(iDataIndex)[field])
             $(nRow).addClass prefix + v
             gui.doLog prefix + v
             return
@@ -553,7 +553,7 @@
       }
     ]
     table = gui.table(tblParams.title or gettext("Logs"), tableId)
-    if tblParams.container is `undefined`
+    if tblParams.container is undefined
       gui.appendToWorkspace "<div class=\"row\"><div class=\"col-lg-12\">" + table.text + "</div></div>"
     else
       $("#" + tblParams.container).empty()
