@@ -101,6 +101,7 @@
                 return;
             }
         }
+        api.doLog('Invoking ajax for ', api.url_for(name, 'template'));
         $.ajax({
             url : api.url_for(name,'template'),
             type : "GET",

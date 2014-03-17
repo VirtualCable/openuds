@@ -1,0 +1,57 @@
+{% load i18n html5 static %}
+ 		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">{% trans 'toggle navigation'|capfirst %}</span>
+	   				<span class="icon-bar"></span>
+	    			<span class="icon-bar"></span>
+	    			<span class="icon-bar"></span>
+	  			</button>
+	  			<a href="{% url 'uds.web.views.index' %}"><span class="navbar-brand">Universal Desktop Services</span></a>
+			</div>
+             <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                </ul>
+                <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+                {% csrf_token %}
+                <input id="id_language" type="hidden" name="language" value=""/>
+                <ul class="nav navbar-nav navbar-right">
+                  <li><a href="#">{% trans 'About' %}</a></li>
+                  <li class="dropdown">
+                    {% for lang in LANGUAGES %}
+                    {% if lang.0  == LANGUAGE_CODE %}
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}<b class="caret"></b></a>
+                    {% endif %}
+                    {% endfor %}
+                    <ul class="dropdown-menu">
+                      {% for lang in LANGUAGES %}
+                      {% if lang.0  != LANGUAGE_CODE %}
+                      <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit()'><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}</a></li>
+                      {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </li>
+                  {% if user and not user.is_anonymous %}
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ user.real_name }} <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url "uds.web.views.prefs" %}"><span class="fa fa-edit"></span> {% trans 'Preferences' %}</a></li>
+                    {% if user.staff_member or user.is_admin %}
+                        <li><a href="{% url "uds.web.views.download" idDownload='' %}"><span class="fa fa-download"></span> {% trans "Downloads" %}</a></li>
+                        {% ifbrowser ie<8 %} 
+                        {% else %}
+                        <li><a href="{% url "uds.admin.views.index" %}"><span class="fa fa-dashboard"></span> Dashboard</a></li>
+                        {% endifbrowser %}
+                    {% endif %}
+                        <li><a href="{% url 'uds.web.views.logout' %}"><span class="fa fa-power-off text-danger"></span> {% trans 'Logout' %}</a></li>
+                    </ul>
+                  </li>
+                  {% endif %}
+
+                </ul>
+                </form>
+                
+             </div>
+			
+		</nav>

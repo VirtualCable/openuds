@@ -1,0 +1,107 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n static html5 %}
+
+{% block title %}{% trans 'Welcome to UDS' %}{% endblock %}
+
+{% block js %}
+<script src="{% get_static_prefix %}js/PluginDetect_Java.js" type="text/javascript" ></script>
+<script type="text/javascript">
+	function isJavaAvailable() {
+		if( PluginDetect.isMinVersion('Java', '1,6,0,0','{% get_static_prefix %}/other/getJavaInfo.jar') == 1 )
+			return true;
+
+		//PluginDetect.getVersion('Java', '{% get_static_prefix %}/other/getJavaInfo.jar')
+		
+		return false;  
+	}
+	
+	function chkNonStandardAuth(val, nonStandard) {
+		if( $.inArray(val, nonStandard) >= 0) {
+		    var vv = val;
+			$("#login").hide(300, function() {
+				$.get('{%url "uds.web.views.customAuth" idAuth=''%}' + vv, function(data) {
+				  $('#nonStandardLogin').html(data);
+				  $('#nonStandard').show(300);
+				});
+			});
+		}
+	}
+	
+	$(document).ready(function() {
+		$('#id_java').val(isJavaAvailable() ? "y" : "n");
+		var nonStandard = $('#id_nonStandard').val();
+
+		if( nonStandard.length == 0 )
+			nonStandard = [];
+		else
+			nonStandard = nonStandard.split(',');
+		var standard = $('#id_standard').val();
+		if( standard.length == 0 )
+			standard = [];
+		else
+			standard = standard.split(',');
+
+		$('#id_authenticator').change(function() { chkNonStandardAuth($(this).val(), nonStandard) });
+		if( standard.length > 0 ) {
+			$('#backToLogin').click(function() {
+				$('#id_authenticator').val(standard[0]);
+				$('#nonStandard').hide(300, function() {
+					$('#nonStandardLogin').html('');
+					$("#login").show(300);
+				});
+				return false;
+			});
+		} else {
+			$('#divBackToLogin').html('');
+		}
+		// Check initial value (may default auth is non Standard)
+		chkNonStandardAuth($('#id_authenticator').val(), nonStandard);
+	   });
+	   
+	
+</script>	
+{% endblock %}
+
+{% block body %}
+		<div class="container">
+		    <div class="row" id="login">
+		        <div class="col-md-4 col-md-offset-4">
+		            <h1 class="text-center login-title">{% trans 'Welcome to UDS' %}</h1>
+		            <div class="account-wall">
+		            	<img class="profile-img" src="{% get_static_prefix %}img/login-img.png" alt="">
+		                <form id="loginform" class="form-signin" name="loginform" method="post">
+							{% if form.errors %}
+							<div class="alert alert-dismissable alert-danger">
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					       		{% trans 'invalid credentials'|capfirst %}
+							</div>
+							{% endif %}
+			                {% csrf_token %}
+						    {% for hidden in form.hidden_fields %}
+						    {{ hidden }}
+						    {% endfor %}
+						    <div class="form-group">
+				                <input id="id_{{form.user.name}}" name="{{form.user.name}}" type="text" class="form-control" placeholder="{% trans 'username'|capfirst %}" autofocus required>
+				                <input id="id_{{form.password.name}}" name="{{form.password.name}}" type="password" class="form-control" placeholder="{% trans 'password'|capfirst %}">
+				                {{ form.authenticator }}
+			                </div>
+			                <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="fa fa-sign-in"></span> {% trans 'Sign in' %}</button>
+							<div id="nonStandard" style="display: none">
+								<div id="nonStandardLogin" class="form">
+								  non standard logins
+								</div>
+								<div id="divBackToLogin">
+								  <a href="#" id="backToLogin" title="{% trans "Back to login" %}">{% trans "Back to login" %}</a>
+								</div>
+							</div>
+		                </form>
+		            </div>
+		        </div>
+		    </div>
+			<div class="row" id="customHtml">
+					{% autoescape off %} 
+					{{ customHtml }}
+					{% endautoescape %}
+			</div>
+		</div>
+{% endblock %}

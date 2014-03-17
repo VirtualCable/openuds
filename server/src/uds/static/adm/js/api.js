@@ -128,397 +128,353 @@
 
     // Public attributes
     api.debug = false;
-}(window.api = window.api || {}, jQuery));
 
 
-// Cache related
-function Cache(cacheName) {
-    "use strict";
-    api.cacheTable[cacheName] = api.cacheTable[cacheName] || {};
-
-    this.name = cacheName;
-    this.cache = api.cacheTable[cacheName];
-}
-
-Cache.prototype = {
-        get: function(key, not_found_fnc){
-            "use strict";
-            not_found_fnc = not_found_fnc || function() { return undefined; };
-        
-            if( this.cache[key] === undefined ) {
-                this.cache[key] = not_found_fnc();
-            }
-            return this.cache[key];
-        },
+    // Cache related
+    function Cache(cacheName) {
+        api.cacheTable[cacheName] = api.cacheTable[cacheName] || {};
     
-    put: function(key, value) {
-        "use strict";
-        this.cache[key] = value;
-        },
-};
-
-
-// Great part of UDS REST api provides same methods.
-// We will take advantage of this and save a lot of nonsense, prone to failure
-// code :-)
-
-function BasicModelRest(path, options) {
-    "use strict";
-    options = options || {};
-    path = path || '';
-    // Requests paths
-    this.path = path;
-    this.getPath = options.getPath || path;
-    this.logPath = options.logPath || path;
-    this.putPath = options.putPath || path;
-    this.testPath = options.testPath || (path + '/test');
-    this.delPath = options.delPath || path;
-    this.typesPath = options.typesPath || (path + '/types');
-    this.guiPath = options.guiPath || (path + '/gui');
-    this.tableInfoPath = options.tableInfoPath || (path + '/tableinfo');
-    this.cache = api.cache('bmr'+path);
-}
-
-BasicModelRest.prototype = {
-    // options:
-    // cacheKey: '.' --> do not cache (undefined will set cacheKey to current path)
-    //           undefined -- > use path as key
-    //           success: success fnc to execute in case of success
-    _requestPath: function(path, options) {
-        "use strict";
+        this.name = cacheName;
+        this.cache = api.cacheTable[cacheName];
+    }
+    
+    Cache.prototype = {
+            get: function(key, not_found_fnc){
+                not_found_fnc = not_found_fnc || function() { return undefined; };
+            
+                if( this.cache[key] === undefined ) {
+                    this.cache[key] = not_found_fnc();
+                }
+                return this.cache[key];
+            },
+        
+        put: function(key, value) {
+            this.cache[key] = value;
+            },
+    };
+    
+    
+    // Great part of UDS REST api provides same methods.
+    // We will take advantage of this and save a lot of nonsense, prone to failure
+    // code :-)
+    
+    function BasicModelRest(path, options) {
         options = options || {};
-        var success_fnc = options.success || function(){api.doLog('success function not provided for '+path);};
-        var fail_fnc = options.fail;
-        var cacheKey = options.cacheKey || path;
+        path = path || '';
+        // Requests paths
+        this.path = path;
+        this.getPath = options.getPath || path;
+        this.logPath = options.logPath || path;
+        this.putPath = options.putPath || path;
+        this.testPath = options.testPath || (path + '/test');
+        this.delPath = options.delPath || path;
+        this.typesPath = options.typesPath || (path + '/types');
+        this.guiPath = options.guiPath || (path + '/gui');
+        this.tableInfoPath = options.tableInfoPath || (path + '/tableinfo');
+        this.cache = api.cache('bmr'+path);
+    }
+    
+    BasicModelRest.prototype = {
+        // options:
+        // cacheKey: '.' --> do not cache (undefined will set cacheKey to current path)
+        //           undefined -- > use path as key
+        //           success: success fnc to execute in case of success
+        _requestPath: function(path, options) {
+            options = options || {};
+            var success_fnc = options.success || function(){api.doLog('success function not provided for '+path);};
+            var fail_fnc = options.fail;
+            var cacheKey = options.cacheKey || path;
+            
+            if( path == '.' ) {
+                success_fnc({});
+                return;
+            }
+            
+            if (cacheKey != '.' && this.cache.get(cacheKey)) {
+                success_fnc(this.cache.get(cacheKey));
+            } else {
+                var $this = this;
+                api.getJson(path, { 
+                    success: function(data) {
+                        if( cacheKey != '.' ) {
+                            $this.cache.put(cacheKey, data);
+                        }
+                        success_fnc(data);
+                    },
+                    fail: fail_fnc,
+                });
+            }
+        },
+        get: function(options) {
+            options = options || {};
+            
+            var path = this.getPath;
+            if ( options.id )
+                path += '/' + options.id;
+            return this._requestPath(path, {
+                cacheKey: '.', // Right now, do not cache any "get" method
+                success: options.success,
+                fail: options.fail
+                
+            });
+        },
+        list: function(success_fnc, fail_fnc) {  // This is "almost" an alias for get
+            return this.get({
+                id: '',
+                success: success_fnc,
+                fail: fail_fnc
+            });
+        },
+        overview: function(success_fnc, fail_fnc) {
+            return this.get({
+                id: 'overview',
+                success: success_fnc,
+                fail: fail_fnc
+            });
+        },
+        item: function(itemId, success_fnc, fail_fnc) {
+            return this.get({
+                id: itemId,
+                success: success_fnc,
+                fail: fail_fnc
+            });
+            
+        },
+        // -------------
+        // Log methods
+        // -------------
+        getLogs: function(itemId, success_fnc, fail_fnc) {
+            var path = this.logPath + '/' + itemId + '/' + 'log';
+            return this._requestPath(path, {
+                cacheKey: '.',
+                success: success_fnc,
+                fail: fail_fnc
+            });
+            
+        },
         
-        if( path == '.' ) {
-            success_fnc({});
-            return;
-        }
+        // -------------
+        // Put methods
+        // -------------
         
-        if (cacheKey != '.' && this.cache.get(cacheKey)) {
-            success_fnc(this.cache.get(cacheKey));
-        } else {
-            var $this = this;
-            api.getJson(path, { 
-                success: function(data) {
-                    if( cacheKey != '.' ) {
-                        $this.cache.put(cacheKey, data);
-                    }
-                    success_fnc(data);
-                },
+        put: function(data, options) {
+            options = options || {};
+            
+            var path = this.putPath;
+            if ( options.id )
+                path += '/' + options.id;
+            
+            api.putJson(path, data, {
+               success:  options.success,
+               fail: options.fail
+            });
+        },
+        create: function(data, success_fnc, fail_fnc) {
+          
+          return this.put(data, {
+             success: success_fnc,
+             fail: fail_fnc
+          });
+        },
+        save: function(data, success_fnc, fail_fnc) {
+    
+            return this.put(data, {
+                id: data.id,
+                success: success_fnc,
+                fail: fail_fnc
+             });
+        },
+        
+        // Testing
+        test: function(type, data, success_fnc, fail_fnc) {
+            var path = this.testPath + '/' + type;
+            
+            api.putJson(path, data, {
+               success:  success_fnc,
+               fail: fail_fnc,
+               method: 'POST'
+            });
+        },
+        // --------------
+        // Delete
+        // --------------
+        del: function(id, success_fnc, fail_fnc) {
+            var path = this.delPath + '/' + id;
+            
+            api.deleteJson(path, {
+               success:  success_fnc,
+               fail: fail_fnc
+            });
+        },
+        
+        // --------------
+        // Types methods
+        // --------------
+        types : function(success_fnc, fail_fnc) {
+            return this._requestPath(this.typesPath, {
+                cacheKey: this.typesPath,
+                success: success_fnc,
+            });
+        },
+        gui: function(typeName, success_fnc, fail_fnc) {
+            // GUI returns a dict, that contains:
+            // name: Name of the field
+            // value: value of the field (selected element in choice, text for inputs, etc....)
+            // gui: Description of the field (type, value or values, defvalue, ....
+            
+            var path;
+            if( typeName !== undefined ) {
+                path = [this.guiPath, typeName].join('/');
+            } else {
+                path = this.guiPath;
+            }
+            return this._requestPath(path, {
+                cacheKey: '.', // Gui is not cacheable, it's dynamic and can change from call to call
+                success: success_fnc,
                 fail: fail_fnc,
             });
-        }
-    },
-    get: function(options) {
-        "use strict";
-        options = options || {};
-        
-        var path = this.getPath;
-        if ( options.id )
-            path += '/' + options.id;
-        return this._requestPath(path, {
-            cacheKey: '.', // Right now, do not cache any "get" method
-            success: options.success,
-            fail: options.fail
+        },
+        tableInfo : function(success_fnc, fail_fnc) {
+            success_fnc = success_fnc || function(){api.doLog('success not provided for tableInfo');};
             
-        });
-    },
-    list: function(success_fnc, fail_fnc) {  // This is "almost" an alias for get
-        "use strict";
-        return this.get({
-            id: '',
-            success: success_fnc,
-            fail: fail_fnc
-        });
-    },
-    overview: function(success_fnc, fail_fnc) {
-        "use strict";
-        return this.get({
-            id: 'overview',
-            success: success_fnc,
-            fail: fail_fnc
-        });
-    },
-    item: function(itemId, success_fnc, fail_fnc) {
-        "use strict";
-        return this.get({
-            id: itemId,
-            success: success_fnc,
-            fail: fail_fnc
-        });
+            var path = this.tableInfoPath;
+            this._requestPath(path, {
+                success: success_fnc,
+                fail: fail_fnc,
+            });
+        },
         
-    },
-    // -------------
-    // Log methods
-    // -------------
-    getLogs: function(itemId, success_fnc, fail_fnc) {
-        "use strict";
-        var path = this.logPath + '/' + itemId + '/' + 'log';
-        return this._requestPath(path, {
-            cacheKey: '.',
-            success: success_fnc,
-            fail: fail_fnc
-        });
-        
-    },
-    
-    // -------------
-    // Put methods
-    // -------------
-    
-    put: function(data, options) {
-        "use strict";
-        options = options || {};
-        
-        var path = this.putPath;
-        if ( options.id )
-            path += '/' + options.id;
-        
-        api.putJson(path, data, {
-           success:  options.success,
-           fail: options.fail
-        });
-    },
-    create: function(data, success_fnc, fail_fnc) {
-      "use strict";
-      
-      return this.put(data, {
-         success: success_fnc,
-         fail: fail_fnc
-      });
-    },
-    save: function(data, success_fnc, fail_fnc) {
-        "use strict";  
-
-        return this.put(data, {
-            id: data.id,
-            success: success_fnc,
-            fail: fail_fnc
-         });
-    },
-    
-    // Testing
-    test: function(type, data, success_fnc, fail_fnc) {
-        "use strict";
-        
-        var path = this.testPath + '/' + type;
-        
-        api.putJson(path, data, {
-           success:  success_fnc,
-           fail: fail_fnc,
-           method: 'POST'
-        });
-    },
-    // --------------
-    // Delete
-    // --------------
-    del: function(id, success_fnc, fail_fnc) {
-        "use strict";
-        
-        var path = this.delPath + '/' + id;
-        
-        api.deleteJson(path, {
-           success:  success_fnc,
-           fail: fail_fnc
-        });
-    },
-    
-    // --------------
-    // Types methods
-    // --------------
-    types : function(success_fnc, fail_fnc) {
-        "use strict";
-        return this._requestPath(this.typesPath, {
-            cacheKey: this.typesPath,
-            success: success_fnc,
-        });
-    },
-    gui: function(typeName, success_fnc, fail_fnc) {
-        // GUI returns a dict, that contains:
-        // name: Name of the field
-        // value: value of the field (selected element in choice, text for inputs, etc....)
-        // gui: Description of the field (type, value or values, defvalue, ....
-        "use strict";
-        
-        var path;
-        if( typeName !== undefined ) {
-            path = [this.guiPath, typeName].join('/');
-        } else {
-            path = this.guiPath;
+        detail: function(id, child, options) {
+            options = options || {};
+            return new DetailModelRestApi(this, id, child, options);
         }
-        return this._requestPath(path, {
-            cacheKey: '.', // Gui is not cacheable, it's dynamic and can change from call to call
-            success: success_fnc,
-            fail: fail_fnc,
-        });
-    },
-    tableInfo : function(success_fnc, fail_fnc) {
-        "use strict";
-        success_fnc = success_fnc || function(){api.doLog('success not provided for tableInfo');};
-        
-        var path = this.tableInfoPath;
-        this._requestPath(path, {
-            success: success_fnc,
-            fail: fail_fnc,
-        });
-    },
     
-    detail: function(id, child, options) {
-        "use strict";
-        options = options || {};
-        return new DetailModelRestApi(this, id, child, options);
+    };
+    
+    // For REST of type /auth/[id]/users, /services/[id]/users, ...
+    function DetailModelRestApi(parentApi, parentId, model, options) {
+        this.options = options;
+        this.base = new BasicModelRest([parentApi.path, parentId, model].join('/'));
     }
-
-};
-
-// For REST of type /auth/[id]/users, /services/[id]/users, ...
-function DetailModelRestApi(parentApi, parentId, model, options) {
-    "use strict";
-    this.options = options;
-    this.base = new BasicModelRest([parentApi.path, parentId, model].join('/'));
-}
-
-DetailModelRestApi.prototype = {
-    // Generates a basic model with fixed methods for "detail" models
-    get: function(success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.get(success_fnc, fail_fnc);
-    },
-    list: function(success_fnc, fail_fnc) {  // This is "almost" an alias for get
-        "use strict";
-        return this.base.list(success_fnc, fail_fnc);
-    },
-    overview: function(success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.overview(success_fnc, fail_fnc);
-    },
-    item: function(itemId, success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.item(itemId, success_fnc, fail_fnc);
-    },
-    // -------------
-    // Log methods
-    // -------------
-    getLogs: function(itemId, success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.getLogs(itemId, success_fnc, fail_fnc);
-    },
-    // Put methods
-    put: function(data, options) {
-        "use strict";
-        return this.base.put(data, options);
-    },
-    create: function(data, success_fnc, fail_fnc) {
-      "use strict";
-      
-      return this.put(data, {
-         success: success_fnc,
-         fail: fail_fnc
-      });
-    },
-    save: function(data, success_fnc, fail_fnc) {
-        "use strict";  
-
-        return this.put(data, {
-            id: data.id,
-            success: success_fnc,
-            fail: fail_fnc
-         });
-    },
-    // Testing
-    test: function(type, data, success_fnc, fail_fnc) {
-        "use strict";  
-
-        return this.base.test(type, data, success_fnc, fail_fnc);
-    },
-    // --------------
-    // Delete
-    // --------------
-    del: function(id, success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.del(id, success_fnc, fail_fnc);
-    },
     
-    tableInfo: function(success_fnc, fail_fnc) { 
-        "use strict";
-        return this.base.tableInfo(success_fnc, fail_fnc);
-    },
-    types: function(success_fnc, fail_fnc) {
-        "use strict";
-        if( this.options.types ) {
-          this.options.types(success_fnc, fail_fnc);   
-        } else {
-            return this.base.types(success_fnc, fail_fnc);
-        }
-    },
-    gui: function(typeName, success_fnc, fail_fnc) { // Typename can be "undefined" to request MAIN gui (it it exists ofc..)
-        "use strict";
-        return this.base.gui(typeName, success_fnc, fail_fnc);
-    },
+    DetailModelRestApi.prototype = {
+        // Generates a basic model with fixed methods for "detail" models
+        get: function(success_fnc, fail_fnc) {
+            return this.base.get(success_fnc, fail_fnc);
+        },
+        list: function(success_fnc, fail_fnc) {  // This is "almost" an alias for get
+            return this.base.list(success_fnc, fail_fnc);
+        },
+        overview: function(success_fnc, fail_fnc) {
+            return this.base.overview(success_fnc, fail_fnc);
+        },
+        item: function(itemId, success_fnc, fail_fnc) {
+            return this.base.item(itemId, success_fnc, fail_fnc);
+        },
+        // -------------
+        // Log methods
+        // -------------
+        getLogs: function(itemId, success_fnc, fail_fnc) {
+            return this.base.getLogs(itemId, success_fnc, fail_fnc);
+        },
+        // Put methods
+        put: function(data, options) {
+            return this.base.put(data, options);
+        },
+        create: function(data, success_fnc, fail_fnc) {
+          
+          return this.put(data, {
+             success: success_fnc,
+             fail: fail_fnc
+          });
+        },
+        save: function(data, success_fnc, fail_fnc) {
+            return this.put(data, {
+                id: data.id,
+                success: success_fnc,
+                fail: fail_fnc
+             });
+        },
+        // Testing
+        test: function(type, data, success_fnc, fail_fnc) {
+            return this.base.test(type, data, success_fnc, fail_fnc);
+        },
+        // --------------
+        // Delete
+        // --------------
+        del: function(id, success_fnc, fail_fnc) {
+            return this.base.del(id, success_fnc, fail_fnc);
+        },
+        
+        tableInfo: function(success_fnc, fail_fnc) { 
+            return this.base.tableInfo(success_fnc, fail_fnc);
+        },
+        types: function(success_fnc, fail_fnc) {
+            if( this.options.types ) {
+              this.options.types(success_fnc, fail_fnc);   
+            } else {
+                return this.base.types(success_fnc, fail_fnc);
+            }
+        },
+        gui: function(typeName, success_fnc, fail_fnc) { // Typename can be "undefined" to request MAIN gui (it it exists ofc..)
+            return this.base.gui(typeName, success_fnc, fail_fnc);
+        },
+        
+        // Generic "Invoke" method (with no args, if needed, put them on "method" after "?" as normal url would be
+        invoke: function(method, success_fnc, fail_fnc) {
+            return this.base.get({
+                id: method,
+                success: success_fnc,
+                fail: fail_fnc
+            });
+        },
+        
+    };
     
-    // Generic "Invoke" method (with no args, if needed, put them on "method" after "?" as normal url would be
-    invoke: function(method, success_fnc, fail_fnc) {
-        "use strict";
-        return this.base.get({
-            id: method,
+    // Populate api
+    
+    api.providers = new BasicModelRest('providers');
+    // all services method used in providers
+    api.providers.allServices = function(success_fnc, fail_fnc) {
+        return this.get({
+            id: 'allservices',
             success: success_fnc,
             fail: fail_fnc
         });
-    },
+    };
     
-};
-
-// Populate api
-
-api.providers = new BasicModelRest('providers');
-// all services method used in providers
-api.providers.allServices = function(success_fnc, fail_fnc) {
-    "use strict";
-    return this.get({
-        id: 'allservices',
-        success: success_fnc,
-        fail: fail_fnc
-    });
-};
-
-api.providers.service = function(id, success_fnc, fail_fnc) {
-    "use strict";
-    return this.get({
-        id: 'service/' + id,
-        success: success_fnc,
-        fail: fail_fnc
-    });
-};
-
-
-api.authenticators = new BasicModelRest('authenticators');
-// Search method used in authenticators
-api.authenticators.search = function(id, type, term, success_fnc, fail_fnc) {
-    "use strict";
-    return this.get({
-        id: id + '/search?type=' + encodeURIComponent(type) + '&term=' + encodeURIComponent(term),
-        success: success_fnc,
-        fail: fail_fnc
-    });
-};
-
-api.osmanagers = new BasicModelRest('osmanagers');
-api.transports = new BasicModelRest('transports');
-api.networks = new BasicModelRest('networks');
-api.servicesPools = new BasicModelRest('servicespools');
-
-api.configuration = new BasicModelRest('config');
-
-api.system = new BasicModelRest('system');
-api.system.stats = function(type, success_fnc, fail_fnc) {
-    "use strict";
-    return this.get({
-        id: 'stats/' + type,
-        success: success_fnc,
-        fail: fail_fnc
-    });
-};
-
-
+    api.providers.service = function(id, success_fnc, fail_fnc) {
+        return this.get({
+            id: 'service/' + id,
+            success: success_fnc,
+            fail: fail_fnc
+        });
+    };
+    
+    
+    api.authenticators = new BasicModelRest('authenticators');
+    // Search method used in authenticators
+    api.authenticators.search = function(id, type, term, success_fnc, fail_fnc) {
+        return this.get({
+            id: id + '/search?type=' + encodeURIComponent(type) + '&term=' + encodeURIComponent(term),
+            success: success_fnc,
+            fail: fail_fnc
+        });
+    };
+    
+    api.osmanagers = new BasicModelRest('osmanagers');
+    api.transports = new BasicModelRest('transports');
+    api.networks = new BasicModelRest('networks');
+    api.servicesPools = new BasicModelRest('servicespools');
+    
+    api.configuration = new BasicModelRest('config');
+    
+    api.system = new BasicModelRest('system');
+    api.system.stats = function(type, success_fnc, fail_fnc) {
+        return this.get({
+            id: 'stats/' + type,
+            success: success_fnc,
+            fail: fail_fnc
+        });
+    };
+}(window.api = window.api || {}, jQuery));
