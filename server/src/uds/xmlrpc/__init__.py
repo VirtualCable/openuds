@@ -32,3 +32,15 @@ XMLRCP processing part
 This package contains all xmlrpc related stuff
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+
+from django.utils.translation import ugettext_noop as _
+
+from uds.core.managers.DownloadsManager import DownloadsManager
+import os.path
+import sys
+
+DownloadsManager.manager().registerDownloadable('UDSAdminSetup.exe',
+                                                _('UDS Client Administration Interface <b>(Important!! Requires .net framework 3.5 sp1)</b>'),
+                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/UDSAdminSetup.exe',
+                                                'application/x-msdownload')
