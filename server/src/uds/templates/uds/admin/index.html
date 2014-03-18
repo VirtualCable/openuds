@@ -44,12 +44,9 @@
          </div>
          
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
-        
-        <script src="{% get_static_prefix %}adm/js/jquery-2.0.3.min.js"></script>
-        
         <script>
             // Initialize a few settings, needed for api to work
-            (function(api, $, undefined){
+            (function(api){
                 api.config = {
                     token: "{% auth_token %}",
                     auth_header: "{% auth_token_header %}",
@@ -58,12 +55,15 @@
                     template_url: "{% url 'uds.admin.views.tmpl' '' %}",
                     img_url: "{% get_static_prefix %}adm/img/",
                 };
-            }(window.api = window.api || {}, jQuery));
+            }(window.api = window.api || {}));
         </script>
+        
+        
 
         {% compress js %}
-        <!-- minified js from: 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
+        <!-- minified js from: 'jquery', 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
             'jquery.dataTables.min', 'TableTools.min', 'Blob', 'FileSaver', 'ZeroClipboard', 'dataTables.bootstrap', 'handlebars-v1.1.2', UDS admin JS's -->
+        <script src="{% get_static_prefix %}adm/js/jquery-2.0.3.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>

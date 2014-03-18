@@ -17,8 +17,8 @@ gui.authenticators.link = (event) ->
       $tbl = $(detailLogTable).dataTable()
       $tbl.fnClearTable()
       $tbl.fnDestroy()
-      $("#user-log-placeholder").empty()
       detailLogTable = undefined
+    $("#users-log-placeholder").empty()
     return
 
   
@@ -26,13 +26,14 @@ gui.authenticators.link = (event) ->
   # Memory saver :-)
   prevTables = []
   clearDetails = ->
+    clearDetailLog()
+
     $.each prevTables, (undefined_, tbl) ->
       $tbl = $(tbl).dataTable()
       $tbl.fnClearTable()
       $tbl.fnDestroy()
       return
 
-    clearDetailLog()
     $("#users-placeholder").empty()
     $("#groups-placeholder").empty()
     $("#logs-placeholder").empty()
@@ -260,6 +261,7 @@ gui.authenticators.link = (event) ->
           container: "users-placeholder"
           rowSelect: "single"
           onRowSelect: (uselected) ->
+            gui.doLog 'User row selected ', uselected
             gui.tools.blockUI()
             uId = uselected[0].id
             clearDetailLog()
@@ -284,7 +286,8 @@ gui.authenticators.link = (event) ->
             return
 
           onRefresh: ->
-            $("#users-log-placeholder").empty() # Remove logs on detail refresh
+            gui.doLog "Refreshing"
+            clearDetailLog()
             return
 
           onEdit: (value, event, table, refreshFnc) ->
