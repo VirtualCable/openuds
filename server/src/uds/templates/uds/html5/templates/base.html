@@ -81,8 +81,8 @@
 		{% endblock %}
 		</footer>
         
-        <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
-        {% compress js %}
+    <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
+    {% compress js %}
 		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
@@ -94,9 +94,12 @@
 				$('.selectpicker').selectpicker();
 			});
 		</script>
+    {% endcompress %}
+        
 		
+    {% compress js %}
 		{% block js %}{% endblock %}
-        {% endcompress %}
+    {% endcompress %}
         
 	</body>
 </html>
