@@ -38,14 +38,16 @@
                   <li class="dropdown">
                     {% for lang in LANGUAGES %}
                     {% if lang.0  == LANGUAGE_CODE %}
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><!--<i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>-->
+                      <i class="fa fa-comments-o"></i> {% trans lang.1|capfirst %}<b class="caret"></b>
+                    </a>
                     {% endif %}
                     {% endfor %}
                     <ul class="dropdown-menu">
                       {% for lang in LANGUAGES %}
                       {% if lang.0  != LANGUAGE_CODE %}
                       <!--  here we force an update of locale of REST api -->
-                      <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'><i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>{% trans lang.1|capfirst %}</a></li>
+                      <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>{% trans lang.1|capfirst %}</a></li>
                       {% endif %}
                       {% endfor %}
                     </ul>

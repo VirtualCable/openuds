@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-07 11:25+0100\n"
+"POT-Creation-Date: 2014-03-18 03:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -144,7 +144,7 @@ msgstr "Prestadores de serviços"
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
 #: templates/uds/admin/tmpl/providers.html:18
-#: templates/uds/html5/index.html:65
+#: templates/uds/html5/index.html:65 templates/uds/pruebas/index.html:65
 msgid "Services"
 msgstr "Serviços"
 
@@ -286,7 +286,7 @@ msgstr ""
 "INATIVO, trans porta será desabilitada para redes selecionadas"
 
 #: REST/methods/transports.py:76 templates/uds/index.html:79
-#: templates/uds/html5/index.html:124
+#: templates/uds/html5/index.html:124 templates/uds/pruebas/index.html:124
 msgid "Networks"
 msgstr "Redes"
 
@@ -1157,7 +1157,8 @@ msgstr "Cancelando"
 
 #: core/util/State.py:73 templates/uds/error.html:6
 #: templates/uds/error.html.py:11 templates/uds/html5/error.html:4
-#: templates/uds/html5/error.html.py:14
+#: templates/uds/html5/error.html.py:14 templates/uds/pruebas/error.html:4
+#: templates/uds/pruebas/error.html:14
 msgid "Error"
 msgstr "Erro"
 
@@ -1974,16 +1975,20 @@ msgid "Login redirection"
 msgstr "Redirecionamento de login"
 
 #: templates/uds/detectJava.html:38 templates/uds/html5/detectJava.html:27
+#: templates/uds/pruebas/detectJava.html:27
 msgid "Go to main page"
 msgstr "Ir para página principal"
 
 #: templates/uds/downloads.html:8 templates/uds/html5/downloads.html:7
 #: templates/uds/html5/snippets/navbar.html:41
+#: templates/uds/pruebas/downloads.html:7
+#: templates/uds/pruebas/snippets/navbar.html:41
 #: templates/uds/snippets/admin_user.html:7
 msgid "Downloads"
 msgstr "Downloads"
 
 #: templates/uds/downloads.html:11 templates/uds/html5/downloads.html:10
+#: templates/uds/pruebas/downloads.html:10
 msgid ""
 "This page contains a list of downloadables provided by different modules"
 msgstr ""
@@ -1991,10 +1996,12 @@ msgstr ""
 "módulos"
 
 #: templates/uds/index.html:70 templates/uds/html5/index.html:103
+#: templates/uds/pruebas/index.html:103
 msgid "Java not found"
 msgstr "Java não encontrado"
 
 #: templates/uds/index.html:71 templates/uds/html5/index.html:106
+#: templates/uds/pruebas/index.html:106
 msgid ""
 "Java is not available on your browser, and the selected transport needs it."
 msgstr ""
@@ -2002,28 +2009,33 @@ msgstr ""
 "precisa disso."
 
 #: templates/uds/index.html:72 templates/uds/html5/index.html:107
+#: templates/uds/pruebas/index.html:107
 msgid "Please, install latest version from"
 msgstr "Por favor, instale a versão mais recente do"
 
 #: templates/uds/index.html:72 templates/uds/html5/index.html:107
+#: templates/uds/pruebas/index.html:107
 msgid "Java website"
 msgstr "Site de Java"
 
 #: templates/uds/index.html:72 templates/uds/html5/index.html:107
+#: templates/uds/pruebas/index.html:107
 msgid "and restart browser"
 msgstr "e reinicie o navegador"
 
 #: templates/uds/index.html:78 templates/uds/html5/index.html:123
+#: templates/uds/pruebas/index.html:123
 msgid "Ip"
 msgstr "IP"
 
 #: templates/uds/index.html:80 templates/uds/admin/tmpl/services_pool.html:21
-#: templates/uds/html5/index.html:125
+#: templates/uds/html5/index.html:125 templates/uds/pruebas/index.html:125
 msgid "Transports"
 msgstr "Transportes"
 
 #: templates/uds/internal_page.html:34 templates/uds/prefs.html:12
 #: templates/uds/html5/snippets/navbar.html:39
+#: templates/uds/pruebas/snippets/navbar.html:39
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -2048,14 +2060,17 @@ msgid "Enter"
 msgstr "Digite"
 
 #: templates/uds/login.html:93 templates/uds/html5/login.html:94
+#: templates/uds/pruebas/login.html:94
 msgid "Back to login"
 msgstr "Para iniciar sessão"
 
 #: templates/uds/prefs.html:6 templates/uds/html5/prefs.html:5
+#: templates/uds/pruebas/prefs.html:5
 msgid "UDS User Preferences"
 msgstr "Preferências do usuário UDS"
 
 #: templates/uds/prefs.html:16 templates/uds/html5/prefs.html:12
+#: templates/uds/pruebas/prefs.html:12
 msgid "Save Preferences"
 msgstr "Salvar preferências"
 
@@ -2089,6 +2104,8 @@ msgid "Exit"
 msgstr "Saída"
 
 #: templates/uds/admin/snippets/navbar.html:57
+#: templates/uds/html5/snippets/navbar.html:47
+#: templates/uds/pruebas/snippets/navbar.html:47
 msgid "Logout"
 msgstr "Logout"
 
@@ -2172,7 +2189,6 @@ msgstr ""
 "Houve um erro solicitando dados do servidor, por favor, tente novamente"
 
 #: templates/uds/admin/tmpl/request_failed.html:9
-#: templates/uds/html5/snippets/navbar.html:44
 msgid "Dashboard"
 msgstr "Painel de controle"
 
@@ -2229,70 +2245,105 @@ msgstr "Adicionar elemento"
 msgid "Add"
 msgstr "Adicionar"
 
+#: templates/uds/html5/about.html:13
+msgid "You can access UDS Open Source code at"
+msgstr "Você pode acessar o código-fonte aberto de UDS em"
+
+#: templates/uds/html5/about.html:14
+msgid "UDS has been developed using theese components:"
+msgstr "UDS foi desenvolvido usando componentes do theese:"
+
+#: templates/uds/html5/about.html:20
+msgid ""
+"(not directly inside UDS, but provided as optional transport as an external "
+"component)"
+msgstr ""
+"(não diretamente dentro UDS, mas fornecido como transporte opcional como um "
+"externo componente)"
+
+#: templates/uds/html5/about.html:37
+msgid "If you found that we missed to mention any component, plese let us know"
+msgstr ""
+"Se você achou que perdemos mencionar qualquer componente, plese deixe-nos "
+"saber"
+
+#: templates/uds/html5/about.html:38
+#: templates/uds/html5/service_not_ready.html:17
+#: templates/uds/pruebas/service_not_ready.html:17
+msgid "Back"
+msgstr "Voltar"
+
 #: templates/uds/html5/detectJava.html:4
+#: templates/uds/pruebas/detectJava.html:4
 msgid "Login redirection to UDS"
 msgstr "Redirecionamento de login para UDS"
 
-#: templates/uds/html5/error.html:12
+#: templates/uds/html5/error.html:12 templates/uds/pruebas/error.html:12
 msgid "An error occurred"
 msgstr "Ocorreu um erro"
 
 #: templates/uds/html5/error.html:16
 #: templates/uds/html5/show_transport.html:10
+#: templates/uds/pruebas/error.html:16
+#: templates/uds/pruebas/show_transport.html:10
 #: templates/uds/snippets/back_to_list.html:3
 msgid "Back to services list"
 msgstr "Voltar à lista de serviços"
 
-#: templates/uds/html5/index.html:4
+#: templates/uds/html5/index.html:4 templates/uds/pruebas/index.html:4
 msgid "Available services list"
 msgstr "Lista de serviços disponíveis"
 
-#: templates/uds/html5/index.html:80
+#: templates/uds/html5/index.html:80 templates/uds/pruebas/index.html:80
 msgid "transports"
 msgstr "transportes"
 
-#: templates/uds/html5/index.html:120
+#: templates/uds/html5/index.html:120 templates/uds/pruebas/index.html:120
 msgid "Administrator info panel"
 msgstr "Painel de informações do administrador"
 
-#: templates/uds/html5/index.html:126
+#: templates/uds/html5/index.html:126 templates/uds/pruebas/index.html:126
 msgid "User Agent"
 msgstr "Agente do usuário"
 
-#: templates/uds/html5/index.html:127
+#: templates/uds/html5/index.html:127 templates/uds/pruebas/index.html:127
 msgid "OS"
 msgstr "SISTEMA OPERACIONAL"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html.py:69
+#: templates/uds/pruebas/login.html:4 templates/uds/pruebas/login.html:69
 msgid "Welcome to UDS"
 msgstr "Bem-vindo ao UDS"
 
-#: templates/uds/html5/login.html:76
+#: templates/uds/html5/login.html:76 templates/uds/pruebas/login.html:76
 msgid "invalid credentials"
 msgstr "credenciais inválidas"
 
-#: templates/uds/html5/login.html:84
+#: templates/uds/html5/login.html:84 templates/uds/pruebas/login.html:84
 msgid "username"
 msgstr "nome de usuário"
 
-#: templates/uds/html5/login.html:85
+#: templates/uds/html5/login.html:85 templates/uds/pruebas/login.html:85
 msgid "password"
 msgstr "senha"
 
-#: templates/uds/html5/login.html:88
+#: templates/uds/html5/login.html:88 templates/uds/pruebas/login.html:88
 msgid "Sign in"
 msgstr "Entrar"
 
-#: templates/uds/html5/prefs.html:11
+#: templates/uds/html5/prefs.html:11 templates/uds/pruebas/prefs.html:11
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: templates/uds/html5/service_not_ready.html:4
 #: templates/uds/html5/service_not_ready.html:12
+#: templates/uds/pruebas/service_not_ready.html:4
+#: templates/uds/pruebas/service_not_ready.html:12
 msgid "The service is not ready"
 msgstr "O serviço não está pronto"
 
 #: templates/uds/html5/service_not_ready.html:14
+#: templates/uds/pruebas/service_not_ready.html:14
 msgid ""
 "The service is not ready at this moment. Please, try it again after a few "
 "seconds."
@@ -2301,6 +2352,7 @@ msgstr ""
 "de alguns segundos."
 
 #: templates/uds/html5/service_not_ready.html:15
+#: templates/uds/pruebas/service_not_ready.html:15
 msgid ""
 "The service you has requested was not ready, and is being created right now. "
 "It will be availabe shortly"
@@ -2308,23 +2360,18 @@ msgstr ""
 "O serviço que você solicitou não estava pronto e está sendo criado agora. Em "
 "breve será availabe"
 
-#: templates/uds/html5/service_not_ready.html:17
-msgid "Back"
-msgstr "Voltar"
-
 #: templates/uds/html5/snippets/navbar.html:6
+#: templates/uds/pruebas/snippets/navbar.html:6
 msgid "toggle navigation"
 msgstr "navegação toggle"
 
 #: templates/uds/html5/snippets/navbar.html:20
+#: templates/uds/pruebas/snippets/navbar.html:20
 msgid "About"
 msgstr "Sobre"
 
-#: templates/uds/html5/snippets/navbar.html:47
-msgid "logout"
-msgstr "logout"
-
 #: templates/uds/html5/templates/base.html:59
+#: templates/uds/pruebas/templates/base.html:59
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
 "html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better)"
