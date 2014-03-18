@@ -17,7 +17,7 @@
                 {% csrf_token %}
                 <input id="id_language" type="hidden" name="language" value=""/>
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#">{% trans 'About' %}</a></li>
+                  <li><a href="{% url 'uds.web.views.about' %}">{% trans 'About' %}</a></li>
                   <li class="dropdown">
                     {% for lang in LANGUAGES %}
                     {% if lang.0  == LANGUAGE_CODE %}

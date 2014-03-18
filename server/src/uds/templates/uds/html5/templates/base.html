@@ -14,19 +14,19 @@
 		{% block icon %}<link href="{% get_static_prefix %}img/favicon.png" rel="icon" type="image/x-icon" />{% endblock %}
 
 		<!-- Bootstrap -->
-        {% compress css %}
+    {% compress css %}
 		<link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
-        {% endcompress %}
+    {% endcompress %}
 		
 		{% ifbrowser ie<9 %}
 		<script src="{% get_static_prefix %}/js/respond.min.js"></script>
 		{% endifbrowser %}
 		
-        {% compress css %}
+    {% compress css %}
 		<link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
+    <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
 		
 		{% ifbrowser ie<10 %}
 		<link href="{% get_static_prefix %}css/fix.css" rel="stylesheet" media="screen">
@@ -36,15 +36,15 @@
 		<link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}css/uds-html5.css" rel="stylesheet" media="screen">
         
-        {% endcompress %}
+    {% endcompress %}
 
-        {% compress css %}
+    {% compress css %}
 		{% ifbrowser ie<9 %}
 		<script src="{% get_static_prefix %}/js/html5shiv.js"></script>
 		{% endifbrowser %}
         
 		{% block css %}{% endblock %}
-        {% endcompress %}
+    {% endcompress %}
 	</head>
 	
 	<body>
