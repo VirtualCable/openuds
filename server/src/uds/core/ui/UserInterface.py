@@ -97,7 +97,9 @@ class gui(object):
 
     @staticmethod
     def convertToList(vals):
-        return [unicode(v) for v in vals]
+        if vals is not None:
+            return [unicode(v) for v in vals]
+        return []
 
     @staticmethod
     def choiceItem(id_, text):

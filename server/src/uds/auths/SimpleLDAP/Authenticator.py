@@ -42,7 +42,7 @@ from uds.core.auths.Exceptions import AuthenticatorException
 import ldap
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-03-19'
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +128,7 @@ class SimpleLDAPAuthenticator(Authenticator):
                 self._userNameAttr)
 
     def marshal(self):
-        return str.join('\t', ['v1',
+        return '\t'.join(['v1',
                 self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
                 self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr])
 

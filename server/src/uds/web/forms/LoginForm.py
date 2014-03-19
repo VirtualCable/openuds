@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from django.utils.safestring import mark_safe
 
 #
 # Copyright (c) 2012 Virtual Cable S.L.
@@ -31,9 +30,11 @@ from django.utils.safestring import mark_safe
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
+from django.utils.safestring import mark_safe
 from django.forms.forms import NON_FIELD_ERRORS
 from django.forms.util import ErrorDict
 from uds.models import Authenticator
@@ -41,17 +42,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class CustomSelect(forms.Select):
     def render(self, name, value, attrs=None):
         if len(self.choices) < 2:
             visible = ' style="display: none;"'
         else:
-            visible = '';
+            visible = ''
         res = '<select id="id_{0}" name="{0}" class="selectpicker show-menu-arrow" data-header="{1}" data-size="8" data-width="100%" >'.format(name, ugettext('Select authenticator'))
         for choice in self.choices:
             res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
         res += '</select>'
         return mark_safe('<div class="form-group"{0}><label>'.format(visible) + unicode(_('authenticator')) + '</label>' + res + '</div>')
+
 
 class BaseForm(forms.Form):
 
@@ -64,6 +67,7 @@ class BaseForm(forms.Form):
         if not NON_FIELD_ERRORS in self._errors:
             self._errors[NON_FIELD_ERRORS] = self.error_class()
         self._errors[NON_FIELD_ERRORS].append(message)
+
 
 class LoginForm(BaseForm):
     user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())
@@ -98,6 +102,8 @@ class LoginForm(BaseForm):
 
         for a in auths:
             if a.getType() is None:
+                continue
+            if a.getType().isCustom() and smallName == 'disabled':
                 continue
             choices.append((a.id, a.name))
             if a.getType().isCustom():
