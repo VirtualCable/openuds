@@ -29,7 +29,7 @@
         self.types[value.type].css = className
         gui.doLog "Creating style for " + className
         unless alreadyAttached
-          style = "." + className + " { display:inline-block; background: url(data:image/png;base64," + value.icon + "); " + "width: 16px; height: 16px; vertical-align: middle; } "
+          style = "." + className + " { display:inline-block; background: url(data:image/png;base64," + value.icon + "); background-size: 16px 16px; background-repeat: no-repeat; " + "width: 16px; height: 16px; vertical-align: middle; } "
           styles += style
         return
 
@@ -194,7 +194,6 @@
         onRefresh = tblParams.onRefresh or ->
 
         refreshFnc = ->
-          
           # Refreshes table content
           tbl = $("#" + tableId).dataTable()
           
