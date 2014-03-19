@@ -5,7 +5,7 @@ gui.authenticators.link = (event) ->
   
   # Button definition to trigger "Test" action
   testButton = testButton:
-    text: gettext("Test authenticator")
+    text: gettext("Test")
     css: "btn-info"
 
   

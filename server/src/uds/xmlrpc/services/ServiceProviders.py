@@ -4,35 +4,36 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
 from django.utils.translation import ugettext as _
-from django.db import IntegrityError 
+from django.db import IntegrityError
 from uds.models import Provider
 from uds.core.services.ServiceProviderFactory import ServiceProviderFactory
 from ..util.Helpers import dictFromData
@@ -44,6 +45,7 @@ from uds.core import services
 
 logger = logging.getLogger(__name__)
 
+
 @needs_credentials
 def getServiceProvidersTypes(credentials):
     '''
@@ -54,6 +56,7 @@ def getServiceProvidersTypes(credentials):
         val = { 'name' : _(type_.name()), 'type' : type_.type(), 'description' : _(type_.description()), 'icon' : type_.icon() }
         res.append(val)
     return res
+
 
 @needs_credentials
 def getServiceProviders(credentials):
@@ -69,6 +72,7 @@ def getServiceProviders(credentials):
             pass
     return res
 
+
 @needs_credentials
 def getServiceProviderGui(credentials, type_):
     '''
@@ -77,13 +81,14 @@ def getServiceProviderGui(credentials, type_):
     spType = ServiceProviderFactory.factory().lookup(type_)
     return spType.guiDescription()
 
+
 @needs_credentials
 def getServiceProvider(credentials, id_):
     '''
     Returns the specified service provider (at database)
     '''
     data = Provider.objects.get(pk=id_)
-    res = [ 
+    res = [
            { 'name' : 'name', 'value' : data.name },
            { 'name' : 'comments', 'value' : data.comments },
           ]
@@ -95,6 +100,7 @@ def getServiceProvider(credentials, id_):
         res.append(val)
     return res
 
+
 @needs_credentials
 def createServiceProvider(credentials, type_, data):
     '''
@@ -105,18 +111,19 @@ def createServiceProvider(credentials, type_, data):
     try:
         dic = dictFromData(data)
         # First create data without serialization, then serialies data with correct environment
-        sp = Provider.objects.create(name = dic['name'], comments = dic['comments'], data_type = type_)
+        sp = Provider.objects.create(name=dic['name'], comments=dic['comments'], data_type=type_)
         sp.data = sp.getInstance(dic).serialize()
         sp.save()
     except services.ServiceProvider.ValidationException as e:
         sp.delete()
         raise ValidationException(str(e))
-    except IntegrityError: # Must be exception at creation
+    except IntegrityError:  # Must be exception at creation
         raise InsertException(_('Name %s already exists') % (dic['name']))
     except Exception as e:
         logger.exception('Unexpected exception')
         raise ValidationException(str(e))
     return True
+
 
 @needs_credentials
 def modifyServiceProvider(credentials, id_, data):
@@ -135,14 +142,15 @@ def modifyServiceProvider(credentials, id_, data):
         prov.save()
     except services.ServiceProvider.ValidationException as e:
         raise ValidationException(str(e))
-    except IntegrityError: # Must be exception at creation
+    except IntegrityError:  # Must be exception at creation
         raise InsertException(_('Name %s already exists') % (dic['name']))
     except Exception as e:
         logger.exception('Unexpected exception')
         raise ValidationException(str(e))
-    
+
     return True
-    
+
+
 @needs_credentials
 def removeServiceProvider(credentials, id_):
     '''
@@ -157,6 +165,7 @@ def removeServiceProvider(credentials, id_):
         raise FindException(_('Can\'t locate the service provider') + '.' + _('Please, refresh interface'))
     return True
 
+
 @needs_credentials
 def getOffersFromServiceProvider(credentials, type_):
     '''
@@ -168,6 +177,7 @@ def getOffersFromServiceProvider(credentials, type_):
         val = { 'name' : _(t.name()), 'type' : t.type(), 'description' : _(t.description()), 'icon' : t.icon() }
         res.append(val)
     return res
+
 
 @needs_credentials
 def testServiceProvider(credentials, type_, data):
@@ -181,6 +191,7 @@ def testServiceProvider(credentials, type_, data):
     res = spType.test(Environment.getTempEnv(), dct)
     return {'ok' : res[0], 'message' : res[1]}
 
+
 @needs_credentials
 def checkServiceProvider(credentials, id_):
     '''
@@ -189,7 +200,7 @@ def checkServiceProvider(credentials, id_):
     prov = Provider.objects.get(id=id_)
     sp = prov.getInstance()
     return sp.check()
-    
+
 
 # Registers XML RPC Methods
 def registerServiceProvidersFunctions(dispatcher):
@@ -203,5 +214,4 @@ def registerServiceProvidersFunctions(dispatcher):
     dispatcher.register_function(getOffersFromServiceProvider, 'getOffersFromServiceProvider')
     dispatcher.register_function(testServiceProvider, 'testServiceProvider')
     dispatcher.register_function(checkServiceProvider, 'checkServiceProvider')
-    
-    
+

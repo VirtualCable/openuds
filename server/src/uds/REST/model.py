@@ -176,6 +176,10 @@ class BaseModelHandler(Handler):
     def success(self):
         return 'done'
 
+    def test(self, type_):
+        logger.debug('Called base test for {0} --> {1}'.format(self.__class__.__name__, self._params))
+        return self.invalidMethodException()
+
 
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
@@ -535,7 +539,7 @@ class ModelHandler(BaseModelHandler):
         logger.debug('method POST for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) == 2:
             if self._args[0] == 'test':
-                return 'tested'
+                return self.test(self._args[1])
 
         self.invalidMethodException()
 

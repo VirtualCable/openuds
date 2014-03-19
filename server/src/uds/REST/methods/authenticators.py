@@ -116,3 +116,17 @@ class Authenticators(ModelHandler):
                 return auth.searchGroups(term)
         except:
             self.invalidRequestException()
+
+    def test(self, type_):
+        from uds.core.Environment import Environment
+
+        authType = auths.factory().lookup(type_)
+        dct = self._params.copy()
+        dct['_request'] = self._request
+        res = authType.test(Environment.getTempEnv(), dct)
+        if res[0]:
+            return 'ok'
+        else:
+            return res[1]
+
+

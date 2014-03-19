@@ -291,7 +291,11 @@
         fields = gui.forms.read(form_selector)
         gui.doLog "Fields: ", fields
         rest.test type, fields, ((data) ->
-          gui.launchModal gettext("Test result"), data,
+          if data == 'ok'
+            text = gettext("Test passed successfully")
+          else
+            text = "<b class=\"text-danger\">Test failed: #{data}</b>"
+          gui.launchModal gettext("Test result"), text,
             actionButton: " "
 
           return

@@ -4,27 +4,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
@@ -33,38 +33,40 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
-from django.db import IntegrityError 
+from django.db import IntegrityError
 from uds.models import Authenticator
 from Groups import getRealGroups
 from uds.xmlrpc.util.Helpers import dictFromData
 from uds.xmlrpc.util.Exceptions import InsertException, ParametersException, FindException, ValidationException
 from uds.core.auths.Exceptions import AuthenticatorException
-from uds.core import auths 
+from uds.core import auths
 from AdminAuth import needs_credentials
 from uds.core.Environment import Environment
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 def dictFromAuthType(type_):
     '''
     Returns a dictionary that describes the authenticator, so the administration
     interface has the info to handle it.
-    
+
     Args:
         type_: Authenticator type (class) where to get information
-        
+
     Returns:
         Dictionary describing the Authenticator type
     '''
-    return { 'name' : type_.name(), 'type' : type_.type(), 'description' : type_.description(), 
-             'icon' : type_.icon(), 'isExternalSource' : type_.isExternalSource, 
-             'canSearchUsers' : type_.searchUsers != auths.Authenticator.searchUsers, 
+    return { 'name' : type_.name(), 'type' : type_.type(), 'description' : type_.description(),
+             'icon' : type_.icon(), 'isExternalSource' : type_.isExternalSource,
+             'canSearchUsers' : type_.searchUsers != auths.Authenticator.searchUsers,
              'canSearchGroups' : type_.searchGroups != auths.Authenticator.searchGroups,
-             'needsPassword' : type_.needsPassword, 'userNameLabel' : _(type_.userNameLabel), 
+             'needsPassword' : type_.needsPassword, 'userNameLabel' : _(type_.userNameLabel),
              'groupNameLabel' : _(type_.groupNameLabel), 'passwordLabel' : _(type_.passwordLabel),
              'canCreateUsers' : type_.createUser != auths.Authenticator.createUser,
            }
+
 
 @needs_credentials
 def getAuthenticatorsTypes(credentials):
@@ -76,6 +78,7 @@ def getAuthenticatorsTypes(credentials):
         res.append(dictFromAuthType(_type))
     return res
 
+
 @needs_credentials
 def getAuthenticators(credentials):
     '''
@@ -85,13 +88,14 @@ def getAuthenticators(credentials):
     res = []
     for auth in Authenticator.objects.all().order_by('priority'):
         try:
-            val = { 'id' : str(auth.id), 'name' : auth.name, 'comments' : auth.comments, 'type' : auth.data_type, 'typeName' : auth.getInstance().name(), 
+            val = { 'id' : str(auth.id), 'name' : auth.name, 'comments' : auth.comments, 'type' : auth.data_type, 'typeName' : auth.getInstance().name(),
                    'priority' : str(auth.priority), 'smallName' : auth.small_name }
             res.append(val)
         except Exception, e:
             logger.debug("Exception: {0}".format(e))
-    
+
     return res
+
 
 @needs_credentials
 def getAuthenticatorType(credentials, id):
@@ -106,6 +110,7 @@ def getAuthenticatorType(credentials, id):
     except Authenticator.DoesNotExist:
         raise InsertException(_('Authenticator does not exists'))
 
+
 @needs_credentials
 def getAuthenticatorGui(credentials, type):
     '''
@@ -115,13 +120,14 @@ def getAuthenticatorGui(credentials, type):
     authType = auths.factory().lookup(type)
     return authType.guiDescription()
 
+
 @needs_credentials
 def getAuthenticator(credentials, id):
     '''
     Returns the specified authenticator (at database)
     '''
     data = Authenticator.objects.get(pk=id)
-    res = [ 
+    res = [
            { 'name' : 'name', 'value' : data.name },
            { 'name' : 'comments', 'value' : data.comments },
            { 'name' : 'priority', 'value' : str(data.priority)}
@@ -134,11 +140,13 @@ def getAuthenticator(credentials, id):
         res.append(val)
     return res
 
+
 @needs_credentials
 def getAuthenticatorGroups(credentials, id):
     '''
     '''
     return getRealGroups(id)
+
 
 @needs_credentials
 def createAuthenticator(credentials, type, data):
@@ -152,14 +160,14 @@ def createAuthenticator(credentials, type, data):
     dict_['_request'] = credentials.request
     auth = None
     try:
-        auth = Authenticator.objects.create(name = dict_['name'], comments = dict_['comments'], 
-                                            data_type = type, priority=int(dict_['priority']), small_name=dict_['smallName'])
+        auth = Authenticator.objects.create(name=dict_['name'], comments=dict_['comments'],
+                                            data_type=type, priority=int(dict_['priority']), small_name=dict_['smallName'])
         auth.data = auth.getInstance(dict_).serialize()
         auth.save()
     except auths.Authenticator.ValidationException as e:
         auth.delete()
         raise ValidationException(str(e))
-    except IntegrityError: # Must be exception at creation
+    except IntegrityError:  # Must be exception at creation
         raise InsertException(_('Name %s already exists') % (dict_['name']))
     except Exception as e:
         logger.exception("Exception at createAuthenticator")
@@ -167,9 +175,10 @@ def createAuthenticator(credentials, type, data):
         if auth is not None:
             auth.delete()
         raise e
-            
-    # Returns true always, 
+
+    # Returns true always,
     return True
+
 
 @needs_credentials
 def modifyAuthenticator(credentials, id, data):
@@ -194,9 +203,10 @@ def modifyAuthenticator(credentials, id, data):
     except Exception as e:
         logger.exception(e)
         raise ValidationException(str(e))
-    
+
     return True
-    
+
+
 @needs_credentials
 def removeAuthenticator(credentials, id):
     '''
@@ -205,18 +215,20 @@ def removeAuthenticator(credentials, id):
     Authenticator.objects.get(pk=id).delete()
     return True
 
+
 @needs_credentials
-def testAuthenticator(credentials, type, data):
+def testAuthenticator(credentials, type_, data):
     '''
     invokes the test function of the specified authenticator type, with the suplied data
     '''
     logger.debug("Testing authenticator, type: {0}, data:{1}".format(type, data))
-    authType = auths.factory().lookup(type)
+    authType = auths.factory().lookup(type_)
     # We need an "temporary" environment to test this service
     dict_ = dictFromData(data)
     dict_['_request'] = credentials.request
     res = authType.test(Environment.getTempEnv(), dict_)
     return {'ok' : res[0], 'message' : res[1]}
+
 
 @needs_credentials
 def checkAuthenticator(credentials, id):
@@ -226,6 +238,7 @@ def checkAuthenticator(credentials, id):
     auth = Authenticator.objects.get(id=id)
     a = auth.getInstance()
     return a.check()
+
 
 @needs_credentials
 def searchAuthenticator(credentials, id, srchUser, srchString):
@@ -239,14 +252,14 @@ def searchAuthenticator(credentials, id, srchUser, srchString):
         if canDoSearch is False:
             raise ParametersException(_('Authenticator do not supports search'))
         if srchUser is True:
-            return auth.searchUsers(srchString) 
+            return auth.searchUsers(srchString)
         else:
             return auth.searchGroups(srchString)
     except Authenticator.DoesNotExist:
         raise FindException(_('Specified authenticator do not exists anymore. Please, reload gui'))
     except AuthenticatorException, e:
         raise ParametersException(str(e))
-    
+
     raise FindException(_('BUG: Reached a point that should never have been reached!!!'))
 
 

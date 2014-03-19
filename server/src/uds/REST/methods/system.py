@@ -83,8 +83,6 @@ def getServicesPoolsCounters(servicePool, counter_type):
 
 
 class System(Handler):
-    needs_admin = True  # By default, staff is lower level needed
-
     def get(self):
         logger.debug('args: {0}'.format(self._args))
         if len(self._args) == 1:

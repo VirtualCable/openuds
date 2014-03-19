@@ -109,3 +109,13 @@ class Providers(ModelHandler):
             return DetailServices.serviceToDict(Service.objects.get(pk=self._args[1]), True)
         except:
             raise RequestError(ugettext('Service not found'))
+
+    def test(self, type_):
+        from uds.core.Environment import Environment
+
+        spType = services.factory().lookup(type_)
+        res = spType.test(Environment.getTempEnv(), self._params)
+        if res[0]:
+            return 'ok'
+        else:
+            return res[1]
