@@ -98,7 +98,9 @@ class Transports(ModelHandler):
         try:
             networks = self._params['networks']
         except:  # No networks passed in, this is ok
+            logger.debug('No networks')
             return
-
+        if networks is None:
+            return
         logger.debug('Params: {0}'.format(networks))
         item.networks = Network.objects.filter(id__in=networks)

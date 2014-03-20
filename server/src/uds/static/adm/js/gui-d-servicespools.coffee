@@ -75,10 +75,7 @@ gui.servicesPools.link = (event) ->
   fillState = (data) ->
     $.each data, (index, value) ->
       if value.state is "U"
-        if value.os_state isnt "" and value.os_state isnt "U"
-          value.state = gettext("Waiting OS")
-        else
-          value.state = gettext("Ready")
+        value.state = if value.os_state isnt "" and value.os_state isnt "U" then gettext("Waiting OS") else value.state = gettext("Ready")
         return
       if value.state is "R"
         value.state = gettext("Waiting for removal")
@@ -298,6 +295,11 @@ gui.servicesPools.link = (event) ->
               "delete"
               "xls"
             ])
+            
+            onData: (data) ->
+              fillState data
+              return
+
             onRowSelect: (selected) ->
               service = selected[0]
               if prevAssignedLogTbl

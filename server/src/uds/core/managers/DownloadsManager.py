@@ -71,7 +71,7 @@ class DownloadsManager(object):
         @param path: path to file
         @params zip: If download as zip
         '''
-        _id = uuid.uuid5(self._namespace, str(name))
+        _id = unicode(uuid.uuid5(self._namespace, str(name)))
         self._downloadables[_id] = {'name': name, 'comment': comment, 'path': path, 'mime': mime}
 
     def getDownloadables(self):
@@ -79,7 +79,8 @@ class DownloadsManager(object):
 
     def send(self, request, _id):
         if _id not in self._downloadables:
-            return Http404()
+            logger.error('ID {0} not found in {1}!!!'.format(_id, self._downloadables))
+            raise Http404
         return self.__send_file(request, self._downloadables[_id]['name'], self._downloadables[_id]['path'], self._downloadables[_id]['mime'])
 
     def __send_file(self, request, name, filename, mime):

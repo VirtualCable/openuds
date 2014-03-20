@@ -112,9 +112,9 @@ gui.providers.link = (event) ->
             "delete"
             "xls"
           ]
-          onEdit: gui.methods.typedEdit(services, gettext("Edit service"), gettext("Service creation error"), testButton)
-          onNew: gui.methods.typedNew(services, gettext("New service"), gettext("Service saving error"), testButton)
-          onDelete: gui.methods.del(services, gettext("Delete service"), gettext("Service deletion error"), testButton)
+          onEdit: gui.methods.typedEdit(services, gettext("Edit service"), gettext("Service creation error"))
+          onNew: gui.methods.typedNew(services, gettext("New service"), gettext("Service saving error"))
+          onDelete: gui.methods.del(services, gettext("Delete service"), gettext("Service deletion error"),)
           scrollToTable: false
           onLoad: (k) ->
             gui.tools.unblockUI()

@@ -29,7 +29,7 @@ Handlebars.registerHelper "eachKey", (context, options) ->
 # Equal comparision (like if helper, but with comparation)
 # Use as block as {{#ifequals [element] [element]}}....{{/ifequals}}
 Handlebars.registerHelper "ifequals", (context1, context2, options) ->
-  if context1 is context2
+  if String(context1) is String(context2)
     options.fn this
   else
     options.inverse this
