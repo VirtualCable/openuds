@@ -1,6 +1,9 @@
 # jshint strict: true 
 ((gui, $, undefined_) ->
   "use strict"
+
+  # Public attributes
+  gui.debug = off
   
   # "public" methods
   gui.doLog = (args...)->
@@ -393,8 +396,5 @@
 
       return
 
-  
-  # Public attributes
-  gui.debug = true
   return
 ) window.gui = window.gui or {}, jQuery

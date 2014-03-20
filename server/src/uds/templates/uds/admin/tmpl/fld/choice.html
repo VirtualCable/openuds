@@ -5,7 +5,7 @@
 {% verbatim %}
 <select class="selectpicker show-menu-arrow show-tick {{ css }}"  name="{{ name }}" data-style="btn-default" data-width="100%" id="{{ name }}_field" {{# if readonly }} disabled{{/ if }}>
     {{#each values }}
-    <option value="{{ id }}"{{# ifequals id ../value }}selected{{/ ifequals }}>{{ text }} --> {{ id }} {{ ../value }}</option>
+    <option value="{{ id }}"{{# ifequals id ../value }}selected{{/ ifequals }}>{{ text }}</option>
     {{/each}}
 </select>
 {% endverbatim %}
