@@ -62,7 +62,6 @@ class DeployedServiceRemover(Job):
     def __init__(self, environment):
         super(DeployedServiceRemover, self).__init__(environment)
 
-    @transaction.atomic
     def startRemovalOf(self, ds):
         # Get publications in course...., can be at most 1!!!
         logger.debug('Removal process of {0}'.format(ds))
@@ -80,7 +79,6 @@ class DeployedServiceRemover(Job):
         ds.name = ds.name + ' (removed)'
         ds.save()
 
-    @transaction.atomic
     def continueRemovalOf(self, ds):
         # First, we remove all publications and user services in "info_state"
         ds.userServices.select_for_update().filter(state__in=State.INFO_STATES).delete()

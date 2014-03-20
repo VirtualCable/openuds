@@ -18,13 +18,13 @@
                     {{/ eachKey }}
                 </ul>
                 <div class="row">    
-                    <div class="tab-content col-md-12 col-md-offset-0 col-lg-6 col-lg-offset-1">
+                    <div class="tab-content col-md-12 col-md-offset-0 col-lg-8 col-lg-offset-2">
                         {{# eachKey config }}
                         <div class="tab-pane {{# if first }}active{{/ if }}" id="section_{{ key }}">
                             {{# eachKey value }}
                             <div class="form-group">
-                               <label for="fld_{{ clean_whitespace ../key }}{{ key }}" class="col-sm-3 control-label">{{ key }}</label>
-                               <div class="col-sm-9">
+                               <label for="fld_{{ clean_whitespace ../key }}{{ key }}" class="col-sm-5 control-label">{{ key }}</label>
+                               <div class="col-sm-6">
                                {{# if value.crypt }}
                                    <div class="input-group">
                                         <input type="password" class="form-control" data-section="{{ ../../key }}" data-key="{{ ../key }}" id="fld_{{ clean_whitespace ../../key }}{{ clean_whitespace ../key }}" value="€fa{}#42123~#||23|ßðđæ">

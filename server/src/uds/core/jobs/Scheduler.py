@@ -42,7 +42,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-03-20'
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +107,7 @@ class Scheduler(object):
         jobInstance = None
         try:
             now = getSqlDatetime()  # Datetimes are based on database server times
-            fltr = Q(state=State.FOR_EXECUTE) & (Q(owner_server=self._hostname) | Q(owner_server='')) & (Q(last_execution__gt=now) | Q(next_execution__lt=now))
+            fltr = Q(state=State.FOR_EXECUTE) & (Q(last_execution__gt=now) | Q(next_execution__lt=now))
             with transaction.atomic():
                 # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
                 # This params are all set inside fltr (look at __init__)

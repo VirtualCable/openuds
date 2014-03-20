@@ -334,7 +334,7 @@ class DetailModelRestApi extends BasicModelRest
 
   # Generic "Invoke" method (with no args, if needed, put them on "method" after "?" as normal url would be
   invoke: (method, success_fnc, fail_fnc) ->
-    @base.get
+    @get
       id: method
       success: success_fnc
       fail: fail_fnc

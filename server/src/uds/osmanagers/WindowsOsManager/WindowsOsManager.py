@@ -31,7 +31,7 @@ def scrambleMsg(data):
     for c in data[::-1]:
         res.append(chr(ord(c) ^ n))
         n = (n + ord(c)) & 0xFF
-    return "".join(res).encode('hex')
+    return unicode(str.join(str(''), res).encode('hex'))
 
 
 class WindowsOsManager(osmanagers.OSManager):
@@ -52,16 +52,15 @@ class WindowsOsManager(osmanagers.OSManager):
         defvalue='keep'
     )
 
-
     @staticmethod
-    def validateLen(len):
+    def validateLen(length):
         try:
-            len = int(len)
+            length = int(length)
         except Exception:
             raise osmanagers.OSManager.ValidationException(_('Length must be numeric!!'))
-        if len > 6 or len < 1:
-            raise osmanagers.OSManager.ValidationException(_('Length must be betwen 1 and six'))
-        return len
+        if length > 6 or length < 1:
+            raise osmanagers.OSManager.ValidationException(_('Length must be betwen 1 and 6'))
+        return length
 
     def __setProcessUnusedMachines(self):
         self.processUnusedMachines = self._onLogout == 'remove'
