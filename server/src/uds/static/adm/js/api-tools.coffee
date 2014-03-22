@@ -41,9 +41,9 @@ strftime = (fmt, d, locale) ->
 
 # locale is optional
 strftimeTZ = (fmt, d, locale, timezone) ->
-  if typeof locale is "number" and timezone is undefined
+  if typeof locale is "number" and not timezone?
     timezone = locale
-    locale = undefined
+    locale = null
   _strftime fmt, d, locale,
     timezone: timezone
 
@@ -68,7 +68,7 @@ _strftime = (fmt, d, locale, options) ->
   # d and locale are optional so check if d is really the locale
   if d and not quacksLikeDate(d)
     locale = d
-    d = undefined
+    d = null
   d = d or new Date()
   locale = locale or DefaultLocale
   locale.formats = locale.formats or {}
@@ -83,8 +83,8 @@ _strftime = (fmt, d, locale, options) ->
   # Some other syntax extensions from Ruby are supported: %-, %_, and %0
   # to pad with nothing, space, or zero (respectively).
   fmt.replace /%([-_0]?.)/g, (_, c) ->
-    mod = undefined
-    padding = undefined
+    mod = null
+    padding = null
     if c.length is 2
       mod = c[0]
       
@@ -217,8 +217,8 @@ pad = (n, padding, length) ->
     padding = "0"
   
   # Defaults handle pad(n) and pad(n, <padding>)
-  padding = "0"  if padding is undefined
-  length = length or 2
+  padding ?= "0"
+  length ?= 2
   s = String(n)
   
   # padding may be an empty string, don't loop forever if it is

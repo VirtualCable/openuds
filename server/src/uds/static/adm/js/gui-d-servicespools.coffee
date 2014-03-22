@@ -148,14 +148,14 @@ gui.servicesPools.link = (event) ->
           servPool = selected[0]
           gui.doLog "Selected services pool", servPool
           clearDetails()
-          service = undefined
+          service = null
           try
             service = availableServices[servPool.service_id]
           catch e
             gui.doLog "Exception on rowSelect", e
             gui.notify "Service pool " + gettext("error"), "danger"
             return
-          if service isnt undefined
+          if service?
             $("#detail-placeholder").removeClass "hidden"
           else
             $("#detail-placeholder").addClass "hidden"
@@ -164,7 +164,7 @@ gui.servicesPools.link = (event) ->
           # 
           #                     * Cache Part
           #                     
-          cachedItems = undefined
+          cachedItems = null
           
           # If service does not supports cache, do not show it
           # Shows/hides cache
@@ -173,7 +173,7 @@ gui.servicesPools.link = (event) ->
             cachedItems = new GuiElement(api.servicesPools.detail(servPool.id, "cache"), "cache")
             
             # Cached items table
-            prevCacheLogTbl = undefined
+            prevCacheLogTbl = null
             cachedItemsTable = cachedItems.table(
               container: "cache-placeholder_tbl"
               buttons: [
@@ -205,7 +205,7 @@ gui.servicesPools.link = (event) ->
           #
           #                     * Groups part
           #                     
-          groups = undefined
+          groups = null
           
           # Shows/hides groups
           if service.info.must_assign_manually is false
@@ -282,7 +282,7 @@ gui.servicesPools.link = (event) ->
           #
           #                     * Assigned services part
           #                     
-          prevAssignedLogTbl = undefined
+          prevAssignedLogTbl = null
           assignedServices = new GuiElement(api.servicesPools.detail(servPool.id, "services"), "services")
           assignedServicesTable = assignedServices.table(
             container: "assigned-services-placeholder_tbl"
@@ -375,7 +375,7 @@ gui.servicesPools.link = (event) ->
           #
           #                     * Publications part
           #                     
-          publications = undefined
+          publications = null
           if service.info.needs_publication
             $("#publications-placeholder_tab").removeClass "hidden"
             pubApi = api.servicesPools.detail(servPool.id, "publications")
@@ -446,7 +446,7 @@ gui.servicesPools.link = (event) ->
           $.each data, (index, value) ->
             try
               service = availableServices[value.service_id]
-              if service is undefined
+              if not service?
                 value.parent = gettext("undefined")
                 return
               style = "display:inline-block; background: url(data:image/png;base64," + service.info.icon + "); " + "width: 16px; height: 16px; vertical-align: middle;"

@@ -5,7 +5,7 @@ $ = jQuery
 
 @api.spreadsheet.cell = (data, type, style) ->
   type = type or "String"
-  if style != undefined
+  if style?
     style = " ss:StyleID=\"" + style + "\""
   else
     style = ""

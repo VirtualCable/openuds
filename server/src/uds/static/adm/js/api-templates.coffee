@@ -131,11 +131,11 @@ api.templates.evaluate = (str, context) ->
   console.log "Evaluating ", str
   # Figure out if we're getting a template, or if we need to
   # load the template - and be sure to cache the result (compiled template).
-  cached = undefined
+  cached = null
   unless /\W/.test(str)
     console.log @cache
     cached = @cache.get("_" + str)
-    if cached is undefined
+    if not cached?
       cached = api.templates.evaluate(document.getElementById(str).innerHTML)
       @cache.put "_" + str, cached
   template = cached or Handlebars.compile(str)

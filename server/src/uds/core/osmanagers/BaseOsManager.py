@@ -36,6 +36,8 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core import Module
 
+__updated__ = '2014-03-22'
+
 STORAGE_KEY = 'osmk'
 
 

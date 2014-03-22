@@ -11,13 +11,13 @@ gui.authenticators.link = (event) ->
   
   # Clears the log of the detail, in this case, the log of "users"
   # Memory saver :-)
-  detailLogTable = undefined
+  detailLogTable = null
   clearDetailLog = ->
-    if detailLogTable
+    if detailLogTable?
       $tbl = $(detailLogTable).dataTable()
       $tbl.fnClearTable()
       $tbl.fnDestroy()
-      detailLogTable = undefined
+      detailLogTable = null
     $("#users-log-placeholder").empty()
     return
 
@@ -248,7 +248,7 @@ gui.authenticators.link = (event) ->
 
           onDelete: gui.methods.del(group, gettext("Delete group"), gettext("Group deletion error"))
         )
-        tmpLogTable = undefined
+        tmpLogTable = null
         
         # New button will only be shown on authenticators that can create new users
         usrButtons = [

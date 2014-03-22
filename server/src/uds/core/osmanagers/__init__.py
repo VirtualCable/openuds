@@ -35,6 +35,8 @@ UDS os managers related interfaces and classes
 from __future__ import unicode_literals
 from BaseOsManager import OSManager
 
+__updated__ = '2014-03-22'
+
 
 def factory():
     '''

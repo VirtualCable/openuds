@@ -24,7 +24,7 @@
     # itemGui is expected to have fields sorted by .gui.order (REST api returns them sorted)
     $.each itemGui, (index, f) ->
       # Not exactly a field, maybe some other info...
-      return  if f.gui is undefined
+      return  if not f.gui?
       
       # Fix multiline text fields to textbox
       f.gui.type = "textbox"  if f.gui.type is "text" and f.gui.multiline
@@ -68,7 +68,7 @@
     originalValues: originalValues
 
   gui.forms.fromFields = (fields, item) ->
-    editing = item isnt `undefined` # Locate real Editing
+    editing = item? # Locate real Editing
     item = item or id: ""
     form = "<form class=\"form-horizontal\" role=\"form\">" + "<input type=\"hidden\" name=\"id\" class=\"modal_field_data\" value=\"" + item.id + "\">"
     fillers = []
@@ -165,7 +165,7 @@
           res[name] = $field.is(":checked")
         else
           res[name] = $field.val()
-          res[name] = []  if res[name] is undefined and $field.is("select")
+          res[name] = []  if not res[name]? and $field.is("select")
       return
 
     gui.doLog res
@@ -213,7 +213,7 @@
     
     # Append click events for custom buttons on footer
     $.each clickEventHandlers, (undefined_, value) ->
-      if value.action
+      if value.action?
         $(value.id).on "click", (event) ->
           value.action event, formSelector, closeFnc
           return

@@ -35,6 +35,8 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 
+__updated__ = '2014-03-22'
+
 
 class Service(Module):
     '''

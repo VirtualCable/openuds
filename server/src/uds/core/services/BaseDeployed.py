@@ -36,6 +36,8 @@ from uds.core import Environmentable
 from uds.core import Serializable
 from uds.core.util.State import State
 
+__updated__ = '2014-03-22'
+
 
 class UserDeployment(Environmentable, Serializable):
     '''

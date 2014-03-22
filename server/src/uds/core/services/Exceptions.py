@@ -30,6 +30,9 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+
+__updated__ = '2014-03-22'
 
 
 class UnsupportedException(Exception):

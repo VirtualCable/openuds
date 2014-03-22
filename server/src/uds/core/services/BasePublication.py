@@ -35,6 +35,8 @@ from __future__ import unicode_literals
 from uds.core import Environmentable
 from uds.core import Serializable
 
+__updated__ = '2014-03-22'
+
 
 class Publication(Environmentable, Serializable):
     '''

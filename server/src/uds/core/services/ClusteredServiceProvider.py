@@ -37,6 +37,8 @@ from uds.core.util.Config import GlobalConfig
 
 import logging
 
+__updated__ = '2014-03-22'
+
 logger = logging.getLogger(__name__)
 
 HEIGHT_OF_CPU = 5

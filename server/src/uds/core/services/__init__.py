@@ -32,6 +32,7 @@ UDS Service modules interfaces and classes.
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
 from BaseServiceProvider import ServiceProvider
 from BaseService import Service
@@ -44,6 +45,8 @@ from ClusteredPublication import ClusteredPublication
 from ClusteredUserDeployment import ClusteredUserDeployment
 
 import Exceptions
+
+__updated__ = '2014-03-22'
 
 
 def factory():
