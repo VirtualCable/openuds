@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-18 03:14+0100\n"
+"POT-Creation-Date: 2014-03-26 03:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: REST/model.py:88 REST/methods/authenticators.py:58
+#: REST/model.py:91 REST/methods/authenticators.py:58
 #: REST/methods/networks.py:55 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:59 REST/methods/services_pools.py:63
 #: REST/methods/transports.py:55 REST/methods/user_services.py:180
@@ -51,11 +51,11 @@ msgstr ""
 msgid "Name"
 msgstr "Name"
 
-#: REST/model.py:89
+#: REST/model.py:92
 msgid "Name of this element"
 msgstr "Name dieses Elements"
 
-#: REST/model.py:95 REST/methods/authenticators.py:59
+#: REST/model.py:98 REST/methods/authenticators.py:59
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:60
 #: REST/methods/services.py:139 REST/methods/services_pools.py:66
 #: REST/methods/transports.py:56 REST/methods/user_services.py:211
@@ -65,39 +65,39 @@ msgstr "Name dieses Elements"
 msgid "Comments"
 msgstr "Kommentare"
 
-#: REST/model.py:96
+#: REST/model.py:99
 msgid "Comments for this element"
 msgstr "Kommentare für dieses element"
 
-#: REST/model.py:104 REST/methods/authenticators.py:60
+#: REST/model.py:107 REST/methods/authenticators.py:60
 #: REST/methods/transports.py:54 REST/methods/user_services.py:208
 msgid "Priority"
 msgstr "Priorität"
 
-#: REST/model.py:105
+#: REST/model.py:108
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Bestimmt die Priorität dieses Elements (niedrigere Zahl bedeutet höhere "
 "Priorität)"
 
-#: REST/model.py:115
+#: REST/model.py:118
 msgid "Short name"
 msgstr "Kurzname"
 
-#: REST/model.py:116
+#: REST/model.py:119
 msgid "Short name of this element"
 msgstr "Kurzer Name für dieses element"
 
-#: REST/model.py:166
+#: REST/model.py:169
 msgid "Invalid Request"
 msgstr "Ungültige Anforderung"
 
-#: REST/model.py:169
+#: REST/model.py:172
 msgid "Method not found"
 msgstr "Methode nicht gefunden"
 
-#: REST/model.py:172
+#: REST/model.py:175
 msgid "Item not found"
 msgstr "Element nicht gefunden"
 
@@ -412,7 +412,7 @@ msgstr "Momentane Benutzer"
 #: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
 #: transports/RGS-enterprise/RGSTransport.py:42
 #: transports/RGS-enterprise/TRGSTransport.py:47
-#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:69
+#: transports/TSNX/TSNXTransport.py:66 web/forms/LoginForm.py:73
 msgid "Username"
 msgstr "Benutzername"
 
@@ -526,7 +526,7 @@ msgstr ""
 #: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
 #: transports/RGS-enterprise/RGSTransport.py:43
 #: transports/RGS-enterprise/TRGSTransport.py:48
-#: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:70
+#: transports/TSNX/TSNXTransport.py:67 web/forms/LoginForm.py:74
 msgid "Password"
 msgstr "Passwort"
 
@@ -1116,24 +1116,24 @@ msgstr ""
 "Kann weder entfernen noch Abbrechen {0} Ursache ihrer Staaten nicht erlaubt "
 "es"
 
-#: core/osmanagers/BaseOsManager.py:51
+#: core/osmanagers/BaseOsManager.py:53
 msgid "Base OS Manager"
 msgstr "Base OS Manager"
 
-#: core/osmanagers/BaseOsManager.py:53
+#: core/osmanagers/BaseOsManager.py:55
 msgid "Base Manager"
 msgstr "Base Manager"
 
-#: core/services/BaseService.py:85 core/services/BaseService.py:97
+#: core/services/BaseService.py:87 core/services/BaseService.py:99
 msgid "Base Service"
 msgstr "Basisdienst"
 
-#: core/services/BaseService.py:118 core/services/BaseService.py:127
+#: core/services/BaseService.py:120 core/services/BaseService.py:129
 #: services/Sample/SampleService.py:92 services/Sample/SampleService.py:98
 msgid "None"
 msgstr "Keine"
 
-#: core/services/ClusteredService.py:40 core/services/ClusteredService.py:42
+#: core/services/ClusteredService.py:42 core/services/ClusteredService.py:44
 msgid "Base Clustered Service"
 msgstr "Base gruppierten Dienst"
 
@@ -1467,15 +1467,15 @@ msgstr ""
 "OS-Manager, um Windows-Rechner ohne Domäne steuern. (Im Grunde benennt "
 "Maschine)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:61
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:60
 msgid "Length must be numeric!!"
 msgstr "Länge muss numerisch sein!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:63
-msgid "Length must be betwen 1 and six"
-msgstr "Länge muss zwischen 1 und 6"
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+msgid "Length must be betwen 1 and 6"
+msgstr "Die Länge muss zwischen 1 und 6 sein."
 
-#: osmanagers/WindowsOsManager/__init__.py:25
+#: osmanagers/WindowsOsManager/__init__.py:26
 msgid ""
 "UDS Actor for windows machines <b>(Important!! Requires .net framework 3.5 "
 "sp1)</b>"
@@ -1766,15 +1766,15 @@ msgstr "Timeout in Sekunden der Verbindung zum VC"
 msgid "IP "
 msgstr "IP "
 
-#: services/PhysicalMachines/IPMachinesService.py:46
+#: services/PhysicalMachines/IPMachinesService.py:48
 msgid "List of IPS"
 msgstr "Liste der IPS"
 
-#: services/PhysicalMachines/IPMachinesService.py:49
+#: services/PhysicalMachines/IPMachinesService.py:51
 msgid "Physical machines accesed by ip"
 msgstr "Physische Computer Zugang von ip"
 
-#: services/PhysicalMachines/IPMachinesService.py:51
+#: services/PhysicalMachines/IPMachinesService.py:53
 msgid "This service provides access to POWERED-ON Machines by ip"
 msgstr ""
 "Dieser Service ermöglicht den Zugriff auf verknüpfte Clones Maschinen auf "
@@ -1928,10 +1928,6 @@ msgstr "VMWare Virtual Center-Anbieter"
 #: services/Vmware_enterprise/ServiceProviderVC.py:41
 msgid "Provides connection to Virtual Center Services"
 msgstr "Stellt Verbindung zu Virtual-Center-Dienstleistungen"
-
-#: services/Vmware_enterprise/ServiceProviderVC.py:110
-msgid "Error testing connection"
-msgstr "Fehler Test Verbindung"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:113
 msgid "VmwareVC Provider: "
@@ -2133,11 +2129,11 @@ msgstr "Konfiguration"
 msgid "Flush cache"
 msgstr "Cache leeren"
 
-#: templates/uds/admin/snippets/navbar.html:56
+#: templates/uds/admin/snippets/navbar.html:58
 msgid "Exit"
 msgstr "Ausfahrt"
 
-#: templates/uds/admin/snippets/navbar.html:57
+#: templates/uds/admin/snippets/navbar.html:59
 #: templates/uds/html5/snippets/navbar.html:47
 #: templates/uds/pruebas/snippets/navbar.html:47
 msgid "Logout"
@@ -2205,7 +2201,7 @@ msgstr "Aktiviert"
 msgid "Disabled"
 msgstr "Behinderte"
 
-#: templates/uds/admin/tmpl/pool_add_group.html:5 web/forms/LoginForm.py:71
+#: templates/uds/admin/tmpl/pool_add_group.html:5 web/forms/LoginForm.py:75
 msgid "Authenticator"
 msgstr "Authentifikator"
 
@@ -2294,13 +2290,13 @@ msgstr ""
 "(nicht direkt im UDS, zur Verfügung gestellt sondern als optional Transport "
 "als eine externe Komponente)"
 
-#: templates/uds/html5/about.html:37
+#: templates/uds/html5/about.html:38
 msgid "If you found that we missed to mention any component, plese let us know"
 msgstr ""
 "Wenn Sie festgestellt, dass wir verpassten erwähnen jede Komponente, bitte "
 "lassen Sie uns wissen"
 
-#: templates/uds/html5/about.html:38
+#: templates/uds/html5/about.html:39
 #: templates/uds/html5/service_not_ready.html:17
 #: templates/uds/pruebas/service_not_ready.html:17
 msgid "Back"
@@ -2403,7 +2399,7 @@ msgstr "Toggle navigation"
 msgid "About"
 msgstr "Über"
 
-#: templates/uds/html5/templates/base.html:59
+#: templates/uds/html5/templates/base.html:61
 #: templates/uds/pruebas/templates/base.html:59
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
@@ -2907,13 +2903,21 @@ msgstr ""
 msgid "Authenticator do not provides information"
 msgstr "Authentifikator informiert nicht"
 
-#: web/forms/LoginForm.py:50
+#: web/forms/LoginForm.py:52
 msgid "Select authenticator"
 msgstr "Wählen Sie Authentifikator"
 
-#: web/forms/LoginForm.py:54
+#: web/forms/LoginForm.py:56
 msgid "authenticator"
 msgstr "Authentifikator"
+
+#: xmlrpc/__init__.py:44
+msgid ""
+"UDS Client Administration Interface <b>(Important!! Requires .net framework "
+"3.5 sp1)</b>"
+msgstr ""
+"UDS Client-Administrationsoberfläche <b>(wichtig!! .Net Framework erfordert "
+"3.5 sp1)</b>"
 
 #: xmlrpc/auths/AdminAuth.py:115
 msgid "Credentials no longer valid"
@@ -2923,29 +2927,29 @@ msgstr "Anmeldeinformationen nicht mehr gültig"
 msgid "Administration"
 msgstr "Verwaltung"
 
-#: xmlrpc/auths/Authenticators.py:107
+#: xmlrpc/auths/Authenticators.py:111
 msgid "Authenticator does not exists"
 msgstr "Authentifikator ist nicht vorhanden"
 
-#: xmlrpc/auths/Authenticators.py:163 xmlrpc/osmanagers/OSManagers.py:117
-#: xmlrpc/services/ServiceProviders.py:115
-#: xmlrpc/services/ServiceProviders.py:139 xmlrpc/services/Services.py:172
+#: xmlrpc/auths/Authenticators.py:171 xmlrpc/osmanagers/OSManagers.py:117
+#: xmlrpc/services/ServiceProviders.py:121
+#: xmlrpc/services/ServiceProviders.py:146 xmlrpc/services/Services.py:172
 #: xmlrpc/services/Services.py:196 xmlrpc/transports/Networks.py:87
 #: xmlrpc/transports/Networks.py:98
 #, python-format
 msgid "Name %s already exists"
 msgstr "Name %s existiert bereits"
 
-#: xmlrpc/auths/Authenticators.py:240
+#: xmlrpc/auths/Authenticators.py:253
 msgid "Authenticator do not supports search"
 msgstr "Authentifikator ist nicht vorhanden"
 
-#: xmlrpc/auths/Authenticators.py:246
+#: xmlrpc/auths/Authenticators.py:259
 msgid "Specified authenticator do not exists anymore. Please, reload gui"
 msgstr ""
 "Angegebenen Authentifikator tun ist nicht mehr vorhanden. Bitte laden gui"
 
-#: xmlrpc/auths/Authenticators.py:250
+#: xmlrpc/auths/Authenticators.py:263
 msgid "BUG: Reached a point that should never have been reached!!!"
 msgstr "BUG: Erreicht einen Punkt, der nie zustande gekommen sind, sollten!!!"
 
@@ -2995,15 +2999,15 @@ msgstr "Bereitgestellte Dienst nicht gefunden werden."
 msgid "Transport does not exists"
 msgstr "Verkehr ist nicht vorhanden"
 
-#: xmlrpc/services/ServiceProviders.py:154
+#: xmlrpc/services/ServiceProviders.py:162
 msgid "Can't delete service provider with services associated"
 msgstr "Service-Provider kann nicht mit verbundenen Services gelöscht werden"
 
-#: xmlrpc/services/ServiceProviders.py:157
+#: xmlrpc/services/ServiceProviders.py:165
 msgid "Can't locate the service provider"
 msgstr "Der Diensteanbieter kann nicht gefunden werden."
 
-#: xmlrpc/services/ServiceProviders.py:157 xmlrpc/services/Services.py:214
+#: xmlrpc/services/ServiceProviders.py:165 xmlrpc/services/Services.py:214
 #: xmlrpc/transports/Networks.py:71 xmlrpc/transports/Networks.py:79
 #: xmlrpc/transports/Networks.py:96
 msgid "Please, refresh interface"
