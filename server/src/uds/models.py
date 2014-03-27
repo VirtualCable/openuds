@@ -1999,7 +1999,7 @@ class DelayedTask(models.Model):
     # objects = LockingManager()
 
     def __unicode__(self):
-        return u"Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.owner_server)
+        return u"Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.execution_time)
 
 
 class Network(models.Model):

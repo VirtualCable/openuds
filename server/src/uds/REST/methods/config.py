@@ -40,7 +40,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /auth path
+# Enclosed methods under /config path
 
 
 class Config(Handler):

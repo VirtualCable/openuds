@@ -50,7 +50,6 @@ class PublicationOldMachinesCleaner(DelayedTask):
         super(PublicationOldMachinesCleaner, self).__init__()
         self._id = publicationId
 
-    @transaction.atomic
     def run(self):
         try:
             dsp = DeployedServicePublication.objects.get(pk=self._id)
@@ -75,12 +74,11 @@ class PublicationLauncher(DelayedTask):
     def run(self):
         logger.debug('Publishing')
         try:
-            with transaction.atomic():
-                dsp = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
-                if dsp.state != State.LAUNCHING:  # If not preparing (may has been canceled by user) just return
-                    return
-                dsp.state = State.PREPARING
-                dsp.save()
+            dsp = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
+            if dsp.state != State.LAUNCHING:  # If not preparing (may has been canceled by user) just return
+                return
+            dsp.state = State.PREPARING
+            dsp.save()
             pi = dsp.getInstance()
             state = pi.publish()
             deployedService = dsp.deployed_service
@@ -151,7 +149,6 @@ class PublicationFinishChecker(DelayedTask):
         '''
         DelayedTaskRunner.runner().insert(PublicationFinishChecker(dsp), pi.suggestedTime, PUBTAG + str(dsp.id))
 
-    @transaction.atomic
     def run(self):
         logger.debug('Checking publication finished {0}'.format(self._publishId))
         try:
@@ -180,9 +177,8 @@ class PublicationManager(object):
         return PublicationManager._manager
 
     def publish(self, deployedService):
-        with transaction.atomic():
-            if deployedService.publications.select_for_update().filter(state__in=State.PUBLISH_STATES).count() > 0:
-                raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
+        if deployedService.publications.select_for_update().filter(state__in=State.PUBLISH_STATES).count() > 0:
+            raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
         try:
             now = getSqlDatetime()
             dsp = deployedService.publications.create(state=State.LAUNCHING, state_date=now, publish_date=now, revision=deployedService.current_pub_revision)
@@ -191,7 +187,6 @@ class PublicationManager(object):
             logger.debug('Caught exception at publish: {0}'.format(e))
             raise PublishException(str(e))
 
-    @transaction.atomic
     def cancel(self, dsp):
         dsp = DeployedServicePublication.objects.select_for_update().get(pk=dsp.id)
         if dsp.state not in State.PUBLISH_STATES:
@@ -211,7 +206,6 @@ class PublicationManager(object):
         except Exception, e:
             raise PublishException(str(e))
 
-    @transaction.atomic
     def unpublish(self, dsp):
         if State.isUsable(dsp.state) == False and State.isRemovable(dsp.state) == False:
             raise PublishException(_('Can\'t unpublish non usable publication'))

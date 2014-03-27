@@ -21,7 +21,7 @@
                     <div class="tab-content col-md-12 col-md-offset-0 col-lg-8 col-lg-offset-2">
                         {{# eachKey config }}
                         <div class="tab-pane {{# if first }}active{{/ if }}" id="section_{{ key }}">
-                            {{# eachKey value }}
+                            {{# eachKeySorted value }}
                             <div class="form-group">
                                <label for="fld_{{ clean_whitespace ../key }}{{ key }}" class="col-sm-5 control-label">{{ key }}</label>
                                <div class="col-sm-6">
@@ -46,7 +46,7 @@
                                {{/ if }}
                                </div>
                             </div>
-                            {{/ eachKey }}
+                            {{/ eachKeySorted }}
                         </div>
                         {{/ eachKey }}
                     </div>

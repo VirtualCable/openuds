@@ -70,7 +70,6 @@ class ServiceCacheUpdater(Job):
         log.doLog(deployedService, log.WARN, 'Deployed service is restrained due to errors', log.INTERNAL)
         logger.info('Deployed service {0} is restrained, will check this later'.format(deployedService.name))
 
-    @transaction.atomic
     def bestDeployedServiceNeedingCacheUpdate(self):
         # State filter for cached and inAssigned objects
         # First we get all deployed services that could need cache generation
@@ -180,15 +179,14 @@ class ServiceCacheUpdater(Job):
         # First, we try to assign from L2 cache
         if cacheL2 > 0:
             valid = None
-            with transaction.atomic():
-                for n in ds.cachedUserServices().select_for_update().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date'):
-                    if n.needsOsManager():
-                        if State.isUsable(n.state) is False or State.isUsable(n.os_state):
-                            valid = n
-                            break
-                    else:
+            for n in ds.cachedUserServices().select_for_update().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date'):
+                if n.needsOsManager():
+                    if State.isUsable(n.state) is False or State.isUsable(n.os_state):
                         valid = n
                         break
+                else:
+                    valid = n
+                    break
 
             if valid is not None:
                 valid.moveToLevel(services.UserDeployment.L1_CACHE)

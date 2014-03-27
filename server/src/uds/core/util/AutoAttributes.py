@@ -30,7 +30,6 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
 from uds.core.Serializable import Serializable
 import cPickle

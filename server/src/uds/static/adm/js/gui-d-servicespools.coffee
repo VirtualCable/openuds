@@ -92,6 +92,11 @@ gui.servicesPools.link = (event) ->
       if value.state is "P"
         value.state = gettext("Generating")
         return
+      if value.state is "K"
+        value.state = gettext("Cancelling")
+        return
+      if value.state is "C"
+        value.state = gettext("Cancelled")
       value.state = gettext("Unknown")
       return
 

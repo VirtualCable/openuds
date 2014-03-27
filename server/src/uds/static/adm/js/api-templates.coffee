@@ -25,6 +25,21 @@ Handlebars.registerHelper "eachKey", (context, options) ->
     first = false
   ret
 
+Handlebars.registerHelper "eachKeySorted", (context, options) ->
+  ret = ""
+  first = true
+  keys = (k for k of context)
+  sortedKeys = keys.sort (a,b) -> a.toLowerCase().localeCompare(b.toLowerCase())
+
+  for prop in sortedKeys
+    ret = ret + options.fn(
+      key: prop
+      value: context[prop]
+      first: first
+    )
+    first = false
+  ret
+
 
 # Equal comparision (like if helper, but with comparation)
 # Use as block as {{#ifequals [element] [element]}}....{{/ifequals}}

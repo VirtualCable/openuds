@@ -111,7 +111,6 @@ class ClusterMigrationTask(DelayedTask):
         self._state = service.state
 
     @staticmethod
-    @transaction.atomic
     def checkAndUpdateState(userService, userServiceInstance, state):
         '''
         Checks the value returned from invocation to publish or checkPublishingState, updating the dsp database object
@@ -186,7 +185,6 @@ class ClusterBalancingTask(DelayedTask):
         self._id = providerId
 
     @staticmethod
-    @transaction.atomic
     def migrate(serviceId, toNode):
         try:
             service = UserService.objects.select_for_update().get(pk=serviceId)

@@ -58,11 +58,9 @@ class Storage(object):
         data = data.encode(Storage.CODEC)
         attr1 = '' if attr1 == None else attr1
         try:
-            with transaction.atomic():
-                dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)
+            dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)
         except Exception:
-            with transaction.atomic():
-                dbStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)
+            dbStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)
         logger.debug('Key saved')
 
     def put(self, skey, data):
