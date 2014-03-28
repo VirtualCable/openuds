@@ -112,7 +112,6 @@ class OVirtLinkedService(Service):
 
     minSpaceGB = gui.NumericField(length=3, label=_('Reserved Space'), defvalue='32', order=4, tooltip=_('Minimal free space in GB'), required=True)
 
-
     memory = gui.NumericField(label=_("Memory (Mb)"), length=4, defvalue=512, rdonly=False, order=5,
                               tooltip=_('Memory assigned to machines'), required=True)
 
@@ -182,7 +181,9 @@ class OVirtLinkedService(Service):
 
     def datastoreHasSpace(self):
         # Get storages for that datacenter
+        logger.debug('Checking datastore space for {0}'.format(self.datastore.value))
         info = self.parent().getStorageInfo(self.datastore.value)
+        logger.debug('Datastore Info: {0}'.format(info))
         availableGB = info['available'] / (1024 * 1024 * 1024)
         if availableGB < self.minSpaceGB.num():
             raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(self.minSpaceGB.num(), availableGB))

@@ -32,7 +32,7 @@ class oVirtHelpers(object):
         # Get storages for that datacenter
         for storage in provider.getDatacenterInfo(ci['datacenter_id'])['storage']:
             if storage['type'] == 'data':
-                space, free = storage['available'] / 1024 / 1024 / 1024, (storage['available'] - storage['used']) / 1024 / 1024 / 1024
+                space, free = (storage['available'] + storage['used']) / 1024 / 1024 / 1024, storage['available'] / 1024 / 1024 / 1024
 
                 res.append({'id': storage['id'], 'text': "%s (%4.2f Gb/%4.2f Gb) %s" % (storage['name'], space, free, storage['active'] and '(ok)' or '(disabled)')})
         data = [

@@ -70,33 +70,24 @@ gui.servicesPools.link = (event) ->
 
     return
 
-  
   # Fill "State" for cached and assigned services
   fillState = (data) ->
+    states = {
+      'R': gettext("Waiting for removal")
+      'M': gettext("Removing")
+      'S': gettext("Removed")
+      'E': gettext("Error")
+      'P': gettext("Generating")
+      'K': gettext("Cancelling")
+      'C': gettext("Cancelled")
+    }
     $.each data, (index, value) ->
       if value.state is "U"
         value.state = if value.os_state isnt "" and value.os_state isnt "U" then gettext("Waiting OS") else value.state = gettext("Ready")
         return
-      if value.state is "R"
-        value.state = gettext("Waiting for removal")
+      if states[value.state]?
+        value.state = states[value.state]
         return
-      if value.state is "M"
-        value.state = gettext("Removing")
-        return
-      if value.state is "S"
-        value.state = gettext("Removed")
-        return
-      if value.state is "E"
-        value.state = gettext("Error")
-        return
-      if value.state is "P"
-        value.state = gettext("Generating")
-        return
-      if value.state is "K"
-        value.state = gettext("Cancelling")
-        return
-      if value.state is "C"
-        value.state = gettext("Cancelled")
       value.state = gettext("Unknown")
       return
 

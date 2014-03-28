@@ -80,6 +80,23 @@ class DeployedServiceRemover(Job):
         ds.save()
 
     def continueRemovalOf(self, ds):
+        # Recheck that there is no publication created in "bad moment"
+        try:
+            publishing = ds.publications.filter(state=State.PREPARING)
+            for p in publishing:
+                p.cancel()
+        except:
+            pass
+
+        try:
+            # Now all publishments are canceling, let's try to cancel cache and assigned
+            uServices = ds.userServices.filter(state=State.PREPARING)
+            for u in uServices:
+                logger.debug('Canceling {0}'.format(u))
+                u.cancel()
+        except:
+            pass
+
         # First, we remove all publications and user services in "info_state"
         ds.userServices.select_for_update().filter(state__in=State.INFO_STATES).delete()
         # Mark usable user services as removable
