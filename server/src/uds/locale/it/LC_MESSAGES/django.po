@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-26 03:22+0100\n"
+"POT-Creation-Date: 2014-03-28 13:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -378,8 +378,8 @@ msgstr "Utenti correnti"
 #: auths/EDirectory_enterprise/Authenticator.py:79
 #: auths/RegexLdap/Authenticator.py:78 auths/SimpleLDAP/Authenticator.py:78
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
-#: services/HyperV_enterprise/HyperVProvider.py:83
-#: services/OVirt/OVirtProvider.py:93
+#: services/HyperV_enterprise/HyperVProvider.py:84
+#: services/OVirt/OVirtProvider.py:94
 #: services/Vmware_enterprise/ServiceProviderVC.py:30
 #: templates/uds/admin/tmpl/user.html:16 transports/HTML5RDP/HTML5RDP.py:64
 #: transports/NX/NXTransport.py:61 transports/NX/TSNXTransport.py:66
@@ -440,8 +440,8 @@ msgstr "richiesto da un modello che non esiste"
 #: auths/EDirectory_enterprise/Authenticator.py:62
 #: auths/RegexLdap/Authenticator.py:55 auths/SimpleLDAP/Authenticator.py:54
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
-#: services/HyperV_enterprise/HyperVProvider.py:81
-#: services/OVirt/OVirtProvider.py:92
+#: services/HyperV_enterprise/HyperVProvider.py:82
+#: services/OVirt/OVirtProvider.py:93
 #: services/Vmware_enterprise/ServiceProviderVC.py:28
 msgid "Host"
 msgstr "Host"
@@ -492,8 +492,8 @@ msgstr ""
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:32
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
-#: services/HyperV_enterprise/HyperVProvider.py:84
-#: services/OVirt/OVirtProvider.py:94 services/Sample/SampleService.py:131
+#: services/HyperV_enterprise/HyperVProvider.py:85
+#: services/OVirt/OVirtProvider.py:95 services/Sample/SampleService.py:131
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: templates/uds/admin/tmpl/user.html:78 transports/HTML5RDP/HTML5RDP.py:65
 #: transports/NX/NXTransport.py:62 transports/NX/TSNXTransport.py:67
@@ -514,8 +514,8 @@ msgstr "Password dell'utente ldap"
 #: auths/EDirectory_enterprise/Authenticator.py:67
 #: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:59
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
-#: services/HyperV_enterprise/HyperVProvider.py:85
-#: services/OVirt/OVirtProvider.py:95
+#: services/HyperV_enterprise/HyperVProvider.py:86
+#: services/OVirt/OVirtProvider.py:96
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Timeout"
 msgstr "Timeout"
@@ -595,7 +595,7 @@ msgstr "EDirectory Server IP o l'Hostname"
 #: auths/EDirectory_enterprise/Authenticator.py:63
 #: auths/RegexLdap/Authenticator.py:56 auths/SimpleLDAP/Authenticator.py:55
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
-#: services/HyperV_enterprise/HyperVProvider.py:82
+#: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
 msgid "Port"
 msgstr "Porta"
@@ -1022,22 +1022,22 @@ msgstr ""
 msgid "System Administrator"
 msgstr "Amministratore di sistema"
 
-#: core/managers/PublicationManager.py:185
+#: core/managers/PublicationManager.py:181
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Già pubblicando. Attendere la pubblicazione precedente finire e riprovare"
 
-#: core/managers/PublicationManager.py:198
+#: core/managers/PublicationManager.py:193
 msgid "Can't cancel non running publication"
 msgstr "Non è possibile annullare la pubblicazione non in esecuzione"
 
-#: core/managers/PublicationManager.py:217
+#: core/managers/PublicationManager.py:211
 msgid "Can't unpublish non usable publication"
 msgstr ""
 "Non è possibile annullare la pubblicazione pubblicazione non utilizzabile"
 
-#: core/managers/PublicationManager.py:220
+#: core/managers/PublicationManager.py:214
 msgid "Can't unpublish publications with services in process"
 msgstr ""
 "Non è possibile annullare la pubblicazione di pubblicazioni con servizi nel "
@@ -1458,46 +1458,46 @@ msgid "HyperV Cluster Linked Clone (Experimental)"
 msgstr "HyperV Cluster collegati Clone (sperimentale)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
-#: services/HyperV_enterprise/HyperVLinkedService.py:58
+#: services/HyperV_enterprise/HyperVLinkedService.py:59
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr "Iper servizi basati su modelli e differenziale dischi (sperimentale)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
-#: services/HyperV_enterprise/HyperVLinkedService.py:75
-#: services/OVirt/OVirtLinkedService.py:77
+#: services/HyperV_enterprise/HyperVLinkedService.py:76
+#: services/OVirt/OVirtLinkedService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:73
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
 "Numero di macchine desiderate per continuare a correre in attesa di un utente"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
-#: services/HyperV_enterprise/HyperVLinkedService.py:81
-#: services/OVirt/OVirtLinkedService.py:83
+#: services/HyperV_enterprise/HyperVLinkedService.py:82
+#: services/OVirt/OVirtLinkedService.py:84
 #: services/Vmware_enterprise/VCLinkedCloneService.py:75
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "Numero di macchine desiderati tenere sospeso in attesa di utilizzo"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:97
-#: services/OVirt/OVirtLinkedService.py:99
+#: services/HyperV_enterprise/HyperVLinkedService.py:98
+#: services/OVirt/OVirtLinkedService.py:100
 #: services/Vmware_enterprise/VCLinkedCloneService.py:51
 msgid "Base Machine"
 msgstr "Macchina base"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:97
-#: services/OVirt/OVirtLinkedService.py:99
+#: services/HyperV_enterprise/HyperVLinkedService.py:98
+#: services/OVirt/OVirtLinkedService.py:100
 msgid "Service base machine"
 msgstr "Macchina base servizio"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
-#: services/HyperV_enterprise/HyperVLinkedService.py:98
+#: services/HyperV_enterprise/HyperVLinkedService.py:99
 #: services/Vmware_enterprise/VCLinkedCloneService.py:39
 msgid "Network"
 msgstr "Rete"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
-#: services/HyperV_enterprise/HyperVLinkedService.py:99
+#: services/HyperV_enterprise/HyperVLinkedService.py:100
 #: services/Vmware_enterprise/VCLinkedCloneService.py:40
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
@@ -1506,66 +1506,66 @@ msgstr ""
 "come principale"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
-#: services/HyperV_enterprise/HyperVLinkedService.py:101
-#: services/OVirt/OVirtLinkedService.py:112
+#: services/HyperV_enterprise/HyperVLinkedService.py:102
+#: services/OVirt/OVirtLinkedService.py:115
 #: services/Vmware_enterprise/VCLinkedCloneService.py:52
 msgid "Memory (Mb)"
 msgstr "Memoria (Mb)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
-#: services/HyperV_enterprise/HyperVLinkedService.py:102
+#: services/HyperV_enterprise/HyperVLinkedService.py:103
 #: services/Vmware_enterprise/VCLinkedCloneService.py:53
 msgid "Memory for machines deployed from this service"
 msgstr "Memoria per macchine distribuite da questo servizio"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:100
-#: services/HyperV_enterprise/HyperVLinkedService.py:103
+#: services/HyperV_enterprise/HyperVLinkedService.py:104
 msgid "Datastore Drives"
 msgstr "Archivio dati unità"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
-#: services/HyperV_enterprise/HyperVLinkedService.py:104
+#: services/HyperV_enterprise/HyperVLinkedService.py:105
 msgid "Datastores where to put incrementals & publications"
 msgstr "Datastore dove mettere incrementali & pubblicazioni"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:105
-#: services/OVirt/OVirtLinkedService.py:118
+#: services/HyperV_enterprise/HyperVLinkedService.py:108
+#: services/OVirt/OVirtLinkedService.py:121
 #: services/Vmware_enterprise/VCLinkedCloneService.py:56
 msgid "Machine Names"
 msgstr "Nomi della macchina"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:105
+#: services/HyperV_enterprise/HyperVLinkedService.py:108
 #: services/Vmware_enterprise/VCLinkedCloneService.py:56
 msgid "Base name for clones from this machine"
 msgstr "Nome di base per i cloni da questa macchina"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
-#: services/HyperV_enterprise/HyperVLinkedService.py:106
-#: services/OVirt/OVirtLinkedService.py:119
+#: services/HyperV_enterprise/HyperVLinkedService.py:110
+#: services/OVirt/OVirtLinkedService.py:123
 #: services/Vmware_enterprise/VCLinkedCloneService.py:57
 msgid "Name Length"
 msgstr "Lunghezza del nome"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
-#: services/HyperV_enterprise/HyperVLinkedService.py:107
-#: services/OVirt/OVirtLinkedService.py:120
+#: services/HyperV_enterprise/HyperVLinkedService.py:111
+#: services/OVirt/OVirtLinkedService.py:124
 #: services/Vmware_enterprise/VCLinkedCloneService.py:58
 msgid "Length of numeric part for the names of this machines (betwen 3 and 6"
 msgstr ""
 "Lunghezza della parte numerica per i nomi di questa macchine (tra 3 e 6"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
-#: services/HyperV_enterprise/HyperVLinkedService.py:119
-#: services/OVirt/OVirtLinkedService.py:143
+#: services/HyperV_enterprise/HyperVLinkedService.py:123
+#: services/OVirt/OVirtLinkedService.py:148
 #: services/Vmware_enterprise/VCLinkedCloneService.py:96
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "La lunghezza di basename più lunghezza non deve essere maggiore di 15"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
-#: services/HyperV_enterprise/HyperVLinkedService.py:121
-#: services/OVirt/OVirtLinkedService.py:145
+#: services/HyperV_enterprise/HyperVLinkedService.py:125
+#: services/OVirt/OVirtLinkedService.py:150
 #: services/Vmware_enterprise/VCLinkedCloneService.py:98
 msgid "The machine name can't be only numbers"
 msgstr "Il nome del computer non può essere solo numeri"
@@ -1579,42 +1579,42 @@ msgid "HyperV Cluster Service Provider"
 msgstr "HyperV Cluster Service Provider"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
-#: services/HyperV_enterprise/HyperVProvider.py:81
+#: services/HyperV_enterprise/HyperVProvider.py:82
 msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
 msgstr ""
 "HyperV Server IP o l'Hostname (necessario abilitare l'accesso prima di WS-"
 "Management)"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
-#: services/HyperV_enterprise/HyperVProvider.py:82
+#: services/HyperV_enterprise/HyperVProvider.py:83
 msgid "WSMan Port (normally 5985)"
 msgstr "Porto di WS-Management (normalmente 5985)"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
-#: services/HyperV_enterprise/HyperVProvider.py:83
+#: services/HyperV_enterprise/HyperVProvider.py:84
 msgid "User with valid privileges on HyperV Server"
 msgstr "Utente con privilegi di validi sul HyperV Server"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
-#: services/HyperV_enterprise/HyperVProvider.py:84
+#: services/HyperV_enterprise/HyperVProvider.py:85
 msgid "Password of the user of HyperV"
 msgstr "Password dell'utente di HyperV"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
-#: services/HyperV_enterprise/HyperVProvider.py:85
+#: services/HyperV_enterprise/HyperVProvider.py:86
 msgid "Timeout in seconds of connection to HyperV"
 msgstr "Timeout in secondi di connessione per HyperV"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:94
-#: services/HyperV_enterprise/HyperVProvider.py:86
-#: services/OVirt/OVirtProvider.py:96
+#: services/HyperV_enterprise/HyperVProvider.py:87
+#: services/OVirt/OVirtProvider.py:97
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 msgid "Macs range"
 msgstr "Gamma di Mac"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:95
-#: services/HyperV_enterprise/HyperVProvider.py:87
-#: services/OVirt/OVirtProvider.py:97
+#: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/OVirt/OVirtProvider.py:98
 msgid "Range of valids macs for created machines"
 msgstr "Gamma di Mac valida per macchine creati"
 
@@ -1623,107 +1623,117 @@ msgid "The selected server is not a cluster"
 msgstr "Il server selezionato non è un cluster"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:299
-#: services/HyperV_enterprise/HyperVProvider.py:249
-#: services/OVirt/OVirtProvider.py:399
+#: services/HyperV_enterprise/HyperVProvider.py:250
+#: services/OVirt/OVirtProvider.py:398
 msgid "Connection test successful"
 msgstr "Test di connessione riuscita"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
-#: services/HyperV_enterprise/HyperVProvider.py:250
-#: services/OVirt/OVirtProvider.py:400
+#: services/HyperV_enterprise/HyperVProvider.py:251
+#: services/OVirt/OVirtProvider.py:399
 #: services/Vmware_enterprise/ServiceProviderVC.py:120
 msgid "Connection failed. Check connection params"
 msgstr "Connessione non riuscita. Controllare la connessione params"
 
 #: services/HyperV_enterprise/HyperVClusterPublication.py:97
 #: services/HyperV_enterprise/HyperVPublication.py:96
-#: services/OVirt/OVirtPublication.py:85
+#: services/OVirt/OVirtPublication.py:86
 #, python-brace-format
 msgid "UDS pub for {0} at {1}"
 msgstr "Pub UDS per {0} in {1}"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:54
+#: services/HyperV_enterprise/HyperVLinkedService.py:55
 msgid "HyperV Linked Clone (Experimental)"
 msgstr "HyperV Clone collegato (sperimentale)"
 
-#: services/HyperV_enterprise/HyperVProvider.py:62
+#: services/HyperV_enterprise/HyperVLinkedService.py:106
+#: services/OVirt/OVirtLinkedService.py:113
+msgid "Reserved Space"
+msgstr "Spazio riservato"
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:106
+#: services/OVirt/OVirtLinkedService.py:113
+msgid "Minimal free space in GB"
+msgstr "Spazio libero minimo in GB"
+
+#: services/HyperV_enterprise/HyperVProvider.py:63
 msgid "HyperV Platform Provider (experimental)"
 msgstr "Fornitore di piattaforma HyperV (sperimentale)"
 
-#: services/HyperV_enterprise/HyperVProvider.py:66
+#: services/HyperV_enterprise/HyperVProvider.py:67
 msgid "HyperV platform service provider (experimental)"
 msgstr "HyperV piattaforma servizio provider (sperimentale)"
 
-#: services/OVirt/OVirtLinkedService.py:56
+#: services/OVirt/OVirtLinkedService.py:57
 msgid "oVirt Linked Clone (Experimental)"
 msgstr "oVirt Linked Clone (sperimentale)"
 
-#: services/OVirt/OVirtLinkedService.py:60
+#: services/OVirt/OVirtLinkedService.py:61
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "oVirt servizi basati su modelli e vacca (sperimentale)"
 
-#: services/OVirt/OVirtLinkedService.py:100
+#: services/OVirt/OVirtLinkedService.py:101
 msgid "Cluster"
 msgstr "Cluster"
 
-#: services/OVirt/OVirtLinkedService.py:106
+#: services/OVirt/OVirtLinkedService.py:107
 msgid "Cluster to contain services"
 msgstr "Cluster per contenere servizi"
 
-#: services/OVirt/OVirtLinkedService.py:109
+#: services/OVirt/OVirtLinkedService.py:110
 msgid "Datastore Domain"
 msgstr "Archivio dati dominio"
 
-#: services/OVirt/OVirtLinkedService.py:110
+#: services/OVirt/OVirtLinkedService.py:111
 msgid "Datastore domain where to publish and put incrementals"
 msgstr "Archivio dati dominio dove pubblicare e mettere incrementali"
 
-#: services/OVirt/OVirtLinkedService.py:113
+#: services/OVirt/OVirtLinkedService.py:116
 msgid "Memory assigned to machines"
 msgstr "Memoria assegnato alle macchine"
 
-#: services/OVirt/OVirtLinkedService.py:115
+#: services/OVirt/OVirtLinkedService.py:118
 msgid "Memory Guaranteed (Mb)"
 msgstr "Memoria garantita (Mb)"
 
-#: services/OVirt/OVirtLinkedService.py:116
+#: services/OVirt/OVirtLinkedService.py:119
 msgid "Physical memory guaranteed to machines"
 msgstr "Memoria fisica garantita per macchine"
 
-#: services/OVirt/OVirtLinkedService.py:122
+#: services/OVirt/OVirtLinkedService.py:126
 msgid "Display"
 msgstr "Visualizzazione"
 
-#: services/OVirt/OVirtLinkedService.py:123
+#: services/OVirt/OVirtLinkedService.py:127
 msgid "Display type (only for administration pourposses)"
 msgstr "Tipo di display (solo per pourposses di amministrazione)"
 
-#: services/OVirt/OVirtLinkedService.py:147
+#: services/OVirt/OVirtLinkedService.py:152
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "Il minimo consentito di memoria è di 256 Mb"
 
-#: services/OVirt/OVirtProvider.py:73
+#: services/OVirt/OVirtProvider.py:74
 msgid "oVirt Platform Provider"
 msgstr "oVirt fornitore di piattaforma"
 
-#: services/OVirt/OVirtProvider.py:77
+#: services/OVirt/OVirtProvider.py:78
 msgid "oVirt platform service provider"
 msgstr "fornitore di servizi di piattaforma oVirt"
 
-#: services/OVirt/OVirtProvider.py:92
+#: services/OVirt/OVirtProvider.py:93
 msgid "oVirt Server IP or Hostname"
 msgstr "oVirt Server IP o l'Hostname"
 
-#: services/OVirt/OVirtProvider.py:93
+#: services/OVirt/OVirtProvider.py:94
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
 msgstr ""
 "Utente con privilegi validi su oVirt, (uso la forma dei \"user@domain\")"
 
-#: services/OVirt/OVirtProvider.py:94
+#: services/OVirt/OVirtProvider.py:95
 msgid "Password of the user of oVirt"
 msgstr "Password dell'utente di oVirt"
 
-#: services/OVirt/OVirtProvider.py:95
+#: services/OVirt/OVirtProvider.py:96
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Timeout in seconds of connection to VC"
 msgstr "Timeout in secondi di connessione a VC"
