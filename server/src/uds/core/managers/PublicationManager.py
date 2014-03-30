@@ -74,11 +74,12 @@ class PublicationLauncher(DelayedTask):
     def run(self):
         logger.debug('Publishing')
         try:
-            dsp = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
-            if dsp.state != State.LAUNCHING:  # If not preparing (may has been canceled by user) just return
-                return
-            dsp.state = State.PREPARING
-            dsp.save()
+            with transaction.atomic():
+                dsp = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
+                if dsp.state != State.LAUNCHING:  # If not preparing (may has been canceled by user) just return
+                    return
+                dsp.state = State.PREPARING
+                dsp.save()
             pi = dsp.getInstance()
             state = pi.publish()
             deployedService = dsp.deployed_service
@@ -152,7 +153,7 @@ class PublicationFinishChecker(DelayedTask):
     def run(self):
         logger.debug('Checking publication finished {0}'.format(self._publishId))
         try:
-            dsp = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
+            dsp = DeployedServicePublication.objects.get(pk=self._publishId)
             if dsp.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
             else:
@@ -177,7 +178,7 @@ class PublicationManager(object):
         return PublicationManager._manager
 
     def publish(self, deployedService):
-        if deployedService.publications.select_for_update().filter(state__in=State.PUBLISH_STATES).count() > 0:
+        if deployedService.publications.filter(state__in=State.PUBLISH_STATES).count() > 0:
             raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
         try:
             now = getSqlDatetime()
@@ -188,7 +189,7 @@ class PublicationManager(object):
             raise PublishException(str(e))
 
     def cancel(self, dsp):
-        dsp = DeployedServicePublication.objects.select_for_update().get(pk=dsp.id)
+        dsp = DeployedServicePublication.objects.get(pk=dsp.id)
         if dsp.state not in State.PUBLISH_STATES:
             raise PublishException(_('Can\'t cancel non running publication'))
 

@@ -141,7 +141,7 @@ class UserServiceOpChecker(DelayedTask):
         logger.debug('Checking user service finished {0}'.format(self._svrId))
         uService = None
         try:
-            uService = UserService.objects.select_for_update().get(pk=self._svrId)
+            uService = UserService.objects.get(pk=self._svrId)
             if uService.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
                 # This item is no longer valid, returning will not check it again (no checkLater called)
@@ -194,7 +194,7 @@ class UserServiceManager(object):
         if serviceInstance.maxDeployed == Service.UNLIMITED:
             return
 
-        numberOfServices = deployedService.userServices.select_for_update().filter(
+        numberOfServices = deployedService.userServices.filter(
                                state__in=[State.PREPARING, State.USABLE]).count()
 
         if serviceInstance.maxDeployed <= numberOfServices:
@@ -282,7 +282,7 @@ class UserServiceManager(object):
         Moves a cache element from one level to another
         @return: cache element
         '''
-        cache = UserService.objects.select_for_update().get(id=cache.id)
+        cache = UserService.objects.get(id=cache.id)
         logger.debug('Moving cache {0} to level {1}'.format(cache, cacheLevel))
         ci = cache.getInstance()
         state = ci.moveToCache(cacheLevel)
@@ -298,7 +298,7 @@ class UserServiceManager(object):
         Cancels a user service creation
         @return: the Uservice canceling
         '''
-        uService = UserService.objects.select_for_update().get(pk=uService.id)
+        uService = UserService.objects.get(pk=uService.id)
         logger.debug('Canceling uService {0} creation'.format(uService))
         if uService.isPreparing() == False:
             logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
@@ -317,7 +317,7 @@ class UserServiceManager(object):
         Removes a uService element
         @return: the uService removed (marked for removal)
         '''
-        uService = UserService.objects.select_for_update().get(id=uService.id)
+        uService = UserService.objects.get(id=uService.id)
         logger.debug('Removing uService {0}'.format(uService))
         if uService.isUsable() == False and State.isRemovable(uService.state) == False:
             raise OperationException(_('Can\'t remove a non active element'))
@@ -336,7 +336,8 @@ class UserServiceManager(object):
             raise OperationException(_('Can\'t remove nor cancel {0} cause its states doesn\'t allows it'))
 
     def removeInfoItems(self, dsp):
-        dsp.cachedDeployedService.select_for_update().filter(state__in=State.INFO_STATES).delete()
+        with transaction.atomic():
+            dsp.cachedDeployedService.filter(state__in=State.INFO_STATES).delete()
 
     def getAssignationForUser(self, ds, user):
         # First, we try to locate an already assigned service

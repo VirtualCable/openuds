@@ -155,7 +155,7 @@ class ClusterMigrationTask(DelayedTask):
         logger.debug('Checking user service finished migrating {0}'.format(self._serviceId))
         uService = None
         try:
-            uService = UserService.objects.select_for_update().get(pk=self._serviceId)
+            uService = UserService.objects.get(pk=self._serviceId)
             if uService.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
                 # This item is no longer valid, returning will not check it again (no checkLater called)
@@ -187,8 +187,10 @@ class ClusterBalancingTask(DelayedTask):
     @staticmethod
     def migrate(serviceId, toNode):
         try:
-            service = UserService.objects.select_for_update().get(pk=serviceId)
-            service.setState(State.BALANCING)
+            with transaction.atomic():
+                service = UserService.objects.select_for_update().get(pk=serviceId)
+                service.setState(State.BALANCING)
+                service.save()
 
             serviceInstance = service.getInstance()
 

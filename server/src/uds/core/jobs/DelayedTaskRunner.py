@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-03-30'
 
 logger = logging.getLogger(__name__)
 
@@ -90,8 +90,9 @@ class DelayedTaskRunner(object):
         try:
             with transaction.atomic():  # Encloses
                 task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]
+                taskInstanceDump = task.instance.decode(self.CODEC)
                 task.delete()
-            taskInstance = loads(task.instance.decode(self.CODEC))
+            taskInstance = loads(taskInstanceDump)
         except Exception:
             # Transaction have been rolled back using the "with atomic", so here just return
             # Note that is taskInstance can't be loaded, this task will not be retried
@@ -130,10 +131,10 @@ class DelayedTaskRunner(object):
             return False
         return True
 
-    @transaction.atomic
     def remove(self, tag):
         try:
-            dbDelayedTask.objects.select_for_update().filter(tag=tag).delete()
+            with transaction.atomic():
+                dbDelayedTask.objects.select_for_update().filter(tag=tag).delete()
         except Exception as e:
             logger.exception('Exception removing a delayed task {0}: {1}'.format(str(e.__class__), e))
 

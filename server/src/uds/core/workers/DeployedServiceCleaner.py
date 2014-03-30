@@ -101,7 +101,9 @@ class DeployedServiceRemover(Job):
         ds.userServices.select_for_update().filter(state__in=State.INFO_STATES).delete()
         # Mark usable user services as removable
         now = getSqlDatetime()
-        ds.userServices.select_for_update().filter(state=State.USABLE).update(state=State.REMOVABLE, state_date=now)
+
+        with transaction.atomic():
+            ds.userServices.select_for_update().filter(state=State.USABLE).update(state=State.REMOVABLE, state_date=now)
 
         # When no service is at database, we start with publications
         if ds.userServices.all().count() == 0:
