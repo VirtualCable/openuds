@@ -81,6 +81,9 @@ body {
 /* Tables */
 
 /* Tables "styling" */
+.dataTables_wrapper {
+  overflow-x: hidden;
+ }
 
 /* States */
 tr.row-state-A, tr.row-state-F, tr.row-state-U, tr.row-state-W {
