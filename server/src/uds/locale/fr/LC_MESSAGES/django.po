@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-30 15:49+0200\n"
+"POT-Creation-Date: 2014-04-02 17:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,8 +45,8 @@ msgstr ""
 #: REST/model.py:91 REST/methods/authenticators.py:58
 #: REST/methods/networks.py:55 REST/methods/osmanagers.py:56
 #: REST/methods/providers.py:59 REST/methods/services_pools.py:63
-#: REST/methods/transports.py:55 REST/methods/user_services.py:180
-#: REST/methods/user_services.py:209 REST/methods/users_groups.py:83
+#: REST/methods/transports.py:55 REST/methods/user_services.py:184
+#: REST/methods/user_services.py:213 REST/methods/users_groups.py:83
 #: templates/uds/admin/tmpl/user.html:29 templates/uds/admin/tmpl/user.html:32
 msgid "Name"
 msgstr "Nom"
@@ -58,7 +58,7 @@ msgstr "Nom de cet élément"
 #: REST/model.py:98 REST/methods/authenticators.py:59
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:60
 #: REST/methods/services.py:139 REST/methods/services_pools.py:66
-#: REST/methods/transports.py:56 REST/methods/user_services.py:211
+#: REST/methods/transports.py:56 REST/methods/user_services.py:215
 #: REST/methods/users_groups.py:84 REST/methods/users_groups.py:192
 #: templates/uds/admin/tmpl/group.html:37
 #: templates/uds/admin/tmpl/user.html:40
@@ -70,7 +70,7 @@ msgid "Comments for this element"
 msgstr "Commentaires pour cet élément"
 
 #: REST/model.py:107 REST/methods/authenticators.py:60
-#: REST/methods/transports.py:54 REST/methods/user_services.py:208
+#: REST/methods/transports.py:54 REST/methods/user_services.py:212
 msgid "Priority"
 msgstr "Priorité"
 
@@ -194,7 +194,7 @@ msgstr "Services actuels"
 msgid "Service name"
 msgstr "Nom du service"
 
-#: REST/methods/services.py:140 REST/methods/user_services.py:210
+#: REST/methods/services.py:140 REST/methods/user_services.py:214
 msgid "Type"
 msgstr "Type"
 
@@ -328,65 +328,81 @@ msgstr ""
 msgid "Assigned services"
 msgstr "Services attribuées"
 
-#: REST/methods/user_services.py:93 REST/methods/user_services.py:146
+#: REST/methods/user_services.py:93 REST/methods/user_services.py:150
 msgid "Creation date"
 msgstr "Date de création"
 
-#: REST/methods/user_services.py:94 REST/methods/user_services.py:147
-#: REST/methods/user_services.py:254
+#: REST/methods/user_services.py:94 REST/methods/user_services.py:151
+#: REST/methods/user_services.py:258
 msgid "Revision"
 msgstr "Révision"
 
-#: REST/methods/user_services.py:96 REST/methods/user_services.py:149
+#: REST/methods/user_services.py:96 REST/methods/user_services.py:153
 msgid "Friendly name"
 msgstr "Nom convivial"
 
-#: REST/methods/user_services.py:97 REST/methods/user_services.py:150
-#: REST/methods/user_services.py:182 REST/methods/user_services.py:256
+#: REST/methods/user_services.py:97 REST/methods/user_services.py:154
+#: REST/methods/user_services.py:186 REST/methods/user_services.py:260
 #: templates/uds/admin/tmpl/group.html:42
 #: templates/uds/admin/tmpl/user.html:45
 msgid "State"
 msgstr "État"
 
 #: REST/methods/user_services.py:98
+msgid "State date"
+msgstr "Date de l'État"
+
+#: REST/methods/user_services.py:99
+msgid "In Use"
+msgstr "En utilisation"
+
+#: REST/methods/user_services.py:100
+msgid "Src Host"
+msgstr "Hôte de la SRC"
+
+#: REST/methods/user_services.py:101
+msgid "Src Ip"
+msgstr "SRC Ip"
+
+#: REST/methods/user_services.py:102
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: REST/methods/user_services.py:122
+#: REST/methods/user_services.py:126
 msgid "Item is not removable"
 msgstr "Point n'est pas amovible"
 
-#: REST/methods/user_services.py:142
+#: REST/methods/user_services.py:146
 msgid "Cached services"
 msgstr "Services de mise en cache"
 
-#: REST/methods/user_services.py:151
+#: REST/methods/user_services.py:155
 msgid "Cache level"
 msgstr "Niveau de cache"
 
-#: REST/methods/user_services.py:175
+#: REST/methods/user_services.py:179
 msgid "Assigned groups"
 msgstr "Groupes assignés"
 
-#: REST/methods/user_services.py:181 templates/uds/admin/tmpl/group.html:34
+#: REST/methods/user_services.py:185 templates/uds/admin/tmpl/group.html:34
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Commentaires"
 
-#: REST/methods/user_services.py:204
+#: REST/methods/user_services.py:208
 msgid "Assigned transports"
 msgstr "Transports assignés"
 
-#: REST/methods/user_services.py:250
+#: REST/methods/user_services.py:254
 #: templates/uds/admin/tmpl/services_pool.html:22
 msgid "Publications"
 msgstr "Publications"
 
-#: REST/methods/user_services.py:255
+#: REST/methods/user_services.py:259
 msgid "Publish date"
 msgstr "La date de publication"
 
-#: REST/methods/user_services.py:257
+#: REST/methods/user_services.py:261
 msgid "Reason"
 msgstr "Raison"
 
@@ -1059,22 +1075,22 @@ msgstr ""
 msgid "System Administrator"
 msgstr "Administrateur système"
 
-#: core/managers/PublicationManager.py:181
+#: core/managers/PublicationManager.py:182
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Déjà la publication. Attendez une publication antérieure de terminer et "
 "réessayez"
 
-#: core/managers/PublicationManager.py:193
+#: core/managers/PublicationManager.py:194
 msgid "Can't cancel non running publication"
 msgstr "Ne peut annuler la publication non courante"
 
-#: core/managers/PublicationManager.py:211
+#: core/managers/PublicationManager.py:212
 msgid "Can't unpublish non usable publication"
 msgstr "Ne peut annuler la publication publication non utilisable"
 
-#: core/managers/PublicationManager.py:214
+#: core/managers/PublicationManager.py:215
 msgid "Can't unpublish publications with services in process"
 msgstr ""
 "Ne peut annuler la publication des publications avec services de processus"
