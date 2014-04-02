@@ -294,6 +294,12 @@ gui.servicesPools.link = (event) ->
             
             onData: (data) ->
               fillState data
+              $.each data, (index, value) ->
+                if value.in_use is true
+                  value.in_use = gettext('Yes')
+                else
+                  value.in_use = gettext('No')
+
               return
 
             onRowSelect: (selected) ->

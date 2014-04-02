@@ -81,7 +81,7 @@ class AssignedService(DetailHandler):
                 return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()]
             else:
                 return parent.assignedUserServices().get(pk=item)
-        except:
+        except Exception:
             logger.exception('getItems')
             self.invalidItemException()
 
@@ -95,6 +95,10 @@ class AssignedService(DetailHandler):
             {'unique_id': {'title': 'Unique ID'}},
             {'friendly_name': {'title': _('Friendly name')}},
             {'state': {'title': _('State')}},
+            {'state_date': {'title': _('State date'), 'type': 'datetime'}},
+            {'in_use': {'title': _('In Use')}},
+            {'source_host': {'title': _('Src Host')}},
+            {'source_ip': {'title': _('Src Ip')}},
             {'owner': {'title': _('Owner')}},
         ]
 
