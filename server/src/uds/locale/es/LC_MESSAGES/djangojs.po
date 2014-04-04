@@ -1,21 +1,25 @@
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# , 2014.
+# Translators:
+# , 2014
+# Adolfo Gómez <dkmaster@dkmon.com>, 2014
+# JaviBas <jgonzalez@virtualcable.es>, 2014
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-02 18:12+0200\n"
-"PO-Revision-Date: 2014-03-07 11:10+0100\n"
-"Last-Translator: \n"
-"Language-Team: American English <kde-i18n-doc@kde.org>\n"
-"Language: en_US\n"
+"POT-Creation-Date: 2014-04-04 08:33+0200\n"
+"PO-Revision-Date: 2014-04-04 06:29+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
+"es/)\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.5\n"
 
 #: static/adm/js/dataTables.bootstrap.js:6 static/adm/js/old-js/gui.js:19
 #: static/tmp_js/gui.js:19
@@ -749,7 +753,7 @@ msgstr "Creación realizada con éxito"
 
 #: static/adm/js/old-js/gui.js:377 static/tmp_js/gui.js:352
 msgid "Are you sure do you want to delete "
-msgstr "¿Estás seguro que quieres borrar "
+msgstr "¿Estás seguro que lo quieres eliminar?"
 
 #: static/adm/js/old-js/gui.js:383 static/tmp_js/gui.js:360
 msgid "Item deleted"
@@ -757,11 +761,11 @@ msgstr "Elemento eliminado"
 
 #: static/tmp_js/gui-d-servicespools.js:77
 msgid "Cancelling"
-msgstr "Cancelación"
+msgstr "Cancelando"
 
 #: static/tmp_js/gui-d-servicespools.js:78
 msgid "Cancelled"
-msgstr "Cancelada"
+msgstr "Cancelado"
 
 #: static/tmp_js/gui-d-servicespools.js:244
 msgid "Yes"
@@ -773,4 +777,4 @@ msgstr "No"
 
 #: static/tmp_js/gui.js:263
 msgid "Test passed successfully"
-msgstr "Prueba superada con éxito"
+msgstr "Test pasado con éxito"
