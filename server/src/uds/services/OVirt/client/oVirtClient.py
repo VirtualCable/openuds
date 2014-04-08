@@ -83,7 +83,7 @@ class Client(object):
             lock.acquire(True)
             return self.__getApi().test()
         except Exception as e:
-            print e
+            logger.error('Testing Server failed: {0}'.format(e))
             return False
         finally:
             lock.release()
