@@ -320,43 +320,7 @@
                   sExtends: "text"
                   sButtonText: gui.config.dataTableButtons.xls.text
                   fnClick: -> # Export to excel
-                    api.templates.get "spreadsheet", (tmpl) ->
-                      styles = bold: "s21"
-                      headings = []
-                      rows = []
-                      $.each columns, (index, heading) ->
-                        return  if heading.bVisible is false
-                        headings.push api.spreadsheet.cell(heading.sTitle, "String", styles.bold)
-                        return
-
-                      rows.push api.spreadsheet.row(headings)
-                      $.each data, (index1, row) ->
-                        cells = []
-                        $.each columns, (index2, col) ->
-                          return  if col.bVisible is false
-                          type = (if col.sType is "numeric" then "Number" else "String")
-                          cells.push api.spreadsheet.cell(row[col.mData], type)
-                          return
-
-                        rows.push api.spreadsheet.row(cells)
-                        return
-
-                      ctx =
-                        creation_date: (new Date()).toISOString()
-                        worksheet: title
-                        columns_count: headings.length
-                        rows_count: rows.length
-                        rows: rows.join("\n")
-
-                      gui.doLog ctx
-                      setTimeout (->
-                        saveAs new Blob([api.templates.evaluate(tmpl, ctx)],
-                          type: "application/vnd.ms-excel"
-                        ), title + ".xls"
-                        return
-                      ), 20
-                      return
-
+                    api.spreadsheet.tableToExcel(tableId, title)
                     return
 
                   # End export to excell

@@ -82,6 +82,7 @@ gui.servicesPools.link = (event) ->
       'C': gettext("Cancelled")
     }
     $.each data, (index, value) ->
+      value.origState = value.state  # Save original state for "cancel" checking
       if value.state is "U"
         value.state = if value.os_state isnt "" and value.os_state isnt "U" then gettext("Waiting OS") else value.state = gettext("Ready")
         return
@@ -182,6 +183,7 @@ gui.servicesPools.link = (event) ->
                 return
 
               onRowSelect: (selected) ->
+                gui.do
                 cached = selected[0]
                 if prevCacheLogTbl
                   $tbl = $(prevCacheLogTbl).dataTable()

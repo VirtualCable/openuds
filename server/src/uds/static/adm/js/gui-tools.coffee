@@ -17,7 +17,6 @@
     fix3dButtons: (selector) ->
       selector = selector or ""
       selector += " .btn3d"
-      console.log selector
       $.each $(selector), (index, value) ->
         
         # If no events associated, return
