@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # , 2014
 # Adolfo Gómez <dkmaster@dkmon.com>, 2014
@@ -11,14 +11,13 @@ msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-04-10 11:41+0200\n"
-"PO-Revision-Date: 2014-04-04 06:29+0000\n"
+"PO-Revision-Date: 2014-04-10 12:26+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
-"es/)\n"
-"Language: es\n"
+"Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: static/adm/js/dataTables.bootstrap.js:6 static/tmp_js/gui.js:19
@@ -382,7 +381,7 @@ msgstr "error"
 
 #: static/tmp_js/gui-d-servicespools.js:170
 msgid "Remove Cache element"
-msgstr "Retire el elemento de la caché"
+msgstr "Retirar elemento de la caché"
 
 #: static/tmp_js/gui-d-servicespools.js:170
 #: static/tmp_js/gui-d-servicespools.js:264
@@ -395,7 +394,7 @@ msgstr "Agregar grupo"
 
 #: static/tmp_js/gui-d-servicespools.js:211
 msgid "You must provide authenticator and group"
-msgstr "Usted debe proporcionar autenticador y grupo"
+msgstr "Debe proporcionar autenticador y grupo"
 
 #: static/tmp_js/gui-d-servicespools.js:225
 msgid "Remove group"
@@ -423,7 +422,7 @@ msgstr "Añadir transporte"
 
 #: static/tmp_js/gui-d-servicespools.js:283
 msgid "You must provide a transport"
-msgstr "Usted debe proporcionar un transporte"
+msgstr "Debe proporcionar un transporte"
 
 #: static/tmp_js/gui-d-servicespools.js:297
 msgid "Remove transport"
@@ -452,11 +451,11 @@ msgstr "¿Lanzar nueva publicación?"
 
 #: static/tmp_js/gui-d-servicespools.js:345
 msgid "Failed creating publication"
-msgstr "No se pudo crear publicación"
+msgstr "No se pudo crear la publicación"
 
 #: static/tmp_js/gui-d-servicespools.js:366
 msgid "undefined"
-msgstr "undefined"
+msgstr "indefinido"
 
 #: static/tmp_js/gui-d-servicespools.js:372
 msgid "Restrained"
@@ -480,9 +479,7 @@ msgstr "Publicar en creación"
 
 #: static/tmp_js/gui-d-servicespools.js:393
 msgid "If selected, will initiate the publication inmediatly after creation"
-msgstr ""
-"Si se selecciona, se iniciará la publicación inmediatamente después de la "
-"creación"
+msgstr "Si se selecciona, se iniciará la publicación inmediatamente después de la creación"
 
 #: static/tmp_js/gui-d-servicespools.js:405 static/tmp_js/gui.js:40
 msgid "Edit"
@@ -563,7 +560,7 @@ msgstr "Nuevo"
 
 #: static/tmp_js/gui.js:48
 msgid "Xls"
-msgstr "XLS"
+msgstr "Xls"
 
 #: static/tmp_js/gui.js:110
 msgid "Message"
@@ -571,11 +568,11 @@ msgstr "Mensaje"
 
 #: static/tmp_js/gui.js:125
 msgid "yes"
-msgstr "Sí"
+msgstr "sí"
 
 #: static/tmp_js/gui.js:126
 msgid "no"
-msgstr "No"
+msgstr "no"
 
 #: static/tmp_js/gui.js:212
 msgid "This field is required."
@@ -583,7 +580,7 @@ msgstr "Este campo es obligatorio"
 
 #: static/tmp_js/gui.js:213
 msgid "Please fix this field."
-msgstr "Por favor arregle este campo."
+msgstr "Por favor corija este campo."
 
 #: static/tmp_js/gui.js:214
 msgid "Please enter a valid email address."
@@ -627,8 +624,7 @@ msgstr "Introduzca al menos {0} caracteres."
 
 #: static/tmp_js/gui.js:224
 msgid "Please enter a value between {0} and {1} characters long."
-msgstr ""
-"Por favor, introduzca un valor de una longitud entre {0} y {1} caracteres."
+msgstr "Por favor, introduzca un valor de una longitud entre {0} y {1} caracteres."
 
 #: static/tmp_js/gui.js:225
 msgid "Please enter a value between {0} and {1}."
