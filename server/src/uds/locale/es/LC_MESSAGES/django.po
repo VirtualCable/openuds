@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-04 08:32+0200\n"
+"POT-Creation-Date: 2014-04-10 11:41+0200\n"
 "PO-Revision-Date: 2014-04-04 06:29+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
@@ -400,6 +400,7 @@ msgstr "Usuarios actuales"
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/OVirt/OVirtProvider.py:94
 #: services/Vmware_enterprise/ServiceProviderVC.py:30
+#: services/Xen_enterprise/XenProvider.py:97
 #: templates/uds/admin/tmpl/user.html:16 transports/HTML5RDP/HTML5RDP.py:64
 #: transports/NX/NXTransport.py:61 transports/NX/TSNXTransport.py:66
 #: transports/RDP/RDPTransport.py:59 transports/RDP/TSRDPTransport.py:63
@@ -462,6 +463,7 @@ msgstr "solicitó una plantilla que no existe"
 #: services/HyperV_enterprise/HyperVProvider.py:82
 #: services/OVirt/OVirtProvider.py:93
 #: services/Vmware_enterprise/ServiceProviderVC.py:28
+#: services/Xen_enterprise/XenProvider.py:96
 msgid "Host"
 msgstr "Servidor "
 
@@ -512,6 +514,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/OVirt/OVirtProvider.py:95 services/Sample/SampleService.py:131
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
+#: services/Xen_enterprise/XenProvider.py:98
 #: templates/uds/admin/tmpl/user.html:78 transports/HTML5RDP/HTML5RDP.py:65
 #: transports/NX/NXTransport.py:62 transports/NX/TSNXTransport.py:67
 #: transports/RDP/RDPTransport.py:60 transports/RDP/TSRDPTransport.py:64
@@ -1485,6 +1488,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:76
 #: services/OVirt/OVirtLinkedService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:73
+#: services/Xen_enterprise/XenLinkedService.py:73
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "Número de máquinas a manatener en ejecución esperando a un usuario"
 
@@ -1492,6 +1496,7 @@ msgstr "Número de máquinas a manatener en ejecución esperando a un usuario"
 #: services/HyperV_enterprise/HyperVLinkedService.py:82
 #: services/OVirt/OVirtLinkedService.py:84
 #: services/Vmware_enterprise/VCLinkedCloneService.py:75
+#: services/Xen_enterprise/XenLinkedService.py:79
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "Número de maquinas a mantener suspendidas esperando asignación"
 
@@ -1499,12 +1504,14 @@ msgstr "Número de maquinas a mantener suspendidas esperando asignación"
 #: services/HyperV_enterprise/HyperVLinkedService.py:98
 #: services/OVirt/OVirtLinkedService.py:100
 #: services/Vmware_enterprise/VCLinkedCloneService.py:51
+#: services/Xen_enterprise/XenLinkedService.py:95
 msgid "Base Machine"
 msgstr "Máquina de base"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:98
 #: services/OVirt/OVirtLinkedService.py:100
+#: services/Xen_enterprise/XenLinkedService.py:95
 msgid "Service base machine"
 msgstr "Máquina de base para el servicio"
 
@@ -1527,6 +1534,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:102
 #: services/OVirt/OVirtLinkedService.py:115
 #: services/Vmware_enterprise/VCLinkedCloneService.py:52
+#: services/Xen_enterprise/XenLinkedService.py:102
 msgid "Memory (Mb)"
 msgstr "Memoria (Mb)"
 
@@ -1551,6 +1559,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:108
 #: services/OVirt/OVirtLinkedService.py:121
 #: services/Vmware_enterprise/VCLinkedCloneService.py:56
+#: services/Xen_enterprise/XenLinkedService.py:105
 msgid "Machine Names"
 msgstr "Nombres de máquinas"
 
@@ -1564,6 +1573,7 @@ msgstr "Nombre base de clones de esta máquina"
 #: services/HyperV_enterprise/HyperVLinkedService.py:110
 #: services/OVirt/OVirtLinkedService.py:123
 #: services/Vmware_enterprise/VCLinkedCloneService.py:57
+#: services/Xen_enterprise/XenLinkedService.py:107
 msgid "Name Length"
 msgstr "Longitud del nombre"
 
@@ -1571,6 +1581,7 @@ msgstr "Longitud del nombre"
 #: services/HyperV_enterprise/HyperVLinkedService.py:111
 #: services/OVirt/OVirtLinkedService.py:124
 #: services/Vmware_enterprise/VCLinkedCloneService.py:58
+#: services/Xen_enterprise/XenLinkedService.py:108
 msgid "Length of numeric part for the names of this machines (betwen 3 and 6"
 msgstr ""
 "Longitud de la parte numérica de los nombres de esta maquinaria (entre 3 y 6"
@@ -1579,6 +1590,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:123
 #: services/OVirt/OVirtLinkedService.py:148
 #: services/Vmware_enterprise/VCLinkedCloneService.py:96
+#: services/Xen_enterprise/XenLinkedService.py:120
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "La longitud de basename más longitud no debe ser superior a 15"
 
@@ -1586,6 +1598,7 @@ msgstr "La longitud de basename más longitud no debe ser superior a 15"
 #: services/HyperV_enterprise/HyperVLinkedService.py:125
 #: services/OVirt/OVirtLinkedService.py:150
 #: services/Vmware_enterprise/VCLinkedCloneService.py:98
+#: services/Xen_enterprise/XenLinkedService.py:122
 msgid "The machine name can't be only numbers"
 msgstr "El nombre del equipo no puede ser sólo números"
 
@@ -1627,12 +1640,14 @@ msgstr "Tiempo de espera en segundos de conexión a HyperV"
 #: services/HyperV_enterprise/HyperVProvider.py:87
 #: services/OVirt/OVirtProvider.py:97
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
+#: services/Xen_enterprise/XenProvider.py:99
 msgid "Macs range"
 msgstr "Rango de Macs"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:95
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/OVirt/OVirtProvider.py:98
+#: services/Xen_enterprise/XenProvider.py:100
 msgid "Range of valids macs for created machines"
 msgstr "Rango válido de macs para las máquinas creadas"
 
@@ -1643,6 +1658,7 @@ msgstr "El servidor seleccionado no es un clúster"
 #: services/HyperV_enterprise/HyperVClusterProvider.py:299
 #: services/HyperV_enterprise/HyperVProvider.py:250
 #: services/OVirt/OVirtProvider.py:398
+#: services/Xen_enterprise/XenProvider.py:349
 msgid "Connection test successful"
 msgstr "Test de conexión correcto"
 
@@ -1666,11 +1682,13 @@ msgstr "HyperV vinculado clon (Experimental)"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:106
 #: services/OVirt/OVirtLinkedService.py:113
+#: services/Xen_enterprise/XenLinkedService.py:100
 msgid "Reserved Space"
 msgstr "Espacio reservado"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:106
 #: services/OVirt/OVirtLinkedService.py:113
+#: services/Xen_enterprise/XenLinkedService.py:100
 msgid "Minimal free space in GB"
 msgstr "Espacio libre mínimo en GB"
 
@@ -1707,6 +1725,7 @@ msgid "Datastore domain where to publish and put incrementals"
 msgstr "Almacenamiento donde colocar los incrementales y las publicaciones"
 
 #: services/OVirt/OVirtLinkedService.py:116
+#: services/Xen_enterprise/XenLinkedService.py:103
 msgid "Memory assigned to machines"
 msgstr "Memoria asignada a las máquinas"
 
@@ -1727,6 +1746,7 @@ msgid "Display type (only for administration pourposses)"
 msgstr "Tipo de pantalla (solo para la administración)"
 
 #: services/OVirt/OVirtLinkedService.py:152
+#: services/Xen_enterprise/XenLinkedService.py:124
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "El mínimo permitido es de memoria 256 Mb"
 
@@ -1735,10 +1755,12 @@ msgid "oVirt Platform Provider"
 msgstr "Proveedor para la plataforma oVirt"
 
 #: services/OVirt/OVirtProvider.py:78
+#: services/Xen_enterprise/XenProvider.py:81
 msgid "oVirt platform service provider"
 msgstr "Proveedor de servicios para la plataforma oVirt"
 
 #: services/OVirt/OVirtProvider.py:93
+#: services/Xen_enterprise/XenProvider.py:96
 msgid "oVirt Server IP or Hostname"
 msgstr "IP o nombre DNS del servidor oVirt"
 
@@ -1982,6 +2004,39 @@ msgid ""
 msgstr ""
 "Este servicio proporciona acceso a máquinas de Clones enlazados en un Centro "
 "Virtual"
+
+#: services/Xen_enterprise/XenLinkedService.py:52
+msgid "Xen Linked Clone (Experimental)"
+msgstr "Xen vinculado clon (Experimental)"
+
+#: services/Xen_enterprise/XenLinkedService.py:56
+msgid "Xen Services based on templates (experimental)"
+msgstr "Xen servicios basados en plantillas (experimentales)"
+
+#: services/Xen_enterprise/XenLinkedService.py:97
+msgid "Storage SR"
+msgstr "Almacenamiento SR"
+
+#: services/Xen_enterprise/XenLinkedService.py:98
+msgid "Storage where to publish and put incrementals"
+msgstr "Almacenamiento donde publicar y poner los backups incrementales"
+
+#: services/Xen_enterprise/XenProvider.py:77
+msgid "Xenserver Platform Provider"
+msgstr "Proveedor de plataformas de XenServer"
+
+#: services/Xen_enterprise/XenProvider.py:97
+msgid "User with valid privileges on XenServer"
+msgstr "Usuario con privilegios válidos en XenServer"
+
+#: services/Xen_enterprise/XenProvider.py:98
+msgid "Password of the user of XenServer"
+msgstr "Contraseña del usuario de XenServer"
+
+#: services/Xen_enterprise/XenProvider.py:351
+#, python-brace-format
+msgid "Connection failed: {0}"
+msgstr "Fallado la conexión: {0}"
 
 #: templates/404.html:3 templates/500.html:3
 msgid "Page not found"
