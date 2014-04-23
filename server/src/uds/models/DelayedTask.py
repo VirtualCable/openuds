@@ -33,59 +33,38 @@
 
 from __future__ import unicode_literals
 
+from django.db import models
+
+
 import logging
 
 logger = logging.getLogger(__name__)
 
 __updated__ = '2014-04-23'
 
+class DelayedTask(models.Model):
+    '''
+    A delayed task is a kind of scheduled task. It's a task that has more than is executed at a delay
+    specified at record. This is, for example, for publications, service preparations, etc...
 
-# Utility
-from uds.models.Util import getSqlDatetime
-from uds.models.Util import optimizeTable
-from uds.models.Util import NEVER
-from uds.models.Util import NEVER_UNIX
+    The delayed task is different from scheduler in the fact that they are "one shot", meaning this that when the
+    specified delay is reached, the task is executed and the record is removed from the table.
 
-# Services
-from uds.models.Provider import Provider
-from uds.models.Service import Service
+    This table contains uds.core.util.jobs.DelayedTask references
+    '''
+    type = models.CharField(max_length=128)
+    tag = models.CharField(max_length=64, db_index=True)  # A tag for letting us locate delayed publications...
+    instance = models.TextField()
+    insert_date = models.DateTimeField(auto_now_add=True)
+    execution_delay = models.PositiveIntegerField()
+    execution_time = models.DateTimeField(db_index=True)
 
-# Os managers
-from uds.models.OSManager import OSManager
+    class Meta:
+        '''
+        Meta class to declare default order and unique multiple field index
+        '''
+        app_label = 'uds'
 
-# Transports
-from uds.models.Transport import Transport
-from uds.models.Network import Network
-
-
-# Authenticators
-from uds.models.Authenticator import Authenticator
-from uds.models.User import User
-from uds.models.UserPreference import UserPreference
-from uds.models.Group import Group
-
-
-# Provisioned services
-from uds.models.ServicesPool import DeployedService
-from uds.models.ServicesPoolPublication import DeployedServicePublication
-from uds.models.UserService import UserService
-
-# Especific log information for an user service
-from uds.models.Log import Log
-
-# Stats
-from uds.models.StatsCounters import StatsCounters
-from uds.models.StatsEvents import StatsEvents
-
-
-# General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
-# We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from uds.models.Cache import Cache
-from uds.models.Config import Config
-from uds.models.Storage import Storage
-from uds.models.UniqueId import UniqueId
-
-# Workers/Schedulers related
-from uds.models.Scheduler import Scheduler
-from uds.models.DelayedTask import DelayedTask
+    def __unicode__(self):
+        return u"Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(self.type, self.insert_date, self.execution_delay, self.execution_time)
 

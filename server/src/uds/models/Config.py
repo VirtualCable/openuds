@@ -33,59 +33,33 @@
 
 from __future__ import unicode_literals
 
+from django.db import models
+
 import logging
 
 logger = logging.getLogger(__name__)
 
 __updated__ = '2014-04-23'
 
+class Config(models.Model):
+    '''
+    General configuration values model. Used to store global and specific modules configuration values.
+    This model is managed via uds.core.util.Config.Config class
+    '''
+    section = models.CharField(max_length=128, db_index=True)
+    key = models.CharField(max_length=64, db_index=True)
+    value = models.TextField(default='')
+    crypt = models.BooleanField(default=False)
+    long = models.BooleanField(default=False)
 
-# Utility
-from uds.models.Util import getSqlDatetime
-from uds.models.Util import optimizeTable
-from uds.models.Util import NEVER
-from uds.models.Util import NEVER_UNIX
+    class Meta:
+        '''
+        Meta class to declare default order and unique multiple field index
+        '''
+        db_table = 'uds_configuration'
+        unique_together = (('section', 'key'),)
+        app_label = 'uds'
 
-# Services
-from uds.models.Provider import Provider
-from uds.models.Service import Service
-
-# Os managers
-from uds.models.OSManager import OSManager
-
-# Transports
-from uds.models.Transport import Transport
-from uds.models.Network import Network
-
-
-# Authenticators
-from uds.models.Authenticator import Authenticator
-from uds.models.User import User
-from uds.models.UserPreference import UserPreference
-from uds.models.Group import Group
-
-
-# Provisioned services
-from uds.models.ServicesPool import DeployedService
-from uds.models.ServicesPoolPublication import DeployedServicePublication
-from uds.models.UserService import UserService
-
-# Especific log information for an user service
-from uds.models.Log import Log
-
-# Stats
-from uds.models.StatsCounters import StatsCounters
-from uds.models.StatsEvents import StatsEvents
-
-
-# General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
-# We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from uds.models.Cache import Cache
-from uds.models.Config import Config
-from uds.models.Storage import Storage
-from uds.models.UniqueId import UniqueId
-
-# Workers/Schedulers related
-from uds.models.Scheduler import Scheduler
-from uds.models.DelayedTask import DelayedTask
+    def __unicode__(self):
+        return u"Config {0} = {1}".format(self.key, self.value)
 

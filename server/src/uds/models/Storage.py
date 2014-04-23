@@ -33,59 +33,34 @@
 
 from __future__ import unicode_literals
 
+from django.db import models
+from uds.core.db.LockingManager import LockingManager
+
+
 import logging
 
 logger = logging.getLogger(__name__)
 
 __updated__ = '2014-04-23'
 
+class Storage(models.Model):
+    '''
+    General storage model. Used to store specific instances (transport, service, servicemanager, ...) persinstent information
+    not intended to be serialized/deserialized everytime one object instance is loaded/saved.
+    '''
+    owner = models.CharField(max_length=128, db_index=True)
+    key = models.CharField(max_length=64, primary_key=True)
+    data = models.TextField(default='')
+    attr1 = models.CharField(max_length=64, db_index=True, null=True, blank=True, default=None)
 
-# Utility
-from uds.models.Util import getSqlDatetime
-from uds.models.Util import optimizeTable
-from uds.models.Util import NEVER
-from uds.models.Util import NEVER_UNIX
+    objects = LockingManager()
 
-# Services
-from uds.models.Provider import Provider
-from uds.models.Service import Service
+    class Meta:
+        '''
+        Meta class to declare the name of the table at database
+        '''
+        app_label = 'uds'
 
-# Os managers
-from uds.models.OSManager import OSManager
-
-# Transports
-from uds.models.Transport import Transport
-from uds.models.Network import Network
-
-
-# Authenticators
-from uds.models.Authenticator import Authenticator
-from uds.models.User import User
-from uds.models.UserPreference import UserPreference
-from uds.models.Group import Group
-
-
-# Provisioned services
-from uds.models.ServicesPool import DeployedService
-from uds.models.ServicesPoolPublication import DeployedServicePublication
-from uds.models.UserService import UserService
-
-# Especific log information for an user service
-from uds.models.Log import Log
-
-# Stats
-from uds.models.StatsCounters import StatsCounters
-from uds.models.StatsEvents import StatsEvents
-
-
-# General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
-# We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from uds.models.Cache import Cache
-from uds.models.Config import Config
-from uds.models.Storage import Storage
-from uds.models.UniqueId import UniqueId
-
-# Workers/Schedulers related
-from uds.models.Scheduler import Scheduler
-from uds.models.DelayedTask import DelayedTask
+    def __unicode__(self):
+        return u"{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, str.join('/', [self.attr1]))
 

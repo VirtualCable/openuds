@@ -33,59 +33,52 @@
 
 from __future__ import unicode_literals
 
+from django.db import models
+
+from uds.models.Util import getSqlDatetime
+
+from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
 
 __updated__ = '2014-04-23'
 
+class Cache(models.Model):
+    '''
+    General caching model. This model is managed via uds.core.util.Cache.Cache class
+    '''
+    owner = models.CharField(max_length=128, db_index=True)
+    key = models.CharField(max_length=64, primary_key=True)
+    value = models.TextField(default='')
+    created = models.DateTimeField()  # Date creation or validation of this entry. Set at write time
+    validity = models.IntegerField(default=60)  # Validity of this entry, in seconds
 
-# Utility
-from uds.models.Util import getSqlDatetime
-from uds.models.Util import optimizeTable
-from uds.models.Util import NEVER
-from uds.models.Util import NEVER_UNIX
+    class Meta:
+        '''
+        Meta class to declare the name of the table at database
+        '''
+        db_table = 'uds_utility_cache'
+        app_label = 'uds'
 
-# Services
-from uds.models.Provider import Provider
-from uds.models.Service import Service
+    @staticmethod
+    def cleanUp():
+        '''
+        Purges the cache items that are no longer vaild.
+        '''
+        from django.db import connection, transaction
+        con = connection
+        cursor = con.cursor()
+        logger.info("Purging cache items")
+        cursor.execute('DELETE FROM uds_utility_cache WHERE created + validity < now()')
+        transaction.commit_unless_managed()
 
-# Os managers
-from uds.models.OSManager import OSManager
+    def __unicode__(self):
+        expired = getSqlDatetime() > self.created + timedelta(seconds=self.validity)
+        if expired:
+            expired = "Expired"
+        else:
+            expired = "Active"
+        return u"{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
 
-# Transports
-from uds.models.Transport import Transport
-from uds.models.Network import Network
-
-
-# Authenticators
-from uds.models.Authenticator import Authenticator
-from uds.models.User import User
-from uds.models.UserPreference import UserPreference
-from uds.models.Group import Group
-
-
-# Provisioned services
-from uds.models.ServicesPool import DeployedService
-from uds.models.ServicesPoolPublication import DeployedServicePublication
-from uds.models.UserService import UserService
-
-# Especific log information for an user service
-from uds.models.Log import Log
-
-# Stats
-from uds.models.StatsCounters import StatsCounters
-from uds.models.StatsEvents import StatsEvents
-
-
-# General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
-# We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from uds.models.Cache import Cache
-from uds.models.Config import Config
-from uds.models.Storage import Storage
-from uds.models.UniqueId import UniqueId
-
-# Workers/Schedulers related
-from uds.models.Scheduler import Scheduler
-from uds.models.DelayedTask import DelayedTask
 
