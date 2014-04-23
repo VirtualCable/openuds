@@ -31,7 +31,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from uds.models import DeployedService, State, User, UserService
+from uds.models import DeployedService, User, UserService
+from  uds.core.util.State import State
 from django.utils.translation import ugettext as _
 from ..auths.AdminAuth import needs_credentials
 from ..util.Exceptions import  FindException

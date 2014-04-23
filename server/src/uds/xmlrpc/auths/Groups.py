@@ -4,27 +4,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
@@ -32,7 +32,8 @@
 '''
 from __future__ import unicode_literals
 
-from uds.models import Group, Authenticator, State
+from uds.models import Group, Authenticator
+from  uds.core.util.State import State
 from django.db import IntegrityError
 from ..util.Exceptions import DuplicateEntryException, InsertException
 from uds.core.auths.Exceptions import AuthenticatorException
@@ -43,12 +44,12 @@ logger = logging.getLogger(__name__)
 
 def dictFromGroup(grp):
     state = True if grp.state == State.ACTIVE else False
-    dct = { 'idParent' : str(grp.manager.id), 'nameParent': grp.manager.name,  'id' : str(grp.id), 'name' : grp.name, 
+    dct = { 'idParent' : str(grp.manager.id), 'nameParent': grp.manager.name, 'id' : str(grp.id), 'name' : grp.name,
                     'comments' : grp.comments, 'active' :  state, 'isMeta' : grp.is_meta }
-    
+
     if grp.is_meta is True:
         dct['groupsIds'] = list(str(x.id) for x in grp.groups.all())
-        
+
     return dct
 
 def getRealGroups(idParent):
@@ -80,8 +81,8 @@ def __createSimpleGroup(grp):
     state = State.ACTIVE if grp['active'] == True else State.INACTIVE
     try:
         authInstance = auth.getInstance()
-        authInstance.createGroup(grp) # Remenber, this throws an exception if there is an error
-        auth.groups.create(name = grp['name'], comments = grp['comments'], state = state, is_meta = False)
+        authInstance.createGroup(grp)  # Remenber, this throws an exception if there is an error
+        auth.groups.create(name=grp['name'], comments=grp['comments'], state=state, is_meta=False)
     except IntegrityError:
         raise DuplicateEntryException(grp['name'])
     except AuthenticatorException, e:
@@ -93,7 +94,7 @@ def __createMetaGroup(grp):
     auth = Authenticator.objects.get(pk=grp['idParent'])
     state = State.ACTIVE if grp['active'] == True else State.INACTIVE
     try:
-        group = auth.groups.create(name = grp['name'], comments = grp['comments'], state = state, is_meta = True)
+        group = auth.groups.create(name=grp['name'], comments=grp['comments'], state=state, is_meta=True)
         group.groups = grp['groupsIds']
     except IntegrityError:
         raise DuplicateEntryException(grp['name'])
@@ -117,9 +118,9 @@ def __modifySimpleGroup(grp):
         group = Group.objects.get(pk=grp['id'])
         authInstance = group.manager.getInstance()
         authInstance.modifyGroup(grp)
-        #group.name = grp['name']
+        # group.name = grp['name']
         group.comments = grp['comments']
-        group.state = grp['state'] 
+        group.state = grp['state']
         group.is_meta = False;
         group.groups.clear()
         group.save()
@@ -164,14 +165,14 @@ def removeGroups(credentials, ids):
     '''
     Group.objects.filter(id__in=ids).delete()
     return True
-    
+
 @needs_credentials
 def changeGroupsState(credentials, ids, newState):
     '''
     Changes the state of the specified group
     '''
     state = State.ACTIVE if newState == True else State.INACTIVE
-    Group.objects.filter(id__in=ids).update(state = state)
+    Group.objects.filter(id__in=ids).update(state=state)
     return True
 
 # Registers XML RPC Methods
@@ -182,4 +183,3 @@ def registerGroupsFunctions(dispatcher):
     dispatcher.register_function(modifyGroup, 'modifyGroup')
     dispatcher.register_function(removeGroups, 'removeGroups')
     dispatcher.register_function(changeGroupsState, 'changeGroupsState')
-    

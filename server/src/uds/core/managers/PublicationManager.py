@@ -37,7 +37,8 @@ from uds.core.jobs.DelayedTask import DelayedTask
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import PublishException
-from uds.models import DeployedServicePublication, getSqlDatetime, State
+from uds.models import DeployedServicePublication, getSqlDatetime
+from  uds.core.util.State import State
 import logging
 
 logger = logging.getLogger(__name__)

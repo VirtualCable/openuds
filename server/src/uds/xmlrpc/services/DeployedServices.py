@@ -32,7 +32,8 @@
 '''
 
 from django.utils.translation import ugettext as _
-from uds.models import DeployedService, Service, OSManager, Transport, State, Group
+from uds.models import DeployedService, Service, OSManager, Transport, Group
+from uds.core.util.State import State
 from ..auths.AdminAuth import needs_credentials
 from django.db import IntegrityError
 from ..util.Exceptions import DuplicateEntryException, InsertException, FindException

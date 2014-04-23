@@ -32,7 +32,8 @@
 '''
 
 from django.db import transaction
-from uds.models import UserService, State
+from uds.models import UserService
+from  uds.core.util.State import State
 from uds.core.util import log
 
 import logging

@@ -31,7 +31,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from uds.models import DeployedService, DeployedServicePublication, State
+from uds.models import DeployedService, DeployedServicePublication
+from  uds.core.util.State import State
 from django.utils.translation import ugettext as _
 from ..util.Helpers import dictFromData
 from ..auths.AdminAuth import needs_credentials
