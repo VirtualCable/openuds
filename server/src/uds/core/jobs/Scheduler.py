@@ -34,7 +34,8 @@ from __future__ import unicode_literals
 
 from django.db.models import Q
 from django.db import transaction, DatabaseError
-from uds.models import Scheduler as dbScheduler, getSqlDatetime, State
+from uds.models import Scheduler as dbScheduler, getSqlDatetime
+from uds.core.util.State import State
 from uds.core.jobs.JobsFactory import JobsFactory
 from datetime import timedelta
 from socket import gethostname
@@ -42,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-03-20'
+__updated__ = '2014-04-23'
 
 logger = logging.getLogger(__name__)
 
