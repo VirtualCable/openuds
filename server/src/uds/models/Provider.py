@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 from django.db import models
 from uds.core.Environment import Environment
 from uds.core.util import log

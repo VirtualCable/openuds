@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 from django.db import models
 from django.db.models import signals
 
@@ -46,7 +48,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-04-23'
 
 class Scheduler(models.Model):
     '''

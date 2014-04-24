@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 from django.db import models
 from uds.core.Environment import Environment
 from django.db import IntegrityError
@@ -41,6 +43,7 @@ from django.db.models import signals
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class OSManager(models.Model):
     '''

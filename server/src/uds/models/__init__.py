@@ -33,11 +33,11 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 import logging
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2014-04-23'
 
 
 # Utility

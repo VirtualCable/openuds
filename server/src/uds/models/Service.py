@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 from django.db import models
 from django.db.models import signals
 from uds.core.Environment import Environment
@@ -43,8 +45,6 @@ from uds.models.Provider import Provider
 import logging
 
 logger = logging.getLogger(__name__)
-
-__updated__ = '2014-04-23'
 
 
 class Service(models.Model):

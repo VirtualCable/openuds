@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 from django.db import models
 from uds.core.util import log
 from django.db.models import signals
@@ -44,6 +46,7 @@ from uds.models.Util import getSqlDatetime
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class User(models.Model):
     '''

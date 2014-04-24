@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 from django.db import models
 from Transport import Transport
 from uds.core.util import net
@@ -40,6 +42,7 @@ from uds.core.util import net
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class Network(models.Model):
     '''

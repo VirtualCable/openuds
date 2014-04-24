@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2014-04-24'
+
 from django.db import models
 
 from uds.models.Util import NEVER_UNIX
@@ -43,7 +45,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-04-23'
 
 class StatsCounters(models.Model):
     '''
