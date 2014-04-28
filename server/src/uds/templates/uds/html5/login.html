@@ -45,6 +45,7 @@
 		if( standard.length > 0 ) {
 			$('#backToLogin').click(function() {
 				$('#id_authenticator').val(standard[0]);
+				$('.selectpicker').selectpicker('render');
 				$('#nonStandard').hide(300, function() {
 					$('#nonStandardLogin').html('');
 					$("#login").show(300);
