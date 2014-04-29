@@ -225,6 +225,7 @@ class Groups(DetailHandler):
                 toSave = {}
                 for k in valid_fields:
                     toSave[k] = fields[k]
+                toSave['comments'] = fields['comments'][:255]
                 toSave['is_meta'] = is_meta
                 group = parent.groups.create(**toSave)
             else:
@@ -233,7 +234,11 @@ class Groups(DetailHandler):
                 toSave = {}
                 for k in valid_fields:
                     toSave[k] = fields[k]
+                for k in valid_fields:
+                    toSave[k] = fields[k]
                 del toSave['name']  # Name can't be changed
+                toSave['comments'] = fields['comments'][:255]
+
                 group = parent.groups.get(pk=item)
                 group.__dict__.update(toSave)
 

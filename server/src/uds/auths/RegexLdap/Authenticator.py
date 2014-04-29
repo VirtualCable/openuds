@@ -32,7 +32,7 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
@@ -43,7 +43,7 @@ import ldap
 import re
 import logging
 
-__updated__ = '2014-03-19'
+__updated__ = '2014-04-28'
 
 logger = logging.getLogger(__name__)
 
