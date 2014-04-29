@@ -18,9 +18,11 @@ import sys, os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../src/'))
 
-from server import settings
-from django.core.management import setup_environ
-setup_environ(settings)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'server.settings'
+
+#from server import settings
+#from django.core.management import setup_environ
+#setup_environ(settings)
 
 # -- General configuration -----------------------------------------------------
 
