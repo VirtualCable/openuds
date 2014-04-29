@@ -1,3 +1,3 @@
 eclipse.preferences.version=1
-excluded=//*.min.js\://PluginDetect_Java.js\://handlebars*.js\:src/static//*
+excluded=//*.min.js\://PluginDetect_Java.js\://handlebars*.js\:documentation//*\:src/static//*
 included=//*.js
