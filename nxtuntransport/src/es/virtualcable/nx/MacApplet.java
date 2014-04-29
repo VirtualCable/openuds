@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class MacApplet implements OsApplet {
 
-	private final String[] paths = { "/Applications/NX Client for OSX.app/Contents/MacOS/" };
+	private final String[] paths = { "/Applications/OpenNX/OpenNX.app/Contents/MacOS/" };
 	private final String app = "OpenNXapp";
 
 	private Hashtable<String,String> params;
