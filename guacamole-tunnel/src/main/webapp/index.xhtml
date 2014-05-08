@@ -62,13 +62,7 @@
         <script type="text/javascript" src="scripts/lib/filesaver/filesaver.js"></script>
 
         <!-- Client core scripts -->
-		<script type="text/javascript" src="guacamole-common-js/keyboard.js"></script>
-        <script type="text/javascript" src="guacamole-common-js/mouse.js"></script>
-        <script type="text/javascript" src="guacamole-common-js/layer.js"></script>
-        <script type="text/javascript" src="guacamole-common-js/tunnel.js"></script>
-        <script type="text/javascript" src="guacamole-common-js/audio.js"></script>
-        <script type="text/javascript" src="guacamole-common-js/guacamole.js"></script>
-        <script type="text/javascript" src="guacamole-common-js/oskeyboard.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/all.min.js"></script>
         
         
         <!-- guacamole-default-webapp scripts -->
@@ -78,89 +72,88 @@
 
         <!-- Init -->
         <script type="text/javascript"> /* <![CDATA[ */
- 			window.onload = function() {
-                window.setTimeout(function() {        
-		        	// Get parameter information, so we can retrieve connecton data
-		        	var params = window.location.search.substr(1);
-		        	var data = "";
-		        	var exitUrl = "";
-		        	var ioa = params.indexOf('&');
-		        	// URL is in the format ?XXXXXXXX&URL, where XXX is the id of the credential stored, and URL is the output URL
-		        	if( ioa != -1 ) {
-		        		data = params.substr(0,ioa);
-		        		exiturl = params.substr(ioa+1);
-		        	}
-		        	else {
-		        		data = params;
-		        	}
-		        	
-                    var tunnel;
-                    
-                    GuacUI.sessionState.setProperty("auto-fit", true);
-                    GuacUI.sessionState.setProperty("exitUrl", exiturl);
-                    GuacUI.sessionState.setProperty("disable-sound", false);
-
-                    // If WebSocket available, try to use it.
-                    /*if (window.WebSocket)
-                        tunnel = new Guacamole.ChainedTunnel(
-                            new Guacamole.WebSocketTunnel("websocket-tunnel"),
-                            new Guacamole.HTTPTunnel("tunnel")
-                        );
-
-                    // If no WebSocket, then use HTTP.
-                    else*/
-                        tunnel = new Guacamole.HTTPTunnel("tunnel")
-
-                    // Instantiate client
-                    var guac = new Guacamole.Client(tunnel);
-
-                    // Add client to UI
-                    guac.getDisplay().className = "software-cursor";
-                    GuacUI.Client.display.appendChild(guac.getDisplay());
-
-                    // Tie UI to client
-                    GuacUI.Client.attach(guac);
-
-                    try {
-
-                        // Calculate optimal width/height for display
-                        var optimal_width = window.innerWidth;
-                        var optimal_height = window.innerHeight;
-
-                        // Scale width/height to be at least 600x600
-                        if (optimal_width < 600 || optimal_height < 600) {
-                            var scale = Math.max(600 / optimal_width, 600 / optimal_height);
-                            optimal_width = Math.floor(optimal_width * scale);
-                            optimal_height = Math.floor(optimal_height * scale);
-                        }
-
-                        // Get entire query string, and pass to connect().
-                        // Normally, only the "id" parameter is required, but
-                        // all parameters should be preserved and passed on for
-                        // the sake of authentication.
-
-						var connect_string = "data=" + data + "&width=" + optimal_width + "&height=" + optimal_height;
+window.onload = function() {
+    window.setTimeout(function() {        
+    // Get parameter information, so we can retrieve connecton data
+    var params = window.location.search.substr(1);
+    var data = "";
+    var exitUrl = "";
+    var ioa = params.indexOf('&');
+    // URL is in the format ?XXXXXXXX&URL, where XXX is the id of the credential stored, and URL is the output URL
+    if( ioa != -1 ) {
+    	data = params.substr(0,ioa);
+    	exiturl = params.substr(ioa+1);
+    } else {
+    	data = params;
+    }
+    	
+    var tunnel;
     
-                        // Add audio mimetypes to connect_string
-                        GuacUI.Audio.supported.forEach(function(mimetype) {
-                            connect_string += "&audio=" + encodeURIComponent(mimetype);
-                        });
+    GuacUI.sessionState.setProperty("auto-fit", true);
+    GuacUI.sessionState.setProperty("exitUrl", exiturl);
+    GuacUI.sessionState.setProperty("disable-sound", false);
 
-                        // Add video mimetypes to connect_string
-                        GuacUI.Video.supported.forEach(function(mimetype) {
-                            connect_string += "&video=" + encodeURIComponent(mimetype);
-                        });
+    // If WebSocket available, try to use it.
+    /*if (window.WebSocket)
+        tunnel = new Guacamole.ChainedTunnel(
+            new Guacamole.WebSocketTunnel("websocket-tunnel"),
+            new Guacamole.HTTPTunnel("tunnel")
+        );
 
-                        guac.connect(connect_string);
+    // If no WebSocket, then use HTTP.
+    else*/
+        tunnel = new Guacamole.HTTPTunnel("tunnel")
 
-                    }
-                    catch (e) {
-                        GuacUI.Client.showError(e.message);
-                    }
-		        	
-					}, 0);
-          };
-        /* ]]> */ </script>
+    // Instantiate client
+    var guac = new Guacamole.Client(tunnel);
+
+    // Add client to UI
+    guac.getDisplay().className = "software-cursor";
+    GuacUI.Client.display.appendChild(guac.getDisplay());
+
+    // Tie UI to client
+    GuacUI.Client.attach(guac);
+
+    try {
+
+        // Calculate optimal width/height for display
+        var optimal_width = window.innerWidth;
+        var optimal_height = window.innerHeight;
+
+        // Scale width/height to be at least 600x600
+        if (optimal_width < 600 || optimal_height < 600) {
+            var scale = Math.max(600 / optimal_width, 600 / optimal_height);
+            optimal_width = Math.floor(optimal_width * scale);
+            optimal_height = Math.floor(optimal_height * scale);
+        }
+
+        // Get entire query string, and pass to connect().
+        // Normally, only the "id" parameter is required, but
+        // all parameters should be preserved and passed on for
+        // the sake of authentication.
+
+				var connect_string = "data=" + data + "&width=" + optimal_width + "&height=" + optimal_height;
+
+                // Add audio mimetypes to connect_string
+                GuacUI.Audio.supported.forEach(function(mimetype) {
+                    connect_string += "&audio=" + encodeURIComponent(mimetype);
+                });
+
+                // Add video mimetypes to connect_string
+                GuacUI.Video.supported.forEach(function(mimetype) {
+                    connect_string += "&video=" + encodeURIComponent(mimetype);
+                });
+
+                guac.connect(connect_string);
+
+        }
+        catch (e) {
+            GuacUI.Client.showError(e.message);
+        }
+	
+			}, 0);
+};
+      /* ]]> */ </script>
  
     </body>
  
