@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-05-08'
 
 
 # a few constants
@@ -548,6 +548,7 @@ class ModelHandler(BaseModelHandler):
 
     def put(self):
         logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
+        self._params['_request'] = self._request
 
         if len(self._args) > 1:  # Detail?
             return self.processDetail()
