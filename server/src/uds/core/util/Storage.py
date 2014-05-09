@@ -86,7 +86,7 @@ class Storage(object):
         return self.readData(skey)
 
     def getPickle(self, skey):
-        return cPickle.loads(self.readData(skey).encode('uft-8'))
+        return cPickle.loads(self.readData(skey).encode('utf-8'))
 
     def remove(self, skey):
         try:

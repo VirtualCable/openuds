@@ -69,11 +69,13 @@ class CryptoManager(object):
         return self._rsa.encrypt(string.encode('utf-8'), '')[0].encode(CryptoManager.CODEC)
 
     def decrypt(self, string):
+        # import inspect
         try:
             atfork()
             return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).encode('utf-8')
         except:
-            logger.exception('Decripting')
+            logger.exception('Decripting: {0}'.format(string))
+            # logger.error(inspect.stack())
             return 'decript error'
 
     def xor(self, s1, s2):

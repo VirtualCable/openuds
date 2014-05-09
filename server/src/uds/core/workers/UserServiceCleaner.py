@@ -35,7 +35,8 @@ from __future__ import unicode_literals
 from django.db import transaction
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util.Config import GlobalConfig
-from uds.models import UserService, getSqlDatetime, State
+from uds.models import UserService, getSqlDatetime
+from uds.core.util.State import  State
 from uds.core.jobs.Job import Job
 from datetime import timedelta
 import logging
