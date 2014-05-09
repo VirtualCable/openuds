@@ -165,7 +165,7 @@ def logout(request):
 def index(request):
     # Session data
     os = request.session['OS']
-    java = request.session['java']
+    java = request.session.get('java', None)
 
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
