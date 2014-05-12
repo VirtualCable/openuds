@@ -41,12 +41,13 @@ from uds.core.ui import gui
 from xen_client import XenServer
 from xen_client import XenFailure, XenFault
 
+from XenLinkedService import XenLinkedService
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-04-08'
+__updated__ = '2014-05-12'
 
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -70,7 +71,7 @@ class Provider(ServiceProvider):
 
     '''
     # : What kind of services we offer, this are classes inherited from Service
-    offers = []  # TODO
+    offers = [XenLinkedService]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -78,7 +79,7 @@ class Provider(ServiceProvider):
     # : Type used internally to identify this provider
     typeType = 'XenPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _('oVirt platform service provider')
+    typeDescription = _('XenServer platform service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -93,19 +94,19 @@ class Provider(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('oVirt Server IP or Hostname'), required=True)
+    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('XenServer Server IP or Hostname'), required=True)
     username = gui.TextField(length=32, label=_('Username'), order=2, tooltip=_('User with valid privileges on XenServer'), required=True, defvalue='root')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=3, tooltip=_('Password of the user of XenServer'), required=True)
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF', order=4, rdonly=True,
                               tooltip=_('Range of valids macs for created machines'), required=True)
 
-    # oVirt engine, right now, only permits a connection to one server and only one per instance
+    # XenServer engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
     def __getApi(self):
         '''
-        Returns the connection API object for oVirt (using ovirtsdk)
+        Returns the connection API object for XenServer (using XenServersdk)
         '''
         if self._api is None:
             self._api = XenServer(self.host.value, '443', self.username.value, self.password.value, True)
@@ -122,7 +123,7 @@ class Provider(ServiceProvider):
 
     def testConnection(self):
         '''
-        Test that conection to oVirt server is fine
+        Test that conection to XenServer server is fine
 
         Returns
 
@@ -130,9 +131,27 @@ class Provider(ServiceProvider):
         '''
         self.__getApi().test()
 
+    def checkTaskFinished(self, task):
+        '''
+        Checks a task state.
+        Returns None if task is Finished
+        Returns a number indicating % of completion if running
+        Raises an exception with status else ('cancelled', 'unknown', 'failure')
+        '''
+        if task is None:
+            return True
+        ts = self.__getApi().getTaskInfo(task)
+        logger.debug('Task status: {0}'.format(ts))
+        if ts['status'] == 'running':
+            return ts['']
+        if ts['status'] == 'success':
+            return None
+        # Any other state, raises an exception
+        raise Exception(ts['status'])  # Should be 'cancelled', 'unknown', 'failure'
+
     def getMachines(self, force=False):
         '''
-        Obtains the list of machines inside oVirt.
+        Obtains the list of machines inside XenServer.
         Machines starting with UDS are filtered out
 
         Args:
@@ -146,7 +165,29 @@ class Provider(ServiceProvider):
                 'cluster_id'
         '''
 
-        return self.__getApi().getVms()
+        for m in self.__getApi().getVMs():
+            if m['name'][:3] == 'UDS':
+                continue
+            yield m
+
+
+    def getStorages(self, force=False):
+        '''
+        Obtains the list of storages inside XenServer.
+
+        Args:
+            force: If true, force to update the cache, if false, tries to first
+            get data from cache and, if valid, return this.
+
+        Returns
+            An array of dictionaries, containing:
+                'name'
+                'id'
+                'size'
+                'used'
+        '''
+        return self.__getApi().getSRs()
+
 
     def getStorageInfo(self, storageId, force=False):
         '''
@@ -170,6 +211,10 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().getSRInfo(storageId)
 
+    def cloneForTemplate(self, machineId, name, comments, sr):
+        return self.__getApi().cloneVM(machineId, name, sr)
+
+
     def convertToTemplate(self, machineId, shadowMultiplier=4):
         '''
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
@@ -180,31 +225,17 @@ class Provider(ServiceProvider):
             machineId: id of the machine to be published
             clusterId: id of the cluster that will hold the machine
             storageId: id of the storage tuat will contain the publication AND linked clones
-            displayType: type of display (for oVirt admin interface only)
+            displayType: type of display (for XenServer admin interface only)
 
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         '''
         return self.__getApi().convertToTemplate(machineId, shadowMultiplier)
 
-    def getTemplateState(self, templateId):
-        '''
-        Returns current template state.
-
-        Returned values could be:
-            ok
-            locked
-            removed
-
-        (don't know if ovirt returns something more right now, will test what happens when template can't be published)
-        '''
-        # return self.__getApi().getTemplateState(templateId)
-        return 'ok'
-
     def getMachineState(self, machineId):
         '''
         Returns the state of the machine
-        This method do not uses cache at all (it always tries to get machine state from oVirt server)
+        This method do not uses cache at all (it always tries to get machine state from XenServer server)
 
         Args:
             machineId: Id of the machine to get state
@@ -223,7 +254,7 @@ class Provider(ServiceProvider):
 
     def removeTemplate(self, templateId):
         '''
-        Removes a template from ovirt server
+        Removes a template from XenServer server
 
         Returns nothing, and raises an Exception if it fails
         '''
@@ -238,7 +269,7 @@ class Provider(ServiceProvider):
             comments: Comments for machine
             templateId: Id of the template to deploy from
             clusterId: Id of the cluster to deploy to
-            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
+            displayType: 'vnc' or 'spice'. Display to use ad XenServer admin interface
             memoryMB: Memory requested for machine, in MB
             guaranteedMB: Minimum memory guaranteed for this machine
 
@@ -249,7 +280,7 @@ class Provider(ServiceProvider):
 
     def startVM(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt.
+        Tries to start a machine. No check is done, it is simply requested to XenServer.
 
         This start also "resume" suspended/paused machines
 
@@ -262,7 +293,7 @@ class Provider(ServiceProvider):
 
     def stopVM(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to start a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
@@ -273,7 +304,7 @@ class Provider(ServiceProvider):
 
     def suspendVM(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to start a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
@@ -284,7 +315,7 @@ class Provider(ServiceProvider):
 
     def resumeVM(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to start a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
@@ -296,7 +327,7 @@ class Provider(ServiceProvider):
 
     def removeVM(self, machineId):
         '''
-        Tries to delete a machine. No check is done, it is simply requested to oVirt
+        Tries to delete a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
@@ -317,7 +348,7 @@ class Provider(ServiceProvider):
     @staticmethod
     def test(env, data):
         '''
-        Test ovirt Connectivity
+        Test XenServer Connectivity
 
         Args:
             env: environment passed for testing (temporal environment passed)

@@ -36,6 +36,9 @@ from uds.core.services import Service
 
 from uds.core.ui import gui
 
+from XenPublication import XenPublication
+from XenLinkedDeployment import XenLinkedDeployment
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -87,9 +90,9 @@ class XenLinkedService(Service):
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publicationType = None  # TODO: do this
+    publicationType = XenPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = None  # TODO: do this
+    deployedType = XenLinkedDeployment
 
     # Now the form part
     machine = gui.ChoiceField(label=_("Base Machine"), order=1, tooltip=_('Service base machine'), required=True)
@@ -122,8 +125,6 @@ class XenLinkedService(Service):
                 raise Service.ValidationException(_('The machine name can\'t be only numbers'))
             if int(self.memory.value) < 256:
                 raise Service.ValidationException(_('The minimum allowed memory is 256 Mb'))
-            if int(self.memoryGuaranteed.value) > int(self.memory.value):
-                self.memoryGuaranteed.value = self.memory.value
 
     def initGui(self):
         '''
@@ -135,37 +136,36 @@ class XenLinkedService(Service):
         # at defValue
 
         machines = self.parent().getMachines()
-        vals = []
+        storages = self.parent().getStorages()
+        machines_list = []
         for m in machines:
-            vals.append(gui.choiceItem(m['id'], m['name']))
+            machines_list.append(gui.choiceItem(m['id'], m['name']))
+        storages_list = []
+        for storage in storages:
+            space, free = storage['size'] / 1024, (storage['size'] - storage['used']) / 1024
+            storages_list.append(gui.choiceItem(storage['id'], "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free)))
 
-        # This is not the same case, values is not the "value" of the field, but
-        # the list of values shown because this is a "ChoiceField"
-        self.machine.setValues(vals)
+        self.machine.setValues(machines_list)
+        self.datastore.setValues(storages_list)
 
-        clusters = self.parent().getClusters()
-        vals = []
-        for c in clusters:
-            vals.append(gui.choiceItem(c['id'], c['name']))
-        self.cluster.setValues(vals)
 
     def datastoreHasSpace(self):
         # Get storages for that datacenter
         logger.debug('Checking datastore space for {0}'.format(self.datastore.value))
         info = self.parent().getStorageInfo(self.datastore.value)
         logger.debug('Datastore Info: {0}'.format(info))
-        availableGB = info['available'] / (1024 * 1024 * 1024)
+        availableGB = info['available'] / 1024
         if availableGB < self.minSpaceGB.num():
             raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(self.minSpaceGB.num(), availableGB))
 
     def sanitizeVmName(self, name):
         '''
-        Xen only allows machine names with [a-zA-Z0-9_-]
+        Xen Seems to allow all kind of names
         '''
-        import re
-        return re.sub("[^a-zA-Z0-9_-]", "_", name)
+        return name
 
-    def makeTemplate(self, name, comments):
+
+    def startDeployTemplate(self, name, comments):
         '''
         Invokes makeTemplate from parent provider, completing params
 
@@ -183,7 +183,7 @@ class XenLinkedService(Service):
         # Get storages for that datacenter
 
         self.datastoreHasSpace()
-        return self.parent().makeTemplate(name, comments, self.machine.value, self.cluster.value, self.datastore.value, self.display.value)
+        return self.parent().cloneForTemplate(name, comments, self.machine.value, self.datastore.value)
 
     def getTemplateState(self, templateId):
         '''
@@ -288,12 +288,6 @@ class XenLinkedService(Service):
         Returns:
         '''
         return self.parent().removeMachine(machineId)
-
-    def updateMachineMac(self, machineId, macAddres):
-        '''
-        Changes the mac address of first nic of the machine to the one specified
-        '''
-        return self.parent().updateMachineMac(machineId, macAddres)
 
     def getMacRange(self):
         '''

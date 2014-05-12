@@ -424,11 +424,6 @@ class XenServer(object):
 
         return self.Async.VM.provision(vmId)
 
-    def setMacVM(self, vmId, netId, mac):
-        '''
-        '''
-        pass  # TODO: Set mac for this machine
-
     def convertToTemplate(self, vmId, shadowMultiplier=4):
         try:
             operations = self.VM.get_allowed_operations(vmId)
