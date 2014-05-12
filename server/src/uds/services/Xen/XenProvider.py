@@ -139,13 +139,14 @@ class Provider(ServiceProvider):
         Raises an exception with status else ('cancelled', 'unknown', 'failure')
         '''
         if task is None:
-            return True
+            return (True, '')
         ts = self.__getApi().getTaskInfo(task)
         logger.debug('Task status: {0}'.format(ts))
         if ts['status'] == 'running':
-            return ts['']
+            return (False, ts['progress'])
         if ts['status'] == 'success':
-            return None
+            return (True, ts['result'])
+
         # Any other state, raises an exception
         raise Exception(ts['status'])  # Should be 'cancelled', 'unknown', 'failure'
 

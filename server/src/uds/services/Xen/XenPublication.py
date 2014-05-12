@@ -110,22 +110,27 @@ class XenPublication(Publication):
 
         try:
             state = self.service().checkTaskFinished(self._task)
-            if state is None:  # Finished
+            if state[0] == True:  # Finished
+                self._templateId = state[1]
                 if self._state == 'publishing':
-                    self.service().convertToTemplate()
+                    self._state = 'templating'
+                    if self._destroyAfter == 't':
+                        return self.destroy()
+
+                    self.service().convertToTemplate(self._templateId)
+                    return State.RUNNING
+                else:  # Templating
+                    self._state = 'finished'
+
+                    if self._destroyAfter == 't':
+                        return self.destroy()
+
+                    return State.FINISHED
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
             return State.ERROR
 
-
-        self._state = self.service().getTemplateState(self._templateId)
-
-        # If publication os done (template is ready), and cancel was requested, do it just after template becomes ready
-        if self._state == 'ok':
-            if self._destroyAfter == 't':
-                return self.destroy()
-            return State.FINISHED
 
         return State.RUNNING
 
@@ -157,7 +162,7 @@ class XenPublication(Publication):
         State.FINISHED or State.ERROR.
         '''
         # We do not do anything else to destroy this instance of publication
-        if self._state == 'locked':
+        if self._state in ('publishing', 'templating'):
             self._destroyAfter = 't'
             return State.RUNNING
 
