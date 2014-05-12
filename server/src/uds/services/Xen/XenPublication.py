@@ -61,13 +61,14 @@ class XenPublication(Publication):
         self._reason = ''
         self._destroyAfter = 'f'
         self._templateId = ''
-        self._state = 'r'
+        self._state = ''
+        self._task = ''
 
     def marshal(self):
         '''
         returns data from an instance of Sample Publication serialized
         '''
-        return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state])
+        return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task])
 
     def unmarshal(self, data):
         '''
@@ -76,20 +77,20 @@ class XenPublication(Publication):
         logger.debug('Data: {0}'.format(data))
         vals = data.split('\t')
         if vals[0] == 'v1':
-            self._name, self._reason, self._destroyAfter, self._templateId, self._state = vals[1:]
+            self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task = vals[1:]
 
     def publish(self):
         '''
         Realizes the publication of the service
         '''
-        self._name = self.service().sanitizeVmName('UDSP ' + self.dsName() + "-" + str(self.revision()))
+        self._name = self.service().sanitizeVmName('UDS Pub ' + self.dsName() + "-" + str(self.revision()))
         comments = _('UDS pub for {0} at {1}').format(self.dsName(), str(datetime.now()).split('.')[0])
         self._reason = ''  # No error, no reason for it
         self._destroyAfter = 'f'
-        self._state = 'locked'
+        self._state = 'publishing'
 
         try:
-            self._templateId = self.service().makeTemplate(self._name, comments)
+            self._task = self.service().startDeployTemplate(self._name, comments)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -101,11 +102,22 @@ class XenPublication(Publication):
         '''
         Checks state of publication creation
         '''
-        if self._state == 'ok':
+        if self._state == 'finished':
             return State.FINISHED
 
         if self._state == 'error':
             return State.ERROR
+
+        try:
+            state = self.service().checkTaskFinished(self._task)
+            if state is None:  # Finished
+                if self._state == 'publishing':
+                    self.service().convertToTemplate()
+        except Exception as e:
+            self._state = 'error'
+            self._reason = str(e)
+            return State.ERROR
+
 
         self._state = self.service().getTemplateState(self._templateId)
 

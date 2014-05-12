@@ -105,10 +105,13 @@ class XenLinkedService(Service):
     memory = gui.NumericField(label=_("Memory (Mb)"), length=4, defvalue=512, rdonly=False, order=5,
                               tooltip=_('Memory assigned to machines'), required=True)
 
-    baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=6, tooltip=('Base name for clones from this machine'), required=True)
+    shadow = gui.NumericField(label=_("Shadow"), lengh=1, defvalue=4, rdonly=True, order=6,
+                              tooltip=_('Shadow memory multiplier (memory overcommit)'), required=True)
 
-    lenName = gui.NumericField(length=1, label=_('Name Length'), defvalue=5, order=7,
-                               tooltip=_('Length of numeric part for the names of this machines (betwen 3 and 6'), required=True)
+    baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=7, tooltip=('Base name for clones from this machine'), required=True)
+
+    lenName = gui.NumericField(length=1, label=_('Name Length'), defvalue=5, order=8,
+                               tooltip=_('Length of numeric part for the names of this machines (beetwen 3 and 6'), required=True)
 
     def initialize(self, values):
         '''
@@ -149,6 +152,10 @@ class XenLinkedService(Service):
         self.datastore.setValues(storages_list)
 
 
+    def checkTaskFinished(self, task):
+        return self.parent().checkTaskFinished(task)
+
+
     def datastoreHasSpace(self):
         # Get storages for that datacenter
         logger.debug('Checking datastore space for {0}'.format(self.datastore.value))
@@ -185,18 +192,10 @@ class XenLinkedService(Service):
         self.datastoreHasSpace()
         return self.parent().cloneForTemplate(name, comments, self.machine.value, self.datastore.value)
 
-    def getTemplateState(self, templateId):
+    def convertToTemplate(self, machineId):
         '''
-        Invokes getTemplateState from parent provider
-
-        Args:
-            templateId: templateId to remove
-
-        Returns nothing
-
-        Raises an exception if operation fails.
         '''
-        return self.parent().getTemplateState(templateId)
+        return self.parent.convertToTemplate(machineId, self.shadow.value)
 
     def startDeployFromTemplate(self, name, comments, templateId):
         '''

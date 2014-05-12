@@ -211,7 +211,7 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().getSRInfo(storageId)
 
-    def cloneForTemplate(self, machineId, name, comments, sr):
+    def cloneForTemplate(self, name, comments, machineId, sr):
         return self.__getApi().cloneVM(machineId, name, sr)
 
 
