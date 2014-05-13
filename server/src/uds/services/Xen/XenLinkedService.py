@@ -242,7 +242,7 @@ class XenLinkedService(Service):
         '''
         return self.parent().getMachineState(machineId)
 
-    def startMachine(self, machineId):
+    def startVM(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
@@ -253,9 +253,9 @@ class XenLinkedService(Service):
 
         Returns:
         '''
-        return self.parent().startMachine(machineId)
+        return self.parent().startVM(machineId, async)
 
-    def stopMachine(self, machineId):
+    def stopVM(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to Xen
 
@@ -264,9 +264,9 @@ class XenLinkedService(Service):
 
         Returns:
         '''
-        return self.parent().stopMachine(machineId)
+        return self.parent().stopVM(machineId, async)
 
-    def suspendMachine(self, machineId):
+    def suspendMachine(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to Xen
 
@@ -275,7 +275,19 @@ class XenLinkedService(Service):
 
         Returns:
         '''
-        return self.parent().suspendMachine(machineId)
+        return self.parent().suspendMachine(machineId, async)
+
+    def resumeMachine(self, machineId, async=True):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to Xen
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        '''
+        return self.parent().resumeMachine(machineId, async)
+
 
     def removeMachine(self, machineId):
         '''

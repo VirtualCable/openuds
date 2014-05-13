@@ -281,7 +281,13 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().cloneTemplate(templateId, name)
 
-    def startVM(self, machineId):
+    def getVMPowerState(self, machineId):
+        '''
+        Returns current machine power state
+        '''
+        return self.__getApi().getVMPowerState(machineId)
+
+    def startVM(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to XenServer.
 
@@ -292,7 +298,7 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().startVM(machineId)
+        return self.__getApi().startVM(machineId, async)
 
     def stopVM(self, machineId):
         '''
@@ -305,7 +311,7 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().stopVM(machineId)
 
-    def suspendVM(self, machineId):
+    def suspendVM(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -314,9 +320,9 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().suspendVM(machineId)
+        return self.__getApi().suspendVM(machineId, async)
 
-    def resumeVM(self, machineId):
+    def resumeVM(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -325,7 +331,7 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().resumeVM(machineId)
+        return self.__getApi().resumeVM(machineId, async)
 
 
     def removeVM(self, machineId):
@@ -338,12 +344,6 @@ class Provider(ServiceProvider):
         Returns:
         '''
         return self.__getApi().removeMachine(machineId)
-
-    def updateMachineMac(self, machineId, netId, macAddres):
-        '''
-        Changes the mac address of first nic of the machine to the one specified
-        '''
-        return self.__getApi().setMacVM(machineId, netId, macAddres)
 
     def getMacRange(self):
         return self.macsRange.value

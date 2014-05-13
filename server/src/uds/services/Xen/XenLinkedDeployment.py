@@ -35,12 +35,14 @@ from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
 
+from uds.services.Xen.xen_client import XenPowerState
+
 import cPickle
 import logging
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opChangeMac = range(10)
+opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opConfigure, opDeploy = range(11)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
@@ -66,6 +68,7 @@ class XenLinkedDeployment(UserDeployment):
         self._mac = ''
         self._vmid = ''
         self._reason = ''
+        self._task = ''
         self._queue = []
 
     # Serializable needed methods
@@ -73,7 +76,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Does nothing right here, we will use envoronment storage in this sample
         '''
-        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, cPickle.dumps(self._queue)])
+        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, cPickle.dumps(self._queue), self._task])
 
     def unmarshal(self, str_):
         '''
@@ -81,7 +84,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         vals = str_.split('\1')
         if vals[0] == 'v1':
-            self._name, self._ip, self._mac, self._vmid, self._reason, queue = vals[1:]
+            self._name, self._ip, self._mac, self._vmid, self._reason, queue, self._task = vals[1:]
             self._queue = cPickle.loads(queue)
 
     def getName(self):
@@ -166,20 +169,17 @@ class XenLinkedDeployment(UserDeployment):
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
         '''
-        if self.cache().get('ready') == '1':
-            return State.FINISHED
+        try:
+            task = self.service().startVM(self._vmid)
 
-        state = self.service().getMachineState(self._vmid)
+            if task == None:  # Already started up
+                return State.FINISHED
 
-        if state == 'unknown':
+            self._queue = [opFinish]
+            return self.__executeQueue()
+        except:
             return self.__error('Machine is not available anymore')
 
-        if state not in ('up', 'powering_up', 'restoring_state'):
-            self._queue = [opStart, opFinish]
-            return self.__executeQueue()
-
-        self.cache().put('ready', '1')
-        return State.FINISHED
 
     def notifyReadyFromOsManager(self, data):
         # Here we will check for suspending the VM (when full ready)
@@ -209,10 +209,11 @@ class XenLinkedDeployment(UserDeployment):
     def __initQueueForDeploy(self, forLevel2=False):
 
         if forLevel2 is False:
-            self._queue = [opCreate, opChangeMac, opStart, opFinish]
+            self._queue = [opCreate, opConfigure, opDeploy, opStart, opFinish]
         else:
-            self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opConfigure, opDeploy, opStart, opWait, opSuspend, opFinish]
 
+    # TODO: delete this
     def __checkMachineState(self, chkState):
         logger.debug('Checking that state of machine {0} is {1}'.format(self._vmid, chkState))
         state = self.service().getMachineState(self._vmid)
@@ -264,9 +265,9 @@ class XenLinkedDeployment(UserDeployment):
 
         if self._vmid != '':  # Powers off
             try:
-                state = self.service().getMachineState(self._vmid)
-                if state in ('up', 'suspended'):
-                    self.service().stopMachine(self._vmid)
+                state = self.service().getVMPowerState(self._vmid)
+                if state in (XenPowerState.running, XenPowerState.paused, XenPowerState.suspended):
+                    self.service().stopVM(self._vmid)
             except:
                 logger.debug('Can\t set machine state to stopped')
 
@@ -292,7 +293,8 @@ class XenLinkedDeployment(UserDeployment):
             opSuspend: self.__suspendMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
-            opChangeMac: self.__changeMac
+            opConfigure: self.__configure,
+            opDeploy: self.__deploy
         }
 
         try:
@@ -336,9 +338,10 @@ class XenLinkedDeployment(UserDeployment):
         name = self.service().sanitizeVmName(name)  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
-        self._vmid = self.service().deployFromTemplate(name, comments, templateId)
-        if self._vmid is None:
+        self._task = self.service().startDeployFromTemplate(name, comments, templateId)
+        if self._task is None:
             raise Exception('Can\'t create machine')
+
 
     def __remove(self):
         '''
@@ -406,11 +409,17 @@ class XenLinkedDeployment(UserDeployment):
         else:
             self.service().suspendMachine(self._vmid)
 
-    def __changeMac(self):
+    def __configure(self):
         '''
         Changes the mac of the first nic
         '''
         self.service().updateMachineMac(self._vmid, self.getUniqueId())
+
+    def __deploy(self):
+        '''
+        Makes machine usable on Xen
+        '''
+        pass
 
     # Check methods
     def __checkCreate(self):
@@ -443,12 +452,15 @@ class XenLinkedDeployment(UserDeployment):
         '''
         return self.__checkMachineState('unknown')
 
-    def __checkMac(self):
+    def __checkConfigure(self):
         '''
         Checks if change mac operation has finished.
 
         Changing nic configuration es 1-step operation, so when we check it here, it is already done
         '''
+        return State.FINISHED
+
+    def __checkDeploy(self):
         return State.FINISHED
 
     def checkState(self):
@@ -472,7 +484,8 @@ class XenLinkedDeployment(UserDeployment):
             opStop: self.__checkStop,
             opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
-            opChangeMac: self.__checkMac
+            opConfigure: self.__checkConfigure,
+            opDeploy: self.__checkDeploy
         }
 
         try:

@@ -297,29 +297,37 @@ class XenServer(object):
         except XenAPI.Failure as e:
             return XenFailure(e.details)
 
-    def startVM(self, vmId):
+    def startVM(self, vmId, async=True):
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.running:
             return  None  # Already powered on
-        return self.Async.VM.start(vmId, False, False)
+        if async:
+            return self.Async.VM.start(vmId, False, False)
+        return self.VM.start(vmId, False, False)
 
-    def stopVM(self, vmId):
+    def stopVM(self, vmId, async=True):
         vmState = self.getVMPowerState(vmId)
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
             return  None  # Already powered off
-        return self.Async.VM.hard_shutdown(vmId)
+        if async:
+            return self.Async.VM.hard_shutdown(vmId)
+        return self.VM.hard_shutdown(vmId)
 
-    def suspendVM(self, vmId):
+    def suspendVM(self, vmId, async=True):
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.suspended:
             return None
-        return self.Async.VM.suspend(vmId)
+        if async:
+            return self.Async.VM.suspend(vmId)
+        return self.VM.suspend(vmId)
 
-    def resumeVM(self, vmId):
+    def resumeVM(self, vmId, async=True):
         vmState = self.getVMPowerState(vmId)
         if vmState != XenPowerState.suspended:
             return None
-        return self.Async.VM.resume(vmId, False, False)
+        if async:
+            return self.Async.VM.resume(vmId, False, False)
+        return self.VM.resume(vmId, False, False)
 
     def cloneVM(self, vmId, targetName, targetSR=None):
         '''
