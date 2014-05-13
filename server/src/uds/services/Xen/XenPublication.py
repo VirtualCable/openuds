@@ -87,7 +87,7 @@ class XenPublication(Publication):
         comments = _('UDS pub for {0} at {1}').format(self.dsName(), str(datetime.now()).split('.')[0])
         self._reason = ''  # No error, no reason for it
         self._destroyAfter = 'f'
-        self._state = 'publishing'
+        self._state = 'ok'
 
         try:
             self._task = self.service().startDeployTemplate(self._name, comments)
@@ -111,21 +111,13 @@ class XenPublication(Publication):
         try:
             state = self.service().checkTaskFinished(self._task)
             if state[0] == True:  # Finished
+                self._state = 'finished'
                 self._templateId = state[1]
-                if self._state == 'publishing':
-                    self._state = 'templating'
-                    if self._destroyAfter == 't':
-                        return self.destroy()
+                if self._destroyAfter == 't':
+                    return self.destroy()
 
-                    self.service().convertToTemplate(self._templateId)
-                    return State.RUNNING
-                else:  # Templating
-                    self._state = 'finished'
-
-                    if self._destroyAfter == 't':
-                        return self.destroy()
-
-                    return State.FINISHED
+                self.service().convertToTemplate(self._templateId)
+                return State.FINISHED
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -162,7 +154,7 @@ class XenPublication(Publication):
         State.FINISHED or State.ERROR.
         '''
         # We do not do anything else to destroy this instance of publication
-        if self._state in ('publishing', 'templating'):
+        if self._state == 'ok':
             self._destroyAfter = 't'
             return State.RUNNING
 

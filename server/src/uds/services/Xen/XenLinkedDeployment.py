@@ -58,7 +58,7 @@ class XenLinkedDeployment(UserDeployment):
     '''
 
     # : Recheck every six seconds by default (for task methods)
-    suggestedTime = 6
+    suggestedTime = 7
 
     def initialize(self):
         self._name = ''

@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-05-12'
+__updated__ = '2014-05-13'
 
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -213,7 +213,9 @@ class Provider(ServiceProvider):
         return self.__getApi().getSRInfo(storageId)
 
     def cloneForTemplate(self, name, comments, machineId, sr):
-        return self.__getApi().cloneVM(machineId, name, sr)
+        task = self.__getApi().cloneVM(machineId, name, sr)
+        logger.debug('Task for cloneForTemplate: {0}'.format(task))
+        return task
 
 
     def convertToTemplate(self, machineId, shadowMultiplier=4):
@@ -231,7 +233,7 @@ class Provider(ServiceProvider):
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         '''
-        return self.__getApi().convertToTemplate(machineId, shadowMultiplier)
+        self.__getApi().convertToTemplate(machineId, shadowMultiplier)
 
     def getMachineState(self, machineId):
         '''

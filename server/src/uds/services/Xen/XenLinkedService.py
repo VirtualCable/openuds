@@ -161,7 +161,7 @@ class XenLinkedService(Service):
         logger.debug('Checking datastore space for {0}'.format(self.datastore.value))
         info = self.parent().getStorageInfo(self.datastore.value)
         logger.debug('Datastore Info: {0}'.format(info))
-        availableGB = info['available'] / 1024
+        availableGB = (info['size'] - info['used']) / 1024
         if availableGB < self.minSpaceGB.num():
             raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(self.minSpaceGB.num(), availableGB))
 
@@ -186,16 +186,16 @@ class XenLinkedService(Service):
         Raises an exception if operation fails.
         '''
 
-        # Checks datastore size
-        # Get storages for that datacenter
+        logger.debug('Starting deploy of template from machine {0} on datastore {1}'.format(self.machine.value, self.datastore.value))
 
+        # Checks datastore size
         self.datastoreHasSpace()
         return self.parent().cloneForTemplate(name, comments, self.machine.value, self.datastore.value)
 
     def convertToTemplate(self, machineId):
         '''
         '''
-        return self.parent.convertToTemplate(machineId, self.shadow.value)
+        self.parent().convertToTemplate(machineId, self.shadow.value)
 
     def startDeployFromTemplate(self, name, comments, templateId):
         '''
