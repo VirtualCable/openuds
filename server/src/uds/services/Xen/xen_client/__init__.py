@@ -428,9 +428,10 @@ class XenServer(object):
         tags.append(TAG_MACHINE)
         self.VM.set_tags(vmId, tags)
 
-        self.VM.set_tags(vmId, tags)
+        if kwargs.get('aync', True) is True:
+            return self.Async.VM.provision(vmId)
+        return self.VM.provision(vmId)
 
-        return self.Async.VM.provision(vmId)
 
     def convertToTemplate(self, vmId, shadowMultiplier=4):
         try:

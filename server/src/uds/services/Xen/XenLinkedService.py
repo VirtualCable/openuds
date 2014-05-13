@@ -100,17 +100,20 @@ class XenLinkedService(Service):
     datastore = gui.ChoiceField(label=_("Storage SR"), rdonly=False, order=3,
                                        tooltip=_('Storage where to publish and put incrementals'), required=True)
 
-    minSpaceGB = gui.NumericField(length=3, label=_('Reserved Space'), defvalue='32', order=4, tooltip=_('Minimal free space in GB'), required=True)
+    network = gui.ChoiceField(label=_("Network"), rdonly=False, order=4,
+                                       tooltip=_('Network used for virtual machines'), required=True)
 
-    memory = gui.NumericField(label=_("Memory (Mb)"), length=4, defvalue=512, rdonly=False, order=5,
+    minSpaceGB = gui.NumericField(length=3, label=_('Reserved Space'), defvalue='32', order=5, tooltip=_('Minimal free space in GB'), required=True)
+
+    memory = gui.NumericField(label=_("Memory (Mb)"), length=4, defvalue=512, rdonly=False, order=6,
                               tooltip=_('Memory assigned to machines'), required=True)
 
-    shadow = gui.NumericField(label=_("Shadow"), lengh=1, defvalue=4, rdonly=True, order=6,
+    shadow = gui.NumericField(label=_("Shadow"), lengh=1, defvalue=4, rdonly=True, order=7,
                               tooltip=_('Shadow memory multiplier (memory overcommit)'), required=True)
 
-    baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=7, tooltip=('Base name for clones from this machine'), required=True)
+    baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=8, tooltip=('Base name for clones from this machine'), required=True)
 
-    lenName = gui.NumericField(length=1, label=_('Name Length'), defvalue=5, order=8,
+    lenName = gui.NumericField(length=1, label=_('Name Length'), defvalue=5, order=9,
                                tooltip=_('Length of numeric part for the names of this machines (beetwen 3 and 6'), required=True)
 
     def initialize(self, values):
@@ -140,6 +143,7 @@ class XenLinkedService(Service):
 
         machines = self.parent().getMachines()
         storages = self.parent().getStorages()
+        networks = self.parent().getNetworks()
         machines_list = []
         for m in machines:
             machines_list.append(gui.choiceItem(m['id'], m['name']))
@@ -147,9 +151,14 @@ class XenLinkedService(Service):
         for storage in storages:
             space, free = storage['size'] / 1024, (storage['size'] - storage['used']) / 1024
             storages_list.append(gui.choiceItem(storage['id'], "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free)))
+        network_list = []
+        for net in networks:
+            network_list.append(gui.choiceItem(net['id'], net['name']))
 
         self.machine.setValues(machines_list)
         self.datastore.setValues(storages_list)
+        self.network.setValues(network_list)
+
 
 
     def checkTaskFinished(self, task):
@@ -257,7 +266,7 @@ class XenLinkedService(Service):
 
     def stopVM(self, machineId, async=True):
         '''
-        Tries to start a machine. No check is done, it is simply requested to Xen
+        Tries to stop a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
@@ -266,30 +275,30 @@ class XenLinkedService(Service):
         '''
         return self.parent().stopVM(machineId, async)
 
-    def suspendMachine(self, machineId, async=True):
+    def suspendVM(self, machineId, async=True):
         '''
-        Tries to start a machine. No check is done, it is simply requested to Xen
+        Tries to suspend a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
 
         Returns:
         '''
-        return self.parent().suspendMachine(machineId, async)
+        return self.parent().suspendVM(machineId, async)
 
-    def resumeMachine(self, machineId, async=True):
+    def resumeVM(self, machineId, async=True):
         '''
-        Tries to start a machine. No check is done, it is simply requested to Xen
+        Tries to resume a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
 
         Returns:
         '''
-        return self.parent().resumeMachine(machineId, async)
+        return self.parent().suspendVM(machineId, async)
 
 
-    def removeMachine(self, machineId):
+    def removeVM(self, machineId):
         '''
         Tries to delete a machine. No check is done, it is simply requested to Xen
 
@@ -298,7 +307,13 @@ class XenLinkedService(Service):
 
         Returns:
         '''
-        return self.parent().removeMachine(machineId)
+        return self.parent().removeVM(machineId)
+
+    def configureVM(self, machineId, mac):
+        return self.parent().configureVM(machineId, self.network.value, mac, self.memory.value)
+
+    def provisionVM(self, machineId, async=True):
+        return self.parent().deployVM(machineId, async)
 
     def getMacRange(self):
         '''

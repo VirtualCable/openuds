@@ -42,7 +42,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opConfigure, opDeploy = range(11)
+opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opConfigure, opProvision = range(11)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
@@ -209,30 +209,9 @@ class XenLinkedDeployment(UserDeployment):
     def __initQueueForDeploy(self, forLevel2=False):
 
         if forLevel2 is False:
-            self._queue = [opCreate, opConfigure, opDeploy, opStart, opFinish]
+            self._queue = [opCreate, opConfigure, opProvision, opStart, opFinish]
         else:
-            self._queue = [opCreate, opConfigure, opDeploy, opStart, opWait, opSuspend, opFinish]
-
-    # TODO: delete this
-    def __checkMachineState(self, chkState):
-        logger.debug('Checking that state of machine {0} is {1}'.format(self._vmid, chkState))
-        state = self.service().getMachineState(self._vmid)
-
-        # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == 'unknown' and chkState != 'unknown':
-            return self.__error('Machine not found')
-
-        ret = State.RUNNING
-        if type(chkState) is list:
-            for cks in chkState:
-                if state == cks:
-                    ret = State.FINISHED
-                    break
-        else:
-            if state == chkState:
-                ret = State.FINISHED
-
-        return ret
+            self._queue = [opCreate, opConfigure, opProvision, opStart, opWait, opSuspend, opFinish]
 
     def __getCurrentOp(self):
         if len(self._queue) == 0:
@@ -294,7 +273,7 @@ class XenLinkedDeployment(UserDeployment):
             opWait: self.__wait,
             opRemove: self.__remove,
             opConfigure: self.__configure,
-            opDeploy: self.__deploy
+            opProvision: self.__provision
         }
 
         try:
@@ -347,98 +326,86 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Removes a machine from system
         '''
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().getVMPowerState(self._vmid)
 
-        if state == 'unknown':
-            raise Exception('Machine not found')
-
-        if state != 'down':
+        if state != XenPowerState.halted:
             self.__pushFrontOp(opStop)
             self.__executeQueue()
         else:
-            self.service().removeMachine(self._vmid)
+            self.service().removeVM(self._vmid)
 
     def __startMachine(self):
         '''
         Powers on the machine
         '''
-        state = self.service().getMachineState(self._vmid)
+        task = self.service().startVM(self._vmid)
 
-        if state == 'unknown':
-            raise Exception('Machine not found')
-
-        if state == 'up':  # Already started, return
-            return
-
-        if state != 'down' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
+        if task is not None:
+            self._task = task
         else:
-            self.service().startMachine(self._vmid)
+            self._task = ''
 
     def __stopMachine(self):
         '''
         Powers off the machine
         '''
-        state = self.service().getMachineState(self._vmid)
+        task = self.service().stopVM(self._vmid)
 
-        if state == 'unknown':
-            raise Exception('Machine not found')
-
-        if state == 'down':  # Already stoped, return
-            return
-
-        if state != 'up' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
+        if task is not None:
+            self._task = task
         else:
-            self.service().stopMachine(self._vmid)
+            self._task = ''
 
     def __suspendMachine(self):
         '''
         Suspends the machine
         '''
-        state = self.service().getMachineState(self._vmid)
+        task = self.service().suspendVM(self._vmid)
 
-        if state == 'unknown':
-            raise Exception('Machine not found')
-
-        if state == 'suspended':  # Already suspended, return
-            return
-
-        if state != 'up':
-            self.__pushFrontOp(opRetry)  # Remember here, the return State.FINISH will make this retry be "poped" right ar return
+        if task is not None:
+            self._task = task
         else:
-            self.service().suspendMachine(self._vmid)
+            self._task = ''
 
     def __configure(self):
         '''
         Changes the mac of the first nic
         '''
-        self.service().updateMachineMac(self._vmid, self.getUniqueId())
+        self.service().configureVM(self._vmid, self.mac)
 
-    def __deploy(self):
+    def __provision(self):
         '''
         Makes machine usable on Xen
         '''
-        pass
+        self.service().provisionVM(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
 
     # Check methods
     def __checkCreate(self):
         '''
         Checks the state of a deploy for an user or cache
         '''
-        return self.__checkMachineState('down')
+        state = self.service().checkTaskFinished(self._task)
+        if state[0] == True:  # Finished
+            self._vmid = state[1]
+            return State.FINISHED
+
+        return State.RUNNING
 
     def __checkStart(self):
         '''
         Checks if machine has started
         '''
-        return self.__checkMachineState('up')
+        if self.service().checkTaskFinished(self._task)[0] == True:
+            return State.FINISHED
+        return State.RUNNING
 
     def __checkStop(self):
         '''
         Checks if machine has stoped
         '''
-        return self.__checkMachineState('down')
+        if self.service().checkTaskFinished(self._task)[0] == True:
+            return State.FINISHED
+        return State.RUNNING
 
     def __checkSuspend(self):
         '''
@@ -450,7 +417,9 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Checks if a machine has been removed
         '''
-        return self.__checkMachineState('unknown')
+        if self.service().checkTaskFinished(self._task)[0] == True:
+            return State.FINISHED
+        return State.RUNNING
 
     def __checkConfigure(self):
         '''
@@ -460,7 +429,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         return State.FINISHED
 
-    def __checkDeploy(self):
+    def __checkProvision(self):
         return State.FINISHED
 
     def checkState(self):
@@ -485,7 +454,7 @@ class XenLinkedDeployment(UserDeployment):
             opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
             opConfigure: self.__checkConfigure,
-            opDeploy: self.__checkDeploy
+            opProvision: self.__checkProvision
         }
 
         try:
@@ -606,7 +575,8 @@ class XenLinkedDeployment(UserDeployment):
             opError: 'error',
             opFinish: 'finish',
             opRetry: 'retry',
-            opChangeMac: 'changing mac'
+            opConfigure: 'configuring',
+            opProvision: 'provisioning'
         }.get(op, '????')
 
     def __debug(self, txt):

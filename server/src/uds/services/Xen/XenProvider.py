@@ -138,7 +138,7 @@ class Provider(ServiceProvider):
         Returns a number indicating % of completion if running
         Raises an exception with status else ('cancelled', 'unknown', 'failure')
         '''
-        if task is None:
+        if task is None or task == '':
             return (True, '')
         ts = self.__getApi().getTaskInfo(task)
         logger.debug('Task status: {0}'.format(ts))
@@ -211,6 +211,9 @@ class Provider(ServiceProvider):
 
         '''
         return self.__getApi().getSRInfo(storageId)
+
+    def getNetworks(self, force=False):
+        return self.__getApi().getNetworks()
 
     def cloneForTemplate(self, name, comments, machineId, sr):
         task = self.__getApi().cloneVM(machineId, name, sr)
@@ -344,6 +347,12 @@ class Provider(ServiceProvider):
         Returns:
         '''
         return self.__getApi().removeMachine(machineId)
+
+    def configureVM(self, machineId, netId, mac, memory):
+        self.__getApi().configureVM(machineId, mac={'network': netId, 'mac': mac}, memory=memory)
+
+    def provisionVM(self, machineId, async):
+        return self.__getApi().provisionVM(machineId, async)
 
     def getMacRange(self):
         return self.macsRange.value
