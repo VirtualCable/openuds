@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-05-13'
+__updated__ = '2014-05-14'
 
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -303,7 +303,7 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().startVM(machineId, async)
 
-    def stopVM(self, machineId):
+    def stopVM(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -312,7 +312,7 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().stopVM(machineId)
+        return self.__getApi().stopVM(machineId, async)
 
     def suspendVM(self, machineId, async=True):
         '''
@@ -346,13 +346,13 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().removeMachine(machineId)
+        return self.__getApi().removeVM(machineId)
 
     def configureVM(self, machineId, netId, mac, memory):
         self.__getApi().configureVM(machineId, mac={'network': netId, 'mac': mac}, memory=memory)
 
     def provisionVM(self, machineId, async):
-        return self.__getApi().provisionVM(machineId, async)
+        return self.__getApi().provisionVM(machineId, async=async)
 
     def getMacRange(self):
         return self.macsRange.value

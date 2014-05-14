@@ -315,7 +315,7 @@ class XenLinkedDeployment(UserDeployment):
         if name == NO_MORE_NAMES:
             raise Exception('No more names available for this service. (Increase digits for this service to fix)')
 
-        name = self.service().sanitizeVmName(name)  # oVirt don't let us to create machines with more than 15 chars!!!
+        name = 'UDS service ' + self.service().sanitizeVmName(name)  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
         self._task = self.service().startDeployFromTemplate(name, comments, templateId)
@@ -370,9 +370,9 @@ class XenLinkedDeployment(UserDeployment):
 
     def __configure(self):
         '''
-        Changes the mac of the indicated nic
+        Provisions machine & changes the mac of the indicated nic
         '''
-        self.service().configureVM(self._vmid, self.mac)
+        self.service().configureVM(self._vmid, self.getUniqueId())
 
     def __provision(self):
         '''
@@ -412,7 +412,9 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Check if the machine has suspended
         '''
-        return self.__checkMachineState('suspended')
+        if self.service().checkTaskFinished(self._task)[0] == True:
+            return State.FINISHED
+        return State.RUNNING
 
     def __checkRemoved(self):
         '''
@@ -540,7 +542,7 @@ class XenLinkedDeployment(UserDeployment):
         op = self.__getCurrentOp()
 
         if op == opError:
-            return self.__error('Machine is already in error state!')
+            return State.FINISHED
 
         if op == opFinish or op == opWait:
             self._queue = [opStop, opRemove, opFinish]

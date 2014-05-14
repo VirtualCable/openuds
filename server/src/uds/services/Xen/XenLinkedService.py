@@ -224,8 +224,7 @@ class XenLinkedService(Service):
         logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
         self.datastoreHasSpace()
 
-        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value,
-                                                self.display.value, int(self.memory.value), int(self.memoryGuaranteed.value))
+        return self.parent().startDeployFromTemplate(name, comments, templateId)
 
     def removeTemplate(self, templateId):
         '''
@@ -233,23 +232,17 @@ class XenLinkedService(Service):
         '''
         return self.parent().removeTemplate(templateId)
 
-    def getMachineState(self, machineId):
+    def getVMPowerState(self, machineId):
         '''
         Invokes getMachineState from parent provider
-        (returns if machine is "active" or "inactive"
 
         Args:
             machineId: If of the machine to get state
 
         Returns:
             one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
         '''
-        return self.parent().getMachineState(machineId)
+        return self.parent().getVMPowerState(machineId)
 
     def startVM(self, machineId, async=True):
         '''
@@ -313,7 +306,7 @@ class XenLinkedService(Service):
         return self.parent().configureVM(machineId, self.network.value, mac, self.memory.value)
 
     def provisionVM(self, machineId, async=True):
-        return self.parent().deployVM(machineId, async)
+        return self.parent().provisionVM(machineId, async)
 
     def getMacRange(self):
         '''
