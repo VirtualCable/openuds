@@ -170,15 +170,15 @@ class XenLinkedDeployment(UserDeployment):
         before presenting it (via transport rendering) to the user.
         '''
         try:
-            task = self.service().startVM(self._vmid)
+            state = self.service().getVMPowerState(self._vmid)
 
-            if task == None:  # Already started up
-                return State.FINISHED
-
-            self._queue = [opFinish]
-            return self.__executeQueue()
+            if state != XenPowerState.running:
+                self._queue = [opStart, opFinish]
+                return self.__executeQueue()
         except:
             return self.__error('Machine is not available anymore')
+
+        return State.FINISHED
 
 
     def notifyReadyFromOsManager(self, data):
@@ -246,7 +246,8 @@ class XenLinkedDeployment(UserDeployment):
             try:
                 state = self.service().getVMPowerState(self._vmid)
                 if state in (XenPowerState.running, XenPowerState.paused, XenPowerState.suspended):
-                    self.service().stopVM(self._vmid)
+                    self.service().stopVM(self._vmid, False)  # In sync mode
+                # TODO Remove machine
             except:
                 logger.debug('Can\t set machine state to stopped')
 
@@ -369,7 +370,7 @@ class XenLinkedDeployment(UserDeployment):
 
     def __configure(self):
         '''
-        Changes the mac of the first nic
+        Changes the mac of the indicated nic
         '''
         self.service().configureVM(self._vmid, self.mac)
 
@@ -417,9 +418,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Checks if a machine has been removed
         '''
-        if self.service().checkTaskFinished(self._task)[0] == True:
-            return State.FINISHED
-        return State.RUNNING
+        return State.FINISHED
 
     def __checkConfigure(self):
         '''
