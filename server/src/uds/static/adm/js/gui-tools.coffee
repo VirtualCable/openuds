@@ -68,6 +68,8 @@
       
       # Activate "cool" selects
       $(selector + " .selectpicker").selectpicker()
+
+      $(selector + " input[type=numeric]").spinedit()
       
       # TEST: cooler on mobile devices
       $(selector + " .selectpicker").selectpicker "mobile"  if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)

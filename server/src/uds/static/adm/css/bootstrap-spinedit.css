@@ -1,7 +1,19 @@
-﻿div.spinedit { display: inline-block; position: relative; }
-input[type="text"].spinedit { width: 35px; }
-div.spinedit .icon-chevron-up,
-div.spinedit .icon-chevron-down { position: relative; cursor: pointer; width: 12px; left: 8px; }
-div.spinedit .icon-chevron-up { top: -12px; }
-div.spinedit .icon-chevron-down { top: 3px; left: -4px; }
-.form-search div.spinedit, .form-inline div.spinedit, .form-horizontal div.spinedit { top: 5px; }
+﻿span.spinedit .glyphicon-chevron-down { position: relative; cursor: pointer;}
+span.spinedit .glyphicon-chevron-up { position: relative; cursor: pointer;}
+span.spinedit .glyphicon-chevron-up { top: -8px; left: -8px; }
+span.spinedit .glyphicon-chevron-down { top: 8px; margin-right: -5px;}
+
+.spinedit {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1;
+  text-align: center;
+  display: table-cell;
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+
