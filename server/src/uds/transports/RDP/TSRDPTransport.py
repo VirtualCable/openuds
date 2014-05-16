@@ -4,27 +4,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
@@ -53,25 +53,25 @@ class TSRDPTransport(Transport):
     typeName = _('RDP Transport (tunneled)')
     typeType = 'TSRDPTransport'
     typeDescription = _('RDP Transport for tunneled connection')
-    iconFile = 'rdp.png' 
+    iconFile = 'rdp.png'
     needsJava = True  # If this transport needs java for rendering
 
-    tunnelServer = gui.TextField(label=_('Tunnel server'), order = 1, tooltip = _('IP or Hostname of tunnel server send to client device ("public" ip) and port. (use HOST:PORT format)'))
-    tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order = 2, tooltip = _('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
-    
-    useEmptyCreds = gui.CheckBoxField(label = _('Empty creds'), order = 3, tooltip = _('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order = 4, tooltip = _('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order = 5, tooltip = _('If not empty, this password will be always used as credential'))
-    fixedDomain = gui.TextField(label=_('Domain'), order = 6, tooltip = _('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    allowSmartcards = gui.CheckBoxField(label = _('Allow Smartcards'), order = 7, tooltip = _('If checked, this transport will allow the use of smartcards'))
-    allowPrinters = gui.CheckBoxField(label = _('Allow Printers'), order = 8, tooltip = _('If checked, this transport will allow the use of user printers'))
-    allowDrives = gui.CheckBoxField(label = _('Allow Drives'), order = 9, tooltip = _('If checked, this transport will allow the use of user drives'))
-    allowSerials = gui.CheckBoxField(label = _('Allow Serials'), order = 10, tooltip = _('If checked, this transport will allow the use of user serial ports'))
-    
-    def __init__(self, environment, values = None):
+    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server send to client device ("public" ip) and port. (use HOST:PORT format)'))
+    tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
+
+    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=3, tooltip=_('If checked, the credentials used to connect will be emtpy'))
+    fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'))
+    fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'))
+    fixedDomain = gui.TextField(label=_('Domain'), order=6, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
+    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=7, tooltip=_('If checked, this transport will allow the use of smartcards'))
+    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=8, tooltip=_('If checked, this transport will allow the use of user printers'))
+    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=9, tooltip=_('If checked, this transport will allow the use of user drives'))
+    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=10, tooltip=_('If checked, this transport will allow the use of user serial ports'))
+
+    def __init__(self, environment, values=None):
         super(TSRDPTransport, self).__init__(environment, values)
         if values != None:
-            if values['tunnelServer'].find(':') == -1:
+            if values['tunnelServer'].count(':') != 1:
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
             self._tunnelServer = values['tunnelServer']
             self._tunnelCheckServer = values['tunnelCheckServer']
@@ -83,7 +83,7 @@ class TSRDPTransport(Transport):
             self._allowPrinters = gui.strToBool(values['allowPrinters'])
             self._allowDrives = gui.strToBool(values['allowDrives'])
             self._allowSerials = gui.strToBool(values['allowSerials'])
-            
+
         else:
             self._tunnelServer = ''
             self._tunnelCheckServer = ''
@@ -95,15 +95,15 @@ class TSRDPTransport(Transport):
             self._allowPrinters = False
             self._allowDrives = False
             self._allowSerials = False
-    
+
     def marshal(self):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join( '\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters), 
+        return str.join('\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
                                 gui.boolToStr(self._allowDrives), gui.boolToStr(self._allowSerials),
-                                self._fixedName, self._fixedPassword, self._fixedDomain, self._tunnelServer, self._tunnelCheckServer ] ) 
-    
+                                self._fixedName, self._fixedPassword, self._fixedDomain, self._tunnelServer, self._tunnelCheckServer ])
+
     def unmarshal(self, str_):
         data = str_.split('\t')
         if data[0] == 'v1':
@@ -117,12 +117,12 @@ class TSRDPTransport(Transport):
             self._fixedDomain = data[8]
             self._tunnelServer = data[9]
             self._tunnelCheckServer = data[10]
-        
+
     def valuesDict(self):
-        return { 'allowSmartcards' : gui.boolToStr(self._allowSmartcards), 'allowPrinters' : gui.boolToStr(self._allowPrinters), 
-                'allowDrives': gui.boolToStr(self._allowDrives), 'allowSerials': gui.boolToStr(self._allowSerials), 
-                'fixedName' : self._fixedName, 'fixedPassword' : self._fixedPassword, 'fixedDomain' : self._fixedDomain, 
-                'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'tunnelServer' : self._tunnelServer, 
+        return { 'allowSmartcards' : gui.boolToStr(self._allowSmartcards), 'allowPrinters' : gui.boolToStr(self._allowPrinters),
+                'allowDrives': gui.boolToStr(self._allowDrives), 'allowSerials': gui.boolToStr(self._allowSerials),
+                'fixedName' : self._fixedName, 'fixedPassword' : self._fixedPassword, 'fixedDomain' : self._fixedDomain,
+                'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'tunnelServer' : self._tunnelServer,
                 'tunnelCheckServer' : self._tunnelCheckServer }
 
     def isAvailableFor(self, ip):
@@ -140,7 +140,7 @@ class TSRDPTransport(Transport):
             else:
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
-    
+
     def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
         # We use helper to keep this clean
         username = user.getUsernameForAuth()
@@ -148,7 +148,7 @@ class TSRDPTransport(Transport):
 
         if self._fixedName is not '':
             username = self._fixedName
-        
+
         proc = username.split('@')
         if len(proc) > 1:
             domain = proc[1]
@@ -160,38 +160,38 @@ class TSRDPTransport(Transport):
         if self._fixedDomain is not '':
             domain = self._fixedDomain;
         if self._useEmptyCreds is True:
-            username, password, domain = '','',''
-        
+            username, password, domain = '', '', ''
+
         if domain != '':
-            if domain.find('.') == -1: # Dotter domain form
+            if domain.find('.') == -1:  # Dotter domain form
                 username = username + '@' + domain
                 domain = ''
-        
+
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
         cache = Cache('pam')
 
         tunuser = ''.join(random.choice(string.letters + string.digits) for i in xrange(12)) + ("%f" % time.time()).split('.')[1]
         tunpass = ''.join(random.choice(string.letters + string.digits) for i in xrange(12))
-        cache.put(tunuser, tunpass, 60*10) # Credential valid for ten minutes, and for 1 use only
-        
+        cache.put(tunuser, tunpass, 60 * 10)  # Credential valid for ten minutes, and for 1 use only
+
         sshHost, sshPort = self._tunnelServer.split(':')
-        
+
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
         tun = "{0} {1} {2} {3} {4} {5} {6}".format(tunuser, tunpass, sshHost, sshPort, ip, '3389', '9')
         ip = '127.0.0.1'
-            
+
         # Extra data
-        extra = { 'width': width, 'height' : height, 'depth' : depth, 
-            'printers' : self._allowPrinters, 'smartcards' : self._allowSmartcards, 
+        extra = { 'width': width, 'height' : height, 'depth' : depth,
+            'printers' : self._allowPrinters, 'smartcards' : self._allowSmartcards,
             'drives' : self._allowDrives, 'serials' : self._allowSerials,
             'tun': tun, 'compression':True }
-            
+
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
-            
+
         return generateHtmlForRdp(self, idUserService, idTransport, os, ip, '-1', username, password, domain, extra)
-        
+
     def getHtmlComponent(self, id, os, componentId):
         # We use helper to keep this clean
         return getHtmlComponent(self.__module__, componentId)
