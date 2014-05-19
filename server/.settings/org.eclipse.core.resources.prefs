@@ -256,6 +256,7 @@ encoding//src/uds/tests/core/util/net.py=utf-8
 encoding//src/uds/transports/HTML5RDP/HTML5RDP.py=utf-8
 encoding//src/uds/transports/HTML5RDP/__init__.py=utf-8
 encoding//src/uds/transports/NX/NXTransport.py=utf-8
+encoding//src/uds/transports/NX/TSNXTransport.py=utf-8
 encoding//src/uds/transports/NX/__init__.py=utf-8
 encoding//src/uds/transports/NX/web.py=utf-8
 encoding//src/uds/transports/RDP/RDPTransport.py=utf-8
