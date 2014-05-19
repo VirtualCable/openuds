@@ -34,8 +34,10 @@ from __future__ import unicode_literals
 # import time
 from django.utils.translation import ugettext as _
 from django.forms.models import model_to_dict
-from uds.core.util.State import State
 from django.db import IntegrityError
+from django.core.exceptions import ValidationError
+
+from uds.core.util.State import State
 
 from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import log
@@ -133,6 +135,8 @@ class Users(DetailHandler):
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
             raise RequestError(unicode(e))
+        except ValidationError as e:
+            raise RequestError(unicode(e.message))
         except Exception:
             logger.exception('Saving user')
             self.invalidRequestException()

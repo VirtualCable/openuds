@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-05-08'
+__updated__ = '2014-05-19'
 
 
 # a few constants
@@ -276,7 +276,7 @@ class DetailHandler(BaseModelHandler):
         '''
         Put is delegated to specific implementation
         '''
-        logger.debug("Detail args for PUT: {0}, {1}".format(self._args, self._params))
+        # logger.debug("Detail args for PUT: {0}, {1}".format(self._args, self._params))
 
         parent = self._kwargs['parent']
 
