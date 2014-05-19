@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-05-19'
 
 import logging
 
@@ -88,4 +88,6 @@ from uds.models.UniqueId import UniqueId
 # Workers/Schedulers related
 from uds.models.Scheduler import Scheduler
 from uds.models.DelayedTask import DelayedTask
+
+from uds.models import plugins
 
