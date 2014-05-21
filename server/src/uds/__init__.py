@@ -38,5 +38,6 @@ import osmanagers  # To make sure that packages are initialized at this point
 import transports  # To make sure that packages are initialized at this point
 import dispatchers
 import models
+import plugins
 
 import xmlrpc
