@@ -353,7 +353,7 @@ class UserServiceManager(object):
             #    return existing[0]
 
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
-        cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
+        cache = ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
         if len(cache) > 0:
             cache = cache[0]  # Database object
             cache.assignToUser(user)
@@ -365,7 +365,7 @@ class UserServiceManager(object):
             cache.save()
             return cache
         # Now find if there is a preparing one
-        cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
+        cache = ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[:1]
         if len(cache) > 0:
             cache = cache[0]
             cache.assignToUser(user)
@@ -410,7 +410,7 @@ class UserServiceManager(object):
 
     def isReady(self, uService):
         UserService.objects.update()
-        uService = UserService.objects.select_for_update().get(id=uService.id)
+        uService = UserService.objects.get(id=uService.id)
         logger.debug('Checking ready of {0}'.format(uService))
         if uService.state != State.USABLE or uService.os_state != State.USABLE:
             logger.debug('State is not usable for {0}'.format(uService))
@@ -432,7 +432,7 @@ class UserServiceManager(object):
         This method is used by UserService when a request for setInUse(False) is made
         This checks that the service can continue existing or not
         '''
-        # uService = UserService.objects.select_for_update().get(id=uService.id)
+        # uService = UserService.objects.get(id=uService.id)
         if uService.publication == None:
             return
         if uService.publication.id != uService.deployed_service.activePublication().id:
