@@ -391,10 +391,10 @@ class UserServiceManager(object):
         # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
         ty = ds.service.getType()
         if ty.usesCache is True:
-            inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
+            # inCacheL1 = ds.cachedUserServices().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L1_CACHE)).count()
             inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
-            totalL1Assigned = inCacheL1 + inAssigned
-            if totalL1Assigned >= ds.max_srvs:
+            # totalL1Assigned = inCacheL1 + inAssigned
+            if inAssigned >= ds.max_srvs:  # cacheUpdater will drop necesary L1 machines, so it's not neccesary to check against inCacheL1
                 raise MaxServicesReachedException()
         # Can create new service, create it
         return self.createAssignedFor(ds, user)
