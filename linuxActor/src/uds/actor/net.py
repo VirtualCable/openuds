@@ -59,7 +59,7 @@ def getIpAndMac(ifname):
 
 def getExternalIpAndMacs():
     res = getIpAndMac(getInterfaces())
-    logger.debug('Res: {0}'.format(res))
+    # logger.debug('Res: {0}'.format(res))
     for key in res.keys():
         if res[key]['mac'] == '00:00:00:00:00:00':
             del res[key]
