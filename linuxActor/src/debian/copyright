@@ -3,8 +3,8 @@ Name: udsactor
 Maintainer: Adolfo Gómez García
 Source: http://www.virtualcable.es/
 
-Copyright: 2010 Virtual Cable S.L.
-License: GPL-2+
+Copyright: 2014 Virtual Cable S.L.
+License: BSD-3-clause
 
 License: GPL-2+
 This program is free software; you can redistribute it and/or modify
