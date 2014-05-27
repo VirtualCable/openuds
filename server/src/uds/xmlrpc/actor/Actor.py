@@ -60,13 +60,13 @@ def message(id_, message, data):
     logger.debug("Called message for id_ {0}, message \"{1}\" and data \"{2}\"".format(ids, message, data))
     res = ""
     try:
-        services = UserService.objects.select_for_update().filter(unique_id__in=ids, state__in=[State.USABLE, State.PREPARING])
+        services = UserService.objects.filter(unique_id__in=ids, state__in=[State.USABLE, State.PREPARING])
         if services.count() == 0:
             res = ""
         else:
             inUse = services[0].in_use
             res = services[0].getInstance().osmanager().process(services[0], message, data)
-            services = UserService.objects.select_for_update().filter(unique_id__in=ids, state__in=[State.USABLE, State.PREPARING])
+            services = UserService.objects.filter(unique_id__in=ids, state__in=[State.USABLE, State.PREPARING])
             if services.count() > 0 and services[0].in_use != inUse:  # If state changed, log it
                 type_ = inUse and 'login' or 'logout'
                 uniqueId = services[0].unique_id

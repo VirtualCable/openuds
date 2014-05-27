@@ -98,7 +98,9 @@ class DeployedServiceRemover(Job):
             pass
 
         # First, we remove all publications and user services in "info_state"
-        ds.userServices.select_for_update().filter(state__in=State.INFO_STATES).delete()
+        with transaction.atomic():
+            ds.userServices.select_for_update().filter(state__in=State.INFO_STATES).delete()
+
         # Mark usable user services as removable
         now = getSqlDatetime()
 

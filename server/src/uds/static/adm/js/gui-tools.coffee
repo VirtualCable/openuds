@@ -70,7 +70,11 @@
       $(selector + " .selectpicker").selectpicker()
 
       # Activate Touchspinner
-      $(selector + " input[type=numeric]:not([readonly])").TouchSpin()
+      $(selector + " input[type=numeric]:not([readonly])").TouchSpin
+        min: 0
+        max: 99999
+        decimals: 0
+        
       $(selector + " input[type=numeric]:not([readonly])").attr("type", "text")
       
       # TEST: cooler on mobile devices

@@ -34,8 +34,9 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.db.models import Q
-from uds.models import DelayedTask as dbDelayedTask, getSqlDatetime
-from ..Environment import Environment
+from uds.models import DelayedTask as dbDelayedTask
+from uds.models import getSqlDatetime
+from uds.core.Environment import Environment
 from socket import gethostname
 from pickle import loads, dumps
 from datetime import timedelta
@@ -43,7 +44,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-03-30'
+__updated__ = '2014-05-26'
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,7 @@ class DelayedTaskRunner(object):
             return
 
         if taskInstance != None:
+            logger.debug('Executing delayedTask:>{0}<'.format(task))
             env = Environment.getEnvForType(taskInstance.__class__)
             taskInstance.setEnv(env)
             DelayedTaskThread(taskInstance).start()
@@ -158,3 +160,4 @@ class DelayedTaskRunner(object):
                 self.executeOneDelayedTask()
             except Exception, e:
                 logger.error('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+        logger.info('Exiting DelayedTask Runner because stop has been requested')

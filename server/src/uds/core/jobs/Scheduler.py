@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-04-23'
+__updated__ = '2014-05-27'
 
 logger = logging.getLogger(__name__)
 
@@ -155,3 +155,4 @@ class Scheduler(object):
                 self.executeOneJob()
             except Exception, e:
                 logger.exception('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+        logger.info('Exiting Scheduler because stop has been requested')

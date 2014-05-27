@@ -179,14 +179,15 @@ class ServiceCacheUpdater(Job):
         # First, we try to assign from L2 cache
         if cacheL2 > 0:
             valid = None
-            for n in ds.cachedUserServices().select_for_update().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date'):
-                if n.needsOsManager():
-                    if State.isUsable(n.state) is False or State.isUsable(n.os_state):
+            with transaction.atomic():
+                for n in ds.cachedUserServices().select_for_update().filter(UserServiceManager.getCacheStateFilter(services.UserDeployment.L2_CACHE)).order_by('creation_date'):
+                    if n.needsOsManager():
+                        if State.isUsable(n.state) is False or State.isUsable(n.os_state):
+                            valid = n
+                            break
+                    else:
                         valid = n
                         break
-                else:
-                    valid = n
-                    break
 
             if valid is not None:
                 valid.moveToLevel(services.UserDeployment.L1_CACHE)

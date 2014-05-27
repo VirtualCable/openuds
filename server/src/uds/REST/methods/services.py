@@ -37,6 +37,7 @@ from django.utils.translation import ugettext as _
 
 from uds.models import Service, UserService
 
+from uds.core.services import Service as coreService
 from uds.core.util import log
 from uds.core.Environment import Environment
 from uds.REST.model import DetailHandler
@@ -107,7 +108,9 @@ class Services(DetailHandler):
         except Service.DoesNotExist:
             self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
-            raise RequestError('Element already exists (duplicate key error)')
+            raise RequestError(_('Element already exists (duplicate key error)'))
+        except coreService.ValidationException as e:
+            raise RequestError(_('Input error: {0}'.format(unicode(e))))
         except Exception:
             logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT')
