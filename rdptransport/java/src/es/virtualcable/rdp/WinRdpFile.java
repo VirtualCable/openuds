@@ -23,6 +23,7 @@ public class WinRdpFile {
 	public boolean redirectAudio = false;
 	public boolean compression = false;
 	public boolean displayConnectionBar = true;
+	public boolean showWallpaper = false;
 
 	public WinRdpFile(boolean fullScreen, String width, String height, String bpp) {
 		this.width = width;
@@ -42,6 +43,7 @@ public class WinRdpFile {
 		String printers = redirectPrinters ? "1" : "0";
 		String compression = this.compression ? "1" : "0";
 		String bar = displayConnectionBar ? "1" : "0";
+		String disableWallpaper = showWallpaper ? "0" : "1";
 		
 		FileWriter fstream = new FileWriter(fname);
 		PrintWriter out = new PrintWriter(fstream);
@@ -67,7 +69,7 @@ public class WinRdpFile {
 		}
 		out.println("alternate shell:s:");
 		out.println("shell working directory:s:");
-		out.println("disable wallpaper:i:1");
+		out.println("disable wallpaper:i:"+disableWallpaper);
 		out.println("disable full window drag:i:1");
 		out.println("disable menu anims:i:1");
 		out.println("disable themes:i:1");
