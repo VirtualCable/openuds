@@ -67,6 +67,7 @@ class TSRDPTransport(Transport):
     allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=8, tooltip=_('If checked, this transport will allow the use of user printers'))
     allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=9, tooltip=_('If checked, this transport will allow the use of user drives'))
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=10, tooltip=_('If checked, this transport will allow the use of user serial ports'))
+    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=11, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
 
     def __init__(self, environment, values=None):
         super(TSRDPTransport, self).__init__(environment, values)
@@ -83,7 +84,7 @@ class TSRDPTransport(Transport):
             self._allowPrinters = gui.strToBool(values['allowPrinters'])
             self._allowDrives = gui.strToBool(values['allowDrives'])
             self._allowSerials = gui.strToBool(values['allowSerials'])
-
+            self._wallPaper = gui.strToBool(values['wallpaper'])
         else:
             self._tunnelServer = ''
             self._tunnelCheckServer = ''
@@ -95,35 +96,43 @@ class TSRDPTransport(Transport):
             self._allowPrinters = False
             self._allowDrives = False
             self._allowSerials = False
+            self._wallPaper = False
 
     def marshal(self):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join('\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
-                                gui.boolToStr(self._allowDrives), gui.boolToStr(self._allowSerials),
+        return str.join('\t', [ 'v2', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
+                                gui.boolToStr(self._allowDrives), gui.boolToStr(self._allowSerials), gui.boolToStr(self._wallPaper),
                                 self._fixedName, self._fixedPassword, self._fixedDomain, self._tunnelServer, self._tunnelCheckServer ])
 
     def unmarshal(self, str_):
         data = str_.split('\t')
-        if data[0] == 'v1':
+        if data[0] in ('v1', 'v2'):
             self._useEmptyCreds = gui.strToBool(data[1])
             self._allowSmartcards = gui.strToBool(data[2])
             self._allowPrinters = gui.strToBool(data[3])
             self._allowDrives = gui.strToBool(data[4])
             self._allowSerials = gui.strToBool(data[5])
-            self._fixedName = data[6]
-            self._fixedPassword = data[7]
-            self._fixedDomain = data[8]
-            self._tunnelServer = data[9]
-            self._tunnelCheckServer = data[10]
+            if data[0] == 'v1':
+                self._wallPaper = False
+                i = 0
+            elif data[0] == 'v2':
+                self._wallPaper = gui.strToBool(data[6])
+                i = 1
+
+            self._fixedName = data[6 + i]
+            self._fixedPassword = data[7 + i]
+            self._fixedDomain = data[8 + i]
+            self._tunnelServer = data[9 + i]
+            self._tunnelCheckServer = data[10 + i]
 
     def valuesDict(self):
         return { 'allowSmartcards' : gui.boolToStr(self._allowSmartcards), 'allowPrinters' : gui.boolToStr(self._allowPrinters),
                 'allowDrives': gui.boolToStr(self._allowDrives), 'allowSerials': gui.boolToStr(self._allowSerials),
                 'fixedName' : self._fixedName, 'fixedPassword' : self._fixedPassword, 'fixedDomain' : self._fixedDomain,
                 'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'tunnelServer' : self._tunnelServer,
-                'tunnelCheckServer' : self._tunnelCheckServer }
+                'tunnelCheckServer' : self._tunnelCheckServer, 'wallpaper': self._wallPaper }
 
     def isAvailableFor(self, ip):
         '''
@@ -185,7 +194,7 @@ class TSRDPTransport(Transport):
         extra = { 'width': width, 'height' : height, 'depth' : depth,
             'printers' : self._allowPrinters, 'smartcards' : self._allowSmartcards,
             'drives' : self._allowDrives, 'serials' : self._allowSerials,
-            'tun': tun, 'compression':True }
+            'tun': tun, 'compression':True, 'wallpaper': self._wallPaper }
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
