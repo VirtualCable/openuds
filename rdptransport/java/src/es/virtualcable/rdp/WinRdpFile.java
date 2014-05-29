@@ -71,8 +71,8 @@ public class WinRdpFile {
 		out.println("shell working directory:s:");
 		out.println("disable wallpaper:i:"+disableWallpaper);
 		out.println("disable full window drag:i:1");
-		out.println("disable menu anims:i:1");
-		out.println("disable themes:i:1");
+		out.println("disable menu anims:i:"+disableWallpaper);
+		out.println("disable themes:i:"+disableWallpaper);
 		out.println("bitmapcachepersistenable:i:1");
 		out.println("authentication level:i:0");
 		out.println("enablecredsspsupport:i:1");
