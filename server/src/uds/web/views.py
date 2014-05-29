@@ -42,7 +42,7 @@ from django.utils import timezone
 from django.views.decorators.http import last_modified
 from django.views.i18n import javascript_catalog
 
-from uds.core.auths.auth import getIp, webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout
+from uds.core.auths.auth import getIp, webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout, getUDSCookie
 from uds.models import Authenticator, DeployedService, Transport, UserService, Network
 from uds.web.forms.LoginForm import LoginForm
 from uds.core.managers.UserServiceManager import UserServiceManager
@@ -132,8 +132,9 @@ def login(request, smallName=None):
     response = render_to_response(theme.template('login.html'), {'form': form, 'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True)},
                                   context_instance=RequestContext(request))
 
-    if 'uds' not in request.COOKIES:
-        response.set_cookie('uds', ''.join(random.choice(string.letters + string.digits) for _ in xrange(32)))
+
+    getUDSCookie(request, response)
+
     return response
 
 

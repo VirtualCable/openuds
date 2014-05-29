@@ -83,6 +83,7 @@ body {
 /* Tables "styling" */
 .dataTables_wrapper {
   overflow-x: hidden;
+  min-height: 300px;
  }
 
 /* States */

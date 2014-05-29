@@ -49,7 +49,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-05-29'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -58,6 +58,16 @@ USER_KEY = 'uk'
 PASS_KEY = 'pk'
 ROOT_ID = -20091204  # Any negative number will do the trick
 
+def getUDSCookie(request, response):
+    if 'uds' not in request.COOKIES:
+        import random
+        import string
+        cookie = ''.join(random.choice(string.letters + string.digits) for _ in xrange(32))
+        response.set_cookie('uds', cookie)
+    else:
+        cookie = request.COOKIES['uds']
+
+    return cookie
 
 def getRootUser():
     from uds.models import Authenticator
@@ -256,10 +266,14 @@ def webLogin(request, response, user, password):
         manager_id = user.manager.id
     else:
         manager_id = -1
+
+    # If for any reason the "uds" cookie is removed, recreated it
+    cookie = getUDSCookie(request, response)
+
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = CryptoManager.manager().xor(password.encode('utf-8'), request.COOKIES['uds'])
+    request.session[PASS_KEY] = CryptoManager.manager().xor(password.encode('utf-8'), cookie)
     # Ensures that this user will have access througt REST api if logged in through web interface
     REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), user.is_admin, user.staff_member)
     return True
