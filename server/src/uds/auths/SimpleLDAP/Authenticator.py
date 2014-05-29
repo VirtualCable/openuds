@@ -32,8 +32,6 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.auths import Authenticator
@@ -42,7 +40,7 @@ from uds.core.auths.Exceptions import AuthenticatorException
 import ldap
 import logging
 
-__updated__ = '2014-03-19'
+__updated__ = '2014-05-29'
 
 logger = logging.getLogger(__name__)
 
