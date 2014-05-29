@@ -43,7 +43,7 @@ import ldap
 import re
 import logging
 
-__updated__ = '2014-04-28'
+__updated__ = '2014-05-29'
 
 logger = logging.getLogger(__name__)
 
@@ -163,7 +163,7 @@ class RegexLdap(auths.Authenticator):
                 try:
                     v = vv.decode('utf-8')
                     srch = re.search(pattern, v, re.IGNORECASE)
-                    logger.debug("Found against {0}: {1} ".format(v, srch))
+                    logger.debug("Found against {0}: {1} ".format(v, srch.groups()))
                     if srch is None:
                         continue
                     res.append(''.join(srch.groups()))
