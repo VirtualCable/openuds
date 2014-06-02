@@ -32,6 +32,8 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.auths import Authenticator
 from uds.models import Authenticator as dbAuthenticator
@@ -41,7 +43,7 @@ import dns
 import hashlib
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-06-02'
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +111,7 @@ class InternalDBAuth(Authenticator):
                 return False
 
             # Internal Db Auth has its own groups, and if it active it is valid
-            if usr.password == hashlib.sha1(credentials).hexdigest():
+            if usr.password == hashlib.sha1(credentials.encode('utf-8')).hexdigest():
                 groupsManager.validate([g.name for g in usr.groups.all()])
                 return True
             return False

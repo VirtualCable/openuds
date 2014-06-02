@@ -32,6 +32,9 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.auths import Authenticator
@@ -40,7 +43,7 @@ from uds.core.auths.Exceptions import AuthenticatorException
 import ldap
 import logging
 
-__updated__ = '2014-05-29'
+__updated__ = '2014-06-02'
 
 logger = logging.getLogger(__name__)
 
@@ -142,6 +145,9 @@ class SimpleLDAPAuthenticator(Authenticator):
             l = None
             cache = False
             try:
+                if password is not None:
+                    password = password.encode('utf-8')
+
                 # ldap.set_option(ldap.OPT_DEBUG_LEVEL, 9)
                 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
                 schema = self._ssl and 'ldaps' or 'ldap'
@@ -176,10 +182,11 @@ class SimpleLDAPAuthenticator(Authenticator):
         try:
             con = self.__connection()
             filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, username)
-            attrlist = self._userNameAttr.split(',') + [self._userIdAttr]
+            attrlist = [x.encode('utf-8') for x in self._userNameAttr.split(',')] + [self._userIdAttr.encode('utf-8')]
             logger.debug('Getuser filter_: {0}, attr list: {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
                              filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
+            logger.debug('res: {0}'.format(res[1]))
             usr = dict((k, '') for k in attrlist)
             usr.update(res[1])
             usr.update({'dn': res[0], '_id': username})
@@ -193,10 +200,11 @@ class SimpleLDAPAuthenticator(Authenticator):
         try:
             con = self.__connection()
             filter_ = '(&(objectClass=%s)(%s=%s))' % (self._groupClass, self._groupIdAttr, groupName)
-            attrlist = [self._memberAttr]
+            attrlist = [self._memberAttr.encode('utf-8')]
             logger.debug('Getgroup filter_: {0}, attr list {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
                              filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
+            logger.debug('res: {0}'.format(res[1]))
             grp = dict((k, ['']) for k in attrlist)
             grp.update(res[1])
             grp.update({'dn': res[0], '_id': groupName})
@@ -211,7 +219,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             con = self.__connection()
             filter_ = '(&(objectClass=%s)(|(%s=%s)(%s=%s)))' % (self._groupClass, self._memberAttr, usr['_id'], self._memberAttr, usr['dn'])
             logger.debug('Filter: {0}'.format(filter_))
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr=filter_, attrlist=[self._groupIdAttr],
+            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr=filter_, attrlist=[self._groupIdAttr.encode('utf-8')],
                                     sizelimit=LDAP_RESULT_LIMIT)
             groups = {}
             for g in res:
@@ -231,7 +239,7 @@ class SimpleLDAPAuthenticator(Authenticator):
         Tries to extract the real name for this user. Will return all atttributes (joint)
         specified in _userNameAttr (comma separated).
         '''
-        return ' '.join([(type(usr.get(id_, '')) is list and ' '.join((str(k) for k in usr.get(id_, ''))) or str(usr.get(id_, ''))) for id_ in self._userNameAttr.split(',')]).strip()
+        return ' '.join([(type(usr.get(id_, '')) is list and ' '.join((k.decode('utf-8') for k in usr.get(id_, ''))) or usr.get(id_, '')) for id_ in self._userNameAttr.split(',')]).strip()
 
     def authenticate(self, username, credentials, groupsManager):
         '''

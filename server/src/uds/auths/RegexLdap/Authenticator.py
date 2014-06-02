@@ -32,7 +32,7 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
@@ -43,7 +43,7 @@ import ldap
 import re
 import logging
 
-__updated__ = '2014-05-29'
+__updated__ = '2014-06-02'
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +138,7 @@ class RegexLdap(auths.Authenticator):
                 attr = line[:equalPos]
             else:
                 attr = line
-            res.append(attr)
+            res.append(attr.encode('utf-8'))
         return res
 
     def __processField(self, field, attributes):
@@ -212,6 +212,9 @@ class RegexLdap(auths.Authenticator):
             l = None
             cache = False
             try:
+                if password is not None:
+                    password = password.encode('utf-8')
+
                 # ldap.set_option(ldap.OPT_DEBUG_LEVEL, 9)
                 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
                 schema = self._ssl and 'ldaps' or 'ldap'
@@ -247,7 +250,7 @@ class RegexLdap(auths.Authenticator):
         try:
             con = self.__connection()
             filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, username)
-            attrlist = [self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
+            attrlist = [self._userIdAttr.encode('utf-8')] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
 
             logger.debug('Getuser filter_: {0}, attr list: {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,

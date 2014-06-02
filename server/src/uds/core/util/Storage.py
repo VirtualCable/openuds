@@ -50,7 +50,7 @@ class Storage(object):
     def __getKey(self, key):
         h = hashlib.md5()
         h.update(self._owner)
-        h.update(str(key))
+        h.update(key.encode('utf-8'))
         return h.hexdigest()
 
     def saveData(self, skey, data, attr1=None):
