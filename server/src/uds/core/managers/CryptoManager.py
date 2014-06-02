@@ -72,7 +72,7 @@ class CryptoManager(object):
         # import inspect
         try:
             atfork()
-            return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).encode('utf-8')
+            return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).decode('utf-8')
         except:
             logger.exception('Decripting: {0}'.format(string))
             # logger.error(inspect.stack())
