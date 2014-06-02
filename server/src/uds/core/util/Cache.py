@@ -46,11 +46,11 @@ class Cache(object):
     CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
 
     def __init__(self, owner):
-        self._owner = owner
+        self._owner = owner.encode('utf-8')
 
     def __getKey(self, key):
         h = hashlib.md5()
-        h.update(self._owner + key)
+        h.update(self._owner + key.encode('utf-8'))
         return h.hexdigest()
 
     def get(self, skey, defValue=None):

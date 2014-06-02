@@ -49,7 +49,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-05-29'
+__updated__ = '2014-06-02'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -273,7 +273,7 @@ def webLogin(request, response, user, password):
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = CryptoManager.manager().xor(password.encode('utf-8'), cookie)
+    request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)
     # Ensures that this user will have access througt REST api if logged in through web interface
     REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), user.is_admin, user.staff_member)
     return True
