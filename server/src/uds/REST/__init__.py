@@ -54,6 +54,7 @@ class Dispatcher(View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, **kwargs):
+        logger.debug('Language in dispatcher: {0}'.format(request.LANGUAGE_CODE))
         import processors
 
         # Remove session, so response middelwares do nothing with this
@@ -99,24 +100,28 @@ class Dispatcher(View):
 
         args = path
 
-        # Inspect
-        lang = None
-        if len(args) > 0:
-            for l in settings.LANGUAGES:
-                if args[-1] == l[0]:
-                    lang = l[0]
-                    activate(lang)
-                    logger.error('Found lang {0}'.format(l))
-                    args = args[:-1]
-                    break
+        # try:
+        #    lang = request.LANGUAGE_CODE
+        # except:
+        #    lang = None
+
+        # Inspect url to see if it contains a language
+        # if len(args) > 0:
+        #    for l in settings.LANGUAGES:
+        #        if args[-1] == l[0]:
+        #            lang = l[0]
+        #            activate(lang)
+        #            logger.error('Found lang {0}'.format(l))
+        #            args = args[:-1]
+        #            break
         # Instantiate method handler and locate http_method dispatcher
         try:
             handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)
             # If no lang on request, try to get the one from
-            if lang is None:
-                activate(handler.getValue('locale'))
-            else:
-                handler.setValue('locale', lang)  # Update Locale if request had one
+            # if lang is None:
+            #    activate(handler.getValue('locale'))
+            # else:
+            #    handler.setValue('locale', lang)  # Update Locale if request had one
 
             operation = getattr(handler, http_method)
         except processors.ParametersException as e:
