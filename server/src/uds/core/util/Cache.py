@@ -73,8 +73,10 @@ class Cache(object):
         try:
             key = self.__getKey(skey)
             dbCache.objects.get(pk=key).delete()
+            return True
         except dbCache.DoesNotExist:
             logger.debug('key not found')
+            return False
 
     def clean(self):
         Cache.delete(self._owner)
@@ -98,6 +100,7 @@ class Cache(object):
             c.validity = validity
             c.save()
 
+
     def refresh(self, skey):
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
         try:
@@ -106,7 +109,7 @@ class Cache(object):
             c.created = getSqlDatetime()
             c.save()
         except dbCache.DoesNotExist:
-            logger.debug('Can\'t refresh cache key %s because it don\'t exists' % skey)
+            logger.debug('Can\'t refresh cache key %s because it doesn\'t exists' % skey)
             return
 
     @staticmethod

@@ -40,7 +40,7 @@ from time import sleep
 from functools import wraps
 
 
-# Have to test these decorators before using them
+# Have to test this decorator before using them
 def retryOnException(retries=3, delay=0):
     '''
     Decorator to retry

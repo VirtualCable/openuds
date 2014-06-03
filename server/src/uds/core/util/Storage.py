@@ -45,7 +45,7 @@ class Storage(object):
     CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
 
     def __init__(self, owner):
-        self._owner = owner
+        self._owner = owner.encode('utf-8')
 
     def __getKey(self, key):
         h = hashlib.md5()
@@ -55,7 +55,7 @@ class Storage(object):
 
     def saveData(self, skey, data, attr1=None):
         key = self.__getKey(skey)
-        data = data.encode(Storage.CODEC)
+        data = data.encode('utf-8').encode(Storage.CODEC)
         attr1 = '' if attr1 == None else attr1
         try:
             dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)
@@ -77,7 +77,7 @@ class Storage(object):
             key = self.__getKey(skey)
             logger.debug('Accesing to {0} {1}'.format(skey, key))
             c = dbStorage.objects.get(pk=key)
-            return c.data.decode(Storage.CODEC)
+            return c.data.decode(Storage.CODEC).decode('utf-8')
         except dbStorage.DoesNotExist:
             logger.debug('key not found')
             return None
@@ -86,7 +86,10 @@ class Storage(object):
         return self.readData(skey)
 
     def getPickle(self, skey):
-        return cPickle.loads(self.readData(skey).encode('utf-8'))
+        v = self.readData(skey)
+        if v is not None:
+            v = cPickle.loads(v.encode('utf-8'))
+        return v
 
     def remove(self, skey):
         try:
@@ -107,6 +110,12 @@ class Storage(object):
         '''
         dbStorage.objects.unlock()
 
+    def locateByAttr1(self, attr1):
+        res = []
+        for v in dbStorage.objects.filter(attr1=attr1):
+            res.append(v.data.decode(Storage.CODEC))
+        return res
+
     @staticmethod
     def delete(owner=None):
         logger.info("Deleting storage items")
@@ -115,9 +124,3 @@ class Storage(object):
         else:
             objects = dbStorage.objects.filter(owner=owner)
         objects.delete()
-
-    def locateByAttr1(self, attr1):
-        res = []
-        for v in dbStorage.objects.filter(attr1=attr1):
-            res.append(v.data.decode(Storage.CODEC))
-        return res
