@@ -91,6 +91,8 @@ class ContentProcessor(object):
             return res
         elif isinstance(obj, datetime.datetime):
             return  int(time.mktime(obj.timetuple()))
+        elif isinstance(obj, str):
+            return obj.decode('utf-8')
         return unicode(obj)
 
 

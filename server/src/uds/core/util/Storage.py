@@ -55,6 +55,8 @@ class Storage(object):
 
     def saveData(self, skey, data, attr1=None):
         key = self.__getKey(skey)
+        if isinstance(data, str):
+            data = data.decode('utf-8')
         data = data.encode('utf-8').encode(Storage.CODEC)
         attr1 = '' if attr1 == None else attr1
         try:
@@ -66,8 +68,8 @@ class Storage(object):
     def put(self, skey, data):
         return self.saveData(skey, data)
 
-    def putPickle(self, skey, data):
-        return self.saveData(skey, cPickle.dumps(data))
+    def putPickle(self, skey, data, attr1=None):
+        return self.saveData(skey, cPickle.dumps(data).encode('base64'), attr1)
 
     def updateData(self, skey, data, attr1=None):
         self.saveData(skey, data, attr1)
@@ -88,7 +90,7 @@ class Storage(object):
     def getPickle(self, skey):
         v = self.readData(skey)
         if v is not None:
-            v = cPickle.loads(v.encode('utf-8'))
+            v = cPickle.loads(v.decode('base64'))
         return v
 
     def remove(self, skey):
