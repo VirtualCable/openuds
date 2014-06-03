@@ -175,7 +175,7 @@ class RDPTransport(Transport):
             username, password, domain = '','',''
             
         if domain != '':
-            if domain.find('.') == -1: # Dotter domain form
+            if '.' in domain: # Dotter domain form
                 username = username + '@' + domain
                 domain = ''
         
