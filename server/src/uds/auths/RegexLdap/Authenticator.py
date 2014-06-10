@@ -43,7 +43,7 @@ import ldap
 import re
 import logging
 
-__updated__ = '2014-06-02'
+__updated__ = '2014-06-04'
 
 logger = logging.getLogger(__name__)
 
@@ -167,10 +167,8 @@ class RegexLdap(auths.Authenticator):
                     if srch is None:
                         continue
                     res.append(''.join(srch.groups()))
-                except Exception as e:
-                    logger.warn('Invalid regular expression')
-                    logger.debug(e)
-                    break
+                except:
+                    pass  # Ignore exceptions here
         return res
 
     def valuesDict(self):

@@ -112,6 +112,7 @@
   gui.notify = (message, type) ->
     gui.launchModal "<b class=\"text-" + type + "\">" + gettext("Message") + "</b>", "<span class=\"text-" + type + "\">" + message + "</span>",
       actionButton: " "
+      closeButton: '<button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>'
 
     return
 
@@ -296,10 +297,13 @@
         rest.test type, fields, ((data) ->
           if data == 'ok'
             text = gettext("Test passed successfully")
+            kind = 'success'
           else
-            text = "<b class=\"text-danger\">Test failed: #{data}</b>"
-          gui.launchModal gettext("Test result"), text,
-            actionButton: " "
+            text = gettext("Test failed:") + " #{data}</b>"
+            kind = 'danger'
+          gui.notify text, kind
+          # gui.launchModal gettext("Test result"), text,
+          #  actionButton: " "
 
           return
         ), gui.failRequestModalFnc(gettext("Test error"))

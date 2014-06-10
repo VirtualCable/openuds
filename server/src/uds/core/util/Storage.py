@@ -74,12 +74,20 @@ class Storage(object):
     def updateData(self, skey, data, attr1=None):
         self.saveData(skey, data, attr1)
 
-    def readData(self, skey):
+    def readData(self, skey, fromPickle=False):
         try:
             key = self.__getKey(skey)
             logger.debug('Accesing to {0} {1}'.format(skey, key))
             c = dbStorage.objects.get(pk=key)
-            return c.data.decode(Storage.CODEC)
+            val = c.data.decode(Storage.CODEC)
+
+            if fromPickle:
+                return val
+
+            try:
+                return val.decode('utf-8')  # Tries to encode in utf-8
+            except:
+                return val
         except dbStorage.DoesNotExist:
             logger.debug('key not found')
             return None
@@ -88,7 +96,7 @@ class Storage(object):
         return self.readData(skey)
 
     def getPickle(self, skey):
-        v = self.readData(skey)
+        v = self.readData(skey, True)
         if v is not None:
             v = cPickle.loads(v)
         return v
