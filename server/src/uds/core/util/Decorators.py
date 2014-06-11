@@ -38,6 +38,14 @@ from uds.web import errors
 
 from time import sleep
 from functools import wraps
+import warnings
+import functools
+
+import logging
+
+__updated__ = '2014-06-11'
+
+logger = logging.getLogger(__name__)
 
 
 # Have to test this decorator before using them
@@ -81,3 +89,18 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
             return view_func(request, *args, **kwargs)
         return _wrapped_view
     return wrap
+
+def deprecated(func):
+    '''This is a decorator which can be used to mark functions
+    as deprecated. It will result in a warning being emitted
+    when the function is used.'''
+
+    @functools.wraps(func)
+    def new_func(*args, **kwargs):
+        logger.info(
+            "Call to deprecated function {0} from {1}:{2}.".format(func.__name__,
+            func.func_code.co_filename,
+            func.func_code.co_firstlineno + 1)
+        )
+        return func(*args, **kwargs)
+    return new_func
