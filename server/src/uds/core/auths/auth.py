@@ -131,7 +131,6 @@ def trustedSourceRequired(view_func):
         Wrapped function for decorator
         '''
         from uds.core.util import net
-        getIp(request, False)
         if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
             return HttpResponseForbidden()
         return view_func(request, *args, **kwargs)

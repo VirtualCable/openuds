@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 
 class IPAuth(Authenticator):
-    translateProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'))
+    acceptProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'))
 
     typeName = _('IP Authenticator')
     typeType = 'IPAuth'
@@ -69,6 +69,9 @@ class IPAuth(Authenticator):
     def __unicode__(self):
         return "IP Authenticator"
 
+    def getIp(self):
+        return getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
+
     def getGroups(self, ip, groupsManager):
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
         # The ranges are stored in group names
@@ -82,12 +85,14 @@ class IPAuth(Authenticator):
     def authenticate(self, username, credentials, groupsManager):
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
         # We use this "trick" so authenticators
-        if username == getRequest().ip:
+        if username == self.getIp():
             self.getGroups(username, groupsManager)
             return True
         return False
 
     def internalAuthenticate(self, username, credentials, groupsManager):
+        # In fact, username does not matter, will get IP from request
+        username = self.getIp()
         self.getGroups(username, groupsManager)
         if groupsManager.hasValidGroups() and self.dbAuthenticator().isValidUser(username, True):
             return True
@@ -95,19 +100,21 @@ class IPAuth(Authenticator):
 
     @staticmethod
     def test(env, data):
-        return _("All seems fine in the authenticator.")
+        return _("All seems to be fine.")
 
     def check(self):
-        return _("All seems fine in the authenticator.")
+        return _("All seems to be fine.")
 
     def getHtml(self, request):
         # doAutoLogin = Config.section('IPAUTH').value('autoLogin', '0').getBool()
+        ip = self.getIp()
         gm = GroupsManager(self.dbAuthenticator())
-        self.getGroups(request.ip, gm)
-        if gm.hasValidGroups() and self.dbAuthenticator().isValidUser(request.ip, True):
+        self.getGroups(ip, gm)
+
+        if gm.hasValidGroups() and self.dbAuthenticator().isValidUser(ip, True):
             passw = ''
-            return '<script type="text/javascript">$("#id_user").val("' + request.ip + '");$("#id_password").val("' + passw + '");$("#loginform").submit();</script>'
+            return '<script type="text/javascript">$("#id_user").val("' + ip + '");$("#id_password").val("' + passw + '");$("#loginform").submit();</script>'
         else:
-            return '<div>This ip is not allowed to autologin (' + request.ip + ')</div><script type="text/javascript">$("#backToLogin").click()</script>'
+            return '<div>Invalid auth (' + ip + ')</div><script type="text/javascript">$("#backToLogin").click()</script>'
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password

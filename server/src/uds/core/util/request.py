@@ -49,18 +49,32 @@ def getRequest():
 class GlobalRequestMiddleware(object):
     def process_request(self, request):
         # Add IP to request
-        GlobalRequestMiddleware.getIp(request)
+        GlobalRequestMiddleware.fillIps(request)
         _requests[threading._get_ident()] = request
         return None
 
+    def process_response(self, request, response):
+        # Remove IP from global cache (processing responses after this will make global request unavailable,
+        # but can be got from request again)
+        try:
+            del _requests[threading._get_ident()]
+        except:
+            logger.exception('Deleting stored request')
+        return response
+
     @staticmethod
-    def getIp(request):
+    def fillIps(request):
         '''
         Obtains the IP of a Django Request, even behind a proxy
 
         Returns the obtained IP, that is always be a valid ip address.
         '''
-        request.ip = request.META['REMOTE_ADDR']
+        try:
+            request.ip = request.META['REMOTE_ADDR']
+        except:
+            logger.exception('Request ip not found!!')
+            request.ip = '0.0.0.0'  # No remote addr?? set this IP to a "basic" one, anyway, this should never ocur
+
         try:
             request.ip_proxy = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0]
             request.is_proxy = True
