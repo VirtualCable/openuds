@@ -90,6 +90,7 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
         return _wrapped_view
     return wrap
 
+# Snippet based on https://wiki.python.org/moin/PythonDecoratorLibrary#Smart_deprecation_warnings_.28with_valid_filenames.2C_line_numbers.2C_etc..29
 def deprecated(func):
     '''This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
