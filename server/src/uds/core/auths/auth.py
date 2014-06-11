@@ -42,6 +42,7 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import log
+from uds.core.util.decorators import deprecated
 from uds.core import auths
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core.util.State import State
@@ -49,7 +50,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-06-02'
+__updated__ = '2014-06-11'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -78,19 +79,10 @@ def getRootUser():
     u.logout = lambda: None
     return u
 
-
-def getIp(request, translateProxy=True):
-    '''
-    Obtains the IP of a Django Request, even behind a proxy
-
-    Returns the obtained IP, that is always be a valid ip address.
-    '''
-    try:
-        if translateProxy is False:
-            raise KeyError()  # Do not allow HTTP_X_FORWARDED_FOR
-        request.ip = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0]
-    except KeyError:
-        request.ip = request.META['REMOTE_ADDR']
+@deprecated
+def getIp(request):
+    import inspect
+    logger.info('Deprecated IP')
     return request.ip
 
 
@@ -123,7 +115,6 @@ def webLoginRequired(view_func):
         # Refresh session duration
         # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
         request.user = user
-        getIp(request)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 

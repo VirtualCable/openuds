@@ -39,15 +39,18 @@ from uds.core.auths import Authenticator
 from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.util import net
 from uds.core.util.request import getRequest
+from uds.core.ui.UserInterface import gui
 
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-06-11'
 
 logger = logging.getLogger(__name__)
 
 
 class IPAuth(Authenticator):
+    translateProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'))
+
     typeName = _('IP Authenticator')
     typeType = 'IPAuth'
     typeDescription = _('IP Authenticator')

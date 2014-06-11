@@ -79,7 +79,7 @@ class IPMachinesService(services.Service):
 
     def unmarshal(self, vals):
         if vals == 'v1':
-            self._ips = cPickle.loads(self.storage().readData('ips'))
+            self._ips = cPickle.loads(str(self.storage().readData('ips')))
 
     def getUnassignedMachine(self):
         # Search first unassigned machine

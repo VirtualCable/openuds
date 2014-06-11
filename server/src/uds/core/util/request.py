@@ -33,6 +33,12 @@
 from __future__ import unicode_literals
 
 import threading
+import logging
+
+__updated__ = '2014-06-11'
+
+logger = logging.getLogger(__name__)
+
 _requests = {}
 
 
@@ -42,5 +48,22 @@ def getRequest():
 
 class GlobalRequestMiddleware(object):
     def process_request(self, request):
+        # Add IP to request
+        GlobalRequestMiddleware.getIp(request)
         _requests[threading._get_ident()] = request
         return None
+
+    @staticmethod
+    def getIp(request):
+        '''
+        Obtains the IP of a Django Request, even behind a proxy
+
+        Returns the obtained IP, that is always be a valid ip address.
+        '''
+        request.ip = request.META['REMOTE_ADDR']
+        try:
+            request.ip_proxy = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0]
+            request.is_proxy = True
+        except:
+            request.ip_proxy = request.ip
+            request.is_proxy = False

@@ -84,7 +84,6 @@ def login(request, smallName=None):
 
     logger.debug('Small name: {0}'.format(smallName))
 
-    getIp(request)
     if request.method == 'POST':
         if 'uds' not in request.COOKIES:
             return errors.errorView(request, errors.COOKIES_NEEDED)  # We need cookies to keep session data

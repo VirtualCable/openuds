@@ -38,8 +38,6 @@ from uds.web import errors
 
 from time import sleep
 from functools import wraps
-import warnings
-import functools
 
 import logging
 
@@ -90,18 +88,22 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
         return _wrapped_view
     return wrap
 
-# Snippet based on https://wiki.python.org/moin/PythonDecoratorLibrary#Smart_deprecation_warnings_.28with_valid_filenames.2C_line_numbers.2C_etc..29
 def deprecated(func):
     '''This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used.'''
+    import inspect
 
-    @functools.wraps(func)
+    @wraps(func)
     def new_func(*args, **kwargs):
-        logger.info(
-            "Call to deprecated function {0} from {1}:{2}.".format(func.__name__,
-            func.func_code.co_filename,
-            func.func_code.co_firstlineno + 1)
-        )
+        try:
+            caller = inspect.stack()[1]
+            logger.warn(
+                "Call to deprecated function {0} from {1}:{2}.".format(func.__name__,
+                caller[1], caller[2]
+            ))
+        except:
+            logger.info('No stack info on deprecated function call {0}'.format(func.__name__))
+
         return func(*args, **kwargs)
     return new_func

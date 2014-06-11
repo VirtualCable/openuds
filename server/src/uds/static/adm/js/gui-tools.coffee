@@ -71,7 +71,7 @@
 
       # Activate Touchspinner
       $(selector + " input[type=numeric]:not([readonly])").TouchSpin
-        min: 0
+        min: -99999
         max: 99999
         decimals: 0
         

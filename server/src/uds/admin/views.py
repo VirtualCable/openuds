@@ -37,11 +37,11 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 
 from uds.core.auths.auth import webLoginRequired
-from uds.core.util.Decorators import denyBrowsers
+from uds.core.util.decorators import denyBrowsers
 
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-06-11'
 
 logger = logging.getLogger(__name__)
 
