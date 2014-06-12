@@ -1,6 +1,6 @@
-{% load i18n %}
+{% load i18n html5 %}
 {% verbatim %}
-<div id="{{ id }}" class="modal fade">
+<div id="{{ id }}" class="modal{% endverbatim %}{% enhaced_visual %} fade{% endenhaced_visual%}{% verbatim %}" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

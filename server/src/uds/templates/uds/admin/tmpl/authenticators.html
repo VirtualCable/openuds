@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n html5 %}
 <div class="row">
   <div class="col-xs-12">
     <h1>{% trans 'Authenticators' %}</h1>
@@ -20,7 +20,7 @@
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
         </ul>    
         <div class="tab-content">
-            <div class="tab-pane fade in active" id="{{ users }}_tab">
+            <div class="tab-pane{% endverbatim %}{% enhaced_visual %} fade {% endenhaced_visual%}{% verbatim %}active" id="{{ users }}_tab">
                 <div class="row">
                     <div class="col-xs-12" id="{{ users }}">
                     </div>
@@ -30,8 +30,8 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="{{ groups }}"></div>
-            <div class="tab-pane fade" id="{{ logs }}">...</div>
+            <div class="tab-pane{% endverbatim %}{% enhaced_visual %} fade{% endenhaced_visual%}{% verbatim %}" id="{{ groups }}"></div>
+            <div class="tab-pane{% endverbatim %}{% enhaced_visual %} fade{% endenhaced_visual%}{% verbatim %}" id="{{ logs }}">...</div>
         </div>        
     </div>
 </div>

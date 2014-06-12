@@ -258,6 +258,9 @@ class GlobalConfig(object):
     # Gui vars
     UDS_THEME = Config.section(GLOBAL_SECTION).value('UDS Theme', 'html5')
 
+    # This is used so templates can change "styles" from admin interface
+    UDS_THEME_VISUAL = Config.section(GLOBAL_SECTION).value('UDS Theme Enhaced', '1')
+
     initDone = False
 
     @staticmethod
