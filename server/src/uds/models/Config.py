@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-06-20'
 
 from django.db import models
 
@@ -52,6 +52,7 @@ class Config(models.Model):
     value = models.TextField(default='')
     crypt = models.BooleanField(default=False)
     long = models.BooleanField(default=False)
+    field_type = models.IntegerField(default=-1)
 
     class Meta:
         '''

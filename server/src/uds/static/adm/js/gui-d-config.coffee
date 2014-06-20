@@ -9,6 +9,7 @@ gui.configuration.link = ->
         config: data
       )
       gui.setLinksEvents()
+      gui.tools.applyCustoms "#form_config"
       $("#form_config .form-control").each (i, element) ->
         $(element).attr "data-val", $(element).val()
         return

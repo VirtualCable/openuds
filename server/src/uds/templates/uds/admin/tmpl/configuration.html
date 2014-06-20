@@ -33,16 +33,20 @@
                                         </span>
                                    </div>
                                {{ else }}
-                                   {{# if value.longText }}
-                                   <textarea class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}" data-section="{{ ../../../key }}" data-key="{{ ../../key }}" rows="3">{{ value.value }}</textarea>
-                                   {{ else }}
-                                   <div class="input-group">
-                                       <input type="text" class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}" data-section="{{ ../../../key }}" data-key="{{ ../../key }}" value="{{ value.value }}">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default button-undo" type="button" data-fld="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}"><i class="fa fa-undo"></i> </button>
-                                        </span>
-                                   </div>
-                                   {{/ if }}
+                                 {{# ifequals value.type 1 }}
+                                 <textarea class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}" data-section="{{ ../../../key }}" data-key="{{ ../../key }}" rows="3">{{ value.value }}</textarea>
+                                 {{ else }}
+                                 {{# ifequals value.type 3 }}
+                                 <input type="checkbox" data-on-label="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-label="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}"{{# ifequals value.value 1 }} checked{{/ ifequals }}>
+                                 {{ else }}
+                                 <div class="input-group">
+                                     <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}" data-section="{{ ../../../key }}" data-key="{{ ../../key }}" value="{{ value.value }}">
+                                      <span class="input-group-btn">
+                                          <button class="btn btn-info button-undo" type="button" data-fld="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}"><i class="fa fa-undo"></i> </button>
+                                      </span>
+                                 </div>
+                                 {{/ ifequals }}
+                                 {{/ ifequals }}
                                {{/ if }}
                                </div>
                             </div>

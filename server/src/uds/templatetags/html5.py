@@ -64,7 +64,7 @@ class EnhacedVisual(template.Node):
         self._nodelistFalse = nodelistFalse
 
     def render(self, context):
-        if GlobalConfig.UDS_THEME_VISUAL.getBool() is True:
+        if GlobalConfig.UDS_THEME_VISUAL.getBool(True) is True:
             return self._nodelistTrue.render(context)
         if self._nodelistFalse is None:
             return ''

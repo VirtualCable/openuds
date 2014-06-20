@@ -58,7 +58,7 @@
         {% ifbrowser ie<10 %}
         <div class="alert alert-dismissable alert-danger">
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          {% trans 'Your browser is supported only partially. Please, upgrade it to a modern html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better)' %}
+          {% trans 'Your browser is supported only partially. Please, upgrade it to a modern html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and must also disable "Compatibility View Mode" for this site)' %}
         </div>
         {% endifbrowser %}
    			{% block messages %}

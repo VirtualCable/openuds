@@ -59,7 +59,8 @@ class Config(Handler):
             res[cfg.section()][cfg.key()] = {
                 'value': cfg.get(),
                 'crypt': cfg.isCrypted(),
-                'longText': cfg.isLongText()
+                'longText': cfg.isLongText(),
+                'type': cfg.getType()
             }
         logger.debug('Configuration: {0}'.format(res))
         return res
