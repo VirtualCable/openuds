@@ -3,13 +3,13 @@
   "use strict"
 
   # Public attributes
-  gui.debug = off
+  gui.debug = on
   
   # "public" methods
   gui.doLog = (args...)->
     if gui.debug
       try
-        console.log.apply window, args
+        console.log args
     return
 
   

@@ -59,6 +59,7 @@ Handlebars.registerHelper "ifbelongs", (context1, context2, options) ->
     options.fn this
   else
     options.inverse this
+  return
 
 
 # Counters. 
@@ -72,11 +73,19 @@ Handlebars.registerHelper "set_counter", (id, value, options) ->
 
 Handlebars.registerHelper "get_counter", (id, options) ->
   options.data["_counter_" + id]
+  return
 
 Handlebars.registerHelper "inc_counter", (id, options) ->
   options.data["_counter_" + id] += 1
   return
 
+Handlebars.registerHelper "set_var", (var_name, value) ->
+  Handlebars.registerHelper var_name, () -> value
+  return
+
+Handlebars.registerHelper "unset_var", (var_name) ->
+  Handlebars.registerHelper var_name, null
+  return
 
 # For inserting "inline" javascript scripts, due to the fact that we cannot
 # Insert "<script>...</script>" inside inline elements (they are already scripts)

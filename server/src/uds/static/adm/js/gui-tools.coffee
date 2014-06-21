@@ -70,12 +70,17 @@
       $(selector + " .selectpicker").selectpicker()
 
       # Activate Touchspinner
-      $(selector + " input[type=numeric]:not([readonly])").TouchSpin
+      tspn = $(selector + " input[type=numeric]:not([readonly])")
+      tspn.attr("type", "text")
+      tspn.TouchSpin
+        verticalbuttons: true
+        verticalupclass: 'glyphicon glyphicon-plus'
+        verticaldownclass: 'glyphicon glyphicon-minus'
         min: -99999
         max: 99999
         decimals: 0
         
-      $(selector + " input[type=numeric]:not([readonly])").attr("type", "text")
+      
       
       # TEST: cooler on mobile devices
       $(selector + " .selectpicker").selectpicker "mobile"  if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)

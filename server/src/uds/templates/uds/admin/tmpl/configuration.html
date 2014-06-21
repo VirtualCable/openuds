@@ -21,37 +21,41 @@
                     <div class="tab-content col-md-12 col-md-offset-0 col-lg-8 col-lg-offset-2">
                         {{# eachKey config }}
                         <div class="tab-pane {{# if first }}active{{/ if }}" id="section_{{ key }}">
+                            {{ set_var "cfg_section" key }}
                             {{# eachKeySorted value }}
+                            {{ set_var "cfg_key" key }}
                             <div class="form-group">
                                <label for="fld_{{ clean_whitespace ../key }}{{ key }}" class="col-sm-5 control-label">{{ key }}</label>
                                <div class="col-sm-6">
                                {{# if value.crypt }}
-                                   <div class="input-group">
-                                        <input type="password" class="form-control" data-section="{{ ../../key }}" data-key="{{ ../key }}" id="fld_{{ clean_whitespace ../../key }}{{ clean_whitespace ../key }}" value="€fa{}#42123~#||23|ßðđæ">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default button-undo" type="button" data-fld="fld_{{ clean_whitespace ../../key }}{{ clean_whitespace ../key }}"><i class="fa fa-undo"></i> </button>
-                                        </span>
+                                   <div>
+                                        <input type="password" class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" value="€fa{}#42123~#||23|ßðđæ">
                                    </div>
                                {{ else }}
                                  {{# ifequals value.type 1 }}
-                                 <textarea class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}" data-section="{{ ../../../key }}" data-key="{{ ../../key }}" rows="3">{{ value.value }}</textarea>
+                                 <textarea class="form-control" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" rows="3">{{ value.value }}</textarea>
                                  {{ else }}
                                  {{# ifequals value.type 3 }}
-                                 <input type="checkbox" data-on-label="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-label="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}"{{# ifequals value.value 1 }} checked{{/ ifequals }}>
+                                 <input type="checkbox" data-on-label="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-label="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="config-ctrl" {{# ifequals value.value 1 }} checked{{/ ifequals }} data-section="{{ cfg_section }}" data-key="{{ cfg_key }}">
                                  {{ else }}
-                                 <div class="input-group">
-                                     <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" class="form-control" id="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}" data-section="{{ ../../../key }}" data-key="{{ ../../key }}" value="{{ value.value }}">
-                                      <span class="input-group-btn">
-                                          <button class="btn btn-info button-undo" type="button" data-fld="fld_{{ clean_whitespace ../../../key }}{{ clean_whitespace ../../key }}"><i class="fa fa-undo"></i> </button>
-                                      </span>
+                                 {{# ifequals value.type 2 }}
+                                 <div>
+                                     <input type="numeric" class="form-control config-ctrl" data-section="{{ ../../../../../key }}" data-key="{{ key }}" value="{{ value.value }}">
                                  </div>
+                                 {{ else }}
+                                 <div>
+                                     <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" value="{{ value.value }}">
+                                 </div>
+                                 {{/ ifequals }}
                                  {{/ ifequals }}
                                  {{/ ifequals }}
                                {{/ if }}
                                </div>
                             </div>
+                            {{ unset_var "cfg_key" }}
                             {{/ eachKeySorted }}
                         </div>
+                        {{ unset_var "cfg_section" }}
                         {{/ eachKey }}
                     </div>
                 </div>        
