@@ -11,12 +11,22 @@ import logging, os
 logger = logging.getLogger(__name__)
 
 def rename(newName):
+    # If new name has "'\t'
+    if '\t' in newName:
+        newName, account, password = newName.split('\t')
+    else:
+        account = password = None
+
     logger.debug('Debian renamer')
+
+    if account is not None:
+        os.system('echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(account, password))
+
     f = open('/etc/hostname', 'w')
     f.write(newName)
     f.close()
     os.system('/bin/hostname %s' % newName)
-    
+
     # add name to "hosts"
     f = open('/etc/hosts', 'r')
     lines = f.readlines()
@@ -28,7 +38,7 @@ def rename(newName):
             continue
         f.write(l)
     f.close()
-    
+
     return True
 # All names in lower case
 renamers['debian'] = rename

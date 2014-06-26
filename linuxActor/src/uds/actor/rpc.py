@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 LOGIN_MSG = 'login'
 LOGOUT_MSG = 'logout'
 READY_MSG = 'ready'
-INFO_MSG = 'info'
+INFO_MSG = 'information'
 IP_MSG = 'ip'
 
 class Rpc(object):

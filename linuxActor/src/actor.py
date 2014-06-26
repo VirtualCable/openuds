@@ -34,7 +34,7 @@ class MyDaemon(Daemon):
                 time.sleep(4)
 
         # We can get 'rename:newname', ''. Anything else is an error
-        data = todo.split(':')
+        data = todo.split('\r')
 
         if data[0] == 'rename':
             logger.info('Renaming to {0}'.format(data[1]))
@@ -71,12 +71,12 @@ class MyDaemon(Daemon):
 if __name__ == '__main__':
     if len(sys.argv) == 3:
         if 'login' == sys.argv[1]:
-            logger.debug('Notifiyin login')
+            logger.debug('Notify login')
             Rpc.initialize()
             Rpc.login(sys.argv[2])
             sys.exit(0)
         elif 'logout' == sys.argv[1]:
-            logger.debug('Notifiyin logout')
+            logger.debug('Notify logout')
             Rpc.initialize()
             Rpc.logout(sys.argv[2])
             sys.exit(0)
