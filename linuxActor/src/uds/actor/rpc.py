@@ -47,7 +47,7 @@ class Rpc(object):
             logger.debug('Sending message to broker: {0} -> {1}, {2}'.format(self._id, msg, data))
             return self._server.message(self._id, msg, data)
         except Exception as e:
-            logger.exception('Error notifyinh message')
+            logger.exception('Error notifying message')
             return None
         return ''
 
