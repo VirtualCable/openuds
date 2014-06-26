@@ -35,13 +35,15 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.osmanagers.OSManagersFactory import OSManagersFactory
 from uds.core.managers.DownloadsManager import DownloadsManager
-from uds.osmanagers.LinuxOsManager.LinuxOsManager import LinuxOsManager
+from LinuxOsManager import LinuxOsManager
+from LinuxRandomPassOsManager import LinuxRandomPassManager
 import os.path
 import sys
 
 OSManagersFactory.factory().insert(LinuxOsManager)
+OSManagersFactory.factory().insert(LinuxRandomPassManager)
 
-DownloadsManager.manager().registerDownloadable('udsactor_1.0_all.deb',
+DownloadsManager.manager().registerDownloadable('udsactor_1.1_all.deb',
                                                 _('UDS Actor for linux machines <b>(Requires python 2.6 or greater)'),
-                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_1.0_all.deb',
+                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_1.1_all.deb',
                                                 'application/x-debian-package')
