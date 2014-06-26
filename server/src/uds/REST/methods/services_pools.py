@@ -75,6 +75,7 @@ class ServicesPools(ModelHandler):
             'comments': item.comments,
             'state': item.state,
             'service_id': item.service_id,
+            'provider_id': item.service.provider_id,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
             'cache_l2_srvs': item.cache_l2_srvs,
