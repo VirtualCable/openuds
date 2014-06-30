@@ -4,6 +4,28 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
@@ -29,7 +51,6 @@ class LinuxRandomPassManager(LinuxOsManager):
 
     # Apart form data from linux os manager, we need also domain and credentials
     userAccount = gui.TextField(length=64, label=_('Account'), order=2, tooltip=_('User account to change password'), required=True)
-    password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Current (template) password of the user account'), required=True)
 
     # Inherits base "onLogout"
     onLogout = LinuxOsManager.onLogout
@@ -42,10 +63,8 @@ class LinuxRandomPassManager(LinuxOsManager):
             if values['password'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide a password for the account!!!'))
             self._userAccount = values['userAccount']
-            self._password = values['password']
         else:
             self._userAccount = ''
-            self._password = ""
 
     def release(self, service):
         super(LinuxRandomPassManager, self).release(service)
@@ -65,27 +84,25 @@ class LinuxRandomPassManager(LinuxOsManager):
         return randomPass
 
     def infoVal(self, service):
-        return 'rename:{0}\t{1}\t{2}\t{3}'.format(self.getName(service), self._userAccount, self._password, self.genPassword(service))
+        return 'rename:{0}\t{1}\t{2}\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
 
     def infoValue(self, service):
-        return 'rename\r{0}\t{1}\t{2}\t{3}'.format(self.getName(service), self._userAccount, self._password, self.genPassword(service))
+        return 'rename\r{0}\t{1}\t{2}\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
 
     def marshal(self):
         base = super(LinuxRandomPassManager, self).marshal()
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v1', self._userAccount, CryptoManager.manager().encrypt(self._password), base.encode('hex')])
+        return '\t'.join(['v1', self._userAccount, base.encode('hex')])
 
     def unmarshal(self, s):
         data = s.split('\t')
         if data[0] == 'v1':
             self._userAccount = data[1]
-            self._password = CryptoManager.manager().decrypt(data[2])
             super(LinuxRandomPassManager, self).unmarshal(data[3].decode('hex'))
 
     def valuesDict(self):
         dic = super(LinuxRandomPassManager, self).valuesDict()
         dic['userAccount'] = self._userAccount
-        dic['password'] = self._password
         return dic

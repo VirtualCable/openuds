@@ -100,32 +100,13 @@ class Dispatcher(View):
 
         args = path
 
-        # try:
-        #    lang = request.LANGUAGE_CODE
-        # except:
-        #    lang = None
-
-        # Inspect url to see if it contains a language
-        # if len(args) > 0:
-        #    for l in settings.LANGUAGES:
-        #        if args[-1] == l[0]:
-        #            lang = l[0]
-        #            activate(lang)
-        #            logger.error('Found lang {0}'.format(l))
-        #            args = args[:-1]
-        #            break
-        # Instantiate method handler and locate http_method dispatcher
         try:
             handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)
-            # If no lang on request, try to get the one from
-            # if lang is None:
-            #    activate(handler.getValue('locale'))
-            # else:
-            #    handler.setValue('locale', lang)  # Update Locale if request had one
-
             operation = getattr(handler, http_method)
         except processors.ParametersException as e:
-            return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(path[0], e))
+            logger.debug('Path: {0}'.format(full_path))
+            logger.debug('Error: {0}'.format(e))
+            return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(full_path, e))
         except AttributeError:
             allowedMethods = []
             for n in ['get', 'post', 'put', 'delete']:

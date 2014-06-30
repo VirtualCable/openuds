@@ -45,7 +45,8 @@ def login():
     global headers
     h = Http()
 
-    parameters = '{ "auth": "admin", "username": "root", "password": "temporal" }'
+    # parameters = '{ "auth": "admin", "username": "root", "password": "temporal" }'
+    parameters = '{ "auth": "interna", "username": "admin", "password": "temporal" }'
 
     resp, content = h.request(rest_url + 'auth/login', method='POST', body=parameters)
 
@@ -117,7 +118,7 @@ def request_service_info(provider_id, service_id):
     return json.loads(content)
 
 if __name__ == '__main__':
-    request_pools()  # Not logged in, this will generate an error
+    # request_pools()  # Not logged in, this will generate an error
 
     if login() == 0:  # If we can log in, will get the pools correctly
         res = request_pools()

@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
 from uds.models import Authenticator
+from uds.core.auths.auth import authenticate
 
 from uds.REST import Handler
 
@@ -58,11 +59,12 @@ class Login(Handler):
                 username:
                 password:
                 auth:
-            optional:
-                locale: (defaults to "en")
         Result:
             on success: { 'result': 'ok', 'auth': [auth_code] }
             on error: { 'result: 'error', 'error': [error string] }
+
+        Locale comes on "Header", as any HTTP Request (Accept-Language header)
+        Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
         '''
         try:
             username, auth, password = self._params['username'], self._params['auth'], self._params['password']
@@ -73,6 +75,20 @@ class Login(Handler):
                     return{'result': 'ok', 'token': self.getAuthToken()}
                 else:
                     raise Exception('Invalid credentials')
+            else:
+                try:
+                    logger.debug('Auth: {0}'.format(auth))
+                    auth = Authenticator.objects.get(name=auth)
+                    logger.debug('Auth obj: {0}'.format(auth))
+                    user = authenticate(username, password, auth)
+                    if user is None:  # invalid credentials
+                        raise Exception()
+                    self.genAuthToken(auth.id, user.name, locale, user.is_admin, user.staff_member)
+                    return{'result': 'ok', 'token': self.getAuthToken()}
+                except:
+                    logger.exception('Credentials ')
+                    raise Exception('Invalid Credentials (invalid authenticator)')
+
             raise Exception('Invalid Credentials')
         except Exception as e:
             logger.exception('exception')
@@ -106,12 +122,3 @@ class Auths(Handler):
 
     def get(self):
         return list(self.auths())
-
-
-class Locale(Handler):
-    authenticated = True
-
-    def get(self):
-        if len(self._args) > 0:
-            self.setValue('locale', self._args[1])
-        return ''
