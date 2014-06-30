@@ -62,12 +62,13 @@ class TSRDPTransport(Transport):
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=3, tooltip=_('If checked, the credentials used to connect will be emtpy'))
     fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'))
-    fixedDomain = gui.TextField(label=_('Domain'), order=6, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=7, tooltip=_('If checked, this transport will allow the use of smartcards'))
-    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=8, tooltip=_('If checked, this transport will allow the use of user printers'))
-    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=9, tooltip=_('If checked, this transport will allow the use of user drives'))
-    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=10, tooltip=_('If checked, this transport will allow the use of user serial ports'))
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=11, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
+    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=6, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
+    fixedDomain = gui.TextField(label=_('Domain'), order=7, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
+    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=8, tooltip=_('If checked, this transport will allow the use of smartcards'))
+    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=9, tooltip=_('If checked, this transport will allow the use of user printers'))
+    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=10, tooltip=_('If checked, this transport will allow the use of user drives'))
+    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=11, tooltip=_('If checked, this transport will allow the use of user serial ports'))
+    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=12, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
 
     def __init__(self, environment, values=None):
         super(TSRDPTransport, self).__init__(environment, values)
@@ -85,6 +86,7 @@ class TSRDPTransport(Transport):
             self._allowDrives = gui.strToBool(values['allowDrives'])
             self._allowSerials = gui.strToBool(values['allowSerials'])
             self._wallPaper = gui.strToBool(values['wallpaper'])
+            self._withoutDomain = gui.strToBool(values['withoutDomain'])
         else:
             self._tunnelServer = ''
             self._tunnelCheckServer = ''
@@ -97,18 +99,20 @@ class TSRDPTransport(Transport):
             self._allowDrives = False
             self._allowSerials = False
             self._wallPaper = False
+            self._withoutDomain = False
 
     def marshal(self):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join('\t', [ 'v2', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
+        return str.join('\t', [ 'v3', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
                                 gui.boolToStr(self._allowDrives), gui.boolToStr(self._allowSerials), gui.boolToStr(self._wallPaper),
-                                self._fixedName, self._fixedPassword, self._fixedDomain, self._tunnelServer, self._tunnelCheckServer ])
+                                self._fixedName, self._fixedPassword, self._fixedDomain, self._tunnelServer, self._tunnelCheckServer,
+                                gui.boolToStr(self._withoutDomain) ])
 
     def unmarshal(self, str_):
         data = str_.split('\t')
-        if data[0] in ('v1', 'v2'):
+        if data[0] in ('v1', 'v2', 'v3'):
             self._useEmptyCreds = gui.strToBool(data[1])
             self._allowSmartcards = gui.strToBool(data[2])
             self._allowPrinters = gui.strToBool(data[3])
@@ -117,7 +121,8 @@ class TSRDPTransport(Transport):
             if data[0] == 'v1':
                 self._wallPaper = False
                 i = 0
-            elif data[0] == 'v2':
+
+            if data[0] in ('v2', 'v3'):
                 self._wallPaper = gui.strToBool(data[6])
                 i = 1
 
@@ -127,12 +132,15 @@ class TSRDPTransport(Transport):
             self._tunnelServer = data[9 + i]
             self._tunnelCheckServer = data[10 + i]
 
+            if data[0] == 'v3':
+                self._withoutDomain = gui.strToBool(data[11 + i])
+
     def valuesDict(self):
         return { 'allowSmartcards' : gui.boolToStr(self._allowSmartcards), 'allowPrinters' : gui.boolToStr(self._allowPrinters),
                 'allowDrives': gui.boolToStr(self._allowDrives), 'allowSerials': gui.boolToStr(self._allowSerials),
                 'fixedName' : self._fixedName, 'fixedPassword' : self._fixedPassword, 'fixedDomain' : self._fixedDomain,
                 'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'tunnelServer' : self._tunnelServer,
-                'tunnelCheckServer' : self._tunnelCheckServer, 'wallpaper': self._wallPaper }
+                'tunnelCheckServer' : self._tunnelCheckServer, 'wallpaper': self._wallPaper, 'withoutDomain': gui.boolToStr(self._withoutDomain) }
 
     def isAvailableFor(self, ip):
         '''
@@ -173,6 +181,9 @@ class TSRDPTransport(Transport):
 
         if '.' in domain:  # Dotter domain form
             username = username + '@' + domain
+            domain = ''
+
+        if self._withoutDomain is True:
             domain = ''
 
         width, height = CommonPrefs.getWidthHeight(prefs)

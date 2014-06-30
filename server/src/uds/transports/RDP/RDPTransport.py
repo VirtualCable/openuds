@@ -58,56 +58,64 @@ class RDPTransport(Transport):
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))
     fixedName = gui.TextField(label=_('Username'), order=2, tooltip=_('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order=3, tooltip=_('If not empty, this password will be always used as credential'))
-    fixedDomain = gui.TextField(label=_('Domain'), order=4, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=5, tooltip=_('If checked, this transport will allow the use of smartcards'))
-    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=6, tooltip=_('If checked, this transport will allow the use of user printers'))
-    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=7, tooltip=_('If checked, this transport will allow the use of user drives'))
-    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=8, tooltip=_('If checked, this transport will allow the use of user serial ports'))
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=9, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
+    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=4, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
+    fixedDomain = gui.TextField(label=_('Domain'), order=5, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
+    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=6, tooltip=_('If checked, this transport will allow the use of smartcards'))
+    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=7, tooltip=_('If checked, this transport will allow the use of user printers'))
+    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=8, tooltip=_('If checked, this transport will allow the use of user drives'))
+    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=9, tooltip=_('If checked, this transport will allow the use of user serial ports'))
+    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=10, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
 
     def __init__(self, environment, values=None):
         super(RDPTransport, self).__init__(environment, values)
+        self._useEmptyCreds = False
+        self._fixedName = ''
+        self._fixedPassword = ''
+        self._fixedDomain = ''
+        self._allowSmartcards = False
+        self._allowPrinters = False
+        self._allowDrives = False
+        self._allowSerials = False
+        self._wallPaper = False
+        self._withoutDomain = False
+
         if values != None:
-            self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
-            self._fixedName = values['fixedName']
-            self._fixedPassword = values['fixedPassword']
-            self._fixedDomain = values['fixedDomain']
-            self._allowSmartcards = gui.strToBool(values['allowSmartcards'])
-            self._allowPrinters = gui.strToBool(values['allowPrinters'])
-            self._allowDrives = gui.strToBool(values['allowDrives'])
-            self._allowSerials = gui.strToBool(values['allowSerials'])
-            self._wallPaper = gui.strToBool(values['wallpaper'])
-        else:
-            self._useEmptyCreds = False
-            self._fixedName = ''
-            self._fixedPassword = ''
-            self._fixedDomain = ''
-            self._allowSmartcards = False
-            self._allowPrinters = False
-            self._allowDrives = False
-            self._allowSerials = False
-            self._wallPaper = False
+            try:
+                self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
+                self._fixedName = values['fixedName']
+                self._fixedPassword = values['fixedPassword']
+                self._fixedDomain = values['fixedDomain']
+                self._allowSmartcards = gui.strToBool(values['allowSmartcards'])
+                self._allowPrinters = gui.strToBool(values['allowPrinters'])
+                self._allowDrives = gui.strToBool(values['allowDrives'])
+                self._allowSerials = gui.strToBool(values['allowSerials'])
+                self._wallPaper = gui.strToBool(values['wallpaper'])
+                self._withoutDomain = gui.strToBool(values['withoutDomain'])
+            except:
+                logger.exception('Some value was missing on RTP Transport')
 
     def marshal(self):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join('\t', [ 'v2', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
+        return str.join('\t', [ 'v3', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
                                 gui.boolToStr(self._allowDrives), gui.boolToStr(self._allowSerials), gui.boolToStr(self._wallPaper),
-                                self._fixedName, self._fixedPassword, self._fixedDomain ])
+                                self._fixedName, self._fixedPassword, self._fixedDomain, gui.boolToStr(self._withoutDomain) ])
 
     def unmarshal(self, str_):
         data = str_.split('\t')
-        if data[0] in ('v1', 'v2'):
+        if data[0] in ('v1', 'v2', 'v3'):
             self._useEmptyCreds = gui.strToBool(data[1])
             self._allowSmartcards = gui.strToBool(data[2])
             self._allowPrinters = gui.strToBool(data[3])
             self._allowDrives = gui.strToBool(data[4])
             self._allowSerials = gui.strToBool(data[5])
+
             if data[0] == 'v1':
                 self._wallPaper = False
                 i = 0
-            elif data[0] == 'v2':
+
+            if data[0] in ('v2', 'v3'):
                 self._wallPaper = gui.strToBool(data[6])
                 i = 1
 
@@ -115,11 +123,15 @@ class RDPTransport(Transport):
             self._fixedPassword = data[7 + i]
             self._fixedDomain = data[8 + i]
 
+            if data[0] == 'v3':
+                self._withoutDomain = gui.strToBool(data[9 + i])
+
+
     def valuesDict(self):
         return { 'allowSmartcards' : gui.boolToStr(self._allowSmartcards), 'allowPrinters' : gui.boolToStr(self._allowPrinters),
                 'allowDrives': gui.boolToStr(self._allowDrives), 'allowSerials': gui.boolToStr(self._allowSerials),
                 'fixedName' : self._fixedName, 'fixedPassword' : self._fixedPassword, 'fixedDomain' : self._fixedDomain,
-                'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'wallpaper': self._wallPaper }
+                'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'wallpaper': self._wallPaper, 'withoutDomain': self._withoutDomain }
 
     def isAvailableFor(self, ip):
         '''
@@ -183,6 +195,9 @@ class RDPTransport(Transport):
             domain = self._fixedDomain;
         if self._useEmptyCreds is True:
             username, password, domain = '', '', ''
+
+        if self._withoutDomain is True:
+            domain = ''
 
         if '.' in domain:  # Dotter domain form
             username = username + '@' + domain
