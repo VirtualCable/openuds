@@ -61,10 +61,19 @@ public class WindowsApplet implements OsApplet {
 				e.printStackTrace();
 				return;
 			}
-
 			String cmd = WinRegistry.readString(WinRegistry.HKEY_CURRENT_USER, "Software\\Classes\\NXClient.session\\shell\\open\\command", "");
 			if ( null == cmd )
-				javax.swing.JOptionPane.showMessageDialog(null, "Can't find Nomachine client. Please, install it");
+			{
+				// "C:\Program Files (x86)\OpenNX\bin\opennx.exe" --session "%1"
+				cmd = WinRegistry.readString(WinRegistry.HKEY_CURRENT_USER, "Software\\InnoviData\\OpenNX\\Config", "SystemNxDir");
+				if( null != cmd )
+				{
+					cmd = "\"" + cmd + "\\bin\\opennx.exe\" --autologin --session \"%1\"";
+				}
+			}
+
+			if( null == cmd )
+				javax.swing.JOptionPane.showMessageDialog(null, "Can't find neither OpenNX or Nomachine client. Please, install one of them.");
 			else
 			{
 				nxFileName = nxFileName.replace("\\", "\\\\");
