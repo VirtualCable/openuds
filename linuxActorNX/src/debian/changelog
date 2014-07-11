@@ -1,3 +1,9 @@
+udsactor-nx (1.1) stable; urgency=medium
+
+  * Updated dependencies
+
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Fri, 23 Jun 2014 13:00:32 +0200
+
 udsactor-nx (1.0) stable; urgency=low
   * Initial version
  -- Adolfo Gómez García <agomez@virtualcable.es>  Fri, 21 Nov 2011 23:35:11 +0100
