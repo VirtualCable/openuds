@@ -1,0 +1,14 @@
+Source: udsactor-xrdp
+Section: contrib/net
+Priority: extra
+Maintainer: Adolfo Gómez García <agomez@virtualcable.es>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.9.2
+Homepage: http://www.udsenterprise.com
+
+Package: udsactor-xrdp
+Architecture: all
+Depends: xrdp (>= 0.6.0), udsactor (>= 1.1), libpam-modules-bin (>=1.0), ${misc:Depends}
+Description: UDS Actor component for xrdp
+ This package provides connection between uds actor and xrdp 
+ 
