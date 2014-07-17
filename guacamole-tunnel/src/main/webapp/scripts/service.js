@@ -1,19 +1,23 @@
 /*
- *  Guacamole - Clientless Remote Desktop
- *  Copyright (C) 2010  Michael Jumper
+ * Copyright (C) 2013 Glyptodon LLC
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /**
@@ -321,19 +325,22 @@ GuacamoleService.PermissionSet = function() {
 GuacamoleService.handleResponse = function(xhr) {
 
     // For HTTP Forbidden, just return permission denied
-    if (xhr.status == 403)
-        throw new Error("Permission denied.");
+    if (xhr.status === 403)
+        throw new Guacamole.Status(Guacamole.Status.Code.CLIENT_FORBIDDEN, "Permission denied.");
 
     // Otherwise, if unsuccessful, throw error with message derived from
     // response
-    if (xhr.status != 200) {
+    if (xhr.status !== 200) {
+
+        // Retrieve error code
+        var code = parseInt(xhr.getResponseHeader("Guacamole-Status-Code"));
 
         // Retrieve error message
         var message =    xhr.getResponseHeader("Guacamole-Error-Message")
                       || xhr.statusText;
 
         // Throw error with derived message
-        throw new Error(message);
+        throw new Guacamole.Status(code, message);
 
     }
 
@@ -1250,7 +1257,7 @@ GuacamoleService.Protocol.Parameter.Option = function(value, title) {
 /**
  * A free-form text field.
  */
-GuacamoleService.Protocol.Parameter.TEXT     = 0;
+GuacamoleService.Protocol.Parameter.TEXT = 0;
 
 /**
  * A password field.
@@ -1260,17 +1267,22 @@ GuacamoleService.Protocol.Parameter.PASSWORD = 1;
 /**
  * A numeric field.
  */
-GuacamoleService.Protocol.Parameter.NUMERIC  = 2;
+GuacamoleService.Protocol.Parameter.NUMERIC = 2;
 
 /**
  * A boolean (checkbox) field.
  */
-GuacamoleService.Protocol.Parameter.BOOLEAN  = 3;
+GuacamoleService.Protocol.Parameter.BOOLEAN = 3;
 
 /**
  * An enumerated (select) field.
  */
-GuacamoleService.Protocol.Parameter.ENUM     = 4;
+GuacamoleService.Protocol.Parameter.ENUM = 4;
+
+/**
+ * A free-form, multi-line text field. 
+ */
+GuacamoleService.Protocol.Parameter.MULTILINE = 5;
 
 /**
  * Collection of service functions which deal with protocols. Each function
@@ -1364,6 +1376,11 @@ GuacamoleService.Protocols = {
                         parameter.type = GuacamoleService.Protocol.Parameter.ENUM;
                         break;
 
+                    // Multiline text parameter
+                    case "multiline":
+                        parameter.type = GuacamoleService.Protocol.Parameter.MULTILINE;
+                        break;
+
                 }
 
                 // Parse all options
@@ -1395,4 +1412,29 @@ GuacamoleService.Protocols = {
 
     }
 
+};
+
+/**
+ * Collection of service functions which deal with the clipboard state. Each
+ * function makes an explicit HTTP query to the server, and parses the response.
+ */
+GuacamoleService.Clipboard = {
+    
+    "get" : function(parameters) {
+        
+        // Construct request URL
+        var list_url = "clipboard";
+        if (parameters) list_url += "?" + parameters;
+        
+        // Get permission list
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", list_url, false);
+        xhr.send(null);
+        
+        // Handle response
+        GuacamoleService.handleResponse(xhr);
+        return xhr.responseText;
+        
+    }
+    
 };

@@ -1,19 +1,23 @@
 /*
- *  Guacamole - Clientless Remote Desktop
- *  Copyright (C) 2010  Michael Jumper
+ * Copyright (C) 2013 Glyptodon LLC
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /**
@@ -76,7 +80,6 @@ GuacAdmin.Field = function() {
 
 };
 
-
 /**
  * Simple HTML input field.
  * 
@@ -108,7 +111,6 @@ GuacAdmin.Field._HTML_INPUT = function(type) {
 
 GuacAdmin.Field._HTML_INPUT.prototype = new GuacAdmin.Field();
 
-
 /**
  * A basic text field.
  * 
@@ -120,6 +122,34 @@ GuacAdmin.Field.TEXT = function() {
 
 GuacAdmin.Field.TEXT.prototype = new GuacAdmin.Field._HTML_INPUT();
 
+/**
+ * A basic multiline text field.
+ * 
+ * @augments GuacAdmin.Field
+ */
+GuacAdmin.Field.MULTILINE = function() {
+
+    // Call parent constructor
+    GuacAdmin.Field.apply(this);
+
+    // Create backing element
+    var element = GuacUI.createElement("textarea");
+
+    this.getValue = function() {
+        return element.value;
+    };
+
+    this.getElement = function() {
+        return element;
+    };
+
+    this.setValue = function(value) {
+        element.value = value;
+    };
+
+};
+
+GuacAdmin.Field.MULTILINE.prototype = new GuacAdmin.Field();
 
 /**
  * A basic password field.
@@ -132,7 +162,6 @@ GuacAdmin.Field.PASSWORD = function() {
 
 GuacAdmin.Field.PASSWORD.prototype = new GuacAdmin.Field._HTML_INPUT();
 
-
 /**
  * A basic numeric field, leveraging the new HTML5 field types.
  * 
@@ -143,7 +172,6 @@ GuacAdmin.Field.NUMERIC = function() {
 };
 
 GuacAdmin.Field.NUMERIC.prototype = new GuacAdmin.Field._HTML_INPUT();
-
 
 /**
  * Simple checkbox.
@@ -215,7 +243,6 @@ GuacAdmin.Field.ENUM = function(values) {
 };
 
 GuacAdmin.Field.ENUM.prototype = new GuacAdmin.Field();
-
 
 /**
  * An arbitrary button.
@@ -362,7 +389,6 @@ GuacAdmin.addUser = function(name, parameters) {
     };
 
 };
-
 
 /**
  * User edit dialog which allows editing of the user's password and connection
@@ -619,8 +645,8 @@ GuacAdmin.UserEditor = function(name, parameters) {
             GuacAdmin.reset();
 
         }
-        catch (e) {
-            alert(e.message);
+        catch (status) {
+            alert(status.message);
         }
 
     };
@@ -658,8 +684,8 @@ GuacAdmin.UserEditor = function(name, parameters) {
                 }
 
                 // Alert on failure
-                catch (e) {
-                    alert(e.message);
+                catch (status) {
+                    alert(status.message);
                 }
 
             }
@@ -816,8 +842,10 @@ GuacAdmin.ConnectionEditor = function(connection, parameters) {
             start.textContent = GuacAdmin.formatDate(record.start);
             if (record.duration !== null)
                 duration.textContent = GuacAdmin.formatSeconds(record.duration);
-            else
+            else if (record.active)
                 duration.textContent = "Active now";
+            else
+                duration.textContent = "-";
 
             // Add record to pager
             history_pager.addElement(row);
@@ -880,6 +908,11 @@ GuacAdmin.ConnectionEditor = function(connection, parameters) {
                 // Select field
                 case GuacamoleService.Protocol.Parameter.ENUM:
                     field = new GuacAdmin.Field.ENUM(parameter.options);
+                    break;
+
+                // Multiline text field
+                case GuacamoleService.Protocol.Parameter.MULTILINE:
+                    field = new GuacAdmin.Field.MULTILINE();
                     break;
 
                 default:
@@ -952,8 +985,8 @@ GuacAdmin.ConnectionEditor = function(connection, parameters) {
             GuacAdmin.reset();
 
         }
-        catch (e) {
-            alert(e.message);
+        catch (status) {
+            alert(status.message);
         }
 
     };
@@ -991,8 +1024,8 @@ GuacAdmin.ConnectionEditor = function(connection, parameters) {
                 }
 
                 // Alert on failure
-                catch (e) {
-                    alert(e.message);
+                catch (status) {
+                    alert(status.message);
                 }
 
             }
@@ -1145,8 +1178,8 @@ GuacAdmin.ConnectionGroupEditor = function(group, parameters) {
             GuacAdmin.reset();
 
         }
-        catch (e) {
-            alert(e.message);
+        catch (status) {
+            alert(status.message);
         }
 
     };
@@ -1184,8 +1217,8 @@ GuacAdmin.ConnectionGroupEditor = function(group, parameters) {
                 }
 
                 // Alert on failure
-                catch (e) {
-                    alert(e.message);
+                catch (status) {
+                    alert(status.message);
                 }
 
             }
@@ -1375,8 +1408,8 @@ GuacAdmin.reset = function() {
             }
 
             // Alert on failure
-            catch (e) {
-                alert(e.message);
+            catch (status) {
+                alert(tatusmessage);
             }
 
         };

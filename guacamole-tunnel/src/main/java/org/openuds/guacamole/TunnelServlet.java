@@ -78,7 +78,7 @@ public class TunnelServlet
 			throw new GuacamoleException("Can't access required user credentials");
 		}
 		
-        System.out.println("Got parameters from remote server");
+        System.out.println("Got parameters from remote server: " + data + ", " + width + "x" + height);
 		
 		GuacamoleClientInformation info = new GuacamoleClientInformation();
 		info.setOptimalScreenWidth(Integer.parseInt(width));

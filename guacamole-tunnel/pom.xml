@@ -7,7 +7,7 @@
     <groupId>org.openuds.server</groupId>
     <artifactId>transport</artifactId>
     <packaging>war</packaging>
-    <version>1.2.1</version>
+    <version>1.5.0</version>
     <name>Guacamole Transport</name>
     <url>http://openuds.org/</url>
 
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.glyptodon.guacamole</groupId>
             <artifactId>guacamole-common-js</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1</version>
             <type>zip</type>
             <scope>runtime</scope>
         </dependency>

@@ -1,20 +1,23 @@
-
 /*
- *  Guacamole - Clientless Remote Desktop
- *  Copyright (C) 2010  Michael Jumper
+ * Copyright (C) 2013 Glyptodon LLC
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 body {
@@ -22,6 +25,7 @@ body {
     font-family: FreeSans, Helvetica, Arial, sans-serif;
     padding: 0;
     margin: 0;
+    overflow: hidden;
 }
 
 img {
@@ -29,8 +33,9 @@ img {
 }
 
 .software-cursor {
-    cursor: url('../images/mouse/dot.gif'),url('../images/mouse/blank.cur'),default;
+    cursor: url('../images/mouse/blank.gif'),url('../images/mouse/blank.cur'),default;
     overflow: hidden;
+    cursor: none;
 }
 
 .guac-error .software-cursor {
@@ -63,27 +68,6 @@ div.dialogMiddle {
     text-align: center;
     display: table-cell;
     vertical-align: middle;
-}
-
-div.dialog {
-    padding: 1em;
-
-    max-width: 75%;
-    text-align: left;
-
-    display: inline-block;
-}
-
-div.dialog h1 {
-    margin: 0;
-    margin-bottom: 0.25em;
-    text-align: center;
-}
-
-div.dialog div.buttons {
-    margin: 0;
-    margin-top: 0.5em;
-    text-align: center;
 }
 
 button {
@@ -128,6 +112,11 @@ button#reconnect {
 
 div.dialog p {
     margin: 0;
+}
+
+div#main {
+    overflow: auto;
+    position: absolute;
 }
 
 div.displayOuter {
@@ -256,15 +245,63 @@ div#viewportClone {
     visibility: hidden;
 }
 
-.status {
-    text-shadow: 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black;
-    font-size: xx-large;
-    color: white;
+@keyframes show-dialog {
+    0%   {transform: scale(0.75); }
+    100% {transform: scale(1); }
 }
 
-.guac-error .status {
-    text-shadow: 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black, 0 0 0.25em black;
-    color: #D44;
+@-webkit-keyframes show-dialog {
+    0%   {-webkit-transform: scale(0.75); }
+    100% {-webkit-transform: scale(1); }
+}
+
+.dialog {
+
+    animation-name: show-dialog;
+    animation-timing-function: linear;
+    animation-duration: 0.125s;
+    -webkit-animation-name: show-dialog;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-duration: 0.125s;
+    
+    max-width: 75%;
+    max-height: none;
+    width: 4in;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
+    border-radius: 0.2em;
+
+    padding: 0.5em;
+    text-align: left;
+    
+}
+
+.guac-error .dialog {
+    background: #FDD;
+    border: 1px solid #964040;
+}
+
+.dialog .title {
+    font-size: 1.1em;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+    margin-bottom: 0.5em;
+}
+
+.dialog .status, .dialog .countdown, .dialog .reconnect {
+    margin: 0;
+    padding: 0.5em;
+    font-size: 0.8em;
+}
+
+.dialog .reconnect {
+    display: none;
+}
+
+.guac-error .dialog .reconnect {
+    display: block;
+    text-align: center;
 }
 
 p.hint {
@@ -297,24 +334,29 @@ p.hint {
 
 .notification {
 
-    font-size: 0.9em;
+    font-size: 0.7em;
+    text-align: center;
     
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    background: black;
-    opacity: 0.9;
+    border: 1px solid rgba(0, 0, 0, 0.75);
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
+    border-radius: 0.2em;
+    background: white;
 
-    color: white;
+    color: black;
 
     padding: 0.5em;
     margin: 1em;
     overflow: hidden;
 
-    box-shadow: 0.25em 0.25em 0.25em rgba(0, 0, 0, 0.75);
+    box-shadow: 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.25);
  
 }
 
 .notification div {
     display: inline-block;
+    text-align: left;
 }
 
 .notification .title-bar {
@@ -322,17 +364,13 @@ p.hint {
     white-space: nowrap;
     font-weight: bold;
 
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid black;
     padding-bottom: 0.5em;
     margin-bottom: 0.5em;
 }
 
 .notification .title-bar * {
     vertical-align: middle;
-}
-
-.notification .caption {
-    color: silver;
 }
 
 .notification .close {
@@ -361,6 +399,7 @@ p.hint {
     to   {background-position: 64px 0px;}
 }
 
+.notification .caption,
 .download.notification .caption {
     width: 100%;
     white-space: nowrap;
@@ -368,7 +407,15 @@ p.hint {
     text-overflow: ellipsis;
 }
 
+.upload.notification .status,
+.download.notification .status {
+    color: red;
+    font-size: 1em;
+    padding: 1em;
+}
+
 .download.notification .progress,
+.upload.notification .progress,
 .download.notification .download {
 
     margin-top: 1em;
@@ -377,16 +424,47 @@ p.hint {
     min-width: 5em;
     
     border: 1px solid gray;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
     border-radius: 0.2em;
 
     text-align: center;
     float: right;
 
+    position: relative;
+    
 }
 
+.upload.notification .progress {
+    float: none;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.download.notification .progress div,
+.upload.notification .progress div {
+    position: relative;
+}
+
+.download.notification .progress .bar,
+.upload.notification .progress .bar {
+    background: #A3D655;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    box-shadow: inset  1px  1px 0 rgba(255, 255, 255, 0.5),
+                inset -1px -1px 0 rgba(  0,   0,   0, 0.1),
+                       1px 1px  0 gray;
+}
+
+.upload.notification .progress,
 .download.notification .progress {
 
-    background: #444 url('../images/progress.png');
+    background: #C2C2C2 url('../images/progress.png');
     background-size: 16px 16px;
     -moz-background-size: 16px 16px;
     -webkit-background-size: 16px 16px;
@@ -418,3 +496,284 @@ p.hint {
     height: 0;
     overflow: hidden;
 }
+
+/* Menu */
+
+/**
+ * show-menu: Animation for showing the menu
+ */
+@keyframes show-menu {
+    from { left: -480px; opacity: 0;}
+    to   { left: 0;      opacity: 1;}
+}
+@-moz-keyframes show-menu {
+    from { left: -480px; opacity: 0;}
+    to   { left: 0;      opacity: 1;}
+}
+@-webkit-keyframes show-menu {
+    from { left: -480px; opacity: 0;}
+    to   { left: 0;      opacity: 1;}
+}
+
+/**
+ * hide-menu: Animation for hiding the menu
+ */
+@keyframes hide-menu {
+    from { left: 0;      opacity: 1;}
+    to   { left: -480px; opacity: 0;}
+}
+@-moz-keyframes hide-menu {
+    from { left: 0;      opacity: 1;}
+    to   { left: -480px; opacity: 0;}
+}
+@-webkit-keyframes hide-menu {
+    from { left: 0;      opacity: 1;}
+    to   { left: -480px; opacity: 0;}
+}
+
+#menu {
+    overflow: auto;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    max-width: 100%;
+    width: 480px;
+    background: #EEE;
+    box-shadow: inset -1px 0 2px white, 1px 0 2px black;
+    z-index: 10;
+}
+
+#menu .content {
+    padding: 1em;
+}
+
+#menu .content > * {
+    margin: 1em 0;
+}
+
+#menu, #menu.closed {
+    left: -480px;
+    opacity: 0;
+}
+
+#menu.open {
+    left: 0px;
+    opacity: 1;
+}
+
+#menu.closed {
+    animation-name: hide-menu;
+    animation-timing-function: linear;
+    animation-duration: 0.05s;
+    -webkit-animation-name: hide-menu;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-duration: 0.05s;
+}
+
+#menu.open {
+    animation-name: show-menu;
+    animation-timing-function: linear;
+    animation-duration: 0.05s;
+    -webkit-animation-name: show-menu;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-duration: 0.05s;
+}
+
+#clipboard-settings textarea {
+    width: 100%;
+    border: 1px solid #AAA;
+    -moz-border-radius: 0.25em;
+    -webkit-border-radius: 0.25em;
+    -khtml-border-radius: 0.25em;
+    border-radius: 0.25em;
+    white-space: pre;
+    display: block;
+}
+
+#mouse-settings .choice {
+    text-align: center;
+}
+
+#mouse-settings .choice .figure {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 80%;
+}
+
+#keyboard-settings .caption {
+    font-size: 0.9em;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+#mouse-settings .figure .caption {
+    text-align: center;
+    font-size: 0.9em;
+}
+
+#mouse-settings .figure img {
+    display: block;
+    max-width: 100%;
+    margin: 1em auto;
+}
+
+#menu h3 {
+
+    background: rgba(0, 0, 0, 0.4);
+
+    padding: 0.25em 0.5em;
+    margin: 0;
+    font-size: 1em;
+
+    color: white;
+    font-weight: bold;
+
+}
+
+#keyboard-settings .figure {
+    float: right;
+    max-width: 30%;
+    margin: 1em;
+}
+
+#keyboard-settings .figure img {
+    max-width: 100%;
+}
+
+#zoom-settings {
+    text-align: center;
+}
+
+#zoom-out, #zoom-in, #zoom-state {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#zoom-out, #zoom-in {
+    max-width: 3em;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2em;
+    margin: 0.5em;
+    cursor: pointer;
+}
+
+#zoom-out img, #zoom-in img {
+    max-width: 100%;
+    opacity: 0.5;
+}
+
+#zoom-out:hover, #zoom-in:hover {
+    border: 1px solid rgba(0, 0, 0, 1);
+    background: #CDA;
+}
+
+#zoom-out:hover img, #zoom-in:hover img {
+    opacity: 1;
+}
+
+#zoom-state {
+    font-size: 2em;
+}
+
+#text-input {
+    display: none;
+    position: absolute;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.5);
+    background: #CDA;
+
+}
+
+#text-input-field,
+#text-input-buttons {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#text-input-field {
+    width: 30%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#text-input-buttons {
+    width: 70%;
+    text-align: right;
+}
+
+#target {
+
+    border: none;
+    border-radius: 0;
+
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 12pt;
+    width: 100%;
+    height: auto;
+    resize: none;
+    outline: none;
+
+    margin: 0;
+    padding: 0.25em;
+    padding-left: 0;
+    background: #CDA;
+    overflow: hidden;
+
+}
+
+#text-input.open {
+    display: block;
+}
+
+#sent-history {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0.25em;
+    padding-right: 0;
+}
+
+#sent-history .sent-text {
+    display: inline-block;
+    vertical-align: baseline;
+    white-space: pre;
+    font-size: 12pt;
+
+    animation: fadeout 1s linear;
+    -webkit-animation: fadeout 1s linear;
+    opacity: 0;
+}
+
+#text-input-buttons button {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    background: none;
+    color: black;
+    box-shadow: none;
+    text-shadow: none;
+    padding: 0.25em;
+    max-width: 20%;
+    margin: 0.1em;
+    min-width: 3em;
+}
+
+#text-input-buttons button:active,
+#text-input-buttons button.pressed {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+}
+
+.notification.message {
+    background: #DFD;
+    animation: fadein 0.125s linear, fadeout 2s 3s linear;
+    -webkit-animation: fadein 0.125s linear, fadeout 2s 3s linear;
+}
+
+.notification.message .caption {
+    vertical-align: middle;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+

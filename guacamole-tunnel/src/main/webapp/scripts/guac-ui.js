@@ -1,19 +1,23 @@
 /*
- *  Guacamole - Clientless Remote Desktop
- *  Copyright (C) 2010  Michael Jumper
+ * Copyright (C) 2013 Glyptodon LLC
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /**
@@ -21,11 +25,6 @@
  * @namespace
  */
 var GuacUI = GuacUI || {};
-
-/**
- * Current session state, including settings.
- */
-GuacUI.sessionState = new GuacamoleSessionState();
 
 /**
  * Creates a new element having the given tagname and CSS class.
@@ -109,6 +108,55 @@ GuacUI.removeClass = function(element, classname) {
 };
 
 /**
+ * Opens the connection group having the given ID in a new tab/window.
+ * 
+ * @param {String} id The ID of the connection group to open.
+ * @param {String} parameters Any parameters that should be added to the URL,
+ *                            for sake of authentication.
+ */
+GuacUI.openConnectionGroup = function(id, parameters) {
+    GuacUI.openObject("g/" + id, parameters);
+};
+
+/**
+ * Opens the connection having the given ID in a new tab/window.
+ * 
+ * @param {String} id The ID of the connection to open.
+ * @param {String} parameters Any parameters that should be added to the URL,
+ *                            for sake of authentication.
+ */
+GuacUI.openConnection = function(id, parameters) {
+    GuacUI.openObject("c/" + id, parameters);
+};
+
+/**
+ * Opens the object having the given ID in a new tab/window. The ID must
+ * include the relevant prefix.
+ * 
+ * @param {String} id The ID of the object to open, including prefix.
+ * @param {String} parameters Any parameters that should be added to the URL,
+ *                            for sake of authentication.
+ */
+GuacUI.openObject = function(id, parameters) {
+
+    // Get URL
+    var url = "client.xhtml?id=" + encodeURIComponent(id);
+
+    // Add parameters, if given
+    if (parameters)
+        url += "&" + parameters;
+
+    // Attempt to focus existing window
+    var current = window.open(null, id);
+
+    // If window did not already exist, set up as
+    // Guacamole client
+    if (!current.GuacUI)
+        window.open(url, id);
+
+};
+
+/**
  * Object describing the UI's level of audio support. If the user has request
  * that audio be disabled, this object will pretend that audio is not
  * supported.
@@ -133,7 +181,7 @@ GuacUI.Audio = new (function() {
     this.supported = [];
 
     // If sound disabled, we're done now.
-    if (GuacUI.sessionState.getProperty("disable-sound"))
+    if (GuacamoleSessionStorage.getItem("disable-sound", false))
         return;
     
     // Build array of supported audio formats
@@ -213,203 +261,6 @@ GuacUI.Video = new (function() {
         this.supported, maybe_supported);
 
 })();
-
-
-/**
- * Central registry of all components for all states.
- */
-GuacUI.StateManager = new (function() {
-
-    /**
-     * The current state.
-     */
-    var current_state = null;
-
-    /**
-     * Array of arrays of components, indexed by the states they are in.
-     */
-    var components = [];
-
-    /**
-     * Registers the given component with this state manager, to be shown
-     * during the given states.
-     * 
-     * @param {GuacUI.Component} component The component to register.
-     * @param {Number} [...] The list of states this component should be
-     *                       visible during.
-     */
-    this.registerComponent = function(component) {
-
-        // For each state specified, add the given component
-        for (var i=1; i<arguments.length; i++) {
-
-            // Get specified state
-            var state = arguments[i];
-
-            // Get array of components in that state
-            var component_array = components[state];
-            if (!component_array)
-                component_array = components[state] = [];
-
-            // Add component
-            component_array.push(component);
-
-        }
-
-    };
-
-    function allComponents(components, name) {
-
-        // Invoke given function on all components in array
-        for (var i=0; i<components.length; i++)
-            components[i][name]();
-
-    }
-
-    /**
-     * Sets the current visible state.
-     */
-    this.setState = function(state) {
-
-        // Hide components in current state
-        if (current_state && components[current_state])
-            allComponents(components[current_state], "hide");
-
-        // Show all components in new state
-        current_state = state;
-        if (components[state])
-            allComponents(components[state], "show");
-
-    };
-
-    /**
-     * Returns the current visible state.
-     */
-    this.getState = function() {
-        return current_state;
-    };
-
-})();
-
-
-/**
- * Abstract component which can be registered with GuacUI and shown or hidden
- * dynamically based on interface mode.
- * 
- * @constructor
- */
-GuacUI.Component = function() {
-
-    /**
-     * Called whenever this component needs to be shown and activated.
-     * @event
-     */
-    this.onshow = null;
-
-    /**
-     * Called whenever this component needs to be hidden and deactivated.
-     * @event
-     */
-    this.onhide = null;
-
-};
-
-/**
- * A Guacamole UI component which can be repositioned by dragging.
- * 
- * @constructor
- * @augments GuacUI.Component
- */
-GuacUI.DraggableComponent = function(element) {
-
-    var draggable_component = this;
-
-    var position_x = 0;
-    var position_y = 0;
-
-    var start_x = 0;
-    var start_y = 0;
-
-    /*
-     * Record drag start when finger hits element
-     */
-    if (element)
-        element.addEventListener("touchstart", function(e) {
-            
-            if (e.touches.length == 1) {
-
-                start_x = e.touches[0].screenX;
-                start_y = e.touches[0].screenY;
-
-            }
-       
-            e.stopPropagation();
-       
-        }, true);
-
-    /*
-     * Update position based on last touch
-     */
-    if (element)
-        element.addEventListener("touchmove", function(e) {
-            
-            if (e.touches.length == 1) {
-                
-                var new_x = e.touches[0].screenX;
-                var new_y = e.touches[0].screenY;
-
-                position_x += new_x - start_x;
-                position_y += new_y - start_y;
-
-                start_x = new_x;
-                start_y = new_y;
-
-                // Move magnifier to new position
-                draggable_component.move(position_x, position_y);
-
-            }
-            
-            e.preventDefault();
-            e.stopPropagation();
-
-        }, true);
-
-    if (element)
-        element.addEventListener("touchend", function(e) {
-            e.stopPropagation();
-        }, true);
-            
-    /**
-     * Moves this component to the specified location relative to its normal
-     * position.
-     * 
-     * @param {Number} x The X coordinate in pixels.
-     * @param {Number} y The Y coordinate in pixels.
-     */
-    this.move = function(x, y) {
-
-        element.style.WebkitTransform =
-        element.style.MozTransform =
-        element.style.OTransform =
-        element.style.msTransform =
-        element.style.transform = "translate("
-            + x + "px, " + y + "px)";
-
-        if (draggable_component.onmove)
-            draggable_component.onmove(x, y);
-
-    };
-
-    /**
-     * Trigered whenever this element is moved.
-     * 
-     * @event
-     * @param {Number} x The new X coordinate.
-     * @param {Number} y The new Y coordinate.
-     */
-    this.onmove = null;
-
-};
 
 /**
  * A connection UI object which can be easily added to a list of connections
@@ -642,7 +493,6 @@ GuacUI.Pager = function(container) {
 
 };
 
-
 /**
  * Interface object which displays the progress of a download, ultimately
  * becoming a download link once complete.
@@ -702,6 +552,22 @@ GuacUI.Download = function(filename) {
     };
 
     /**
+     * Updates the content of the dialog to reflect an error condition
+     * represented by the given text.
+     * 
+     * @param {String} text A human-readable description of the error.
+     */
+    this.showError = function(text) {
+
+        element.removeChild(progress);
+        GuacUI.addClass(element, "error");
+
+        var status = GuacUI.createChildElement(element, "div", "status");
+        status.textContent = text;
+
+    };
+
+    /**
      * Removes the progress indicator and replaces it with a download button.
      */
     this.complete = function() {
@@ -709,7 +575,7 @@ GuacUI.Download = function(filename) {
         element.removeChild(progress);
         GuacUI.addClass(element, "complete");
 
-        var download = GuacUI.createChildElement(element, "div", "download");
+        var download = GuacUI.createChildElement(element, "button");
         download.textContent = "Download";
         download.onclick = function() {
             if (guac_download.ondownload)
@@ -736,6 +602,108 @@ GuacUI.Download = function(filename) {
      * @event
      */
     this.ondownload = null;
+
+};
+
+/**
+ * Interface object which displays the progress of a upload.
+ * 
+ * @constructor
+ * @param {String} filename The name the file will have once complete.
+ */
+GuacUI.Upload = function(filename) {
+
+    /**
+     * Reference to this GuacUI.Upload.
+     * @private
+     */
+    var guac_upload = this;
+
+    /**
+     * The outer div representing the notification.
+     * @private
+     */
+    var element = GuacUI.createElement("div", "upload notification");
+
+    /**
+     * Title bar describing the notification.
+     * @private
+     */
+    var title = GuacUI.createChildElement(element, "div", "title-bar");
+
+    /**
+     * Close button for removing the notification.
+     * @private
+     */
+    var close_button = GuacUI.createChildElement(title, "div", "close");
+    close_button.onclick = function() {
+        if (guac_upload.onclose)
+            guac_upload.onclose();
+    };
+
+    GuacUI.createChildElement(title, "div", "title").textContent =
+        "File Transfer";
+
+    GuacUI.createChildElement(element, "div", "caption").textContent =
+        filename + " ";
+
+    /**
+     * Progress bar and status.
+     * @private
+     */
+    var progress = GuacUI.createChildElement(element, "div", "progress");
+
+    /**
+     * The actual moving bar within the progress bar.
+     * @private
+     */
+    var bar = GuacUI.createChildElement(progress, "div", "bar");
+
+    /**
+     * The textual readout of progress.
+     * @private
+     */
+    var progress_status = GuacUI.createChildElement(progress, "div");
+
+    /**
+     * Updates the content of the progress indicator with the given text.
+     * 
+     * @param {String} text The text to assign to the progress indicator.
+     * @param {Number} percent The overall percent complete.
+     */
+    this.updateProgress = function(text, percent) {
+        progress_status.textContent = text;
+        bar.style.width = percent + "%";
+    };
+
+    /**
+     * Updates the content of the dialog to reflect an error condition
+     * represented by the given text.
+     * 
+     * @param {String} text A human-readable description of the error.
+     */
+    this.showError = function(text) {
+
+        element.removeChild(progress);
+        GuacUI.addClass(element, "error");
+
+        var status = GuacUI.createChildElement(element, "div", "status");
+        status.textContent = text;
+
+    };
+
+    /**
+     * Returns the element representing this notification.
+     */
+    this.getElement = function() {
+        return element;
+    };
+
+    /**
+     * Called when the close button of this notification is clicked.
+     * @event
+     */
+    this.onclose = null;
 
 };
 
