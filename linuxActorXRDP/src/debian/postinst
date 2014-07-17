@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SESMANFILE=/etc/pam.d/sesman
+SESMANFILE=/etc/pam.d/xrdp-sesman
 
 . /usr/share/debconf/confmodule
 
