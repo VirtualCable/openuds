@@ -261,6 +261,7 @@ namespace uds.Services
 
                         if (knownIps.ContainsKey(i.mac) && knownIps[i.mac] != i.ip)
                         {
+                            logger.Info("Notifying new IP address to broker: " + i.ip);
                             if (rpc.NotifyIPChange() == true) // if Could not send ip addresses, try again in a while, else save it
                                 knownIps[i.mac] = i.ip;
                             else
