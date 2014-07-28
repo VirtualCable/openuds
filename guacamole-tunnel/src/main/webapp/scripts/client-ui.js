@@ -1033,7 +1033,6 @@ GuacUI.Client.connect = function() {
             window.location = window.query.exit;
     };
 
-    console.log(connect_string);
     // Connect
     guac.connect(connect_string);
 
