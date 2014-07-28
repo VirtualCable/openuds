@@ -155,7 +155,7 @@
         <!-- Init -->
         <script type="text/javascript"> /* <![CDATA[ */
 
-            function getQueryParams(qs) {
+            /*function getQueryParams(qs) {
                 qs = qs.split("+").join(" ");
     
                 var params = {}, tokens,
@@ -169,7 +169,21 @@
                 return params;
             }
         
-            window.query = getQueryParams(document.location.search);
+            window.query = getQueryParams(document.location.search);*/
+            
+            // Adapted to 1.5
+            function getQueryParams(qs) {
+                qs = qs.split("+").join(" ");
+                
+                var params = {}, re=/[^?]*\?([^&]*)&(.*)/;
+                
+                params.data = res[1]
+                params.data = res[2]
+                
+                return params;
+            }
+            
+            window.query = getQueryParams(document.location);
                                                      
             // Sanity check Guacamole JavaScript API version
             // if (Guacamole.API_VERSION !== "0.9.1")
