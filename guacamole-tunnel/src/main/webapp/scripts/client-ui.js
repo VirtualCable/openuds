@@ -998,8 +998,13 @@ GuacUI.Client.connect = function() {
     // all parameters should be preserved and passed on for
     // the sake of authentication.
 
+    var queryArr = [];
+    for( k in window.query ) {
+        queryArr.push(k+"="+window.query[k])
+    }
+    
     var connect_string =
-        window.location.search.substring(1)
+        queryArr.join('&')
         + "&width="  + Math.floor(optimal_width)
         + "&height=" + Math.floor(optimal_height)
         + "&dpi="    + Math.floor(optimal_dpi);
@@ -1028,6 +1033,7 @@ GuacUI.Client.connect = function() {
             window.location = window.query.exit;
     };
 
+    console.log(connect_string);
     // Connect
     guac.connect(connect_string);
 

@@ -177,13 +177,15 @@
                 
                 var params = {}, re=/[^?]*\?([^&]*)&(.*)/;
                 
-                params.data = res[1]
-                params.data = res[2]
+                var res = re.exec(qs);
+                
+                params.data = res[1];
+                params.exit = res[2];
                 
                 return params;
             }
             
-            window.query = getQueryParams(document.location);
+            window.query = getQueryParams(document.location.href);
                                                      
             // Sanity check Guacamole JavaScript API version
             // if (Guacamole.API_VERSION !== "0.9.1")
