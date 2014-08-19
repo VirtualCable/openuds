@@ -91,11 +91,19 @@ class Services(DetailHandler):
             logger.exception('getItems')
             self.invalidItemException()
 
+    def deleteIncompleteService(self, service):
+        if service is not None:
+            try:
+                service.delete()
+            except:
+                pass
+
     def saveItem(self, parent, item):
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving service {0} / {1}'.format(parent, item))
         fields = self.readFieldsFromParams(['name', 'comments', 'data_type'])
+        service = None
         try:
             if item is None:  # Create new
                 service = parent.services.create(**fields)
@@ -110,10 +118,12 @@ class Services(DetailHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)'))
         except coreService.ValidationException as e:
+            self.deleteIncompleteService(service)
             raise RequestError(_('Input error: {0}'.format(unicode(e))))
-        except Exception:
+        except Exception as e:
+            self.deleteIncompleteService(service)
             logger.exception('Saving Service')
-            raise RequestError('incorrect invocation to PUT')
+            raise RequestError('incorrect invocation to PUT: {0}'.format(e))
 
         return self.getItems(parent, service.id)
 

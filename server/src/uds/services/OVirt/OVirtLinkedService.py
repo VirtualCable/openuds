@@ -148,7 +148,7 @@ class OVirtLinkedService(Service):
                 raise Service.ValidationException(_('The length of basename plus length must not be greater than 15'))
             if self.baseName.value.isdigit():
                 raise Service.ValidationException(_('The machine name can\'t be only numbers'))
-            if int(self.memory.value) < 256:
+            if int(self.memory.value) < 256 or int(self.memoryGuaranteed.value) < 256:
                 raise Service.ValidationException(_('The minimum allowed memory is 256 Mb'))
             if int(self.memoryGuaranteed.value) > int(self.memory.value):
                 self.memoryGuaranteed.value = self.memory.value
