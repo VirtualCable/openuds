@@ -6,7 +6,7 @@ Created on Nov 16, 2011
 @author: dkmaster
 '''
 
-import sys, time, logging
+import sys, time, logging, re
 from uds.actor.daemon import Daemon
 from uds.actor.rpc import Rpc
 from uds.actor import net
@@ -16,6 +16,7 @@ logger = logging.getLogger('uds')
 
 class MyDaemon(Daemon):
     def run(self):
+        splitRe = re.compile('\r|\n')
         while True:
             # Wait for networks to become ready
             info = net.getExternalIpAndMacs()
@@ -34,7 +35,7 @@ class MyDaemon(Daemon):
                 time.sleep(4)
 
         # We can get 'rename:newname', ''. Anything else is an error
-        data = todo.split('\r')
+        data = splitRe.split(todo)
 
         if data[0] == 'rename':
             logger.info('Renaming to {0}'.format(data[1]))
