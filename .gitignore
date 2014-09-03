@@ -1,5 +1,10 @@
 *.pyc
 
+# Debian buildings
+*.debhelper*
+*-stamp
+*.substvars
+
 # /client/administration/
 /client/administration/*.suo
 
@@ -22,48 +27,22 @@
 /guacamole-tunnel/target
 
 # /linuxActor/
-/linuxActor/udsactor_1.0_all.deb
-/linuxActor/udsactor_1.0_amd64.changes
-/linuxActor/udsactor_1.0.dsc
-/linuxActor/udsactor_1.0.tar.gz
-/linuxActor/udsactor_1.1_all.deb
-/linuxActor/udsactor_1.1_amd64.changes
-/linuxActor/udsactor_1.1.dsc
-/linuxActor/udsactor_1.1.tar.gz
-
-# /linuxActor/src/
-/linuxActor/src/build-stamp
-/linuxActor/src/configure-stamp
+/linuxActor/udsactor_*
 
 # /linuxActor/src/debian/
 /linuxActor/src/debian/udsactor
-/linuxActor/src/debian/udsactor.postinst.debhelper
-/linuxActor/src/debian/udsactor.postrm.debhelper
-/linuxActor/src/debian/udsactor.substvars
 
 # /linuxActorNX/
-/linuxActorNX/*.deb
-/linuxActorNX/*.changes
-/linuxActorNX/*.dsc
-/linuxActorNX/*.gz
-
-# /linuxActorNX/src/
-/linuxActorNX/src/build-stamp
-/linuxActorNX/src/configure-stamp
+/linuxActorNX/udsactor-nx_*
 
 # /linuxActorNX/src/debian/
 /linuxActorNX/src/debian/udsactor-nx
-/linuxActorNX/src/debian/udsactor-nx.substvars
 
 # /linuxActorXRDP/
-/linuxActorXRDP/udsactor-xrdp_1.1_all.deb
-/linuxActorXRDP/udsactor-xrdp_1.1_amd64.changes
-/linuxActorXRDP/udsactor-xrdp_1.1.dsc
-/linuxActorXRDP/udsactor-xrdp_1.1.tar.gz
+/linuxActorXRDP/udsactor-xrdp_*
 
 # /linuxActorXRDP/src/debian/
 /linuxActorXRDP/src/debian/udsactor-xrdp
-/linuxActorXRDP/src/debian/udsactor-xrdp.substvars
 
 # /nxtransport/jar/
 /nxtransport/jar/*.sh
