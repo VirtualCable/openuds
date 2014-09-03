@@ -253,6 +253,9 @@ class GlobalConfig(object):
     # If disallow login using /login url, and must go to an authenticator
     DISALLOW_GLOBAL_LOGIN = Config.section(GLOBAL_SECTION).value('disallowGlobalLogin', '0', type=Config.BOOLEAN_FIELD)
 
+    # Allos preferences access to users
+    PREFERENCES_ALLOWED = Config.section(GLOBAL_SECTION).value('allowPreferencesAccess', '1', type=Config.BOOLEAN_FIELD)
+
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES = Config.section(SECURITY_SECTION).value('Trusted Hosts', '*', type=Config.TEXT_FIELD)
 

@@ -1,0 +1,179 @@
+*.pyc
+
+# /client/administration/
+/client/administration/*.suo
+
+# /client/administration/UdsAdmin/
+/client/administration/UdsAdmin/*.user
+
+# /client/administration/UdsAdmin/bin/
+/client/administration/UdsAdmin/bin/Debug
+/client/administration/UdsAdmin/bin/Release
+
+# /client/administration/UdsAdmin/obj/x86/
+/client/administration/UdsAdmin/obj/x86/Debug
+/client/administration/UdsAdmin/obj/x86/Release
+
+# /client/administration/installer/UDSAdminInstaller/
+/client/administration/installer/UDSAdminInstaller/MSChart.exe
+/client/administration/installer/UDSAdminInstaller/UDSAdminSetup.exe
+
+# /guacamole-tunnel/
+/guacamole-tunnel/target
+
+# /linuxActor/
+/linuxActor/udsactor_1.0_all.deb
+/linuxActor/udsactor_1.0_amd64.changes
+/linuxActor/udsactor_1.0.dsc
+/linuxActor/udsactor_1.0.tar.gz
+/linuxActor/udsactor_1.1_all.deb
+/linuxActor/udsactor_1.1_amd64.changes
+/linuxActor/udsactor_1.1.dsc
+/linuxActor/udsactor_1.1.tar.gz
+
+# /linuxActor/src/
+/linuxActor/src/build-stamp
+/linuxActor/src/configure-stamp
+
+# /linuxActor/src/debian/
+/linuxActor/src/debian/udsactor
+/linuxActor/src/debian/udsactor.postinst.debhelper
+/linuxActor/src/debian/udsactor.postrm.debhelper
+/linuxActor/src/debian/udsactor.substvars
+
+# /linuxActorNX/
+/linuxActorNX/*.deb
+/linuxActorNX/*.changes
+/linuxActorNX/*.dsc
+/linuxActorNX/*.gz
+
+# /linuxActorNX/src/
+/linuxActorNX/src/build-stamp
+/linuxActorNX/src/configure-stamp
+
+# /linuxActorNX/src/debian/
+/linuxActorNX/src/debian/udsactor-nx
+/linuxActorNX/src/debian/udsactor-nx.substvars
+
+# /linuxActorXRDP/
+/linuxActorXRDP/udsactor-xrdp_1.1_all.deb
+/linuxActorXRDP/udsactor-xrdp_1.1_amd64.changes
+/linuxActorXRDP/udsactor-xrdp_1.1.dsc
+/linuxActorXRDP/udsactor-xrdp_1.1.tar.gz
+
+# /linuxActorXRDP/src/debian/
+/linuxActorXRDP/src/debian/udsactor-xrdp
+/linuxActorXRDP/src/debian/udsactor-xrdp.substvars
+
+# /nxtransport/jar/
+/nxtransport/jar/*.sh
+/nxtransport/jar/*.jar
+
+# /nxtuntransport/jar/
+/nxtuntransport/jar/*.sh
+/nxtuntransport/jar/*.jar
+
+# /rdptransport/java/jar/
+/rdptransport/java/jar/*.sh
+/rdptransport/java/jar/*.jar
+
+# /server/
+/server/*_enterprise
+/server/openuds.sublime-project
+/server/openuds.sublime-workspace
+
+# /server/src/
+/server/src/taskmanager.pid
+/server/src/testing
+/server/src/*_enterprise*
+
+# /server/src/log/
+/server/src/log/uds.log.*
+/server/src/log/sql.log.*
+/server/src/log/*.log.*
+
+# /server/src/server/
+/server/src/server/settings.py
+/server/src/server/*_enterprise.py
+/server/src/server/enterprise*
+
+# /server/src/static/
+/server/src/static/cache
+
+# /server/src/uds/
+/server/src/uds/*_enterprise.py
+/server/src/uds/fixtures
+/server/src/uds/tests
+
+# /server/src/uds/auths/
+/server/src/uds/auths/*-enterprise
+/server/src/uds/auths/*_enterprise
+
+# /server/src/uds/core/util/
+/server/src/uds/core/util/*enterprise.py
+
+# /server/src/uds/dispatchers/
+/server/src/uds/dispatchers/*_enterprise
+
+# /server/src/uds/locale/
+/server/src/uds/locale/*.sh
+
+# /server/src/uds/management/commands/
+/server/src/uds/management/commands/*_enterprise.py
+
+# /server/src/uds/models/
+/server/src/uds/models/enterprise*
+
+# /server/src/uds/plugins/
+/server/src/uds/plugins/enterprise*
+
+# /server/src/uds/services/
+/server/src/uds/services/*-enterprise
+/server/src/uds/services/*_enterprise
+
+# /server/src/uds/static/adm/css/
+/server/src/uds/static/adm/css/admin.min.css
+
+# /server/src/uds/static/adm/js/
+/server/src/uds/static/adm/js/admin.min.js
+
+# /server/src/uds/templates/uds/admin/
+/server/src/uds/templates/uds/admin/sample.html
+
+# /server/src/uds/transports/
+/server/src/uds/transports/*-enterprise
+
+# /udsService/
+/udsService/*.suo
+
+# /udsService/installer/
+/udsService/installer/UDSActorSetup.exe
+
+# /udsService/rpc/bin/
+/udsService/rpc/bin/Debug
+/udsService/rpc/bin/Release
+/udsService/rpc/bin/x86
+
+# /udsService/rpc/obj/
+/udsService/rpc/obj/Debug
+/udsService/rpc/obj/Release
+/udsService/rpc/obj/x86
+
+# /udsService/udsService/bin/
+/udsService/udsService/bin/Debug
+/udsService/udsService/bin/Release
+/udsService/udsService/bin/x64
+
+# /udsService/udsService/obj/
+/udsService/udsService/obj/x64
+/udsService/udsService/obj/x86
+
+# /udsService/udsgui/bin/
+/udsService/udsgui/bin/Debug
+/udsService/udsgui/bin/Release
+/udsService/udsgui/bin/x86
+
+# /udsService/udsgui/obj/
+/udsService/udsgui/obj/Debug
+/udsService/udsgui/obj/Release
+/udsService/udsgui/obj/x86
