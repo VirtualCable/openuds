@@ -5,6 +5,11 @@
 *-stamp
 *.substvars
 
+rdptransport/java/bin/
+server/src/log/
+ssh-tunnel/tunnelLaucher/bin/
+
+
 # /client/administration/
 /client/administration/*.suo
 
