@@ -85,6 +85,9 @@ def enhaced_visual(parser, token):
 
     return EnhacedVisual(states['enhaced_visual'], states.get('else', None))
 
+@register.assignment_tag
+def preferences_allowed():
+    return GlobalConfig.PREFERENCES_ALLOWED.getBool(True)
 
 # Browser related
 class IfBrowser(template.Node):

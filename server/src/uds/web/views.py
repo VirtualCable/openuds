@@ -35,6 +35,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
@@ -215,9 +216,7 @@ def index(request):
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
-            return HttpResponseRedirect(
-                reverse('uds.web.views.service', kwargs={'idService': services[0]['id'], 'idTransport': services[0]['transports'][0]['id']})
-            )
+            return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
     response = render_to_response(theme.template('index.html'),
         {'services': services, 'java': java, 'ip': request.ip, 'nets': nets, 'transports': validTrans},
@@ -228,9 +227,12 @@ def index(request):
 
 @webLoginRequired
 def prefs(request):
+    # Redirects to index if no preferences change allowed
+    if GlobalConfig.PREFERENCES_ALLOWED.getBool(True) is False:
+        return redirect('uds.web.views.index')
     if request.method == 'POST':
         UserPrefsManager.manager().processRequestForUserPreferences(request.user, request.POST)
-        return HttpResponseRedirect(reverse('uds.web.views.index'))
+        return redirect('uds.web.views.index')
     prefs_form = UserPrefsManager().manager().getHtmlForUserPreferences(request.user)
     return render_to_response(theme.template('prefs.html'), {'prefs_form': prefs_form}, context_instance=RequestContext(request))
 
@@ -429,7 +431,7 @@ def authJava(request, idAuth, hasJava):
         authenticator = Authenticator.objects.get(pk=idAuth)
         os = request.session['OS']
         authLogLogin(request, authenticator, request.user.name, request.session['java'], os)
-        return HttpResponseRedirect(reverse('uds.web.views.index'))
+        return redirect('uds.web.views.index')
 
     except Exception as e:
         return errors.exceptionView(request, e)
