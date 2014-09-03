@@ -67,7 +67,7 @@ logger = logging.getLogger(__name__)
 def login(request, smallName=None):
     # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
 
-    host = request.META['HTTP_HOST'] or request.META['SERVER_NAME'] or 'auth_host'  # Last one is a placeholder in case we can't locate host name
+    host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
     # Get Authenticators limitation
     logger.debug('Host: {0}'.format(host))
