@@ -56,7 +56,7 @@ NEVER_UNIX = int(mktime(NEVER.timetuple()))
 
 def getSqlDatetime(unix=False):
     '''
-    Returns the current date/time of the database server.
+    Returns the current date/time from the database server.
 
     We use this time as method of keeping all operations betwen different servers in sync.
 
