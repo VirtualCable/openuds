@@ -238,7 +238,7 @@ class GlobalConfig(object):
     REDIRECT_TO_HTTPS = Config.section(GLOBAL_SECTION).value('redirectToHttps', '0', type=Config.BOOLEAN_FIELD)
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
-    MAX_INITIALIZING_TIME = Config.section(GLOBAL_SECTION).value('maxInitTime', '3600', type=Config.NUMERIC_FIELD)
+    MAX_INITIALIZING_TIME = Config.section(GLOBAL_SECTION).value('maxInitTime', '3601', type=Config.NUMERIC_FIELD)
     # Custom HTML for login page
     CUSTOM_HTML_LOGIN = Config.section(GLOBAL_SECTION).value('customHtmlLogin', '', type=Config.LONGTEXT_FIELD)
     # Maximum logs per user service

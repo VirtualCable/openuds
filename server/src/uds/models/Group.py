@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-05'
 
 from django.db import models
 from django.db.models import signals
@@ -59,6 +59,7 @@ class Group(models.Model):
     comments = models.CharField(max_length=256, default='')
     users = models.ManyToManyField(User, related_name='groups')
     is_meta = models.BooleanField(default=False, db_index=True)
+    meta_if_any = models.BooleanField(default=False)
     groups = models.ManyToManyField('self', symmetrical=False)
 
     class Meta:

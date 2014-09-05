@@ -3,9 +3,8 @@
 <form class="form-horizontal" role="form">
       <input type="hidden" name="id" value="{{ id }}" class="modal_field_data">
       <input type="hidden" name="type" value="{{ type }}" class="modal_field_data">
-      
       <div class="form-group">
-        <label for="id_username" class="col-sm-2 control-label">{{ groupname_label }}</label>
+        <label for="id_groupname" class="col-sm-2 control-label">{{ groupname_label }}</label>
         <div class="col-sm-10">
           {{# ifequals type 'group' }}
           {{# if canSearchGroups }}
@@ -15,7 +14,7 @@
           {{/ if }}
           {{/ if }}
           {{/ ifequals }}
-              <input name="name" value="{{ groupname }}" type="text" id="id_username" class="form-control modal_field_data" 
+              <input name="name" value="{{ groupname }}" type="text" id="id_groupname" class="form-control modal_field_data" 
                      placeholder="{% endverbatim %}{% trans 'Group name' %}{% verbatim %}"{{# if groupname }}readonly{{/ if }}>
           {{# ifequals type 'group' }}
           {{# if canSearchGroups }}
@@ -30,6 +29,19 @@
           {{/ ifequals }}
         </div>
       </div>
+      {{# ifequals type 'meta' }}
+      <div class="form-group">
+        <label for="id_matchifany" class="col-sm-2 control-label">{% endverbatim %}{% trans 'Match mode' %}{% verbatim %}</label>
+        <div class="col-sm-10">
+            <div class="make-switch">
+                <input type="checkbox" class="modal_field_data" 
+                  data-on-text="{% endverbatim %}{% trans 'Any' %}{% verbatim %}" 
+                  data-off-text="{% endverbatim %}{% trans 'All' %}{% verbatim %}"
+                  name="meta_if_any" id="id_matchifany"{{# if meta_if_any }} checked{{/ if }}>
+            </div>
+        </div>
+      </div>     
+      {{/ ifequals }}      
       <div class="form-group">
         <label for="id_comments" class="col-sm-2 control-label">{% endverbatim %}{% trans 'comments' %}{% verbatim %}</label>
         <div class="col-sm-10">

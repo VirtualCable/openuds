@@ -165,6 +165,7 @@ gui.authenticators.link = (event) ->
                   modalId = gui.launchModal(gettext("Edit group") + " <b>" + item.name + "</b>", api.templates.evaluate(tmpl,
                     id: item.id
                     type: item.type
+                    meta_if_any: item.meta_if_any 
                     groupname: item.name
                     groupname_label: type.groupNameLabel
                     comments: item.comments
@@ -209,7 +210,11 @@ gui.authenticators.link = (event) ->
               gui.tools.blockUI()
               api.templates.get "group", (tmpl) -> # Get form template
                 # Creates modal
-                modalId = gui.launchModal(gettext("New group"), api.templates.evaluate(tmpl,
+                if t is "meta"
+                  title = gettext("New meta group")
+                else
+                  title = gettext("New group")
+                modalId = gui.launchModal(title, api.templates.evaluate(tmpl,
                   type: t
                   groupname_label: type.groupNameLabel
                   external: type.isExternal
@@ -236,7 +241,6 @@ gui.authenticators.link = (event) ->
               return
 
             if t is "meta"
-              
               # Meta will get all groups
               group.rest.overview (groups) ->
                 exec groups

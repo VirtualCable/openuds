@@ -172,7 +172,8 @@ class Groups(DetailHandler):
                     'name': i.name,
                     'comments': i.comments,
                     'state': i.state,
-                    'type': i.is_meta and 'meta' or 'group'
+                    'type': i.is_meta and 'meta' or 'group',
+                    'meta_if_any': i.meta_if_any
                 }
                 if i.is_meta:
                     val['groups'] = list(x.id for x in i.groups.all())
@@ -220,15 +221,16 @@ class Groups(DetailHandler):
         try:
             is_meta = self._params['type'] == 'meta'
             logger.debug('Saving group {0} / {1}'.format(parent, item))
-            valid_fields = ['name', 'comments', 'state']
+            valid_fields = ['name', 'meta_if_any', 'comments', 'state']
             fields = self.readFieldsFromParams(valid_fields)
             auth = parent.getInstance()
             if item is None:  # Create new
                 if not is_meta:
-                    auth.createGroup(fields)  # this throws an exception if there is an error (for example, this auth can't create users)
+                    auth.createGroup(fields)  # this throws an exception if there is an error (for example, this auth can't create groups)
                 toSave = {}
                 for k in valid_fields:
                     toSave[k] = fields[k]
+                logger.debug('Meta any {}'.format(fields['meta_if_any']))
                 toSave['comments'] = fields['comments'][:255]
                 toSave['is_meta'] = is_meta
                 group = parent.groups.create(**toSave)
@@ -236,8 +238,7 @@ class Groups(DetailHandler):
                 if not is_meta:
                     auth.modifyGroup(fields)
                 toSave = {}
-                for k in valid_fields:
-                    toSave[k] = fields[k]
+                logger.debug('Meta any {}'.format(fields['meta_if_any']))
                 for k in valid_fields:
                     toSave[k] = fields[k]
                 del toSave['name']  # Name can't be changed
