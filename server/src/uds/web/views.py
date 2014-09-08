@@ -335,7 +335,7 @@ def transportIcon(request, idTrans):
 def serviceImage(request, idImage):
     try:
         icon = Transport.objects.get(pk=idImage).getInstance().icon(False)
-        return HttpResponse(icon, mimetype='image/png')
+        return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponseRedirect('/static/img/unknown.png')
 
