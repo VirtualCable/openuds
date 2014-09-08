@@ -50,7 +50,6 @@ class Migration(migrations.Migration):
                 ('value', models.TextField(default='')),
                 ('crypt', models.BooleanField(default=False)),
                 ('long', models.BooleanField(default=False)),
-                ('field_type', models.IntegerField(default=-1)),
             ],
             options={
                 'db_table': 'uds_configuration',
@@ -116,7 +115,6 @@ class Migration(migrations.Migration):
                 ('state', models.CharField(default='A', max_length=1, db_index=True)),
                 ('comments', models.CharField(default='', max_length=256)),
                 ('is_meta', models.BooleanField(default=False, db_index=True)),
-                ('meta_if_any', models.BooleanField(default=False)),
                 ('groups', models.ManyToManyField(to='uds.Group')),
                 ('manager', models.ForeignKey(related_name='groups', to='uds.Authenticator')),
             ],
@@ -151,7 +149,6 @@ class Migration(migrations.Migration):
                 ('net_string', models.CharField(default='', max_length=128)),
             ],
             options={
-                'ordering': ('name',),
             },
             bases=(models.Model,),
         ),

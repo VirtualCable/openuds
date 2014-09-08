@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-08'
 
 from django.db import models
 from django.db.models import signals
@@ -279,10 +279,13 @@ class DeployedService(models.Model):
             List of accesible deployed services
         '''
         from uds.core import services
-        list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state__exact=State.ACTIVE, state=State.ACTIVE).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta__eq=0)
+        # Get services that HAS publications
+        list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=State.ACTIVE,
+                                               state=State.ACTIVE).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
         # Now get deployed services that DO NOT NEED publication
         doNotNeedPublishing = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
-        list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state__exact=State.ACTIVE, service__data_type__in=doNotNeedPublishing, state=State.ACTIVE)
+        list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=State.ACTIVE, service__data_type__in=doNotNeedPublishing, state=State.ACTIVE)
+        # And generate a single list without duplicates
         return list(set([r for r in list1] + [r for r in list2]))
 
     def publish(self):
