@@ -11,29 +11,22 @@ import django.conf.global_settings as DEFAULT_SETTINGS
 # calculated paths for django and the site
 # used as starting points for various other paths
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
-SITE_ROOT = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
+BASE_DIR = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
-
-MANAGERS = ADMINS
-
-#USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https') # For testing begind a reverse proxy
+# USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')  # For testing begind a reverse proxy
 
 # This mark can be used by a setup script to easy locate DB Section of the settings file
 #DB_SECTION_START
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'OPTIONS': { 
-            #'init_command': 'SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
-            'init_command' : 'SET storage_engine=MYISAM, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'OPTIONS': {
+            # 'init_command': 'SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+            'init_command': 'SET storage_engine=MYISAM, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
         },
         'NAME': 'dbuds',                      # Or path to database file if using sqlite3.
         'USER': 'dbuds',                      # Not used with sqlite3.
@@ -75,8 +68,6 @@ LANGUAGES = (
 
 LANGUAGE_COOKIE_NAME = 'uds_lang'
 
-SITE_ID = 1
-
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
@@ -98,7 +89,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -107,7 +98,7 @@ STATIC_URL = '/static/'
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-#ADMIN_MEDIA_PREFIX = '/static/admin/'
+# ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -122,7 +113,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 #KEYS_SECTION_START
@@ -142,6 +133,7 @@ TEMPLATE_LOADERS = (
 # Own context processors plus django's own
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     'uds.core.util.Config.context_processor',
+    'uds.core.util.html.context',
     'django.core.context_processors.request',
 )
 
@@ -154,13 +146,15 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'uds.core.util.request.GlobalRequestMiddleware',
     'uds.core.util.middleware.XUACompatibleMiddleware',
+    'uds.plugins.enterprise.middleware.Middleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 SESSION_COOKIE_HTTPONLY = False
-SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 
 ROOT_URLCONF = 'server.urls'
 
@@ -171,11 +165,11 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'templates')
+    os.path.join(BASE_DIR, 'templates'),
 )
 
 INSTALLED_APPS = (
-    #'django.contrib.contenttypes', # Not used
+    # 'django.contrib.contenttypes', # Not used
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -199,13 +193,16 @@ if DEBUG:
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
-LOGDIR = SITE_ROOT + '/' + 'log'
+LOGDIR = BASE_DIR + '/' + 'log'
 LOGFILE = 'uds.log'
 SERVICESFILE = 'services.log'
 AUTHFILE = 'auth.log'
 USEFILE = 'use.log'
 LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
-ROTATINGSIZE = 32*1024*1024 # 32 Megabytes before rotating files
+ROTATINGSIZE = 32 * 1024 * 1024  # 32 Megabytes before rotating files
+
+# Tests runner is default tests runner
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 LOGGING = {
     'version': 1,
