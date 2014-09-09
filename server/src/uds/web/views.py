@@ -92,7 +92,7 @@ def login(request, smallName=None):
         form = LoginForm(request.POST, smallName=smallName)
         if form.is_valid():
             java = form.cleaned_data['java'] == 'y'
-            os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
+            os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
             try:
                 authenticator = Authenticator.objects.get(pk=form.cleaned_data['authenticator'])
             except:

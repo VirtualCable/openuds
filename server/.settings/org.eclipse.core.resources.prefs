@@ -223,6 +223,7 @@ encoding//src/uds/tests/core/util/storage.py=utf-8
 encoding//src/uds/tests/enterprise/__init__.py=utf-8
 encoding//src/uds/tests/enterprise/serials/__init__.py=utf-8
 encoding//src/uds/tests/enterprise/serials/base.py=utf-8
+encoding//src/uds/tests/enterprise/serials/enterp.py=utf-8
 encoding//src/uds/tests/enterprise/serials/evaluation.py=utf-8
 encoding//src/uds/tests/enterprise/serials/free.py=utf-8
 encoding//src/uds/tests/util/UDSWebTest.py=utf-8

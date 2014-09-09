@@ -50,7 +50,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-06-11'
+__updated__ = '2014-09-09'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -302,7 +302,7 @@ def authLogLogin(request, authenticator, userName, java, os, logStr=''):
         logStr = 'Logged in'
 
     javaStr = java and 'Java' or 'No Java'
-    authLogger.info('|'.join([authenticator.name, userName, javaStr, os['OS'], logStr, request.META['HTTP_USER_AGENT']]))
+    authLogger.info('|'.join([authenticator.name, userName, javaStr, os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
     level = (logStr == 'Logged in') and log.INFO or log.ERROR
     log.doLog(authenticator, level, 'user {0} has {1} from {2} {3} java and os is {4}'.format(userName, logStr,
           request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)

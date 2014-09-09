@@ -41,7 +41,7 @@ from functools import wraps
 
 import logging
 
-__updated__ = '2014-06-11'
+__updated__ = '2014-09-09'
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +81,7 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
             Wrapped function for decorator
             '''
             for b in browsers:
-                if checkBrowser(request.META['HTTP_USER_AGENT'], b):
+                if checkBrowser(request.META.get('HTTP_USER_AGENT', 'Unknown'), b):
                     return errorResponse(request)
 
             return view_func(request, *args, **kwargs)

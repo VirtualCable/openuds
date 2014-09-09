@@ -48,12 +48,17 @@ allOss = list(knownOss)
 desktopOss = [Linux, Windows, Macintosh]
 mobilesODD = list(set(allOss) - set(desktopOss))
 
+DEFAULT_OS = 'Windows'
 
 def getOsFromUA(ua):
     '''
     Basic OS Client detector (very basic indeed :-))
     '''
-    res = {'OS': 'Unknown', 'Version': 'unused'}
+    if ua is None:
+        os = DEFAULT_OS
+    else:
+        os = 'Unknown'
+    res = {'OS': os, 'Version': 'unused'}
     for os in knownOss:
         try:
             ua.index(os)
