@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-10'
 
 from django.db import models
 from uds.core.Environment import Environment
@@ -151,7 +151,7 @@ class Authenticator(models.Model):
         if realName is None:
             realName = username
         user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
-        if realName != user.real_name:
+        if realName is not None and realName != user.real_name:
             user.real_name = realName
             user.save()
 

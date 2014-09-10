@@ -102,7 +102,9 @@ class CryptoManager(object):
     def certificateString(self, certificate):
         return certificate.replace('-----BEGIN CERTIFICATE-----', '').replace('-----END CERTIFICATE-----', '').replace('\n', '')
 
-    def hash(self, string):
-        if string is '' or string is None:
+    def hash(self, value):
+        if value is '' or value is None:
             return ''
-        return hashlib.sha1(string).hexdigest()
+        if isinstance(value, unicode):
+            value = value.encode('utf-8')
+        return hashlib.sha1(value).hexdigest()

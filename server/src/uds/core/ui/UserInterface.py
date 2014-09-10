@@ -449,7 +449,7 @@ class gui(object):
             '''
             Checks that the value is true
             '''
-            return self.value == 'true'
+            return self.value == gui.TRUE
 
     class ChoiceField(InputField):
         '''
