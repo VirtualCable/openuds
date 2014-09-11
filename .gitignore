@@ -1,6 +1,8 @@
 *.pyc
 *.orig
 
+.settings/
+
 # Debian buildings
 *.debhelper*
 *-stamp
