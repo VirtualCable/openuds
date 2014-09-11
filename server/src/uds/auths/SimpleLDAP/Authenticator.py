@@ -33,6 +33,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.auths import Authenticator
@@ -41,7 +43,7 @@ from uds.core.auths.Exceptions import AuthenticatorException
 import ldap
 import logging
 
-__updated__ = '2014-03-19'
+__updated__ = '2014-09-11'
 
 logger = logging.getLogger(__name__)
 
@@ -177,7 +179,7 @@ class SimpleLDAPAuthenticator(Authenticator):
         try:
             con = self.__connection()
             filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, username)
-            attrlist = self._userNameAttr.split(',') + [self._userIdAttr]
+            attrlist = [i.encode('utf-8') for i in  self._userNameAttr.split(',') + [self._userIdAttr]]
             logger.debug('Getuser filter_: {0}, attr list: {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
                              filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
@@ -194,7 +196,7 @@ class SimpleLDAPAuthenticator(Authenticator):
         try:
             con = self.__connection()
             filter_ = '(&(objectClass=%s)(%s=%s))' % (self._groupClass, self._groupIdAttr, groupName)
-            attrlist = [self._memberAttr]
+            attrlist = [self._memberAttr.encode('utf-8')]
             logger.debug('Getgroup filter_: {0}, attr list {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
                              filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
@@ -410,7 +412,7 @@ class SimpleLDAPAuthenticator(Authenticator):
 
         # And group part, with membership
         try:
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._groupClass, self._groupIdAttr), attrlist=[self._memberAttr])
+            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._groupClass, self._groupIdAttr), attrlist=[self._memberAttr.encode('utf-8')])
             if len(res) == 0:
                 raise Exception(_('Ldap group class or group id attr is probably wrong (can\'t find any group with both conditions)'))
             ok = False
