@@ -33,9 +33,11 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-10'
+__updated__ = '2014-09-12'
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
+
 from uds.core.Environment import Environment
 from uds.core.util import log
 from django.db.models import signals
@@ -47,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
+@python_2_unicode_compatible
 class Authenticator(models.Model):
     '''
     This class represents an Authenticator inside the platform.
@@ -179,9 +181,6 @@ class Authenticator(models.Model):
         except Exception:
             return falseIfNotExists
 
-    def __unicode__(self):
-        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
-
     @staticmethod
     def all():
         '''
@@ -210,6 +209,9 @@ class Authenticator(models.Model):
         log.clearLogs(toDelete)
 
         logger.debug('Before delete auth '.format(toDelete))
+
+    def __str__(self):
+        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(Authenticator.beforeDelete, sender=Authenticator)

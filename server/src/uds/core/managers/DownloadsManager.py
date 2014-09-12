@@ -36,6 +36,9 @@ import os
 import uuid
 from django.http import HttpResponse, Http404
 from django.core.servers.basehttp import FileWrapper
+
+import six
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -49,7 +52,7 @@ class DownloadsManager(object):
         import os.path, sys
         DownloadsManager.manager().registerDownloadable('test.exe',
                                                         _('comments for test'),
-                                                        os.path.dirname(sys.modules[__package__].__file__) + '/files/test.exe',
+                                                        os.path.join(os.path.dirname(sys.modules[__package__].__file__), 'files/test.exe'),
                                                         'application/x-msdos-program')
     '''
     _manager = None
@@ -71,7 +74,7 @@ class DownloadsManager(object):
         @param path: path to file
         @params zip: If download as zip
         '''
-        _id = unicode(uuid.uuid5(self._namespace, str(name)))
+        _id = six.text_type(uuid.uuid5(self._namespace, six.binary_type(name)))
         self._downloadables[_id] = {'name': name, 'comment': comment, 'path': path, 'mime': mime}
 
     def getDownloadables(self):

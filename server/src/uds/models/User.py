@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-12'
 
 from django.db import models
 from uds.core.util import log
@@ -126,6 +126,7 @@ class User(models.Model):
     def logout(self):
         '''
         Invoked to log out this user
+        Returns the url where to redirect user, or None if default url will be used
         '''
         return self.getManager().logout(self.name)
 

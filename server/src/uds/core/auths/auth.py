@@ -50,7 +50,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-09-09'
+__updated__ = '2014-09-12'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -289,6 +289,9 @@ def webLogout(request, exit_url=None):
     request.session.clear()
     if exit_url is None:
         exit_url = GlobalConfig.LOGIN_URL.get()
+        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
+            exit_url = exit_url.replace('http://', 'https://')
+
     # Try to delete session
     return HttpResponseRedirect(request.build_absolute_uri(exit_url))
 

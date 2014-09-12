@@ -40,6 +40,7 @@ import hashlib
 import array
 
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -64,26 +65,34 @@ class CryptoManager(object):
             CryptoManager.instance = CryptoManager()
         return CryptoManager.instance
 
-    def encrypt(self, string):
-        atfork()
-        return self._rsa.encrypt(string.encode('utf-8'), '')[0].encode(CryptoManager.CODEC)
+    def encrypt(self, value):
+        if isinstance(value, six.text_type):
+            value = value.encode('utf-8')
 
-    def decrypt(self, string):
+        atfork()
+        return six.text_type(self._rsa.encrypt(value, six.b(''))[0].encode(CryptoManager.CODEC))
+
+    def decrypt(self, value):
+        if isinstance(value, six.text_type):
+            value = value.encode('utf-8')
         # import inspect
         try:
             atfork()
-            return self._rsa.decrypt(string.decode(CryptoManager.CODEC)).decode('utf-8')
+            return six.text_type(self._rsa.decrypt(value.decode(CryptoManager.CODEC)).decode('utf-8'))
         except:
-            logger.exception('Decripting: {0}'.format(string))
+            logger.exception('Decripting: {0}'.format(value))
             # logger.error(inspect.stack())
             return 'decript error'
 
     def xor(self, s1, s2):
-        s1, s2 = s1.encode('utf-8'), s2.encode('utf-8')
+        if isinstance(s1, six.text_type):
+            s1 = s1.encode('utf-8')
+        if isinstance(s2, six.text_type):
+            s2 = s2.encode('utf-8')
         mult = (len(s1) / len(s2)) + 1
-        s1 = array.array(b'B', s1)
-        s2 = array.array(b'B', s2 * mult)
-        return array.array(b'B', (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()
+        s1 = array.array(str('B'), s1)
+        s2 = array.array(str('B'), s2 * mult)
+        return six.binary_type(array.array(str('B'), (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()).decode('utf-8')
 
     def loadPrivateKey(self, rsaKey):
         try:
@@ -103,8 +112,10 @@ class CryptoManager(object):
         return certificate.replace('-----BEGIN CERTIFICATE-----', '').replace('-----END CERTIFICATE-----', '').replace('\n', '')
 
     def hash(self, value):
+        if isinstance(value, six.text_type):
+            value = value.encode('utf-8')
+
         if value is '' or value is None:
             return ''
-        if isinstance(value, unicode):
-            value = value.encode('utf-8')
-        return hashlib.sha1(value).hexdigest()
+
+        return six.text_type(hashlib.sha1(value).hexdigest())

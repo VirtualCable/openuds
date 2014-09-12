@@ -85,8 +85,10 @@ def login(request, smallName=None):
 
     logger.debug('Small name: {0}'.format(smallName))
 
+    logger.debug(request.method)
     if request.method == 'POST':
         if 'uds' not in request.COOKIES:
+            logger.debug('Request does not have uds cookie')
             return errors.errorView(request, errors.COOKIES_NEEDED)  # We need cookies to keep session data
         request.session.cycle_key()
         form = LoginForm(request.POST, smallName=smallName)
@@ -109,6 +111,7 @@ def login(request, smallName=None):
                 authLogLogin(request, authenticator, userName, java, os, 'Temporarily blocked')
             else:
                 user = authenticate(userName, form.cleaned_data['password'], authenticator)
+                logger.debug('User: {}'.format(user))
 
                 if user is None:
                     logger.debug("Invalid credentials for user {0}".format(userName))
@@ -117,6 +120,7 @@ def login(request, smallName=None):
                     form.add_form_error('Invalid credentials')
                     authLogLogin(request, authenticator, userName, java, os, 'Invalid credentials')
                 else:
+                    logger.debug('User {} has logged in'.format(userName))
                     cache.remove(cacheKey)  # Valid login, remove cached tries
                     response = HttpResponseRedirect(reverse('uds.web.views.index'))
                     webLogin(request, response, user, form.cleaned_data['password'])
