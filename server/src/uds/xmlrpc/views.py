@@ -35,25 +35,25 @@ from django.http import HttpResponse
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 from django.views.decorators.csrf import csrf_exempt
 
-from services.ServiceProviders import registerServiceProvidersFunctions
-from services.Services import registerServiceFunctions
-from services.DeployedServices import registerDeployedServicesFunctions
-from services.Publications import registerPublicationsFunctions
-from services.UserDeployedServices import registerUserDeployedServiceFunctions
+# from services.ServiceProviders import registerServiceProvidersFunctions
+# from services.Services import registerServiceFunctions
+# from services.DeployedServices import registerDeployedServicesFunctions
+# from services.Publications import registerPublicationsFunctions
+# from services.UserDeployedServices import registerUserDeployedServiceFunctions
 from actor.Actor import registerActorFunctions
-from util.Callbacks import registerCallbackFunctions
-from auths.AdminAuth import registerAdminAuthFunctions
-from auths.Authenticators import  registerAuthenticatorFunctions
-from osmanagers.OSManagers import registerOSManagersFunctions
-from transports.Transports import registerTransportsFunctions
-from transports.Networks import registerNetworksFunctions
-from auths.Groups import registerGroupsFunctions
-from auths.Users import registerUserFunctions
-from auths.UserPreferences import registerPreferencesFunctions
-from tools.Cache import registerCacheFunctions
-from tools.Config import registerConfigurationFunctions
-from log.logs import registerLogFunctions
-from stats.stats import registerStatsFunctions
+# from util.Callbacks import registerCallbackFunctions
+# from auths.AdminAuth import registerAdminAuthFunctions
+# from auths.Authenticators import  registerAuthenticatorFunctions
+# from osmanagers.OSManagers import registerOSManagersFunctions
+# from transports.Transports import registerTransportsFunctions
+# from transports.Networks import registerNetworksFunctions
+# from auths.Groups import registerGroupsFunctions
+# from auths.Users import registerUserFunctions
+# from auths.UserPreferences import registerPreferencesFunctions
+# from tools.Cache import registerCacheFunctions
+# from tools.Config import registerConfigurationFunctions
+# from log.logs import registerLogFunctions
+# from stats.stats import registerStatsFunctions
 
 import logging
 
@@ -127,22 +127,22 @@ def xmlrpc(request):
     return response
 
 # Register every xmlrpc function
-registerServiceProvidersFunctions(dispatcher)
-registerServiceFunctions(dispatcher)
-registerPublicationsFunctions(dispatcher)
-registerUserDeployedServiceFunctions(dispatcher)
-registerOSManagersFunctions(dispatcher)
-registerTransportsFunctions(dispatcher)
-registerNetworksFunctions(dispatcher)
-registerAdminAuthFunctions(dispatcher)
-registerAuthenticatorFunctions(dispatcher)
-registerGroupsFunctions(dispatcher)
-registerUserFunctions(dispatcher)
-registerCallbackFunctions(dispatcher)
-registerDeployedServicesFunctions(dispatcher)
+# registerServiceProvidersFunctions(dispatcher)
+# registerServiceFunctions(dispatcher)
+# registerPublicationsFunctions(dispatcher)
+# registerUserDeployedServiceFunctions(dispatcher)
+# registerOSManagersFunctions(dispatcher)
+# registerTransportsFunctions(dispatcher)
+# registerNetworksFunctions(dispatcher)
+# registerAdminAuthFunctions(dispatcher)
+# registerAuthenticatorFunctions(dispatcher)
+# registerGroupsFunctions(dispatcher)
+# registerUserFunctions(dispatcher)
+# registerCallbackFunctions(dispatcher)
+# registerDeployedServicesFunctions(dispatcher)
 registerActorFunctions(dispatcher)
-registerPreferencesFunctions(dispatcher)
-registerCacheFunctions(dispatcher)
-registerConfigurationFunctions(dispatcher)
-registerLogFunctions(dispatcher)
-registerStatsFunctions(dispatcher)
+# registerPreferencesFunctions(dispatcher)
+# registerCacheFunctions(dispatcher)
+# registerConfigurationFunctions(dispatcher)
+# registerLogFunctions(dispatcher)
+# registerStatsFunctions(dispatcher)

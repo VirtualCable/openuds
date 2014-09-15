@@ -33,7 +33,7 @@
 
 from django.db import transaction
 from uds.models import UserService
-from  uds.core.util.State import State
+from uds.core.util.State import State
 from uds.core.util import log
 
 import logging
@@ -48,7 +48,6 @@ def test():
     logger.debug("Test called")
     return True
 
-@transaction.commit_on_success
 def message(id_, message, data):
     '''
     Process a message from the actor.
