@@ -34,9 +34,11 @@ from __future__ import unicode_literals
 
 # from django.utils import simplejson as json
 import ujson as json
+from xml_marshaller import xml_marshaller
 import datetime
 import time
 import types
+import six
 from django import http
 
 import logging
@@ -49,6 +51,9 @@ class ParametersException(Exception):
 
 
 class ContentProcessor(object):
+    '''
+    Process contents (request/response) so Handlers can manage them
+    '''
     mime_type = None
     extensions = None
 
@@ -56,78 +61,106 @@ class ContentProcessor(object):
         self._request = request
 
     def processGetParameters(self):
+        '''
+        returns parameters based on request method
+        GET parameters are understood
+        '''
         if self._request.method != 'GET':
             return {}
 
         return self._request.GET.copy()
 
     def processParameters(self):
+        '''
+        Returns the parameter from the request
+        '''
         return ''
 
     def getResponse(self, obj):
+        '''
+        Converts an obj to a response of specific type (json, XML, ...)
+        This is done using "render" method of specific type
+        '''
         return http.HttpResponse(content=self.render(obj), content_type=self.mime_type + "; charset=utf-8")
 
     def render(self, obj):
-        return unicode(obj)
+        '''
+        Renders an obj to the spefific type
+        '''
+        return six.text_type(obj)
 
     @staticmethod
     def procesForRender(obj):
         '''
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         '''
-        if type(obj) in (bool, int, float, unicode):
-            return obj
-        elif isinstance(obj, long):
+        # if isinstance(obj, (bool, int, float, six.text_type)):
+        #    return obj
+        if isinstance(obj, (int, long)):
             return int(obj)
         elif isinstance(obj, dict):
             res = {}
             for k, v in obj.iteritems():
                 res[k] = ContentProcessor.procesForRender(v)
             return res
-        elif type(obj) in (list, tuple, types.GeneratorType):
+        elif isinstance(obj, (list, tuple, types.GeneratorType)):
             res = []
             for v in obj:
                 res.append(ContentProcessor.procesForRender(v))
             return res
         elif isinstance(obj, datetime.datetime):
-            return  int(time.mktime(obj.timetuple()))
-        elif isinstance(obj, str):
+            return int(time.mktime(obj.timetuple()))
+        elif isinstance(obj, six.binary_type):
             return obj.decode('utf-8')
-        return unicode(obj)
+        return six.text_type(obj)
 
 
-# ---------------
-# Json Processor
-# ---------------
-class JsonProcessor(ContentProcessor):
-    mime_type = 'application/json'
-    extensions = ['json']
+class MarshallerProcessor(ContentProcessor):
+    '''
+    If we have a simple marshaller for processing contents
+    this class will allow us to set up a new one simply setting "marshaller"
+    '''
+    marshaller = None
 
     def processParameters(self):
         try:
             if len(self._request.body) == 0:
                 return self.processGetParameters()
-            res = json.loads(self._request.body)
-            logger.debug(res)
+            res = self.marshaller.loads(self._request.body)
+            logger.debug("Unmarshalled content: {}".format(res))
             return res
         except Exception as e:
-            logger.error('parsing json: {0}'.format(e))
-            raise ParametersException(unicode(e))
+            logger.error('parsing {}: {}'.format(self.mime_type, e))
+            raise ParametersException(six.text_type(e))
 
     def render(self, obj):
-        return json.dumps(ContentProcessor.procesForRender(obj))
+        return self.marshaller.dumps(ContentProcessor.procesForRender(obj))
         # return json.dumps(obj)
+
+
+# ---------------
+# Json Processor
+# ---------------
+class JsonProcessor(MarshallerProcessor):
+    '''
+    Provides JSON content processor
+    '''
+    mime_type = 'application/json'
+    extensions = ['json']
+    marshaller = json
 
 
 # ---------------
 # XML Processor
 # ---------------
-class XMLProcessor(ContentProcessor):
+class XMLProcessor(MarshallerProcessor):
+    '''
+    Provides XML content processor
+    '''
     mime_type = 'application/xml'
     extensions = ['xml']
+    marshaller = xml_marshaller
 
-    def processParameters(self):
-        return ''
 
 processors_list = (JsonProcessor, XMLProcessor)
 default_processor = JsonProcessor

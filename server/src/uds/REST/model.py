@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from handlers import NotFound, RequestError, ResponseError
+from uds.REST.handlers import NotFound, RequestError, ResponseError
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError
 

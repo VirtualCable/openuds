@@ -76,15 +76,16 @@ class Dispatcher(View):
         # Last element will be
         cls = None
         while len(path) > 0:
+            # .json, .xml, ... will break path recursion
+            if path[0].find('.') != -1:
+                break
+
             clean_path = path[0].split('.')[0]
             if clean_path in service:
                 service = service[clean_path]
                 full_path.append(path[0])
                 path = path[1:]
             else:
-                break
-            # .json, .xml, ... will break path recursion
-            if path[0].find('.') != -1:
                 break
 
         full_path = '/'.join(full_path)
@@ -193,7 +194,7 @@ class Dispatcher(View):
 
         logger.debug('Loading Handlers')
 
-        # Dinamycally import children of this package. The __init__.py files must register, if needed, inside ServiceProviderFactory
+        # Dinamycally import children of this package.
         package = 'methods'
 
         pkgpath = os.path.join(os.path.dirname(sys.modules[__name__].__file__), package)
