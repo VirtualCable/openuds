@@ -73,12 +73,13 @@ class Dispatcher(View):
         # Transverse service nodes too look for path
         service = Dispatcher.services
         full_path = []
-        # Last element will be
+        content_type = None
+
         cls = None
         while len(path) > 0:
             # .json, .xml, ... will break path recursion
             if path[0].find('.') != -1:
-                break
+                content_type = path[0].split('.')[1]
 
             clean_path = path[0].split('.')[0]
             if clean_path in service:
@@ -89,7 +90,7 @@ class Dispatcher(View):
                 break
 
         full_path = '/'.join(full_path)
-        logger.debug(full_path)
+        logger.debug("REST request: {} ({})".format(full_path, content_type))
 
         # Here, service points to the path
         cls = service['']
@@ -98,8 +99,7 @@ class Dispatcher(View):
 
         # Guess content type from content type header (post) or ".xxx" to method
         try:
-            p = full_path.split('.')
-            processor = processors.available_processors_ext_dict[p[1]](request)
+            processor = processors.available_processors_ext_dict[content_type](request)
         except Exception:
             processor = processors.available_processors_mime_dict.get(request.META.get('CONTENT_TYPE', 'json'), processors.default_processor)(request)
 

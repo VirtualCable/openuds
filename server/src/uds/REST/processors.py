@@ -94,9 +94,9 @@ class ContentProcessor(object):
         '''
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         '''
-        # if isinstance(obj, (bool, int, float, six.text_type)):
-        #    return obj
-        if isinstance(obj, (int, long)):
+        if isinstance(obj, (bool, int, float, six.text_type)):
+            return obj
+        elif isinstance(obj, long):
             return int(obj)
         elif isinstance(obj, dict):
             res = {}
