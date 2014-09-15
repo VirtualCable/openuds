@@ -36,12 +36,12 @@ js_info_dict = {
 }
 
 
-from django.conf import settings
 from django.conf.urls import patterns, include, url
 from uds.core.util.modfinder import loadModulesUrls
 from uds import REST
 
-urlpatterns = patterns('uds',
+urlpatterns = patterns(
+    'uds',
     (r'^$', 'web.views.index'),
     (r'^login/$', 'web.views.login'),
     (r'^login/(?P<smallName>.+)$', 'web.views.login'),

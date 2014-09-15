@@ -41,7 +41,7 @@ from uds.core.util.decorators import denyBrowsers
 
 import logging
 
-__updated__ = '2014-06-11'
+__updated__ = '2014-09-15'
 
 logger = logging.getLogger(__name__)
 

@@ -31,7 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from django.db import transaction
 from uds.models import UserService
 from uds.core.util.State import State
 from uds.core.util import log
@@ -48,7 +47,8 @@ def test():
     logger.debug("Test called")
     return True
 
-def message(id_, message, data):
+
+def message_fnc(id_, message, data):
     '''
     Process a message from the actor.
     @param _id: Ids used by actors to identify themself and locate services to witch they belongs
@@ -84,4 +84,4 @@ def registerActorFunctions(dispatcher):
     Utility function to register methods at xmlrpc server for actor
     '''
     dispatcher.register_function(test, 'test')
-    dispatcher.register_function(message, 'message')
+    dispatcher.register_function(message_fnc, 'message')

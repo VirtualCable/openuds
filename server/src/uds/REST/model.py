@@ -37,14 +37,14 @@ from django.utils.translation import ugettext as _
 from django.db import IntegrityError
 
 from uds.core.ui.UserInterface import gui as uiGui
-from uds.REST.handlers import Handler
+from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-05-19'
+__updated__ = '2014-09-15'
 
 
 # a few constants
@@ -56,7 +56,10 @@ LOG = 'log'
 
 
 # Exception to "rethrow" on save error
-class SaveException(Exception):
+class SaveException(HandlerError):
+    '''
+    Exception thrown if couldn't save
+    '''
     pass
 
 
@@ -64,6 +67,9 @@ class SaveException(Exception):
 class BaseModelHandler(Handler):
 
     def addField(self, gui, field):
+        '''
+        Add a field to a "gui" description
+        '''
         gui.append({
             'name': field.get('name', ''),
             'value': '',
@@ -84,6 +90,9 @@ class BaseModelHandler(Handler):
         return gui
 
     def addDefaultFields(self, gui, flds):
+        '''
+        Adds default fields (based in a list) to a "gui" description
+        '''
         if 'name' in flds:
             self.addField(gui, {
                 'name': 'name',
@@ -94,40 +103,47 @@ class BaseModelHandler(Handler):
             })
         if 'comments' in flds:
             self.addField(gui, {
-                 'name': 'comments',
-                 'label': _('Comments'),
-                 'tooltip': _('Comments for this element'),
-                 'length': 256,
-                 'order': 0 - 99,
+                'name': 'comments',
+                'label': _('Comments'),
+                'tooltip': _('Comments for this element'),
+                'length': 256,
+                'order': 0 - 99,
             })
         if 'priority' in flds:
             self.addField(gui, {
-                 'name': 'priority',
-                 'type': 'numeric',
-                 'label': _('Priority'),
-                 'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
-                 'required': True,
-                 'value': 1,
-                 'length': 4,
-                 'order': 0 - 98,
+                'name': 'priority',
+                'type': 'numeric',
+                'label': _('Priority'),
+                'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
+                'required': True,
+                'value': 1,
+                'length': 4,
+                'order': 0 - 98,
             })
         if 'small_name' in flds:
             self.addField(gui, {
-                 'name': 'small_name',
-                 'type': 'text',
-                 'label': _('Short name'),
-                 'tooltip': _('Short name of this element'),
-                 'required': True,
-                 'length': 128,
-                 'order': 0 - 97,
+                'name': 'small_name',
+                'type': 'text',
+                'label': _('Short name'),
+                'tooltip': _('Short name of this element'),
+                'required': True,
+                'length': 128,
+                'order': 0 - 97,
             })
 
         return gui
 
     def typeInfo(self, type_):
+        '''
+        Returns info about the type
+        In fact, right now, it returns an empty dict, that will be extended by typeAsDict
+        '''
         return {}
 
-    def type_as_dict(self, type_):
+    def typeAsDict(self, type_):
+        '''
+        Returns a dictionary describing the type (the name, the icon, description, etc...)
+        '''
         res = self.typeInfo(type_)
         res.update({
             'name': _(type_.name()),
@@ -138,6 +154,9 @@ class BaseModelHandler(Handler):
         return res
 
     def processTableFields(self, title, fields, row_style):
+        '''
+        Returns a dict containing the table fields description
+        '''
         return {
             'title': unicode(title),
             'fields': fields,
@@ -369,10 +388,11 @@ class ModelHandler(BaseModelHandler):
     needs_staff = True
     # Which model does this manage
     model = None
+
+    # This is an array of tuples of two items, where first is method and second inticates if method needs parent id
+    # For example ('services', True) -- > .../id_parent/services
+    #             ('services', False) --> ..../services
     custom_methods = []  # If this model respond to "custom" methods, we will declare them here
-                        # This is an array of tuples of two items, where first is method and second inticates if method needs parent id
-                        # For example ('services', True) -- > .../id_parent/services
-                        #             ('services', False) --> ..../services
     # If this model has details, which ones
     detail = None  # Dictionary containing detail routing
     # Put needed fields
@@ -394,7 +414,7 @@ class ModelHandler(BaseModelHandler):
 
     def getTypes(self, *args, **kwargs):
         for type_ in self.enum_types():
-            yield self.type_as_dict(type_)
+            yield self.typeAsDict(type_)
 
     def getType(self, type_):
         found = None
@@ -480,14 +500,14 @@ class ModelHandler(BaseModelHandler):
                     try:
                         operation = getattr(self, self._args[1])
                         item = self.model.objects.get(pk=self._args[0])
-                    except:
+                    except Exception:
                         self.invalidMethodException()
 
                     return operation(item)
             elif self._args[0] == cm[0]:
                 try:
                     operation = getattr(self, self._args[0])
-                except:
+                except Exception:
                     self.invalidMethodException()
 
                 return operation()
@@ -538,6 +558,9 @@ class ModelHandler(BaseModelHandler):
         self.invalidRequestException()
 
     def post(self):
+        '''
+        Processes a POST request
+        '''
         # right now
         logger.debug('method POST for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) == 2:

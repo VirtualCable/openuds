@@ -33,7 +33,6 @@
 from __future__ import unicode_literals
 
 from django.contrib.sessions.backends.db import SessionStore
-from django.conf import settings
 
 from uds.core.util.Config import GlobalConfig
 
@@ -45,26 +44,44 @@ AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'
 
 
 class HandlerError(Exception):
+    '''
+    Generic error for a REST handler
+    '''
     pass
 
 
 class NotFound(HandlerError):
+    '''
+    Item not found error
+    '''
     pass
 
 
 class AccessDenied(HandlerError):
+    '''
+    Access denied error
+    '''
     pass
 
 
 class RequestError(HandlerError):
+    '''
+    Request is invalid error
+    '''
     pass
 
 
 class ResponseError(HandlerError):
+    '''
+    Generic response error
+    '''
     pass
 
 
 class Handler(object):
+    '''
+    REST requests handler base class
+    '''
     raw = False  # If true, Handler will return directly an HttpResponse Object
     name = None  # If name is not used, name will be the class name in lower case
     path = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
@@ -95,7 +112,7 @@ class Handler(object):
                 self._session = SessionStore(session_key=self._authToken)
                 if 'REST' not in self._session:
                     raise Exception()  # No valid session, so auth_token is also invalid
-            except:
+            except Exception:  # Couldn't authenticate
                 self._authToken = None
                 self._session = None
 
@@ -109,26 +126,44 @@ class Handler(object):
                 raise AccessDenied()
 
     def headers(self):
+        '''
+        Returns the headers of the REST request (all)
+        '''
         return self._headers
 
-    def header(self, header_):
-        return self._headers.get(header_)
+    def header(self, headerName):
+        '''
+        Get's an specific header name from REST request
+        '''
+        return self._headers.get(headerName)
 
     def addHeader(self, header, value):
+        '''
+        Inserts a new header inside the headers list
+        '''
         self._headers[header] = value
 
     def removeHeader(self, header):
+        '''
+        Removes an specific header from the headers list
+        '''
         try:
             del self._headers[header]
-        except:
-            pass
+        except Exception:
+            pass  # If not found, just ignore it
 
     # Auth related
     def getAuthToken(self):
+        '''
+        Returns the authentication token for this REST request
+        '''
         return self._authToken
 
     @staticmethod
     def storeSessionAuthdata(session, id_auth, username, locale, is_admin, staff_member):
+        '''
+        Stores the authentication data inside current session
+        '''
         if is_admin:
             staff_member = True  # Make admins also staff members :-)
 
@@ -141,6 +176,10 @@ class Handler(object):
         }
 
     def genAuthToken(self, id_auth, username, locale, is_admin, staf_member):
+        '''
+        Generates the authentication token from a session, that is basically
+        the session key itself
+        '''
         session = SessionStore()
         session.set_expiry(GlobalConfig.ADMIN_IDLE_TIME.getInt())
         Handler.storeSessionAuthdata(session, id_auth, username, locale, is_admin, staf_member)
@@ -150,6 +189,9 @@ class Handler(object):
         return self._authToken
 
     def cleanAuthToken(self):
+        '''
+        Cleans up the authentication token
+        '''
         self._authToken = None
         if self._session:
             self._session.delete()
@@ -157,21 +199,33 @@ class Handler(object):
 
     # Session related (from auth token)
     def getValue(self, key):
+        '''
+        Get REST session related value for a key
+        '''
         try:
             return self._session['REST'].get(key)
-        except:
-            return None
+        except Exception:
+            return None  # _session['REST'] does not exists?
 
     def setValue(self, key, value):
+        '''
+        Set a session key value
+        '''
         try:
             self._session['REST'][key] = value
             self._session.accessed = True
             self._session.save()
-        except:
-            pass
+        except Exception:
+            logger.exception('Got an exception setting session value {} to {}'.format(key, value))
 
     def is_admin(self):
+        '''
+        True if user of this REST request is administrator
+        '''
         return self.getValue('is_admin') and True or False
 
     def is_staff_member(self):
+        '''
+        True if user of this REST request is member of staff
+        '''
         return self.getValue('staff_member') and True or False

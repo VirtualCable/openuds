@@ -199,7 +199,7 @@ class Transports(DetailHandler):
         return [{
             'id': i.id,
             'name': i.name,
-            'type': self.type_as_dict(i.getType()),
+            'type': self.typeAsDict(i.getType()),
             'comments': i.comments,
             'priority': i.priority,
         } for i in parent.transports.all()]

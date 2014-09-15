@@ -43,7 +43,7 @@ from uds.core.ui.UserInterface import gui
 
 import logging
 
-__updated__ = '2014-06-11'
+__updated__ = '2014-09-15'
 
 logger = logging.getLogger(__name__)
 

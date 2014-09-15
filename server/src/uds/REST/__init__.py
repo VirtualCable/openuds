@@ -37,29 +37,36 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _, activate
 from django.conf import settings
-from handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError
+from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError
 
 import time
 import logging
 
 logger = logging.getLogger(__name__)
 
-__all__ = [str(v) for v  in ['Handler', 'Dispatcher']]
+__all__ = [str(v) for v in ['Handler', 'Dispatcher']]
 
 AUTH_TOKEN_HEADER = 'X-Auth-Token'
 
 
 class Dispatcher(View):
+    '''
+    This class is responsible of dispatching REST requests
+    '''
+    # This attribute will contain all paths-->handler relations, added at Initialized method
     services = {'': None}  # Will include a default /rest handler, but rigth now this will be fine
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, **kwargs):
+        '''
+        Processes the REST request and routes it wherever it needs to be routed
+        '''
         logger.debug('Language in dispatcher: {0}'.format(request.LANGUAGE_CODE))
-        import processors
+        from uds.REST import processors
 
-        # Remove session, so response middelwares do nothing with this
+        # Remove session, so response middleware do nothing with this
         del request.session
-        # Now we extract method and posible variables from path
+        # Now we extract method and possible variables from path
         path = kwargs['arguments'].split('/')
         del kwargs['arguments']
 
@@ -67,22 +74,23 @@ class Dispatcher(View):
         service = Dispatcher.services
         full_path = []
         # Last element will be
-        do_break = False
         cls = None
-        while len(path) > 0 and not do_break:
-            # .json, .xml, ... will break path recursion
-            do_break = path[0].find('.') != -1
+        while len(path) > 0:
             clean_path = path[0].split('.')[0]
-            if service.has_key(clean_path):
+            if clean_path in service:
                 service = service[clean_path]
                 full_path.append(path[0])
                 path = path[1:]
             else:
                 break
+            # .json, .xml, ... will break path recursion
+            if path[0].find('.') != -1:
+                break
 
         full_path = '/'.join(full_path)
         logger.debug(full_path)
 
+        # Here, service points to the path
         cls = service['']
         if cls is None:
             return http.HttpResponseNotFound('method not found')
@@ -91,8 +99,7 @@ class Dispatcher(View):
         try:
             p = full_path.split('.')
             processor = processors.available_processors_ext_dict[p[1]](request)
-        except:
-            # TODO: Extract processor from accept and/or content type?
+        except Exception:
             processor = processors.available_processors_mime_dict.get(request.META.get('CONTENT_TYPE', 'json'), processors.default_processor)(request)
 
         # Obtain method to be invoked
@@ -115,7 +122,7 @@ class Dispatcher(View):
             return http.HttpResponseNotAllowed(allowedMethods)
         except AccessDenied:
             return http.HttpResponseForbidden('access denied')
-        except:
+        except Exception:
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute {0} for {1}'.format(http_method, full_path))
             return http.HttpResponseServerError('Unexcepected error')
@@ -130,8 +137,8 @@ class Dispatcher(View):
                 start = time.time()
                 response = processor.getResponse(response)
             logger.debug('Execution time for encoding: {0}'.format(time.time() - start))
-            for k, v in handler.headers().iteritems():
-                response[k] = v
+            for k, val in handler.headers().iteritems():
+                response[k] = val
             return response
         except RequestError as e:
             return http.HttpResponseServerError(unicode(e))
@@ -149,6 +156,9 @@ class Dispatcher(View):
 
     @staticmethod
     def registerSubclasses(classes):
+        '''
+        Try to register Handler subclasses that have not been inherited
+        '''
         for cls in classes:
             if len(cls.__subclasses__()) == 0:  # Only classes that has not been inherited will be registered as Handlers
                 logger.debug('Found class {0}'.format(cls))

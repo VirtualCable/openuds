@@ -40,7 +40,7 @@ from django.views.decorators.csrf import csrf_exempt
 # from services.DeployedServices import registerDeployedServicesFunctions
 # from services.Publications import registerPublicationsFunctions
 # from services.UserDeployedServices import registerUserDeployedServiceFunctions
-from actor.Actor import registerActorFunctions
+from uds.xmlrpc.actor.Actor import registerActorFunctions
 # from util.Callbacks import registerCallbackFunctions
 # from auths.AdminAuth import registerAdminAuthFunctions
 # from auths.Authenticators import  registerAuthenticatorFunctions
@@ -59,6 +59,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class XMLRPCDispatcher(SimpleXMLRPCDispatcher):
     '''
     Own dispatchers, to allow the pass of the request to the methods.
@@ -72,7 +73,6 @@ class XMLRPCDispatcher(SimpleXMLRPCDispatcher):
 
     def __init__(self):
         SimpleXMLRPCDispatcher.__init__(self, allow_none=False, encoding=None)
-
 
     def dispatch(self, request, **kwargs):
         import xmlrpclib
@@ -91,12 +91,14 @@ class XMLRPCDispatcher(SimpleXMLRPCDispatcher):
         except Exception as e:
             response = xmlrpclib.dumps(
                 xmlrpclib.Fault(1, "Exception caught!: {0}".format(e))
-                )
+            )
+            logger.exception('Excaption processing xmlrpc message')
 
         return HttpResponse(response, content_type='text/xml')
 
 
 dispatcher = XMLRPCDispatcher()
+
 
 # csrf_exempt is needed because we don't expect xmlrcp to be called from a web form
 @csrf_exempt
@@ -108,20 +110,6 @@ def xmlrpc(request):
         response = HttpResponse()
         response.write("<b>This is an XML-RPC Service.</b><br>")
         response.write("You need to invoke it using an XML-RPC Client!<br>")
-        # response.write("The following methods are available:<ul>")
-        # methods = dispatcher.system_listMethods()
-        # for method in methods:
-                # right now, my version of SimpleXMLRPCDispatcher always
-                # returns "signatures not supported"... :(
-                # but, in an ideal world it will tell users what args are expected
-        #        sig = dispatcher.system_methodSignature(method)
-
-                # this just reads your docblock, so fill it in!
-        #        help =  dispatcher.system_methodHelp(method)
-
-        #        response.write("<li><b>%s</b>: [%s] %s" % (method, sig, help))
-
-        # response.write("</ul>")
 
     response['Content-length'] = str(len(response.content))
     return response
