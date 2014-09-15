@@ -1,5 +1,0 @@
-To build installed, mschart.exe is needed (provided by Microsoft)
-
-You can get it at:
-
-http://www.microsoft.com/en-us/download/details.aspx?id=14422
