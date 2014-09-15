@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_noop as _, ugettext
+from django.utils.translation import ugettext_noop as _, ugettext_lazy
 
 
 # States for different objects. Not all objects supports all States
@@ -156,5 +156,5 @@ class State(object):
         '''
         res = {}
         for k, v in State.string.iteritems():
-            res[k] = ugettext(v)
+            res[k] = ugettext_lazy(v)
         return res

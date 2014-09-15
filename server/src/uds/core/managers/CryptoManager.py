@@ -38,6 +38,8 @@ from OpenSSL import crypto
 from Crypto.Random import atfork
 import hashlib
 import array
+import uuid
+
 
 import logging
 import six
@@ -58,6 +60,7 @@ class CryptoManager(object):
 
     def __init__(self):
         self._rsa = RSA.importKey(settings.RSA_KEY)
+        self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
 
     @staticmethod
     def manager():
@@ -119,3 +122,15 @@ class CryptoManager(object):
             return ''
 
         return six.text_type(hashlib.sha1(value).hexdigest())
+
+    def uuid(self, obj):
+        '''
+        Generates an uuid from obj.
+        Right now, obj must be an string
+        '''
+
+        if isinstance(obj, six.text_type):
+            obj = obj.decode('utf-8')
+        else:
+            obj = six. binary_type(obj)
+        return six.text_type(uuid.uuid5(self._namespace, six.binary_type(obj)))

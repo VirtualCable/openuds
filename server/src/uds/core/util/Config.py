@@ -43,6 +43,7 @@ GLOBAL_SECTION = 'UDS'
 SECURITY_SECTION = 'Security'
 CLUSTER_SECTION = 'Cluster'
 
+
 class Config(object):
     '''
     Keeps persistence configuration data
@@ -71,7 +72,7 @@ class Config(object):
             try:
                 if force or self._data is None:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
-                    readed = dbConfig.objects.filter(section=self._section.name(), key=self._key)[0]
+                    readed = dbConfig.objects.filter(section=self._section.name(), key=self._key)[0]  # @UndefinedVariable
                     self._data = readed.value
                     self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
                     self._longText = readed.long
@@ -130,16 +131,16 @@ class Config(object):
             '''
             logger.debug('Saving config {0}.{1} as {2}'.format(self._section.name(), self._key, value))
             try:
-                if dbConfig.objects.filter(section=self._section.name(), key=self._key).update(value=value, crypt=self._crypt, long=self._longText, field_type=self._type) == 0:
+                if dbConfig.objects.filter(section=self._section.name(), key=self._key).update(value=value, crypt=self._crypt, long=self._longText, field_type=self._type) == 0:  # @UndefinedVariable
                     raise Exception()  # Do not exists, create a new one
             except Exception:
                 try:
-                    dbConfig.objects.create(section=self._section.name(), key=self._key, value=value, crypt=self._crypt, long=self._longText, field_type=self._type)
+                    dbConfig.objects.create(section=self._section.name(), key=self._key, value=value, crypt=self._crypt, long=self._longText, field_type=self._type)  # @UndefinedVariable
                 except Exception:
                     # Probably a migration issue, just ignore it
                     logger.info("Could not save configuration key {0}.{1}".format(self._section.name(), self._key))
 
-    class _Section:
+    class _Section(object):
         def __init__(self, sectionName):
             self._sectionName = sectionName
 
@@ -161,7 +162,7 @@ class Config(object):
 
     @staticmethod
     def enumerate():
-        for cfg in dbConfig.objects.all().order_by('key'):
+        for cfg in dbConfig.objects.all().order_by('key'):  # @UndefinedVariable
             logger.debug('{0}.{1}:{2},{3}'.format(cfg.section, cfg.key, cfg.value, cfg.field_type))
             if cfg.crypt is True:
                 val = Config.section(cfg.section).valueCrypt(cfg.key)
@@ -173,7 +174,7 @@ class Config(object):
     def update(section, key, value):
         # If cfg value does not exists, simply ignore request
         try:
-            cfg = dbConfig.objects.filter(section=section, key=key)[0]
+            cfg = dbConfig.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
             if cfg.crypt is True:
                 value = CryptoManager.manager().encrypt(value)
             cfg.value = value

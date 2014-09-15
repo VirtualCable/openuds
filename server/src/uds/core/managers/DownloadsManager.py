@@ -37,6 +37,8 @@ import uuid
 from django.http import HttpResponse, Http404
 from django.core.servers.basehttp import FileWrapper
 
+from uds.core.managers import cryptoManager
+
 import six
 
 import logging
@@ -59,11 +61,10 @@ class DownloadsManager(object):
 
     def __init__(self):
         self._downloadables = {}
-        self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
 
     @staticmethod
     def manager():
-        if DownloadsManager._manager == None:
+        if DownloadsManager._manager is None:
             DownloadsManager._manager = DownloadsManager()
         return DownloadsManager._manager
 
@@ -74,7 +75,7 @@ class DownloadsManager(object):
         @param path: path to file
         @params zip: If download as zip
         '''
-        _id = six.text_type(uuid.uuid5(self._namespace, six.binary_type(name)))
+        _id = cryptoManager().uuid(name)
         self._downloadables[_id] = {'name': name, 'comment': comment, 'path': path, 'mime': mime}
 
     def getDownloadables(self):

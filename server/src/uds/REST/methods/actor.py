@@ -32,10 +32,12 @@
 '''
 from __future__ import unicode_literals
 
-from uds.core.util import Config
-from uds.core.managers import cryptoManager
+from django.utils.translation import ugettext as _
 
-from uds.REST import Handler, AccessDenied
+from uds.core.util import Config
+from uds.core.util import log
+from uds.core.managers import cryptoManager
+from uds.REST import Handler, AccessDenied, RequestError
 
 import datetime
 
@@ -44,9 +46,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-Config.Config.section(Config.SECURITY_SECTION).value('actorKey',
-                                                     cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
-                                                     type=Config.Config.NUMERIC_FIELD).get()
+# Actor key, configurable in Security Section of administration interface
+actorKey = Config.Config.section(Config.SECURITY_SECTION).value('actorKey',
+                                                                cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
+                                                                type=Config.Config.NUMERIC_FIELD)
+actorKey.get()
 
 
 # Enclosed methods under /actor path
@@ -56,15 +60,54 @@ class Actor(Handler):
     '''
     authenticated = False  # Actor requests are not authenticated
 
+    def test(self):
+        return {'result': _('Correct'), 'date': datetime.datetime.now()}
+
+    def getClientIdAndMessage(self):
+
+        # Now we will process .../clientIds/message
+        if len(self._args) < 3:
+            raise RequestError('Invalid arguments provided')
+
+        clientIds, message = self._args[1].split(',')[:5], self._args[2]
+
+        return clientIds, message
+
+    def validateRequest(self):
+        # Ensures that key is first parameter
+        # Here, path will be .../actor/KEY/... (probably /rest/actor/KEY/...)
+        if self._args[0] != actorKey.get(True):
+            raise AccessDenied('Invalid actor key')
+
     def get(self):
         '''
         Processes get requests
         '''
         logger.debug("Actor args for GET: {0}".format(self._args))
-        return self._args
+
+        self.validateRequest()  # Wil raise an access denied exception if not valid
+
+        # if path is .../test (/rest/actor/KEY/test)
+        if self._args[1] == 'test':
+            return self.test()
+
+        clientIds, message = self.getClientIdAndMessage()
+
+        try:
+            data = self._args[3]
+        except Exception:
+            data = ''
+
+        return clientIds, message, data
 
     def post(self):
         '''
         Processes post requests
         '''
-        return self._params
+        self.validateRequest()  # Wil raise an access denied exception if not valid
+
+        clientIds, message = self.getClientIdAndMessage()
+
+        data = self._params[0]
+
+        return clientIds, message, data
