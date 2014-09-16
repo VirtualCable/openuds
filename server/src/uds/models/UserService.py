@@ -81,7 +81,7 @@ class UserService(models.Model):
     src_hostname = models.CharField(max_length=64, default='')
     src_ip = models.CharField(max_length=15, default='')
 
-    uuid = models.CharField(max_length=36, default=None, null=True, unique=True)
+    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 
     cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True)
 

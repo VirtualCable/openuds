@@ -33,13 +33,16 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-05'
+__updated__ = '2014-09-16'
 
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
+
 
 from uds.core.util.State import State
 from uds.core.util import log
+from uds.core.util.model import generateUuid
 
 from uds.models.Authenticator import Authenticator
 from uds.models.User import User
@@ -49,10 +52,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+@python_2_unicode_compatible
 class Group(models.Model):
     '''
     This class represents a group, associated with one authenticator
     '''
+    # pylint: disable=model-missing-unicode
     manager = models.ForeignKey(Authenticator, on_delete=models.CASCADE, related_name='groups')
     name = models.CharField(max_length=128, db_index=True)
     state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
@@ -61,6 +66,7 @@ class Group(models.Model):
     is_meta = models.BooleanField(default=False, db_index=True)
     meta_if_any = models.BooleanField(default=False)
     groups = models.ManyToManyField('self', symmetrical=False)
+    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 
     class Meta:
         '''
@@ -70,6 +76,14 @@ class Group(models.Model):
         ordering = ('name',)
         app_label = 'uds'
 
+    # Override default save to add uuid
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.uuid is None:
+            self.uuid = generateUuid()
+        return models.Model.save(self, force_insert=force_insert,
+                                 force_update=force_update, using=using,
+                                 update_fields=update_fields)
+
     def getManager(self):
         '''
         Returns the authenticator object that owns this user.
@@ -78,7 +92,7 @@ class Group(models.Model):
         '''
         return self.manager.getInstance()
 
-    def __unicode__(self):
+    def __str__(self):
         if self.is_meta:
             return "Meta group {0}(id:{1}) with groups {2}".format(self.name, self.id, list(self.groups.all()))
         else:

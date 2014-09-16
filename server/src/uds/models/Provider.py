@@ -33,22 +33,28 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-16'
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
+from django.db.models import signals
+
 from uds.core.Environment import Environment
 from uds.core.util import log
-from django.db.models import signals
+from uds.core.util.model import generateUuid
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
+@python_2_unicode_compatible
 class Provider(models.Model):
     '''
     A Provider represents the Service provider itself, (i.e. a KVM Server or a Terminal Server)
     '''
+    # pylint: disable=model-missing-unicode
+    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
     name = models.CharField(max_length=128, unique=True)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
@@ -60,6 +66,14 @@ class Provider(models.Model):
         '''
         ordering = ('name',)
         app_label = 'uds'
+
+    # Override default save to add uuid
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.uuid is None:
+            self.uuid = generateUuid()
+        return models.Model.save(self, force_insert=force_insert,
+                                 force_update=force_update, using=using,
+                                 update_fields=update_fields)
 
     def getEnvironment(self):
         '''
@@ -107,7 +121,7 @@ class Provider(models.Model):
     def isOfType(self, type_):
         return self.data_type == type_
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 
     @staticmethod
@@ -130,7 +144,7 @@ class Provider(models.Model):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Before delete service provider '.format(toDelete))
+        logger.debug('Before delete service provider {}'.format(toDelete))
 
 # : Connects a pre deletion signal to Provider
 signals.pre_delete.connect(Provider.beforeDelete, sender=Provider)

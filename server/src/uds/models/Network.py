@@ -33,21 +33,27 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-16'
 
 from django.db import models
-from Transport import Transport
+from django.utils.encoding import python_2_unicode_compatible
+
+from uds.models.Transport import Transport
 from uds.core.util import net
+from uds.core.util.model import generateUuid
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
+@python_2_unicode_compatible
 class Network(models.Model):
     '''
     This model is used for keeping information of networks associated with transports (right now, just transports..)
     '''
+    # pylint: disable=model-missing-unicode
+    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
     name = models.CharField(max_length=64, unique=True)
     net_start = models.BigIntegerField(db_index=True)
     net_end = models.BigIntegerField(db_index=True)
@@ -61,6 +67,13 @@ class Network(models.Model):
         ordering = ('name',)
         app_label = 'uds'
 
+    # Override default save to add uuid
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.uuid is None:
+            self.uuid = generateUuid()
+        return models.Model.save(self, force_insert=force_insert,
+                                 force_update=force_update, using=using,
+                                 update_fields=update_fields)
 
     @staticmethod
     def networksFor(ip):
@@ -121,5 +134,5 @@ class Network(models.Model):
         self.net_string = netRange
         self.save()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Network {0} ({1}) from {2} to {3}'.format(self.name, self.net_string, net.longToIp(self.net_start), net.longToIp(self.net_end))

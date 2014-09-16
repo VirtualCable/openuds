@@ -33,15 +33,16 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-12'
+__updated__ = '2014-09-16'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
+from django.db.models import signals
 
 from uds.core.Environment import Environment
 from uds.core.util import log
-from django.db.models import signals
 from uds.core.util.State import State
+from uds.core.util.model import generateUuid
 
 from uds.models.Util import NEVER
 
@@ -49,12 +50,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 @python_2_unicode_compatible
 class Authenticator(models.Model):
     '''
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...
     '''
+    # pylint: disable=model-missing-unicode
+    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
     name = models.CharField(max_length=128, unique=True)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
@@ -68,6 +72,12 @@ class Authenticator(models.Model):
         '''
         ordering = ('name',)
         app_label = 'uds'
+
+    # Override default save to add uuid
+    def save(self, *args, **kwargs):
+        if self.uuid is None:
+            self.uuid = generateUuid()
+        return models.Model.save(self, *args, **kwargs)
 
     def getEnvironment(self):
         '''
@@ -99,7 +109,7 @@ class Authenticator(models.Model):
         auth = auType(self, env, values)
         # Only unserializes if this is not initialized via user interface and
         # data contains something
-        if values == None and self.data != None and self.data != '':
+        if values is None and self.data is not None and self.data != '':
             auth.unserialize(self.data)
         return auth
 
@@ -208,7 +218,7 @@ class Authenticator(models.Model):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Before delete auth '.format(toDelete))
+        logger.debug('Before delete auth {}'.format(toDelete))
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
