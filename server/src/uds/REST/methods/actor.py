@@ -35,9 +35,12 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 from uds.core.util import Config
+from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.managers import cryptoManager
 from uds.REST import Handler, AccessDenied, RequestError
+from uds.models import UserService
+
 
 import datetime
 
@@ -79,6 +82,29 @@ class Actor(Handler):
         if self._args[0] != actorKey.get(True):
             raise AccessDenied('Invalid actor key')
 
+    def processRequest(self, clientIds, message, data):
+        logger.debug("Called message for id_ {0}, message \"{1}\" and data \"{2}\"".format(clientIds, message, data))
+        res = ""
+        try:
+            services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
+            if services.count() == 0:
+                res = ""
+            else:
+                inUse = services[0].in_use
+                res = services[0].getInstance().osmanager().process(services[0], message, data)
+                services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
+                if services.count() > 0 and services[0].in_use != inUse:  # If state changed, log it
+                    type_ = inUse and 'login' or 'logout'
+                    uniqueId = services[0].unique_id
+                    serviceIp = ''
+                    username = ''
+                    log.useLog(type_, uniqueId, serviceIp, username)
+        except Exception as e:
+            logger.error("Exception at message (client): {0}".format(e))
+            res = ""
+        logger.debug("Returning {0}".format(res))
+        return res
+
     def get(self):
         '''
         Processes get requests
@@ -98,7 +124,7 @@ class Actor(Handler):
         except Exception:
             data = ''
 
-        return clientIds, message, data
+        return self.processRequest(clientIds, message, data)
 
     def post(self):
         '''
@@ -110,4 +136,4 @@ class Actor(Handler):
 
         data = self._params[0]
 
-        return clientIds, message, data
+        return self.processRequest(clientIds, message, data)

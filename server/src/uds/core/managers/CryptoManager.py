@@ -39,6 +39,7 @@ from Crypto.Random import atfork
 import hashlib
 import array
 import uuid
+import datetime
 
 
 import logging
@@ -61,6 +62,7 @@ class CryptoManager(object):
     def __init__(self):
         self._rsa = RSA.importKey(settings.RSA_KEY)
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
+        self._counter = 0
 
     @staticmethod
     def manager():
@@ -123,11 +125,14 @@ class CryptoManager(object):
 
         return six.text_type(hashlib.sha1(value).hexdigest())
 
-    def uuid(self, obj):
+    def uuid(self, obj=None):
         '''
         Generates an uuid from obj.
-        Right now, obj must be an string
+        If obj is None, returns an uuid based on current datetime + counter
         '''
+        if obj is None:
+            obj = six.text_type(datetime.datetime.now()) + six.text_type(self._counter)
+            self._counter += 1
 
         if isinstance(obj, six.text_type):
             obj = obj.decode('utf-8')

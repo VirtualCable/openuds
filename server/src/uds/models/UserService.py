@@ -33,13 +33,14 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-16'
 
 from django.db import models
 from django.db.models import signals
 from uds.core.Environment import Environment
 from uds.core.util import log
 from uds.core.util.State import State
+from uds.core.util.model import generateUuid
 
 from uds.models.ServicesPool import DeployedService
 from uds.models.ServicesPoolPublication import DeployedServicePublication
@@ -80,6 +81,8 @@ class UserService(models.Model):
     src_hostname = models.CharField(max_length=64, default='')
     src_ip = models.CharField(max_length=15, default='')
 
+    uuid = models.CharField(max_length=36, default=None, null=True, unique=True)
+
     cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True)
 
     # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
@@ -91,6 +94,14 @@ class UserService(models.Model):
         db_table = 'uds__user_service'
         ordering = ('creation_date',)
         app_label = 'uds'
+
+    # Override default save to add uuid
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.uuid is None:
+            self.uuid = generateUuid()
+        return models.Model.save(self, force_insert=force_insert,
+                                 force_update=force_update, using=using,
+                                 update_fields=update_fields)
 
     def getEnvironment(self):
         '''
