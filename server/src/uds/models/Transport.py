@@ -33,24 +33,30 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-16'
 
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
+
 from uds.core.Environment import Environment
 from uds.core.util import net
+
+from uds.models.UUIDModel import UUIDModel
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Transport(models.Model):
+@python_2_unicode_compatible
+class Transport(UUIDModel):
     '''
     A Transport represents a way of connecting the user with the service.
 
     Sample of transports are RDP, Spice, Web file uploader, etc...
     '''
+    # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, unique=True)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
@@ -58,7 +64,7 @@ class Transport(models.Model):
     priority = models.IntegerField(default=0, db_index=True)
     nets_positive = models.BooleanField(default=False)
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order
         '''
@@ -141,7 +147,7 @@ class Transport(models.Model):
         else:
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 
     @staticmethod
@@ -162,7 +168,7 @@ class Transport(models.Model):
             s.destroy()
             s.env().clearRelatedData()
 
-        logger.debug('Before delete transport '.format(toDelete))
+        logger.debug('Before delete transport {}'.format(toDelete))
 
 # : Connects a pre deletion signal to OS Manager
 signals.pre_delete.connect(Transport.beforeDelete, sender=Transport)

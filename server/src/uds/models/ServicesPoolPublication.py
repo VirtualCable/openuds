@@ -33,27 +33,31 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-16'
 
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
+
 from uds.core.util.State import State
 from uds.core.Environment import Environment
 from uds.core.util import log
 
 from uds.models.ServicesPool import DeployedService
-
 from uds.models.Util import getSqlDatetime
+from uds.models.UUIDModel import UUIDModel
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class DeployedServicePublication(models.Model):
+@python_2_unicode_compatible
+class DeployedServicePublication(UUIDModel):
     '''
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     '''
+    # pylint: disable=model-missing-unicode
     deployed_service = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='publications')
     publish_date = models.DateTimeField(db_index=True)
     # data_type = models.CharField(max_length=128) # The data type is specified by the service itself
@@ -69,7 +73,7 @@ class DeployedServicePublication(models.Model):
     state_date = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order and unique multiple field index
         '''
@@ -179,7 +183,7 @@ class DeployedServicePublication(models.Model):
 
         logger.debug('Deleted publication {0}'.format(toDelete))
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Publication {0}, rev {1}, state {2}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
 
 # Connects a pre deletion signal to Authenticator

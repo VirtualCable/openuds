@@ -33,25 +33,29 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-12'
+__updated__ = '2014-09-16'
 
 from django.db import models
-from uds.core.util import log
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.Authenticator import Authenticator
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
+from uds.core.util import log
+from uds.models.UUIDModel import UUIDModel
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class User(models.Model):
+@python_2_unicode_compatible
+class User(UUIDModel):
     '''
     This class represents a single user, associated with one authenticator
     '''
+    # pylint: disable=model-missing-unicode, maybe-no-member
     manager = models.ForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
     name = models.CharField(max_length=128, db_index=True)
     real_name = models.CharField(max_length=128)
@@ -63,7 +67,7 @@ class User(models.Model):
     last_access = models.DateTimeField(default=NEVER)
     parent = models.IntegerField(default=-1)
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order and unique multiple field index
         '''
@@ -154,7 +158,7 @@ class User(models.Model):
                 # This group matches
                 yield g
 
-    def __unicode__(self):
+    def __str__(self):
         return u"User {0}(id:{1}) from auth {2}".format(self.name, self.id, self.manager.name)
 
     @staticmethod

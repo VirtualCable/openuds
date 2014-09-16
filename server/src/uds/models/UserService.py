@@ -37,10 +37,12 @@ __updated__ = '2014-09-16'
 
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
+
 from uds.core.Environment import Environment
 from uds.core.util import log
 from uds.core.util.State import State
-from uds.core.util.model import generateUuid
+from uds.models.UUIDModel import UUIDModel
 
 from uds.models.ServicesPool import DeployedService
 from uds.models.ServicesPoolPublication import DeployedServicePublication
@@ -55,11 +57,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class UserService(models.Model):
+@python_2_unicode_compatible
+class UserService(UUIDModel):
     '''
     This is the base model for assigned user service and cached user services.
     This are the real assigned services to users. DeployedService is the container (the group) of this elements.
     '''
+    # pylint: disable=model-missing-unicode
+
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
     deployed_service = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='userServices')
@@ -81,27 +86,17 @@ class UserService(models.Model):
     src_hostname = models.CharField(max_length=64, default='')
     src_ip = models.CharField(max_length=15, default='')
 
-    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
-
     cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True)
 
     # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order and unique multiple field index
         '''
         db_table = 'uds__user_service'
         ordering = ('creation_date',)
         app_label = 'uds'
-
-    # Override default save to add uuid
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if self.uuid is None:
-            self.uuid = generateUuid()
-        return models.Model.save(self, force_insert=force_insert,
-                                 force_update=force_update, using=using,
-                                 update_fields=update_fields)
 
     def getEnvironment(self):
         '''
@@ -399,9 +394,9 @@ class UserService(models.Model):
             res.append({'id': us.id, 'name': usi.getName(), 'transports': us.deployed_service.transports, 'service': us})
         return res
 
-    def __unicode__(self):
+    def __str__(self):
         return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,
-                            State.toString(self.state), State.toString(self.os_state))
+                                                                                             State.toString(self.state), State.toString(self.os_state))
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -418,9 +413,6 @@ class UserService(models.Model):
 
         # Clear related logs to this user service
         log.clearLogs(toDelete)
-
-        # TODO: Check if this invokation goes here
-        # toDelete.getInstance()
 
         logger.debug('Deleted user service {0}'.format(toDelete))
 

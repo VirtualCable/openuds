@@ -9,7 +9,9 @@ from uds.core.util.model import generateUuid
 def add_uuids(apps, schema_editor):
     # We can't import the Person model directly as it may be a newer
     # version than this migration expects. We use the historical version.
-    for model in ('Authenticator', 'Group', 'Network', 'UserService', 'OSManager', 'Provider'):
+    for model in ('Authenticator', 'Group', 'Network', 'UserService',
+                  'OSManager', 'Provider', 'Service', 'DeployedService',
+                  'DeployedServicePublication', 'Transport', 'User'):
         Model = apps.get_model("uds", model)
         for m in Model.objects.all():
             m.uuid = generateUuid()
@@ -59,6 +61,36 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='provider',
+            name='uuid',
+            field=models.CharField(default=None, max_length=50, unique=True, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='service',
+            name='uuid',
+            field=models.CharField(default=None, max_length=50, unique=True, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='deployedservice',
+            name='uuid',
+            field=models.CharField(default=None, max_length=50, unique=True, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='deployedservicepublication',
+            name='uuid',
+            field=models.CharField(default=None, max_length=50, unique=True, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='transport',
+            name='uuid',
+            field=models.CharField(default=None, max_length=50, unique=True, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='user',
             name='uuid',
             field=models.CharField(default=None, max_length=50, unique=True, null=True),
             preserve_default=True,

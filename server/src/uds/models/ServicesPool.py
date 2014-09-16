@@ -33,14 +33,17 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-08'
+__updated__ = '2014-09-16'
 
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
+
 from uds.core.Environment import Environment
 from uds.core.util import log
 from uds.core.util.State import State
 from uds.core.services.Exceptions import InvalidServiceException
+from uds.models.UUIDModel import UUIDModel
 
 from uds.models.OSManager import OSManager
 from uds.models.Service import Service
@@ -56,10 +59,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class DeployedService(models.Model):
+@python_2_unicode_compatible
+class DeployedService(UUIDModel):
     '''
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     '''
+    # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices')
@@ -74,7 +79,7 @@ class DeployedService(models.Model):
     max_srvs = models.PositiveIntegerField(default=0)
     current_pub_revision = models.PositiveIntegerField(default=1)
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare the name of the table at database
         '''
@@ -353,9 +358,9 @@ class DeployedService(models.Model):
 
         logger.debug('Deleting Deployed Service {0}'.format(toDelete))
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Deployed service {0}({1}) with {2} as initial, {3} as L1 cache, {4} as L2 cache, {5} as max".format(
-                        self.name, self.id, self.initial_srvs, self.cache_l1_srvs, self.cache_l2_srvs, self.max_srvs)
+            self.name, self.id, self.initial_srvs, self.cache_l1_srvs, self.cache_l2_srvs, self.max_srvs)
 
 
 # Connects a pre deletion signal to Authenticator

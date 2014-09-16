@@ -42,7 +42,7 @@ from django.db.models import signals
 from uds.core.Environment import Environment
 from uds.core.util import log
 from uds.core.util.State import State
-from uds.core.util.model import generateUuid
+from uds.models.UUIDModel import UUIDModel
 
 from uds.models.Util import NEVER
 
@@ -52,13 +52,12 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Authenticator(models.Model):
+class Authenticator(UUIDModel):
     '''
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...
     '''
     # pylint: disable=model-missing-unicode
-    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
     name = models.CharField(max_length=128, unique=True)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
@@ -66,18 +65,12 @@ class Authenticator(models.Model):
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order
         '''
         ordering = ('name',)
         app_label = 'uds'
-
-    # Override default save to add uuid
-    def save(self, *args, **kwargs):
-        if self.uuid is None:
-            self.uuid = generateUuid()
-        return models.Model.save(self, *args, **kwargs)
 
     def getEnvironment(self):
         '''

@@ -40,7 +40,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.Transport import Transport
 from uds.core.util import net
-from uds.core.util.model import generateUuid
+from uds.models.UUIDModel import UUIDModel
 
 import logging
 
@@ -48,32 +48,23 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Network(models.Model):
+class Network(UUIDModel):
     '''
     This model is used for keeping information of networks associated with transports (right now, just transports..)
     '''
     # pylint: disable=model-missing-unicode
-    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
     name = models.CharField(max_length=64, unique=True)
     net_start = models.BigIntegerField(db_index=True)
     net_end = models.BigIntegerField(db_index=True)
     net_string = models.CharField(max_length=128, default='')
     transports = models.ManyToManyField(Transport, related_name='networks', db_table='uds_net_trans')
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order
         '''
         ordering = ('name',)
         app_label = 'uds'
-
-    # Override default save to add uuid
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if self.uuid is None:
-            self.uuid = generateUuid()
-        return models.Model.save(self, force_insert=force_insert,
-                                 force_update=force_update, using=using,
-                                 update_fields=update_fields)
 
     @staticmethod
     def networksFor(ip):

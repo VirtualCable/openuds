@@ -33,12 +33,15 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-09-16'
 
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
+
 from uds.core.Environment import Environment
 from uds.core.util import log
+from uds.models.UUIDModel import UUIDModel
 
 from uds.models.Provider import Provider
 
@@ -47,18 +50,20 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Service(models.Model):
+@python_2_unicode_compatible
+class Service(UUIDModel):
     '''
     A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
     or a Terminal Server configuration).
     '''
+    # pylint: disable=model-missing-unicode
     provider = models.ForeignKey(Provider, related_name='services')
     name = models.CharField(max_length=128, unique=False)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
     comments = models.CharField(max_length=256)
 
-    class Meta:
+    class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order and unique multiple field index
         '''
@@ -116,7 +121,7 @@ class Service(models.Model):
     def isOfType(self, type_):
         return self.data_type == type_
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
 
     @staticmethod
@@ -139,7 +144,7 @@ class Service(models.Model):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Before delete service '.format(toDelete))
+        logger.debug('Before delete service {}'.format(toDelete))
 
 # : Connects a pre deletion signal to Service
 signals.pre_delete.connect(Service.beforeDelete, sender=Service)
