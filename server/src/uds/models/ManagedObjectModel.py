@@ -51,7 +51,7 @@ class ManagedObjectModel(UUIDModel):
     (such as Authenticator, Transport, OSManager, Provider, Service ...)
     '''
     # pylint: disable=model-missing-unicode, abstract-class-not-used
-    name = models.CharField(max_length=128, unique=True)
+    name = models.CharField(max_length=128, unique=False, db_index=True)
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
     comments = models.CharField(max_length=256)
