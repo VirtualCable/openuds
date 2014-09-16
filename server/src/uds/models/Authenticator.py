@@ -39,10 +39,9 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.db.models import signals
 
-from uds.core.Environment import Environment
 from uds.core.util import log
 from uds.core.util.State import State
-from uds.models.UUIDModel import UUIDModel
+from uds.models.ManagedObjectModel import ManagedObjectModel
 
 from uds.models.Util import NEVER
 
@@ -52,31 +51,21 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Authenticator(UUIDModel):
+class Authenticator(ManagedObjectModel):
     '''
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...
     '''
     # pylint: disable=model-missing-unicode
-    name = models.CharField(max_length=128, unique=True)
-    data_type = models.CharField(max_length=128)
-    data = models.TextField(default='')
-    comments = models.TextField(default='')
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
 
-    class Meta(UUIDModel.Meta):
+    class Meta(ManagedObjectModel.Meta):
         '''
         Meta class to declare default order
         '''
         ordering = ('name',)
         app_label = 'uds'
-
-    def getEnvironment(self):
-        '''
-        Returns an environment valid for the record this object represents
-        '''
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
     def getInstance(self, values=None):
         '''
@@ -100,10 +89,7 @@ class Authenticator(UUIDModel):
         auType = self.getType()
         env = self.getEnvironment()
         auth = auType(self, env, values)
-        # Only unserializes if this is not initialized via user interface and
-        # data contains something
-        if values is None and self.data is not None and self.data != '':
-            auth.unserialize(self.data)
+        self.deserialize(auth, values)
         return auth
 
     def getType(self):
@@ -119,9 +105,6 @@ class Authenticator(UUIDModel):
         '''
         from uds.core import auths
         return auths.factory().lookup(self.data_type)
-
-    def isOfType(self, type_):
-        return self.data_type == type_
 
     def getOrCreateUser(self, username, realName=None):
         '''

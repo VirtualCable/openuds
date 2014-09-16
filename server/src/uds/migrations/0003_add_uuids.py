@@ -7,8 +7,9 @@ from uds.core.util.model import generateUuid
 
 
 def add_uuids(apps, schema_editor):
-    # We can't import the Person model directly as it may be a newer
-    # version than this migration expects. We use the historical version.
+    '''
+    Adds uuids values to migrated models
+    '''
     for model in ('Authenticator', 'Group', 'Network', 'UserService',
                   'OSManager', 'Provider', 'Service', 'DeployedService',
                   'DeployedServicePublication', 'Transport', 'User'):
@@ -19,11 +20,16 @@ def add_uuids(apps, schema_editor):
 
 
 def remove_uuids(apps, schema_editor):
+    '''
+    Dummy function. uuid field will be dropped on reverse migration
+    '''
     pass
 
 
 class Migration(migrations.Migration):
-
+    '''
+    Implements the migrations needed to add uuid to manageable objects
+    '''
     dependencies = [
         ('uds', '0002_auto_20140908_1344'),
     ]

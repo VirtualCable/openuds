@@ -73,7 +73,7 @@ class Providers(ModelHandler):
             'icon': t.icon().replace('\n', '')} for t in type_.getServicesTypes()]
 
         return {
-            'id': provider.uuidid,
+            'id': provider.uuid,
             'name': provider.name,
             'services_count': provider.services.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).count(),
@@ -106,7 +106,7 @@ class Providers(ModelHandler):
 
     def service(self):
         try:
-            return DetailServices.serviceToDict(Service.objects.get(pk=self._args[1]), True)
+            return DetailServices.serviceToDict(Service.objects.get(uuid=self._args[1]), True)
         except:
             raise RequestError(ugettext('Service not found'))
 

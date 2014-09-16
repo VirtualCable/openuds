@@ -40,8 +40,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.db import IntegrityError
 from django.db.models import signals
 
-from uds.core.Environment import Environment
-from uds.models.UUIDModel import UUIDModel
+from uds.models.ManagedObjectModel import ManagedObjectModel
 
 import logging
 
@@ -49,52 +48,18 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class OSManager(UUIDModel):
+class OSManager(ManagedObjectModel):
     '''
     An OS Manager represents a manager for responding requests for agents inside services.
     '''
     # pylint: disable=model-missing-unicode
-    name = models.CharField(max_length=128, unique=True)
-    data_type = models.CharField(max_length=128)
-    data = models.TextField(default='')
-    comments = models.CharField(max_length=256)
 
-    class Meta(UUIDModel.Meta):
+    class Meta(ManagedObjectModel.Meta):
         '''
         Meta class to declare default order
         '''
         ordering = ('name',)
         app_label = 'uds'
-
-    def getEnvironment(self):
-        '''
-        Returns an environment valid for the record this object represents
-        '''
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
-
-    def getInstance(self, values=None):
-        '''
-        Instantiates the object this record contains.
-
-        Every single record of Provider model, represents an object.
-
-        Args:
-           values (list): Values to pass to constructor. If no values are especified,
-                          the object is instantiated empty and them de-serialized from stored data.
-
-        Returns:
-            The instance Instance of the class this provider represents
-
-        Raises:
-        '''
-        osType = self.getType()
-        env = self.getEnvironment()
-        os = osType(env, values)
-        # Only unserializes if this is not initialized via user interface and
-        # data contains something
-        if values == None and self.data != None and self.data != '':
-            os.unserialize(self.data)
-        return os
 
     def getType(self):
         '''
@@ -110,9 +75,6 @@ class OSManager(UUIDModel):
         # We only need to get info from this, not access specific data (class specific info)
         from uds.core import osmanagers
         return osmanagers.factory().lookup(self.data_type)
-
-    def isOfType(self, type_):
-        return self.data_type == type_
 
     def remove(self):
         '''

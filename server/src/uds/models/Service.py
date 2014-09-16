@@ -41,7 +41,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.Environment import Environment
 from uds.core.util import log
-from uds.models.UUIDModel import UUIDModel
+from uds.models.ManagedObjectModel import ManagedObjectModel
 
 from uds.models.Provider import Provider
 
@@ -51,19 +51,15 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Service(UUIDModel):
+class Service(ManagedObjectModel):
     '''
     A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
     or a Terminal Server configuration).
     '''
     # pylint: disable=model-missing-unicode
     provider = models.ForeignKey(Provider, related_name='services')
-    name = models.CharField(max_length=128, unique=False)
-    data_type = models.CharField(max_length=128)
-    data = models.TextField(default='')
-    comments = models.CharField(max_length=256)
 
-    class Meta(UUIDModel.Meta):
+    class Meta(ManagedObjectModel.Meta):
         '''
         Meta class to declare default order and unique multiple field index
         '''
@@ -99,10 +95,7 @@ class Service(UUIDModel):
         sType = prov.getServiceByType(self.data_type)
         env = self.getEnvironment()
         s = sType(env, prov, values)
-        # Only unserializes if this is not initialized via user interface and
-        # data contains something
-        if values == None and self.data != None and self.data != '':
-            s.unserialize(self.data)
+        self.deserialize(s, values)
         return s
 
     def getType(self):
@@ -117,9 +110,6 @@ class Service(UUIDModel):
         :note: We only need to get info from this, not access specific data (class specific info)
         '''
         return self.provider.getType().getServiceByType(self.data_type)
-
-    def isOfType(self, type_):
-        return self.data_type == type_
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)

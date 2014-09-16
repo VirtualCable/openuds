@@ -84,7 +84,7 @@ class Services(DetailHandler):
             if item is None:
                 return [Services.serviceToDict(k) for k in parent.services.all()]
             else:
-                k = parent.services.get(pk=item)
+                k = parent.services.get(uuid=item)
                 val = Services.serviceToDict(k)
                 return self.fillIntanceFields(k, val)
         except Exception:
@@ -108,7 +108,7 @@ class Services(DetailHandler):
             if item is None:  # Create new
                 service = parent.services.create(**fields)
             else:
-                service = parent.services.get(pk=item)
+                service = parent.services.get(uuid=item)
                 service.__dict__.update(fields)
 
             service.data = service.getInstance(self._params).serialize()
@@ -129,7 +129,7 @@ class Services(DetailHandler):
 
     def deleteItem(self, parent, item):
         try:
-            service = parent.services.get(pk=item)
+            service = parent.services.get(uuid=item)
 
             if service.deployedServices.count() != 0:
                 raise RequestError('Item has associated deployed services')
@@ -187,7 +187,7 @@ class Services(DetailHandler):
 
     def getLogs(self, parent, item):
         try:
-            item = parent.services.get(pk=item)
+            item = parent.services.get(uuid=item)
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
         except:

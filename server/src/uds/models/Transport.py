@@ -39,10 +39,9 @@ from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
-from uds.core.Environment import Environment
 from uds.core.util import net
 
-from uds.models.UUIDModel import UUIDModel
+from uds.models.ManagedObjectModel import ManagedObjectModel
 
 import logging
 
@@ -50,56 +49,22 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Transport(UUIDModel):
+class Transport(ManagedObjectModel):
     '''
     A Transport represents a way of connecting the user with the service.
 
     Sample of transports are RDP, Spice, Web file uploader, etc...
     '''
     # pylint: disable=model-missing-unicode
-    name = models.CharField(max_length=128, unique=True)
-    data_type = models.CharField(max_length=128)
-    data = models.TextField(default='')
-    comments = models.CharField(max_length=256)
     priority = models.IntegerField(default=0, db_index=True)
     nets_positive = models.BooleanField(default=False)
 
-    class Meta(UUIDModel.Meta):
+    class Meta(ManagedObjectModel.Meta):
         '''
         Meta class to declare default order
         '''
         ordering = ('name',)
         app_label = 'uds'
-
-    def getEnvironment(self):
-        '''
-        Returns an environment valid for the record this object represents
-        '''
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
-
-    def getInstance(self, values=None):
-        '''
-        Instantiates the object this record contains.
-
-        Every single record of Provider model, represents an object.
-
-        Args:
-           values (list): Values to pass to constructor. If no values are especified,
-                          the object is instantiated empty and them de-serialized from stored data.
-
-        Returns:
-            The instance Instance of the class this provider represents
-
-        Raises:
-        '''
-        tType = self.getType()
-        env = self.getEnvironment()
-        tr = tType(env, values)
-        # Only unserializes if this is not initialized via user interface and
-        # data contains something
-        if values == None and self.data != None and self.data != '':
-            tr.unserialize(self.data)
-        return tr
 
     def getType(self):
         '''

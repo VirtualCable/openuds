@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core import Module
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-09-16'
 
 STORAGE_KEY = 'osmk'
 
@@ -59,7 +59,8 @@ class OSManager(Module):
     # Time is defined as a global config
     processUnusedMachines = False
 
-    def __init__(self, environment, values):
+    def __init__(self, dbOsManager, environment, values):
+        self._dbOsManager = dbOsManager
         super(OSManager, self).__init__(environment, values)
         self.initialize(values)
 
