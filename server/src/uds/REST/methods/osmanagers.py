@@ -62,7 +62,7 @@ class OsManagers(ModelHandler):
     def osmToDict(osm):
         type_ = osm.getType()
         return {
-            'id': osm.id,
+            'id': osm.uuid,
             'name': osm.name,
             'deployed_count': osm.deployedServices.count(),
             'type': type_.type(),

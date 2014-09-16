@@ -38,7 +38,6 @@ from uds.core.util.stats import counters
 from uds.core.util.Cache import Cache
 from uds.REST import Handler, RequestError, ResponseError
 import cPickle
-import time
 from datetime import timedelta
 
 import logging
@@ -54,6 +53,7 @@ USE_MAX = True
 
 
 def getServicesPoolsCounters(servicePool, counter_type):
+    # pylint: disable=no-value-for-parameter
     try:
         cacheKey = (servicePool and servicePool.id or 'all') + str(counter_type) + str(POINTS) + str(SINCE)
         to = getSqlDatetime()
@@ -72,7 +72,7 @@ def getServicesPoolsCounters(servicePool, counter_type):
             if len(val) > 2:
                 cache.put(cacheKey, cPickle.dumps(val).encode('zip'), 600)
             else:
-                val = [{'stamp':since, 'value': 0}, {'stamp':to, 'value':0}]
+                val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
             val = cPickle.loads(val.decode('zip'))
 

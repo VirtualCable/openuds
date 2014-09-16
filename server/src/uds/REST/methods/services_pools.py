@@ -70,12 +70,12 @@ class ServicesPools(ModelHandler):
 
     def item_as_dict(self, item):
         val = {
-            'id': item.id,
+            'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
             'state': item.state,
-            'service_id': item.service_id,
-            'provider_id': item.service.provider_id,
+            'service_id': item.service.uuid,
+            'provider_id': item.service.provider.uuid,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
             'cache_l2_srvs': item.cache_l2_srvs,
@@ -85,7 +85,7 @@ class ServicesPools(ModelHandler):
         }
 
         if item.osmanager is not None:
-            val['osmanager_id'] = item.osmanager.id
+            val['osmanager_id'] = item.osmanager.uuid
 
         return val
 
@@ -99,50 +99,50 @@ class ServicesPools(ModelHandler):
         g = self.addDefaultFields([], ['name', 'comments'])
 
         for f in [{
-                     'name': 'service_id',
-                     'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.id, v.name) for v in Service.objects.all()],
-                     'label': ugettext('Base service'),
-                     'tooltip': ugettext('Service used as base of this service pool'),
-                     'type': gui.InputField.CHOICE_TYPE,
-                     'rdonly': True,
-                     'order': 100,  # At end
-                  }, {
-                     'name': 'osmanager_id',
-                     'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.id, v.name) for v in OSManager.objects.all()],
-                     'label': ugettext('OS Manager'),
-                     'tooltip': ugettext('OS Manager used as base of this service pool'),
-                     'type': gui.InputField.CHOICE_TYPE,
-                     'rdonly': True,
-                     'order': 101,  # At end
-                  }, {
-                       'name': 'initial_srvs',
-                       'value': '0',
-                       'label': ugettext('Initial available services'),
-                       'tooltip': ugettext('Services created initially for this service pool'),
-                       'type': gui.InputField.NUMERIC_TYPE,
-                       'order': 102,  # At end
-                  }, {
-                       'name': 'cache_l1_srvs',
-                       'value': '0',
-                       'label': ugettext('Services to keep in cache'),
-                       'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
-                       'type': gui.InputField.NUMERIC_TYPE,
-                       'order': 103,  # At end
-                  }, {
-                       'name': 'cache_l2_srvs',
-                       'value': '0',
-                       'label': ugettext('Services to keep in L2 cache'),
-                       'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
-                       'type': gui.InputField.NUMERIC_TYPE,
-                       'order': 104,  # At end
-                  }, {
-                       'name': 'max_srvs',
-                       'value': '0',
-                       'label': ugettext('Maximum number of services to provide'),
-                       'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
-                       'type': gui.InputField.NUMERIC_TYPE,
-                       'order': 105,  # At end
-                  }]:
+            'name': 'service_id',
+            'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in Service.objects.all()],
+            'label': ugettext('Base service'),
+            'tooltip': ugettext('Service used as base of this service pool'),
+            'type': gui.InputField.CHOICE_TYPE,
+            'rdonly': True,
+            'order': 100,  # At end
+        }, {
+            'name': 'osmanager_id',
+            'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()],
+            'label': ugettext('OS Manager'),
+            'tooltip': ugettext('OS Manager used as base of this service pool'),
+            'type': gui.InputField.CHOICE_TYPE,
+            'rdonly': True,
+            'order': 101,  # At end
+        }, {
+            'name': 'initial_srvs',
+            'value': '0',
+            'label': ugettext('Initial available services'),
+            'tooltip': ugettext('Services created initially for this service pool'),
+            'type': gui.InputField.NUMERIC_TYPE,
+            'order': 102,  # At end
+        }, {
+            'name': 'cache_l1_srvs',
+            'value': '0',
+            'label': ugettext('Services to keep in cache'),
+            'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
+            'type': gui.InputField.NUMERIC_TYPE,
+            'order': 103,  # At end
+        }, {
+            'name': 'cache_l2_srvs',
+            'value': '0',
+            'label': ugettext('Services to keep in L2 cache'),
+            'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
+            'type': gui.InputField.NUMERIC_TYPE,
+            'order': 104,  # At end
+        }, {
+            'name': 'max_srvs',
+            'value': '0',
+            'label': ugettext('Maximum number of services to provide'),
+            'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
+            'type': gui.InputField.NUMERIC_TYPE,
+            'order': 105,  # At end
+        }]:
             self.addField(g, f)
 
         return g
@@ -152,7 +152,7 @@ class ServicesPools(ModelHandler):
         logger.debug(self._params)
         try:
             try:
-                service = Service.objects.get(pk=fields['service_id'])
+                service = Service.objects.get(uuid=fields['service_id'])
                 del fields['service_id']
                 fields['service'] = service
             except:
@@ -161,7 +161,7 @@ class ServicesPools(ModelHandler):
             try:
                 serviceType = service.getType()
                 if serviceType.needsManager is True:
-                    osmanager = OSManager.objects.get(pk=fields['osmanager_id'])
+                    osmanager = OSManager.objects.get(uuid=fields['osmanager_id'])
                     fields['osmanager'] = osmanager
                 del fields['osmanager_id']
 

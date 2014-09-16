@@ -67,14 +67,14 @@ class Authenticators(ModelHandler):
 
     def typeInfo(self, type_):
         return {
-             'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,
-             'canSearchGroups': type_.searchGroups != auths.Authenticator.searchGroups,
-             'needsPassword': type_.needsPassword,
-             'userNameLabel': _(type_.userNameLabel),
-             'groupNameLabel': _(type_.groupNameLabel),
-             'passwordLabel': _(type_.passwordLabel),
-             'canCreateUsers': type_.createUser != auths.Authenticator.createUser,
-             'isExternal': type_.isExternalSource,
+            'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,
+            'canSearchGroups': type_.searchGroups != auths.Authenticator.searchGroups,
+            'needsPassword': type_.needsPassword,
+            'userNameLabel': _(type_.userNameLabel),
+            'groupNameLabel': _(type_.groupNameLabel),
+            'passwordLabel': _(type_.passwordLabel),
+            'canCreateUsers': type_.createUser != auths.Authenticator.createUser,
+            'isExternal': type_.isExternalSource,
         }
 
     def getGui(self, type_):
@@ -86,13 +86,13 @@ class Authenticators(ModelHandler):
     def item_as_dict(self, auth):
         type_ = auth.getType()
         return {
-                 'id': auth.id,
-                 'name': auth.name,
-                 'comments': auth.comments,
-                 'priority': auth.priority,
-                 'small_name': auth.small_name,
-                 'users_count': auth.users.count(),
-                 'type': type_.type(),
+            'id': auth.uuid,
+            'name': auth.name,
+            'comments': auth.comments,
+            'priority': auth.priority,
+            'small_name': auth.small_name,
+            'users_count': auth.users.count(),
+            'type': type_.type(),
         }
 
     # Custom "search" method

@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-09-15'
+__updated__ = '2014-09-16'
 
 
 # a few constants
@@ -185,9 +185,15 @@ class BaseModelHandler(Handler):
 
     # Exceptions
     def invalidRequestException(self):
+        '''
+        Raises an invalid request error with a default translated string
+        '''
         raise RequestError(_('Invalid Request'))
 
     def invalidMethodException(self):
+        '''
+        Raises a NotFound exception with translated "Method not found" string to current locale
+        '''
         raise NotFound(_('Method not found'))
 
     def invalidItemException(self, msg=None):
@@ -228,6 +234,7 @@ class DetailHandler(BaseModelHandler):
     '''
 
     def __init__(self, parentHandler, path, params, *args, **kwargs):
+        # pylint: disable=super-init-not-called
         self._parent = parentHandler
         self._path = path
         self._params = params
@@ -240,7 +247,7 @@ class DetailHandler(BaseModelHandler):
             if check == cm:
                 try:
                     operation = getattr(self, cm)
-                except:
+                except Exception:
                     self.invalidMethodException()
 
                 if arg is None:
@@ -313,7 +320,7 @@ class DetailHandler(BaseModelHandler):
         '''
         Post will be used for, for example, testing
         '''
-        raise NotFound('TODO: do it :-)')
+        raise NotFound('This objects does not accepts POSTs')
 
     def delete(self):
         '''
@@ -426,7 +433,7 @@ class ModelHandler(BaseModelHandler):
         if found is None:
             raise NotFound('type not found')
 
-        logger.debug('Found type {0}'.format(v))
+        logger.debug('Found type {0}'.format(found))
         return found
 
     # log related
@@ -462,7 +469,7 @@ class ModelHandler(BaseModelHandler):
     def processDetail(self):
         logger.debug('Processing detail {0}'.format(self._path))
         try:
-            item = self.model.objects.filter(pk=self._args[0])[0]
+            item = self.model.objects.filter(uuid=self._args[0])[0]
             detailCls = self.detail[self._args[1]]
             args = list(self._args[2:])
             path = self._path + '/'.join(args[:2])
@@ -479,7 +486,7 @@ class ModelHandler(BaseModelHandler):
         for item in self.model.objects.filter(*args, **kwargs):
             try:
                 yield self.item_as_dict(item)
-            except:
+            except Exception:
                 logger.exception('Exception getting item from {0}'.format(self.model))
 
     def get(self):
@@ -499,7 +506,7 @@ class ModelHandler(BaseModelHandler):
                 if self._args[1] == cm[0]:
                     try:
                         operation = getattr(self, self._args[1])
-                        item = self.model.objects.get(pk=self._args[0])
+                        item = self.model.objects.get(uuid=self._args[0])
                     except Exception:
                         self.invalidMethodException()
 
@@ -524,11 +531,11 @@ class ModelHandler(BaseModelHandler):
 
             # get item ID
             try:
-                val = self.model.objects.get(pk=self._args[0])
+                val = self.model.objects.get(uuid=self._args[0])
                 res = self.item_as_dict(val)
                 self.fillIntanceFields(val, res)
                 return res
-            except:
+            except Exception:
                 self.invalidItemException()
 
         # nArgs > 1
@@ -546,8 +553,8 @@ class ModelHandler(BaseModelHandler):
             if nArgs != 2:
                 self.invalidRequestException()
             try:
-                item = self.model.objects.get(pk=self._args[0])
-            except:
+                item = self.model.objects.get(uuid=self._args[0])
+            except Exception:
                 self.invalidItemException()
             return self.getLogs(item)
 
@@ -585,7 +592,7 @@ class ModelHandler(BaseModelHandler):
                 deleteOnError = True
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
-                item = self.model.objects.get(pk=self._args[0])
+                item = self.model.objects.get(uuid=self._args[0])
                 item.__dict__.update(args)  # Update fields from args
         except self.model.DoesNotExist:
             raise NotFound('Item not found')
@@ -629,7 +636,7 @@ class ModelHandler(BaseModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
         try:
-            item = self.model.objects.get(pk=self._args[0])
+            item = self.model.objects.get(uuid=self._args[0])
             self.checkDelete(item)
             self.deleteItem(item)
         except self.model.DoesNotExist:

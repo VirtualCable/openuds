@@ -73,7 +73,7 @@ class Providers(ModelHandler):
             'icon': t.icon().replace('\n', '')} for t in type_.getServicesTypes()]
 
         return {
-            'id': provider.id,
+            'id': provider.uuidid,
             'name': provider.name,
             'services_count': provider.services.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).count(),

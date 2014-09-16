@@ -51,8 +51,8 @@ class AssignedService(DetailHandler):
     @staticmethod
     def itemToDict(item, is_cache=False):
         val = {
-            'id': item.id,
-            'id_deployed_service': item.deployed_service_id,
+            'id': item.uuid,
+            'id_deployed_service': item.deployed_service.uuid,
             'unique_id': item.unique_id,
             'friendly_name': item.friendly_name,
             'state': item.state,
@@ -80,7 +80,7 @@ class AssignedService(DetailHandler):
             if item is None:
                 return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()]
             else:
-                return parent.assignedUserServices().get(pk=item)
+                return parent.assignedUserServices().get(uuid=item)
         except Exception:
             logger.exception('getItems')
             self.invalidItemException()
@@ -104,7 +104,7 @@ class AssignedService(DetailHandler):
 
     def getLogs(self, parent, item):
         try:
-            item = parent.assignedUserServices().get(pk=item)
+            item = parent.assignedUserServices().get(uuid=item)
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
         except:
@@ -112,7 +112,7 @@ class AssignedService(DetailHandler):
 
     def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
         try:
-            service = parent.userServices.get(pk=item)
+            service = parent.userServices.get(uuid=item)
         except:
             logger.exception('deleteItem')
             self.invalidItemException()
@@ -136,7 +136,7 @@ class CachedService(AssignedService):
             if item is None:
                 return [AssignedService.itemToDict(k, True) for k in parent.cachedUserServices().all()]
             else:
-                k = parent.cachedUserServices().get(pk=item)
+                k = parent.cachedUserServices().get(uuid=item)
                 return AssignedService.itemToDict(k, True)
         except:
             logger.exception('getItems')
@@ -157,7 +157,7 @@ class CachedService(AssignedService):
 
     def getLogs(self, parent, item):
         try:
-            item = parent.cachedUserServices().get(pk=item)
+            item = parent.cachedUserServices().get(uuid=item)
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
         except:
@@ -167,7 +167,7 @@ class CachedService(AssignedService):
 class Groups(DetailHandler):
     def getItems(self, parent, item):
         return [{
-            'id': i.id,
+            'id': i.uuid,
             'name': i.name,
             'comments': i.comments,
             'state': i.state,
@@ -187,17 +187,17 @@ class Groups(DetailHandler):
         ]
 
     def saveItem(self, parent, item):
-        parent.assignedGroups.add(Group.objects.get(pk=self._params['id']))
+        parent.assignedGroups.add(Group.objects.get(uuid=self._params['id']))
         return self.success()
 
     def deleteItem(self, parent, item):
-        parent.assignedGroups.remove(Group.objects.get(pk=self._args[0]))
+        parent.assignedGroups.remove(Group.objects.get(uuid=self._args[0]))
 
 
 class Transports(DetailHandler):
     def getItems(self, parent, item):
         return [{
-            'id': i.id,
+            'id': i.uuid,
             'name': i.name,
             'type': self.typeAsDict(i.getType()),
             'comments': i.comments,
@@ -216,11 +216,11 @@ class Transports(DetailHandler):
         ]
 
     def saveItem(self, parent, item):
-        parent.transports.add(Transport.objects.get(pk=self._params['id']))
+        parent.transports.add(Transport.objects.get(uuid=self._params['id']))
         return self.success()
 
     def deleteItem(self, parent, item):
-        parent.transports.remove(Transport.objects.get(pk=self._args[0]))
+        parent.transports.remove(Transport.objects.get(uuid=self._args[0]))
 
 
 class Publications(DetailHandler):
@@ -231,9 +231,9 @@ class Publications(DetailHandler):
         parent.publish()
         return self.success()
 
-    def cancel(self, parent, pk):
+    def cancel(self, parent, uuid):
         try:
-            ds = DeployedServicePublication.objects.get(pk=pk)
+            ds = DeployedServicePublication.objects.get(uuid=uuid)
             ds.cancel()
         except Exception as e:
             raise ResponseError(unicode(e))
@@ -242,7 +242,7 @@ class Publications(DetailHandler):
 
     def getItems(self, parent, item):
         return [{
-            'id': i.id,
+            'id': i.uuid,
             'revision': i.revision,
             'publish_date': i.publish_date,
             'state': i.state,

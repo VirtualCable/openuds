@@ -61,10 +61,10 @@ class Users(DetailHandler):
         # Extract authenticator
         try:
             if item is None:
-                return list(parent.users.all().values('id', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent'))
+                return list(parent.users.all().values('uuid', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent'))
             else:
                 u = parent.users.get(pk=item)
-                res = model_to_dict(u, fields=('id', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent'))
+                res = model_to_dict(u, fields=('uuid', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent'))
                 usr = aUser(u)
                 res['groups'] = [g.dbGroup().id for g in usr.groups()]
                 logger.debug('Item: {0}'.format(res))
@@ -168,7 +168,7 @@ class Groups(DetailHandler):
             res = []
             for i in q:
                 val = {
-                    'id': i.id,
+                    'id': i.uuid,
                     'name': i.name,
                     'comments': i.comments,
                     'state': i.state,

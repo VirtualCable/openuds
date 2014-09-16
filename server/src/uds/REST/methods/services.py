@@ -54,7 +54,7 @@ class Services(DetailHandler):
     @staticmethod
     def serviceToDict(item, full=False):
         retVal = {
-            'id': item.id,
+            'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
             'type': item.data_type,
@@ -87,7 +87,7 @@ class Services(DetailHandler):
                 k = parent.services.get(pk=item)
                 val = Services.serviceToDict(k)
                 return self.fillIntanceFields(k, val)
-        except:
+        except Exception:
             logger.exception('getItems')
             self.invalidItemException()
 

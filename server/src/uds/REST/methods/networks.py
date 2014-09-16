@@ -79,7 +79,7 @@ class Networks(ModelHandler):
 
     def item_as_dict(self, item):
         return {
-            'id': item.id,
+            'id': item.uuid,
             'name': item.name,
             'net_string': item.net_string,
             'networks_count': item.transports.count(),

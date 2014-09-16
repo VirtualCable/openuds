@@ -84,7 +84,7 @@ class Transports(ModelHandler):
     def item_as_dict(self, item):
         type_ = item.getType()
         return {
-            'id': item.id,
+            'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
             'priority': item.priority,
