@@ -1,3 +1,3 @@
 '''
-This module is responsible of the communication betwen actors and OS Managers
+This module is responsible of the communication between actors and OS Managers
 '''

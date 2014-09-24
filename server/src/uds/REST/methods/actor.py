@@ -38,11 +38,15 @@ from uds.core.util import Config
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.managers import cryptoManager
-from uds.REST import Handler, AccessDenied, RequestError
+from uds.REST import Handler
+from uds.REST import AccessDenied
+from uds.REST import RequestError
 from uds.models import UserService
 
 
 import datetime
+import six
+import simplejson as json
 
 import logging
 
@@ -52,7 +56,7 @@ logger = logging.getLogger(__name__)
 # Actor key, configurable in Security Section of administration interface
 actorKey = Config.Config.section(Config.SECURITY_SECTION).value('actorKey',
                                                                 cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
-                                                                type=Config.Config.NUMERIC_FIELD)
+                                                                type=Config.Config.TEXT_FIELD)
 actorKey.get()
 
 
@@ -64,23 +68,17 @@ class Actor(Handler):
     authenticated = False  # Actor requests are not authenticated
 
     def test(self):
+        '''
+        Executes and returns the test
+        '''
         return {'result': _('Correct'), 'date': datetime.datetime.now()}
 
-    def getClientIdAndMessage(self):
-
-        # Now we will process .../clientIds/message
-        if len(self._args) < 3:
-            raise RequestError('Invalid arguments provided')
-
-        clientIds, message = self._args[1].split(',')[:5], self._args[2]
-
-        return clientIds, message
-
-    def validateRequest(self):
+    def validateRequestKey(self):
         # Ensures that key is first parameter
-        # Here, path will be .../actor/KEY/... (probably /rest/actor/KEY/...)
-        if self._args[0] != actorKey.get(True):
-            raise AccessDenied('Invalid actor key')
+        # Here, path will be .../actor/ACTION/KEY (probably /rest/actor/KEY/...)
+        if self._params.get('key') != actorKey.get(True):
+            return {'result': _('Invalid key'), 'date': datetime.datetime.now()}
+        return None
 
     def processRequest(self, clientIds, message, data):
         logger.debug("Called message for id_ {0}, message \"{1}\" and data \"{2}\"".format(clientIds, message, data))
@@ -105,35 +103,46 @@ class Actor(Handler):
         logger.debug("Returning {0}".format(res))
         return res
 
+    def getUserServiceByIds(self):
+        '''
+        This will get the client from the IDs passed from parameters
+        '''
+        logger.debug('Getting User services from ids: {}'.format(self._params.get('id')))
+
+        try:
+            clientIds = self._params.get('id').split(',')[:5]
+        except Exception:
+            raise RequestError('Invalid request: (no id found)')
+
+        services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
+        if services.count() == 0:
+            return None
+
+        return services[0]
+
     def get(self):
         '''
         Processes get requests
         '''
         logger.debug("Actor args for GET: {0}".format(self._args))
 
-        self.validateRequest()  # Wil raise an access denied exception if not valid
+        # if path is .../test (/rest/actor/[test|init]?key=.....)
+        if self._args[0] in ('test', 'init'):
+            v = self.validateRequestKey()
+            if v is not None:
+                return v
+            if self._args[0] == 'test':
+                return self.test()
 
-        # if path is .../test (/rest/actor/KEY/test)
-        if self._args[1] == 'test':
-            return self.test()
-
-        clientIds, message = self.getClientIdAndMessage()
-
-        try:
-            data = self._args[3]
-        except Exception:
-            data = ''
-
-        return self.processRequest(clientIds, message, data)
+            # Returns UID of selected Machine
+            service = self.getUserServiceByIds()
+            if service is None:
+                return ""
+            else:
+                return service.uuid
 
     def post(self):
         '''
         Processes post requests
         '''
-        self.validateRequest()  # Wil raise an access denied exception if not valid
-
-        clientIds, message = self.getClientIdAndMessage()
-
-        data = self._params[0]
-
-        return self.processRequest(clientIds, message, data)
+        raise RequestError('Invalid method invoked')

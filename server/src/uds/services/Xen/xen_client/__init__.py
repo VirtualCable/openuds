@@ -49,7 +49,8 @@ class XenFailure(XenAPI.Failure, XenFault):
     exHandleInvalid = 'HANDLE_INVALID'
     exHostIsSlave = 'HOST_IS_SLAVE'
 
-    def __init__(self, details=[]):
+    def __init__(self, details=None):
+        details = [] if details is None else details
         super(XenFailure, self).__init__(details)
 
     def isHandleInvalid(self):
@@ -75,7 +76,7 @@ class XenFailure(XenAPI.Failure, XenFault):
             err = errList.get(self.details[0], 'Error {0}')
 
             return err.format(*self.details)
-        except:
+        except Exception:
             return 'Unknown exception: {0}'.format(self.details)
 
     def __unicode__(self):
@@ -83,9 +84,8 @@ class XenFailure(XenAPI.Failure, XenFault):
 
 
 class XenException(XenFault):
-
     def __init__(self, message):
-        Exception.__init__(self, message)
+        XenFault.__init__(self, message)
         logger.debug('Exception create: {0}'.format(message))
 
 
@@ -106,37 +106,38 @@ class XenServer(object):
         self._loggedIn = False
         self._username = username
         self._password = password
-        self._poolName = ''
+        self._session = None
+        self._poolName = self._apiVersion = ''
 
     @staticmethod
     def toMb(number):
         return int(number) / (1024 * 1024)
 
-    def __checkLogin(self):
+    def checkLogin(self):
         if self._loggedIn is False:
             self.login()
         return self._loggedIn
 
-    def __getXenapiProperty(self, prop):
-        if self.__checkLogin() is False:
-            raise "Can't log in"
+    def getXenapiProperty(self, prop):
+        if self.checkLogin() is False:
+            raise Exception("Can't log in")
         return getattr(self._session.xenapi, prop)
 
     # Properties to fast access XenApi classes
-    Async = property(lambda self: self.__getXenapiProperty('Async'))
-    task = property(lambda self: self.__getXenapiProperty('task'))
-    VM = property(lambda self: self.__getXenapiProperty('VM'))
-    SR = property(lambda self: self.__getXenapiProperty('SR'))
-    pool = property(lambda self: self.__getXenapiProperty('pool'))
-    host = property(lambda self: self.__getXenapiProperty('host'))
-    network = property(lambda self: self.__getXenapiProperty('network'))
-    VIF = property(lambda self: self.__getXenapiProperty('VIF'))  # Virtual Interface
-    VDI = property(lambda self: self.__getXenapiProperty('VDI'))  # Virtual Disk Image
-    VBD = property(lambda self: self.__getXenapiProperty('VBD'))  # Virtual Block Device
+    Async = property(lambda self: self.getXenapiProperty('Async'))
+    task = property(lambda self: self.getXenapiProperty('task'))
+    VM = property(lambda self: self.getXenapiProperty('VM'))
+    SR = property(lambda self: self.getXenapiProperty('SR'))
+    pool = property(lambda self: self.getXenapiProperty('pool'))
+    host = property(lambda self: self.getXenapiProperty('host'))
+    network = property(lambda self: self.getXenapiProperty('network'))
+    VIF = property(lambda self: self.getXenapiProperty('VIF'))  # Virtual Interface
+    VDI = property(lambda self: self.getXenapiProperty('VDI'))  # Virtual Disk Image
+    VBD = property(lambda self: self.getXenapiProperty('VBD'))  # Virtual Block Device
 
     # Properties to access private vars
-    poolName = property(lambda self: self.__checkLogin() and self._poolName)
-    hasPool = property(lambda self: self.__checkLogin() and self._poolName != '')
+    poolName = property(lambda self: self.checkLogin() and self._poolName)
+    hasPool = property(lambda self: self.checkLogin() and self._poolName != '')
 
     def getPoolName(self):
         pool = self.pool.get_all()[0]
@@ -224,7 +225,7 @@ class XenServer(object):
             # Only valid SR shared, non iso
             name_label = self.SR.get_name_label(srId)
             if self.SR.get_content_type(srId) == 'iso' or \
-               self.SR.get_shared(srId) == False or \
+               self.SR.get_shared(srId) is False or \
                name_label == '':
                 continue
 
@@ -300,7 +301,7 @@ class XenServer(object):
     def startVM(self, vmId, async=True):
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.running:
-            return  None  # Already powered on
+            return None  # Already powered on
         if async:
             return self.Async.VM.start(vmId, False, False)
         return self.VM.start(vmId, False, False)
@@ -308,7 +309,7 @@ class XenServer(object):
     def stopVM(self, vmId, async=True):
         vmState = self.getVMPowerState(vmId)
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
-            return  None  # Already powered off
+            return None  # Already powered off
         if async:
             return self.Async.VM.hard_shutdown(vmId)
         return self.VM.hard_shutdown(vmId)
@@ -388,7 +389,6 @@ class XenServer(object):
 
         Mac address should be in the range 02:xx:xx:xx:xx (recommended, but not a "have to")
         '''
-        pass
         mac = kwargs.get('mac', None)
         memory = kwargs.get('memory', None)
 
@@ -423,7 +423,7 @@ class XenServer(object):
         tags = self.VM.get_tags(vmId)
         try:
             del tags[tags.index(TAG_TEMPLATE)]
-        except:
+        except Exception:
             pass
         tags.append(TAG_MACHINE)
         self.VM.set_tags(vmId, tags)
@@ -431,7 +431,6 @@ class XenServer(object):
         if kwargs.get('async', True) is True:
             return self.Async.VM.provision(vmId)
         return self.VM.provision(vmId)
-
 
     def convertToTemplate(self, vmId, shadowMultiplier=4):
         try:
@@ -453,7 +452,7 @@ class XenServer(object):
             # Set multiplier
             try:
                 self.VM.set_HVM_shadow_multiplier(vmId, float(shadowMultiplier))
-            except:
+            except Exception:
                 # Can't set shadowMultiplier, nothing happens
                 pass  # TODO: Log this?
         except XenAPI.Failure as e:
@@ -467,4 +466,3 @@ class XenServer(object):
         After cloning template, we must deploy the VM so it's a full usable VM
         '''
         return self.cloneVM(templateId, targetName)
-
