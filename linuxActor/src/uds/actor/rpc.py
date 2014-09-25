@@ -73,7 +73,7 @@ class Rpc(object):
     def setReady():
         if Rpc._manager is None:  # Not managed
             return
-        interfaces = ','.join([ v['mac'] + '=' + v['ip'] for v in net.getExternalIpAndMacs().values() ])
+        interfaces = ','.join([v['mac'] + '=' + v['ip'] for v in net.getExternalIpAndMacs().values()])
         return Rpc._manager.message(READY_MSG, interfaces)
 
     @staticmethod
