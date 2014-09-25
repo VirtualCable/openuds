@@ -126,11 +126,12 @@ class MarshallerProcessor(ContentProcessor):
         try:
             if len(self._request.body) == 0:
                 return self.processGetParameters()
+            logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body)
             logger.debug("Unmarshalled content: {}".format(res))
             return res
         except Exception as e:
-            logger.error('parsing {}: {}'.format(self.mime_type, e))
+            logger.exception('parsing {}: {}'.format(self.mime_type, e))
             raise ParametersException(six.text_type(e))
 
     def render(self, obj):

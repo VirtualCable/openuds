@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-09-16'
+__updated__ = '2014-09-25'
 
 
 # a few constants
@@ -314,6 +314,7 @@ class DetailHandler(BaseModelHandler):
         else:
             self.invalidRequestException()
 
+        logger.debug('Invoking proper saving detail item {}'.format(item))
         return self.saveItem(parent, item)
 
     def post(self):

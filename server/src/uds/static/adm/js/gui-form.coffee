@@ -27,7 +27,7 @@
       return  if not f.gui?
       
       # Fix multiline text fields to textbox
-      f.gui.type = "textbox"  if f.gui.type is "text" and f.gui.multiline
+      f.gui.type = "textbox" if f.gui.type is "text" and f.gui.multiline
       value = item[f.name] or f.gui.value or f.gui.defvalue
       
       # We need to convert "array" values for multichoices to single list of ids (much more usable right here)

@@ -88,7 +88,7 @@ class Services(DetailHandler):
                 val = Services.serviceToDict(k)
                 return self.fillIntanceFields(k, val)
         except Exception:
-            logger.exception('getItems')
+            logger.exception('itemId {}'.format(item))
             self.invalidItemException()
 
     def deleteIncompleteService(self, service):
@@ -125,7 +125,7 @@ class Services(DetailHandler):
             logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT: {0}'.format(e))
 
-        return self.getItems(parent, service.id)
+        return self.getItems(parent, service.uuid)
 
     def deleteItem(self, parent, item):
         try:
@@ -180,7 +180,7 @@ class Services(DetailHandler):
             parentInstance = parent.getInstance()
             serviceType = parentInstance.getServiceByType(forType)
             service = serviceType(Environment.getTempEnv(), parentInstance)  # Instantiate it so it has the opportunity to alter gui description based on parent
-            return  self.addDefaultFields(service.guiDescription(service), ['name', 'comments'])
+            return self.addDefaultFields(service.guiDescription(service), ['name', 'comments'])
         except Exception as e:
             logger.exception('getGui')
             raise ResponseError(unicode(e))
@@ -190,5 +190,5 @@ class Services(DetailHandler):
             item = parent.services.get(uuid=item)
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
-        except:
+        except Exception:
             self.invalidItemException()

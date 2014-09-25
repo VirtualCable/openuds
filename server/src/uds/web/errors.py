@@ -50,7 +50,7 @@ ACCESS_DENIED = 3
 INVALID_SERVICE = 4
 MAX_SERVICES_REACHED = 5
 COOKIES_NEEDED = 6
-USER_SERVICE_NOT_FOUND = 7
+ERR_USER_SERVICE_NOT_FOUND = 7
 AUTHENTICATOR_NOT_FOUND = 8
 INVALID_CALLBACK = 9
 INVALID_REQUEST = 10
@@ -91,7 +91,7 @@ def exceptionView(request, exception):
     try:
         raise exception
     except UserService.DoesNotExist:
-        return errorView(request, USER_SERVICE_NOT_FOUND)
+        return errorView(request, ERR_USER_SERVICE_NOT_FOUND)
     except DeployedService.DoesNotExist:
         return errorView(request, SERVICE_NOT_FOUND)
     except Transport.DoesNotExist:

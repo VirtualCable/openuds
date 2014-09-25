@@ -43,6 +43,7 @@ import sys
 import os
 import signal
 import time
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ PID_FILE = 'taskmanager.pid'
 
 
 def getPidFile():
-    return settings.SITE_ROOT + '/' + PID_FILE
+    return settings.BASE_DIR + '/' + PID_FILE
 
 
 class Command(BaseCommand):
@@ -59,16 +60,16 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option('--start',
-            action='store_true',
-            dest='start',
-            default=False,
-            help='Starts a new daemon'),
+                    action='store_true',
+                    dest='start',
+                    default=False,
+                    help='Starts a new daemon'),
         make_option('--stop',
-            action='store_true',
-            dest='stop',
-            default=False,
-            help='Stop any running daemon'),
-        )
+                    action='store_true',
+                    dest='stop',
+                    default=False,
+                    help='Stop any running daemon'),
+    )
 
     def handle(self, *args, **options):
         logger.info("Running task manager command")
@@ -94,8 +95,9 @@ class Command(BaseCommand):
 
         if start is True:
             logger.info('Starting task manager.')
-            become_daemon(settings.SITE_ROOT, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
-            pid = str(os.getpid())
+            become_daemon(settings.BASE_DIR, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
+            pid = six.text_type(os.getpid())
+
             file(getPidFile(), 'w+').write("%s\n" % pid)
 
             manager = TaskManager()

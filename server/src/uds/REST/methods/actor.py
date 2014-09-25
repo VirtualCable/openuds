@@ -59,6 +59,11 @@ actorKey = Config.Config.section(Config.SECURITY_SECTION).value('actorKey',
                                                                 type=Config.Config.TEXT_FIELD)
 actorKey.get()
 
+# Error codes:
+ERR_INVALID_KEY = 1
+ERR_HOST_NOT_MANAGED = 2
+ERR_USER_SERVICE_NOT_FOUND = 3
+ERR_OSMANAGER_ERROR = 4
 
 # Enclosed methods under /actor path
 class Actor(Handler):
@@ -67,41 +72,29 @@ class Actor(Handler):
     '''
     authenticated = False  # Actor requests are not authenticated
 
+    @staticmethod
+    def result(result='', error=None):
+        res = {'result': result, 'date': datetime.datetime.now()}
+        if error is not None:
+            res['error'] = error
+        return res
+
     def test(self):
         '''
         Executes and returns the test
         '''
-        return {'result': _('Correct'), 'date': datetime.datetime.now()}
+        return Actor.result(_('Correct'))
 
     def validateRequestKey(self):
+        '''
+        Validates a request key (in "key" parameter)
+        '''
         # Ensures that key is first parameter
         # Here, path will be .../actor/ACTION/KEY (probably /rest/actor/KEY/...)
+        logger.debug('{} == {}'.format(self._params.get('key'), actorKey.get(True)))
         if self._params.get('key') != actorKey.get(True):
-            return {'result': _('Invalid key'), 'date': datetime.datetime.now()}
+            return Actor.result(_('Invalid key'), error=ERR_INVALID_KEY)
         return None
-
-    def processRequest(self, clientIds, message, data):
-        logger.debug("Called message for id_ {0}, message \"{1}\" and data \"{2}\"".format(clientIds, message, data))
-        res = ""
-        try:
-            services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
-            if services.count() == 0:
-                res = ""
-            else:
-                inUse = services[0].in_use
-                res = services[0].getInstance().osmanager().process(services[0], message, data)
-                services = UserService.objects.filter(unique_id__in=clientIds, state__in=[State.USABLE, State.PREPARING])
-                if services.count() > 0 and services[0].in_use != inUse:  # If state changed, log it
-                    type_ = inUse and 'login' or 'logout'
-                    uniqueId = services[0].unique_id
-                    serviceIp = ''
-                    username = ''
-                    log.useLog(type_, uniqueId, serviceIp, username)
-        except Exception as e:
-            logger.error("Exception at message (client): {0}".format(e))
-            res = ""
-        logger.debug("Returning {0}".format(res))
-        return res
 
     def getUserServiceByIds(self):
         '''
@@ -126,6 +119,9 @@ class Actor(Handler):
         '''
         logger.debug("Actor args for GET: {0}".format(self._args))
 
+        if len(self._args) < 1:
+            raise RequestError('Invalid request')
+
         # if path is .../test (/rest/actor/[test|init]?key=.....)
         if self._args[0] in ('test', 'init'):
             v = self.validateRequestKey()
@@ -137,12 +133,49 @@ class Actor(Handler):
             # Returns UID of selected Machine
             service = self.getUserServiceByIds()
             if service is None:
-                return ""
+                return Actor.result(error=ERR_HOST_NOT_MANAGED)
             else:
-                return service.uuid
+                return Actor.result(service.uuid)
+        raise RequestError('Invalid request')
 
+    # Must be invoked as '/rest/actor/UUID/[message], with message data in post body
     def post(self):
         '''
         Processes post requests
         '''
-        raise RequestError('Invalid method invoked')
+        if len(self._args) != 2:
+            raise RequestError('Invalid request')
+
+        uuid, message = self._args[0], self._args[1]
+        if self._params.get('data') is not None:
+            data = self._params['data']
+        else:
+            data = None
+
+        # Right now, only "message" posts
+        try:
+            service = UserService.objects.get(uuid=uuid)
+        except Exception:
+            return Actor.result(_('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND)
+
+        inUse = service.in_use
+
+        # Preprocess some messages, common to all clients, such as "log"
+        if message == 'log':
+            data = '\t'.join((self._params.get('message'), six.text_type(self._params.get('level', 10000))))
+
+        try:
+            res = service.getInstance().osmanager().process(service, message, data)
+        except Exception as e:
+            return Actor.result(six.text_type(e), ERR_OSMANAGER_ERROR)
+
+        # Force service reload to check if inUse has changed, so we can log login/logout
+        service = UserService.objects.get(uuid=uuid)
+        if service.in_use != inUse:  # If state changed, log it
+            type_ = inUse and 'login' or 'logout'
+            uniqueId = service.unique_id
+            serviceIp = ''
+            username = ''
+            log.useLog(type_, uniqueId, serviceIp, username)
+
+        return Actor.result(res)
