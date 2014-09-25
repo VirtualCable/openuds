@@ -103,7 +103,7 @@ class WindowsOsManager(osmanagers.OSManager):
         try:
 
             msg, level = data.split('\t')
-            log.doLog(service, level, msg, origin)
+            log.doLog(service, int(level), msg, origin)
         except:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 

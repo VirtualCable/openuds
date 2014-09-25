@@ -33,6 +33,8 @@
 from __future__ import unicode_literals
 import logging
 
+from uds.core.managers import logManager
+
 logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
@@ -74,7 +76,7 @@ def useLog(type_, serviceUniqueId, serviceIp, username):
 
 
 def doLog(wichObject, level, message, source=UNKNOWN, avoidDuplicates=True):
-    from uds.core.managers import logManager
+    logger.debug('{} {} {}'.format(wichObject, level, message))
     logManager().doLog(wichObject, level, message, source, avoidDuplicates)
 
 

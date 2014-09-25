@@ -52,15 +52,15 @@ OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT
 
 # Dict for translations
 transDict = {
-        UserService: OT_USERSERVICE,
-        DeployedServicePublication: OT_PUBLICATION,
-        DeployedService: OT_DEPLOYED_SERVICE,
-        Service: OT_SERVICE,
-        Provider: OT_PROVIDER,
-        User: OT_USER,
-        Group: OT_GROUP,
-        Authenticator: OT_AUTHENTICATOR
-    }
+    UserService: OT_USERSERVICE,
+    DeployedServicePublication: OT_PUBLICATION,
+    DeployedService: OT_DEPLOYED_SERVICE,
+    Service: OT_SERVICE,
+    Provider: OT_PROVIDER,
+    User: OT_USER,
+    Group: OT_GROUP,
+    Authenticator: OT_AUTHENTICATOR
+}
 
 
 class LogManager(object):
@@ -97,7 +97,7 @@ class LogManager(object):
                 if lg.message == message:
                     # Do not log again, already logged
                     return
-            except:  # Do not exists log
+            except Exception:  # Do not exists log
                 pass
 
         # now, we add new log

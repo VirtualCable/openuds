@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
 from uds.core.util.State import State
+from uds.core.util import log
 
 import logging
 from uds.core.managers.UserServiceManager import UserServiceManager
@@ -96,6 +97,14 @@ class LinuxOsManager(osmanagers.OSManager):
                 si.setIp(val)
                 break
 
+    def doLog(self, service, data, origin=log.OSMANAGER):
+        # Stores a log associated with this service
+        try:
+            msg, level = data.split('\t')
+            log.doLog(service, int(level), msg, origin)
+        except Exception:
+            log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
+
     def process(self, service, msg, data):
         '''
         We understand this messages:
@@ -120,6 +129,8 @@ class LinuxOsManager(osmanagers.OSManager):
         elif msg == "information":
             ret = self.infoValue(service)
             state = State.PREPARING
+        elif msg == "log":
+            self.doLog(service, data, log.ACTOR)
         elif msg == "login":
             si = service.getInstance()
             si.userLoggedIn(data)
