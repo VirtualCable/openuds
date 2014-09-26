@@ -67,10 +67,10 @@ def message_fnc(id_, message, data):
             res = services[0].getInstance().osmanager().process(services[0], message, data)
             services = UserService.objects.filter(unique_id__in=ids, state__in=[State.USABLE, State.PREPARING])
             if services.count() > 0 and services[0].in_use != inUse:  # If state changed, log it
-                type_ = inUse and 'login' or 'logout'
+                type_ = inUse and 'logout' or 'login'
                 uniqueId = services[0].unique_id
-                serviceIp = ''
-                username = ''
+                serviceIp = services[0].getInstance().getIp()
+                username = data
                 log.useLog(type_, uniqueId, serviceIp, username)
     except Exception as e:
         logger.error("Exception at message (client): {0}".format(e))
