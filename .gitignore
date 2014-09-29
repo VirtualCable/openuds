@@ -1,5 +1,7 @@
 *.pyc
 *.orig
+*~
+*.swp
 
 *_enterprise.*
 .settings/

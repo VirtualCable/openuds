@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication(sys.argv)
 
-    if checkPermissions() == True:
+    if checkPermissions() == False:
         QtGui.QMessageBox.question(None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
         sys.exit(1)
 
