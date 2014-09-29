@@ -242,9 +242,43 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>testButton</sender>
+   <signal>pressed()</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>testParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>239</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveButton</sender>
+   <signal>pressed()</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>acceptAndSave()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>124</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>textChanged()</slot>
   <slot>cancelAndDiscard()</slot>
+  <slot>testParameters()</slot>
+  <slot>acceptAndSave()</slot>
  </slots>
 </ui>

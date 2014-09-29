@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created: Mon Sep 29 12:07:26 2014
+# Created: Mon Sep 29 18:18:44 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -84,6 +84,8 @@ class Ui_UdsActorSetupDialog(object):
         QtCore.QObject.connect(self.host, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), UdsActorSetupDialog.textChanged)
         QtCore.QObject.connect(self.masterKey, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), UdsActorSetupDialog.textChanged)
         QtCore.QObject.connect(self.cancelButton, QtCore.SIGNAL(_fromUtf8("pressed()")), UdsActorSetupDialog.cancelAndDiscard)
+        QtCore.QObject.connect(self.testButton, QtCore.SIGNAL(_fromUtf8("pressed()")), UdsActorSetupDialog.testParameters)
+        QtCore.QObject.connect(self.saveButton, QtCore.SIGNAL(_fromUtf8("pressed()")), UdsActorSetupDialog.acceptAndSave)
         QtCore.QMetaObject.connectSlotsByName(UdsActorSetupDialog)
 
     def retranslateUi(self, UdsActorSetupDialog):
