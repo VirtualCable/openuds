@@ -1,7 +1,7 @@
 *.pyc
 *.orig
 
-*_enterprise
+*_enterprise.*
 .settings/
 
 # Debian buildings

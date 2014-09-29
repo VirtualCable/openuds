@@ -109,7 +109,7 @@
     <string>Cancel &amp;&amp; Discard</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -226,8 +226,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>pressed()</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>cancelAndDiscard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>315</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>textChanged()</slot>
+  <slot>cancelAndDiscard()</slot>
  </slots>
 </ui>
