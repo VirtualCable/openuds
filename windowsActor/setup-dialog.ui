@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UdsActorSetupDialog</class>
+ <widget class="QDialog" name="UdsActorSetupDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>399</width>
+    <height>192</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>UDS Actor Configuration</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QPushButton" name="testButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>120</y>
+     <width>361</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Click to test the selecter parameters</string>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to test the server host and master key parameters.&lt;/p&gt;&lt;p&gt;A window will be displayed with results after the test is executed.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This button will only be active if all parameters are filled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Test parameters</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="saveButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>150</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>101</width>
+     <height>23</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Accepts changes and saves them</string>
+   </property>
+   <property name="whatsThis">
+    <string>Clicking on this button will accept all changes and save them, closing the configuration window</string>
+   </property>
+   <property name="text">
+    <string>Accept &amp;&amp; Save</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancelButton">
+   <property name="geometry">
+    <rect>
+     <x>264</x>
+     <y>150</y>
+     <width>111</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>111</width>
+     <height>23</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Cancel all changes and discard them</string>
+   </property>
+   <property name="whatsThis">
+    <string>Discards all changes and closes the configuration window</string>
+   </property>
+   <property name="text">
+    <string>Cancel &amp;&amp; Discard</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>361</width>
+     <height>94</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <property name="verticalSpacing">
+     <number>16</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>UDS Server Host</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="host">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="toolTip">
+       <string>Uds Broker Server Addres. Use IP or FQDN</string>
+      </property>
+      <property name="whatsThis">
+       <string>Enter here the UDS Broker Addres using either its IP address or its FQDN address</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>UDS Master Key</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="masterKey">
+      <property name="toolTip">
+       <string>Master key to communicate with UDS Broker</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the Master Key (found on&lt;span style=&quot; font-weight:600;&quot;&gt; UDS Configuration&lt;/span&gt; section) of the UDS Broker to allow communication of the Actor with Broker&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Security</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="comboBox">
+      <property name="toolTip">
+       <string>Select communication security with broker</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the security for communications with UDS Broker.&lt;/p&gt;&lt;p&gt;The recommended method of communication is &lt;span style=&quot; font-weight:600;&quot;&gt;Use SSL&lt;/span&gt;, but selection needs to be acording to your broker configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Do not use SSL</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Use SSL</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>host</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>textChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>123</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>48</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>masterKey</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>UdsActorSetupDialog</receiver>
+   <slot>textChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>258</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>84</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>textChanged()</slot>
+ </slots>
+</ui>

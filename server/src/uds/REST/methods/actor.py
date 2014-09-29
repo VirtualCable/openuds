@@ -46,7 +46,6 @@ from uds.models import UserService
 
 import datetime
 import six
-import simplejson as json
 
 import logging
 
@@ -54,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 
 # Actor key, configurable in Security Section of administration interface
-actorKey = Config.Config.section(Config.SECURITY_SECTION).value('actorKey',
+actorKey = Config.Config.section(Config.SECURITY_SECTION).value('Master Key',
                                                                 cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
                                                                 type=Config.Config.TEXT_FIELD)
 actorKey.get()
@@ -64,6 +63,7 @@ ERR_INVALID_KEY = 1
 ERR_HOST_NOT_MANAGED = 2
 ERR_USER_SERVICE_NOT_FOUND = 3
 ERR_OSMANAGER_ERROR = 4
+
 
 # Enclosed methods under /actor path
 class Actor(Handler):
@@ -160,9 +160,12 @@ class Actor(Handler):
 
         inUse = service.in_use
 
+        username = ''
         # Preprocess some messages, common to all clients, such as "log"
         if message == 'log':
             data = '\t'.join((self._params.get('message'), six.text_type(self._params.get('level', 10000))))
+        elif message in ('login', 'logout', 'logon', 'logoff'):
+            username = data
 
         try:
             res = service.getInstance().osmanager().process(service, message, data)
@@ -172,10 +175,10 @@ class Actor(Handler):
         # Force service reload to check if inUse has changed, so we can log login/logout
         service = UserService.objects.get(uuid=uuid)
         if service.in_use != inUse:  # If state changed, log it
-            type_ = inUse and 'login' or 'logout'
+            instance = service.getInstance()
+            type_ = 'login' if service.in_use else 'logout'
             uniqueId = service.unique_id
-            serviceIp = ''
-            username = ''
+            serviceIp = instance.getIp()
             log.useLog(type_, uniqueId, serviceIp, username)
 
         return Actor.result(res)

@@ -1,6 +1,7 @@
 *.pyc
 *.orig
 
+*_enterprise
 .settings/
 
 # Debian buildings
@@ -60,7 +61,7 @@
 /rdptransport/java/jar/*.jar
 
 # /server/
-/server/*_enterprise
+*_enterprise
 /server/openuds.sublime-project
 /server/openuds.sublime-workspace
 
