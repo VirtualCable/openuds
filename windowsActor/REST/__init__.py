@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 201 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,5 +29,15 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from store.windows import *
+from __future__ import unicode_literals
+
+
+class RestApi(object):
+    def __init__(self, host, masterKey, useSSL):
+        self.host = host
+        self.masterKey = masterKey
+        self.useSSL = useSSL
+        self.url =  "{}://{}/rest/actor".format(('http', 'https')[useSSL], self.host)
+
+    def test(self):
 
