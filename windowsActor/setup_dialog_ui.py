@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created: Mon Sep 29 18:18:44 2014
+# Created: Tue Sep 30 02:15:54 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -74,11 +74,11 @@ class Ui_UdsActorSetupDialog(object):
         self.label_4 = QtGui.QLabel(self.layoutWidget)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_4)
-        self.comboBox = QtGui.QComboBox(self.layoutWidget)
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.comboBox.addItem(_fromUtf8(""))
-        self.comboBox.addItem(_fromUtf8(""))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.comboBox)
+        self.useSSl = QtGui.QComboBox(self.layoutWidget)
+        self.useSSl.setObjectName(_fromUtf8("useSSl"))
+        self.useSSl.addItem(_fromUtf8(""))
+        self.useSSl.addItem(_fromUtf8(""))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.useSSl)
 
         self.retranslateUi(UdsActorSetupDialog)
         QtCore.QObject.connect(self.host, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), UdsActorSetupDialog.textChanged)
@@ -106,8 +106,8 @@ class Ui_UdsActorSetupDialog(object):
         self.masterKey.setToolTip(_translate("UdsActorSetupDialog", "Master key to communicate with UDS Broker", None))
         self.masterKey.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Enter the Master Key (found on<span style=\" font-weight:600;\"> UDS Configuration</span> section) of the UDS Broker to allow communication of the Actor with Broker</p></body></html>", None))
         self.label_4.setText(_translate("UdsActorSetupDialog", "Security", None))
-        self.comboBox.setToolTip(_translate("UdsActorSetupDialog", "Select communication security with broker", None))
-        self.comboBox.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Select the security for communications with UDS Broker.</p><p>The recommended method of communication is <span style=\" font-weight:600;\">Use SSL</span>, but selection needs to be acording to your broker configuration.</p></body></html>", None))
-        self.comboBox.setItemText(0, _translate("UdsActorSetupDialog", "Do not use SSL", None))
-        self.comboBox.setItemText(1, _translate("UdsActorSetupDialog", "Use SSL", None))
+        self.useSSl.setToolTip(_translate("UdsActorSetupDialog", "Select communication security with broker", None))
+        self.useSSl.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Select the security for communications with UDS Broker.</p><p>The recommended method of communication is <span style=\" font-weight:600;\">Use SSL</span>, but selection needs to be acording to your broker configuration.</p></body></html>", None))
+        self.useSSl.setItemText(0, _translate("UdsActorSetupDialog", "Do not use SSL", None))
+        self.useSSl.setItemText(1, _translate("UdsActorSetupDialog", "Use SSL", None))
 
