@@ -110,7 +110,10 @@ public class LinuxApplet implements OsApplet {
 			}
 			
 			if( redirectDrives )
+			{
 				exec.add("-rdisk:home=" + home);
+				exec.add("-rdisk:media=/media");
+			}
 			
 			if( redirectAudio )
 				exec.add("-rsound:local");
