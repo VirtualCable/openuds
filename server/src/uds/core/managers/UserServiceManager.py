@@ -461,6 +461,7 @@ class UserServiceManager(object):
         logger.debug('State: {0}'.format(state))
         uService.updateData(ui)
         if state == State.FINISHED:
+            logger.debug('Service is now ready')
             uService.save()
         elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
             uService.setState(State.PREPARING)
