@@ -55,8 +55,9 @@ except ImportError:
 
 from distutils.core import setup
 import py2exe
+import sys
 
-#sys.argv.append('py2exe')
+sys.argv.append('py2exe')
 
 class Target:
     
@@ -84,11 +85,19 @@ udsservice = Target(
 )
 
 setup(
-    windows=[{'script': 'UDSActorConfig.py', 'icon_resources': [(0, 'uds.ico')]} ],
+    windows=[{
+        'script': 'UDSActorConfig.py', 
+        'icon_resources': [(101, 'uds.ico')]
+    } ],
     service=[udsservice],
-    options={ 'py2exe': {
-        'bundle_files': 3, 'compressed': True,
-        'includes': [ 'sip', 'PyQt4', 'win32com.shell' ]  } 
+    options={ 
+        'py2exe': {
+            'bundle_files': 3, 
+            'compressed': True,
+            'optimize': 2,
+            'includes': [ 'sip', 'PyQt4', 'win32com.shell' ],
+            'dist_dir': 'udsactor',
+        }
     },
     name = 'UDSActorConfig',
     version = '1.6.0.0',
