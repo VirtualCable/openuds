@@ -87,7 +87,7 @@ udsservice = Target(
 setup(
     windows=[{
         'script': 'UDSActorConfig.py', 
-        'icon_resources': [(101, 'uds.ico')]
+        'icon_resources': [(0, 'uds.ico'),(1, 'uds.ico')]
     } ],
     service=[udsservice],
     options={ 
@@ -99,9 +99,9 @@ setup(
             'dist_dir': 'udsactor',
         }
     },
-    name = 'UDSActorConfig',
+    name = 'UD Actor',
     version = '1.6.0.0',
-    description = 'UDS Actor Configuration Tool',
+    description = 'UDS Actor Application',
     author = 'Adolfo Gomez',
     author_email = 'agomez@virtualcable.es',
     zipfile='uds.zip',
