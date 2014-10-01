@@ -14,4 +14,4 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False, icon="uds.ico", manifest="UDSActorConfig_enterprise.manifest", version="UDSActorConfig_version_info.txt", append_pkg=True)
+          console=False, icon="uds.ico", manifest="UDSActorConfig.manifest", version="UDSActorConfig_version_info.txt", append_pkg=True)

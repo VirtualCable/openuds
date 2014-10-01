@@ -30,15 +30,15 @@ VSVersionInfo(
       [
       StringTable(
         u'000004b0',
-        [StringStruct(u'Comments', u'Configuration App for UDS Actor'),
-        StringStruct(u'CompanyName', u'Virtual Cable S.L.'),
-        StringStruct(u'FileDescription', u'UDSActorConfig'),
+        [StringStruct(u'Comments', u'UDS Actor Service Application'),
+        StringStruct(u'CompanyName', u'Virtual Cable S.L.U.'),
+        StringStruct(u'FileDescription', u'UDSActorService'),
         StringStruct(u'FileVersion', u'1.6.0.0'),
-        StringStruct(u'InternalName', u'UDSActorConfig.exe'),
-        StringStruct(u'LegalCopyright', u'Copyright © Virtual Cable S.L. 2014'),
+        StringStruct(u'InternalName', u'UDSActorService.exe'),
+        StringStruct(u'LegalCopyright', u'Copyright © Virtual Cable S.L.U. 2014'),
         StringStruct(u'LegalTrademarks', u'UDS'),
-        StringStruct(u'OriginalFilename', u'UDSActorConfig.exe'),
-        StringStruct(u'ProductName', u'USDActorConfig'),
+        StringStruct(u'OriginalFilename', u'UDSActorService.exe'),
+        StringStruct(u'ProductName', u'UDSActorService'),
         StringStruct(u'ProductVersion', u'1.6.0.0'),
         StringStruct(u'Assembly Version', u'1.6.0.0')])
       ])
