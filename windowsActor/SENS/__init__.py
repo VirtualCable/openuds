@@ -31,7 +31,7 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
         'StopScreenSaver'
         ]
 
-    def __init__(self):
+    def __init__(self, cfg):
         self._wrap_(self)
 
     def Logon(self, *args):
@@ -39,6 +39,7 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
 
     def Logoff(self, *args):
         logevent('Logoff : %s'%[args])
+        self.executer.logoff(*args)
 
     def StartShell(self, *args):
         logevent('StartShell : %s'%[args])
@@ -65,25 +66,25 @@ def logevent(msg, evtid=0xF000):
             (msg, '')
             )
 
-def register():
-    # call the CoInitialize to allow the registration to run in an other
-    # thread
-    pythoncom.CoInitialize()
+#def register():
+    ## call the CoInitialize to allow the registration to run in an other
+    ## thread
+    #pythoncom.CoInitialize()
 
-    logevent('Registring ISensLogon')
+    #logevent('Registring ISensLogon')
 
-    sl=SensLogon()
-    subscription_interface=pythoncom.WrapObject(sl)
+    #sl=SensLogon()
+    #subscription_interface=pythoncom.WrapObject(sl)
 
-    event_system=win32com.client.Dispatch(PROGID_EventSystem)
+    #event_system=win32com.client.Dispatch(PROGID_EventSystem)
 
-    event_subscription=win32com.client.Dispatch(PROGID_EventSubscription)
-    event_subscription.EventClassID=SENSGUID_EVENTCLASS_LOGON
-    event_subscription.PublisherID=SENSGUID_PUBLISHER
-    event_subscription.SubscriptionName='Python subscription'
-    event_subscription.SubscriberInterface=subscription_interface
+    #event_subscription=win32com.client.Dispatch(PROGID_EventSubscription)
+    #event_subscription.EventClassID=SENSGUID_EVENTCLASS_LOGON
+    #event_subscription.PublisherID=SENSGUID_PUBLISHER
+    #event_subscription.SubscriptionName='Python subscription'
+    #event_subscription.SubscriberInterface=subscription_interface
 
-    event_system.Store(PROGID_EventSubscription, event_subscription)
+    #event_system.Store(PROGID_EventSubscription, event_subscription)
 
-    #pythoncom.PumpMessages()
-    #logevent('ISensLogon stopped')
+    ##pythoncom.PumpMessages()
+    ##logevent('ISensLogon stopped')
