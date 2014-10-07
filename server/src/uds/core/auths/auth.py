@@ -50,7 +50,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-09-12'
+__updated__ = '2014-10-07'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -58,6 +58,7 @@ authLogger = logging.getLogger('authLog')
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
 ROOT_ID = -20091204  # Any negative number will do the trick
+
 
 def getUDSCookie(request, response):
     if 'uds' not in request.COOKIES:
@@ -70,7 +71,9 @@ def getUDSCookie(request, response):
 
     return cookie
 
+
 def getRootUser():
+    # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
     from uds.models import Authenticator
     u = User(id=ROOT_ID, name=GlobalConfig.SUPER_USER_LOGIN.get(True), real_name=_('System Administrator'), state=State.ACTIVE, staff_member=True, is_admin=True)
     u.manager = Authenticator()

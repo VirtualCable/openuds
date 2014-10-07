@@ -31,13 +31,154 @@
 '''
 from __future__ import unicode_literals
 
+import requests
+import json
 
-class RestApi(object):
-    def __init__(self, host, masterKey, useSSL):
+# Valid logging levels
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
+
+
+class RESTError(Exception):
+    ERRCODE = 0
+
+
+class ConnectionError(RESTError):
+    ERRCODE = -1
+
+
+# Errors ""raised"" from broker
+class InvalidKeyError(RESTError):
+    ERRCODE = 1
+
+
+class UnmanagedHostError(RESTError):
+    ERRCODE = 2
+
+
+class UserServiceNotFoundError(RESTError):
+    ERRCODE = 3
+
+
+class OsManagerError(RESTError):
+    ERRCODE = 4
+
+
+def ensureResultIsOk(result):
+    if not 'error' in result:
+        return
+
+    for i in (InvalidKeyError, UnmanagedHostError, UserServiceNotFoundError, OsManagerError):
+        if result['error'] == i.ERRCODE:
+            raise i(result['result'])
+
+    err = RESTError(result['result'])
+    err.ERRCODE = result['error']
+    raise err
+
+
+def unscramble(value):
+    if value is None or value == '':
+        return value
+
+    value = value.decode('hex')
+
+    n = 0x32
+    result = []
+    for ch in value:
+        c = ord(ch) ^ n
+        n = (n + c) & 0xFF
+        result.append(chr(c))
+
+    return b''.join(result)[::-1].decode('utf8')
+
+
+class Api(object):
+    def __init__(self, host, masterKey, ssl, scrambledResponses=False):
         self.host = host
         self.masterKey = masterKey
-        self.useSSL = useSSL
-        self.url =  "{}://{}/rest/actor".format(('http', 'https')[useSSL], self.host)
+        self.useSSL = ssl
+        self.scrambledResponses = scrambledResponses
+        self.uuid = None
+        self.url =  "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
+
+    def _getUrl(self, method, key=None, ids=None):
+        url = self.url + method
+        params = []
+        if key is not None:
+            params.append('key=' + key)
+        if ids is not None:
+            params.append('id=' + ids)
+
+        if len(params) > 0:
+            url += '?' + '&'.join(params)
+
+        print url
+
+        return url
+
+    def _request(self, url, data=None):
+        try:
+            if data is None:
+                r = requests.get(url)
+            else:
+                r = requests.post(url, data)
+
+            r = r.json()
+        except requests.exceptions.ConnectionError as e:
+            raise ConnectionError(e.message.args[1].strerror)
+        except Exception as e:
+            raise ConnectionError(unicode(e))
+
+        ensureResultIsOk(r)
+
+        if self.scrambledResponses is True:
+            # test && init are not scrambled, even if rest of messages are
+            try:
+                r['result'] = unscramble(r['result'])
+            except Exception:
+                pass
+
+        return r
 
     def test(self):
+        url = self._getUrl('test', self.masterKey)
+        return self._request(url)['result']
 
+    def init(self, ids):
+        '''
+        Ids is a comma separated values indicating MAC=ip
+        '''
+        url = self._getUrl('init', self.masterKey, ids)
+        self.uuid = self._request(url)['result']
+        return self.uuid
+
+    def postMessage(self, msg, data, processData=True):
+        if self.uuid is None:
+            raise ConnectionError('REST api has not been initialized')
+
+        if processData:
+            data = json.dumps({'data': data })
+        print data
+        url = self._getUrl('/'.join([self.uuid, msg]))
+        return self._request(url, data)
+
+    def login(self, username):
+        return self.postMessage('login', username)['result']
+
+    def logout(self, username):
+        return self.postMessage('logout', username)['result']
+
+    def information(self):
+        return self.postMessage('information', '')['result']
+
+    def setReady(self, ipsInfo):
+        data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
+        return self.postMessage('ready', data)['result']
+
+    def notifyIpChanges(self, ipsInfo):
+        data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
+        return self.postMessage('ip', data)['result']
+
+    def log(self, logLevel, message):
+        data = json.dumps({'message': message, 'level': logLevel})
+        return self.postMessage('log', data, processData=False)['result']

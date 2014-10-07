@@ -16,6 +16,7 @@ from uds.core import osmanagers
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util.State import State
 from uds.core.util import log
+import six
 
 import logging
 
@@ -26,12 +27,14 @@ def scrambleMsg(data):
     '''
     Simple scrambler so password are not seen at source page
     '''
+    if isinstance(data, six.text_type):
+        data = data.encode('utf8')
     res = []
     n = 0x32
     for c in data[::-1]:
         res.append(chr(ord(c) ^ n))
         n = (n + ord(c)) & 0xFF
-    return unicode(str.join(str(''), res).encode('hex'))
+    return six.text_type(b''.join(res).encode('hex'))
 
 
 class WindowsOsManager(osmanagers.OSManager):
@@ -131,7 +134,7 @@ class WindowsOsManager(osmanagers.OSManager):
             state = State.PREPARING
         elif msg == "log":
             self.doLog(service, data, log.ACTOR)
-        elif msg == "logon":
+        elif msg == "logon" or msg == 'login':
             si = service.getInstance()
             si.userLoggedIn(data)
             service.updateData(si)
@@ -140,7 +143,7 @@ class WindowsOsManager(osmanagers.OSManager):
             ip, hostname = service.getConnectionSource()
             ret = "{0}\t{1}".format(ip, hostname)
             inUse = True
-        elif msg == "logoff":
+        elif msg == "logoff" or msg == 'logout':
             si = service.getInstance()
             si.userLoggedOut(data)
             service.updateData(si)

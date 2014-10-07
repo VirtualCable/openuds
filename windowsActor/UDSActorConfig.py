@@ -48,7 +48,7 @@ class MyForm(QtGui.QDialog):
         if data is not None:
             self.ui.host.setText(data['host'])
             self.ui.masterKey.setText(data['masterKey'])
-            self.ui.useSSl.setCurrentIndex(0 if data['ssl'] is True else 1)
+            self.ui.useSSl.setCurrentIndex(1 if data['ssl'] is True else 0)
 
     def textChanged(self):
         enableButtons = self.ui.host.text() != '' and self.ui.masterKey.text() != ''
@@ -63,7 +63,7 @@ class MyForm(QtGui.QDialog):
         pass
 
     def acceptAndSave(self):
-        data = { 'host': self.ui.host.text(), 'masterKey': self.ui.masterKey.text(), 'ssl': self.ui.useSSl.currentIndex() == 0 }
+        data = { 'host': unicode(self.ui.host.text()), 'masterKey': unicode(self.ui.masterKey.text()), 'ssl': self.ui.useSSl.currentIndex() == 1 }
         writeConfig(data)
         self.close()
 

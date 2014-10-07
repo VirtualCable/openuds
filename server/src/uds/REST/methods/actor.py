@@ -133,7 +133,7 @@ class Actor(Handler):
             # Returns UID of selected Machine
             service = self.getUserServiceByIds()
             if service is None:
-                return Actor.result(error=ERR_HOST_NOT_MANAGED)
+                return Actor.result(_('Unmanaged host'), error=ERR_HOST_NOT_MANAGED)
             else:
                 return Actor.result(service.uuid)
         raise RequestError('Invalid request')
@@ -163,6 +163,7 @@ class Actor(Handler):
         username = ''
         # Preprocess some messages, common to all clients, such as "log"
         if message == 'log':
+            logger.debug(self._params)
             data = '\t'.join((self._params.get('message'), six.text_type(self._params.get('level', 10000))))
         elif message in ('login', 'logout', 'logon', 'logoff'):
             username = data
