@@ -39,6 +39,11 @@ import win32con
 import utils
 import ctypes
 from ctypes.wintypes import DWORD, LPCSTR, LPCWSTR
+import sys
+
+def getErrorMessage(res=0):
+    msg = win32api.FormatMessage(res)
+    return msg.decode('windows-1250', 'ignore')
 
 def getNetworkInfo():
     obj = win32com.client.Dispatch("WbemScripting.SWbemLocator")
@@ -83,15 +88,15 @@ def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
     result = win32api.ExitWindowsEx(flags, 0)
     if result != 0:
         # GetLastError and format it
-        raise Exception(win32api.FormatMessage())
+        raise Exception(getErrorMessage)
 
-def renameComputer(string newName):
+def renameComputer(newName):
     # Needs admin privileges to work
     if ctypes.windll.kernel32.SetComputerNameExW(DWORD(win32con.ComputerNamePhysicalDnsHostname), LPCWSTR(newName)) == 0:
         # win32api.FormatMessage -> returns error string
         # win32api.GetLastError -> returns error code
         # (just put this comment here to remember to log this when logger is available)
-        error = win32api.FormatMessage()
+        error = getErrorMessage()
         computerName = win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname)
         raise Exception('Error renaming computer from {} to {}: {}'.format(computerName, newName, error))
 
@@ -105,7 +110,7 @@ NETSETUP_MACHINE_PWD_PASSED = 0x00000080
 NETSETUP_JOIN_WITH_NEW_NAME = 0x00000400
 NETSETUP_DEFER_SPN_SET = 0x1000000
 
-def JoinDomain(domain, ou, account, password, executeInOneStep=False):
+def joinDomain(domain, ou, account, password, executeInOneStep=False):
     # If account do not have domain, include it
     if '@' not in account and '\\' not in account:
         if '.' in domain:
@@ -113,11 +118,9 @@ def JoinDomain(domain, ou, account, password, executeInOneStep=False):
         else:
             account = domain + '\\' + account
 
-    if ou == '':
-        ou = None
 
     # Do log
-    flags = NETSETUP_ACCT_CREATE | NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
+    flags =  NETSETUP_ACCT_CREATE | NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
 
     if executeInOneStep:
         flags |= NETSETUP_JOIN_WITH_NEW_NAME
@@ -125,23 +128,22 @@ def JoinDomain(domain, ou, account, password, executeInOneStep=False):
     flags = DWORD(flags)
 
     domain = LPCWSTR(domain)
-    ou = LPCWSTR(ou)
+
+    # Must be in format "ou=.., ..., dc=...,"
+    ou = LPCWSTR(ou) if ou is not None and ou != '' else None
     account = LPCWSTR(account)
     password = LPCWSTR(password)
 
-    server = LPCWSTR(None)
-    nullOu = LPCWSTR(None)
-
-    res = ctypes.windll.netapi32.NetJoinDomain(server, domain, ou, account, password, flags)
+    res = ctypes.windll.netapi32.NetJoinDomain(None, domain, ou, account, password, flags)
     # Machine found in another ou, use it and warn this on log
     if res == 2224:
-        flags = NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
-        res = NetJoinDomain(server, domain, nullOu, account, password, flags)
-
+        flags = DWORD(NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN)
+        res = ctypes.windll.netapi32.NetJoinDomain(None, domain, None, account, password, flags)
     if res != 0:
         # Log the error
-        error = win32api.FormatMessage()
-        raise Exception('Error joining domain {}, with credentials {}/*****, {}: {}'.format(domain.value, account.value, 'under OU {}'.format(ou.value) if ou.value != None else ''), error)
+        error = getErrorMessage(res)
+        print res, error
+        raise Exception('Error joining domain {}, with credentials {}/*****{}: {}, {}'.format(domain.value, account.value, ', under OU {}'.format(ou.value) if ou.value != None else '', res, error))
 
 def ChangeUserPassword(user, oldPassword, newPassword):
     computerName = LPCWSTR(win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname))
@@ -153,6 +155,5 @@ def ChangeUserPassword(user, oldPassword, newPassword):
 
     if res != 0:
         # Log the error, and raise exception to parent
-        error = win32api.FormatMessage()
-        raise Exception('Error changing password for user {}: {}'.format(user.value, error)
-
+        error = getErrorMessage()
+        raise Exception('Error changing password for user {}: {}'.format(user.value, error))

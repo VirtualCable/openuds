@@ -67,7 +67,7 @@ class Target:
         self.version = "1.6.0"
         self.name = 'UDSActorService'
         self.description = 'UDS Actor Service for managing UDS Broker controlled machines'
-        self.author = 'VirtualCable S.L.U.'
+        self.author = 'Adolfo Gomez'
         self.url = 'http://www.udsenterprise.com'
         self.company_name = "VirtualCable S.L.U."
         self.copyright = "(c) 2014 VirtualCable S.L.U."
@@ -86,9 +86,15 @@ udsservice = Target(
 
 setup(
     windows=[{
-        'script': 'UDSActorConfig.py', 
-        'icon_resources': [(0, 'uds.ico'),(1, 'uds.ico')]
-    } ],
+            'script': 'UDSActorConfig.py', 
+            'icon_resources': [(0, 'uds.ico'),(1, 'uds.ico')]
+        }
+    ],
+    console=[{
+            'script': 'test.py', 
+            'icon_resources': [(0, 'uds.ico'),(1, 'uds.ico')]
+        }    
+    ],
     service=[udsservice],
     options={ 
         'py2exe': {
@@ -96,6 +102,8 @@ setup(
             'compressed': True,
             'optimize': 2,
             'includes': [ 'sip', 'PyQt4', 'win32com.shell' ],
+            'excludes': [ 'doctest', 'unittest' ],
+            'dll_excludes': ['msvcp90.dll'],
             'dist_dir': 'udsactor',
         }
     },

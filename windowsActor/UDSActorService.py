@@ -138,9 +138,5 @@ class AppServerSvc (win32serviceutil.ServiceFramework):
 
 
 if __name__ == '__main__':
-    cfg = readConfig()
-    print "Intefaces: ", list(getNetworkInfo())
-    print "Joined Domain: ", getDomainName()
-    reboot()
-    # TODO: Reactivate service handling
-    # win32serviceutil.HandleCommandLine(AppServerSvc)
+    # cfg = readConfig()
+    win32serviceutil.HandleCommandLine(AppServerSvc)
