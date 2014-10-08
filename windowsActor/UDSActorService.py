@@ -42,13 +42,14 @@ import win32com.client
 import servicemanager
 from SENS import *
 from store import readConfig
-import socket
+import REST
+from windows_operations import *
 
-from management import *
+import socket
 
 cfg = None
 
-class AppServerSvc (win32serviceutil.ServiceFramework):
+class UDSActorSvc(win32serviceutil.ServiceFramework):
     _svc_name_ = "UDSActor"
     _svc_display_name_ = "UDS Actor Service"
     _svc_description_ = "UDS Actor for machines managed by UDS Broker"
@@ -56,9 +57,12 @@ class AppServerSvc (win32serviceutil.ServiceFramework):
 
     def __init__(self,args):
         win32serviceutil.ServiceFramework.__init__(self,args)
-        self.hWaitStop = win32event.CreateEvent(None,0,0,None)
+        self.hWaitStop = win32event.CreateEvent(None,1,0,None)
         self.isAlive = True
         socket.setdefaulttimeout(60)
+        self.api = None
+        self.rebootRequested = False
+        self.knownIps = []
 
     def SvcStop(self):
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
@@ -67,20 +71,145 @@ class AppServerSvc (win32serviceutil.ServiceFramework):
 
     SvcShutdown = SvcStop
 
+    def reboot(self):
+        self.rebootRequested = True
+
+    def rename(self, name, user=None, oldPass=None, newPass=None):
+        hostName = getComputerName()
+
+        if hostName.lower() == name.lower():
+            servicemanager.LogInfoMsg('Computer name is now {}'.format(hostName))
+            r.setReady([(v.mac, v.ip) for v in getNetworkInfo()])
+            return
+
+        # Check for password change request for an user
+        if user is not None:
+            servicemanager.LogInfoMsg('Setting password for user {}'.format(user))
+            try:
+                changeUserPassword(user, oldPassword, newPassword)
+            except Exception as e:
+                # We stop here without even renaming computer, because the process has failed
+                raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(unicode(e)))
+
+        renameComputer(name)
+        # Reboot just after renaming
+        servicemanager.LogInfoMsg('Rebooting computer got activate new name {}'.format(name))
+        self.reboot()
+
+    def oneStepJoin(name, domain, ou, account, password):
+        pass
+
+    def multiStepJoin(self, name, domain, ou, account, password):
+        pass
+
+    def joinDomain(self, name, domain, ou, account, password):
+        ver = getWindowsVersion()
+        ver = ver[0]*10 + ver[1]
+        servicemanager.LogInfoMsg('Starting joining domain {} with name {} (detected operating version: {})'.format(domain, name, ver))
+        if ver >= 60:  # Accepts one step joinDomain, also remember XP is no more supported by microsoft, but this also must works with it
+            self.oneStepJoin(name, domain, ou, account, password)
+        else:
+            self.multiStepJoin(name, domain, ou, account, password)
+
+
+
     def interactWithBroker(self):
         '''
         Returns True to continue to main loop, false to stop & exit service
         '''
-        return True
+        # If no configuration is found, stop service
+        if cfg is None:
+            return False
+
+        self.api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
+
+        # Wait for Broker to be ready
+        counter = 0
+        while self.isAlive:
+            try:
+                netInfo = tuple(getNetworkInfo())  # getNetworkInfo is a generator function
+                self.knownIps = dict(((i.mac, i.ip) for i in netInfo))
+                ids = ','.join([i.map for i in netInfo])
+                if ids == '':
+                    raise Exception()  # Wait for any network interface to be ready
+                self.api.init(ids)
+                break
+            except REST.InvalidKeyError:
+                # TODO: Log exception
+                servicemanager.LogErrorMsg('Can\'t sync with broker due to invalid broker Master Key')
+                return False
+            except REST.UnmanagedHostError:
+                # Maybe interface that is registered with broker is not enabled already?
+                # Right now, we thing that the interface connected to broker is the interface that broker will know, let's see how this works
+                servicemanager.LogErrorMsg('This host is not managed by UDS Broker (ids: {})'.format(ids))
+                return False
+            except Exception as e:
+                # Any other error is expectable and recoverable, so let's wait a bit and retry again
+                # but, if too many errors, will log it (one every minute, for example)
+                counter += 1
+                if counter % 60 == 0:
+                    servicemanager.LogWarningMsg('There are too many retries in progress, though still trying (last error: {})'.format(e.message))
+                win32event.WaitForSingleObject(self.hWaitStop, 1000)  # Wait a bit before next check
+
+        # Broker connection is initialized, now get information about what to do
+        counter = 0
+        while self.isAlive:
+            try:
+                info = self.api.information()
+                data = info.split('\r')
+                if len(data) != 2:
+                    servicemanager.LogErrorMsg('The format of the information message is not correct (got {})'.format(info))
+                    raise Exception
+                params = data[1].split('\t')
+                if data[0] == 'rename':
+                    try:
+                        if len(params) == 1:  # Simple rename
+                            self.rename(params[0])
+                        elif len(params) == 4:  # Rename with change password for an user
+                            self.rename(params[0], params[1], params[2], params[3])
+                        else:
+                            servicemanager.LogErrorMsg('Got invalid parameter for rename operation: {}'.format(params))
+                            return False
+                    except Exception as e:
+                        servicemanager.LogErrorMsg('Error at computer renaming stage: {}'.format(e.message))
+                        return False
+                elif data[0] == 'domain':
+                    if len(params) != 5:
+                        servicemanager.LogErrorMsg('Got invalid parameters for domain message: {}'.format(params))
+                        return False
+                    self.joinDomain(parms[0], parms[1], parms[2], parms[3], parms[4])
+                else:
+                    servicemanager.LogErrorMsg('Unrecognized action sent from broker: {}'.format(data[0]))
+                    return False  # Stop running service
+            except REST.UserServiceNotFoundError:
+                servicemanager.LogErrorMsg('The host has lost the sync state with broker! (host uuid changed?)')
+                return False
+            except:
+                counter += 1
+                if counter % 60 == 0:
+                    servicemanager.LogWarningMsg('There are too many retries in progress, though still trying (last error: {})'.format(e.message))
+                # Any other error is expectable and recoverable, so let's wait a bit and retry again
+                win32event.WaitForSingleObject(self.hWaitStop, 1000)  # Wait a bit before next check
+
+        if self.rebootRequested:
+            reboot()
+            return False   # Stops service
+
+    def checkIpsChanged(self):
+        netInfo = tuple(getNetworkInfo())
+        for i in netInfo:
+            if i.mac in self.knownIps and self.knownIps[i.mac] != i.ip:  # If at least one ip has changed
+                servicemanager.LogInfoMsg('Notifying ip change to broker (mac {}, from {} to {})'.format(i.mac, self.knownIps[i.mac], i.ip))
+                try:
+                    self.api.notifyIpChanges(((v.mac, v.ip) for v in netInfo))  # Notifies all interfaces IPs
+                    self.knownIps = dict(((i.mac, i.ip) for i in netInfo))  # Regenerates Known ips
+                except Exception as e:
+                    servicemanager.LogWarningMsg('Got an error notifiying IPs to broker: {} (will retry in a bit)'.format(e.message))
 
     def SvcDoRun(self):
         servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
                               servicemanager.PYS_SERVICE_STARTED,
                               (self._svc_name_,''))
-
-        if cfg is None:
-            self.ReportServiceStatus(win32service.SERVICE_STOPPED)
-            return
 
         # ********************************************************
         # * Ask brokers what to do before proceding to main loop *
@@ -118,8 +247,12 @@ class AppServerSvc (win32serviceutil.ServiceFramework):
         # *********************
         # * Main Service loop *
         # *********************
+        counter = 0  # Counter used to check ip changes only once every 10 seconds, for example
         while self.isAlive:
+            counter += 1
             pythoncom.PumpWaitingMessages() # Process SENS messages, This will be a bit asyncronous (1 second delay)
+            if counter % 10 == 0:
+                self.checkIpsChanged()
             win32event.WaitForSingleObject(self.hWaitStop, 1000)  # In milliseconds, will break
 
         # *******************************************
@@ -138,5 +271,5 @@ class AppServerSvc (win32serviceutil.ServiceFramework):
 
 
 if __name__ == '__main__':
-    # cfg = readConfig()
-    win32serviceutil.HandleCommandLine(AppServerSvc)
+    cfg = readConfig()
+    win32serviceutil.HandleCommandLine(UDSActorSvc)

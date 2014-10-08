@@ -45,6 +45,9 @@ def getErrorMessage(res=0):
     msg = win32api.FormatMessage(res)
     return msg.decode('windows-1250', 'ignore')
 
+def getComputerName():
+    return win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname)
+
 def getNetworkInfo():
     obj = win32com.client.Dispatch("WbemScripting.SWbemLocator")
     wmobj = obj.ConnectServer("localhost","root\cimv2")
@@ -72,6 +75,8 @@ def getDomainName():
 
     return domain
 
+def getWindowsVersion():
+    return win32api.GetVersionEx()
 
 EWX_LOGOFF = 0x00000000
 EWX_SHUTDOWN = 0x00000001
@@ -79,7 +84,7 @@ EWX_REBOOT = 0x00000002
 EWX_FORCE = 0x00000004
 EWX_POWEROFF = 0x00000008
 EWX_FORCEIFHUNG = 0x00000010
-
+getNetworkInfo()
 def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
     hproc = win32api.GetCurrentProcess()
     htok = win32security.OpenProcessToken(hproc, win32security.TOKEN_ADJUST_PRIVILEGES | win32security.TOKEN_QUERY)
@@ -145,8 +150,8 @@ def joinDomain(domain, ou, account, password, executeInOneStep=False):
         print res, error
         raise Exception('Error joining domain {}, with credentials {}/*****{}: {}, {}'.format(domain.value, account.value, ', under OU {}'.format(ou.value) if ou.value != None else '', res, error))
 
-def ChangeUserPassword(user, oldPassword, newPassword):
-    computerName = LPCWSTR(win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname))
+def changeUserPassword(user, oldPassword, newPassword):
+    computerName = LPCWSTR(getComputerName())
     user = LPCWSTR(user)
     oldPassword = LPCWSTR(oldPassword)
     newPassword = LPCWSTR(newPassword)
@@ -157,3 +162,4 @@ def ChangeUserPassword(user, oldPassword, newPassword):
         # Log the error, and raise exception to parent
         error = getErrorMessage()
         raise Exception('Error changing password for user {}: {}'.format(user.value, error))
+
