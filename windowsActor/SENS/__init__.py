@@ -31,8 +31,9 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
         'StopScreenSaver'
         ]
 
-    def __init__(self, cfg):
+    def __init__(self, api):
         self._wrap_(self)
+        self.api = api
 
     def Logon(self, *args):
         logevent('Logon : %s'%[args])
