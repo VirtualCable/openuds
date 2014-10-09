@@ -136,7 +136,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                 break
             except REST.InvalidKeyError:
                 # TODO: Log exception
-                servicemanager.LogErrorMsg('Can\'t sync with broker due to invalid broker Master Key')
+                servicemanager.LogErrorMsg('Can\'t sync with broker: Invalid broker Master Key')
                 return False
             except REST.UnmanagedHostError:
                 # Maybe interface that is registered with broker is not enabled already?
@@ -184,10 +184,10 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             except REST.UserServiceNotFoundError:
                 servicemanager.LogErrorMsg('The host has lost the sync state with broker! (host uuid changed?)')
                 return False
-            except:
+            except Exception:
                 counter += 1
                 if counter % 60 == 0:
-                    servicemanager.LogWarningMsg('There are too many retries in progress, though still trying (last error: {})'.format(e.message))
+                    servicemanager.LogWarningMsg('Too many retries in progress, though still trying (last error: {})'.format(e.message))
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
                 win32event.WaitForSingleObject(self.hWaitStop, 1000)  # Wait a bit before next check
 
@@ -228,7 +228,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
 
         logevent('Registring ISensLogon')
         subscription_guid = '{41099152-498E-11E4-8FD3-10FEED05884B}'
-        sl = SensLogon()
+        sl = SensLogon(self.api)
         subscription_interface=pythoncom.WrapObject(sl)
 
         event_system=win32com.client.Dispatch(PROGID_EventSystem)
