@@ -71,7 +71,7 @@ class Provider(ServiceProvider):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('oVirt Platform Provider')
+    typeName = _('oVirt/RHEV Platform Provider')
     # : Type used internally to identify this provider
     typeType = 'oVirtPlatform'
     # : Description shown at administration interface for this provider
