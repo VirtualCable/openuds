@@ -33,7 +33,7 @@ from __future__ import unicode_literals
 
 import sys
 if sys.platform == 'win32':
-    from windows.operations import *
+    from udsactor.windows.operations import *
 else:
     pass
 

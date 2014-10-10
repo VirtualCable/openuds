@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
-from windows_operations import *
+
+from udsactor import operations
+from udsactor import store
 from store import readConfig
 import REST
 
