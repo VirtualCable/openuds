@@ -104,7 +104,7 @@ setup(
             'includes': [ 'sip', 'PyQt4', 'win32com.shell' ],
             'excludes': [ 'doctest', 'unittest' ],
             'dll_excludes': ['msvcp90.dll'],
-            'dist_dir': 'udsactor',
+            'dist_dir': 'bin',
         }
     },
     name = 'UD Actor',
