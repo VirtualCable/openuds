@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created: Tue Sep 30 02:15:54 2014
+# Created: Fri Oct 10 10:43:30 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_UdsActorSetupDialog(object):
     def setupUi(self, UdsActorSetupDialog):
         UdsActorSetupDialog.setObjectName(_fromUtf8("UdsActorSetupDialog"))
         UdsActorSetupDialog.setWindowModality(QtCore.Qt.WindowModal)
-        UdsActorSetupDialog.resize(399, 192)
+        UdsActorSetupDialog.resize(400, 243)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -39,19 +39,19 @@ class Ui_UdsActorSetupDialog(object):
         UdsActorSetupDialog.setModal(True)
         self.testButton = QtGui.QPushButton(UdsActorSetupDialog)
         self.testButton.setEnabled(False)
-        self.testButton.setGeometry(QtCore.QRect(20, 120, 361, 23))
+        self.testButton.setGeometry(QtCore.QRect(20, 160, 361, 23))
         self.testButton.setObjectName(_fromUtf8("testButton"))
         self.saveButton = QtGui.QPushButton(UdsActorSetupDialog)
         self.saveButton.setEnabled(False)
-        self.saveButton.setGeometry(QtCore.QRect(20, 150, 101, 23))
+        self.saveButton.setGeometry(QtCore.QRect(20, 190, 101, 23))
         self.saveButton.setMaximumSize(QtCore.QSize(101, 23))
         self.saveButton.setObjectName(_fromUtf8("saveButton"))
         self.cancelButton = QtGui.QPushButton(UdsActorSetupDialog)
-        self.cancelButton.setGeometry(QtCore.QRect(264, 150, 111, 23))
+        self.cancelButton.setGeometry(QtCore.QRect(270, 190, 111, 23))
         self.cancelButton.setMaximumSize(QtCore.QSize(111, 23))
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.layoutWidget = QtGui.QWidget(UdsActorSetupDialog)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 94))
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 131))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.formLayout = QtGui.QFormLayout(self.layoutWidget)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
@@ -79,8 +79,23 @@ class Ui_UdsActorSetupDialog(object):
         self.useSSl.addItem(_fromUtf8(""))
         self.useSSl.addItem(_fromUtf8(""))
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.useSSl)
+        self.logLevelLabel = QtGui.QLabel(self.layoutWidget)
+        self.logLevelLabel.setObjectName(_fromUtf8("logLevelLabel"))
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.logLevelLabel)
+        self.logLevelComboBox = QtGui.QComboBox(self.layoutWidget)
+        self.logLevelComboBox.setObjectName(_fromUtf8("logLevelComboBox"))
+        self.logLevelComboBox.addItem(_fromUtf8(""))
+        self.logLevelComboBox.setItemText(0, _fromUtf8("DEBUG"))
+        self.logLevelComboBox.addItem(_fromUtf8(""))
+        self.logLevelComboBox.setItemText(1, _fromUtf8("INFO"))
+        self.logLevelComboBox.addItem(_fromUtf8(""))
+        self.logLevelComboBox.setItemText(2, _fromUtf8("EROR"))
+        self.logLevelComboBox.addItem(_fromUtf8(""))
+        self.logLevelComboBox.setItemText(3, _fromUtf8("FATAL"))
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.logLevelComboBox)
 
         self.retranslateUi(UdsActorSetupDialog)
+        self.logLevelComboBox.setCurrentIndex(1)
         QtCore.QObject.connect(self.host, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), UdsActorSetupDialog.textChanged)
         QtCore.QObject.connect(self.masterKey, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), UdsActorSetupDialog.textChanged)
         QtCore.QObject.connect(self.cancelButton, QtCore.SIGNAL(_fromUtf8("pressed()")), UdsActorSetupDialog.cancelAndDiscard)
@@ -110,4 +125,5 @@ class Ui_UdsActorSetupDialog(object):
         self.useSSl.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Select the security for communications with UDS Broker.</p><p>The recommended method of communication is <span style=\" font-weight:600;\">Use SSL</span>, but selection needs to be acording to your broker configuration.</p></body></html>", None))
         self.useSSl.setItemText(0, _translate("UdsActorSetupDialog", "Do not use SSL", None))
         self.useSSl.setItemText(1, _translate("UdsActorSetupDialog", "Use SSL", None))
+        self.logLevelLabel.setText(_translate("UdsActorSetupDialog", "Log Level", None))
 

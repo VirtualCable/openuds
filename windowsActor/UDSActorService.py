@@ -39,10 +39,12 @@ import pythoncom
 import win32com.client
 
 import servicemanager
-from udsactor.windows.SENS import *
 from udsactor import store
 from udsactor import REST
 from udsactor import operations
+
+from udsactor.windows.SENS import *
+from udsactor.log import logger
 
 import socket
 
@@ -269,4 +271,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
 
 if __name__ == '__main__':
     cfg = store.readConfig()
+
+    if logger.logger.isWindows():
+        logger.logger.serviceLogger = True  # Logs will also go to windows event log
+    logger.setLevel(cfg.get('logLevel', 10000))
+
     win32serviceutil.HandleCommandLine(UDSActorSvc)

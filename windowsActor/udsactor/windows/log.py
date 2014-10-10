@@ -31,46 +31,46 @@
 '''
 from __future__ import unicode_literals
 
-import sys
-if sys.platform == 'win32':
-    from udsactor.windows.log import LocalLogger
-else:
-    pass
+import servicemanager
+import logging
+import os
+import tempfile
+
+from udsactor.windows.eventlogutil import AddSourceToRegistry
+from udsactor.windows.eventlogutil import ReportEvent
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
 
-class Logger(object):
+class LocalLogger(object):
     def __init__(self):
-        self.logLevel = OTHER
-        self.logger = LocalLogger()
-
-    def setLevel(self, level):
-        self.logLevel = level
+        logging.basicConfig(
+            filename=os.path.join(tempfile.gettempdir(), 'udsactor.log'),
+            filemode='w',
+            format='%(levelname)s %(asctime)s %(message)s',
+            level=logging.DEBUG
+        )
+        self.logger = logging.getLogger('udsactor')
+        self.serviceLogger = False
 
     def log(self, level, message):
-        if level < self.logLevel:  # Skip not wanted messages
+        # Debug messages are logged to a file
+        # our loglevels are 10000, 20000, ....
+        # python logger are 10, 20, .... (divided by 1000)
+        self.logger.log(level/1000, message)
+
+        if level < INFO or self.serviceLogger is False:  # Only information and above will be on event log
             return
 
-        self.logger.log(level, message)
+        if level < WARN:  # Info
+            servicemanager.LogInfoMsg(message)
+        elif level < ERROR: # WARN
+            servicemanager.LogWarningMsg(message)
+        else:
+            servicemanager.LogErrorMsg(message)
 
-    def debug(self, message):
-        self.log(DEBUG, message)
+    def isWindows(self):
+        return True
 
-    def warn(self, message):
-        self.log(WARN, message)
-
-    def info(self, message):
-        self.log(WARN, message)
-
-    def error(self, message):
-        self.log(ERROR, message)
-
-    def FATAL(self, message):
-        self.log(FATAL, message)
-
-    def flush(self):
-        pass
-
-
-logger = Logger()
+    def isLinux(self):
+        return False

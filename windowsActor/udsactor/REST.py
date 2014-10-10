@@ -34,10 +34,6 @@ from __future__ import unicode_literals
 import requests
 import json
 
-# Valid logging levels
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
-
-
 class RESTError(Exception):
     ERRCODE = 0
 
