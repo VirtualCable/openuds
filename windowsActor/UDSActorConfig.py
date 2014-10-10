@@ -34,9 +34,8 @@ from __future__ import unicode_literals
 import sys
 from PyQt4 import QtCore, QtGui
 
-from store import checkPermissions
-from store import readConfig
-from store import writeConfig
+from udsactor import store
+from udsactor import REST
 
 from setup_dialog_ui import Ui_UdsActorSetupDialog
 
@@ -50,6 +49,9 @@ class MyForm(QtGui.QDialog):
             self.ui.masterKey.setText(data['masterKey'])
             self.ui.useSSl.setCurrentIndex(1 if data['ssl'] is True else 0)
 
+    def _getCfg(self):
+        return { 'host': unicode(self.ui.host.text()), 'masterKey': unicode(self.ui.masterKey.text()), 'ssl': self.ui.useSSl.currentIndex() == 1 }
+
     def textChanged(self):
         enableButtons = self.ui.host.text() != '' and self.ui.masterKey.text() != ''
         self.ui.testButton.setEnabled(enableButtons)
@@ -60,24 +62,30 @@ class MyForm(QtGui.QDialog):
         self.close()
 
     def testParameters(self):
-        pass
+        try:
+            cfg = self._getCfg()
+            api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
+            api.test()
+            QtGui.QMessageBox.information(self, 'Test Passed', 'The test was executed successfully', QtGui.QMessageBox.Ok)
+        except Exception as e:
+            QtGui.QMessageBox.warning(self, 'Test Error', e.message.decode('windows-1250', 'ignore'), QtGui.QMessageBox.Ok)
 
     def acceptAndSave(self):
-        data = { 'host': unicode(self.ui.host.text()), 'masterKey': unicode(self.ui.masterKey.text()), 'ssl': self.ui.useSSl.currentIndex() == 1 }
-        writeConfig(data)
+        cfg = self._getCfg()
+        store.writeConfig(cfg)
         self.close()
 
 if __name__ == "__main__":
 
     app = QtGui.QApplication(sys.argv)
 
-    if checkPermissions() == False:
-        QtGui.QMessageBox.question(None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
+    if store.checkPermissions() == False:
+        QtGui.QMessageBox.critical(None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
         sys.exit(1)
 
     # Read configuration
-    data = readConfig()
+    cfg = store.readConfig()
 
-    myapp = MyForm(data)
+    myapp = MyForm(cfg)
     myapp.show()
     sys.exit(app.exec_())

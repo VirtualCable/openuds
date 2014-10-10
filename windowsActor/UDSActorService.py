@@ -33,17 +33,16 @@ from __future__ import unicode_literals
 
 import win32serviceutil
 import win32service
-import win32api
 import win32event
 
 import pythoncom
 import win32com.client
 
 import servicemanager
-from SENS import *
-from store import readConfig
-import REST
-from windows_operations import *
+from udsactor.windows.SENS import *
+from udsactor import store
+from udsactor import REST
+from udsactor import operations
 
 import socket
 
@@ -74,44 +73,42 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
     def reboot(self):
         self.rebootRequested = True
 
-    def rename(self, name, user=None, oldPass=None, newPass=None):
-        hostName = getComputerName()
+    def rename(self, name, user=None, oldPassword=None, newPassword=None):
+        hostName = operations.getComputerName()
 
         if hostName.lower() == name.lower():
             servicemanager.LogInfoMsg('Computer name is now {}'.format(hostName))
-            r.setReady([(v.mac, v.ip) for v in getNetworkInfo()])
+            self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
             return
 
         # Check for password change request for an user
         if user is not None:
             servicemanager.LogInfoMsg('Setting password for user {}'.format(user))
             try:
-                changeUserPassword(user, oldPassword, newPassword)
+                operations.changeUserPassword(user, oldPassword, newPassword)
             except Exception as e:
                 # We stop here without even renaming computer, because the process has failed
-                raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(unicode(e)))
+                raise Exception('Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(user, unicode(e)))
 
-        renameComputer(name)
+        operations.renameComputer(name)
         # Reboot just after renaming
         servicemanager.LogInfoMsg('Rebooting computer got activate new name {}'.format(name))
         self.reboot()
 
-    def oneStepJoin(name, domain, ou, account, password):
+    def oneStepJoin(self, name, domain, ou, account, password):
         pass
 
     def multiStepJoin(self, name, domain, ou, account, password):
         pass
 
     def joinDomain(self, name, domain, ou, account, password):
-        ver = getWindowsVersion()
+        ver = operations.getWindowsVersion()
         ver = ver[0]*10 + ver[1]
         servicemanager.LogInfoMsg('Starting joining domain {} with name {} (detected operating version: {})'.format(domain, name, ver))
         if ver >= 60:  # Accepts one step joinDomain, also remember XP is no more supported by microsoft, but this also must works with it
             self.oneStepJoin(name, domain, ou, account, password)
         else:
             self.multiStepJoin(name, domain, ou, account, password)
-
-
 
     def interactWithBroker(self):
         '''
@@ -127,7 +124,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         counter = 0
         while self.isAlive:
             try:
-                netInfo = tuple(getNetworkInfo())  # getNetworkInfo is a generator function
+                netInfo = tuple(operations.getNetworkInfo())  # getNetworkInfo is a generator function
                 self.knownIps = dict(((i.mac, i.ip) for i in netInfo))
                 ids = ','.join([i.map for i in netInfo])
                 if ids == '':
@@ -177,7 +174,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                     if len(params) != 5:
                         servicemanager.LogErrorMsg('Got invalid parameters for domain message: {}'.format(params))
                         return False
-                    self.joinDomain(parms[0], parms[1], parms[2], parms[3], parms[4])
+                    self.joinDomain(params[0], params[1], params[2], params[3], params[4])
                 else:
                     servicemanager.LogErrorMsg('Unrecognized action sent from broker: {}'.format(data[0]))
                     return False  # Stop running service
@@ -192,11 +189,11 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                 win32event.WaitForSingleObject(self.hWaitStop, 1000)  # Wait a bit before next check
 
         if self.rebootRequested:
-            reboot()
+            operations.reboot()
             return False   # Stops service
 
     def checkIpsChanged(self):
-        netInfo = tuple(getNetworkInfo())
+        netInfo = tuple(operations.getNetworkInfo())
         for i in netInfo:
             if i.mac in self.knownIps and self.knownIps[i.mac] != i.ip:  # If at least one ip has changed
                 servicemanager.LogInfoMsg('Notifying ip change to broker (mac {}, from {} to {})'.format(i.mac, self.knownIps[i.mac], i.ip))
@@ -271,5 +268,5 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
 
 
 if __name__ == '__main__':
-    cfg = readConfig()
+    cfg = store.readConfig()
     win32serviceutil.HandleCommandLine(UDSActorSvc)

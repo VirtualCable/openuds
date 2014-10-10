@@ -125,7 +125,7 @@ class Api(object):
 
             r = r.json()
         except requests.exceptions.ConnectionError as e:
-            raise ConnectionError(e.message.args[1].strerror)
+            raise ConnectionError(e.message.args[-1].strerror)
         except Exception as e:
             raise ConnectionError(unicode(e))
 
@@ -139,6 +139,10 @@ class Api(object):
                 pass
 
         return r
+
+    @property
+    def isConnected(self):
+        return self.uuid is not None
 
     def test(self):
         url = self._getUrl('test', self.masterKey)

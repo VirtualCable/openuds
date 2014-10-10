@@ -36,10 +36,11 @@ import win32net
 import win32security
 import win32api
 import win32con
-import utils
 import ctypes
 from ctypes.wintypes import DWORD, LPCSTR, LPCWSTR
 import sys
+
+from udsactor import utils
 
 def getErrorMessage(res=0):
     msg = win32api.FormatMessage(res)
