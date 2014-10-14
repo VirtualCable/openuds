@@ -66,7 +66,7 @@ class LocalLogger(object):
             servicemanager.LogInfoMsg(message)
         elif level < ERROR: # WARN
             servicemanager.LogWarningMsg(message)
-        else:
+        else:  # Error & Fatal
             servicemanager.LogErrorMsg(message)
 
     def isWindows(self):

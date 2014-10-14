@@ -44,13 +44,24 @@ class Logger(object):
     def __init__(self):
         self.logLevel = OTHER
         self.logger = LocalLogger()
+        self.remoteLogger = None
 
     def setLevel(self, level):
         self.logLevel = level
 
+    def setRemoteLogger(self, remoteLogger):
+        self.remoteLogger = remoteLogger
+
     def log(self, level, message):
         if level < self.logLevel:  # Skip not wanted messages
             return
+
+        # If remote loger is available, notify message to it
+        try:
+            if self.remoteLogger is not None and self.remoteLogger.isConnected:
+                self.remoteLogger.log(self, leve, message)
+        except Exception as e:
+            self.logger.log(FATAL, 'Error notifying log to broker: {}'.format(e.message))
 
         self.logger.log(level, message)
 
@@ -66,7 +77,7 @@ class Logger(object):
     def error(self, message):
         self.log(ERROR, message)
 
-    def FATAL(self, message):
+    def fatal(self, message):
         self.log(FATAL, message)
 
     def flush(self):

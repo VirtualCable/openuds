@@ -37,6 +37,9 @@ import servicemanager
 import win32com.client
 import win32com.server.policy
 import pythoncom
+import os
+
+from udsactor.log import logger
 
 # based on python SENS example from http://timgolden.me.uk/python/win32_how_do_i/track-session-events.html
 
@@ -69,6 +72,7 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
     def Logon(self, *args):
         logevent('Logon : %s'%[args])
 
+
     def Logoff(self, *args):
         logevent('Logoff : %s'%[args])
         self.executer.logoff(*args)
@@ -89,14 +93,8 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
         logevent('StopScreenSaver : %s'%[args])
 
 
-def logevent(msg, evtid=0xF000):
-    """log into windows event manager
-    """
-    servicemanager.LogMsg(
-            servicemanager.EVENTLOG_INFORMATION_TYPE,
-            evtid, #  generic message
-            (msg, '')
-            )
+def logevent(msg):
+    logger.info(message)
 
 #def register():
     ## call the CoInitialize to allow the registration to run in an other

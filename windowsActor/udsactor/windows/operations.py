@@ -65,6 +65,10 @@ def getNetworkInfo():
         return
 
 def getDomainName():
+    '''
+    Will return the domain name if we belong a domain, else None
+    (if part of a network group, will also return None)
+    '''
     # Status:
     # 0 = Unknown
     # 1 = Unjoined

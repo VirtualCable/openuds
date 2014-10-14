@@ -75,17 +75,20 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
     def reboot(self):
         self.rebootRequested = True
 
+    def setReady(self):
+        self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
+
     def rename(self, name, user=None, oldPassword=None, newPassword=None):
         hostName = operations.getComputerName()
 
         if hostName.lower() == name.lower():
-            servicemanager.LogInfoMsg('Computer name is now {}'.format(hostName))
-            self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
+            logger.info('Computer name is now {}'.format(hostName))
+            self.setReady()
             return
 
         # Check for password change request for an user
         if user is not None:
-            servicemanager.LogInfoMsg('Setting password for user {}'.format(user))
+            logger.info('Setting password for user {}'.format(user))
             try:
                 operations.changeUserPassword(user, oldPassword, newPassword)
             except Exception as e:
@@ -94,20 +97,40 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
 
         operations.renameComputer(name)
         # Reboot just after renaming
-        servicemanager.LogInfoMsg('Rebooting computer got activate new name {}'.format(name))
+        logger.info('Rebooting computer got activate new name {}'.format(name))
         self.reboot()
 
     def oneStepJoin(self, name, domain, ou, account, password):
-        pass
+        currName = operations.getComputerName()
+        # If name is desired, simply execute multiStepJoin, because computer name will not change
+        if currName.lower() == name.lower():
+            self.multiStepJoin(name, domain, ou, account, password)
+        else:
+            operations.renameComputer(name)
+            logger.debug('Computer renamed to {} without reboot'.format(name))
+            operations.joinDomain(domain, ou, account, password, executeInOneStep=True)
+            logger.debug('Requested join domain {} without errors'.format(domain))
+            self.reboot()
 
     def multiStepJoin(self, name, domain, ou, account, password):
-        pass
+        currName = operations.getComputerName()
+        if currName.lower() == name.lower():
+            currDomain = operations.getDomainName()
+            if currDomain is not None and currDomain.lower() == domain.lower():
+                logger.info('Machine {} is part of domain {}'.format(name, domain))
+                self.setReady()
+            else:
+                operations.joinDomain(domain, ou, account, password, executeInOneStep=False)
+        else:
+            operations.renameComputer(name)
+            logger.info('Rebooting computer got activate new name {}'.format(name))
+            self.reboot()
 
     def joinDomain(self, name, domain, ou, account, password):
         ver = operations.getWindowsVersion()
         ver = ver[0]*10 + ver[1]
-        servicemanager.LogInfoMsg('Starting joining domain {} with name {} (detected operating version: {})'.format(domain, name, ver))
-        if ver >= 60:  # Accepts one step joinDomain, also remember XP is no more supported by microsoft, but this also must works with it
+        logger.info('Starting joining domain {} with name {} (detected operating version: {})'.format(domain, name, ver))
+        if ver >= 60:  # Accepts one step joinDomain, also remember XP is no more supported by microsoft, but this also must works with it because will do a "multi step" join
             self.oneStepJoin(name, domain, ou, account, password)
         else:
             self.multiStepJoin(name, domain, ou, account, password)
@@ -132,15 +155,16 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                 if ids == '':
                     raise Exception()  # Wait for any network interface to be ready
                 self.api.init(ids)
+                logger.setRemoteLogger(self.api)  # Set remote logger to notify log info to broker
                 break
             except REST.InvalidKeyError:
                 # TODO: Log exception
-                servicemanager.LogErrorMsg('Can\'t sync with broker: Invalid broker Master Key')
+                logger.fatal('Can\'t sync with broker: Invalid broker Master Key')
                 return False
             except REST.UnmanagedHostError:
                 # Maybe interface that is registered with broker is not enabled already?
                 # Right now, we thing that the interface connected to broker is the interface that broker will know, let's see how this works
-                servicemanager.LogErrorMsg('This host is not managed by UDS Broker (ids: {})'.format(ids))
+                logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
                 return False
             except Exception as e:
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
@@ -167,7 +191,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                         elif len(params) == 4:  # Rename with change password for an user
                             self.rename(params[0], params[1], params[2], params[3])
                         else:
-                            servicemanager.LogErrorMsg('Got invalid parameter for rename operation: {}'.format(params))
+                            logger.error('Got invalid parameter for rename operation: {}'.format(params))
                             return False
                     except Exception as e:
                         servicemanager.LogErrorMsg('Error at computer renaming stage: {}'.format(e.message))
@@ -186,7 +210,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             except Exception:
                 counter += 1
                 if counter % 60 == 0:
-                    servicemanager.LogWarningMsg('Too many retries in progress, though still trying (last error: {})'.format(e.message))
+                    logger.warn('Too many retries in progress, though still trying (last error: {})'.format(e.message))
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
                 win32event.WaitForSingleObject(self.hWaitStop, 1000)  # Wait a bit before next check
 
@@ -273,7 +297,8 @@ if __name__ == '__main__':
     cfg = store.readConfig()
 
     if logger.logger.isWindows():
-        logger.logger.serviceLogger = True  # Logs will also go to windows event log
+        logger.logger.serviceLogger = True  # Logs will also go to windows event log for services
+
     logger.setLevel(cfg.get('logLevel', 10000))
 
     win32serviceutil.HandleCommandLine(UDSActorSvc)
