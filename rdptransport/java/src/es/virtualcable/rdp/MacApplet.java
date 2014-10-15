@@ -23,6 +23,8 @@ public class MacApplet implements OsApplet {
 		if( value == null || value.isEmpty())
 			return "";
 		String res = value.replaceAll(" ", "%20");
+		res = res.replaceAll("@", "%40");
+		res = res.replaceAll(":", "%3A");
 		res = res.replaceAll("&", weird);
 		return res.replaceAll(weird, "&amp;");
 	}
