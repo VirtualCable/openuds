@@ -114,7 +114,9 @@ class Dispatcher(View):
             handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)
             # If no lang on request, try to get the one from
             if lang is None:
-                activate(handler.getValue('locale'))
+                lang = handler.getValue('locale')
+                lang = lang if lang is not None else 'en'
+                activate(lang)
             else:
                 handler.setValue('locale', lang)  # Update Locale if request had one
 
