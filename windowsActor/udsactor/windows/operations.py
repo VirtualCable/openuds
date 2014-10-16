@@ -37,8 +37,7 @@ import win32security
 import win32api
 import win32con
 import ctypes
-from ctypes.wintypes import DWORD, LPCSTR, LPCWSTR
-import sys
+from ctypes.wintypes import DWORD, LPCWSTR
 
 from udsactor import utils
 
@@ -51,7 +50,7 @@ def getComputerName():
 
 def getNetworkInfo():
     obj = win32com.client.Dispatch("WbemScripting.SWbemLocator")
-    wmobj = obj.ConnectServer("localhost","root\cimv2")
+    wmobj = obj.ConnectServer("localhost", "root\cimv2")
     adapters = wmobj.ExecQuery("Select * from Win32_NetworkAdapterConfiguration where IpEnabled=True")
     try:
         for obj in adapters:
@@ -61,7 +60,7 @@ def getNetworkInfo():
                 if ip == '' or ip is None:
                     continue
                 yield utils.Bunch(name=obj.Caption, mac=obj.MACAddress, ip=ip)
-    except Exception as e:
+    except Exception:
         return
 
 def getDomainName():
@@ -130,7 +129,7 @@ def joinDomain(domain, ou, account, password, executeInOneStep=False):
 
 
     # Do log
-    flags =  NETSETUP_ACCT_CREATE | NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
+    flags = NETSETUP_ACCT_CREATE | NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
 
     if executeInOneStep:
         flags |= NETSETUP_JOIN_WITH_NEW_NAME

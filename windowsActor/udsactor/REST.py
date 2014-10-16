@@ -29,6 +29,9 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+
+# pylint: disable-msg=E1101,W0703
+
 from __future__ import unicode_literals
 
 import requests
@@ -96,7 +99,7 @@ class Api(object):
         self.useSSL = ssl
         self.scrambledResponses = scrambledResponses
         self.uuid = None
-        self.url =  "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
+        self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
 
     def _getUrl(self, method, key=None, ids=None):
         url = self.url + method
@@ -158,28 +161,29 @@ class Api(object):
             raise ConnectionError('REST api has not been initialized')
 
         if processData:
-            data = json.dumps({'data': data })
+            data = json.dumps({'data': data})
         print data
         url = self._getUrl('/'.join([self.uuid, msg]))
-        return self._request(url, data)
+        return self._request(url, data)['result']
 
     def login(self, username):
-        return self.postMessage('login', username)['result']
+        return self.postMessage('login', username)
 
     def logout(self, username):
-        return self.postMessage('logout', username)['result']
+        return self.postMessage('logout', username)
 
     def information(self):
-        return self.postMessage('information', '')['result']
+        return self.postMessage('information', '')
 
     def setReady(self, ipsInfo):
         data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
-        return self.postMessage('ready', data)['result']
+        return self.postMessage('ready', data)
 
     def notifyIpChanges(self, ipsInfo):
         data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
-        return self.postMessage('ip', data)['result']
+        return self.postMessage('ip', data)
 
     def log(self, logLevel, message):
         data = json.dumps({'message': message, 'level': logLevel})
-        return self.postMessage('log', data, processData=False)['result']
+        return self.postMessage('log', data, processData=False)
+

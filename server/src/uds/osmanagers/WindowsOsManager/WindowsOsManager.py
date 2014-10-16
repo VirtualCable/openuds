@@ -175,6 +175,7 @@ class WindowsOsManager(osmanagers.OSManager):
             else:
                 UserServiceManager.manager().notifyReadyFromOsManager(service, '')
             logger.debug('Returning {0}'.format(ret))
+        logger.debug('Returning {} to {} message'.format(ret, msg))
         return scrambleMsg(ret)
 
     def processUnused(self, userService):

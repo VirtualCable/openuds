@@ -36,9 +36,6 @@ import logging
 import os
 import tempfile
 
-from udsactor.windows.eventlogutil import AddSourceToRegistry
-from udsactor.windows.eventlogutil import ReportEvent
-
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
 

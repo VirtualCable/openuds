@@ -31,6 +31,7 @@
 '''
 from __future__ import unicode_literals
 
+
 class Bunch(dict):
     def __init__(self, **kw):
         dict.__init__(self, kw)

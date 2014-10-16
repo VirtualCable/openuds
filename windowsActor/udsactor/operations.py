@@ -29,6 +29,8 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=unused-wildcard-import,wildcard-import
+
 from __future__ import unicode_literals
 
 import sys

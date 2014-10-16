@@ -31,7 +31,6 @@
 '''
 from __future__ import unicode_literals
 
-
 from win32com.shell import shell
 import _winreg as wreg
 import win32security
@@ -72,16 +71,16 @@ def fixRegistryPermissions(handle):
 def readConfig():
     try:
         key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_QUERY_VALUE)
-        data, dataType = wreg.QueryValueEx(key, '')
+        data, _ = wreg.QueryValueEx(key, '')
         wreg.CloseKey(key)
         return cPickle.loads(decoder(data))
-    except Exception as e:
+    except Exception:
         return None
 
 def writeConfig(data):
     try:
-        key = wreg.OpenKey(base, path, 0, wreg.KEY_ALL_ACCESS)
-    except:
+        key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_ALL_ACCESS)
+    except Exception:
         key = wreg.CreateKeyEx(baseKey, path, 0, wreg.KEY_ALL_ACCESS)
         fixRegistryPermissions(key.handle)
 

@@ -59,7 +59,7 @@ class Logger(object):
         # If remote loger is available, notify message to it
         try:
             if self.remoteLogger is not None and self.remoteLogger.isConnected:
-                self.remoteLogger.log(self, leve, message)
+                self.remoteLogger.log(self, level, message)
         except Exception as e:
             self.logger.log(FATAL, 'Error notifying log to broker: {}'.format(e.message))
 

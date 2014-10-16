@@ -40,28 +40,33 @@ from udsactor.log import logger
 
 from setup_dialog_ui import Ui_UdsActorSetupDialog
 
+
 class MyForm(QtGui.QDialog):
+
     def __init__(self, data, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
         if data is not None:
             logger.debug('Setting configuration parameters in form')
             self.ui.host.setText(data.get('host', ''))
             self.ui.masterKey.setText(data.get('masterKey', ''))
-            self.ui.useSSl.setCurrentIndex(1 if data.get('ssl', False) is True else 0)
-            self.ui.logLevelComboBox.setCurrentIndex(data.get('logLevel', 10000)/10000 - 1)
+            self.ui.useSSl.setCurrentIndex(
+                1 if data.get('ssl', False) is True else 0)
+            self.ui.logLevelComboBox.setCurrentIndex(
+                data.get('logLevel', 10000) / 10000 - 1)
 
     def _getCfg(self):
         return {
             'host': unicode(self.ui.host.text()),
             'masterKey': unicode(self.ui.masterKey.text()),
             'ssl': self.ui.useSSl.currentIndex() == 1,
-            'logLevel': (self.ui.logLevelComboBox.currentIndex()+1)*10000
-    }
+            'logLevel': (self.ui.logLevelComboBox.currentIndex() + 1) * 10000
+        }
 
     def textChanged(self):
-        enableButtons = self.ui.host.text() != '' and self.ui.masterKey.text() != ''
+        enableButtons = self.ui.host.text(
+        ) != '' and self.ui.masterKey.text() != ''
         self.ui.testButton.setEnabled(enableButtons)
         self.ui.saveButton.setEnabled(enableButtons)
 
@@ -73,13 +78,17 @@ class MyForm(QtGui.QDialog):
         logger.debug('Testing connection')
         try:
             cfg = self._getCfg()
-            api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
+            api = REST.Api(
+                cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
             api.test()
-            QtGui.QMessageBox.information(self, 'Test Passed', 'The test was executed successfully', QtGui.QMessageBox.Ok)
+            QtGui.QMessageBox.information(
+                self, 'Test Passed', 'The test was executed successfully', QtGui.QMessageBox.Ok)
             logger.info('Test was passed successfully')
         except Exception as e:
-            logger.info('Test error: {}'.format(e.message.decode('windows-1250', 'ignore')))
-            QtGui.QMessageBox.warning(self, 'Test Error', e.message.decode('windows-1250', 'ignore'), QtGui.QMessageBox.Ok)
+            logger.info(
+                'Test error: {}'.format(e.message.decode('windows-1250', 'ignore')))
+            QtGui.QMessageBox.warning(self, 'Test Error', e.message.decode(
+                'windows-1250', 'ignore'), QtGui.QMessageBox.Ok)
 
     def acceptAndSave(self):
         cfg = self._getCfg()
@@ -89,8 +98,9 @@ class MyForm(QtGui.QDialog):
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
-    if store.checkPermissions() == False:
-        QtGui.QMessageBox.critical(None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
+    if store.checkPermissions() is False:
+        QtGui.QMessageBox.critical(
+            None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
         sys.exit(1)
 
     # Read configuration

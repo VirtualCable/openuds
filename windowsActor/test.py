@@ -21,7 +21,7 @@ try:
 except REST.UnmanagedHostError:
     print 'Unmanaged host (confirmed)'
 
-uuid = r.init('02:46:00:00:00:06')
+uuid = r.init('02:46:00:00:00:08')
 
 print "Connected: {}".format(r.isConnected)
 
@@ -29,7 +29,8 @@ print 'uuid = {}'.format(uuid)
 
 #print 'Login: {}'.format(r.login('test-user'))
 #print 'Logout: {}'.format(r.logout('test-user'))
-print r.information()
+print "Information: >>{}<<".format(r.information())
+print "Login: >>{}<<".format(r.login('Pepito'))
 
 print r.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
-print r.log(REST.ERROR, 'Test error message')
+print r.log(10000, 'Test error message')

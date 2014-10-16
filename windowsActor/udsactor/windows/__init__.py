@@ -31,4 +31,4 @@
 '''
 from __future__ import unicode_literals
 
-import operations
+from udsactor.windows import operations
