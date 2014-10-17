@@ -95,12 +95,7 @@ def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
     htok = win32security.OpenProcessToken(hproc, win32security.TOKEN_ADJUST_PRIVILEGES | win32security.TOKEN_QUERY)
     privs = ((win32security.LookupPrivilegeValue(None, win32security.SE_SHUTDOWN_NAME), win32security.SE_PRIVILEGE_ENABLED),)
     win32security.AdjustTokenPrivileges(htok, 0, privs)
-    result = win32api.ExitWindowsEx(flags, 0)
-    if result != 0:
-        # GetLastError and format it
-        error = getErrorMessage()
-        logger.error('Reboot returned {}'.format(res))
-        raise Exception(error)
+    win32api.ExitWindowsEx(flags, 0)
 
 def renameComputer(newName):
     # Needs admin privileges to work
