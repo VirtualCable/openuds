@@ -40,6 +40,7 @@ import ctypes
 from ctypes.wintypes import DWORD, LPCWSTR
 
 from udsactor import utils
+from udsactor.log import logger
 
 def getErrorMessage(res=0):
     msg = win32api.FormatMessage(res)
@@ -88,7 +89,7 @@ EWX_REBOOT = 0x00000002
 EWX_FORCE = 0x00000004
 EWX_POWEROFF = 0x00000008
 EWX_FORCEIFHUNG = 0x00000010
-getNetworkInfo()
+
 def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
     hproc = win32api.GetCurrentProcess()
     htok = win32security.OpenProcessToken(hproc, win32security.TOKEN_ADJUST_PRIVILEGES | win32security.TOKEN_QUERY)
@@ -97,7 +98,9 @@ def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
     result = win32api.ExitWindowsEx(flags, 0)
     if result != 0:
         # GetLastError and format it
-        raise Exception(getErrorMessage)
+        error = getErrorMessage()
+        logger.error('Reboot returned {}'.format(res))
+        raise Exception(error)
 
 def renameComputer(newName):
     # Needs admin privileges to work

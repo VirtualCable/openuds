@@ -35,6 +35,7 @@
 from __future__ import unicode_literals
 
 import requests
+import logging
 import json
 
 
@@ -100,6 +101,8 @@ class Api(object):
         self.scrambledResponses = scrambledResponses
         self.uuid = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
+        # Disable logging requests messages except for warnings, errors, ...
+        logging.getLogger("requests").setLevel(logging.WARNING)
 
     def _getUrl(self, method, key=None, ids=None):
         url = self.url + method

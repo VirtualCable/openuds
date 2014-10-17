@@ -70,30 +70,29 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
         self.api = api
 
     def Logon(self, *args):
-        logevent('Logon : %s' % [args])
+        logger.debug('Logon event: {}'.format(args))
         if self.api is not None and self.api.isConnected:
             try:
-                data = self.api.login(args[0]).split('\t')
+                data = self.api.login(args[0])
+                logger.debug('Data received for login: {}'.format(data))
+                data = data.split('\t')
                 if len(data) == 2:
+                    logger.debug('Data is valid: {}'.format(data))
                     windir = os.environ['windir']
-                    f = open(os.path.join(windir, 'remoteh.txt'))
-                    f.write(data[0])
-                    f.close()
-                    f = open(os.path.join(windir, 'remoteip.txt'))
-                    f.write(data[1])
-                    f.close()
+                    with open(os.path.join(windir, 'remoteip.txt'), 'w') as f:
+                        f.write(data[0])
+                    with open(os.path.join(windir, 'remoteh.txt'), 'w') as f:
+                        f.write(data[1])
             except Exception as e:
-                logger.fatal(
-                    'Error notifying logon to server: {}'.format(e.message))
+                logger.fatal('Error notifying logon to server: {}'.format(e))
 
     def Logoff(self, *args):
-        logevent('Logoff : %s' % [args])
+        logger.debug('Logoff event: {}'.format(args))
         if self.api is not None and self.api.isConnected:
             try:
                 self.api.logout(args[0])
             except Exception as e:
-                logger.fatal(
-                    'Error notifying logon to server: {}'.format(e.message))
+                logger.fatal('Error notifying logon to server: {}'.format(e))
 
     def StartShell(self, *args):
         logevent('StartShell : %s' % [args])

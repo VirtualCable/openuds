@@ -50,6 +50,19 @@ import socket
 
 cfg = None
 
+def initCfg():
+    global cfg
+    cfg = store.readConfig()
+
+    if logger.logger.isWindows():
+        # Logs will also go to windows event log for services
+        logger.logger.serviceLogger = True
+
+    if cfg is not None:
+        logger.setLevel(cfg.get('logLevel', 20000))
+    else:
+        logger.setLevel(20000)
+
 
 class UDSActorSvc(win32serviceutil.ServiceFramework):
     _svc_name_ = "UDSActor"
@@ -62,7 +75,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.hWaitStop = win32event.CreateEvent(None, 1, 0, None)
         self.isAlive = True
-        socket.setdefaulttimeout(60)
+        socket.setdefaulttimeout(20)
         self.api = None
         self.rebootRequested = False
         self.knownIps = []
@@ -73,6 +86,11 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         win32event.SetEvent(self.hWaitStop)
 
     SvcShutdown = SvcStop
+
+    def notifyStop(self):
+        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
+                              servicemanager.PYS_SERVICE_STOPPED,
+                              (self._svc_name_, ''))
 
     def reboot(self):
         self.rebootRequested = True
@@ -162,10 +180,10 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         '''
         # If no configuration is found, stop service
         if cfg is None:
+            logger.debug('No configuration found, stopping service')
             return False
 
-        self.api = REST.Api(
-            cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
+        self.api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
 
         # Wait for Broker to be ready
         counter = 0
@@ -174,46 +192,46 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                 # getNetworkInfo is a generator function
                 netInfo = tuple(operations.getNetworkInfo())
                 self.knownIps = dict(((i.mac, i.ip) for i in netInfo))
-                ids = ','.join([i.map for i in netInfo])
+                ids = ','.join([i.mac for i in netInfo])
                 if ids == '':
                     # Wait for any network interface to be ready
+                    logger.debug('No network interfaces found, retrying in a while...')
                     raise Exception()
+                logger.debug('Ids: {}'.format(ids))
                 self.api.init(ids)
                 # Set remote logger to notify log info to broker
                 logger.setRemoteLogger(self.api)
                 break
             except REST.InvalidKeyError:
-                logger.fatal(
-                    'Can\'t sync with broker: Invalid broker Master Key')
+                logger.fatal('Can\'t sync with broker: Invalid broker Master Key')
                 return False
             except REST.UnmanagedHostError:
                 # Maybe interface that is registered with broker is not enabled already?
                 # Right now, we thing that the interface connected to broker is
                 # the interface that broker will know, let's see how this works
-                logger.fatal(
-                    'This host is not managed by UDS Broker (ids: {})'.format(ids))
+                logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
                 return False
             except Exception as e:
+                logger.debug('Exception caugh: {}, retrying'.format(e.message.decode('windows-1250', 'ignore')))
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
                 # but, if too many errors, will log it (one every minute, for
                 # example)
                 counter += 1
-                if counter % 60 == 0:
-                    servicemanager.LogWarningMsg(
-                        'There are too many retries in progress, though still trying (last error: {})'.format(e.message))
+                if counter % 60 == 0:  # Every 5 minutes, raise a log
+                    logger.info('Trying to inititialize connection with broker (last error: {})'.format(e.message.decode('windows-1250', 'ignore')))
                 # Wait a bit before next check
-                win32event.WaitForSingleObject(self.hWaitStop, 1000)
+                win32event.WaitForSingleObject(self.hWaitStop, 5000)
 
         # Broker connection is initialized, now get information about what to
         # do
         counter = 0
         while self.isAlive:
             try:
+                logger.debug('Requesting information of what to do now')
                 info = self.api.information()
                 data = info.split('\r')
                 if len(data) != 2:
-                    servicemanager.LogErrorMsg(
-                        'The format of the information message is not correct (got {})'.format(info))
+                    logger.error('The format of the information message is not correct (got {})'.format(info))
                     raise Exception
                 params = data[1].split('\t')
                 if data[0] == 'rename':
@@ -222,84 +240,96 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                             self.rename(params[0])
                         # Rename with change password for an user
                         elif len(params) == 4:
-                            self.rename(
-                                params[0], params[1], params[2], params[3])
+                            self.rename(params[0], params[1], params[2], params[3])
                         else:
-                            logger.error(
-                                'Got invalid parameter for rename operation: {}'.format(params))
+                            logger.error('Got invalid parameter for rename operation: {}'.format(params))
                             return False
+                        break
                     except Exception as e:
-                        servicemanager.LogErrorMsg(
-                            'Error at computer renaming stage: {}'.format(e.message))
+                        logger.error('Error at computer renaming stage: {}'.format(e.message))
                         return False
                 elif data[0] == 'domain':
                     if len(params) != 5:
-                        servicemanager.LogErrorMsg(
-                            'Got invalid parameters for domain message: {}'.format(params))
+                        logger.error('Got invalid parameters for domain message: {}'.format(params))
                         return False
-                    self.joinDomain(
-                        params[0], params[1], params[2], params[3], params[4])
+                    self.joinDomain(params[0], params[1], params[2], params[3], params[4])
+                    break
                 else:
-                    servicemanager.LogErrorMsg(
-                        'Unrecognized action sent from broker: {}'.format(data[0]))
+                    logger.error('Unrecognized action sent from broker: {}'.format(data[0]))
                     return False  # Stop running service
             except REST.UserServiceNotFoundError:
-                servicemanager.LogErrorMsg(
-                    'The host has lost the sync state with broker! (host uuid changed?)')
+                logger.error('The host has lost the sync state with broker! (host uuid changed?)')
                 return False
             except Exception:
                 counter += 1
                 if counter % 60 == 0:
-                    logger.warn(
-                        'Too many retries in progress, though still trying (last error: {})'.format(e.message))
+                    logger.warn('Too many retries in progress, though still trying (last error: {})'.format(e.message.decode('windows-1250', 'ignore')))
                 # Any other error is expectable and recoverable, so let's wait
                 # a bit and retry again
                 # Wait a bit before next check
                 win32event.WaitForSingleObject(self.hWaitStop, 1000)
 
         if self.rebootRequested:
-            operations.reboot()
+            try:
+                operations.reboot()
+            except Exception as e:
+                logger.error('Exception on reboot: {}'.format(e.message))
             return False   # Stops service
+
+        return True
 
     def checkIpsChanged(self):
         netInfo = tuple(operations.getNetworkInfo())
         for i in netInfo:
             # If at least one ip has changed
             if i.mac in self.knownIps and self.knownIps[i.mac] != i.ip:
-                servicemanager.LogInfoMsg('Notifying ip change to broker (mac {}, from {} to {})'.format(
-                    i.mac, self.knownIps[i.mac], i.ip))
+                logger.info('Notifying ip change to broker (mac {}, from {} to {})'.format(i.mac, self.knownIps[i.mac], i.ip))
                 try:
                     # Notifies all interfaces IPs
                     self.api.notifyIpChanges(((v.mac, v.ip) for v in netInfo))
                     # Regenerates Known ips
                     self.knownIps = dict(((i.mac, i.ip) for i in netInfo))
                 except Exception as e:
-                    servicemanager.LogWarningMsg(
-                        'Got an error notifiying IPs to broker: {} (will retry in a bit)'.format(e.message))
+                    logger.warn('Got an error notifiying IPs to broker: {} (will retry in a bit)'.format(e.message.decode('windows-1250', 'ignore')))
 
     def SvcDoRun(self):
         '''
         Main service loop
         '''
+        initCfg()
+
+        logger.debug('running SvcDoRun')
         servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
                               servicemanager.PYS_SERVICE_STARTED,
                               (self._svc_name_, ''))
+
+        # call the CoInitialize to allow the registration to run in an other
+        # thread
+        logger.debug('Initializing com...')
+        pythoncom.CoInitialize()
 
         # ********************************************************
         # * Ask brokers what to do before proceding to main loop *
         # ********************************************************
         if self.interactWithBroker() is False:
-            self.ReportServiceStatus(win32service.SERVICE_STOPPED)
+            logger.debug('Interact with broker returned false, stopping service after a while')
+            self.notifyStop()
+            win32event.WaitForSingleObject(self.hWaitStop, 5000)
+            return
+
+        if self.isAlive is False:
+            logger.debug('The service is not alive after broker interaction, stopping it')
+            self.notifyStop()
+            return
+
+        if self.rebootRequested is True:
+            logger.debug('Reboot has been requested, stopping service')
+            self.notifyStop()
             return
 
         # ********************************
         # * Registers SENS subscriptions *
         # ********************************
-
-        # call the CoInitialize to allow the registration to run in an other
-        # thread
-        pythoncom.CoInitialize()
-
         logevent('Registring ISensLogon')
         subscription_guid = '{41099152-498E-11E4-8FD3-10FEED05884B}'
         sl = SensLogon(self.api)
@@ -316,8 +346,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
 
         event_system.Store(PROGID_EventSubscription, event_subscription)
 
-        servicemanager.LogMsg(
-            servicemanager.EVENTLOG_INFORMATION_TYPE, 0xF000, ('Running Service Main Loop', ''))
+        logger.debug('Registered SENS, running main loop')
 
         # *********************
         # * Main Service loop *
@@ -330,10 +359,12 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             # Process SENS messages, This will be a bit asyncronous (1 second
             # delay)
             pythoncom.PumpWaitingMessages()
-            if counter % 10 == 0:
-                self.checkIpsChanged()
+            #if counter % 10 == 0:
+            #    self.checkIpsChanged()
             # In milliseconds, will break
             win32event.WaitForSingleObject(self.hWaitStop, 1000)
+
+        logger.debug('Exited main loop, deregistering SENS')
 
         # *******************************************
         # * Remove SENS subscription before exiting *
@@ -341,23 +372,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         event_system.Remove(
             PROGID_EventSubscription, "SubscriptionID == " + subscription_guid)
 
-        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
-                              servicemanager.PYS_SERVICE_STOPPED,
-                              (self._svc_name_, ''))
-
-        try:
-            self.ReportServiceStatus(win32service.SERVICE_STOPPED)
-        except Exception:
-            pass
+        self.notifyStop()
 
 
 if __name__ == '__main__':
-    cfg = store.readConfig()
-
-    if logger.logger.isWindows():
-        # Logs will also go to windows event log for services
-        logger.logger.serviceLogger = True
-
-    logger.setLevel(cfg.get('logLevel', 10000))
-
+    initCfg()
     win32serviceutil.HandleCommandLine(UDSActorSvc)

@@ -41,9 +41,11 @@ OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
 
 class LocalLogger(object):
     def __init__(self):
+        # tempdir is different for "user application" and "service"
+        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
         logging.basicConfig(
             filename=os.path.join(tempfile.gettempdir(), 'udsactor.log'),
-            filemode='w',
+            filemode='a',
             format='%(levelname)s %(asctime)s %(message)s',
             level=logging.DEBUG
         )
@@ -52,9 +54,10 @@ class LocalLogger(object):
 
     def log(self, level, message):
         # Debug messages are logged to a file
-        # our loglevels are 10000, 20000, ....
-        # python logger are 10, 20, .... (divided by 1000)
-        self.logger.log(level/1000, message)
+        # our loglevels are 10000 (other), 20000 (debug), ....
+        # logging levels are 10 (debug), 20 (info)
+        # OTHER = logging.NOTSET
+        self.logger.log(level/1000-10, message)
 
         if level < INFO or self.serviceLogger is False:  # Only information and above will be on event log
             return

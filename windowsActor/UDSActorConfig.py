@@ -105,7 +105,11 @@ if __name__ == "__main__":
 
     # Read configuration
     cfg = store.readConfig()
-    logger.setLevel(cfg.get('logLevel', 10000))
+
+    if cfg is not None:
+        logger.setLevel(cfg.get('logLevel', 20000))
+    else:
+        logger.setLevel(20000)
 
     logger.debug('Configuration: {}'.format(cfg))
 

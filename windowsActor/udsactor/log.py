@@ -48,6 +48,7 @@ class Logger(object):
 
     def setLevel(self, level):
         self.logLevel = level
+        self.logger.log(INFO, 'Setting LogLevel to {}'.format(level))
 
     def setRemoteLogger(self, remoteLogger):
         self.remoteLogger = remoteLogger
@@ -59,7 +60,7 @@ class Logger(object):
         # If remote loger is available, notify message to it
         try:
             if self.remoteLogger is not None and self.remoteLogger.isConnected:
-                self.remoteLogger.log(self, level, message)
+                self.remoteLogger.log(level, message)
         except Exception as e:
             self.logger.log(FATAL, 'Error notifying log to broker: {}'.format(e.message))
 
