@@ -61,7 +61,7 @@ class UserServiceOpChecker(DelayedTask):
     @staticmethod
     def makeUnique(userService, userServiceInstance, state):
         '''
-        This method makes sure that there will be only one delayedtask related to the userService indicated
+        This method ensures that there will be only one delayedtask related to the userService indicated
         '''
         DelayedTaskRunner.runner().remove(USERSERVICE_TAG + str(userService.id))
         UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
@@ -172,13 +172,13 @@ class UserServiceManager(object):
 
     @staticmethod
     def manager():
-        if UserServiceManager._manager == None:
+        if UserServiceManager._manager is None:
             UserServiceManager._manager = UserServiceManager()
         return UserServiceManager._manager
 
     @staticmethod
     def getCacheStateFilter(level):
-        return  Q(cache_level=level) & UserServiceManager.getStateFilter()
+        return Q(cache_level=level) & UserServiceManager.getStateFilter()
 
     @staticmethod
     def getStateFilter():
@@ -194,8 +194,7 @@ class UserServiceManager(object):
         if serviceInstance.maxDeployed == Service.UNLIMITED:
             return
 
-        numberOfServices = deployedService.userServices.filter(
-                               state__in=[State.PREPARING, State.USABLE]).count()
+        numberOfServices = deployedService.userServices.filter(state__in=[State.PREPARING, State.USABLE]).count()
 
         if serviceInstance.maxDeployed <= numberOfServices:
             raise MaxServicesReachedException('Max number of allowed deployments for service reached')
@@ -208,8 +207,9 @@ class UserServiceManager(object):
         self.__checkMaxDeployedReached(deployedServicePublication.deployed_service)
         now = getSqlDatetime()
         return deployedServicePublication.userServices.create(cache_level=cacheLevel, state=State.PREPARING, os_state=State.PREPARING,
-                                               state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service,
-                                               user=None, in_use=False)
+                                                              state_date=now, creation_date=now, data='',
+                                                              deployed_service=deployedServicePublication.deployed_service,
+                                                              user=None, in_use=False)
 
     def __createAssignedAtDb(self, deployedServicePublication, user):
         '''
@@ -218,7 +218,9 @@ class UserServiceManager(object):
         self.__checkMaxDeployedReached(deployedServicePublication.deployed_service)
         now = getSqlDatetime()
         return deployedServicePublication.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
-                                       state_date=now, creation_date=now, data='', deployed_service=deployedServicePublication.deployed_service, user=user, in_use=False)
+                                                              state_date=now, creation_date=now, data='',
+                                                              deployed_service=deployedServicePublication.deployed_service,
+                                                              user=user, in_use=False)
 
     def __createAssignedAtDbForNoPublication(self, deployedService, user):
         '''
@@ -229,7 +231,7 @@ class UserServiceManager(object):
         self.__checkMaxDeployedReached(deployedService)
         now = getSqlDatetime()
         return deployedService.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
-                                       state_date=now, creation_date=now, data='', publication=None, user=user, in_use=False)
+                                                   state_date=now, creation_date=now, data='', publication=None, user=user, in_use=False)
 
     def createCacheFor(self, deployedServicePublication, cacheLevel):
         '''
@@ -268,7 +270,7 @@ class UserServiceManager(object):
         '''
         now = getSqlDatetime()
         assignable = ds.userServices.create(cache_level=0, state=State.PREPARING, os_state=State.PREPARING,
-                                       state_date=now, creation_date=now, data='', user=user, in_use=False)
+                                            state_date=now, creation_date=now, data='', user=user, in_use=False)
         state = deployed.deployForUser(user)
         try:
             UserServiceOpChecker.makeUnique(assignable, deployed, state)
@@ -300,8 +302,8 @@ class UserServiceManager(object):
         '''
         uService = UserService.objects.get(pk=uService.id)
         logger.debug('Canceling uService {0} creation'.format(uService))
-        if uService.isPreparing() == False:
-            logger.INFO(_('Cancel requested for a non running operation, doing remove instead'))
+        if uService.isPreparing() is False:
+            logger.info(_('Cancel requested for a non running operation, doing remove instead'))
             return self.remove(uService)
 
         ui = uService.getInstance()
@@ -319,7 +321,7 @@ class UserServiceManager(object):
         '''
         uService = UserService.objects.get(id=uService.id)
         logger.debug('Removing uService {0}'.format(uService))
-        if uService.isUsable() == False and State.isRemovable(uService.state) == False:
+        if uService.isUsable() is False and State.isRemovable(uService.state) is False:
             raise OperationException(_('Can\'t remove a non active element'))
 
         ci = uService.getInstance()
@@ -410,7 +412,7 @@ class UserServiceManager(object):
         checks if we can do a "remove" from a deployed service
         '''
         removing = self.getServicesInStateForProvider(ds.service.provider_id, State.REMOVING)
-        if removing >= GlobalConfig.MAX_REMOVING_SERVICES.getInt() and GlobalConfig.IGNORE_LIMITS.getBool() == False:
+        if removing >= GlobalConfig.MAX_REMOVING_SERVICES.getInt() and GlobalConfig.IGNORE_LIMITS.getBool() is False:
             return False
         return True
 
@@ -419,7 +421,7 @@ class UserServiceManager(object):
         Checks if we can start a new service
         '''
         preparing = self.getServicesInStateForProvider(ds.service.provider_id, State.PREPARING)
-        if preparing >= GlobalConfig.MAX_PREPARING_SERVICES.getInt() and GlobalConfig.IGNORE_LIMITS.getBool() == False:
+        if preparing >= GlobalConfig.MAX_PREPARING_SERVICES.getInt() and GlobalConfig.IGNORE_LIMITS.getBool() is False:
             return False
         return True
 
@@ -448,7 +450,7 @@ class UserServiceManager(object):
         This checks that the service can continue existing or not
         '''
         # uService = UserService.objects.get(id=uService.id)
-        if uService.publication == None:
+        if uService.publication is None:
             return
         if uService.publication.id != uService.deployed_service.activePublication().id:
             logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))

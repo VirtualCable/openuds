@@ -811,18 +811,18 @@ class UserInterface(object):
                             val = cPickle.loads(v[1:].encode('utf-8'))
                         else:
                             val = v
-                    except:
+                    except Exception:
                         val = ''
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))
-        except:
+        except Exception:
             # Values can contain invalid characters, so we log every single char
             logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
     @classmethod
     def guiDescription(cls, obj=None):
         '''
-        This simple method generates the gui description needed by the
+        This simple method generates the theGui description needed by the
         administration client, so it can
         represent it at user interface and manage it.
 
@@ -830,16 +830,17 @@ class UserInterface(object):
             object: If not none, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
         '''
-        logger.debug('Active languaje for gui translation: {0}'.format(get_language()))
-        gui = cls
+        logger.debug('Active languaje for theGui translation: {0}'.format(get_language()))
+        theGui = cls
         if obj is not None:
-            obj.initGui()  # We give the "oportunity" to fill necesary gui data before providing it to client
-            gui = obj
+            obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
+            theGui = obj
 
         res = []
-        for key, val in gui._gui.iteritems():
+        # pylint: disable=protected-access,maybe-no-member
+        for key, val in theGui._gui.iteritems():
             logger.debug('{0} ### {1}'.format(key, val))
-            res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
+            res.append({'name': key, 'theGui': val.guiDescription(), 'value': ''})
 
         logger.debug('>>>>>>>>>>>> Gui Description: {0} -- {1}'.format(obj, res))
         return res
