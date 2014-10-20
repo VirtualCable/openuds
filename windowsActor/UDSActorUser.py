@@ -32,17 +32,33 @@
 from __future__ import unicode_literals
 
 import sys
-if sys.platform == 'win32':
-    def toUnicode(msg):
-        return msg.decode('windows-1250', 'ignore')
-else:
-    def toUnicode(msg):
-        return msg.decode('utf8')
+from PyQt4 import QtGui
+from udsactor import operations
 
+class SystemTrayIconApp(QtGui.QSystemTrayIcon):
+    def __init__(self, icon, app, parent=None):
+        self.app = app
+        QtGui.QSystemTrayIcon.__init__(self, icon, parent)
+        self.menu = QtGui.QMenu(parent)
+        exitAction = self.menu.addAction("Exit")
+        exitAction.triggered.connect(self.quit)
+        self.setContextMenu(self.menu)
 
-class Bunch(dict):
-    def __init__(self, **kw):
-        dict.__init__(self, kw)
-        self.__dict__ = self
+    def quit(self):
+        operations.loggoff()
+        self.app.quit()
 
+if __name__ == '__main__':
+    app = QtGui.QApplication(sys.argv)
 
+    if not QtGui.QSystemTrayIcon.isSystemTrayAvailable():
+        QtGui.QMessageBox.critical(None, "Systray",
+                                   "I couldn't detect any system tray on this system.")
+        sys.exit(1)
+
+    style = app.style()
+    icon = QtGui.QIcon(style.standardPixmap(QtGui.QStyle.SP_DesktopIcon))
+    trayIcon = SystemTrayIconApp(icon, app)
+
+    trayIcon.show()
+    sys.exit(app.exec_())

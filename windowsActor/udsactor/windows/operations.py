@@ -97,6 +97,10 @@ def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
     win32security.AdjustTokenPrivileges(htok, 0, privs)
     win32api.ExitWindowsEx(flags, 0)
 
+
+def loggoff():
+    win32api.ExitWindowsEx(EWX_LOGOFF)
+
 def renameComputer(newName):
     # Needs admin privileges to work
     if ctypes.windll.kernel32.SetComputerNameExW(DWORD(win32con.ComputerNamePhysicalDnsHostname), LPCWSTR(newName)) == 0:
