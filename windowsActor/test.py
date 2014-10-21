@@ -37,31 +37,47 @@ def testRest():
     print r.log(10000, 'Test error message')
 
 def ipcTest():
-    from udsactor import ipc_server
+    from udsactor import ipc
     import socket
     from time import sleep
 
-    s = ipc_server.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
+    s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
     s.start()
 
-    counter = 0
-    while counter < 4:
-        counter += 1
-        so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        so.connect(('localhost', 39188))
-        sleep(1)
-        s.sendMessage(ipc_server.MSG_LOGOFF, None)
-        print so.recv(512)
-        s.sendMessage(ipc_server.MSG_MESSAGE, 'Cierra la sesión')
-        print so.recv(512)
+    client = ipc.ClientIPC(39188)
+    client.start()
+    client2 = ipc.ClientIPC(39188)
+    client2.start()
 
-        so.close()
-        sleep(1)
+    sleep(1)
 
+    s.sendMessage(ipc.MSG_LOGOFF, None)
+    s.sendMessage(ipc.MSG_MESSAGE, 'Cierra la sesión')
+    s.sendMessage(33, 'invalid')
+    s.sendMessage(ipc.MSG_SCRIPT, 'print "hello"')
+
+    for c in (client, client2):
+        print c.getMessage()
+        print c.getMessage()
+        print c.getMessage()
+
+    client.stop()
+    client.join()
+
+    s.sendMessage(ipc.MSG_LOGOFF, None)
+    s.sendMessage(ipc.MSG_MESSAGE, 'Cierra la sesión')
+    s.sendMessage(33, 'invalid')
+    s.sendMessage(ipc.MSG_SCRIPT, 'print "hello"')
+
+    print client2.getMessage()
+    print client2.getMessage()
+    print client2.getMessage()
+
+    client2.stop()
     s.stop()
+    client2.join()
     s.join()
-
 
 if __name__ == '__main__':
     ipcTest()

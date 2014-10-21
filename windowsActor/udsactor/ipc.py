@@ -52,10 +52,15 @@ from udsactor.log import logger
 # BYTE
 #  0           1-2                        3 4 ...
 # MSG_ID   DATA_LENGTH (little endian)    Data (can be 0 length)
+# With a previos "MAGIC" header in fron of each message
 
 MSG_LOGOFF = 0
 MSG_MESSAGE = 1
 MSG_SCRIPT = 2
+
+VALID_MESSAGES = (MSG_LOGOFF, MSG_MESSAGE, MSG_SCRIPT)
+
+MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the ridght
 
 class ClientProcessor(threading.Thread):
     def __init__(self, clientSocket):
@@ -81,7 +86,6 @@ class ClientProcessor(threading.Thread):
                     logger.debug('Got unexpected data {}'.format(buf))
                 # In fact, we do not process anything right now, simply empty recv buffer if something is found
             except socket.error as e:
-                logger.debug('Got socket error {}'.format(toUnicode(e.strerror)))
                 # If no data is present
                 pass
 
@@ -95,15 +99,16 @@ class ClientProcessor(threading.Thread):
             try:
                 m = msg[1] if msg[1] is not None else ''
                 l = len(m)
-                data = chr(msg[0]) + chr(l/256) + chr(l&0xFF) + m.encode('utf8', 'ignore')
+                data = MAGIC + chr(msg[0]) + chr(l&0xFF) + chr(l>>8) + m.encode('utf8', 'ignore')
                 try:
                     self.clientSocket.sendall(data)
                 except socket.error as e:
                     # Send data error
-                    logger.info('Socket connection is no more available: {}'.format(toUnicode(e.strerror)))
+                    logger.debug('Socket connection is no more available: {}'.format(toUnicode(e.strerror)))
                     self.running = False
             except Exception as e:
                 logger.error('Invalid message in queue: {}'.format(toUnicode(e.strerror)))
+
         try:
             self.clientSocket.close()
         except Exception:
@@ -136,8 +141,9 @@ class ServerIPC(threading.Thread):
         '''
         logger.debug('Sending message {},{} to all clients'.format(msgId, msgData))
         for t in self.threads:
-            logger.debug('Sending to {}'.format(t))
-            t.messages.put((msgId, msgData))
+            if t.isAlive():
+                logger.debug('Sending to {}'.format(t))
+                t.messages.put((msgId, msgData))
 
     def cleanupFinishedThreads(self):
         '''
@@ -145,7 +151,7 @@ class ServerIPC(threading.Thread):
         '''
         aliveThreads = []
         for t in self.threads:
-            if t.isAlive() is True:
+            if t.isAlive():
                 logger.debug('Thread {} is alive'.format(t))
                 aliveThreads.append(t)
         self.threads[:] = aliveThreads
@@ -165,10 +171,96 @@ class ServerIPC(threading.Thread):
                     break
                 logger.debug('Got connection from {}'.format(address))
 
-                self.cleanupFinishedThreads()
+                self.cleanupFinishedThreads()  # House keeping
 
                 t = ClientProcessor(clientSocket)
                 self.threads.append(t)
                 t.start()
             except Exception as e:
                 logger.error('Got an exception on Server ipc thread: {}'.format(e))
+
+
+class ClientIPC(threading.Thread):
+    def __init__(self, listenPort):
+        super(self.__class__, self).__init__()
+        self.port = listenPort
+        self.running = False
+        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.clientSocket.connect(('localhost', listenPort))
+        self.clientSocket.settimeout(2)  # 2 seconds timeout
+        self.messages = Queue.Queue(32)
+
+    def stop(self):
+        self.running = False
+
+    def getMessage(self):
+        while self.running:
+            try:
+                return self.messages.get(block=True, timeout=1)
+            except Queue.Empty:
+                pass
+
+        return None
+
+    def receiveBytes(self, number):
+        msg = b''
+        while self.running:
+            try:
+                msg += self.clientSocket.recv(number-len(msg))
+                if len(msg) == number:
+                    break
+            except socket.timeout:
+                pass
+
+        if self.running is False:
+            return None
+        return msg
+
+    def run(self):
+        self.running = True
+
+        while self.running:
+            try:
+                msg = b''
+                # We look for magic message header
+                while self.running:  # Wait for MAGIC
+                    try:
+                        msg += self.clientSocket.recv(len(MAGIC)-len(msg))
+                        if len(msg) != len(MAGIC):
+                            continue  # Do not have message
+                        if msg != MAGIC:  # Skip first byte an continue searchong
+                            msg = msg[1:]
+                            continue
+                        break
+                    except socket.timeout: # Timeout is here so we can get stop thread
+                        continue
+
+                # Now we get message basic data (msg + datalen)
+                msg = self.receiveBytes(3)
+
+                # We have the magic header, here comes the message itself
+                if msg is None:
+                    continue
+
+                msgId = ord(msg[0])
+                dataLen = ord(msg[1]) + (ord(msg[2])<<8)
+                if msgId not in VALID_MESSAGES:
+                    raise Exception('Invalid message id: {}'.format(msgId))
+
+                data = self.receiveBytes(dataLen)
+                if data is None:
+                    continue
+
+                self.messages.put((msgId, data))
+            except socket.error as e:
+                logger.error('Communication with server got an error: {}'.format(toUnicode(e.strerror)))
+                return
+            except Exception as e:
+                logger.error('Error: {}'.format(toUnicode(e.message)))
+                self.running = False
+
+        try:
+            self.clientSocket.close()
+        except Exception:
+            pass  # If can't close, nothing happens, just end thread
+
