@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 
@@ -38,7 +39,6 @@ def testRest():
 
 def ipcTest():
     from udsactor import ipc
-    import socket
     from time import sleep
 
     s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
@@ -79,6 +79,27 @@ def ipcTest():
     client2.join()
     s.join()
 
+def ipcServer():
+    from udsactor import ipc
+    from win32api import Sleep
+
+    s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
+
+    s.start()
+
+
+    counter = 0
+    while True:
+        try:
+            counter += 1
+            print "Sending new message {}".format(counter)
+            s.sendMessage(ipc.MSG_MESSAGE, 'This is a test message ñöitó 33.3€ {}'.format(counter))
+            Sleep(20)
+        except:
+            break
+
+    s.stop()
+
 if __name__ == '__main__':
-    ipcTest()
+    ipcServer()
 

@@ -33,7 +33,38 @@ from __future__ import unicode_literals
 
 import sys
 from PyQt4 import QtGui
-from udsactor import operations
+from PyQt4 import QtCore
+from udsactor import ipc
+from udsactor.log import logger
+
+
+class MessagesProcessor(QtCore.QThread):
+
+    logoff = QtCore.pyqtSignal(name='logoff')
+    displayMessage = QtCore.pyqtSignal(QtCore.QString, name='displayMessage')
+    script = QtCore.pyqtSignal(QtCore.QString, name='script')
+
+    def __init__(self):
+        super(self.__class__, self).__init__()
+        self.ipc = ipc.ClientIPC(39188)
+        self.ipc.start()
+        self.running = False
+
+    def stop(self):
+        self.running = False
+        self.ipc.stop()
+
+    def run(self):
+        self.running = True
+        while self.running:
+            msgId, data = self.ipc.getMessage()
+            if msgId == ipc.MSG_MESSAGE:
+                self.displayMessage.emit(QtCore.QString.fromUtf8(data))
+            elif msgId == ipc.MSG_LOGOFF:
+                self.logoff.emit()
+            elif msgId == ipc.MSG_SCRIPT:
+                self.script.emit(QtCore.QString.fromUtf8(data))
+
 
 class SystemTrayIconApp(QtGui.QSystemTrayIcon):
     def __init__(self, icon, app, parent=None):
@@ -43,9 +74,21 @@ class SystemTrayIconApp(QtGui.QSystemTrayIcon):
         exitAction = self.menu.addAction("Exit")
         exitAction.triggered.connect(self.quit)
         self.setContextMenu(self.menu)
+        self.ipc = MessagesProcessor()
+        self.ipc.start()
+
+        self.ipc.displayMessage.connect(self.displayMessage, QtCore.Qt.QueuedConnection)
+
+        self.counter = 0
+
+    @QtCore.pyqtSlot(QtCore.QString)
+    def displayMessage(self, message):
+        self.counter += 1
+        print "3.-", message.toUtf8(), '--', self.counter
 
     def quit(self):
-        operations.loggoff()
+        self.ipc.stop()
+
         self.app.quit()
 
 if __name__ == '__main__':

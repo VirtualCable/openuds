@@ -45,7 +45,7 @@ from udsactor.log import logger
 #     Message_id     Data               Action
 #    ------------  --------         --------------------------
 #    MSG_LOGOFF     None            Logout user from session
-#    MSG_MESSAGE    message,level   Display a message with level (INFO, WARN, ERROR, FATAL)
+#    MSG_MESSAGE    message,level   Display a message with level (INFO, WARN, ERROR, FATAL)     # TODO: Include levle, right now only has message
 #    MSG_SCRIPT     python script   Execute an specific python script INSIDE CLIENT environment (this messages is not sent right now)
 #
 # All messages are in the form:
@@ -97,17 +97,17 @@ class ClientProcessor(threading.Thread):
             logger.debug('Got message {}'.format(msg))
 
             try:
-                m = msg[1] if msg[1] is not None else ''
+                m = msg[1] if msg[1] is not None else b''
                 l = len(m)
-                data = MAGIC + chr(msg[0]) + chr(l&0xFF) + chr(l>>8) + m.encode('utf8', 'ignore')
+                data = MAGIC + chr(msg[0]) + chr(l&0xFF) + chr(l>>8) + m
                 try:
                     self.clientSocket.sendall(data)
                 except socket.error as e:
                     # Send data error
-                    logger.debug('Socket connection is no more available: {}'.format(toUnicode(e.strerror)))
+                    logger.debug('Socket connection is no more available: {}'.format(toUnicode(e)))
                     self.running = False
             except Exception as e:
-                logger.error('Invalid message in queue: {}'.format(toUnicode(e.strerror)))
+                logger.error('Invalid message in queue: {}'.format(e))
 
         try:
             self.clientSocket.close()
@@ -140,6 +140,11 @@ class ServerIPC(threading.Thread):
         Notify message to all listening threads
         '''
         logger.debug('Sending message {},{} to all clients'.format(msgId, msgData))
+
+        # Convert to bytes so length is correctly calculated
+        if isinstance(msgData, unicode):
+            msgData = msgData.encode('utf8')
+
         for t in self.threads:
             if t.isAlive():
                 logger.debug('Sending to {}'.format(t))
@@ -182,12 +187,10 @@ class ServerIPC(threading.Thread):
 
 class ClientIPC(threading.Thread):
     def __init__(self, listenPort):
-        super(self.__class__, self).__init__()
+        super(ClientIPC, self).__init__()
         self.port = listenPort
         self.running = False
-        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.clientSocket.connect(('localhost', listenPort))
-        self.clientSocket.settimeout(2)  # 2 seconds timeout
+        self.clientSocket = None
         self.messages = Queue.Queue(32)
 
     def stop(self):
@@ -196,11 +199,18 @@ class ClientIPC(threading.Thread):
     def getMessage(self):
         while self.running:
             try:
-                return self.messages.get(block=True, timeout=1)
+                return self.messages.get(timeout=1)
             except Queue.Empty:
-                pass
+                continue
 
         return None
+
+    def messageReceived(self):
+        '''
+        Override this method to automatically get notified on new message
+        received. Message is at self.messages queue
+        '''
+        pass # Messa
 
     def receiveBytes(self, number):
         msg = b''
@@ -216,8 +226,19 @@ class ClientIPC(threading.Thread):
             return None
         return msg
 
+    def connect(self):
+        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.clientSocket.connect(('localhost', self.port))
+        self.clientSocket.settimeout(2)  # 2 seconds timeout
+
     def run(self):
         self.running = True
+
+        try:
+            self.connect()
+        except:
+            self.running = False
+            return
 
         while self.running:
             try:
@@ -252,12 +273,14 @@ class ClientIPC(threading.Thread):
                     continue
 
                 self.messages.put((msgId, data))
+                self.messageReceived()
+
             except socket.error as e:
                 logger.error('Communication with server got an error: {}'.format(toUnicode(e.strerror)))
+                self.running = False
                 return
             except Exception as e:
                 logger.error('Error: {}'.format(toUnicode(e.message)))
-                self.running = False
 
         try:
             self.clientSocket.close()
