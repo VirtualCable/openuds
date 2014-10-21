@@ -135,7 +135,7 @@ class Actor(Handler):
             if service is None:
                 return Actor.result(_('Unmanaged host'), error=ERR_HOST_NOT_MANAGED)
             else:
-                return Actor.result(service.uuid)
+                return Actor.result((service.uuid, service.unique_id))
         raise RequestError('Invalid request')
 
     # Must be invoked as '/rest/actor/UUID/[message], with message data in post body
@@ -161,6 +161,12 @@ class Actor(Handler):
         inUse = service.in_use
 
         username = ''
+
+        if message == 'notifyComms':
+            service.comms_url = data
+            service.save()
+            return Actor.result('ok')
+
         # Preprocess some messages, common to all clients, such as "log"
         if message == 'log':
             logger.debug(self._params)

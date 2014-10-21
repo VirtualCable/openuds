@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2014-10-21'
 
 from django.db import models
 from django.db.models import signals
@@ -87,6 +87,11 @@ class UserService(UUIDModel):
     src_ip = models.CharField(max_length=15, default='')
 
     cluster_node = models.CharField(max_length=128, default=None, blank=True, null=True, db_index=True)
+
+    # "Secret" url used to communicate (send message) to services
+    # if This is None, communication is not possible
+    # The communication is done using POST via REST & Json
+    comms_url = models.CharField(max_length=256, default=None, null=True, blank=True)
 
     # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
 
