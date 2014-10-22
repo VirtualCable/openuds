@@ -327,6 +327,8 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             self.notifyStop()
             return
 
+        # Register Listening thread
+
         # ********************************
         # * Registers SENS subscriptions *
         # ********************************

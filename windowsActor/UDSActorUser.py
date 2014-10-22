@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+import cPickle
 from udsactor import ipc
 from udsactor.log import logger
 
@@ -43,6 +44,8 @@ class MessagesProcessor(QtCore.QThread):
     logoff = QtCore.pyqtSignal(name='logoff')
     displayMessage = QtCore.pyqtSignal(QtCore.QString, name='displayMessage')
     script = QtCore.pyqtSignal(QtCore.QString, name='script')
+    exit = QtCore.pyqtSignal(name='exit')
+    information = QtCore.pyqtSignal(dict, name='information')
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -54,16 +57,28 @@ class MessagesProcessor(QtCore.QThread):
         self.running = False
         self.ipc.stop()
 
+    def requestInformation(self):
+        self.ipc.requestInformation()
+
     def run(self):
         self.running = True
-        while self.running:
-            msgId, data = self.ipc.getMessage()
+        while self.running and self.ipc.running:
+            msg = self.ipc.getMessage()
+            if msg is None:
+                break
+            msgId, data = msg
             if msgId == ipc.MSG_MESSAGE:
                 self.displayMessage.emit(QtCore.QString.fromUtf8(data))
             elif msgId == ipc.MSG_LOGOFF:
                 self.logoff.emit()
             elif msgId == ipc.MSG_SCRIPT:
                 self.script.emit(QtCore.QString.fromUtf8(data))
+            elif msgId == ipc.MSG_INFORMATION:
+                self.information.emit(cPickle.loads(data))
+
+        if self.ipc.running is False:
+            logger.warn('Lost connection with Service, closing program')
+            self.exit.emit()
 
 
 class SystemTrayIconApp(QtGui.QSystemTrayIcon):
@@ -77,14 +92,33 @@ class SystemTrayIconApp(QtGui.QSystemTrayIcon):
         self.ipc = MessagesProcessor()
         self.ipc.start()
 
-        self.ipc.displayMessage.connect(self.displayMessage, QtCore.Qt.QueuedConnection)
+        self.ipc.displayMessage.connect(self.displayMessage)
+        self.ipc.exit.connect(self.quit)
+        self.ipc.script.connect(self.executeScript)
+        self.ipc.logoff.connect(self.loggof)
+        self.ipc.information.connect(self.information)
+
+        # Pre generate a request for information (general parameters) to daemon/service
+        self.ipc.requestInformation()
 
         self.counter = 0
 
-    @QtCore.pyqtSlot(QtCore.QString)
     def displayMessage(self, message):
         self.counter += 1
-        print "3.-", message.toUtf8(), '--', self.counter
+        print message.toUtf8(), '--', self.counter
+
+    def executeScript(self, message):
+        self.counter += 1
+        print message.toUtf8(), '--', self.counter
+
+    def loggof(self):
+        self.counter += 1
+        print "Loggof --", self.counter
+
+    def information(self, info):
+        self.counter += 1
+        print "Information:", info, '--', self.counter
+
 
     def quit(self):
         self.ipc.stop()

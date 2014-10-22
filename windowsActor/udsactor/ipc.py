@@ -35,6 +35,7 @@ import socket
 import threading
 import Queue
 import time
+import cPickle
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -54,17 +55,21 @@ from udsactor.log import logger
 # MSG_ID   DATA_LENGTH (little endian)    Data (can be 0 length)
 # With a previos "MAGIC" header in fron of each message
 
-MSG_LOGOFF = 0
-MSG_MESSAGE = 1
-MSG_SCRIPT = 2
+MSG_LOGOFF = 0xA1
+MSG_MESSAGE = 0xB2
+MSG_SCRIPT = 0xC3
+MSG_INFORMATION = 0x90
 
-VALID_MESSAGES = (MSG_LOGOFF, MSG_MESSAGE, MSG_SCRIPT)
+VALID_MESSAGES = (MSG_LOGOFF, MSG_MESSAGE, MSG_SCRIPT, MSG_INFORMATION)
+
+REQ_INFORMATION = 0xAA
 
 MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the ridght
 
 class ClientProcessor(threading.Thread):
-    def __init__(self, clientSocket):
+    def __init__(self, parent, clientSocket):
         super(self.__class__, self).__init__()
+        self.parent = parent
         self.clientSocket = clientSocket
         self.running = False
         self.messages = Queue.Queue(32)
@@ -81,12 +86,18 @@ class ClientProcessor(threading.Thread):
             try:
                 while True:
                     buf = self.clientSocket.recv(512)   # Empty buffer, this is set as non-blocking
-                    if buf == '':
+                    if buf == b'':  # No data
                         break
-                    logger.debug('Got unexpected data {}'.format(buf))
+                    for b in buf:
+                        if ord(b) == REQ_INFORMATION:
+                            infoParams = self.parent.infoParams if self.parent.infoParams is not None else {}
+                            self.messages.put((MSG_INFORMATION, cPickle.dumps(infoParams)))
+                            logger.debug('Received a request for information')
+                        else:
+                            logger.debug('Got unexpected data {}'.format(ord(b)))
                 # In fact, we do not process anything right now, simply empty recv buffer if something is found
             except socket.error as e:
-                # If no data is present
+                # If no data is present, no problem at all
                 pass
 
             try:
@@ -117,12 +128,13 @@ class ClientProcessor(threading.Thread):
 
 class ServerIPC(threading.Thread):
 
-    def __init__(self, listenPort):
+    def __init__(self, listenPort, infoParams=None):
         super(self.__class__, self).__init__()
         self.port = listenPort
         self.running = False
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.threads = []
+        self.infoParams = infoParams
 
     def stop(self):
         logger.debug('Stopping Server IPC')
@@ -178,7 +190,7 @@ class ServerIPC(threading.Thread):
 
                 self.cleanupFinishedThreads()  # House keeping
 
-                t = ClientProcessor(clientSocket)
+                t = ClientProcessor(self, clientSocket)
                 self.threads.append(t)
                 t.start()
             except Exception as e:
@@ -193,6 +205,8 @@ class ClientIPC(threading.Thread):
         self.clientSocket = None
         self.messages = Queue.Queue(32)
 
+        self.connect()
+
     def stop(self):
         self.running = False
 
@@ -205,6 +219,9 @@ class ClientIPC(threading.Thread):
 
         return None
 
+    def requestInformation(self):
+        self.clientSocket.sendall(chr(REQ_INFORMATION))
+
     def messageReceived(self):
         '''
         Override this method to automatically get notified on new message
@@ -214,11 +231,13 @@ class ClientIPC(threading.Thread):
 
     def receiveBytes(self, number):
         msg = b''
-        while self.running:
+        while self.running and len(msg) < number:
             try:
-                msg += self.clientSocket.recv(number-len(msg))
-                if len(msg) == number:
+                buf = self.clientSocket.recv(number-len(msg))
+                if buf == b'':
+                    self.running = False
                     break
+                msg += buf
             except socket.timeout:
                 pass
 
@@ -234,19 +253,17 @@ class ClientIPC(threading.Thread):
     def run(self):
         self.running = True
 
-        try:
-            self.connect()
-        except:
-            self.running = False
-            return
-
         while self.running:
             try:
                 msg = b''
                 # We look for magic message header
                 while self.running:  # Wait for MAGIC
                     try:
-                        msg += self.clientSocket.recv(len(MAGIC)-len(msg))
+                        buf = self.clientSocket.recv(len(MAGIC)-len(msg))
+                        if buf == b'':
+                            self.running = False
+                            break
+                        msg += buf
                         if len(msg) != len(MAGIC):
                             continue  # Do not have message
                         if msg != MAGIC:  # Skip first byte an continue searchong

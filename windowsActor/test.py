@@ -24,6 +24,7 @@ def testRest():
         print 'Unmanaged host (confirmed)'
 
     uuid = r.init('02:46:00:00:00:08')
+    print "Notify comm:", r.notifyComm('http://172.27.0.1:8000/')
 
     print "Connected: {}".format(r.isConnected)
 
@@ -83,7 +84,7 @@ def ipcServer():
     from udsactor import ipc
     from win32api import Sleep
 
-    s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
+    s = ipc.ServerIPC(39188, {'idle': 180})  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
     s.start()
 
@@ -94,12 +95,26 @@ def ipcServer():
             counter += 1
             print "Sending new message {}".format(counter)
             s.sendMessage(ipc.MSG_MESSAGE, 'This is a test message ñöitó 33.3€ {}'.format(counter))
-            Sleep(20)
+            counter += 1
+            s.sendMessage(ipc.MSG_SCRIPT, 'print "This is a test message ñöitó 33.3€ {}"'.format(counter))
+            counter += 1
+            s.sendMessage(ipc.MSG_LOGOFF, None)
+            Sleep(1000)
         except:
             break
 
     s.stop()
 
+def testIdle():
+    from udsactor import operations
+    from win32api import Sleep
+
+    for i in xrange(1, 10):
+        print operations.getIdleDuration()
+        Sleep(1000)
+
 if __name__ == '__main__':
     ipcServer()
+    #testRest()
+    #testIdle()
 

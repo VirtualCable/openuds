@@ -169,3 +169,15 @@ def changeUserPassword(user, oldPassword, newPassword):
         error = getErrorMessage()
         raise Exception('Error changing password for user {}: {}'.format(user.value, error))
 
+class LASTINPUTINFO(ctypes.Structure):
+    _fields_ = [
+        ('cbSize', ctypes.c_uint),
+        ('dwTime', ctypes.c_uint),
+    ]
+
+def getIdleDuration():
+    lastInputInfo = LASTINPUTINFO()
+    lastInputInfo.cbSize = ctypes.sizeof(lastInputInfo)
+    ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo))
+    millis = ctypes.windll.kernel32.GetTickCount() - lastInputInfo.dwTime
+    return millis / 1000.0

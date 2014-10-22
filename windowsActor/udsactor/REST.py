@@ -37,7 +37,7 @@ from __future__ import unicode_literals
 import requests
 import logging
 import json
-
+import uuid
 
 class RESTError(Exception):
     ERRCODE = 0
@@ -101,16 +101,19 @@ class Api(object):
         self.scrambledResponses = scrambledResponses
         self.uuid = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
+        self.secretKey = uuid.uuid4().get_hex()
         # Disable logging requests messages except for warnings, errors, ...
         logging.getLogger("requests").setLevel(logging.WARNING)
 
-    def _getUrl(self, method, key=None, ids=None):
+    def _getUrl(self, method, key=None, ids=None, secretKey=None):
         url = self.url + method
         params = []
         if key is not None:
             params.append('key=' + key)
         if ids is not None:
             params.append('id=' + ids)
+        if secretKey is not None:
+            params.append('sk=' + secretKey)
 
         if len(params) > 0:
             url += '?' + '&'.join(params)
@@ -155,8 +158,8 @@ class Api(object):
         '''
         Ids is a comma separated values indicating MAC=ip
         '''
-        url = self._getUrl('init', self.masterKey, ids)
-        self.uuid = self._request(url)['result']
+        url = self._getUrl('init', key=self.masterKey, ids=ids, secretKey=self.secretKey)
+        self.uuid, self.mac = self._request(url)['result']
         return self.uuid
 
     def postMessage(self, msg, data, processData=True):
@@ -168,6 +171,9 @@ class Api(object):
         print data
         url = self._getUrl('/'.join([self.uuid, msg]))
         return self._request(url, data)['result']
+
+    def notifyComm(self, url):
+        return self.postMessage('notifyComms', url)
 
     def login(self, username):
         return self.postMessage('login', username)
