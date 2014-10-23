@@ -105,15 +105,13 @@ class Api(object):
         # Disable logging requests messages except for warnings, errors, ...
         logging.getLogger("requests").setLevel(logging.WARNING)
 
-    def _getUrl(self, method, key=None, ids=None, secretKey=None):
+    def _getUrl(self, method, key=None, ids=None):
         url = self.url + method
         params = []
         if key is not None:
             params.append('key=' + key)
         if ids is not None:
             params.append('id=' + ids)
-        if secretKey is not None:
-            params.append('sk=' + secretKey)
 
         if len(params) > 0:
             url += '?' + '&'.join(params)
@@ -127,7 +125,7 @@ class Api(object):
             if data is None:
                 r = requests.get(url)
             else:
-                r = requests.post(url, data)
+                r = requests.post(url, data=data, headers={'content-type': 'application/json'})
 
             r = r.json()
         except requests.exceptions.ConnectionError as e:
@@ -158,7 +156,7 @@ class Api(object):
         '''
         Ids is a comma separated values indicating MAC=ip
         '''
-        url = self._getUrl('init', key=self.masterKey, ids=ids, secretKey=self.secretKey)
+        url = self._getUrl('init', key=self.masterKey, ids=ids)
         self.uuid, self.mac = self._request(url)['result']
         return self.uuid
 

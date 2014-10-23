@@ -113,8 +113,47 @@ def testIdle():
         print operations.getIdleDuration()
         Sleep(1000)
 
+def testServer():
+    from udsactor import httpserver
+    from win32api import Sleep
+    import random
+    import requests
+    import json
+
+    while True:
+        try:
+            port = random.randrange(32000, 64000)
+            server = httpserver.HTTPServerThread(('172.27.0.8', port))
+            break
+        except:
+            pass
+
+    serverUrl = server.getServerUrl()
+    server.start()
+
+    print serverUrl
+
+    res = requests.post(serverUrl + '/message', data=json.dumps({'Data': 'test1', 'Other': 'test2'}), headers={'content-type': 'application/json'})
+    print res
+    print res.json()
+
+    res = requests.get(serverUrl + '/information?param1=1&param2=2', headers={'content-type': 'application/json'})
+    print res
+    print res.json()
+
+    #try:
+    #    while True:
+    #        Sleep(1000)
+    #except:
+    #    pass
+
+    server.stop()
+    server.join()
+
+
 if __name__ == '__main__':
-    ipcServer()
+    #ipcServer()
     #testRest()
     #testIdle()
+    testServer()
 
