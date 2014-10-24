@@ -40,6 +40,7 @@ from base64 import decodestring
 import time
 
 from udsactor.log import logger
+from udsactor import utils
 
 startTime = time.time()
 
@@ -47,101 +48,134 @@ startTime = time.time()
 class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
     uuid = None
     ipc = None
+    lock = threading.Lock()
 
     def sendJsonError(self, code, message):
-	self.send_response(code)
-	self.send_header('Content-type','application/json')
-	self.end_headers()
-	self.wfile.write(json.dumps({'error': message}))
-	return
+        self.send_response(code)
+        self.send_header('Content-type','application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({'error': message}))
+        return
 
 
     def do_GET(self):
-	# Very simple path & params splitter
-	path = self.path.split('?')[0][1:].split('/')
-	try:
-	    params = dict((v.split('=') for v in self.path.split('?')[1].split('&')))
-	except:
-	    params = {}
+        # Very simple path & params splitter
+        path = self.path.split('?')[0][1:].split('/')
+        try:
+            params = dict((v.split('=') for v in self.path.split('?')[1].split('&')))
+        except:
+            params = {}
 
         if path[0] != HTTPServerHandler.uuid:
             self.sendJsonError(403, 'Forbidden')
             return
 
-	if len(path) != 2:
-	    self.send_response(200)
-	    self.send_header('Content-type','application/json')
-	    self.end_headers()
-	    # Send the html message
-	    self.wfile.write(json.dumps("UDS Actor has been running for {} seconds".format(time.time() - startTime)))
-	    return
+        if len(path) != 2:
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.end_headers()
+            # Send the html message
+            self.wfile.write(json.dumps("UDS Actor has been running for {} seconds".format(time.time() - startTime)))
+            return
 
-	try:
-	    operation = getattr(self, 'get_' + path[1])
-	    result = operation(params)  # Protect not POST methods
-	except AttributeError:
-	    self.sendJsonError(404, 'Method not found')
-	    return
-	except Exception as e:
-	    self.sendJsonError(500, unicode(e))
-	    return
+        try:
+            operation = getattr(self, 'get_' + path[1])
+            result = operation(params)  # Protect not POST methods
+        except AttributeError:
+            self.sendJsonError(404, 'Method not found')
+            return
+        except Exception as e:
+            logger.error('Got exception executing GET {}: {}'.format(path[1], utils.toUnicode(e.message)))
+            self.sendJsonError(500, unicode(e))
+            return
 
-	self.send_response(200)
-	self.send_header('Content-type','application/json')
-	self.end_headers()
-	# Send the html message
-	self.wfile.write(json.dumps(result))
+        self.send_response(200)
+        self.send_header('Content-type','application/json')
+        self.end_headers()
+        # Send the html message
+        self.wfile.write(json.dumps(result))
 
     def do_POST(self):
-	path = self.path.split('?')[0][1:].split('/')
+        path = self.path.split('?')[0][1:].split('/')
         if path[0] != HTTPServerHandler.uuid:
             self.sendJsonError(403, 'Forbidden')
             return
 
-	if len(path) != 2:
-	    self.sendJsonError(400, 'Invalid request')
-	    return
+        if len(path) != 2:
+            self.sendJsonError(400, 'Invalid request')
+            return
 
-	try:
-	    length = int(self.headers.getheader('content-length'))
-	    content = self.rfile.read(length)
-	    print length, ">>", content, '<<'
-	    params = json.loads(content)
+        try:
+            HTTPServerHandler.lock.acquire()
+            length = int(self.headers.getheader('content-length'))
+            content = self.rfile.read(length)
+            print length, ">>", content, '<<'
+            params = json.loads(content)
 
-	    operation = getattr(self, 'post_' + path[1])
-	    result = operation(params)  # Protect not POST methods
-	except AttributeError:
-	    self.sendJsonError(404, 'Method not found')
-	    return
-	except Exception as e:
-	    self.sendJsonError(500, unicode(e))
-	    return
+            operation = getattr(self, 'post_' + path[1])
+            result = operation(params)  # Protect not POST methods
+        except AttributeError:
+            self.sendJsonError(404, 'Method not found')
+            return
+        except Exception as e:
+            logger.error('Got exception executing POST {}: {}'.format(path[1], utils.toUnicode(e.message)))
+            self.sendJsonError(500, unicode(e))
+            return
+        finally:
+            HTTPServerHandler.lock.release()
 
-	self.send_response(200)
-	self.send_header('Content-type','application/json')
-	self.end_headers()
-	# Send the html message
-	self.wfile.write(json.dumps(result))
+
+        self.send_response(200)
+        self.send_header('Content-type','application/json')
+        self.end_headers()
+        # Send the html message
+        self.wfile.write(json.dumps(result))
 
     def post_logoff(self, params):
-	return 'Logout'
+        logger.debug('Sending LOGOFF to clients')
+        HTTPServerHandler.ipc.sendLoggofMessage()
 
     # Alias
     post_logout = post_logoff
 
     def post_message(self, params):
-	return 'message'
+        logger.debug('Sending MESSAGE to clients')
+        if 'message' not in params:
+            raise Exception('Invalid message parameters')
+        HTTPServerHandler.ipc.sendMessageMessage(params['message'])
+
+    def post_script(self, params):
+        if 'script' not in params:
+            raise Exception('Invalid script parameters')
+        if 'user' in params:
+            logger.debug('Sending SCRIPT to clients')
+            HTTPServerHandler.ipc.sendScriptMessage(params['script'])
+        else:
+            # Execute script at server space, that is, here
+            # as a secondary thread
+            script = params['script']
+            def executor():
+                logger.debug('Executing script: {}'.format(script))
+                try:
+                    exec script in None, None
+                except Exception as e:
+                    logger.error('Error executing script: {}'.format(e))
+            th = threading.Thread(target=executor)
+            th.start()
 
     def get_information(self, params):
-	return 'Information'
+        # TODO: Return something useful? :)
+        return 'Information'
 
 
 class HTTPServerThread(threading.Thread):
-    def __init__(self, address):
+    def __init__(self, address, ipc):
         super(self.__class__, self).__init__()
 
         if HTTPServerHandler.uuid is None:
             HTTPServerHandler.uuid =  uuid.uuid4().get_hex()
+
+        HTTPServerHandler.ipc = ipc
 
         self.server = SocketServer.TCPServer(address, HTTPServerHandler)
 
@@ -153,4 +187,3 @@ class HTTPServerThread(threading.Thread):
 
     def run(self):
         self.server.serve_forever()
-

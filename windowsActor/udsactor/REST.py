@@ -39,6 +39,8 @@ import logging
 import json
 import uuid
 
+VERIFY_CERT = False
+
 class RESTError(Exception):
     ERRCODE = 0
 
@@ -116,16 +118,14 @@ class Api(object):
         if len(params) > 0:
             url += '?' + '&'.join(params)
 
-        print url
-
         return url
 
     def _request(self, url, data=None):
         try:
             if data is None:
-                r = requests.get(url)
+                r = requests.get(url, verify=VERIFY_CERT)
             else:
-                r = requests.post(url, data=data, headers={'content-type': 'application/json'})
+                r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=VERIFY_CERT)
 
             r = r.json()
         except requests.exceptions.ConnectionError as e:

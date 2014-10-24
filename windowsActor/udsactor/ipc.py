@@ -162,6 +162,15 @@ class ServerIPC(threading.Thread):
                 logger.debug('Sending to {}'.format(t))
                 t.messages.put((msgId, msgData))
 
+    def sendLoggofMessage(self):
+        self.sendMessage(MSG_LOGOFF, '')
+
+    def sendMessageMessage(self, message):
+        self.sendMessage(MSG_MESSAGE, message)
+
+    def sendScriptMessage(self, script):
+        self.sendMessage(MSG_SCRIPT, script)
+
     def cleanupFinishedThreads(self):
         '''
         Cleans up current threads list

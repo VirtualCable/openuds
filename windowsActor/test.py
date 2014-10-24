@@ -114,16 +114,25 @@ def testIdle():
         Sleep(1000)
 
 def testServer():
-    from udsactor import httpserver
     from win32api import Sleep
     import random
     import requests
     import json
 
+    from udsactor import httpserver
+    from udsactor import ipc
+
+    s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
+
+    s.start()
+
+    client = ipc.ClientIPC(39188)
+    client.start()
+
     while True:
         try:
             port = random.randrange(32000, 64000)
-            server = httpserver.HTTPServerThread(('172.27.0.8', port))
+            server = httpserver.HTTPServerThread(('172.27.0.8', port), s)
             break
         except:
             pass
@@ -133,13 +142,25 @@ def testServer():
 
     print serverUrl
 
-    res = requests.post(serverUrl + '/message', data=json.dumps({'Data': 'test1', 'Other': 'test2'}), headers={'content-type': 'application/json'})
+    res = requests.post(serverUrl + '/message', data=json.dumps({'message': 'Test message'}), headers={'content-type': 'application/json'})
+    print res
+    print res.json()
+
+    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'import time\ntime.sleep(1)\nfor v in xrange(10): print "Hello world, this is an script"'}), headers={'content-type': 'application/json'})
+    print res
+    print res.json()
+
+    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'print "Hello world, this is an script"', 'user': True}), headers={'content-type': 'application/json'})
     print res
     print res.json()
 
     res = requests.get(serverUrl + '/information?param1=1&param2=2', headers={'content-type': 'application/json'})
     print res
     print res.json()
+
+    print "Messages:"
+    print client.getMessage()
+    print client.getMessage()
 
     #try:
     #    while True:
@@ -148,7 +169,8 @@ def testServer():
     #    pass
 
     server.stop()
-    server.join()
+    s.stop()
+    client.stop()
 
 
 if __name__ == '__main__':
