@@ -41,6 +41,8 @@ import time
 
 from udsactor.log import logger
 from udsactor import utils
+from udsactor.certs import createSelfSignedCert
+import ssl
 
 startTime = time.time()
 
@@ -173,14 +175,16 @@ class HTTPServerThread(threading.Thread):
         super(self.__class__, self).__init__()
 
         if HTTPServerHandler.uuid is None:
-            HTTPServerHandler.uuid =  uuid.uuid4().get_hex()
+            HTTPServerHandler.uuid = uuid.uuid4().get_hex()
 
         HTTPServerHandler.ipc = ipc
 
+        self.certFile = createSelfSignedCert(hostName=address[0])
         self.server = SocketServer.TCPServer(address, HTTPServerHandler)
+        self.server.socket = ssl.wrap_socket (self.server.socket, certfile=self.certFile, server_side=True)
 
     def getServerUrl(self):
-        return 'http://{}:{}/{}'.format(self.server.server_address[0], self.server.server_address[1], HTTPServerHandler.uuid)
+        return 'https://{}:{}/{}'.format(self.server.server_address[0], self.server.server_address[1], HTTPServerHandler.uuid)
 
     def stop(self):
         self.server.shutdown()

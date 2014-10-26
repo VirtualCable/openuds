@@ -142,19 +142,19 @@ def testServer():
 
     print serverUrl
 
-    res = requests.post(serverUrl + '/message', data=json.dumps({'message': 'Test message'}), headers={'content-type': 'application/json'})
+    res = requests.post(serverUrl + '/message', data=json.dumps({'message': 'Test message'}), headers={'content-type': 'application/json'}, verify=False)
     print res
     print res.json()
 
-    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'import time\ntime.sleep(1)\nfor v in xrange(10): print "Hello world, this is an script"'}), headers={'content-type': 'application/json'})
+    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'import time\ntime.sleep(1)\nfor v in xrange(10): print "Hello world, this is an script"'}), headers={'content-type': 'application/json'}, verify=False)
     print res
     print res.json()
 
-    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'print "Hello world, this is an script"', 'user': True}), headers={'content-type': 'application/json'})
+    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'print "Hello world, this is an script"', 'user': True}), headers={'content-type': 'application/json'}, verify=False)
     print res
     print res.json()
 
-    res = requests.get(serverUrl + '/information?param1=1&param2=2', headers={'content-type': 'application/json'})
+    res = requests.get(serverUrl + '/information?param1=1&param2=2', headers={'content-type': 'application/json'}, verify=False)
     print res
     print res.json()
 

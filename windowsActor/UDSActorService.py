@@ -334,7 +334,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             self.notifyStop()
             return
 
-        # Initialize listener IPC & REST threads
+        # ******************************************
+        # * Initialize listener IPC & REST threads *
+        # ******************************************
         logger.debug('Starting IPC listener at {}'.format(IPC_PORT))
         self.ipc = ipc.ServerIPC(IPC_PORT)
         self.ipc.start()
