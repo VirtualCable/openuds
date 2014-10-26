@@ -34,19 +34,23 @@ from __future__ import unicode_literals
 import win32serviceutil
 import win32service
 import win32event
-
-import pythoncom
 import win32com.client
-
+import pythoncom
 import servicemanager
+
+import socket
+import random
+
 from udsactor import store
 from udsactor import REST
 from udsactor import operations
+from udsactor import httpserver
+from udsactor import ipc
 
 from udsactor.windows.SENS import *
 from udsactor.log import logger
 
-import socket
+IPC_PORT = 39188
 
 cfg = None
 
@@ -77,6 +81,8 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         self.isAlive = True
         socket.setdefaulttimeout(20)
         self.api = None
+        self.ipc = None
+        self.httpServer = None
         self.rebootRequested = False
         self.knownIps = []
 
@@ -201,6 +207,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                 self.api.init(ids)
                 # Set remote logger to notify log info to broker
                 logger.setRemoteLogger(self.api)
+
                 break
             except REST.InvalidKeyError:
                 logger.fatal('Can\'t sync with broker: Invalid broker Master Key')
@@ -327,7 +334,17 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             self.notifyStop()
             return
 
-        # Register Listening thread
+        # Initialize listener IPC & REST threads
+        logger.debug('Starting IPC listener at {}'.format(IPC_PORT))
+        self.ipc = ipc.ServerIPC(IPC_PORT)
+        self.ipc.start()
+
+        if self.api.mac in self.knownIps:
+            address = (self.knownIps[self.api.mac], random.randrange(32000, 64000))
+            logger.debug('Starting REST listener at {}'.format(address))
+            self.httpServer = httpserver.HTTPServerThread(address, self.ipc)
+            # And notify it to broker
+            self.api.notifyComm(self.httpServer.getServerUrl() )
 
         # ********************************
         # * Registers SENS subscriptions *
@@ -373,6 +390,12 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         # *******************************************
         event_system.Remove(
             PROGID_EventSubscription, "SubscriptionID == " + subscription_guid)
+
+        # Remove IPC threads
+        if self.ipc is not None:
+            self.ipc.stop()
+        if self.httpServer is not None:
+            self.httpServer.stop()
 
         self.notifyStop()
 
