@@ -179,9 +179,9 @@ class HTTPServerThread(threading.Thread):
 
         HTTPServerHandler.ipc = ipc
 
-        self.certFile = createSelfSignedCert(hostName=address[0])
+        self.certFile = createSelfSignedCert()
         self.server = SocketServer.TCPServer(address, HTTPServerHandler)
-        self.server.socket = ssl.wrap_socket (self.server.socket, certfile=self.certFile, server_side=True)
+        self.server.socket = ssl.wrap_socket(self.server.socket, certfile=self.certFile, server_side=True)
 
     def getServerUrl(self):
         return 'https://{}:{}/{}'.format(self.server.server_address[0], self.server.server_address[1], HTTPServerHandler.uuid)
