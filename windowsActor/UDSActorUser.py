@@ -58,27 +58,36 @@ class MessagesProcessor(QtCore.QThread):
         self.ipc.stop()
 
     def requestInformation(self):
-        self.ipc.requestInformation()
+        info = self.ipc.requestInformation()
+        logger.debug('Request information: {}'.format(info))
 
     def run(self):
         self.running = True
         while self.running and self.ipc.running:
-            msg = self.ipc.getMessage()
-            if msg is None:
-                break
-            msgId, data = msg
-            if msgId == ipc.MSG_MESSAGE:
-                self.displayMessage.emit(QtCore.QString.fromUtf8(data))
-            elif msgId == ipc.MSG_LOGOFF:
-                self.logoff.emit()
-            elif msgId == ipc.MSG_SCRIPT:
-                self.script.emit(QtCore.QString.fromUtf8(data))
-            elif msgId == ipc.MSG_INFORMATION:
-                self.information.emit(cPickle.loads(data))
+            try:
+                msg = self.ipc.getMessage()
+                if msg is None:
+                    break
+                msgId, data = msg
+                logger.debug('Got Message on User Space: {}:{}'.format(msgId, data))
+                if msgId == ipc.MSG_MESSAGE:
+                    self.displayMessage.emit(QtCore.QString.fromUtf8(data))
+                elif msgId == ipc.MSG_LOGOFF:
+                    self.logoff.emit()
+                elif msgId == ipc.MSG_SCRIPT:
+                    self.script.emit(QtCore.QString.fromUtf8(data))
+                elif msgId == ipc.MSG_INFORMATION:
+                    self.information.emit(cPickle.loads(data))
+            except Exception as e:
+                try:
+                    logger.error('Got error on IPC thread {}'.format(e))
+                except:
+                    logger.error('Got error on IPC thread (and unicode error??)')
 
-        if self.ipc.running is False:
+        if self.ipc.running is False and self.running == True:
             logger.warn('Lost connection with Service, closing program')
-            self.exit.emit()
+
+        self.exit.emit()
 
 
 class SystemTrayIconApp(QtGui.QSystemTrayIcon):

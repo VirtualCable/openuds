@@ -136,6 +136,7 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
     def post_logoff(self, params):
         logger.debug('Sending LOGOFF to clients')
         HTTPServerHandler.ipc.sendLoggofMessage()
+        return 'ok'
 
     # Alias
     post_logout = post_logoff
@@ -145,6 +146,7 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
         if 'message' not in params:
             raise Exception('Invalid message parameters')
         HTTPServerHandler.ipc.sendMessageMessage(params['message'])
+        return 'ok'
 
     def post_script(self, params):
         if 'script' not in params:
@@ -164,6 +166,7 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
                     logger.error('Error executing script: {}'.format(e))
             th = threading.Thread(target=executor)
             th.start()
+        return 'ok'
 
     def get_information(self, params):
         # TODO: Return something useful? :)
@@ -187,6 +190,7 @@ class HTTPServerThread(threading.Thread):
         return 'https://{}:{}/{}'.format(self.server.server_address[0], self.server.server_address[1], HTTPServerHandler.uuid)
 
     def stop(self):
+        logger.debug('Stopping REST Service')
         self.server.shutdown()
 
     def run(self):

@@ -51,10 +51,8 @@ class MyForm(QtGui.QDialog):
             logger.debug('Setting configuration parameters in form')
             self.ui.host.setText(data.get('host', ''))
             self.ui.masterKey.setText(data.get('masterKey', ''))
-            self.ui.useSSl.setCurrentIndex(
-                1 if data.get('ssl', False) is True else 0)
-            self.ui.logLevelComboBox.setCurrentIndex(
-                data.get('logLevel', 10000) / 10000 - 1)
+            self.ui.useSSl.setCurrentIndex(1 if data.get('ssl', False) is True else 0)
+            self.ui.logLevelComboBox.setCurrentIndex(data.get('logLevel', 10000) / 10000 - 1)
 
     def _getCfg(self):
         return {
@@ -65,8 +63,7 @@ class MyForm(QtGui.QDialog):
         }
 
     def textChanged(self):
-        enableButtons = self.ui.host.text(
-        ) != '' and self.ui.masterKey.text() != ''
+        enableButtons = self.ui.host.text() != '' and self.ui.masterKey.text() != ''
         self.ui.testButton.setEnabled(enableButtons)
         self.ui.saveButton.setEnabled(enableButtons)
 
@@ -110,8 +107,6 @@ if __name__ == "__main__":
         logger.setLevel(cfg.get('logLevel', 20000))
     else:
         logger.setLevel(20000)
-
-    logger.debug('Configuration: {}'.format(cfg))
 
     myapp = MyForm(cfg)
     myapp.show()

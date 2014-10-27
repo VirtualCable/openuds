@@ -43,9 +43,9 @@ def encoder(data):
 def decoder(data):
     return data.decode('bz2')
 
-DEBUG = True
+DEBUG = False
 
-path = 'Software\\UDSEnterpriseActor'
+path = 'Software\\UDSActor'
 baseKey = wreg.HKEY_CURRENT_USER if DEBUG is True else wreg.HKEY_LOCAL_MACHINE
 
 def checkPermissions():

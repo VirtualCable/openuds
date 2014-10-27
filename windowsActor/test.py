@@ -118,9 +118,14 @@ def testServer():
     import random
     import requests
     import json
+    import logging
 
     from udsactor import httpserver
     from udsactor import ipc
+
+    # Disable verify warinings
+    logging.getLogger("requests").setLevel(logging.ERROR)
+    requests.packages.urllib3.disable_warnings()
 
     s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
@@ -172,10 +177,34 @@ def testServer():
     s.stop()
     client.stop()
 
+def testRemote():
+    import requests
+    import json
+
+    serverUrl = "https://172.27.0.208:52562/633a1245873848b7b4017c23283bc195"
+    print serverUrl
+
+    res = requests.post(serverUrl + '/message', data=json.dumps({'message': 'Test message'}), headers={'content-type': 'application/json'}, verify=False)
+    print res
+    print res.json()
+
+    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'import time\ntime.sleep(1)\nfor v in xrange(10): print "Hello world, this is an script"'}), headers={'content-type': 'application/json'}, verify=False)
+    print res
+    print res.json()
+
+    res = requests.post(serverUrl + '/script', data=json.dumps({'script': 'print "Hello world, this is an script"', 'user': True}), headers={'content-type': 'application/json'}, verify=False)
+    print res
+    print res.json()
+
+    res = requests.get(serverUrl + '/information?param1=1&param2=2', headers={'content-type': 'application/json'}, verify=False)
+    print res
+    print res.json()
+
 
 if __name__ == '__main__':
     #ipcServer()
     #testRest()
     #testIdle()
     testServer()
+    #testRemote()
 

@@ -345,8 +345,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             address = (self.knownIps[self.api.mac], random.randrange(32000, 64000))
             logger.debug('Starting REST listener at {}'.format(address))
             self.httpServer = httpserver.HTTPServerThread(address, self.ipc)
+            self.httpServer.start()
             # And notify it to broker
-            self.api.notifyComm(self.httpServer.getServerUrl() )
+            self.api.notifyComm(self.httpServer.getServerUrl())
 
         # ********************************
         # * Registers SENS subscriptions *
@@ -395,9 +396,21 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
 
         # Remove IPC threads
         if self.ipc is not None:
-            self.ipc.stop()
+            try:
+                self.ipc.stop()
+            except:
+                logger.error('Couln\'t stop ipc server')
         if self.httpServer is not None:
-            self.httpServer.stop()
+            try:
+                self.httpServer.stop()
+            except:
+                logger.error('Couln\'t stop REST server')
+
+        if self.api is not None:
+            try:
+                self.api.notifyComm(None)
+            except:
+                logger.error('Couln\'t remove comms url from broker')
 
         self.notifyStop()
 

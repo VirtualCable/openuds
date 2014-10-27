@@ -104,8 +104,9 @@ class Api(object):
         self.uuid = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
         self.secretKey = uuid.uuid4().get_hex()
-        # Disable logging requests messages except for warnings, errors, ...
-        logging.getLogger("requests").setLevel(logging.WARNING)
+        # Disable logging requests messages except for errors, ...
+        requests.packages.urllib3.disable_warnings()
+        logging.getLogger("requests").setLevel(logging.ERROR)
 
     def _getUrl(self, method, key=None, ids=None):
         url = self.url + method
@@ -166,7 +167,6 @@ class Api(object):
 
         if processData:
             data = json.dumps({'data': data})
-        print data
         url = self._getUrl('/'.join([self.uuid, msg]))
         return self._request(url, data)['result']
 
