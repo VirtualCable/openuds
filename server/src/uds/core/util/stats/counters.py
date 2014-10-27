@@ -64,7 +64,7 @@ def addCounter(obj, counterType, counterValue, stamp=None):
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     '''
     if type(obj) not in __caWrite.get(counterType, ()):
-        logger.error('Type {0} does not accepts counter of type {1}', format(type(obj), counterValue))
+        logger.error('Type {0} does not accepts counter of type {1}'.format(type(obj), counterValue))
         return False
 
     return statsManager().addCounter(__transDict[type(obj)], obj.id, counterType, counterValue, stamp)
