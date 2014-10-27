@@ -70,6 +70,9 @@ urlpatterns = patterns(
     (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),
     (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),
     (r'^about', 'web.views.about'),
+    # Ticket authentication
+    (r'^tkauth/(?P<ticketId>.+)/(?P<serviceId>.*)', 'web.views.ticketAuth'),
+
 
     # XMLRPC Processor
     (r'^xmlrpc$', 'xmlrpc.views.xmlrpc'),

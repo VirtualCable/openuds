@@ -25,7 +25,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
@@ -39,9 +38,10 @@ from django.shortcuts import redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-from django.utils import timezone
 from django.views.decorators.http import last_modified
 from django.views.i18n import javascript_catalog
+from django.contrib.sessions.backends.db import SessionStore
+from django.utils import timezone
 
 from uds.core.auths.auth import webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout, getUDSCookie
 from uds.models import Authenticator, DeployedService, Transport, UserService, Network
@@ -53,14 +53,14 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
 from uds.core.util import log
+from uds.core.util.State import State
 from uds.core.ui import theme
+from uds.core.auths.Exceptions import InvalidUserException
 
 from transformers import transformId, scrambleId
 
-import errors
+import uds.web.errors as errors
 import logging
-import random
-import string
 
 logger = logging.getLogger(__name__)
 
@@ -293,7 +293,7 @@ def transcomp(request, idTransport, componentId):
         trans = Transport.objects.get(pk=idTransport)
         itrans = trans.getInstance()
         res = itrans.getHtmlComponent(scrambleId(request, trans.id), request.session['OS'], componentId)
-        response = HttpResponse(res[1], mimetype=res[0])
+        response = HttpResponse(res[1], content_type=res[0])
         response['Content-Length'] = len(res[1])
         return response
     except Exception, e:
@@ -323,14 +323,14 @@ def sernotify(request, idUserService, notification):
     except Exception as e:
         logger.exception("Exception")
         return errors.errorView(request, e)
-    return HttpResponse('ok', mimetype='text/plain')
+    return HttpResponse('ok', content_type='text/plain')
 
 
 @transformId
 def transportIcon(request, idTrans):
     try:
         icon = Transport.objects.get(pk=idTrans).getInstance().icon(False)
-        return HttpResponse(icon, mimetype='image/png')
+        return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponseRedirect('/static/img/unknown.png')
 
@@ -456,6 +456,7 @@ def download(request, idDownload):
 
     return DownloadsManager.manager().send(request, idDownload)
 
+
 last_modified_date = timezone.now()
 
 
@@ -464,3 +465,36 @@ def jsCatalog(request, lang, domain='djangojs', packages=None):
     if lang != '':
         request.GET = {'language': lang}  # Fake args for catalog :-)
     return javascript_catalog(request, domain, packages)
+
+
+def ticketAuth(request, ticketId):
+    '''
+    Used to authenticate an user via a ticket
+    '''
+    session = SessionStore(session_key=ticketId)
+
+    try:
+        for k in ('username', 'groups', 'auth', 'realname'):
+            if k not in session:  # No valid data stored, maybe session is expired, or no session at all
+                raise InvalidUserException()
+        auth = Authenticator.objects.get(uuid=session['auth'])
+        # If user does not exists in DB, create it right now
+        usr = auth.getOrCreateUser(session['username'], session['realname'])
+        if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
+            raise InvalidUserException()
+        # Add user to groups, if they exists...
+        grps = []
+        for g in iter(session['groups']):
+            try:
+                grps.append(auth.groups.get(name=g))
+            except Exception:
+                logger.info('Group {} from ticket does not exists'.format(g))
+        # Add groups
+        usr.groups = grps
+
+    except Authenticator.DoesNotExist:
+        return error(request, InvalidUserException())
+    except Exception as e:
+        return errors.exceptionView(request, e)
+
+    return HttpResponse(ticketId, content_type='text/plain')

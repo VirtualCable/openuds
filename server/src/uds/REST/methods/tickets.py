@@ -73,7 +73,7 @@ class Ticket(Handler):
 
         raise RequestError('Invalid request')
 
-    # Must be invoked as '/rest/ticket/create, with "username", ("authId" or "authSmallName", "group" and optionally "time" (in seconds) as paramteres
+    # Must be invoked as '/rest/ticket/create, with "username", ("authId" or "authSmallName", "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(self):
         '''
         Processes put requests, currently only under "create"
@@ -84,23 +84,30 @@ class Ticket(Handler):
         if 'username' not in self._params or 'group' not in self._params:
             raise RequestError('Invalid parameters')
 
-        if 'authId' not in self._params and 'authSmallName' not in self._params:
+        if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
             raise RequestError('Invalid parameters (no auth)')
 
         try:
             authId = self._params.get('authId', None)
             authSmallName = self._params.get('authSmallName', None)
+            authName = self._params.get('auth', None)
 
             # Will raise an exception if no auth found
             if authId is not None:
                 auth = Authenticator.objects.get(uuid=authId)
+            elif authName is not None:
+                auth = Authenticator.objects.get(name=authName)
             else:
                 auth = Authenticator.objects.get(small_name=authSmallName)
 
             username = self._params['username']
-            group = self._params['group']
+            groups = self._params['groups']
             time = int(self._params.get('time', 60))
-            # Try to get auth, or raise an exception if auth is not found
+            realname = self._params.get('realname', self._params['username'])
+            servicePool = self._params.get('servicePool', None)
+            backUrl = self._params.get('exitUrl', None)
+            # Groups will be checked on user login stage, and invalid groups will be simply ignored
+            # If user is no part of ANY group, access will be denied
 
         except Exception as e:
             return Ticket.result(error=six.text_type(e))
@@ -110,7 +117,8 @@ class Ticket(Handler):
         store = SessionStore()
         store.set_expiry(time)
         store['username'] = username
-        store['group'] = group
+        store['realname'] = realname
+        store['groups'] = groups
         store['auth'] = auth.uuid
         store.save()
 

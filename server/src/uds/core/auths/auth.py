@@ -50,7 +50,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-10-07'
+__updated__ = '2014-10-27'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -82,9 +82,9 @@ def getRootUser():
     u.logout = lambda: None
     return u
 
+
 @deprecated
 def getIp(request):
-    import inspect
     logger.info('Deprecated IP')
     return request.ip
 

@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-09-25'
+__updated__ = '2014-10-27'
 
 
 # a few constants
@@ -541,7 +541,12 @@ class ModelHandler(BaseModelHandler):
 
         # nArgs > 1
         # Request type info or gui, or detail
-        if self._args[0] == TYPES:
+        if self._args[0] == OVERVIEW:
+            if nArgs != 2:
+                self.invalidRequestException()
+                # TODO: Parse _args[1]
+
+        elif self._args[0] == TYPES:
             if nArgs != 2:
                 self.invalidRequestException()
             return self.getType(self._args[1])
