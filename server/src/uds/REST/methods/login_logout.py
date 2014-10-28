@@ -36,6 +36,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.models import Authenticator
 from uds.core.auths.auth import authenticate
 
+from uds.REST import RequestError
 from uds.REST import Handler
 
 import logging
@@ -46,6 +47,9 @@ logger = logging.getLogger(__name__)
 
 
 class Login(Handler):
+    '''
+    Responsible of user authentication
+    '''
     path = 'auth'
     authenticated = False  # Public method
 
@@ -58,7 +62,7 @@ class Login(Handler):
             mandatory:
                 username:
                 password:
-                auth:
+                authId or auth or authSmallName: (must include at least one. If multiple are used, precedence is the list order)
         Result:
             on success: { 'result': 'ok', 'auth': [auth_code] }
             on error: { 'result: 'error', 'error': [error string] }
@@ -67,9 +71,16 @@ class Login(Handler):
         Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
         '''
         try:
-            username, auth, password = self._params['username'], self._params['auth'], self._params['password']
+            if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
+                raise RequestError('Invalid parameters (no auth)')
+
+            authId = self._params.get('authId', None)
+            authSmallName = self._params.get('authSmallName', None)
+            authName = self._params.get('auth', None)
+
+            username, password = self._params['username'], self._params['password']
             locale = self._params.get('locale', 'en')
-            if auth == 'admin':
+            if authName == 'admin' or authSmallName == 'admin':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
                     self.genAuthToken(-1, username, locale, True, True)
                     return{'result': 'ok', 'token': self.getAuthToken()}
@@ -77,8 +88,14 @@ class Login(Handler):
                     raise Exception('Invalid credentials')
             else:
                 try:
-                    logger.debug('Auth: {0}'.format(auth))
-                    auth = Authenticator.objects.get(name=auth)
+                    # Will raise an exception if no auth found
+                    if authId is not None:
+                        auth = Authenticator.objects.get(uuid=authId)
+                    elif authName is not None:
+                        auth = Authenticator.objects.get(name=authName)
+                    else:
+                        auth = Authenticator.objects.get(small_name=authSmallName)
+
                     logger.debug('Auth obj: {0}'.format(auth))
                     user = authenticate(username, password, auth)
                     if user is None:  # invalid credentials
@@ -96,13 +113,16 @@ class Login(Handler):
 
 
 class Logout(Handler):
+    '''
+    Responsible of user de-authentication
+    '''
     path = 'auth'
     authenticated = True  # By default, all handlers needs authentication
 
     def get(self):
         # Remove auth token
         self.cleanAuthToken()
-        return 'done'
+        return {'result': 'ok'}
 
     def post(self):
         return self.get()
@@ -113,11 +133,12 @@ class Auths(Handler):
     authenticated = False  # By default, all handlers needs authentication
 
     def auths(self):
-        for a in Authenticator.all():
+        for a in Authenticator.objects.all():
             if a.getType().isCustom() is False:
                 yield {
-                    'auth': str(a.small_name),
-                    'name': a.name
+                    'authId': a.id,
+                    'authSmallName': str(a.small_name),
+                    'auth': a.name,
                 }
 
     def get(self):
