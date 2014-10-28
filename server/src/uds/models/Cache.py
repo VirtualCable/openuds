@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-10-28'
 
 from django.db import models
 
@@ -67,12 +67,12 @@ class Cache(models.Model):
         '''
         Purges the cache items that are no longer vaild.
         '''
-        from django.db import connection, transaction
-        con = connection
-        cursor = con.cursor()
-        logger.info("Purging cache items")
-        cursor.execute('DELETE FROM uds_utility_cache WHERE created + validity < now()')
-        transaction.commit_unless_managed()
+        from django.db import transaction
+        now = getSqlDatetime()
+        with transaction.atomic():
+            for v in Cache.objects.all():
+                if now > v.created + timedelta(seconds=v.validity):
+                    v.delete()
 
     def __unicode__(self):
         expired = getSqlDatetime() > self.created + timedelta(seconds=self.validity)
@@ -81,5 +81,3 @@ class Cache(models.Model):
         else:
             expired = "Active"
         return u"{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
-
-

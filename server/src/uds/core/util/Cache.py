@@ -58,23 +58,23 @@ class Cache(object):
         # logger.debug('Requesting key "%s" for cache "%s"' % (skey, self._owner,))
         try:
             key = self.__getKey(skey)
-            c = dbCache.objects.get(pk=key)
+            c = dbCache.objects.get(pk=key)  # @UndefinedVariable
             expired = now > c.created + timedelta(seconds=c.validity)
             if expired:
                 return defValue
             val = cPickle.loads(c.value.decode(Cache.CODEC).encode('utf-8'))
             return val
-        except dbCache.DoesNotExist:
-            logger.debug('key not found')
+        except dbCache.DoesNotExist:  # @UndefinedVariable
+            logger.debug('key not found: {}'.format(skey))
             return defValue
 
     def remove(self, skey):
         # logger.debug('Removing key "%s" for uService "%s"' % (skey, self._owner))
         try:
             key = self.__getKey(skey)
-            dbCache.objects.get(pk=key).delete()
+            dbCache.objects.get(pk=key).delete()  # @UndefinedVariable
             return True
-        except dbCache.DoesNotExist:
+        except dbCache.DoesNotExist:  # @UndefinedVariable
             logger.debug('key not found')
             return False
 
@@ -83,16 +83,16 @@ class Cache(object):
 
     def put(self, skey, value, validity=None):
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
-        if validity == None:
+        if validity is None:
             validity = Cache.DEFAULT_VALIDITY
         key = self.__getKey(skey)
         value = cPickle.dumps(value).encode(Cache.CODEC)
         now = getSqlDatetime()
         try:
-            dbCache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)
+            dbCache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable
         except Exception:
             # Already exists, modify it
-            c = dbCache.objects.get(pk=key)
+            c = dbCache.objects.get(pk=key)  # @UndefinedVariable
             c.owner = self._owner
             c.key = key
             c.value = value
@@ -100,31 +100,30 @@ class Cache(object):
             c.validity = validity
             c.save()
 
-
     def refresh(self, skey):
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
         try:
             key = self.__getKey(skey)
-            c = dbCache.objects.get(pk=key)
+            c = dbCache.objects.get(pk=key)  # @UndefinedVariable
             c.created = getSqlDatetime()
             c.save()
-        except dbCache.DoesNotExist:
+        except dbCache.DoesNotExist:  # @UndefinedVariable
             logger.debug('Can\'t refresh cache key %s because it doesn\'t exists' % skey)
             return
 
     @staticmethod
     def purge():
-        dbCache.objects.all().delete()
+        dbCache.objects.all().delete()  # @UndefinedVariable
 
     @staticmethod
     def cleanUp():
-        dbCache.cleanUp()
+        dbCache.cleanUp()  # @UndefinedVariable
 
     @staticmethod
     def delete(owner=None):
         # logger.info("Deleting cache items")
-        if owner == None:
-            objects = dbCache.objects.all()
+        if owner is None:
+            objects = dbCache.objects.all()  # @UndefinedVariable
         else:
-            objects = dbCache.objects.filter(owner=owner)
+            objects = dbCache.objects.filter(owner=owner)  # @UndefinedVariable
         objects.delete()
