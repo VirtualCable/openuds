@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
@@ -39,12 +38,16 @@ from django.db import IntegrityError
 from uds.core.ui.UserInterface import gui as uiGui
 from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
+import fnmatch
+import re
+import itertools
+import types
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-10-27'
+__updated__ = '2014-10-29'
 
 
 # a few constants
@@ -65,7 +68,6 @@ class SaveException(HandlerError):
 
 # Base for Gui Related mixins
 class BaseModelHandler(Handler):
-
     def addField(self, gui, field):
         '''
         Add a field to a "gui" description
@@ -260,6 +262,7 @@ class DetailHandler(BaseModelHandler):
         # Process args
         logger.debug("Detail args for GET: {0}".format(self._args))
         nArgs = len(self._args)
+
         parent = self._kwargs['parent']
         if nArgs == 0:
             return self.getItems(parent, None)
@@ -397,6 +400,9 @@ class ModelHandler(BaseModelHandler):
     # Which model does this manage
     model = None
 
+    # By default, filter is empty
+    fltr = None
+
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
@@ -466,6 +472,56 @@ class ModelHandler(BaseModelHandler):
 
     # End overridable
 
+    def extractFilter(self):
+        # Extract filter from params if present
+        self.fltr = None
+        if 'filter' in self._params:
+            self.fltr = self._params['filter']
+            del self._params['filter']  # Remove parameter
+            logger.debug('Found a filter expression ({})'.format(self.fltr))
+
+    def doFilter(self, data):
+        # Right now, filtering only supports a single filter, in a future
+        # we may improve it
+        if self.fltr is None:
+            return data
+
+        # Filtering a non iterable (list or tuple)
+        if not isinstance(data, (list, tuple, types.GeneratorType)):
+            return data
+
+        logger.debug('data: {}, fltr: {}'.format(data, self.fltr))
+        try:
+            fld, pattern = self.fltr.split('=')
+            s, e = '', ''
+            if pattern[0] == '^':
+                pattern = pattern[1:]
+                s = '^'
+            if pattern[-1] == '$':
+                pattern = pattern[:-1]
+                e = '$'
+
+            r = re.compile(s + fnmatch.translate(pattern) + e, re.IGNORECASE)
+
+            def fltr_function(item):
+                try:
+                    if fld not in item or r.match(item[fld]) is None:
+                        return False
+                except Exception:
+                    return False
+                return True
+
+            res = list(itertools.ifilter(fltr_function, data))
+
+            logger.debug('After filtering: {}'.format(res))
+            return res
+        except:
+            logger.exception('Exception:')
+            logger.info('Filtering expression {} is invalid!'.format(self.fltr))
+            raise RequestError('Filtering expression {} is invalid'.format(self.fltr))
+
+        return data
+
     # Helper to process detail
     def processDetail(self):
         logger.debug('Processing detail {0}'.format(self._path))
@@ -491,8 +547,17 @@ class ModelHandler(BaseModelHandler):
                 logger.exception('Exception getting item from {0}'.format(self.model))
 
     def get(self):
+        '''
+        Wraps real get method so we can process filters if they exists
+        '''
+        # Extract filter from params if present
+        self.extractFilter()
+        return self.doFilter(self.doGet())
+
+    def doGet(self):
         logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
         nArgs = len(self._args)
+
         if nArgs == 0:
             result = []
             for val in self.model.objects.all():

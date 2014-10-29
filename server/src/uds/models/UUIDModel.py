@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2014-10-29'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -59,7 +59,7 @@ class UUIDModel(models.Model):
 
     # Override default save to add uuid
     def save(self, *args, **kwargs):
-        if self.uuid is None:
+        if self.uuid is None or self.uuid == '':
             self.uuid = generateUuid()
         return models.Model.save(self, *args, **kwargs)
 
