@@ -186,27 +186,38 @@ class BaseModelHandler(Handler):
         return res
 
     # Exceptions
-    def invalidRequestException(self):
+    def invalidRequestException(self, message=None):
         '''
         Raises an invalid request error with a default translated string
         '''
-        raise RequestError(_('Invalid Request'))
+        message = _('Invalid Request') if message is None else message
+        raise RequestError('{} {}: {}'.format(message, self.__class__, self._args))
 
     def invalidMethodException(self):
         '''
         Raises a NotFound exception with translated "Method not found" string to current locale
         '''
-        raise NotFound(_('Method not found'))
+        raise RequestError(_('Method not found in {}: {}'.format(self.__class__, self._args)))
 
-    def invalidItemException(self, msg=None):
-        msg = msg or _('Item not found')
-        raise NotFound(msg)
+    def invalidItemException(self, message=None):
+        '''
+        Raises a NotFound exception, with location info
+        '''
+        message = _('Item not found') if message is None else None
+        raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
     # Success methods
     def success(self):
-        return 'done'
+        '''
+        Utility method to be invoked for simple methods that returns nothing in fact
+        '''
+        logger.debug('Returning success on {} {}'.format(self.__class__, self._args))
+        return 'ok'
 
     def test(self, type_):
+        '''
+        Invokes a test for an item
+        '''
         logger.debug('Called base test for {0} --> {1}'.format(self.__class__.__name__, self._params))
         return self.invalidMethodException()
 
@@ -226,6 +237,7 @@ class DetailHandler(BaseModelHandler):
     [path]/types
     [path]/types/TYPE
     [path]/tableinfo
+    ....?filter=[filter],[filter]..., filters are simple unix files filters, with ^ and $ supported
     For PUT:
     [path] --> create NEW item
     [path]/ID --> Modify existing item
@@ -324,7 +336,7 @@ class DetailHandler(BaseModelHandler):
         '''
         Post will be used for, for example, testing
         '''
-        raise NotFound('This objects does not accepts POSTs')
+        self.invalidRequestException('This method does not accepts POST')
 
     def delete(self):
         '''
@@ -341,14 +353,23 @@ class DetailHandler(BaseModelHandler):
 
     # Invoked if default get can't process request
     def fallbackGet(self):
-        raise self.invalidRequestException()
+        '''
+        '''
+        raise self.invalidRequestException('Fallback invoked')
 
     # Override this to provide functionality
     # Default (as sample) getItems
     def getItems(self, parent, item):
-        if item is None:  # Returns ALL detail items
-            return []
-        return {}  # Returns one item
+        '''
+        This must be overriden by desdendants
+        Excepts to return a list of dictionaries or a single dictionary, depending on "item" param
+        If "item" param is None, ALL items are expected to be returned as a list of dictionaries
+        If "Item" param has an id (normally an uuid), one item is expected to be returned as dictionary
+        '''
+        # if item is None:  # Returns ALL detail items
+        #     return []
+        # return {}  # Returns one item
+        raise NotImplementedError('Must provide an getItems method for {} class'.format(self.__class__))
 
     # Default save
     def saveItem(self, parent, item):
@@ -420,10 +441,18 @@ class ModelHandler(BaseModelHandler):
 
     # Data related
     def item_as_dict(self, item):
+        '''
+        Must be overriden by descendants.
+        Expects the return of an item as a dictionary
+        '''
         pass
 
     # types related
     def enum_types(self):  # override this
+        '''
+        Must be overriden by desdencents if they support types
+        Excpetcs the list of types that the handler supports
+        '''
         return []
 
     def getTypes(self, *args, **kwargs):
@@ -609,8 +638,6 @@ class ModelHandler(BaseModelHandler):
         if self._args[0] == OVERVIEW:
             if nArgs != 2:
                 self.invalidRequestException()
-                # TODO: Parse _args[1]
-
         elif self._args[0] == TYPES:
             if nArgs != 2:
                 self.invalidRequestException()
@@ -648,6 +675,9 @@ class ModelHandler(BaseModelHandler):
         self.invalidMethodException()
 
     def put(self):
+        '''
+        Processes a PUT request
+        '''
         logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
         self._params['_request'] = self._request
 
@@ -682,8 +712,9 @@ class ModelHandler(BaseModelHandler):
 
         # Store associated object if needed
         try:
-            if 'data_type' in self._params:  # Needs to store instance
-                item.data_type = self._params['data_type']
+            data_type = self._params.get('data_type', self._params.get('type'))
+            if data_type is not None:
+                item.data_type = data_type
                 item.data = item.getInstance(self._params).serialize()
 
             item.save()
@@ -700,6 +731,9 @@ class ModelHandler(BaseModelHandler):
         return res
 
     def delete(self):
+        '''
+        Processes a DELETE request
+        '''
         logger.debug('method DELETE for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) > 1:
             return self.processDetail()
@@ -713,7 +747,10 @@ class ModelHandler(BaseModelHandler):
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists')
 
-        return 'deleted'
+        return 'ok'
 
     def deleteItem(self, item):
-            item.delete()
+        '''
+        Basic, overridable method for deleting an item
+        '''
+        item.delete()

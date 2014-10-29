@@ -55,11 +55,11 @@ class Authenticators(ModelHandler):
 
     table_title = _('Current authenticators')
     table_fields = [
-            {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-            {'comments': {'title': _('Comments')}},
-            {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
-            {'small_name': {'title': _('Small name')}},
-            {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
+        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+        {'comments': {'title': _('Comments')}},
+        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
+        {'small_name': {'title': _('Small name')}},
+        {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
     ]
 
     def enum_types(self):
@@ -114,7 +114,7 @@ class Authenticators(ModelHandler):
                 return auth.searchUsers(term)
             else:
                 return auth.searchGroups(term)
-        except:
+        except Exception:
             self.invalidRequestException()
 
     def test(self, type_):
@@ -125,8 +125,7 @@ class Authenticators(ModelHandler):
         dct['_request'] = self._request
         res = authType.test(Environment.getTempEnv(), dct)
         if res[0]:
-            return 'ok'
+            return self.success()
         else:
             return res[1]
-
 
