@@ -135,7 +135,6 @@ class User(UUIDModel):
         return self.getManager().logout(self.name)
 
     def getGroups(self):
-        from Group import Group
         '''
         returns the groups (and metagroups) this user belongs to
         '''
@@ -152,8 +151,17 @@ class User(UUIDModel):
             grps += (g.id,)
             yield g
         # Locate metagroups
-        for g in Group.objects.filter(manager__id=usr.manager.id, is_meta=True):
+        for g in self.manager.groups.filter(is_meta=True):
             gn = g.groups.filter(id__in=grps).count()
+
+            logger.debug('gn = {}'.format(gn))
+            logger.debug('groups count: {}'.format(g.groups.count()))
+
+            if g.meta_if_any is True and gn > 0:
+                gn = g.groups.count()
+
+            logger.debug('gn after = {}'.format(gn))
+
             if gn == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g

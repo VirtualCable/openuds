@@ -38,7 +38,7 @@ from Group import Group
 import inspect
 import logging
 
-__updated__ = '2014-09-05'
+__updated__ = '2014-10-30'
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ class GroupsManager(object):
                 lst += (g['group'].dbGroup().id,)
                 yield g['group']
         # Now, get metagroups and also return them
-        for g in dbGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=True):
+        for g in dbGroup.objects.filter(manager__id=self._dbAuthenticator.id, is_meta=True):  # @UndefinedVariable
             gn = g.groups.filter(id__in=lst, state=State.ACTIVE).count()
             if g.meta_if_any is True and gn > 0:
                 gn = g.groups.count()

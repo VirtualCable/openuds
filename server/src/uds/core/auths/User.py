@@ -59,20 +59,20 @@ class User(object):
         '''
         from GroupsManager import GroupsManager
 
-        if self._grpsManager == None:
+        if self._grpsManager is None:
             self._grpsManager = GroupsManager(self._manager.dbAuthenticator())
         return self._grpsManager
 
     def groups(self):
         '''
         Returns the valid groups for this user.
-        To do this, it will validate groups throuht authenticator instance using
+        To do this, it will validate groups through authenticator instance using
         :py:meth:`uds.core.auths.Authenticator.getGroups` method.
 
         :note: Once obtained valid groups, it caches them until object removal.
         '''
         from uds.models import User as DbUser
-        from Group import Group
+        from uds.core.auths.Group import Group
 
         if self._groups is None:
             if self._manager.isExternalSource is True:
@@ -83,7 +83,7 @@ class User(object):
                 usr = DbUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
                 lst = ()
                 for g in self._groups:
-                    if g.dbGroup().is_meta == False:
+                    if g.dbGroup().is_meta is False:
                         lst += (g.dbGroup().id,)
                 usr.groups = lst
             else:
