@@ -840,7 +840,7 @@ class UserInterface(object):
         # pylint: disable=protected-access,maybe-no-member
         for key, val in theGui._gui.iteritems():
             logger.debug('{0} ### {1}'.format(key, val))
-            res.append({'name': key, 'theGui': val.guiDescription(), 'value': ''})
+            res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
 
         logger.debug('>>>>>>>>>>>> Gui Description: {0} -- {1}'.format(obj, res))
         return res
