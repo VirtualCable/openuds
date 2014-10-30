@@ -132,7 +132,7 @@ gui.authenticators.link = (event) ->
 
       onRowSelect: (selected) ->
         
-        # We can have lots of users, so memory can grow up rapidly if we do not keep thins clena
+        # We can have lots of users, so memory can grow up rapidly if we do not keep thins clean
         # To do so, we empty previous table contents before storing new table contents
         # Anyway, TabletTools will keep "leaking" memory, but we can handle a little "leak" that will be fixed as soon as we change the section
         clearDetails()
