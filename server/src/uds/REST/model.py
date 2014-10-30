@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-10-29'
+__updated__ = '2014-10-30'
 
 
 # a few constants
@@ -229,7 +229,7 @@ class DetailHandler(BaseModelHandler):
     '''
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
-    [path] --> get Items (all hopefully, this call is delegated to getItems)
+    [path] --> get Items (all items, this call is delegated to getItems)
     [path]/overview
     [path]/ID
     [path]/gui

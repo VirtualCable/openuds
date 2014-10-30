@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-10-30'
 
 logger = logging.getLogger(__name__)
 
@@ -74,13 +74,13 @@ class User(object):
         from uds.models import User as DbUser
         from Group import Group
 
-        if self._groups == None:
-            if self._manager.isExternalSource == True:
+        if self._groups is None:
+            if self._manager.isExternalSource is True:
                 self._manager.getGroups(self._dbUser.name, self._groupsManager())
                 self._groups = list(self._groupsManager().getValidGroups())
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
-                usr = DbUser.objects.get(pk=self._dbUser.id)
+                usr = DbUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
                 lst = ()
                 for g in self._groups:
                     if g.dbGroup().is_meta == False:
@@ -88,7 +88,7 @@ class User(object):
                 usr.groups = lst
             else:
                 # From db
-                usr = DbUser.objects.get(pk=self._dbUser.id)
+                usr = DbUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
                 self._groups = [Group(g) for g in usr.getGroups()]
         return self._groups
 

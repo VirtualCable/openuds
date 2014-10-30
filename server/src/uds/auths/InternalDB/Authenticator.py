@@ -41,10 +41,9 @@ from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core.util.State import State
 import dns
-import hashlib
 import logging
 
-__updated__ = '2014-10-27'
+__updated__ = '2014-10-30'
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +78,7 @@ class InternalDBAuth(Authenticator):
     def transformUsername(self, username):
         from uds.core.util.request import getRequest
         if self.differentForEachHost.isTrue():
-            newUsername = self.getIp(getRequest().ip) + '-' + username
+            newUsername = self.getIp(getRequest().ip) + '-' + username  # pylint: disable=maybe-no-member
             # Duplicate basic user into username.
             auth = self.dbAuthenticator()
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user
@@ -87,14 +86,14 @@ class InternalDBAuth(Authenticator):
             # and access will be denied
             try:
                 usr = auth.users.get(name=username, state=State.ACTIVE)
-                parent = usr.id
-                usr.id = None
+                parent = usr.uuid
+                usr.id = usr.uuid = None  # Empty "key" fields for replication
                 if usr.real_name.strip() == '':
                     usr.real_name = usr.name
                 usr.name = newUsername
                 usr.parent = parent
                 usr.save()
-            except:
+            except Exception:
                 pass  # User already exists
             username = newUsername
 
@@ -104,11 +103,12 @@ class InternalDBAuth(Authenticator):
         logger.debug('Username: {0}, Password: {1}'.format(username, credentials))
         auth = self.dbAuthenticator()
         try:
-            usr = auth.users.filter(name=username, state=State.ACTIVE)
-            if len(usr) == 0:
+            try:
+                usr = auth.users.get(name=username, state=State.ACTIVE)
+            except Exception:
                 return False
-            usr = usr[0]
-            if usr.parent != -1:  # Direct auth not allowed for "derived" users
+
+            if usr.parent is not None and self.parent != '':  # Direct auth not allowed for "derived" users
                 return False
 
             # Internal Db Auth has its own groups, and if it active it is valid
@@ -117,7 +117,7 @@ class InternalDBAuth(Authenticator):
                 groupsManager.validate([g.name for g in usr.groups.all()])
                 return True
             return False
-        except dbAuthenticator.DoesNotExist:
+        except dbAuthenticator.DoesNotExist:  # @UndefinedVariable
             return False
 
     def createUser(self, usrData):

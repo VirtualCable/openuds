@@ -35,30 +35,42 @@ from __future__ import unicode_literals
 import threading
 import logging
 
-__updated__ = '2014-06-11'
+__updated__ = '2014-10-30'
 
 logger = logging.getLogger(__name__)
 
 _requests = {}
 
 
+def getIdent():
+    return threading.current_thread().ident
+
+
 def getRequest():
-    return _requests[threading._get_ident()]
+    ident = getIdent()
+    if ident in _requests:
+        return _requests[ident]
+    return {}
 
 
 class GlobalRequestMiddleware(object):
     def process_request(self, request):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
-        _requests[threading._get_ident()] = request
+        _requests[getIdent()] = request
         return None
 
     def process_response(self, request, response):
         # Remove IP from global cache (processing responses after this will make global request unavailable,
         # but can be got from request again)
+        ident = getIdent()
+        logger.debug('Deleting {}'.format(ident))
         try:
-            del _requests[threading._get_ident()]
-        except:
+            if ident in _requests:
+                del _requests[ident]
+            else:
+                logger.info('Request id {} not stored'.format(ident))
+        except Exception:
             logger.exception('Deleting stored request')
         return response
 

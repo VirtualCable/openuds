@@ -92,7 +92,7 @@
             <select class="selectpicker show-menu-arrow modal_field_data" multiple data-style="btn-default" countSelectedText="{% endverbatim %}{% trans '{0} of {1} selected' %}{% verbatim %}" 
                     data-selected-text-format="count>3" data-width="100%" name="groups" id="id_groups">
                 {{#each groups_all }}
-                <option value="{{ id }}"{{# ifbelongs id ../groups }}selected{{/ ifbelongs }}>{{ name }}</option>
+                <option value="{{ id }}"{{# ifbelongs id ../groups }} selected{{/ ifbelongs }}>{{ name }}</option>
                 {{/each}}
             </select>
         </div>

@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2014-10-30'
 
 from django.db import models
 from django.db.models import signals
@@ -65,7 +65,7 @@ class User(UUIDModel):
     staff_member = models.BooleanField(default=False)  # Staff members can login to admin
     is_admin = models.BooleanField(default=False)  # is true, this is a super-admin
     last_access = models.DateTimeField(default=NEVER)
-    parent = models.IntegerField(default=-1)
+    parent = models.CharField(max_length=50, default=None, null=True)
 
     class Meta(UUIDModel.Meta):
         '''
@@ -139,10 +139,10 @@ class User(UUIDModel):
         '''
         returns the groups (and metagroups) this user belongs to
         '''
-        if self.parent != -1:
+        if self.parent is not None and self.parent != '':
             try:
-                usr = User.objects.get(id=self.parent)
-            except:  # If parent do not exists
+                usr = User.objects.get(uuid=self.parent)
+            except Exception:  # If parent do not exists
                 usr = self
         else:
             usr = self

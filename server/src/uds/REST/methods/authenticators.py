@@ -128,4 +128,3 @@ class Authenticators(ModelHandler):
             return self.success()
         else:
             return res[1]
-

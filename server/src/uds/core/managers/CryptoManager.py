@@ -84,7 +84,7 @@ class CryptoManager(object):
         try:
             atfork()
             return six.text_type(self._rsa.decrypt(value.decode(CryptoManager.CODEC)).decode('utf-8'))
-        except:
+        except Exception:
             logger.exception('Decripting: {0}'.format(value))
             # logger.error(inspect.stack())
             return 'decript error'
@@ -95,9 +95,10 @@ class CryptoManager(object):
         if isinstance(s2, six.text_type):
             s2 = s2.encode('utf-8')
         mult = (len(s1) / len(s2)) + 1
-        s1 = array.array(str('B'), s1)
-        s2 = array.array(str('B'), s2 * mult)
-        return six.binary_type(array.array(str('B'), (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()).decode('utf-8')
+        s1 = array.array(six.binary_type('B'), s1)
+        s2 = array.array(six.binary_type('B'), s2 * mult)
+        # We must return bynary in xor, because result is in fact binary
+        return six.binary_type(array.array(six.binary_type('B'), (s1[i] ^ s2[i] for i in range(len(s1)))).tostring())
 
     def loadPrivateKey(self, rsaKey):
         try:

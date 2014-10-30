@@ -56,10 +56,10 @@ Handlebars.registerHelper "ifbelongs", (context1, context2, options) ->
   gui.doLog "belongs", context1, context2
   unless $.inArray(context1, context2) is -1
     gui.doLog "belongs is true"
+    gui.doLog options.fn this
     options.fn this
   else
     options.inverse this
-  return
 
 
 # Counters. 
