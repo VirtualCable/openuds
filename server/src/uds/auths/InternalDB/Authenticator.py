@@ -108,7 +108,7 @@ class InternalDBAuth(Authenticator):
             except Exception:
                 return False
 
-            if usr.parent is not None and self.parent != '':  # Direct auth not allowed for "derived" users
+            if usr.parent is not None and usr.parent != '':  # Direct auth not allowed for "derived" users
                 return False
 
             # Internal Db Auth has its own groups, and if it active it is valid

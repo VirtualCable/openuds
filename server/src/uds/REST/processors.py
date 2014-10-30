@@ -126,7 +126,7 @@ class MarshallerProcessor(ContentProcessor):
         try:
             if len(self._request.body) == 0:
                 return self.processGetParameters()
-            logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
+            # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body)
             logger.debug("Unmarshalled content: {}".format(res))
             return res

@@ -42,8 +42,9 @@ from uds.core.auths.Exceptions import AuthenticatorException
 
 import ldap
 import logging
+import six
 
-__updated__ = '2014-09-11'
+__updated__ = '2014-10-30'
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class SimpleLDAPAuthenticator(Authenticator):
 
     def __init__(self, dbAuth, environment, values=None):
         super(SimpleLDAPAuthenticator, self).__init__(dbAuth, environment, values)
-        if values != None:
+        if values is not None:
             self._host = values['host']
             self._port = values['port']
             self._ssl = gui.strToBool(values['ssl'])
@@ -125,13 +126,13 @@ class SimpleLDAPAuthenticator(Authenticator):
 
     def __str__(self):
         return "Ldap Auth: {0}:{1}@{2}:{3}, base = {4}, userClass = {5}, groupClass = {6}, userIdAttr = {7}, groupIdAttr = {8}, memberAttr = {9}, userName attr = {10}".format(
-                self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr,
+            self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr,
                 self._userNameAttr)
 
     def marshal(self):
         return '\t'.join(['v1',
-                self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
-                self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr])
+                          self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
+                          self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr])
 
     def unmarshal(self, str_):
         data = str_.split('\t')
@@ -142,6 +143,10 @@ class SimpleLDAPAuthenticator(Authenticator):
 
     def __connection(self, username=None, password=None):
         if self._connection is None or username is not None:  # We want this method also to check credentials
+            if isinstance(username, six.text_type):
+                username = username.encode('utf8')
+            if isinstance(password, six.text_type):
+                password = password.encode('utf8')
             l = None
             cache = False
             try:
@@ -199,7 +204,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             attrlist = [self._memberAttr.encode('utf-8')]
             logger.debug('Getgroup filter_: {0}, attr list {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
-                             filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
+                                   filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
             grp = dict((k, ['']) for k in attrlist)
             grp.update(res[1])
             grp.update({'dn': res[0], '_id': groupName})
@@ -214,8 +219,8 @@ class SimpleLDAPAuthenticator(Authenticator):
             con = self.__connection()
             filter_ = '(&(objectClass=%s)(|(%s=%s)(%s=%s)))' % (self._groupClass, self._memberAttr, usr['_id'], self._memberAttr, usr['dn'])
             logger.debug('Filter: {0}'.format(filter_))
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr=filter_, attrlist=[self._groupIdAttr],
-                                    sizelimit=LDAP_RESULT_LIMIT)
+            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr=filter_, attrlist=[self._groupIdAttr.encode('utf8')],
+                                   sizelimit=LDAP_RESULT_LIMIT)
             groups = {}
             for g in res:
                 v = g[1][self._groupIdAttr]
@@ -227,6 +232,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             return groups
 
         except Exception:
+            logger.exception('Exception at __getGroups')
             return {}
 
     def __getUserRealName(self, usr):

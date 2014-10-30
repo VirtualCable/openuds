@@ -39,7 +39,7 @@ from uds.core.util import log
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
-from user_services import AssignedService, CachedService, Groups, Transports, Publications
+from uds.REST.methods.user_services import AssignedService, CachedService, Groups, Transports, Publications
 
 import logging
 
@@ -165,11 +165,11 @@ class ServicesPools(ModelHandler):
                     fields['osmanager'] = osmanager
                 del fields['osmanager_id']
 
-                if serviceType.usesCache == False:
+                if serviceType.usesCache is False:
                     for k in ('initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'):
                         fields[k] = 0
 
-            except:
+            except Exception:
                 raise RequestError(ugettext('This service requires an os manager'))
 
         except (RequestError, ResponseError):
