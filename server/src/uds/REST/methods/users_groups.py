@@ -103,7 +103,7 @@ class Users(DetailHandler):
     def getLogs(self, parent, item):
         try:
             user = parent.users.get(uuid=item)
-        except:
+        except Exception:
             self.invalidItemException()
 
         return log.getLogs(user)

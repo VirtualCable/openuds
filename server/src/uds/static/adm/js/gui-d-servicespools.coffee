@@ -367,7 +367,7 @@ gui.servicesPools.link = (event) ->
             onDelete: gui.methods.del(transports, gettext("Remove transport"), gettext("Transport removal error"))
             onData: (data) ->
               $.each data, (undefined_, value) ->
-                style = "display:inline-block; background: url(data:image/png;base64," + value.type.icon + "); " + "width: 16px; height: 16px; vertical-align: middle;"
+                style = "display:inline-block; background: url(data:image/png;base64," + value.type.icon + "); ; background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
                 value.trans_type = value.type.name
                 value.name = "<span style=\"" + style + "\"></span> " + value.name
                 return
@@ -453,7 +453,7 @@ gui.servicesPools.link = (event) ->
               if not service?
                 value.parent = gettext("undefined")
                 return
-              style = "display:inline-block; background: url(data:image/png;base64," + service.info.icon + "); " + "width: 16px; height: 16px; vertical-align: middle;"
+              style = "display:inline-block; background: url(data:image/png;base64," + service.info.icon + "); background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
               if value.restrained
                 value.name = "<span class=\"fa fa-exclamation text-danger\"></span> " + value.name
                 value.state = gettext("Restrained")

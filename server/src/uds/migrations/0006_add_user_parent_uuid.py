@@ -3,14 +3,11 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 
-from uds.core.util.model import generateUuid
-
 
 def add_parent_uuids(apps, schema_editor):
     '''
     Adds uuids values to migrated models
     '''
-    print "Adding parent uuids"
     model = apps.get_model("uds", 'User')
     for m in model.objects.all():
         print m
@@ -30,7 +27,6 @@ def remove_parent_uuids(apps, schema_editor):
     '''
     Dummy function. uuid field will be dropped on reverse migration
     '''
-    print "Removing parent uuids"
     model = apps.get_model("uds", 'User')
     for m in model.objects.all():
         parent = m.parent

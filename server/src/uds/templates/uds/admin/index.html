@@ -64,7 +64,7 @@
         {% compress js %}
         <!-- minified js from: 'jquery', 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
             'jquery.dataTables.min', 'TableTools.min', 'Blob', 'FileSaver', 'ZeroClipboard', 'dataTables.bootstrap', 'handlebars-v1.1.2', UDS admin JS's -->
-        <script src="{% get_static_prefix %}adm/js/jquery-2.0.3.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery-2.1.1.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
@@ -81,18 +81,18 @@
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.time.min.js"></script>
         
         <!-- Table tools -->
-        <script src="{% get_static_prefix %}adm/js/TableTools.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/dataTables.tableTools.min.js"></script>
         
         <!--  for "save" from javascript -->
         <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
-        <script src="{% get_static_prefix %}adm/js/FileSaver.js"></script>
+        <script src="{% get_static_prefix %}adm/js/FileSaver.min.js"></script>
         
         <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script>
         
         <script src="{% get_static_prefix %}adm/js/dataTables.bootstrap.js"></script>
                 
         <!-- template engine -->
-        <script src="{% get_static_prefix %}adm/js/handlebars-v1.3.0.js"></script>
+        <script src="{% get_static_prefix %}adm/js/handlebars-v2.0.0.js"></script>
         
         <!-- First all api related stuff -->
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api.coffee"></script>

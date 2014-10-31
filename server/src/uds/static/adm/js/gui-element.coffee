@@ -29,7 +29,7 @@
         self.types[value.type].css = className
         gui.doLog "Creating style for " + className
         unless alreadyAttached
-          style = "." + className + " { display:inline-block; background: url(data:image/png;base64," + value.icon + "); background-size: 16px 16px; background-repeat: no-repeat; " + "width: 16px; height: 16px; vertical-align: middle; } "
+          style = "." + className + " { display:inline-block; background: url(data:image/png;base64," + value.icon + "); background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle; } "
           styles += style
         return
 
@@ -206,7 +206,8 @@
             tblParams.onData data  if tblParams.onData
             setTimeout (->
               tbl.fnClearTable()
-              tbl.fnAddData data
+              if data.length > 0  # Only adds data if data is available
+                tbl.fnAddData data
               onRefresh self
               gui.tools.unblockUI()
               return
@@ -459,14 +460,14 @@
     
     # Renderers for columns
     refreshFnc = ->
-      
       # Refreshes table content
       tbl = $("#" + tableId).dataTable()
       gui.tools.blockUI()
       self.rest.getLogs itemId, (data) ->
         setTimeout (->
           tbl.fnClearTable()
-          tbl.fnAddData data
+          if data.length > 0
+            tbl.fnAddData data
           gui.tools.unblockUI()
           return
         ), 0
