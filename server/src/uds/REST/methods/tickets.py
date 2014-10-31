@@ -32,11 +32,10 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
-
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import Authenticator
+from uds.models import DeployedService
 from django.contrib.sessions.backends.db import SessionStore
 
 
@@ -49,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 # Enclosed methods under /actor path
-class Ticket(Handler):
+class Tickets(Handler):
     '''
     Processes actor requests
     '''
@@ -78,10 +77,11 @@ class Ticket(Handler):
         '''
         Processes put requests, currently only under "create"
         '''
-        if len(self._args) != 1 or self._args[1] not in ('create',):
+        logger.debug(self._args)
+        if len(self._args) != 1 or self._args[0] not in ('create',):
             raise RequestError('Invalid method')
 
-        if 'username' not in self._params or 'group' not in self._params:
+        if 'username' not in self._params or 'groups' not in self._params:
             raise RequestError('Invalid parameters')
 
         if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
@@ -102,17 +102,25 @@ class Ticket(Handler):
 
             username = self._params['username']
             groups = self._params['groups']
+            if isinstance(groups, (six.text_type, six.binary_type)):
+                groups = (groups,)
             time = int(self._params.get('time', 60))
             realname = self._params.get('realname', self._params['username'])
             servicePool = self._params.get('servicePool', None)
-            backUrl = self._params.get('exitUrl', None)
+
+            if servicePool is not None:
+                DeployedService.objects.get(uuid=servicePool)
+
+            # backUrl = self._params.get('exitUrl', None)
             # Groups will be checked on user login stage, and invalid groups will be simply ignored
             # If user is no part of ANY group, access will be denied
 
         except Exception as e:
-            return Ticket.result(error=six.text_type(e))
+            return Tickets.result(error=six.text_type(e))
         except Authenticator.DoesNotExist:
-            return Ticket.result(error='Authenticator does not exits')
+            return Tickets.result(error='Authenticator does not exists')
+        except DeployedService.DoesNotExist:
+            return Tickets.result(error='Service pool does not exists')
 
         store = SessionStore()
         store.set_expiry(time)
@@ -120,6 +128,7 @@ class Ticket(Handler):
         store['realname'] = realname
         store['groups'] = groups
         store['auth'] = auth.uuid
+        store['servicePool'] = servicePool
         store.save()
 
-        return Ticket.result(store.session_key)
+        return Tickets.result(store.session_key)

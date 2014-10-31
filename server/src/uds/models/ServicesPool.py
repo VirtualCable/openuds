@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2014-10-31'
 
 from django.db import models
 from django.db.models import signals
@@ -365,3 +365,6 @@ class DeployedService(UUIDModel):
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(DeployedService.beforeDelete, sender=DeployedService)
+
+# Renaming of model, easier to understand
+ServicePool = DeployedService

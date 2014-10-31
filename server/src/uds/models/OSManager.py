@@ -33,9 +33,8 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2014-10-31'
 
-from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import IntegrityError
 from django.db.models import signals

@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-05-20'
+__updated__ = '2014-10-31'
 
 import logging
 
@@ -66,7 +66,8 @@ from uds.models.Group import Group
 
 
 # Provisioned services
-from uds.models.ServicesPool import DeployedService
+from uds.models.ServicesPool import DeployedService  # Old name, will continue here for a while already
+from uds.models.ServicesPool import ServicePool  # New name
 from uds.models.ServicesPoolPublication import DeployedServicePublication
 from uds.models.UserService import UserService
 

@@ -34,9 +34,8 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
-from uds.core.managers.CryptoManager import CryptoManager
 from uds.core import osmanagers
-from LinuxOsManager import LinuxOsManager
+from uds.osmanagers.LinuxOsManager import LinuxOsManager
 
 import logging
 
@@ -57,11 +56,9 @@ class LinuxRandomPassManager(LinuxOsManager):
 
     def __init__(self, environment, values):
         super(LinuxRandomPassManager, self).__init__(environment, values)
-        if values != None:
+        if values is not None:
             if values['userAccount'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide an user account!!!'))
-            if values['password'] == '':
-                raise osmanagers.OSManager.ValidationException(_('Must provide a password for the account!!!'))
             self._userAccount = values['userAccount']
         else:
             self._userAccount = ''
@@ -84,10 +81,10 @@ class LinuxRandomPassManager(LinuxOsManager):
         return randomPass
 
     def infoVal(self, service):
-        return 'rename:{0}\t{1}\t{2}\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
+        return 'rename:{0}\t{1}\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
 
     def infoValue(self, service):
-        return 'rename\r{0}\t{1}\t{2}\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
+        return 'rename\r{0}\t{1}\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
 
     def marshal(self):
         base = super(LinuxRandomPassManager, self).marshal()
@@ -100,7 +97,7 @@ class LinuxRandomPassManager(LinuxOsManager):
         data = s.split('\t')
         if data[0] == 'v1':
             self._userAccount = data[1]
-            super(LinuxRandomPassManager, self).unmarshal(data[3].decode('hex'))
+            super(LinuxRandomPassManager, self).unmarshal(data[2].decode('hex'))
 
     def valuesDict(self):
         dic = super(LinuxRandomPassManager, self).valuesDict()

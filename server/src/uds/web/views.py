@@ -474,7 +474,7 @@ def ticketAuth(request, ticketId):
     session = SessionStore(session_key=ticketId)
 
     try:
-        for k in ('username', 'groups', 'auth', 'realname'):
+        for k in ('username', 'groups', 'auth', 'realname', 'servicePool'):
             if k not in session:  # No valid data stored, maybe session is expired, or no session at all
                 raise InvalidUserException()
         auth = Authenticator.objects.get(uuid=session['auth'])
