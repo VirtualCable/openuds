@@ -46,6 +46,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+VALID_PARAMS = ('authId', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool')
+
 
 # Enclosed methods under /actor path
 class Tickets(Handler):
@@ -78,6 +80,14 @@ class Tickets(Handler):
         Processes put requests, currently only under "create"
         '''
         logger.debug(self._args)
+
+        # Parameters can only be theese
+
+        for p in self._params:
+            if p not in VALID_PARAMS:
+                logger.debug('Parameter {} not in valid ticket parameters list'.format(p))
+                raise RequestError('Invalid parameters')
+
         if len(self._args) != 1 or self._args[0] not in ('create',):
             raise RequestError('Invalid method')
 
@@ -94,13 +104,14 @@ class Tickets(Handler):
 
             # Will raise an exception if no auth found
             if authId is not None:
-                auth = Authenticator.objects.get(uuid=authId)
+                auth = Authenticator.objects.get(uuid=authId.upper())
             elif authName is not None:
                 auth = Authenticator.objects.get(name=authName)
             else:
                 auth = Authenticator.objects.get(small_name=authSmallName)
 
             username = self._params['username']
+            password = self._params.get('password', username)  # Some machines needs password, depending on configuration
             groups = self._params['groups']
             if isinstance(groups, (six.text_type, six.binary_type)):
                 groups = (groups,)
@@ -109,22 +120,23 @@ class Tickets(Handler):
             servicePool = self._params.get('servicePool', None)
 
             if servicePool is not None:
-                DeployedService.objects.get(uuid=servicePool)
+                servicePool = DeployedService.objects.get(uuid=servicePool.upper()).uuid
 
             # backUrl = self._params.get('exitUrl', None)
             # Groups will be checked on user login stage, and invalid groups will be simply ignored
             # If user is no part of ANY group, access will be denied
 
-        except Exception as e:
-            return Tickets.result(error=six.text_type(e))
         except Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
         except DeployedService.DoesNotExist:
             return Tickets.result(error='Service pool does not exists')
+        except Exception as e:
+            return Tickets.result(error=six.text_type(e))
 
         store = SessionStore()
         store.set_expiry(time)
         store['username'] = username
+        store['password'] = password
         store['realname'] = realname
         store['groups'] = groups
         store['auth'] = auth.uuid

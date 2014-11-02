@@ -43,7 +43,7 @@ import ldap
 import re
 import logging
 
-__updated__ = '2014-06-04'
+__updated__ = '2014-11-01'
 
 logger = logging.getLogger(__name__)
 

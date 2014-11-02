@@ -44,7 +44,7 @@ import ldap
 import logging
 import six
 
-__updated__ = '2014-10-30'
+__updated__ = '2014-11-01'
 
 logger = logging.getLogger(__name__)
 
@@ -204,7 +204,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             attrlist = [self._memberAttr.encode('utf-8')]
             logger.debug('Getgroup filter_: {0}, attr list {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
-                                   filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
+                                   filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT * 10)[0]
             grp = dict((k, ['']) for k in attrlist)
             grp.update(res[1])
             grp.update({'dn': res[0], '_id': groupName})
@@ -220,7 +220,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             filter_ = '(&(objectClass=%s)(|(%s=%s)(%s=%s)))' % (self._groupClass, self._memberAttr, usr['_id'], self._memberAttr, usr['dn'])
             logger.debug('Filter: {0}'.format(filter_))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr=filter_, attrlist=[self._groupIdAttr.encode('utf8')],
-                                   sizelimit=LDAP_RESULT_LIMIT)
+                                   sizelimit=LDAP_RESULT_LIMIT * 10)
             groups = {}
             for g in res:
                 v = g[1][self._groupIdAttr]

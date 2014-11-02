@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-10-30'
+__updated__ = '2014-11-02'
 
 
 # a few constants
@@ -296,7 +296,7 @@ class DetailHandler(BaseModelHandler):
                 return self.processTableFields(self.getTitle(parent), self.getFields(parent), self.getRowStyle(parent))
 
             # try to get id
-            return self.getItems(parent, self._args[0])
+            return self.getItems(parent, self._args[0].upper())
 
         if nArgs == 2:
             if self._args[0] == GUI:
@@ -601,7 +601,7 @@ class ModelHandler(BaseModelHandler):
                 if self._args[1] == cm[0]:
                     try:
                         operation = getattr(self, self._args[1])
-                        item = self.model.objects.get(uuid=self._args[0])
+                        item = self.model.objects.get(uuid=self._args[0].upper())
                     except Exception:
                         self.invalidMethodException()
 
@@ -626,7 +626,7 @@ class ModelHandler(BaseModelHandler):
 
             # get item ID
             try:
-                val = self.model.objects.get(uuid=self._args[0])
+                val = self.model.objects.get(uuid=self._args[0].upper())
                 res = self.item_as_dict(val)
                 self.fillIntanceFields(val, res)
                 return res
@@ -651,7 +651,7 @@ class ModelHandler(BaseModelHandler):
             if nArgs != 2:
                 self.invalidRequestException()
             try:
-                item = self.model.objects.get(uuid=self._args[0])
+                item = self.model.objects.get(uuid=self._args[0].upper())  # DB maybe case sensitive??, anyway, uuids are stored in uppercase
             except Exception:
                 self.invalidItemException()
             return self.getLogs(item)
@@ -670,7 +670,7 @@ class ModelHandler(BaseModelHandler):
         logger.debug('method POST for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) == 2:
             if self._args[0] == 'test':
-                return self.test(self._args[1])
+                return self.test(self._args[1].upper())
 
         self.invalidMethodException()
 
@@ -693,7 +693,7 @@ class ModelHandler(BaseModelHandler):
                 deleteOnError = True
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
-                item = self.model.objects.get(uuid=self._args[0])
+                item = self.model.objects.get(uuid=self._args[0].upper())
                 item.__dict__.update(args)  # Update fields from args
         except self.model.DoesNotExist:
             raise NotFound('Item not found')
@@ -741,7 +741,7 @@ class ModelHandler(BaseModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
         try:
-            item = self.model.objects.get(uuid=self._args[0])
+            item = self.model.objects.get(uuid=self._args[0].upper())
             self.checkDelete(item)
             self.deleteItem(item)
         except self.model.DoesNotExist:
