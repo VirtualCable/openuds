@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-10-31'
+__updated__ = '2014-11-02'
 
 from django.db import models
 from django.db.models import signals
@@ -245,6 +245,29 @@ class DeployedService(UUIDModel):
             ap.userServices.exclude(cache_level=0).filter(state=State.USABLE).update(state=State.REMOVABLE, state_date=now)
             ap.userServices.filter(cache_level=0, state=State.USABLE, in_use=False).update(state=State.REMOVABLE, state_date=now)
 
+    def validateGroups(self, grps):
+        '''
+        Ensures that at least a group of grps (database groups) has access to this Service Pool
+        raise an InvalidUserException if fails check
+        '''
+        from uds.core import auths
+        if len(set(grps) & set(self.assignedGroups.all())) == 0:
+            raise auths.Exceptions.InvalidUserException()
+
+    def validatePublication(self):
+        '''
+        Ensures that, if this service has publications, that a publication is active
+        raises an IvalidServiceException if check fails
+        '''
+        if self.activePublication() is None and self.service.getType().publicationType is not None:
+            raise InvalidServiceException()
+
+    def validateTransport(self, transport):
+        try:
+            self.transports.get(id=transport.id)
+        except:
+            raise InvalidServiceException()
+
     def validateUser(self, user):
         '''
         Validates that the user has access to this deployed service
@@ -262,14 +285,11 @@ class DeployedService(UUIDModel):
 
         '''
         # We have to check if at least one group from this user is valid for this deployed service
-        from uds.core import auths
 
         logger.debug('User: {0}'.format(user.id))
         logger.debug('DeployedService: {0}'.format(self.id))
-        if len(set(user.getGroups()) & set(self.assignedGroups.all())) == 0:
-            raise auths.Exceptions.InvalidUserException()
-        if self.activePublication() is None and self.service.getType().publicationType is not None:
-            raise InvalidServiceException()
+        self.validateGroups(user.getGroups())
+        self.validatePublication()
         return True
 
     @staticmethod

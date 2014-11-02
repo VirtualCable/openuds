@@ -56,6 +56,7 @@ from uds.core.util import log
 from uds.core.util.State import State
 from uds.core.ui import theme
 from uds.core.auths.Exceptions import InvalidUserException
+from uds.core.services.Exceptions import InvalidServiceException
 
 from transformers import transformId, scrambleId
 
@@ -136,7 +137,6 @@ def login(request, smallName=None):
     response = render_to_response(theme.template('login.html'), {'form': form, 'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True)},
                                   context_instance=RequestContext(request))
 
-
     getUDSCookie(request, response)
 
     return response
@@ -198,9 +198,9 @@ def index(request):
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
             if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
-                trans.append({'id': scrambleId(request, t.id), 'name': t.name, 'needsJava': t.getType().needsJava})
+                trans.append({'id': t.uuid, 'name': t.name, 'needsJava': t.getType().needsJava})
         imageId = len(trans) == 0 and 'x' or trans[0]['id']
-        services.append({'id': scrambleId(request, 'a' + str(svr['id'])), 'name': svr['name'], 'transports': trans, 'imageId': imageId})
+        services.append({'id': 'A' + svr.uuid, 'name': svr['name'], 'transports': trans, 'imageId': imageId})
 
     # Now generic user service
     for svr in availServices:
@@ -209,9 +209,9 @@ def index(request):
             if t.validForIp(request.ip):
                 typeTrans = t.getType()
                 if typeTrans.supportsOs(os['OS']):
-                    trans.append({'id': scrambleId(request, t.id), 'name': t.name, 'needsJava': typeTrans.needsJava})
+                    trans.append({'id': t.uuid, 'name': t.name, 'needsJava': typeTrans.needsJava})
         imageId = len(trans) == 0 and 'x' or trans[0]['id']
-        services.append({'id': scrambleId(request, 'd' + str(svr.id)), 'name': svr.name, 'transports': trans, 'imageId': imageId})
+        services.append({'id': 'F' + svr.uuid, 'name': svr.name, 'transports': trans, 'imageId': imageId})
 
     logger.debug('Services: {0}'.format(services))
 
@@ -223,9 +223,9 @@ def index(request):
             return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
     response = render_to_response(theme.template('index.html'),
-        {'services': services, 'java': java, 'ip': request.ip, 'nets': nets, 'transports': validTrans},
-        context_instance=RequestContext(request)
-    )
+                                  {'services': services, 'java': java, 'ip': request.ip, 'nets': nets, 'transports': validTrans},
+                                  context_instance=RequestContext(request)
+                                  )
     return response
 
 
@@ -242,23 +242,22 @@ def prefs(request):
 
 
 @webLoginRequired
-@transformId
 def service(request, idService, idTransport):
     # TODO: Cache hit performance can be done here, we can log event of "got" and event of "failed"
     kind, idService = idService[0], idService[1:]
     try:
         logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
-        if kind == 'a':  # This is an assigned service
-            ads = UserService.objects.get(pk=idService)
+        if kind == 'A':  # This is an assigned service
+            ads = UserService.objects.get(uuid=idService)
         else:
-            ds = DeployedService.objects.get(pk=idService)
+            ds = DeployedService.objects.get(uuid=idService)
             # We first do a sanity check for this, if the user has access to this service
             # If it fails, will raise an exception
             ds.validateUser(request.user)
             # Now we have to locate an instance of the service, so we can assign it to user.
             ads = UserServiceManager.manager().getAssignationForUser(ds, request.user)
         logger.debug('Found service: {0}'.format(ads))
-        trans = Transport.objects.get(pk=idTransport)
+        trans = Transport.objects.get(uuid=idTransport)
         # Test if the service is ready
         if ads.isReady():
             log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
@@ -269,7 +268,7 @@ def service(request, idService, idTransport):
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
-                    transport = itrans.renderForHtml(ads, scrambleId(request, ads.id), scrambleId(request, trans.id), ip, request.session['OS'], request.user, webPassword(request))
+                    transport = itrans.renderForHtml(ads, ads.uuid, trans.uuid, ip, request.session['OS'], request.user, webPassword(request))
                     return render_to_response(theme.template('show_transport.html'), {'transport': transport, 'nolang': True}, context_instance=RequestContext(request))
                 else:
                     log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
@@ -286,13 +285,12 @@ def service(request, idService, idTransport):
 
 
 @webLoginRequired
-@transformId
 def transcomp(request, idTransport, componentId):
     try:
         # We got translated first id
-        trans = Transport.objects.get(pk=idTransport)
+        trans = Transport.objects.get(uuid=idTransport.upper())
         itrans = trans.getInstance()
-        res = itrans.getHtmlComponent(scrambleId(request, trans.id), request.session['OS'], componentId)
+        res = itrans.getHtmlComponent(trans.uuid, request.session['OS'], componentId)
         response = HttpResponse(res[1], content_type=res[0])
         response['Content-Length'] = len(res[1])
         return response
@@ -301,14 +299,13 @@ def transcomp(request, idTransport, componentId):
 
 
 @webLoginRequired
-@transformId
 def sernotify(request, idUserService, notification):
     try:
         if notification == 'hostname':
             hostname = request.GET.get('hostname', None)
             ip = request.GET.get('ip', None)
             if ip is not None and hostname is not None:
-                us = UserService.objects.get(pk=idUserService)
+                us = UserService.objects.get(uuid=idUserService)
                 us.setConnectionSource(ip, hostname)
             else:
                 return HttpResponse('Invalid request!', 'text/plain')
@@ -316,7 +313,7 @@ def sernotify(request, idUserService, notification):
             message = request.GET.get('message', None)
             level = request.GET.get('level', None)
             if message is not None and level is not None:
-                us = UserService.objects.get(pk=idUserService)
+                us = UserService.objects.get(uuid=idUserService)
                 log.doLog(us, level, message, log.TRANSPORT)
             else:
                 return HttpResponse('Invalid request!', 'text/plain')
@@ -326,19 +323,17 @@ def sernotify(request, idUserService, notification):
     return HttpResponse('ok', content_type='text/plain')
 
 
-@transformId
 def transportIcon(request, idTrans):
     try:
-        icon = Transport.objects.get(pk=idTrans).getInstance().icon(False)
+        icon = Transport.objects.get(uuid=idTrans).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponseRedirect('/static/img/unknown.png')
 
 
-@transformId
 def serviceImage(request, idImage):
     try:
-        icon = Transport.objects.get(pk=idImage).getInstance().icon(False)
+        icon = Transport.objects.get(uuid=idImage).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponseRedirect('/static/img/unknown.png')
@@ -378,7 +373,7 @@ def authCallback(request, authName):
             raise auths.Exceptions.InvalidUserException()
 
         # Redirect to main page through java detection process, so UDS know the availability of java
-        response = render_to_response(theme.template('detectJava.html'), {'idAuth': scrambleId(request, authenticator.id)},
+        response = render_to_response(theme.template('detectJava.html'), {'idAuth': authenticator.uuid},
                                       context_instance=RequestContext(request))
 
         webLogin(request, response, user, '')  # Password is unavailable in this case
@@ -424,15 +419,14 @@ def authInfo(request, authName):
 
         return HttpResponse(info)
     except Exception:
-        return HttpResponse(_('Authenticator do not provides information'))
+        return HttpResponse(_('Authenticator does not provides information'))
 
 
 @webLoginRequired
-@transformId
 def authJava(request, idAuth, hasJava):
     request.session['java'] = hasJava == 'y'
     try:
-        authenticator = Authenticator.objects.get(pk=idAuth)
+        authenticator = Authenticator.objects.get(uuid=idAuth)
         os = request.session['OS']
         authLogLogin(request, authenticator, request.user.name, request.session['java'], os)
         return redirect('uds.web.views.index')
@@ -474,26 +468,65 @@ def ticketAuth(request, ticketId):
     session = SessionStore(session_key=ticketId)
 
     try:
-        for k in ('username', 'groups', 'auth', 'realname', 'servicePool'):
-            if k not in session:  # No valid data stored, maybe session is expired, or no session at all
-                raise InvalidUserException()
-        auth = Authenticator.objects.get(uuid=session['auth'])
-        # If user does not exists in DB, create it right now
-        usr = auth.getOrCreateUser(session['username'], session['realname'])
-        if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
+        try:
+            # Extract data from session storage, and remove it if success
+            username = session['username']
+            groups = session['groups']
+            auth = session['auth']
+            realname = session['realname']
+            servicePool = session['servicePool']
+            password = session['password']
+            transport = session['transport']
+        except:
+            logger.error('Ticket stored is not valid')
             raise InvalidUserException()
+
+        session.delete()
+
+        auth = Authenticator.objects.get(uuid=auth)
+        # If user does not exists in DB, create it right now
         # Add user to groups, if they exists...
         grps = []
-        for g in iter(session['groups']):
+        for g in groups:
             try:
-                grps.append(auth.groups.get(name=g))
+                grps.append(auth.groups.get(uuid=g))
             except Exception:
-                logger.info('Group {} from ticket does not exists'.format(g))
-        # Add groups
+                logger.debug('Group list has changed since ticket assignement')
+
+        if len(grps) == 0:
+            logger.error('Ticket has no valid groups')
+            raise Exception('Invalid ticket authentification')
+
+        usr = auth.getOrCreateUser(username, realname)
+        if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
+            raise InvalidUserException()
+
+        # Add groups to user (replace existing groups)
         usr.groups = grps
 
+        # Right now, we assume that user supports java, let's see how this works
+        request.session['java'] = True
+        request['OS'] = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
+
+        # Check if servicePool is part of the ticket
+        if servicePool is not None:
+            servicePool = DeployedService.objects.get(uuid=servicePool)
+            # Check if servicepool can't be accessed by groups
+            servicePool.validateUser(usr)
+            transport = Transport.objects.get(uuid=transport)
+
+            response = service(request, servicePool.id, transport.id)
+        else:
+            response = HttpResponseRedirect(reverse('uds.web.views.index'))
+
+        webLogin(request, response, usr, password)  # Password is passed in by ticket, and probably will be empty
+
     except Authenticator.DoesNotExist:
+        logger.error('Ticket has an non existing authenticator')
         return error(request, InvalidUserException())
+    except DeployedService.DoesNotExist:
+        logger.error('Ticket has an invalid Service Pool')
+        return error(request, InvalidServiceException())
     except Exception as e:
         return errors.exceptionView(request, e)
 

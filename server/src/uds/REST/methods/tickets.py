@@ -36,6 +36,7 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import Authenticator
 from uds.models import DeployedService
+from uds.models import Transport
 from django.contrib.sessions.backends.db import SessionStore
 
 
@@ -46,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-VALID_PARAMS = ('authId', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool')
+VALID_PARAMS = ('authId', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool', 'transport')
 
 
 # Enclosed methods under /actor path
@@ -111,16 +112,44 @@ class Tickets(Handler):
                 auth = Authenticator.objects.get(small_name=authSmallName)
 
             username = self._params['username']
-            password = self._params.get('password', username)  # Some machines needs password, depending on configuration
+            password = self._params.get('password', '')  # Some machines needs password, depending on configuration
             groups = self._params['groups']
             if isinstance(groups, (six.text_type, six.binary_type)):
                 groups = (groups,)
+            grps = []
+            for g in groups:
+                try:
+                    grps.append(auth.groups.get(name=g).uuid)
+                except Exception:
+                    logger.info('Group {} from ticket does not exists'.format(g))
+
+            if len(grps) == 0:  # No valid group in groups names
+                raise Exception('Authenticator does not contain ANY of the requested groups')
+
+            groups = grps
+
             time = int(self._params.get('time', 60))
             realname = self._params.get('realname', self._params['username'])
             servicePool = self._params.get('servicePool', None)
+            transport = None
 
             if servicePool is not None:
                 servicePool = DeployedService.objects.get(uuid=servicePool.upper()).uuid
+
+                transport = self._params.get('transport', None)
+                if transport is not None:
+                    transport = Transport.objects.get(uuid=transport.upper())
+                    try:
+                        servicePool.validateTransport(transport)
+                    except Exception:
+                        logger.error('Transport {} is not valid for Service Pool {}'.format(transport.name, servicePool.name))
+                        raise Exception('Invalid transport for Service Pool')
+                else:
+                    transport = servicePool.transports.order_by('priority').first()
+                    if transport is None:
+                        logger.error('Service pool {} does not has transports')
+                        raise Exception('Service pool does not has any assigned transports')
+                transport = transport.uuid
 
             # backUrl = self._params.get('exitUrl', None)
             # Groups will be checked on user login stage, and invalid groups will be simply ignored
@@ -130,6 +159,8 @@ class Tickets(Handler):
             return Tickets.result(error='Authenticator does not exists')
         except DeployedService.DoesNotExist:
             return Tickets.result(error='Service pool does not exists')
+        except Transport.DoesNotExist:
+            return Tickets.result(error='Transport does not exists')
         except Exception as e:
             return Tickets.result(error=six.text_type(e))
 
@@ -141,6 +172,7 @@ class Tickets(Handler):
         store['groups'] = groups
         store['auth'] = auth.uuid
         store['servicePool'] = servicePool
+        store['transport'] = transport
         store.save()
 
         return Tickets.result(store.session_key)

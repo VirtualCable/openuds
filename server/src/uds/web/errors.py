@@ -58,19 +58,19 @@ BROWSER_NOT_SUPPORTED = 11
 
 
 strings = [
-           _('Unknown error'),
-           _('Transport not found'),
-           _('Service not found'),
-           _('Access denied'),
-           _('Invalid service. The service is not available at this moment. Please, try later'),
-           _('Maximum services limit reached. Please, contact administrator'),
-           _('You need to enable cookies to let this application work'),
-           _('User service not found'),
-           _('Authenticator not found'),
-           _('Invalid authenticator'),
-           _('Invalid request received'),
-           _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome')
-        ]
+    _('Unknown error'),
+    _('Transport not found'),
+    _('Service not found'),
+    _('Access denied'),
+    _('Invalid service. The service is not available at this moment. Please, try later'),
+    _('Maximum services limit reached. Please, contact administrator'),
+    _('You need to enable cookies to let this application work'),
+    _('User service not found'),
+    _('Authenticator not found'),
+    _('Invalid authenticator'),
+    _('Invalid request received'),
+    _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome')
+]
 
 
 def errorString(errorId):
@@ -107,5 +107,5 @@ def exceptionView(request, exception):
     except InvalidAuthenticatorException:
         return errorView(request, INVALID_CALLBACK)
     except Exception as e:
-        logger.exception('Exception cauthg at view!!!')
+        logger.exception('Exception cautgh at view!!!')
         raise e
