@@ -50,7 +50,7 @@ from uds.models import User
 
 import logging
 
-__updated__ = '2014-10-27'
+__updated__ = '2014-11-02'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -60,14 +60,19 @@ PASS_KEY = 'pk'
 ROOT_ID = -20091204  # Any negative number will do the trick
 
 
-def getUDSCookie(request, response):
+def getUDSCookie(request, response=None, force=False):
     if 'uds' not in request.COOKIES:
         import random
         import string
         cookie = ''.join(random.choice(string.letters + string.digits) for _ in xrange(32))
-        response.set_cookie('uds', cookie)
+        if response is not None:
+            response.set_cookie('uds', cookie)
+        request.COOKIES['uds'] = cookie
     else:
         cookie = request.COOKIES['uds']
+
+    if response is not None and force is True:
+        response.set_cookie('uds', cookie)
 
     return cookie
 

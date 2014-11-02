@@ -58,7 +58,7 @@ from uds.core.ui import theme
 from uds.core.auths.Exceptions import InvalidUserException
 from uds.core.services.Exceptions import InvalidServiceException
 
-from transformers import transformId, scrambleId
+from transformers import transformId
 
 import uds.web.errors as errors
 import logging
@@ -508,6 +508,9 @@ def ticketAuth(request, ticketId):
         request.session['java'] = True
         request['OS'] = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
 
+        # Force cookie generation
+        getUDSCookie(request)
+
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             servicePool = DeployedService.objects.get(uuid=servicePool)
@@ -518,6 +521,9 @@ def ticketAuth(request, ticketId):
             response = service(request, servicePool.id, transport.id)
         else:
             response = HttpResponseRedirect(reverse('uds.web.views.index'))
+
+        # Now ensure cookie is at response
+        getUDSCookie(request, response, True)
 
         webLogin(request, response, usr, password)  # Password is passed in by ticket, and probably will be empty
 
