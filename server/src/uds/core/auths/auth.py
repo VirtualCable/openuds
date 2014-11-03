@@ -61,6 +61,9 @@ ROOT_ID = -20091204  # Any negative number will do the trick
 
 
 def getUDSCookie(request, response=None, force=False):
+    '''
+    Generates a random cookie for uds, used, for example, to encript things
+    '''
     if 'uds' not in request.COOKIES:
         import random
         import string
@@ -316,12 +319,13 @@ def authLogLogin(request, authenticator, userName, java, os, logStr=''):
     authLogger.info('|'.join([authenticator.name, userName, javaStr, os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
     level = (logStr == 'Logged in') and log.INFO or log.ERROR
     log.doLog(authenticator, level, 'user {0} has {1} from {2} {3} java and os is {4}'.format(userName, logStr,
-          request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)
+                                                                                              request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)
 
     try:
         user = authenticator.users.get(name=userName)
-        log.doLog(user, level, '{0} from {1} {2} java and os is {3}'.format(logStr,
-                request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)
+        log.doLog(user, level,
+                  '{0} from {1} {2} java and os is {3}'.format(logStr, request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB
+                  )
     except:
         pass
 

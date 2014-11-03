@@ -71,7 +71,7 @@ urlpatterns = patterns(
     (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),
     (r'^about', 'web.views.about'),
     # Ticket authentication
-    (r'^tkauth/(?P<ticketId>.+)/(?P<serviceId>.*)', 'web.views.ticketAuth'),
+    url(r'^tkauth/(?P<ticketId>.+)$', 'web.views.ticketAuth', name='TicketAuth'),
 
 
     # XMLRPC Processor

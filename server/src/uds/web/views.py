@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponsePermanentRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
 from django.shortcuts import render
@@ -40,7 +40,6 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import last_modified
 from django.views.i18n import javascript_catalog
-from django.contrib.sessions.backends.db import SessionStore
 from django.utils import timezone
 
 from uds.core.auths.auth import webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout, getUDSCookie
@@ -53,6 +52,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
 from uds.core.util import log
+from uds.core.util.Ticket import Ticket
 from uds.core.util.State import State
 from uds.core.ui import theme
 from uds.core.auths.Exceptions import InvalidUserException
@@ -465,23 +465,24 @@ def ticketAuth(request, ticketId):
     '''
     Used to authenticate an user via a ticket
     '''
-    session = SessionStore(session_key=ticketId)
+    ticket = Ticket(ticketId)
 
     try:
         try:
-            # Extract data from session storage, and remove it if success
-            username = session['username']
-            groups = session['groups']
-            auth = session['auth']
-            realname = session['realname']
-            servicePool = session['servicePool']
-            password = session['password']
-            transport = session['transport']
+            # Extract ticket.data from ticket.data storage, and remove it if success
+            username = ticket.data['username']
+            groups = ticket.data['groups']
+            auth = ticket.data['auth']
+            realname = ticket.data['realname']
+            servicePool = ticket.data['servicePool']
+            password = ticket.data['password']
+            transport = ticket.data['transport']
         except:
             logger.error('Ticket stored is not valid')
             raise InvalidUserException()
 
-        session.delete()
+        # Remove ticket
+        ticket.delete()
 
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
@@ -506,26 +507,26 @@ def ticketAuth(request, ticketId):
 
         # Right now, we assume that user supports java, let's see how this works
         request.session['java'] = True
-        request['OS'] = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
+        request.session['OS'] = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
+        request.user = usr  # Temporaly store this user as "authenticated" user, next requests will be done using session
 
         # Force cookie generation
-        getUDSCookie(request)
+        webLogin(request, None, usr, password)
 
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             servicePool = DeployedService.objects.get(uuid=servicePool)
-            # Check if servicepool can't be accessed by groups
+            # Check if service pool can't be accessed by groups
             servicePool.validateUser(usr)
             transport = Transport.objects.get(uuid=transport)
 
-            response = service(request, servicePool.id, transport.id)
+            response = service(request, 'F' + servicePool.uuid, transport.uuid)  # 'A' Indicates 'assigned service'
         else:
-            response = HttpResponseRedirect(reverse('uds.web.views.index'))
+            response = HttpResponsePermanentRedirect(reverse('uds.web.views.index'))
 
-        # Now ensure cookie is at response
+        # Now ensure uds cookie is at response
         getUDSCookie(request, response, True)
-
-        webLogin(request, response, usr, password)  # Password is passed in by ticket, and probably will be empty
+        return response
 
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
@@ -534,6 +535,7 @@ def ticketAuth(request, ticketId):
         logger.error('Ticket has an invalid Service Pool')
         return error(request, InvalidServiceException())
     except Exception as e:
+        logger.exception('Exception')
         return errors.exceptionView(request, e)
 
     return HttpResponse(ticketId, content_type='text/plain')

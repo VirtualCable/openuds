@@ -62,13 +62,17 @@ class Cache(object):
             expired = now > c.created + timedelta(seconds=c.validity)
             if expired:
                 return defValue
-            val = cPickle.loads(c.value.decode(Cache.CODEC).encode('utf-8'))
+            val = cPickle.loads(c.value.decode(Cache.CODEC))
             return val
         except dbCache.DoesNotExist:  # @UndefinedVariable
             logger.debug('key not found: {}'.format(skey))
             return defValue
 
     def remove(self, skey):
+        '''
+        Removes an stored cached item
+        If cached item does not exists, nothing happens (no exception thrown)
+        '''
         # logger.debug('Removing key "%s" for uService "%s"' % (skey, self._owner))
         try:
             key = self.__getKey(skey)

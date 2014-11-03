@@ -37,7 +37,7 @@ from uds.REST import RequestError
 from uds.models import Authenticator
 from uds.models import DeployedService
 from uds.models import Transport
-from django.contrib.sessions.backends.db import SessionStore
+from uds.core.util.Ticket import Ticket
 
 
 import datetime
@@ -134,7 +134,7 @@ class Tickets(Handler):
             transport = None
 
             if servicePool is not None:
-                servicePool = DeployedService.objects.get(uuid=servicePool.upper()).uuid
+                servicePool = DeployedService.objects.get(uuid=servicePool.upper())
 
                 transport = self._params.get('transport', None)
                 if transport is not None:
@@ -149,11 +149,9 @@ class Tickets(Handler):
                     if transport is None:
                         logger.error('Service pool {} does not has transports')
                         raise Exception('Service pool does not has any assigned transports')
-                transport = transport.uuid
 
-            # backUrl = self._params.get('exitUrl', None)
-            # Groups will be checked on user login stage, and invalid groups will be simply ignored
-            # If user is no part of ANY group, access will be denied
+                servicePool = servicePool.uuid
+                transport = transport.uuid
 
         except Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
@@ -164,15 +162,16 @@ class Tickets(Handler):
         except Exception as e:
             return Tickets.result(error=six.text_type(e))
 
-        store = SessionStore()
-        store.set_expiry(time)
-        store['username'] = username
-        store['password'] = password
-        store['realname'] = realname
-        store['groups'] = groups
-        store['auth'] = auth.uuid
-        store['servicePool'] = servicePool
-        store['transport'] = transport
-        store.save()
+        data = {}
+        data['username'] = username
+        data['password'] = password
+        data['realname'] = realname
+        data['groups'] = groups
+        data['auth'] = auth.uuid
+        data['servicePool'] = servicePool
+        data['transport'] = transport
 
-        return Tickets.result(store.session_key)
+        ticket = Ticket()
+        ticket.save(data, time)
+
+        return Tickets.result(ticket.key)
