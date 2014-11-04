@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-10-31'
+__updated__ = '2014-11-04'
 
 import logging
 
@@ -90,3 +90,5 @@ from uds.models.UniqueId import UniqueId
 from uds.models.Scheduler import Scheduler
 from uds.models.DelayedTask import DelayedTask
 
+# Image galery related
+from uds.models.Image import Image
