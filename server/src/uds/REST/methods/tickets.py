@@ -129,6 +129,7 @@ class Tickets(Handler):
             groups = grps
 
             time = int(self._params.get('time', 60))
+            time = 60 if time < 1 else time
             realname = self._params.get('realname', self._params['username'])
             servicePool = self._params.get('servicePool', None)
             transport = None

@@ -142,7 +142,7 @@ class Dispatcher(View):
                 response[k] = val
             return response
         except RequestError as e:
-            return http.HttpResponseServerError(unicode(e))
+            return http.HttpResponseBadRequest(unicode(e))
         except ResponseError as e:
             return http.HttpResponseServerError(unicode(e))
         except AccessDenied as e:
