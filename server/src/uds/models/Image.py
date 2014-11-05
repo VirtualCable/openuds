@@ -95,14 +95,14 @@ class Image(UUIDModel):
         '''
         Returns the value of the image (data) as a base 64 encoded string
         '''
-        return base64.encodestring(self.thumb)[:-1]  # Removes trailing \n
+        return Image.encode64(self.thumb)
 
     @thumb64.setter
     def thumb64(self, value):
         '''
         Sets the value of image (data) from a base 64 encoded string
         '''
-        self.thumb = base64.decodestring(value)
+        self.thumb = Image.decode64(value)
 
     @property
     def image(self):

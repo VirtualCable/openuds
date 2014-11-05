@@ -447,6 +447,13 @@ class ModelHandler(BaseModelHandler):
         '''
         pass
 
+    def item_as_dict_overview(self, item):
+        '''
+        Invoked when request is an "overview"
+        default behavior is return item_as_dict
+        '''
+        return self.item_as_dict(item)
+
     # types related
     def enum_types(self):  # override this
         '''
@@ -571,7 +578,7 @@ class ModelHandler(BaseModelHandler):
     def getItems(self, *args, **kwargs):
         for item in self.model.objects.filter(*args, **kwargs):
             try:
-                yield self.item_as_dict(item)
+                yield self.item_as_dict_overview(item)
             except Exception:
                 logger.exception('Exception getting item from {0}'.format(self.model))
 

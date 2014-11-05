@@ -56,7 +56,7 @@ class Images(ModelHandler):
     table_title = _('Image Gallery')
     table_fields = [
         {'name': {'title': _('Name')}},
-        {'data': {'title': _('Image')}},
+        {'thumb': {'title': _('Image')}},
     ]
 
     def beforeSave(self, fields):
@@ -85,4 +85,11 @@ class Images(ModelHandler):
             'id': item.uuid,
             'name': item.name,
             'data': item.data64,
+        }
+
+    def item_as_dict_overview(self, item):
+        return {
+            'id': item.uuid,
+            'name': item.name,
+            'thumb': item.thumb64,
         }
