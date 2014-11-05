@@ -26,4 +26,10 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.AddField(
+            model_name='deployedservice',
+            name='image',
+            field=models.ForeignKey(related_name='deployedServices', blank=True, to='uds.Image', null=True),
+            preserve_default=True,
+        ),
     ]

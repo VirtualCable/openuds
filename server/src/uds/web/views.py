@@ -43,7 +43,7 @@ from django.views.i18n import javascript_catalog
 from django.utils import timezone
 
 from uds.core.auths.auth import webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout, getUDSCookie
-from uds.models import Authenticator, DeployedService, Transport, UserService, Network
+from uds.models import Authenticator, DeployedService, Transport, UserService, Network, Image
 from uds.web.forms.LoginForm import LoginForm
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.managers.UserPrefsManager import UserPrefsManager
@@ -199,7 +199,10 @@ def index(request):
             typeTrans = t.getType()
             if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
                 trans.append({'id': t.uuid, 'name': t.name, 'needsJava': t.getType().needsJava})
-        imageId = len(trans) == 0 and 'x' or trans[0]['id']
+        if svr.deployed_service.image is not None:
+            imageId = svr.deployed_service.image.uuid
+        else:
+            imageId = 'x'  # Invalid
         services.append({'id': 'A' + svr.uuid, 'name': svr['name'], 'transports': trans, 'imageId': imageId})
 
     # Now generic user service
@@ -210,7 +213,10 @@ def index(request):
                 typeTrans = t.getType()
                 if typeTrans.supportsOs(os['OS']):
                     trans.append({'id': t.uuid, 'name': t.name, 'needsJava': typeTrans.needsJava})
-        imageId = len(trans) == 0 and 'x' or trans[0]['id']
+        if svr.image is not None:
+            imageId = svr.image.uuid
+        else:
+            imageId = 'x'
         services.append({'id': 'F' + svr.uuid, 'name': svr.name, 'transports': trans, 'imageId': imageId})
 
     logger.debug('Services: {0}'.format(services))
@@ -333,10 +339,16 @@ def transportIcon(request, idTrans):
 
 def serviceImage(request, idImage):
     try:
+        icon = Image.objects.get(uuid=idImage)
+        return icon.imageResponse()
+    except Image.DoesNotExist:
+        pass  # Tries to get image from transport
+
+    try:
         icon = Transport.objects.get(uuid=idImage).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
-        return HttpResponseRedirect('/static/img/unknown.png')
+        return HttpResponseRedirect('/static/img/uds-service.png')
 
 
 @transformId

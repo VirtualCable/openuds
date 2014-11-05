@@ -35,6 +35,8 @@ from __future__ import unicode_literals
 __updated__ = '2014-11-05'
 
 from django.db import models
+from django.http import HttpResponse
+
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Util import getSqlDatetime
 from PIL import Image as PILImage  # @UnresolvedImport
@@ -149,6 +151,12 @@ class Image(UUIDModel):
         '''
         self.data64 = data64
         self._processImageStore()
+
+    def imageResponse(self):
+        return HttpResponse(self.data, content_type='image/png')
+
+    def thumbnailResponse(self):
+        return HttpResponse(self.data, content_type='image/png')
 
     def save(self, *args, **kwargs):
         self.stamp = getSqlDatetime()

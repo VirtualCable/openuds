@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-02'
+__updated__ = '2014-11-05'
 
 from django.db import models
 from django.db.models import signals
@@ -49,6 +49,7 @@ from uds.models.OSManager import OSManager
 from uds.models.Service import Service
 from uds.models.Transport import Transport
 from uds.models.Group import Group
+from uds.models.Image import Image
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
@@ -73,6 +74,7 @@ class DeployedService(UUIDModel):
     assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
     state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=NEVER)
+    image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices')
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
     cache_l2_srvs = models.PositiveIntegerField(default=0)
