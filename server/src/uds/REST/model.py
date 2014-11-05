@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-11-02'
+__updated__ = '2014-11-05'
 
 
 # a few constants
@@ -680,6 +680,8 @@ class ModelHandler(BaseModelHandler):
         '''
         logger.debug('method PUT for {0}, {1}'.format(self.__class__.__name__, self._args))
         self._params['_request'] = self._request
+
+        deleteOnError = False
 
         if len(self._args) > 1:  # Detail?
             return self.processDetail()

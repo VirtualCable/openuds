@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(unique=True, max_length=128, db_index=True)),
                 ('stamp', models.DateTimeField()),
                 ('data', models.BinaryField()),
+                ('thumb', models.BinaryField()),
             ],
             options={
                 'db_table': 'uds_images',

@@ -32,7 +32,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-04'
+__updated__ = '2014-11-05'
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
@@ -54,10 +54,12 @@ class Image(UUIDModel):
 
     '''
     MAX_IMAGE_SIZE = (128, 128)
+    THUMBNAIL_SIZE = (20, 20)
 
     name = models.CharField(max_length=128, unique=True, db_index=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry. Set at write time
     data = models.BinaryField()  # Image storage
+    thumb = models.BinaryField()  # Thumbnail, very small
 
     class Meta:
         '''
@@ -66,28 +68,41 @@ class Image(UUIDModel):
         db_table = 'uds_images'
         app_label = 'uds'
 
-    def _storePILImage(self, image):
-        '''
-        Internal method
-        Stores an image inside data field
-        '''
-        output = io.BytesIO()
-        image.save(output, b'png')
-        self.data = output.getvalue()
+    @staticmethod
+    def encode64(data):
+        return base64.encodestring(data)[:-1]  # Removes trailing \n
+
+    @staticmethod
+    def decode64(data64):
+        return base64.decodestring(data64)
 
     @property
     def data64(self):
         '''
         Returns the value of the image (data) as a base 64 encoded string
         '''
-        return base64.encodestring(self.data)[:-1]  # Removes trailing \n
+        return Image.encode64(self.data)
 
     @data64.setter
     def data64(self, value):
         '''
         Sets the value of image (data) from a base 64 encoded string
         '''
-        self.data = base64.decodestring(value)
+        self.data = Image.decode64(value)
+
+    @property
+    def thumb64(self):
+        '''
+        Returns the value of the image (data) as a base 64 encoded string
+        '''
+        return base64.encodestring(self.thumb)[:-1]  # Removes trailing \n
+
+    @thumb64.setter
+    def thumb64(self, value):
+        '''
+        Sets the value of image (data) from a base 64 encoded string
+        '''
+        self.thumb = base64.decodestring(value)
 
     @property
     def image(self):
@@ -107,15 +122,33 @@ class Image(UUIDModel):
         '''
         return self.image.size
 
+    def updateThumbnail(self):
+        thumb = self.image
+        thumb.thumbnail(Image.THUMBNAIL_SIZE, PILImage.ANTIALIAS)
+        output = io.BytesIO()
+        thumb.save(output, 'png')
+        self.thumb = output.getvalue()
+
+    def _processImageStore(self):
+        image = self.image
+        # Max image size, keeping aspect and using antialias
+        image.thumbnail(Image.MAX_IMAGE_SIZE, PILImage.ANTIALIAS)
+        output = io.BytesIO()
+        image.save(output, 'png')
+        self.data = output.getvalue()
+
+        self.updateThumbnail()
+
+    def storeImageFromBinary(self, data):
+        self.data = data
+        self._processImageStore()
+
     def storeImageFromBase64(self, data64):
         '''
         Stores an image, passed as base64 string, resizing it as necessary
         '''
         self.data64 = data64
-        image = self.image
-        # Max image size, keeping aspect and using antialias
-        image.thumbnail(Image.MAX_IMAGE_SIZE, PILImage.ANTIALIAS)
-        self._storePILImage(image)
+        self._processImageStore()
 
     def save(self, *args, **kwargs):
         self.stamp = getSqlDatetime()

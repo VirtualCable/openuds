@@ -202,6 +202,7 @@ class gui(object):
         MULTI_CHOICE_TYPE = 'multichoice'
         EDITABLE_LIST = 'editlist'
         CHECKBOX_TYPE = 'checkbox'
+        IMAGE_TYPE = 'image'
 
         DEFAULT_LENTGH = 32  # : If length of some fields are not especified, this value is used as default
 
@@ -648,6 +649,14 @@ class gui(object):
             '''
             super(self.__class__, self)._setValue(values)
             self._data['values'] = gui.convertToList(values)
+
+    class ImageField(InputField):
+        '''
+        Basically, this is a looooong text field
+        '''
+        def __init__(self, **options):
+            super(self.__class__, self).__init__(**options)
+            self._type(gui.InputField.TEXT_TYPE)
 
 
 class UserInterfaceType(type):
