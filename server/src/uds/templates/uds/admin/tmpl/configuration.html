@@ -48,7 +48,7 @@
                                  <textarea class="form-control" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" rows="3">{{ value.value }}</textarea>
                                  {{ else }}
                                  {{# ifequals value.type 3 }}
-                                 <input type="checkbox" data-on-label="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-label="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="config-ctrl" {{# ifequals value.value 1 }} checked{{/ ifequals }} data-section="{{ cfg_section }}" data-key="{{ cfg_key }}">
+                                 <input type="checkbox" data-on-text="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-text="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="config-ctrl" {{# ifequals value.value 1 }} checked{{/ ifequals }} data-section="{{ cfg_section }}" data-key="{{ cfg_key }}">
                                  {{ else }}
                                  {{# ifequals value.type 2 }}
                                  <div>
