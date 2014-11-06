@@ -25,14 +25,13 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-05'
+__updated__ = '2014-11-06'
 
 from django.db import models
 from django.http import HttpResponse
@@ -56,12 +55,14 @@ class Image(UUIDModel):
 
     '''
     MAX_IMAGE_SIZE = (64, 64)
-    THUMBNAIL_SIZE = (16, 16)
+    THUMBNAIL_SIZE = (24, 24)
 
     name = models.CharField(max_length=128, unique=True, db_index=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry. Set at write time
     data = models.BinaryField()  # Image storage
     thumb = models.BinaryField()  # Thumbnail, very small
+    width = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
 
     class Meta:
         '''
@@ -122,7 +123,7 @@ class Image(UUIDModel):
         '''
         Returns the image size
         '''
-        return self.image.size
+        return (self.width, self.height)
 
     def updateThumbnail(self):
         thumb = self.image
@@ -138,6 +139,7 @@ class Image(UUIDModel):
         output = io.BytesIO()
         image.save(output, 'png')
         self.data = output.getvalue()
+        self.width, self.height = image.size
 
         self.updateThumbnail()
 

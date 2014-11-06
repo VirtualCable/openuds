@@ -20,6 +20,8 @@ class Migration(migrations.Migration):
                 ('stamp', models.DateTimeField()),
                 ('data', models.BinaryField()),
                 ('thumb', models.BinaryField()),
+                ('width', models.IntegerField(default=0)),
+                ('height', models.IntegerField(default=0)),
             ],
             options={
                 'db_table': 'uds_images',

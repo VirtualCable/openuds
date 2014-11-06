@@ -110,6 +110,9 @@
         renderEmptyCell data
 
     
+    renderImage = (data) ->
+      "<img src=\"data:image/png;base64," + data + "\">"
+    
     # Custom icon renderer, in fact span with defined class
     renderIcon = (icon) ->
       (data, type, full) ->
@@ -118,7 +121,6 @@
         else
           renderEmptyCell data
 
-    
     # Custom icon based on type
     renderIconDict = (iconDict) ->
       (data, type, value) ->
@@ -160,13 +162,14 @@
                 column.sType = "uds-date"
                 column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format("TIME_FORMAT")))
               when "iconType"
-                
                 #columnt.sType = 'html'; // html is default, so this is not needed
                 column.mRender = renderTypeIcon
               when "icon"
                 column.mRender = renderIcon(opts.icon)  if opts.icon?
               when "icon_dict"
                 column.mRender = renderIconDict(opts.icon_dict)  if opts.icon_dict?
+              when "image"
+                column.mRender = renderImage
               when "dict"
                 column.mRender = renderTextTransform(opts.dict)  if opts.dict?
               else

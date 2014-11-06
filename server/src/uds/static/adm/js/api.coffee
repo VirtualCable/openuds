@@ -373,6 +373,7 @@ api.transports = new BasicModelRest("transports")
 api.networks = new BasicModelRest("networks")
 api.servicesPools = new BasicModelRest("servicespools")
 api.configuration = new BasicModelRest("config")
+api.gallery = new BasicModelRest("gallery/images")
 api.system = new BasicModelRest("system")
 api.system.stats = (type, success_fnc, fail_fnc) ->
   @get
