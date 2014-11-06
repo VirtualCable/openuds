@@ -1,0 +1,19 @@
+{% load i18n html5 %}
+{% image_size as size %}
+<div class="center-block" style="width: {{ size.0|add:40 }}px">
+    <div class="form-group">
+        <label for="id_image_name">{% trans 'Image name' %}</label>
+        <input id="id_image_name" name="image_name" type="text" class="form-control" placeholder="{% trans 'Image name' %}" autofocus required>
+    </div>
+    <div class="fileinput fileinput-new" data-provides="fileinput">
+      <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: {{ size.0 }}px; height: {{ size.1 }}px;"></div>
+      <div>
+        <span class="btn btn-default btn-file">
+        <span class="fileinput-new">{% trans 'Select image' %}</span>
+        <span class="fileinput-exists">{% trans 'Change' %}</span>
+        <input type="file" name="image_for_gallery" id="id-image_for_gallery"></span>
+        <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">{% trans 'Remove' %}</a>
+      </div>
+    </div>
+</div>
+<h3 class="text-center">{% trans 'Select image to upload' %} <small>{% trans 'accepts PNG, JPEG and GIF images' %}</small></h3>

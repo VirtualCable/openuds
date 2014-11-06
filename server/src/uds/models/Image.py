@@ -54,8 +54,8 @@ class Image(UUIDModel):
     This is intended for small images (i will limit them to 128x128), so storing at db is fine
 
     '''
-    MAX_IMAGE_SIZE = (64, 64)
-    THUMBNAIL_SIZE = (24, 24)
+    MAX_IMAGE_SIZE = (128, 128)
+    THUMBNAIL_SIZE = (32, 32)
 
     name = models.CharField(max_length=128, unique=True, db_index=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry. Set at write time

@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django import template
 from uds.core.util import html
 from uds.core.util.Config import GlobalConfig
+from uds.models.Image import Image
 
 import logging
 
@@ -53,10 +54,12 @@ def country(lang):
 
     return lang.upper()
 
+
 # Config related
 @register.assignment_tag
 def get_theme():
     return GlobalConfig.UDS_THEME.get()
+
 
 class EnhacedVisual(template.Node):
     def __init__(self, nodelistTrue, nodelistFalse):
@@ -70,6 +73,7 @@ class EnhacedVisual(template.Node):
             return ''
 
         return self._nodelistFalse.render(context)
+
 
 @register.tag(name='enhaced_visual')
 def enhaced_visual(parser, token):
@@ -85,9 +89,16 @@ def enhaced_visual(parser, token):
 
     return EnhacedVisual(states['enhaced_visual'], states.get('else', None))
 
+
 @register.assignment_tag
 def preferences_allowed():
     return GlobalConfig.PREFERENCES_ALLOWED.getBool(True)
+
+
+@register.assignment_tag
+def image_size():
+    return Image.MAX_IMAGE_SIZE
+
 
 # Browser related
 class IfBrowser(template.Node):

@@ -23,6 +23,8 @@
         <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/dataTables.bootstrap.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/jasny-bootstrap.min.css" rel="stylesheet" media="screen">
+
         
         <link href="{% get_static_prefix %}adm/css/tables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/buttons.css" rel="stylesheet" media="screen">
@@ -82,14 +84,17 @@
         <!-- Table tools -->
         <script src="{% get_static_prefix %}adm/js/dataTables.tableTools.min.js"></script>
         
-        <!--  for "save" from javascript -->
+        <!-- for "save" from javascript -->
         <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
         <script src="{% get_static_prefix %}adm/js/FileSaver.min.js"></script>
         
         <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script>
         
         <script src="{% get_static_prefix %}adm/js/dataTables.bootstrap.js"></script>
-                
+
+        <!-- For Image preview on file upload -->
+        <script src="{% get_static_prefix %}adm/js/jasny-bootstrap.min.js"></script>
+
         <!-- template engine -->
         <script src="{% get_static_prefix %}adm/js/handlebars-v2.0.0.js"></script>
         
@@ -145,6 +150,8 @@
         {% js_template 'gallery' %}
         <!-- utility pages -->
         {% js_template 'request_failed' %}
+        <!-- specific pages -->
+        {% js_template 'new_image' %}
         <!-- components -->
         {% js_template 'comp/table' %}
         {% js_template 'comp/modal' %}
