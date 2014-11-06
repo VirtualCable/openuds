@@ -59,10 +59,7 @@ gui.servicesPools.link = (event) ->
               $cacheL2Fld.prop "disabled", "disabled"
             else
               $cacheL2Fld.prop "disabled", false
-          if data.info.needs_publication is false
-            $publishOnSaveFld.bootstrapSwitch "setDisabled", true
-          else
-            $publishOnSaveFld.bootstrapSwitch "setDisabled", false
+          $publishOnSaveFld.bootstrapSwitch "toggleReadonly", data.info.needs_publication
           $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
           return
 
@@ -448,12 +445,14 @@ gui.servicesPools.link = (event) ->
         onData: (data) ->
           gui.doLog "onData", data
           $.each data, (index, value) ->
+            gui.doLog value.thumb
             try
               service = availableServices[value.service_id]
               if not service?
                 value.parent = gettext("undefined")
                 return
-              style = "display:inline-block; background: url(data:image/png;base64," + service.info.icon + "); background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
+              style = "display:inline-block; background: url(data:image/png;base64," + value.thumb + "); background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
+              gui.doLog style
               if value.restrained
                 value.name = "<span class=\"fa fa-exclamation text-danger\"></span> " + value.name
                 value.state = gettext("Restrained")

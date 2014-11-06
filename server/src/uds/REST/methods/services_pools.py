@@ -33,7 +33,8 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import DeployedService, OSManager, Service
+from uds.models import DeployedService, OSManager, Service, Image
+from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import ModelHandler
@@ -56,7 +57,8 @@ class ServicesPools(ModelHandler):
         'publications': Publications,
     }
 
-    save_fields = ['name', 'comments', 'service_id', 'osmanager_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
+    save_fields = ['name', 'comments', 'service_id', 'osmanager_id', 'image_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
+    remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
     table_fields = [
@@ -69,6 +71,8 @@ class ServicesPools(ModelHandler):
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
 
     def item_as_dict(self, item):
+        # if item does not have an associated service, hide it (the case, for example, for a removed service)
+        # Access from dict will raise an exception, and item will be skipped
         val = {
             'id': item.uuid,
             'name': item.name,
@@ -76,6 +80,7 @@ class ServicesPools(ModelHandler):
             'state': item.state,
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
+            'image_id': item.image.uuid if item.image is not None else None,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
             'cache_l2_srvs': item.cache_l2_srvs,
@@ -88,6 +93,18 @@ class ServicesPools(ModelHandler):
             val['osmanager_id'] = item.osmanager.uuid
 
         return val
+
+    def item_as_dict_overview(self, item):
+        # if item does not have an associated service, hide it (the case, for example, for a removed service)
+        # Access from dict will raise an exception, and item will be skipped
+        return {
+            'id': item.uuid,
+            'name': item.name,
+            'comments': item.comments,
+            'state': item.state,
+            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
+            'service_id': item.service.uuid
+        }
 
     # Gui related
     def getGui(self, type_):
@@ -115,33 +132,40 @@ class ServicesPools(ModelHandler):
             'rdonly': True,
             'order': 101,  # At end
         }, {
+            'name': 'image_id',
+            'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in Image.objects.all()],
+            'label': ugettext('Associated Image'),
+            'tooltip': ugettext('Image assocciated with this service'),
+            'type': gui.InputField.CHOICE_TYPE,
+            'order': 102,  # At end
+        }, {
             'name': 'initial_srvs',
             'value': '0',
             'label': ugettext('Initial available services'),
             'tooltip': ugettext('Services created initially for this service pool'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 102,  # At end
+            'order': 103,  # At end
         }, {
             'name': 'cache_l1_srvs',
             'value': '0',
             'label': ugettext('Services to keep in cache'),
             'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 103,  # At end
+            'order': 104,  # At end
         }, {
             'name': 'cache_l2_srvs',
             'value': '0',
             'label': ugettext('Services to keep in L2 cache'),
             'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 104,  # At end
+            'order': 105,  # At end
         }, {
             'name': 'max_srvs',
             'value': '0',
             'label': ugettext('Maximum number of services to provide'),
             'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 105,  # At end
+            'order': 106,  # At end
         }]:
             self.addField(g, f)
 
@@ -153,8 +177,7 @@ class ServicesPools(ModelHandler):
         try:
             try:
                 service = Service.objects.get(uuid=fields['service_id'])
-                del fields['service_id']
-                fields['service'] = service
+                fields['service_id'] = service.id
             except:
                 raise RequestError(ugettext('Base service does not exists anymore'))
 
@@ -162,8 +185,9 @@ class ServicesPools(ModelHandler):
                 serviceType = service.getType()
                 if serviceType.needsManager is True:
                     osmanager = OSManager.objects.get(uuid=fields['osmanager_id'])
-                    fields['osmanager'] = osmanager
-                del fields['osmanager_id']
+                    fields['osmanager_id'] = osmanager.id
+                else:
+                    del fields['osmanager_id']
 
                 if serviceType.usesCache is False:
                     for k in ('initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'):
@@ -171,6 +195,16 @@ class ServicesPools(ModelHandler):
 
             except Exception:
                 raise RequestError(ugettext('This service requires an os manager'))
+
+            imgId = fields['image_id']
+            fields['image_id'] = None
+            logger.debug('Image id: {}'.format(imgId))
+            try:
+                if imgId != '-1':
+                    image = Image.objects.get(uuid=imgId)
+                    fields['image_id'] = image.id
+            except Exception:
+                logger.exception('At image recovering')
 
         except (RequestError, ResponseError):
             raise

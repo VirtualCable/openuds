@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-11-05'
+__updated__ = '2014-11-06'
 
 
 # a few constants
@@ -432,6 +432,8 @@ class ModelHandler(BaseModelHandler):
     detail = None  # Dictionary containing detail routing
     # Put needed fields
     save_fields = []
+    # Put removable fields before updating
+    remove_fields = []
     # Table info needed fields and title
     table_fields = []
     table_row_style = {}
@@ -579,8 +581,9 @@ class ModelHandler(BaseModelHandler):
         for item in self.model.objects.filter(*args, **kwargs):
             try:
                 yield self.item_as_dict_overview(item)
-            except Exception:
-                logger.exception('Exception getting item from {0}'.format(self.model))
+            except Exception:  # maybe an exception is thrown to skip an item
+                # logger.exception('Exception getting item from {0}'.format(self.model))
+                pass
 
     def get(self):
         '''
@@ -597,9 +600,12 @@ class ModelHandler(BaseModelHandler):
         if nArgs == 0:
             result = []
             for val in self.model.objects.all():
-                res = self.item_as_dict(val)
-                self.fillIntanceFields(val, res)
-                result.append(res)
+                try:
+                    res = self.item_as_dict(val)
+                    self.fillIntanceFields(val, res)
+                    result.append(res)
+                except Exception:  # maybe an exception is thrown to skip an item
+                    pass
             return result
 
         # if has custom methods, look for if this request matches any of them
@@ -703,6 +709,9 @@ class ModelHandler(BaseModelHandler):
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
                 item = self.model.objects.get(uuid=self._args[0].upper())
+                for v in self.remove_fields:
+                    if v in args:
+                        del args[v]
                 item.__dict__.update(args)  # Update fields from args
         except self.model.DoesNotExist:
             raise NotFound('Item not found')

@@ -39,13 +39,14 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import last_modified
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, cache_control
 from django.views.i18n import javascript_catalog
 from django.utils import timezone
 from django.contrib.staticfiles import finders
 
 from uds.core.auths.auth import webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout, getUDSCookie
 from uds.models import Authenticator, DeployedService, Transport, UserService, Network, Image
+from uds.core.ui.images import DEFAULT_IMAGE
 from uds.web.forms.LoginForm import LoginForm
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.managers.UserPrefsManager import UserPrefsManager
@@ -331,7 +332,6 @@ def sernotify(request, idUserService, notification):
     return HttpResponse('ok', content_type='text/plain')
 
 
-@cache_page(60 * 10)  # Cache images 10 minutes
 def transportIcon(request, idTrans):
     try:
         icon = Transport.objects.get(uuid=idTrans).getInstance().icon(False)
@@ -340,7 +340,6 @@ def transportIcon(request, idTrans):
         return HttpResponseRedirect('/static/img/unknown.png')
 
 
-@cache_page(60 * 10)  # Cache images 10 minutes
 def serviceImage(request, idImage):
     try:
         icon = Image.objects.get(uuid=idImage)
@@ -352,12 +351,7 @@ def serviceImage(request, idImage):
         icon = Transport.objects.get(uuid=idImage).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
-        result = finders.find('img/uds-service.png')
-        if isinstance(result, (list, tuple)):
-            result = result[0]
-        with open(result) as f:
-            icon = f.read()
-        return HttpResponse(icon, content_type='image/png')
+        return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
 
 
 @transformId

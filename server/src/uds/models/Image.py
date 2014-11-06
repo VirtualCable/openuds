@@ -55,7 +55,7 @@ class Image(UUIDModel):
 
     '''
     MAX_IMAGE_SIZE = (128, 128)
-    THUMBNAIL_SIZE = (32, 32)
+    THUMBNAIL_SIZE = (48, 48)
 
     name = models.CharField(max_length=128, unique=True, db_index=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry. Set at write time
@@ -73,7 +73,7 @@ class Image(UUIDModel):
 
     @staticmethod
     def encode64(data):
-        return base64.encodestring(data)[:-1]  # Removes trailing \n
+        return base64.encodestring(data).replace('\n', '')  # Removes \n
 
     @staticmethod
     def decode64(data64):
@@ -166,11 +166,11 @@ class Image(UUIDModel):
         return HttpResponse(self.data, content_type='image/png')
 
     def thumbnailResponse(self):
-        return HttpResponse(self.data, content_type='image/png')
+        return HttpResponse(self.thumb, content_type='image/png')
 
     def save(self, *args, **kwargs):
         self.stamp = getSqlDatetime()
         return UUIDModel.save(self, *args, **kwargs)
 
     def __unicode__(self):
-        return 'Image "{}", {} bytes'.format(self.name, len(self.data))
+        return 'Image id {}, name {}, {} bytes, {} bytes thumb'.format(self.id, self.name, len(self.data), len(self.thumb))

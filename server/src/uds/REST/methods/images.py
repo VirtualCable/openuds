@@ -91,7 +91,7 @@ class Images(ModelHandler):
     def item_as_dict_overview(self, item):
         return {
             'id': item.uuid,
-            'size': '{}x{}, {} bytes'.format(item.width, item.height, len(item.data)),
+            'size': '{}x{}, {} bytes (thumb {} bytes)'.format(item.width, item.height, len(item.data), len(item.thumb)),
             'name': item.name,
             'thumb': item.thumb64,
         }
