@@ -79,6 +79,20 @@ class Image(UUIDModel):
     def decode64(data64):
         return base64.decodestring(data64)
 
+    @staticmethod
+    def prepareForDb(data):
+        try:
+            stream = io.BytesIO(data)
+            image = PILImage.open(stream)
+        except Exception:  # Image data is incorrect, fix as a simple transparent image
+            image = PILImage.new('RGBA', (128, 128))
+
+        # Max image size, keeping aspect and using antialias
+        image.thumbnail(Image.MAX_IMAGE_SIZE, PILImage.ANTIALIAS)
+        output = io.BytesIO()
+        image.save(output, 'png')
+        return output.getvalue()
+
     @property
     def data64(self):
         '''
@@ -116,7 +130,7 @@ class Image(UUIDModel):
             data = io.BytesIO(self.data)
             return PILImage.open(data)
         except Exception:  # Image data is incorrect, fix as a simple transparent image
-            return PILImage.new('RGBA', (128, 128))
+            return PILImage.new('RGBA', Image.MAX_IMAGE_SIZE)
 
     @property
     def size(self):
@@ -127,20 +141,14 @@ class Image(UUIDModel):
 
     def updateThumbnail(self):
         thumb = self.image
+        self.width, self.height = thumb.size
         thumb.thumbnail(Image.THUMBNAIL_SIZE, PILImage.ANTIALIAS)
         output = io.BytesIO()
         thumb.save(output, 'png')
         self.thumb = output.getvalue()
 
     def _processImageStore(self):
-        image = self.image
-        # Max image size, keeping aspect and using antialias
-        image.thumbnail(Image.MAX_IMAGE_SIZE, PILImage.ANTIALIAS)
-        output = io.BytesIO()
-        image.save(output, 'png')
-        self.data = output.getvalue()
-        self.width, self.height = image.size
-
+        self.data = Image.prepareForDb(self.data)
         self.updateThumbnail()
 
     def storeImageFromBinary(self, data):

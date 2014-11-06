@@ -61,7 +61,7 @@ class Images(ModelHandler):
     ]
 
     def beforeSave(self, fields):
-        fields['data'] = Image.decode64(fields['data'])
+        fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))
 
     def afterSave(self, item):
         # Updates the thumbnail and re-saves it
@@ -91,7 +91,7 @@ class Images(ModelHandler):
     def item_as_dict_overview(self, item):
         return {
             'id': item.uuid,
-            'size': '{} px x {} px'.format(item.width, item.height),
+            'size': '{}x{}, {} bytes'.format(item.width, item.height, len(item.data)),
             'name': item.name,
             'thumb': item.thumb64,
         }

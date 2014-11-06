@@ -9,21 +9,29 @@ gui.gallery.link = ->
       modalId = gui.launchModal(gettext("New image"), content,
         actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Upload") + "</button>"
       )
+      gui.tools.applyCustoms modalId
       $(modalId + " .button-accept").click ->
-        $(modalId).modal "hide"
         file = $('#id-image_for_gallery')[0].files[0]
+        name = $('#id_image_name').val()
+        if name == ""
+          name = file.name
+
+        if file.size > 256*1024
+          gui.notify gettext("Image is too big (max. upload size is 256Kb)")
+          return
+
+
+        $(modalId).modal "hide"
         reader = new FileReader()
 
         reader.onload = (res) ->
           img = res.target.result
           img = img.substr img.indexOf("base64,") + 7
           data = {
-            name: $('#id_image_name').val()
             data: img
+            name: name
           }
-          api.gallery.put data, {
-            success: refreshFnc
-          }
+          api.gallery.create data, refreshFnc
 
         reader.readAsDataURL(file)
 
