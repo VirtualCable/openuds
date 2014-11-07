@@ -80,8 +80,6 @@
         max: 99999
         decimals: 0
         
-      
-      
       # TEST: cooler on mobile devices
       $(selector + " .selectpicker").selectpicker "mobile"  if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
       

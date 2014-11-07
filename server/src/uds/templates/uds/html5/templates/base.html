@@ -25,8 +25,7 @@
 		
     {% compress css %}
 		<link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-		<link href="{% get_static_prefix %}css/bootstrap-formhelpers.min.css" rel="stylesheet" media="screen">
-    <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
 		
 		{% ifbrowser ie<10 %}
 		<link href="{% get_static_prefix %}css/fix.css" rel="stylesheet" media="screen">
