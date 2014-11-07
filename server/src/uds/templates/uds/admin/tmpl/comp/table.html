@@ -1,4 +1,41 @@
 {% verbatim %}
+<div class="widget" id ="{{ panelId }}"> <!-- TYPE PANEL -->
+    <div class="widget-head"> <!-- HEAD PANEL -->
+        <h4 class="heading"><i class="fa fa-briefcase"></i>  {{ title }}</h4>
+        <span class="pull-right">
+            <span class="widget-icon fa fa-chevron-circle-up toggler"> </span>
+            <span class="widget-icon fa fa-refresh"> </span>
+        </span>
+    </div><!-- /HEAD PANEL -->
+    
+    <div class="widget-body collapse in"> <!-- CONTENT PANEL -->
+        <table class="table table-striped table-bordered table-hover" id="{{ table_id }}" width="100%">
+        </table>    
+    </div><!-- /CONTENT PANEL -->
+    
+    <div class="widget-footer"><!-- FOOTER PANEL--> 
+        <span class="widget-icon fa fa-chevron-circle-up toggler" data-placement="right"> </span>
+    </div><!-- /FOOTER PANEL--> 
+    
+</div> <!-- /TYPE PANEL -->
+{% endverbatim %}{% comment %}<script>/*This is a little trick to make IDE recognize sintax hightlight, will not be show on render :-)*/{% endcomment %}
+{% verbatim %}{{# javascript }}
+(function(){
+    $( "#{{ panelId }} .toggler" ).click(function() {
+        $("#{{ panelId}} .widget-body").slideToggle( "slow" );
+      
+        $("#{{ panelId }} .toggler").toggleClass(function() {
+            if ($(this).is('.fa fa-chevron-circle-down')) {
+                return '.fa fa-chevron-circle-up';
+            } else {
+                return '.fa fa-chevron-circle-down';
+            }
+        })
+    });
+}());
+{{/ javascript }}{% endverbatim %}
+{% comment %}</script>{% endcomment %}
+<!--
 <div class="panel panel-primary" id="{{ panelId }}">
     <div class="panel-heading">
         <h3 class="panel-title"><span class="fa fa-{{ icon }}"></span> {{ title }}
@@ -11,5 +48,4 @@
         <table class="table table-striped table-bordered table-hover" id="{{ table_id }}" width="100%">
         </table>
     </div>
-</div>
-{% endverbatim %}
+</div> -->

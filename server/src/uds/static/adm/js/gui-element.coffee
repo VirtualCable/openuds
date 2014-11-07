@@ -179,7 +179,7 @@
 
       
       # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
-      $("#style-" + tableId).remove() # Remove existing style for table before adding new one
+      $("#style-" + tableId).remove() # Remove existing style for table before adding new one, if it exist ofc
       $(api.templates.evaluate("tmpl_comp_responsive_table",
         tableId: tableId
         columns: columns
