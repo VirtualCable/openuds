@@ -1,0 +1,51 @@
+/*WIDGETS */
+a {color: #A3A5A7;text-decoration: none;}
+a:hover, a:focus {color: #434446;text-decoration: none;}
+.widget{background:#fff;margin:0 auto 20px;position:static;border:1px solid #c1c1c1;}.widget .tab-content{padding:0;}
+.widget .widget-head{background-color:#f8f8f8;background-image:-moz-linear-gradient(top, #f8f8f8, #ededed);background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f8f8f8), to(#ededed));background-image:-webkit-linear-gradient(top, #f8f8f8, #ededed);background-image:-o-linear-gradient(top, #f8f8f8, #ededed);background-image:linear-gradient(to bottom, #f8f8f8, #ededed);background-repeat:repeat-x;border-bottom:1px solid #c1c1c1;color:#fff;text-shadow:0 1px 0 rgba(255, 255, 255, 0.5);height:40px;line-height:40px;position:relative;padding:0 15px 0 0;}
+.widget .widget-head.progress{-webkit-border-radius:0 0 0 0;-moz-border-radius:0 0 0 0;border-radius:0 0 0 0;margin:0;padding:0;}
+.widget .widget-head .glyphicons{height:40px;width:30px;padding:0;}.widget .widget-head .fai:before{width:30px;height:40px;line-height:31px;text-align:center;font-size:16px;color:rgba(255, 255, 255, 0.5);}
+.widget .widget-head .heading{margin:0;color:#45484d;font-size:14px;height:40px;line-height:40px;padding:0 15px;float:left;}
+.widget .widget-head .heading.glyphicons{width:auto;display:block;padding:0 0 0 35px;}
+.widget .widget-head .heading.fai:before{padding:0;margin:0;left:0;top:0;height:40px;line-height:40px;text-align:center;width:35px;color:#45484d;font-size:16px;font-weight:normal;text-shadow:none;}
+.widget .widget-head a{text-shadow:none;}
+.widget .widget-head .dropdown-menu li>a:hover,.widget .widget-head .dropdown-menu li>a:focus,.widget .widget-head .dropdown-submenu:hover>a{background-color:#47759e;background-image:-moz-linear-gradient(top, #47759e, #d24343);background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#47759e), to(#d24343));background-image:-webkit-linear-gradient(top, #47759e, #d24343);background-image:-o-linear-gradient(top, #47759e, #d24343);background-image:linear-gradient(to bottom, #47759e, #d24343);background-repeat:repeat-x;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffda4c4c', endColorstr='#ffd24343', GradientType=0);}
+.widget .details{font-size:8pt;color:#45484d;}
+.widget .widget-body{padding:20px 15px;}
+.widget .widget-body form{margin:0;}
+.widget .widget-body .count{font-size:15pt;font-weight:400;}
+.widget .widget-body>p:last-child{margin:0;}
+.widget .widget-body.list{color:#575655;padding:0;}
+.widget .widget-body.list ul{margin:0;list-style:none;}
+.widget .widget-body.list ul li{padding:0 10px;height:39px;border-bottom:1px solid rgba(0, 0, 0, 0.02);line-height:39px;text-align:left;clear:both;}
+.widget .widget-body.list ul li:first-child{border-top:none;}
+.widget .widget-body.list ul li:last-child{border-bottom:none;}
+.widget .widget-body.list ul li .count{float:right;color:#47759e;}
+.widget .widget-body.list ul li .sparkline{position:relative;top:5px;margin-left:5px;}
+.widget .widget-body.list.products li{height:60px;line-height:60px;}
+.widget .widget-body.list.products .img{float:left;display:inline-block;width:48px;height:44px;line-height:44px;color:#818181;text-align:center;background:#272729;margin:8px 8px 0 0;-webkit-border-radius:3px 3px 3px 3px;-moz-border-radius:3px 3px 3px 3px;border-radius:3px 3px 3px 3px;cursor:pointer;font-size:10pt;font-weight:600;}
+.widget .widget-body.list.products .title{line-height:normal;display:inline-block;padding:13px 0 0;font-family:"Raleway",sans-serif;text-transform:uppercase;}
+.widget .widget-body.list.products .title strong{font-family:"Open Sans",sans-serif;text-transform:none;}
+.widget .widget-body.list.fluid ul li{height:auto;line-height:normal;padding:10px;}
+.widget .widget-body.list.list-2 ul li{border-bottom:1px solid #d8d9da;border-top:none;background:#f8f8f8;}
+.widget .widget-body.list.list-2 ul li.active{border-color:#dddddd;background:#fff;}
+.widget .widget-body.list.list-2 ul li.active i:before{font-weight:normal;background:#47759e;color:#fff;text-shadow:none;}
+.widget .widget-body.list.list-2 ul li.active a{color:#47759e;}
+.widget .widget-body.list.list-2 ul li:last-child{border-bottom:none;}
+.widget .widget-body.list.list-2 ul li a{display:block;color:#222;padding:0 0 0 30px;}
+.widget .widget-body.list.list-2 ul li a i:before{color:#555;width:20px;height:17px;font-size:14px;border:1px solid #ccc;background:#dddddd;top:9px;left:0;text-align:center;vertical-align:middle;padding-top:3px;text-shadow:0 1px 0 #fff;}
+.widget .widget-body.list.list-2 ul li.hasSubmenu{height:auto;}
+.widget .widget-body.list.list-2 ul li.hasSubmenu ul{padding:0 0 10px;}
+.widget .widget-body.list.list-2 ul li.hasSubmenu ul li{height:auto;line-height:normal;background:none;border:none;line-height:20px;}
+.widget .widget-body.list.list-2 ul li.hasSubmenu ul li a{color:#333;padding:0 0 0 20px;}
+.widget .widget-body.list.list-2 ul li.hasSubmenu ul li.active a{font-weight:bold;}
+.widget .widget-footer{background:#f7f7f7;height:25px;line-height:25px;border-top:1px solid #e6e6e6;border-bottom:1px solid #ffffff;}
+.widget .widget-footer .fa{width:25px;height:25px;line-height:25px;padding:0;float:right;}
+.widget .widget-footer .fa i:before{font-size:16px;color:#c3c3c3;text-align:center;width:20px;height:25px;line-height:25px;text-shadow:0 1px 0 #fff;}
+.widget .widget-footer .fa:hover i:before{color:rgba(0, 0, 0, 0.5);}
+.widget.margin-bottom-none{margin-bottom:0;}
+.widget.widget-gray{background:#f5f5f5;}
+.widget.widget-gray .widget-head{background:#e9e9e9;border-color:#d1d2d3;box-shadow:inset 1px 1px 1px rgba(255, 255, 255, 0.6),inset -1px -1px 1px rgba(0, 0, 0, 0);-moz-box-shadow:inset 1px 1px 1px rgba(255, 255, 255, 0.6),inset -1px -1px 1px rgba(0, 0, 0, 0);-webkit-box-shadow:inset 1px 1px 1px rgba(255, 255, 255, 0.6),inset -1px -1px 1px rgba(0, 0, 0, 0);}
+.widget.widget-gray .widget-head .heading{color:#555555;text-shadow:0 1px 0 #fff;}
+.widget.widget-gray .widget-head .heading.fai:before{background:none;color:#555;border-color:rgba(0, 0, 0, 0.1);}
+.widget.widget-body-white .widget-body{background:#fff;}
