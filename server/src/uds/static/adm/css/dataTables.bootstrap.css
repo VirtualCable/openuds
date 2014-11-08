@@ -105,10 +105,10 @@ div.dataTables_scrollFoot table {
 	color: white;
 }
 
-.table-striped > tbody > tr:nth-child(2n+1) > td { background-color: #d9edf7; }
-.table-striped > tbody > tr:nth-child(2n) > td { background-color: white; }
+.table-striped > tbody > tr:nth-child(2n+1) > td { background-color: #606060; color: #F0F0F0; }
+.table-striped > tbody > tr:nth-child(2n) > td { background-color: white; color: #000000;}
 
-.table-striped > tbody > tr:nth-child(2n+1) > td.sorting_1 { background-color: #b3dbef; }
+.table-striped > tbody > tr:nth-child(2n+1) > td.sorting_1 { background-color: #505050; color: #FFFFFF; }
 .table-striped > tbody > tr:nth-child(2n) > td.sorting_1 { background-color: #F5F5F5; }
 
 
