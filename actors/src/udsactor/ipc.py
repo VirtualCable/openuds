@@ -134,6 +134,7 @@ class ServerIPC(threading.Thread):
         self.port = listenPort
         self.running = False
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.threads = []
         self.infoParams = infoParams
 

@@ -31,59 +31,35 @@
 '''
 from __future__ import unicode_literals
 
-import sys
-if sys.platform == 'win32':
-    from udsactor.windows.log import LocalLogger
-else:
-    from udsactor.linux.log import LocalLogger
+import logging
+import os
+import tempfile
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
 
 
-class Logger(object):
+class LocalLogger(object):
     def __init__(self):
-        self.logLevel = OTHER
-        self.logger = LocalLogger()
-        self.remoteLogger = None
-
-    def setLevel(self, level):
-        self.logLevel = level
-        self.logger.log(INFO, 'Setting LogLevel to {}'.format(level))
-
-    def setRemoteLogger(self, remoteLogger):
-        self.remoteLogger = remoteLogger
+        # tempdir is different for "user application" and "service"
+        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
+        logging.basicConfig(
+            filename=os.path.join(tempfile.gettempdir(), 'udsactor.log'),
+            filemode='a',
+            format='%(levelname)s %(asctime)s %(message)s',
+            level=logging.DEBUG
+        )
+        self.logger = logging.getLogger('udsactor')
 
     def log(self, level, message):
-        if level < self.logLevel:  # Skip not wanted messages
-            return
+        # Debug messages are logged to a file
+        # our loglevels are 10000 (other), 20000 (debug), ....
+        # logging levels are 10 (debug), 20 (info)
+        # OTHER = logging.NOTSET
+        self.logger.log(level / 1000 - 10, message)
 
-        # If remote loger is available, notify message to it
-        try:
-            if self.remoteLogger is not None and self.remoteLogger.isConnected:
-                self.remoteLogger.log(level, message)
-        except Exception as e:
-            self.logger.log(FATAL, 'Error notifying log to broker: {}'.format(e.message))
+    def isWindows(self):
+        return False
 
-        self.logger.log(level, message)
-
-    def debug(self, message):
-        self.log(DEBUG, message)
-
-    def warn(self, message):
-        self.log(WARN, message)
-
-    def info(self, message):
-        self.log(WARN, message)
-
-    def error(self, message):
-        self.log(ERROR, message)
-
-    def fatal(self, message):
-        self.log(FATAL, message)
-
-    def flush(self):
-        pass
-
-
-logger = Logger()
+    def isLinux(self):
+        return True

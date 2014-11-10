@@ -12,9 +12,9 @@ def testRest():
     print "Intefaces: ", list(operations.getNetworkInfo())
     print "Joined Domain: ", operations.getDomainName()
 
-    #renameComputer('win7-64')
-    #joinDomain('dom.dkmon.com', 'ou=pruebas_2,dc=dom,dc=dkmon,dc=com', 'administrador@dom.dkmon.com', 'Temporal2012', True)
-    #reboot()
+    # renameComputer('win7-64')
+    # joinDomain('dom.dkmon.com', 'ou=pruebas_2,dc=dom,dc=dkmon,dc=com', 'administrador@dom.dkmon.com', 'Temporal2012', True)
+    # reboot()
     r = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
     print "Connected: {}".format(r.isConnected)
     r.test()
@@ -30,13 +30,14 @@ def testRest():
 
     print 'uuid = {}'.format(uuid)
 
-    #print 'Login: {}'.format(r.login('test-user'))
-    #print 'Logout: {}'.format(r.logout('test-user'))
+    # print 'Login: {}'.format(r.login('test-user'))
+    # print 'Logout: {}'.format(r.logout('test-user'))
     print "Information: >>{}<<".format(r.information())
     print "Login: >>{}<<".format(r.login('Pepito'))
 
     print r.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
     print r.log(10000, 'Test error message')
+
 
 def ipcTest():
     from udsactor import ipc
@@ -80,14 +81,14 @@ def ipcTest():
     client2.join()
     s.join()
 
+
 def ipcServer():
     from udsactor import ipc
-    from win32api import Sleep
+    from time import sleep
 
     s = ipc.ServerIPC(39188, {'idle': 180})  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
     s.start()
-
 
     counter = 0
     while True:
@@ -99,33 +100,35 @@ def ipcServer():
             s.sendMessage(ipc.MSG_SCRIPT, 'print "This is a test message ñöitó 33.3€ {}"'.format(counter))
             counter += 1
             s.sendMessage(ipc.MSG_LOGOFF, None)
-            Sleep(1000)
+            sleep(1)
         except:
             break
 
     s.stop()
 
+
 def testIdle():
     from udsactor import operations
-    from win32api import Sleep
+    from time import sleep
 
     for i in xrange(1, 10):
         print operations.getIdleDuration()
-        Sleep(1000)
+        sleep(1)
+
 
 def testServer():
-    from win32api import Sleep
     import random
     import requests
     import json
     import logging
+    from time import sleep
 
     from udsactor import httpserver
     from udsactor import ipc
 
     # Disable verify warinings
     logging.getLogger("requests").setLevel(logging.ERROR)
-    requests.packages.urllib3.disable_warnings()
+    # requests.packages.urllib3.disable_warnings()  # @UndefinedVariable
 
     s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
@@ -167,15 +170,16 @@ def testServer():
     print client.getMessage()
     print client.getMessage()
 
-    #try:
+    # try:
     #    while True:
     #        Sleep(1000)
-    #except:
+    # except:
     #    pass
 
     server.stop()
     s.stop()
     client.stop()
+
 
 def testRemote():
     import requests
@@ -202,9 +206,10 @@ def testRemote():
 
 
 if __name__ == '__main__':
-    #ipcServer()
-    #testRest()
-    #testIdle()
-    testServer()
-    #testRemote()
+    # ipcServer()
+    ipcTest()
+    # testRest()
+    # testIdle()
+    # testServer()
+    # testRemote()
 

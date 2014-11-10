@@ -68,6 +68,12 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="maximumSize">
     <size>
      <width>101</width>
@@ -93,6 +99,12 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="maximumSize">
     <size>
      <width>111</width>
@@ -115,7 +127,7 @@
      <x>20</x>
      <y>20</y>
      <width>361</width>
-     <height>131</height>
+     <height>146</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">

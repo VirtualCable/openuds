@@ -17,11 +17,13 @@ import os
 # backups = Number of backups to keep of log file (defaults to 3)
 
 
-import ConfigParser, logging, sys
+import ConfigParser
+import logging
+import sys
 
 CONFIGFILE = '/etc/udsactor/udsactor.cfg'
 
-cfg = ConfigParser.SafeConfigParser(defaults={ 'server' : '', 'ssl' : False, 'timeout' : '10', 
+cfg = ConfigParser.SafeConfigParser(defaults={ 'server' : '', 'ssl' : False, 'timeout' : '10',
                                                'log' : '/tmp/udsactor.log', 'debug' : 'ERROR', 'maxsize'  : '20', 'backups' : '3' })
 cfg.read(CONFIGFILE)
 
@@ -38,7 +40,7 @@ try:
         'timeout' : cfg.getint('broker', 'timeout'),
         'log' : cfg.get('logging', 'log'),
         'debug' : levels.get(cfg.get('logging', 'debug'), logging.ERROR),
-        'maxsize' : cfg.getint('logging', 'maxsize')*1024*1024,
+        'maxsize' : cfg.getint('logging', 'maxsize') * 1024 * 1024,
         'backups' : cfg.getint('logging', 'backups')
         }
     # Config file is used only in "root mode", in user mode we overwrite it
