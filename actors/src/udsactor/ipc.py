@@ -46,7 +46,7 @@ from udsactor.log import logger
 #     Message_id     Data               Action
 #    ------------  --------         --------------------------
 #    MSG_LOGOFF     None            Logout user from session
-#    MSG_MESSAGE    message,level   Display a message with level (INFO, WARN, ERROR, FATAL)     # TODO: Include levle, right now only has message
+#    MSG_MESSAGE    message,level   Display a message with level (INFO, WARN, ERROR, FATAL)     # TODO: Include level, right now only has message
 #    MSG_SCRIPT     python script   Execute an specific python script INSIDE CLIENT environment (this messages is not sent right now)
 #
 # All messages are in the form:
@@ -64,7 +64,8 @@ VALID_MESSAGES = (MSG_LOGOFF, MSG_MESSAGE, MSG_SCRIPT, MSG_INFORMATION)
 
 REQ_INFORMATION = 0xAA
 
-MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the ridght
+MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the right
+
 
 class ClientProcessor(threading.Thread):
     def __init__(self, parent, clientSocket):
@@ -85,7 +86,7 @@ class ClientProcessor(threading.Thread):
         while self.running:
             try:
                 while True:
-                    buf = self.clientSocket.recv(512)   # Empty buffer, this is set as non-blocking
+                    buf = self.clientSocket.recv(512)  # Empty buffer, this is set as non-blocking
                     if buf == b'':  # No data
                         break
                     for b in buf:
@@ -110,7 +111,7 @@ class ClientProcessor(threading.Thread):
             try:
                 m = msg[1] if msg[1] is not None else b''
                 l = len(m)
-                data = MAGIC + chr(msg[0]) + chr(l&0xFF) + chr(l>>8) + m
+                data = MAGIC + chr(msg[0]) + chr(l & 0xFF) + chr(l >> 8) + m
                 try:
                     self.clientSocket.sendall(data)
                 except socket.error as e:
@@ -236,13 +237,13 @@ class ClientIPC(threading.Thread):
         Override this method to automatically get notified on new message
         received. Message is at self.messages queue
         '''
-        pass # Messa
+        pass  # Messa
 
     def receiveBytes(self, number):
         msg = b''
         while self.running and len(msg) < number:
             try:
-                buf = self.clientSocket.recv(number-len(msg))
+                buf = self.clientSocket.recv(number - len(msg))
                 if buf == b'':
                     self.running = False
                     break
@@ -268,7 +269,7 @@ class ClientIPC(threading.Thread):
                 # We look for magic message header
                 while self.running:  # Wait for MAGIC
                     try:
-                        buf = self.clientSocket.recv(len(MAGIC)-len(msg))
+                        buf = self.clientSocket.recv(len(MAGIC) - len(msg))
                         if buf == b'':
                             self.running = False
                             break
@@ -279,7 +280,7 @@ class ClientIPC(threading.Thread):
                             msg = msg[1:]
                             continue
                         break
-                    except socket.timeout: # Timeout is here so we can get stop thread
+                    except socket.timeout:  # Timeout is here so we can get stop thread
                         continue
 
                 # Now we get message basic data (msg + datalen)
@@ -290,7 +291,7 @@ class ClientIPC(threading.Thread):
                     continue
 
                 msgId = ord(msg[0])
-                dataLen = ord(msg[1]) + (ord(msg[2])<<8)
+                dataLen = ord(msg[1]) + (ord(msg[2]) << 8)
                 if msgId not in VALID_MESSAGES:
                     raise Exception('Invalid message id: {}'.format(msgId))
 

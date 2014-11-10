@@ -52,7 +52,7 @@ class MyForm(QtGui.QDialog):
             self.ui.host.setText(data.get('host', ''))
             self.ui.masterKey.setText(data.get('masterKey', ''))
             self.ui.useSSl.setCurrentIndex(1 if data.get('ssl', False) is True else 0)
-            self.ui.logLevelComboBox.setCurrentIndex(data.get('logLevel', 10000) / 10000 - 1)
+            self.ui.logLevelComboBox.setCurrentIndex(int(data.get('logLevel', '10000')) / 10000 - 1)
 
     def _getCfg(self):
         return {

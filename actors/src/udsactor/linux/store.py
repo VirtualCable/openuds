@@ -29,11 +29,40 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=unused-wildcard-import, wildcard-import
 from __future__ import unicode_literals
 
-import sys
-if sys.platform == 'win32':
-    from udsactor.windows.store import *  # @UnusedWildImport
-else:
-    from udsactor.linux.store import *  # @UnusedWildImport
+import six
+import os
+
+DEBUG = True
+
+CONFIGFILE = '/etc/udsactor/udsactor.cfg' if DEBUG is False else '/tmp/udsactor.cfg'
+
+
+def checkPermissions():
+    return True if DEBUG else os.getuid() == 0
+
+
+def readConfig():
+    res = {}
+    try:
+        cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
+        cfg.read(CONFIGFILE)
+        # Just reads 'uds' section
+        for key in cfg.options('uds'):
+            res[key] = cfg.get('uds', key)
+    except Exception:
+        pass
+
+    return res
+
+
+def writeConfig(data):
+    cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
+    cfg.add_section('uds')
+    for key, val in data.iteritems():
+        cfg.set('uds', key, unicode(val))
+    with file(CONFIGFILE, 'w') as f:
+        cfg.write(f)
+
+    os.chmod(CONFIGFILE, 0600)

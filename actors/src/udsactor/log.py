@@ -40,6 +40,7 @@ else:
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
 
+
 class Logger(object):
     def __init__(self):
         self.logLevel = OTHER

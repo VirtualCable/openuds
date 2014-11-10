@@ -30,13 +30,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
+# pylint: disable=unused-wildcard-import, wildcard-import
 
-import win32serviceutil
-import win32service
-import win32event
-import win32com.client
-import pythoncom
-import servicemanager
+import win32serviceutil  # @UnresolvedImport, pylint: disable=import-error
+import win32service  # @UnresolvedImport, pylint: disable=import-error
+import win32event  # @UnresolvedImport, pylint: disable=import-error
+import win32com.client  # @UnresolvedImport,  @UnusedImport, pylint: disable=import-error
+import pythoncom  # @UnresolvedImport, pylint: disable=import-error
+import servicemanager  # @UnresolvedImport, pylint: disable=import-error
 
 import socket
 import random
@@ -47,12 +48,13 @@ from udsactor import operations
 from udsactor import httpserver
 from udsactor import ipc
 
-from udsactor.windows.SENS import *
+from udsactor.windows.SENS import *  # @UnusedWildImport
 from udsactor.log import logger
 
 IPC_PORT = 39188
 
 cfg = None
+
 
 def initCfg():
     global cfg
@@ -281,7 +283,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
                 operations.reboot()
             except Exception as e:
                 logger.error('Exception on reboot: {}'.format(e.message))
-            return False   # Stops service
+            return False  # Stops service
 
         return True
 
@@ -381,7 +383,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
             # Process SENS messages, This will be a bit asyncronous (1 second
             # delay)
             pythoncom.PumpWaitingMessages()
-            #if counter % 10 == 0:
+            # if counter % 10 == 0:
             #    self.checkIpsChanged()
             # In milliseconds, will break
             win32event.WaitForSingleObject(self.hWaitStop, 1000)

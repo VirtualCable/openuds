@@ -31,14 +31,16 @@
 '''
 from __future__ import unicode_literals
 
-from win32com.shell import shell
-import _winreg as wreg
-import win32security
+from win32com.shell import shell  # @UnresolvedImport, pylint: disable=import-error
+import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
+import win32security  # @UnresolvedImport, pylint: disable=import-error
 import cPickle
+
 
 # Can be changed to whatever we want, but registry key is protected by permissions
 def encoder(data):
     return data.encode('bz2')
+
 
 def decoder(data):
     return data.decode('bz2')
@@ -46,10 +48,12 @@ def decoder(data):
 DEBUG = False
 
 path = 'Software\\UDSActor'
-baseKey = wreg.HKEY_CURRENT_USER if DEBUG is True else wreg.HKEY_LOCAL_MACHINE
+baseKey = wreg.HKEY_CURRENT_USER if DEBUG is True else wreg.HKEY_LOCAL_MACHINE  # @UndefinedVariable
+
 
 def checkPermissions():
     return True if DEBUG else shell.IsUserAnAdmin()
+
 
 def fixRegistryPermissions(handle):
     if DEBUG:
@@ -68,21 +72,23 @@ def fixRegistryPermissions(handle):
                                   win32security.DACL_SECURITY_INFORMATION | win32security.PROTECTED_DACL_SECURITY_INFORMATION,
                                   None, None, dacl, None)
 
+
 def readConfig():
     try:
-        key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_QUERY_VALUE)
-        data, _ = wreg.QueryValueEx(key, '')
-        wreg.CloseKey(key)
+        key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
+        data, _ = wreg.QueryValueEx(key, '')  # @UndefinedVariable
+        wreg.CloseKey(key)  # @UndefinedVariable
         return cPickle.loads(decoder(data))
     except Exception:
         return None
 
+
 def writeConfig(data):
     try:
-        key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_ALL_ACCESS)
+        key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
     except Exception:
-        key = wreg.CreateKeyEx(baseKey, path, 0, wreg.KEY_ALL_ACCESS)
+        key = wreg.CreateKeyEx(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
         fixRegistryPermissions(key.handle)
 
-    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(cPickle.dumps(data)))
-    wreg.CloseKey(key)
+    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(cPickle.dumps(data)))  # @UndefinedVariable
+    wreg.CloseKey(key)  # @UndefinedVariable

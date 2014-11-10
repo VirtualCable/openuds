@@ -31,13 +31,14 @@
 '''
 from __future__ import unicode_literals
 
-import servicemanager
+import servicemanager  # @UnresolvedImport, pylint: disable=import-error
 import logging
 import os
 import tempfile
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
+
 
 class LocalLogger(object):
     def __init__(self):
@@ -57,14 +58,14 @@ class LocalLogger(object):
         # our loglevels are 10000 (other), 20000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
-        self.logger.log(level/1000-10, message)
+        self.logger.log(level / 1000 - 10, message)
 
         if level < INFO or self.serviceLogger is False:  # Only information and above will be on event log
             return
 
         if level < WARN:  # Info
             servicemanager.LogInfoMsg(message)
-        elif level < ERROR: # WARN
+        elif level < ERROR:  # WARN
             servicemanager.LogWarningMsg(message)
         else:  # Error & Fatal
             servicemanager.LogErrorMsg(message)
