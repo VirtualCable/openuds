@@ -33,9 +33,9 @@ from __future__ import unicode_literals
 
 import socket
 import threading
-import Queue
-import time
-import cPickle
+import six
+import traceback
+import pickle
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -73,7 +73,7 @@ class ClientProcessor(threading.Thread):
         self.parent = parent
         self.clientSocket = clientSocket
         self.running = False
-        self.messages = Queue.Queue(32)
+        self.messages = six.moves.queue.Queue(32)  # @UndefinedVariable
 
     def stop(self):
         logger.debug('Stoping client processor')
@@ -86,13 +86,13 @@ class ClientProcessor(threading.Thread):
         while self.running:
             try:
                 while True:
-                    buf = self.clientSocket.recv(512)  # Empty buffer, this is set as non-blocking
-                    if buf == b'':  # No data
+                    buf = bytearray(self.clientSocket.recv(512))  # Empty buffer, this is set as non-blocking
+                    if len(buf) == 0:  # No data
                         break
                     for b in buf:
-                        if ord(b) == REQ_INFORMATION:
+                        if b == REQ_INFORMATION:
                             infoParams = self.parent.infoParams if self.parent.infoParams is not None else {}
-                            self.messages.put((MSG_INFORMATION, cPickle.dumps(infoParams)))
+                            self.messages.put((MSG_INFORMATION, pickle.dumps(infoParams)))
                             logger.debug('Received a request for information')
                         else:
                             logger.debug('Got unexpected data {}'.format(ord(b)))
@@ -103,7 +103,7 @@ class ClientProcessor(threading.Thread):
 
             try:
                 msg = self.messages.get(block=True, timeout=1)
-            except Queue.Empty:  # No message got in time
+            except six.moves.queue.Empty:  # No message got in time @UndefinedVariable
                 continue
 
             logger.debug('Got message {}'.format(msg))
@@ -111,12 +111,12 @@ class ClientProcessor(threading.Thread):
             try:
                 m = msg[1] if msg[1] is not None else b''
                 l = len(m)
-                data = MAGIC + chr(msg[0]) + chr(l & 0xFF) + chr(l >> 8) + m
+                data = MAGIC + six.int2byte(msg[0]) + six.int2byte(l & 0xFF) + six.int2byte(l >> 8) + m
                 try:
                     self.clientSocket.sendall(data)
                 except socket.error as e:
                     # Send data error
-                    logger.debug('Socket connection is no more available: {}'.format(toUnicode(e)))
+                    logger.debug('Socket connection is no more available: {}'.format(e.args))
                     self.running = False
             except Exception as e:
                 logger.error('Invalid message in queue: {}'.format(e))
@@ -156,7 +156,7 @@ class ServerIPC(threading.Thread):
         logger.debug('Sending message {},{} to all clients'.format(msgId, msgData))
 
         # Convert to bytes so length is correctly calculated
-        if isinstance(msgData, unicode):
+        if isinstance(msgData, six.text_type):
             msgData = msgData.encode('utf8')
 
         for t in self.threads:
@@ -214,7 +214,7 @@ class ClientIPC(threading.Thread):
         self.port = listenPort
         self.running = False
         self.clientSocket = None
-        self.messages = Queue.Queue(32)
+        self.messages = six.moves.queue.Queue(32)  # @UndefinedVariable
 
         self.connect()
 
@@ -225,7 +225,7 @@ class ClientIPC(threading.Thread):
         while self.running:
             try:
                 return self.messages.get(timeout=1)
-            except Queue.Empty:
+            except six.moves.queue.Empty:  # @UndefinedVariable
                 continue
 
         return None
@@ -285,14 +285,14 @@ class ClientIPC(threading.Thread):
                         continue
 
                 # Now we get message basic data (msg + datalen)
-                msg = self.receiveBytes(3)
+                msg = bytearray(self.receiveBytes(3))
 
                 # We have the magic header, here comes the message itself
                 if msg is None:
                     continue
 
-                msgId = ord(msg[0])
-                dataLen = ord(msg[1]) + (ord(msg[2]) << 8)
+                msgId = msg[0]
+                dataLen = msg[1] + (msg[2] << 8)
                 if msgId not in VALID_MESSAGES:
                     raise Exception('Invalid message id: {}'.format(msgId))
 
@@ -308,7 +308,7 @@ class ClientIPC(threading.Thread):
                 self.running = False
                 return
             except Exception as e:
-                logger.error('Error: {}'.format(toUnicode(e.message)))
+                logger.error('Error: {}'.format(e.args))
 
         try:
             self.clientSocket.close()

@@ -32,13 +32,15 @@
 from __future__ import unicode_literals
 
 import sys
+import six
+
 if sys.platform == 'win32':
-    from udsactor.windows.log import LocalLogger
+    from udsactor.windows.log import LocalLogger  # @UnusedImport
 else:
-    from udsactor.linux.log import LocalLogger
+    from udsactor.linux.log import LocalLogger  # @Reimport
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
 
 
 class Logger(object):
@@ -58,7 +60,7 @@ class Logger(object):
         if level < self.logLevel:  # Skip not wanted messages
             return
 
-        # If remote loger is available, notify message to it
+        # If remote logger is available, notify message to it
         try:
             if self.remoteLogger is not None and self.remoteLogger.isConnected:
                 self.remoteLogger.log(level, message)

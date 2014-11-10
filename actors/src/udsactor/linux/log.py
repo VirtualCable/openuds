@@ -34,9 +34,10 @@ from __future__ import unicode_literals
 import logging
 import os
 import tempfile
+import six
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
 
 
 class LocalLogger(object):
@@ -56,7 +57,7 @@ class LocalLogger(object):
         # our loglevels are 10000 (other), 20000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
-        self.logger.log(level / 1000 - 10, message)
+        self.logger.log(int(level / 1000) - 10, message)
 
     def isWindows(self):
         return False
