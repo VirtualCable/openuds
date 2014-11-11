@@ -18,6 +18,7 @@ def getMacAddr(ifname):
     except Exception:
         return None
 
+
 def getIpAddr(ifname):
     if isinstance(ifname, list):
         return dict([ (name, getIpAddr(name)) for name in ifname ])
@@ -30,6 +31,7 @@ def getIpAddr(ifname):
         )[20:24])
     except Exception:
         return None
+
 
 def getInterfaces():
     max_possible = 128  # arbitrary. raise if needed.
@@ -51,11 +53,13 @@ def getInterfaces():
     namestr = names.tostring()
     return [namestr[i:i + offset].split('\0', 1)[0] for i in range(0, outbytes, length)]
 
+
 def getIpAndMac(ifname):
     ip, mac = getIpAddr(ifname), getMacAddr(ifname)
     if isinstance(ifname, list):
         return dict([ (key, { 'ip': ip[key], 'mac': mac[key] }) for key in ip.keys() ])
     return (ip, mac)
+
 
 def getExternalIpAndMacs():
     res = getIpAndMac(getInterfaces())

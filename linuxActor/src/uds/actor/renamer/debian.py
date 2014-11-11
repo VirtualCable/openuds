@@ -10,6 +10,7 @@ import logging, os
 
 logger = logging.getLogger(__name__)
 
+
 def rename(newName):
     # If new name has "'\t'
     if '\t' in newName:
