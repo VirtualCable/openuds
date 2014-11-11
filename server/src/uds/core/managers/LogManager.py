@@ -45,10 +45,11 @@ from uds.core.util import log
 from uds.core.util.Config import GlobalConfig
 
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
-OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR = xrange(8)
+OT_USERSERVICE, OT_PUBLICATION, OT_DEPLOYED_SERVICE, OT_SERVICE, OT_PROVIDER, OT_USER, OT_GROUP, OT_AUTHENTICATOR = range(8)  # @UndefinedVariable
 
 # Dict for translations
 transDict = {

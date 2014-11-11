@@ -178,8 +178,8 @@ class TSNXTransport(Transport):
         cache = Cache('pam')
 
 
-        tunuser = ''.join(random.choice(string.letters + string.digits) for i in xrange(12)) + ("%f" % time.time()).split('.')[1]
-        tunpass = ''.join(random.choice(string.letters + string.digits) for i in xrange(12))
+        tunuser = ''.join(random.choice(string.letters + string.digits) for i in range(12)) + ("%f" % time.time()).split('.')[1]
+        tunpass = ''.join(random.choice(string.letters + string.digits) for i in range(12))
         cache.put(tunuser, tunpass, 60 * 10)  # Credential valid for ten minutes, and for 1 use only
 
         sshHost, sshPort = self._tunnelServer.split(':')

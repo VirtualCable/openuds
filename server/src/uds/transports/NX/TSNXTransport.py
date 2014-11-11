@@ -41,11 +41,15 @@ from uds.core.util.Cache import Cache
 from uds.core.util import connection
 from web import generateHtmlForNX, getHtmlComponent
 
-import logging, random, string, time
+import logging
+import random
+import string
+import time
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
+
 
 class TSNXTransport(Transport):
     '''
@@ -66,13 +70,17 @@ class TSNXTransport(Transport):
     fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'))
     listenPort = gui.NumericField(label=_('Listen port'), length=5, order=6, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
-    connection = gui.ChoiceField(label=_('Connection'), order=7, tooltip=_('Connection speed for this transport (quality)'), values=[
-            {'id' : 'modem', 'text' : 'modem'},
-            {'id' : 'isdn', 'text' : 'isdn'},
-            {'id' : 'adsl', 'text' : 'adsl'},
-            {'id' : 'wan', 'text' : 'wan'},
-            {'id' : 'lan', 'text' : 'lan'},
-        ])
+    connection = gui.ChoiceField(label=_('Connection'),
+                                 order=7,
+                                 tooltip=_('Connection speed for this transport (quality)'),
+                                 values=[
+                                         {'id': 'modem', 'text': 'modem'},
+                                         {'id': 'isdn', 'text': 'isdn'},
+                                         {'id': 'adsl', 'text': 'adsl'},
+                                         {'id': 'wan', 'text': 'wan'},
+                                         {'id': 'lan', 'text': 'lan'},
+                                         ]
+                                 )
     session = gui.ChoiceField(label=_('Session'), order=8, tooltip=_('Desktop session'), values=[
             {'id' : 'gnome', 'text' : 'gnome'},
             {'id' : 'kde', 'text' : 'kde'},
@@ -94,7 +102,6 @@ class TSNXTransport(Transport):
             {'id' : '64', 'text' : '64 Mb'},
             {'id' : '128', 'text' : '128 Mb'},
         ])
-
 
     def __init__(self, environment, values=None):
         super(TSNXTransport, self).__init__(environment, values)
@@ -136,13 +143,19 @@ class TSNXTransport(Transport):
             self._useEmptyCreds = gui.strToBool(data[1])
             self._fixedName, self._fixedPassword, self._listenPort, self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer = data[2:]
 
-
     def valuesDict(self):
-        return {  'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'fixedName' : self._fixedName,
-                'fixedPassword' : self._fixedPassword, 'listenPort': self._listenPort,
-                'connection' : self._connection, 'session' : self._session, 'cacheDisk' : self._cacheDisk,
-                'cacheMem' : self._cacheMem, 'tunnelServer' : self._tunnelServer,
-                'tunnelCheckServer' : self._tunnelCheckServer }
+        return {
+            'useEmptyCreds': gui.boolToStr(self._useEmptyCreds),
+            'fixedName': self._fixedName,
+            'fixedPassword': self._fixedPassword,
+            'listenPort': self._listenPort,
+            'connection': self._connection,
+            'session': self._session,
+            'cacheDisk': self._cacheDisk,
+            'cacheMem': self._cacheMem,
+            'tunnelServer': self._tunnelServer,
+            'tunnelCheckServer': self._tunnelCheckServer
+        }
 
     def isAvailableFor(self, ip):
         '''
@@ -177,9 +190,8 @@ class TSNXTransport(Transport):
         width, height = CommonPrefs.getWidthHeight(prefs)
         cache = Cache('pam')
 
-
-        tunuser = ''.join(random.choice(string.letters + string.digits) for i in xrange(12)) + ("%f" % time.time()).split('.')[1]
-        tunpass = ''.join(random.choice(string.letters + string.digits) for i in xrange(12))
+        tunuser = ''.join(random.choice(string.letters + string.digits) for _ in range(12)) + ("%f" % time.time()).split('.')[1]
+        tunpass = ''.join(random.choice(string.letters + string.digits) for _ in range(12))
         cache.put(tunuser, tunpass, 60 * 10)  # Credential valid for ten minutes, and for 1 use only
 
         sshHost, sshPort = self._tunnelServer.split(':')
@@ -188,15 +200,20 @@ class TSNXTransport(Transport):
         tun = "{0} {1} {2} {3} {4} {5} {6}".format(tunuser, tunpass, sshHost, sshPort, ip, self._listenPort, '9')
 
         # Extra data
-        extra = { 'width': width, 'height' : height,
-                 'connection' : self._connection,
-                 'session' : self._session, 'cacheDisk': self._cacheDisk,
-                 'cacheMem' : self._cacheMem, 'tun' : tun }
+        extra = {
+            'width': width,
+            'height': height,
+            'connection': self._connection,
+            'session': self._session,
+            'cacheDisk': self._cacheDisk,
+            'cacheMem': self._cacheMem,
+            'tun': tun
+        }
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return generateHtmlForNX(self, idUserService, idTransport, os, username, password, extra)
+        return generateHtmlForNX(self, idUserService, idTransport, ip, os, username, password, extra)
 
     def getHtmlComponent(self, theId, os, componentId):
         # We use helper to keep this clean

@@ -52,22 +52,23 @@ def transformId(view_func):
     To use this decorator, the view must receive 'response' and 'id' and (optionaly) 'id2', 'id3'
     example: def view(response, id)
     '''
+
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        import errors
+        from uds.web import errors
         for k in kwargs.keys():
             if k[:2] == 'id':
                 try:
                     kwargs[k] = unscrambleId(request, kwargs[k])
-                except:
+                except Exception:
                     return errors.errorView(request, errors.INVALID_REQUEST)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
 
 def scrambleId(request, id_):
-    if request.session.get(SCRAMBLE_SES) == None:
-        request.session[SCRAMBLE_SES] = ''.join(random.choice(string.letters) for _ in xrange(SCRAMBLE_LEN))
+    if request.session.get(SCRAMBLE_SES) is None:
+        request.session[SCRAMBLE_SES] = ''.join(random.choice(string.letters) for _ in range(SCRAMBLE_LEN))
     return base64.b64encode(unicode(id_) + request.session.get(SCRAMBLE_SES)).encode('hex')
 
 

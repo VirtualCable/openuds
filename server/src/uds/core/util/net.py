@@ -102,7 +102,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
 
     def maskFromBits(nBits):
         v = 0
-        for n in xrange(nBits):
+        for n in range(nBits):
             v |= 1 << (31 - n)
         return v
 

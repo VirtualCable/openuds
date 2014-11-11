@@ -36,6 +36,7 @@ from uds.models import NEVER
 from django.utils.translation import ugettext_lazy as _
 from uds.core.managers import statsManager
 import datetime
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,7 +46,7 @@ logger = logging.getLogger(__name__)
 # FIRST_COUNTER_TYPE, LAST_COUNTER_TYPE are just a placeholder for sanity checks
 (
     CT_LOAD, CT_STORAGE, CT_ASSIGNED, CT_INUSE,
-) = xrange(4)
+) = range(4)
 
 __caRead = None
 __caWrite = None
@@ -190,7 +191,7 @@ def _initializeData():
             return res
         return ()
 
-    OT_PROVIDER, OT_SERVICE, OT_DEPLOYED = xrange(3)
+    OT_PROVIDER, OT_SERVICE, OT_DEPLOYED = range(3)
 
     # Dict to convert objects to owner types
     # Dict for translations

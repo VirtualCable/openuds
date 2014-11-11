@@ -49,8 +49,9 @@ from uds.core.util.State import State
 from uds.models import User
 
 import logging
+import six
 
-__updated__ = '2014-11-02'
+__updated__ = '2014-11-11'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -67,7 +68,7 @@ def getUDSCookie(request, response=None, force=False):
     if 'uds' not in request.COOKIES:
         import random
         import string
-        cookie = ''.join(random.choice(string.letters + string.digits) for _ in xrange(32))
+        cookie = ''.join(random.choice(string.letters + string.digits) for _ in range(32))  # @UndefinedVariable
         if response is not None:
             response.set_cookie('uds', cookie)
         request.COOKIES['uds'] = cookie

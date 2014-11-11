@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
 # Logging levels
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in range(6))  # @UndefinedVariable
 
 # Logging sources
 INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE = ('internal', 'actor', 'transport', 'osmanager', 'unknown', 'web', 'admin', 'service')

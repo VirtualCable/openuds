@@ -36,13 +36,14 @@ import cairo
 import pycha.line
 import StringIO
 import time
+import six
 
 from uds.models import getSqlDatetime
 
 import counters
 
 # Chart types
-CHART_TYPE_LINE, CHART_TYPE_AREA, CHART_TYPE_BAR = xrange(3)
+CHART_TYPE_LINE, CHART_TYPE_AREA, CHART_TYPE_BAR = range(3)  # @UndefinedVariable
 
 __typeTitles = None
 
@@ -55,7 +56,7 @@ def make(obj, counterType, **kwargs):
     to = kwargs.get('to', None)
     if since is None and to is None:
         interval = kwargs.get('interval', None)
-        if interval  is not None:
+        if interval is not None:
             to = getSqlDatetime()
             since = to - datetime.timedelta(days=interval)
 

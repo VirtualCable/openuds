@@ -39,11 +39,15 @@ from uds.core.util import connection
 from uds.core.util.Cache import Cache
 from web import generateHtmlForRdp, getHtmlComponent
 
-import logging, random, string, time
+import logging
+import random
+import string
+import time
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
+
 
 class TSRDPTransport(Transport):
     '''
@@ -72,7 +76,7 @@ class TSRDPTransport(Transport):
 
     def __init__(self, environment, values=None):
         super(TSRDPTransport, self).__init__(environment, values)
-        if values != None:
+        if values is not None:
             if values['tunnelServer'].count(':') != 1:
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
             self._tunnelServer = values['tunnelServer']
@@ -136,11 +140,20 @@ class TSRDPTransport(Transport):
                 self._withoutDomain = gui.strToBool(data[11 + i])
 
     def valuesDict(self):
-        return { 'allowSmartcards' : gui.boolToStr(self._allowSmartcards), 'allowPrinters' : gui.boolToStr(self._allowPrinters),
-                'allowDrives': gui.boolToStr(self._allowDrives), 'allowSerials': gui.boolToStr(self._allowSerials),
-                'fixedName' : self._fixedName, 'fixedPassword' : self._fixedPassword, 'fixedDomain' : self._fixedDomain,
-                'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'tunnelServer' : self._tunnelServer,
-                'tunnelCheckServer' : self._tunnelCheckServer, 'wallpaper': self._wallPaper, 'withoutDomain': gui.boolToStr(self._withoutDomain) }
+        return {
+            'allowSmartcards': gui.boolToStr(self._allowSmartcards),
+            'allowPrinters': gui.boolToStr(self._allowPrinters),
+            'allowDrives': gui.boolToStr(self._allowDrives),
+            'allowSerials': gui.boolToStr(self._allowSerials),
+            'fixedName': self._fixedName,
+            'fixedPassword': self._fixedPassword,
+            'fixedDomain': self._fixedDomain,
+            'useEmptyCreds': gui.boolToStr(self._useEmptyCreds),
+            'tunnelServer': self._tunnelServer,
+            'tunnelCheckServer': self._tunnelCheckServer,
+            'wallpaper': self._wallPaper,
+            'withoutDomain': gui.boolToStr(self._withoutDomain)
+        }
 
     def isAvailableFor(self, ip):
         '''
@@ -190,8 +203,8 @@ class TSRDPTransport(Transport):
         depth = CommonPrefs.getDepth(prefs)
         cache = Cache('pam')
 
-        tunuser = ''.join(random.choice(string.letters + string.digits) for i in xrange(12)) + ("%f" % time.time()).split('.')[1]
-        tunpass = ''.join(random.choice(string.letters + string.digits) for i in xrange(12))
+        tunuser = ''.join(random.choice(string.letters + string.digits) for i in range(12)) + ("%f" % time.time()).split('.')[1]
+        tunpass = ''.join(random.choice(string.letters + string.digits) for i in range(12))
         cache.put(tunuser, tunpass, 60 * 10)  # Credential valid for ten minutes, and for 1 use only
 
         sshHost, sshPort = self._tunnelServer.split(':')
@@ -201,10 +214,18 @@ class TSRDPTransport(Transport):
         ip = '127.0.0.1'
 
         # Extra data
-        extra = { 'width': width, 'height' : height, 'depth' : depth,
-            'printers' : self._allowPrinters, 'smartcards' : self._allowSmartcards,
-            'drives' : self._allowDrives, 'serials' : self._allowSerials,
-            'tun': tun, 'compression':True, 'wallpaper': self._wallPaper }
+        extra = {
+            'width': width,
+            'height' : height,
+            'depth': depth,
+            'printers': self._allowPrinters,
+            'smartcards': self._allowSmartcards,
+            'drives': self._allowDrives,
+            'serials': self._allowSerials,
+            'tun': tun,
+            'compression': True,
+            'wallpaper': self._wallPaper
+        }
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
