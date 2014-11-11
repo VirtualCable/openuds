@@ -34,24 +34,24 @@ UDS Service modules interfaces and classes.
 '''
 from __future__ import unicode_literals
 
-from BaseServiceProvider import ServiceProvider
-from BaseService import Service
-from BasePublication import Publication
-from BaseDeployed import UserDeployment
+from uds.core.services.BaseServiceProvider import ServiceProvider
+from uds.core.services.BaseService import Service
+from uds.core.services.BasePublication import Publication
+from uds.core.services.BaseDeployed import UserDeployment
 
-from ClusteredServiceProvider import ClusteredServiceProvider
-from ClusteredService import ClusteredService
-from ClusteredPublication import ClusteredPublication
-from ClusteredUserDeployment import ClusteredUserDeployment
+from uds.core.services.ClusteredServiceProvider import ClusteredServiceProvider
+from uds.core.services.ClusteredService import ClusteredService
+from uds.core.services.ClusteredPublication import ClusteredPublication
+from uds.core.services.ClusteredUserDeployment import ClusteredUserDeployment
 
-import Exceptions
+import uds.core.services.Exceptions
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-11-11'
 
 
 def factory():
     '''
     Returns factory for register/access to service providers
     '''
-    from ServiceProviderFactory import ServiceProviderFactory
+    from uds.core.services.ServiceProviderFactory import ServiceProviderFactory
     return ServiceProviderFactory.factory()

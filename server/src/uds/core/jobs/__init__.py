@@ -34,12 +34,15 @@ UDS jobs related modules
 '''
 from __future__ import unicode_literals
 
-from Job import Job
-from DelayedTask import DelayedTask
+from uds.core.jobs.Job import Job
+from uds.core.jobs.DelayedTask import DelayedTask
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-11'
 
 
 def factory():
-    from JobsFactory import JobsFactory
+    '''
+    Returns a singleton to a jobs factory
+    '''
+    from uds.core.jobs.JobsFactory import JobsFactory
     return JobsFactory.factory()

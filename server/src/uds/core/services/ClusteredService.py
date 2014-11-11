@@ -33,9 +33,9 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
-from BaseService import Service
+from uds.core.services.BaseService import Service
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-11-11'
 
 
 class ClusteredService(Service):

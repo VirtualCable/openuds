@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 import datetime
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-11'
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class JobsFactory(object):
         logger.debug('Inserting job {0} of type_ {1}'.format(name, type_))
         try:
             self._jobs[name] = type_
-        except Exception, e:
+        except Exception as e:
             logger.debug('Exception at insert in JobsFactory: {0}, {1}'.format(e.__class__, e))
 
     def ensureJobsInDatabase(self):
@@ -81,7 +81,7 @@ class JobsFactory(object):
                     if job.next_execution > job.last_execution + datetime.timedelta(seconds=type_.frecuency):
                         job.next_execution = job.last_execution + datetime.timedelta(seconds=type_.frecuency)
                     job.save()
-        except Exception, e:
+        except Exception as e:
             logger.debug('Exception at ensureJobsInDatabase in JobsFactory: {0}, {1}'.format(e.__class__, e))
 
     def lookup(self, typeName):

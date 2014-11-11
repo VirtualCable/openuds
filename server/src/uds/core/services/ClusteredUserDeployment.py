@@ -32,10 +32,10 @@
 '''
 from __future__ import unicode_literals
 
-from BaseDeployed import UserDeployment
+from uds.core.services.BaseDeployed import UserDeployment
 from uds.core.util.State import State
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-11-11'
 
 
 class ClusteredUserDeployment(UserDeployment):

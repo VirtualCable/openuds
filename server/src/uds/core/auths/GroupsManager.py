@@ -34,11 +34,11 @@ from __future__ import unicode_literals
 
 from uds.core.util.State import State
 from uds.models import Group as dbGroup
-from Group import Group
+from uds.core.auths.Group import Group
 import inspect
 import logging
 
-__updated__ = '2014-10-30'
+__updated__ = '2014-11-11'
 
 logger = logging.getLogger(__name__)
 

@@ -34,7 +34,7 @@ UDS Service modules interfaces and classes.
 '''
 from __future__ import unicode_literals
 
-from BaseTransport import Transport
+from uds.core.transports.BaseTransport import Transport
 
 
 def factory():

@@ -34,18 +34,18 @@ UDS authentication related interfaces and classes
 '''
 from __future__ import unicode_literals
 
-from BaseAuthenticator import Authenticator
-from User import User
-from Group import Group
-from GroupsManager import GroupsManager
-import Exceptions
+from uds.core.auths.BaseAuthenticator import Authenticator
+from uds.core.auths.User import User
+from uds.core.auths.Group import Group
+from uds.core.auths.GroupsManager import GroupsManager
+from uds.core.auths import Exceptions
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-11'
 
 
 def factory():
     '''
     Returns factory for register/access to authenticators
     '''
-    from AuthsFactory import AuthsFactory
+    from uds.core.auths.AuthsFactory import AuthsFactory
     return AuthsFactory.factory()

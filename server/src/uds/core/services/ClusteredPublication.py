@@ -31,9 +31,9 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
-from BasePublication import Publication
+from uds.core.services.BasePublication import Publication
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-11-11'
 
 
 class ClusteredPublication(Publication):

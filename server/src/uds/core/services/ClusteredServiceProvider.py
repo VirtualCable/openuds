@@ -32,12 +32,12 @@
 '''
 from __future__ import unicode_literals
 
-from BaseServiceProvider import ServiceProvider
+from uds.core.services.BaseServiceProvider import ServiceProvider
 from uds.core.util.Config import GlobalConfig
 
 import logging
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-11-11'
 
 logger = logging.getLogger(__name__)
 

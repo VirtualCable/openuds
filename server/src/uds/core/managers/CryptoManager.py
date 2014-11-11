@@ -40,7 +40,7 @@ import hashlib
 import array
 import uuid
 import datetime
-
+import codecs
 
 import logging
 import six
@@ -75,7 +75,7 @@ class CryptoManager(object):
             value = value.encode('utf-8')
 
         atfork()
-        return six.text_type(self._rsa.encrypt(value, six.b(''))[0].encode(CryptoManager.CODEC))
+        return six.text_type(codecs.encode(self._rsa.encrypt(value, six.b(''))[0], CryptoManager.CODEC))
 
     def decrypt(self, value):
         if isinstance(value, six.text_type):

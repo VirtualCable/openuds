@@ -35,12 +35,16 @@ from __future__ import unicode_literals
 from uds.core.Environment import Environmentable
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-11'
 
 logger = logging.getLogger(__name__)
 
 
 class DelayedTask(Environmentable):
+    '''
+    This class represents a single delayed task object.
+    This is an object that represents an execution to be done "later"
+    '''
     def __init__(self):
         '''
         Remember to invoke parent init in derived clases using super(myClass,self).__init__() to let this initialize its own variables
@@ -50,7 +54,7 @@ class DelayedTask(Environmentable):
     def execute(self):
         try:
             self.run()
-        except Exception, e:
+        except Exception as e:
             logger.error('Job {0} raised an exception: {1}'.format(self.__class__, e))
 
     def run(self):

@@ -31,15 +31,17 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
-import logging
 
 from uds.core.managers import logManager
+
+import logging
+import six
 
 logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
 # Logging levels
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
 
 # Logging sources
 INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE = ('internal', 'actor', 'transport', 'osmanager', 'unknown', 'web', 'admin', 'service')
@@ -48,16 +50,16 @@ OTHERSTR, DEBUGSTR, INFOSTR, WARNSTR, ERRORSTR, FATALSTR = ('OTHER', 'DEBUG', 'I
 
 # Names for defined log levels
 __nameLevels = {
-     DEBUGSTR: DEBUG,
-     INFOSTR: INFO,
-     WARNSTR: WARN,
-     ERRORSTR: ERROR,
-     FATALSTR: FATAL,
-     OTHERSTR: OTHER
-    }
+    DEBUGSTR: DEBUG,
+    INFOSTR: INFO,
+    WARNSTR: WARN,
+    ERRORSTR: ERROR,
+    FATALSTR: FATAL,
+    OTHERSTR: OTHER
+}
 
 # Reverse dict of names
-__valueLevels = dict((v, k) for k, v in __nameLevels.iteritems())
+__valueLevels = dict((v, k) for k, v in __nameLevels.items())
 
 
 def logLevelFromStr(str_):
@@ -84,7 +86,6 @@ def getLogs(wichObject, limit=None):
     '''
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     '''
-    from uds.core.managers import logManager
     from uds.core.util.Config import GlobalConfig
 
     if limit is None:
@@ -97,5 +98,4 @@ def clearLogs(wichObject):
     '''
     Clears the logs associated with the object using the logManager
     '''
-    from uds.core.managers import logManager
     return logManager().clearLogs(wichObject)

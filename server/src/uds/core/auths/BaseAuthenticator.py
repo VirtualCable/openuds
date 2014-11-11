@@ -35,11 +35,11 @@ from __future__ import unicode_literals
 
 from uds.core import Module
 from django.utils.translation import ugettext_noop as _
-from GroupsManager import GroupsManager
-from Exceptions import InvalidUserException
+from uds.core.auths.GroupsManager import GroupsManager
+from uds.core.auths.Exceptions import InvalidUserException
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-11'
 
 logger = logging.getLogger(__name__)
 
@@ -142,8 +142,8 @@ class Authenticator(Module):
     # : If this authenticators casues a temporal block of an user on repeated login failures
     blockUserOnLoginFailures = True
 
-    from User import User
-    from Group import Group
+    from uds.core.auths.User import User
+    from uds.core.auths.Group import Group
 
     # : The type of user provided, normally standard user will be enough.
     # : This is here so if we need it in some case, we can write our own

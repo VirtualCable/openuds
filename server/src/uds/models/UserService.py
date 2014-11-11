@@ -31,9 +31,11 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+# pylint: disable=model-missing-unicode, too-many-public-methods
+
 from __future__ import unicode_literals
 
-__updated__ = '2014-10-21'
+__updated__ = '2014-11-11'
 
 from django.db import models
 from django.db.models import signals
@@ -63,7 +65,6 @@ class UserService(UUIDModel):
     This is the base model for assigned user service and cached user services.
     This are the real assigned services to users. DeployedService is the container (the group) of this elements.
     '''
-    # pylint: disable=model-missing-unicode
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
@@ -145,9 +146,9 @@ class UserService(UUIDModel):
         # We get active publication
         publicationInstance = None
         try:  # We may have deleted publication...
-            if self.publication != None:
+            if self.publication is not None:
                 publicationInstance = self.publication.getInstance()
-        except Exception, e:
+        except Exception as e:
             # The publication to witch this item points to, does not exists
             self.publication = None
             logger.error("Got exception at getInstance of an userService {0} : {1}".format(e.__class__, e))
@@ -239,6 +240,9 @@ class UserService(UUIDModel):
         return [self.src_ip, self.src_hostname]
 
     def needsOsManager(self):
+        '''
+        Returns True if this User Service needs an os manager (i.e. parent services pools is marked to use an os manager)
+        '''
         return self.deployed_service.osmanager is not None
 
     def transformsUserOrPasswordForService(self):

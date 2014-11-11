@@ -35,9 +35,9 @@ This package contains all core-related code for UDS
 from __future__ import unicode_literals
 
 # Core needs tasks manager to register scheduled jobs, so we ensure of that here
-from Environment import Environmentable
-from Serializable import Serializable
-from BaseModule import Module
-import services
-import auths
-import transports
+from uds.core.Environment import Environmentable
+from uds.core.Serializable import Serializable
+from uds.core.BaseModule import Module
+from uds.core import services
+from uds.core import auths
+from uds.core import transports

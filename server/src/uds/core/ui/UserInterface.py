@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import get_language, ugettext as _
-import cPickle
+import pickle
 import logging
 
 logger = logging.getLogger(__name__)
@@ -781,7 +781,7 @@ class UserInterface(object):
                 continue
             if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 logger.debug('Serializing value {0}'.format(v.value))
-                val = '\001' + cPickle.dumps(v.value)
+                val = '\001' + pickle.dumps(v.value)
             else:
                 val = v.value
             if val is True:
@@ -817,7 +817,7 @@ class UserInterface(object):
                 if k in self._gui:
                     try:
                         if v[0] == '\001':
-                            val = cPickle.loads(v[1:].encode('utf-8'))
+                            val = pickle.loads(v[1:].encode('utf-8'))
                         else:
                             val = v
                     except Exception:
