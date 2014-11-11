@@ -29,14 +29,14 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-import SimpleHTTPServer
-import SocketServer
+
 import threading
 import uuid
 import json
-from base64 import decodestring
+import six
+from six.moves import socketserver  # @UnresolvedImport, pylint: disable=import-error
+from six.moves import SimpleHTTPServer  # @UnresolvedImport, pylint: disable=import-error
 import time
 
 from udsactor.log import logger
@@ -54,11 +54,10 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
 
     def sendJsonError(self, code, message):
         self.send_response(code)
-        self.send_header('Content-type','application/json')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps({'error': message}))
         return
-
 
     def do_GET(self):
         # Very simple path & params splitter
@@ -74,7 +73,7 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
 
         if len(path) != 2:
             self.send_response(200)
-            self.send_header('Content-type','application/json')
+            self.send_header('Content-type', 'application/json')
             self.end_headers()
             # Send the html message
             self.wfile.write(json.dumps("UDS Actor has been running for {} seconds".format(time.time() - startTime)))
@@ -88,11 +87,11 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
             return
         except Exception as e:
             logger.error('Got exception executing GET {}: {}'.format(path[1], utils.toUnicode(e.message)))
-            self.sendJsonError(500, unicode(e))
+            self.sendJsonError(500, str(e))
             return
 
         self.send_response(200)
-        self.send_header('Content-type','application/json')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
         # Send the html message
         self.wfile.write(json.dumps(result))
@@ -111,7 +110,7 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
             HTTPServerHandler.lock.acquire()
             length = int(self.headers.getheader('content-length'))
             content = self.rfile.read(length)
-            print length, ">>", content, '<<'
+            print(length, ">>", content, '<<')
             params = json.loads(content)
 
             operation = getattr(self, 'post_' + path[1])
@@ -121,14 +120,13 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
             return
         except Exception as e:
             logger.error('Got exception executing POST {}: {}'.format(path[1], utils.toUnicode(e.message)))
-            self.sendJsonError(500, unicode(e))
+            self.sendJsonError(500, str(e))
             return
         finally:
             HTTPServerHandler.lock.release()
 
-
         self.send_response(200)
-        self.send_header('Content-type','application/json')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
         # Send the html message
         self.wfile.write(json.dumps(result))
@@ -158,10 +156,11 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
             # Execute script at server space, that is, here
             # as a secondary thread
             script = params['script']
+
             def executor():
                 logger.debug('Executing script: {}'.format(script))
                 try:
-                    exec script in None, None
+                    exec(script, None, None)
                 except Exception as e:
                     logger.error('Error executing script: {}'.format(e))
             th = threading.Thread(target=executor)
@@ -183,7 +182,7 @@ class HTTPServerThread(threading.Thread):
         HTTPServerHandler.ipc = ipc
 
         self.certFile = createSelfSignedCert()
-        self.server = SocketServer.TCPServer(address, HTTPServerHandler)
+        self.server = socketserver.TCPServer(address, HTTPServerHandler)
         self.server.socket = ssl.wrap_socket(self.server.socket, certfile=self.certFile, server_side=True)
 
     def getServerUrl(self):

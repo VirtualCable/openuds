@@ -209,8 +209,8 @@ def testRemote():
 
 if __name__ == '__main__':
     # ipcServer()
-    ipcTest()
-    # testRest()
+    # ipcTest()
+    testRest()
     # testIdle()
     # testServer()
     # testRemote()

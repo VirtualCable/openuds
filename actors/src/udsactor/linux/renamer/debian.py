@@ -29,47 +29,45 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
+from udsactor.linux.renamer import renamers
+from udsactor.log import logger
 
-import six
 import os
 
-DEBUG = True
 
-CONFIGFILE = '/etc/udsactor/udsactor.cfg' if DEBUG is False else '/tmp/udsactor.cfg'
+def rename(newName):
+    # If new name has "'\t'
+    if '\t' in newName:
+        newName, account, password = newName.split('\t')
+    else:
+        account = password = None
 
+    logger.debug('Debian renamer')
 
-def checkPermissions():
-    return True if DEBUG else os.getuid() == 0
+    if account is not None:
+        os.system('echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(account, password))
 
+    f = open('/etc/hostname', 'w')
+    f.write(newName)
+    f.close()
+    os.system('/bin/hostname %s' % newName)
 
-def readConfig():
-    res = {}
-    try:
-        cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
-        cfg.optionxform = six.text_type
-        cfg.read(CONFIGFILE)
-        # Just reads 'uds' section
-        for key in cfg.options('uds'):
-            res[key] = cfg.get('uds', key)
-            if res[key].lower() in ('true', 'yes', 'si'):
-                res[key] = True
-            elif res[key].lower() in ('false', 'no'):
-                res[key] = False
-    except Exception:
-        pass
+    # add name to "hosts"
+    f = open('/etc/hosts', 'r')
+    lines = f.readlines()
+    f.close()
+    f = open('/etc/hosts', 'w')
+    f.write("127.0.1.1\t%s\n" % newName)
+    for l in lines:
+        if l[:9] == '127.0.1.1':
+            continue
+        f.write(l)
+    f.close()
 
-    return res
+    return True
 
-
-def writeConfig(data):
-    cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
-    cfg.optionxform = six.text_type
-    cfg.add_section('uds')
-    for key, val in data.items():
-        cfg.set('uds', key, str(val))
-
-    with open(CONFIGFILE, 'w') as f:
-        cfg.write(f)
-
-    os.chmod(CONFIGFILE, 0o0600)
+# All names in lower case
+renamers['debian'] = rename
+renamers['ubuntu'] = rename

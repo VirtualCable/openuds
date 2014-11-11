@@ -33,6 +33,7 @@ from __future__ import unicode_literals
 
 import sys
 from PyQt4 import QtCore, QtGui
+import six
 
 from udsactor import store
 from udsactor import REST
@@ -48,7 +49,7 @@ class MyForm(QtGui.QDialog):
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
         if data is not None:
-            logger.debug('Setting configuration parameters in form')
+            logger.debug('Setting configuration parameters in form: {}'.format(data))
             self.ui.host.setText(data.get('host', ''))
             self.ui.masterKey.setText(data.get('masterKey', ''))
             self.ui.useSSl.setCurrentIndex(1 if data.get('ssl', False) is True else 0)
@@ -56,8 +57,8 @@ class MyForm(QtGui.QDialog):
 
     def _getCfg(self):
         return {
-            'host': unicode(self.ui.host.text()),
-            'masterKey': unicode(self.ui.masterKey.text()),
+            'host': six.text_type(self.ui.host.text()),
+            'masterKey': six.text_type(self.ui.masterKey.text()),
             'ssl': self.ui.useSSl.currentIndex() == 1,
             'logLevel': (self.ui.logLevelComboBox.currentIndex() + 1) * 10000
         }
@@ -104,7 +105,7 @@ if __name__ == "__main__":
     cfg = store.readConfig()
 
     if cfg is not None:
-        logger.setLevel(cfg.get('logLevel', 20000))
+        logger.setLevel(int(cfg.get('logLevel', 20000)))
     else:
         logger.setLevel(20000)
 

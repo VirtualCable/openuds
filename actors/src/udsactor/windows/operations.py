@@ -31,23 +31,26 @@
 '''
 from __future__ import unicode_literals
 
-import win32com.client
-import win32net
-import win32security
-import win32api
-import win32con
+import win32com.client  # @UnresolvedImport, pylint: disable=import-error
+import win32net  # @UnresolvedImport, pylint: disable=import-error
+import win32security  # @UnresolvedImport, pylint: disable=import-error
+import win32api  # @UnresolvedImport, pylint: disable=import-error
+import win32con  # @UnresolvedImport, pylint: disable=import-error
 import ctypes
 from ctypes.wintypes import DWORD, LPCWSTR
 
 from udsactor import utils
 from udsactor.log import logger
 
+
 def getErrorMessage(res=0):
     msg = win32api.FormatMessage(res)
     return msg.decode('windows-1250', 'ignore')
 
+
 def getComputerName():
     return win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname)
+
 
 def getNetworkInfo():
     obj = win32com.client.Dispatch("WbemScripting.SWbemLocator")
@@ -63,6 +66,7 @@ def getNetworkInfo():
                 yield utils.Bunch(name=obj.Caption, mac=obj.MACAddress, ip=ip)
     except Exception:
         return
+
 
 def getDomainName():
     '''
@@ -80,6 +84,7 @@ def getDomainName():
 
     return domain
 
+
 def getWindowsVersion():
     return win32api.GetVersionEx()
 
@@ -89,6 +94,7 @@ EWX_REBOOT = 0x00000002
 EWX_FORCE = 0x00000004
 EWX_POWEROFF = 0x00000008
 EWX_FORCEIFHUNG = 0x00000010
+
 
 def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
     hproc = win32api.GetCurrentProcess()
@@ -100,6 +106,7 @@ def reboot(flags=EWX_FORCEIFHUNG | EWX_REBOOT):
 
 def loggoff():
     win32api.ExitWindowsEx(EWX_LOGOFF)
+
 
 def renameComputer(newName):
     # Needs admin privileges to work
@@ -120,6 +127,7 @@ NETSETUP_JOIN_UNSECURE = 0x00000040
 NETSETUP_MACHINE_PWD_PASSED = 0x00000080
 NETSETUP_JOIN_WITH_NEW_NAME = 0x00000400
 NETSETUP_DEFER_SPN_SET = 0x1000000
+
 
 def joinDomain(domain, ou, account, password, executeInOneStep=False):
     # If account do not have domain, include it
@@ -156,6 +164,7 @@ def joinDomain(domain, ou, account, password, executeInOneStep=False):
         print res, error
         raise Exception('Error joining domain {}, with credentials {}/*****{}: {}, {}'.format(domain.value, account.value, ', under OU {}'.format(ou.value) if ou.value != None else '', res, error))
 
+
 def changeUserPassword(user, oldPassword, newPassword):
     computerName = LPCWSTR(getComputerName())
     user = LPCWSTR(user)
@@ -169,11 +178,13 @@ def changeUserPassword(user, oldPassword, newPassword):
         error = getErrorMessage()
         raise Exception('Error changing password for user {}: {}'.format(user.value, error))
 
+
 class LASTINPUTINFO(ctypes.Structure):
     _fields_ = [
         ('cbSize', ctypes.c_uint),
         ('dwTime', ctypes.c_uint),
     ]
+
 
 def getIdleDuration():
     lastInputInfo = LASTINPUTINFO()

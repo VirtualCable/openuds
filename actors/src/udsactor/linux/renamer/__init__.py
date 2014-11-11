@@ -29,47 +29,31 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
-
-import six
+import platform
 import os
+import sys
+import pkgutil
 
-DEBUG = True
+from udsactor.log import logger
 
-CONFIGFILE = '/etc/udsactor/udsactor.cfg' if DEBUG is False else '/tmp/udsactor.cfg'
-
-
-def checkPermissions():
-    return True if DEBUG else os.getuid() == 0
+renamers = {}
 
 
-def readConfig():
-    res = {}
-    try:
-        cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
-        cfg.optionxform = six.text_type
-        cfg.read(CONFIGFILE)
-        # Just reads 'uds' section
-        for key in cfg.options('uds'):
-            res[key] = cfg.get('uds', key)
-            if res[key].lower() in ('true', 'yes', 'si'):
-                res[key] = True
-            elif res[key].lower() in ('false', 'no'):
-                res[key] = False
-    except Exception:
-        pass
+def rename(newName):
+    distribution = platform.linux_distribution()[0].lower()
+    if distribution in renamers:
+        return renamers[distribution](newName)
 
-    return res
+    logger.error('Renamer for platform "{0}" not found'.format(distribution))
+    return False
 
 
-def writeConfig(data):
-    cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
-    cfg.optionxform = six.text_type
-    cfg.add_section('uds')
-    for key, val in data.items():
-        cfg.set('uds', key, str(val))
+# Do load of packages
+def _init():
+    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    for _, name, _ in pkgutil.iter_modules([pkgpath]):
+        __import__(__name__ + '.' + name, globals(), locals())
 
-    with open(CONFIGFILE, 'w') as f:
-        cfg.write(f)
-
-    os.chmod(CONFIGFILE, 0o0600)
+_init()
