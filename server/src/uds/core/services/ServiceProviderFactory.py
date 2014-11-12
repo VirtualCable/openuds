@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 import logging
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-11-12'
 
 logger = logging.getLogger(__name__)
 
@@ -97,14 +97,14 @@ class ServiceProviderFactory(object):
         type_.offers = offers
         logger.debug('Adding provider {0} as {1}'.format(type_.type(), type_))
 
-        self._providers[type_.type()] = type_
+        self._providers[type_.type().lower()] = type_
 
     def lookup(self, typeName):
         '''
         Tries to locate a server provider and by its name, and, if
         not found, returns None
         '''
-        return self._providers.get(typeName, None)
+        return self._providers.get(typeName.lower(), None)
 
     def servicesThatDoNotNeedPublication(self):
         '''
