@@ -34,7 +34,7 @@
 import six
 import os
 
-DEBUG = True
+DEBUG = False
 
 CONFIGFILE = '/etc/udsactor/udsactor.cfg' if DEBUG is False else '/tmp/udsactor.cfg'
 
@@ -68,6 +68,11 @@ def writeConfig(data):
     cfg.add_section('uds')
     for key, val in data.items():
         cfg.set('uds', key, str(val))
+
+    # Ensures exists destination folder
+    dirname = os.path.dirname(CONFIGFILE)
+    if not os.path.exists(dirname):
+        os.mkdir(dirname, mode=0o700)  # Will create only if route to path already exists, for example, /etc (that must... :-))
 
     with open(CONFIGFILE, 'w') as f:
         cfg.write(f)

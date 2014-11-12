@@ -38,8 +38,13 @@ import requests
 import logging
 import json
 import uuid
+import urllib3
+import six
+
+from .utils import exceptionToMessage
 
 VERIFY_CERT = False
+
 
 class RESTError(Exception):
     ERRCODE = 0
@@ -67,7 +72,7 @@ class OsManagerError(RESTError):
 
 
 def ensureResultIsOk(result):
-    if not 'error' in result:
+    if 'error' not in result:
         return
 
     for i in (InvalidKeyError, UnmanagedHostError, UserServiceNotFoundError, OsManagerError):
@@ -103,9 +108,9 @@ class Api(object):
         self.scrambledResponses = scrambledResponses
         self.uuid = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
-        self.secretKey = uuid.uuid4().get_hex()
+        self.secretKey = six.text_type(uuid.uuid4())
         # Disable logging requests messages except for errors, ...
-        requests.packages.urllib3.disable_warnings()
+        urllib3.disable_warnings()
         logging.getLogger("requests").setLevel(logging.ERROR)
 
     def _getUrl(self, method, key=None, ids=None):
@@ -129,10 +134,10 @@ class Api(object):
                 r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=VERIFY_CERT)
 
             r = r.json()
-        except requests.exceptions.ConnectionError as e:
-            raise ConnectionError(e.message.args[-1].strerror)
+        except requests.exceptions.RequestException as e:
+            raise ConnectionError(e)
         except Exception as e:
-            raise ConnectionError(unicode(e))
+            raise ConnectionError(exceptionToMessage(e))
 
         ensureResultIsOk(r)
 
