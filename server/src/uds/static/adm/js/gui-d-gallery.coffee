@@ -10,7 +10,6 @@ gui.gallery.link = ->
         modalId = gui.launchModal(gettext("New image"), content,
           actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Upload") + "</button>"
         )
-        gui.doLog value.name
         gui.tools.applyCustoms modalId
         value is null or $("#id_image_name").val(value.name)
         $(modalId + " .button-accept").click ->

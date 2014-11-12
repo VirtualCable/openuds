@@ -41,23 +41,24 @@ class TransportsFactory(object):
     _factory = None
 
     def __init__(self):
-        self._jobs = {}
+        self._transports = {}
 
     @staticmethod
     def factory():
-        if TransportsFactory._factory == None:
+        '''
+        Singleton getter
+        '''
+        if TransportsFactory._factory is None:
             TransportsFactory._factory = TransportsFactory()
         return TransportsFactory._factory
 
     def providers(self):
-        return self._jobs
+        return self._transports
 
     def insert(self, type_):
         logger.debug('Adding transport {0} as {1}'.format(type_.type(), type_))
-        self._jobs[type_.type()] = type_
+        typeName = type_.type().lower()
+        self._transports[typeName] = type_
 
     def lookup(self, typeName):
-        try:
-            return self._jobs[typeName]
-        except KeyError:
-            return None
+        return self._transports.get(typeName.lower(), None)

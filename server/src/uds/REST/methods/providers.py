@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider, Service, UserService
-from services import Services as DetailServices
+from uds.REST.methods.services import Services as DetailServices
 from uds.core import services
 
 from uds.REST import NotFound, RequestError
@@ -113,7 +113,9 @@ class Providers(ModelHandler):
     def test(self, type_):
         from uds.core.Environment import Environment
 
+        logger.debug('Type: {}'.format(type_))
         spType = services.factory().lookup(type_)
+        logger.debug('spType: {}'.format(spType))
         res = spType.test(Environment.getTempEnv(), self._params)
         if res[0]:
             return 'ok'

@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-11-06'
+__updated__ = '2014-11-12'
 
 
 # a few constants
@@ -683,7 +683,7 @@ class ModelHandler(BaseModelHandler):
         logger.debug('method POST for {0}, {1}'.format(self.__class__.__name__, self._args))
         if len(self._args) == 2:
             if self._args[0] == 'test':
-                return self.test(self._args[1].upper())
+                return self.test(self._args[1])
 
         self.invalidMethodException()
 

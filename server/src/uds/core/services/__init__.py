@@ -46,7 +46,7 @@ from uds.core.services.ClusteredUserDeployment import ClusteredUserDeployment
 
 import uds.core.services.Exceptions
 
-__updated__ = '2014-11-11'
+__updated__ = '2014-11-12'
 
 
 def factory():

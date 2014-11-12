@@ -59,7 +59,7 @@ class ServiceProviderFactory(object):
         '''
         Returns the factory that keeps the register of service providers.
         '''
-        if ServiceProviderFactory._factory == None:
+        if ServiceProviderFactory._factory is None:
             ServiceProviderFactory._factory = ServiceProviderFactory()
         return ServiceProviderFactory._factory
 
@@ -79,7 +79,8 @@ class ServiceProviderFactory(object):
         # We will check that if service provided by "provider" needs
         # cache, but service do not provides publicationType,
         # that service will not be registered and it will be informed
-        if self._providers.get(type_.type(), None) is not None:
+        typeName = type_.type().lower()
+        if typeName in self._providers:
             logger.debug('{0} already registered as Service Provider'.format(type_))
             return
 
@@ -87,17 +88,16 @@ class ServiceProviderFactory(object):
         for s in type_.offers:
             if s.usesCache_L2 is True:
                 s.usesCache = True
-            if s.usesCache is True and s.publicationType is None:
-                logger.error('Provider {0} offers {1}, but {1} needs cache and do not have publicationType defined'.format(
-                                type_, s))
-                continue
+                if s.publicationType is None:
+                    logger.error('Provider {0} offers {1}, but {1} needs cache and do not have publicationType defined'.format(type_, s))
+                    continue
             offers.append(s)
 
         # Only offers valid services
         type_.offers = offers
         logger.debug('Adding provider {0} as {1}'.format(type_.type(), type_))
 
-        self._providers[type_.type().lower()] = type_
+        self._providers[typeName] = type_
 
     def lookup(self, typeName):
         '''

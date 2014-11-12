@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-12'
 
 
 class AuthsFactory(object):
@@ -52,7 +52,7 @@ class AuthsFactory(object):
         '''
         Returns the factory that keeps the register of authentication providers.
         '''
-        if AuthsFactory._factory == None:
+        if AuthsFactory._factory is None:
             AuthsFactory._factory = AuthsFactory()
         return AuthsFactory._factory
 
@@ -66,11 +66,11 @@ class AuthsFactory(object):
         '''
         Registers a new authentication provider
         '''
-        self._auths[type_.type()] = type_
+        self._auths[type_.type().lower()] = type_
 
     def lookup(self, typeName):
         '''
         Tries to locate an authentication provider and by its name, and, if
         not found, returns None
         '''
-        return self._auths.get(typeName, None)
+        return self._auths.get(typeName.lower(), None)

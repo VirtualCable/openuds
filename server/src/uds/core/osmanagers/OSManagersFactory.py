@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 import logging
 
-__updated__ = '2014-03-22'
+__updated__ = '2014-11-12'
 
 logger = logging.getLogger(__name__)
 
@@ -43,23 +43,21 @@ class OSManagersFactory(object):
     _factory = None
 
     def __init__(self):
-        self._jobs = {}
+        self._osManagers = {}
 
     @staticmethod
     def factory():
-        if OSManagersFactory._factory == None:
+        if OSManagersFactory._factory is None:
             OSManagersFactory._factory = OSManagersFactory()
         return OSManagersFactory._factory
 
     def providers(self):
-        return self._jobs
+        return self._osManagers
 
     def insert(self, type_):
         logger.debug('Adding OS Manager {0} as {1}'.format(type_.type(), type_))
-        self._jobs[type_.type()] = type_
+        typeName = type_.type().lower()
+        self._osManagers[typeName] = type_
 
     def lookup(self, typeName):
-        try:
-            return self._jobs[typeName]
-        except KeyError:
-            return None
+        return self._osManagers.get(typeName.lower(), None)
