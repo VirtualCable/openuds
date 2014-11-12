@@ -160,7 +160,7 @@ class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
             def executor():
                 logger.debug('Executing script: {}'.format(script))
                 try:
-                    exec(script, None, None)
+                    six.exec_(script, None, None)
                 except Exception as e:
                     logger.error('Error executing script: {}'.format(e))
             th = threading.Thread(target=executor)

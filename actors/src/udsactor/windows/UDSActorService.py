@@ -188,7 +188,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         '''
         # If no configuration is found, stop service
         if cfg is None:
-            logger.debug('No configuration found, stopping service')
+            logger.fatal('No configuration found, stopping service')
             return False
 
         self.api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
