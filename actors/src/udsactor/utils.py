@@ -70,4 +70,3 @@ class Bunch(dict):
         dict.__init__(self, kw)
         self.__dict__ = self
 
-
