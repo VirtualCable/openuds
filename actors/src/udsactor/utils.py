@@ -32,12 +32,37 @@
 from __future__ import unicode_literals
 
 import sys
+import six
+
 if sys.platform == 'win32':
-    def toUnicode(msg):
-        return msg.decode('windows-1250', 'ignore')
+    _fromEncoding = 'windows-1250'
 else:
-    def toUnicode(msg):
-        return msg.decode('utf8')
+    _fromEncoding = 'utf-8'
+
+
+def toUnicode(msg):
+    try:
+        if not isinstance(msg, six.text_type):
+            if isinstance(msg, six.binary_type):
+                return msg.decode(_fromEncoding, 'ignore')
+            return six.text_type(msg)
+        else:
+            return msg
+    except Exception:
+        try:
+            return six.text_type(msg)
+        except Exception:
+            return ''
+
+
+def exceptionToMessage(e):
+    msg = ''
+    for arg in e.args:
+        if isinstance(arg, Exception):
+            msg = msg + exceptionToMessage(arg)
+        else:
+            msg = msg + toUnicode(arg) + '. '
+    return msg
 
 
 class Bunch(dict):

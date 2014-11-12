@@ -37,6 +37,7 @@ import six
 
 from udsactor import store
 from udsactor import REST
+from udsactor import utils
 from udsactor.log import logger
 
 from setup_dialog_ui import Ui_UdsActorSetupDialog
@@ -83,10 +84,8 @@ class MyForm(QtGui.QDialog):
                 self, 'Test Passed', 'The test was executed successfully', QtGui.QMessageBox.Ok)
             logger.info('Test was passed successfully')
         except Exception as e:
-            logger.info(
-                'Test error: {}'.format(e.message.decode('windows-1250', 'ignore')))
-            QtGui.QMessageBox.warning(self, 'Test Error', e.message.decode(
-                'windows-1250', 'ignore'), QtGui.QMessageBox.Ok)
+            logger.info('Test error: {}'.format(utils.exceptionToMessage(e)))
+            QtGui.QMessageBox.critical(self, 'Test Error', utils.exceptionToMessage(e), QtGui.QMessageBox.Ok)
 
     def acceptAndSave(self):
         cfg = self._getCfg()
@@ -97,8 +96,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
 
     if store.checkPermissions() is False:
-        QtGui.QMessageBox.critical(
-            None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
+        QtGui.QMessageBox.critical(None, 'Notice', 'This Program must be executed as administrator', QtGui.QMessageBox.Ok)
         sys.exit(1)
 
     # Read configuration

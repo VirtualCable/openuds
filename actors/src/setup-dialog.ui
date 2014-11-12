@@ -19,6 +19,12 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="font">
+   <font>
+    <family>Verdana</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>UDS Actor Configuration</string>
   </property>
@@ -74,12 +80,6 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <property name="maximumSize">
-    <size>
-     <width>101</width>
-     <height>23</height>
-    </size>
-   </property>
    <property name="toolTip">
     <string>Accepts changes and saves them</string>
    </property>
@@ -93,9 +93,9 @@
   <widget class="QPushButton" name="cancelButton">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>260</x>
      <y>190</y>
-     <width>111</width>
+     <width>121</width>
      <height>23</height>
     </rect>
    </property>
@@ -104,12 +104,6 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>111</width>
-     <height>23</height>
-    </size>
    </property>
    <property name="toolTip">
     <string>Cancel all changes and discard them</string>

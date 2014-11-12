@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created: Fri Oct 10 10:43:30 2014
+# Created: Wed Nov 12 04:50:26 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,6 +33,10 @@ class Ui_UdsActorSetupDialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(UdsActorSetupDialog.sizePolicy().hasHeightForWidth())
         UdsActorSetupDialog.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Verdana"))
+        font.setPointSize(9)
+        UdsActorSetupDialog.setFont(font)
         UdsActorSetupDialog.setAutoFillBackground(False)
         UdsActorSetupDialog.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
         UdsActorSetupDialog.setSizeGripEnabled(False)
@@ -44,14 +48,22 @@ class Ui_UdsActorSetupDialog(object):
         self.saveButton = QtGui.QPushButton(UdsActorSetupDialog)
         self.saveButton.setEnabled(False)
         self.saveButton.setGeometry(QtCore.QRect(20, 190, 101, 23))
-        self.saveButton.setMaximumSize(QtCore.QSize(101, 23))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.saveButton.sizePolicy().hasHeightForWidth())
+        self.saveButton.setSizePolicy(sizePolicy)
         self.saveButton.setObjectName(_fromUtf8("saveButton"))
         self.cancelButton = QtGui.QPushButton(UdsActorSetupDialog)
-        self.cancelButton.setGeometry(QtCore.QRect(270, 190, 111, 23))
-        self.cancelButton.setMaximumSize(QtCore.QSize(111, 23))
+        self.cancelButton.setGeometry(QtCore.QRect(260, 190, 121, 23))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.cancelButton.sizePolicy().hasHeightForWidth())
+        self.cancelButton.setSizePolicy(sizePolicy)
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.layoutWidget = QtGui.QWidget(UdsActorSetupDialog)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 131))
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 146))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.formLayout = QtGui.QFormLayout(self.layoutWidget)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
