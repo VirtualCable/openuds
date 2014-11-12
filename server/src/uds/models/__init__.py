@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-04'
+__updated__ = '2014-11-12'
 
 import logging
 
@@ -41,54 +41,54 @@ logger = logging.getLogger(__name__)
 
 
 # Utility
-from uds.models.Util import getSqlDatetime
-from uds.models.Util import optimizeTable
-from uds.models.Util import NEVER
-from uds.models.Util import NEVER_UNIX
+from .Util import getSqlDatetime
+from .Util import optimizeTable
+from .Util import NEVER
+from .Util import NEVER_UNIX
 
 # Services
-from uds.models.Provider import Provider
-from uds.models.Service import Service
+from .Provider import Provider
+from .Service import Service
 
 # Os managers
-from uds.models.OSManager import OSManager
+from .OSManager import OSManager
 
 # Transports
-from uds.models.Transport import Transport
-from uds.models.Network import Network
+from .Transport import Transport
+from .Network import Network
 
 
 # Authenticators
-from uds.models.Authenticator import Authenticator
-from uds.models.User import User
-from uds.models.UserPreference import UserPreference
-from uds.models.Group import Group
+from .Authenticator import Authenticator
+from .User import User
+from .UserPreference import UserPreference
+from .Group import Group
 
 
 # Provisioned services
-from uds.models.ServicesPool import DeployedService  # Old name, will continue here for a while already
-from uds.models.ServicesPool import ServicePool  # New name
-from uds.models.ServicesPoolPublication import DeployedServicePublication
-from uds.models.UserService import UserService
+from .ServicesPool import DeployedService  # Old name, will continue here for a while already
+from .ServicesPool import ServicePool  # New name
+from .ServicesPoolPublication import DeployedServicePublication
+from .UserService import UserService
 
 # Especific log information for an user service
-from uds.models.Log import Log
+from .Log import Log
 
 # Stats
-from uds.models.StatsCounters import StatsCounters
-from uds.models.StatsEvents import StatsEvents
+from .StatsCounters import StatsCounters
+from .StatsEvents import StatsEvents
 
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
 # We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from uds.models.Cache import Cache
-from uds.models.Config import Config
-from uds.models.Storage import Storage
-from uds.models.UniqueId import UniqueId
+from .Cache import Cache
+from .Config import Config
+from .Storage import Storage
+from .UniqueId import UniqueId
 
 # Workers/Schedulers related
-from uds.models.Scheduler import Scheduler
-from uds.models.DelayedTask import DelayedTask
+from .Scheduler import Scheduler
+from .DelayedTask import DelayedTask
 
 # Image galery related
-from uds.models.Image import Image
+from .Image import Image

@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-02'
+__updated__ = '2014-11-12'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -61,8 +61,8 @@ class UUIDModel(models.Model):
     def save(self, *args, **kwargs):
         if self.uuid is None or self.uuid == '':
             self.uuid = generateUuid()
-        elif self.uuid != self.uuid.upper():
-            self.uuid = self.uuid.upper()  # If we modify uuid elsewhere, ensure that it's stored in upper case
+        elif self.uuid != self.uuid.lower():
+            self.uuid = self.uuid.lower()  # If we modify uuid elsewhere, ensure that it's stored in lower case
 
         return models.Model.save(self, *args, **kwargs)
 

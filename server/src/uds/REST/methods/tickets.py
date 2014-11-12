@@ -105,7 +105,7 @@ class Tickets(Handler):
 
             # Will raise an exception if no auth found
             if authId is not None:
-                auth = Authenticator.objects.get(uuid=authId.upper())
+                auth = Authenticator.objects.get(uuid=authId.lower())
             elif authName is not None:
                 auth = Authenticator.objects.get(name=authName)
             else:
@@ -135,11 +135,11 @@ class Tickets(Handler):
             transport = None
 
             if servicePool is not None:
-                servicePool = DeployedService.objects.get(uuid=servicePool.upper())
+                servicePool = DeployedService.objects.get(uuid=servicePool.lower())
 
                 transport = self._params.get('transport', None)
                 if transport is not None:
-                    transport = Transport.objects.get(uuid=transport.upper())
+                    transport = Transport.objects.get(uuid=transport.lower())
                     try:
                         servicePool.validateTransport(transport)
                     except Exception:

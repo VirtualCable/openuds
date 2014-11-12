@@ -614,7 +614,7 @@ class ModelHandler(BaseModelHandler):
                 if self._args[1] == cm[0]:
                     try:
                         operation = getattr(self, self._args[1])
-                        item = self.model.objects.get(uuid=self._args[0].upper())
+                        item = self.model.objects.get(uuid=self._args[0].lower())
                     except Exception:
                         self.invalidMethodException()
 
@@ -639,7 +639,7 @@ class ModelHandler(BaseModelHandler):
 
             # get item ID
             try:
-                val = self.model.objects.get(uuid=self._args[0].upper())
+                val = self.model.objects.get(uuid=self._args[0].lower())
                 res = self.item_as_dict(val)
                 self.fillIntanceFields(val, res)
                 return res
@@ -664,7 +664,7 @@ class ModelHandler(BaseModelHandler):
             if nArgs != 2:
                 self.invalidRequestException()
             try:
-                item = self.model.objects.get(uuid=self._args[0].upper())  # DB maybe case sensitive??, anyway, uuids are stored in uppercase
+                item = self.model.objects.get(uuid=self._args[0].lower())  # DB maybe case sensitive??, anyway, uuids are stored in lowercase
             except Exception:
                 self.invalidItemException()
             return self.getLogs(item)
@@ -708,7 +708,7 @@ class ModelHandler(BaseModelHandler):
                 deleteOnError = True
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
-                item = self.model.objects.get(uuid=self._args[0].upper())
+                item = self.model.objects.get(uuid=self._args[0].lower())
                 for v in self.remove_fields:
                     if v in args:
                         del args[v]
@@ -759,7 +759,7 @@ class ModelHandler(BaseModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
         try:
-            item = self.model.objects.get(uuid=self._args[0].upper())
+            item = self.model.objects.get(uuid=self._args[0].lower())
             self.checkDelete(item)
             self.deleteItem(item)
         except self.model.DoesNotExist:
