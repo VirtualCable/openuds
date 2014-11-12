@@ -36,6 +36,7 @@ from PyQt4 import QtGui
 from PyQt4 import QtCore
 import cPickle
 from udsactor import ipc
+from udsactor import utils
 from udsactor.log import logger
 
 
@@ -49,19 +50,27 @@ class MessagesProcessor(QtCore.QThread):
 
     def __init__(self):
         super(self.__class__, self).__init__()
-        self.ipc = ipc.ClientIPC(39188)
-        self.ipc.start()
+        try:
+            self.ipc = ipc.ClientIPC(39188)
+            self.ipc.start()
+        except Exception:
+            self.ipc = None
+
         self.running = False
 
     def stop(self):
         self.running = False
-        self.ipc.stop()
+        if self.ipc:
+            self.ipc.stop()
 
     def requestInformation(self):
-        info = self.ipc.requestInformation()
-        logger.debug('Request information: {}'.format(info))
+        if self.ipc:
+            info = self.ipc.requestInformation()
+            logger.debug('Request information: {}'.format(info))
 
     def run(self):
+        if self.ipc is None:
+            return
         self.running = True
         while self.running and self.ipc.running:
             try:
@@ -80,11 +89,11 @@ class MessagesProcessor(QtCore.QThread):
                     self.information.emit(cPickle.loads(data))
             except Exception as e:
                 try:
-                    logger.error('Got error on IPC thread {}'.format(e))
+                    logger.error('Got error on IPC thread {}'.format(utils.exceptionToMessage(e)))
                 except:
                     logger.error('Got error on IPC thread (and unicode error??)')
 
-        if self.ipc.running is False and self.running == True:
+        if self.ipc.running is False and self.running is True:
             logger.warn('Lost connection with Service, closing program')
 
         self.exit.emit()
@@ -114,20 +123,19 @@ class SystemTrayIconApp(QtGui.QSystemTrayIcon):
 
     def displayMessage(self, message):
         self.counter += 1
-        print message.toUtf8(), '--', self.counter
+        print(message.toUtf8(), '--', self.counter)
 
     def executeScript(self, message):
         self.counter += 1
-        print message.toUtf8(), '--', self.counter
+        print(message.toUtf8(), '--', self.counter)
 
     def loggof(self):
         self.counter += 1
-        print "Loggof --", self.counter
+        print("Loggof --", self.counter)
 
     def information(self, info):
         self.counter += 1
-        print "Information:", info, '--', self.counter
-
+        print("Information:", info, '--', self.counter)
 
     def quit(self):
         self.ipc.stop()
@@ -138,8 +146,7 @@ if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
 
     if not QtGui.QSystemTrayIcon.isSystemTrayAvailable():
-        QtGui.QMessageBox.critical(None, "Systray",
-                                   "I couldn't detect any system tray on this system.")
+        QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
         sys.exit(1)
 
     style = app.style()
