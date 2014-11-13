@@ -25,7 +25,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
@@ -33,6 +32,7 @@ from __future__ import unicode_literals
 
 import socket
 import threading
+import sys
 import six
 import traceback
 import pickle
@@ -42,12 +42,18 @@ from udsactor.log import logger
 
 # The IPC Server will wait for connections from clients
 # Clients will open socket, and wait for data from server
-# The messages sent will be the following (subject to future changes):
+# The messages sent (from server) will be the following (subject to future changes):
 #     Message_id     Data               Action
 #    ------------  --------         --------------------------
 #    MSG_LOGOFF     None            Logout user from session
 #    MSG_MESSAGE    message,level   Display a message with level (INFO, WARN, ERROR, FATAL)     # TODO: Include level, right now only has message
 #    MSG_SCRIPT     python script   Execute an specific python script INSIDE CLIENT environment (this messages is not sent right now)
+# The messages received (sent from client) will be the following:
+#     Message_id       Data               Action
+#    ------------    --------         --------------------------
+#    REQ_LOGOUT                   Logout user from session
+#    REQ_INFORMATION  None            Request information from ipc server (maybe configuration parameters in a near future)
+#    REQ_LOGIN        python script   Execute an specific python script INSIDE CLIENT environment (this messages is not sent right now)
 #
 # All messages are in the form:
 # BYTE
@@ -58,13 +64,28 @@ from udsactor.log import logger
 MSG_LOGOFF = 0xA1
 MSG_MESSAGE = 0xB2
 MSG_SCRIPT = 0xC3
-MSG_INFORMATION = 0x90
+MSG_INFORMATION = 0xD4
+
+# Request messages
+REQ_INFORMATION = MSG_INFORMATION
+REQ_LOGIN = 0xE5
+REQ_LOGOUT = MSG_LOGOFF
 
 VALID_MESSAGES = (MSG_LOGOFF, MSG_MESSAGE, MSG_SCRIPT, MSG_INFORMATION)
 
 REQ_INFORMATION = 0xAA
 
 MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the right
+
+
+# Allows notifying login/logout from client for linux platform
+ALLOW_LOG_METHODS = sys.platform != 'win32'
+
+
+# States for client processor
+ST_SECOND_BYTE = 0x01
+ST_RECEIVING = 0x02
+ST_PROCESS_MESSAGE = 0x02
 
 
 class ClientProcessor(threading.Thread):
@@ -79,30 +100,64 @@ class ClientProcessor(threading.Thread):
         logger.debug('Stoping client processor')
         self.running = False
 
+    def processRequest(self, msg, data):
+        print('Got message {}, with data {}'.format(msg, data))
+
     def run(self):
         self.running = True
         self.clientSocket.setblocking(0)
 
+        state = None
+        recv_msg = None
+        recv_data = None
         while self.running:
             try:
-                while True:
-                    buf = bytearray(self.clientSocket.recv(512))  # Empty buffer, this is set as non-blocking
-                    if len(buf) == 0:  # No data
+                counter = 1024
+                while counter > 0:  # So we process at least the incoming queue every XX bytes readed
+                    counter -= 1
+                    b = self.clientSocket.recv(1)
+                    if b == b'':
                         break
-                    for b in buf:
-                        if b == REQ_INFORMATION:
-                            infoParams = self.parent.infoParams if self.parent.infoParams is not None else {}
-                            self.messages.put((MSG_INFORMATION, pickle.dumps(infoParams)))
-                            logger.debug('Received a request for information')
+                    buf = six.byte2int(b)  # Empty buffer, this is set as non-blocking
+                    if state is None:
+                        if buf in (REQ_INFORMATION, REQ_LOGIN, REQ_LOGOUT):
+                            print('State set to {}'.format(buf))
+                            state = buf
+                            recv_msg = buf
+                            continue  # Get next byte
                         else:
-                            logger.debug('Got unexpected data {}'.format(ord(b)))
-                # In fact, we do not process anything right now, simply empty recv buffer if something is found
+                            logger.debug('Got unexpected data {}'.format(buf))
+                    elif state in (REQ_INFORMATION, REQ_LOGIN, REQ_LOGOUT):
+                        print('First length byte is {}'.format(buf))
+                        msg_len = buf
+                        state = ST_SECOND_BYTE
+                        continue
+                    elif state == ST_SECOND_BYTE:
+                        msg_len += buf << 8
+                        print('Second length byte is {}, len is {}'.format(buf, msg_len))
+                        if msg_len == 0:
+                            self.processRequest(recv_msg, None)
+                            state = None
+                            break
+                        state = ST_RECEIVING
+                        recv_data = b''
+                        continue
+                    elif state == ST_RECEIVING:
+                        recv_data += six.int2byte(buf)
+                        msg_len -= 1
+                        if msg_len == 0:
+                            self.processRequest(recv_msg, recv_data)
+                            recv_data = None
+                            state = None
+                            break
+                    else:
+                        logger.debug('Got invalid message from request: {}, state: {}'.format(buf, state))
             except socket.error as e:
-                # If no data is present, no problem at all
+                # If no data is present, no problem at all, pass to check messages
                 pass
 
             try:
-                msg = self.messages.get(block=True, timeout=1)
+                msg = self.messages.get(block=False)
             except six.moves.queue.Empty:  # No message got in time @UndefinedVariable
                 continue
 
@@ -230,8 +285,25 @@ class ClientIPC(threading.Thread):
 
         return None
 
+    def sendRequestMessage(self, msg, data=None):
+        if data is None:
+            data = b''
+
+        if isinstance(data, six.text_type):  # Convert to bytes if necessary
+            data = data.encode('utf-8')
+
+        l = len(data)
+        msg = six.int2byte(msg) + six.int2byte(l & 0xFF) + six.int2byte(l >> 8) + data
+        self.clientSocket.sendall(msg)
+
     def requestInformation(self):
-        self.clientSocket.sendall(chr(REQ_INFORMATION))
+        self.sendRequestMessage(REQ_INFORMATION)
+
+    def sendLogin(self, username):
+        self.sendRequestMessage(REQ_LOGIN, username)
+
+    def sendLogout(self, username):
+        self.sendRequestMessage(REQ_LOGOUT, username)
 
     def messageReceived(self):
         '''

@@ -54,6 +54,13 @@ def ipcTest():
     client2 = ipc.ClientIPC(39188)
     client2.start()
 
+    print("Requesting information")
+    client.requestInformation()
+    print("Sending login info")
+    client.sendLogin('user1')
+    print("Sending logout info")
+    client.sendLogout('mariete' * 1000)
+
     print('Sending message')
     s.sendMessage(ipc.MSG_LOGOFF, None)
     s.sendMessage(ipc.MSG_MESSAGE, 'Cierra la sesión')
@@ -209,8 +216,8 @@ def testRemote():
 
 if __name__ == '__main__':
     # ipcServer()
-    # ipcTest()
-    testRest()
+    ipcTest()
+    # testRest()
     # testIdle()
     # testServer()
     # testRemote()

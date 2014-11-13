@@ -48,8 +48,15 @@ from udsactor import operations
 from udsactor import httpserver
 from udsactor import ipc
 
-from udsactor.windows.SENS import *  # @UnusedWildImport
 from udsactor.log import logger
+
+from .SENS import SensLogon
+from .SENS import logevent
+from .SENS import SENSGUID_EVENTCLASS_LOGON
+from .SENS import SENSGUID_PUBLISHER
+from .SENS import PROGID_EventSubscription
+from .SENS import PROGID_EventSystem
+
 
 IPC_PORT = 39188
 
@@ -354,7 +361,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework):
         # ********************************
         # * Registers SENS subscriptions *
         # ********************************
-        logevent('Registring ISensLogon')
+        logevent('Registering ISensLogon')
         subscription_guid = '{41099152-498E-11E4-8FD3-10FEED05884B}'
         sl = SensLogon(self.api)
         subscription_interface = pythoncom.WrapObject(sl)

@@ -38,33 +38,28 @@ import os
 
 
 def rename(newName):
-    # If new name has "'\t'
-    if '\t' in newName:
-        newName, account, password = newName.split('\t')
-    else:
-        account = password = None
+    '''
+    Debian renamer
+    Expects new host name on newName
+    Host does not needs to be rebooted after renaming
+    '''
+    logger.debug('using Debian renamer')
 
-    logger.debug('Debian renamer')
+    with open('/etc/hostname', 'w') as hostname:
+        hostname.write(newName)
 
-    if account is not None:
-        os.system('echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(account, password))
-
-    f = open('/etc/hostname', 'w')
-    f.write(newName)
-    f.close()
+    # Force system new name
     os.system('/bin/hostname %s' % newName)
 
     # add name to "hosts"
-    f = open('/etc/hosts', 'r')
-    lines = f.readlines()
-    f.close()
-    f = open('/etc/hosts', 'w')
-    f.write("127.0.1.1\t%s\n" % newName)
-    for l in lines:
-        if l[:9] == '127.0.1.1':
-            continue
-        f.write(l)
-    f.close()
+    with open('/etc/hosts', 'r') as hosts:
+        lines = hosts.readlines()
+    with open('/etc/hosts', 'w') as hosts:
+        hosts.write("127.0.1.1\t%s\n" % newName)
+        for l in lines:
+            if l[:9] == '127.0.1.1':  # Skips existing 127.0.1.1. if it already exists
+                continue
+            hosts.write(l)
 
     return True
 
