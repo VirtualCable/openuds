@@ -55,6 +55,10 @@ from .SENS import PROGID_EventSystem
 
 
 class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
+    '''
+    This class represents a Windows Service for managing actor interactions
+    with UDS Broker and Machine
+    '''
     _svc_name_ = "UDSActor"
     _svc_display_name_ = "UDS Actor Service"
     _svc_description_ = "UDS Actor for machines managed by UDS Broker"

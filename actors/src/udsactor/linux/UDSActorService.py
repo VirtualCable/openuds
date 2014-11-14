@@ -75,6 +75,9 @@ class UDSActorSvc(Daemon, CommonService):
         renamer.rename(name)
         self.setReady()
 
+    def joinDomain(self, name, domain, ou, account, password):
+        logger.fatal('Join domain is not supported on linux platforms right now')
+
     def run(self):
         initCfg()
 

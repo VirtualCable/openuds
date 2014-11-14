@@ -40,6 +40,7 @@ import json
 import uuid
 import urllib3
 import six
+import codecs
 
 from .utils import exceptionToMessage
 
@@ -88,14 +89,14 @@ def unscramble(value):
     if value is None or value == '':
         return value
 
-    value = value.decode('hex')
+    value = bytearray(codecs.decode(value, 'hex'))
 
     n = 0x32
     result = []
     for ch in value:
-        c = ord(ch) ^ n
+        c = ch ^ n
         n = (n + c) & 0xFF
-        result.append(chr(c))
+        result.append(six.int2byte(c))
 
     return b''.join(result)[::-1].decode('utf8')
 
@@ -145,7 +146,8 @@ class Api(object):
             # test && init are not scrambled, even if rest of messages are
             try:
                 r['result'] = unscramble(r['result'])
-            except Exception:
+            except Exception as e:  # Can't unscramble, return result "as is"
+                r['warning'] = True
                 pass
 
         return r

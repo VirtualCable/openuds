@@ -1,13 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import urllib3
+from udsactor import operations
+from udsactor import store
+from udsactor import REST
+from udsactor import ipc
+from udsactor import httpserver
+
+from time import sleep
+
+import random
+import requests
+import json
+import logging
+
 
 def testRest():
-    from udsactor import operations
-    from udsactor import store
-    from udsactor import REST
-
-    cfg = store.readConfig()
+    # cfg = store.readConfig()
+    cfg = {'host': '172.27.0.1:8000', 'masterKey': '8f914604ad2c5c558575856299866bbb', 'ssl': False}
     print(cfg)
     print("Intefaces: ", list(operations.getNetworkInfo()))
     print("Joined Domain: ", operations.getDomainName())
@@ -40,9 +51,6 @@ def testRest():
 
 
 def ipcTest():
-    from udsactor import ipc
-    from time import sleep
-
     s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
     s.start()
@@ -92,9 +100,6 @@ def ipcTest():
 
 
 def ipcServer():
-    from udsactor import ipc
-    from time import sleep
-
     s = ipc.ServerIPC(39188, {'idle': 180})  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
     s.start()
@@ -117,27 +122,16 @@ def ipcServer():
 
 
 def testIdle():
-    from udsactor import operations
-    from time import sleep
-
-    for i in range(1, 10):
+    for _ in range(1, 10):
         print(operations.getIdleDuration())
         sleep(1)
 
 
 def testServer():
-    import random
-    import requests
-    import json
-    import logging
-    from time import sleep
-
-    from udsactor import httpserver
-    from udsactor import ipc
 
     # Disable verify warinings
     logging.getLogger("requests").setLevel(logging.ERROR)
-    # requests.packages.urllib3.disable_warnings()  # @UndefinedVariable
+    urllib3.disable_warnings()  # @UndefinedVariable
 
     s = ipc.ServerIPC(39188)  # I have got the enterprise number for Virtual Cable. This number is not about ports, but as good as any other selection :)
 
@@ -191,9 +185,6 @@ def testServer():
 
 
 def testRemote():
-    import requests
-    import json
-
     serverUrl = "https://172.27.0.208:52562/633a1245873848b7b4017c23283bc195"
     print(serverUrl)
 
@@ -216,8 +207,8 @@ def testRemote():
 
 if __name__ == '__main__':
     # ipcServer()
-    ipcTest()
-    # testRest()
+    # ipcTest()
+    testRest()
     # testIdle()
     # testServer()
     # testRemote()

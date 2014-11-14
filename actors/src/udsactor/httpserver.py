@@ -36,7 +36,7 @@ import uuid
 import json
 import six
 from six.moves import socketserver  # @UnresolvedImport, pylint: disable=import-error
-from six.moves import SimpleHTTPServer  # @UnresolvedImport, pylint: disable=import-error
+from six.moves import BaseHTTPServer  # @UnresolvedImport, pylint: disable=import-error
 import time
 
 from udsactor.log import logger
@@ -47,7 +47,7 @@ import ssl
 startTime = time.time()
 
 
-class HTTPServerHandler(SimpleHTTPServer.BaseHTTPServer.BaseHTTPRequestHandler):
+class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     uuid = None
     ipc = None
     lock = threading.Lock()

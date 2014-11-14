@@ -35,8 +35,6 @@ from __future__ import unicode_literals
 
 import sys
 if sys.platform == 'win32':
-    from udsactor.windows.operations import *
+    from .windows.operations import *  # @UnusedWildImport
 else:
-    pass
-
-
+    from .linux.operations import *  # @UnusedWildImport

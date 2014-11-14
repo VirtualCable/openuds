@@ -236,7 +236,6 @@ class CommonService(object):
 
         self.notifyStop()
 
-
     # ***************************************************
     # Methods that ARE overriden by linux & windows Actor
     # ***************************************************
@@ -254,9 +253,9 @@ class CommonService(object):
         '''
         raise NotImplementedError('Method renamed has not been implemented!')
 
-    # ***************************************************
-    # Methods that CAN BE overriden by linux & windows Actor
-    # ***************************************************
+    # ****************************************
+    # Methods that CAN BE overriden by actors
+    # ****************************************
     def doWait(self, miliseconds):
         '''
         Invoked to wait a bit
