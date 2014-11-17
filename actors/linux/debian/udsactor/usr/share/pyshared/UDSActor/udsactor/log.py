@@ -31,50 +31,61 @@
 '''
 from __future__ import unicode_literals
 
-import logging
-import os
-import tempfile
+import sys
 import six
+
+if sys.platform == 'win32':
+    from udsactor.windows.log import LocalLogger  # @UnusedImport
+else:
+    from udsactor.linux.log import LocalLogger  # @Reimport
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
 OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
 
 
-class LocalLogger(object):
+class Logger(object):
     def __init__(self):
-        # tempdir is different for "user application" and "service"
-        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        # Try to open logger at /var/log path
-        # If it fails (access denied normally), will try to open one at user's home folder, and if
-        # agaim it fails, open it at the tmpPath
+        self.logLevel = OTHER
+        self.logger = LocalLogger()
+        self.remoteLogger = None
 
-        for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
-            try:
-                fname = os.path.join(logDir, 'udsactor.log')
-                logging.basicConfig(
-                    filename=fname,
-                    filemode='a',
-                    format='%(levelname)s %(asctime)s %(message)s',
-                    level=logging.DEBUG
-                )
-                self.logger = logging.getLogger('udsactor')
-                os.chmod(fname, 0o0600)
-                return
-            except Exception:
-                pass
+    def setLevel(self, level):
+        self.logLevel = level
+        self.logger.log(INFO, 'Setting LogLevel to {}'.format(level))
 
-        # Logger can't be set
-        self.logger = None
+    def setRemoteLogger(self, remoteLogger):
+        self.remoteLogger = remoteLogger
 
     def log(self, level, message):
-        # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
-        # logging levels are 10 (debug), 20 (info)
-        # OTHER = logging.NOTSET
-        self.logger.log(int(level / 1000) - 10, message)
+        if level < self.logLevel:  # Skip not wanted messages
+            return
 
-    def isWindows(self):
-        return False
+        # If remote logger is available, notify message to it
+        try:
+            if self.remoteLogger is not None and self.remoteLogger.isConnected:
+                self.remoteLogger.log(level, message)
+        except Exception as e:
+            self.logger.log(FATAL, 'Error notifying log to broker: {}'.format(e.message))
 
-    def isLinux(self):
-        return True
+        self.logger.log(level, message)
+
+    def debug(self, message):
+        self.log(DEBUG, message)
+
+    def warn(self, message):
+        self.log(WARN, message)
+
+    def info(self, message):
+        self.log(WARN, message)
+
+    def error(self, message):
+        self.log(ERROR, message)
+
+    def fatal(self, message):
+        self.log(FATAL, message)
+
+    def flush(self):
+        pass
+
+
+logger = Logger()

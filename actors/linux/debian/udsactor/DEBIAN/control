@@ -1,0 +1,11 @@
+Package: udsactor
+Version: 1.7.0
+Architecture: all
+Maintainer: Adolfo Gómez García <agomez@virtualcable.es>
+Installed-Size: 234
+Depends: python-requests (>= 0.8.2), python-qt4 (>= 4.9), python-six (>= 1.1), python (>= 2.7), debconf (>= 0.5) | debconf-2.0
+Section: admin
+Priority: optional
+Homepage: http://www.virtualcable.es
+Description: Actor for Universal Desktop Services (UDS) Broker
+ This package provides the required components to allow this machine to work on an environment managed by UDS Broker.

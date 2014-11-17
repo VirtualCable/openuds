@@ -31,50 +31,38 @@
 '''
 from __future__ import unicode_literals
 
-import logging
+from udsactor.linux.renamer import renamers
+from udsactor.log import logger
+
 import os
-import tempfile
-import six
-
-# Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
 
 
-class LocalLogger(object):
-    def __init__(self):
-        # tempdir is different for "user application" and "service"
-        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        # Try to open logger at /var/log path
-        # If it fails (access denied normally), will try to open one at user's home folder, and if
-        # agaim it fails, open it at the tmpPath
+def rename(newName):
+    '''
+    Debian renamer
+    Expects new host name on newName
+    Host does not needs to be rebooted after renaming
+    '''
+    logger.debug('using Debian renamer')
 
-        for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
-            try:
-                fname = os.path.join(logDir, 'udsactor.log')
-                logging.basicConfig(
-                    filename=fname,
-                    filemode='a',
-                    format='%(levelname)s %(asctime)s %(message)s',
-                    level=logging.DEBUG
-                )
-                self.logger = logging.getLogger('udsactor')
-                os.chmod(fname, 0o0600)
-                return
-            except Exception:
-                pass
+    with open('/etc/hostname', 'w') as hostname:
+        hostname.write(newName)
 
-        # Logger can't be set
-        self.logger = None
+    # Force system new name
+    os.system('/bin/hostname %s' % newName)
 
-    def log(self, level, message):
-        # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
-        # logging levels are 10 (debug), 20 (info)
-        # OTHER = logging.NOTSET
-        self.logger.log(int(level / 1000) - 10, message)
+    # add name to "hosts"
+    with open('/etc/hosts', 'r') as hosts:
+        lines = hosts.readlines()
+    with open('/etc/hosts', 'w') as hosts:
+        hosts.write("127.0.1.1\t%s\n" % newName)
+        for l in lines:
+            if l[:9] == '127.0.1.1':  # Skips existing 127.0.1.1. if it already exists
+                continue
+            hosts.write(l)
 
-    def isWindows(self):
-        return False
+    return True
 
-    def isLinux(self):
-        return True
+# All names in lower case
+renamers['debian'] = rename
+renamers['ubuntu'] = rename

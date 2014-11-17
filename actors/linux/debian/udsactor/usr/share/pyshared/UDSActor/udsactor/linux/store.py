@@ -29,52 +29,52 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-import logging
-import os
-import tempfile
+
 import six
+import os
 
-# Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
+DEBUG = False
+
+CONFIGFILE = '/etc/udsactor/udsactor.cfg' if DEBUG is False else '/tmp/udsactor.cfg'
 
 
-class LocalLogger(object):
-    def __init__(self):
-        # tempdir is different for "user application" and "service"
-        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        # Try to open logger at /var/log path
-        # If it fails (access denied normally), will try to open one at user's home folder, and if
-        # agaim it fails, open it at the tmpPath
+def checkPermissions():
+    return True if DEBUG else os.getuid() == 0
 
-        for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
-            try:
-                fname = os.path.join(logDir, 'udsactor.log')
-                logging.basicConfig(
-                    filename=fname,
-                    filemode='a',
-                    format='%(levelname)s %(asctime)s %(message)s',
-                    level=logging.DEBUG
-                )
-                self.logger = logging.getLogger('udsactor')
-                os.chmod(fname, 0o0600)
-                return
-            except Exception:
-                pass
 
-        # Logger can't be set
-        self.logger = None
+def readConfig():
+    res = {}
+    try:
+        cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
+        cfg.optionxform = six.text_type
+        cfg.read(CONFIGFILE)
+        # Just reads 'uds' section
+        for key in cfg.options('uds'):
+            res[key] = cfg.get('uds', key)
+            if res[key].lower() in ('true', 'yes', 'si'):
+                res[key] = True
+            elif res[key].lower() in ('false', 'no'):
+                res[key] = False
+    except Exception:
+        pass
 
-    def log(self, level, message):
-        # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
-        # logging levels are 10 (debug), 20 (info)
-        # OTHER = logging.NOTSET
-        self.logger.log(int(level / 1000) - 10, message)
+    return res
 
-    def isWindows(self):
-        return False
 
-    def isLinux(self):
-        return True
+def writeConfig(data):
+    cfg = six.moves.configparser.SafeConfigParser()  # @UndefinedVariable
+    cfg.optionxform = six.text_type
+    cfg.add_section('uds')
+    for key, val in data.items():
+        cfg.set('uds', key, str(val))
+
+    # Ensures exists destination folder
+    dirname = os.path.dirname(CONFIGFILE)
+    if not os.path.exists(dirname):
+        os.mkdir(dirname, mode=0o700)  # Will create only if route to path already exists, for example, /etc (that must... :-))
+
+    with open(CONFIGFILE, 'w') as f:
+        cfg.write(f)
+
+    os.chmod(CONFIGFILE, 0o0600)

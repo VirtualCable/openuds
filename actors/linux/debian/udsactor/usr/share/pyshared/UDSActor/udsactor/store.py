@@ -29,52 +29,11 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=unused-wildcard-import, wildcard-import
 from __future__ import unicode_literals
 
-import logging
-import os
-import tempfile
-import six
-
-# Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
-
-
-class LocalLogger(object):
-    def __init__(self):
-        # tempdir is different for "user application" and "service"
-        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        # Try to open logger at /var/log path
-        # If it fails (access denied normally), will try to open one at user's home folder, and if
-        # agaim it fails, open it at the tmpPath
-
-        for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
-            try:
-                fname = os.path.join(logDir, 'udsactor.log')
-                logging.basicConfig(
-                    filename=fname,
-                    filemode='a',
-                    format='%(levelname)s %(asctime)s %(message)s',
-                    level=logging.DEBUG
-                )
-                self.logger = logging.getLogger('udsactor')
-                os.chmod(fname, 0o0600)
-                return
-            except Exception:
-                pass
-
-        # Logger can't be set
-        self.logger = None
-
-    def log(self, level, message):
-        # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
-        # logging levels are 10 (debug), 20 (info)
-        # OTHER = logging.NOTSET
-        self.logger.log(int(level / 1000) - 10, message)
-
-    def isWindows(self):
-        return False
-
-    def isLinux(self):
-        return True
+import sys
+if sys.platform == 'win32':
+    from udsactor.windows.store import *  # @UnusedWildImport
+else:
+    from udsactor.linux.store import *  # @UnusedWildImport

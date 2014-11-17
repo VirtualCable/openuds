@@ -1,0 +1,5 @@
+#! /bin/bash -e
+
+ln -fs "/usr/share/pyshared/UDSActor/UDSActorUser.py" "/usr/bin/UDSActorUser"
+
+ln -fs "/usr/share/pyshared/UDSActor/UDSActorConfig.py" "/usr/bin/UDSActorConfig"

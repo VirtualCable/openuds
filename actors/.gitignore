@@ -1,2 +1,5 @@
 bin
 *_enterprise*
+udsactor*.deb
+udsactor*.build
+udsactor*.changes

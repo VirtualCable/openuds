@@ -31,50 +31,29 @@
 '''
 from __future__ import unicode_literals
 
-import logging
+import platform
 import os
-import tempfile
-import six
+import sys
+import pkgutil
 
-# Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
+from udsactor.log import logger
+
+renamers = {}
 
 
-class LocalLogger(object):
-    def __init__(self):
-        # tempdir is different for "user application" and "service"
-        # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        # Try to open logger at /var/log path
-        # If it fails (access denied normally), will try to open one at user's home folder, and if
-        # agaim it fails, open it at the tmpPath
+def rename(newName):
+    distribution = platform.linux_distribution()[0].lower()
+    if distribution in renamers:
+        return renamers[distribution](newName)
 
-        for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
-            try:
-                fname = os.path.join(logDir, 'udsactor.log')
-                logging.basicConfig(
-                    filename=fname,
-                    filemode='a',
-                    format='%(levelname)s %(asctime)s %(message)s',
-                    level=logging.DEBUG
-                )
-                self.logger = logging.getLogger('udsactor')
-                os.chmod(fname, 0o0600)
-                return
-            except Exception:
-                pass
+    logger.error('Renamer for platform "{0}" not found'.format(distribution))
+    return False
 
-        # Logger can't be set
-        self.logger = None
 
-    def log(self, level, message):
-        # Debug messages are logged to a file
-        # our loglevels are 10000 (other), 20000 (debug), ....
-        # logging levels are 10 (debug), 20 (info)
-        # OTHER = logging.NOTSET
-        self.logger.log(int(level / 1000) - 10, message)
+# Do load of packages
+def _init():
+    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    for _, name, _ in pkgutil.iter_modules([pkgpath]):
+        __import__(__name__ + '.' + name, globals(), locals())
 
-    def isWindows(self):
-        return False
-
-    def isLinux(self):
-        return True
+_init()

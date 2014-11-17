@@ -31,50 +31,47 @@
 '''
 from __future__ import unicode_literals
 
+import servicemanager  # @UnresolvedImport, pylint: disable=import-error
 import logging
 import os
 import tempfile
-import six
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))  # @UndefinedVariable
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
 
 
 class LocalLogger(object):
     def __init__(self):
         # tempdir is different for "user application" and "service"
         # service wil get c:\windows\temp, while user will get c:\users\XXX\temp
-        # Try to open logger at /var/log path
-        # If it fails (access denied normally), will try to open one at user's home folder, and if
-        # agaim it fails, open it at the tmpPath
-
-        for logDir in ('/var/log', os.path.expanduser('~'), tempfile.gettempdir()):
-            try:
-                fname = os.path.join(logDir, 'udsactor.log')
-                logging.basicConfig(
-                    filename=fname,
-                    filemode='a',
-                    format='%(levelname)s %(asctime)s %(message)s',
-                    level=logging.DEBUG
-                )
-                self.logger = logging.getLogger('udsactor')
-                os.chmod(fname, 0o0600)
-                return
-            except Exception:
-                pass
-
-        # Logger can't be set
-        self.logger = None
+        logging.basicConfig(
+            filename=os.path.join(tempfile.gettempdir(), 'udsactor.log'),
+            filemode='a',
+            format='%(levelname)s %(asctime)s %(message)s',
+            level=logging.DEBUG
+        )
+        self.logger = logging.getLogger('udsactor')
+        self.serviceLogger = False
 
     def log(self, level, message):
         # Debug messages are logged to a file
         # our loglevels are 10000 (other), 20000 (debug), ....
         # logging levels are 10 (debug), 20 (info)
         # OTHER = logging.NOTSET
-        self.logger.log(int(level / 1000) - 10, message)
+        self.logger.log(level / 1000 - 10, message)
+
+        if level < INFO or self.serviceLogger is False:  # Only information and above will be on event log
+            return
+
+        if level < WARN:  # Info
+            servicemanager.LogInfoMsg(message)
+        elif level < ERROR:  # WARN
+            servicemanager.LogWarningMsg(message)
+        else:  # Error & Fatal
+            servicemanager.LogErrorMsg(message)
 
     def isWindows(self):
-        return False
+        return True
 
     def isLinux(self):
-        return True
+        return False
