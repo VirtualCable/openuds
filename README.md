@@ -1,4 +1,4 @@
-![UDS Logo](https://www.udsenterprise.com/static//img/logoUDSNav.png)](https://www.udsenterprise.com)
+![UDS Logo](https://www.udsenterprise.com/static//img/logoUDSNav.png)
 
 openuds
 =======
