@@ -1,5 +1,42 @@
-#! /bin/bash -e
+#!/bin/sh
 
-ln -fs "/usr/share/pyshared/UDSActor/UDSActorUser.py" "/usr/bin/UDSActorUser"
+. /usr/share/debconf/confmodule
 
-ln -fs "/usr/share/pyshared/UDSActor/UDSActorConfig.py" "/usr/bin/UDSActorConfig"
+set -e
+
+case "$1" in
+	configure)
+		if [ "$2" = "" ]; then
+			# Ensure actor is not running
+			db_get udsactor/host
+			host=$RET
+			db_get udsactor/secure
+			ssl=$RET
+			if [ "$ssl" = "true" ]; then 
+				ssl=True;
+			else
+				ssl=False;
+			fi
+			db_get udsactor/masterKey
+			masterKey=$RET
+			
+			trap "cp /etc/udsactor/udsactor.cfg /etc/udsactor/udsactor.cfg.dpkg-old" 0
+			echo "[uds]" > /etc/udsactor/udsactor.cfg
+			echo "host = $host" >> /etc/udsactor/udsactor.cfg
+			echo "logLevel = 20000" >> /etc/udsactor/udsactor.cfg
+			echo "ssl = ssl" >> /etc/udsactor/udsactor.cfg
+			echo "masterKey = $masterKey" >> /etc/udsactor/udsactor.cfg
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

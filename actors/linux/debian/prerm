@@ -1,5 +1,1 @@
 #! /bin/bash -e
-
-rm "/usr/bin/UDSActorUser"
-
-rm "/usr/bin/UDSActorConfig"
