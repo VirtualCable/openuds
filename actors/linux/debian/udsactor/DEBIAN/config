@@ -6,21 +6,10 @@ db_version 2.0
 # This conf script is capable of backing up
 db_capb backup
 
-# Although configuration file can be modified "by hand", is not responsability of this config script
-# to manage that changes (we have an user space configuration tool...)
-#omsk=`umask`
-#umask 0077
-#if [ -f /etc/udsactor/udsactor.cfg ]; then
-#  TMPFILE=$(mktemp /tmp/udsactor.cfg.XXXXX)
-#  trap "rm -f $TMPFILE" 0
-#  cat /etc/udsactor/udsactor.cfg | sed -e "s/\\[.*\\]//; s/ *= */=/; s/False/false/; s/True/true/" > $TMPFILE
-#  . $TMPFILE
-#  db_set udsactor/host $host
-#  db_set udsactor/secure $ssl
-#  db_set udsactor/masterKey $masterKey
-#fi
-#umask $omsk
-
+if [ -f /etc/udsactor/udsactor.cfg ] && [ "$1" != "reconfigure" ]; then
+	echo "/etc/udsactor/udsactor.cfg already exists, leaving untouched."
+	exit 0
+fi
 
 STATE=1 
 while [ "$STATE" != 0 -a "$STATE" != 4 ]; do
@@ -43,3 +32,14 @@ while [ "$STATE" != 0 -a "$STATE" != 4 ]; do
   fi
     
 done
+
+# If "cancelled", exit
+if [ "$STATE" = 0 ]; then
+	exit 0
+fi
+
+# If using reconfigure, and already exists an configuration file, move it to a backup
+if [ -f /etc/udsactor/udsactor.cfg ] && [ "$1" = "reconfigure" ]; then
+	echo "/etc/udsactor.cfg backup to /etc/udsactor.cfg.back"
+	mv /etc/udsactor/udsactor.cfg /etc/udsactor/udsactor.cfg.back
+fi
