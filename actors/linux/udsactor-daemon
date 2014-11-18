@@ -1,0 +1,6 @@
+#!/bin/sh
+
+FOLDER=/usr/share/pyshared/UDSActor
+
+cd $FOLDER
+python -m udsactor.linux.UDSActorService $@

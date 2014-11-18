@@ -10,7 +10,7 @@ Package: udsactor
 Section: admin
 Priority: optional
 Architecture: all
-Depends: python-requests (>=0.8.2), python-qt4 (>=4.9), python-six(>=1.1), python (>=2.7),  ${misc:Depends}
+Depends: python-requests (>=0.8.2), python-qt4 (>=4.9), python-six(>=1.1), python-prctl(>=1.1.1), python (>=2.7),  ${misc:Depends}
 Description: Actor for Universal Desktop Services (UDS) Broker
  This package provides the required components to allow this machine to work on an environment managed by UDS Broker.
  .

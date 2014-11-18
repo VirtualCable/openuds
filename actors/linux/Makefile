@@ -4,6 +4,7 @@
 SOURCEDIR := ../src
 LIBDIR := $(DESTDIR)/usr/share/pyshared/UDSActor
 BINDIR := $(DESTDIR)/usr/bin
+SBINDIR := $(DESTDIR)/usr/sbin
 APPSDIR := $(DESTDIR)/usr/share/applications
 CFGDIR := $(DESTDIR)/etc/udsactor
 PYC := $(shell find $(SOURCEDIR) -name '*.py[co]')
@@ -14,6 +15,8 @@ clean:
 install:
 	mkdir -p $(LIBDIR)
 	mkdir -p $(BINDIR)
+	mkdir -p $(SBINDIR)
+	mkdir -p $(APPSDIR)
 	mkdir -p $(CFGDIR)
 	
 	mkdir -p $(LIBDIR)/
@@ -24,7 +27,9 @@ install:
 	cp $(SOURCEDIR)/UDSActorUser.py $(LIBDIR)
 	cp $(SOURCEDIR)/setup_dialog_ui.py $(LIBDIR)
 	
-	cp UDS_Actor_Configuration.desktop $(DESTDIR)
+	cp UDS_Actor_Configuration.desktop $(APPSDIR)
+	cp udsactor-daemon $(SBINDIR)
+	chmod 755 $(SBINDIR)/udsactor-daemon
 	
 	# chmod 0755 $(BINDIR)/udsactor
 uninstall:

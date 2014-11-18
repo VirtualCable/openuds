@@ -44,6 +44,7 @@ from udsactor.linux.daemon import Daemon
 from udsactor.linux import renamer
 
 import sys
+import prctl
 
 
 class UDSActorSvc(Daemon, CommonService):
@@ -78,6 +79,7 @@ class UDSActorSvc(Daemon, CommonService):
         initCfg()
 
         logger.debug('Running Daemon')
+        prctl.set_proctitle('UDSActorDaemon')
 
         # Linux daemon will continue running unless something is requested to
         if self.interactWithBroker() is False:

@@ -9,10 +9,12 @@
 ### END INIT INFO
 #
 
+. /lib/lsb/init-functions
+
 case "$1" in
   start|stop|restart) 
-    /usr/bin/udsactor $1
-    ;;
+    /usr/sbin/udsactor-daemon $1
+	;;
   force-reload)
   	./actor restart 
 	;;

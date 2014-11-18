@@ -129,6 +129,9 @@ class Daemon:
         except Exception as e:
             logger.error('Exception running process: {}'.format(e))
 
+        if os.path.exists(self.pidfile):
+            os.remove(self.pidfile)
+
     def stop(self):
         """
         Stop the daemon
