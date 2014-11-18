@@ -116,7 +116,7 @@ class CommonService(object):
                 # Right now, we thing that the interface connected to broker is
                 # the interface that broker will know, let's see how this works
                 logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
-                return False
+                return False  # On unmanaged hosts, there is no reason right now to continue running
             except Exception as e:
                 logger.debug('Exception caugh: {}, retrying'.format(exceptionToMessage(e)))
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
@@ -185,6 +185,8 @@ class CommonService(object):
         return True
 
     def checkIpsChanged(self):
+        if self.api.uuid is None:
+            return  # Not connected
         netInfo = tuple(operations.getNetworkInfo())
         for i in netInfo:
             # If at least one ip has changed

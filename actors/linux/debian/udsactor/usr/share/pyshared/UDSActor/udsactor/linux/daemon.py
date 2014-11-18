@@ -35,7 +35,7 @@ import sys
 import os
 import time
 import atexit
-
+from udsactor.log import logger
 
 from signal import SIGTERM
 
@@ -64,7 +64,8 @@ class Daemon:
                 # exit first parent
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write("fork #1 failed: {} ({})\n".format(e.errno, e.strerror))
+            logger.error("fork #1 error: {}".format(e))
+            sys.stderr.write("fork #1 failed: {}\n".format(e))
             sys.exit(1)
 
         # decouple from parent environment
@@ -79,7 +80,8 @@ class Daemon:
                 # exit from second parent
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write("fork #2 failed: {} ({})\n".format(e.errno, e.strerror))
+            logger.error("fork #2 error: {}".format(e))
+            sys.stderr.write("fork #2 failed: {}\n".format(e))
             sys.exit(1)
 
         # redirect standard file descriptors
@@ -105,22 +107,27 @@ class Daemon:
         """
         Start the daemon
         """
+        logger.debug('Starting daemon')
         # Check for a pidfile to see if the daemon already runs
         try:
-            pf = file(self.pidfile, 'r')
+            pf = open(self.pidfile, 'r')
             pid = int(pf.read().strip())
             pf.close()
         except IOError:
             pid = None
 
         if pid:
-            message = "pidfile %s already exist. Daemon already running?\n"
-            sys.stderr.write(message % self.pidfile)
+            message = "pidfile {} already exist. Daemon already running?\n".format(pid)
+            logger.error(message)
+            sys.stderr.write(message)
             sys.exit(1)
 
         # Start the daemon
         self.daemonize()
-        self.run()
+        try:
+            self.run()
+        except Exception as e:
+            logger.error('Exception running process: {}'.format(e))
 
     def stop(self):
         """
@@ -135,7 +142,9 @@ class Daemon:
             pid = None
 
         if pid is None:
-            sys.stderr.write("pidfile {} does not exist. Daemon not running?\n".format(self.pidfile))
+            message = "pidfile {} does not exist. Daemon not running?\n".format(self.pidfile)
+            logger.error(message)
+            sys.stderr.write(message)
             return  # not an error in a restart
 
         # Try killing the daemon process

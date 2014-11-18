@@ -26,8 +26,8 @@ case "$1" in
 			
 			echo "[uds]" > /etc/udsactor/udsactor.cfg
 			echo "host = $host" >> /etc/udsactor/udsactor.cfg
-			echo "logLevel = 20000" >> /etc/udsactor/udsactor.cfg
-			echo "ssl = ssl" >> /etc/udsactor/udsactor.cfg
+			echo "logLevel = 30000" >> /etc/udsactor/udsactor.cfg
+			echo "ssl = $ssl" >> /etc/udsactor/udsactor.cfg
 			echo "masterKey = $masterKey" >> /etc/udsactor/udsactor.cfg
 			
 		fi

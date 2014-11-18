@@ -119,6 +119,7 @@ class Api(object):
         self.useSSL = ssl
         self.scrambledResponses = scrambledResponses
         self.uuid = None
+        self.mac = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
         self.secretKey = six.text_type(uuid.uuid4())
         self.newerRequestLib = 'verify' in requests.sessions.Session.__attrs__

@@ -50,7 +50,7 @@ class Logger(object):
         self.remoteLogger = None
 
     def setLevel(self, level):
-        self.logLevel = level
+        self.logLevel = int(level)  # Ensures level is an integer or fails
         self.logger.log(INFO, 'Setting LogLevel to {}'.format(level))
 
     def setRemoteLogger(self, remoteLogger):

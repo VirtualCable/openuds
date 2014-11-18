@@ -119,8 +119,8 @@ def usage():
 
 if __name__ == '__main__':
     initCfg()
-
     if len(sys.argv) == 3:
+        client = None
         try:
             client = ipc.ClientIPC(IPC_PORT)
             client.start()
@@ -135,7 +135,8 @@ if __name__ == '__main__':
         except Exception as e:
             logger.error(e)
         finally:
-            client.stop()
+            if client is not None:
+                client.stop()
         usage()
 
     logger.debug('Executing actor')

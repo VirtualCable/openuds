@@ -52,7 +52,7 @@ def _getMacAddr(ifname):
         ifname = ifname.encode('utf-8')  # If unicode, convert to bytes (or str in python 2.7)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', ifname[:15])))
+        info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifname[:15])))
         return six.text_type(''.join(['%02x:' % char for char in info[18:24]])[:-1])
     except Exception:
         return None
@@ -72,7 +72,7 @@ def _getIpAddr(ifname):
         return six.text_type(socket.inet_ntoa(fcntl.ioctl(
             s.fileno(),
             0x8915,  # SIOCGIFADDR
-            struct.pack('256s', ifname[:15])
+            struct.pack(str('256s'), ifname[:15])
         )[20:24]))
     except Exception:
         return None
@@ -93,10 +93,10 @@ def _getInterfaces():
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     names = array.array(str('B'), b'\0' * space)
-    outbytes = struct.unpack('iL', fcntl.ioctl(
+    outbytes = struct.unpack(str('iL'), fcntl.ioctl(
         s.fileno(),
         0x8912,  # SIOCGIFCONF
-        struct.pack('iL', space, names.buffer_info()[0])
+        struct.pack(str('iL'), space, names.buffer_info()[0])
     ))[0]
     namestr = names.tostring()
     # return namestr, outbytes
@@ -118,7 +118,8 @@ def getComputerName():
 def getNetworkInfo():
     for ifname in _getInterfaces():
         ip, mac = _getIpAndMac(ifname)
-        yield utils.Bunch(name=ifname, mac=mac, ip=ip)
+        if mac != '00:00:00:00:00:00':  # Skips local interfaces
+            yield utils.Bunch(name=ifname, mac=mac, ip=ip)
 
 
 def getDomainName():
