@@ -13,10 +13,10 @@
 
 case "$1" in
   start|stop|restart) 
-    /usr/sbin/udsactor-daemon $1
+    /usr/bin/udsactor $1
 	;;
   force-reload)
-  	./actor restart 
+  	/usr/bin/udsactor restart 
 	;;
   *) echo "Usage: $0 {start|stop|restart|force-reload}" >&2; exit 1 ;;
 esac

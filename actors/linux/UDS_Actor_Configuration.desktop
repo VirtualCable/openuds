@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=UDS Actor Configuration
 Version=1.0
-Exec=/usr/bin/UDSActorConfig
+Exec=/usr/sbin/UDSActorConfig-pkexec
 Comment=UDS Actor Configuration Application. (Must be executed as root)
 Icon=/usr/share/pyshared/UDSActor/img/uds.png
 Type=Application
