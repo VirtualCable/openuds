@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
+# Directories
 SOURCEDIR := ../src
 LIBDIR := $(DESTDIR)/usr/share/pyshared/UDSActor
 BINDIR := $(DESTDIR)/usr/bin
@@ -8,6 +9,9 @@ SBINDIR = $(DESTDIR)/usr/sbin
 APPSDIR := $(DESTDIR)/usr/share/applications
 CFGDIR := $(DESTDIR)/etc/udsactor
 POLKITDIR := $(DESTDIR)/usr/share/polkit-1/actions/
+XDGAUTOSTARTDIR := $(DESTDIR)/etc/xdg/autostart
+KDEAUTOSTARTDIR := $(DESTDIR)/usr/share/autostart
+
 PYC := $(shell find $(SOURCEDIR) -name '*.py[co]')
 CACHES := $(shell find $(SOURCEDIR) -name '__pycache__')
 
@@ -20,10 +24,14 @@ install:
 	mkdir -p $(APPSDIR)
 	mkdir -p $(CFGDIR)
 	mkdir -p $(POLKITDIR)
+	mkdir -p $(XDGAUTOSTARTDIR)
+	mkdir -p $(KDEAUTOSTARTDIR)
 	
 	mkdir $(LIBDIR)/img
 	
+	# Cleans up .pyc and cache folders
 	rm -f $(PYC) $(CACHES)
+	
 	cp -r $(SOURCEDIR)/udsactor $(LIBDIR)/udsactor
 	cp $(SOURCEDIR)/img/uds.png $(LIBDIR)/img
 
@@ -32,16 +40,23 @@ install:
 	cp $(SOURCEDIR)/setup_dialog_ui.py $(LIBDIR)
 	
 	# Menu GUI app
-	cp UDS_Actor_Configuration.desktop $(APPSDIR)
-	# binaries
-	cp udsactor $(BINDIR)
-	cp UDSActorConfig-pkexec $(SBINDIR)
+	cp desktop/UDS_Actor_Configuration.desktop $(APPSDIR)
+	
+	# Autostart elements for gnome/kde
+	cp desktop/UDSActorTool.desktop $(XDGAUTOSTARTDIR)
+	cp desktop/UDSActorTool.desktop $(KDEAUTOSTARTDIR)
+	
+	# scripts
+	cp scripts/udsactor $(BINDIR)
+	cp scripts/UDSActorConfig-pkexec $(SBINDIR)
+	cp scripts/UDSActorTool-startup $(BINDIR)
 	
 	# Policy to run as administrator
-	cp org.openuds.pkexec.UDSActorConfig.policy $(POLKITDIR)
+	cp policy/org.openuds.pkexec.UDSActorConfig.policy $(POLKITDIR)
 
 	# Fix permissions
 	chmod 755 $(BINDIR)/udsactor
+	chmod 755 $(BINDIR)/UDSActorTool-startup
 	chmod 755 $(LIBDIR)/UDSActorConfig.py
 	chmod 755 $(LIBDIR)/UDSActorUser.py
 	chmod 644 $(POLKITDIR)/org.openuds.pkexec.UDSActorConfig.policy

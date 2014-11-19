@@ -35,6 +35,7 @@ from os.path import exists, join
 
 CERTFILE = 'UDSActor.pem'
 
+
 def createSelfSignedCert(force=False):
 
     certFile = join(gettempdir(), CERTFILE)
@@ -98,6 +99,3 @@ xtvM
         f.write(certData)
 
     return certFile
-
-# At beginning, force certificate creation
-createSelfSignedCert(force=True)

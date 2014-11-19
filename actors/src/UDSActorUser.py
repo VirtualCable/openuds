@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-import cPickle
+import pickle
 from udsactor import ipc
 from udsactor import utils
 from udsactor.log import logger
@@ -88,7 +88,7 @@ class MessagesProcessor(QtCore.QThread):
                 elif msgId == ipc.MSG_SCRIPT:
                     self.script.emit(QtCore.QString.fromUtf8(data))
                 elif msgId == ipc.MSG_INFORMATION:
-                    self.information.emit(cPickle.loads(data))
+                    self.information.emit(pickle.loads(data))
             except Exception as e:
                 try:
                     logger.error('Got error on IPC thread {}'.format(utils.exceptionToMessage(e)))
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
 
     if not QtGui.QSystemTrayIcon.isSystemTrayAvailable():
-        QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
+        # QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
         sys.exit(1)
 
     trayIcon = UDSSystemTray(app)
