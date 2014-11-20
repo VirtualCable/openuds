@@ -2,7 +2,7 @@
 Name=UDS Actor Tool
 Comment=UDS Actor Userspace tools
 Exec=/usr/bin/UDSActorTool-startup
-Icon=/usr/share/pyshared/UDSActor/img/uds.png
+Icon=/usr/share/UDSActor/img/uds.png
 Terminal=false
 Type=Application
 NoDisplay=true
