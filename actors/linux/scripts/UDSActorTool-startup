@@ -1,4 +1,6 @@
 #!/bin/sh
 
+# Simple hack to wait for systray to be present
 sleep 5
-/usr/bin/UDSActorTool
+# Exec tool
+exec /usr/bin/UDSActorTool

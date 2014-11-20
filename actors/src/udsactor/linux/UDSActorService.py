@@ -44,7 +44,11 @@ from udsactor.linux.daemon import Daemon
 from udsactor.linux import renamer
 
 import sys
-import prctl
+try:
+    from prctl import set_proctitle
+except Exception:  # Platform may not include prctl, so in case it's not available, we let the "name" as is
+    def set_proctitle(_):
+        pass
 
 
 class UDSActorSvc(Daemon, CommonService):
@@ -79,7 +83,7 @@ class UDSActorSvc(Daemon, CommonService):
         initCfg()
 
         logger.debug('Running Daemon')
-        prctl.set_proctitle('UDSActorDaemon')
+        set_proctitle('UDSActorDaemon')
 
         # Linux daemon will continue running unless something is requested to
         if self.interactWithBroker() is False:

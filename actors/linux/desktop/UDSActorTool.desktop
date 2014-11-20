@@ -6,3 +6,7 @@ Icon=/usr/share/pyshared/UDSActor/img/uds.png
 Terminal=false
 Type=Application
 NoDisplay=true
+X-KDE-autostart-after=panel
+X-KDE-StartupNotify=false
+X-DBUS-StartupType=Unique
+X-KDE-UniqueApplet=true

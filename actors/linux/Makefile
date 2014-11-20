@@ -3,11 +3,12 @@
 
 # Directories
 SOURCEDIR := ../src
-LIBDIR := $(DESTDIR)/usr/share/pyshared/UDSActor
+LIBDIR := $(DESTDIR)/usr/share/UDSActor
 BINDIR := $(DESTDIR)/usr/bin
 SBINDIR = $(DESTDIR)/usr/sbin
 APPSDIR := $(DESTDIR)/usr/share/applications
 CFGDIR := $(DESTDIR)/etc/udsactor
+INITDIR := $(DESTDIR)/etc/init.d
 POLKITDIR := $(DESTDIR)/usr/share/polkit-1/actions/
 XDGAUTOSTARTDIR := $(DESTDIR)/etc/xdg/autostart
 KDEAUTOSTARTDIR := $(DESTDIR)/usr/share/autostart
@@ -18,6 +19,7 @@ CACHES := $(shell find $(SOURCEDIR) -name '__pycache__')
 clean:
 	rm -rf $(PYC) $(CACHES) $(DESTDIR)
 install:
+	rm -rf $(DESTDIR)
 	mkdir -p $(LIBDIR)
 	mkdir -p $(BINDIR)
 	mkdir -p $(SBINDIR)
@@ -57,9 +59,18 @@ install:
 	# Fix permissions
 	chmod 755 $(BINDIR)/udsactor
 	chmod 755 $(BINDIR)/UDSActorTool-startup
+	chmod 755 $(SBINDIR)/UDSActorConfig-pkexec
 	chmod 755 $(LIBDIR)/UDSActorConfig.py
 	chmod 755 $(LIBDIR)/UDSActorUser.py
 	chmod 644 $(POLKITDIR)/org.openuds.pkexec.UDSActorConfig.policy
+	
+	# If for red hat based, copy init.d
+ifeq ($(DISTRO),rh)
+	mkdir -p $(INITDIR)
+	cp debian/init $(INITDIR)/udsactor
+	ln -s /usr/share/UDSActor/UDSActorConfig.py $(SBINDIR)/UDSActorConfig
+	ln -s /usr/share/UDSActor/UDSActorUser.py $(BINDIR)/UDSActorTool
+endif
 	
 	# chmod 0755 $(BINDIR)/udsactor
 uninstall:

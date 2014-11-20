@@ -122,7 +122,10 @@ class Api(object):
         self.mac = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
         self.secretKey = six.text_type(uuid.uuid4())
-        self.newerRequestLib = 'verify' in requests.sessions.Session.__attrs__
+        try:
+            self.newerRequestLib = 'verify' in requests.sessions.Session.__attrs__
+        except:
+            self.newerRequestLib = False
         # Disable logging requests messages except for errors, ...
         logging.getLogger("requests").setLevel(logging.ERROR)
 

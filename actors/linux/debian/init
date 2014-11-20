@@ -1,6 +1,6 @@
 #!/bin/sh -e
 ### BEGIN INIT INFO
-# Provides:          uds-actor
+# Provides:          udsactor
 # Required-Start:    $local_fs $remote_fs $network $syslog $named
 # Required-Stop:     $local_fs $remote_fs $network $syslog $named
 # Default-Start:     2 3 4 5
@@ -9,7 +9,7 @@
 ### END INIT INFO
 #
 
-. /lib/lsb/init-functions
+# . /lib/lsb/init-functions
 
 case "$1" in
   start|stop|restart) 
