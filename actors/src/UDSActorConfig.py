@@ -44,7 +44,7 @@ from udsactor.log import logger
 from setup_dialog_ui import Ui_UdsActorSetupDialog
 
 
-class MyForm(QtGui.QDialog):
+class UDSConfigDialog(QtGui.QDialog):
 
     def __init__(self, data, parent=None):
         QtGui.QDialog.__init__(self, parent)
@@ -108,6 +108,6 @@ if __name__ == "__main__":
     else:
         logger.setLevel(20000)
 
-    myapp = MyForm(cfg)
+    myapp = UDSConfigDialog(cfg)
     myapp.show()
     sys.exit(app.exec_())

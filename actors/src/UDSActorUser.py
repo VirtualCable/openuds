@@ -40,7 +40,17 @@ from udsactor import ipc
 from udsactor import utils
 from udsactor.log import logger
 from udsactor.service import IPC_PORT
+from about_dialog_ui import Ui_UDSAboutDialog
 
+# About dialog
+class UDSAboutDialog(QtGui.QDialog):
+    def __init__(self, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = Ui_UDSAboutDialog()
+        self.ui.setupUi(self)
+
+    def closeDialog(self):
+        self.hide()
 
 class MessagesProcessor(QtCore.QThread):
 
@@ -110,8 +120,8 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         QtGui.QSystemTrayIcon.__init__(self, icon, parent)
         self.menu = QtGui.QMenu(parent)
-        exitAction = self.menu.addAction("Exit")
-        exitAction.triggered.connect(self.quit)
+        exitAction = self.menu.addAction("About")
+        exitAction.triggered.connect(self.about)
         self.setContextMenu(self.menu)
         self.ipc = MessagesProcessor()
         self.ipc.start()
@@ -124,6 +134,8 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         # Pre generate a request for information (general parameters) to daemon/service
         self.ipc.requestInformation()
+
+        self.aboutDlg = UDSAboutDialog()
 
         self.counter = 0
 
@@ -143,9 +155,11 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.counter += 1
         print("Information:", info, '--', self.counter)
 
+    def about(self):
+        self.aboutDlg.exec_()
+
     def quit(self):
         self.ipc.stop()
-
         self.app.quit()
 
 if __name__ == '__main__':

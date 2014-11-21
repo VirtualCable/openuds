@@ -29,7 +29,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
+from __future__ import unicode_literals
 
 import threading
 import uuid

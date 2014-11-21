@@ -61,6 +61,13 @@ def initCfg():
         logger.setLevel(cfg.get('logLevel', 20000))
     else:
         logger.setLevel(20000)
+        cfg = {}
+
+    # If ANY var is missing, reset cfg
+    for v in ('host', 'ssl', 'masterKey'):
+        if v not in cfg:
+            cfg = None
+            break
 
 
 class CommonService(object):
