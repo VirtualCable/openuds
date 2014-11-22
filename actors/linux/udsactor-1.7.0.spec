@@ -12,6 +12,9 @@ Summary: Actor for Universal Desktop Services (UDS) Broker
 License: BSD3
 Group: Admin
 Requires: python-six python-requests PyQt4
+Vendor: Virtual Cable S.L.U.
+URL: http://www.udsenterprise.com
+Provides: udsactor
 
 %define _rpmdir ../
 %define _rpmfilename %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
@@ -32,13 +35,19 @@ cd $curdir
 
 
 %post
-#!/bin/sh
+systemctl enable udsactor.service > /dev/null 2>&1
 
 %preun
-#!/bin/sh
+systemctl disable udsactor.service > /dev/null 2>&1
 
 %postun
-#!/bin/sh
+# $1 == 0 on uninstall, == 1 on upgrade for preun and postun (just a reminder for me... :) )
+if [ $1 -eq 0 ]; then
+    rm -rf /etc/udsactor
+    rm /var/log/udsactor.log
+fi
+# And, posibly, the .pyc leaved behind on /usr/share/UDSActor
+rm -rf /usr/share/UDSActor > /dev/null 2>&1
 
 %description
 This package provides the required components to allow this machine to work on an environment managed by UDS Broker.
