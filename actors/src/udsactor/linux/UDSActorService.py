@@ -44,6 +44,7 @@ from udsactor.linux.daemon import Daemon
 from udsactor.linux import renamer
 
 import sys
+import time
 try:
     from prctl import set_proctitle
 except Exception:  # Platform may not include prctl, so in case it's not available, we let the "name" as is
@@ -124,8 +125,10 @@ def usage():
     sys.exit(2)
 
 if __name__ == '__main__':
-    initCfg()
+    logger.setLevel(20000)
+
     if len(sys.argv) == 3:
+        logger.debug('Running client udsactor')
         client = None
         try:
             client = ipc.ClientIPC(IPC_PORT)

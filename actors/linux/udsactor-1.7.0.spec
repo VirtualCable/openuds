@@ -39,6 +39,7 @@ systemctl enable udsactor.service > /dev/null 2>&1
 
 %preun
 systemctl disable udsactor.service > /dev/null 2>&1
+systemctl stop udsactor.service > /dev/null 2>&1
 
 %postun
 # $1 == 0 on uninstall, == 1 on upgrade for preun and postun (just a reminder for me... :) )

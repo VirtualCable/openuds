@@ -207,12 +207,25 @@ class CommonService(object):
                 except Exception as e:
                     logger.warn('Got an error notifiying IPs to broker: {} (will retry in a bit)'.format(e.message.decode('windows-1250', 'ignore')))
 
+    def clientMessageProcessor(self, msg, data):
+        logger.debug('Got message {}'.format(msg))
+        if self.api is None:
+            logger.info('Rest api not ready')
+            return
+
+        if msg == ipc.REQ_LOGIN:
+            self.api.login(data)
+        elif msg == ipc.REQ_LOGOUT:
+            self.api.logout(data)
+        elif msg == ipc.REQ_INFORMATION:
+            logger.debug('Requested information')
+
     def initIPC(self):
         # ******************************************
         # * Initialize listener IPC & REST threads *
         # ******************************************
         logger.debug('Starting IPC listener at {}'.format(IPC_PORT))
-        self.ipc = ipc.ServerIPC(IPC_PORT)
+        self.ipc = ipc.ServerIPC(IPC_PORT, clientMessageProcessor=self.clientMessageProcessor)
         self.ipc.start()
 
         if self.api.mac in self.knownIps:

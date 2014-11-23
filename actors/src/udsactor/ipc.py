@@ -35,7 +35,7 @@ import threading
 import sys
 import six
 import traceback
-import pickle
+import time
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -101,22 +101,30 @@ class ClientProcessor(threading.Thread):
         self.running = False
 
     def processRequest(self, msg, data):
-        print('Got message {}, with data {}'.format(msg, data))
+        if self.parent.clientMessageProcessor is not None:
+            self.parent.clientMessageProcessor(msg, data)
 
     def run(self):
         self.running = True
         self.clientSocket.setblocking(0)
 
+        logger.debug('Client processor running')
+
         state = None
         recv_msg = None
         recv_data = None
         while self.running:
+            logger.debug('Iteration')
+            # Slice some time, we do not need "realtime"
+            time.sleep(1)
             try:
                 counter = 1024
                 while counter > 0:  # So we process at least the incoming queue every XX bytes readed
                     counter -= 1
                     b = self.clientSocket.recv(1)
                     if b == b'':
+                        # Client disconnected
+                        self.running = False
                         break
                     buf = six.byte2int(b)  # Empty buffer, this is set as non-blocking
                     if state is None:
@@ -155,6 +163,12 @@ class ClientProcessor(threading.Thread):
             except socket.error as e:
                 # If no data is present, no problem at all, pass to check messages
                 pass
+            except Exception as e:
+                tb = traceback.format_exc()
+                logger.error('Error: {}, trace: {}'.format(e, tb))
+
+            if self.running is False:
+                break
 
             try:
                 msg = self.messages.get(block=False)
@@ -176,6 +190,7 @@ class ClientProcessor(threading.Thread):
             except Exception as e:
                 logger.error('Invalid message in queue: {}'.format(e))
 
+        logger.debug('Client processor stopped')
         try:
             self.clientSocket.close()
         except Exception:
@@ -184,14 +199,14 @@ class ClientProcessor(threading.Thread):
 
 class ServerIPC(threading.Thread):
 
-    def __init__(self, listenPort, infoParams=None):
+    def __init__(self, listenPort, clientMessageProcessor=None):
         super(self.__class__, self).__init__()
         self.port = listenPort
         self.running = False
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.threads = []
-        self.infoParams = infoParams
+        self.clientMessageProcessor = clientMessageProcessor
 
     def stop(self):
         logger.debug('Stopping Server IPC')
@@ -249,13 +264,14 @@ class ServerIPC(threading.Thread):
         while True:
             try:
                 (clientSocket, address) = self.serverSocket.accept()
-                # Stop processiong if thread is mean to stop
+                # Stop processing if thread is mean to stop
                 if self.running is False:
                     break
                 logger.debug('Got connection from {}'.format(address))
 
                 self.cleanupFinishedThreads()  # House keeping
 
+                logger.debug('Starting new thread, current: {}'.format(self.threads))
                 t = ClientProcessor(self, clientSocket)
                 self.threads.append(t)
                 t.start()
@@ -286,6 +302,7 @@ class ClientIPC(threading.Thread):
         return None
 
     def sendRequestMessage(self, msg, data=None):
+        logger.debug('Sending request for msg: {}, {}'.format(msg, data))
         if data is None:
             data = b''
 
@@ -318,6 +335,7 @@ class ClientIPC(threading.Thread):
             try:
                 buf = self.clientSocket.recv(number - len(msg))
                 if buf == b'':
+                    logger.debug('Buf {}, msg {}'.format(buf, msg))
                     self.running = False
                     break
                 msg += buf
@@ -325,6 +343,7 @@ class ClientIPC(threading.Thread):
                 pass
 
         if self.running is False:
+            logger.debug('Not running, returning None')
             return None
         return msg
 
@@ -356,6 +375,9 @@ class ClientIPC(threading.Thread):
                     except socket.timeout:  # Timeout is here so we can get stop thread
                         continue
 
+                if self.running is False:
+                    break
+
                 # Now we get message basic data (msg + datalen)
                 msg = bytearray(self.receiveBytes(3))
 
@@ -380,7 +402,8 @@ class ClientIPC(threading.Thread):
                 self.running = False
                 return
             except Exception as e:
-                logger.error('Error: {}'.format(e.args))
+                tb = traceback.format_exc()
+                logger.error('Error: {}, trace: {}'.format(e, tb))
 
         try:
             self.clientSocket.close()

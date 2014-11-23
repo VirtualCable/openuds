@@ -82,7 +82,7 @@ install-udsactor:
 	# If for red hat based, copy init.d
 ifeq ($(DISTRO),rh)
 	mkdir -p $(INITDIR)
-	cp debian/init $(INITDIR)/udsactor
+	cp debian/udsactor.init $(INITDIR)/udsactor
 	ln -s /usr/share/UDSActor/UDSActorConfig.py $(SBINDIR)/UDSActorConfig
 	ln -s /usr/share/UDSActor/UDSActorUser.py $(BINDIR)/UDSActorTool
 endif

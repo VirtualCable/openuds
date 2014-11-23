@@ -37,3 +37,16 @@ __build__ = 0x010700
 __author__ = 'Adolfo Gómez'
 __license__ = "BSD 3-clause"
 __copyright__ = "Copyright 2014 VirtualCable S.L.U."
+
+
+# On centos, old six release does not includes byte2int, nor six.PY2
+import six
+
+if not hasattr(six, 'byte2int'):
+    if six.PY3:
+        import operator
+        six.byte2int = operator.itemgetter(0)
+    else:
+        def _byte2int(bs):
+            return ord(bs[0])
+        six.byte2int = _byte2int
