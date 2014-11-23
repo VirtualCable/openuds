@@ -23,7 +23,7 @@ Provides: udsactor
 %install
 curdir=`pwd`
 cd ../..
-make DESTDIR=$RPM_BUILD_ROOT DISTRO=rh install
+make DESTDIR=$RPM_BUILD_ROOT DISTRO=rh install-udsactor
 cd $curdir
 
 %clean
