@@ -1,4 +1,9 @@
-#! /bin/bash -e
+#!/bin/sh -e
+
+. /usr/share/debconf/confmodule
+
+set -e
+
 if [ "$1" = "purge" ] ; then
 	if [ -f /etc/udsactor/udsactor.cfg ]; then
 		mv /etc/udsactor/udsactor.cfg /etc/udsactor/udsactor.cfg.dpkg-backup

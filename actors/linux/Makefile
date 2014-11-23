@@ -18,7 +18,7 @@ CACHES := $(shell find $(SOURCEDIR) -name '__pycache__')
 
 clean:
 	rm -rf $(PYC) $(CACHES) $(DESTDIR)
-install-xrdp-udsactor:
+install-udsactor-xrdp:
 	mkdir -p $(BINDIR)
 	cp scripts/uds-sesman.sh $(BINDIR)/uds-sesman
 	cp scripts/uds-wait-session.sh $(BINDIR)/uds-wait-session
@@ -26,6 +26,13 @@ install-xrdp-udsactor:
 	chmod 0755 $(BINDIR)/uds-sesman
 	chmod 0755 $(BINDIR)/uds-wait-session
 
+install-udsactor-nx:
+	mkdir -p $(BINDIR)
+	cp scripts/udsnxstart.sh $(BINDIR)/udsnxstart
+	cp scripts/udsnxstop.sh $(BINDIR)/udsnxstop
+	
+	chmod 0755 $(BINDIR)/udsnxstart
+	chmod 0755 $(BINDIR)/udsnxstop
 install-udsactor:
 	rm -rf $(DESTDIR)
 	mkdir -p $(LIBDIR)

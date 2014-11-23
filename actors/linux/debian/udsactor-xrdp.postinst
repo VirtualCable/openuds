@@ -1,0 +1,39 @@
+#!/bin/sh
+
+SESMANFILE=/etc/pam.d/xrdp-sesman
+
+. /usr/share/debconf/confmodule
+
+set -e
+
+case "$1" in
+    configure)
+       trap "cp $SESMANFILE $SESMANFILE.uds.old" 0
+       
+       TMPFILE=$(mktemp /tmp/sesman.XXXXX)
+       trap "rm -f $TMPFILE" 0
+       grep -v uds $SESMANFILE > $TMPFILE  # Removes all UDS lines from sesman if they exists
+       
+       echo >> $TMPFILE
+       echo "# Added by udsactor-xrdp" >> $TMPFILE
+       echo "session optional pam_exec.so /usr/bin/uds-sesman" >> $TMPFILE
+       cp $TMPFILE $SESMANFILE
+       trap "rm -f $TMPFILE" 0
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+# Don't know why, but descriptors get "weird" when launched daemon, so we tell here to debconf to stop.
+# Solved not starting the service right now, defered to next reboot
+
+
+exit 0
