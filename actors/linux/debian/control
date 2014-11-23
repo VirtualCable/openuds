@@ -13,5 +13,11 @@ Architecture: all
 Depends: policykit-1(>=0.100), python-requests (>=0.8.2), python-qt4 (>=4.9), python-six(>=1.1), python-prctl(>=1.1.1), python (>=2.7),  ${misc:Depends}
 Description: Actor for Universal Desktop Services (UDS) Broker
  This package provides the required components to allow this machine to work on an environment managed by UDS Broker.
- .
 
+Package: udsactor-xrdp
+Section: x11
+Priority: optional
+Architecture: all
+Depends: xrdp (>= 0.6.0), udsactor (>= ${Source-Version}), libpam-modules-bin (>=1.0), ${misc:Depends}
+Description: UDS Actor component for xrdp
+ This package provides connection between uds actor and xrdp, so session can be managed

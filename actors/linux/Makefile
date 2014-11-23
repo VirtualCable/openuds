@@ -18,7 +18,15 @@ CACHES := $(shell find $(SOURCEDIR) -name '__pycache__')
 
 clean:
 	rm -rf $(PYC) $(CACHES) $(DESTDIR)
-install:
+install-xrdp-udsactor:
+	mkdir -p $(BINDIR)
+	cp scripts/uds-sesman.sh $(BINDIR)/uds-sesman
+	cp scripts/uds-wait-session.sh $(BINDIR)/uds-wait-session
+	
+	chmod 0755 $(BINDIR)/uds-sesman
+	chmod 0755 $(BINDIR)/uds-wait-session
+
+install-udsactor:
 	rm -rf $(DESTDIR)
 	mkdir -p $(LIBDIR)
 	mkdir -p $(BINDIR)
