@@ -127,12 +127,11 @@ def usage():
 if __name__ == '__main__':
     logger.setLevel(20000)
 
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 3 and sys.argv[1] in ('login', 'logout'):
         logger.debug('Running client udsactor')
         client = None
         try:
             client = ipc.ClientIPC(IPC_PORT)
-            client.start()
             if 'login' == sys.argv[1]:
                 client.sendLogin(sys.argv[2])
                 sys.exit(0)
@@ -143,9 +142,7 @@ if __name__ == '__main__':
                 usage()
         except Exception as e:
             logger.error(e)
-        finally:
-            if client is not None:
-                client.stop()
+    else:
         usage()
 
     logger.debug('Executing actor')

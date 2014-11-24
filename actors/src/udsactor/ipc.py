@@ -35,7 +35,6 @@ import threading
 import sys
 import six
 import traceback
-import time
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -114,9 +113,6 @@ class ClientProcessor(threading.Thread):
         recv_msg = None
         recv_data = None
         while self.running:
-            logger.debug('Iteration')
-            # Slice some time, we do not need "realtime"
-            time.sleep(1)
             try:
                 counter = 1024
                 while counter > 0:  # So we process at least the incoming queue every XX bytes readed
@@ -171,7 +167,7 @@ class ClientProcessor(threading.Thread):
                 break
 
             try:
-                msg = self.messages.get(block=False)
+                msg = self.messages.get(block=True, timeout=1)
             except six.moves.queue.Empty:  # No message got in time @UndefinedVariable
                 continue
 
