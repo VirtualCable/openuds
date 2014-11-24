@@ -18,7 +18,7 @@ Package: udsactor-xrdp
 Section: x11
 Priority: optional
 Architecture: all
-Depends: xrdp (>= 0.6.0), udsactor (>= ${binary:Version}), libpam-modules-bin (>=1.0), ${misc:Depends}
+Depends: xrdp (>= 0.5.0), udsactor (>= ${binary:Version}), libpam-modules-bin (>=1.0), ${misc:Depends}
 Description: UDS Actor component for xrdp
  This package provides connection between uds actor and xrdp
 

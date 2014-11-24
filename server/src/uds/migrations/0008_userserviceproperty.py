@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 ('user_service', models.ForeignKey(related_name='properties', to='uds.UserService')),
             ],
             options={
+                'db_table': 'uds__user_service_property',
             },
             bases=(models.Model,),
         ),

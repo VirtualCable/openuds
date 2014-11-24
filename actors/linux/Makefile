@@ -54,7 +54,9 @@ install-udsactor:
 
 	cp $(SOURCEDIR)/UDSActorConfig.py $(LIBDIR)
 	cp $(SOURCEDIR)/UDSActorUser.py $(LIBDIR)
-	cp $(SOURCEDIR)/setup_dialog_ui.py $(LIBDIR)
+	# QT Dialogs & resources
+	cp $(SOURCEDIR)/*_ui.py $(LIBDIR)
+	cp $(SOURCEDIR)/UDSActor_rc.py $(LIBDIR)
 	
 	# Menu GUI app
 	cp desktop/UDS_Actor_Configuration.desktop $(APPSDIR)

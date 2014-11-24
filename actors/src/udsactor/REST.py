@@ -125,7 +125,7 @@ class Api(object):
         self.secretKey = six.text_type(uuid.uuid4())
         self.newerRequestLib = requests.__version__.split('.') >= '1'
         # Disable logging requests messages except for errors, ...
-        logging.getLogger("requests").setLevel(logging.ERROR)
+        logging.getLogger("requests").setLevel(logging.CRITICAL)
 
     def _getUrl(self, method, key=None, ids=None):
         url = self.url + method

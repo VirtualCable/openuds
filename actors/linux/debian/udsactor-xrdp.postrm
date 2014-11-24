@@ -10,11 +10,13 @@ case "$1" in
     purge)
     ;;
     remove)
-       TMPFILE=$(mktemp /tmp/sesman.XXXXX)
-       trap "rm -f $TMPFILE" 0
-       grep -v uds $SESMANFILE > $TMPFILE  # Removes all UDS lines from sesman if they exists
-       cp $TMPFILE $SESMANFILE
-       trap "rm -f $TMPFILE" 0
+        if [ -f $SESMANFILE ]; then
+            TMPFILE=$(mktemp /tmp/sesman.XXXXX)
+            trap "rm -f $TMPFILE" 0
+            grep -v uds $SESMANFILE > $TMPFILE  # Removes all UDS lines from sesman if they exists
+            cp $TMPFILE $SESMANFILE
+            trap "rm -f $TMPFILE" 0
+        fi
     ;;
 	upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     ;;

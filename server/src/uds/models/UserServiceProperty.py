@@ -50,10 +50,20 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class UserServiceProperty(models.Model):
+    '''
+    Properties for User Service.
+    The value field is a Text field, so we can put whatever we want in it
+    '''
     name = models.CharField(max_length=128, db_index=True, unique=True)
     value = models.TextField(default='')
-
     user_service = models.ForeignKey(UserService, on_delete=models.CASCADE, related_name='properties')
+
+    class Meta:
+        '''
+        Meta class to declare default order and unique multiple field index
+        '''
+        db_table = 'uds__user_service_property'
+        app_label = 'uds'
 
     def __str__(self):
         return "Property of {}. {}={}".format(self.user_service.pk, self.name, self.value)
