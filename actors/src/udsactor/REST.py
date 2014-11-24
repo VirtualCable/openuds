@@ -41,6 +41,7 @@ import uuid
 import six
 import codecs
 
+from udsactor import __version__ as VERSION
 from .utils import exceptionToMessage
 
 VERIFY_CERT = False
@@ -133,6 +134,7 @@ class Api(object):
             params.append('key=' + key)
         if ids is not None:
             params.append('id=' + ids)
+            params.append('version=' + VERSION)
 
         if len(params) > 0:
             url += '?' + '&'.join(params)
