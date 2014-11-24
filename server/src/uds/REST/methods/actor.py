@@ -122,7 +122,7 @@ class Actor(Handler):
         if len(self._args) < 1:
             raise RequestError('Invalid request')
 
-        # if path is .../test (/rest/actor/[test|init]?key=.....)
+        # if path is .../test (/rest/actor/[test|init]?key=.....&version=....&id=....)
         if self._args[0] in ('test', 'init'):
             v = self.validateRequestKey()
             if v is not None:
@@ -131,10 +131,13 @@ class Actor(Handler):
                 return self.test()
 
             # Returns UID of selected Machine
+            actorVersion = self._params.get('version', 'unknown')
             service = self.getUserServiceByIds()
             if service is None:
                 return Actor.result(_('Unmanaged host'), error=ERR_HOST_NOT_MANAGED)
             else:
+                # Set last seen actor version
+                service.setProperty('actor_version', actorVersion)
                 return Actor.result((service.uuid, service.unique_id))
         raise RequestError('Invalid request')
 

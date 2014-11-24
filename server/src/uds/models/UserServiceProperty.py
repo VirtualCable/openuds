@@ -31,65 +31,29 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+# pylint: disable=model-missing-unicode, too-many-public-methods
+
 from __future__ import unicode_literals
 
 __updated__ = '2014-11-24'
+
+from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
+
+from .UserService import UserService
+from uds.models.Util import getSqlDatetime
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-# Utility
-from .Util import getSqlDatetime
-from .Util import optimizeTable
-from .Util import NEVER
-from .Util import NEVER_UNIX
+@python_2_unicode_compatible
+class UserServiceProperty(models.Model):
+    name = models.CharField(max_length=128, db_index=True, unique=True)
+    value = models.TextField(default='')
 
-# Services
-from .Provider import Provider
-from .Service import Service
+    user_service = models.ForeignKey(UserService, on_delete=models.CASCADE, related_name='properties')
 
-# Os managers
-from .OSManager import OSManager
-
-# Transports
-from .Transport import Transport
-from .Network import Network
-
-
-# Authenticators
-from .Authenticator import Authenticator
-from .User import User
-from .UserPreference import UserPreference
-from .Group import Group
-
-
-# Provisioned services
-from .ServicesPool import DeployedService  # Old name, will continue here for a while already
-from .ServicesPool import ServicePool  # New name
-from .ServicesPoolPublication import DeployedServicePublication
-from .UserService import UserService
-from .UserServiceProperty import UserServiceProperty
-
-# Especific log information for an user service
-from .Log import Log
-
-# Stats
-from .StatsCounters import StatsCounters
-from .StatsEvents import StatsEvents
-
-
-# General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
-# We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from .Cache import Cache
-from .Config import Config
-from .Storage import Storage
-from .UniqueId import UniqueId
-
-# Workers/Schedulers related
-from .Scheduler import Scheduler
-from .DelayedTask import DelayedTask
-
-# Image galery related
-from .Image import Image
+    def __str__(self):
+        return "Property of {}. {}={}".format(self.user_service.pk, self.name, self.value)

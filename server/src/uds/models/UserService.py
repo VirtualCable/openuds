@@ -35,7 +35,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-11'
+__updated__ = '2014-11-24'
 
 from django.db import models
 from django.db.models import signals
@@ -406,6 +406,17 @@ class UserService(UUIDModel):
     def __str__(self):
         return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,
                                                                                              State.toString(self.state), State.toString(self.os_state))
+
+    def getProperty(self, propName, default=None):
+        try:
+            return self.properties.get(name=propName).value
+        except Exception:
+            return default
+
+    def setProperty(self, propName, propValue):
+        prop, _ = self.properties.get_or_create(name=propName)
+        prop.value = propValue
+        prop.save()
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

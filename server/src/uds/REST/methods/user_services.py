@@ -60,6 +60,7 @@ class AssignedService(DetailHandler):
             'state_date': item.state_date,
             'creation_date': item.creation_date,
             'revision': item.publication and item.publication.revision or '',
+            'actor_version': item.getProperty('actor_version', _('unknown')),
         }
 
         if is_cache:
@@ -100,6 +101,7 @@ class AssignedService(DetailHandler):
             {'source_host': {'title': _('Src Host')}},
             {'source_ip': {'title': _('Src Ip')}},
             {'owner': {'title': _('Owner')}},
+            {'actor_version': {'title': _('Actor version')}}
         ]
 
     def getLogs(self, parent, item):
