@@ -85,7 +85,7 @@ class ServiceCacheUpdater(Job):
         for ds in whichNeedsCaching:
             ds.userServices.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it
-            if ds.activePublication() == None and ds.service.getInstance().publicationType is not None:
+            if ds.activePublication() is None and ds.service.getInstance().publicationType is not None:
                 logger.debug('Needs publication but do not have one, cache test ignored')
                 continue
             # If it has any running publication, do not generate cache anymore

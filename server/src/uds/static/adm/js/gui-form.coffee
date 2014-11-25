@@ -52,7 +52,7 @@
         name: f.name
         css: "modal_field_data"
       )
-      
+
       # if this field has a filler (callback to get data)
       if f.gui.fills
         gui.doLog "This field has a filler"
@@ -96,7 +96,7 @@
       $.extend originalValues, h.originalValues
     form += "</form>"
     gui.doLog "Original values: ", originalValues
-    
+
     # Init function for callbacks.
     # Callbacks can only be attached to "Selects", but it's parameters can be got from any field
     # This needs the "form selector" as base for setting callbacks, etc..
@@ -226,8 +226,11 @@
     gui.tools.applyCustoms id
     
     # Validation
+
+
     $form.validate
       debug: true
+      ignore: ':hidden:not("select")'
       errorClass: "text-danger"
       validClass: "has-success"
       highlight: (element) ->
@@ -239,6 +242,10 @@
         $(element).remove()
         return
 
+    # Generate rules for required select fields
+    for s in $($form.selector + " select[multiple][required]")
+      gui.doLog "Rules ", $(s).rules()
+    
     
     # And catch "accept" (default is "Save" in fact) button click
     $("#{id} .button-accept").click ->

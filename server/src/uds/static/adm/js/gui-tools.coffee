@@ -36,7 +36,7 @@
         # If Mousedown registers a temporal mouseUp event on parent, to lauch button click 
         $this.mousedown (event) ->
           $("body").mouseup (e) ->
-            
+
             # Remove temporal mouseup handler
             $(this).unbind "mouseup"
             

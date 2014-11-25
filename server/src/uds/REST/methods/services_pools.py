@@ -103,7 +103,8 @@ class ServicesPools(ModelHandler):
             'comments': item.comments,
             'state': item.state,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
-            'service_id': item.service.uuid
+            'service_id': item.service.uuid,
+            'restrained': item.isRestrained(),
         }
 
     # Gui related

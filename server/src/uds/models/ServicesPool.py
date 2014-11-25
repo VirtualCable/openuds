@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-05'
+__updated__ = '2014-11-25'
 
 from django.db import models
 from django.db.models import signals
@@ -160,7 +160,6 @@ class DeployedService(UUIDModel):
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
         date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
-
         if self.userServices.filter(state=State.ERROR, state_date__gt=date).count() >= GlobalConfig.RESTRAINT_COUNT.getInt():
             return True
 

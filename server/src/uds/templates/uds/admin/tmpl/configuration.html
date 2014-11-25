@@ -14,9 +14,9 @@
     {% for message in messages %}
     <div class="alert alert-danger alert-dismissable">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-       {{ message }}  
+       {{ message }}
     </div>
-    {% endfor %}       
+    {% endfor %}
   </div>
 </div>
 {% endif %}
@@ -29,7 +29,7 @@
                     <li {{# if first }}class="active" {{/ if }}><a href="#section_{{ key }}" data-toggle="tab">{{ key }}</a>
                     {{/ eachKey }}
                 </ul>
-                <div class="row">    
+                <div class="row">
                     <div class="tab-content col-md-12 col-md-offset-0 col-lg-8 col-lg-offset-2">
                         {{# eachKey config }}
                         <div class="tab-pane {{# if first }}active{{/ if }}" id="section_{{ key }}">
