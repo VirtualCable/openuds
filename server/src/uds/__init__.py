@@ -42,3 +42,21 @@ import uds.plugins  # To make sure plugins are loaded on memory
 import uds.REST  # To make sure REST initializes all what it needs
 
 import uds.xmlrpc  # To make actor live
+
+from django.apps import AppConfig
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class UDSAppConfig(AppConfig):
+    name = 'uds'
+    verbose_name = 'Universal Desktop Services'
+
+    def ready(self):
+        # We have to take care with this, because it's supposed to be executed
+        # with ANY command from manage.
+        logger.debug('Initializing app (ready) ***************')
+
+default_app_config = 'uds.UDSAppConfig'

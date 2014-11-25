@@ -38,6 +38,7 @@ from django.conf import settings
 
 from django.utils.daemonize import become_daemon
 from uds.core.managers.TaskManager import TaskManager
+from uds.core.util.Config import GlobalConfig
 import logging
 import sys
 import os
@@ -73,6 +74,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         logger.info("Running task manager command")
+
+        GlobalConfig.initialize()
 
         start = options['start'] and True or False
         stop = options['stop'] and True or False

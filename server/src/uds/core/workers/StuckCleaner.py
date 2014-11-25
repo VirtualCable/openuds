@@ -28,32 +28,40 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
+from uds.models import DeployedService, getSqlDatetime
+from uds.core.util.State import State
+from uds.core.jobs.Job import Job
+from uds.core.util import log
+from datetime import timedelta
+import logging
 
-def __init__():
+logger = logging.getLogger(__name__)
+
+MAX_STUCK_TIME = 3600 * 24 * 7  # At most 7 days "Stuck", not configurable (there is no need to)
+
+
+class StuckCleaner(Job):
     '''
-    This imports all packages that are descendant of this package, and, after that,
-    it register all subclases of service provider as
+    Kaputen Cleaner is very similar to Hanged Cleaner, at start, almost a copy
+    We keep it in a new place to "control" more specific thins
     '''
-    import os.path
-    import pkgutil
-    import sys
-    from uds.core import jobs
-    from uds.core.managers.TaskManager import TaskManager
+    frecuency = MAX_STUCK_TIME / 2
+    friendly_name = 'Stuck States checker'
 
-    # Dinamycally import children of this package.
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(name, globals(), locals())
+    def __init__(self, environment):
+        super(StuckCleaner, self).__init__(environment)
 
-    p = jobs.Job
-    # This is marked as error in IDE, but it's not (__subclasses__)
-    for cls in p.__subclasses__():
-        # Limit to autoregister just workers jobs inside this module
-        if cls.__module__[0:16] == 'uds.core.workers':
-            TaskManager.registerJob(cls)
-
-__init__()
+    def run(self):
+        since_state = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
+        # Filter for locating machine not ready
+        for ds in DeployedService.objects.all():
+            logger.debug('Searching for stuck states for {0}'.format(ds))
+            # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
+            for us in ds.userServices.filter(state_date__lt=since_state).exclude(state__in=State.INFO_STATES + State.VALID_STATES):
+                logger.debug('Found stuck user service {0}'.format(us))
+                log.doLog(ds, log.ERROR, 'User service {0} has been hard removed because it\'s stuck'.format(us.friendly_name))
+                # us.delete()

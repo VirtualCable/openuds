@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.apps import apps
 from uds.models import Config as dbConfig
 from uds.core.managers.CryptoManager import CryptoManager
 import logging
@@ -42,6 +43,9 @@ logger = logging.getLogger(__name__)
 GLOBAL_SECTION = 'UDS'
 SECURITY_SECTION = 'Security'
 CLUSTER_SECTION = 'Cluster'
+
+# For save when initialized
+saveLater = []
 
 
 class Config(object):
@@ -69,10 +73,15 @@ class Config(object):
             self._data = None
 
         def get(self, force=False):
+            # Ensures DB contains configuration values
+            # From Django 1.7, DB can only be accessed AFTER all apps are initialized, curious at least.. :)
+            if apps.ready is True and GlobalConfig.initDone is False:
+                GlobalConfig.initialize()
+
             try:
                 if force or self._data is None:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
-                    readed = dbConfig.objects.filter(section=self._section.name(), key=self._key)[0]  # @UndefinedVariable
+                    readed = dbConfig.objects.get(section=self._section.name(), key=self._key)  # @UndefinedVariable
                     self._data = readed.value
                     self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
                     self._longText = readed.long
@@ -124,6 +133,10 @@ class Config(object):
             return self._type
 
         def set(self, value):
+            if GlobalConfig.initDone is False:
+                saveLater.append((self, value))
+                return
+
             if self._crypt is True:
                 value = CryptoManager.manager().encrypt(value)
             '''
@@ -134,9 +147,11 @@ class Config(object):
                 if dbConfig.objects.filter(section=self._section.name(), key=self._key).update(value=value, crypt=self._crypt, long=self._longText, field_type=self._type) == 0:  # @UndefinedVariable
                     raise Exception()  # Do not exists, create a new one
             except Exception:
+                logger.exception('Exception 2')
                 try:
                     dbConfig.objects.create(section=self._section.name(), key=self._key, value=value, crypt=self._crypt, long=self._longText, field_type=self._type)  # @UndefinedVariable
                 except Exception:
+                    logger.exception('Exception')
                     # Probably a migration issue, just ignore it
                     logger.info("Could not save configuration key {0}.{1}".format(self._section.name(), self._key))
 
@@ -162,6 +177,7 @@ class Config(object):
 
     @staticmethod
     def enumerate():
+        GlobalConfig.initialize()  # Ensures DB contains all values
         for cfg in dbConfig.objects.all().order_by('key'):  # @UndefinedVariable
             logger.debug('{0}.{1}:{2},{3}'.format(cfg.section, cfg.key, cfg.value, cfg.field_type))
             if cfg.crypt is True:
@@ -282,21 +298,22 @@ class GlobalConfig(object):
 
     @staticmethod
     def initialize():
-        try:
-            if GlobalConfig.initDone is False:
-                # All configurations are upper case
+        if GlobalConfig.initDone is False:
+            try:
                 # Tries to initialize database data for global config so it is stored asap and get cached for use
+                GlobalConfig.initDone = True
                 for v in GlobalConfig.__dict__.itervalues():
                     if type(v) is Config._Value:
                         v.get()
-            GlobalConfig.initDone = True
-        except:
-            logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
+
+                for c, v in saveLater:
+                    logger.debug('Saving delayed value: {}'.format(c))
+                    c.set(v)
+                saveLater[:] = []
+            except Exception:
+                logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
 
 
 # Context processor
 def context_processor(request):
     return {'css_path': GlobalConfig.CSS.get()}
-
-# Initialization of global configurations
-GlobalConfig.initialize()
