@@ -144,16 +144,13 @@ class Config(object):
             '''
             logger.debug('Saving config {0}.{1} as {2}'.format(self._section.name(), self._key, value))
             try:
-                if dbConfig.objects.filter(section=self._section.name(), key=self._key).update(value=value, crypt=self._crypt, long=self._longText, field_type=self._type) == 0:  # @UndefinedVariable
-                    raise Exception()  # Do not exists, create a new one
+                obj, _ = dbConfig.objects.get_or_create(section=self._section.name(), key=self._key)  # @UndefinedVariable
+                obj.value, obj.crypt, obj.long, obj.field_type = value, self._crypt, self._longText, self._type
+                obj.save()
             except Exception:
-                logger.exception('Exception 2')
-                try:
-                    dbConfig.objects.create(section=self._section.name(), key=self._key, value=value, crypt=self._crypt, long=self._longText, field_type=self._type)  # @UndefinedVariable
-                except Exception:
-                    logger.exception('Exception')
-                    # Probably a migration issue, just ignore it
-                    logger.info("Could not save configuration key {0}.{1}".format(self._section.name(), self._key))
+                logger.exception('Exception')
+                # Probably a migration issue, just ignore it
+                logger.info("Could not save configuration key {0}.{1}".format(self._section.name(), self._key))
 
     class _Section(object):
         def __init__(self, sectionName):

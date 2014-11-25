@@ -41,7 +41,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-MAX_STUCK_TIME = 3600 * 24 * 7  # At most 7 days "Stuck", not configurable (there is no need to)
+MAX_STUCK_TIME = 3600 * 24 * 2  # At most 2 days "Stuck", not configurable (there is no need to)
 
 
 class StuckCleaner(Job):
@@ -49,8 +49,8 @@ class StuckCleaner(Job):
     Kaputen Cleaner is very similar to Hanged Cleaner, at start, almost a copy
     We keep it in a new place to "control" more specific thins
     '''
-    frecuency = MAX_STUCK_TIME / 2
-    friendly_name = 'Stuck States checker'
+    frecuency = 3600 * 24  # Executes Once a day
+    friendly_name = 'Stuck States cleaner'
 
     def __init__(self, environment):
         super(StuckCleaner, self).__init__(environment)
