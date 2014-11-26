@@ -54,8 +54,9 @@ class ServiceCacheUpdater(Job):
     if cache is not needed.
     This is included as a scheduled task that will run every X seconds, and scheduler will keep it so it will be only executed by one backend at a time
     '''
-    frecuency = GlobalConfig.CACHE_CHECK_DELAY.getInt()  # Request run cache manager every configured seconds (defaults to 20 seconds).
-                                                        # If config value is changed, it will be used at next reload
+    frecuency = 19
+    frecuency_cfg = GlobalConfig.CACHE_CHECK_DELAY  # Request run cache manager every configured seconds (defaults to 20 seconds).
+
     friendly_name = 'Service Cache Updater'
 
     def __init__(self, environment):

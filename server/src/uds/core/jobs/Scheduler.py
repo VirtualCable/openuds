@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-05-27'
+__updated__ = '2014-11-26'
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ class Scheduler(object):
 
     @staticmethod
     def scheduler():
-        if Scheduler._scheduler == None:
+        if Scheduler._scheduler is None:
             Scheduler._scheduler = Scheduler()
         return Scheduler._scheduler
 

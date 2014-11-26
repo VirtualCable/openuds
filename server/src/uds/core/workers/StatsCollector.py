@@ -63,7 +63,7 @@ class DeployedServiceStatsCollector(Job):
                 inUse = fltr.filter(in_use=True).count()
                 counters.addCounter(ds, counters.CT_ASSIGNED, assigned)
                 counters.addCounter(ds, counters.CT_INUSE, inUse)
-            except:
+            except Exception:
                 logger.exception('Getting counters for deployed service {0}'.format(ds))
 
         logger.debug('Done Deployed service stats collector')
@@ -92,4 +92,4 @@ class StatsCleaner(Job):
         except:
             logger.exception('Cleaning up events')
 
-        logger.debug('Donde statistics cleanup')
+        logger.debug('Done statistics cleanup')

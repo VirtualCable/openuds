@@ -73,9 +73,11 @@ def getSqlDatetime(unix=False):
 
 
 def optimizeTable(dbTable):
-    from django.db import connection
+    '''
+    Executes table optimization
+    Supported only on mysql right now
+    '''
     cursor = connection.cursor()
 
     if connection.vendor == 'mysql':
         cursor.execute('OPTIMIZE TABLE {0}'.format(dbTable))
-

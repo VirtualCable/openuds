@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 
-def __init__():
+def initialize():
     '''
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
@@ -54,6 +54,5 @@ def __init__():
     for cls in p.__subclasses__():
         # Limit to autoregister just workers jobs inside this module
         if cls.__module__[0:16] == 'uds.core.workers':
+            cls.setup()
             TaskManager.registerJob(cls)
-
-__init__()

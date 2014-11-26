@@ -32,6 +32,13 @@
 from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
+from uds.models import StatsCounters
+from uds.models import getSqlDatetime
+from uds.models import StatsEvents
+from uds.models import optimizeTable
+from django.db import connection
+import datetime
+import time
 
 import logging
 
@@ -40,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 class StatsManager(object):
     '''
-    Manager for loggins statistics, so we can provide usefull info about platform usage
+    Manager for statistics, so we can provide usefull info about platform usage
 
     Right now, we are going to provide an interface to "counter stats", that is, statistics
     that has counters (such as how many users is at a time active at platform, how many services
@@ -53,19 +60,14 @@ class StatsManager(object):
 
     @staticmethod
     def manager():
-        if StatsManager._manager == None:
+        if StatsManager._manager is None:
             StatsManager._manager = StatsManager()
         return StatsManager._manager
 
     def __doCleanup(self, dbTable):
-        from uds.models import getSqlDatetime, optimizeTable
-        from django.db import connection
-        import datetime
-        import time
-
         minTime = time.mktime((getSqlDatetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple())
 
-        # Don't like how django executes this (recovers all IDS and lauches "DELETE .. WHERE id IN ...)
+        # Don't like how django (v1.5 at least) executes this (recovers all IDS and launches "DELETE .. WHERE id IN ...)
         # StatsCounters.objects.filter(stamp__lt=minTime).delete()
         # Used dict, cause environment says _meta is not known :-)
         query = 'DELETE FROM {0} where STAMP < {1}'.format(dbTable, minTime)
@@ -100,12 +102,12 @@ class StatsManager(object):
             stamp = getSqlDatetime()
 
         # To Unix epoch
-        stamp = int(time.mktime(stamp.timetuple()))
+        stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
             StatsCounters.objects.create(owner_type=owner_type, owner_id=owner_id, counter_type=counterType, value=counterValue, stamp=stamp)
             return True
-        except:
+        except Exception:
             logger.error('Exception handling counter stats saving (maybe database is full?)')
         return False
 
@@ -125,9 +127,6 @@ class StatsManager(object):
 
             Iterator, containing (date, counter) each element
         '''
-        from uds.models import StatsCounters
-        import time
-
         # To Unix epoch
         since = int(time.mktime(since.timetuple()))
         to = int(time.mktime(to.timetuple()))
@@ -160,19 +159,16 @@ class StatsManager(object):
 
 
         '''
-        from uds.models import getSqlDatetime, StatsEvents
-        import time
-
         if stamp is None:
-            stamp = getSqlDatetime()
-
-        # To Unix epoch
-        stamp = int(time.mktime(stamp.timetuple()))
+            stamp = getSqlDatetime(unix=True)
+        else:
+            # To Unix epoch
+            stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
             StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp)
             return True
-        except:
+        except Exception:
             logger.error('Exception handling event stats saving (maybe database is full?)')
         return False
 

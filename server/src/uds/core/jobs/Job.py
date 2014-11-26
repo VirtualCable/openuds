@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from uds.core import Environmentable
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-26'
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,8 @@ logger = logging.getLogger(__name__)
 class Job(Environmentable):
     # Default frecuency, once a day. Remenber that precision will be based on "granurality" of Scheduler
     # If a job is used for delayed execution, this attribute is in fact ignored
-    frecuency = 24 * 3600 + 3
+    frecuency = 24 * 3600 + 3  # Defaults to a big one, and i know frecuency is written as frequency, but this is an "historical mistake" :)
+    frecuency_cfg = None  # If we use a configuration variable from DB, we need to update the frecuency asap, but not before app is ready
     friendly_name = 'Unknown'
 
     def __init__(self, environment):
@@ -51,6 +52,18 @@ class Job(Environmentable):
         Remember to invoke parent init in derived clases using super(myClass,self).__init__(environmnet) if u want to use env(), cache() and storage() methods
         '''
         Environmentable.__init__(self, environment)
+
+    @classmethod
+    def setup(cls):
+        '''
+        Sets ups frequency from configuration values
+        '''
+        if cls.frecuency_cfg is not None:
+            try:
+                logger.debug('Setting frecuency from DB setting for {}'.format(cls))
+                cls.frecuency = cls.frecuency_cfg.getInt(force=True)
+            except Exception as e:
+                logger.error('Error setting default frecuency for {}. left as default {}'.format(cls, cls.frecuency))
 
     def execute(self):
         try:

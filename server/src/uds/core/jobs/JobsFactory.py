@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 import datetime
 import logging
 
-__updated__ = '2014-11-11'
+__updated__ = '2014-11-26'
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class JobsFactory(object):
 
     @staticmethod
     def factory():
-        if JobsFactory._factory == None:
+        if JobsFactory._factory is None:
             JobsFactory._factory = JobsFactory()
         return JobsFactory._factory
 
@@ -65,9 +65,11 @@ class JobsFactory(object):
     def ensureJobsInDatabase(self):
         from uds.models import Scheduler, getSqlDatetime
         from uds.core.util.State import State
+        from uds.core import workers
 
         try:
             logger.debug('Ensuring that jobs are registered inside database')
+            workers.initialize()
             for name, type_ in self._jobs.iteritems():
                 try:
                     # We use database server datetime

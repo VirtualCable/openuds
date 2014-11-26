@@ -101,7 +101,7 @@ class Command(BaseCommand):
             become_daemon(settings.BASE_DIR, settings.LOGDIR + '/taskManagerStdout.log', settings.LOGDIR + '/taskManagerStderr.log')
             pid = six.text_type(os.getpid())
 
-            file(getPidFile(), 'w+').write("%s\n" % pid)
+            open(getPidFile(), 'w+').write("%s\n" % pid)
 
             manager = TaskManager()
             manager.run()

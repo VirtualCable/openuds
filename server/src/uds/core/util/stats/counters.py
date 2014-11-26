@@ -95,7 +95,6 @@ def getCounters(obj, counterType, **kwargs):
 
     readFncTbl = __caRead.get(type(obj), None)
 
-
     if readFncTbl is None:
         logger.error('Type {0} has no registered stats'.format(type(obj)))
         return

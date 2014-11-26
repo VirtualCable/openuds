@@ -45,7 +45,8 @@ logger = logging.getLogger(__name__)
 
 
 class HangedCleaner(Job):
-    frecuency = GlobalConfig.MAX_INITIALIZING_TIME.getInt()
+    frecuency = 3601
+    frecuency_cfg = GlobalConfig.MAX_INITIALIZING_TIME
     friendly_name = 'Hanged services checker'
 
     def __init__(self, environment):
