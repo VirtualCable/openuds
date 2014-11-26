@@ -7,7 +7,7 @@ Author:
 from django.db import models, connection
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2014-11-26'
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +57,10 @@ class LockingManager(models.Manager):
 
         See http://dev.mysql.com/doc/refman/5.0/en/lock-tables.html
         """
-        con = connection
-        cursor = con.cursor()
+        if connection.vendor == 'sqlite':
+            return
+
+        cursor = connection.cursor()
         table = self.model._meta.db_table
         # logger.debug("Locking table %s" % table)
         cursor.execute("LOCK TABLES %s WRITE" % table)
@@ -68,6 +70,9 @@ class LockingManager(models.Manager):
     def unlock(self):
         """ Unlock the table. """
         # logger.debug("Unlocked tables")
+        if connection.vendor == 'sqlite':
+            return
+
         con = connection
         cursor = con.cursor()
         # table = self.model._meta.db_table

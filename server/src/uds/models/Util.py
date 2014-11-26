@@ -33,9 +33,10 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-11-26'
 
 from datetime import datetime
+from django.db import connection
 from time import mktime
 
 
@@ -57,10 +58,9 @@ def getSqlDatetime(unix=False):
       * mysql
       * sqlite
     '''
-    from django.db import connection
-    cursor = connection.cursor()
 
     if connection.vendor == 'mysql':
+        cursor = connection.cursor()
         cursor.execute('SELECT NOW()')
         date = cursor.fetchone()[0]
     else:

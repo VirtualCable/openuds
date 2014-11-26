@@ -64,4 +64,4 @@ class StuckCleaner(Job):
             for us in ds.userServices.filter(state_date__lt=since_state).exclude(state__in=State.INFO_STATES + State.VALID_STATES):
                 logger.debug('Found stuck user service {0}'.format(us))
                 log.doLog(ds, log.ERROR, 'User service {0} has been hard removed because it\'s stuck'.format(us.friendly_name))
-                # us.delete()
+                us.delete()
