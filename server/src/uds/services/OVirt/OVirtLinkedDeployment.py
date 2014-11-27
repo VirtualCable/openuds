@@ -124,7 +124,7 @@ class OVirtLinkedDeployment(UserDeployment):
         :note: This IP is the IP of the "consumed service", so the transport can
                access it.
         '''
-        logger.debug('Setting IP to %s' % ip)
+        logger.debug('Setting IP to {}'.format(ip))
         self._ip = ip
 
     def getUniqueId(self):

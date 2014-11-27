@@ -59,7 +59,9 @@ gui.servicesPools.link = (event) ->
               $cacheL2Fld.prop "disabled", "disabled"
             else
               $cacheL2Fld.prop "disabled", false
-          $publishOnSaveFld.bootstrapSwitch "toggleReadonly", data.info.needs_publication
+          gui.doLog "Needs publication?", data.info.needs_publication, $publishOnSaveFld
+          if $publishOnSaveFld.bootstrapSwitch("readonly") is data.info.needs_publication
+            $publishOnSaveFld.bootstrapSwitch "toggleReadonly", true
           $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
           return
 
