@@ -173,8 +173,7 @@ class ServicesPools(ModelHandler):
         return g
 
     def beforeSave(self, fields):
-        logger.debug('Before {0}'.format(fields))
-        logger.debug(self._params)
+        # logger.debug(self._params)
         try:
             try:
                 service = Service.objects.get(uuid=fields['service_id'])
@@ -184,6 +183,10 @@ class ServicesPools(ModelHandler):
 
             try:
                 serviceType = service.getType()
+
+                if serviceType.publicationType is None:
+                    self._params['publish_on_save'] = False
+
                 if serviceType.needsManager is True:
                     osmanager = OSManager.objects.get(uuid=fields['osmanager_id'])
                     fields['osmanager_id'] = osmanager.id

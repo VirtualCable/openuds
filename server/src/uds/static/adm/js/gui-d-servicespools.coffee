@@ -60,6 +60,7 @@ gui.servicesPools.link = (event) ->
             else
               $cacheL2Fld.prop "disabled", false
           gui.doLog "Needs publication?", data.info.needs_publication, $publishOnSaveFld
+          # if switch y not as required..
           if $publishOnSaveFld.bootstrapSwitch("readonly") is data.info.needs_publication
             $publishOnSaveFld.bootstrapSwitch "toggleReadonly", true
           $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
