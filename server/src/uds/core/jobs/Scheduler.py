@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-11-26'
+__updated__ = '2014-11-27'
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,8 @@ class JobThread(threading.Thread):
             self._jobInstance.execute()
         except Exception:
             logger.debug("Exception executing job {0}".format(self._dbJobId))
-        self.jobDone()
+        finally:
+            self.jobDone()
 
     def jobDone(self):
         done = False
@@ -74,7 +75,7 @@ class JobThread(threading.Thread):
 
     @transaction.atomic
     def __updateDb(self):
-        job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)
+        job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)  # @UndefinedVariable
         job.state = State.FOR_EXECUTE
         job.owner_server = ''
         job.next_execution = getSqlDatetime() + timedelta(seconds=job.frecuency)
@@ -112,7 +113,7 @@ class Scheduler(object):
             with transaction.atomic():
                 # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
                 # This params are all set inside fltr (look at __init__)
-                job = dbScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]
+                job = dbScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]  # @UndefinedVariable
                 job.state = State.RUNNING
                 job.owner_server = self._hostname
                 job.last_execution = now
@@ -141,7 +142,7 @@ class Scheduler(object):
         '''
         Releases all scheduleds being executed by this scheduler
         '''
-        dbScheduler.objects.select_for_update().filter(owner_server=self._hostname).update(owner_server='', state=State.FOR_EXECUTE)
+        dbScheduler.objects.select_for_update().filter(owner_server=self._hostname).update(owner_server='', state=State.FOR_EXECUTE)  # @UndefinedVariable
 
     def run(self):
         # We ensure that the jobs are also in database so we can
