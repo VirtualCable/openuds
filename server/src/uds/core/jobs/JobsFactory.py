@@ -72,6 +72,7 @@ class JobsFactory(object):
             workers.initialize()
             for name, type_ in self._jobs.iteritems():
                 try:
+                    type_.setup()
                     # We use database server datetime
                     now = getSqlDatetime()
                     next_ = now

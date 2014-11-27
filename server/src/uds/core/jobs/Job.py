@@ -60,10 +60,10 @@ class Job(Environmentable):
         '''
         if cls.frecuency_cfg is not None:
             try:
-                logger.debug('Setting frecuency from DB setting for {}'.format(cls))
                 cls.frecuency = cls.frecuency_cfg.getInt(force=True)
+                logger.debug('Setting frequency from DB setting for {} to {}'.format(cls, cls.frecuency))
             except Exception as e:
-                logger.error('Error setting default frecuency for {}. left as default {}'.format(cls, cls.frecuency))
+                logger.error('Error setting default frequency for {} (){}. Got default value of {}'.format(cls, e, cls.frecuency))
 
     def execute(self):
         try:

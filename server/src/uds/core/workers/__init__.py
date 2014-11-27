@@ -54,5 +54,4 @@ def initialize():
     for cls in p.__subclasses__():
         # Limit to autoregister just workers jobs inside this module
         if cls.__module__[0:16] == 'uds.core.workers':
-            cls.setup()
             TaskManager.registerJob(cls)

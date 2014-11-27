@@ -35,7 +35,6 @@ from django.conf import settings
 from django.apps import apps
 from uds.models import Config as dbConfig
 from uds.core.managers.CryptoManager import CryptoManager
-import traceback
 import logging
 
 logger = logging.getLogger(__name__)
@@ -77,8 +76,6 @@ class Config(object):
             # From Django 1.7, DB can only be accessed AFTER all apps are initialized, curious at least.. :)
             if apps.ready is True and GlobalConfig.initDone is False:
                 logger.debug('Initializing configuration & updating db values')
-                for v in traceback.format_stack():
-                    logger.debug(v)
                 GlobalConfig.initialize()
 
             try:

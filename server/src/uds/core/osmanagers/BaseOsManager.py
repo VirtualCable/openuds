@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core import Module
 
-__updated__ = '2014-09-25'
+__updated__ = '2014-11-27'
 
 STORAGE_KEY = 'osmk'
 
@@ -55,8 +55,8 @@ class OSManager(Module):
     typeDescription = _('Base Manager')
     iconFile = 'osmanager.png'
 
-    # If true, this os manager  will be invoked with every user service assigned, but not used from time to time
-    # Time is defined as a global config
+    # If true, this os manager  will be invoked with every user service assigned, but not used
+    # The interval is defined as a global config
     processUnusedMachines = False
 
     def __init__(self, environment, values):
