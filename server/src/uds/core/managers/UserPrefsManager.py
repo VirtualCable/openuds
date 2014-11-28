@@ -34,7 +34,6 @@ from __future__ import unicode_literals
 
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from uds.models import UserPreference
 from uds.core.ui.UserInterface import gui
 import logging
 
@@ -49,7 +48,7 @@ class UserPrefsManager(object):
 
     @staticmethod
     def manager():
-        if UserPrefsManager._manager == None:
+        if UserPrefsManager._manager is None:
             UserPrefsManager._manager = UserPrefsManager()
         return UserPrefsManager._manager
 
@@ -193,7 +192,7 @@ class UserNumericPreference(UserPreference):
 
     def formField(self, value):
         return forms.IntegerField(label=_(self._label), initial=value, min_value=self._min, max_value=self._max,
-                                  widget=forms.TextInput(attrs={'class': self._css}))
+                                  widget=forms.TextInput(attrs={'class': self._css}))  # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
 
 
 class UserChoicePreference(UserPreference):
@@ -208,7 +207,7 @@ class UserChoicePreference(UserPreference):
 
     def formField(self, value):
         return forms.ChoiceField(label=_(self._label), initial=value, choices=self._values,
-                                 widget=forms.Select(attrs={'class': self._css}))
+                                 widget=forms.Select(attrs={'class': self._css}))  # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
 
     def guiField(self, value):
         vals = []
