@@ -35,10 +35,13 @@ import socket
 import platform
 import fcntl
 import os
+import ctypes
+import ctypes.util
 import struct
 import array
 import six
 from udsactor import utils
+from .renamer import rename
 
 
 def _getMacAddr(ifname):
@@ -143,7 +146,7 @@ def loggoff():
 
 
 def renameComputer(newName):
-    pass
+    rename(newName)
 
 
 def joinDomain(domain, ou, account, password, executeInOneStep=False):
@@ -157,5 +160,46 @@ def changeUserPassword(user, oldPassword, newPassword):
     os.system('echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(user, newPassword))
 
 
+class XScreenSaverInfo(ctypes.Structure):
+    _fields_ = [('window', ctypes.c_long),
+                ('state', ctypes.c_int),
+                ('kind', ctypes.c_int),
+                ('til_or_since', ctypes.c_ulong),
+                ('idle', ctypes.c_ulong),
+                ('eventMask', ctypes.c_ulong)]
+
+# Initialize xlib & xss
+try:
+    xlibPath = ctypes.util.find_library('X11')
+    xssPath = ctypes.util.find_library('Xss')
+    xlib = ctypes.cdll.LoadLibrary(xlibPath)
+    xss = ctypes.cdll.LoadLibrary(xssPath)
+
+    # Fix result type to XScreenSaverInfo Structure
+    xss.XScreenSaverQueryExtension.restype = ctypes.c_int
+    xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
+
+except Exception:  # Libraries not accesible, not found or whatever..
+    xlib = xss = None
+
+
 def getIdleDuration():
-    return 0
+    '''
+    Returns idle duration, in seconds
+    '''
+    if xlib is None or xss is None:
+        return 0  # Libraries not available
+
+    # production code might want to not hardcode the offset 16...
+    display = xlib.XOpenDisplay(None)
+
+    event_base = ctypes.c_int()
+    error_base = ctypes.c_int()
+
+    available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
+    if available != 1:
+        return 0
+
+    info = xss.XScreenSaverAllocInfo()
+    xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), info)
+    return info.contents.idle / 1000.0
