@@ -37,10 +37,11 @@ class WinDomainOsManager(WindowsOsManager):
     ou = gui.TextField(length=64, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it)'))
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
+    idle = WindowsOsManager.idle
 
     def __init__(self, environment, values):
         super(WinDomainOsManager, self).__init__(environment, values)
-        if values != None:
+        if values is not None:
             if values['domain'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide a domain!'))
             if values['domain'].find('.') == -1:

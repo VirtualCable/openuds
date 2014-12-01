@@ -33,10 +33,11 @@ class WinRandomPassManager(WindowsOsManager):
 
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
+    idle = WindowsOsManager.idle
 
     def __init__(self, environment, values):
         super(WinRandomPassManager, self).__init__(environment, values)
-        if values != None:
+        if values is not None:
             if values['userAccount'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide an user account!!!'))
             if values['password'] == '':

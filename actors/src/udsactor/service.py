@@ -218,7 +218,10 @@ class CommonService(object):
         elif msg == ipc.REQ_LOGOUT:
             self.api.logout(data)
         elif msg == ipc.REQ_INFORMATION:
-            logger.debug('Requested information')
+            info = {}
+            if self.api.idle is not None:
+                info['idle'] = self.api.idle
+            self.ipc.sendInformationMessage(info)
 
     def initIPC(self):
         # ******************************************
@@ -241,19 +244,19 @@ class CommonService(object):
         if self.ipc is not None:
             try:
                 self.ipc.stop()
-            except:
+            except Exception:
                 logger.error('Couln\'t stop ipc server')
         if self.httpServer is not None:
             try:
                 self.httpServer.stop()
-            except:
+            except Exception:
                 logger.error('Couln\'t stop REST server')
 
     def endAPI(self):
         if self.api is not None:
             try:
                 self.api.notifyComm(None)
-            except:
+            except Exception:
                 logger.error('Couln\'t remove comms url from broker')
 
         self.notifyStop()

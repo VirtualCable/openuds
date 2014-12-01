@@ -55,6 +55,9 @@ class WindowsOsManager(osmanagers.OSManager):
         defvalue='keep'
     )
 
+    idle = gui.NumericField(label=_("Max.Idle time"), length=4, defvalue=-1, rdonly=False, order=11,
+                            tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max idle time). Note that this value only applies to "removable" services'), required=True)
+
     @staticmethod
     def validateLen(length):
         try:
@@ -72,8 +75,10 @@ class WindowsOsManager(osmanagers.OSManager):
         super(WindowsOsManager, self).__init__(environment, values)
         if values is not None:
             self._onLogout = values['onLogout']
+            self._idle = int(values['idle'])
         else:
             self._onLogout = ''
+            self._idle = -1
 
         self.__setProcessUnusedMachines()
 
@@ -189,18 +194,27 @@ class WindowsOsManager(osmanagers.OSManager):
         logger.debug('Checking state for service {0}'.format(service))
         return State.RUNNING
 
+    def maxIdle(self):
+        if self._onLogout == 'remove' or self._idle <= 0:
+            return None
+
+        return self._idle
+
     def marshal(self):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v1', self._onLogout])
+        return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)])
 
     def unmarshal(self, s):
         data = s.split('\t')
         if data[0] == 'v1':
             self._onLogout = data[1]
+            self._idle = -1
+        elif data[0] == 'v2':
+            self._onLogout, self._idle = data[1], int(data[2])
 
         self.__setProcessUnusedMachines()
 
     def valuesDict(self):
-        return {'onLogout': self._onLogout}
+        return {'onLogout': self._onLogout, 'idle': self._idle}

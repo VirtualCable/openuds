@@ -178,9 +178,15 @@ try:
     # Fix result type to XScreenSaverInfo Structure
     xss.XScreenSaverQueryExtension.restype = ctypes.c_int
     xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
-
 except Exception:  # Libraries not accesible, not found or whatever..
     xlib = xss = None
+
+
+def initIdleDuration(atLeastSeconds):
+    '''
+    On linux we set the screensaver to at least required seconds, or we never will get "idle"
+    '''
+    os.system('/usr/bin/xset s {}'.format(atLeastSeconds + 30))
 
 
 def getIdleDuration():

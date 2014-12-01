@@ -186,6 +186,13 @@ class LASTINPUTINFO(ctypes.Structure):
     ]
 
 
+def initIdleDuration(atLeastSeconds):
+    '''
+    In windows, there is no need to set screensaver
+    '''
+    pass
+
+
 def getIdleDuration():
     lastInputInfo = LASTINPUTINFO()
     lastInputInfo.cbSize = ctypes.sizeof(lastInputInfo)

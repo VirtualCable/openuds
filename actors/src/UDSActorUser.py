@@ -40,7 +40,9 @@ from udsactor import ipc
 from udsactor import utils
 from udsactor.log import logger
 from udsactor.service import IPC_PORT
+from udsactor import operations
 from about_dialog_ui import Ui_UDSAboutDialog
+
 
 # About dialog
 class UDSAboutDialog(QtGui.QDialog):
@@ -51,6 +53,7 @@ class UDSAboutDialog(QtGui.QDialog):
 
     def closeDialog(self):
         self.hide()
+
 
 class MessagesProcessor(QtCore.QThread):
 
@@ -125,6 +128,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.setContextMenu(self.menu)
         self.ipc = MessagesProcessor()
         self.ipc.start()
+        self.maxIdleTime = None
 
         self.ipc.displayMessage.connect(self.displayMessage)
         self.ipc.exit.connect(self.quit)
@@ -152,6 +156,16 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         print("Loggof --", self.counter)
 
     def information(self, info):
+        '''
+        Invoked when received information from service
+        '''
+        if 'idle' in info:
+            idle = int(info['idle'])
+            operations.initIdleDuration(idle)
+            self.maxIdleTime = idle
+        else:
+            self.maxIdleTime = None
+
         self.counter += 1
         print("Information:", info, '--', self.counter)
 

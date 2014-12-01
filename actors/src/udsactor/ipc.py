@@ -35,6 +35,7 @@ import threading
 import sys
 import six
 import traceback
+import pickle
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -238,6 +239,9 @@ class ServerIPC(threading.Thread):
 
     def sendScriptMessage(self, script):
         self.sendMessage(MSG_SCRIPT, script)
+
+    def sendInformationMessage(self, info):
+        self.sendMessage(MSG_INFORMATION, pickle.dumps(info))
 
     def cleanupFinishedThreads(self):
         '''

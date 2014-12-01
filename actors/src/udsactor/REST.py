@@ -122,6 +122,7 @@ class Api(object):
         self.uuid = None
         self.mac = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
+        self.idle = None
         self.secretKey = six.text_type(uuid.uuid4())
         self.newerRequestLib = requests.__version__.split('.') >= '1'
         # Disable logging requests messages except for errors, ...
@@ -183,9 +184,18 @@ class Api(object):
     def init(self, ids):
         '''
         Ids is a comma separated values indicating MAC=ip
+        Server returns:
+          uuid, mac
+          Optionally can return an third parameter, that is max "idle" request time
         '''
         url = self._getUrl('init', key=self.masterKey, ids=ids)
-        self.uuid, self.mac = self._request(url)['result']
+        res = self._request(url)['result']
+        self.uuid, self.mac = res[0:2]
+        if len[res] >= 3:
+            self.idle = int(res[3])
+            if self.idle <= 30:
+                self.idle = None  # No values under 30
+
         return self.uuid
 
     def postMessage(self, msg, data, processData=True):

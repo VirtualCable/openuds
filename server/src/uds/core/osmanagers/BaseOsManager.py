@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core import Module
 
-__updated__ = '2014-11-27'
+__updated__ = '2014-12-01'
 
 STORAGE_KEY = 'osmk'
 
@@ -119,6 +119,13 @@ class OSManager(Module):
         '''
         pass
 
+    def maxIdle(self):
+        '''
+        If os manager request "max idle", this method will return a value different to None so actors will get informed on Connection
+        @return Must return None (default if not overriden), or a "max idle" in seconds
+        '''
+        return None
+
     @classmethod
     def transformsUserOrPasswordForService(cls):
         '''
@@ -137,7 +144,7 @@ class OSManager(Module):
 
         MUST Return:
             An array with 2 elements, [newUserName, newPassword].
-            Default method simplt does nothing with in parameters, just returns it. (So, if your os manager does not need this,
+            Default method simply does nothing with in parameters, just returns it. (So, if your os manager does not need this,
             simply do not implement it)
 
         Note: This method is, right now, invoked by Transports directly. So if you implement a Transport, remember to invoke this

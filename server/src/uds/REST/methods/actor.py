@@ -138,7 +138,10 @@ class Actor(Handler):
             else:
                 # Set last seen actor version
                 service.setProperty('actor_version', actorVersion)
-                return Actor.result((service.uuid, service.unique_id))
+                maxIdle = None
+                if service.deployed_service.osmanager is not None:
+                    maxIdle = service.deployed_service.osmanager.getInstance().maxIdle()
+                return Actor.result((service.uuid, service.unique_id, 0 if maxIdle is None else maxIdle))
         raise RequestError('Invalid request')
 
     # Must be invoked as '/rest/actor/UUID/[message], with message data in post body

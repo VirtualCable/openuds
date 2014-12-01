@@ -53,6 +53,7 @@ class LinuxRandomPassManager(LinuxOsManager):
 
     # Inherits base "onLogout"
     onLogout = LinuxOsManager.onLogout
+    idle = LinuxOsManager.idle
 
     def __init__(self, environment, values):
         super(LinuxRandomPassManager, self).__init__(environment, values)
