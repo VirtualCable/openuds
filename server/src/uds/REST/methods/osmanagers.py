@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.conf import settings
 from uds.models import OSManager
 
 from uds.REST import NotFound, RequestError
@@ -77,7 +78,7 @@ class OsManagers(ModelHandler):
             raise RequestError(ugettext('Can\'t delete an OSManager with deployed services associated'))
 
     def checkSave(self, item):
-        if item.deployedServices.count() > 0:
+        if item.deployedServices.count() > 0 and settings.DEBUG is False:
             raise RequestError(ugettext('Can\'t modify an OSManager with deployed services associated'))
 
     # Types related

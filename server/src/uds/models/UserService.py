@@ -35,7 +35,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-24'
+__updated__ = '2014-12-02'
 
 from django.db import models
 from django.db.models import signals
@@ -92,7 +92,7 @@ class UserService(UUIDModel):
     # "Secret" url used to communicate (send message) to services
     # if This is None, communication is not possible
     # The communication is done using POST via REST & Json
-    comms_url = models.CharField(max_length=256, default=None, null=True, blank=True)
+    # comms_url = models.CharField(max_length=256, default=None, null=True, blank=True)
 
     # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
 
@@ -199,7 +199,8 @@ class UserService(UUIDModel):
             name: Name of the value to store
             value: Value of the value to store
         '''
-        self.getEnvironment().storage().put(name, value)
+        # Store value as a property
+        self.setProperty(name, value)
 
     def recoverValue(self, name):
         '''
@@ -211,7 +212,13 @@ class UserService(UUIDModel):
         Returns:
             Stored value, None if no value was stored
         '''
-        return self.getEnvironment().storage().get(name)
+        val = self.getProperty(name)
+
+        # To transition between old stor at storage table and new properties table
+        # If value is found on property, use it, else, try to recover it from storage
+        if val is None:
+            val = self.getEnvironment().storage().get(name)
+        return val
 
     def setConnectionSource(self, ip, hostname=''):
         '''
@@ -403,13 +410,10 @@ class UserService(UUIDModel):
             res.append({'id': us.id, 'name': usi.getName(), 'transports': us.deployed_service.transports, 'service': us})
         return res
 
-    def __str__(self):
-        return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,
-                                                                                             State.toString(self.state), State.toString(self.os_state))
-
     def getProperty(self, propName, default=None):
         try:
-            return self.properties.get(name=propName).value
+            val = self.properties.get(name=propName).value
+            return val if val is not '' else default  # Empty string is null
         except Exception:
             return default
 
@@ -417,6 +421,10 @@ class UserService(UUIDModel):
         prop, _ = self.properties.get_or_create(name=propName)
         prop.value = propValue
         prop.save()
+
+    def __str__(self):
+        return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,
+                                                                                             State.toString(self.state), State.toString(self.os_state))
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

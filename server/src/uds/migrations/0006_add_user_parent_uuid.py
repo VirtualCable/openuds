@@ -10,7 +10,6 @@ def add_parent_uuids(apps, schema_editor):
     '''
     model = apps.get_model("uds", 'User')
     for m in model.objects.all():
-        print m
         parent = int(m.parent)
         if parent != -1:
             try:
@@ -44,7 +43,7 @@ def remove_parent_uuids(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('uds', '0005_userservice_comms_url'),
+        ('uds', '0004_auto_20140916_1217'),
     ]
 
     operations = [

@@ -141,6 +141,7 @@ class Actor(Handler):
                 maxIdle = None
                 if service.deployed_service.osmanager is not None:
                     maxIdle = service.deployed_service.osmanager.getInstance().maxIdle()
+                    logger.debug('Max idle: {}'.format(maxIdle))
                 return Actor.result((service.uuid, service.unique_id, 0 if maxIdle is None else maxIdle))
         raise RequestError('Invalid request')
 
@@ -169,8 +170,7 @@ class Actor(Handler):
         username = ''
 
         if message == 'notifyComms':
-            service.comms_url = data
-            service.save()
+            service.setProperty('comms_url', data)
             return Actor.result('ok')
 
         # Preprocess some messages, common to all clients, such as "log"

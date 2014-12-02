@@ -45,6 +45,7 @@ CLUSTER_SECTION = 'Cluster'
 
 # For save when initialized
 saveLater = []
+getLater = []
 
 
 class Config(object):
@@ -74,9 +75,13 @@ class Config(object):
         def get(self, force=False):
             # Ensures DB contains configuration values
             # From Django 1.7, DB can only be accessed AFTER all apps are initialized, curious at least.. :)
-            if apps.ready is True and GlobalConfig.initDone is False:
-                logger.debug('Initializing configuration & updating db values')
-                GlobalConfig.initialize()
+            if apps.ready is True:
+                if GlobalConfig.initDone is False:
+                    logger.debug('Initializing configuration & updating db values')
+                    GlobalConfig.initialize()
+            else:
+                getLater.append(self)
+                return self._default
 
             try:
                 if force or self._data is None:
@@ -108,7 +113,7 @@ class Config(object):
                 logger.error('Value for {0}.{1} is invalid (integer expected)'.format(self._section, self._key))
                 try:
                     return int(self._default)
-                except:
+                except Exception:
                     logger.error('Default value for {0}.{1} is also invalid (integer expected)'.format(self._section, self._key))
                     return -1
 
@@ -302,6 +307,12 @@ class GlobalConfig(object):
                 for v in GlobalConfig.__dict__.itervalues():
                     if type(v) is Config._Value:
                         v.get()
+
+                for c in getLater:
+                    logger.debug('Get later: {}'.format(c))
+                    c.get()
+
+                getLater[:] = []
 
                 for c, v in saveLater:
                     logger.debug('Saving delayed value: {}'.format(c))

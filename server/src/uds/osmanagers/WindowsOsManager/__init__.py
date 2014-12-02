@@ -12,9 +12,9 @@
 from django.utils.translation import ugettext_noop as _
 from uds.core.osmanagers.OSManagersFactory import OSManagersFactory
 from uds.core.managers.DownloadsManager import DownloadsManager
-from WindowsOsManager import WindowsOsManager
-from WinDomainOsManager import WinDomainOsManager
-from WinRandomPassOsManager import WinRandomPassManager
+from .WindowsOsManager import WindowsOsManager
+from .WinDomainOsManager import WinDomainOsManager
+from .WinRandomPassOsManager import WinRandomPassManager
 import os.path
 import sys
 
