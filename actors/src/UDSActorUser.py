@@ -78,6 +78,9 @@ class MessagesProcessor(QtCore.QThread):
         if self.ipc:
             self.ipc.stop()
 
+    def isAlive(self):
+        return self.ipc is not None
+
     def requestInformation(self):
         if self.ipc:
             info = self.ipc.requestInformation()
@@ -140,6 +143,9 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.checkIdle)
 
+        if self.ipc.isAlive() is False:
+            raise Exception('no connection to service, exiting')
+
         self.stopped = False
 
         self.ipc.displayMessage.connect(self.displayMessage)
@@ -155,14 +161,16 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         self.counter = 0
 
-        self.timer.start(2000)  # Launch idle checking every 2 seconds
+        self.timer.start(5000)  # Launch idle checking every 5 seconds
 
         # If this is running, it's because he have logged in
         self.ipc.sendLogin(operations.getCurrentUser())
 
     def checkIdle(self):
-        logger.debug('Timer called: {}'.format(operations.getIdleDuration()))
-        if self.maxIdleTime is not None and operations.getIdleDuration() > self.maxIdleTime:
+        idleTime = operations.getIdleDuration()
+        logger.debug('User has been idle for: {}'.format(idleTime))
+        if self.maxIdleTime is not None and idleTime > self.maxIdleTime:
+            logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
             self.quit()
 
     def displayMessage(self, message):
@@ -210,7 +218,11 @@ if __name__ == '__main__':
         # QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
         sys.exit(1)
 
-    trayIcon = UDSSystemTray(app)
+    try:
+        trayIcon = UDSSystemTray(app)
+    except Exception:
+        logger.error('UDS Service is not running. Tool stopped')
+        sys.exit(1)
 
     trayIcon.show()
 

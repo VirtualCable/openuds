@@ -36,6 +36,8 @@ import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
 import win32security  # @UnresolvedImport, pylint: disable=import-error
 import cPickle
 
+DEBUG = False
+
 
 # Can be changed to whatever we want, but registry key is protected by permissions
 def encoder(data):
@@ -44,8 +46,6 @@ def encoder(data):
 
 def decoder(data):
     return data.decode('bz2')
-
-DEBUG = True
 
 path = 'Software\\UDSActor'
 baseKey = wreg.HKEY_CURRENT_USER if DEBUG is True else wreg.HKEY_LOCAL_MACHINE  # @UndefinedVariable

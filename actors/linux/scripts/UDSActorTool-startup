@@ -2,5 +2,9 @@
 
 # Simple hack to wait for systray to be present
 sleep 5
-# Exec tool
-exec /usr/bin/UDSActorTool
+# Exec tool if not already runned by session manager
+ps -ef | grep "$USER" | grep -v grep | grep 'UDSActorTool' -q
+# If not already running
+if [ $? -eq 1 ]; then
+    exec /usr/bin/UDSActorTool
+fi
