@@ -51,7 +51,6 @@ class UDSConfigDialog(QtGui.QDialog):
         self.ui = Ui_UdsActorSetupDialog()
         self.ui.setupUi(self)
         if data is not None:
-            logger.debug('Setting configuration parameters in form: {}'.format(data))
             self.ui.host.setText(data.get('host', ''))
             self.ui.masterKey.setText(data.get('masterKey', ''))
             self.ui.useSSl.setCurrentIndex(1 if data.get('ssl', False) is True else 0)
