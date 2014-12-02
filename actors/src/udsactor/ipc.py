@@ -75,6 +75,16 @@ VALID_MESSAGES = (MSG_LOGOFF, MSG_MESSAGE, MSG_SCRIPT, MSG_INFORMATION)
 
 REQ_INFORMATION = 0xAA
 
+# Reverse msgs dict for debugging
+REV_DICT = {
+    MSG_LOGOFF: 'MSG_LOGOFF',
+    MSG_MESSAGE: 'MSG_MESSAGE',
+    MSG_SCRIPT: 'MSG_SCRIPT',
+    MSG_INFORMATION: 'MSG_INFORMATION',
+    REQ_LOGIN: 'REQ_LOGIN',
+    REQ_LOGOUT: 'REQ_LOGOUT'
+}
+
 MAGIC = b'\x55\x44\x53\x00'  # UDS in hexa with a padded 0 to the right
 
 
@@ -126,20 +136,20 @@ class ClientProcessor(threading.Thread):
                     buf = six.byte2int(b)  # Empty buffer, this is set as non-blocking
                     if state is None:
                         if buf in (REQ_INFORMATION, REQ_LOGIN, REQ_LOGOUT):
-                            print('State set to {}'.format(buf))
+                            logger.debug('State set to {}'.format(buf))
                             state = buf
                             recv_msg = buf
                             continue  # Get next byte
                         else:
                             logger.debug('Got unexpected data {}'.format(buf))
                     elif state in (REQ_INFORMATION, REQ_LOGIN, REQ_LOGOUT):
-                        print('First length byte is {}'.format(buf))
+                        logger.debug('First length byte is {}'.format(buf))
                         msg_len = buf
                         state = ST_SECOND_BYTE
                         continue
                     elif state == ST_SECOND_BYTE:
                         msg_len += buf << 8
-                        print('Second length byte is {}, len is {}'.format(buf, msg_len))
+                        logger.debug('Second length byte is {}, len is {}'.format(buf, msg_len))
                         if msg_len == 0:
                             self.processRequest(recv_msg, None)
                             state = None
@@ -172,7 +182,7 @@ class ClientProcessor(threading.Thread):
             except six.moves.queue.Empty:  # No message got in time @UndefinedVariable
                 continue
 
-            logger.debug('Got message {}'.format(msg))
+            logger.debug('Got message {}={}'.format(msg, REV_DICT.get(msg)))
 
             try:
                 m = msg[1] if msg[1] is not None else b''
@@ -220,7 +230,7 @@ class ServerIPC(threading.Thread):
         '''
         Notify message to all listening threads
         '''
-        logger.debug('Sending message {},{} to all clients'.format(msgId, msgData))
+        logger.debug('Sending message {}({}),{} to all clients'.format(msgId, REV_DICT.get(msgId), msgData))
 
         # Convert to bytes so length is correctly calculated
         if isinstance(msgData, six.text_type):
@@ -302,7 +312,7 @@ class ClientIPC(threading.Thread):
         return None
 
     def sendRequestMessage(self, msg, data=None):
-        logger.debug('Sending request for msg: {}, {}'.format(msg, data))
+        logger.debug('Sending request for msg: {}({}), {}'.format(msg, REV_DICT.get(msg), data))
         if data is None:
             data = b''
 
@@ -335,7 +345,7 @@ class ClientIPC(threading.Thread):
             try:
                 buf = self.clientSocket.recv(number - len(msg))
                 if buf == b'':
-                    logger.debug('Buf {}, msg {}'.format(buf, msg))
+                    logger.debug('Buf {}, msg {}({})'.format(buf, msg, REV_DICT.get(msg)))
                     self.running = False
                     break
                 msg += buf

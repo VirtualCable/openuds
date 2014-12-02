@@ -41,6 +41,8 @@ import uuid
 import six
 import codecs
 
+from udsactor.log import logger
+
 from udsactor import __version__ as VERSION
 from .utils import exceptionToMessage
 
@@ -190,11 +192,11 @@ class Api(object):
         '''
         url = self._getUrl('init', key=self.masterKey, ids=ids)
         res = self._request(url)['result']
+        logger.debug('Got response parameters: {}'.format(res))
         self.uuid, self.mac = res[0:2]
-        if len[res] >= 3:
-            self.idle = int(res[3])
-            if self.idle <= 30:
-                self.idle = None  # No values under 30
+        self.idle = int(res[2])
+        if self.idle < 15:
+            self.idle = None  # No values under 30 seconds are allowed :)
 
         return self.uuid
 

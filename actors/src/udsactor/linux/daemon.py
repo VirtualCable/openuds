@@ -101,7 +101,11 @@ class Daemon:
             f.write("{}\n".format(pid))
 
     def delpid(self):
-        os.remove(self.pidfile)
+        try:
+            os.remove(self.pidfile)
+        except Exception:
+            # Not found/not permissions or whatever...
+            pass
 
     def start(self):
         """

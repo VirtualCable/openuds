@@ -35,8 +35,9 @@ import socket
 import platform
 import fcntl
 import os
-import ctypes
+import ctypes  # @UnusedImport
 import ctypes.util
+import subprocess
 import struct
 import array
 import six
@@ -138,11 +139,25 @@ def reboot(flags=0):
     '''
     Simple reboot using os command
     '''
-    os.system('/sbin/shutdown now -r')
+    # Workaround for dummy thread
+    if six.PY3 is False:
+        import threading
+        threading._DummyThread._Thread__stop = lambda x: 42
+
+    subprocess.call(['/sbin/shutdown', 'now', '-r'])
 
 
 def loggoff():
-    pass
+    '''
+    Right now shutdowns the machine...
+    '''
+    # Workaround for dummy thread
+    if six.PY3 is False:
+        import threading
+        threading._DummyThread._Thread__stop = lambda x: 42
+
+    subprocess.call(['/sbin/shutdown', 'now', '-h'])
+    subprocess.call(['/usr/bin/systemctl', 'poweroff', '-i'])
 
 
 def renameComputer(newName):
@@ -186,7 +201,12 @@ def initIdleDuration(atLeastSeconds):
     '''
     On linux we set the screensaver to at least required seconds, or we never will get "idle"
     '''
-    os.system('/usr/bin/xset s {}'.format(atLeastSeconds + 30))
+    # Workaround for dummy thread
+    if six.PY3 is False:
+        import threading
+        threading._DummyThread._Thread__stop = lambda x: 42
+
+    subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
 
 
 def getIdleDuration():
@@ -209,3 +229,10 @@ def getIdleDuration():
     info = xss.XScreenSaverAllocInfo()
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), info)
     return info.contents.idle / 1000.0
+
+
+def getCurrentUser():
+    '''
+    Returns current logged in user
+    '''
+    return os.environ['USER']

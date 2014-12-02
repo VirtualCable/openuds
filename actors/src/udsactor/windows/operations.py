@@ -38,6 +38,7 @@ import win32api  # @UnresolvedImport, pylint: disable=import-error
 import win32con  # @UnresolvedImport, pylint: disable=import-error
 import ctypes
 from ctypes.wintypes import DWORD, LPCWSTR
+import os
 
 from udsactor import utils
 from udsactor.log import logger
@@ -199,3 +200,10 @@ def getIdleDuration():
     ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo))
     millis = ctypes.windll.kernel32.GetTickCount() - lastInputInfo.dwTime
     return millis / 1000.0
+
+
+def getCurrentUser():
+    '''
+    Returns current logged in username
+    '''
+    return os.environ['USERNAME']

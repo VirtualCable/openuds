@@ -121,7 +121,7 @@ class UDSActorSvc(Daemon, CommonService):
 
 
 def usage():
-    sys.stderr.write("usage: {} start|stop|restart|login 'username'|logout 'username'".format(sys.argv[0]))
+    sys.stderr.write("usage: {} start|stop|restart|login 'username'|logout 'username'\n".format(sys.argv[0]))
     sys.exit(2)
 
 if __name__ == '__main__':
@@ -142,7 +142,7 @@ if __name__ == '__main__':
                 usage()
         except Exception as e:
             logger.error(e)
-    else:
+    elif len(sys.argv) != 2:
         usage()
 
     logger.debug('Executing actor')

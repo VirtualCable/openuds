@@ -83,6 +83,14 @@ class MessagesProcessor(QtCore.QThread):
             info = self.ipc.requestInformation()
             logger.debug('Request information: {}'.format(info))
 
+    def sendLogin(self, userName):
+        if self.ipc:
+            self.ipc.sendLogin(userName)
+
+    def sendLogout(self, userName):
+        if self.ipc:
+            self.ipc.sendLogout(userName)
+
     def run(self):
         if self.ipc is None:
             return
@@ -129,11 +137,15 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.ipc = MessagesProcessor()
         self.ipc.start()
         self.maxIdleTime = None
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.checkIdle)
+
+        self.stopped = False
 
         self.ipc.displayMessage.connect(self.displayMessage)
         self.ipc.exit.connect(self.quit)
         self.ipc.script.connect(self.executeScript)
-        self.ipc.logoff.connect(self.loggof)
+        self.ipc.logoff.connect(self.logoff)
         self.ipc.information.connect(self.information)
 
         # Pre generate a request for information (general parameters) to daemon/service
@@ -143,6 +155,16 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         self.counter = 0
 
+        self.timer.start(2000)  # Launch idle checking every 2 seconds
+
+        # If this is running, it's because he have logged in
+        self.ipc.sendLogin(operations.getCurrentUser())
+
+    def checkIdle(self):
+        logger.debug('Timer called: {}'.format(operations.getIdleDuration()))
+        if self.maxIdleTime is not None and operations.getIdleDuration() > self.maxIdleTime:
+            self.quit()
+
     def displayMessage(self, message):
         self.counter += 1
         print(message.toUtf8(), '--', self.counter)
@@ -151,7 +173,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.counter += 1
         print(message.toUtf8(), '--', self.counter)
 
-    def loggof(self):
+    def logoff(self):
         self.counter += 1
         print("Loggof --", self.counter)
 
@@ -159,20 +181,25 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         '''
         Invoked when received information from service
         '''
+        logger.debug('Got information message: {}'.format(info))
         if 'idle' in info:
             idle = int(info['idle'])
             operations.initIdleDuration(idle)
             self.maxIdleTime = idle
+            logger.debug('Set screensaver launching to {}'.format(idle))
         else:
             self.maxIdleTime = None
-
-        self.counter += 1
-        print("Information:", info, '--', self.counter)
 
     def about(self):
         self.aboutDlg.exec_()
 
     def quit(self):
+        if self.stopped is True:
+            return
+        self.stopped = True
+        # If we close Client, send Loggof to Broker
+        self.ipc.sendLogout(operations.getCurrentUser())
+        self.timer.stop()
         self.ipc.stop()
         self.app.quit()
 
@@ -186,4 +213,10 @@ if __name__ == '__main__':
     trayIcon = UDSSystemTray(app)
 
     trayIcon.show()
-    sys.exit(app.exec_())
+
+    res = app.exec_()
+
+    logger.debug('Exiting')
+    trayIcon.quit()
+
+    sys.exit(res)
