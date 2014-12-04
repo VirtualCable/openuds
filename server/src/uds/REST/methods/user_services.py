@@ -155,6 +155,7 @@ class CachedService(AssignedService):
             {'friendly_name': {'title': _('Friendly name')}},
             {'state': {'title': _('State'), 'type': 'dict', 'dict': State.dictionary()}},
             {'cache_level': {'title': _('Cache level')}},
+            {'actor_version': {'title': _('Actor version')}}
         ]
 
     def getLogs(self, parent, item):

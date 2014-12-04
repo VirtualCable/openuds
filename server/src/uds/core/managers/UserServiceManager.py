@@ -45,6 +45,8 @@ from uds.core.services.Exceptions import MaxServicesReachedException
 from uds.models import UserService, getSqlDatetime
 from uds.core import services
 from uds.core.services import Service
+import requests
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -443,6 +445,46 @@ class UserServiceManager(object):
         uService.setState(State.PREPARING)
         UserServiceOpChecker.makeUnique(uService, ui, state)
         return False
+
+    def manageOsManagerPreConnection(self, uService, user):
+        '''
+        Sends, if the user service has os manager and the os manager "wants" to send an pre-script to actor
+        the script to the Service
+        If fails, it will silently ignore it, but probably connection will not success
+        This is so right now to keep compatibility with previos xmlrpc actor..
+        @return: Nothing
+        '''
+        logger.debug('Managing specific OS Manager data before connection')
+        if uService.needsOsManager() is False:
+            logger.debug('No os manager for service, finishing')
+            return
+
+        osm = uService.getOsManager()
+        instanceOsManager = osm.getInstance()
+        script = instanceOsManager.preAccessScript(uService, user)
+        if script is None:
+            logger.debug('OS Manager does not provides a pre access script')
+
+        logger.debug('Pre access script: {}'.format(script))
+        return self.sendScript(uService, script)
+
+    def sendScript(self, uService, script):
+        '''
+        If allowed, send script to user service
+        '''
+        url = uService.getCommsUrl()
+        if url is None:
+            logger.error('Can\'t connect with actor (no actor or legacy actor)')
+            return
+
+        try:
+            r = requests.post(url, data={'script': script}, headers={'content-type': 'application/json'}, verify=False, timeout=5)
+            r = json.loads(r.content)
+            # In fact we ignore result right now
+        except Exception as e:
+            logger.error('Exception caught sending script: {}. Check connection on destination machine: {}'.format(e, url))
+
+        # All done
 
     def checkForRemoval(self, uService):
         '''

@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core import Module
 
-__updated__ = '2014-12-01'
+__updated__ = '2014-12-04'
 
 STORAGE_KEY = 'osmk'
 
@@ -89,7 +89,7 @@ class OSManager(Module):
         pass
 
     # These methods must be overriden
-    def process(self, service, message, data):
+    def process(self, service, message, data, options=None):
         '''
         This method must be overriden so your so manager can manage requests and responses from agent.
         @param service: Service that sends the request (virtual machine or whatever)
@@ -123,6 +123,14 @@ class OSManager(Module):
         '''
         If os manager request "max idle", this method will return a value different to None so actors will get informed on Connection
         @return Must return None (default if not overriden), or a "max idle" in seconds
+        '''
+        return None
+
+    def preAccessScript(self, userService, user):
+        '''
+        This gives us the chance to include "customized" initialization for any os manager for an specifyc user & service on assignation to an user
+        such as "include" in allowed user list, etc...
+        Both values are db objects
         '''
         return None
 

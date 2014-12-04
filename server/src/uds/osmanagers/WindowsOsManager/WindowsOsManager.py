@@ -115,7 +115,7 @@ class WindowsOsManager(osmanagers.OSManager):
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
-    def process(self, service, msg, data):
+    def process(self, service, msg, data, options):
         '''
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class) (old method)
@@ -180,6 +180,8 @@ class WindowsOsManager(osmanagers.OSManager):
             else:
                 UserServiceManager.manager().notifyReadyFromOsManager(service, '')
         logger.debug('Returning {} to {} message'.format(ret, msg))
+        if options is not None and options.get('scramble', True) is False:
+            return ret
         return scrambleMsg(ret)
 
     def processUnused(self, userService):

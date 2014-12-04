@@ -35,7 +35,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-12-02'
+__updated__ = '2014-12-04'
 
 from django.db import models
 from django.db.models import signals
@@ -246,11 +246,14 @@ class UserService(UUIDModel):
         '''
         return [self.src_ip, self.src_hostname]
 
+    def getOsManager(self):
+        return self.deployed_service.osmanager
+
     def needsOsManager(self):
         '''
         Returns True if this User Service needs an os manager (i.e. parent services pools is marked to use an os manager)
         '''
-        return self.deployed_service.osmanager is not None
+        return self.getOsManager() is not None
 
     def transformsUserOrPasswordForService(self):
         '''
@@ -419,8 +422,14 @@ class UserService(UUIDModel):
 
     def setProperty(self, propName, propValue):
         prop, _ = self.properties.get_or_create(name=propName)
-        prop.value = propValue
+        prop.value = propValue if propValue is None else ''
         prop.save()
+
+    def setCommsUrl(self, commsUrl=None):
+        self.setProperty('comms_url', commsUrl)
+
+    def getCommsUrl(self):
+        return self.getProperty('comms_url', None)
 
     def __str__(self):
         return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,

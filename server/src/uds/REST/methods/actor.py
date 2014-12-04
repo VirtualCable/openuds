@@ -122,7 +122,7 @@ class Actor(Handler):
         if len(self._args) < 1:
             raise RequestError('Invalid request')
 
-        # if path is .../test (/rest/actor/[test|init]?key=.....&version=....&id=....)
+        # if path is .../test (/rest/actor/[test|init]?key=.....&version=....&id=....)  version & ids are only used on init
         if self._args[0] in ('test', 'init'):
             v = self.validateRequestKey()
             if v is not None:
@@ -142,7 +142,10 @@ class Actor(Handler):
                 if service.deployed_service.osmanager is not None:
                     maxIdle = service.deployed_service.osmanager.getInstance().maxIdle()
                     logger.debug('Max idle: {}'.format(maxIdle))
-                return Actor.result((service.uuid, service.unique_id, 0 if maxIdle is None else maxIdle))
+                return Actor.result((service.uuid,
+                                     service.unique_id,
+                                     0 if maxIdle is None else maxIdle)
+                                    )
         raise RequestError('Invalid request')
 
     # Must be invoked as '/rest/actor/UUID/[message], with message data in post body
@@ -170,7 +173,7 @@ class Actor(Handler):
         username = ''
 
         if message == 'notifyComms':
-            service.setProperty('comms_url', data)
+            service.setCommsUrl(data)
             return Actor.result('ok')
 
         # Preprocess some messages, common to all clients, such as "log"
@@ -181,7 +184,7 @@ class Actor(Handler):
             username = data
 
         try:
-            res = service.getInstance().osmanager().process(service, message, data)
+            res = service.getInstance().osmanager().process(service, message, data, options={'scramble': False})
         except Exception as e:
             return Actor.result(six.text_type(e), ERR_OSMANAGER_ERROR)
 

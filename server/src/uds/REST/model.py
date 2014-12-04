@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-11-12'
+__updated__ = '2014-12-04'
 
 
 # a few constants
