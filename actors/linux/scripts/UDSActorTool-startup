@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # Simple hack to wait for systray to be present
-sleep 5
 # Exec tool if not already runned by session manager
-ps -ef | grep "$USER" | grep -v grep | grep 'UDSActorTool' -q
+ps -ef | grep "$USER" | grep -v grep | grep -v UDSActorTool-startup | grep 'UDSActorTool' -q
 # If not already running
 if [ $? -eq 1 ]; then
+    sleep 5
     exec /usr/bin/UDSActorTool
 fi

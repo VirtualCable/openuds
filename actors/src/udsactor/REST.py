@@ -39,7 +39,6 @@ import logging
 import json
 import uuid
 import six
-import codecs
 
 from udsactor.log import logger
 
@@ -99,28 +98,11 @@ def ensureResultIsOk(result):
     raise err
 
 
-def unscramble(value):
-    if value is None or value == '':
-        return value
-
-    value = bytearray(codecs.decode(value, 'hex'))
-
-    n = 0x32
-    result = []
-    for ch in value:
-        c = ch ^ n
-        n = (n + c) & 0xFF
-        result.append(six.int2byte(c))
-
-    return b''.join(result)[::-1].decode('utf8')
-
-
 class Api(object):
-    def __init__(self, host, masterKey, ssl, scrambledResponses=False):
+    def __init__(self, host, masterKey, ssl):
         self.host = host
         self.masterKey = masterKey
         self.useSSL = ssl
-        self.scrambledResponses = scrambledResponses
         self.uuid = None
         self.mac = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
@@ -165,13 +147,6 @@ class Api(object):
             raise ConnectionError(exceptionToMessage(e))
 
         ensureResultIsOk(r)
-
-        if self.scrambledResponses is True:
-            # test && init are not scrambled, even if rest of messages are
-            try:
-                r['result'] = unscramble(r['result'])
-            except Exception as e:  # Can't unscramble, return result "as is"
-                r['warning'] = True
 
         return r
 
