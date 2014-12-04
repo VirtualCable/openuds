@@ -180,7 +180,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # ********************************************************
         # * Ask brokers what to do before proceding to main loop *
         # ********************************************************
-        if self.interactWithBroker(scrambledResponses=True) is False:
+        if self.interactWithBroker() is False:
             logger.debug('Interact with broker returned false, stopping service after a while')
             self.notifyStop()
             win32event.WaitForSingleObject(self.hWaitStop, 5000)

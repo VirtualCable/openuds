@@ -25,37 +25,42 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-import platform
-import os
-import sys
-import pkgutil
-
+from udsactor.linux.renamer import renamers
 from udsactor.log import logger
 
-renamers = {}
+import os
 
 
-# Renamers now are for IPv4 only addresses
 def rename(newName):
-    distribution = platform.linux_distribution()[0].lower().strip()
-    if distribution in renamers:
-        return renamers[distribution](newName)
+    '''
+    RH, Centos, Fedora Renamer
+    Expects new host name on newName
+    Host does not needs to be rebooted after renaming
+    '''
+    logger.debug('using SUSE renamer')
 
-    # Try Debian renamer, simplest one
-    logger.info('Renamer for platform "{0}" not found, tryin debian renamer'.format(distribution))
-    return renamers['debian'](newName)
+    with open('/etc/hostname', 'w') as hostname:
+        hostname.write(newName)
 
+    # Force system new name
+    os.system('/bin/hostname %s' % newName)
 
-# Do load of packages
-def _init():
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(__name__ + '.' + name, globals(), locals())
+    # add name to "hosts"
+    with open('/etc/hosts', 'r') as hosts:
+        lines = hosts.readlines()
+    with open('/etc/hosts', 'w') as hosts:
+        hosts.write("127.0.1.1\t{}\n".format(newName))
+        for l in lines:
+            if l[:9] != '127.0.1.1':  # Skips existing 127.0.1.1. if it already exists
+                hosts.write(l)
 
-_init()
+    return True
+
+# All names in lower case
+renamers['opensuse'] = rename
+renamers['suse'] = rename

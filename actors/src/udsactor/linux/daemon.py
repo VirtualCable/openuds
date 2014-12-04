@@ -150,8 +150,8 @@ class Daemon:
 
         if pid is None:
             message = "pidfile {} does not exist. Daemon not running?\n".format(self.pidfile)
-            logger.error(message)
-            sys.stderr.write(message)
+            logger.info(message)
+            # sys.stderr.write(message)
             return  # not an error in a restart
 
         # Try killing the daemon process

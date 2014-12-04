@@ -86,7 +86,7 @@ class CommonService(object):
     def setReady(self):
         self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
 
-    def interactWithBroker(self, scrambledResponses=False):
+    def interactWithBroker(self):
         '''
         Returns True to continue to main loop, false to stop & exit service
         '''
@@ -95,7 +95,7 @@ class CommonService(object):
             logger.fatal('No configuration found, stopping service')
             return False
 
-        self.api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=scrambledResponses)
+        self.api = REST.Api(cfg['host'], cfg['masterKey'], cfg['ssl'])
 
         # Wait for Broker to be ready
         counter = 0
@@ -125,7 +125,7 @@ class CommonService(object):
                 logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
                 return False  # On unmanaged hosts, there is no reason right now to continue running
             except Exception as e:
-                logger.debug('Exception caugh: {}, retrying'.format(exceptionToMessage(e)))
+                logger.debug('Exception caught: {}, retrying'.format(exceptionToMessage(e)))
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
                 # but, if too many errors, will log it (one every minute, for
                 # example)
@@ -176,7 +176,7 @@ class CommonService(object):
             except Exception:
                 counter += 1
                 if counter % 60 == 0:
-                    logger.warn('Too many retries in progress, though still trying (last error: {})'.format(e.message.decode('windows-1250', 'ignore')))
+                    logger.warn('Too many retries in progress, though still trying (last error: {})'.format(exceptionToMessage(e)))
                 # Any other error is expectable and recoverable, so let's wait
                 # a bit and retry again
                 # Wait a bit before next check
@@ -232,7 +232,7 @@ class CommonService(object):
         self.ipc.start()
 
         if self.api.mac in self.knownIps:
-            address = (self.knownIps[self.api.mac], random.randrange(32000, 64000))
+            address = (self.knownIps[self.api.mac], random.randrange(40000, 44000))
             logger.debug('Starting REST listener at {}'.format(address))
             self.httpServer = httpserver.HTTPServerThread(address, self.ipc)
             self.httpServer.start()
