@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
+from django.conf import settings
 from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
 from uds.core.util.State import State
@@ -107,6 +108,11 @@ class LinuxOsManager(osmanagers.OSManager):
         # Stores a log associated with this service
         try:
             msg, level = data.split('\t')
+            try:
+                level = int(level)
+            except Exception:
+                logger.debug('Do not understand level {}'.format(level))
+                level = log.INFO
             log.doLog(service, int(level), msg, origin)
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
@@ -188,7 +194,10 @@ class LinuxOsManager(osmanagers.OSManager):
         return State.RUNNING
 
     def maxIdle(self):
-        if self._idle <= 0:
+        '''
+        On production environments, will return no idle for non removable machines
+        '''
+        if self._idle <= 0 or (settings.DEBUG is False and self._onLogout == 'remove'):
             return None
 
         return self._idle

@@ -173,6 +173,7 @@ class Actor(Handler):
         username = ''
 
         if message == 'notifyComms':
+            logger.debug('Setting comms url to {}'.format(data))
             service.setCommsUrl(data)
             return Actor.result('ok')
 

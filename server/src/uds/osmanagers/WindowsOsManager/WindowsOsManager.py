@@ -11,6 +11,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
+from django.conf import settings
 from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
 from uds.core.managers.UserServiceManager import UserServiceManager
@@ -57,6 +58,7 @@ class WindowsOsManager(osmanagers.OSManager):
 
     idle = gui.NumericField(label=_("Max.Idle time"), length=4, defvalue=-1, rdonly=False, order=11,
                             tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max idle time).'), required=True)
+    addToRemoteGroup = gui.CheckBoxField(label=_('Remote Desktop Groups'), order=12, tooltip=_('If checked, the conecting user will be added to Remote Desktop Users group prior to connecting'))
 
     @staticmethod
     def validateLen(length):
@@ -109,8 +111,13 @@ class WindowsOsManager(osmanagers.OSManager):
     def doLog(self, service, data, origin=log.OSMANAGER):
         # Stores a log associated with this service
         try:
-
             msg, level = data.split('\t')
+            try:
+                level = int(level)
+            except Exception:
+                logger.debug('Do not understand level {}'.format(level))
+                level = log.INFO
+
             log.doLog(service, int(level), msg, origin)
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
@@ -197,7 +204,10 @@ class WindowsOsManager(osmanagers.OSManager):
         return State.RUNNING
 
     def maxIdle(self):
-        if self._idle <= 0:
+        '''
+        On production environments, will return no idle for non removable machines
+        '''
+        if self._idle <= 0 or (settings.DEBUG is False and self._onLogout == 'remove'):
             return None
 
         return self._idle

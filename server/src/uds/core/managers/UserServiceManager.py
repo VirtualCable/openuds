@@ -476,10 +476,12 @@ class UserServiceManager(object):
         if url is None:
             logger.error('Can\'t connect with actor (no actor or legacy actor)')
             return
+        url += '/script'
 
         try:
-            r = requests.post(url, data={'script': script}, headers={'content-type': 'application/json'}, verify=False, timeout=5)
+            r = requests.post(url, data=json.dumps({'script': script}), headers={'content-type': 'application/json'}, verify=False, timeout=5)
             r = json.loads(r.content)
+            logger.debug('Sent script to client using {}: {}'.format(url, r))
             # In fact we ignore result right now
         except Exception as e:
             logger.error('Exception caught sending script: {}. Check connection on destination machine: {}'.format(e, url))
