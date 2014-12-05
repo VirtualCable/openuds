@@ -38,6 +38,7 @@ from . import store
 from . import REST
 from . import ipc
 from . import httpserver
+from .scriptThread import ScriptExecutorThread
 from .utils import exceptionToMessage
 
 import socket
@@ -293,3 +294,13 @@ class CommonService(object):
         Overriden to log stop
         '''
         logger.info('Service is being stopped')
+
+    def onLogout(self):
+        scripts = httpserver.scriptsOnLogout[:]  # Copy scripts and remove them
+        httpserver.scriptsOnLogout[:] = []
+
+        for s in scripts:
+            th = ScriptExecutorThread(s)
+            th.start()
+
+        # Right now, do not wait for thread end, just return

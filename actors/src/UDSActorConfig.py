@@ -78,7 +78,7 @@ class UDSConfigDialog(QtGui.QDialog):
         try:
             cfg = self._getCfg()
             api = REST.Api(
-                cfg['host'], cfg['masterKey'], cfg['ssl'], scrambledResponses=True)
+                cfg['host'], cfg['masterKey'], cfg['ssl'])
             api.test()
             QtGui.QMessageBox.information(
                 self, 'Test Passed', 'The test was executed successfully', QtGui.QMessageBox.Ok)

@@ -31,6 +31,11 @@
 '''
 from __future__ import unicode_literals
 
+from udsactor.log import logger
+from udsactor import utils
+from udsactor.certs import createSelfSignedCert
+from udsactor.scriptThread import ScriptExecutorThread
+
 import threading
 import uuid
 import json
@@ -39,12 +44,12 @@ from six.moves import socketserver  # @UnresolvedImport, pylint: disable=import-
 from six.moves import BaseHTTPServer  # @UnresolvedImport, pylint: disable=import-error
 import time
 
-from udsactor.log import logger
-from udsactor import utils
-from udsactor.certs import createSelfSignedCert
 import ssl
 
 startTime = time.time()
+
+# List os scripts that should be executed on logout
+scriptsOnLogout = []
 
 
 class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -147,6 +152,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return 'ok'
 
     def post_script(self, params):
+        logger.debug('Received script: {}'.format(params))
         if 'script' not in params:
             raise Exception('Invalid script parameters')
         if 'user' in params:
@@ -155,15 +161,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             # Execute script at server space, that is, here
             # as a secondary thread
-            script = params['script']
-
-            def executor():
-                logger.debug('Executing script: {}'.format(script))
-                try:
-                    six.exec_(script, None, None)
-                except Exception as e:
-                    logger.error('Error executing script: {}'.format(e))
-            th = threading.Thread(target=executor)
+            th = ScriptExecutorThread(params['script'])
             th.start()
         return 'ok'
 
