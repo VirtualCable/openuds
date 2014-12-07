@@ -218,6 +218,7 @@ class CommonService(object):
             self.api.login(data)
         elif msg == ipc.REQ_LOGOUT:
             self.api.logout(data)
+            self.onLogout(data)
         elif msg == ipc.REQ_INFORMATION:
             info = {}
             if self.api.idle is not None:
@@ -235,7 +236,7 @@ class CommonService(object):
         if self.api.mac in self.knownIps:
             address = (self.knownIps[self.api.mac], random.randrange(40000, 44000))
             logger.debug('Starting REST listener at {}'.format(address))
-            self.httpServer = httpserver.HTTPServerThread(address, self.ipc)
+            self.httpServer = httpserver.HTTPServerThread(address, self)
             self.httpServer.start()
             # And notify it to broker
             self.api.notifyComm(self.httpServer.getServerUrl())
@@ -295,12 +296,12 @@ class CommonService(object):
         '''
         logger.info('Service is being stopped')
 
-    def onLogout(self):
-        scripts = httpserver.scriptsOnLogout[:]  # Copy scripts and remove them
-        httpserver.scriptsOnLogout[:] = []
+    def preConnect(self, user):
+        '''
+        Invoked when received a PRE Connection request via REST
+        '''
+        logger.debug('Pre-connect does nothing')
+        return 'ok'
 
-        for s in scripts:
-            th = ScriptExecutorThread(s)
-            th.start()
-
-        # Right now, do not wait for thread end, just return
+    def onLogout(self, user):
+        logger.debug('On logout invoked for {}'.format(user))

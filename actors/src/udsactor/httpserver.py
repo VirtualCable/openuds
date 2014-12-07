@@ -48,13 +48,10 @@ import ssl
 
 startTime = time.time()
 
-# List os scripts that should be executed on logout
-scriptsOnLogout = []
-
 
 class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     uuid = None
-    ipc = None
+    service = None
     lock = threading.Lock()
 
     def sendJsonError(self, code, message):
@@ -69,7 +66,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         path = self.path.split('?')[0][1:].split('/')
         try:
             params = dict((v.split('=') for v in self.path.split('?')[1].split('&')))
-        except:
+        except Exception:
             params = {}
 
         if path[0] != HTTPServerHandler.uuid:
@@ -138,7 +135,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def post_logoff(self, params):
         logger.debug('Sending LOGOFF to clients')
-        HTTPServerHandler.ipc.sendLoggofMessage()
+        HTTPServerHandler.service.ipc.sendLoggofMessage()
         return 'ok'
 
     # Alias
@@ -148,7 +145,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         logger.debug('Sending MESSAGE to clients')
         if 'message' not in params:
             raise Exception('Invalid message parameters')
-        HTTPServerHandler.ipc.sendMessageMessage(params['message'])
+        HTTPServerHandler.service.ipc.sendMessageMessage(params['message'])
         return 'ok'
 
     def post_script(self, params):
@@ -157,7 +154,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             raise Exception('Invalid script parameters')
         if 'user' in params:
             logger.debug('Sending SCRIPT to clients')
-            HTTPServerHandler.ipc.sendScriptMessage(params['script'])
+            HTTPServerHandler.service.ipc.sendScriptMessage(params['script'])
         else:
             # Execute script at server space, that is, here
             # as a secondary thread
@@ -165,19 +162,25 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             th.start()
         return 'ok'
 
+    def get_preConnect(self, params):
+        logger.debug('Received Pre connection')
+        if 'user' not in params:
+            raise Exception('Invalid preConnect parameters')
+        return HTTPServerHandler.service.preConnect(params.get('user'))
+
     def get_information(self, params):
         # TODO: Return something useful? :)
         return 'Information'
 
 
 class HTTPServerThread(threading.Thread):
-    def __init__(self, address, ipc):
+    def __init__(self, address, service):
         super(self.__class__, self).__init__()
 
         if HTTPServerHandler.uuid is None:
             HTTPServerHandler.uuid = uuid.uuid4().get_hex()
 
-        HTTPServerHandler.ipc = ipc
+        HTTPServerHandler.service = service
 
         self.certFile = createSelfSignedCert()
         self.server = socketserver.TCPServer(address, HTTPServerHandler)

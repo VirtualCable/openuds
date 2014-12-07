@@ -111,14 +111,13 @@ class ClientProcessor(threading.Thread):
         self.running = False
 
     def processRequest(self, msg, data):
+        logger.debug('Got Client message {}={}'.format(msg, REV_DICT.get(msg)))
         if self.parent.clientMessageProcessor is not None:
             self.parent.clientMessageProcessor(msg, data)
 
     def run(self):
         self.running = True
         self.clientSocket.setblocking(0)
-
-        logger.debug('Client processor running')
 
         state = None
         recv_msg = None

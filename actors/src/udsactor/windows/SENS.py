@@ -33,8 +33,8 @@
 
 from __future__ import unicode_literals
 
-import win32com.client
-import win32com.server.policy
+import win32com.client  # @UnresolvedImport, pylint: disable=import-error
+import win32com.server.policy  # @UnresolvedImport, pylint: disable=import-error
 import os
 
 from udsactor.log import logger
@@ -65,15 +65,15 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
         'StopScreenSaver'
     ]
 
-    def __init__(self, api):
+    def __init__(self, service):
         self._wrap_(self)
-        self.api = api
+        self.service = service
 
     def Logon(self, *args):
         logger.debug('Logon event: {}'.format(args))
-        if self.api is not None and self.api.isConnected:
+        if self.service.api is not None and self.service.api.isConnected:
             try:
-                data = self.api.login(args[0])
+                data = self.service.api.login(args[0])
                 logger.debug('Data received for login: {}'.format(data))
                 data = data.split('\t')
                 if len(data) == 2:
@@ -88,11 +88,12 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
 
     def Logoff(self, *args):
         logger.debug('Logoff event: {}'.format(args))
-        if self.api is not None and self.api.isConnected:
+        if self.service.api is not None and self.service.api.isConnected:
             try:
-                self.api.logout(args[0])
+                self.service.api.logout(args[0])
             except Exception as e:
                 logger.fatal('Error notifying logon to server: {}'.format(e))
+        self.service.onLogout(args[0])
 
     def StartShell(self, *args):
         logevent('StartShell : %s' % [args])
@@ -120,7 +121,7 @@ def logevent(msg):
     # thread
     # pythoncom.CoInitialize()
 
-    #logevent('Registring ISensLogon')
+    # logevent('Registring ISensLogon')
 
     # sl=SensLogon()
     # subscription_interface=pythoncom.WrapObject(sl)
@@ -130,10 +131,10 @@ def logevent(msg):
     # event_subscription=win32com.client.Dispatch(PROGID_EventSubscription)
     # event_subscription.EventClassID=SENSGUID_EVENTCLASS_LOGON
     # event_subscription.PublisherID=SENSGUID_PUBLISHER
-    #event_subscription.SubscriptionName='Python subscription'
+    # event_subscription.SubscriptionName='Python subscription'
     # event_subscription.SubscriberInterface=subscription_interface
 
-    #event_system.Store(PROGID_EventSubscription, event_subscription)
+    # event_system.Store(PROGID_EventSubscription, event_subscription)
 
     # pythoncom.PumpMessages()
-    ##logevent('ISensLogon stopped')
+    # #logevent('ISensLogon stopped')

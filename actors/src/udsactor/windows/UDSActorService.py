@@ -34,11 +34,12 @@ from __future__ import unicode_literals
 
 import win32serviceutil  # @UnresolvedImport, pylint: disable=import-error
 import win32service  # @UnresolvedImport, pylint: disable=import-error
+import win32security  # @UnresolvedImport, pylint: disable=import-error
+import win32net  # @UnresolvedImport, pylint: disable=import-error
 import win32event  # @UnresolvedImport, pylint: disable=import-error
 import win32com.client  # @UnresolvedImport,  @UnusedImport, pylint: disable=import-error
 import pythoncom  # @UnresolvedImport, pylint: disable=import-error
 import servicemanager  # @UnresolvedImport, pylint: disable=import-error
-
 
 from udsactor import operations
 from udsactor.service import CommonService
@@ -69,6 +70,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         win32serviceutil.ServiceFramework.__init__(self, args)
         CommonService.__init__(self)
         self.hWaitStop = win32event.CreateEvent(None, 1, 0, None)
+        self._user = None
 
     def SvcStop(self):
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
@@ -160,6 +162,53 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             self.oneStepJoin(name, domain, ou, account, password)
         else:
             self.multiStepJoin(name, domain, ou, account, password)
+
+    def preConnect(self, user):
+        # Well known SSID for Remote Desktop Users
+        REMOTE_USERS_SID = 'S-1-5-32-555'
+
+        p = win32security.GetBinarySid(REMOTE_USERS_SID)
+        groupName = win32security.LookupAccountSid(None, p)[0]
+
+        useraAlreadyInGroup = False
+        resumeHandle = 0
+        while True:
+            users, _, resumeHandle = win32net.NetLocalGroupGetMembers(None, groupName, 1, resumeHandle, 32768)
+            if user in [u['name'] for u in users]:
+                useraAlreadyInGroup = True
+                break
+            if resumeHandle == 0:
+                break
+
+        if useraAlreadyInGroup is False:
+            logger.debug('User not in group, adding it')
+            self._user = user
+            try:
+                userSSID = win32security.LookupAccountName(None, user)[0]
+                win32net.NetLocalGroupAddMembers(None, groupName, 0, [{'sid': userSSID}])
+            except Exception as e:
+                logger.error('Exception adding user to Remote Desktop Users: {}'.format(e))
+        else:
+            self._user = None
+            logger.debug('User {} already in group'.format(user))
+
+        return 'ok'
+
+    def onLogout(self, user):
+        logger.debug('Windows onLogout invoked: {}, {}'.format(user, self._user))
+        try:
+            REMOTE_USERS_SID = 'S-1-5-32-555'
+            p = win32security.GetBinarySid(REMOTE_USERS_SID)
+            groupName = win32security.LookupAccountSid(None, p)[0]
+        except Exception:
+            logger.error('Exception getting Windows Group')
+            return
+
+        if self._user is not None:
+            try:
+                win32net.NetLocalGroupDelMembers(None, groupName, [self._user])
+            except Exception as e:
+                logger.error('Exception removing user from Remote Desktop Users: {}'.format(e))
 
     def SvcDoRun(self):
         '''
