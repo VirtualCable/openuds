@@ -121,7 +121,7 @@ class TSNXTransport(Transport):
         else:
             self._tunnelServer = ''
             self._tunnelCheckServer = ''
-            self._useEmptyCreds = ''
+            self._useEmptyCreds = False
             self._fixedName = ''
             self._fixedPassword = ''
             self._listenPort = ''
@@ -134,8 +134,8 @@ class TSNXTransport(Transport):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join('\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
-                                self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer ])
+        return str.join('\t', ['v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
+                               self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer])
 
     def unmarshal(self, string):
         data = string.split('\t')

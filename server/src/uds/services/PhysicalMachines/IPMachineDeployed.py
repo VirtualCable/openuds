@@ -39,6 +39,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class IPMachineDeployed(AutoAttributes, services.UserDeployment):
     suggestedTime = 10
 

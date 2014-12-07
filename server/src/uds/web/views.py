@@ -276,7 +276,6 @@ def service(request, idService, idTransport):
             if ip is not None:
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
-                    UserServiceManager.manager().manageOsManagerPreConnection(ads, request.user)
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
                     transport = itrans.renderForHtml(ads, ads.uuid, trans.uuid, ip, request.session['OS'], request.user, webPassword(request))
                     return render_to_response(theme.template('show_transport.html'), {'transport': transport, 'nolang': True}, context_instance=RequestContext(request))

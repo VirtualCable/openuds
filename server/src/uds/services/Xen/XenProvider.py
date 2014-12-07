@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-05-14'
+__updated__ = '2014-12-07'
 
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -171,7 +171,6 @@ class Provider(ServiceProvider):
                 continue
             yield m
 
-
     def getStorages(self, force=False):
         '''
         Obtains the list of storages inside XenServer.
@@ -188,7 +187,6 @@ class Provider(ServiceProvider):
                 'used'
         '''
         return self.__getApi().getSRs()
-
 
     def getStorageInfo(self, storageId, force=False):
         '''
@@ -219,7 +217,6 @@ class Provider(ServiceProvider):
         task = self.__getApi().cloneVM(machineId, name, sr)
         logger.debug('Task for cloneForTemplate: {0}'.format(task))
         return task
-
 
     def convertToTemplate(self, machineId, shadowMultiplier=4):
         '''
@@ -335,7 +332,6 @@ class Provider(ServiceProvider):
         Returns:
         '''
         return self.__getApi().resumeVM(machineId, async)
-
 
     def removeVM(self, machineId):
         '''

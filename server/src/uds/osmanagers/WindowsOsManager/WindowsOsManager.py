@@ -23,6 +23,39 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Base script for allowing RDP access
+baseScript = '''from __future__ import unicode_literals
+
+import win32security
+import win32net
+from udsactor.httpserver import scriptsOnLogout
+
+# Well known SSID for Remote Desktop Users
+REMOTE_USERS_SID = 'S-1-5-32-555'
+
+user = '{user}'
+
+p = win32security.GetBinarySid(REMOTE_USERS_SID)
+groupName = win32security.LookupAccountSid(None, p)[0]
+
+useraAlreadyInGroup = False
+resumeHandle = 0
+while True:
+    users, total, resumeHandle = win32net.NetLocalGroupGetMembers(None, groupName, 1, resumeHandle, 32768)
+    if user in [u['name'] for u in users]:
+        useraAlreadyInGroup = True
+        break
+    if resumeHandle == 0:
+        break
+
+if useraAlreadyInGroup is False:
+    try:
+        userSSID = win32security.LookupAccountName(None, user)[0]
+        win32net.NetLocalGroupAddMembers(None, groupName, 0, [{'sid': userSSID}])
+    except Exception as e:
+        logger.exception('Exception adding user to Remote Desktop Users: {}'.format(e))
+'''
+
 
 def scrambleMsg(data):
     '''
@@ -58,7 +91,6 @@ class WindowsOsManager(osmanagers.OSManager):
 
     idle = gui.NumericField(label=_("Max.Idle time"), length=4, defvalue=-1, rdonly=False, order=11,
                             tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max idle time).'), required=True)
-    addToRemoteGroup = gui.CheckBoxField(label=_('Remote Desktop Groups'), order=12, tooltip=_('If checked, the conecting user will be added to Remote Desktop Users group prior to connecting'))
 
     @staticmethod
     def validateLen(length):
@@ -220,11 +252,14 @@ class WindowsOsManager(osmanagers.OSManager):
 
     def unmarshal(self, s):
         data = s.split('\t')
-        if data[0] == 'v1':
-            self._onLogout = data[1]
-            self._idle = -1
-        elif data[0] == 'v2':
-            self._onLogout, self._idle = data[1], int(data[2])
+        try:
+            if data[0] == 'v1':
+                self._onLogout = data[1]
+                self._idle = -1
+            elif data[0] == 'v2':
+                self._onLogout, self._idle = data[1], int(data[2])
+        except Exception:
+            logger.exception('Exception unmarshalling. Some values left as default ones')
 
         self.__setProcessUnusedMachines()
 

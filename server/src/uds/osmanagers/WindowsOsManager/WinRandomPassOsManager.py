@@ -34,7 +34,6 @@ class WinRandomPassManager(WindowsOsManager):
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
-    addToRemoteGroup = WindowsOsManager.addToRemoteGroup
 
     def __init__(self, environment, values):
         super(WinRandomPassManager, self).__init__(environment, values)

@@ -446,28 +446,6 @@ class UserServiceManager(object):
         UserServiceOpChecker.makeUnique(uService, ui, state)
         return False
 
-    def manageOsManagerPreConnection(self, uService, user):
-        '''
-        Sends, if the user service has os manager and the os manager "wants" to send an pre-script to actor
-        the script to the Service
-        If fails, it will silently ignore it, but probably connection will not success
-        This is so right now to keep compatibility with previos xmlrpc actor..
-        @return: Nothing
-        '''
-        logger.debug('Managing specific OS Manager data before connection')
-        if uService.needsOsManager() is False:
-            logger.debug('No os manager for service, finishing')
-            return
-
-        osm = uService.getOsManager()
-        instanceOsManager = osm.getInstance()
-        script = instanceOsManager.preAccessScript(uService, user)
-        if script is None:
-            logger.debug('OS Manager does not provides a pre access script')
-
-        logger.debug('Pre access script: {}'.format(script))
-        return self.sendScript(uService, script)
-
     def sendScript(self, uService, script):
         '''
         If allowed, send script to user service

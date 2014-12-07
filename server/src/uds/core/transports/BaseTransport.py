@@ -141,6 +141,15 @@ class Transport(Module):
         '''
         return {'protocol': protocols.NONE, 'username': '', 'password': '', 'domain': ''}
 
+    def preAccessScript(self, userService, user):
+        '''
+        This gives us the chance to include "customized" initialization for any transport for an specifyc user & service on assignation to an user
+        such as "include" in allowed user list, etc...
+        Both values are db objects
+        '''
+        return None
+
+
     def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
         '''
         Requests the html rendering of connector for the destination ip, (dbUser) and password
