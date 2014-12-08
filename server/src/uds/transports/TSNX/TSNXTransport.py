@@ -37,11 +37,15 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports import protocols
 from uds.core.util.Cache import Cache
 from uds.core.util import connection
 from web import generateHtmlForNX, getHtmlComponent
 
-import logging, random, string, time
+import logging
+import random
+import string
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +63,7 @@ class TSNXTransport(Transport):
     iconFile = 'nx.png'
     needsJava = True  # If this transport needs java for rendering
     supportedOss = ['Windows', 'Macintosh', 'Linux']
+    protocol = protocols.NX
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server send to client device ("public" ip) and port. (use HOST:PORT format)'))
     tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
@@ -67,35 +72,38 @@ class TSNXTransport(Transport):
     fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'))
     listenPort = gui.NumericField(label=_('Listen port'), length=5, order=6, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
-    connection = gui.ChoiceField(label=_('Connection'), order=7, tooltip=_('Connection speed for this transport (quality)'), values=[
-            {'id' : 'modem', 'text' : 'modem'},
-            {'id' : 'isdn', 'text' : 'isdn'},
-            {'id' : 'adsl', 'text' : 'adsl'},
-            {'id' : 'wan', 'text' : 'wan'},
-            {'id' : 'lan', 'text' : 'lan'},
-        ])
-    session = gui.ChoiceField(label=_('Session'), order=8, tooltip=_('Desktop session'), values=[
-            {'id' : 'gnome', 'text' : 'gnome'},
-            {'id' : 'kde', 'text' : 'kde'},
-            {'id' : 'cde', 'text' : 'cde'},
-        ])
-    cacheDisk = gui.ChoiceField(label=_('Disk Cache'), order=9, tooltip=_('Cache size en Mb stored at disk'), values=[
-            {'id' : '0', 'text' : '0 Mb'},
-            {'id' : '32', 'text' : '32 Mb'},
-            {'id' : '64', 'text' : '64 Mb'},
-            {'id' : '128', 'text' : '128 Mb'},
-            {'id' : '256', 'text' : '256 Mb'},
-            {'id' : '512', 'text' : '512 Mb'},
-        ])
-    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=10, tooltip=_('Cache size en Mb keept at memory'), values=[
-            {'id' : '4', 'text' : '4 Mb'},
-            {'id' : '8', 'text' : '8 Mb'},
-            {'id' : '16', 'text' : '16 Mb'},
-            {'id' : '32', 'text' : '32 Mb'},
-            {'id' : '64', 'text' : '64 Mb'},
-            {'id' : '128', 'text' : '128 Mb'},
-        ])
-
+    connection = gui.ChoiceField(label=_('Connection'), order=7, tooltip=_('Connection speed for this transport (quality)'),
+                                 values=[
+                                     {'id': 'modem', 'text': 'modem'},
+                                     {'id': 'isdn', 'text': 'isdn'},
+                                     {'id': 'adsl', 'text': 'adsl'},
+                                     {'id': 'wan', 'text': 'wan'},
+                                     {'id': 'lan', 'text': 'lan'},
+    ])
+    session = gui.ChoiceField(label=_('Session'), order=8, tooltip=_('Desktop session'),
+                              values=[
+                                  {'id': 'gnome', 'text': 'gnome'},
+                                  {'id': 'kde', 'text': 'kde'},
+                                  {'id': 'cde', 'text': 'cde'},
+    ])
+    cacheDisk = gui.ChoiceField(label=_('Disk Cache'), order=9, tooltip=_('Cache size en Mb stored at disk'),
+                                values=[
+                                    {'id': '0', 'text': '0 Mb'},
+                                    {'id': '32', 'text': '32 Mb'},
+                                    {'id': '64', 'text': '64 Mb'},
+                                    {'id': '128', 'text': '128 Mb'},
+                                    {'id': '256', 'text': '256 Mb'},
+                                    {'id': '512', 'text': '512 Mb'},
+    ])
+    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=10, tooltip=_('Cache size en Mb keept at memory'),
+                               values=[
+                                   {'id': '4', 'text': '4 Mb'},
+                                   {'id': '8', 'text': '8 Mb'},
+                                   {'id': '16', 'text': '16 Mb'},
+                                   {'id': '32', 'text': '32 Mb'},
+                                   {'id': '64', 'text': '64 Mb'},
+                                   {'id': '128', 'text': '128 Mb'},
+    ])
 
     def __init__(self, environment, values=None):
         super(TSNXTransport, self).__init__(environment, values)
@@ -137,13 +145,19 @@ class TSNXTransport(Transport):
             self._useEmptyCreds = gui.strToBool(data[1])
             self._fixedName, self._fixedPassword, self._listenPort, self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer = data[2:]
 
-
     def valuesDict(self):
-        return {  'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'fixedName' : self._fixedName,
-                'fixedPassword' : self._fixedPassword, 'listenPort': self._listenPort,
-                'connection' : self._connection, 'session' : self._session, 'cacheDisk' : self._cacheDisk,
-                'cacheMem' : self._cacheMem, 'tunnelServer' : self._tunnelServer,
-                'tunnelCheckServer' : self._tunnelCheckServer }
+        return {
+            'useEmptyCreds': gui.boolToStr(self._useEmptyCreds),
+            'fixedName': self._fixedName,
+            'fixedPassword': self._fixedPassword,
+            'listenPort': self._listenPort,
+            'connection': self._connection,
+            'session': self._session,
+            'cacheDisk': self._cacheDisk,
+            'cacheMem': self._cacheMem,
+            'tunnelServer': self._tunnelServer,
+            'tunnelCheckServer': self._tunnelCheckServer
+        }
 
     def isAvailableFor(self, ip):
         '''
@@ -154,14 +168,14 @@ class TSNXTransport(Transport):
         ready = self.cache().get(ip)
         if ready is None:
             # Check again for readyness
-            if connection.testServer(ip, self._listenPort) == True:
+            if connection.testServer(ip, self._listenPort) is True:
                 self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
+    def renderForHtml(self, userService, transport, ip, os, user, password):
 
         prefs = user.prefs('nx')
 
@@ -178,9 +192,8 @@ class TSNXTransport(Transport):
         width, height = CommonPrefs.getWidthHeight(prefs)
         cache = Cache('pam')
 
-
-        tunuser = ''.join(random.choice(string.letters + string.digits) for i in range(12)) + ("%f" % time.time()).split('.')[1]
-        tunpass = ''.join(random.choice(string.letters + string.digits) for i in range(12))
+        tunuser = ''.join(random.choice(string.letters + string.digits) for _i in range(12)) + ("%f" % time.time()).split('.')[1]
+        tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
         cache.put(tunuser, tunpass, 60 * 10)  # Credential valid for ten minutes, and for 1 use only
 
         sshHost, sshPort = self._tunnelServer.split(':')
@@ -189,15 +202,20 @@ class TSNXTransport(Transport):
         tun = "{0} {1} {2} {3} {4} {5} {6}".format(tunuser, tunpass, sshHost, sshPort, ip, self._listenPort, '9')
 
         # Extra data
-        extra = { 'width': width, 'height' : height,
-                 'connection' : self._connection,
-                 'session' : self._session, 'cacheDisk': self._cacheDisk,
-                 'cacheMem' : self._cacheMem, 'tun' : tun }
+        extra = {
+            'width': width,
+            'height': height,
+            'connection': self._connection,
+            'session': self._session,
+            'cacheDisk': self._cacheDisk,
+            'cacheMem': self._cacheMem,
+            'tun': tun
+        }
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return generateHtmlForNX(self, idUserService, idTransport, os, username, password, extra)
+        return generateHtmlForNX(self, userService.uuid, transport.uuid, os, username, password, extra)
 
     def getHtmlComponent(self, theId, os, componentId):
         # We use helper to keep this clean

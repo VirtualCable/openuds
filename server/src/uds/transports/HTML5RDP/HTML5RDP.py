@@ -42,6 +42,7 @@ from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util import OsDetector
 
+import uuid
 import logging
 
 logger = logging.getLogger(__name__)
@@ -87,53 +88,51 @@ class HTML5RDPTransport(Transport):
         ready = self.cache().get(ip)
         if ready is None:
             # Check again for readyness
-            if connection.testServer(ip, '3389') == True:
+            if connection.testServer(ip, '3389') is True:
                 self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
+    def renderForHtml(self, userService, transport, ip, os, user, password):
         # We use helper to keep this clean
-        import uuid
-
         username = user.getUsernameForAuth()
 
-        if self.fixedName.value is not '':
-            username = self.fixedName.value
+        if self._fixedName is not '':
+            username = self._fixedName
 
-        domain = ''
-        if username.find('@') != -1:
-            username, domain = username.split('@')
-        elif username.find('\\') != -1:
-            domain, username = username.split('\\')
+        proc = username.split('@')
+        if len(proc) > 1:
+            domain = proc[1]
+        else:
+            domain = ''
+        username = proc[0]
 
-        if self.fixedPassword.value is not '':
-            password = self.fixedPassword.value
-        if self.fixedDomain.value is not '':
-            domain = self.fixedDomain.value
-        if self.useEmptyCreds.isTrue():
+        if self._fixedPassword is not '':
+            password = self._fixedPassword
+        if self._fixedDomain is not '':
+            domain = self._fixedDomain
+        if self._useEmptyCreds is True:
             username, password, domain = '', '', ''
 
-        if self.withoutDomain.isTrue():
+        if self._withoutDomain is True:
             domain = ''
 
+        if '.' in domain:  # Dotter domain form
+            username = username + '@' + domain
+            domain = ''
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        if domain != '':
-            if domain.find('.') == -1:
-                username = domain + '\\' + username
-            else:
-                username = username + '@' + domain
-
-
         # Build params dict
-        params = { 'protocol':'rdp',
-                   'hostname':ip, 'username': username, 'password': password,
-                   'ignore-cert': 'true'
+        params = {
+            'protocol': 'rdp',
+            'hostname': ip,
+            'username': username,
+            'password': password,
+            'ignore-cert': 'true'
         }
 
         if self.enableAudio.isTrue() is False:

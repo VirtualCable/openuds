@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import get_language, ugettext as _
+import six
 import pickle
 import logging
 
@@ -357,7 +358,11 @@ class gui(object):
             '''
             Return value as integer
             '''
-            return int(self.value)
+            try:
+                v = int(self.value)
+            except Exception:
+                v = 0
+            return v
 
     class PasswordField(InputField):
         '''
@@ -695,13 +700,15 @@ class UserInterface(object):
         # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
         # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
         self._gui = copy.deepcopy(self._gui)  # Ensure "gui" is our own instance, deep copied from base
-        for key, val in self._gui.iteritems():  # And refresg references to them
+        for key, val in self._gui.iteritems():  # And refresh references to them
             setattr(self, key, val)
 
         if values is not None:
             for k, v in self._gui.iteritems():
                 if k in values:
                     v.value = values[k]
+                else:
+                    logger.warn('Field {} not found'.format(k))
 
     def initGui(self):
         '''
@@ -782,6 +789,8 @@ class UserInterface(object):
             if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 logger.debug('Serializing value {0}'.format(v.value))
                 val = '\001' + pickle.dumps(v.value)
+            elif v.isType(gui.InputField.NUMERIC_TYPE):
+                val = six.text_type(int(v.num()))
             else:
                 val = v.value
             if val is True:

@@ -37,7 +37,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
 from uds.core.util import connection
-from web import generateHtmlForRdp, getHtmlComponent
+from .web import generateHtmlForRdp, getHtmlComponent
 
 import logging
 
@@ -69,72 +69,8 @@ class RDPTransport(Transport):
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=9, tooltip=_('If checked, this transport will allow the use of user serial ports'))
     wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=10, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
 
-    def __init__(self, environment, values=None):
-        super(RDPTransport, self).__init__(environment, values)
-        self._useEmptyCreds = False
-        self._fixedName = ''
-        self._fixedPassword = ''
-        self._fixedDomain = ''
-        self._allowSmartcards = False
-        self._allowPrinters = False
-        self._allowDrives = False
-        self._allowSerials = False
-        self._wallPaper = False
-        self._withoutDomain = False
-
-        if values != None:
-            try:
-                self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
-                self._fixedName = values['fixedName']
-                self._fixedPassword = values['fixedPassword']
-                self._fixedDomain = values['fixedDomain']
-                self._allowSmartcards = gui.strToBool(values['allowSmartcards'])
-                self._allowPrinters = gui.strToBool(values['allowPrinters'])
-                self._allowDrives = gui.strToBool(values['allowDrives'])
-                self._allowSerials = gui.strToBool(values['allowSerials'])
-                self._wallPaper = gui.strToBool(values['wallpaper'])
-                self._withoutDomain = gui.strToBool(values['withoutDomain'])
-            except:
-                logger.exception('Some value was missing on RTP Transport')
-
-    def marshal(self):
-        '''
-        Serializes the transport data so we can store it in database
-        '''
-        return str.join('\t', [ 'v3', gui.boolToStr(self._useEmptyCreds), gui.boolToStr(self._allowSmartcards), gui.boolToStr(self._allowPrinters),
-                                gui.boolToStr(self._allowDrives), gui.boolToStr(self._allowSerials), gui.boolToStr(self._wallPaper),
-                                self._fixedName, self._fixedPassword, self._fixedDomain, gui.boolToStr(self._withoutDomain) ])
-
-    def unmarshal(self, str_):
-        data = str_.split('\t')
-        if data[0] in ('v1', 'v2', 'v3'):
-            self._useEmptyCreds = gui.strToBool(data[1])
-            self._allowSmartcards = gui.strToBool(data[2])
-            self._allowPrinters = gui.strToBool(data[3])
-            self._allowDrives = gui.strToBool(data[4])
-            self._allowSerials = gui.strToBool(data[5])
-
-            if data[0] == 'v1':
-                self._wallPaper = False
-                i = 0
-
-            if data[0] in ('v2', 'v3'):
-                self._wallPaper = gui.strToBool(data[6])
-                i = 1
-
-            self._fixedName = data[6 + i]
-            self._fixedPassword = data[7 + i]
-            self._fixedDomain = data[8 + i]
-
-            if data[0] == 'v3':
-                self._withoutDomain = gui.strToBool(data[9 + i])
-
-
-    def valuesDict(self):
-        return { 'allowSmartcards' : gui.boolToStr(self._allowSmartcards), 'allowPrinters' : gui.boolToStr(self._allowPrinters),
-                'allowDrives': gui.boolToStr(self._allowDrives), 'allowSerials': gui.boolToStr(self._allowSerials),
-                'fixedName' : self._fixedName, 'fixedPassword' : self._fixedPassword, 'fixedDomain' : self._fixedDomain,
-                'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'wallpaper': self._wallPaper, 'withoutDomain': self._withoutDomain }
+    def initialize(self, values):
+        return
 
     def isAvailableFor(self, ip):
         '''
@@ -144,7 +80,7 @@ class RDPTransport(Transport):
         logger.debug('Checking availability for {0}'.format(ip))
         ready = self.cache().get(ip)
         if ready is None:
-            # Check again for readyness
+            # Check again for ready
             if connection.testServer(ip, '3389') == True:
                 self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
@@ -153,37 +89,10 @@ class RDPTransport(Transport):
         return ready == 'Y'
 
     def getConnectionInfo(self, service, user, password):
-        from uds.core.transports import protocols
-
         username = user.getUsernameForAuth()
 
-        proc = username.split('@')
-        if len(proc) > 1:
-            domain = proc[1]
-        else:
-            domain = ''
-
-        username = proc[0]
-        if self._fixedName is not '':
-            username = self._fixedName
-        if self._fixedPassword is not '':
-            password = self._fixedPassword
-        if self._fixedDomain is not '':
-            domain = self._fixedDomain;
-        if self._useEmptyCreds is True:
-            username, password, domain = '', '', ''
-
-        username, password = service.processUserPassword(username, password)
-
-        return {'protocol': protocols.RDP, 'username': username, 'password': password, 'domain': domain}
-
-    def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
-        # We use helper to keep this clean
-        username = user.getUsernameForAuth()
-        prefs = user.prefs('rdp')
-
-        if self._fixedName is not '':
-            username = self._fixedName
+        if self.fixedName.value is not '':
+            username = self.fixedName.value
 
         proc = username.split('@')
         if len(proc) > 1:
@@ -192,34 +101,51 @@ class RDPTransport(Transport):
             domain = ''
         username = proc[0]
 
-        if self._fixedPassword is not '':
-            password = self._fixedPassword
-        if self._fixedDomain is not '':
-            domain = self._fixedDomain;
-        if self._useEmptyCreds is True:
+        if self.fixedPassword.value is not '':
+            password = self.fixedPassword.value
+        if self.fixedDomain.value is not '':
+            domain = self.fixedDomain.value
+        if self.useEmptyCreds.isTrue():
             username, password, domain = '', '', ''
 
-        if self._withoutDomain is True:
+        if self.withoutDomain.isTrue():
             domain = ''
 
         if '.' in domain:  # Dotter domain form
             username = username + '@' + domain
             domain = ''
 
+        # Fix username/password acording to os manager
+        username, password = service.processUserPassword(username, password)
+
+        return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
+
+    def renderForHtml(self, userService, transport, ip, os, user, password):
+        # We use helper to keep this clean
+        prefs = user.prefs('rdp')
+
+        ci = self.getConnectionInfo(userService, user, password)
+        username, password, domain = ci['username'], ci['password'], ci['domain']
+
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
 
         # Extra data
-        extra = { 'width': width, 'height' : height, 'depth' : depth,
-            'printers' : self._allowPrinters, 'smartcards' : self._allowSmartcards,
-            'drives' : self._allowDrives, 'serials' : self._allowSerials, 'compression':True,
-            'wallpaper': self._wallPaper }
+        extra = {
+            'width': width,
+            'height': height,
+            'depth': depth,
+            'printers': self.allowPrinters.isTrue(),
+            'smartcards': self.allowSmartcards.isTrue(),
+            'drives': self.allowDrives.isTrue(),
+            'serials': self.allowSerials.isTrue(),
+            'compression': True,
+            'wallpaper': self.wallpaper.isTrue()
+        }
 
-        # Fix username/password acording to os manager
-        username, password = userService.processUserPassword(username, password)
-
-        return generateHtmlForRdp(self, idUserService, idTransport, os, ip, '3389', username, password, domain, extra)
+        return generateHtmlForRdp(self, userService.uuid, transport.uuid, os, ip, '3389', username, password, domain, extra)
 
     def getHtmlComponent(self, id, os, componentId):
+        logger.debug('Component: ID={}'.format(id))
         # We use helper to keep this clean
         return getHtmlComponent(self.__module__, componentId)

@@ -64,39 +64,42 @@ class NXTransport(Transport):
     fixedName = gui.TextField(label=_('Username'), order=2, tooltip=_('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order=3, tooltip=_('If not empty, this password will be always used as credential'))
     listenPort = gui.NumericField(label=_('Listen port'), length=5, order=4, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
-    connection = gui.ChoiceField(label=_('Connection'), order=6, tooltip=_('Connection speed for this transport (quality)'), values=[
-            {'id' : 'modem', 'text' : 'modem'},
-            {'id' : 'isdn', 'text' : 'isdn'},
-            {'id' : 'adsl', 'text' : 'adsl'},
-            {'id' : 'wan', 'text' : 'wan'},
-            {'id' : 'lan', 'text' : 'lan'},
-        ])
-    session = gui.ChoiceField(label=_('Session'), order=7, tooltip=_('Desktop session'), values=[
-            {'id' : 'gnome', 'text' : 'gnome'},
-            {'id' : 'kde', 'text' : 'kde'},
-            {'id' : 'cde', 'text' : 'cde'},
-        ])
-    cacheDisk = gui.ChoiceField(label=_('Disk Cache'), order=8, tooltip=_('Cache size en Mb stored at disk'), values=[
-            {'id' : '0', 'text' : '0 Mb'},
-            {'id' : '32', 'text' : '32 Mb'},
-            {'id' : '64', 'text' : '64 Mb'},
-            {'id' : '128', 'text' : '128 Mb'},
-            {'id' : '256', 'text' : '256 Mb'},
-            {'id' : '512', 'text' : '512 Mb'},
-        ])
-    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=9, tooltip=_('Cache size en Mb keept at memory'), values=[
-            {'id' : '4', 'text' : '4 Mb'},
-            {'id' : '8', 'text' : '8 Mb'},
-            {'id' : '16', 'text' : '16 Mb'},
-            {'id' : '32', 'text' : '32 Mb'},
-            {'id' : '64', 'text' : '64 Mb'},
-            {'id' : '128', 'text' : '128 Mb'},
-        ])
-
+    connection = gui.ChoiceField(label=_('Connection'), order=6, tooltip=_('Connection speed for this transport (quality)'),
+                                 values=[
+                                     {'id': 'modem', 'text': 'modem'},
+                                     {'id': 'isdn', 'text': 'isdn'},
+                                     {'id': 'adsl', 'text': 'adsl'},
+                                     {'id': 'wan', 'text': 'wan'},
+                                     {'id': 'lan', 'text': 'lan'}
+    ])
+    session = gui.ChoiceField(label=_('Session'), order=7, tooltip=_('Desktop session'),
+                              values=[
+                                  {'id': 'gnome', 'text': 'gnome'},
+                                  {'id': 'kde', 'text': 'kde'},
+                                  {'id': 'cde', 'text': 'cde'},
+    ])
+    cacheDisk = gui.ChoiceField(label=_('Disk Cache'), order=8, tooltip=_('Cache size en Mb stored at disk'),
+                                values=[
+                                    {'id': '0', 'text': '0 Mb'},
+                                    {'id': '32', 'text': '32 Mb'},
+                                    {'id': '64', 'text': '64 Mb'},
+                                    {'id': '128', 'text': '128 Mb'},
+                                    {'id': '256', 'text': '256 Mb'},
+                                    {'id': '512', 'text': '512 Mb'},
+    ])
+    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=9, tooltip=_('Cache size en Mb keept at memory'),
+                               values=[
+                                       {'id': '4', 'text': '4 Mb'},
+                                       {'id': '8', 'text': '8 Mb'},
+                                       {'id': '16', 'text': '16 Mb'},
+                                       {'id': '32', 'text': '32 Mb'},
+                                       {'id': '64', 'text': '64 Mb'},
+                                       {'id': '128', 'text': '128 Mb'},
+    ])
 
     def __init__(self, environment, values=None):
         super(NXTransport, self).__init__(environment, values)
-        if values != None:
+        if values is not None:
             self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
             self._fixedName = values['fixedName']
             self._fixedPassword = values['fixedPassword']
@@ -128,12 +131,17 @@ class NXTransport(Transport):
             self._useEmptyCreds = gui.strToBool(data[1])
             self._fixedName, self._fixedPassword, self._listenPort, self._connection, self._session, self._cacheDisk, self._cacheMem = data[2:]
 
-
     def valuesDict(self):
-        return {  'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'fixedName' : self._fixedName,
-                'fixedPassword' : self._fixedPassword, 'listenPort': self._listenPort,
-                'connection' : self._connection, 'session' : self._session, 'cacheDisk' : self._cacheDisk,
-                'cacheMem' : self._cacheMem }
+        return {
+            'useEmptyCreds': gui.boolToStr(self._useEmptyCreds),
+            'fixedName': self._fixedName,
+            'fixedPassword': self._fixedPassword,
+            'listenPort': self._listenPort,
+            'connection': self._connection,
+            'session': self._session,
+            'cacheDisk': self._cacheDisk,
+            'cacheMem': self._cacheMem
+        }
 
     def isAvailableFor(self, ip):
         '''
@@ -144,14 +152,14 @@ class NXTransport(Transport):
         ready = self.cache().get(ip)
         if ready is None:
             # Check again for readyness
-            if connection.testServer(ip, self._listenPort) == True:
+            if connection.testServer(ip, self._listenPort) is True:
                 self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
+    def renderForHtml(self, userService, transport, ip, os, user, password):
 
         prefs = user.prefs('nx')
 
@@ -170,15 +178,20 @@ class NXTransport(Transport):
         width, height = CommonPrefs.getWidthHeight(prefs)
 
         # Extra data
-        extra = { 'width': width, 'height' : height,
-                 'port' : self._listenPort, 'connection' : self._connection,
-                 'session' : self._session, 'cacheDisk': self._cacheDisk,
-                 'cacheMem' : self._cacheMem }
+        extra = {
+            'width': width,
+            'height': height,
+            'port': self._listenPort,
+            'connection': self._connection,
+            'session': self._session,
+            'cacheDisk': self._cacheDisk,
+            'cacheMem': self._cacheMem
+        }
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return generateHtmlForNX(self, idUserService, idTransport, ip, os, username, password, extra)
+        return generateHtmlForNX(self, userService.uuid, transport.uuid, ip, os, username, password, extra)
 
     def getHtmlComponent(self, theId, os, componentId):
         # We use helper to keep this clean

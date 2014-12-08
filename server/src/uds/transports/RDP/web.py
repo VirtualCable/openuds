@@ -34,7 +34,9 @@
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from uds.core.util import OsDetector
-import logging, os, sys
+import logging
+import os
+import sys
 
 logger = logging.getLogger(__name__)
 
