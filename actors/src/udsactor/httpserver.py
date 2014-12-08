@@ -162,11 +162,11 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             th.start()
         return 'ok'
 
-    def get_preConnect(self, params):
+    def post_preConnect(self, params):
         logger.debug('Received Pre connection')
-        if 'user' not in params:
+        if 'user' not in params or 'protocol' not in params:
             raise Exception('Invalid preConnect parameters')
-        return HTTPServerHandler.service.preConnect(params.get('user'))
+        return HTTPServerHandler.service.preConnect(params.get('user'), params.get('protocol'))
 
     def get_information(self, params):
         # TODO: Return something useful? :)

@@ -38,6 +38,7 @@ from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
 from uds.core.util import connection
 from .web import generateHtmlForRdp, getHtmlComponent
+from .BaseRDPTransport import BaseRDPTransport
 
 import logging
 
@@ -46,7 +47,7 @@ logger = logging.getLogger(__name__)
 READY_CACHE_TIMEOUT = 30
 
 
-class RDPTransport(Transport):
+class RDPTransport(BaseRDPTransport):
     '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
@@ -54,71 +55,20 @@ class RDPTransport(Transport):
     typeName = _('RDP Transport (direct)')
     typeType = 'RDPTransport'
     typeDescription = _('RDP Transport for direct connection')
-    iconFile = 'rdp.png'
-    needsJava = True  # If this transport needs java for rendering
-    protocol = protocols.RDP
 
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order=2, tooltip=_('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order=3, tooltip=_('If not empty, this password will be always used as credential'))
-    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=4, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
-    fixedDomain = gui.TextField(label=_('Domain'), order=5, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=6, tooltip=_('If checked, this transport will allow the use of smartcards'))
-    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=7, tooltip=_('If checked, this transport will allow the use of user printers'))
-    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=8, tooltip=_('If checked, this transport will allow the use of user drives'))
-    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=9, tooltip=_('If checked, this transport will allow the use of user serial ports'))
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=10, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
-
-    def initialize(self, values):
-        return
-
-    def isAvailableFor(self, ip):
-        '''
-        Checks if the transport is available for the requested destination ip
-        Override this in yours transports
-        '''
-        logger.debug('Checking availability for {0}'.format(ip))
-        ready = self.cache().get(ip)
-        if ready is None:
-            # Check again for ready
-            if connection.testServer(ip, '3389') == True:
-                self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
-                return True
-            else:
-                self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
-        return ready == 'Y'
+    useEmptyCreds = BaseRDPTransport.useEmptyCreds
+    fixedName = BaseRDPTransport.fixedName
+    fixedPassword = BaseRDPTransport.fixedPassword
+    withoutDomain = BaseRDPTransport.withoutDomain
+    fixedDomain = BaseRDPTransport.fixedDomain
+    allowSmartcards = BaseRDPTransport.allowSmartcards
+    allowPrinters = BaseRDPTransport.allowPrinters
+    allowDrives = BaseRDPTransport.allowDrives
+    allowSerials = BaseRDPTransport.allowSerials
+    wallpaper = BaseRDPTransport.wallpaper
 
     def getConnectionInfo(self, service, user, password):
-        username = user.getUsernameForAuth()
-
-        if self.fixedName.value is not '':
-            username = self.fixedName.value
-
-        proc = username.split('@')
-        if len(proc) > 1:
-            domain = proc[1]
-        else:
-            domain = ''
-        username = proc[0]
-
-        if self.fixedPassword.value is not '':
-            password = self.fixedPassword.value
-        if self.fixedDomain.value is not '':
-            domain = self.fixedDomain.value
-        if self.useEmptyCreds.isTrue():
-            username, password, domain = '', '', ''
-
-        if self.withoutDomain.isTrue():
-            domain = ''
-
-        if '.' in domain:  # Dotter domain form
-            username = username + '@' + domain
-            domain = ''
-
-        # Fix username/password acording to os manager
-        username, password = service.processUserPassword(username, password)
-
-        return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
+        return self.processUserPassword(service, user, password)
 
     def renderForHtml(self, userService, transport, ip, os, user, password):
         # We use helper to keep this clean
@@ -144,8 +94,3 @@ class RDPTransport(Transport):
         }
 
         return generateHtmlForRdp(self, userService.uuid, transport.uuid, os, ip, '3389', username, password, domain, extra)
-
-    def getHtmlComponent(self, id, os, componentId):
-        logger.debug('Component: ID={}'.format(id))
-        # We use helper to keep this clean
-        return getHtmlComponent(self.__module__, componentId)

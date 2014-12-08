@@ -38,7 +38,8 @@ from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util.Cache import Cache
-from web import generateHtmlForRdp, getHtmlComponent
+from .web import generateHtmlForRdp, getHtmlComponent
+from .BaseRDPTransport import BaseRDPTransport
 
 import logging
 import random
@@ -50,7 +51,7 @@ logger = logging.getLogger(__name__)
 READY_CACHE_TIMEOUT = 30
 
 
-class TSRDPTransport(Transport):
+class TSRDPTransport(BaseRDPTransport):
     '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
@@ -65,65 +66,28 @@ class TSRDPTransport(Transport):
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server send to client device ("public" ip) and port. (use HOST:PORT format)'))
     tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
 
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=3, tooltip=_('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'))
-    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=6, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
-    fixedDomain = gui.TextField(label=_('Domain'), order=7, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=8, tooltip=_('If checked, this transport will allow the use of smartcards'))
-    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=9, tooltip=_('If checked, this transport will allow the use of user printers'))
-    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=10, tooltip=_('If checked, this transport will allow the use of user drives'))
-    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=11, tooltip=_('If checked, this transport will allow the use of user serial ports'))
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=12, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
+    useEmptyCreds = BaseRDPTransport.useEmptyCreds
+    fixedName = BaseRDPTransport.fixedName
+    fixedPassword = BaseRDPTransport.fixedPassword
+    withoutDomain = BaseRDPTransport.withoutDomain
+    fixedDomain = BaseRDPTransport.fixedDomain
+    allowSmartcards = BaseRDPTransport.allowSmartcards
+    allowPrinters = BaseRDPTransport.allowPrinters
+    allowDrives = BaseRDPTransport.allowDrives
+    allowSerials = BaseRDPTransport.allowSerials
+    wallpaper = BaseRDPTransport.wallpaper
 
     def initialize(self, values):
         if values is not None:
             if values['tunnelServer'].count(':') != 1:
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
-    def isAvailableFor(self, ip):
-        '''
-        Checks if the transport is available for the requested destination ip
-        Override this in yours transports
-        '''
-        logger.debug('Checking availability for {0}'.format(ip))
-        ready = self.cache().get(ip)
-        if ready is None:
-            # Check again for readyness
-            if connection.testServer(ip, '3389') == True:
-                self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
-                return True
-            else:
-                self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
-        return ready == 'Y'
-
     def renderForHtml(self, userService, transport, ip, os, user, password):
         # We use helper to keep this clean
-        username = user.getUsernameForAuth()
         prefs = user.prefs('rdp')
 
-        if self.fixedName.value is not '':
-            username = self.fixedName.value
-
-        proc = username.split('@')
-        if len(proc) > 1:
-            domain = proc[1]
-        else:
-            domain = ''
-        username = proc[0]
-        if self.fixedPassword.value is not '':
-            password = self.fixedPassword.value
-        if self.fixedDomain.value is not '':
-            domain = self.fixedDomain.value
-        if self.useEmptyCreds.isTrue():
-            username, password, domain = '', '', ''
-
-        if '.' in domain:  # Dotter domain form
-            username = username + '@' + domain
-            domain = ''
-
-        if self.withoutDomain.isTrue():
-            domain = ''
+        ci = self.getConnectionInfo(userService, user, password)
+        username, password, domain = ci['username'], ci['password'], ci['domain']
 
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
@@ -153,11 +117,4 @@ class TSRDPTransport(Transport):
             'wallpaper': self.wallpaper.isTrue()
         }
 
-        # Fix username/password acording to os manager
-        username, password = userService.processUserPassword(username, password)
-
         return generateHtmlForRdp(self, userService.uuid, transport.uuid, os, ip, '-1', username, password, domain, extra)
-
-    def getHtmlComponent(self, id, os, componentId):
-        # We use helper to keep this clean
-        return getHtmlComponent(self.__module__, componentId)

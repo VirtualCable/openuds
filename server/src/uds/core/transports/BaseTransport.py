@@ -144,13 +144,13 @@ class Transport(Module):
         '''
         return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
 
-    def preAccessScript(self, userService, user):
+    def processedUser(self, userService, userName):
         '''
-        This gives us the chance to include "customized" initialization for any transport for an specifyc user & service on assignation to an user
-        such as "include" in allowed user list, etc...
-        Both values are db objects
+        Used to "transform" username that will be sent to service
+        This is used to make the "user" that will receive the service match with that sent in notification
+        @return: transformed username
         '''
-        return None
+        return userName
 
     def renderForHtml(self, userService, transport, ip, os, user, password):
         '''

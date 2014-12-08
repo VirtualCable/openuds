@@ -163,7 +163,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         else:
             self.multiStepJoin(name, domain, ou, account, password)
 
-    def preConnect(self, user):
+    def preConnect(self, user, protocol):
+        if protocol != 'rdp':  # If connection is not using rdp, skip adding user
+            return 'ok'
         # Well known SSID for Remote Desktop Users
         REMOTE_USERS_SID = 'S-1-5-32-555'
 

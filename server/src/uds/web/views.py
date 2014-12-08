@@ -277,8 +277,9 @@ def service(request, idService, idTransport):
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
-                    transport = itrans.renderForHtml(ads, trans, ip, request.session['OS'], request.user, webPassword(request))
-                    return render_to_response(theme.template('show_transport.html'), {'transport': transport, 'nolang': True}, context_instance=RequestContext(request))
+                    transportHtml = itrans.renderForHtml(ads, trans, ip, request.session['OS'], request.user, webPassword(request))
+                    UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, request.user), itrans.protocol)
+                    return render_to_response(theme.template('show_transport.html'), {'transport': transportHtml, 'nolang': True}, context_instance=RequestContext(request))
                 else:
                     log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
                     logger.debug('Transport is not ready for user service {0}'.format(ads))

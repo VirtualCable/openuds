@@ -296,7 +296,7 @@ class CommonService(object):
         '''
         logger.info('Service is being stopped')
 
-    def preConnect(self, user):
+    def preConnect(self, user, protocol):
         '''
         Invoked when received a PRE Connection request via REST
         '''

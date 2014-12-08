@@ -428,6 +428,7 @@ class UserServiceManager(object):
         return True
 
     def isReady(self, uService):
+        return True
         UserService.objects.update()
         uService = UserService.objects.get(id=uService.id)
         logger.debug('Checking ready of {0}'.format(uService))
@@ -445,6 +446,25 @@ class UserServiceManager(object):
         uService.setState(State.PREPARING)
         UserServiceOpChecker.makeUnique(uService, ui, state)
         return False
+
+    def notifyPreconnect(self, uService, userName, protocol):
+        url = uService.getCommsUrl()
+        if url is None:
+            logger.debug('No notification is made because agent does not supports notifications')
+            return
+        url += '/preConnect'
+
+        try:
+            r = requests.post(url,
+                              data=json.dumps({'user': userName, 'protocol': protocol}),
+                              headers={'content-type': 'application/json'},
+                              verify=False,
+                              timeout=5)
+            r = json.loads(r.content)
+            logger.debug('Sent pre connection to client using {}: {}'.format(url, r))
+            # In fact we ignore result right now
+        except Exception as e:
+            logger.error('Exception caught notifiying preConnection: {}. Check connection on destination machine: {}'.format(e, url))
 
     def sendScript(self, uService, script):
         '''
