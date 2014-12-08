@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports import protocols
 from uds.core.util import connection
 from web import generateHtmlForRdp, getHtmlComponent
 
@@ -43,6 +44,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
+
 
 class RDPTransport(Transport):
     '''
@@ -54,6 +56,7 @@ class RDPTransport(Transport):
     typeDescription = _('RDP Transport for direct connection')
     iconFile = 'rdp.png'
     needsJava = True  # If this transport needs java for rendering
+    protocol = protocols.RDP
 
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))
     fixedName = gui.TextField(label=_('Username'), order=2, tooltip=_('If not empty, this username will be always used as credential'))

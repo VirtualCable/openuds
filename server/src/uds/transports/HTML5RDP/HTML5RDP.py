@@ -38,6 +38,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core.util.Cache import Cache
 from uds.core.util import net
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util import OsDetector
 
@@ -46,6 +47,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
+
 
 class HTML5RDPTransport(Transport):
     '''
@@ -58,6 +60,7 @@ class HTML5RDPTransport(Transport):
     iconFile = 'rdp.png'
     needsJava = False  # If this transport needs java for rendering
     supportedOss = OsDetector.allOss
+    protocol = protocols.RDP
 
     guacamoleServer = gui.TextField(label=_('Tunnel Server'), order=1, tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue='https://', length=64, required=True)
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=2, tooltip=_('If checked, the credentials used to connect will be emtpy'))

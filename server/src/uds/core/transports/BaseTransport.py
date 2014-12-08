@@ -62,9 +62,12 @@ class Transport(Module):
     # Linux
     supportedOss = OsDetector.desktopOss  # Supported operating systems
 
-    # If this transport is visible via Web, via Thick Client or both
+    # If this transport is visible via Web, via Thin Client or both
     webTransport = False
     tcTransport = False
+
+    # Protocol "type". This is not mandatory, but will help
+    protocol = protocols.NONE
 
     def __init__(self, environment, values):
         super(Transport, self).__init__(environment, values)
@@ -139,7 +142,7 @@ class Transport(Module):
                DeployedService or UserService. In case of processUserPassword for an DeployedService, no transformation
                is done, because there is no relation at that level between user and service.
         '''
-        return {'protocol': protocols.NONE, 'username': '', 'password': '', 'domain': ''}
+        return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
 
     def preAccessScript(self, userService, user):
         '''
@@ -148,7 +151,6 @@ class Transport(Module):
         Both values are db objects
         '''
         return None
-
 
     def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
         '''

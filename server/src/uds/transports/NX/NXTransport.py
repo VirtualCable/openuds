@@ -4,27 +4,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
@@ -37,6 +37,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports import protocols
 from uds.core.util import connection
 from web import generateHtmlForNX, getHtmlComponent
 
@@ -46,6 +47,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
+
 class NXTransport(Transport):
     '''
     Provides access via RDP to service.
@@ -54,44 +56,45 @@ class NXTransport(Transport):
     typeName = _('NX Transport (direct)')
     typeType = 'NXTransport'
     typeDescription = _('NX Transport for direct connection')
-    iconFile = 'nx.png' 
+    iconFile = 'nx.png'
     needsJava = True  # If this transport needs java for rendering
+    protocol = protocols.NX
 
-    useEmptyCreds = gui.CheckBoxField(label = _('Empty creds'), order = 1, tooltip = _('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order = 2, tooltip = _('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order = 3, tooltip = _('If not empty, this password will be always used as credential'))
-    listenPort = gui.NumericField(label=_('Listen port'), length = 5, order = 4, tooltip = _('Listening port of NX (ssh) at client machine'), defvalue = '22')
-    connection = gui.ChoiceField(label=_('Connection'), order = 6, tooltip = _('Connection speed for this transport (quality)'), values = [
+    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))
+    fixedName = gui.TextField(label=_('Username'), order=2, tooltip=_('If not empty, this username will be always used as credential'))
+    fixedPassword = gui.PasswordField(label=_('Password'), order=3, tooltip=_('If not empty, this password will be always used as credential'))
+    listenPort = gui.NumericField(label=_('Listen port'), length=5, order=4, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
+    connection = gui.ChoiceField(label=_('Connection'), order=6, tooltip=_('Connection speed for this transport (quality)'), values=[
             {'id' : 'modem', 'text' : 'modem'},
             {'id' : 'isdn', 'text' : 'isdn'},
             {'id' : 'adsl', 'text' : 'adsl'},
             {'id' : 'wan', 'text' : 'wan'},
             {'id' : 'lan', 'text' : 'lan'},
-        ] )
-    session = gui.ChoiceField(label=_('Session'), order = 7, tooltip = _('Desktop session'), values = [
+        ])
+    session = gui.ChoiceField(label=_('Session'), order=7, tooltip=_('Desktop session'), values=[
             {'id' : 'gnome', 'text' : 'gnome'},
             {'id' : 'kde', 'text' : 'kde'},
             {'id' : 'cde', 'text' : 'cde'},
-        ] )
-    cacheDisk = gui.ChoiceField(label=_('Disk Cache'), order = 8, tooltip = _('Cache size en Mb stored at disk'), values = [
+        ])
+    cacheDisk = gui.ChoiceField(label=_('Disk Cache'), order=8, tooltip=_('Cache size en Mb stored at disk'), values=[
             {'id' : '0', 'text' : '0 Mb'},
             {'id' : '32', 'text' : '32 Mb'},
             {'id' : '64', 'text' : '64 Mb'},
             {'id' : '128', 'text' : '128 Mb'},
             {'id' : '256', 'text' : '256 Mb'},
             {'id' : '512', 'text' : '512 Mb'},
-        ] ) 
-    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order = 9, tooltip = _('Cache size en Mb keept at memory'), values = [
+        ])
+    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=9, tooltip=_('Cache size en Mb keept at memory'), values=[
             {'id' : '4', 'text' : '4 Mb'},
             {'id' : '8', 'text' : '8 Mb'},
             {'id' : '16', 'text' : '16 Mb'},
             {'id' : '32', 'text' : '32 Mb'},
             {'id' : '64', 'text' : '64 Mb'},
             {'id' : '128', 'text' : '128 Mb'},
-        ] ) 
-    
-    
-    def __init__(self, environment, values = None):
+        ])
+
+
+    def __init__(self, environment, values=None):
         super(NXTransport, self).__init__(environment, values)
         if values != None:
             self._useEmptyCreds = gui.strToBool(values['useEmptyCreds'])
@@ -111,23 +114,23 @@ class NXTransport(Transport):
             self._session = ''
             self._cacheDisk = ''
             self._cacheMem = ''
-    
+
     def marshal(self):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join( '\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
-                                self._connection, self._session, self._cacheDisk, self._cacheMem ] ) 
-    
+        return str.join('\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
+                                self._connection, self._session, self._cacheDisk, self._cacheMem ])
+
     def unmarshal(self, string):
         data = string.split('\t')
         if data[0] == 'v1':
             self._useEmptyCreds = gui.strToBool(data[1])
             self._fixedName, self._fixedPassword, self._listenPort, self._connection, self._session, self._cacheDisk, self._cacheMem = data[2:]
-            
-        
+
+
     def valuesDict(self):
-        return {  'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'fixedName' : self._fixedName, 
+        return {  'useEmptyCreds' : gui.boolToStr(self._useEmptyCreds), 'fixedName' : self._fixedName,
                 'fixedPassword' : self._fixedPassword, 'listenPort': self._listenPort,
                 'connection' : self._connection, 'session' : self._session, 'cacheDisk' : self._cacheDisk,
                 'cacheMem' : self._cacheMem }
@@ -147,11 +150,11 @@ class NXTransport(Transport):
             else:
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
-    
+
     def renderForHtml(self, userService, idUserService, idTransport, ip, os, user, password):
-        
+
         prefs = user.prefs('nx')
-        
+
         username = user.getUsernameForAuth()
         proc = username.split('@')
         username = proc[0]
@@ -160,24 +163,23 @@ class NXTransport(Transport):
         if self._fixedPassword is not '':
             password = self._fixedPassword
         if self._useEmptyCreds is True:
-            username, password  = '',''
-            
+            username, password = '', ''
+
         # We have the credentials right now, let os manager
-            
+
         width, height = CommonPrefs.getWidthHeight(prefs)
-            
+
         # Extra data
         extra = { 'width': width, 'height' : height,
                  'port' : self._listenPort, 'connection' : self._connection,
                  'session' : self._session, 'cacheDisk': self._cacheDisk,
                  'cacheMem' : self._cacheMem }
-            
+
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
-            
+
         return generateHtmlForNX(self, idUserService, idTransport, ip, os, username, password, extra)
-        
+
     def getHtmlComponent(self, theId, os, componentId):
         # We use helper to keep this clean
         return getHtmlComponent(self.__module__, componentId)
-    

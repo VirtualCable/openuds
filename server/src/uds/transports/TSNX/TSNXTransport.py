@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
+
 class TSNXTransport(Transport):
     '''
     Provides access via RDP to service.

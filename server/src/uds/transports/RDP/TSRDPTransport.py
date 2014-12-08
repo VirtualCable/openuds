@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util.Cache import Cache
 from web import generateHtmlForRdp, getHtmlComponent
@@ -59,6 +60,7 @@ class TSRDPTransport(Transport):
     typeDescription = _('RDP Transport for tunneled connection')
     iconFile = 'rdp.png'
     needsJava = True  # If this transport needs java for rendering
+    protocol = protocols.RDP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server send to client device ("public" ip) and port. (use HOST:PORT format)'))
     tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))

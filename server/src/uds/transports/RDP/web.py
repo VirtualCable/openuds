@@ -51,35 +51,35 @@ def scramble(data):
     return "".join(res).encode('hex')
 
 
-
 def generateHtmlForRdp(transport, idUserService, idTransport, os, ip, port, user, password, domain, extra):
     isMac = os['OS'] == OsDetector.Macintosh
-    applet = reverse('uds.web.views.transcomp', kwargs={ 'idTransport' : idTransport, 'componentId' : '1' })
+    applet = reverse('uds.web.views.transcomp', kwargs={'idTransport': idTransport, 'componentId': '1'})
     logger.debug('Applet: {0}'.format(applet))
     # Gets the codebase, simply remove last char from applet
     codebase = applet[:-1]
     # We generate the "data" parameter
-    data = [ 'u:' + user,
-          'p:' + password,
-          'd:' + domain,
-          's:' + ip,
-          'po:' + port,
-          'sc:' + (extra['smartcards'] and '1' or '0'),
-          'pr:' + (extra['printers'] and '1' or '0'),
-          'se:' + (extra['serials'] and '1' or '0'),
-          'dr:' + (extra['drives'] and '1' or '0'),
-          'au:' + '1',  # Audio, 0 do not play, 1 play
-          'w:' + str(extra['width']),
-          'h:' + str(extra['height']),
-          'c:' + str(extra['depth']),
-          'cr:' + (extra['compression'] and '1' or '0'),
-          'is:' + idUserService,
-          'sw:' + (extra['wallpaper'] and '1' or '0'),
-         ]
+    data = [
+        'u:' + user,
+        'p:' + password,
+        'd:' + domain,
+        's:' + ip,
+        'po:' + port,
+        'sc:' + (extra['smartcards'] and '1' or '0'),
+        'pr:' + (extra['printers'] and '1' or '0'),
+        'se:' + (extra['serials'] and '1' or '0'),
+        'dr:' + (extra['drives'] and '1' or '0'),
+        'au:' + '1',  # Audio, 0 do not play, 1 play
+        'w:' + str(extra['width']),
+        'h:' + str(extra['height']),
+        'c:' + str(extra['depth']),
+        'cr:' + (extra['compression'] and '1' or '0'),
+        'is:' + idUserService,
+        'sw:' + (extra['wallpaper'] and '1' or '0'),
+    ]
 
     logger.debug('Data: {0}'.format(data))
 
-    if extra.has_key('tun'):
+    if 'tun' in extra:
         data.append('tun:' + extra['tun'])
 
     data = scramble('\t'.join(data))
@@ -91,16 +91,20 @@ def generateHtmlForRdp(transport, idUserService, idTransport, os, ip, port, user
                 )
     return res
 
-def getHtmlComponent(module, componentId):
-    filesDict = { '1' : ['rdp.jar', 'application/java-archive' ], '2' : ['rdppass.dll', 'application/x-msdos-program' ],
-            '3' : ['launcher.jar', 'application/java-archive'] }
 
-    if filesDict.has_key(componentId) == False:
+def getHtmlComponent(module, componentId):
+    filesDict = {
+        '1': ['rdp.jar', 'application/java-archive'],
+        '2': ['rdppass.dll', 'application/x-msdos-program'],
+        '3': ['launcher.jar', 'application/java-archive']
+    }
+
+    if componentId not in filesDict:
         return ['text/plain', 'no component']
     fname = os.path.dirname(sys.modules[module].__file__) + '/applet/' + filesDict[componentId][0]
     logger.debug('Loading component {0} from {1}'.format(componentId, fname))
 
-    f = open(fname, 'rb')
-    data = f.read()
-    f.close()
-    return [ filesDict[componentId][1], data ]
+    with open(fname, 'rb') as f:
+        data = f.read()
+
+    return [filesDict[componentId][1], data]
