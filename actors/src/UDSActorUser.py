@@ -36,6 +36,7 @@ import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 import pickle
+import time
 from udsactor import ipc
 from udsactor import utils
 from udsactor.log import logger
@@ -98,6 +99,10 @@ class MessagesProcessor(QtCore.QThread):
         if self.ipc is None:
             return
         self.running = True
+
+        # Wait a bit so we ensure IPC thread is running...
+        time.sleep(2)
+
         while self.running and self.ipc.running:
             try:
                 msg = self.ipc.getMessage()
@@ -138,7 +143,6 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         exitAction.triggered.connect(self.about)
         self.setContextMenu(self.menu)
         self.ipc = MessagesProcessor()
-        self.ipc.start()
         self.maxIdleTime = None
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.checkIdle)
@@ -163,6 +167,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         self.timer.start(5000)  # Launch idle checking every 5 seconds
 
+        self.ipc.start()
         # If this is running, it's because he have logged in
         self.ipc.sendLogin(operations.getCurrentUser())
 
@@ -205,10 +210,11 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         if self.stopped is True:
             return
         self.stopped = True
-        # If we close Client, send Loggof to Broker
+        # If we close Client, send Logoff to Broker
         self.ipc.sendLogout(operations.getCurrentUser())
         self.timer.stop()
         self.ipc.stop()
+        operations.loggoff()
         self.app.quit()
 
 if __name__ == '__main__':
