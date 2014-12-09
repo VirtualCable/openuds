@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'about-dialog.ui'
 #
-# Created: Fri Nov 21 10:28:41 2014
+# Created: Tue Dec 09 10:54:30 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,6 +31,7 @@ class Ui_UDSAboutDialog(object):
         font.setFamily(_fromUtf8("Verdana"))
         font.setPointSize(9)
         UDSAboutDialog.setFont(font)
+        UDSAboutDialog.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
         UDSAboutDialog.setModal(True)
         self.vboxlayout = QtGui.QVBoxLayout(UDSAboutDialog)
         self.vboxlayout.setSpacing(9)

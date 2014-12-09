@@ -37,12 +37,22 @@ from PyQt4 import QtGui
 from PyQt4 import QtCore
 import pickle
 import time
+import signal
 from udsactor import ipc
 from udsactor import utils
 from udsactor.log import logger
 from udsactor.service import IPC_PORT
 from udsactor import operations
 from about_dialog_ui import Ui_UDSAboutDialog
+from message_dialog_ui import Ui_UDSMessageDialog
+from udsactor.scriptThread import ScriptExecutorThread
+
+trayIcon = None
+
+
+def sigTerm(sigNo, stackFrame):
+    if trayIcon:
+        trayIcon.quit()
 
 
 # About dialog
@@ -51,6 +61,20 @@ class UDSAboutDialog(QtGui.QDialog):
         QtGui.QDialog.__init__(self, parent)
         self.ui = Ui_UDSAboutDialog()
         self.ui.setupUi(self)
+
+    def closeDialog(self):
+        self.hide()
+
+
+class UDSMessageDialog(QtGui.QDialog):
+    def __init__(self, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = Ui_UDSMessageDialog()
+        self.ui.setupUi(self)
+
+    def displayMessage(self, message):
+        self.ui.message.setText(message)
+        self.show()
 
     def closeDialog(self):
         self.hide()
@@ -66,11 +90,16 @@ class MessagesProcessor(QtCore.QThread):
 
     def __init__(self):
         super(self.__class__, self).__init__()
-        try:
-            self.ipc = ipc.ClientIPC(IPC_PORT)
-            self.ipc.start()
-        except Exception:
-            self.ipc = None
+        # Retries connection for a while
+        for _ in range(10):
+            try:
+                self.ipc = ipc.ClientIPC(IPC_PORT)
+                self.ipc.start()
+                break
+            except Exception:
+                logger.debug('IPC Server is not reachable')
+                self.ipc = None
+                time.sleep(2)
 
         self.running = False
 
@@ -83,7 +112,7 @@ class MessagesProcessor(QtCore.QThread):
         return self.ipc is not None
 
     def requestInformation(self):
-        if self.ipc:
+        if self.ipc is not None:
             info = self.ipc.requestInformation()
             logger.debug('Request information: {}'.format(info))
 
@@ -146,6 +175,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.maxIdleTime = None
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.checkIdle)
+        self.showIdleWarn = True
 
         if self.ipc.isAlive() is False:
             raise Exception('no connection to service, exiting')
@@ -162,6 +192,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.ipc.requestInformation()
 
         self.aboutDlg = UDSAboutDialog()
+        self.msgDlg = UDSMessageDialog()
 
         self.counter = 0
 
@@ -172,19 +203,35 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.ipc.sendLogin(operations.getCurrentUser())
 
     def checkIdle(self):
+        if self.maxIdleTime is None:  # No idle checl
+            return
+
         idleTime = operations.getIdleDuration()
+        remainingTime = self.maxIdleTime - idleTime
+
+        if remainingTime > 300:  # Reset show Warning dialog if we have more than 5 minutes left
+            self.showIdleWarn = True
+
         logger.debug('User has been idle for: {}'.format(idleTime))
-        if self.maxIdleTime is not None and idleTime > self.maxIdleTime:
+
+        if remainingTime <= 0:
             logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
             self.quit()
 
-    def displayMessage(self, message):
-        self.counter += 1
-        print(message.toUtf8(), '--', self.counter)
+        if self.showIdleWarn is True and remainingTime < 120:  # With two minutes, show a warning message
+            self.showIdleWarn = False
+            self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
+            logger.debug('Here')
 
-    def executeScript(self, message):
-        self.counter += 1
-        print(message.toUtf8(), '--', self.counter)
+    def displayMessage(self, message):
+        logger.debug('Displaying message')
+        self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
+        QtGui.QMessageBox.information(None, "UDS Actor", message)
+
+    def executeScript(self, script):
+        logger.debug('Executing script')
+        th = ScriptExecutorThread(script)
+        th.start()
 
     def logoff(self):
         self.counter += 1
@@ -207,14 +254,19 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.aboutDlg.exec_()
 
     def quit(self):
+        logger.debug('Quit invoked')
         if self.stopped is True:
             return
         self.stopped = True
-        # If we close Client, send Logoff to Broker
-        self.ipc.sendLogout(operations.getCurrentUser())
-        self.timer.stop()
-        self.ipc.stop()
-        operations.loggoff()
+        try:
+            # If we close Client, send Logoff to Broker
+            self.ipc.sendLogout(operations.getCurrentUser())
+            self.timer.stop()
+            self.ipc.stop()
+            operations.loggoff()
+        except Exception:
+            # May we have lost connection with server, simply exit in that case
+            pass
         self.app.quit()
 
 if __name__ == '__main__':
@@ -224,6 +276,9 @@ if __name__ == '__main__':
         # QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
         sys.exit(1)
 
+    # This is important so our app won't close on message windows
+    QtGui.QApplication.setQuitOnLastWindowClosed(False)
+
     try:
         trayIcon = UDSSystemTray(app)
     except Exception:
@@ -231,6 +286,9 @@ if __name__ == '__main__':
         sys.exit(1)
 
     trayIcon.show()
+
+    # Catch kill and logout user :)
+    signal.signal(signal.SIGTERM, sigTerm)
 
     res = app.exec_()
 

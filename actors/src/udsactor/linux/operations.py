@@ -149,15 +149,16 @@ def reboot(flags=0):
 
 def loggoff():
     '''
-    Right now shutdowns the machine...
+    Right now restarts the machine...
     '''
     # Workaround for dummy thread
     if six.PY3 is False:
         import threading
         threading._DummyThread._Thread__stop = lambda x: 42
 
-    subprocess.call(['/sbin/shutdown', 'now', '-h'])
-    subprocess.call(['/usr/bin/systemctl', 'poweroff', '-i'])
+    subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])
+    # subprocess.call(['/sbin/shutdown', 'now', '-r'])
+    # subprocess.call(['/usr/bin/systemctl', 'reboot', '-i'])
 
 
 def renameComputer(newName):
