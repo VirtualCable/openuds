@@ -87,30 +87,38 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
                 logger.fatal('Error notifying logon to server: {}'.format(e))
 
     def Logoff(self, *args):
-        logger.debug('Logoff event: {}'.format(args))
-        if self.service.api is not None and self.service.api.isConnected:
+        logger.debug('Logoff event: arguments: {}'.format(args))
+        if self.service is not None and self.service.api is not None and self.service.api.isConnected:
             try:
                 self.service.api.logout(args[0])
             except Exception as e:
-                logger.fatal('Error notifying logon to server: {}'.format(e))
+                logger.fatal('Error notifying logoff to server: {}'.format(e))
+
+        logger.debug('Invoking onLogout: {}'.format(self.service))
         self.service.onLogout(args[0])
+        logger.debug('Invoked!!')
 
     def StartShell(self, *args):
-        logevent('StartShell : %s' % [args])
+        # logevent('StartShell : %s' % [args])
+        pass
 
     def DisplayLock(self, *args):
-        logevent('DisplayLock : %s' % [args])
+        # logevent('DisplayLock : %s' % [args])
+        pass
 
     def DisplayUnlock(self, *args):
-        logevent('DisplayUnlock : %s' % [args])
+        # logevent('DisplayUnlock : %s' % [args])
+        pass
 
     def StartScreenSaver(self, *args):
         # When finished basic actor, we will use this to provide a new parameter: logout on screensaver
         # This will allow to easily close sessions of idle users
-        logevent('StartScreenSaver : %s' % [args])
+        # logevent('StartScreenSaver : %s' % [args])
+        pass
 
     def StopScreenSaver(self, *args):
-        logevent('StopScreenSaver : %s' % [args])
+        # logevent('StopScreenSaver : %s' % [args])
+        pass
 
 
 def logevent(msg):

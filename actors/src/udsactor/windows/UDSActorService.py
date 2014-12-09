@@ -254,7 +254,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # ********************************
         logevent('Registering ISensLogon')
         subscription_guid = '{41099152-498E-11E4-8FD3-10FEED05884B}'
-        sl = SensLogon(self.api)
+        sl = SensLogon(self)
         subscription_interface = pythoncom.WrapObject(sl)
 
         event_system = win32com.client.Dispatch(PROGID_EventSystem)
