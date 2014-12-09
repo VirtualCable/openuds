@@ -428,6 +428,7 @@ class UserServiceManager(object):
         return True
 
     def isReady(self, uService):
+        return True
         UserService.objects.update()
         uService = UserService.objects.get(id=uService.id)
         logger.debug('Checking ready of {0}'.format(uService))

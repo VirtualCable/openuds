@@ -129,7 +129,6 @@ class LinuxOsManager(osmanagers.OSManager):
         logger.info("Invoked LinuxOsManager for {0} with params: {1},{2}".format(service, msg, data))
         # We get from storage the name for this service. If no name, we try to assign a new one
         ret = "ok"
-        inUse = False
         notifyReady = False
         doRemove = False
         state = service.os_state
@@ -144,11 +143,12 @@ class LinuxOsManager(osmanagers.OSManager):
         elif msg == "log":
             self.doLog(service, data, log.ACTOR)
         elif msg == "login":
+            service.setInUse(True)
             si = service.getInstance()
             si.userLoggedIn(data)
             service.updateData(si)
-            inUse = True
         elif msg == "logout":
+            service.setInUse(False)
             si = service.getInstance()
             si.userLoggedOut(data)
             service.updateData(si)
@@ -167,7 +167,6 @@ class LinuxOsManager(osmanagers.OSManager):
             self.notifyIp(service.unique_id, si, data)
             service.updateData(si)
 
-        service.setInUse(inUse)
         service.setOsState(state)
 
         # If notifyReady is not true, save state, let UserServiceManager do it for us else

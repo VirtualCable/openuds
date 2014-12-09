@@ -23,40 +23,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Base script for allowing RDP access
-baseScript = '''from __future__ import unicode_literals
-
-import win32security
-import win32net
-from udsactor.httpserver import scriptsOnLogout
-
-# Well known SSID for Remote Desktop Users
-REMOTE_USERS_SID = 'S-1-5-32-555'
-
-user = '{user}'
-
-p = win32security.GetBinarySid(REMOTE_USERS_SID)
-groupName = win32security.LookupAccountSid(None, p)[0]
-
-useraAlreadyInGroup = False
-resumeHandle = 0
-while True:
-    users, total, resumeHandle = win32net.NetLocalGroupGetMembers(None, groupName, 1, resumeHandle, 32768)
-    if user in [u['name'] for u in users]:
-        useraAlreadyInGroup = True
-        break
-    if resumeHandle == 0:
-        break
-
-if useraAlreadyInGroup is False:
-    try:
-        userSSID = win32security.LookupAccountName(None, user)[0]
-        win32net.NetLocalGroupAddMembers(None, groupName, 0, [{'sid': userSSID}])
-    except Exception as e:
-        logger.exception('Exception adding user to Remote Desktop Users: {}'.format(e))
-'''
-
-
 def scrambleMsg(data):
     '''
     Simple scrambler so password are not seen at source page
@@ -166,7 +132,6 @@ class WindowsOsManager(osmanagers.OSManager):
         logger.info("Invoked WindowsOsManager for {0} with params: {1},{2}".format(service, msg, data))
         # We get from storage the name for this service. If no name, we try to assign a new one
         ret = "ok"
-        inUse = False
         notifyReady = False
         doRemove = False
         state = service.os_state
@@ -179,6 +144,7 @@ class WindowsOsManager(osmanagers.OSManager):
         elif msg == "log":
             self.doLog(service, data, log.ACTOR)
         elif msg == "logon" or msg == 'login':
+            service.setInUse(True)
             si = service.getInstance()
             si.userLoggedIn(data)
             service.updateData(si)
@@ -186,8 +152,8 @@ class WindowsOsManager(osmanagers.OSManager):
             # We get the service logged hostname & ip and returns this
             ip, hostname = service.getConnectionSource()
             ret = "{0}\t{1}".format(ip, hostname)
-            inUse = True
         elif msg == "logoff" or msg == 'logout':
+            service.setInUse(False)
             si = service.getInstance()
             si.userLoggedOut(data)
             service.updateData(si)
@@ -207,7 +173,6 @@ class WindowsOsManager(osmanagers.OSManager):
             self.notifyIp(service.unique_id, si, data)
             service.updateData(si)
 
-        service.setInUse(inUse)
         service.setOsState(state)
 
         # If notifyReady is not true, save state, let UserServiceManager do it for us else
@@ -217,6 +182,7 @@ class WindowsOsManager(osmanagers.OSManager):
             if notifyReady is False:
                 service.save()
             else:
+                logger.debug('Notifying ready')
                 UserServiceManager.manager().notifyReadyFromOsManager(service, '')
         logger.debug('Returning {} to {} message'.format(ret, msg))
         if options is not None and options.get('scramble', True) is False:

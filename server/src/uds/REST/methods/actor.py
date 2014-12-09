@@ -168,6 +168,7 @@ class Actor(Handler):
         except Exception:
             return Actor.result(_('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND)
 
+        logger.debug('In use: {}'.format(service.in_use))
         inUse = service.in_use
 
         username = ''
@@ -191,6 +192,7 @@ class Actor(Handler):
 
         # Force service reload to check if inUse has changed, so we can log login/logout
         service = UserService.objects.get(uuid=uuid)
+        logger.debug('service in use: {}, {}'.format(service.in_use, inUse))
         if service.in_use != inUse:  # If state changed, log it
             instance = service.getInstance()
             type_ = 'login' if service.in_use else 'logout'
