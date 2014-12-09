@@ -121,7 +121,7 @@
      <x>20</x>
      <y>20</y>
      <width>361</width>
-     <height>146</height>
+     <height>131</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -207,6 +207,9 @@
       <property name="currentIndex">
        <number>1</number>
       </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
       <item>
        <property name="text">
         <string notr="true">DEBUG</string>
@@ -219,7 +222,7 @@
       </item>
       <item>
        <property name="text">
-        <string notr="true">EROR</string>
+        <string notr="true">ERROR</string>
        </property>
       </item>
       <item>

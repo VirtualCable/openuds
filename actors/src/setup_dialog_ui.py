@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created: Wed Nov 12 04:50:26 2014
+# Created: Tue Dec  9 17:29:24 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,7 +63,7 @@ class Ui_UdsActorSetupDialog(object):
         self.cancelButton.setSizePolicy(sizePolicy)
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.layoutWidget = QtGui.QWidget(UdsActorSetupDialog)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 146))
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 361, 131))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.formLayout = QtGui.QFormLayout(self.layoutWidget)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
@@ -95,13 +95,14 @@ class Ui_UdsActorSetupDialog(object):
         self.logLevelLabel.setObjectName(_fromUtf8("logLevelLabel"))
         self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.logLevelLabel)
         self.logLevelComboBox = QtGui.QComboBox(self.layoutWidget)
+        self.logLevelComboBox.setFrame(True)
         self.logLevelComboBox.setObjectName(_fromUtf8("logLevelComboBox"))
         self.logLevelComboBox.addItem(_fromUtf8(""))
         self.logLevelComboBox.setItemText(0, _fromUtf8("DEBUG"))
         self.logLevelComboBox.addItem(_fromUtf8(""))
         self.logLevelComboBox.setItemText(1, _fromUtf8("INFO"))
         self.logLevelComboBox.addItem(_fromUtf8(""))
-        self.logLevelComboBox.setItemText(2, _fromUtf8("EROR"))
+        self.logLevelComboBox.setItemText(2, _fromUtf8("ERROR"))
         self.logLevelComboBox.addItem(_fromUtf8(""))
         self.logLevelComboBox.setItemText(3, _fromUtf8("FATAL"))
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.logLevelComboBox)
