@@ -37,7 +37,8 @@ from udsactor.certs import createSelfSignedCert
 from udsactor.scriptThread import ScriptExecutorThread
 
 import threading
-import uuid
+import string
+import random
 import json
 import six
 from six.moves import socketserver  # @UnresolvedImport, pylint: disable=import-error
@@ -178,7 +179,7 @@ class HTTPServerThread(threading.Thread):
         super(self.__class__, self).__init__()
 
         if HTTPServerHandler.uuid is None:
-            HTTPServerHandler.uuid = uuid.uuid4().get_hex()
+            HTTPServerHandler.uuid = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(48))
 
         HTTPServerHandler.service = service
 
