@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-12-04'
+__updated__ = '2014-12-12'
 
 
 # a few constants
@@ -701,6 +701,7 @@ class ModelHandler(BaseModelHandler):
         try:
             # Extract fields
             args = self.readFieldsFromParams(self.save_fields)
+            logger.debug('Args: {}'.format(args))
             self.beforeSave(args)
             deleteOnError = False
             if len(self._args) == 0:  # create new

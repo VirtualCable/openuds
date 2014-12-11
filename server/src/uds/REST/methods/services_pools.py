@@ -57,7 +57,7 @@ class ServicesPools(ModelHandler):
         'publications': Publications,
     }
 
-    save_fields = ['name', 'comments', 'service_id', 'osmanager_id', 'image_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs']
+    save_fields = ['name', 'comments', 'service_id', 'osmanager_id', 'image_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports']
     remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
@@ -65,6 +65,7 @@ class ServicesPools(ModelHandler):
         {'name': {'title': _('Name')}},
         {'parent': {'title': _('Parent Service')}},  # Will process this field on client in fact, not sent by server
         {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
+        {'show_transports': {'title': _('Shows transports')}},  # Will process this field on client in fact, not sent by server
         {'comments': {'title': _('Comments')}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
@@ -87,6 +88,7 @@ class ServicesPools(ModelHandler):
             'max_srvs': item.max_srvs,
             'user_services_count': item.userServices.count(),
             'restrained': item.isRestrained(),
+            'show_transports': item.show_transports,
         }
 
         if item.osmanager is not None:
@@ -105,6 +107,7 @@ class ServicesPools(ModelHandler):
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'service_id': item.service.uuid,
             'restrained': item.isRestrained(),
+            'show_transports': item.show_transports,
         }
 
     # Gui related
@@ -123,7 +126,7 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Service used as base of this service pool'),
             'type': gui.InputField.CHOICE_TYPE,
             'rdonly': True,
-            'order': 100,  # At end
+            'order': 100,  # Ensueres is At end
         }, {
             'name': 'osmanager_id',
             'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()],
@@ -131,42 +134,49 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('OS Manager used as base of this service pool'),
             'type': gui.InputField.CHOICE_TYPE,
             'rdonly': True,
-            'order': 101,  # At end
+            'order': 101,
         }, {
             'name': 'image_id',
             'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in Image.objects.all()],
             'label': ugettext('Associated Image'),
             'tooltip': ugettext('Image assocciated with this service'),
             'type': gui.InputField.CHOICE_TYPE,
-            'order': 102,  # At end
+            'order': 102,
         }, {
             'name': 'initial_srvs',
             'value': '0',
             'label': ugettext('Initial available services'),
             'tooltip': ugettext('Services created initially for this service pool'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 103,  # At end
+            'order': 103,
         }, {
             'name': 'cache_l1_srvs',
             'value': '0',
             'label': ugettext('Services to keep in cache'),
             'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 104,  # At end
+            'order': 104,
         }, {
             'name': 'cache_l2_srvs',
             'value': '0',
             'label': ugettext('Services to keep in L2 cache'),
             'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 105,  # At end
+            'order': 105,
         }, {
             'name': 'max_srvs',
             'value': '0',
             'label': ugettext('Maximum number of services to provide'),
             'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 106,  # At end
+            'order': 106,
+        }, {
+            'name': 'show_transports',
+            'value': True,
+            'label': ugettext('Show transports'),
+            'tooltip': ugettext('If active, alternative transports for user will be shown'),
+            'type': gui.InputField.CHECKBOX_TYPE,
+            'order': 107,
         }]:
             self.addField(g, f)
 

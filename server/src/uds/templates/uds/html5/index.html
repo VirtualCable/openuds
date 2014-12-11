@@ -1,13 +1,142 @@
 {% extends "uds/html5/templates/base.html" %}
-{% load i18n html5 %}
+{% load i18n html5 static %}
 
 {% block title %}{% trans 'Available services list' %}{% endblock %}
 
+{% block body %}
+        <h2 class="text-center">{% trans "Services" %}</h2>
+        <div class="clearfix">
+            <div class="row">
+            {% for ser in services %}
+                {% if ser.transports %}
+                {% with trans=ser.transports|first numTransports=ser.transports|length %}
+                <div class="service"{% if not java and trans.needsJava %} class="nojava"{% endif %} 
+                     data-url="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">
+                    <img src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />{{ ser.show_tranports }}
+                    <span{% if ser.name|length > 16 %} class="with-tooltip" data-content="{{ser.name|capfirst}}"{% endif %}{% if ser.show_transports and numTransports > 1 %} style="width: 90%;"{% endif %}>{{ ser.name|capfirst|truncatechars:16 }}</span>
+                    {% if ser.show_transports and numTransports > 1 %}
+                    <span class="gear"><span class="fa fa-gear"> </span></span>
+                    {% endif %}
+                </div>
+
+                {% if ser.show_transports and numTransports > 1 %}
+                <div class="modal fade in">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">{% trans "Available transports" %}</h4>
+                      </div>
+                      <div class="modal-body">
+                        <ul>
+                            {% for trans in ser.transports %}
+                                <p><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></p>
+                            {% endfor %}
+                        </ul>
+
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                {% endif %}
+
+                {% endwith %}
+                {% endif %}
+            {% endfor %}
+            </div>
+        </div>
+
+			
+{% if not java %}
+		<div class="modal fade" id="no-java-dialog">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title">{% trans "Java not found" %}</h4>
+		      </div>
+		      <div class="modal-body">
+				<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
+				<p>{% trans "Please, install latest version from" %} <a href="http://www.java.com" target="_blank">{% trans "Java website" %}</a> {% trans "and restart browser" %}</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+{% endif %}
+
+{% if user.isStaff %}
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                {% trans "Administrator info panel" %}
+            </div>
+            <div class="panel-body">
+                <p>{% trans "Ip" %}: {{ ip }}</p>
+                <p>{% trans "Networks" %}: {{ nets }}</p>
+                <p>{% trans "Transports" %}: {{ transports }}</p>
+                <p>{% trans "User Agent" %}: {{ request.META.HTTP_USER_AGENT }}</p>
+                <p>{% trans "OS" %}: {{ request.session.OS.OS }}</p>
+            </div>
+        </div>
+{% endif %}
+
+{% endblock %} 
+
 {% block css %}
         <style media="screen">
+            div.service {
+                background-color: #F8F8F8;
+                background-image: url("{% get_static_prefix %}/img/uds-small-back.png");
+                margin-left: 12px;
+                margin-bottom: 16px;
+                padding: 6px;
+                border: 1px solid #BABABA;
+                border-radius: 6px;
+                display: inline-block;
+                position: relative;
+                width: 140px;
+                height: 162px;
+                box-shadow: 6px 6px 5px #E0E0E0;
+                cursor: pointer;
+            }
+
+            div.service.over {
+                background-color: #E0E0E0;
+            }
+
+            div.service > img {
+                width: 100%;
+            }
+
+            div.service > span {
+                display: inline-block;
+                position: absolute;
+                vertical-align: bottom;
+                text-align: center;
+                left: 0px;
+                bottom: 0px;
+                width: 100%;
+            }
+
+            div.service > span.gear {
+                text-align: right;
+                padding-right: 12px;
+            }
+
+            span.gear > span.fa {
+                cursor: zoom-in;
+            }
+
+            /* Old stuff */
+
             .list-btn-group {
-        		margin-bottom: 24px;  
-        		margin-right: 24px;
+                margin-bottom: 24px;  
+                margin-right: 24px;
             }
             .list-btn {
                 padding-top: 24px;
@@ -45,87 +174,33 @@
 {% endblock %}
 
 {% block js %}
-		<script>
-		$(function() {
-			{% if not java %}
-			$("a.nojava").click( function() {
-				$('#no-java-dialog').modal({
-					  keyboard: false
-					})
-				return false;
-			});
-			
-			{% endif %}
-			$('.transport-caption-small').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
-		});
-		</script>
+        <script>
+        $(function() {
+            $('.transport-caption-small').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
+
+            // New stuff
+            {% if not java %}
+            $(".nojava").click( function() {
+                $('#no-java-dialog').modal({
+                      keyboard: false
+                    })
+                return false;
+            });
+            {% endif %}
+            $('.with-tooltip').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
+
+            $('div.service').on("click", function (event){
+                window.location = $(this).attr('data-url');
+            }).on("mouseenter mouseleave", function(event) {
+                /* Act on the event */
+                $(this).toggleClass('over');
+            });
+
+            $('span.gear > span.fa').on("click", function (event) {
+                event.stopPropagation();
+                $(this).parent().parent().next().modal();
+                return false;
+            });
+        });
+        </script>
 {% endblock %}
-
-{% block body %}
-			<h2>{% trans "Services" %}</h2>
-			 	<div class="clearfix">
-			{% for ser in services %}
-				  {% if ser.transports %}
-					  {% with trans=ser.transports|first numTransports=ser.transports|length %}
-                     <div class="btn-group list-btn-group">
-                         <a class="{% if not java and trans.needsJava %} nojava{% endif %} btn list-btn btn-default list-btn-{% if numTransports > 1 %}reduced{% else %}normal{% endif %}"
-                            href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"
-                            title="{{ ser.name }}"
-                            data-toggle="tooltip">
-                                    <img src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" class="transport" alt="{{ ser.name }}" />
-                                  </a>
-                          {% if numTransports > 1 %}
-                          <button type="button" class="btn list-btn btn-default dropdown-toggle list-dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>
-                            <span class="sr-only">{% trans 'transports' %}</span>
-                          </button>
-                          <ul class="dropdown-menu" role="menu">
-                              {% for trans in ser.transports %}
-                                {% if not forloop.first %}
-                                    <li><a{% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
-                                {% endif %}  
-                              {% endfor %}
-                          </ul>
-                          {% endif %}
-                        <div class="transport-caption{% if ser.name|length > 16 %}-small{% endif %} text-center" data-content="{{ser.name|capfirst}}">{{ ser.name|capfirst|truncatechars:16 }}</div>
-                    </div>					  
-					  {% endwith %}
-				  {% endif %}
-				{% endfor %}
-			</div>
-			
-{% if not java %}
-		<div class="modal fade" id="no-java-dialog">
-		  <div class="modal-dialog">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title">{% trans "Java not found" %}</h4>
-		      </div>
-		      <div class="modal-body">
-				<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
-				<p>{% trans "Please, install latest version from" %} <a href="http://www.java.com" target="_blank">{% trans "Java website" %}</a> {% trans "and restart browser" %}</p>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		      </div>
-		    </div><!-- /.modal-content -->
-		  </div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
-{% endif %}
-
-{% if user.isStaff %}
-        <div class="panel panel-warning">
-            <div class="panel-heading">
-                {% trans "Administrator info panel" %}
-            </div>
-            <div class="panel-body">
-                <p>{% trans "Ip" %}: {{ ip }}</p>
-                <p>{% trans "Networks" %}: {{ nets }}</p>
-                <p>{% trans "Transports" %}: {{ transports }}</p>
-                <p>{% trans "User Agent" %}: {{ request.META.HTTP_USER_AGENT }}</p>
-                <p>{% trans "OS" %}: {{ request.session.OS.OS }}</p>
-            </div>
-        </div>
-{% endif %}
-{% endblock %} 

@@ -81,10 +81,10 @@ def login(request, smallName=None):
             try:
                 Authenticator.objects.get(small_name=host)
                 smallName = host
-            except:
+            except Exception:
                 try:
                     smallName = Authenticator.objects.order_by('priority')[0].small_name
-                except:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
+                except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
                     smallName = None
 
     logger.debug('Small name: {0}'.format(smallName))
@@ -206,7 +206,7 @@ def index(request):
             imageId = svr.deployed_service.image.uuid
         else:
             imageId = 'x'  # Invalid
-        services.append({'id': 'A' + svr.uuid, 'name': svr['name'], 'transports': trans, 'imageId': imageId})
+        services.append({'id': 'A' + svr.uuid, 'name': svr['name'], 'transports': trans, 'imageId': imageId, 'show_transports': svr.deployed_service.show_transports})
 
     # Now generic user service
     for svr in availServices:
@@ -220,7 +220,7 @@ def index(request):
             imageId = svr.image.uuid
         else:
             imageId = 'x'
-        services.append({'id': 'F' + svr.uuid, 'name': svr.name, 'transports': trans, 'imageId': imageId})
+        services.append({'id': 'F' + svr.uuid, 'name': svr.name, 'transports': trans, 'imageId': imageId, 'show_transports': svr.show_transports})
 
     logger.debug('Services: {0}'.format(services))
 

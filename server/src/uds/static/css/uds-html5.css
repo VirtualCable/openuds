@@ -7,11 +7,6 @@ html, body {
 body {
   padding-top: 60px;
 }
-@media (max-width: 979px) {
-	body {
-	  padding-top: 0px;
-	}
-}
 
 .st-sticky-wrap {
     min-height: 100%;
