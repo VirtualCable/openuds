@@ -16,6 +16,7 @@
 		<!-- Bootstrap -->
     {% compress css %}
 		<link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/jquery-ui.min.css" rel="stylesheet" media="screen">
 		<link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
     {% endcompress %}
 		
@@ -84,6 +85,7 @@
     <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
     {% compress js %}
 		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
+        <script src="{% get_static_prefix %}js/jquery-ui.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
