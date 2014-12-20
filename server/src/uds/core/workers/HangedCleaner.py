@@ -57,7 +57,7 @@ class HangedCleaner(Job):
         # Filter for locating machine not ready
         flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING)
 
-        for ds in DeployedService.objects.exclude(osmanager=None, state__in=State.VALID_STATES):
+        for ds in DeployedService.objects.exclude(osmanager=None, state__in=State.VALID_STATES, service__provider__maintenance_mode=True):
             logger.debug('Searching for hanged services for {0}'.format(ds))
             for us in ds.userServices.filter(flt):
                 logger.debug('Found hanged service {0}'.format(us))

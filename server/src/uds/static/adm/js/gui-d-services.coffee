@@ -66,6 +66,15 @@ gui.providers.link = (event) ->
         #                }
         true
 
+      onData: (data) ->
+        $.each data, (index, value) ->
+          if value.maintenance_mode is true
+            value.maintenance_mode = gettext('In Maintenance')
+          else
+            value.maintenance_mode = gettext('Enabled')
+
+        return
+
       onRowDeselect: ->
         clearDetails()
         return
@@ -130,6 +139,32 @@ gui.providers.link = (event) ->
       buttons: [
         "new"
         "edit"
+        {
+          text: gettext("Maintenance")
+          css: "disabled"
+          click: (val, value, btn, tbl, refreshFnc) ->
+            gui.promptModal gettext("Maintenance Mode"), (if val.maintenance_mode is gettext('Enabled') then gettext("Enter Maintenance Mode?") else gettext("Exit Maintenance Mode?")),
+              onYes: ->
+                gui.doLog 'Val: ', val
+                api.providers.maintenance val.id, (->
+                  refreshFnc()
+                  ), (->)
+
+                return
+
+            return
+
+            return
+
+          select: (val, value, btn, tbl, refreshFnc) ->
+            unless val
+              $(btn).removeClass("btn3d-warning").addClass "disabled"
+              $(btn).empty().append(gettext("Maintenance"))
+              return
+            $(btn).removeClass("disabled").addClass "btn3d-warning"
+            $(btn).empty().append('<div>' + (if val.maintenance_mode is gettext('Enabled') then gettext('Enter maintenance Mode') else gettext('Exit Maintenance Mode')) + '</div>')
+            return
+        }
         "delete"
         "xls"
       ]

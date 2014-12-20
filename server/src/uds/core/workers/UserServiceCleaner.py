@@ -36,7 +36,7 @@ from django.db import transaction
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util.Config import GlobalConfig
 from uds.models import UserService, getSqlDatetime
-from uds.core.util.State import  State
+from uds.core.util.State import State
 from uds.core.jobs.Job import Job
 from datetime import timedelta
 import logging
@@ -75,6 +75,7 @@ class UserServiceRemover(Job):
 
     def run(self):
         removeFrom = getSqlDatetime() - timedelta(seconds=10)  # We keep at least 30 seconds the machine before removing it, so we avoid connections errors
-        removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom)[0:UserServiceRemover.removeAtOnce]
+        removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom,
+                                                deployed_service__service__provider__maintenance_mode=False)[0:UserServiceRemover.removeAtOnce]
         for us in removables:
             UserServiceManager.manager().remove(us)

@@ -65,7 +65,7 @@ class PublicationCleaner(Job):
         super(PublicationCleaner, self).__init__(environment)
 
     def run(self):
-        removables = DeployedServicePublication.objects.filter(state=State.REMOVABLE)
+        removables = DeployedServicePublication.objects.filter(state=State.REMOVABLE, deployed_service__service__provider__maintenance_mode=False)
         for removable in removables:
             try:
                 PublicationManager.manager().unpublish(removable)

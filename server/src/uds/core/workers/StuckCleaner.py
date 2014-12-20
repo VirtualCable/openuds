@@ -58,7 +58,7 @@ class StuckCleaner(Job):
     def run(self):
         since_state = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
         # Filter for locating machine not ready
-        for ds in DeployedService.objects.all():
+        for ds in DeployedService.objects.filter(service__provider__maintenance_mode=False):
             logger.debug('Searching for stuck states for {0}'.format(ds))
             # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
             for us in ds.userServices.filter(state_date__lt=since_state).exclude(state__in=State.INFO_STATES + State.VALID_STATES):

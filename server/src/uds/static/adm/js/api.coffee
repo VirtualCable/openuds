@@ -357,6 +357,11 @@ api.providers.service = (id, success_fnc, fail_fnc) ->
     success: success_fnc
     fail: fail_fnc
 
+api.providers.maintenance = (id, success_fnc, fail_fnc) ->
+  @get
+    id: id + "/maintenance"
+    success: success_fnc
+    fail: fail_fnc    
 
 api.authenticators = new BasicModelRest("authenticators")
 

@@ -55,6 +55,10 @@ class AssignedAndUnused(Job):
     def run(self):
         since_state = getSqlDatetime() - timedelta(seconds=self.frecuency)
         for ds in DeployedService.objects.all():
+            # Skips checking deployed services in maintenance mode
+            if ds.service.provider.maintenance_mode is True:
+                logger.warn('Skipped {} because it is in maintenance mode'.format(ds.name))
+                continue
             # If do not needs os manager, this is
             if ds.osmanager is not None:
                 osm = ds.osmanager.getInstance()

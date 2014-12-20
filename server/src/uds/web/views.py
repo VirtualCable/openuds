@@ -197,6 +197,9 @@ def index(request):
     services = []
     # Select assigned user services
     for svr in availUserServices:
+        # Skip maintenance services...
+        if svr.deployed_service.service.provider.maintenance_mode is True:
+            continue
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
@@ -210,6 +213,8 @@ def index(request):
 
     # Now generic user service
     for svr in availServices:
+        if svr.service.provider.maintenance_mode is True:
+            continue
         trans = []
         for t in svr.transports.all().order_by('priority'):
             if t.validForIp(request.ip):

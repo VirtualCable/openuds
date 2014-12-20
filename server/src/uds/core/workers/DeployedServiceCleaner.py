@@ -84,10 +84,9 @@ class DeployedServiceRemover(Job):
     def continueRemovalOf(self, ds):
         # Recheck that there is no publication created in "bad moment"
         try:
-            publishing = ds.publications.filter(state=State.PREPARING)
-            for p in publishing:
+            for p in ds.publications.filter(state=State.PREPARING):
                 p.cancel()
-        except:
+        except Exception:
             pass
 
         try:
@@ -96,7 +95,7 @@ class DeployedServiceRemover(Job):
             for u in uServices:
                 logger.debug('Canceling {0}'.format(u))
                 u.cancel()
-        except:
+        except Exception:
             pass
 
         # First, we remove all publications and user services in "info_state"
@@ -129,10 +128,15 @@ class DeployedServiceRemover(Job):
         rems = DeployedService.objects.filter(state=State.REMOVABLE)[:10]
         if len(rems) > 0:
             logger.debug('Found a deployed service marked for removal. Starting removal of {0}'.format(rems))
-            for rem in rems:
-                self.startRemovalOf(rem)
+            for ds in rems:
+                # Skips checking deployed services in maintenance mode
+                if ds.service.provider.maintenance_mode is False:
+                    self.startRemovalOf(ds)
+
         rems = DeployedService.objects.filter(state=State.REMOVING)[:10]
         if len(rems) > 0:
             logger.debug('Found a deployed service in removing state, continuing removal of {0}'.format(rems))
-            for rem in rems:
-                self.continueRemovalOf(rem)
+            for ds in rems:
+                # Skips checking deployed services in maintenance mode
+                if ds.service.provider.maintenance_mode is False:
+                    self.continueRemovalOf(ds)

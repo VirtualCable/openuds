@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-12-11'
+__updated__ = '2014-12-20'
 
 from django.db import models
 from django.db.models import signals
@@ -81,6 +81,9 @@ class DeployedService(UUIDModel):
     cache_l2_srvs = models.PositiveIntegerField(default=0)
     max_srvs = models.PositiveIntegerField(default=0)
     current_pub_revision = models.PositiveIntegerField(default=1)
+
+    # Meta service related
+    meta_pools = models.ManyToManyField('self', symmetrical=False)
 
     class Meta(UUIDModel.Meta):
         '''
@@ -140,6 +143,10 @@ class DeployedService(UUIDModel):
             if v['how_many'] >= min_:
                 res.append(v['deployed_service'])
         return DeployedService.objects.filter(pk__in=res)
+
+    @property
+    def is_meta(self):
+        return self.meta_pools.count() == 0
 
     def isRestrained(self):
         '''

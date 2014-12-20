@@ -33,9 +33,10 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2014-12-20'
 
 from django.utils.encoding import python_2_unicode_compatible
+from django.db import models
 from django.db.models import signals
 
 from uds.core.util import log
@@ -51,7 +52,9 @@ class Provider(ManagedObjectModel):
     '''
     A Provider represents the Service provider itself, (i.e. a KVM Server or a Terminal Server)
     '''
+
     # pylint: disable=model-missing-unicode
+    maintenance_mode = models.BooleanField(default=False, db_index=True)
 
     class Meta(ManagedObjectModel.Meta):
         '''

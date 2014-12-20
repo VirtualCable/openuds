@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 class Providers(ModelHandler):
     model = Provider
     detail = {'services': DetailServices}
-    custom_methods = [('allservices', False), ('service', False)]
+    custom_methods = [('allservices', False), ('service', False), ('maintenance', True)]
 
     save_fields = ['name', 'comments']
 
@@ -58,6 +58,7 @@ class Providers(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
+        {'maintenance_mode': {'title': _('State')}},
         {'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
         {'user_services_count': {'title': _('User Services'), 'type': 'numeric', 'width': '8em'}},
     ]
@@ -77,6 +78,7 @@ class Providers(ModelHandler):
             'name': provider.name,
             'services_count': provider.services.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).count(),
+            'maintenance_mode': provider.maintenance_mode,
             'offers': offers,
             'type': type_.type(),
             'comments': provider.comments,
@@ -109,6 +111,11 @@ class Providers(ModelHandler):
             return DetailServices.serviceToDict(Service.objects.get(uuid=self._args[1]), True)
         except:
             raise RequestError(ugettext('Service not found'))
+
+    def maintenance(self, item):
+        item.maintenance_mode = not item.maintenance_mode
+        item.save()
+        return self.item_as_dict(item)
 
     def test(self, type_):
         from uds.core.Environment import Environment
