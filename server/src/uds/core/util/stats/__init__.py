@@ -30,5 +30,4 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import counters
-
-counters._initializeData()
+import events

@@ -64,18 +64,14 @@ class StatsManager(object):
             StatsManager._manager = StatsManager()
         return StatsManager._manager
 
-    def __doCleanup(self, dbTable):
+    def __doCleanup(self, model):
         minTime = time.mktime((getSqlDatetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple())
 
-        # Don't like how django (v1.5 at least) executes this (recovers all IDS and launches "DELETE .. WHERE id IN ...)
-        # StatsCounters.objects.filter(stamp__lt=minTime).delete()
-        # Used dict, cause environment says _meta is not known :-)
-        query = 'DELETE FROM {0} where STAMP < {1}'.format(dbTable, minTime)
-        cursor = connection.cursor()
-        cursor.execute(query)
-        # This table will hold a big amount of data, and mayby we erase a a big number of records also.
-        # This will ensure table is in "good" shape (testing right now, will see at future)
-        optimizeTable(dbTable)
+        # Newer Django versions (at least 1.7) does this deletions as it must (executes a DELETE FROM ... WHERE...)
+        model.objects.filter(stamp__lt=minTime).delete()
+
+        # Optimize mysql tables after deletions
+        optimizeTable(model._meta.db_table)
 
     # Counter stats
     def addCounter(self, owner_type, owner_id, counterType, counterValue, stamp=None):
@@ -95,9 +91,6 @@ class StatsManager(object):
 
             Nothing
         '''
-        from uds.models import getSqlDatetime, StatsCounters
-        import time
-
         if stamp is None:
             stamp = getSqlDatetime()
 
@@ -137,13 +130,11 @@ class StatsManager(object):
         '''
         Removes all counters previous to configured max keep time for stat information from database.
         '''
-        from uds.models import StatsCounters
-
-        self.__doCleanup(StatsCounters.__dict__['_meta'].db_table)
+        self.__doCleanup(StatsCounters)
 
     # Event stats
     # Counter stats
-    def addEvent(self, owner_type, owner_id, eventType, stamp=None):
+    def addEvent(self, owner_type, owner_id, eventType, stamp=None, fld1=None, fld2=None, fld3=None):
         '''
         Adds a new event stat to database.
 
@@ -166,31 +157,39 @@ class StatsManager(object):
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
-            StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp)
+            fld1 = fld1 or ''
+            fld2 = fld2 or ''
+            fld3 = fld3 or ''
+            StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3)
             return True
         except Exception:
             logger.error('Exception handling event stats saving (maybe database is full?)')
         return False
 
-    def getEvents(self, fromWhat, **kwargs):
+    def getEvents(self, ownerType, eventType, ownerId, since, to):
         '''
         Retrieves counters from item
 
         Args:
 
-            fromWhat: From what object to get counters
-            maxElements: (optional) Maximum number of elements to retrieve
+            ownerType: Type of counter to get values
+            eventType:
+            from: date from what to obtain counters. Unlimited if not specified
+            to: date until obtain counters. Unlimited if not specified
 
         Returns:
 
-            Array of lists, containing (date, counter)
-
+            Iterator, containing (date, counter) each element
         '''
+        # To Unix epoch
+        since = int(time.mktime(since.timetuple()))
+        to = int(time.mktime(to.timetuple()))
+
+        return StatsEvents.get_stats(ownerType, eventType, owner_id=ownerId, since=since, to=to)
 
     def cleanupEvents(self):
         '''
         Removes all events previous to configured max keep time for stat information from database.
         '''
-        from uds.models import StatsEvents
 
-        self.__doCleanup(StatsEvents.__dict__['_meta'].db_table)
+        self.__doCleanup(StatsEvents)

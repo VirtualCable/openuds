@@ -33,9 +33,12 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2014-12-21'
 
 from django.db import models
+
+from uds.models.Util import NEVER_UNIX
+from uds.models.Util import getSqlDatetime
 
 import logging
 
@@ -52,12 +55,56 @@ class StatsEvents(models.Model):
     event_type = models.SmallIntegerField(db_index=True, default=0)
     stamp = models.IntegerField(db_index=True, default=0)
 
+    # Variable fields, depends on event
+    fld1 = models.CharField(max_length=128, default='')
+    fld2 = models.CharField(max_length=128, default='')
+    fld3 = models.CharField(max_length=128, default='')
+
     class Meta:
         '''
         Meta class to declare db table
         '''
         db_table = 'uds_stats_e'
         app_label = 'uds'
+
+    @staticmethod
+    def get_stats(owner_type, event_type, **kwargs):
+        '''
+        Returns the average stats grouped by interval for owner_type and owner_id (optional)
+
+        Note: if someone cant get this more optimized, please, contribute it!
+        '''
+        fltr = StatsEvents.objects.filter(event_type=event_type)
+
+        if type(owner_type) in (list, tuple):
+            fltr = fltr.filter(owner_type__in=owner_type)
+        else:
+            fltr = fltr.filter(owner_type=owner_type)
+
+        if kwargs.get('owner_id', None) is not None:
+            fltr = fltr.filter(owner_id=kwargs['owner_id'])
+
+        since = kwargs.get('since', None)
+        to = kwargs.get('to', None)
+
+        since = since and int(since) or NEVER_UNIX
+        to = to and int(to) or getSqlDatetime(True)
+
+        fltr = fltr.filter(stamp__gte=since, stamp__lte=to)
+
+        # We use result as an iterator
+        return fltr
+
+    # Some "aliases" to easy access to event flds
+    @property
+    def ip(self):
+        return self.fld1
+
+    def unique_id(self):
+        return self.fld2
+
+    def username(self):
+        return self.fld3
 
     def __unicode__(self):
         return u"Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)

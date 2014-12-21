@@ -207,3 +207,5 @@ def _initializeData():
         CT_LOAD: _('Load'),
         CT_STORAGE: _('Storage')
     }
+
+_initializeData()
