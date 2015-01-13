@@ -228,6 +228,8 @@ class CommonPrefs(object):
     SZ_640x480 = '1'
     SZ_800x600 = '2'
     SZ_1024x768 = '3'
+    SZ_1366x768 = '4'
+    SZ_1920x1080 = '5'
     SZ_FULLSCREEN = 'F'
 
     DEPTH_PREF = 'screenDepth'
@@ -245,6 +247,8 @@ class CommonPrefs(object):
             CommonPrefs.SZ_640x480: (640, 480),
             CommonPrefs.SZ_800x600: (800, 600),
             CommonPrefs.SZ_1024x768: (1024, 768),
+            CommonPrefs.SZ_1366x768: (1366, 768),
+            CommonPrefs.SZ_1920x1080: (1920, 1080),
             CommonPrefs.SZ_FULLSCREEN: (-1, -1)
         }[prefsDict[CommonPrefs.SZ_PREF]]
 
@@ -263,17 +267,15 @@ class CommonPrefs(object):
     screenSizePref = UserChoicePreference(name=SZ_PREF,
                                           label=ugettext_lazy('Screen Size'),
                                           defvalue=SZ_FULLSCREEN,
-                                          values=(
-                                                  (SZ_640x480, '640x480'),
+                                          values=((SZ_640x480, '640x480'),
                                                   (SZ_800x600, '800x600'),
                                                   (SZ_1024x768, '1024x768'),
-                                                  (SZ_FULLSCREEN, ugettext_lazy('Full Screen'))
-                                                )
-    )
-    depthPref = UserChoicePreference(name=DEPTH_PREF, label=ugettext_lazy('Screen colors'), defvalue=DEPTH_24, values=(
-                                                (DEPTH_8, ugettext_lazy('8 bits')),
-                                                (DEPTH_16, ugettext_lazy('16 bits')),
-                                                (DEPTH_24, ugettext_lazy('24 bits')),
-                                                (DEPTH_32, ugettext_lazy('32 bits')),
-                                                )
+                                                  (SZ_FULLSCREEN, ugettext_lazy('Full Screen')))
                                           )
+    depthPref = UserChoicePreference(name=DEPTH_PREF, label=ugettext_lazy('Screen colors'),
+                                     defvalue=DEPTH_24,
+                                     values=((DEPTH_8, ugettext_lazy('8 bits')),
+                                             (DEPTH_16, ugettext_lazy('16 bits')),
+                                             (DEPTH_24, ugettext_lazy('24 bits')),
+                                             (DEPTH_32, ugettext_lazy('32 bits')))
+                                     )

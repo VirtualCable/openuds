@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
 from uds.osmanagers.LinuxOsManager import LinuxOsManager
+from uds.core.util import log
 
 import logging
 
@@ -79,6 +80,8 @@ class LinuxRandomPassManager(LinuxOsManager):
         if randomPass is None:
             randomPass = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
             service.storeValue('linOsRandomPass', randomPass)
+            log.doLog(service, log.INFO, "Password set to \"{}\"".format(randomPass), log.OSMANAGER)
+
         return randomPass
 
     def infoVal(self, service):

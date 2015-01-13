@@ -23,6 +23,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def scrambleMsg(data):
     '''
     Simple scrambler so password are not seen at source page
