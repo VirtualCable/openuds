@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-13 04:43+0100\n"
+"POT-Creation-Date: 2015-01-13 05:07+0100\n"
 "PO-Revision-Date: 2014-06-03 11:17+0000\n"
 "Last-Translator: blafuente <blafuente@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
@@ -124,7 +124,6 @@ msgid "Group saved"
 msgstr "Grupo guardado"
 
 #: static/tmp_js/gui-d-authenticators.js:183
-#| msgid "New group"
 msgid "New meta group"
 msgstr "Nuevo grupo meta"
 
@@ -223,7 +222,6 @@ msgid "Configuration saved"
 msgstr "Configuración guardada"
 
 #: static/tmp_js/gui-d-config.js:57
-#| msgid "Cache has been flushed"
 msgid "No changes has been made"
 msgstr "No se han introducido modificaciones"
 
@@ -276,7 +274,6 @@ msgid "Network deletion error"
 msgstr "Error de eliminación de la red"
 
 #: static/tmp_js/gui-d-gallery.js:14
-#| msgid "New OSManager"
 msgid "New image"
 msgstr "Nueva imagen"
 
@@ -293,12 +290,10 @@ msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "Imagen es demasiado grande (tamaño de carga máximo es 256Kb)"
 
 #: static/tmp_js/gui-d-gallery.js:76
-#| msgid "Delete OSManager"
 msgid "Delete Image"
 msgstr "Borrar imagen"
 
 #: static/tmp_js/gui-d-gallery.js:76
-#| msgid "deletion error"
 msgid "Image deletion error"
 msgstr "Error de borrado de imagen"
 

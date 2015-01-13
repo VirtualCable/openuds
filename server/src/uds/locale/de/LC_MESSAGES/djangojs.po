@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-13 04:43+0100\n"
+"POT-Creation-Date: 2015-01-13 05:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,7 +120,6 @@ msgid "Group saved"
 msgstr "Gruppe gespeichert"
 
 #: static/tmp_js/gui-d-authenticators.js:183
-#| msgid "New group"
 msgid "New meta group"
 msgstr "Neue Meta-Gruppe"
 
@@ -219,7 +218,6 @@ msgid "Configuration saved"
 msgstr "Gespeicherte Konfiguration"
 
 #: static/tmp_js/gui-d-config.js:57
-#| msgid "Cache has been flushed"
 msgid "No changes has been made"
 msgstr "Keine Änderungen"
 
@@ -272,7 +270,6 @@ msgid "Network deletion error"
 msgstr "Netzwerkfehler löschen"
 
 #: static/tmp_js/gui-d-gallery.js:14
-#| msgid "New OSManager"
 msgid "New image"
 msgstr "Neues Bild"
 
@@ -289,12 +286,10 @@ msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "Bild ist zu groß (max. Uploadgröße beträgt 256 KByte)"
 
 #: static/tmp_js/gui-d-gallery.js:76
-#| msgid "Delete OSManager"
 msgid "Delete Image"
 msgstr "Bild löschen"
 
 #: static/tmp_js/gui-d-gallery.js:76
-#| msgid "deletion error"
 msgid "Image deletion error"
 msgstr "Bild löschen Fehler"
 

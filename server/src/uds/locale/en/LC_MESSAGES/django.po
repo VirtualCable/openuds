@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-13 04:42+0100\n"
+"POT-Creation-Date: 2015-01-13 05:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2767,12 +2767,8 @@ msgstr ""
 msgid "In order to use this service, you should first install CoRD."
 msgstr ""
 
-#: transports/RDP/web.py:91 transports/RGS_enterprise/web.py:83
-msgid "You can obtain it from"
-msgstr ""
-
 #: transports/RDP/web.py:91
-msgid "CoRD Website"
+msgid "Download CoRD"
 msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:34
@@ -2877,6 +2873,10 @@ msgstr ""
 
 #: transports/RGS_enterprise/web.py:82
 msgid "In order to use this service, you should first install RGS Receiver."
+msgstr ""
+
+#: transports/RGS_enterprise/web.py:83
+msgid "You can obtain it from"
 msgstr ""
 
 #: transports/RGS_enterprise/web.py:83

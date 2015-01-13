@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-13 04:42+0100\n"
+"POT-Creation-Date: 2015-01-13 05:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,6 @@ msgid "Correct"
 msgstr "Korrigieren"
 
 #: REST/methods/actor.py:96
-#| msgid "Invalid Request"
 msgid "Invalid key"
 msgstr "Ungültiger Schlüssel"
 
@@ -99,7 +98,6 @@ msgid "Users"
 msgstr "Benutzer"
 
 #: REST/methods/images.py:56
-#| msgid "Image quality"
 msgid "Image Gallery"
 msgstr "Bildergalerie"
 
@@ -188,13 +186,11 @@ msgid "Service not found"
 msgstr "-Dienst nicht gefunden"
 
 #: REST/methods/services.py:119
-#| msgid "User already exists (duplicate key error)"
 msgid "Element already exists (duplicate key error)"
 msgstr "Element ist bereits vorhanden (doppelte Schlüsselfehler)"
 
 #: REST/methods/services.py:122
 #, python-brace-format
-#| msgid "Check error: {0}"
 msgid "Input error: {0}"
 msgstr "Eingabefehler: {0}"
 
@@ -240,7 +236,6 @@ msgid "state"
 msgstr "Zustand"
 
 #: REST/methods/services_pools.py:68
-#| msgid "transports"
 msgid "Shows transports"
 msgstr "Zeigt Transporte"
 
@@ -277,7 +272,6 @@ msgid "Associated Image"
 msgstr "Zugeordnetes Bild"
 
 #: REST/methods/services_pools.py:142
-#| msgid "Base machine for this service"
 msgid "Image assocciated with this service"
 msgstr "Bild Assocciated mit diesem service"
 
@@ -318,7 +312,6 @@ msgstr ""
 "können dieser service"
 
 #: REST/methods/services_pools.py:176
-#| msgid "transports"
 msgid "Show transports"
 msgstr "Karte-Transporte"
 
@@ -364,7 +357,6 @@ msgstr ""
 "ausgewählt, bedeutet \"alle Netze\""
 
 #: REST/methods/user_services.py:63
-#| msgid "Unknown"
 msgid "unknown"
 msgstr "unbekannt"
 
@@ -540,7 +532,6 @@ msgid "Invalid Request"
 msgstr "Ungültige Anforderung"
 
 #: REST/model.py:200
-#| msgid "Method not found"
 msgid "Method not found in {}: {}"
 msgstr "Methode nicht gefunden in {}: {}"
 
@@ -802,8 +793,9 @@ msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
 msgstr ""
-"Wenn diese Option aktiviert ist, erhalten Anfragen per Proxy weitergeleiteten Ip-Adresse (kümmern mit "
-"Dieses Bein aktiviert, können interne IP-Adressen von Internet nehmen)"
+"Wenn diese Option aktiviert ist, erhalten Anfragen per Proxy "
+"weitergeleiteten Ip-Adresse (kümmern mit Dieses Bein aktiviert, können "
+"interne IP-Adressen von Internet nehmen)"
 
 #: auths/IP/Authenticator.py:54 auths/IP/Authenticator.py:56
 msgid "IP Authenticator"
@@ -818,7 +810,6 @@ msgid "IP Range"
 msgstr "IP-Bereich"
 
 #: auths/IP/Authenticator.py:103 auths/IP/Authenticator.py:106
-#| msgid "All parameters seems to work fine."
 msgid "All seems to be fine."
 msgstr "Alles scheint in Ordnung zu sein."
 
@@ -1379,19 +1370,18 @@ msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max idle time)."
 msgstr ""
-"Maximale Leerlaufzeit (in Sekunden) vor der Sitzung ist Automaticatlly geschlossen "
-"der Benutzer (< = 0 bedeutet keine max Leerlaufzeit)."
+"Maximale Leerlaufzeit (in Sekunden) vor der Sitzung ist Automaticatlly "
+"geschlossen der Benutzer (< = 0 bedeutet keine max Leerlaufzeit)."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:46
-#| msgid "Windows Random Password OS Manager"
 msgid "Linux Random Password OS Manager"
 msgstr "Zufällige Kennwortmanager OS Linux"
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:48
-#| msgid ""
-#| "Os Manager to control windows machines, with user password set randomly."
 msgid "Os Manager to control linux machines, with user password set randomly."
-msgstr "OS-Manager zur Kontrolle Linux-Maschinen, mit Benutzerkennwort festlegen nach dem Zufallsprinzip."
+msgstr ""
+"OS-Manager zur Kontrolle Linux-Maschinen, mit Benutzerkennwort festlegen "
+"nach dem Zufallsprinzip."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:52
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
@@ -1795,7 +1785,6 @@ msgid "HyperV platform service provider (experimental)"
 msgstr "Hyper-v-Plattform-Service-Provider (experimentell)"
 
 #: services/OVirt/OVirtLinkedService.py:57
-#| msgid "oVirt Linked Clone (Experimental)"
 msgid "oVirt/RHEV Linked Clone"
 msgstr "oVirt/RHEV Linked Clone"
 
@@ -1846,7 +1835,6 @@ msgid "The minimum allowed memory is 256 Mb"
 msgstr "Die minimale zulässige Speicher 256 Mb"
 
 #: services/OVirt/OVirtProvider.py:74
-#| msgid "oVirt Platform Provider"
 msgid "oVirt/RHEV Platform Provider"
 msgstr "oVirt/RHEV Plattform-Anbieter"
 
@@ -1993,17 +1981,14 @@ msgid "List of names"
 msgstr "Liste der Namen"
 
 #: services/TestService_enterprise/TestProvider.py:23
-#| msgid "Sample Provider"
 msgid "Test Provider"
 msgstr "Test Anbieter"
 
 #: services/TestService_enterprise/TestProvider.py:25
-#| msgid "Sample (and dummy) service provider"
 msgid "Test (and dummy) service provider"
 msgstr "Test (und Dummy)-Service-provider"
 
 #: services/TestService_enterprise/TestService.py:18
-#| msgid "Services to keep in cache"
 msgid "Test Service with cache"
 msgstr "Test-Service mit cache"
 
@@ -2105,17 +2090,14 @@ msgid "Base machine for this service"
 msgstr "Basismaschine für diesen Dienst"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
-#| msgid "Datastores"
 msgid "Pub.Datastores"
 msgstr "Pub.Datastores"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:55
-#| msgid "Datastores where to put incrementals & publications"
 msgid "Datastores where to put publications"
 msgstr "Datastores wo Publikationen setzen"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:56
-#| msgid "Datastores"
 msgid "Inc.Datastores"
 msgstr "Inc.Datastores"
 
@@ -2125,10 +2107,10 @@ msgstr "Datastores wo Sie inkrementelle Backups"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:60
 #: services/Xen/XenLinkedService.py:117
-#| msgid ""
-#| "Length of numeric part for the names of this machines (betwen 3 and 6"
 msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
-msgstr "Länge der numerischen Teil für die Namen von diesen Maschinen (Beetwen 3 und 6"
+msgstr ""
+"Länge der numerischen Teil für die Namen von diesen Maschinen (Beetwen 3 und "
+"6"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid "VMWare Linked clone base"
@@ -2158,7 +2140,6 @@ msgid "Storage where to publish and put incrementals"
 msgstr "Speicher wo zu veröffentlichen und inkrementelle Backups"
 
 #: services/Xen/XenLinkedService.py:104
-#| msgid "Memory assigned to machines"
 msgid "Network used for virtual machines"
 msgstr "Netzwerk für virtuelle Maschinen"
 
@@ -2175,12 +2156,10 @@ msgid "Xenserver Platform Provider"
 msgstr "XenServer-Plattform-Anbieter"
 
 #: services/Xen/XenProvider.py:82
-#| msgid "oVirt platform service provider"
 msgid "XenServer platform service provider"
 msgstr "XenServer-Plattform-Service-provider"
 
 #: services/Xen/XenProvider.py:97
-#| msgid "EDirectory Server IP or Hostname"
 msgid "XenServer Server IP or Hostname"
 msgstr "XenServer Server IP oder Hostname"
 
@@ -2323,7 +2302,6 @@ msgid "Add"
 msgstr "Hinzufügen"
 
 #: templates/uds/admin/tmpl/gallery.html:5
-#| msgid "Image quality"
 msgid "UDS Image Gallery"
 msgstr "UDS-Bildergalerie"
 
@@ -2362,11 +2340,11 @@ msgstr "Wählen Sie Bild hochladen"
 #: templates/uds/admin/tmpl/new_image.html:6
 #: templates/uds/admin/tmpl/new_image.html:10
 msgid "Name of the image. If left empty, will get the filename as name"
-msgstr "Name des Bildes. Wenn leer gelassen, wird der Dateiname als Name erhalten."
+msgstr ""
+"Name des Bildes. Wenn leer gelassen, wird der Dateiname als Name erhalten."
 
 #: templates/uds/admin/tmpl/new_image.html:6
 #: templates/uds/admin/tmpl/new_image.html:7
-#| msgid "Small name"
 msgid "Image name"
 msgstr "Image-name"
 
@@ -2375,12 +2353,10 @@ msgid "Select image"
 msgstr "Wählen Sie Bild"
 
 #: templates/uds/admin/tmpl/new_image.html:16
-#| msgid "Range"
 msgid "Change"
 msgstr "Änderung"
 
 #: templates/uds/admin/tmpl/new_image.html:18
-#| msgid "Removed"
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -2474,12 +2450,11 @@ msgid "UDS has been developed using theese components:"
 msgstr "UDS wurde entwickelt mit Theese Komponenten:"
 
 #: templates/uds/html5/about.html:42
-#| msgid ""
-#| "If you found that we missed to mention any component, plese let us know"
 msgid ""
 "If you found that we missed to mention any component, please let us know"
 msgstr ""
-"Wenn Sie festgestellt, dass wir verpasst zu erwähnen eine beliebige Komponente, informieren Sie uns bitte"
+"Wenn Sie festgestellt, dass wir verpasst zu erwähnen eine beliebige "
+"Komponente, informieren Sie uns bitte"
 
 #: templates/uds/html5/about.html:43
 #: templates/uds/html5/service_not_ready.html:17
@@ -2505,7 +2480,6 @@ msgid "Available services list"
 msgstr "Liste der verfügbaren Dienste"
 
 #: templates/uds/html5/index.html:29
-#| msgid "Assigned transports"
 msgid "Available transports"
 msgstr "Verfügbare Transporte"
 
@@ -2619,17 +2593,15 @@ msgid "Preferences"
 msgstr "Einstellungen"
 
 #: templates/uds/html5/templates/base.html:60
-#| msgid ""
-#| "Your browser is supported only partially. Please, upgrade it to a modern "
-#| "html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better)"
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
 "html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
 "must also disable \"Compatibility View Mode\" for this site)"
 msgstr ""
-"Ihr Browser wird nur teilweise unterstützt. Bitte aktualisieren Sie es auf ein modernes "
-"HTML5-Browser wie Firefox, Chrome, Opera... (IE 10 oder besser, sein muss und "
-"müssen auch \"Compatibility View Mode\" für diese Seite deaktivieren)"
+"Ihr Browser wird nur teilweise unterstützt. Bitte aktualisieren Sie es auf "
+"ein modernes HTML5-Browser wie Firefox, Chrome, Opera... (IE 10 oder besser, "
+"sein muss und müssen auch \"Compatibility View Mode\" für diese Seite "
+"deaktivieren)"
 
 #: templates/uds/internal_page.html:40
 msgid "Log out"
@@ -2720,7 +2692,6 @@ msgstr ""
 "Anmeldeinformationen"
 
 #: transports/HTML5RDP/HTML5RDP.py:70 transports/RDP/BaseRDPTransport.py:61
-#| msgid "Datastore Domain"
 msgid "Without Domain"
 msgstr "Ohne Domäne"
 
@@ -2729,8 +2700,8 @@ msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
 msgstr ""
-"Wenn diese Option aktiviert, wird der Domänenteil immer (zum Anschluss an Xrdp für geleert werden "
-"Beispiel ist erforderlich)"
+"Wenn diese Option aktiviert, wird der Domänenteil immer (zum Anschluss an "
+"Xrdp für geleert werden Beispiel ist erforderlich)"
 
 #: transports/HTML5RDP/HTML5RDP.py:71 transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -2911,8 +2882,8 @@ msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
 msgstr ""
-"Wenn diese Option aktiviert ist, be die Tapete und Themen Maschine (bessere User will shown "
-"Erfahrung, mehr Bandbreite)"
+"Wenn diese Option aktiviert ist, be die Tapete und Themen Maschine (bessere "
+"User will shown Erfahrung, mehr Bandbreite)"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
@@ -2977,13 +2948,10 @@ msgstr "Remote Desktop-Protokoll"
 msgid "In order to use this service, you should first install CoRD."
 msgstr "Um diesen Dienst zu nutzen, sollten Sie zunächst Kabel installieren."
 
-#: transports/RDP/web.py:91 transports/RGS_enterprise/web.py:83
-msgid "You can obtain it from"
-msgstr "Erhalten Sie es aus"
-
 #: transports/RDP/web.py:91
-msgid "CoRD Website"
-msgstr "CoRD-Website"
+#| msgid "Downloads"
+msgid "Download CoRD"
+msgstr "Download CoRD"
 
 #: transports/RGS_enterprise/RGSTransport.py:34
 msgid "RGS Transport (direct)"
@@ -3097,6 +3065,10 @@ msgstr ""
 "Um diesen Service zu nutzen, sollten Sie zunächst RGS-Empfänger installieren."
 
 #: transports/RGS_enterprise/web.py:83
+msgid "You can obtain it from"
+msgstr "Erhalten Sie es aus"
+
+#: transports/RGS_enterprise/web.py:83
 msgid "HP Website"
 msgstr "Website von HP"
 
@@ -3165,6 +3137,5 @@ msgid "authenticator"
 msgstr "Authentifikator"
 
 #: web/views.py:443
-#| msgid "Authenticator do not provides information"
 msgid "Authenticator does not provides information"
 msgstr "Authentifikator wird nicht informiert"

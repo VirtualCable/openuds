@@ -1,0 +1,6 @@
+* Add "Scheduler" to manage pools, and posibbly other operations (Expect to release an version 1.7.1??)
+* Improve stats
+* Add App Virtualization support
+* Add "Meta Pools"
+* Manage to connect several UDS in "tree", so one UDS can be provider o another UDS
+
