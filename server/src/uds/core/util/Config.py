@@ -198,8 +198,9 @@ class Config(object):
             cfg.value = value
             cfg.save()
             logger.debug('Updated value for {0}.{1} to {2}'.format(section, key, value))
+            return True
         except Exception:
-            pass
+            return False
 
 
 class GlobalConfig(object):
