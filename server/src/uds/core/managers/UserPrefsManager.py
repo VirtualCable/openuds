@@ -124,8 +124,11 @@ class UserPrefsManager(object):
                 logger.debug(name)
                 prefs.append({'module': mod, 'name': p.getName(), 'value': form.cleaned_data[name]})
         user.preferences.all().delete()
-        for p in prefs:
-            user.preferences.create(module=p['module'], name=p['name'], value=p['value'])
+        try:
+            for p in prefs:
+                user.preferences.create(module=p['module'], name=p['name'], value=p['value'])
+        except Exception:  # User does not exists
+            logger.info('Trying to dave user preferences failed (probably root user?)')
         return None
 
     def processGuiForUserPreferences(self, user, data):

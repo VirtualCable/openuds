@@ -1,5 +1,6 @@
 {% load i18n html5 static %}
     {% preferences_allowed as show_prefs %}
+    {% root_id as rootid %}
  		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
@@ -37,7 +38,7 @@
                   <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ user.real_name }} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        {% if show_prefs %}
+                        {% if show_prefs and user.id != rootid %}
                         <li><a href="{% url "uds.web.views.prefs" %}"><span class="fa fa-edit"></span> {% trans 'Preferences' %}</a></li>
                         {% endif %}
                     {% if user.staff_member or user.is_admin %}

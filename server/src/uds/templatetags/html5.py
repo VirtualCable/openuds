@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from django import template
 from uds.core.util import html
+from uds.core.auths.auth import ROOT_ID
 from uds.core.util.Config import GlobalConfig
 from uds.models.Image import Image
 
@@ -93,6 +94,11 @@ def enhaced_visual(parser, token):
 @register.assignment_tag
 def preferences_allowed():
     return GlobalConfig.PREFERENCES_ALLOWED.getBool(True)
+
+
+@register.assignment_tag
+def root_id():
+    return ROOT_ID
 
 
 @register.assignment_tag
