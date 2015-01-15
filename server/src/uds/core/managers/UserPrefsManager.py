@@ -273,6 +273,8 @@ class CommonPrefs(object):
                                           values=((SZ_640x480, '640x480'),
                                                   (SZ_800x600, '800x600'),
                                                   (SZ_1024x768, '1024x768'),
+                                                  (SZ_1366x768, '1366x768'),
+                                                  (SZ_1920x1080, '1920x1080'),
                                                   (SZ_FULLSCREEN, ugettext_lazy('Full Screen')))
                                           )
     depthPref = UserChoicePreference(name=DEPTH_PREF, label=ugettext_lazy('Screen colors'),
