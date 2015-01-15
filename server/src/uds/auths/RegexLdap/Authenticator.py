@@ -40,10 +40,11 @@ from uds.core import auths
 from uds.core.auths.Exceptions import AuthenticatorException
 
 import ldap
+import ldap.filter
 import re
 import logging
 
-__updated__ = '2014-11-01'
+__updated__ = '2015-01-15'
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +84,7 @@ class RegexLdap(auths.Authenticator):
 
     def __init__(self, dbAuth, environment, values=None):
         super(RegexLdap, self).__init__(dbAuth, environment, values)
-        if values != None:
+        if values is not None:
             self.__validateField(values['userNameAttr'], str(self.userNameAttr.label))
             self.__validateField(values['userIdAttr'], str(self.userIdAttr.label))
             self.__validateField(values['groupNameAttr'], str(self.groupNameAttr.label))
@@ -182,8 +183,8 @@ class RegexLdap(auths.Authenticator):
 
     def __str__(self):
         return "Ldap Auth: {0}:{1}@{2}:{3}, base = {4}, userClass = {5}, userIdAttr = {6}, groupNameAttr = {7}, userName attr = {8}".format(
-                self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr,
-                self._userNameAttr)
+               self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr,
+               self._userNameAttr)
 
     def marshal(self):
         return '\t'.join([
@@ -247,12 +248,12 @@ class RegexLdap(auths.Authenticator):
     def __getUser(self, username):
         try:
             con = self.__connection()
-            filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, username)
+            filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
             attrlist = [self._userIdAttr.encode('utf-8')] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
 
             logger.debug('Getuser filter_: {0}, attr list: {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
-                             filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
+                                   filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
             usr = dict((k, '') for k in attrlist)
             dct = {k.lower(): v for k, v in res[1].iteritems()}
             usr.update(dct)

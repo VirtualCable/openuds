@@ -40,11 +40,12 @@ from uds.core.ui.UserInterface import gui
 from uds.core.auths import Authenticator
 from uds.core.auths.Exceptions import AuthenticatorException
 
+import ldap.filter
 import ldap
 import logging
 import six
 
-__updated__ = '2014-11-01'
+__updated__ = '2015-01-15'
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +128,7 @@ class SimpleLDAPAuthenticator(Authenticator):
     def __str__(self):
         return "Ldap Auth: {0}:{1}@{2}:{3}, base = {4}, userClass = {5}, groupClass = {6}, userIdAttr = {7}, groupIdAttr = {8}, memberAttr = {9}, userName attr = {10}".format(
             self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr,
-                self._userNameAttr)
+            self._userNameAttr)
 
     def marshal(self):
         return '\t'.join(['v1',
@@ -183,7 +184,7 @@ class SimpleLDAPAuthenticator(Authenticator):
     def __getUser(self, username):
         try:
             con = self.__connection()
-            filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, username)
+            filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
             attrlist = [i.encode('utf-8') for i in  self._userNameAttr.split(',') + [self._userIdAttr]]
             logger.debug('Getuser filter_: {0}, attr list: {1}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
