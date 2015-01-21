@@ -339,7 +339,7 @@ class Client(object):
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         '''
-        logger.debug("n: {0}, c: {1}, vm: {2}, cl: {3}, st: {3}, dt: {4}".format(name, comments, machineId, clusterId, storageId, displayType))
+        logger.debug("n: {0}, c: {1}, vm: {2}, cl: {3}, st: {4}, dt: {5}".format(name, comments, machineId, clusterId, storageId, displayType))
 
         try:
             lock.acquire(True)
