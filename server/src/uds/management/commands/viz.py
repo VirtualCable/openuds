@@ -39,7 +39,7 @@ options:
 
     -X, --exclude_models
     exclude specific model(s) from the graph.
-    
+
     -e, --inheritance
     show inheritance arrows.
 """
@@ -68,12 +68,12 @@ from django.utils.translation import activate as activate_language
 from django.utils.safestring import mark_safe
 from django.template import Context, loader
 from django.db import models
-from django.db.models import get_models
+from django.apps import apps as djApps
 from django.db.models.fields.related import \
     ForeignKey, OneToOneField, ManyToManyField, RelatedField
 
 try:
-    from django.db.models.fields.generic import GenericRelation
+    from django.db.models.fields.generic import GenericRelation  # pylint: disable=import-error, no-name-in-module
 except ImportError:
     from django.contrib.contenttypes.generic import GenericRelation
 
@@ -81,7 +81,7 @@ except ImportError:
 def parse_file_or_list(arg):
     if not arg:
         return []
-    if not ',' in arg and os.path.isfile(arg):
+    if ',' not in arg and os.path.isfile(arg):
         return [e.strip() for e in open(arg).readlines()]
     return arg.split(',')
 
@@ -129,11 +129,11 @@ digraph name {
 
     apps = []
     if all_applications:
-        apps = models.get_apps()
+        apps = djApps.get_apps()
 
     for app_label in app_labels:
-        app = models.get_app(app_label)
-        if not app in apps:
+        app = djApps.get_app(app_label)
+        if app not in apps:
             apps.append(app)
 
     graphs = []
@@ -147,7 +147,7 @@ digraph name {
             'models': []
         })
 
-        appmodels = get_models(app)
+        appmodels = djApps.get_models(app)
         abstract_models = []
         for appmodel in appmodels:
             abstract_models = abstract_models + \

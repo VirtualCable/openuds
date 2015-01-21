@@ -58,11 +58,11 @@ class Storage(object):
         if isinstance(data, unicode):
             data = data.encode('utf-8')
         data = data.encode(Storage.CODEC)
-        attr1 = '' if attr1 == None else attr1
+        attr1 = '' if attr1 is None else attr1
         try:
-            dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)
+            dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
         except Exception:
-            dbStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)
+            dbStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
         logger.debug('Key saved')
 
     def put(self, skey, data):
@@ -78,7 +78,7 @@ class Storage(object):
         try:
             key = self.__getKey(skey)
             logger.debug('Accesing to {0} {1}'.format(skey, key))
-            c = dbStorage.objects.get(pk=key)
+            c = dbStorage.objects.get(pk=key)  # @UndefinedVariable
             val = c.data.decode(Storage.CODEC)
 
             if fromPickle:
@@ -88,7 +88,7 @@ class Storage(object):
                 return val.decode('utf-8')  # Tries to encode in utf-8
             except:
                 return val
-        except dbStorage.DoesNotExist:
+        except dbStorage.DoesNotExist:  # @UndefinedVariable
             logger.debug('key not found')
             return None
 
@@ -104,7 +104,7 @@ class Storage(object):
     def remove(self, skey):
         try:
             key = self.__getKey(skey)
-            dbStorage.objects.filter(key=key).delete()
+            dbStorage.objects.filter(key=key).delete()  # @UndefinedVariable
         except Exception:
             pass
 
@@ -112,25 +112,25 @@ class Storage(object):
         '''
         Use with care. If locked, it must be unlocked before returning
         '''
-        dbStorage.objects.lock()
+        dbStorage.objects.lock()  # @UndefinedVariable
 
     def unlock(self):
         '''
         Must be used to unlock table
         '''
-        dbStorage.objects.unlock()
+        dbStorage.objects.unlock()  # @UndefinedVariable
 
     def locateByAttr1(self, attr1):
         res = []
-        for v in dbStorage.objects.filter(attr1=attr1):
+        for v in dbStorage.objects.filter(attr1=attr1):  # @UndefinedVariable
             res.append(v.data.decode(Storage.CODEC))
         return res
 
     @staticmethod
     def delete(owner=None):
         logger.info("Deleting storage items")
-        if owner == None:
-            objects = dbStorage.objects.all()
+        if owner is None:
+            objects = dbStorage.objects.all()  # @UndefinedVariable
         else:
-            objects = dbStorage.objects.filter(owner=owner)
+            objects = dbStorage.objects.filter(owner=owner)  # @UndefinedVariable
         objects.delete()
