@@ -150,6 +150,7 @@ class StatsManager(object):
 
 
         '''
+        logger.debug('Adding event stat')
         if stamp is None:
             stamp = getSqlDatetime(unix=True)
         else:
@@ -160,7 +161,8 @@ class StatsManager(object):
             fld1 = fld1 or ''
             fld2 = fld2 or ''
             fld3 = fld3 or ''
-            StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3)
+            obj = StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3)
+            logger.debug('Created event {}'.format(obj))
             return True
         except Exception:
             logger.error('Exception handling event stats saving (maybe database is full?)')

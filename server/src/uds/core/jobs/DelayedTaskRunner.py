@@ -44,12 +44,15 @@ import threading
 import time
 import logging
 
-__updated__ = '2014-05-26'
+__updated__ = '2015-01-21'
 
 logger = logging.getLogger(__name__)
 
 
 class DelayedTaskThread(threading.Thread):
+    '''
+    Class responsible of executing a delayed task in its own thread
+    '''
     def __init__(self, taskInstance):
         super(DelayedTaskThread, self).__init__()
         self._taskInstance = taskInstance
@@ -62,6 +65,9 @@ class DelayedTaskThread(threading.Thread):
 
 
 class DelayedTaskRunner(object):
+    '''
+    Delayed task runner class
+    '''
     CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
     # How often tasks r checked
     granularity = 2
@@ -75,11 +81,20 @@ class DelayedTaskRunner(object):
         self._keepRunning = True
 
     def notifyTermination(self):
+        '''
+        Invoke this whenever you want to terminate the delayed task runner thread
+        It will mark the thread to "stop" ASAP
+        '''
         self._keepRunning = False
 
     @staticmethod
     def runner():
-        if DelayedTaskRunner._runner == None:
+        '''
+        Static method that returns an instance (singleton instance) to a Delayed Runner.
+        There is only one instance of DelayedTaksRunner, but its "run" method is executed on
+        many thread (depending on configuration). They all share common Instance data
+        '''
+        if DelayedTaskRunner._runner is None:
             DelayedTaskRunner._runner = DelayedTaskRunner()
         return DelayedTaskRunner._runner
 
@@ -90,7 +105,7 @@ class DelayedTaskRunner(object):
         taskInstance = None
         try:
             with transaction.atomic():  # Encloses
-                task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]
+                task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
                 taskInstanceDump = task.instance.decode(self.CODEC)
                 task.delete()
             taskInstance = loads(taskInstanceDump)
@@ -99,7 +114,7 @@ class DelayedTaskRunner(object):
             # Note that is taskInstance can't be loaded, this task will not be retried
             return
 
-        if taskInstance != None:
+        if taskInstance is not None:
             logger.debug('Executing delayedTask:>{0}<'.format(task))
             env = Environment.getEnvForType(taskInstance.__class__)
             taskInstance.setEnv(env)
@@ -114,8 +129,8 @@ class DelayedTaskRunner(object):
 
         logger.debug('Inserting delayed task {0} with {1} bytes ({2})'.format(typeName, len(instanceDump), exec_time))
 
-        dbDelayedTask.objects.create(type=typeName, instance=instanceDump,
-                                         insert_date=now, execution_delay=delay, execution_time=exec_time, tag=tag)
+        dbDelayedTask.objects.create(type=typeName, instance=instanceDump,  # @UndefinedVariable
+                                     insert_date=now, execution_delay=delay, execution_time=exec_time, tag=tag)
 
     def insert(self, instance, delay, tag=''):
         retries = 3
@@ -136,7 +151,7 @@ class DelayedTaskRunner(object):
     def remove(self, tag):
         try:
             with transaction.atomic():
-                dbDelayedTask.objects.select_for_update().filter(tag=tag).delete()
+                dbDelayedTask.objects.select_for_update().filter(tag=tag).delete()  # @UndefinedVariable
         except Exception as e:
             logger.exception('Exception removing a delayed task {0}: {1}'.format(str(e.__class__), e))
 
@@ -147,7 +162,7 @@ class DelayedTaskRunner(object):
 
         number = 0
         try:
-            number = dbDelayedTask.objects.filter(tag=tag).count()
+            number = dbDelayedTask.objects.filter(tag=tag).count()  # @UndefinedVariable
         except Exception:
             logger.error('Exception looking for a delayed task tag {0}'.format(tag))
         return number > 0

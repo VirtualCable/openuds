@@ -34,9 +34,11 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
+from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
+from uds.core.util import log
 from uds.core import Module
 
-__updated__ = '2014-12-07'
+__updated__ = '2015-01-21'
 
 STORAGE_KEY = 'osmk'
 
@@ -157,5 +159,43 @@ class OSManager(Module):
         '''
         pass
 
+    def loggedIn(self, userService, userName=None, save=True):
+        '''
+        This method:
+          - Add log in event to stats
+          - Sets service in use
+          - Invokes userLoggedIn for user service instance
+        '''
+        addEvent(userService.deployed_service, ET_LOGIN, fld1=userName)
+
+        log.doLog(userService, log.INFO, "User {0} has logged in", log.OSMANAGER)
+
+        userService.setInUse(True)
+        si = userService.getInstance()
+        si.userLoggedIn(userName)
+        userService.updateData(si)
+        if save:
+            userService.save()
+
+    def loggedOut(self, userService, userName=None, save=True):
+        '''
+        This method:
+          - Add log in event to stats
+          - Sets service in use
+          - Invokes userLoggedIn for user service instance
+        '''
+        addEvent(userService.deployed_service, ET_LOGOUT, fld1=userName)
+        log.doLog(userService, log.INFO, "User {0} has logged out", log.OSMANAGER)
+
+        userService.setInUse(False)
+        si = userService.getInstance()
+        si.userLoggedOut(userName)
+        userService.updateData(si)
+        if save:
+            userService.save()
+
     def __str__(self):
         return "Base OS Manager"
+
+    def __unicode__(self):
+        return self.__str__()

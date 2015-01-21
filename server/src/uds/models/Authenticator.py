@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2015-01-21'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -74,8 +74,8 @@ class Authenticator(ManagedObjectModel):
         Every single record of Provider model, represents an object.
 
         Args:
-           values (list): Values to pass to constructor. If no values are especified,
-                          the object is instantiated empty and them de-serialized from stored data.
+           values (list): Values to pass to constructor. If no values are specified,
+                          the object is instantiated empty and them deserialized from stored data.
 
         Returns:
             The instance Instance of the class this provider represents

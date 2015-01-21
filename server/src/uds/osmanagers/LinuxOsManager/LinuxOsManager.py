@@ -143,15 +143,9 @@ class LinuxOsManager(osmanagers.OSManager):
         elif msg == "log":
             self.doLog(service, data, log.ACTOR)
         elif msg == "login":
-            service.setInUse(True)
-            si = service.getInstance()
-            si.userLoggedIn(data)
-            service.updateData(si)
+            self.loggedIn(service, data, False)
         elif msg == "logout":
-            service.setInUse(False)
-            si = service.getInstance()
-            si.userLoggedOut(data)
-            service.updateData(si)
+            self.loggedOut(service, data, False)
             if self._onLogout == 'remove':
                 doRemove = True
         elif msg == "ip":

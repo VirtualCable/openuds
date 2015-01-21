@@ -43,7 +43,7 @@ from uds.core.ui.UserInterface import gui
 
 import logging
 
-__updated__ = '2014-09-15'
+__updated__ = '2015-01-21'
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ class IPAuth(Authenticator):
         return "IP Authenticator"
 
     def getIp(self):
-        return getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip
+        return getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
 
     def getGroups(self, ip, groupsManager):
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen

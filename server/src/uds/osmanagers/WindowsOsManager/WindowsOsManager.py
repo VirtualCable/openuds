@@ -145,20 +145,13 @@ class WindowsOsManager(osmanagers.OSManager):
         elif msg == "log":
             self.doLog(service, data, log.ACTOR)
         elif msg == "logon" or msg == 'login':
+            self.loggedIn(service, data, False)
             service.setInUse(True)
-            si = service.getInstance()
-            si.userLoggedIn(data)
-            service.updateData(si)
-            self.doLog(service, 'User {0} has logged IN\t{1}'.format(data, log.INFOSTR))
             # We get the service logged hostname & ip and returns this
             ip, hostname = service.getConnectionSource()
             ret = "{0}\t{1}".format(ip, hostname)
         elif msg == "logoff" or msg == 'logout':
-            service.setInUse(False)
-            si = service.getInstance()
-            si.userLoggedOut(data)
-            service.updateData(si)
-            self.doLog(service, 'User {0} has logged OUT\t{1}'.format(data, log.INFOSTR))
+            self.loggedOut(service, data, False)
             if self._onLogout == 'remove':
                 doRemove = True
         elif msg == "ip":

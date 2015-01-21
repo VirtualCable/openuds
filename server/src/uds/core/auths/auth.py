@@ -44,6 +44,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util import log
 from uds.core.util.decorators import deprecated
 from uds.core import auths
+from uds.core.util.stats import events
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core.util.State import State
 from uds.models import User
@@ -51,7 +52,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2014-11-11'
+__updated__ = '2015-01-21'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -162,6 +163,7 @@ def __registerUser(authenticator, authInstance, username):
     if usr is not None and State.isActive(usr.state):
         # Now we update database groups for this user
         usr.getManager().recreateGroups(usr)
+        events.addEvent(authenticator, events.ET_LOGIN, fld1=username)
         return usr
 
     return None
