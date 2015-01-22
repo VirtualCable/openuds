@@ -32,6 +32,9 @@
 '''
 from __future__ import unicode_literals
 
+from django.utils.translation import get_language
+from django.utils import formats
+
 import re
 import logging
 
@@ -40,21 +43,16 @@ logger = logging.getLogger(__name__)
 
 def parseDate(dateToParse):
     import datetime
-    from django.utils.translation import get_language
-    from django.utils import formats
 
     if get_language() == 'fr':
         date_format = '%d/%m/%Y'
     else:
-        date_format = formats.get_format('SHORT_DATE_FORMAT').replace('Y', '%Y').replace('m', '%m').replace('d', '%d')
+        date_format = formats.get_format('SHORT_DATE_FORMAT').replace('Y', '%Y').replace('m', '%m').replace('d', '%d')  # pylint: disable=maybe-no-member
 
     return datetime.datetime.strptime(dateToParse, date_format).date()
 
 
 def dateToLiteral(date):
-    from django.utils.translation import get_language
-    from django.utils import formats
-
     # Fix for FR lang for datepicker
     if get_language() == 'fr':
         date = date.strftime('%d/%m/%Y')
@@ -78,16 +76,16 @@ def extractKey(dictionary, key, **kwargs):
 
 # Regular expressions for User Agents
 # These both are for Internet Explorer
-_msie = re.compile('MSIE ([0-9]+)\.([0-9]+)')
-_trident = re.compile('Trident/.*rv:([0-9]+)\.([0-9]+)')
+_msie = re.compile(r'MSIE ([0-9]+)\.([0-9]+)')
+_trident = re.compile(r'Trident/.*rv:([0-9]+)\.([0-9]+)')
 # Opera
-_opera = re.compile('OPR/([0-9]+)\.([0-9]+)')
+_opera = re.compile(r'OPR/([0-9]+)\.([0-9]+)')
 # Firefox
-_firefox = re.compile('Firefox/([0-9]+)\.([0-9]+)')
+_firefox = re.compile(r'Firefox/([0-9]+)\.([0-9]+)')
 # Chrome
-_chrome = re.compile('Chrome/([0-9]+)\.([0-9]+)')
+_chrome = re.compile(r'Chrome/([0-9]+)\.([0-9]+)')
 # Webkit in general
-_webkit = re.compile('AppleWebKit/([0-9]+)\.([0-9]+)')
+_webkit = re.compile(r'AppleWebKit/([0-9]+)\.([0-9]+)')
 
 _browsers = {
     'ie': [_trident, _msie],

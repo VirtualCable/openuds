@@ -39,6 +39,7 @@ from uds.core.util.State import State
 from uds.core.services import ServiceProvider
 from OVirtLinkedService import OVirtLinkedService
 from uds.core.ui import gui
+from uds.core.util import validators
 
 from client import oVirtClient
 
@@ -117,6 +118,11 @@ class Provider(ServiceProvider):
 
         # Just reset _api connection variable
         self._api = None
+
+        if values is not None:
+            self.macsRange.value = validators.validateMacRange(self.macsRange.value)
+            self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
+            logger.debug(self.host.value)
 
     def testConnection(self):
         '''

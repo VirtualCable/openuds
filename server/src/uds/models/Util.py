@@ -33,11 +33,12 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-26'
+__updated__ = '2015-01-22'
 
 from datetime import datetime
 from django.db import connection
 from time import mktime
+import re
 
 
 import logging

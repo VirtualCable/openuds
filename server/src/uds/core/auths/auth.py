@@ -164,6 +164,7 @@ def __registerUser(authenticator, authInstance, username):
     if usr is not None and State.isActive(usr.state):
         # Now we update database groups for this user
         usr.getManager().recreateGroups(usr)
+        # And add an login event
         events.addEvent(authenticator, events.ET_LOGIN, username=username, srcip=getRequest().ip)  # pylint: disable=maybe-no-member
         return usr
 

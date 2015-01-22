@@ -124,13 +124,12 @@ class OVirtLinkedService(Service):
                                tooltip=_('Length of numeric part for the names of this machines (betwen 3 and 6'), required=True)
 
     display = gui.ChoiceField(label=_('Display'), rdonly=False, order=8,
-                 tooltip=_('Display type (only for administration pourposses)'),
-                 values=[
-                    gui.choiceItem('spice', 'Spice'),
-                    gui.choiceItem('vnc', 'Vnc')
-                 ],
-                 defvalue='1'  # Default value is the ID of the choicefield
-              )
+                              tooltip=_('Display type (only for administration pourposses)'),
+                              values=[gui.choiceItem('spice', 'Spice'),
+                                      gui.choiceItem('vnc', 'Vnc')
+                                      ],
+                              defvalue='1'  # Default value is the ID of the choicefield
+                              )
 
     ov = gui.HiddenField()
     ev = gui.HiddenField()  # We need to keep the env so we can instantiate the Provider

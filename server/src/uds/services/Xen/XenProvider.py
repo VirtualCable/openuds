@@ -37,6 +37,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
+from uds.core.util import validators
 
 from xen_client import XenServer
 from xen_client import XenFailure, XenFault
@@ -47,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-12-07'
+__updated__ = '2015-01-22'
 
 
 CACHE_TIME_FOR_SERVER = 1800
