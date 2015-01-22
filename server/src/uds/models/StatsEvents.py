@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-12-21'
+__updated__ = '2015-01-22'
 
 from django.db import models
 
@@ -59,6 +59,7 @@ class StatsEvents(models.Model):
     fld1 = models.CharField(max_length=128, default='')
     fld2 = models.CharField(max_length=128, default='')
     fld3 = models.CharField(max_length=128, default='')
+    fld4 = models.CharField(max_length=128, default='')
 
     class Meta:
         '''
@@ -95,16 +96,21 @@ class StatsEvents(models.Model):
         # We use result as an iterator
         return fltr
 
-    # Some "aliases" to easy access to event flds
     @property
-    def ip(self):
+    def username(self):
         return self.fld1
 
-    def unique_id(self):
+    @property
+    def srcIp(self):
         return self.fld2
 
-    def username(self):
+    @property
+    def dstIp(self):
         return self.fld3
 
+    @property
+    def uniqueId(self):
+        return self.fld4
+
     def __unicode__(self):
-        return u"Log of {0}({1}): {2} - {3} - {4} - {5}".format(self.owner_type, self.owner_id, self.created, self.source, self.level, self.data)
+        return u"Log of {0}({1}): {2} - {3} - {4}, {5}, {6}".format(self.owner_type, self.owner_id, self.event_type, self.stamp, self.fld1, self.fld2, self.fld3)

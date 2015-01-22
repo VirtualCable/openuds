@@ -134,10 +134,11 @@ class StatsManager(object):
 
     # Event stats
     # Counter stats
-    def addEvent(self, owner_type, owner_id, eventType, stamp=None, fld1=None, fld2=None, fld3=None):
+    def addEvent(self, owner_type, owner_id, eventType, **kwargs):
         '''
         Adds a new event stat to database.
 
+    stamp=None, fld1=None, fld2=None, fld3=None
         Args:
 
             toWhat: if of the counter
@@ -151,6 +152,7 @@ class StatsManager(object):
 
         '''
         logger.debug('Adding event stat')
+        stamp = kwargs.get('stamp')
         if stamp is None:
             stamp = getSqlDatetime(unix=True)
         else:
@@ -158,11 +160,11 @@ class StatsManager(object):
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
-            fld1 = fld1 or ''
-            fld2 = fld2 or ''
-            fld3 = fld3 or ''
-            obj = StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3)
-            logger.debug('Created event {}'.format(obj))
+            fld1 = kwargs.get('fld1', kwargs.get('username', ''))
+            fld2 = kwargs.get('fld2', kwargs.get('srcip', ''))
+            fld3 = kwargs.get('fld3', kwargs.get('dstip', ''))
+            fld4 = kwargs.get('fld4', kwargs.get('uniqueid', ''))
+            StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3, fld4=fld4)
             return True
         except Exception:
             logger.error('Exception handling event stats saving (maybe database is full?)')

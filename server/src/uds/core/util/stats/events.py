@@ -43,13 +43,13 @@ logger = logging.getLogger(__name__)
 
 # Posible events, note that not all are used by every possible owner type
 (
-    ET_LOGIN, ET_LOGOUT
-) = range(2)
+    ET_LOGIN, ET_LOGOUT, ET_ACCESS,
+) = range(3)
 
 __transDict = None
 
 
-def addEvent(obj, eventType, stamp=None, fld1=None, fld2=None, fld3=None):
+def addEvent(obj, eventType, **kwargs):
     '''
     Adds a event stat to specified object
 
@@ -60,7 +60,7 @@ def addEvent(obj, eventType, stamp=None, fld1=None, fld2=None, fld3=None):
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     '''
 
-    return statsManager().addEvent(__transDict[type(obj)], obj.id, eventType, stamp, fld1, fld2, fld3)
+    return statsManager().addEvent(__transDict[type(obj)], obj.id, eventType, **kwargs)
 
 
 def getEvents(obj, eventType, **kwargs):

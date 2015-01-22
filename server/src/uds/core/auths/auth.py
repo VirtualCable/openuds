@@ -48,11 +48,12 @@ from uds.core.util.stats import events
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core.util.State import State
 from uds.models import User
+from uds.core.util.request import getRequest
 
 import logging
 import six
 
-__updated__ = '2015-01-21'
+__updated__ = '2015-01-22'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -163,7 +164,7 @@ def __registerUser(authenticator, authInstance, username):
     if usr is not None and State.isActive(usr.state):
         # Now we update database groups for this user
         usr.getManager().recreateGroups(usr)
-        events.addEvent(authenticator, events.ET_LOGIN, fld1=username)
+        events.addEvent(authenticator, events.ET_LOGIN, username=username, srcip=getRequest().ip)  # pylint: disable=maybe-no-member
         return usr
 
     return None
@@ -299,7 +300,11 @@ def webLogout(request, exit_url=None):
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     '''
-    # Invoke esit for authenticator
+    # Invoke exit for authenticator
+
+    if request.user.id != ROOT_ID:
+        events.addEvent(request.user.manager, events.ET_LOGOUT, username=request.user.name, srcip=request.ip)
+
     request.session.clear()
     if exit_url is None:
         exit_url = GlobalConfig.LOGIN_URL.get()
@@ -314,12 +319,11 @@ def authLogLogin(request, authenticator, userName, java, os, logStr=''):
     '''
     Logs authentication
     '''
-
     if logStr == '':
         logStr = 'Logged in'
 
     javaStr = java and 'Java' or 'No Java'
-    authLogger.info('|'.join([authenticator.name, userName, javaStr, os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
+    authLogger.info('|'.join([authenticator.name, userName, request.ip, javaStr, os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
     level = (logStr == 'Logged in') and log.INFO or log.ERROR
     log.doLog(authenticator, level, 'user {0} has {1} from {2} {3} java and os is {4}'.format(userName, logStr,
                                                                                               request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)

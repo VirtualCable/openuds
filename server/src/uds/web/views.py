@@ -42,7 +42,6 @@ from django.views.decorators.http import last_modified
 from django.views.decorators.cache import cache_page, cache_control
 from django.views.i18n import javascript_catalog
 from django.utils import timezone
-from django.contrib.staticfiles import finders
 
 from uds.core.auths.auth import webLogin, webLogout, webLoginRequired, authenticate, webPassword, authenticateViaCallback, authLogLogin, authLogLogout, getUDSCookie
 from uds.models import Authenticator, DeployedService, Transport, UserService, Network, Image
@@ -55,6 +54,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
 from uds.core.util import log
+from uds.core.util.stats import events
 from uds.core.util.Ticket import Ticket
 from uds.core.util.State import State
 from uds.core.ui import theme
@@ -257,7 +257,7 @@ def prefs(request):
 
 @webLoginRequired
 def service(request, idService, idTransport):
-    # TODO: Cache hit performance can be done here, we can log event of "got" and event of "failed"
+    # TODO: Cache hit performance check can be done here, we can log event of "got" and event of "failed"
     kind, idService = idService[0], idService[1:]
     try:
         logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
@@ -278,6 +278,7 @@ def service(request, idService, idTransport):
             # If ready, show transport for this service, if also ready ofc
             iads = ads.getInstance()
             ip = iads.getIp()
+            events.addEvent(ads.deployed_service, events.ET_ACCESS, username=request.user.name, srcip=request.ip, dstip=ip, uniqueid=ads.unique_id)
             if ip is not None:
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
