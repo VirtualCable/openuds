@@ -35,10 +35,12 @@ from __future__ import unicode_literals
 from uds.core.util.State import State
 from uds.models import Group as dbGroup
 from uds.core.auths.Group import Group
+
+import re
 import inspect
 import logging
 
-__updated__ = '2014-11-11'
+__updated__ = '2015-01-23'
 
 logger = logging.getLogger(__name__)
 
@@ -72,13 +74,30 @@ class GroupsManager(object):
         self._dbAuthenticator = dbAuthenticator
         self._groups = {}  # We just get active groups, inactive aren't visible to this class
         for g in dbAuthenticator.groups.filter(state=State.ACTIVE, is_meta=False):
-            self._groups[g.name.lower()] = {'group': Group(g), 'valid': False}
+            name = g.name.lower()
+            isPattern = name.find('pat:') == 0  # Is a pattern?
+            self._groups[name] = {'name': g.name, 'group': Group(g), 'valid': False, 'pattern': isPattern}
 
-    def contains(self, groupName):
+    def checkAllGroups(self, groupName):
         '''
         Returns true if this groups manager contains the specified group name (string)
         '''
-        return groupName.lower() in self._groups
+        name = groupName.lower()
+        res = []
+        for gName, grp in self._groups.iteritems():
+            if grp['pattern'] is True:
+                logger.debug('Group is a pattern: {}'.format(grp))
+                try:
+                    logger.debug('Match: {}->{}'.format(grp['name'][4:], name))
+                    if re.search(grp['name'][4:], name, re.IGNORECASE) is not None:
+                        res.append(grp)  # Stop searching, one group at least matches
+                except Exception:
+                    logger.exception('Exception in RE')
+            else:
+                logger.debug('Group NORMAL: {}=={}'.format(name, gName))
+                if name == gName:
+                    res.append(grp)
+        return res
 
     def getGroupsNames(self):
         '''
@@ -142,16 +161,17 @@ class GroupsManager(object):
             for n in groupName:
                 self.validate(n)
         else:
-            if groupName.lower() in self._groups:
-                self._groups[groupName.lower()]['valid'] = True
+            for grp in self.checkAllGroups(groupName):
+                grp['valid'] = True
 
     def isValid(self, groupName):
         '''
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.
         '''
-        if groupName.lower() in self._groups:
-            return self._groups[groupName.lower()]['valid']
+        for grp in self.checkAllGroup(groupName):
+            if grp['valid']:
+                return True
         return False
 
     def __str__(self):

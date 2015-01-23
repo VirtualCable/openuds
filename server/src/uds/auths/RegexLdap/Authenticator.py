@@ -44,7 +44,7 @@ import ldap.filter
 import re
 import logging
 
-__updated__ = '2015-01-15'
+__updated__ = '2015-01-23'
 
 logger = logging.getLogger(__name__)
 
@@ -144,6 +144,7 @@ class RegexLdap(auths.Authenticator):
 
     def __processField(self, field, attributes):
         res = []
+        logger.debug('Attributes: {}'.format(attributes))
         for line in field.splitlines():
             equalPos = line.find('=')
             if equalPos == -1:
@@ -163,12 +164,13 @@ class RegexLdap(auths.Authenticator):
             for vv in val:
                 try:
                     v = vv.decode('utf-8')
+                    logger.debug('v, vv: {}, {}'.format(v, vv))
                     srch = re.search(pattern, v, re.IGNORECASE)
                     logger.debug("Found against {0}: {1} ".format(v, srch.groups()))
                     if srch is None:
                         continue
                     res.append(''.join(srch.groups()))
-                except:
+                except Exception:
                     pass  # Ignore exceptions here
         return res
 
@@ -352,8 +354,7 @@ class RegexLdap(auths.Authenticator):
         if user is None:
             raise AuthenticatorException(_('Username not found'))
         groups = self.__getGroups(user)
-        for g in groups:
-            _ = groupsManager.validate(g)
+        groupsManager.validate(groups)
 
     def searchUsers(self, pattern):
         try:

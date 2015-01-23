@@ -237,9 +237,10 @@ class Groups(DetailHandler):
             logger.debug('Meta any {}'.format(meta_if_any))
             valid_fields = ['name', 'comments', 'state']
             fields = self.readFieldsFromParams(valid_fields)
+            is_pattern = fields.get('name', '').find('pat:') == 0
             auth = parent.getInstance()
             if item is None:  # Create new
-                if not is_meta:
+                if not is_meta and not is_pattern:
                     auth.createGroup(fields)  # this throws an exception if there is an error (for example, this auth can't create groups)
                 toSave = {}
                 for k in valid_fields:
@@ -249,7 +250,7 @@ class Groups(DetailHandler):
                 toSave['meta_if_any'] = meta_if_any
                 group = parent.groups.create(**toSave)
             else:
-                if not is_meta:
+                if not is_meta and not is_pattern:
                     auth.modifyGroup(fields)
                 toSave = {}
                 for k in valid_fields:
