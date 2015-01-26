@@ -98,14 +98,21 @@ class WindowsOsManager(osmanagers.OSManager):
     def infoValue(self, service):
         return 'rename\r' + self.getName(service)
 
-    def notifyIp(self, uid, si, data):
+    def notifyIp(self, uid, service, data):
+        si = service.getInstance()
+
+        ip = ''
         # Notifies IP to deployed
         pairs = data.split(',')
         for p in pairs:
             key, val = p.split('=')
             if key.lower() == uid.lower():
                 si.setIp(val)
+                ip = val
                 break
+
+        self.logKnownIp(service, ip)
+        service.updateData(si)
 
     def doLog(self, service, data, origin=log.OSMANAGER):
         # Stores a log associated with this service
@@ -157,15 +164,11 @@ class WindowsOsManager(osmanagers.OSManager):
         elif msg == "ip":
             # This ocurss on main loop inside machine, so service is usable
             state = State.USABLE
-            si = service.getInstance()
-            self.notifyIp(service.unique_id, si, data)
-            service.updateData(si)
+            self.notifyIp(service.unique_id, service, data)
         elif msg == "ready":
             state = State.USABLE
-            si = service.getInstance()
             notifyReady = True
-            self.notifyIp(service.unique_id, si, data)
-            service.updateData(si)
+            self.notifyIp(service.unique_id, service, data)
 
         service.setOsState(state)
 

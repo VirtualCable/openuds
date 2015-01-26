@@ -57,6 +57,7 @@ class State(object):
     USABLE = 'U'
     RUNNING = 'W'
     FOR_EXECUTE = 'X'
+    MAINTENANCE = 'Y'  # "Visual" state, no element will be in fact in maintenance, but used to show "Services Pools" for which a Provider is in maintenance
 
     string = {
         ACTIVE: _('Active'),
@@ -74,7 +75,8 @@ class State(object):
         RUNNING: _('Running'),
         FINISHED: _('Finished'),
         FOR_EXECUTE: _('Waiting execution'),
-        BALANCING: _('Balancing')
+        BALANCING: _('Balancing'),
+        MAINTENANCE: _('In maintenance')
     }
 
     # States that are merely for "information" to the user. They don't contain any usable instance
@@ -144,10 +146,7 @@ class State(object):
 
     @staticmethod
     def toString(state):
-        try:
-            return State.string[state]
-        except Exception:
-            return ''
+        return State.string.get(state, '')
 
     @staticmethod
     def dictionary():

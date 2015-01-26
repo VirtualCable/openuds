@@ -222,6 +222,8 @@ gui.servicesPools.link = (event) ->
               onNew: (value, table, refreshFnc) ->
                 api.templates.get "pool_add_group", (tmpl) ->
                   api.authenticators.overview (data) ->
+                    # Sorts groups, expression means that "if a > b returns 1, if b > a returns -1, else returns 0"
+
                     modalId = gui.launchModal(gettext("Add group"), api.templates.evaluate(tmpl,
                       auths: data
                     ))
@@ -230,6 +232,7 @@ gui.servicesPools.link = (event) ->
                       api.authenticators.detail(auth, "groups").overview (data) ->
                         $select = $(modalId + " #id_group_select")
                         $select.empty()
+                        # Sorts groups, expression means that "if a > b returns 1, if b > a returns -1, else returns 0"
                         $.each data, (undefined_, value) ->
                           $select.append "<option value=\"" + value.id + "\">" + value.name + "</option>"
                           return

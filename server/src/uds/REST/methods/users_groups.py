@@ -173,7 +173,7 @@ class Groups(DetailHandler):
             multi = False
             if item is None:
                 multi = True
-                q = parent.groups.all()
+                q = parent.groups.all().order_by('name')
             else:
                 q = parent.groups.filter(uuid=item)
             res = []

@@ -50,6 +50,7 @@ class AssignedService(DetailHandler):
 
     @staticmethod
     def itemToDict(item, is_cache=False):
+        props = item.getProperties()
         val = {
             'id': item.uuid,
             'id_deployed_service': item.deployed_service.uuid,
@@ -60,7 +61,8 @@ class AssignedService(DetailHandler):
             'state_date': item.state_date,
             'creation_date': item.creation_date,
             'revision': item.publication and item.publication.revision or '',
-            'actor_version': item.getProperty('actor_version', _('unknown')),
+            'ip': props.get('ip', _('unknown')),
+            'actor_version': props.get('actor_version', _('unknown')),
         }
 
         if is_cache:
@@ -79,7 +81,8 @@ class AssignedService(DetailHandler):
         # Extract provider
         try:
             if item is None:
-                return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()]
+                return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()
+                        .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
             else:
                 return parent.assignedUserServices().get(uuid=item)
         except Exception:
@@ -94,6 +97,7 @@ class AssignedService(DetailHandler):
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
             {'unique_id': {'title': 'Unique ID'}},
+            {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
             {'state': {'title': _('State')}},
             {'state_date': {'title': _('State date'), 'type': 'datetime'}},
@@ -136,7 +140,8 @@ class CachedService(AssignedService):
         # Extract provider
         try:
             if item is None:
-                return [AssignedService.itemToDict(k, True) for k in parent.cachedUserServices().all()]
+                return [AssignedService.itemToDict(k, True) for k in parent.cachedUserServices().all()
+                        .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
             else:
                 k = parent.cachedUserServices().get(uuid=item)
                 return AssignedService.itemToDict(k, True)
@@ -152,6 +157,7 @@ class CachedService(AssignedService):
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
             {'unique_id': {'title': 'Unique ID'}},
+            {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
             {'state': {'title': _('State'), 'type': 'dict', 'dict': State.dictionary()}},
             {'cache_level': {'title': _('Cache level')}},

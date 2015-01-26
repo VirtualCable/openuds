@@ -103,7 +103,7 @@ class ServicesPools(ModelHandler):
             'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
-            'state': item.state,
+            'state': item.state if item.service.provider.maintenance_mode is False else State.MAINTENANCE,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'service_id': item.service.uuid,
             'restrained': item.isRestrained(),
@@ -121,7 +121,7 @@ class ServicesPools(ModelHandler):
 
         for f in [{
             'name': 'service_id',
-            'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in Service.objects.all()],
+            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]),
             'label': ugettext('Base service'),
             'tooltip': ugettext('Service used as base of this service pool'),
             'type': gui.InputField.CHOICE_TYPE,
@@ -129,7 +129,7 @@ class ServicesPools(ModelHandler):
             'order': 100,  # Ensueres is At end
         }, {
             'name': 'osmanager_id',
-            'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()],
+            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]),
             'label': ugettext('OS Manager'),
             'tooltip': ugettext('OS Manager used as base of this service pool'),
             'type': gui.InputField.CHOICE_TYPE,
@@ -137,7 +137,7 @@ class ServicesPools(ModelHandler):
             'order': 101,
         }, {
             'name': 'image_id',
-            'values': [gui.choiceItem(-1, '')] + [gui.choiceItem(v.uuid, v.name) for v in Image.objects.all()],
+            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Image.objects.all()]),
             'label': ugettext('Associated Image'),
             'tooltip': ugettext('Image assocciated with this service'),
             'type': gui.InputField.CHOICE_TYPE,

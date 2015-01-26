@@ -35,7 +35,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-12-05'
+__updated__ = '2015-01-26'
 
 from django.db import models
 from django.db.models import signals
@@ -420,6 +420,16 @@ class UserService(UUIDModel):
         except Exception:
             return default
 
+    def getProperties(self):
+        '''
+        Retrieves all properties as a dictionary
+        The number of properties per item is expected to be "relatively small" (no more than 5 items?)
+        '''
+        dct = {}
+        for v in self.properties.all():
+            dct[v.name] = v.value
+        return dct
+
     def setProperty(self, propName, propValue):
         prop, _ = self.properties.get_or_create(name=propName)
         prop.value = propValue if propValue is not None else ''
@@ -430,6 +440,12 @@ class UserService(UUIDModel):
 
     def getCommsUrl(self):
         return self.getProperty('comms_url', None)
+
+    def logIP(self, ip=None):
+        self.setProperty('ip', ip)
+
+    def getLoggedIP(self):
+        return self.getProperty('ip', '0.0.0.0')
 
     def __str__(self):
         return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,

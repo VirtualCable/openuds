@@ -122,6 +122,10 @@ class gui(object):
         return {'id': str(id_), 'text': str(text)}
 
     @staticmethod
+    def sortedChoices(choices):
+        return sorted(choices, key=lambda item: item['text'].lower())
+
+    @staticmethod
     def strToBool(str_):
         '''
         Converts the string "true" (case insensitive) to True (boolean).

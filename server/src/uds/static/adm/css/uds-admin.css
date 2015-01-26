@@ -87,16 +87,28 @@ body {
  }
 
 /* States */
-tr.row-state-A, tr.row-state-F, tr.row-state-U, tr.row-state-W {
-	color: black;
+
+
+/*
+This states displays as default
+tr.row-state-A > td, tr.row-state-F > td, tr.row-state-U > td, tr.row-state-W > td {
+}
+*/
+
+tr.row-state-B:nth-child(2n) > td, tr.row-state-C:nth-child(2n) > td, tr.row-state-E:nth-child(2n) > td, tr.row-state-Y:nth-child(2n) > td {
+    color: #FF6600 !important;
 }
 
-tr.row-state-B, tr.row-state-C, tr.row-state-E {
-	color: red;
+tr.row-state-B:nth-child(2n+1) > td, tr.row-state-C:nth-child(2n+1) > td, tr.row-state-E:nth-child(2n+1) > td, tr.row-state-Y:nth-child(2n+1) > td {
+	color: #FF6600 !important;
 }
 
-tr.row-state-M, tr.row-state-R, tr.row-state-I, tr.row-state-S {
-	color: #858585;
+tr.row-state-M:nth-child(2n+1) > td, tr.row-state-R:nth-child(2n+1) > td, tr.row-state-I:nth-child(2n+1) > td, tr.row-state-S > td:nth-child(2n+1) {
+	color: #9A9A9A !important;
+}
+
+tr.row-state-M:nth-child(2n) > td, tr.row-state-R:nth-child(2n) > td, tr.row-state-I:nth-child(2n) > td, tr.row-state-S > td:nth-child(2n) {
+    color: #858585 !important;
 }
 
 /* Logs */
