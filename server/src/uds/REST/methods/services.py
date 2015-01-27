@@ -50,6 +50,9 @@ logger = logging.getLogger(__name__)
 
 
 class Services(DetailHandler):
+    '''
+    Detail handler for Services, whose parent is a Provider
+    '''
 
     @staticmethod
     def serviceToDict(item, full=False):
@@ -135,7 +138,7 @@ class Services(DetailHandler):
                 raise RequestError('Item has associated deployed services')
 
             service.delete()
-        except:
+        except Exception:
             self.invalidItemException()
 
         return 'deleted'
@@ -143,7 +146,7 @@ class Services(DetailHandler):
     def getTitle(self, parent):
         try:
             return _('Services of {0}').format(parent.name)
-        except:
+        except Exception:
             return _('Current services')
 
     def getFields(self, parent):

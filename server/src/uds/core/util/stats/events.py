@@ -46,6 +46,11 @@ logger = logging.getLogger(__name__)
     ET_LOGIN, ET_LOGOUT, ET_ACCESS,
 ) = range(3)
 
+(
+    OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR,
+) = range(4)
+
+
 __transDict = None
 
 
@@ -103,8 +108,6 @@ def _initializeData():
     from uds.models import Provider, Service, DeployedService, Authenticator
 
     global __transDict
-
-    OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR = range(4)
 
     # Dict to convert objects to owner types
     # Dict for translations

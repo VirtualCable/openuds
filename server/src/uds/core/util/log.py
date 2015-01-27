@@ -73,8 +73,19 @@ def logStrFromLevel(level):
     return __valueLevels.get(level, 'OTHER')
 
 
-def useLog(type_, serviceUniqueId, serviceIp, username):
-    useLogger.info('|'.join([type_, serviceUniqueId, serviceIp, username]))
+def useLog(type_, serviceUniqueId, serviceIp, username, srcIP=None, srcUser=None):
+    '''
+    Logs an "use service" event (logged from actors)
+    :param type_: Type of event (commonly 'login' or 'logout' )
+    :param serviceUniqueId: Unique id of service
+    :param serviceIp: IP Of the service
+    :param username: Username notified from service (internal "user service" user name
+    :param srcIP: IP of user holding that service at time of event
+    :param srcUser: Username holding that service at time of evet
+    '''
+    srcIP = 'unknown' if srcIP is None else srcIP
+    srcUser = 'unknown' if srcUser is None else srcUser
+    useLogger.info('|'.join([type_, serviceUniqueId, serviceIp, srcIP, srcUser, username]))
 
 
 def doLog(wichObject, level, message, source=UNKNOWN, avoidDuplicates=True):

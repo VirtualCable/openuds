@@ -160,14 +160,19 @@ class StatsManager(object):
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
-            fld1 = kwargs.get('fld1', kwargs.get('username', ''))
-            fld2 = kwargs.get('fld2', kwargs.get('srcip', ''))
-            fld3 = kwargs.get('fld3', kwargs.get('dstip', ''))
-            fld4 = kwargs.get('fld4', kwargs.get('uniqueid', ''))
+            # Replaces nulls for ''
+            def noneToEmpty(str):
+                return str if str is not None else ''
+
+            fld1 = noneToEmpty(kwargs.get('fld1', kwargs.get('username', '')))
+            fld2 = noneToEmpty(kwargs.get('fld2', kwargs.get('srcip', '')))
+            fld3 = noneToEmpty(kwargs.get('fld3', kwargs.get('dstip', '')))
+            fld4 = noneToEmpty(kwargs.get('fld4', kwargs.get('uniqueid', '')))
+
             StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3, fld4=fld4)
             return True
         except Exception:
-            logger.error('Exception handling event stats saving (maybe database is full?)')
+            logger.exception('Exception handling event stats saving (maybe database is full?)')
         return False
 
     def getEvents(self, ownerType, eventType, ownerId, since, to):

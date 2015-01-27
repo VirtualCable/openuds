@@ -39,7 +39,6 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.managers import cryptoManager
 from uds.REST import Handler
-from uds.REST import AccessDenied
 from uds.REST import RequestError
 from uds.models import UserService
 
@@ -73,7 +72,14 @@ class Actor(Handler):
     authenticated = False  # Actor requests are not authenticated
 
     @staticmethod
-    def result(result='', error=None):
+    def result(result=None, error=None):
+        '''
+        Helper method to create a "result" set for actor response
+        :param result: Result value to return (can be None, in which case it is converted to empty string '')
+        :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
+        :return: A dictionary, suitable for response to Caller
+        '''
+        result = result if result is not None else ''
         res = {'result': result, 'date': datetime.datetime.now()}
         if error is not None:
             res['error'] = error
@@ -168,11 +174,6 @@ class Actor(Handler):
         except Exception:
             return Actor.result(_('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND)
 
-        logger.debug('In use: {}'.format(service.in_use))
-        inUse = service.in_use
-
-        username = ''
-
         if message == 'notifyComms':
             logger.debug('Setting comms url to {}'.format(data))
             service.setCommsUrl(data)
@@ -182,22 +183,10 @@ class Actor(Handler):
         if message == 'log':
             logger.debug(self._params)
             data = '\t'.join((self._params.get('message'), six.text_type(self._params.get('level', 10000))))
-        elif message in ('login', 'logout', 'logon', 'logoff'):
-            username = data
 
         try:
             res = service.getInstance().osmanager().process(service, message, data, options={'scramble': False})
         except Exception as e:
             return Actor.result(six.text_type(e), ERR_OSMANAGER_ERROR)
-
-        # Force service reload to check if inUse has changed, so we can log login/logout
-        service = UserService.objects.get(uuid=uuid)
-        logger.debug('service in use: {}, {}'.format(service.in_use, inUse))
-        if service.in_use != inUse:  # If state changed, log it
-            instance = service.getInstance()
-            type_ = 'login' if service.in_use else 'logout'
-            uniqueId = service.unique_id
-            serviceIp = instance.getIp()
-            log.useLog(type_, uniqueId, serviceIp, username)
 
         return Actor.result(res)

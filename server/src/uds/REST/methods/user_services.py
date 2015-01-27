@@ -47,6 +47,9 @@ logger = logging.getLogger(__name__)
 
 
 class AssignedService(DetailHandler):
+    '''
+    Rest handler for Assigned Services, wich parent is Service
+    '''
 
     @staticmethod
     def itemToDict(item, is_cache=False):
@@ -113,13 +116,13 @@ class AssignedService(DetailHandler):
             item = parent.assignedUserServices().get(uuid=item)
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
-        except:
+        except Exception:
             self.invalidItemException()
 
     def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
         try:
             service = parent.userServices.get(uuid=item)
-        except:
+        except Exception:
             logger.exception('deleteItem')
             self.invalidItemException()
 
@@ -135,6 +138,9 @@ class AssignedService(DetailHandler):
 
 
 class CachedService(AssignedService):
+    '''
+    Rest handler for Cached Services, wich parent is Service
+    '''
 
     def getItems(self, parent, item):
         # Extract provider

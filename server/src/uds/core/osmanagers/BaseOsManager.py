@@ -38,7 +38,7 @@ from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
 from uds.core import Module
 
-__updated__ = '2015-01-26'
+__updated__ = '2015-01-27'
 
 STORAGE_KEY = 'osmk'
 
@@ -169,14 +169,27 @@ class OSManager(Module):
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         '''
-        addEvent(userService.deployed_service, ET_LOGIN, fld1=userName)
-
-        log.doLog(userService, log.INFO, "User {0} has logged in", log.OSMANAGER)
-
+        uniqueId = userService.unique_id
         userService.setInUse(True)
         si = userService.getInstance()
         si.userLoggedIn(userName)
         userService.updateData(si)
+
+        serviceIp = si.getIp()
+
+        fullUserName = 'unknown'
+        if userService.user is not None:
+            fullUserName = userService.user.manager.name + '\\' + userService.user.name
+
+        knownUserIP = userService.src_ip + ':' + userService.src_hostname
+        knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
+
+        addEvent(userService.deployed_service, ET_LOGIN, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
+
+        log.doLog(userService, log.INFO, "User {0} has logged in", log.OSMANAGER)
+
+        log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
+
         if save:
             userService.save()
 
@@ -187,13 +200,27 @@ class OSManager(Module):
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         '''
-        addEvent(userService.deployed_service, ET_LOGOUT, fld1=userName)
-        log.doLog(userService, log.INFO, "User {0} has logged out", log.OSMANAGER)
-
+        uniqueId = userService.unique_id
         userService.setInUse(False)
         si = userService.getInstance()
         si.userLoggedOut(userName)
         userService.updateData(si)
+
+        serviceIp = si.getIp()
+
+        fullUserName = 'unknown'
+        if userService.user is not None:
+            fullUserName = userService.user.manager.name + '\\' + userService.user.name
+
+        knownUserIP = userService.src_ip + ':' + userService.src_hostname
+        knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
+
+        addEvent(userService.deployed_service, ET_LOGOUT, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
+
+        log.doLog(userService, log.INFO, "User {0} has logged out", log.OSMANAGER)
+
+        log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
+
         if save:
             userService.save()
 

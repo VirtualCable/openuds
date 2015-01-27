@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-12-12'
+__updated__ = '2015-01-27'
 
 
 # a few constants
@@ -56,6 +56,8 @@ TYPES = 'types'
 TABLEINFO = 'tableinfo'
 GUI = 'gui'
 LOG = 'log'
+
+OK = 'ok'  # Constant to be returned when result is just "operation complete successfully"
 
 
 # Exception to "rethrow" on save error
@@ -66,8 +68,11 @@ class SaveException(HandlerError):
     pass
 
 
-# Base for Gui Related mixins
 class BaseModelHandler(Handler):
+    '''
+    Base Handler for Master & Detail Handlers
+    '''
+
     def addField(self, gui, field):
         '''
         Add a field to a "gui" description
@@ -212,7 +217,7 @@ class BaseModelHandler(Handler):
         Utility method to be invoked for simple methods that returns nothing in fact
         '''
         logger.debug('Returning success on {} {}'.format(self.__class__, self._args))
-        return 'ok'
+        return OK
 
     def test(self, type_):
         '''
@@ -225,7 +230,6 @@ class BaseModelHandler(Handler):
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 class DetailHandler(BaseModelHandler):
-    custom_methods = []
     '''
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -246,6 +250,7 @@ class DetailHandler(BaseModelHandler):
 
     Also accepts GET methods for "custom" methods
     '''
+    custom_methods = []
 
     def __init__(self, parentHandler, path, params, *args, **kwargs):
         # pylint: disable=super-init-not-called
@@ -256,18 +261,23 @@ class DetailHandler(BaseModelHandler):
         self._kwargs = kwargs
 
     def __checkCustom(self, check, parent, arg=None):
+        '''
+        checks curron methods
+        :param check: Method to check
+        :param parent: Parent Model Element
+        :param arg: argument to pass to custom method
+        '''
         logger.debug('Checking custom method {0}'.format(check))
-        for cm in self.custom_methods:
-            if check == cm:
-                try:
-                    operation = getattr(self, cm)
-                except Exception:
-                    self.invalidMethodException()
+        if check in self.custom_methods:
+            try:
+                operation = getattr(self, check)
+            except Exception:
+                self.invalidMethodException()
 
-                if arg is None:
-                    return operation(parent)
-                else:
-                    return operation(parent, arg)
+            if arg is None:
+                return operation(parent)
+            else:
+                return operation(parent, arg)
         return None
 
     def get(self):
@@ -766,7 +776,7 @@ class ModelHandler(BaseModelHandler):
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists')
 
-        return 'ok'
+        return OK
 
     def deleteItem(self, item):
         '''
