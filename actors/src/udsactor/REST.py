@@ -39,6 +39,7 @@ import logging
 import json
 import uuid
 import six
+import warnings
 
 from udsactor.log import logger
 
@@ -81,6 +82,7 @@ except Exception:
 
 try:
     urllib3.disable_warnings()  # @UndefinedVariable
+    warnings.simplefilter("ignore")
 except Exception:
     pass  # In fact, isn't too important, but wil log warns to logging file
 
@@ -108,9 +110,14 @@ class Api(object):
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
         self.idle = None
         self.secretKey = six.text_type(uuid.uuid4())
-        self.newerRequestLib = requests.__version__.split('.') >= '1'
+        self.newerRequestLib = requests.__version__.split('.')[0] >= '1'
         # Disable logging requests messages except for errors, ...
         logging.getLogger("requests").setLevel(logging.CRITICAL)
+        # Tries to disable all warnings
+        try:
+            warnings.simplefilter("ignore")  # Disables all warnings
+        except Exception:
+            pass
 
     def _getUrl(self, method, key=None, ids=None):
         url = self.url + method
@@ -129,15 +136,19 @@ class Api(object):
     def _request(self, url, data=None):
         try:
             if data is None:
-                # Old requests version does not support verify, but they do not checks ssl certificate
+                # Old requests version does not support verify, but they do not checks ssl certificate by default
                 if self.newerRequestLib:
+                    logger.debug('Requesting with new')
                     r = requests.get(url, verify=VERIFY_CERT)
                 else:
+                    logger.debug('Requesting with old')
                     r = requests.get(url)  # Always ignore certs??
             else:
                 if self.newerRequestLib:
+                    logger.debug('Requesting with new')
                     r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=VERIFY_CERT)
                 else:
+                    logger.debug('Requesting with old')
                     r = requests.post(url, data=data, headers={'content-type': 'application/json'})
 
             r = json.loads(r.content)  # Using instead of r.json() to make compatible with oooold rquests lib versions
