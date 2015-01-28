@@ -33,6 +33,7 @@ from __future__ import unicode_literals
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.views.decorators.cache import cache_page
 
 from uds.core.auths.auth import webLoginRequired, webPassword
 from uds.models import DeployedService, Transport, UserService, Image
@@ -44,10 +45,11 @@ from uds.core.ui import theme
 
 import uds.web.errors as errors
 
-
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2015-01-28'
 
 
 @webLoginRequired
@@ -141,6 +143,7 @@ def transportIcon(request, idTrans):
         return HttpResponseRedirect('/static/img/unknown.png')
 
 
+@cache_page(86400, key_prefix='img')
 def serviceImage(request, idImage):
     try:
         icon = Image.objects.get(uuid=idImage)

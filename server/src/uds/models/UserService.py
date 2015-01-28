@@ -35,7 +35,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-01-26'
+__updated__ = '2015-01-28'
 
 from django.db import models
 from django.db.models import signals

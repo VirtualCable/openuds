@@ -40,6 +40,7 @@ from uds.core.auths.auth import webLoginRequired
 from uds.models import DeployedService, Transport, UserService, Network
 from uds.core.util.Config import GlobalConfig
 from uds.core.ui import theme
+from uds.core.managers.UserServiceManager import UserServiceManager
 
 
 import logging
@@ -89,8 +90,6 @@ def index(request):
     # Select assigned user services
     for svr in availUserServices:
         # Skip maintenance services...
-        if svr.deployed_service.service.provider.maintenance_mode is True:
-            continue
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
@@ -100,12 +99,18 @@ def index(request):
             imageId = svr.deployed_service.image.uuid
         else:
             imageId = 'x'  # Invalid
-        services.append({'id': 'A' + svr.uuid, 'name': svr['name'], 'transports': trans, 'imageId': imageId, 'show_transports': svr.deployed_service.show_transports})
+        services.append({'id': 'A' + svr.uuid,
+                         'name': svr['name'],
+                         'transports': trans,
+                         'imageId': imageId,
+                         'show_transports': svr.deployed_service.show_transports,
+                         'maintenance': svr.deployed_service.service.provider.maintenance_mode,
+                         'in_use': svr.in_use})
+
+    logger.debug(services)
 
     # Now generic user service
     for svr in availServices:
-        if svr.service.provider.maintenance_mode is True:
-            continue
         trans = []
         for t in svr.transports.all().order_by('priority'):
             if t.validForIp(request.ip):
@@ -116,7 +121,16 @@ def index(request):
             imageId = svr.image.uuid
         else:
             imageId = 'x'
-        services.append({'id': 'F' + svr.uuid, 'name': svr.name, 'transports': trans, 'imageId': imageId, 'show_transports': svr.show_transports})
+
+        ads = UserServiceManager.manager().getExistingAssignationForUser(svr, request.user)
+
+        services.append({'id': 'F' + svr.uuid,
+                         'name': svr.name,
+                         'transports': trans,
+                         'imageId': imageId,
+                         'show_transports': svr.show_transports,
+                         'maintenance': svr.service.provider.maintenance_mode,
+                         'in_use': ads.in_use})
 
     logger.debug('Services: {0}'.format(services))
 

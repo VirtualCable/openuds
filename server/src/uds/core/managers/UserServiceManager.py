@@ -343,8 +343,7 @@ class UserServiceManager(object):
         with transaction.atomic():
             dsp.cachedDeployedService.filter(state__in=State.INFO_STATES).delete()
 
-    def getAssignationForUser(self, ds, user):
-        # First, we try to locate an already assigned service
+    def getExistingAssignationForUser(self, ds, user):
         existing = ds.assignedUserServices().filter(user=user, state__in=State.VALID_STATES)
         lenExisting = existing.count()
         if lenExisting > 0:  # Already has 1 assigned
@@ -355,6 +354,13 @@ class UserServiceManager(object):
             #        return existing[1]
             # else:
             #    return existing[0]
+        return None
+
+    def getAssignationForUser(self, ds, user):
+        assignedUserService = self.getExistingAssignationForUser(ds, user)
+        # If has an assigend user service, returns this without any more work
+        if assignedUserService is not None:
+            return assignedUserService
 
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():

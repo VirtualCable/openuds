@@ -9,7 +9,12 @@
             {% if ser.transports %}
             <div class="service-container">
                 {% with trans=ser.transports|first numTransports=ser.transports|length %}
-                <div class="service"{% if not java and trans.needsJava %} class="nojava"{% endif %} 
+                <div class="service{% if not java and trans.needsJava %} nojava{% endif %}{% if ser.maintenance %} maintenance{% endif %}{% if ser.in_use %} inuse{% endif %}"
+                     {% if ser.maintenance %}
+                     data-content="{% trans "Under maintenance" %}"
+                     {% elif ser.in_use %}
+                     data-content="{%trans "Currently in use" %}"
+                     {% endif %}
                      data-url="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">
                      <div class="service-image">
                         <img src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
@@ -31,7 +36,7 @@
                       <div class="modal-body">
                         <ul>
                             {% for trans in ser.transports %}
-                                <p><a {% if not java and trans.needsJava %} class="nojava"{% endif %} href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></p>
+                                <p><a href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></p>
                             {% endfor %}
                         </ul>
 
@@ -49,6 +54,24 @@
             {% endif %}
         {% endfor %}
 
+        <div class="modal fade" id="maintenance-dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans "Service under maintenance" %}</h4>
+              </div>
+              <div class="modal-body text-center">
+                <p>{% trans "This service is in maintenance mode." %}</p>
+                <p>{% trans "Please, retry access in a while." %}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
 			
 {% if not java %}
 		<div class="modal fade" id="no-java-dialog">
@@ -58,7 +81,7 @@
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		        <h4 class="modal-title">{% trans "Java not found" %}</h4>
 		      </div>
-		      <div class="modal-body">
+		      <div class="modal-body text-center">
 				<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
 				<p>{% trans "Please, install latest version from" %} <a href="http://www.java.com" target="_blank">{% trans "Java website" %}</a> {% trans "and restart browser" %}</p>
 		      </div>
@@ -69,6 +92,8 @@
 		  </div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 {% endif %}
+
+
 
 {% if user.isStaff %}
         <div class="panel panel-warning">
@@ -119,13 +144,23 @@
                 filter: alpha(opacity=40);
             }
 
+            div.service.maintenance {
+                opacity: 0.6;
+                filter: alpha(opacity=60);
+            }
+
+            div.service.inuse {
+                background-color: #DCDCFF;
+
+            }
+
             div.service-image {
                 width: 128px;
                 height: 128px;
             }
 
             div.service.over:not(.disabled) {
-                background-color: #FFFFFF;
+                background-color: #F0F0F0;
                 animation: pulse 0.5s infinite alternate;
                 -webkit-animation-name: pulse;
                 -webkit-animation-duration: 0.8s;
@@ -172,18 +207,12 @@
 {% block js %}
         <script>
         $(function() {
-            {% if not java %}
-            $(".nojava").click( function() {
-                $('#no-java-dialog').modal({
-                      keyboard: false
-                    })
-                return false;
-            });
-            {% endif %}
 
             $('.with-tooltip').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
 
-            $('div.service').on("click", function (event){
+            $('.inuse').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto top'});
+
+            $('div.service:not(.maintenance):not(.nojava)').on("click", function (event){
                 if($(this).hasClass('disabled'))
                     return;
                 $('div.service').addClass('disabled');
@@ -193,11 +222,28 @@
                 $(this).toggleClass('over');
             });
 
-            $('span.gear > span.fa').on("click", function (event) {
+            $('div.service:not(.maintenance):not(.nojava) > span.gear > span.fa').on("click", function (event) {
                 event.stopPropagation();
                 $(this).parent().parent().next().modal();
                 return false;
             });
+
+            $(".maintenance").click( function(event) {
+                $('#maintenance-dialog').modal({
+                      keyboard: false
+                    })
+                return false;
+            });
+
+            {% if not java %}
+            $(".nojava").click( function(event) {
+                $('#no-java-dialog').modal({
+                      keyboard: false
+                    })
+                return false;
+            });
+            {% endif %}
+
         });
         </script>
 {% endblock %}
