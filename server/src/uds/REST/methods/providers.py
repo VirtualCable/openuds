@@ -58,10 +58,12 @@ class Providers(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
-        {'maintenance_mode': {'title': _('State')}},
+        {'maintenance_state': {'title': _('Maintenance')}},
         {'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
         {'user_services_count': {'title': _('User Services'), 'type': 'numeric', 'width': '8em'}},
     ]
+    # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
+    table_row_style = {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     def item_as_dict(self, provider):
         type_ = provider.getType()

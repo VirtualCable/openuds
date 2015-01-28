@@ -111,6 +111,11 @@ tr.row-state-M:nth-child(2n) > td, tr.row-state-R:nth-child(2n) > td, tr.row-sta
     color: #858585 !important;
 }
 
+tr.row-maintenance-true:nth-child(2n) > td {
+    color: #FF6600 !important;
+}
+
+
 /* Logs */
 tr.log-WARN {
 	color: blue;

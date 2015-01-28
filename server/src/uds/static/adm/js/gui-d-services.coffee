@@ -69,9 +69,9 @@ gui.providers.link = (event) ->
       onData: (data) ->
         $.each data, (index, value) ->
           if value.maintenance_mode is true
-            value.maintenance_mode = gettext('In Maintenance')
+            value.maintenance_state = gettext('In Maintenance')
           else
-            value.maintenance_mode = gettext('Enabled')
+            value.maintenance_state = gettext('Enabled')
 
         return
 

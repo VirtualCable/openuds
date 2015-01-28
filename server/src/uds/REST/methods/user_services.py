@@ -40,6 +40,7 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
+from uds.core.util.State import State
 
 import logging
 
@@ -102,7 +103,7 @@ class AssignedService(DetailHandler):
             {'unique_id': {'title': 'Unique ID'}},
             {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
-            {'state': {'title': _('State')}},
+            {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
             {'state_date': {'title': _('State date'), 'type': 'datetime'}},
             {'in_use': {'title': _('In Use')}},
             {'source_host': {'title': _('Src Host')}},
@@ -110,6 +111,9 @@ class AssignedService(DetailHandler):
             {'owner': {'title': _('Owner')}},
             {'actor_version': {'title': _('Actor version')}}
         ]
+
+    def getRowStyle(self, parent):
+        return {'field': 'state', 'prefix': 'row-state-'}
 
     def getLogs(self, parent, item):
         try:
