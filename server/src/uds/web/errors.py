@@ -33,12 +33,19 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from transformers import scrambleId
+from .transformers import scrambleId, transformId
+
 from uds.models import DeployedService, Transport, UserService, Authenticator
 from uds.core.auths.Exceptions import InvalidUserException, InvalidAuthenticatorException
 from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedException
+from uds.core.ui import theme
+
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -109,3 +116,13 @@ def exceptionView(request, exception):
     except Exception as e:
         logger.exception('Exception cautgh at view!!!')
         raise e
+
+
+@transformId
+def error(request, idError):
+    '''
+    Error view, responsible of error display
+    :param request:
+    :param idError:
+    '''
+    return render_to_response(theme.template('error.html'), {'errorString': errorString(idError)}, context_instance=RequestContext(request))
