@@ -124,8 +124,9 @@ class WindowsOsManager(osmanagers.OSManager):
                 logger.debug('Do not understand level {}'.format(level))
                 level = log.INFO
 
-            log.doLog(service, int(level), msg, origin)
+            log.doLog(service, level, msg, origin)
         except Exception:
+            logger.exception('LinuxOs Manager message log: ')
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
     def process(self, service, msg, data, options):

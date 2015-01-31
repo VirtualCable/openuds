@@ -57,21 +57,27 @@ def message_fnc(id_, message, data):
     '''
     ids = id_.split(",")[:5]  # Limit ids received to five...
     logger.debug("Called message for id_ {0}, message \"{1}\" and data \"{2}\"".format(ids, message, data))
+
+    # Fix: Log used to send "INFO", "DEBUG", .. as level instead of numeric
+    # Now, we use levels, so for "legacy" actors we can do logs correctly
+    if message == 'log':
+        try:
+            msg, level = data.split('\t')
+            logger.debug('Msg: {}, level: "{}"'.format(msg, level))
+            level = "{}".format(log.logLevelFromStr(level))
+            logger.debug('Level: "{}"'.format(level))
+            data = '\t'.join([msg, level])
+        except Exception:
+            logger.exception("Exception at log")
+            data = data.replace('\t', ' ') + '\t10000'  # Other
+
     res = ""
     try:
         services = UserService.objects.filter(unique_id__in=ids, state__in=[State.USABLE, State.PREPARING])
         if services.count() == 0:
             res = ""
         else:
-            inUse = services[0].in_use
-            res = services[0].getInstance().osmanager().process(services[0], message, data)
-            services = UserService.objects.filter(unique_id__in=ids, state__in=[State.USABLE, State.PREPARING])
-            if services.count() > 0 and services[0].in_use != inUse:  # If state changed, log it
-                type_ = inUse and 'logout' or 'login'
-                uniqueId = services[0].unique_id
-                serviceIp = services[0].getInstance().getIp()
-                username = data
-                log.useLog(type_, uniqueId, serviceIp, username)
+            res = services[0].getInstance().osmanager().process(services[0], message, data, None)
     except Exception as e:
         logger.error("Exception at message (client): {0}".format(e))
         res = ""

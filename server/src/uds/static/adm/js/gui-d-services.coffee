@@ -143,7 +143,7 @@ gui.providers.link = (event) ->
           text: gettext("Maintenance")
           css: "disabled"
           click: (val, value, btn, tbl, refreshFnc) ->
-            gui.promptModal gettext("Maintenance Mode"), (if val.maintenance_mode is gettext('Enabled') then gettext("Enter Maintenance Mode?") else gettext("Exit Maintenance Mode?")),
+            gui.promptModal gettext("Maintenance Mode"), (if val.maintenance_mode is false then gettext("Enter Maintenance Mode?") else gettext("Exit Maintenance Mode?")),
               onYes: ->
                 gui.doLog 'Val: ', val
                 api.providers.maintenance val.id, (->
@@ -162,7 +162,7 @@ gui.providers.link = (event) ->
               $(btn).empty().append(gettext("Maintenance"))
               return
             $(btn).removeClass("disabled").addClass "btn3d-warning"
-            $(btn).empty().append('<div>' + (if val.maintenance_mode is gettext('Enabled') then gettext('Enter maintenance Mode') else gettext('Exit Maintenance Mode')) + '</div>')
+            $(btn).empty().append('<div>' + (if val.maintenance_mode is false then gettext('Enter maintenance Mode') else gettext('Exit Maintenance Mode')) + '</div>')
             return
         }
         "delete"

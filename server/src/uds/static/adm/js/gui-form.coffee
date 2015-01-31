@@ -39,11 +39,12 @@
         $.each value, (undefined_, val) ->
           newValue.push val.id
           return
-
         value = newValue
+
       originalValues[f.name] = value # Store original value
       html += api.templates.evaluate("tmpl_fld_" + f.gui.type,
         value: value # If no value present, use default value
+        minValue: f.gui.minValue
         values: f.gui.values
         label: f.gui.label
         length: f.gui.length

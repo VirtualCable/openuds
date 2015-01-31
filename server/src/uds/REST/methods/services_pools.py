@@ -145,6 +145,7 @@ class ServicesPools(ModelHandler):
         }, {
             'name': 'initial_srvs',
             'value': '0',
+            'minValue': '0',
             'label': ugettext('Initial available services'),
             'tooltip': ugettext('Services created initially for this service pool'),
             'type': gui.InputField.NUMERIC_TYPE,
@@ -152,6 +153,7 @@ class ServicesPools(ModelHandler):
         }, {
             'name': 'cache_l1_srvs',
             'value': '0',
+            'minValue': '0',
             'label': ugettext('Services to keep in cache'),
             'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
             'type': gui.InputField.NUMERIC_TYPE,
@@ -159,6 +161,7 @@ class ServicesPools(ModelHandler):
         }, {
             'name': 'cache_l2_srvs',
             'value': '0',
+            'minValue': '0',
             'label': ugettext('Services to keep in L2 cache'),
             'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
             'type': gui.InputField.NUMERIC_TYPE,
@@ -166,6 +169,7 @@ class ServicesPools(ModelHandler):
         }, {
             'name': 'max_srvs',
             'value': '0',
+            'minValue': '1',
             'label': ugettext('Maximum number of services to provide'),
             'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
             'type': gui.InputField.NUMERIC_TYPE,

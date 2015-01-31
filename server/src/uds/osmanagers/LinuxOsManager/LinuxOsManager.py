@@ -120,7 +120,7 @@ class LinuxOsManager(osmanagers.OSManager):
             except Exception:
                 logger.debug('Do not understand level {}'.format(level))
                 level = log.INFO
-            log.doLog(service, int(level), msg, origin)
+            log.doLog(service, level, msg, origin)
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 

@@ -122,7 +122,12 @@ def index(request):
         else:
             imageId = 'x'
 
+        # Locate if user service has any already assigned user service for this
         ads = UserServiceManager.manager().getExistingAssignationForUser(svr, request.user)
+        if ads is None:
+            in_use = False
+        else:
+            in_use = ads.in_use
 
         services.append({'id': 'F' + svr.uuid,
                          'name': svr.name,
@@ -130,7 +135,7 @@ def index(request):
                          'imageId': imageId,
                          'show_transports': svr.show_transports,
                          'maintenance': svr.service.provider.maintenance_mode,
-                         'in_use': ads.in_use})
+                         'in_use': in_use})
 
     logger.debug('Services: {0}'.format(services))
 

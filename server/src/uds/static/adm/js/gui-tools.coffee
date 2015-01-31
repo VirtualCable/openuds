@@ -70,15 +70,20 @@
       $(selector + " .selectpicker").selectpicker()
 
       # Activate Touchspinner
-      tspn = $(selector + " input[type=numeric]:not([readonly])")
-      tspn.attr("type", "text")
-      tspn.TouchSpin
-        verticalbuttons: true
-        verticalupclass: 'glyphicon glyphicon-plus'
-        verticaldownclass: 'glyphicon glyphicon-minus'
-        min: -99999
-        max: 99999
-        decimals: 0
+      $.each $(selector + " input[type=numeric]:not([readonly])"), (index, tspn) ->
+        $tspn = $(tspn)
+        minVal = parseInt $tspn.attr("data-minval")
+        if minVal == 987654321
+          minVal = -999999
+        gui.doLog minVal
+        $tspn.attr("type", "text")
+        $tspn.TouchSpin
+          verticalbuttons: true
+          verticalupclass: 'glyphicon glyphicon-plus'
+          verticaldownclass: 'glyphicon glyphicon-minus'
+          min: minVal
+          max: 999999
+          decimals: 0
         
       # TEST: cooler on mobile devices
       $(selector + " .selectpicker").selectpicker "mobile"  if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)

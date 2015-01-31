@@ -1,6 +1,6 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% block field %}
 {% verbatim %}
-        <input type="{% endverbatim %}{% block type %}text{% endblock %}{% verbatim %}" class="form-control {{ css }}" name="{{ name }}" id="{{ name }}_field" placeholder="{{ tooltip }}" value="{{ value }}"{{# if readonly }} readonly{{/ if }} {{# if required }} required {{/ if }}>
+        <input type="{% endverbatim %}{% block type %}text{% endblock %}{% verbatim %}" class="form-control {{ css }}" name="{{ name }}" id="{{ name }}_field" placeholder="{{ tooltip }}" value="{{ value }}"{{# if readonly }} readonly{{/ if }} {{# if required }} required {{/ if }} data-minval="{{ minValue }}">
 {% endverbatim %}
 {% endblock %}

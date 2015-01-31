@@ -47,7 +47,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-01-27'
+__updated__ = '2015-01-31'
 
 
 # a few constants
@@ -84,6 +84,7 @@ class BaseModelHandler(Handler):
                 'required': field.get('required', False),
                 'defvalue': field.get('value', ''),
                 'value': field.get('value', ''),
+                'minValue': field.get('minValue', '987654321'),
                 'label': field.get('label', ''),
                 'length': field.get('length', 128),
                 'multiline': field.get('multiline', 0),
