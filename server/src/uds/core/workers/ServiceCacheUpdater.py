@@ -76,8 +76,8 @@ class ServiceCacheUpdater(Job):
         # First we get all deployed services that could need cache generation
         DeployedService.objects.update()
         # We start filtering out the deployed services that do not need caching at all.
-        whichNeedsCaching = DeployedService.objects.filter(Q(initial_srvs__gt=0) | Q(cache_l1_srvs__gt=0)).filter(max_srvs__gt=0, state=State.ACTIVE,
-                                                                                                                  service__provider__maintenance_mode=False)[:]
+        whichNeedsCaching = DeployedService.objects.filter(Q(initial_srvs__gte=0) | Q(cache_l1_srvs__gte=0)).filter(max_srvs__gte=0, state=State.ACTIVE,
+                                                                                                                    service__provider__maintenance_mode=False)[:]
 
         # We will get the one that proportionally needs more cache
         servicesPools = []
