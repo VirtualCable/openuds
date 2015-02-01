@@ -109,7 +109,7 @@ class PublicationFinishChecker(DelayedTask):
         try:
             prevState = dsp.state
             checkLater = False
-            if  State.isFinished(state):
+            if State.isFinished(state):
                 # Now we mark, if it exists, the previous usable publication as "Removable"
                 if State.isPreparing(prevState):
                     for old in dsp.deployed_service.publications.filter(state=State.USABLE):
@@ -174,13 +174,17 @@ class PublicationManager(object):
 
     @staticmethod
     def manager():
-        if PublicationManager._manager == None:
+        if PublicationManager._manager is None:
             PublicationManager._manager = PublicationManager()
         return PublicationManager._manager
 
     def publish(self, deployedService):
         if deployedService.publications.filter(state__in=State.PUBLISH_STATES).count() > 0:
             raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
+
+        if deployedService.isInMaintenance():
+            raise PublishException(_('Service is in maintenance mode and new publications are not allowed'))
+
         try:
             now = getSqlDatetime()
             dsp = deployedService.publications.create(state=State.LAUNCHING, state_date=now, publish_date=now, revision=deployedService.current_pub_revision)
