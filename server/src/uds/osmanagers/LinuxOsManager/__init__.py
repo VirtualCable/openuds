@@ -51,9 +51,9 @@ DownloadsManager.manager().registerDownloadable('udsactor_1.7.0_all.deb',
 DownloadsManager.manager().registerDownloadable('udsactor-1.7.0-1.noarch.rpm',
                                                 _('UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'),
                                                 os.path.dirname(sys.modules[__package__].__file__) + 'udsactor-1.7.0-1.noarch.rpm',
-                                                'application/x-debian-package')
+                                                'application/x-redhat-package-manager')
 
 DownloadsManager.manager().registerDownloadable('udsactor-opensuse-1.7.0-1.noarch.rpm',
                                                 _('UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>'),
                                                 os.path.dirname(sys.modules[__package__].__file__) + 'udsactor-opensuse-1.7.0-1.noarch.rpm',
-                                                'application/x-debian-package')
+                                                'application/x-redhat-package-manager')
