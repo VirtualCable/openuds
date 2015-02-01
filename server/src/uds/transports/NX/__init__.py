@@ -47,7 +47,7 @@ UserPrefsManager.manager().registerPrefs('nx', _('NX Protocol'),
                                            CommonPrefs.screenSizePref
                                         ])
 
-DownloadsManager.manager().registerDownloadable('udsactor-nx_1.0_all.deb',
-                                                _('UDS Actor connector for NX <b>(requires nomachine packages)</b>'),
-                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-nx_1.0_all.deb',
-                                                'application/x-debian-package')
+# DownloadsManager.manager().registerDownloadable('udsactor-nx_1.0_all.deb',
+#                                                _('UDS Actor connector for NX <b>(requires nomachine packages)</b>'),
+#                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor-nx_1.0_all.deb',
+#                                                'application/x-debian-package')

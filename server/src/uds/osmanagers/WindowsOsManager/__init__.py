@@ -23,6 +23,6 @@ OSManagersFactory.factory().insert(WinDomainOsManager)
 OSManagersFactory.factory().insert(WinRandomPassManager)
 
 DownloadsManager.manager().registerDownloadable('UDSActorSetup.exe',
-                                                _('UDS Actor for windows machines <b>(Important!! Requires .net framework 3.5 sp1)</b>'),
+                                                _('UDS Actor for windows machines'),
                                                 os.path.dirname(sys.modules[__package__].__file__) + '/files/UDSActorSetup.exe',
                                                 'application/x-msdos-program')

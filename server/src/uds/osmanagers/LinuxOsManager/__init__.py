@@ -35,15 +35,25 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.osmanagers.OSManagersFactory import OSManagersFactory
 from uds.core.managers.DownloadsManager import DownloadsManager
-from LinuxOsManager import LinuxOsManager
-from LinuxRandomPassOsManager import LinuxRandomPassManager
+from .LinuxOsManager import LinuxOsManager
+from .LinuxRandomPassOsManager import LinuxRandomPassManager
 import os.path
 import sys
 
 OSManagersFactory.factory().insert(LinuxOsManager)
 OSManagersFactory.factory().insert(LinuxRandomPassManager)
 
-DownloadsManager.manager().registerDownloadable('udsactor_1.1_all.deb',
-                                                _('UDS Actor for linux machines <b>(Requires python 2.6 or greater)'),
-                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_1.1_all.deb',
+DownloadsManager.manager().registerDownloadable('udsactor_1.7.0_all.deb',
+                                                _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>'),
+                                                os.path.dirname(sys.modules[__package__].__file__) + '/files/udsactor_1.7.0_all.deb',
+                                                'application/x-debian-package')
+
+DownloadsManager.manager().registerDownloadable('udsactor-1.7.0-1.noarch.rpm',
+                                                _('UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'),
+                                                os.path.dirname(sys.modules[__package__].__file__) + 'udsactor-1.7.0-1.noarch.rpm',
+                                                'application/x-debian-package')
+
+DownloadsManager.manager().registerDownloadable('udsactor-opensuse-1.7.0-1.noarch.rpm',
+                                                _('UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>'),
+                                                os.path.dirname(sys.modules[__package__].__file__) + 'udsactor-opensuse-1.7.0-1.noarch.rpm',
                                                 'application/x-debian-package')
