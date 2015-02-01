@@ -64,6 +64,7 @@ def getNetworkInfo():
                     continue
                 if ip == '' or ip is None:
                     continue
+                logger.debug('Net config found: {}=({}, {})'.format(obj.Caption, obj.MACAddress, ip))
                 yield utils.Bunch(name=obj.Caption, mac=obj.MACAddress, ip=ip)
     except Exception:
         return
@@ -111,7 +112,7 @@ def loggoff():
 
 def renameComputer(newName):
     # Needs admin privileges to work
-    if ctypes.windll.kernel32.SetComputerNameExW(DWORD(win32con.ComputerNamePhysicalDnsHostname), LPCWSTR(newName)) == 0:
+    if ctypes.windll.kernel32.SetComputerNameExW(DWORD(win32con.ComputerNamePhysicalDnsHostname), LPCWSTR(newName)) == 0:  # @UndefinedVariable
         # win32api.FormatMessage -> returns error string
         # win32api.GetLastError -> returns error code
         # (just put this comment here to remember to log this when logger is available)
@@ -131,13 +132,20 @@ NETSETUP_DEFER_SPN_SET = 0x1000000
 
 
 def joinDomain(domain, ou, account, password, executeInOneStep=False):
+    '''
+    Joins machine to a windows domain
+    :param domain: Domain to join to
+    :param ou: Ou that will hold machine
+    :param account: Account used to join domain
+    :param password: Password of account used to join domain
+    :param executeInOneStep: If true, means that this machine has been renamed and wants to add NETSETUP_JOIN_WITH_NEW_NAME to request so we can do rename/join in one step.
+    '''
     # If account do not have domain, include it
     if '@' not in account and '\\' not in account:
         if '.' in domain:
             account = account + '@' + domain
         else:
             account = domain + '\\' + account
-
 
     # Do log
     flags = NETSETUP_ACCT_CREATE | NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
@@ -198,7 +206,7 @@ def getIdleDuration():
     lastInputInfo = LASTINPUTINFO()
     lastInputInfo.cbSize = ctypes.sizeof(lastInputInfo)
     ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo))
-    millis = ctypes.windll.kernel32.GetTickCount() - lastInputInfo.dwTime
+    millis = ctypes.windll.kernel32.GetTickCount() - lastInputInfo.dwTime  # @UndefinedVariable
     return millis / 1000.0
 
 

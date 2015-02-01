@@ -104,13 +104,17 @@ class Api(object):
     def __init__(self, host, masterKey, ssl):
         self.host = host
         self.masterKey = masterKey
-        self.useSSL = ssl
+        self.useSSL = True if ssl else False
         self.uuid = None
         self.mac = None
-        self.url = "{}://{}/rest/actor/".format(('http', 'https')[ssl], self.host)
+        self.url = "{}://{}/rest/actor/".format(('http', 'https')[self.useSSL], self.host)
         self.idle = None
         self.secretKey = six.text_type(uuid.uuid4())
-        self.newerRequestLib = requests.__version__.split('.')[0] >= '1'
+        try:
+            self.newerRequestLib = requests.__version__.split('.')[0] >= '1'
+        except Exception:
+            self.newerRequestLib = False  # I no version, guess this must be an old requests
+
         # Disable logging requests messages except for errors, ...
         logging.getLogger("requests").setLevel(logging.CRITICAL)
         # Tries to disable all warnings

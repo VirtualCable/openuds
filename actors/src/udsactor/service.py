@@ -126,7 +126,8 @@ class CommonService(object):
                 logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
                 return False  # On unmanaged hosts, there is no reason right now to continue running
             except Exception as e:
-                logger.debug('Exception caught: {}, retrying'.format(exceptionToMessage(e)))
+                logger.debug('Exception on network info: {}, retrying')
+                logger.exception()
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
                 # but, if too many errors, will log it (one every minute, for
                 # example)

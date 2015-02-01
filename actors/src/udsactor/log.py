@@ -31,6 +31,7 @@
 '''
 from __future__ import unicode_literals
 
+import traceback
 import sys
 import six
 
@@ -50,6 +51,10 @@ class Logger(object):
         self.remoteLogger = None
 
     def setLevel(self, level):
+        '''
+        Sets log level filter (minimum level required for a log message to be processed)
+        :param level: Any message with a level below this will be filtered out
+        '''
         self.logLevel = int(level)  # Ensures level is an integer or fails
 
     def setRemoteLogger(self, remoteLogger):
@@ -82,6 +87,14 @@ class Logger(object):
 
     def fatal(self, message):
         self.log(FATAL, message)
+
+    def exception(self):
+        try:
+            tb = traceback.format_exc()
+        except Exception:
+            tb = '(could not get traceback!)'
+
+        self.log(DEBUG, tb)
 
     def flush(self):
         pass
