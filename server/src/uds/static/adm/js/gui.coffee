@@ -396,7 +396,7 @@
         $(modalId).modal "hide"
         parent.rest.del value.id, (->
           refreshFnc()
-          gui.notify gettext("Item deleted"), "success"
+          gui.notify gettext("Sucess"), "success"
           return
         ), gui.failRequestModalFnc(modalErrorMsg)
         return

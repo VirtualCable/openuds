@@ -410,14 +410,23 @@ gui.servicesPools.link = (event) ->
 
                   select: (val, value, btn, tbl, refreshFnc) ->
                     unless val
-                      $(btn).removeClass("btn3d-info").addClass "disabled"
+                      $(btn).removeClass("btn3d-warning").addClass "disabled"
                       return
+
+                    if val.state == 'K'
+                      $(btn).empty().append(gettext("Force Cancel"))
+                    else
+                      $(btn).empty().append(gettext("Cancel"))
+
                     # Waiting for publication, Preparing or running
-                    $(btn).removeClass("disabled").addClass "btn3d-info"  if [
+                    gui.doLog "State: ", val.state
+                    $(btn).removeClass("disabled").addClass "btn3d-warning"  if [
                       "P"
                       "W"
                       "L"
-                    ].indexOf(val.state) > 0
+                      "K"
+                    ].indexOf(val.state) != -1
+
                     return
                 }
                 "xls"
