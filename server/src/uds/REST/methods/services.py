@@ -64,6 +64,7 @@ class Services(DetailHandler):
             'type_name': _(item.getType().name()),
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service=item).count(),
+            'maintenance_mode': item.provider.maintenance_mode,
         }
         if full:
             info = item.getType()
@@ -93,6 +94,9 @@ class Services(DetailHandler):
         except Exception:
             logger.exception('itemId {}'.format(item))
             self.invalidItemException()
+
+    def getRowStyle(self, parent):
+        return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     def deleteIncompleteService(self, service):
         if service is not None:

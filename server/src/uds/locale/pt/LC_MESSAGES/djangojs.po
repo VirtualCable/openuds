@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-02 11:31+0100\n"
+"POT-Creation-Date: 2015-02-02 11:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -328,8 +328,8 @@ msgstr ""
 "Translate.22213748"
 
 #: static/tmp_js/gui-d-services.js:67
-msgid "Enabled"
-msgstr "Habilitado"
+msgid "Normal"
+msgstr "Normal"
 
 #: static/tmp_js/gui-d-services.js:114
 msgid "Edit service"

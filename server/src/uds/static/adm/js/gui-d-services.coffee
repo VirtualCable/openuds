@@ -71,7 +71,7 @@ gui.providers.link = (event) ->
           if value.maintenance_mode is true
             value.maintenance_state = gettext('In Maintenance')
           else
-            value.maintenance_state = gettext('Enabled')
+            value.maintenance_state = gettext('Normal')
 
         return
 

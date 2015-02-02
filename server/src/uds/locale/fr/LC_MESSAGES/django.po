@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-02 11:30+0100\n"
+"POT-Creation-Date: 2015-02-02 11:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,7 @@ msgstr "Authentificateurs actuels"
 
 #: REST/methods/authenticators.py:58 REST/methods/images.py:58
 #: REST/methods/networks.py:59 REST/methods/osmanagers.py:57
-#: REST/methods/providers.py:59 REST/methods/services_pools.py:65
+#: REST/methods/providers.py:62 REST/methods/services_pools.py:65
 #: REST/methods/transports.py:55 REST/methods/user_services.py:203
 #: REST/methods/user_services.py:232 REST/methods/users_groups.py:94
 #: REST/model.py:108 templates/uds/admin/tmpl/user.html:29
@@ -73,7 +73,7 @@ msgid "Name"
 msgstr "Nom"
 
 #: REST/methods/authenticators.py:59 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:60 REST/methods/services.py:155
+#: REST/methods/providers.py:63 REST/methods/services.py:159
 #: REST/methods/services_pools.py:69 REST/methods/transports.py:56
 #: REST/methods/user_services.py:234 REST/methods/users_groups.py:95
 #: REST/methods/users_groups.py:208 REST/model.py:115
@@ -155,15 +155,16 @@ msgstr "Impossible de supprimer un gestionnaire d'OS avec services associés"
 msgid "Can't modify an OS Manager with services pools associated"
 msgstr "Impossible de modifier un gestionnaire de l'OS avec services associés"
 
-#: REST/methods/providers.py:55
+#: REST/methods/providers.py:58
 msgid "Service providers"
 msgstr "Fournisseurs de services"
 
-#: REST/methods/providers.py:61
-msgid "Maintenance"
-msgstr "Entretien"
+#: REST/methods/providers.py:64
+#| msgid "State"
+msgid "Status"
+msgstr "Statut"
 
-#: REST/methods/providers.py:62 templates/uds/admin/snippets/navbar.html:18
+#: REST/methods/providers.py:65 templates/uds/admin/snippets/navbar.html:18
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
@@ -172,45 +173,45 @@ msgstr "Entretien"
 msgid "Services"
 msgstr "Services"
 
-#: REST/methods/providers.py:63
+#: REST/methods/providers.py:66
 msgid "User Services"
 msgstr "Services aux utilisateurs"
 
-#: REST/methods/providers.py:115 web/errors.py:70
+#: REST/methods/providers.py:118 web/errors.py:70
 msgid "Service not found"
 msgstr "Service introuvable"
 
-#: REST/methods/services.py:122
+#: REST/methods/services.py:126
 msgid "Element already exists (duplicate key error)"
 msgstr "Élément existe déjà (erreur de clé en double)"
 
-#: REST/methods/services.py:125
+#: REST/methods/services.py:129
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Erreur d'entrée : {0}"
 
-#: REST/methods/services.py:148
+#: REST/methods/services.py:152
 #, python-brace-format
 msgid "Services of {0}"
 msgstr "Services de {0}"
 
-#: REST/methods/services.py:150
+#: REST/methods/services.py:154
 msgid "Current services"
 msgstr "Services actuels"
 
-#: REST/methods/services.py:154
+#: REST/methods/services.py:158
 msgid "Service name"
 msgstr "Nom du service"
 
-#: REST/methods/services.py:156 REST/methods/user_services.py:233
+#: REST/methods/services.py:160 REST/methods/user_services.py:233
 msgid "Type"
 msgstr "Type"
 
-#: REST/methods/services.py:157
+#: REST/methods/services.py:161
 msgid "Deployed services"
 msgstr "Services déployés"
 
-#: REST/methods/services.py:158 templates/uds/admin/tmpl/dashboard.html:88
+#: REST/methods/services.py:162 templates/uds/admin/tmpl/dashboard.html:88
 msgid "User services"
 msgstr "Services aux utilisateurs"
 

@@ -46,6 +46,9 @@ logger = logging.getLogger(__name__)
 
 
 class Providers(ModelHandler):
+    '''
+    Providers REST handler
+    '''
     model = Provider
     detail = {'services': DetailServices}
     custom_methods = [('allservices', False), ('service', False), ('maintenance', True)]
@@ -58,7 +61,7 @@ class Providers(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
-        {'maintenance_state': {'title': _('Maintenance')}},
+        {'maintenance_state': {'title': _('Status')}},
         {'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
         {'user_services_count': {'title': _('User Services'), 'type': 'numeric', 'width': '8em'}},
     ]
@@ -98,20 +101,20 @@ class Providers(ModelHandler):
     def getGui(self, type_):
         try:
             return self.addDefaultFields(services.factory().lookup(type_).guiDescription(), ['name', 'comments'])
-        except:
+        except Exception:
             raise NotFound('type not found')
 
     def allservices(self):
         for s in Service.objects.all():
             try:
                 yield DetailServices.serviceToDict(s, True)
-            except:
+            except Exception:
                 logger.exception('Passed service cause type is unknown')
 
     def service(self):
         try:
             return DetailServices.serviceToDict(Service.objects.get(uuid=self._args[1]), True)
-        except:
+        except Exception:
             raise RequestError(ugettext('Service not found'))
 
     def maintenance(self, item):
