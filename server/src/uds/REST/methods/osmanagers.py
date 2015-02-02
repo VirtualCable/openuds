@@ -54,9 +54,9 @@ class OsManagers(ModelHandler):
 
     table_title = _('Current OS Managers')
     table_fields = [
-            {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-            {'comments': {'title': _('Comments')}},
-            {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+        {'comments': {'title': _('Comments')}},
+        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]
 
     @staticmethod
@@ -75,11 +75,11 @@ class OsManagers(ModelHandler):
 
     def checkDelete(self, item):
         if item.deployedServices.count() > 0:
-            raise RequestError(ugettext('Can\'t delete an OSManager with deployed services associated'))
+            raise RequestError(ugettext('Can\'t delete an OS Manager with services pools associated'))
 
     def checkSave(self, item):
         if item.deployedServices.count() > 0 and settings.DEBUG is False:
-            raise RequestError(ugettext('Can\'t modify an OSManager with deployed services associated'))
+            raise RequestError(ugettext('Can\'t modify an OS Manager with services pools associated'))
 
     # Types related
     def enum_types(self):

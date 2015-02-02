@@ -96,7 +96,7 @@ class Provider(ServiceProvider):
     password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of oVirt'), required=True)
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=5, tooltip=_('Timeout in seconds of connection to VC'), required=True)
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF', order=6, rdonly=True,
-                              tooltip=_('Range of valids macs for created machines'), required=True)
+                              tooltip=_('Range of valid macs for created machines'), required=True)
 
     # oVirt engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..

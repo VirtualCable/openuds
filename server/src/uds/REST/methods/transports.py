@@ -51,10 +51,10 @@ class Transports(ModelHandler):
 
     table_title = _('Current Transports')
     table_fields = [
-            {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-            {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-            {'comments': {'title': _('Comments')}},
-            {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
+        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+        {'comments': {'title': _('Comments')}},
+        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]
 
     def enum_types(self):
@@ -62,23 +62,24 @@ class Transports(ModelHandler):
 
     def getGui(self, type_):
         try:
-            return self.addField(self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'priority']), {
-                       'name': 'nets_positive',
-                       'value': True,
-                       'label': ugettext('Network access'),
-                       'tooltip': ugettext('If ACTIVE, the transport will be enabled for the selected networks.If INACTIVE, trans port will be disabled for selected networks'),
-                       'type': 'checkbox',
-                       'order': 100,  # At end
-                   }), {
-                        'name': 'networks',
-                        'value': [],
-                        'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
-                        'label': ugettext('Networks'),
-                        'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
-                        'type': 'multichoice',
-                        'order': 101
-                  })
-        except:
+            return self.addField(
+                self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'priority']), {
+                    'name': 'nets_positive',
+                    'value': True,
+                    'label': ugettext('Network access'),
+                    'tooltip': ugettext('If checked, the transport will be enabled for the selected networks.If unchecked, transport will be disabled for selected networks'),
+                    'type': 'checkbox',
+                    'order': 100,  # At end
+                }), {
+                    'name': 'networks',
+                    'value': [],
+                    'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
+                    'label': ugettext('Networks'),
+                    'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
+                    'type': 'multichoice',
+                    'order': 101
+                })
+        except Exception:
             self.invalidItemException()
 
     def item_as_dict(self, item):

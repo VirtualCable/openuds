@@ -65,13 +65,13 @@ class TSNXTransport(Transport):
     supportedOss = ['Windows', 'Macintosh', 'Linux']
     protocol = protocols.NX
 
-    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server send to client device ("public" ip) and port. (use HOST:PORT format)'))
+    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'))
     tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
 
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=3, tooltip=_('If checked, the credentials used to connect will be emtpy'))
     fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'))
-    listenPort = gui.NumericField(label=_('Listen port'), length=5, order=6, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
+    listenPort = gui.NumericField(label=_('Listening port'), length=5, order=6, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
     connection = gui.ChoiceField(label=_('Connection'), order=7, tooltip=_('Connection speed for this transport (quality)'),
                                  values=[
                                      {'id': 'modem', 'text': 'modem'},
@@ -95,7 +95,7 @@ class TSNXTransport(Transport):
                                     {'id': '256', 'text': '256 Mb'},
                                     {'id': '512', 'text': '512 Mb'},
     ])
-    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=10, tooltip=_('Cache size en Mb keept at memory'),
+    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=10, tooltip=_('Cache size en Mb kept at memory'),
                                values=[
                                    {'id': '4', 'text': '4 Mb'},
                                    {'id': '8', 'text': '8 Mb'},

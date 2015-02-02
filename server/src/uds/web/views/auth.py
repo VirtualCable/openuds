@@ -131,7 +131,7 @@ def authInfo(request, authName):
 
         return HttpResponse(info)
     except Exception:
-        return HttpResponse(_('Authenticator does not provides information'))
+        return HttpResponse(_('Authenticator does not provide information'))
 
 
 @webLoginRequired

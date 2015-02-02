@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-13 05:07+0100\n"
+"POT-Creation-Date: 2015-02-02 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -321,8 +321,7 @@ msgstr "OSManager löschen Fehler"
 msgid "In Maintenance"
 msgstr "In der Pflege"
 
-#: static/tmp_js/gui-d-services.js:67 static/tmp_js/gui-d-services.js.c:133
-#: static/tmp_js/gui-d-services.js:150
+#: static/tmp_js/gui-d-services.js:67
 msgid "Enabled"
 msgstr "Aktiviert"
 
@@ -496,11 +495,12 @@ msgid "Transport removal error"
 msgstr "Transportfehler entfernen"
 
 #: static/tmp_js/gui-d-servicespools.js:317
+#: static/tmp_js/gui-d-servicespools.js:336
 msgid "Cancel"
 msgstr "Abbrechen"
 
 #: static/tmp_js/gui-d-servicespools.js:320
-#: static/tmp_js/gui-d-servicespools.js:340
+#: static/tmp_js/gui-d-servicespools.js:346
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -508,57 +508,61 @@ msgstr "Veröffentlichen"
 msgid "Cancel publication"
 msgstr "Veröffentlichung einzustellen"
 
-#: static/tmp_js/gui-d-servicespools.js:340
+#: static/tmp_js/gui-d-servicespools.js:334
+msgid "Force Cancel"
+msgstr "Kraft \"Abbrechen\""
+
+#: static/tmp_js/gui-d-servicespools.js:346
 msgid "Launch new publication?"
 msgstr "Starten neue Publikation zu?"
 
-#: static/tmp_js/gui-d-servicespools.js:344
+#: static/tmp_js/gui-d-servicespools.js:350
 msgid "Failed creating publication"
 msgstr "Fehler beim Erstellen von Publikation"
 
-#: static/tmp_js/gui-d-servicespools.js:366
+#: static/tmp_js/gui-d-servicespools.js:372
 msgid "undefined"
 msgstr "undefiniert"
 
-#: static/tmp_js/gui-d-servicespools.js:373
+#: static/tmp_js/gui-d-servicespools.js:379
 msgid "Restrained"
 msgstr "Zurückhaltend"
 
-#: static/tmp_js/gui-d-servicespools.js:380
+#: static/tmp_js/gui-d-servicespools.js:386
 msgid "unknown (needs reload)"
 msgstr "unbekannt (muss neu laden)"
 
-#: static/tmp_js/gui-d-servicespools.js:384
+#: static/tmp_js/gui-d-servicespools.js:390
 msgid "New service pool"
 msgstr "Neue Service-pool"
 
-#: static/tmp_js/gui-d-servicespools.js:384
+#: static/tmp_js/gui-d-servicespools.js:390
 msgid "creation error"
 msgstr "Fehler beim Erstellen"
 
-#: static/tmp_js/gui-d-servicespools.js:393
+#: static/tmp_js/gui-d-servicespools.js:399
 msgid "Publish on creation"
 msgstr "Bei der Erstellung zu veröffentlichen"
 
-#: static/tmp_js/gui-d-servicespools.js:394
+#: static/tmp_js/gui-d-servicespools.js:400
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr ""
 "Wenn ausgewählt, wird die Publikation Inmediatly nach Erstellung einleiten."
 
-#: static/tmp_js/gui-d-servicespools.js:406 static/tmp_js/gui.js:40
+#: static/tmp_js/gui-d-servicespools.js:412 static/tmp_js/gui.js:40
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: static/tmp_js/gui-d-servicespools.js:406
+#: static/tmp_js/gui-d-servicespools.js:412
 msgid "saving error"
 msgstr "Speichern von Fehler"
 
-#: static/tmp_js/gui-d-servicespools.js:407 static/tmp_js/gui.js:44
+#: static/tmp_js/gui-d-servicespools.js:413 static/tmp_js/gui.js:44
 #: static/tmp_js/gui.js.c:360
 msgid "Delete"
 msgstr "Löschen"
 
-#: static/tmp_js/gui-d-servicespools.js:407
+#: static/tmp_js/gui-d-servicespools.js:413
 msgid "deletion error"
 msgstr "Fehler löschen"
 
@@ -731,5 +735,5 @@ msgid "Are you sure do you want to delete "
 msgstr "Bist du sicher wollen Sie löschen "
 
 #: static/tmp_js/gui.js:366
-msgid "Item deleted"
-msgstr "Element gelöscht"
+msgid "Sucess"
+msgstr "Erfolg"

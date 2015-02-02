@@ -72,7 +72,7 @@ def login(request, smallName=None):
                 except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
                     smallName = None
 
-    logger.debug('Small name: {0}'.format(smallName))
+    logger.debug('Tag: {0}'.format(smallName))
 
     logger.debug(request.method)
     if request.method == 'POST':

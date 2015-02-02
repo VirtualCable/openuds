@@ -305,7 +305,7 @@ class UserServiceManager(object):
         uService = UserService.objects.get(pk=uService.id)
         logger.debug('Canceling uService {0} creation'.format(uService))
         if uService.isPreparing() is False:
-            logger.info(_('Cancel requested for a non running operation, doing remove instead'))
+            logger.info('Cancel requested for a non running operation, performing removal instead')
             return self.remove(uService)
 
         ui = uService.getInstance()
@@ -337,7 +337,7 @@ class UserServiceManager(object):
         elif uService.isPreparing():
             return self.cancel(uService)
         else:
-            raise OperationException(_('Can\'t remove nor cancel {0} cause its states doesn\'t allows it'))
+            raise OperationException(_('Can\'t remove nor cancel {0} cause its states don\'t allow it'))
 
     def removeInfoItems(self, dsp):
         with transaction.atomic():

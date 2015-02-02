@@ -104,7 +104,7 @@ class AssignedService(DetailHandler):
             {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
             {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
-            {'state_date': {'title': _('State date'), 'type': 'datetime'}},
+            {'state_date': {'title': _('Status date'), 'type': 'datetime'}},
             {'in_use': {'title': _('In Use')}},
             {'source_host': {'title': _('Src Host')}},
             {'source_ip': {'title': _('Src Ip')}},

@@ -36,7 +36,7 @@ from uds.core import auths
 
 import logging
 
-__updated__ = '2014-02-19'
+__updated__ = '2015-02-02'
 
 logger = logging.getLogger(__name__)
 
@@ -123,7 +123,7 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values is not None and len(self.groups.value) < 2:
-            raise auths.Authenticator.ValidationException(_('We need more that two items!'))
+            raise auths.Authenticator.ValidationException(_('We need more than two items!'))
 
     def searchUsers(self, pattern):
         '''
@@ -135,7 +135,7 @@ class SampleAuth(auths.Authenticator):
         facility for users. In our case, we will simply return a list of users
         (array of dictionaries with ids and names) with the pattern plus 1..10
         '''
-        return [ { 'id' : '{0}-{1}'.format(pattern, a), 'name' : '{0} number {1}'.format(pattern, a) } for a in range(1, 10)]
+        return [{'id': '{0}-{1}'.format(pattern, a), 'name': '{0} number {1}'.format(pattern, a)} for a in range(1, 10)]
 
     def searchGroups(self, pattern):
         '''
@@ -149,7 +149,7 @@ class SampleAuth(auths.Authenticator):
         res = []
         for g in self.groups.value:
             if g.lower().find(pattern) != -1:
-                res.append({'id' : g, 'name' : ''})
+                res.append({'id': g, 'name': ''})
         return res
 
     def authenticate(self, username, credentials, groupsManager):

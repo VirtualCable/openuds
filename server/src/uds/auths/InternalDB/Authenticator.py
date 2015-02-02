@@ -43,7 +43,7 @@ from uds.core.util.State import State
 import dns
 import logging
 
-__updated__ = '2014-10-30'
+__updated__ = '2015-02-02'
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 class InternalDBAuth(Authenticator):
     typeName = _('Internal Database')
     typeType = 'InternalDBAuth'
-    typeDescription = _('Internal dabasase authenticator. Doesn\'t uses external sources')
+    typeDescription = _('Internal dabasase authenticator. Doesn\'t use external sources')
     iconFile = 'auth.png'
 
     # If we need to enter the password for this user

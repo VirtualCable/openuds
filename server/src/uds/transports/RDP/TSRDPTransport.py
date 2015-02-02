@@ -63,7 +63,7 @@ class TSRDPTransport(BaseRDPTransport):
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.RDP
 
-    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server send to client device ("public" ip) and port. (use HOST:PORT format)'))
+    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'))
     tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds

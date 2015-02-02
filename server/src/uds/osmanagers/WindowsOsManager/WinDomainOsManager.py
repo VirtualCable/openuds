@@ -136,7 +136,7 @@ class WinDomainOsManager(WindowsOsManager):
             #  res = l.search_ext_s(base = self._ou, scope = ldap.SCOPE_SUBTREE,
             #                       filterstr = _filter)[0]
             l.delete('cn={0},{1}'.format(service.friendly_name, self._ou))
-        except:
+        except Exception:
             logger.exception('Not found: ')
 
     def check(self):
@@ -145,7 +145,7 @@ class WinDomainOsManager(WindowsOsManager):
         except ldap.LDAPError as e:
             return _('Check error: {0}').format(self.__getLdapError(e))
         except dns.resolver.NXDOMAIN:
-            return [True, _('Could not find server parameters (_ldap._tcp.{0} can\'r be resolved)').format(self._domain)]
+            return [True, _('Could not find server parameters (_ldap._tcp.{0} can\'t be resolved)').format(self._domain)]
         except Exception as e:
             logger.exception('Exception ')
             return [False, str(e)]
@@ -186,7 +186,7 @@ class WinDomainOsManager(WindowsOsManager):
             logger.exception('Exception ')
             return [False, str(e)]
 
-        return [True, _("All parameters seems to work fine.")]
+        return [True, _("All parameters seem to work fine.")]
 
     def infoVal(self, service):
         return 'domain:{0}\t{1}\t{2}\t{3}\t{4}'.format(self.getName(service), self._domain, self._ou, self._account, self._password)

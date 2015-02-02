@@ -115,7 +115,7 @@ class Provider(ServiceProvider):
     #: Is Methuselah istill alive?
     methAlive = gui.CheckBoxField(order = 4,
                     label = translatable('Is Methuselah still alive?'),
-                    tooltip = translatable('If you fails, this will not get saved :-)'),
+                    tooltip = translatable('If you fail, this will not get saved :-)'),
                     required = True, #: Also means nothing. Check boxes has always a value
                     defvalue = gui.TRUE #: By default, at new item, check this
                 ) 

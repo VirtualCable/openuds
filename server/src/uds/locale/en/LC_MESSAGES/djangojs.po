@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-13 05:07+0100\n"
+"POT-Creation-Date: 2015-02-02 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -320,8 +320,7 @@ msgstr ""
 msgid "In Maintenance"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:67 static/tmp_js/gui-d-services.js.c:133
-#: static/tmp_js/gui-d-services.js:150
+#: static/tmp_js/gui-d-services.js:67
 msgid "Enabled"
 msgstr ""
 
@@ -495,11 +494,12 @@ msgid "Transport removal error"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:317
+#: static/tmp_js/gui-d-servicespools.js:336
 msgid "Cancel"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:320
-#: static/tmp_js/gui-d-servicespools.js:340
+#: static/tmp_js/gui-d-servicespools.js:346
 msgid "Publish"
 msgstr ""
 
@@ -507,56 +507,60 @@ msgstr ""
 msgid "Cancel publication"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:340
+#: static/tmp_js/gui-d-servicespools.js:334
+msgid "Force Cancel"
+msgstr ""
+
+#: static/tmp_js/gui-d-servicespools.js:346
 msgid "Launch new publication?"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:344
+#: static/tmp_js/gui-d-servicespools.js:350
 msgid "Failed creating publication"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:366
+#: static/tmp_js/gui-d-servicespools.js:372
 msgid "undefined"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:373
+#: static/tmp_js/gui-d-servicespools.js:379
 msgid "Restrained"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:380
+#: static/tmp_js/gui-d-servicespools.js:386
 msgid "unknown (needs reload)"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:384
+#: static/tmp_js/gui-d-servicespools.js:390
 msgid "New service pool"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:384
+#: static/tmp_js/gui-d-servicespools.js:390
 msgid "creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:393
+#: static/tmp_js/gui-d-servicespools.js:399
 msgid "Publish on creation"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:394
+#: static/tmp_js/gui-d-servicespools.js:400
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:406 static/tmp_js/gui.js:40
+#: static/tmp_js/gui-d-servicespools.js:412 static/tmp_js/gui.js:40
 msgid "Edit"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:406
+#: static/tmp_js/gui-d-servicespools.js:412
 msgid "saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:407 static/tmp_js/gui.js:44
+#: static/tmp_js/gui-d-servicespools.js:413 static/tmp_js/gui.js:44
 #: static/tmp_js/gui.js.c:360
 msgid "Delete"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:407
+#: static/tmp_js/gui-d-servicespools.js:413
 msgid "deletion error"
 msgstr ""
 
@@ -729,5 +733,5 @@ msgid "Are you sure do you want to delete "
 msgstr ""
 
 #: static/tmp_js/gui.js:366
-msgid "Item deleted"
+msgid "Sucess"
 msgstr ""

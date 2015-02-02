@@ -56,7 +56,7 @@ class LinuxOsManager(osmanagers.OSManager):
         label=_('On Logout'),
         order=10,
         rdonly=False,
-        tooltip=_('What to do when user logout from service'),
+        tooltip=_('What to do when user logs out from service'),
         values=[
             {'id': 'keep', 'text': _('Keep service assigned')},
             {'id': 'remove', 'text': _('Remove service')}

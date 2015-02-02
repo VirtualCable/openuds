@@ -99,7 +99,7 @@ class Provider(ServiceProvider):
     username = gui.TextField(length=32, label=_('Username'), order=2, tooltip=_('User with valid privileges on XenServer'), required=True, defvalue='root')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=3, tooltip=_('Password of the user of XenServer'), required=True)
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF', order=4, rdonly=True,
-                              tooltip=_('Range of valids macs for created machines'), required=True)
+                              tooltip=_('Range of valid macs for created machines'), required=True)
 
     # XenServer engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..

@@ -33,8 +33,8 @@
 
 from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.services import Service
-from OVirtPublication import OVirtPublication
-from OVirtLinkedDeployment import OVirtLinkedDeployment
+from .OVirtPublication import OVirtPublication
+from .OVirtLinkedDeployment import OVirtLinkedDeployment
 
 from uds.core.ui import gui
 
@@ -42,14 +42,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from Helpers import oVirtHelpers
+from .Helpers import oVirtHelpers
 
 
 class OVirtLinkedService(Service):
     '''
     oVirt Linked clones service. This is based on creating a template from selected vm, and then use it to
-
-
     '''
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
@@ -121,10 +119,10 @@ class OVirtLinkedService(Service):
     baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=6, tooltip=('Base name for clones from this machine'), required=True)
 
     lenName = gui.NumericField(length=1, label=_('Name Length'), defvalue=5, order=7,
-                               tooltip=_('Length of numeric part for the names of this machines (betwen 3 and 6'), required=True)
+                               tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'), required=True)
 
     display = gui.ChoiceField(label=_('Display'), rdonly=False, order=8,
-                              tooltip=_('Display type (only for administration pourposses)'),
+                              tooltip=_('Display type (only for administration purposes)'),
                               values=[gui.choiceItem('spice', 'Spice'),
                                       gui.choiceItem('vnc', 'Vnc')
                                       ],

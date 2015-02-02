@@ -44,7 +44,7 @@ import ldap.filter
 import re
 import logging
 
-__updated__ = '2015-01-23'
+__updated__ = '2015-02-02'
 
 logger = logging.getLogger(__name__)
 
@@ -54,12 +54,12 @@ LDAP_RESULT_LIMIT = 50
 class RegexLdap(auths.Authenticator):
 
     host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('Ldap Server Host'), required=True)
-    port = gui.NumericField(length=5, label=_('Port'), defvalue='389', order=2, tooltip=_('Ldap port (389 for non ssl, 636 for ssl normally'), required=True)
-    ssl = gui.CheckBoxField(label=_('Use SSL'), order=3, tooltip=_('If checked, will use a ssl connection to ldap (if port is 389, will use in fact port 636)'))
+    port = gui.NumericField(length=5, label=_('Port'), defvalue='389', order=2, tooltip=_('Ldap port (usually 389 for non ssl and 636 for ssl)'), required=True)
+    ssl = gui.CheckBoxField(label=_('Use SSL'), order=3, tooltip=_('If checked, the connection will be ssl, using port 636 instead of 389'))
     username = gui.TextField(length=64, label=_('Ldap User'), order=4, tooltip=_('Username with read privileges on the base selected'), required=True)
     password = gui.PasswordField(lenth=32, label=_('Password'), order=5, tooltip=_('Password of the ldap user'), required=True)
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=6, tooltip=_('Timeout in seconds of connection to LDAP'), required=True)
-    ldapBase = gui.TextField(length=64, label=_('Base'), order=7, tooltip=_('Common search base (used for "users" and "groups"'), required=True)
+    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=6, tooltip=_('Timeout in seconds of connection to LDAP'), required=True, minValue=1)
+    ldapBase = gui.TextField(length=64, label=_('Base'), order=7, tooltip=_('Common search base (used for "users" and "groups")'), required=True)
     userClass = gui.TextField(length=64, label=_('User class'), defvalue='posixAccount', order=8, tooltip=_('Class for LDAP users (normally posixAccount)'), required=True)
     userIdAttr = gui.TextField(length=64, label=_('User Id Attr'), defvalue='uid', order=9, tooltip=_('Attribute that contains the user id'), required=True)
     userNameAttr = gui.TextField(length=640, label=_('User Name Attr'), multiline=2, defvalue='uid', order=10, tooltip=_('Attributes that contains the user name (list of comma separated values)'), required=True)

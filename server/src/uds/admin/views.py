@@ -41,7 +41,7 @@ from uds.core.util.decorators import denyBrowsers
 
 import logging
 
-__updated__ = '2014-09-15'
+__updated__ = '2015-02-02'
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ def tmpl(request, template):
         resp = t.render(c)
     except Exception as e:
         logger.debug('Exception getting template: {0}'.format(e))
-        resp = _('requested a template that do not exists')
+        resp = _('requested a template that do not exist')
     return HttpResponse(resp, content_type="text/plain")
 
 

@@ -63,7 +63,7 @@ class NXTransport(Transport):
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))
     fixedName = gui.TextField(label=_('Username'), order=2, tooltip=_('If not empty, this username will be always used as credential'))
     fixedPassword = gui.PasswordField(label=_('Password'), order=3, tooltip=_('If not empty, this password will be always used as credential'))
-    listenPort = gui.NumericField(label=_('Listen port'), length=5, order=4, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
+    listenPort = gui.NumericField(label=_('Listening port'), length=5, order=4, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
     connection = gui.ChoiceField(label=_('Connection'), order=6, tooltip=_('Connection speed for this transport (quality)'),
                                  values=[
                                      {'id': 'modem', 'text': 'modem'},
@@ -87,7 +87,7 @@ class NXTransport(Transport):
                                     {'id': '256', 'text': '256 Mb'},
                                     {'id': '512', 'text': '512 Mb'},
     ])
-    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=9, tooltip=_('Cache size en Mb keept at memory'),
+    cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=9, tooltip=_('Cache size en Mb kept at memory'),
                                values=[
                                        {'id': '4', 'text': '4 Mb'},
                                        {'id': '8', 'text': '8 Mb'},

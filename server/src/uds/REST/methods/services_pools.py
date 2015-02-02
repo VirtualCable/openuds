@@ -155,7 +155,7 @@ class ServicesPools(ModelHandler):
             'value': '0',
             'minValue': '0',
             'label': ugettext('Services to keep in cache'),
-            'tooltip': ugettext('Services keeped in cache for improved user service assignation'),
+            'tooltip': ugettext('Services kept in cache for improved user service assignation'),
             'type': gui.InputField.NUMERIC_TYPE,
             'order': 104,
         }, {
@@ -163,7 +163,7 @@ class ServicesPools(ModelHandler):
             'value': '0',
             'minValue': '0',
             'label': ugettext('Services to keep in L2 cache'),
-            'tooltip': ugettext('Services keeped in cache of level2 for improved service generation'),
+            'tooltip': ugettext('Services kept in cache of level2 for improved service generation'),
             'type': gui.InputField.NUMERIC_TYPE,
             'order': 105,
         }, {
@@ -193,7 +193,7 @@ class ServicesPools(ModelHandler):
                 service = Service.objects.get(uuid=fields['service_id'])
                 fields['service_id'] = service.id
             except:
-                raise RequestError(ugettext('Base service does not exists anymore'))
+                raise RequestError(ugettext('Base service does not exist anymore'))
 
             try:
                 serviceType = service.getType()
@@ -212,7 +212,7 @@ class ServicesPools(ModelHandler):
                         fields[k] = 0
 
             except Exception:
-                raise RequestError(ugettext('This service requires an os manager'))
+                raise RequestError(ugettext('This service requires an OS Manager'))
 
             imgId = fields['image_id']
             fields['image_id'] = None

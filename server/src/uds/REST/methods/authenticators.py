@@ -58,7 +58,7 @@ class Authenticators(ModelHandler):
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
-        {'small_name': {'title': _('Small name')}},
+        {'small_name': {'title': _('Tag')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
     ]
 
