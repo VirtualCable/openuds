@@ -49,6 +49,12 @@ logger = logging.getLogger(__name__)
 
 
 class JobThread(threading.Thread):
+    '''
+    Class responsible of executing one job.
+    This class:
+      Ensures that the job is executed in a controlled way (any exception will be catch & processed)
+      Ensures that the scheduler db entry is released after run
+    '''
     def __init__(self, jobInstance, dbJob):
         super(JobThread, self).__init__()
         self._jobInstance = jobInstance
@@ -58,11 +64,14 @@ class JobThread(threading.Thread):
         try:
             self._jobInstance.execute()
         except Exception:
-            logger.debug("Exception executing job {0}".format(self._dbJobId))
+            logger.warn("Exception executing job {0}".format(self._dbJobId))
         finally:
             self.jobDone()
 
     def jobDone(self):
+        '''
+        Invoked whenever a job is is finished (with or without exception)
+        '''
         done = False
         while done is False:
             try:
@@ -73,17 +82,23 @@ class JobThread(threading.Thread):
                 logger.info('Database access locked... Retrying')
                 time.sleep(1)
 
-    @transaction.atomic
     def __updateDb(self):
-        job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)  # @UndefinedVariable
-        job.state = State.FOR_EXECUTE
-        job.owner_server = ''
-        job.next_execution = getSqlDatetime() + timedelta(seconds=job.frecuency)
-        # Update state and last execution time at database
-        job.save()
+        '''
+        Atomically updates the scheduler db to "release" this job
+        '''
+        with transaction.atomic():
+            job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)  # @UndefinedVariable
+            job.state = State.FOR_EXECUTE
+            job.owner_server = ''
+            job.next_execution = getSqlDatetime() + timedelta(seconds=job.frecuency)
+            # Update state and last execution time at database
+            job.save()
 
 
 class Scheduler(object):
+    '''
+    Class responsible of maintain/execute scheduled jobs
+    '''
     granularity = 2  # We check for cron jobs every THIS seconds
 
     # to keep singleton Scheduler
@@ -96,16 +111,22 @@ class Scheduler(object):
 
     @staticmethod
     def scheduler():
+        '''
+        Returns a singleton to the Scheduler
+        '''
         if Scheduler._scheduler is None:
             Scheduler._scheduler = Scheduler()
         return Scheduler._scheduler
 
     def notifyTermination(self):
+        '''
+        Invoked to signal that termination of scheduler task(s) is requested
+        '''
         self._keepRunning = False
 
     def executeOneJob(self):
         '''
-        Looks for a job and executes it
+        Looks for the best waiting job and executes it
         '''
         jobInstance = None
         try:
@@ -122,7 +143,7 @@ class Scheduler(object):
 
             jobInstance = job.getInstance()
 
-            if jobInstance == None:
+            if jobInstance is None:
                 logger.error('Job instance can\'t be resolved for {0}, removing it'.format(job))
                 job.delete()
                 return
@@ -149,6 +170,10 @@ class Scheduler(object):
             dbScheduler.objects.select_for_update().filter(owner_server='').update(state=State.FOR_EXECUTE)  # @UndefinedVariable
 
     def run(self):
+        '''
+        Loop that executes scheduled tasks
+        Can be executed more than once, in differents threads
+        '''
         # We ensure that the jobs are also in database so we can
         logger.debug('Run Scheduler thread')
         JobsFactory.factory().ensureJobsInDatabase()
