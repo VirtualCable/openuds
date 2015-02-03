@@ -38,12 +38,12 @@ from uds.models import Scheduler as dbScheduler, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs.JobsFactory import JobsFactory
 from datetime import timedelta
-from socket import gethostname
+import platform
 import threading
 import time
 import logging
 
-__updated__ = '2014-11-27'
+__updated__ = '2015-02-03'
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ class JobThread(threading.Thread):
             try:
                 self.__updateDb()
                 done = True
-            except:
+            except Exception:
                 # Databases locked, maybe because we are on a multitask environment, let's try again in a while
                 logger.info('Database access locked... Retrying')
                 time.sleep(1)
@@ -90,8 +90,9 @@ class Scheduler(object):
     _scheduler = None
 
     def __init__(self):
-        self._hostname = gethostname()
+        self._hostname = platform.node()
         self._keepRunning = True
+        logger.info('Initialized scheduler for host "{}"'.format(self._hostname))
 
     @staticmethod
     def scheduler():
@@ -137,18 +138,20 @@ class Scheduler(object):
             # I have got some deadlock errors, but looking at that url, i found that it is not so abnormal
             logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
 
-    @transaction.atomic
-    def releaseOwnShedules(self):
+    @staticmethod
+    def releaseOwnShedules():
         '''
-        Releases all scheduleds being executed by this scheduler
+        Releases all scheduleds being executed by this server
         '''
-        dbScheduler.objects.select_for_update().filter(owner_server=self._hostname).update(owner_server='', state=State.FOR_EXECUTE)  # @UndefinedVariable
+        logger.debug('Releasing all owned scheduled tasks')
+        with transaction.atomic():
+            dbScheduler.objects.select_for_update().filter(owner_server=platform.node()).update(owner_server='')  # @UndefinedVariable
+            dbScheduler.objects.select_for_update().filter(owner_server='').update(state=State.FOR_EXECUTE)  # @UndefinedVariable
 
     def run(self):
         # We ensure that the jobs are also in database so we can
         logger.debug('Run Scheduler thread')
         JobsFactory.factory().ensureJobsInDatabase()
-        self.releaseOwnShedules()
         logger.debug("At loop")
         while self._keepRunning:
             try:

@@ -105,6 +105,9 @@ class Providers(ModelHandler):
             raise NotFound('type not found')
 
     def allservices(self):
+        '''
+        Custom method that returns "all existing services", no mater who's his daddy :)
+        '''
         for s in Service.objects.all():
             try:
                 yield DetailServices.serviceToDict(s, True)
@@ -112,12 +115,19 @@ class Providers(ModelHandler):
                 logger.exception('Passed service cause type is unknown')
 
     def service(self):
+        '''
+        Custom method that returns a service by its uuid, no matter who's his daddy
+        '''
         try:
             return DetailServices.serviceToDict(Service.objects.get(uuid=self._args[1]), True)
         except Exception:
             raise RequestError(ugettext('Service not found'))
 
     def maintenance(self, item):
+        '''
+        Custom method that swaps maintenance mode state for a provider
+        :param item:
+        '''
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return self.item_as_dict(item)

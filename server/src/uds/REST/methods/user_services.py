@@ -56,6 +56,11 @@ class AssignedService(DetailHandler):
 
     @staticmethod
     def itemToDict(item, is_cache=False):
+        '''
+        Converts an assigned/cached service db item to a dictionary for REST response
+        :param item: item to convert
+        :param is_cache: If item is from cache or not
+        '''
         props = item.getProperties()
         val = {
             'id': item.uuid,
@@ -105,7 +110,7 @@ class AssignedService(DetailHandler):
             {'unique_id': {'title': 'Unique ID'}},
             {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
-            {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
+            {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
             {'state_date': {'title': _('Status date'), 'type': 'datetime'}},
             {'in_use': {'title': _('In Use')}},
             {'source_host': {'title': _('Src Host')}},
@@ -209,6 +214,9 @@ class Groups(DetailHandler):
             {'comments': {'title': _('comments')}},
             {'state': {'title': _('State'), 'type': 'dict', 'dict': State.dictionary()}},
         ]
+
+    def getRowStyle(self, parent):
+        return {'field': 'state', 'prefix': 'row-state-'}
 
     def saveItem(self, parent, item):
         parent.assignedGroups.add(Group.objects.get(uuid=self._params['id']))

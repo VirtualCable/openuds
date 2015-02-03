@@ -49,13 +49,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Services(DetailHandler):
+class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     '''
     Detail handler for Services, whose parent is a Provider
     '''
 
     @staticmethod
     def serviceToDict(item, full=False):
+        '''
+        Convert a service db item to a dict for a rest response
+        :param item: Service item (db)
+        :param full: If full is requested, add "extra" fields to complete information
+        '''
         retVal = {
             'id': item.uuid,
             'name': item.name,
@@ -98,11 +103,15 @@ class Services(DetailHandler):
     def getRowStyle(self, parent):
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def deleteIncompleteService(self, service):
+    def _deleteIncompleteService(self, service):  # pylint: disable=no-self-use
+        '''
+        Deletes a service if it is needed to (that is, if it is not None) and silently catch any exception of this operation
+        :param service:  Service to delete (may be None, in which case it does nothing)
+        '''
         if service is not None:
             try:
                 service.delete()
-            except:
+            except Exception:
                 pass
 
     def saveItem(self, parent, item):
@@ -125,10 +134,10 @@ class Services(DetailHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)'))
         except coreService.ValidationException as e:
-            self.deleteIncompleteService(service)
+            self._deleteIncompleteService(service)
             raise RequestError(_('Input error: {0}'.format(unicode(e))))
         except Exception as e:
-            self.deleteIncompleteService(service)
+            self._deleteIncompleteService(service)
             logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT: {0}'.format(e))
 

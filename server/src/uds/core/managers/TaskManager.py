@@ -92,6 +92,7 @@ class TaskManager(object):
     def run():
         TaskManager.keepRunning = True
         # Runs Scheduler in a separate thread and DelayedTasks here
+        Scheduler.releaseOwnShedules()
 
         TaskManager.registerScheduledTasks()
 

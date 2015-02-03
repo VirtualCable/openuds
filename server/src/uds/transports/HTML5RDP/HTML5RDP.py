@@ -99,8 +99,8 @@ class HTML5RDPTransport(Transport):
         # We use helper to keep this clean
         username = user.getUsernameForAuth()
 
-        if self._fixedName is not '':
-            username = self._fixedName
+        if self.fixedName.value is not '':
+            username = self.fixedName.value
 
         proc = username.split('@')
         if len(proc) > 1:
@@ -109,14 +109,14 @@ class HTML5RDPTransport(Transport):
             domain = ''
         username = proc[0]
 
-        if self._fixedPassword is not '':
-            password = self._fixedPassword
-        if self._fixedDomain is not '':
-            domain = self._fixedDomain
-        if self._useEmptyCreds is True:
+        if self.fixedPassword.value is not '':
+            password = self.fixedPassword.value
+        if self.fixedDomain.value is not '':
+            domain = self.fixedDomain.value
+        if self.useEmptyCreds.value is True:
             username, password, domain = '', '', ''
 
-        if self._withoutDomain is True:
+        if self.withoutDomain.value is True:
             domain = ''
 
         if '.' in domain:  # Dotter domain form

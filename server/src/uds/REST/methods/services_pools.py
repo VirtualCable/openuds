@@ -48,6 +48,9 @@ logger = logging.getLogger(__name__)
 
 
 class ServicesPools(ModelHandler):
+    '''
+    Handles Services Pools REST requests
+    '''
     model = DeployedService
     detail = {
         'services': AssignedService,
@@ -64,7 +67,7 @@ class ServicesPools(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name')}},
         {'parent': {'title': _('Parent Service')}},  # Will process this field on client in fact, not sent by server
-        {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
+        {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
         {'show_transports': {'title': _('Shows transports')}},  # Will process this field on client in fact, not sent by server
         {'comments': {'title': _('Comments')}},
     ]
