@@ -113,7 +113,7 @@ class ClusterMigrationTask(DelayedTask):
     @staticmethod
     def checkAndUpdateState(userService, userServiceInstance, state):
         '''
-        Checks the value returned from invocation to publish or checkPublishingState, updating the dsp database object
+        Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
         '''
         try:

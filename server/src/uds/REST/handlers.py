@@ -30,6 +30,8 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=too-many-public-methods
+
 from __future__ import unicode_literals
 
 from django.contrib.sessions.backends.db import SessionStore
@@ -134,18 +136,22 @@ class Handler(object):
     def header(self, headerName):
         '''
         Get's an specific header name from REST request
+        :param headerName: name of header to get
         '''
         return self._headers.get(headerName)
 
     def addHeader(self, header, value):
         '''
         Inserts a new header inside the headers list
+        :param header: name of header to insert
+        :param value: value of header
         '''
         self._headers[header] = value
 
     def removeHeader(self, header):
         '''
         Removes an specific header from the headers list
+        :param header: Name of header to remove
         '''
         try:
             del self._headers[header]
@@ -163,6 +169,12 @@ class Handler(object):
     def storeSessionAuthdata(session, id_auth, username, locale, is_admin, staff_member):
         '''
         Stores the authentication data inside current session
+        :param session: session handler (Djano user session object)
+        :param id_auth: Authenticator id (DB object id)
+        :param username: Name of user (login name)
+        :param locale: Assigned locale
+        :param is_admin: If user is considered admin or not
+        :param staff_member: If is considered as staff member
         '''
         if is_admin:
             staff_member = True  # Make admins also staff members :-)
@@ -179,6 +191,11 @@ class Handler(object):
         '''
         Generates the authentication token from a session, that is basically
         the session key itself
+        :param id_auth: Authenticator id (DB object id)
+        :param username: Name of user (login name)
+        :param locale: Assigned locale
+        :param is_admin: If user is considered admin or not
+        :param staf_member: If user is considered staff member or not
         '''
         session = SessionStore()
         session.set_expiry(GlobalConfig.ADMIN_IDLE_TIME.getInt())

@@ -30,6 +30,9 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+
+# pylint: disable=too-many-public-methods
+
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -40,7 +43,6 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
-from uds.core.util.State import State
 
 import logging
 
@@ -155,7 +157,7 @@ class CachedService(AssignedService):
             else:
                 k = parent.cachedUserServices().get(uuid=item)
                 return AssignedService.itemToDict(k, True)
-        except:
+        except Exception:
             logger.exception('getItems')
             self.invalidItemException()
 
@@ -179,11 +181,14 @@ class CachedService(AssignedService):
             item = parent.cachedUserServices().get(uuid=item)
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
-        except:
+        except Exception:
             self.invalidItemException()
 
 
 class Groups(DetailHandler):
+    '''
+    Processes the groups detail requests of a Service Pool
+    '''
     def getItems(self, parent, item):
         return [{
             'id': i.uuid,
@@ -214,6 +219,9 @@ class Groups(DetailHandler):
 
 
 class Transports(DetailHandler):
+    '''
+    Processes the transports detail requests of a Service Pool
+    '''
     def getItems(self, parent, item):
         return [{
             'id': i.uuid,
@@ -243,14 +251,27 @@ class Transports(DetailHandler):
 
 
 class Publications(DetailHandler):
-    custom_methods = ['publish', 'cancel']
+    '''
+    Processes the publications detail requests of a Service Pool
+    '''
+    custom_methods = ['publish', 'cancel']  # We provided these custom methods
 
     def publish(self, parent):
+        '''
+        Custom method "publish", provided to initiate a publication of a deployed service
+        :param parent: Parent service pool
+        '''
         logger.debug('Custom "publish" invoked')
         parent.publish()
         return self.success()
 
     def cancel(self, parent, uuid):
+        '''
+        Invoked to cancel a running publication
+        Double invocation (this means, invoking cancel twice) will mean that is a "forced cancelation"
+        :param parent: Parent service pool
+        :param uuid: uuid of the publication
+        '''
         try:
             ds = DeployedServicePublication.objects.get(uuid=uuid)
             ds.cancel()
