@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2014-03-22'
+__updated__ = '2015-02-10'
 
 
 class UnsupportedException(Exception):
@@ -80,5 +80,12 @@ class MaxServicesReachedException(Exception):
     '''
     Number of maximum services has been reached, and no more services
     can be created for users.
+    '''
+    pass
+
+
+class ServiceInMaintenanceMode(Exception):
+    '''
+    The service is in maintenance mode and can't be accesed right now
     '''
     pass

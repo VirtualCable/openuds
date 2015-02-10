@@ -81,7 +81,7 @@ class ServicesPools(ModelHandler):
             'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
-            'state': item.state,
+            'state': item.state if item.service.provider.maintenance_mode is False else State.MAINTENANCE,
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,

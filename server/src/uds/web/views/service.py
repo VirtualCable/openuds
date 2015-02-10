@@ -40,6 +40,7 @@ from uds.models import DeployedService, Transport, UserService, Image
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util import log
+from uds.core.util import OsDetector
 from uds.core.util.stats import events
 from uds.core.ui import theme
 
@@ -49,7 +50,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-01-28'
+__updated__ = '2015-02-10'
 
 
 @webLoginRequired
@@ -79,7 +80,7 @@ def service(request, idService, idTransport):
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
-                    transportHtml = itrans.renderForHtml(ads, trans, ip, request.session['OS'], request.user, webPassword(request))
+                    transportHtml = itrans.renderForHtml(ads, trans, ip, OsDetector.getOsFromRequest(request), request.user, webPassword(request))
                     UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, request.user), itrans.protocol)
                     return render_to_response(theme.template('show_transport.html'), {'transport': transportHtml, 'nolang': True}, context_instance=RequestContext(request))
                 else:
@@ -102,7 +103,7 @@ def transcomp(request, idTransport, componentId):
         # We got translated first id
         trans = Transport.objects.get(uuid=idTransport.upper())
         itrans = trans.getInstance()
-        res = itrans.getHtmlComponent(trans.uuid, request.session['OS'], componentId)
+        res = itrans.getHtmlComponent(trans.uuid, OsDetector.getOsFromRequest(request), componentId)
         response = HttpResponse(res[1], content_type=res[0])
         response['Content-Length'] = len(res[1])
         return response

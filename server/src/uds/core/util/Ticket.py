@@ -74,3 +74,6 @@ class Ticket(object):
         Removes a ticket from storage (db)
         '''
         self.cache.remove(self.key)
+
+    def __unicode__(self):
+        return "Ticket: {}, {}".format(self.key, self.data)

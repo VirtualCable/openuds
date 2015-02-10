@@ -39,6 +39,8 @@ from uds.core.auths.auth import webLoginRequired
 
 from uds.models import DeployedService, Transport, UserService, Network
 from uds.core.util.Config import GlobalConfig
+from uds.core.util import OsDetector
+
 from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
 
@@ -63,7 +65,7 @@ def index(request):
     :param request: http request
     '''
     # Session data
-    os = request.session['OS']
+    os = OsDetector.getOsFromRequest(request)
     java = request.session.get('java', None)
 
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds

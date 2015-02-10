@@ -50,6 +50,7 @@ mobilesODD = list(set(allOss) - set(desktopOss))
 
 DEFAULT_OS = 'Windows'
 
+
 def getOsFromUA(ua):
     '''
     Basic OS Client detector (very basic indeed :-))
@@ -69,3 +70,12 @@ def getOsFromUA(ua):
     logger.debug('User-Agent: {0}'.format(ua))
     logger.debug('Detected OS: {0}'.format(res))
     return res
+
+
+def getOsFromRequest(request):
+    try:
+        return request.session['OS']
+    except:
+        request.session['OS'] = getOsFromUA(request.META['HTTP_USER_AGENT'])
+
+    return request.session['OS']

@@ -37,6 +37,7 @@ from django.shortcuts import redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
+from django.views.decorators.cache import never_cache
 
 from uds.core.auths.auth import webLogin, webLogout, webLoginRequired, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.models import Authenticator, DeployedService, Transport
@@ -45,7 +46,7 @@ from uds.core.util.Ticket import Ticket
 from uds.core.util.State import State
 from uds.core.ui import theme
 from uds.core.auths.Exceptions import InvalidUserException
-from uds.core.services.Exceptions import InvalidServiceException
+from uds.core.services.Exceptions import InvalidServiceException, ServiceInMaintenanceMode
 
 import uds.web.errors as errors
 
@@ -139,7 +140,7 @@ def authJava(request, idAuth, hasJava):
     request.session['java'] = hasJava == 'y'
     try:
         authenticator = Authenticator.objects.get(uuid=idAuth)
-        os = request.session['OS']
+        os = OsDetector.getOsFromRequest(request)
         authLogLogin(request, authenticator, request.user.name, request.session['java'], os)
         return redirect('uds.web.views.index')
 
@@ -147,11 +148,14 @@ def authJava(request, idAuth, hasJava):
         return errors.exceptionView(request, e)
 
 
+@never_cache
 def ticketAuth(request, ticketId):
     '''
     Used to authenticate an user via a ticket
     '''
     ticket = Ticket(ticketId)
+
+    logger.debug('Ticket: {}'.format(ticket))
 
     try:
         try:
@@ -182,7 +186,7 @@ def ticketAuth(request, ticketId):
 
         if len(grps) == 0:
             logger.error('Ticket has no valid groups')
-            raise Exception('Invalid ticket authentification')
+            raise Exception('Invalid ticket authentication')
 
         usr = auth.getOrCreateUser(username, realname)
         if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
@@ -192,18 +196,22 @@ def ticketAuth(request, ticketId):
         usr.groups = grps
 
         # Right now, we assume that user supports java, let's see how this works
+        # Force cookie generation
+        webLogin(request, None, usr, password)
+
         request.session['java'] = True
         request.session['OS'] = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
         request.user = usr  # Temporaly store this user as "authenticated" user, next requests will be done using session
 
-        # Force cookie generation
-        webLogin(request, None, usr, password)
 
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             servicePool = DeployedService.objects.get(uuid=servicePool)
             # Check if service pool can't be accessed by groups
             servicePool.validateUser(usr)
+            if servicePool.isInMaintenance():
+                raise ServiceInMaintenanceMode()
+
             transport = Transport.objects.get(uuid=transport)
 
             response = service(request, 'F' + servicePool.uuid, transport.uuid)  # 'A' Indicates 'assigned service'
@@ -223,5 +231,3 @@ def ticketAuth(request, ticketId):
     except Exception as e:
         logger.exception('Exception')
         return errors.exceptionView(request, e)
-
-    return HttpResponse(ticketId, content_type='text/plain')

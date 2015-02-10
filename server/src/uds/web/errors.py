@@ -42,7 +42,7 @@ from .transformers import scrambleId, transformId
 
 from uds.models import DeployedService, Transport, UserService, Authenticator
 from uds.core.auths.Exceptions import InvalidUserException, InvalidAuthenticatorException
-from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedException
+from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedException, ServiceInMaintenanceMode
 from uds.core.ui import theme
 
 
@@ -61,7 +61,8 @@ ERR_USER_SERVICE_NOT_FOUND = 7
 AUTHENTICATOR_NOT_FOUND = 8
 INVALID_CALLBACK = 9
 INVALID_REQUEST = 10
-BROWSER_NOT_SUPPORTED = 11
+BROWSER_NOT_SUPPORTED = 11,
+SERVICE_IN_MAINTENANCE = 12
 
 
 strings = [
@@ -76,7 +77,8 @@ strings = [
     _('Authenticator not found'),
     _('Invalid authenticator'),
     _('Invalid request received'),
-    _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome')
+    _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome'),
+    _('The requested service is in maintenance mode')
 ]
 
 
@@ -113,6 +115,8 @@ def exceptionView(request, exception):
         return errorView(request, MAX_SERVICES_REACHED)
     except InvalidAuthenticatorException:
         return errorView(request, INVALID_CALLBACK)
+    except ServiceInMaintenanceMode:
+        return errorView(request, SERVICE_IN_MAINTENANCE)
     except Exception as e:
         logger.exception('Exception cautgh at view!!!')
         raise e
