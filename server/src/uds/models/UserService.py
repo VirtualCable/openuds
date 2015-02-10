@@ -35,7 +35,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-01-28'
+__updated__ = '2015-02-10'
 
 from django.db import models
 from django.db.models import signals
@@ -359,6 +359,9 @@ class UserService(UUIDModel):
         # Call to isReady of the instance
         from uds.core.managers.UserServiceManager import UserServiceManager
         return UserServiceManager.manager().isReady(self)
+
+    def isInMaintenance(self):
+        return self.deployed_service.isInMaintenance()
 
     def remove(self):
         '''
