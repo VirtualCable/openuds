@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-03 07:00+0100\n"
+"POT-Creation-Date: 2015-02-10 09:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,7 +62,7 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: REST/methods/authenticators.py:61
+#: REST/methods/authenticators.py:61 REST/model.py:143
 msgid "Tag"
 msgstr ""
 
@@ -490,12 +490,8 @@ msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 
-#: REST/model.py:143
-msgid "Short name"
-msgstr ""
-
 #: REST/model.py:144
-msgid "Short name of this element"
+msgid "Tag for this element"
 msgstr ""
 
 #: REST/model.py:219

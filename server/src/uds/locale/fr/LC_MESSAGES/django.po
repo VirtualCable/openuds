@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-03 07:00+0100\n"
+"POT-Creation-Date: 2015-02-10 09:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,7 @@ msgstr "Commentaires"
 msgid "Priority"
 msgstr "Priorité"
 
-#: REST/methods/authenticators.py:61
+#: REST/methods/authenticators.py:61 REST/model.py:143
 msgid "Tag"
 msgstr "Tag"
 
@@ -226,7 +226,6 @@ msgid "Parent Service"
 msgstr "Service parent"
 
 #: REST/methods/services_pools.py:70 REST/methods/user_services.py:113
-#| msgid "Status"
 msgid "status"
 msgstr "statut"
 
@@ -531,13 +530,10 @@ msgstr ""
 "Sélectionne la priorité de cet élément (priorité supérieure de moyens nombre "
 "inférieur)"
 
-#: REST/model.py:143
-msgid "Short name"
-msgstr "Nom court"
-
 #: REST/model.py:144
-msgid "Short name of this element"
-msgstr "Nom court de cet élément"
+#| msgid "Name of this element"
+msgid "Tag for this element"
+msgstr "Tag pour cet élément"
 
 #: REST/model.py:219
 msgid "Invalid Request"

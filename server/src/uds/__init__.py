@@ -60,3 +60,18 @@ class UDSAppConfig(AppConfig):
         logger.debug('Initializing app (ready) ***************')
 
 default_app_config = 'uds.UDSAppConfig'
+
+
+# Sets up several sqlite non existing methods
+from django.db.backends.signals import connection_created
+from django.dispatch import receiver
+import math
+
+
+@receiver(connection_created)
+def extend_sqlite(connection=None, **kwargs):
+    if connection.vendor == "sqlite":
+        logger.debug('Connection vendor is sqlite, extending methods')
+        connection.connection.create_function("MIN", 2, min)
+        connection.connection.create_function("MAX", 2, max)
+        connection.connection.create_function("CEIL", 1, math.ceil)

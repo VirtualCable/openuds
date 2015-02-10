@@ -49,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-03'
+__updated__ = '2015-02-10'
 
 
 # a few constants
@@ -140,8 +140,8 @@ class BaseModelHandler(Handler):
             self.addField(gui, {
                 'name': 'small_name',
                 'type': 'text',
-                'label': _('Short name'),
-                'tooltip': _('Short name of this element'),
+                'label': _('Tag'),
+                'tooltip': _('Tag for this element'),
                 'required': True,
                 'length': 128,
                 'order': 0 - 97,

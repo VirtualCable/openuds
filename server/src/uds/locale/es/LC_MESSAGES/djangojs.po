@@ -4,16 +4,18 @@
 #
 # Translators:
 # , 2014
-# Adolfo Gómez <dkmaster@dkmon.com>, 2014
+# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015
 # blafuente <blafuente@virtualcable.es>, 2014
+# blafuente <blafuente@virtualcable.es>, 2014
+# JaviBas <jgonzalez@virtualcable.es>, 2014
 # JaviBas <jgonzalez@virtualcable.es>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-03 07:01+0100\n"
-"PO-Revision-Date: 2014-06-03 11:17+0000\n"
-"Last-Translator: blafuente <blafuente@virtualcable.es>\n"
+"POT-Creation-Date: 2015-02-10 09:52+0100\n"
+"PO-Revision-Date: 2015-02-10 08:30+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -287,7 +289,7 @@ msgstr "Debe seleccionar una imagen"
 
 #: static/tmp_js/gui-d-gallery.js:31
 msgid "Image is too big (max. upload size is 256Kb)"
-msgstr "Imagen es demasiado grande (tamaño de carga máximo es 256Kb)"
+msgstr "La imagen es demasiado grande (el tamaño de carga máximo es 256Kb)"
 
 #: static/tmp_js/gui-d-gallery.js:76
 msgid "Delete Image"
@@ -359,23 +361,23 @@ msgstr "Mantenimiento"
 
 #: static/tmp_js/gui-d-services.js:133
 msgid "Maintenance Mode"
-msgstr "Modo de mantenimiento"
+msgstr "En modo mantenimiento"
 
 #: static/tmp_js/gui-d-services.js:133
 msgid "Enter Maintenance Mode?"
-msgstr "Entrar en modo de mantenimiento."
+msgstr "Entrar en modo mantenimiento."
 
 #: static/tmp_js/gui-d-services.js:133
 msgid "Exit Maintenance Mode?"
-msgstr "Salir del modo de mantenimiento."
+msgstr "Salir del modo mantenimiento."
 
 #: static/tmp_js/gui-d-services.js:150
 msgid "Enter maintenance Mode"
-msgstr "Entrar en modo de mantenimiento"
+msgstr "Entrar en modo mantenimiento"
 
 #: static/tmp_js/gui-d-services.js:150
 msgid "Exit Maintenance Mode"
-msgstr "Salir del modo de mantenimiento"
+msgstr "Salir del modo mantenimiento"
 
 #: static/tmp_js/gui-d-services.js:154
 msgid "New services provider"
@@ -474,7 +476,7 @@ msgstr "Cancelar la publicación"
 
 #: static/tmp_js/gui-d-servicespools.js:306
 msgid "Force Cancel"
-msgstr "Cancelar la fuerza"
+msgstr "Forzar cancelación"
 
 #: static/tmp_js/gui-d-servicespools.js:318
 msgid "Launch new publication?"
