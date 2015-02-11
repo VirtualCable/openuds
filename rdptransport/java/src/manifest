@@ -1,5 +1,8 @@
 Manifest-Version: 1.0
 Sealed: true
 Permissions: all-permissions
+Trusted-Only: true
 Codebase: *
+Application-Library-Allowable-Codebase: *
 Application-Name: UDS RDP Connector
+Created-By: Virtual Cable S.L.U.

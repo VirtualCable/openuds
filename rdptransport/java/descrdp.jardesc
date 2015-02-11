@@ -14,6 +14,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=rdptransport/src"/>
+        <javaElement handleIdentifier="=rdptransport/src&lt;net.sourceforge.jdpapi"/>
+        <javaElement handleIdentifier="=rdptransport/src&lt;"/>
+        <javaElement handleIdentifier="=rdptransport/src&lt;es.virtualcable.rdp"/>
     </selectedElements>
 </jardesc>
