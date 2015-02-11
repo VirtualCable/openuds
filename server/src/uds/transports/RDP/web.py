@@ -90,6 +90,14 @@ def generateHtmlForRdp(transport, idUserService, idTransport, os, ip, port, user
         res += ('<div><p>' + _('In order to use this service, you should first install CoRD.') + '</p>'
                 '<p><a href="/static/other/CoRD.pkg">' + _('Download CoRD') + '</a></p>'
                 '</div>'
+                '<div>'
+                '<p>' + _('Attention Safari Users:') + '<br/>'
+                '<p>' + _('In order to access theese services, you will need to enable this in order to access to service:') + '</p>'
+                '<p>' + _('Go to Safari > Preferences > Security > Manage Website Settings') + '</p>'
+                '<p>' + _('Click Java in left hand panel, and select site to allow UDS Rdp, and set it to Allow Always (also mark "Unsecure mode").') + '</p>'
+                '<p>' + _('Users of Firefox or Chrome:') + '</p>'
+                '<p>' + _('If any warning is shown when launching RDP Applet, press "ignore" and continue') + '</p>'
+                '</div>'
                 )
     return res
 

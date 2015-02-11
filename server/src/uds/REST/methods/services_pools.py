@@ -82,6 +82,7 @@ class ServicesPools(ModelHandler):
             'name': item.name,
             'comments': item.comments,
             'state': item.state if item.service.provider.maintenance_mode is False else State.MAINTENANCE,
+            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
@@ -98,20 +99,6 @@ class ServicesPools(ModelHandler):
             val['osmanager_id'] = item.osmanager.uuid
 
         return val
-
-    def item_as_dict_overview(self, item):
-        # if item does not have an associated service, hide it (the case, for example, for a removed service)
-        # Access from dict will raise an exception, and item will be skipped
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'state': item.state if item.service.provider.maintenance_mode is False else State.MAINTENANCE,
-            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
-            'service_id': item.service.uuid,
-            'restrained': item.isRestrained(),
-            'show_transports': item.show_transports,
-        }
 
     # Gui related
     def getGui(self, type_):
