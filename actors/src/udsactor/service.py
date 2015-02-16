@@ -126,7 +126,7 @@ class CommonService(object):
                 logger.fatal('This host is not managed by UDS Broker (ids: {})'.format(ids))
                 return False  # On unmanaged hosts, there is no reason right now to continue running
             except Exception as e:
-                logger.debug('Exception on network info: {}, retrying')
+                logger.debug('Exception on network info: retrying')
                 logger.exception()
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
                 # but, if too many errors, will log it (one every minute, for
@@ -176,9 +176,9 @@ class CommonService(object):
                 logger.error('The host has lost the sync state with broker! (host uuid changed?)')
                 return False
             except Exception:
-                counter += 1
                 if counter % 60 == 0:
                     logger.warn('Too many retries in progress, though still trying (last error: {})'.format(exceptionToMessage(e)))
+                counter += 1
                 # Any other error is expectable and recoverable, so let's wait
                 # a bit and retry again
                 # Wait a bit before next check
