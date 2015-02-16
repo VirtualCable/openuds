@@ -55,7 +55,7 @@ class LinuxOsManager(osmanagers.OSManager):
     onLogout = gui.ChoiceField(
         label=_('On Logout'),
         order=10,
-        rdonly=False,
+        rdonly=True,
         tooltip=_('What to do when user logs out from service'),
         values=[
             {'id': 'keep', 'text': _('Keep service assigned')},
@@ -63,8 +63,13 @@ class LinuxOsManager(osmanagers.OSManager):
         ],
         defvalue='keep')
 
-    idle = gui.NumericField(label=_("Max.Idle time"), length=4, defvalue=-1, rdonly=False, order=11,
-                            tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max idle time).'), required=True)
+    idle = gui.NumericField(
+        label=_("Max.Idle time"),
+        length=4,
+        defvalue=-1,
+        rdonly=False, order=11,
+        tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max idle time).'),
+        required=True)
 
     def __setProcessUnusedMachines(self):
         self.processUnusedMachines = self._onLogout == 'remove'

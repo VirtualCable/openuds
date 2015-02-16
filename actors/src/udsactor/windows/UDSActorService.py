@@ -137,7 +137,8 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         currName = operations.getComputerName()
         if currName.lower() == name.lower():
             currDomain = operations.getDomainName()
-            if currDomain is not None and currDomain.lower() == domain.lower():
+            logger.debug('Name: "{}" vs "{}", Domain: "{}" vs "{}"'.format(currName.lower(), name.lower(), currDomain.lower(), domain.lower()))
+            if currDomain is not None:
                 logger.info(
                     'Machine {} is part of domain {}'.format(name, domain))
                 self.setReady()
@@ -164,6 +165,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             self.multiStepJoin(name, domain, ou, account, password)
 
     def preConnect(self, user, protocol):
+        logger.debug('Pre connect invoked')
         if protocol != 'rdp':  # If connection is not using rdp, skip adding user
             return 'ok'
         # Well known SSID for Remote Desktop Users

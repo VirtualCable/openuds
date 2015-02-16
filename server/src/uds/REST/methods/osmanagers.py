@@ -77,9 +77,8 @@ class OsManagers(ModelHandler):
         if item.deployedServices.count() > 0:
             raise RequestError(ugettext('Can\'t delete an OS Manager with services pools associated'))
 
-    def checkSave(self, item):
-        if item.deployedServices.count() > 0 and settings.DEBUG is False:
-            raise RequestError(ugettext('Can\'t modify an OS Manager with services pools associated'))
+    def checkSave(self, item):  # Right now, always can be saved
+        pass
 
     # Types related
     def enum_types(self):

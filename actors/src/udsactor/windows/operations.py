@@ -64,7 +64,7 @@ def getNetworkInfo():
                     continue
                 if ip == '' or ip is None:
                     continue
-                logger.debug('Net config found: {}=({}, {})'.format(obj.Caption, obj.MACAddress, ip))
+                # logger.debug('Net config found: {}=({}, {})'.format(obj.Caption, obj.MACAddress, ip))
                 yield utils.Bunch(name=obj.Caption, mac=obj.MACAddress, ip=ip)
     except Exception:
         return

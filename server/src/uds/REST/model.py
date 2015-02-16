@@ -40,6 +40,7 @@ from django.db import IntegrityError
 from uds.core.ui.UserInterface import gui as uiGui
 from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
+
 import fnmatch
 import re
 import itertools
@@ -49,7 +50,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-10'
+__updated__ = '2015-02-16'
 
 
 # a few constants
@@ -293,15 +294,12 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         '''
         logger.debug('Checking custom method {0}'.format(check))
         if check in self.custom_methods:
-            try:
-                operation = getattr(self, check)
+            operation = getattr(self, check)
 
-                if arg is None:
-                    return operation(parent)
-                else:
-                    return operation(parent, arg)
-            except Exception:
-                self.invalidMethodException()
+            if arg is None:
+                return operation(parent)
+            else:
+                return operation(parent, arg)
 
         return None
 

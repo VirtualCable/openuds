@@ -270,8 +270,8 @@ class Publications(DetailHandler):
         Custom method "publish", provided to initiate a publication of a deployed service
         :param parent: Parent service pool
         '''
-        logger.debug('Custom "publish" invoked')
-        parent.publish()
+        logger.debug('Custom "publish" invoked for {}'.format(parent))
+        parent.publish()  # Can raise exceptions that will be processed on response
         return self.success()
 
     def cancel(self, parent, uuid):
