@@ -69,7 +69,16 @@ gui.servicesPools.link = (event) ->
       return
 
     return
-  
+
+  # Fill "State" for cached and assigned services
+  fillState = (data) ->
+    $.each data, (index, value) ->
+      value.origState = value.state  # Save original state for "cancel" checking
+      if value.state is "U"
+        value.state = if value.os_state isnt "" and value.os_state isnt "U" then 'Z' else 'U'
+      return
+    return
+
   # Fills up the list of available services
   api.providers.allServices (services) ->
     availableServices = {}
@@ -153,6 +162,9 @@ gui.servicesPools.link = (event) ->
                 "xls"
               ]
               rowSelect: "single"
+              onData: (data) ->
+                fillState data
+                return
 
               onRowSelect: (selected) ->
                 gui.do
@@ -270,6 +282,7 @@ gui.servicesPools.link = (event) ->
             ])
             
             onData: (data) ->
+              fillState data
               $.each data, (index, value) ->
                 if value.in_use is true
                   value.in_use = gettext('Yes')

@@ -58,6 +58,7 @@ class State(object):
     RUNNING = 'W'
     FOR_EXECUTE = 'X'
     MAINTENANCE = 'Y'  # "Visual" state, no element will be in fact in maintenance, but used to show "Services Pools" for which a Provider is in maintenance
+    WAITING_OS = 'Z'  # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are whating for os manager
 
     string = {
         ACTIVE: _('Active'),
@@ -76,7 +77,8 @@ class State(object):
         FINISHED: _('Finished'),
         FOR_EXECUTE: _('Waiting execution'),
         BALANCING: _('Balancing'),
-        MAINTENANCE: _('In maintenance')
+        MAINTENANCE: _('In maintenance'),
+        WAITING_OS: _('Waiting OS')
     }
 
     # States that are merely for "information" to the user. They don't contain any usable instance

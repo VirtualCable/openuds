@@ -62,6 +62,7 @@ class AssignedService(DetailHandler):
         :param is_cache: If item is from cache or not
         '''
         props = item.getProperties()
+
         val = {
             'id': item.uuid,
             'id_deployed_service': item.deployed_service.uuid,
