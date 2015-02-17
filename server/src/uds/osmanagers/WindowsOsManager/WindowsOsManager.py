@@ -160,7 +160,8 @@ class WindowsOsManager(osmanagers.OSManager):
         elif msg == "log":
             self.doLog(service, data, log.ACTOR)
         elif msg == "logon" or msg == 'login':
-            self.loggedIn(service, data, False)
+            if '\\' not in data:
+                self.loggedIn(service, data, False)
             service.setInUse(True)
             # We get the service logged hostname & ip and returns this
             ip, hostname = service.getConnectionSource()
