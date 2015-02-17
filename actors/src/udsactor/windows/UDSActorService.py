@@ -40,6 +40,7 @@ import win32event  # @UnresolvedImport, pylint: disable=import-error
 import win32com.client  # @UnresolvedImport,  @UnusedImport, pylint: disable=import-error
 import pythoncom  # @UnresolvedImport, pylint: disable=import-error
 import servicemanager  # @UnresolvedImport, pylint: disable=import-error
+import os
 
 from udsactor import operations
 from udsactor.service import CommonService
@@ -218,38 +219,43 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         '''
         Main service loop
         '''
-        initCfg()
+        try:
+            initCfg()
 
-        logger.debug('running SvcDoRun')
-        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
-                              servicemanager.PYS_SERVICE_STARTED,
-                              (self._svc_name_, ''))
+            logger.debug('running SvcDoRun')
+            servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
+                                  servicemanager.PYS_SERVICE_STARTED,
+                                  (self._svc_name_, ''))
 
-        # call the CoInitialize to allow the registration to run in an other
-        # thread
-        logger.debug('Initializing com...')
-        pythoncom.CoInitialize()
+            # call the CoInitialize to allow the registration to run in an other
+            # thread
+            logger.debug('Initializing com...')
+            pythoncom.CoInitialize()
 
-        # ********************************************************
-        # * Ask brokers what to do before proceding to main loop *
-        # ********************************************************
-        if self.interactWithBroker() is False:
-            logger.debug('Interact with broker returned false, stopping service after a while')
-            self.notifyStop()
-            win32event.WaitForSingleObject(self.hWaitStop, 5000)
-            return
+            # ********************************************************
+            # * Ask brokers what to do before proceding to main loop *
+            # ********************************************************
+            if self.interactWithBroker() is False:
+                logger.debug('Interact with broker returned false, stopping service after a while')
+                self.notifyStop()
+                win32event.WaitForSingleObject(self.hWaitStop, 5000)
+                return
 
-        if self.isAlive is False:
-            logger.debug('The service is not alive after broker interaction, stopping it')
-            self.notifyStop()
-            return
+            if self.isAlive is False:
+                logger.debug('The service is not alive after broker interaction, stopping it')
+                self.notifyStop()
+                return
 
-        if self.rebootRequested is True:
-            logger.debug('Reboot has been requested, stopping service')
-            self.notifyStop()
-            return
+            if self.rebootRequested is True:
+                logger.debug('Reboot has been requested, stopping service')
+                self.notifyStop()
+                return
 
-        self.initIPC()
+            self.initIPC()
+        except Exception:  # Any init exception wil be caught, service must be then restarted
+            logger.exception()
+            logger.debug('Exiting service with failure status')
+            os._exit(-1)  # pylint: disable=protected-access
 
         # ********************************
         # * Registers SENS subscriptions *

@@ -236,7 +236,7 @@ class CommonService(object):
 
         if self.api.mac in self.knownIps:
             address = (self.knownIps[self.api.mac], random.randrange(40000, 44000))
-            logger.debug('Starting REST listener at {}'.format(address))
+            logger.info('Starting REST listener at {}'.format(address))
             self.httpServer = httpserver.HTTPServerThread(address, self)
             self.httpServer.start()
             # And notify it to broker
