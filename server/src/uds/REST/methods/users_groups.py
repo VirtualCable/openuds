@@ -207,7 +207,6 @@ class Groups(DetailHandler):
             {'name': {'title': _('Group'), 'visible': True, 'type': 'icon_dict', 'icon_dict': {'group': 'fa fa-group text-success', 'meta': 'fa fa-gears text-info'}}},
             {'comments': {'title': _('Comments')}},
             {'state': {'title': _('state'), 'type': 'dict', 'dict': State.dictionary()}},
-            {'meta_if_any': {'title': _('state'), 'type': 'bool'}},
         ]
 
     def getTypes(self, parent, forType):
