@@ -95,8 +95,11 @@ class HTML5RDPTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def renderForHtml(self, userService, transport, ip, os, user, password):
-        # We use helper to keep this clean
+    def processedUser(self, userService, userName):
+        v = self.processUserPassword(userService, userName, '')
+        return v['username']
+
+    def processUserPassword(self, service, user, password):
         username = user.getUsernameForAuth()
 
         if self.fixedName.value is not '':
@@ -113,10 +116,10 @@ class HTML5RDPTransport(Transport):
             password = self.fixedPassword.value
         if self.fixedDomain.value is not '':
             domain = self.fixedDomain.value
-        if self.useEmptyCreds.value is True:
+        if self.useEmptyCreds.isTrue():
             username, password, domain = '', '', ''
 
-        if self.withoutDomain.value is True:
+        if self.withoutDomain.isTrue():
             domain = ''
 
         if '.' in domain:  # Dotter domain form
@@ -124,7 +127,16 @@ class HTML5RDPTransport(Transport):
             domain = ''
 
         # Fix username/password acording to os manager
-        username, password = userService.processUserPassword(username, password)
+        username, password = service.processUserPassword(username, password)
+
+        return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
+
+    def renderForHtml(self, userService, transport, ip, os, user, password):
+        ci = self.processUserPassword(userService, user, password)
+        username, password, domain = ci['username'], ci['password'], ci['domain']
+
+        if domain != '':
+            username = domain + '\\' + username
 
         # Build params dict
         params = {

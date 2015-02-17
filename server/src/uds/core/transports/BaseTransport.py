@@ -144,13 +144,13 @@ class Transport(Module):
         '''
         return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
 
-    def processedUser(self, userService, userName):
+    def processedUser(self, userService, user):
         '''
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification
         @return: transformed username
         '''
-        return userName
+        return user.name
 
     def renderForHtml(self, userService, transport, ip, os, user, password):
         '''
