@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-10'
+__updated__ = '2015-02-18'
 
 
 @webLoginRequired
@@ -84,6 +84,7 @@ def service(request, idService, idTransport):
             if ip is not None:
                 itrans = trans.getInstance()
                 if itrans.isAvailableFor(ip):
+                    ads.setConnectionSource(request.ip, 'unknown')
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
                     transportHtml = itrans.renderForHtml(ads, trans, ip, OsDetector.getOsFromRequest(request), request.user, webPassword(request))
                     UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, request.user), itrans.protocol)

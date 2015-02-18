@@ -201,8 +201,7 @@ def ticketAuth(request, ticketId):
 
         request.session['java'] = True
         request.session['OS'] = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
-        request.user = usr  # Temporaly store this user as "authenticated" user, next requests will be done using session
-
+        request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
 
         # Check if servicePool is part of the ticket
         if servicePool is not None:
