@@ -45,7 +45,13 @@ public class LinuxApplet implements OsApplet {
 			boolean redirectPrinters = params.get("pr").equals("1");
 			boolean redirectAudio = params.get("au").equals("1");
 			boolean compression = params.get("cr").equals("1");
+			boolean wallpaper = false;
 			
+			if( params.get("sw") != null ) 
+			{
+				wallpaper = params.get("sw").equals("1");
+			}
+		
 			
 			// Notifies to broker the 
 			util.notifyHostname(baseUrl, params.get("is"));
@@ -122,6 +128,9 @@ public class LinuxApplet implements OsApplet {
 			
 			if( redirectSerials )
 				exec.add("-rcomport:COM1=/dev/ttyS0");
+			
+			if( wallpaper )
+				exec.add("-xl");  // Adds "Lan" experience
 			
 			if( redirectPrinters ) // Will have to look at local cups to find printer 
 			{
