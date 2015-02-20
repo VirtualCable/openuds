@@ -1,3 +1,13 @@
 ujson
 xml_marshaller
 six
+pycrypto
+django-compressor
+dnspython
+lxml
+ovirt-engine-sdk-python
+pycurl
+pyOpenSSL
+python-ldap
+six
+MySQL-python
