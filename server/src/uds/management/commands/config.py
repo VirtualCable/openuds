@@ -48,7 +48,7 @@ class Command(BaseCommand):
         GlobalConfig.initialize()
         try:
             for config in args:
-                print config
+                logger.debug('Config: {}'.format(config))
                 first, value = config.split('=')
                 first = first.split('.')
                 if len(first) == 2:
