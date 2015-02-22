@@ -37,13 +37,14 @@ from django.views.decorators.cache import cache_page
 
 from uds.core.auths.auth import webLoginRequired, webPassword
 from uds.core.services.Exceptions import ServiceInMaintenanceMode
-from uds.models import DeployedService, Transport, UserService, Image
-from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.ui.images import DEFAULT_IMAGE
+from uds.core.ui import theme
+from uds.core.util.Config import GlobalConfig
+from uds.core.util.stats import events
 from uds.core.util import log
 from uds.core.util import OsDetector
-from uds.core.util.stats import events
-from uds.core.ui import theme
+from uds.models import DeployedService, Transport, UserService, Image
 
 import uds.web.errors as errors
 
@@ -51,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-18'
+__updated__ = '2015-02-22'
 
 
 @webLoginRequired
@@ -121,8 +122,12 @@ def transcomp(request, idTransport, componentId):
 def sernotify(request, idUserService, notification):
     try:
         if notification == 'hostname':
-            hostname = request.GET.get('hostname', None)
-            ip = request.GET.get('ip', None)
+            hostname = request.GET.get('hostname', None)[:64]  # Cuts host name to 64 chars
+            ip = request.ip
+
+            if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.getBool(True) is True:
+                ip = request.GET.get('ip', ip)
+
             if ip is not None and hostname is not None:
                 us = UserService.objects.get(uuid=idUserService)
                 us.setConnectionSource(ip, hostname)

@@ -279,6 +279,9 @@ class GlobalConfig(object):
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES = Config.section(SECURITY_SECTION).value('Trusted Hosts', '*', type=Config.TEXT_FIELD)
 
+    # Allow clients to notify their own ip (if set), or use always the request extracted IP
+    HONOR_CLIENT_IP_NOTIFY = Config.section(SECURITY_SECTION).value('honorClientNotifyIP', '0', type=Config.BOOLEAN_FIELD)
+
     # Clusters related vars
 
     # Maximum desired CPU Load. If cpu is over this value, a migration of a service is "desirable"
