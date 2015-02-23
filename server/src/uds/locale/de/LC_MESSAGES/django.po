@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-10 09:52+0100\n"
+"POT-Creation-Date: 2015-02-23 10:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr "Ungültiger Schlüssel"
 msgid "Unmanaged host"
 msgstr "Nicht verwalteter host"
 
-#: REST/methods/actor.py:175 web/errors.py:75
+#: REST/methods/actor.py:175 web/errors.py:76
 msgid "User service not found"
 msgstr "Benutzer-Dienst nicht gefunden"
 
@@ -65,9 +65,9 @@ msgstr "Aktuelle Authentifikatoren"
 #: REST/methods/authenticators.py:58 REST/methods/images.py:58
 #: REST/methods/networks.py:59 REST/methods/osmanagers.py:57
 #: REST/methods/providers.py:62 REST/methods/services_pools.py:68
-#: REST/methods/transports.py:55 REST/methods/user_services.py:213
-#: REST/methods/user_services.py:248 REST/methods/users_groups.py:94
-#: REST/model.py:116 templates/uds/admin/tmpl/user.html:29
+#: REST/methods/transports.py:55 REST/methods/user_services.py:214
+#: REST/methods/user_services.py:249 REST/methods/users_groups.py:94
+#: REST/model.py:117 templates/uds/admin/tmpl/user.html:29
 #: templates/uds/admin/tmpl/user.html:32
 msgid "Name"
 msgstr "Name"
@@ -75,19 +75,19 @@ msgstr "Name"
 #: REST/methods/authenticators.py:59 REST/methods/osmanagers.py:58
 #: REST/methods/providers.py:63 REST/methods/services.py:168
 #: REST/methods/services_pools.py:72 REST/methods/transports.py:56
-#: REST/methods/user_services.py:250 REST/methods/users_groups.py:95
-#: REST/methods/users_groups.py:208 REST/model.py:123
+#: REST/methods/user_services.py:251 REST/methods/users_groups.py:95
+#: REST/methods/users_groups.py:208 REST/model.py:124
 #: templates/uds/admin/tmpl/group.html:49
 #: templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Kommentare"
 
 #: REST/methods/authenticators.py:60 REST/methods/transports.py:54
-#: REST/methods/user_services.py:247 REST/model.py:132
+#: REST/methods/user_services.py:248 REST/model.py:133
 msgid "Priority"
 msgstr "Priorität"
 
-#: REST/methods/authenticators.py:61 REST/model.py:143
+#: REST/methods/authenticators.py:61 REST/model.py:144
 msgid "Tag"
 msgstr "Tag"
 
@@ -153,12 +153,6 @@ msgstr ""
 "Kann nicht gelöscht werden ein OS-Manager mit Dienstleistungen verbundenen "
 "Pools"
 
-#: REST/methods/osmanagers.py:82
-msgid "Can't modify an OS Manager with services pools associated"
-msgstr ""
-"Kann nicht geändert werden ein OS-Manager mit Dienstleistungen verbundenen "
-"Pools"
-
 #: REST/methods/providers.py:58
 msgid "Service providers"
 msgstr "Service-Provider"
@@ -180,7 +174,7 @@ msgstr "Dienstleistungen"
 msgid "User Services"
 msgstr "Benutzerdienste"
 
-#: REST/methods/providers.py:124 web/errors.py:70
+#: REST/methods/providers.py:124 web/errors.py:71
 msgid "Service not found"
 msgstr "-Dienst nicht gefunden"
 
@@ -206,7 +200,7 @@ msgstr "Aktuelle Dienstleistungen"
 msgid "Service name"
 msgstr "Dienstnamen"
 
-#: REST/methods/services.py:169 REST/methods/user_services.py:249
+#: REST/methods/services.py:169 REST/methods/user_services.py:250
 msgid "Type"
 msgstr "Typ"
 
@@ -229,7 +223,7 @@ msgstr "Service-Pools"
 msgid "Parent Service"
 msgstr "Eltern-Service"
 
-#: REST/methods/services_pools.py:70 REST/methods/user_services.py:113
+#: REST/methods/services_pools.py:70 REST/methods/user_services.py:114
 msgid "status"
 msgstr "Status"
 
@@ -237,73 +231,73 @@ msgstr "Status"
 msgid "Shows transports"
 msgstr "Zeigt Transporte"
 
-#: REST/methods/services_pools.py:119
+#: REST/methods/services_pools.py:106
 msgid "Create at least one OS Manager before creating a new service pool"
 msgstr ""
 "Erstellen Sie mindestens ein OS-Manager vor dem Erstellen eines neuen "
 "Service-Pools"
 
-#: REST/methods/services_pools.py:121
+#: REST/methods/services_pools.py:108
 msgid "Create at least a service before creating a new service pool"
 msgstr ""
 "Erstellen Sie mindestens einen Dienst vor dem Erstellen eines neuen Service-"
 "Pools"
 
-#: REST/methods/services_pools.py:128
+#: REST/methods/services_pools.py:115
 msgid "Base service"
 msgstr "Basisdienst"
 
-#: REST/methods/services_pools.py:129
+#: REST/methods/services_pools.py:116
 msgid "Service used as base of this service pool"
 msgstr "Service als Basis für diesen Service-pool"
 
-#: REST/methods/services_pools.py:136
+#: REST/methods/services_pools.py:123
 msgid "OS Manager"
 msgstr "OS-Manager"
 
-#: REST/methods/services_pools.py:137
+#: REST/methods/services_pools.py:124
 msgid "OS Manager used as base of this service pool"
 msgstr "OS-Manager verwendet als Grundlage dieser Service-pool"
 
-#: REST/methods/services_pools.py:144
+#: REST/methods/services_pools.py:131
 msgid "Associated Image"
 msgstr "Zugeordnetes Bild"
 
-#: REST/methods/services_pools.py:145
+#: REST/methods/services_pools.py:132
 msgid "Image assocciated with this service"
 msgstr "Bild Assocciated mit diesem service"
 
-#: REST/methods/services_pools.py:152
+#: REST/methods/services_pools.py:139
 msgid "Initial available services"
 msgstr "Erster verfügbaren Dienste"
 
-#: REST/methods/services_pools.py:153
+#: REST/methods/services_pools.py:140
 msgid "Services created initially for this service pool"
 msgstr "Dienste, die ursprünglich für diesen Service-Pool erstellt"
 
-#: REST/methods/services_pools.py:160
+#: REST/methods/services_pools.py:147
 msgid "Services to keep in cache"
 msgstr "Dienstleistungen im Cache behalten"
 
-#: REST/methods/services_pools.py:161
+#: REST/methods/services_pools.py:148
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
 "Dienstleistungen, die im Cache für verbesserte Service Zuweisung gehalten"
 
-#: REST/methods/services_pools.py:168
+#: REST/methods/services_pools.py:155
 msgid "Services to keep in L2 cache"
 msgstr "Dienstleistungen im L2-Cache zu behalten"
 
-#: REST/methods/services_pools.py:169
+#: REST/methods/services_pools.py:156
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr ""
 "Dienstleistungen gehalten im level2-Cache für verbesserte Service-generation"
 
-#: REST/methods/services_pools.py:176
+#: REST/methods/services_pools.py:163
 msgid "Maximum number of services to provide"
 msgstr "Maximale Anzahl der Dienste"
 
-#: REST/methods/services_pools.py:177
+#: REST/methods/services_pools.py:164
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -311,19 +305,19 @@ msgstr ""
 "Maximale Anzahl der Dienst (zugewiesen und L1-Cache) für die erstellt werden "
 "können dieser service"
 
-#: REST/methods/services_pools.py:183
+#: REST/methods/services_pools.py:170
 msgid "Show transports"
 msgstr "Karte-Transporte"
 
-#: REST/methods/services_pools.py:184
+#: REST/methods/services_pools.py:171
 msgid "If active, alternative transports for user will be shown"
 msgstr "Wenn aktiv, werden alternative Transporte für Benutzer angezeigt"
 
-#: REST/methods/services_pools.py:199
+#: REST/methods/services_pools.py:186
 msgid "Base service does not exist anymore"
 msgstr "Zentrale Dienst existiert nicht mehr"
 
-#: REST/methods/services_pools.py:218
+#: REST/methods/services_pools.py:205
 msgid "This service requires an OS Manager"
 msgstr "Dieser Service erfordert eine OS-Manager"
 
@@ -356,98 +350,98 @@ msgstr ""
 "Netzwerke, die mit diesem Transport verbunden. Wenn kein Netzwerk "
 "ausgewählt, bedeutet \"alle Netze\""
 
-#: REST/methods/user_services.py:75 REST/methods/user_services.py:76
+#: REST/methods/user_services.py:76 REST/methods/user_services.py:77
 msgid "unknown"
 msgstr "unbekannt"
 
-#: REST/methods/user_services.py:104
+#: REST/methods/user_services.py:105
 #: templates/uds/admin/tmpl/services_pool.html:30
 msgid "Assigned services"
 msgstr "Zugeordneten services"
 
-#: REST/methods/user_services.py:108 REST/methods/user_services.py:174
+#: REST/methods/user_services.py:109 REST/methods/user_services.py:175
 msgid "Creation date"
 msgstr "Erstellungsdatum"
 
-#: REST/methods/user_services.py:109 REST/methods/user_services.py:175
-#: REST/methods/user_services.py:306
+#: REST/methods/user_services.py:110 REST/methods/user_services.py:176
+#: REST/methods/user_services.py:307
 msgid "Revision"
 msgstr "Revision"
 
-#: REST/methods/user_services.py:111 REST/methods/user_services.py:177
+#: REST/methods/user_services.py:112 REST/methods/user_services.py:178
 #: auths/IP/Authenticator.py:60
 msgid "IP"
 msgstr "IP "
 
-#: REST/methods/user_services.py:112 REST/methods/user_services.py:178
+#: REST/methods/user_services.py:113 REST/methods/user_services.py:179
 msgid "Friendly name"
 msgstr "Angezeigter name"
 
-#: REST/methods/user_services.py:114
+#: REST/methods/user_services.py:115
 msgid "Status date"
 msgstr "Statusdatum"
 
-#: REST/methods/user_services.py:115
+#: REST/methods/user_services.py:116
 msgid "In Use"
 msgstr "Im Einsatz"
 
-#: REST/methods/user_services.py:116
+#: REST/methods/user_services.py:117
 msgid "Src Host"
 msgstr "Src-Host"
 
-#: REST/methods/user_services.py:117
+#: REST/methods/user_services.py:118
 msgid "Src Ip"
 msgstr "Quell-IP-"
 
-#: REST/methods/user_services.py:118
+#: REST/methods/user_services.py:119
 msgid "Owner"
 msgstr "Eigentümer"
 
-#: REST/methods/user_services.py:119 REST/methods/user_services.py:181
+#: REST/methods/user_services.py:120 REST/methods/user_services.py:182
 msgid "Actor version"
 msgstr "Schauspieler-version"
 
-#: REST/methods/user_services.py:146
+#: REST/methods/user_services.py:147
 msgid "Item is not removable"
 msgstr "Element ist nicht abnehmbar"
 
-#: REST/methods/user_services.py:170
+#: REST/methods/user_services.py:171
 msgid "Cached services"
 msgstr "Zwischengespeicherte Dienstleistungen"
 
-#: REST/methods/user_services.py:179 REST/methods/user_services.py:215
-#: REST/methods/user_services.py:308 templates/uds/admin/tmpl/group.html:54
+#: REST/methods/user_services.py:180 REST/methods/user_services.py:216
+#: REST/methods/user_services.py:309 templates/uds/admin/tmpl/group.html:54
 #: templates/uds/admin/tmpl/user.html:45
 msgid "State"
 msgstr "Zustand"
 
-#: REST/methods/user_services.py:180
+#: REST/methods/user_services.py:181
 msgid "Cache level"
 msgstr "Cache-Stufe"
 
-#: REST/methods/user_services.py:208
+#: REST/methods/user_services.py:209
 msgid "Assigned groups"
 msgstr "Zugewiesenen Gruppen"
 
-#: REST/methods/user_services.py:214 templates/uds/admin/tmpl/group.html:46
+#: REST/methods/user_services.py:215 templates/uds/admin/tmpl/group.html:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Kommentare"
 
-#: REST/methods/user_services.py:243
+#: REST/methods/user_services.py:244
 msgid "Assigned transports"
 msgstr "Zugewiesenen Transporte"
 
-#: REST/methods/user_services.py:302
+#: REST/methods/user_services.py:303
 #: templates/uds/admin/tmpl/services_pool.html:34
 msgid "Publications"
 msgstr "Publikationen"
 
-#: REST/methods/user_services.py:307
+#: REST/methods/user_services.py:308
 msgid "Publish date"
 msgstr "Datum der Veröffentlichung"
 
-#: REST/methods/user_services.py:309
+#: REST/methods/user_services.py:310
 msgid "Reason"
 msgstr "Grund"
 
@@ -478,7 +472,6 @@ msgid "Username"
 msgstr "Benutzername"
 
 #: REST/methods/users_groups.py:96 REST/methods/users_groups.py:209
-#: REST/methods/users_groups.py:210
 msgid "state"
 msgstr "Zustand"
 
@@ -486,7 +479,7 @@ msgstr "Zustand"
 msgid "Last access"
 msgstr "Zuletzt online"
 
-#: REST/methods/users_groups.py:147 REST/methods/users_groups.py:272
+#: REST/methods/users_groups.py:147 REST/methods/users_groups.py:271
 msgid "User already exists (duplicate key error)"
 msgstr "Benutzer ist bereits vorhanden (doppelte Schlüsselfehler)"
 
@@ -499,7 +492,7 @@ msgstr "Gruppen von {0}"
 msgid "Current groups"
 msgstr "Aktuelle Gruppen"
 
-#: REST/methods/users_groups.py:207 REST/methods/users_groups.py:215
+#: REST/methods/users_groups.py:207 REST/methods/users_groups.py:214
 #: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:81
 #: auths/RegexLdap/Authenticator.py:81 auths/SAML_enterprise/SAML.py:115
@@ -508,47 +501,46 @@ msgstr "Aktuelle Gruppen"
 msgid "Group"
 msgstr "Gruppe"
 
-#: REST/methods/users_groups.py:215
+#: REST/methods/users_groups.py:214
 msgid "UDS Group"
 msgstr "UDS-Gruppe"
 
-#: REST/methods/users_groups.py:216
+#: REST/methods/users_groups.py:215
 msgid "Meta group"
 msgstr "Meta group"
 
-#: REST/methods/users_groups.py:216
+#: REST/methods/users_groups.py:215
 msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
-#: REST/model.py:117
+#: REST/model.py:118
 msgid "Name of this element"
 msgstr "Name dieses Elements"
 
-#: REST/model.py:124
+#: REST/model.py:125
 msgid "Comments for this element"
 msgstr "Kommentare für dieses element"
 
-#: REST/model.py:133
+#: REST/model.py:134
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Bestimmt die Priorität dieses Elements (niedrigere Zahl bedeutet höhere "
 "Priorität)"
 
-#: REST/model.py:144
-#| msgid "Name of this element"
+#: REST/model.py:145
 msgid "Tag for this element"
 msgstr "Tag für dieses element"
 
-#: REST/model.py:219
+#: REST/model.py:220
 msgid "Invalid Request"
 msgstr "Ungültige Anforderung"
 
-#: REST/model.py:226
+#: REST/model.py:227
 msgid "Method not found in {}: {}"
 msgstr "Methode nicht gefunden in {}: {}"
 
-#: REST/model.py:232
+#: REST/model.py:233
 msgid "Item not found"
 msgstr "Element nicht gefunden"
 
@@ -1255,75 +1247,79 @@ msgstr "Base gruppierten Dienst"
 msgid "Transport empty"
 msgstr "Transport leer"
 
-#: core/util/State.py:63
+#: core/util/State.py:64
 msgid "Active"
 msgstr "Aktive"
 
-#: core/util/State.py:64
+#: core/util/State.py:65
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: core/util/State.py:65 templates/uds/admin/tmpl/user.html:50
+#: core/util/State.py:66 templates/uds/admin/tmpl/user.html:50
 msgid "Blocked"
 msgstr "Blockiert"
 
-#: core/util/State.py:66
+#: core/util/State.py:67
 msgid "Waiting publication"
 msgstr "Wartet auf Veröffentlichung"
 
-#: core/util/State.py:67
+#: core/util/State.py:68
 msgid "In preparation"
 msgstr "In Vorbereitung"
 
-#: core/util/State.py:68
+#: core/util/State.py:69
 msgid "Valid"
 msgstr "Gültig"
 
-#: core/util/State.py:69
+#: core/util/State.py:70
 msgid "Waiting for removal"
 msgstr "Warten auf Entfernung"
 
-#: core/util/State.py:70
+#: core/util/State.py:71
 msgid "Removing"
 msgstr "Entfernen"
 
-#: core/util/State.py:71
+#: core/util/State.py:72
 msgid "Removed"
 msgstr "Entfernt"
 
-#: core/util/State.py:72
+#: core/util/State.py:73
 msgid "Canceled"
 msgstr "Abgebrochen"
 
-#: core/util/State.py:73
+#: core/util/State.py:74
 msgid "Canceling"
 msgstr "Abbrechen"
 
-#: core/util/State.py:74 templates/uds/error.html:6
+#: core/util/State.py:75 templates/uds/error.html:6
 #: templates/uds/error.html.py:11 templates/uds/html5/error.html:4
 #: templates/uds/html5/error.html.py:14
 msgid "Error"
 msgstr "Fehler"
 
-#: core/util/State.py:75
+#: core/util/State.py:76
 msgid "Running"
 msgstr "Ausführen"
 
-#: core/util/State.py:76
+#: core/util/State.py:77
 msgid "Finished"
 msgstr "Fertig"
 
-#: core/util/State.py:77
+#: core/util/State.py:78
 msgid "Waiting execution"
 msgstr "Personen, die auf Ausführung"
 
-#: core/util/State.py:78
+#: core/util/State.py:79
 msgid "Balancing"
 msgstr "Balancing"
 
-#: core/util/State.py:79
+#: core/util/State.py:80
 msgid "In maintenance"
 msgstr "In der Pflege"
+
+#: core/util/State.py:81
+msgid "Waiting OS"
+msgstr "OS warten"
 
 #: core/util/stats/counters.py:205
 msgid "Assigned"
@@ -1398,12 +1394,12 @@ msgstr "Halten Sie Dienst zugewiesen"
 msgid "Remove service"
 msgstr "Basisdienst"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:66
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:59
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:60
 msgid "Max.Idle time"
 msgstr "Max.Idle Zeit"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:67
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:71
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max idle time)."
@@ -1477,10 +1473,9 @@ msgid "Domain"
 msgstr "Domäne"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
-msgid "Domain to join machines to (use FQDN form, netbios name not allowed)"
-msgstr ""
-"Domäne beitreten Maschinen Verwendung (FQDN Form, Netbios-Namen nicht "
-"erlaubt)"
+#| msgid "Domain to join machines to (use FQDN form, netbios name not allowed)"
+msgid "Domain to join machines to (use FQDN form, Netbios name not allowed)"
+msgstr "Domäne beitreten Maschinen Verwendung (FQDN Form, Netbios-Namen nicht erlaubt)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid "Account with rights to add machines to domain"
@@ -1495,12 +1490,15 @@ msgid "OU"
 msgstr "OU"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
+#| msgid ""
+#| "Organizational unit where to add machines in domain (check it before "
+#| "using it)"
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
-"it)"
+"it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
-"Organisationseinheit, an Maschinen in Domäne hinzugefügt (überprüfen sie vor "
-"der Verwendung es)"
+"Organisationseinheit wo man Computer in Domäne hinzufügen (überprüfen sie vor der Verwendung "
+"IT). d.h.: Ou = My Machines, dc = Mydomain, dc = local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
 msgid "Must provide a domain!"
@@ -1594,7 +1592,7 @@ msgstr ""
 "OS-Manager, um Windows-Rechner ohne Domäne steuern. (Im Grunde benennt "
 "Maschine)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:60
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:65
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
@@ -1602,11 +1600,11 @@ msgstr ""
 "Maximale Leerlaufzeit (in Sekunden) vor der Sitzung ist Automaticatlly "
 "geschlossen der Benutzer (< = 0 bedeutet keine max. idle-Zeit)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:74
 msgid "Length must be numeric!!"
 msgstr "Länge muss numerisch sein!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:69
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
 msgid "Length must be betwen 1 and 6"
 msgstr "Die Länge muss zwischen 1 und 6 sein."
 
@@ -2818,7 +2816,7 @@ msgstr ""
 msgid "The server must be http or https"
 msgstr "Der Server muss http oder Https sein."
 
-#: transports/HTML5RDP/HTML5RDP.py:159
+#: transports/HTML5RDP/HTML5RDP.py:171
 msgid "Launching HTML5 RDP connection"
 msgstr "HTML5-RDP-Verbindung starten"
 
@@ -3025,6 +3023,42 @@ msgstr "Um diesen Dienst zu nutzen, sollten Sie zunächst Kabel installieren."
 msgid "Download CoRD"
 msgstr "Download CoRD"
 
+#: transports/RDP/web.py:94
+msgid "Attention Safari Users:"
+msgstr "Achtung-Safari-Benutzer:"
+
+#: transports/RDP/web.py:95
+msgid ""
+"In order to access theese services, you will need to enable this in order to "
+"access to service:"
+msgstr ""
+"Um Theese Dienste zuzugreifen, müssen Sie, um dies zu ermöglichen "
+"Zugang zu Service:"
+
+#: transports/RDP/web.py:96
+msgid "Go to Safari > Preferences > Security > Manage Website Settings"
+msgstr "Gehen Sie auf Safari > Präferenzen > Sicherheit > Websiteeinstellungen verwalten"
+
+#: transports/RDP/web.py:97
+msgid ""
+"Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
+"to Allow Always (also mark \"Unsecure mode\")."
+msgstr ""
+"Klicken Sie im linken Feld klickt auf Java, und wählen Sie Site zulassen UDS Rdp und setzen Sie ihn "
+"Immer (auch Mark \"Unsicheren Modus\") zu ermöglichen."
+
+#: transports/RDP/web.py:98
+msgid "Users of Firefox or Chrome:"
+msgstr "Benutzer von Firefox oder Chrome:"
+
+#: transports/RDP/web.py:99
+msgid ""
+"If any warning is shown when launching RDP Applet, press \"ignore\" and "
+"continue"
+msgstr ""
+"Wenn keine Warnung angezeigt wird, wenn der RDP-Applet zu starten, drücken Sie \"ignorieren\" und "
+"weiter"
+
 #: transports/RGS_enterprise/RGSTransport.py:34
 msgid "RGS Transport (direct)"
 msgstr "RGS-Transport (direkt)"
@@ -3152,19 +3186,19 @@ msgstr "NX-Transport (Tunneling)"
 msgid "NX Transport for tunneled connection"
 msgstr "NX-Transport für getunnelte Verbindung"
 
-#: web/errors.py:68
+#: web/errors.py:69
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
-#: web/errors.py:69
+#: web/errors.py:70
 msgid "Transport not found"
 msgstr "Verkehr nicht gefunden"
 
-#: web/errors.py:71
+#: web/errors.py:72
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: web/errors.py:72
+#: web/errors.py:73
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -3172,33 +3206,38 @@ msgstr ""
 "Ungültiger Service. Der Dienst ist nicht verfügbar im Moment. Bitte, "
 "versuchen Sie später"
 
-#: web/errors.py:73
+#: web/errors.py:74
 msgid "Maximum services limit reached. Please, contact administrator"
 msgstr "Maximale Service Limit erreicht. Bitte kontaktieren Sie administrator"
 
-#: web/errors.py:74
+#: web/errors.py:75
 msgid "You need to enable cookies to let this application work"
 msgstr "Sie müssen Cookies, diese Anwendung arbeiten lassen aktivieren"
 
-#: web/errors.py:76
+#: web/errors.py:77
 msgid "Authenticator not found"
 msgstr "Authentifikator nicht gefunden"
 
-#: web/errors.py:77
+#: web/errors.py:78
 msgid "Invalid authenticator"
 msgstr "Ungültige Echtheitsbestätigung"
 
-#: web/errors.py:78
+#: web/errors.py:79
 msgid "Invalid request received"
 msgstr "Ungültige Anforderung empfangen"
 
-#: web/errors.py:79
+#: web/errors.py:80
 msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
 msgstr ""
 "Ihr Browser wird nicht unterstützt. Bitte aktualisieren Sie es auf einen "
 "modernen Browser mit HTML5 wie Firefox oder Chrome"
+
+#: web/errors.py:81
+#| msgid "This service is in maintenance mode."
+msgid "The requested service is in maintenance mode"
+msgstr "Der angeforderte Dienst ist im Wartungsmodus"
 
 #: web/forms/LoginForm.py:52
 msgid "Select authenticator"
@@ -3208,6 +3247,6 @@ msgstr "Wählen Sie Authentifikator"
 msgid "authenticator"
 msgstr "Authentifikator"
 
-#: web/views/auth.py:134
+#: web/views/auth.py:135
 msgid "Authenticator does not provide information"
 msgstr "Authentifikator stellt keine Informationen bereit."
