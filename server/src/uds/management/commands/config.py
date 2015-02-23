@@ -58,4 +58,4 @@ class Command(BaseCommand):
                 if Config.update(mod, name, value) is False:  # If not exists, try to store value without any special parameters
                     Config.section(mod).value(name, value).get()
         except Exception:
-            logger.exception("Error")
+            logger.exception('Exception processing {}'.format(args))
