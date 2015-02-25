@@ -118,7 +118,10 @@ class BaseRDPTransport(Transport):
 
         return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
 
+    def getConnectionInfo(self, service, user, password):
+        return self.processUserPassword(service, user, password)
+
     def getHtmlComponent(self, _id, _os, componentId):
-        logger.debug('Component: ID={}'.format(id))
+        logger.debug('Component: ID={}'.format(_id))
         # We use helper to keep this clean
         return getHtmlComponent(self.__module__, componentId)

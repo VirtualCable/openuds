@@ -67,9 +67,6 @@ class RDPTransport(BaseRDPTransport):
     allowSerials = BaseRDPTransport.allowSerials
     wallpaper = BaseRDPTransport.wallpaper
 
-    def getConnectionInfo(self, service, user, password):
-        return self.processUserPassword(service, user, password)
-
     def renderForHtml(self, userService, transport, ip, os, user, password):
         # We use helper to keep this clean
         prefs = user.prefs('rdp')
