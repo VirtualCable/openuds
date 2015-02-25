@@ -66,7 +66,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
             servicePoolPub.deployed_service.userServices.filter(in_use=True).update(in_use=False, state_date=now)
             servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
         except Exception:
-            logger.info("Machine removal for {0} not executed because publication is already removed")
+            logger.exception('Trace (treated exception, not fault)')
             # Removed provider, no problem at all, no update is done
 
 

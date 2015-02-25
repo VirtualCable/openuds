@@ -185,7 +185,7 @@ class Api(object):
         logger.debug('Got response parameters: {}'.format(res))
         self.uuid, self.mac = res[0:2]
         self.idle = int(res[2])
-        if self.idle < 15:
+        if self.idle < 30:
             self.idle = None  # No values under 30 seconds are allowed :)
 
         return self.uuid
