@@ -152,9 +152,11 @@ class CommonService(object):
                 if data[0] == 'rename':
                     try:
                         if len(params) == 1:  # Simple rename
+                            logger.debug('Renaming computer to {}'.format(params[0]))
                             self.rename(params[0])
                         # Rename with change password for an user
                         elif len(params) == 4:
+                            logger.debug('Renaming computer to {}'.format(params))
                             self.rename(params[0], params[1], params[2], params[3])
                         else:
                             logger.error('Got invalid parameter for rename operation: {}'.format(params))

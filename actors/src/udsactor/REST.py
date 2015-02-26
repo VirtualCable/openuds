@@ -142,14 +142,12 @@ class Api(object):
             if data is None:
                 # Old requests version does not support verify, but they do not checks ssl certificate by default
                 if self.newerRequestLib:
-                    logger.debug('Requesting with new')
                     r = requests.get(url, verify=VERIFY_CERT)
                 else:
                     logger.debug('Requesting with old')
                     r = requests.get(url)  # Always ignore certs??
             else:
                 if self.newerRequestLib:
-                    logger.debug('Requesting with new')
                     r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=VERIFY_CERT)
                 else:
                     logger.debug('Requesting with old')
@@ -180,6 +178,7 @@ class Api(object):
           uuid, mac
           Optionally can return an third parameter, that is max "idle" request time
         '''
+        logger.debug('Invoking init')
         url = self._getUrl('init', key=self.masterKey, ids=ids)
         res = self._request(url)['result']
         logger.debug('Got response parameters: {}'.format(res))
@@ -191,6 +190,8 @@ class Api(object):
         return self.uuid
 
     def postMessage(self, msg, data, processData=True):
+        logger.debug('Invoking post message {} with data {}'.format(msg, data))
+
         if self.uuid is None:
             raise ConnectionError('REST api has not been initialized')
 
@@ -200,22 +201,28 @@ class Api(object):
         return self._request(url, data)['result']
 
     def notifyComm(self, url):
+        logger.debug('Notifying comms {}'.format(url))
         return self.postMessage('notifyComms', url)
 
     def login(self, username):
+        logger.debug('Notifying login {}'.format(username))
         return self.postMessage('login', username)
 
     def logout(self, username):
+        logger.debug('Notifying logout {}'.format(username))
         return self.postMessage('logout', username)
 
     def information(self):
+        logger.debug('Requesting information'.format())
         return self.postMessage('information', '')
 
     def setReady(self, ipsInfo):
+        logger.debug('Notifying readyness: {}'.format(ipsInfo))
         data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
         return self.postMessage('ready', data)
 
     def notifyIpChanges(self, ipsInfo):
+        logger.debug('Notifying ip changes: {}'.format(ipsInfo))
         data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
         return self.postMessage('ip', data)
 

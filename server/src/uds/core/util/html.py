@@ -110,7 +110,7 @@ def checkBrowser(user_agent, browser):
 
     for b, res in _browsers.iteritems():
         if browser.startswith(b):
-            logger.debug('Found: {0}'.format(b))
+            logger.debug('Found: b={}, res={}, browser={}'.format(b, res, browser))
             regexs = res
             browser = browser[len(b):]
 
