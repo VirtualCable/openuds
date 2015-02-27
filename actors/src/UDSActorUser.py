@@ -258,18 +258,22 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
     def quit(self):
         logger.debug('Quit invoked')
-        if self.stopped is True:
-            return
-        self.stopped = True
+        if self.stopped is False:
+            self.stopped = True
+            try:
+                # If we close Client, send Logoff to Broker
+                self.ipc.sendLogout(operations.getCurrentUser())
+                self.timer.stop()
+                self.ipc.stop()
+            except Exception:
+                # May we have lost connection with server, simply exit in that case
+                pass
+
         try:
-            # If we close Client, send Logoff to Broker
-            self.ipc.sendLogout(operations.getCurrentUser())
-            self.timer.stop()
-            self.ipc.stop()
-            operations.loggoff()
+            operations.loggoff()  # Invoke log off
         except Exception:
-            # May we have lost connection with server, simply exit in that case
             pass
+
         self.app.quit()
 
 if __name__ == '__main__':
