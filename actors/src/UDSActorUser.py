@@ -175,6 +175,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.maxIdleTime = None
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.checkIdle)
+        self.graceTimerShots = 6  # Start counting for idle after 30 seconds after login, got on windows some "instant" logout because of this
         self.showIdleWarn = True
 
         if self.ipc.isAlive() is False:
@@ -203,7 +204,11 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.ipc.sendLogin(operations.getCurrentUser())
 
     def checkIdle(self):
-        if self.maxIdleTime is None:  # No idle checl
+        if self.maxIdleTime is None or self.maxIdleTime < 30:  # No idle check
+            return
+
+        if self.graceTimerShots > 0:
+            self.graceTimerShots -= 1
             return
 
         idleTime = operations.getIdleDuration()
@@ -221,12 +226,10 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         if self.showIdleWarn is True and remainingTime < 120:  # With two minutes, show a warning message
             self.showIdleWarn = False
             self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
-            logger.debug('Here')
 
     def displayMessage(self, message):
         logger.debug('Displaying message')
-        self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
-        QtGui.QMessageBox.information(None, "UDS Actor", message)
+        self.msgDlg.displayMessage(message)
 
     def executeScript(self, script):
         logger.debug('Executing script')
