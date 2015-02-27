@@ -148,9 +148,9 @@ _strftime = (fmt, d, locale, options) ->
       when "o"
         String(d.getDate()) + ordinal(d.getDate())
       when "P"
-        (if d.getHours() < 12 then locale.am else locale.pm)
+        '' # (if d.getHours() < 12 then locale.am else locale.pm)
       when "p"
-        (if d.getHours() < 12 then locale.AM else locale.PM)
+        '' # (if d.getHours() < 12 then locale.AM else locale.PM)
       when "R"
         _strftime locale.formats.R or "%H:%M", d, locale
       when "r"

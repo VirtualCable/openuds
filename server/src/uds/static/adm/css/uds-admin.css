@@ -172,9 +172,9 @@ tr.log-ERROR, tr.log-FATAL {
   /* Side Nav */
 
   .side-nav {
-	margin-left: -225px;
-	left: 225px;
-	width: 225px;
+	margin-left: -180px;
+	left: 180px;
+	width: 180px;
 	position: fixed;
 	top: 50px;
 	height: 100%;
