@@ -45,6 +45,8 @@ from uds.core.services.Exceptions import MaxServicesReachedException
 from uds.models import UserService, getSqlDatetime
 from uds.core import services
 from uds.core.services import Service
+from uds.core.util.stats.events import addEvent, ET_CACHE_HIT, ET_CACHE_MISS
+
 import requests
 import json
 import logging
@@ -358,7 +360,7 @@ class UserServiceManager(object):
 
     def getAssignationForUser(self, ds, user):
         assignedUserService = self.getExistingAssignationForUser(ds, user)
-        # If has an assigend user service, returns this without any more work
+        # If has an assigned user service, returns this without any more work
         if assignedUserService is not None:
             return assignedUserService
 
@@ -372,13 +374,17 @@ class UserServiceManager(object):
             else:
                 cache = None
 
+        # Out of atomic transaction
         if cache is not None:
             logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
+            addEvent(ds, ET_CACHE_HIT)
             ci = cache.getInstance()  # User Deployment instance
             ci.assignToUser(user)
             cache.updateData(ci)
             cache.save()
             return cache
+
+        # Cache missed
 
         # Now find if there is a preparing one
         with transaction.atomic():
@@ -390,8 +396,10 @@ class UserServiceManager(object):
             else:
                 cache = None
 
+        # Out of atomic transaction
         if cache is not None:
             logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
+            addEvent(ds, ET_CACHE_MISS)
             ci = cache.getInstance()  # User Deployment instance
             ci.assignToUser(user)
             cache.updateData(ci)
@@ -407,6 +415,7 @@ class UserServiceManager(object):
             if inAssigned >= ds.max_srvs:  # cacheUpdater will drop necesary L1 machines, so it's not neccesary to check against inCacheL1
                 raise MaxServicesReachedException()
         # Can create new service, create it
+        addEvent(ds, ET_CACHE_MISS)
         return self.createAssignedFor(ds, user)
 
     def getServicesInStateForProvider(self, provider_id, state):

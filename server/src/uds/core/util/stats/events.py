@@ -43,8 +43,8 @@ logger = logging.getLogger(__name__)
 
 # Posible events, note that not all are used by every possible owner type
 (
-    ET_LOGIN, ET_LOGOUT, ET_ACCESS,
-) = range(3)
+    ET_LOGIN, ET_LOGOUT, ET_ACCESS, ET_CACHE_HIT, ET_CACHE_MISS
+) = range(5)
 
 (
     OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR,
