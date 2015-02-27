@@ -175,7 +175,6 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.maxIdleTime = None
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.checkIdle)
-        self.graceTimerShots = 6  # Start counting for idle after 30 seconds after login, got on windows some "instant" logout because of this
         self.showIdleWarn = True
 
         if self.ipc.isAlive() is False:
@@ -198,13 +197,14 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.counter = 0
 
         self.timer.start(5000)  # Launch idle checking every 5 seconds
+        self.graceTimerShots = 6  # Start counting for idle after 30 seconds after login, got on windows some "instant" logout because of idle timer not being reset??
 
         self.ipc.start()
         # If this is running, it's because he have logged in
         self.ipc.sendLogin(operations.getCurrentUser())
 
     def checkIdle(self):
-        if self.maxIdleTime is None or self.maxIdleTime < 30:  # No idle check
+        if self.maxIdleTime is None:  # No idle check
             return
 
         if self.graceTimerShots > 0:
