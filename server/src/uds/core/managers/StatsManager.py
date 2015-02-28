@@ -39,6 +39,7 @@ from uds.models import optimizeTable
 from django.db import connection
 import datetime
 import time
+import six
 
 import logging
 
@@ -162,7 +163,7 @@ class StatsManager(object):
         try:
             # Replaces nulls for ''
             def noneToEmpty(str):
-                return str if str is not None else ''
+                return six.text_type(str) if str is not None else ''
 
             fld1 = noneToEmpty(kwargs.get('fld1', kwargs.get('username', '')))
             fld2 = noneToEmpty(kwargs.get('fld2', kwargs.get('srcip', '')))

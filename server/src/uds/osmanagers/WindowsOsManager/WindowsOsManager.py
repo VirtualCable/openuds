@@ -64,7 +64,7 @@ class WindowsOsManager(osmanagers.OSManager):
         order=11,
         tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max. idle time)'),
         required=True
-)
+    )
 
     @staticmethod
     def validateLen(length):

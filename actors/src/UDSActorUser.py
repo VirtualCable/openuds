@@ -197,13 +197,18 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.counter = 0
 
         self.timer.start(5000)  # Launch idle checking every 5 seconds
+        self.graceTimerShots = 6  # Start counting for idle after 30 seconds after login, got on windows some "instant" logout because of idle timer not being reset??
 
         self.ipc.start()
         # If this is running, it's because he have logged in
         self.ipc.sendLogin(operations.getCurrentUser())
 
     def checkIdle(self):
-        if self.maxIdleTime is None:  # No idle checl
+        if self.maxIdleTime is None:  # No idle check
+            return
+
+        if self.graceTimerShots > 0:
+            self.graceTimerShots -= 1
             return
 
         idleTime = operations.getIdleDuration()
@@ -221,12 +226,10 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         if self.showIdleWarn is True and remainingTime < 120:  # With two minutes, show a warning message
             self.showIdleWarn = False
             self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
-            logger.debug('Here')
 
     def displayMessage(self, message):
         logger.debug('Displaying message')
-        self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
-        QtGui.QMessageBox.information(None, "UDS Actor", message)
+        self.msgDlg.displayMessage(message)
 
     def executeScript(self, script):
         logger.debug('Executing script')
@@ -255,18 +258,22 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
     def quit(self):
         logger.debug('Quit invoked')
-        if self.stopped is True:
-            return
-        self.stopped = True
+        if self.stopped is False:
+            self.stopped = True
+            try:
+                # If we close Client, send Logoff to Broker
+                self.ipc.sendLogout(operations.getCurrentUser())
+                self.timer.stop()
+                self.ipc.stop()
+            except Exception:
+                # May we have lost connection with server, simply exit in that case
+                pass
+
         try:
-            # If we close Client, send Logoff to Broker
-            self.ipc.sendLogout(operations.getCurrentUser())
-            self.timer.stop()
-            self.ipc.stop()
-            operations.loggoff()
+            operations.loggoff()  # Invoke log off
         except Exception:
-            # May we have lost connection with server, simply exit in that case
             pass
+
         self.app.quit()
 
 if __name__ == '__main__':
