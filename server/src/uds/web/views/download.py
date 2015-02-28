@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.http import HttpResponseForbidden
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -44,14 +46,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@webLoginRequired
+@webLoginRequired(admin=True)
 def download(request, idDownload):
     '''
     Downloadables management
     '''
-    if request.user.isStaff() is False:
-        return HttpResponseForbidden(_('Forbidden'))
-
     if idDownload == '':
         files = [{'id': key, 'name': val['name'], 'comment': _(val['comment'])} for key, val in DownloadsManager.manager().getDownloadables().items()]
         logger.debug('Files: {0}'.format(files))

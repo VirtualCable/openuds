@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.views.decorators.cache import cache_page
 from django.views.i18n import javascript_catalog
 

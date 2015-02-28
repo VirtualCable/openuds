@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
@@ -135,7 +137,7 @@ def authInfo(request, authName):
         return HttpResponse(_('Authenticator does not provide information'))
 
 
-@webLoginRequired
+@webLoginRequired(admin=False)
 def authJava(request, idAuth, hasJava):
     request.session['java'] = hasJava == 'y'
     try:

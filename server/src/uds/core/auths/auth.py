@@ -38,6 +38,7 @@ from __future__ import unicode_literals
 from functools import wraps
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.utils.translation import get_language
+from django.utils.decorators import available_attrs
 
 from django.utils.translation import ugettext as _
 from uds.core.util.Config import GlobalConfig
@@ -53,7 +54,7 @@ from uds.core.util.request import getRequest
 import logging
 import six
 
-__updated__ = '2015-01-22'
+__updated__ = '2015-02-28'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -101,36 +102,43 @@ def getIp(request):
 
 
 # Decorator to make easier protect pages that needs to be logged in
-def webLoginRequired(view_func):
+def webLoginRequired(admin):
     '''
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     '''
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        '''
-        Wrapped function for decorator
-        '''
-        user = request.session.get(USER_KEY)
-        if user is not None:
-            try:
-                if user == ROOT_ID:
-                    user = getRootUser()
-                else:
-                    user = User.objects.get(pk=user)
-            except User.DoesNotExist:
-                user = None
-        if user is None:
-            url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
-            if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
-                url = url.replace('http://', 'https://')
-            logger.debug('No user found, redirecting to {0}'.format(url))
-            return HttpResponseRedirect(url)
-        # Refresh session duration
-        # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
-        request.user = user
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
+    def decorator(view_func):
+        @wraps(view_func, assigned=available_attrs(view_func))
+        def _wrapped_view(request, *args, **kwargs):
+            '''
+            Wrapped function for decorator
+            '''
+            user = request.session.get(USER_KEY)
+            if user is not None:
+                try:
+                    if user == ROOT_ID:
+                        user = getRootUser()
+                    else:
+                        user = User.objects.get(pk=user)
+                except User.DoesNotExist:
+                    user = None
+
+            if admin is True:
+               if user is None or user.isStaff() is False:
+                   return HttpResponseForbidden(_('Forbidden'))
+
+            if user is None:
+                url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
+                if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
+                    url = url.replace('http://', 'https://')
+                logger.debug('No user found, redirecting to {0}'.format(url))
+                return HttpResponseRedirect(url)
+            # Refresh session duration
+            # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
+            request.user = user
+            return view_func(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
 
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"

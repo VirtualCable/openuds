@@ -25,22 +25,16 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
+from django.conf.urls import patterns
 
 __updated__ = '2015-02-28'
 
-import logging
-
-logger = logging.getLogger(__name__)
-
-from .login import login, logout, customAuth
-from .index import index, about
-from .prefs import prefs
-from .service import service, transcomp, sernotify, transportIcon, serviceImage
-from .auth import authCallback, authInfo, authJava, ticketAuth
-from .download import download
-from .js import jsCatalog
-from ..errors import error
+urlpatterns = patterns(
+    'uds.admin.views.reports',
+    (r'^usage/', 'usage'),
+)

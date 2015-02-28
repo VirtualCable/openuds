@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.http import HttpResponse, HttpResponseForbidden
 from django.template import RequestContext, loader
 
@@ -41,25 +43,18 @@ from uds.core.util.decorators import denyBrowsers
 
 import logging
 
-__updated__ = '2015-02-02'
-
 logger = logging.getLogger(__name__)
 
 
 @denyBrowsers(browsers=['ie<9'])
-@webLoginRequired
+@webLoginRequired(admin=True)
 def index(request):
-    if request.user.isStaff() is False:
-        return HttpResponseForbidden(_('Forbidden'))
-
     return render(request, 'uds/admin/index.html')
 
 
 @denyBrowsers(browsers=['ie<9'])
-@webLoginRequired
+@webLoginRequired(admin=True)
 def tmpl(request, template):
-    if request.user.isStaff() is False:
-        return HttpResponseForbidden(_('Forbidden'))
     try:
         t = loader.get_template('uds/admin/tmpl/' + template + ".html")
         c = RequestContext(request)
@@ -71,9 +66,6 @@ def tmpl(request, template):
 
 
 @denyBrowsers(browsers=['ie<9'])
-@webLoginRequired
+@webLoginRequired(admin=True)
 def sample(request):
-    if request.user.isStaff() is False:
-        return HttpResponseForbidden(_('Forbidden'))
-
     return render(request, 'uds/admin/sample.html')

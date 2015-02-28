@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -55,7 +57,7 @@ logger = logging.getLogger(__name__)
 __updated__ = '2015-02-22'
 
 
-@webLoginRequired
+@webLoginRequired(admin=False)
 def service(request, idService, idTransport):
     kind, idService = idService[0], idService[1:]
     try:
@@ -104,7 +106,7 @@ def service(request, idService, idTransport):
         return errors.exceptionView(request, e)
 
 
-@webLoginRequired
+@webLoginRequired(admin=False)
 def transcomp(request, idTransport, componentId):
     try:
         # We got translated first id
@@ -118,7 +120,7 @@ def transcomp(request, idTransport, componentId):
         return errors.exceptionView(request, e)
 
 
-@webLoginRequired
+@webLoginRequired(admin=False)
 def sernotify(request, idUserService, notification):
     try:
         if notification == 'hostname':

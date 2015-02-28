@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2014 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,17 +30,4 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
-
-import logging
-
-logger = logging.getLogger(__name__)
-
-from .login import login, logout, customAuth
-from .index import index, about
-from .prefs import prefs
-from .service import service, transcomp, sernotify, transportIcon, serviceImage
-from .auth import authCallback, authInfo, authJava, ticketAuth
-from .download import download
-from .js import jsCatalog
-from ..errors import error
+from .usage import usage

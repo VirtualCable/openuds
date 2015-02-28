@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -58,7 +60,7 @@ def about(request):
     return render(request, theme.template('about.html'))
 
 
-@webLoginRequired
+@webLoginRequired(admin=False)
 def index(request):
     '''
     Renders the main page.

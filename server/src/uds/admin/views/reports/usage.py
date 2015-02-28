@@ -32,15 +32,18 @@ from __future__ import unicode_literals
 
 __updated__ = '2015-02-28'
 
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response
+
+from uds.core.auths.auth import webLoginRequired
+from uds.core.util.decorators import denyBrowsers
+
 import logging
 
 logger = logging.getLogger(__name__)
 
-from .login import login, logout, customAuth
-from .index import index, about
-from .prefs import prefs
-from .service import service, transcomp, sernotify, transportIcon, serviceImage
-from .auth import authCallback, authInfo, authJava, ticketAuth
-from .download import download
-from .js import jsCatalog
-from ..errors import error
+
+@denyBrowsers(browsers=['ie<9'])
+@webLoginRequired(admin=True)
+def usage(request):
+    return HttpResponse('ok', content_type='text/plain')

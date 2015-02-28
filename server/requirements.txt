@@ -11,3 +11,4 @@ pyOpenSSL
 python-ldap
 six
 MySQL-python
+reportlab

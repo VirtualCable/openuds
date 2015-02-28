@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.template import RequestContext
@@ -45,7 +47,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@webLoginRequired
+@webLoginRequired(admin=False)
 def prefs(request):
     '''
     Preferences form

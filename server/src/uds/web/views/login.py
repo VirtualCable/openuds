@@ -30,6 +30,8 @@
 '''
 from __future__ import unicode_literals
 
+__updated__ = '2015-02-28'
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -143,7 +145,7 @@ def customAuth(request, idAuth):
     return HttpResponse(res, content_type='text/html')
 
 
-@webLoginRequired
+@webLoginRequired(admin=False)
 def logout(request):
     authLogLogout(request)
     return webLogout(request, request.user.logout())
