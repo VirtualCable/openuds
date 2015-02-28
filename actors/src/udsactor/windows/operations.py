@@ -62,7 +62,7 @@ def getNetworkInfo():
             for ip in obj.IPAddress:
                 if ':' in ip:  # Is IPV6, skip this
                     continue
-                if ip == '' or ip is None:
+                if ip is None or ip == '' or ip.startswith('169.254') or ip.startswith('0.'):  # If single link ip, or no ip
                     continue
                 # logger.debug('Net config found: {}=({}, {})'.format(obj.Caption, obj.MACAddress, ip))
                 yield utils.Bunch(name=obj.Caption, mac=obj.MACAddress, ip=ip)

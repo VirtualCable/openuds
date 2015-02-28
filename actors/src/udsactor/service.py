@@ -108,7 +108,7 @@ class CommonService(object):
                 ids = ','.join([i.mac for i in netInfo])
                 if ids == '':
                     # Wait for any network interface to be ready
-                    logger.debug('No network interfaces found, retrying in a while...')
+                    logger.debug('No valid network interfaces found, retrying in a while...')
                     raise Exception()
                 logger.debug('Ids: {}'.format(ids))
                 self.api.init(ids)
