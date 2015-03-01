@@ -30,13 +30,18 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
+__updated__ = '2015-03-01'
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 from uds.core.auths.auth import webLoginRequired
 from uds.core.util.decorators import denyBrowsers
+
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
 
 import logging
 
@@ -46,4 +51,15 @@ logger = logging.getLogger(__name__)
 @denyBrowsers(browsers=['ie<9'])
 @webLoginRequired(admin=True)
 def usage(request):
-    return HttpResponse('ok', content_type='text/plain')
+    with io.BytesIO() as output:
+        c = canvas.Canvas(filename=output, pagesize=A4)
+        c.setFont('Helvetica', 10)
+        # Print Customer Data
+        c.drawString(210 * mm / 2, 297 * mm / 2, "* <-- center")
+        c.drawString(0 * mm, 0 * mm, '* <-- top left')
+        c.drawString(210 * mm - 80, 297 * mm - 10, 'bottom right --> *')
+        c.showPage()
+        c.save()
+        pdf = output.getvalue()
+
+    return HttpResponse(pdf, content_type='application/pdf')

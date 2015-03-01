@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-01-21'
+__updated__ = '2015-03-01'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -44,6 +44,7 @@ from uds.core.util.State import State
 from uds.models.ManagedObjectModel import ManagedObjectModel
 
 from uds.models.Util import NEVER
+
 
 import logging
 
@@ -184,7 +185,11 @@ class Authenticator(ManagedObjectModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         '''
+        from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
+
+        logger.debug('Before delete auth {}'.format(toDelete))
+
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()
@@ -194,7 +199,8 @@ class Authenticator(ManagedObjectModel):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Before delete auth {}'.format(toDelete))
+        # Clears related permissions
+        clean(toDelete)
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)

@@ -33,12 +33,15 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-24'
+__updated__ = '2015-03-01'
 
 import logging
 
 logger = logging.getLogger(__name__)
 
+
+# Permissions
+from .Permissions import Permissions
 
 # Utility
 from .Util import getSqlDatetime
