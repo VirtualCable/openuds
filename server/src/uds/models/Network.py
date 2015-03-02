@@ -33,9 +33,10 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2015-03-02'
 
 from django.db import models
+from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.Transport import Transport
@@ -127,3 +128,16 @@ class Network(UUIDModel):
 
     def __str__(self):
         return u'Network {0} ({1}) from {2} to {3}'.format(self.name, self.net_string, net.longToIp(self.net_start), net.longToIp(self.net_end))
+
+    @staticmethod
+    def beforeDelete(sender, **kwargs):
+        from uds.core.util.permissions import clean
+        toDelete = kwargs['instance']
+
+        logger.debug('Before delete auth {}'.format(toDelete))
+
+        # Clears related permissions
+        clean(toDelete)
+
+# Connects a pre deletion signal to Authenticator
+signals.pre_delete.connect(Network.beforeDelete, sender=Network)

@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2015-03-02'
 
 from django.db import models
 from django.db.models import signals
@@ -124,7 +124,10 @@ class Service(ManagedObjectModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         '''
+        from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
+
+        logger.debug('Before delete service {}'.format(toDelete))
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()
@@ -134,7 +137,8 @@ class Service(ManagedObjectModel):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Before delete service {}'.format(toDelete))
+        # Clears related permissions
+        clean(toDelete)
 
 # : Connects a pre deletion signal to Service
 signals.pre_delete.connect(Service.beforeDelete, sender=Service)

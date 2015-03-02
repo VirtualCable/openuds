@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-12-20'
+__updated__ = '2015-03-02'
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
@@ -88,7 +88,11 @@ class Provider(ManagedObjectModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         '''
+        from uds.core.util.permissions import clean
+
         toDelete = kwargs['instance']
+        logger.debug('Before delete service provider {}'.format(toDelete))
+
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()
@@ -98,7 +102,8 @@ class Provider(ManagedObjectModel):
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Before delete service provider {}'.format(toDelete))
+        # Clears related permissions
+        clean(toDelete)
 
 # : Connects a pre deletion signal to Provider
 signals.pre_delete.connect(Provider.beforeDelete, sender=Provider)

@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-01'
+__updated__ = '2015-03-02'
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
@@ -49,11 +49,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Allowed permissions
-PERMISSION_NONE = 0
-PERMISSION_READ = 16
-PERMISSION_ALL = 32
-
 
 @python_2_unicode_compatible
 class Permissions(UUIDModel):
@@ -61,6 +56,10 @@ class Permissions(UUIDModel):
     An OS Manager represents a manager for responding requests for agents inside services.
     '''
     # pylint: disable=model-missing-unicode
+    # Allowed permissions
+    PERMISSION_NONE = 0
+    PERMISSION_READ = 16
+    PERMISSION_ALL = 32
 
     created = models.DateTimeField(db_index=True)
     ends = models.DateTimeField(db_index=True, null=True, blank=True, default=None)  # Future "permisions ends at this moment", not assigned right now
@@ -76,9 +75,9 @@ class Permissions(UUIDModel):
     @staticmethod
     def permissionAsString(perm):
         return {
-            PERMISSION_NONE: _('None'),
-            PERMISSION_READ: _('Read'),
-            PERMISSION_ALL: _('All')
+            Permissions.PERMISSION_NONE: _('None'),
+            Permissions.PERMISSION_READ: _('Read'),
+            Permissions.PERMISSION_ALL: _('All')
         }.get(perm, _('None'))
 
     @staticmethod
@@ -102,7 +101,7 @@ class Permissions(UUIDModel):
 
         object_id = kwargs.get('object_id', None)
 
-        permission = kwargs.get('permission', PERMISSION_NONE)
+        permission = kwargs.get('permission', Permissions.PERMISSION_NONE)
 
         if user is not None:
             q = Q(user=user)
@@ -152,7 +151,7 @@ class Permissions(UUIDModel):
             logger.debug('Got permission {}'.format(perm))
             return perm.permission
         except Exception:  # DoesNotExists
-            return PERMISSION_NONE
+            return Permissions.PERMISSION_NONE
 
     @staticmethod
     def cleanPermissions(object_type, object_id):

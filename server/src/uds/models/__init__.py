@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-01'
+__updated__ = '2015-03-02'
 
 import logging
 

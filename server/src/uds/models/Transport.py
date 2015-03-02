@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
+__updated__ = '2015-03-02'
 
 from django.db import models
 from django.db.models import signals
@@ -125,15 +125,18 @@ class Transport(ManagedObjectModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         '''
+        from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 
+        logger.debug('Before delete transport {}'.format(toDelete))
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
             s = toDelete.getInstance()
             s.destroy()
             s.env().clearRelatedData()
 
-        logger.debug('Before delete transport {}'.format(toDelete))
+        # Clears related permissions
+        clean(toDelete)
 
 # : Connects a pre deletion signal to OS Manager
 signals.pre_delete.connect(Transport.beforeDelete, sender=Transport)

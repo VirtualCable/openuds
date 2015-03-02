@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-01'
+__updated__ = '2015-03-02'
 
 from django.db import models
 from django.db.models import signals
@@ -382,13 +382,17 @@ class DeployedService(UUIDModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         '''
+        from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
+
+        logger.debug('Deleting Deployed Service {0}'.format(toDelete))
         toDelete.getEnvironment().clearRelatedData()
 
         # Clears related logs
         log.clearLogs(toDelete)
 
-        logger.debug('Deleting Deployed Service {0}'.format(toDelete))
+        # Clears related permissions
+        clean(toDelete)
 
     def __str__(self):
         return u"Deployed service {0}({1}) with {2} as initial, {3} as L1 cache, {4} as L2 cache, {5} as max".format(

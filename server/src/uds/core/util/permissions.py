@@ -32,15 +32,18 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-01'
+__updated__ = '2015-03-02'
 
-from uds.models.Permissions import PERMISSION_ALL, PERMISSION_READ, PERMISSION_NONE
-from uds.models import Permissions, User, Group
+from uds.models import Permissions
 from uds.core.util import ot
 
 import logging
 
 logger = logging.getLogger(__name__)
+
+PERMISSION_ALL = Permissions.PERMISSION_ALL
+PERMISSION_READ = Permissions.PERMISSION_READ
+PERMISSION_NONE = Permissions.PERMISSION_NONE
 
 
 def clean(obj):
@@ -57,4 +60,10 @@ def addGroupPermission(group, obj, permission=PERMISSION_READ):
 
 
 def checkPermissions(user, obj, permission=PERMISSION_ALL):
+    if user.is_admin is True:
+        return True
+
+    if user.is_staff is False:
+        return False
+
     return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk) >= permission
