@@ -120,6 +120,7 @@ gui.providers.link = (event) ->
             "edit"
             "delete"
             "xls"
+            "permissions"
           ]
           onEdit: gui.methods.typedEdit(services, gettext("Edit service"), gettext("Service creation error"))
           onNew: gui.methods.typedNew(services, gettext("New service"), gettext("Service saving error"))
@@ -167,6 +168,7 @@ gui.providers.link = (event) ->
         }
         "delete"
         "xls"
+        "permissions"
       ]
       onNew: gui.methods.typedNew(gui.providers, gettext("New services provider"), gettext("Services provider creation error"), testButton)
       onEdit: gui.methods.typedEdit(gui.providers, gettext("Edit services provider"), gettext("Services Provider saving error"), testButton)

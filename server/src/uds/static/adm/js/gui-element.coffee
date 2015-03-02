@@ -259,9 +259,18 @@
             sel = @fnGetSelectedData()
             enable = (if sel.length is 1 then onCheck("delete", sel) else false)
             if enable
-              $(btn).removeClass("disabled").addClass "btn3d-warning"
+              $(btn).removeClass("disabled").addClass "btn3d-danger"
             else
-              $(btn).removeClass("btn3d-warning").addClass "disabled"
+              $(btn).removeClass("btn3d-danger").addClass "disabled"
+            return
+
+          permissionsSelected = (btn, obj, node) ->
+            sel = @fnGetSelectedData()
+            enable = (if sel.length is 1 then onCheck("delete", sel) else false)
+            if enable
+              $(btn).removeClass("disabled").addClass "btn3d-success"
+            else
+              $(btn).removeClass("btn3d-success").addClass "disabled"
             return
 
           $.each tblParams.buttons, (index, value) -> # Iterate through button definition
@@ -319,6 +328,14 @@
                   sButtonText: gui.config.dataTableButtons.refresh.text
                   fnClick: refreshFnc
                   sButtonClass: gui.config.dataTableButtons.refresh.css
+              when "permissions"
+                if api.config.admin
+                  btn =
+                    sExtends: "text"
+                    sButtonText: gui.config.dataTableButtons.permissions.text
+                    fnSelect: permissionsSelected
+                    fnClick: clickHandlerFor(gui.permissions, "permissions")
+                    sButtonClass: gui.config.dataTableButtons.permissions.css
               when "xls"
                 btn =
                   sExtends: "text"
@@ -326,7 +343,6 @@
                   fnClick: -> # Export to excel
                     api.spreadsheet.tableToExcel(tableId, title)
                     return
-
                   # End export to excell
                   sButtonClass: gui.config.dataTableButtons.xls.css
               else # Custom button, this has to be

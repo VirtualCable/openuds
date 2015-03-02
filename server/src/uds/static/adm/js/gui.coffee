@@ -45,6 +45,10 @@
       text: "<span class=\"fa fa-trash-o\"></span> <span class=\"label-tbl-button\">" + gettext("Delete") + "</span>"
       css: "btn disabled btn3d-default btn3d btn3d-tables"
 
+    permissions:
+      text: "<span class=\"fa fa-save\"></span> <span class=\"label-tbl-button\">" + gettext("Permissions") + "</span>"
+      css: "btn disabled btn3d-default btn3d btn3d-tables"
+
     xls:
       text: "<span class=\"fa fa-save\"></span> <span class=\"label-tbl-button\">" + gettext("Xls") + "</span>"
       css: "btn btn3d-info btn3d btn3d-tables"
@@ -94,8 +98,6 @@
       footer: options.footer
       button1: options.closeButton
       button2: options.actionButton
-
-
   
   # As previous, this creates the modal and shows it. in this case, the id of the modal returned already has '#'
   gui.launchModal = (title, content, options) ->

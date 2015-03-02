@@ -52,6 +52,7 @@
             (function(api){
                 api.config = {
                     token: "{% auth_token %}",
+                    admin: {{ request.user.is_admin|lower }},
                     auth_header: "{% auth_token_header %}",
                     lang: "{{ LANGUAGE_CODE }}",
                     base_url: "{% url 'REST' '' %}",
@@ -114,6 +115,7 @@
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-tools.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-form.coffee"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-permissions.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-element.coffee"></script>
         
         <!-- user interface management -->
