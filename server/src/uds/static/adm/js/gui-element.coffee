@@ -334,7 +334,7 @@
                     sExtends: "text"
                     sButtonText: gui.config.dataTableButtons.permissions.text
                     fnSelect: permissionsSelected
-                    fnClick: clickHandlerFor(gui.permissions, "permissions")
+                    fnClick: clickHandlerFor(gui.permissions, self.rest)
                     sButtonClass: gui.config.dataTableButtons.permissions.css
               when "xls"
                 btn =

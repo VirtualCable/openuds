@@ -267,6 +267,21 @@ class BasicModelRest
 
     return
 
+  getPermissions: (id, success_fnc, fail_fnc) ->
+    path = "permissions/" + @path + "/" + id
+    @_requestPath path,
+      cacheKey: "."
+      success: success_fnc
+      fail: fail_fnc
+
+  addPermission: (id, type, itemId, perm, success_fnc, fail_fnc) ->
+    path = "permissions/" + @path + '/' + id + '/' + type + '/' + itemId
+    data =
+      perm: perm
+    api.putJson path, data,
+      success: success_fnc
+      fail: fail_fnc
+
   types: (success_fnc, fail_fnc) ->
     @_requestPath @typesPath,
       cacheKey: @typesPath

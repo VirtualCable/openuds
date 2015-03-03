@@ -37,6 +37,8 @@ from __future__ import unicode_literals
 from django.contrib.sessions.backends.db import SessionStore
 
 from uds.core.util.Config import GlobalConfig
+from uds.core.auths.auth import getRootUser
+from uds.models import Authenticator
 
 import logging
 
@@ -88,7 +90,7 @@ class Handler(object):
     name = None  # If name is not used, name will be the class name in lower case
     path = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     authenticated = True  # By default, all handlers needs authentication
-    needs_admin = False  # By default, the methods will be accessible by anyone if nothine else indicated
+    needs_admin = False  # By default, the methods will be accessible by anyone if nothing else indicated
     needs_staff = False  # By default, staff
 
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
@@ -246,3 +248,16 @@ class Handler(object):
         True if user of this REST request is member of staff
         '''
         return self.getValue('staff_member') and True or False
+
+    def getUser(self):
+        '''
+        If user is staff member, returns his Associated user on auth
+        '''
+        authId = self.getValue('auth')
+        username = self.getValue('username')
+        # Maybe it's root user??
+        if (GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True) and
+                username == GlobalConfig.SUPER_USER_LOGIN.get(True) and
+                authId == -1):
+            return getRootUser()
+        return Authenticator.objects.get(pk=authId).users.get(name=username)
