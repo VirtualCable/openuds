@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
+__updated__ = '2015-03-04'
 
 from uds.models import Permissions
 from uds.core.util import ot
@@ -48,6 +48,10 @@ PERMISSION_NONE = Permissions.PERMISSION_NONE
 
 def clean(obj):
     Permissions.cleanPermissions(ot.getObjectType(obj), obj.pk)
+
+
+def getPermissions(obj):
+    return list(Permissions.enumeratePermissions(object_type=ot.getObjectType(obj), object_id=obj.pk))
 
 
 def addUserPermission(user, obj, permission=PERMISSION_READ):
@@ -67,3 +71,7 @@ def checkPermissions(user, obj, permission=PERMISSION_ALL):
         return False
 
     return Permissions.getPermissions(user=user, groups=user.groups.all(), object_type=ot.getObjectType(obj), object_id=obj.pk) >= permission
+
+
+def getPermissionName(perm):
+    return Permissions.permissionAsString(perm)

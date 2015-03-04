@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
+__updated__ = '2015-03-04'
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
@@ -154,6 +154,13 @@ class Permissions(UUIDModel):
             return Permissions.PERMISSION_NONE
 
     @staticmethod
+    def enumeratePermissions(object_type, object_id):
+        '''
+        Get users permissions over object
+        '''
+        return Permissions.objects.filter(object_type=object_type, object_id=object_id)
+
+    @staticmethod
     def cleanPermissions(object_type, object_id):
         Permissions.objects.filter(object_type=object_type, object_id=object_id).delete()
 
@@ -164,6 +171,10 @@ class Permissions(UUIDModel):
     @staticmethod
     def cleanGroupPermissions(group):
         Permissions.objects.filter(group=group).delete()
+
+    @property
+    def permission_as_string(self):
+        return Permissions.permissionAsString(self.permission)
 
     def __str__(self):
         return 'Permission {}, user {} group {} object_type {} object_id {} permission {}'.format(

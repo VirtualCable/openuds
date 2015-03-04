@@ -55,13 +55,61 @@ class Permissions(Handler):
     '''
     needs_admin = True
 
+    @staticmethod
+    def getClass(arg):
+        cls = {
+            'providers': Provider,
+            'service': Service,
+            'authenticators': Authenticator,
+            'osmanagers': OSManager,
+            'transports': Transport,
+            'networks': Network,
+            'servicespools': ServicesPool
+        }.get(arg, None)
+
+        if cls is None:
+            raise RequestError('Invalid request')
+
+        return cls
+
+    @staticmethod
+    def permsToDict(perms):
+        res = []
+        for perm in perms:
+            if perm.user is None:
+                kind = 'group'
+                entity = perm.group
+            else:
+                kind = 'user'
+                entity = perm.user
+
+            res.append({
+                'type': kind,
+                'auth': entity.manager.uuid,
+                'auth_name': entity.manager.name,
+                'id': entity.uuid,
+                'name': entity.name,
+                'perm': perm.permission,
+                'perm_name': perm.permission_as_string
+            })
+
+        return sorted(res, key=lambda v: v['auth_name'] + v['name'])
+
     def get(self):
         '''
         Processes get requests
         '''
         logger.debug("Permissions args for GET: {0}".format(self._args))
 
-        return ''
+        if len(self._args) != 2:
+            raise RequestError('Invalid request')
+
+        cls = Permissions.getClass(self._args[0])
+        obj = cls.objects.get(uuid=self._args[1])
+
+        perms = permissions.getPermissions(obj)
+
+        return Permissions.permsToDict(perms)
 
     def put(self):
         '''
@@ -78,13 +126,7 @@ class Permissions(Handler):
             '2': permissions.PERMISSION_ALL
         }.get(self._params.get('perm', '0'), permissions.PERMISSION_NONE)
 
-        cls = {
-            'providers': Provider,
-            'service': Service
-        }.get(self._args[0], None)
-
-        if cls is None:
-            raise RequestError('Invalid request')
+        cls = Permissions.getClass(self._args[0])
 
         obj = cls.objects.get(uuid=self._args[1])
 
@@ -93,8 +135,8 @@ class Permissions(Handler):
             permissions.addUserPermission(user, obj, perm)
         elif self._args[2] == 'groups':
             group = Group.objects.get(uuid=self._args[3])
-            permissions.addUserPermission(group, obj, perm)
+            permissions.addGroupPermission(group, obj, perm)
         else:
             raise RequestError('Ivalid request')
 
-        return 'ok'
+        return Permissions.permsToDict(permissions.getPermissions(obj))

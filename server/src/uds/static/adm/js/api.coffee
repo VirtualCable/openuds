@@ -268,7 +268,7 @@ class BasicModelRest
     return
 
   getPermissions: (id, success_fnc, fail_fnc) ->
-    path = "permissions/" + @path + "/" + id
+    path = "permissions/" + @path + '/' + id 
     @_requestPath path,
       cacheKey: "."
       success: success_fnc
@@ -281,6 +281,15 @@ class BasicModelRest
     api.putJson path, data,
       success: success_fnc
       fail: fail_fnc
+
+  revokePermissions: (id, type, itemIds, success_fnc, fail_fnc)->
+    path = "permissions/revoke/" + @path + '/' + id + '/' + type 
+    data =
+      ids: itemIds
+    api.putJson path, data,
+      success: success_fnc
+      fail: fail_fnc
+
 
   types: (success_fnc, fail_fnc) ->
     @_requestPath @typesPath,
