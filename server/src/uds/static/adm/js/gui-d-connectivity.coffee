@@ -19,6 +19,7 @@ gui.connectivity.link = (event) ->
         "edit"
         "delete"
         "xls"
+        "permissions"
       ]
       onNew: gui.methods.typedNew(gui.connectivity.transports, gettext("New transport"), gettext("Transport creation error"))
       onEdit: gui.methods.typedEdit(gui.connectivity.transports, gettext("Edit transport"), gettext("Transport saving error"))
@@ -32,6 +33,7 @@ gui.connectivity.link = (event) ->
         "edit"
         "delete"
         "xls"
+        "permissions"
       ]
       onNew: gui.methods.typedNew(gui.connectivity.networks, gettext("New network"), gettext("Network creation error"))
       onEdit: gui.methods.typedEdit(gui.connectivity.networks, gettext("Edit network"), gettext("Network saving error"))

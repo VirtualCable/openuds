@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-04'
+__updated__ = '2015-03-05'
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
@@ -58,8 +58,9 @@ class Permissions(UUIDModel):
     # pylint: disable=model-missing-unicode
     # Allowed permissions
     PERMISSION_NONE = 0
-    PERMISSION_READ = 16
-    PERMISSION_ALL = 32
+    PERMISSION_READ = 32
+    PERMISSION_MANAGEMENT = 64
+    PERMISSION_ALL = 96
 
     created = models.DateTimeField(db_index=True)
     ends = models.DateTimeField(db_index=True, null=True, blank=True, default=None)  # Future "permisions ends at this moment", not assigned right now
@@ -77,6 +78,7 @@ class Permissions(UUIDModel):
         return {
             Permissions.PERMISSION_NONE: _('None'),
             Permissions.PERMISSION_READ: _('Read'),
+            Permissions.PERMISSION_MANAGEMENT: _('Management'),
             Permissions.PERMISSION_ALL: _('All')
         }.get(perm, _('None'))
 

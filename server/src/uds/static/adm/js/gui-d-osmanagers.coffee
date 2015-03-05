@@ -17,6 +17,7 @@ gui.osmanagers.link = (event) ->
         "edit"
         "delete"
         "xls"
+        "permissions"
       ]
       onNew: gui.methods.typedNew(gui.osmanagers, gettext("New OSManager"), gettext("OSManager creation error"))
       onEdit: gui.methods.typedEdit(gui.osmanagers, gettext("Edit OSManager"), gettext("OSManager saving error"))

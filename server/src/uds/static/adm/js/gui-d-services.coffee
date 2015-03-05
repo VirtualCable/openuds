@@ -54,6 +54,8 @@ gui.providers.link = (event) ->
       return
 
     tableId = gui.providers.table(
+      getPermission: (selected) ->
+        gui.doLog "Selected", selected
       container: "providers-placeholder"
       rowSelect: "single"
       onCheck: (check, items) -> # Check if item can be deleted
@@ -84,9 +86,9 @@ gui.providers.link = (event) ->
         clearDetails()
         $("#detail-placeholder").removeClass "hidden"
         id = selected[0].id
-        
+
         # Giving the name compossed with type, will ensure that only styles will be reattached once
-        services = new GuiElement(api.providers.detail(id, "services"), "services-" + selected[0].type)
+        services = new GuiElement(api.providers.detail(id, "services", { permission: selected[0].permission }), "services-" + selected[0].type)
         tmpLogTable = undefined
         servicesTable = services.table(
           container: "services-placeholder"
@@ -120,7 +122,6 @@ gui.providers.link = (event) ->
             "edit"
             "delete"
             "xls"
-            "permissions"
           ]
           onEdit: gui.methods.typedEdit(services, gettext("Edit service"), gettext("Service creation error"))
           onNew: gui.methods.typedNew(services, gettext("New service"), gettext("Service saving error"))
@@ -141,6 +142,7 @@ gui.providers.link = (event) ->
         "new"
         "edit"
         {
+          permission: api.permissions.MANAGEMENT
           text: gettext("Maintenance")
           css: "disabled"
           click: (val, value, btn, tbl, refreshFnc) ->

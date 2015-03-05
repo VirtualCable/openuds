@@ -276,52 +276,56 @@
           $.each tblParams.buttons, (index, value) -> # Iterate through button definition
             btn = null
             switch value
+
               when "new"
-                if Object.keys(self.types).length isnt 0
-                  menuId = gui.genRamdonId("dd-")
-                  ordered = []
-                  $.each self.types, (k, v) ->
-                    ordered.push
-                      type: k
-                      css: v.css
-                      name: v.name
-                      description: v.description
+                if self.rest.permission() >= api.permissions.MANAGEMENT
+                  if Object.keys(self.types).length isnt 0
+                    menuId = gui.genRamdonId("dd-")
+                    ordered = []
+                    $.each self.types, (k, v) ->
+                      ordered.push
+                        type: k
+                        css: v.css
+                        name: v.name
+                        description: v.description
 
-                    return
+                      return
 
-                  ordered = ordered.sort((a, b) ->
-                    a.name.localeCompare b.name
-                  )
-                  btn =
-                    sExtends: "div"
-                    sButtonText: api.templates.evaluate("tmpl_comp_dropdown",
-                      label: gui.config.dataTableButtons["new"].text
-                      css: gui.config.dataTableButtons["new"].css
-                      id: menuId
-                      tableId: tableId
-                      columns: columns
-                      menu: ordered
+                    ordered = ordered.sort((a, b) ->
+                      a.name.localeCompare b.name
                     )
-                else
+                    btn =
+                      sExtends: "div"
+                      sButtonText: api.templates.evaluate("tmpl_comp_dropdown",
+                        label: gui.config.dataTableButtons["new"].text
+                        css: gui.config.dataTableButtons["new"].css
+                        id: menuId
+                        tableId: tableId
+                        columns: columns
+                        menu: ordered
+                      )
+                  else
+                    btn =
+                      sExtends: "text"
+                      sButtonText: gui.config.dataTableButtons["new"].text
+                      sButtonClass: gui.config.dataTableButtons["new"].css
+                      fnClick: clickHandlerFor(tblParams.onNew, "new", true)
+              when "edit"
+                if self.rest.permission() >= api.permissions.MANAGEMENT
                   btn =
                     sExtends: "text"
-                    sButtonText: gui.config.dataTableButtons["new"].text
-                    sButtonClass: gui.config.dataTableButtons["new"].css
-                    fnClick: clickHandlerFor(tblParams.onNew, "new", true)
-              when "edit"
-                btn =
-                  sExtends: "text"
-                  sButtonText: gui.config.dataTableButtons.edit.text
-                  fnSelect: editSelected
-                  fnClick: clickHandlerFor(tblParams.onEdit, "edit")
-                  sButtonClass: gui.config.dataTableButtons.edit.css
+                    sButtonText: gui.config.dataTableButtons.edit.text
+                    fnSelect: editSelected
+                    fnClick: clickHandlerFor(tblParams.onEdit, "edit")
+                    sButtonClass: gui.config.dataTableButtons.edit.css
               when "delete"
-                btn =
-                  sExtends: "text"
-                  sButtonText: gui.config.dataTableButtons["delete"].text
-                  fnSelect: deleteSelected
-                  fnClick: clickHandlerFor(tblParams.onDelete, "delete")
-                  sButtonClass: gui.config.dataTableButtons["delete"].css
+                if self.rest.permission() >= api.permissions.MANAGEMENT
+                  btn =
+                    sExtends: "text"
+                    sButtonText: gui.config.dataTableButtons["delete"].text
+                    fnSelect: deleteSelected
+                    fnClick: clickHandlerFor(tblParams.onDelete, "delete")
+                    sButtonClass: gui.config.dataTableButtons["delete"].css
               when "refresh"
                 btn =
                   sExtends: "text"
@@ -329,7 +333,7 @@
                   fnClick: refreshFnc
                   sButtonClass: gui.config.dataTableButtons.refresh.css
               when "permissions"
-                if api.config.admin
+                if self.rest.permission() == api.permissions.ALL
                   btn =
                     sExtends: "text"
                     sButtonText: gui.config.dataTableButtons.permissions.text
@@ -346,33 +350,35 @@
                   # End export to excell
                   sButtonClass: gui.config.dataTableButtons.xls.css
               else # Custom button, this has to be
-                try
-                  css = ((if value.css then value.css + " " else "")) + gui.config.dataTableButtons.custom.css
-                  btn =
-                    sExtends: "text"
-                    sButtonText: value.text
-                    sButtonClass: css
+                perm = if value.permission? then value.permission else api.permissions.NONE
+                if self.rest.permission() >= perm
+                  try
+                    css = ((if value.css then value.css + " " else "")) + gui.config.dataTableButtons.custom.css
+                    btn =
+                      sExtends: "text"
+                      sButtonText: value.text
+                      sButtonClass: css
 
-                  if value.click
-                    btn.fnClick = (btn) ->
-                      tbl = $("#" + tableId).dataTable()
-                      val = @fnGetSelectedData()[0]
-                      setTimeout (->
-                        value.click val, value, btn, tbl, refreshFnc
+                    if value.click
+                      btn.fnClick = (btn) ->
+                        tbl = $("#" + tableId).dataTable()
+                        val = @fnGetSelectedData()[0]
+                        setTimeout (->
+                          value.click val, value, btn, tbl, refreshFnc
+                          return
+                        ), 0
                         return
-                      ), 0
-                      return
-                  if value.select
-                    btn.fnSelect = (btn) ->
-                      tbl = $("#" + tableId).dataTable()
-                      val = @fnGetSelectedData()[0]
-                      setTimeout (->
-                        value.select val, value, btn, tbl, refreshFnc
+                    if value.select
+                      btn.fnSelect = (btn) ->
+                        tbl = $("#" + tableId).dataTable()
+                        val = @fnGetSelectedData()[0]
+                        setTimeout (->
+                          value.select val, value, btn, tbl, refreshFnc
+                          return
+                        ), 0
                         return
-                      ), 0
-                      return
-                catch e
-                  gui.doLog "Button", value, e
+                  catch e
+                    gui.doLog "Button", value, e
             btns.push btn  if btn
             return
 

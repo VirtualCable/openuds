@@ -33,8 +33,8 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from django.conf import settings
 from uds.models import OSManager
+from uds.core.util import permissions
 
 from uds.REST import NotFound, RequestError
 from uds.core.osmanagers import factory
@@ -59,8 +59,7 @@ class OsManagers(ModelHandler):
         {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
     ]
 
-    @staticmethod
-    def osmToDict(osm):
+    def osmToDict(self, osm):
         type_ = osm.getType()
         return {
             'id': osm.uuid,
@@ -68,10 +67,11 @@ class OsManagers(ModelHandler):
             'deployed_count': osm.deployedServices.count(),
             'type': type_.type(),
             'comments': osm.comments,
+            'permission': permissions.getEffectivePermission(self._user, osm)
         }
 
     def item_as_dict(self, item):
-        return OsManagers.osmToDict(item)
+        return self.osmToDict(item)
 
     def checkDelete(self, item):
         if item.deployedServices.count() > 0:

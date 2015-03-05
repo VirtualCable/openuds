@@ -38,7 +38,7 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds.core.util import permissions
 
-from uds.models import Provider, Service, Authenticator, OSManager, Transport, Network, ServicesPool
+from uds.models import Provider, Service, Authenticator, OSManager, Transport, Network, ServicePool
 from uds.models import User, Group
 
 import six
@@ -64,7 +64,7 @@ class Permissions(Handler):
             'osmanagers': OSManager,
             'transports': Transport,
             'networks': Network,
-            'servicespools': ServicesPool
+            'servicespools': ServicePool
         }.get(arg, None)
 
         if cls is None:
@@ -84,16 +84,17 @@ class Permissions(Handler):
                 entity = perm.user
 
             res.append({
+                'id': perm.uuid,
                 'type': kind,
                 'auth': entity.manager.uuid,
                 'auth_name': entity.manager.name,
-                'id': entity.uuid,
-                'name': entity.name,
+                'entity_id': entity.uuid,
+                'entity_name': entity.name,
                 'perm': perm.permission,
                 'perm_name': perm.permission_as_string
             })
 
-        return sorted(res, key=lambda v: v['auth_name'] + v['name'])
+        return sorted(res, key=lambda v: v['auth_name'] + v['entity_name'])
 
     def get(self):
         '''
@@ -115,28 +116,36 @@ class Permissions(Handler):
         '''
         Processes post requests
         '''
-        if len(self._args) != 4:
-            raise RequestError('Invalid request')
-
         logger.debug('Put args: {}'.format(self._args))
 
-        perm = {
-            '0': permissions.PERMISSION_NONE,
-            '1': permissions.PERMISSION_READ,
-            '2': permissions.PERMISSION_ALL
-        }.get(self._params.get('perm', '0'), permissions.PERMISSION_NONE)
+        la = len(self._args)
 
-        cls = Permissions.getClass(self._args[0])
+        if la == 5 and self._args[3] == 'add':
+            perm = {
+                '0': permissions.PERMISSION_NONE,
+                '1': permissions.PERMISSION_READ,
+                '2': permissions.PERMISSION_MANAGEMENT,
+                '3': permissions.PERMISSION_ALL
+            }.get(self._params.get('perm', '0'), permissions.PERMISSION_NONE)
 
-        obj = cls.objects.get(uuid=self._args[1])
+            cls = Permissions.getClass(self._args[0])
 
-        if self._args[2] == 'users':
-            user = User.objects.get(uuid=self._args[3])
-            permissions.addUserPermission(user, obj, perm)
-        elif self._args[2] == 'groups':
-            group = Group.objects.get(uuid=self._args[3])
-            permissions.addGroupPermission(group, obj, perm)
+            obj = cls.objects.get(uuid=self._args[1])
+
+            if self._args[2] == 'users':
+                user = User.objects.get(uuid=self._args[4])
+                permissions.addUserPermission(user, obj, perm)
+            elif self._args[2] == 'groups':
+                group = Group.objects.get(uuid=self._args[4])
+                permissions.addGroupPermission(group, obj, perm)
+            else:
+                raise RequestError('Ivalid request')
+
+            return Permissions.permsToDict(permissions.getPermissions(obj))
+        elif la == 1 and self._args[0] == 'revoke':
+            items = self._params.get('items', [])
+            for permId in items:
+                permissions.revokePermissionById(permId)
+            return {}
         else:
-            raise RequestError('Ivalid request')
-
-        return Permissions.permsToDict(permissions.getPermissions(obj))
+            raise RequestError('Invalid request')

@@ -36,6 +36,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider, Service, UserService
 from uds.REST.methods.services import Services as DetailServices
 from uds.core import services
+from uds.core.util import permissions
 
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
@@ -87,6 +88,7 @@ class Providers(ModelHandler):
             'offers': offers,
             'type': type_.type(),
             'comments': provider.comments,
+            'permission': permissions.getEffectivePermission(self._user, provider)
         }
 
     def checkDelete(self, item):
@@ -110,7 +112,9 @@ class Providers(ModelHandler):
         '''
         for s in Service.objects.all():
             try:
-                yield DetailServices.serviceToDict(s, True)
+                perm = permissions.getEffectivePermission(self._user, s)
+                if perm >= permissions.PERMISSION_READ:
+                    yield DetailServices.serviceToDict(s, perm, True)
             except Exception:
                 logger.exception('Passed service cause type is unknown')
 
@@ -119,7 +123,9 @@ class Providers(ModelHandler):
         Custom method that returns a service by its uuid, no matter who's his daddy
         '''
         try:
-            return DetailServices.serviceToDict(Service.objects.get(uuid=self._args[1]), True)
+            service = Service.objects.get(uuid=self._args[1])
+            perm = self.ensureAccess(service, permissions.PERMISSION_READ)  # Ensures that we can read this item
+            return DetailServices.serviceToDict(service, perm, True)
         except Exception:
             raise RequestError(ugettext('Service not found'))
 
@@ -128,6 +134,7 @@ class Providers(ModelHandler):
         Custom method that swaps maintenance mode state for a provider
         :param item:
         '''
+        self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return self.item_as_dict(item)
@@ -137,6 +144,9 @@ class Providers(ModelHandler):
 
         logger.debug('Type: {}'.format(type_))
         spType = services.factory().lookup(type_)
+
+        self.ensureAccess(spType, permissions.PERMISSION_MANAGEMENT, root=True)
+
         logger.debug('spType: {}'.format(spType))
         res = spType.test(Environment.getTempEnv(), self._params)
         if res[0]:

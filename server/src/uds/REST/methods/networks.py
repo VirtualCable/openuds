@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Network
 from uds.core.util import net
+from uds.core.util import permissions
 from uds.core.ui.UserInterface import gui
 
 from uds.REST.model import ModelHandler, SaveException
@@ -89,4 +90,5 @@ class Networks(ModelHandler):
             'name': item.name,
             'net_string': item.net_string,
             'networks_count': item.transports.count(),
+            'permission': permissions.getEffectivePermission(self._user, item)
         }

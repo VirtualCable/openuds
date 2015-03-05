@@ -82,6 +82,13 @@ class ResponseError(HandlerError):
     pass
 
 
+class NotSupportedError(HandlerError):
+    '''
+    Some elements do not support some operations (as searching over an authenticator that does not supports it)
+    '''
+    pass
+
+
 class Handler(object):
     '''
     REST requests handler base class
@@ -110,6 +117,7 @@ class Handler(object):
         self._kwargs = kwargs
         self._headers = {}
         self._authToken = None
+        self._user = None
         if self.authenticated:  # Only retrieve auth related data on authenticated handlers
             try:
                 self._authToken = self._request.META.get(AUTH_TOKEN_HEADER, '')
@@ -128,6 +136,8 @@ class Handler(object):
 
             if self.needs_staff and not self.getValue('staff_member'):
                 raise AccessDenied()
+
+            self._user = self.getUser()
 
     def headers(self):
         '''
@@ -253,6 +263,7 @@ class Handler(object):
         '''
         If user is staff member, returns his Associated user on auth
         '''
+        logger.debug('REST : {}'.format(self._session))
         authId = self.getValue('auth')
         username = self.getValue('username')
         # Maybe it's root user??

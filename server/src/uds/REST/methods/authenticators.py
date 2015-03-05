@@ -39,6 +39,7 @@ from uds.core import auths
 from users_groups import Users, Groups
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
+from uds.core.util import permissions
 
 import logging
 
@@ -93,10 +94,12 @@ class Authenticators(ModelHandler):
             'small_name': auth.small_name,
             'users_count': auth.users.count(),
             'type': type_.type(),
+            'permission': permissions.getEffectivePermission(self._user, auth)
         }
 
     # Custom "search" method
     def search(self, item):
+        self.ensureAccess(item, permissions.PERMISSION_READ)
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):
@@ -108,7 +111,7 @@ class Authenticators(ModelHandler):
 
             canDoSearch = type_ == 'user' and (auth.searchUsers != auths.Authenticator.searchUsers) or (auth.searchGroups != auths.Authenticator.searchGroups)
             if canDoSearch is False:
-                self.invalidRequestException()
+                self.notSupported()
 
             if type_ == 'user':
                 return auth.searchUsers(term)
@@ -121,6 +124,8 @@ class Authenticators(ModelHandler):
         from uds.core.Environment import Environment
 
         authType = auths.factory().lookup(type_)
+        self.ensureAccess(authType, permissions.PERMISSION_MANAGEMENT, root=True)
+
         dct = self._params.copy()
         dct['_request'] = self._request
         res = authType.test(Environment.getTempEnv(), dct)

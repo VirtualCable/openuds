@@ -33,13 +33,14 @@
 
 from __future__ import unicode_literals
 
-from uds.REST.handlers import NotFound, RequestError, ResponseError
+from uds.REST.handlers import NotFound, RequestError, ResponseError, AccessDenied, NotSupportedError
 from django.utils.translation import ugettext as _
 from django.db import IntegrityError
 
 from uds.core.ui.UserInterface import gui as uiGui
 from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
+from uds.core.util import permissions
 
 import fnmatch
 import re
@@ -50,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-16'
+__updated__ = '2015-03-05'
 
 
 # a few constants
@@ -150,6 +151,12 @@ class BaseModelHandler(Handler):
 
         return gui
 
+    def ensureAccess(self, obj, permission, root=False):
+        perm = permissions.getEffectivePermission(self._user, obj, root)
+        if perm < permission:
+            self.accessDenied()
+        return perm
+
     def typeInfo(self, type_):  # pylint: disable=no-self-use
         '''
         Returns info about the type
@@ -233,6 +240,12 @@ class BaseModelHandler(Handler):
         message = _('Item not found') if message is None else None
         raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
+    def accessDenied(self, message=None):
+        raise AccessDenied(message or _('Access denied'))
+
+    def notSupported(self, message=None):
+        raise NotSupportedError(message or _('Operation not supported'))
+
     # Success methods
     def success(self):
         '''
@@ -284,6 +297,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         self._params = params
         self._args = args
         self._kwargs = kwargs
+        self._user = kwargs.get('user', None)
 
     def __checkCustom(self, check, parent, arg=None):
         '''
@@ -312,6 +326,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         nArgs = len(self._args)
 
         parent = self._kwargs['parent']
+
         if nArgs == 0:
             return self.getItems(parent, None)
 
@@ -578,6 +593,7 @@ class ModelHandler(BaseModelHandler):
 
     # log related
     def getLogs(self, item):
+        self.ensureAccess(item, permissions.PERMISSION_READ)
         logger.debug('Default getLogs invoked')
         return log.getLogs(item)
 
@@ -656,14 +672,26 @@ class ModelHandler(BaseModelHandler):
         return data
 
     # Helper to process detail
+    # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
     def processDetail(self):
-        logger.debug('Processing detail {0}'.format(self._path))
+        logger.debug('Processing detail {} for user {}'.format(self._path, self._user))
         try:
             item = self.model.objects.filter(uuid=self._args[0])[0]
+            # If we do not have access to parent to, at least, read...
+
+            if self._operation in ('put', 'post', 'delete'):
+                requiredPermission = permissions.PERMISSION_MANAGEMENT
+            else:
+                requiredPermission = permissions.PERMISSION_READ
+
+            if permissions.checkPermissions(self._user, item, requiredPermission) is False:
+                logger.debug('Permission for user {} does not comply with {}'.format(self._user, requiredPermission))
+                self.accessDenied()
+
             detailCls = self.detail[self._args[1]]
             args = list(self._args[2:])
             path = self._path + '/'.join(args[:2])
-            detail = detailCls(self, path, self._params, *args, parent=item)
+            detail = detailCls(self, path, self._params, *args, parent=item, user=self._user)
             method = getattr(detail, self._operation)
         except KeyError:
             self.invalidMethodException()
@@ -672,10 +700,17 @@ class ModelHandler(BaseModelHandler):
 
         return method()
 
-    def getItems(self, *args, **kwargs):
+    def getItems(self, overview=True, *args, **kwargs):
         for item in self.model.objects.filter(*args, **kwargs):
             try:
-                yield self.item_as_dict_overview(item)
+                if permissions.checkPermissions(self._user, item, permissions.PERMISSION_READ) is False:
+                    continue
+                if overview:
+                    yield self.item_as_dict_overview(item)
+                else:
+                    res = self.item_as_dict(item)
+                    self.fillIntanceFields(item, res)
+                    yield res
             except Exception:  # maybe an exception is thrown to skip an item
                 # logger.exception('Exception getting item from {0}'.format(self.model))
                 pass
@@ -693,15 +728,7 @@ class ModelHandler(BaseModelHandler):
         nArgs = len(self._args)
 
         if nArgs == 0:
-            result = []
-            for val in self.model.objects.all():
-                try:
-                    res = self.item_as_dict(val)
-                    self.fillIntanceFields(val, res)
-                    result.append(res)
-                except Exception:  # maybe an exception is thrown to skip an item
-                    pass
-            return result
+            return list(self.getItems(overview=False))
 
         # if has custom methods, look for if this request matches any of them
         for cm in self.custom_methods:
@@ -735,6 +762,9 @@ class ModelHandler(BaseModelHandler):
             # get item ID
             try:
                 val = self.model.objects.get(uuid=self._args[0].lower())
+
+                self.ensureAccess(val, permissions.PERMISSION_READ)
+
                 res = self.item_as_dict(val)
                 self.fillIntanceFields(val, res)
                 return res
@@ -793,6 +823,9 @@ class ModelHandler(BaseModelHandler):
 
         if len(self._args) > 1:  # Detail?
             return self.processDetail()
+
+        self.ensureAccess(self.model(), permissions.PERMISSION_ALL, root=True)  # Must have write permissions to create, modify, etc..
+
         try:
             # Extract fields
             args = self.readFieldsFromParams(self.save_fields)
@@ -854,6 +887,9 @@ class ModelHandler(BaseModelHandler):
 
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
+
+        self.ensureAccess(self.model(), permissions.PERMISSION_ALL, root=True)  # Must have write permissions to delete
+
         try:
             item = self.model.objects.get(uuid=self._args[0].lower())
             self.checkDelete(item)

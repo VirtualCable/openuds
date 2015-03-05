@@ -37,10 +37,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _, activate
 from django.conf import settings
-from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError
+from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError, NotSupportedError
 
 import time
 import logging
+
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -142,18 +144,20 @@ class Dispatcher(View):
                 response[k] = val
             return response
         except RequestError as e:
-            return http.HttpResponseBadRequest(unicode(e))
+            return http.HttpResponseBadRequest(six.text_type(e))
         except ResponseError as e:
-            return http.HttpResponseServerError(unicode(e))
+            return http.HttpResponseServerError(six.text_type(e))
+        except NotSupportedError as e:
+            return http.HttpResponseBadRequest(six.text_type(e))
         except AccessDenied as e:
-            return http.HttpResponseForbidden(unicode(e))
+            return http.HttpResponseForbidden(six.text_type(e))
         except NotFound as e:
-            return http.HttpResponseNotFound(unicode(e))
+            return http.HttpResponseNotFound(six.text_type(e))
         except HandlerError as e:
-            return http.HttpResponseBadRequest(unicode(e))
+            return http.HttpResponseBadRequest(six.text_type(e))
         except Exception as e:
             logger.exception('Error processing request')
-            return http.HttpResponseServerError(unicode(e))
+            return http.HttpResponseServerError(six.text_type(e))
 
     @staticmethod
     def registerSubclasses(classes):

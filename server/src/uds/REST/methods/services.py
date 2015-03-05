@@ -39,6 +39,7 @@ from uds.models import Service, UserService
 
 from uds.core.services import Service as coreService
 from uds.core.util import log
+from uds.core.util import permissions
 from uds.core.Environment import Environment
 from uds.REST.model import DetailHandler
 from uds.REST import NotFound, ResponseError, RequestError
@@ -55,7 +56,22 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     '''
 
     @staticmethod
-    def serviceToDict(item, full=False):
+    def serviceInfo(item):
+        info = item.getType()
+        return {
+            'icon': info.icon().replace('\n', ''),
+            'needs_publication': info.publicationType is not None,
+            'max_deployed': info.maxDeployed,
+            'uses_cache': info.usesCache,
+            'uses_cache_l2': info.usesCache_L2,
+            'cache_tooltip': _(info.cacheTooltip),
+            'cache_tooltip_l2': _(info.cacheTooltip_L2),
+            'needs_manager': info.needsManager,
+            'must_assign_manually': info.mustAssignManually,
+        }
+
+    @staticmethod
+    def serviceToDict(item, perm, full=False):
         '''
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
@@ -70,31 +86,22 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service=item).count(),
             'maintenance_mode': item.provider.maintenance_mode,
+            'permission': perm
         }
         if full:
-            info = item.getType()
-            retVal['info'] = {
-                'icon': info.icon().replace('\n', ''),
-                'needs_publication': info.publicationType is not None,
-                'max_deployed': info.maxDeployed,
-                'uses_cache': info.usesCache,
-                'uses_cache_l2': info.usesCache_L2,
-                'cache_tooltip': _(info.cacheTooltip),
-                'cache_tooltip_l2': _(info.cacheTooltip_L2),
-                'needs_manager': info.needsManager,
-                'must_assign_manually': info.mustAssignManually,
-            }
+            retVal['info'] = Services.serviceInfo(item)
 
         return retVal
 
     def getItems(self, parent, item):
-        # Extract provider
+        # Check what kind of access do we have to parent provider
+        perm = permissions.getEffectivePermission(self._user, parent)
         try:
             if item is None:
-                return [Services.serviceToDict(k) for k in parent.services.all()]
+                return [Services.serviceToDict(k, perm) for k in parent.services.all()]
             else:
                 k = parent.services.get(uuid=item)
-                val = Services.serviceToDict(k)
+                val = Services.serviceToDict(k, perm, full=True)
                 return self.fillIntanceFields(k, val)
         except Exception:
             logger.exception('itemId {}'.format(item))

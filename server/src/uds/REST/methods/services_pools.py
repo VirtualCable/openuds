@@ -37,10 +37,12 @@ from uds.models import DeployedService, OSManager, Service, Image
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util import log
+from uds.core.util import permissions
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
-from uds.REST.methods.user_services import AssignedService, CachedService, Groups, Transports, Publications
+from .user_services import AssignedService, CachedService, Groups, Transports, Publications
+from .services import Services
 
 import logging
 
@@ -80,6 +82,7 @@ class ServicesPools(ModelHandler):
         val = {
             'id': item.uuid,
             'name': item.name,
+            'parent': item.service.name,
             'comments': item.comments,
             'state': item.state if item.service.provider.maintenance_mode is False else State.MAINTENANCE,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
@@ -93,6 +96,8 @@ class ServicesPools(ModelHandler):
             'user_services_count': item.userServices.count(),
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
+            'permission': permissions.getEffectivePermission(self._user, item),
+            'info': Services.serviceInfo(item.service)
         }
 
         if item.osmanager is not None:

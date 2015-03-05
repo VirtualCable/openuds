@@ -125,6 +125,7 @@ gui.authenticators.link = (event) ->
         "edit"
         "delete"
         "xls"
+        "permissions"
       ]
       onRowDeselect: ->
         clearDetails()
@@ -141,8 +142,8 @@ gui.authenticators.link = (event) ->
         id = selected[0].id
         type = gui.authenticators.types[selected[0].type]
         gui.doLog "Type", type
-        user = new GuiElement(api.authenticators.detail(id, "users"), "users")
-        group = new GuiElement(api.authenticators.detail(id, "groups"), "groups")
+        user = new GuiElement(api.authenticators.detail(id, "users", { permission: selected[0].permission }), "users")
+        group = new GuiElement(api.authenticators.detail(id, "groups", { permission: selected[0].permission }), "groups")
         grpTable = group.table(
           container: "groups-placeholder"
           rowSelect: "single"

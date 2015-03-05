@@ -6,6 +6,13 @@ api = @api
 
 api.debug = on
 
+api.permissions = {
+  NONE: 0
+  READ: 32
+  MANAGEMENT: 64
+  ALL: 96
+}
+
 api.doLog = (args...) ->
   if api.debug
     try
@@ -267,6 +274,12 @@ class BasicModelRest
 
     return
 
+  permission: () ->
+    if api.config.admin is true
+      return api.permissions.ALL
+
+    return api.permissions.NONE
+
   getPermissions: (id, success_fnc, fail_fnc) ->
     path = "permissions/" + @path + '/' + id 
     @_requestPath path,
@@ -275,17 +288,17 @@ class BasicModelRest
       fail: fail_fnc
 
   addPermission: (id, type, itemId, perm, success_fnc, fail_fnc) ->
-    path = "permissions/" + @path + '/' + id + '/' + type + '/' + itemId
+    path = "permissions/" + @path + '/' + id + '/' + type + '/add/' + itemId
     data =
       perm: perm
     api.putJson path, data,
       success: success_fnc
       fail: fail_fnc
 
-  revokePermissions: (id, type, itemIds, success_fnc, fail_fnc)->
-    path = "permissions/revoke/" + @path + '/' + id + '/' + type 
+  revokePermissions: (itemIds, success_fnc, fail_fnc)->
+    path = "permissions/revoke"
     data =
-      ids: itemIds
+      items: itemIds
     api.putJson path, data,
       success: success_fnc
       fail: fail_fnc
@@ -337,12 +350,14 @@ class DetailModelRestApi extends BasicModelRest
       model
     ].join("/")
     @moptions = options
+
+  permission: () ->
+    if @moptions.permission? then @moptions.permission else api.permissions.ALL
   
   create: (data, success_fnc, fail_fnc) ->
     @put data,
       success: success_fnc
       fail: fail_fnc
-
 
   save: (data, success_fnc, fail_fnc) ->
     @put data,
