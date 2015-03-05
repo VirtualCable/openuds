@@ -1,6 +1,10 @@
 gui.configuration = new BasicGuiElement("Clear cache")
 gui.configuration.link = ->
   "use strict"
+
+  if api.config.admin is false
+    return
+
   api.templates.get "configuration", (tmpl) ->
     api.configuration.overview ((data) ->
       gui.doLog data

@@ -37,7 +37,7 @@
         <!-- Navigation bar -->
         <div id="wrapper">
         
-        {% block menu %}{% include 'uds/admin/snippets/navbar.html' %}{% endblock %}
+        {% block menu %}{% include 'uds/admin/snippets/navbar.html' with admin=request.user.is_admin %}{% endblock %}
         <!-- End of menu -->
         <!-- Content -->
              <div id="page-wrapper">
@@ -151,7 +151,9 @@
         {% js_template 'services_pool' %}
         {% js_template 'configuration' %}
         {% js_template 'gallery' %}
-        {% js_template 'permissions'}
+        {% js_template 'permissions' %}
+        {% js_template 'permissions_add' %}
+
         <!-- utility pages -->
         {% js_template 'request_failed' %}
         <!-- specific pages -->

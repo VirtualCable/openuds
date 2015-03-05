@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 class Cache(Handler):
     authenticated = True
-    needs_staff = True
+    needs_admin = True
 
     def get(self):
         '''

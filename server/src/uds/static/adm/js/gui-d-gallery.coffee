@@ -2,6 +2,9 @@ gui.gallery = new GuiElement(api.gallery, "imgal")
 gui.gallery.link = ->
   "use strict"
 
+  if api.config.admin is false
+    return
+
   newEditImageFnc = (forEdit) ->
     realFnc = (value, refreshFnc) ->
       api.templates.get "new_image", (tmpl) ->
