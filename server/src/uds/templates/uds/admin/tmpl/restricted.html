@@ -1,0 +1,41 @@
+{% load i18n html5 static %}
+
+<div class="row">
+  <div class="col-xs-12">
+    <h1>Dashboard <small>{% trans 'overview' %}</small></h1>
+    <ol class="breadcrumb">
+      <li><a id="lnk-dashboard" href=""><i class="fa fa-dashboard"></i> Dashboard</a></li>
+    </ol>
+  </div>
+</div><!-- /.row -->
+{% if messages %}
+<div class="row">
+  <div class="col-md-offset-2 col-md-8">
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+       {{ message }}  
+    </div>
+    {% endfor %}       
+  </div>
+</div>
+{% endif %}
+
+{% verbatim %}
+<div class="row">
+  <div class="col-md-offset-3 col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% endverbatim %}{% trans 'UDS Administration' %}{% verbatim %}</h3>
+      </div>
+      <div class="panel-body">
+        <p><b>{% endverbatim %}{% trans 'You are accessing UDS Administration as staff member.' %}{% verbatim %}</b></p>
+        <p>{% endverbatim %}{% trans 'This means that you have restricted access to assigned elements.' %}{% verbatim %}</p>
+        <p>{% endverbatim %}{% trans 'In order to increase your privileges, please contact your local UDS administrator.' %}{% verbatim %}</p>
+        <br/>
+        <p>{% endverbatim %}{% trans 'Thank you.' %}{% verbatim %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endverbatim %}
