@@ -54,7 +54,7 @@ from uds.core.util.request import getRequest
 import logging
 import six
 
-__updated__ = '2015-03-03'
+__updated__ = '2015-03-06'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -123,16 +123,17 @@ def webLoginRequired(admin):
                 except User.DoesNotExist:
                     user = None
 
-            if admin is True:
-                if user is None or user.isStaff() is False:
-                    return HttpResponseForbidden(_('Forbidden'))
-
             if user is None:
                 url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
                 if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
                     url = url.replace('http://', 'https://')
                 logger.debug('No user found, redirecting to {0}'.format(url))
                 return HttpResponseRedirect(url)
+
+            if admin is True or admin == 'admin':
+                if user.isStaff() is False or (admin == 'admin' and user.is_admin is False):
+                    return HttpResponseForbidden(_('Forbidden'))
+
             # Refresh session duration
             # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
             request.user = user

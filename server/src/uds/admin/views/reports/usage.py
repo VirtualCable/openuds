@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-01'
+__updated__ = '2015-03-06'
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 
 @denyBrowsers(browsers=['ie<9'])
-@webLoginRequired(admin=True)
+@webLoginRequired(admin='admin')
 def usage(request):
     with io.BytesIO() as output:
         c = canvas.Canvas(filename=output, pagesize=A4)
