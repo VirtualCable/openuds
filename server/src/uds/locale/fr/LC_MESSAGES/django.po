@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 10:05+0100\n"
+"POT-Creation-Date: 2015-03-09 08:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1216,11 +1216,11 @@ msgstr "24 bits"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:327
+#: core/managers/UserServiceManager.py:329
 msgid "Can't remove a non active element"
 msgstr "Impossible de supprimer un élément non actif"
 
-#: core/managers/UserServiceManager.py:340
+#: core/managers/UserServiceManager.py:342
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr ""
@@ -1481,9 +1481,10 @@ msgid "Domain"
 msgstr "Domaine"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
-#| msgid "Domain to join machines to (use FQDN form, netbios name not allowed)"
 msgid "Domain to join machines to (use FQDN form, Netbios name not allowed)"
-msgstr "Domaine de rejoindre machines pour (utiliser le formulaire nom de domaine complet, nom Netbios non autorisés)"
+msgstr ""
+"Domaine de rejoindre machines pour (utiliser le formulaire nom de domaine "
+"complet, nom Netbios non autorisés)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid "Account with rights to add machines to domain"
@@ -1498,15 +1499,13 @@ msgid "OU"
 msgstr "OU"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
-#| msgid ""
-#| "Organizational unit where to add machines in domain (check it before "
-#| "using it)"
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
-"Unité d'organisation où ajouter des machines dans le domaine (Vérifiez-la avant d'utiliser "
-"Il). c'est-à-dire: UO = My Machines, dc = mondomaine, dc = local"
+"Unité d'organisation où ajouter des machines dans le domaine (Vérifiez-la "
+"avant d'utiliser Il). c'est-à-dire: UO = My Machines, dc = mondomaine, dc = "
+"local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
 msgid "Must provide a domain!"
@@ -3036,20 +3035,23 @@ msgid ""
 "In order to access theese services, you will need to enable this in order to "
 "access to service:"
 msgstr ""
-"Pour accéder à ces services, vous devrez activer ceci afin de "
-"l'accès au service :"
+"Pour accéder à ces services, vous devrez activer ceci afin de l'accès au "
+"service :"
 
 #: transports/RDP/web.py:96
 msgid "Go to Safari > Preferences > Security > Manage Website Settings"
-msgstr "Allez dans Safari &gt; Préférences > sécurité > gérer les paramètres de site Web"
+msgstr ""
+"Allez dans Safari &gt; Préférences > sécurité > gérer les paramètres de site "
+"Web"
 
 #: transports/RDP/web.py:97
 msgid ""
 "Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
 "to Allow Always (also mark \"Unsecure mode\")."
 msgstr ""
-"Cliquez sur Java dans le panneau de gauche, puis sélectionnez le site pour permettre UDS Rdp et réglez-le "
-"permettre à toujours (aussi marque \"mode non sécurisé\")."
+"Cliquez sur Java dans le panneau de gauche, puis sélectionnez le site pour "
+"permettre UDS Rdp et réglez-le permettre à toujours (aussi marque \"mode non "
+"sécurisé\")."
 
 #: transports/RDP/web.py:98
 msgid "Users of Firefox or Chrome:"
@@ -3060,8 +3062,8 @@ msgid ""
 "If any warning is shown when launching RDP Applet, press \"ignore\" and "
 "continue"
 msgstr ""
-"Si aucun avertissement apparaît lors du lancement de RDP Applet, appuyez sur « ignorer » et "
-"continuer"
+"Si aucun avertissement apparaît lors du lancement de RDP Applet, appuyez sur "
+"« ignorer » et continuer"
 
 #: transports/RGS_enterprise/RGSTransport.py:34
 msgid "RGS Transport (direct)"
@@ -3239,7 +3241,6 @@ msgstr ""
 "vers un navigateur modern de HTML5 comme Firefox ou Chrome"
 
 #: web/errors.py:81
-#| msgid "This service is in maintenance mode."
 msgid "The requested service is in maintenance mode"
 msgstr "Le service demandé est en mode maintenance"
 

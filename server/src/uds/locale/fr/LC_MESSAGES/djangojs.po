@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 10:06+0100\n"
+"POT-Creation-Date: 2015-03-09 08:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,79 +22,79 @@ msgstr ""
 msgid "_MENU_ records per page"
 msgstr "Documents _MENU_ par page"
 
-#: static/tmp_js/api-tools.js:284
+#: static/tmp_js/api-tools.js:276
 msgid "Sunday"
 msgstr "Dimanche"
 
-#: static/tmp_js/api-tools.js:284
+#: static/tmp_js/api-tools.js:276
 msgid "Monday"
 msgstr "Lundi"
 
-#: static/tmp_js/api-tools.js:284
+#: static/tmp_js/api-tools.js:276
 msgid "Tuesday"
 msgstr "Mardi"
 
-#: static/tmp_js/api-tools.js:284
+#: static/tmp_js/api-tools.js:276
 msgid "Wednesday"
 msgstr "Mercredi"
 
-#: static/tmp_js/api-tools.js:284
+#: static/tmp_js/api-tools.js:276
 msgid "Thursday"
 msgstr "Jeudi"
 
-#: static/tmp_js/api-tools.js:284
+#: static/tmp_js/api-tools.js:276
 msgid "Friday"
 msgstr "Vendredi"
 
-#: static/tmp_js/api-tools.js:284
+#: static/tmp_js/api-tools.js:276
 msgid "Saturday"
 msgstr "Samedi"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "January"
 msgstr "Janvier"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "February"
 msgstr "Février"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "March"
 msgstr "Mars"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "April"
 msgstr "Avril"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "May"
 msgstr "Mai"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "June"
 msgstr "Juin"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "July"
 msgstr "Juillet"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "August"
 msgstr "Août"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "September"
 msgstr "Septembre"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "October"
 msgstr "Octobre"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "November"
 msgstr "Novembre"
 
-#: static/tmp_js/api-tools.js:286
+#: static/tmp_js/api-tools.js:278
 msgid "December"
 msgstr "Décembre"
 

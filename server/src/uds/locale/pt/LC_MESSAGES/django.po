@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 10:05+0100\n"
+"POT-Creation-Date: 2015-03-09 08:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1177,11 +1177,11 @@ msgstr "24 bits"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:327
+#: core/managers/UserServiceManager.py:329
 msgid "Can't remove a non active element"
 msgstr "Não é possível remover um elemento não-ativo"
 
-#: core/managers/UserServiceManager.py:340
+#: core/managers/UserServiceManager.py:342
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr "Não pode remover nem cancelar {0} causa que seus Estados não permitem"
@@ -1440,9 +1440,10 @@ msgid "Domain"
 msgstr "Domínio"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
-#| msgid "Domain to join machines to (use FQDN form, netbios name not allowed)"
 msgid "Domain to join machines to (use FQDN form, Netbios name not allowed)"
-msgstr "Domínio para juntar-se a máquinas para (use o formulário FQDN, nome Netbios não permitido)"
+msgstr ""
+"Domínio para juntar-se a máquinas para (use o formulário FQDN, nome Netbios "
+"não permitido)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid "Account with rights to add machines to domain"
@@ -1457,15 +1458,12 @@ msgid "OU"
 msgstr "UO"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
-#| msgid ""
-#| "Organizational unit where to add machines in domain (check it before "
-#| "using it)"
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
-"Unidade organizacional onde adicionar máquinas no domínio (verifique isso antes de usar "
-"isso). ou seja: UO = My Machines, dc = mydomain, dc = local"
+"Unidade organizacional onde adicionar máquinas no domínio (verifique isso "
+"antes de usar isso). ou seja: UO = My Machines, dc = mydomain, dc = local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
 msgid "Must provide a domain!"
@@ -2988,20 +2986,21 @@ msgid ""
 "In order to access theese services, you will need to enable this in order to "
 "access to service:"
 msgstr ""
-"Para acessar serviços de theese, você precisará ativar este a fim de "
-"acesso ao serviço:"
+"Para acessar serviços de theese, você precisará ativar este a fim de acesso "
+"ao serviço:"
 
 #: transports/RDP/web.py:96
 msgid "Go to Safari > Preferences > Security > Manage Website Settings"
-msgstr "Vá ao Safari > preferências > Segurança > gerenciar configurações do site"
+msgstr ""
+"Vá ao Safari > preferências > Segurança > gerenciar configurações do site"
 
 #: transports/RDP/web.py:97
 msgid ""
 "Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
 "to Allow Always (also mark \"Unsecure mode\")."
 msgstr ""
-"Clique em Java no painel da esquerda e selecione o local para permitir UDS Rdp e configurá-lo "
-"permitir sempre (também marca \"Modo seguro\")."
+"Clique em Java no painel da esquerda e selecione o local para permitir UDS "
+"Rdp e configurá-lo permitir sempre (também marca \"Modo seguro\")."
 
 #: transports/RDP/web.py:98
 msgid "Users of Firefox or Chrome:"
@@ -3012,8 +3011,8 @@ msgid ""
 "If any warning is shown when launching RDP Applet, press \"ignore\" and "
 "continue"
 msgstr ""
-"Se nenhum aviso é exibido quando o lançamento RDP Applet, pressione \"ignorar\" e "
-"continuar"
+"Se nenhum aviso é exibido quando o lançamento RDP Applet, pressione \"ignorar"
+"\" e continuar"
 
 #: transports/RGS_enterprise/RGSTransport.py:34
 msgid "RGS Transport (direct)"
@@ -3190,7 +3189,6 @@ msgstr ""
 "moderno do HTML5 como o Firefox ou Chrome"
 
 #: web/errors.py:81
-#| msgid "This service is in maintenance mode."
 msgid "The requested service is in maintenance mode"
 msgstr "O serviço solicitado está no modo de manutenção"
 
