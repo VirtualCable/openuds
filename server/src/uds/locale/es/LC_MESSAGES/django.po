@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 10:05+0100\n"
+"POT-Creation-Date: 2015-03-09 08:27+0100\n"
 "PO-Revision-Date: 2015-02-09 10:44+0000\n"
 "Last-Translator: blafuente <blafuente@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
@@ -1189,11 +1189,11 @@ msgstr "24 bits"
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserServiceManager.py:327
+#: core/managers/UserServiceManager.py:329
 msgid "Can't remove a non active element"
 msgstr "No se puede eliminar un elemento que no está activo"
 
-#: core/managers/UserServiceManager.py:340
+#: core/managers/UserServiceManager.py:342
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr "No puede quitar ni cancelar {0} porque que sus estados no lo permiten."
@@ -1449,9 +1449,10 @@ msgid "Domain"
 msgstr "Dominio"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
-#| msgid "Domain to join machines to (use FQDN form, netbios name not allowed)"
 msgid "Domain to join machines to (use FQDN form, Netbios name not allowed)"
-msgstr "Dominio para unirse a las máquinas para (usar formulario FQDN, nombre Netbios no permitidos)"
+msgstr ""
+"Dominio para unirse a las máquinas para (usar formulario FQDN, nombre "
+"Netbios no permitidos)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid "Account with rights to add machines to domain"
@@ -1466,15 +1467,12 @@ msgid "OU"
 msgstr "OU"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
-#| msgid ""
-#| "Organizational unit where to add machines in domain (check it before "
-#| "using it)"
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
-"Unidad organizativa donde agregar máquinas de dominio (comprobarlo antes de usar "
-"It). es decir: ou = mis máquinas, dc = midominio, dc = local"
+"Unidad organizativa donde agregar máquinas de dominio (comprobarlo antes de "
+"usar It). es decir: ou = mis máquinas, dc = midominio, dc = local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
 msgid "Must provide a domain!"
@@ -3008,15 +3006,17 @@ msgstr ""
 
 #: transports/RDP/web.py:96
 msgid "Go to Safari > Preferences > Security > Manage Website Settings"
-msgstr "Ir a Safari &gt; Preferencias > seguridad > administrar la configuración de sitio web"
+msgstr ""
+"Ir a Safari &gt; Preferencias > seguridad > administrar la configuración de "
+"sitio web"
 
 #: transports/RDP/web.py:97
 msgid ""
 "Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
 "to Allow Always (also mark \"Unsecure mode\")."
 msgstr ""
-"Haga clic en Java en el panel izquierdo y seleccione sitio para permitir UDS Rdp y colóquela "
-"para permitir siempre (también marca \"Modo no seguro\")."
+"Haga clic en Java en el panel izquierdo y seleccione sitio para permitir UDS "
+"Rdp y colóquela para permitir siempre (también marca \"Modo no seguro\")."
 
 #: transports/RDP/web.py:98
 msgid "Users of Firefox or Chrome:"
@@ -3208,7 +3208,6 @@ msgstr ""
 "moderno como Firefox o Chrome"
 
 #: web/errors.py:81
-#| msgid "This service is in maintenance mode."
 msgid "The requested service is in maintenance mode"
 msgstr "El servicio solicitado está en modo de mantenimiento"
 

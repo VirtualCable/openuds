@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 10:05+0100\n"
+"POT-Creation-Date: 2015-03-09 08:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1122,11 +1122,11 @@ msgstr ""
 msgid "32 bits"
 msgstr ""
 
-#: core/managers/UserServiceManager.py:327
+#: core/managers/UserServiceManager.py:329
 msgid "Can't remove a non active element"
 msgstr ""
 
-#: core/managers/UserServiceManager.py:340
+#: core/managers/UserServiceManager.py:342
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr ""
