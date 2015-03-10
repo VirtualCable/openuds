@@ -48,7 +48,7 @@ class Client(object):
         Again, due to the fact that ovirtsdk don't allow (at this moment, but it's on the "TODO" list) concurrent access to
         more than one server, we keep only one opened connection.
 
-        Must be acceses "locked", we can alter cached_api and cached_api_key
+        Must be accesed "locked", so we can safely alter cached_api and cached_api_key
         '''
         global cached_api, cached_api_key
         aKey = self.__getKey('o-host')

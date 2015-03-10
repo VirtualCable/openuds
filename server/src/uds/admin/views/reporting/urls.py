@@ -32,9 +32,9 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns
 
-__updated__ = '2015-02-28'
+__updated__ = '2015-03-10'
 
 urlpatterns = patterns(
-    'uds.admin.views.reports',
-    (r'^usage/', 'usage'),
+    'uds.admin.views.reporting',
+    (r'', 'usage'),
 )

@@ -81,15 +81,15 @@ def make(obj, counterType, **kwargs):
     dataset = ((counters.getCounterTitle(counterType).encode('iso-8859-1', errors='ignore'), dataset1),)
 
     options = {
-         'axis': {
-                    'x': {
-                        'ticks': [dict(v=i, label=datetime.datetime.fromtimestamp(i).strftime(xLabelFormat)) for i in firstLast],
-                        'range': (firstLast[0], firstLast[1])
-                    },
-                    'y': {
-                        'tickCount': 4,
-                    }
-                },
+        'axis': {
+            'x': {
+                'ticks': [dict(v=i, label=datetime.datetime.fromtimestamp(i).strftime(xLabelFormat)) for i in firstLast],
+                'range': (firstLast[0], firstLast[1])
+            },
+            'y': {
+                'tickCount': 4,
+            }
+        },
         'legend': {'hide': True},
         'background': {
             'chartColor': '#ffeeff',
