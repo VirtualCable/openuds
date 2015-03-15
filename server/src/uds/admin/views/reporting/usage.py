@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-06'
+__updated__ = '2015-03-10'
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -39,27 +39,60 @@ from uds.core.auths.auth import webLoginRequired
 from uds.core.util.decorators import denyBrowsers
 
 import io
-from reportlab.pdfgen import canvas
+import six
+
+from geraldo import Report, landscape, ReportBand, ObjectValue, SystemField, BAND_WIDTH, Label
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import mm
+from reportlab.lib.units import cm
+from reportlab.lib.enums import TA_RIGHT, TA_CENTER
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
+class TestReport(Report):
+    title = 'Test report'
+    author = 'UDS Enterprise'
+
+    page_size = A4
+    margin_left = 2 * cm
+    margin_top = 0.5 * cm
+    margin_right = 0.5 * cm
+    margin_bottom = 0.5 * cm
+
+    class band_detail(ReportBand):
+        height = 0.5 * cm
+        elements = (
+            ObjectValue(attribute_name='id', left=0.5 * cm),
+            ObjectValue(attribute_name='date_creation', left=3 * cm,
+                        get_value=lambda instance: six.text_type(instance)),
+        )
+
+    class band_page_header(ReportBand):
+        height = 1.3 * cm
+        elements = [
+            SystemField(expression='%(report_title)s', top=0.1 * cm, left=0, width=BAND_WIDTH,
+                        style={'fontName': 'Helvetica-Bold', 'fontSize': 14, 'alignment': TA_CENTER}),
+            Label(text="ID", top=0.8 * cm, left=0.5 * cm),
+            Label(text=u"Creation Date", top=0.8 * cm, left=3 * cm),
+            SystemField(expression=u'Page %(page_number)d of %(page_count)d', top=0.1 * cm,
+                        width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
+        ]
+        borders = {'bottom': True}
+
+    class band_page_footer(ReportBand):
+        height = 0.5 * cm
+        elements = [
+            Label(text='Geraldo Reports', top=0.1 * cm),
+            SystemField(expression=u'Printed in %(now:%Y, %b %d)s at %(now:%H:%M)s', top=0.1 * cm,
+                        width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
+        ]
+        borders = {'top': True}
+
+
 @denyBrowsers(browsers=['ie<9'])
 @webLoginRequired(admin='admin')
 def usage(request):
-    with io.BytesIO() as output:
-        c = canvas.Canvas(filename=output, pagesize=A4)
-        c.setFont('Helvetica', 10)
-        # Print Customer Data
-        c.drawString(210 * mm / 2, 297 * mm / 2, "* <-- center")
-        c.drawString(0 * mm, 0 * mm, '* <-- top left')
-        c.drawString(210 * mm - 80, 297 * mm - 10, 'bottom right --> *')
-        c.showPage()
-        c.save()
-        pdf = output.getvalue()
-
-    return HttpResponse(pdf, content_type='application/pdf')
+    pass
+    # return HttpResponse(pdf, content_type='application/pdf')

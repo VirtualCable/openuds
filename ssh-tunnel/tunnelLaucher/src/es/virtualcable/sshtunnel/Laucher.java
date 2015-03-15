@@ -93,7 +93,7 @@ public class Laucher {
 				System.out.println("Using compression");
 				session.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
 			    session.setConfig("compression.c2s", "none");
-			    session.setConfig("compression_level", compressionLevel);				
+			    session.setConfig("compression_level", compressionLevel);
 			}
 			else
 			{
