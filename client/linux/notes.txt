@@ -1,0 +1,2 @@
+/usr/share/applications/udsclient.desktop
+exec update-desktop-database to update mime info on gnome
