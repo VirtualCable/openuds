@@ -43,6 +43,8 @@ from uds.core.util.State import State
 from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
+from uds.core.util import permissions
+
 
 import logging
 
@@ -270,6 +272,10 @@ class Publications(DetailHandler):
         Custom method "publish", provided to initiate a publication of a deployed service
         :param parent: Parent service pool
         '''
+        if permissions.checkPermissions(self._user, parent, permissions.PERMISSION_MANAGEMENT) is False:
+            logger.debug('Management Permission failed for user {}'.format(self._user))
+            self.accessDenied()
+
         logger.debug('Custom "publish" invoked for {}'.format(parent))
         parent.publish()  # Can raise exceptions that will be processed on response
         return self.success()
@@ -281,6 +287,10 @@ class Publications(DetailHandler):
         :param parent: Parent service pool
         :param uuid: uuid of the publication
         '''
+        if permissions.checkPermissions(self._user, parent, permissions.PERMISSION_MANAGEMENT) is False:
+            logger.debug('Management Permission failed for user {}'.format(self._user))
+            self.accessDenied()
+
         try:
             ds = DeployedServicePublication.objects.get(uuid=uuid)
             ds.cancel()
