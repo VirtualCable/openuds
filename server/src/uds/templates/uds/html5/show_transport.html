@@ -4,17 +4,10 @@
 {% block body %}
         <div class="panel panel-default text-center">
             <div id="transport">
+                {{ transport }}
             </div>
         </div>
         <div class="text-center">
             <a href="{% url 'uds.web.views.index' %}" class="btn btn-info"><i class="fa fa-home"></i> {% trans "Back to services list" %}</a>
         </div>
-{% endblock %}
-
-{% block js %}
-<script>
-$(document).ready(function(){
-    $('#transport').append("{{ transport|escapejs }}");
-});
-</script>
 {% endblock %}

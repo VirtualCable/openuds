@@ -138,6 +138,6 @@ class CryptoManager(object):
         if isinstance(obj, six.text_type):
             obj = obj.decode('utf-8')
         else:
-            obj = six. binary_type(obj)
+            obj = six.binary_type(obj)
 
         return six.text_type(uuid.uuid5(self._namespace, six.binary_type(obj))).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)

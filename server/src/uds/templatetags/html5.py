@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from django import template
 from uds.core.util import html
+from uds.core.util.request import getRequest
 from uds.core.auths.auth import ROOT_ID
 from uds.core.util.Config import GlobalConfig
 from uds.models.Image import Image
@@ -89,6 +90,29 @@ def enhaced_visual(parser, token):
         token = parser.next_token()
 
     return EnhacedVisual(states['enhaced_visual'], states.get('else', None))
+
+
+class TabIndex(template.Node):
+    def __init__(self, tabIndexName):
+        self.tabIndexIname = tabIndexName
+
+    def render(self, context):
+        counter = context.get(self.tabIndexIname, 0) + 1
+        context[self.tabIndexIname] = counter
+        return "{}".format(counter)
+
+
+@register.tag(name='tabindex')
+def tabindex(parser, token):
+    try:
+        # split_contents() knows not to split quoted strings.
+        tag_name, tabIndexName = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError(
+            "%r tag requires a single argument" % token.contents.split()[0]
+        )
+
+    return TabIndex(tabIndexName)
 
 
 @register.assignment_tag

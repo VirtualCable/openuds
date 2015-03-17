@@ -33,7 +33,11 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
+from django.template import loader, Context
+
 from uds.core.util import OsDetector
+from uds.core.util.Ticket import Ticket
+from uds.core.auths.auth import webPassword
 from uds.core import Module
 from uds.core.transports import protocols
 
@@ -151,6 +155,25 @@ class Transport(Module):
         @return: transformed username
         '''
         return user.name
+
+    def getUDSTransportInfo(self, userService, transport, ip, os, user, password, request):
+        return None
+
+    def renderAsHtml(self, userService, transport, ip, request):
+        os, user, password = OsDetector.getOsFromRequest(request), request.user, webPassword(request)
+        info = self.getUDSTransportInfo(userService, transport, ip, os, user, password, request)
+        if info is not None:
+            ticket = Ticket(data=info)
+            template = loader.get_template('uds/transport/udslink.html')
+            if request.is_secure():
+                uri = 'udss://'
+            else:
+                uri = 'uds://'
+            uri += request.build_absolute_uri('/').split('//')[1]  # Remove http or https
+            uri += ticket.key
+            return template.render(context=Context({'ticket': ticket, 'request': request, 'uri': uri}))
+
+        return self.renderForHtml(userService, transport, ip, os, user, password)
 
     def renderForHtml(self, userService, transport, ip, os, user, password):
         '''

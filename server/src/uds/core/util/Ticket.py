@@ -44,21 +44,22 @@ class Ticket(object):
     Right now, uses cache as backend
     '''
 
-    def __init__(self, key=None):
-        self.uuidGenerator = cryptoManager().uuid
+    def __init__(self, key=None, data=None):
+        self.uuidGenerator = lambda: (cryptoManager().uuid() + cryptoManager().uuid()).replace('-', '')
         self.cache = Cache(TICKET_OWNER)
-        self.data = None
+        self.data = data
         self.key = key
         if key is not None:
             self.load()
         else:
             self.key = self.uuidGenerator()
 
-    def save(self, data, validity):
+    def save(self, data=None, validity=Cache.DEFAULT_VALIDITY):
         '''
         Stores data inside ticket, and make data persistent (store in db)
         '''
-        self.data = data
+        if data is not None:
+            self.data = data
         self.cache.put(self.key, self.data, validity)
         return self.key
 

@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 import threading
 import logging
 
-__updated__ = '2014-10-30'
+__updated__ = '2015-03-17'
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +57,7 @@ class GlobalRequestMiddleware(object):
     def process_request(self, request):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
+        # Add a counter var, reseted on every request
         _requests[getIdent()] = request
         return None
 

@@ -41,30 +41,9 @@ from functools import wraps
 
 import logging
 
-__updated__ = '2014-09-09'
+__updated__ = '2015-03-16'
 
 logger = logging.getLogger(__name__)
-
-
-# Have to test this decorator before using them
-def retryOnException(retries=3, delay=0):
-    '''
-    Decorator to retry
-    '''
-    def decorator(func):
-        @wraps(func)
-        def _wrapped_func(*args, **kwargs):
-            while retries > 0:
-                retries -= 1
-                try:
-                    return func(*args, **kwargs)
-                except Exception:
-                    if retries == 0:
-                        raise
-                    if delay > 0:
-                        sleep(delay)
-        return _wrapped_func
-    return decorator
 
 
 # Decorator that protects pages that needs at least a browser version
@@ -88,6 +67,7 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
         return _wrapped_view
     return wrap
 
+
 def deprecated(func):
     '''This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
@@ -100,9 +80,10 @@ def deprecated(func):
             caller = inspect.stack()[1]
             logger.warn(
                 "Call to deprecated function {0} from {1}:{2}.".format(func.__name__,
-                caller[1], caller[2]
-            ))
-        except:
+                                                                       caller[1], caller[2]
+                                                                       )
+            )
+        except Exception:
             logger.info('No stack info on deprecated function call {0}'.format(func.__name__))
 
         return func(*args, **kwargs)

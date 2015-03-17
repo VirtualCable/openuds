@@ -90,10 +90,12 @@
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}js/uds-client.coffee"></script>
 
 		<script>
 			$(function(){
 				$('.selectpicker').selectpicker();
+                window.uds.onLink();
 			});
 		</script>
     {% endcompress %}

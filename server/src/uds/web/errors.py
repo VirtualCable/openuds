@@ -45,7 +45,7 @@ from uds.core.auths.Exceptions import InvalidUserException, InvalidAuthenticator
 from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedException, ServiceInMaintenanceMode
 from uds.core.ui import theme
 
-
+import traceback
 import logging
 
 logger = logging.getLogger(__name__)
@@ -97,6 +97,8 @@ def exceptionView(request, exception):
     '''
     Tries to render an error page with error information
     '''
+    logger.error(traceback.format_exc())
+
     try:
         raise exception
     except UserService.DoesNotExist:

@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
+__updated__ = '2015-03-16'
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -89,7 +89,7 @@ def service(request, idService, idTransport):
                 if itrans.isAvailableFor(ip):
                     ads.setConnectionSource(request.ip, 'unknown')
                     log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
-                    transportHtml = itrans.renderForHtml(ads, trans, ip, OsDetector.getOsFromRequest(request), request.user, webPassword(request))
+                    transportHtml = itrans.renderAsHtml(ads, trans, ip, request)
                     UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, request.user), itrans.protocol)
                     return render_to_response(theme.template('show_transport.html'), {'transport': transportHtml, 'nolang': True}, context_instance=RequestContext(request))
                 else:
