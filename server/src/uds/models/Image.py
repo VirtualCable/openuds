@@ -31,13 +31,15 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-06'
+__updated__ = '2015-03-18'
 
 from django.db import models
 from django.http import HttpResponse
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Util import getSqlDatetime
+from django.db.models import signals
+
 from PIL import Image as PILImage  # @UnresolvedImport
 import io
 
@@ -174,3 +176,22 @@ class Image(UUIDModel):
 
     def __unicode__(self):
         return 'Image id {}, name {}, {} bytes, {} bytes thumb'.format(self.id, self.name, len(self.data), len(self.thumb))
+
+    @staticmethod
+    def beforeDelete(sender, **kwargs):
+        '''
+        Used to invoke the Service class "Destroy" before deleting it from database.
+
+        In this case, this is a dummy method, waiting for something useful to do :-)
+
+        :note: If destroy raises an exception, the deletion is not taken.
+        '''
+        toDelete = kwargs['instance']
+        toDelete.deployedServices.update(image=None)
+
+        # Todelete is a group
+
+        logger.debug('Deleted image {0}'.format(toDelete))
+
+signals.pre_delete.connect(Image.beforeDelete, sender=Image)
+
