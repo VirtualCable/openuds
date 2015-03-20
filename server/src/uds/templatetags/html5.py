@@ -170,3 +170,24 @@ def ifbrowser(parser, token):
         token = parser.next_token()
 
     return IfBrowser(states['ifbrowser'], states.get('else', None), browsers)
+
+
+# Os Related
+@register.filter(name='osName')
+def osName(os):
+    if os == 'windows':
+        return 'Windows platform'
+    elif os == 'linux':
+        return 'Linux platform'
+    else:
+        return 'Mac OSX platform'
+
+
+@register.filter(name='pluginDownloadUrl')
+def pluginDownloadUrl(os):
+    if os == 'windows':
+        return '1'
+    elif os == 'linux':
+        return '2'
+    else:
+        return '3'

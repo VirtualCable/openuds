@@ -1,0 +1,45 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n html5 static %}
+
+{% block title %}
+{% trans 'Download UDS plugin for' %} {{ os|osName }}
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 col-md-offset-2 bg-primary">
+        <h3 class="text-center">{% trans 'Download UDS Plugin for' %} {{ os|osName }}</h3>
+        <p>{% trans 'In order to be able to execute UDS services, you need to have uds plugin installed.' %}</p>
+        <p>{% trans 'If for any reason, you have uds plugin already installed but this message persist to appear, you can force the execution by pressing <kbd>ctrl</kbd> when launching the service.' %}</p>
+
+        <p class="text-center"><a href="{{ os|pluginDownloadUrl }}" class="btn btn-success">{% trans 'Download UDS Plugin for' %} {{ os|osName }}</a></p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2 bg-success">
+        <h3>{% trans 'or select another version' %}</h3>
+        {% if os != 'linux' %}
+        <div>
+            <a href="#">{% trans 'Linux UDS plugin' %}</a>
+        </div>
+        {% endif %}
+        {% if os != 'windows' %}
+        <div>
+            <a href="#">{% trans 'Windows UDS plugin' %}</a>
+        </div>
+        {% endif %}
+        {% if os != 'mac' %}
+        <div>
+            <a href="#">{% trans 'Mac OSX (>10.5) UDS plugin' %}</a>
+        </div>
+        {% endif %}
+        <div class="text-center">
+            <a href="{% url 'uds.web.views.index' %}" class="btn btn-info"><i class="fa fa-home"></i> {% trans "Return" %}</a>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

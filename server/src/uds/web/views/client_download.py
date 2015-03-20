@@ -30,18 +30,29 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-18'
+__updated__ = '2015-03-20'
+
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+from uds.core.auths.auth import webLoginRequired
+from uds.core.ui import theme
+from uds.core.util.OsDetector import desktopOss
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-from .login import login, logout, customAuth
-from .index import index, about
-from .prefs import prefs
-from .service import service, transcomp, sernotify, transportIcon, serviceImage
-from .auth import authCallback, authInfo, authJava, ticketAuth
-from .download import download
-from .client_download import client_downloads
-from .js import jsCatalog
-from ..errors import error
+
+@webLoginRequired(admin=False)
+def client_downloads(request, os=None):
+    '''
+    Downloadables management
+    '''
+    if os not in desktopOss:
+        os = request.os['OS']
+    logger.debug('User: {}'.format(request.user))
+    os = os.lower()
+    return render_to_response(theme.template('client/download_client.html'),
+                              {'os': os, 'user': request.user},
+                              context_instance=RequestContext(request))

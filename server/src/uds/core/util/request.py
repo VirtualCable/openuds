@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -32,10 +31,12 @@
 '''
 from __future__ import unicode_literals
 
+from uds.core.util import OsDetector
+
 import threading
 import logging
 
-__updated__ = '2015-03-17'
+__updated__ = '2015-03-18'
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,8 @@ class GlobalRequestMiddleware(object):
     def process_request(self, request):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
+        # Ensures request contains os
+        OsDetector.getOsFromRequest(request)
         # Add a counter var, reseted on every request
         _requests[getIdent()] = request
         return None
@@ -94,3 +97,4 @@ class GlobalRequestMiddleware(object):
         except:
             request.ip_proxy = request.ip
             request.is_proxy = False
+

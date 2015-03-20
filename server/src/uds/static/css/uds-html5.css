@@ -127,3 +127,9 @@ footer {
 .form-preferences .btn {
 	margin-top: 16px;
 }
+
+.navbar-img {
+    width: 32px;
+    height: 32px;
+    margin-top: -8px;
+}

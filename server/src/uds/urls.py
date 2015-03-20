@@ -64,7 +64,11 @@ urlpatterns = patterns(
     # Change Language
     (r'^i18n/', include('django.conf.urls.i18n')),
     # Downloadables
-    (r'^download/(?P<idDownload>[a-zA-Z0-9-]*)$', 'web.views.download'),
+    (r'^idown/(?P<idDownload>[a-zA-Z0-9-]*)$', 'web.views.download'),
+    # for client
+    (r'^down$', 'web.views.client_downloads'),
+    (r'^down/(?P<os>[a-zA-Z0-9-]*)$', 'web.views.client_downloads'),
+
     # Custom authentication callback
     (r'^auth/(?P<authName>.+)', 'web.views.authCallback'),
     (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),

@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 Linux = 'Linux'
 WindowsPhone = 'Windows Phone'
 Windows = 'Windows'
-Macintosh = 'Macintosh'
+Macintosh = 'Mac'
 Android = 'Android'
 iPad = 'iPad'
 iPhone = 'iPhone'
@@ -59,6 +59,7 @@ def getOsFromUA(ua):
         os = DEFAULT_OS
     else:
         os = 'Unknown'
+
     res = {'OS': os, 'Version': 'unused'}
     for os in knownOss:
         try:
@@ -74,8 +75,8 @@ def getOsFromUA(ua):
 
 def getOsFromRequest(request):
     try:
-        return request.session['OS']
-    except:
-        request.session['OS'] = getOsFromUA(request.META['HTTP_USER_AGENT'])
+        return request.os
+    except Exception:
+        request.os = getOsFromUA(request.META['HTTP_USER_AGENT'])
 
-    return request.session['OS']
+    return request.os

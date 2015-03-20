@@ -10,7 +10,10 @@
 	    			<span class="icon-bar"></span>
 	    			<span class="icon-bar"></span>
 	  			</button>
-	  			<a href="{% url 'uds.web.views.index' %}"><span class="navbar-brand">Universal Desktop Services</span></a>
+	  			<a class ="navbar-brand" href="{% url 'uds.web.views.index' %}">
+            <img alt="Universal Desktop Services" src="{% get_static_prefix %}img/udsicon.png" class="navbar-img pull-left">
+            <span>Universal Desktop Services</span>
+          </a>
 			</div>
              <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
