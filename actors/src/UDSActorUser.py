@@ -292,6 +292,9 @@ if __name__ == '__main__':
         logger.error('UDS Service is not running. Tool stopped')
         sys.exit(1)
 
+    # Sets a default idle duration, but will not be used unless idle is notified from server
+    operations.initIdleDuration(3600 * 10)
+
     trayIcon.show()
 
     # Catch kill and logout user :)

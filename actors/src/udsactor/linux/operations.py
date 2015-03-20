@@ -208,6 +208,8 @@ def initIdleDuration(atLeastSeconds):
         threading._DummyThread._Thread__stop = lambda x: 42
 
     subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])
+    # And now reset it
+    subprocess.call(['/usr/bin/xset', 's', 'reset'])
 
 
 def getIdleDuration():
@@ -225,10 +227,14 @@ def getIdleDuration():
 
     available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
     if available != 1:
-        return 0
+        return 0  # No screen saver is available, no way of getting idle
 
     info = xss.XScreenSaverAllocInfo()
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), info)
+
+    if info.contents.state != 0:
+        return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
+
     return info.contents.idle / 1000.0
 
 
