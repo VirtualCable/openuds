@@ -11,4 +11,4 @@ def generateUuid():
     '''
     Generates a ramdom uuid for models default
     '''
-    return cryptoManager().uuid().upper()
+    return cryptoManager().uuid().lower()
