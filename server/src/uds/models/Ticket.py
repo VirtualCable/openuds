@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -26,7 +25,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
@@ -35,66 +33,62 @@ from __future__ import unicode_literals
 
 __updated__ = '2015-03-23'
 
+from django.db import models
+
+from uds.models.UUIDModel import UUIDModel
+from uds.models.Util import getSqlDatetime
+import datetime
+
+
+import pickle
+
+
+import base64
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-# Permissions
-from .Permissions import Permissions
+class TicketStore(UUIDModel):
+    '''
+    Image storing on DB model
+    This is intended for small images (i will limit them to 128x128), so storing at db is fine
 
-# Utility
-from .Util import getSqlDatetime
-from .Util import optimizeTable
-from .Util import NEVER
-from .Util import NEVER_UNIX
+    '''
 
-# Services
-from .Provider import Provider
-from .Service import Service
+    stamp = models.DateTimeField()  # Date creation or validation of this entry
+    validity = models.IntegerField(default=60)  # Duration allowed for this ticket to be valid, in seconds
 
-# Os managers
-from .OSManager import OSManager
+    data = models.BinaryField()  # Associated ticket data
 
-# Transports
-from .Transport import Transport
-from .Network import Network
+    class Meta:
+        '''
+        Meta class to declare the name of the table at database
+        '''
+        db_table = 'uds_tickets'
+        app_label = 'uds'
 
+    @staticmethod
+    def create(data, validity=60):
+        return TicketStore.objects.create(stamp=getSqlDatetime(), data=pickle.dumps(data), validity=validity).uuid
 
-# Authenticators
-from .Authenticator import Authenticator
-from .User import User
-from .UserPreference import UserPreference
-from .Group import Group
+    @staticmethod
+    def get(uuid):
+        try:
+            t = TicketStore.objects.get(uuid=uuid)
+            if datetime.timedelta(seconds=t.validity) + t.stamp < getSqlDatetime():
+                raise Exception('Not valid anymore')
+            return pickle.loads(t.data)
+        except TicketStore.DoesNotExist:
+            raise Exception('Does not exists')
 
-
-# Provisioned services
-from .ServicesPool import DeployedService  # Old name, will continue here for a while already
-from .ServicesPool import ServicePool  # New name
-from .ServicesPoolPublication import DeployedServicePublication
-from .UserService import UserService
-from .UserServiceProperty import UserServiceProperty
-
-# Especific log information for an user service
-from .Log import Log
-
-# Stats
-from .StatsCounters import StatsCounters
-from .StatsEvents import StatsEvents
-
-
-# General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
-# We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
-from .Cache import Cache
-from .Config import Config
-from .Storage import Storage
-from .UniqueId import UniqueId
-
-# Workers/Schedulers related
-from .Scheduler import Scheduler
-from .DelayedTask import DelayedTask
-
-# Image galery related
-from .Image import Image
-
-from .Ticket import TicketStore
+    @staticmethod
+    def revalidate(uuid, validity=None):
+        try:
+            t = TicketStore.objects.get(uuid=uuid)
+            t.stamp = getSqlDatetime()
+            if validity is not None:
+                t.validity = validity
+            t.save()
+        except TicketStore.DoesNotExist:
+            raise Exception('Does not exists')
