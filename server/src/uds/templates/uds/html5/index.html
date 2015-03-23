@@ -8,14 +8,14 @@
         {% for ser in services %}
             {% if ser.transports %}
             <div class="service-container">
-                {% with trans=ser.transports|first numTransports=ser.transports|length link=host|add:ser.ticket|add:'/'|add:scrambler|add:'/' %}
+                {% with trans=ser.transports|first numTransports=ser.transports|length %}
                 <div class="service{% if ser.maintenance %} maintenance{% endif %}{% if ser.in_use %} inuse{% endif %}"
                      {% if ser.maintenance %}
                      data-content="{% trans "Under maintenance" %}"
                      {% elif ser.in_use %}
                      data-content="{%trans "Currently in use" %}"
                      {% endif %}
-                     data-href="{{ link }}{{ trans.id }}">
+                     data-href="{{ trans.link }}">
                      <div class="service-image">
                         <img src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
                     </div>
@@ -36,7 +36,7 @@
                       <div class="modal-body">
                         <ul>
                             {% for trans in ser.transports %}
-                                <li><a class="uds-service-transport" data-href-alt="{% url 'uds.web.views.client_downloads' %}" href="{{ link }}{{ trans.id }}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
+                                <li><a class="uds-service-transport" data-href-alt="{% url 'uds.web.views.client_downloads' %}" href="{{ trans.link }}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
                             {% endfor %}
                         </ul>
 
@@ -192,20 +192,43 @@
             $('.inuse').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto top'});
 
             $('div.service:not(.maintenance)').on("click", function (event){
+                var url, el;
                 event.preventDefault();
 
-                uds.launch($(this));
+                // check url
+                el = $(this)
+                url = el.attr('data-href');
+                url = url != null ? url : el.attr('href');
+
+                if ( url.substring(0, 3) == 'uds' ) {
+                    uds.launch(el);
+                } else {
+                    window.location = url;
+                }
+
                 return false;
             }).on("mouseenter mouseleave", function (event) {
                 $(this).toggleClass('over');
             });
 
             $('.uds-service-transport').on("click", function (event){
+                var url, el, modal;
+
                 event.preventDefault();
 
-                var modal = $(this).parent().parent().parent().parent().parent().parent();
+                modal = $(this).parent().parent().parent().parent().parent().parent();
                 modal.modal('hide');
-                uds.launch($(this));
+
+                // check url
+                el = $(this)
+                url = el.attr('data-href');
+                url = url != null ? url : el.attr('href');
+
+                if ( url.substring(0, 3) == 'uds' ) {
+                    uds.launch(el);
+                } else {
+                    window.location = url;
+                }
 
                 return false;
             })

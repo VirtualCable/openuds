@@ -59,7 +59,6 @@ class Transport(Module):
     typeType = 'Base Transport'
     typeDescription = 'Base Transport'
     iconFile = 'transport.png'
-    needsJava = False  # If this transport needs java for rendering
     # Supported names for OS (used right now, but lots of more names for sure)
     # Windows
     # Macintosh
@@ -69,6 +68,9 @@ class Transport(Module):
     # If this transport is visible via Web, via Thin Client or both
     webTransport = False
     tcTransport = False
+
+    # If the link to use transport is provided by transport itself
+    ownLink = False
 
     # Protocol "type". This is not mandatory, but will help
     protocol = protocols.NONE
@@ -158,9 +160,18 @@ class Transport(Module):
 
     def getUDSTransportData(self, userService, transport, ip, os, user, password, request):
         '''
-        Must ve overriden
+        Must override if transport does not provides its own link (that is, it is an UDS native transport)
         Returns the transport data needed to connect with the userService
-        This is invoked right before service is accesed (secuentally)
+        This is invoked right before service is accesed (secuentally).
+
+        The class must provide either this method or the getLink method
+        '''
+        return None
+
+    def getLink(self, userService, transport, ip, os, user, password, request):
+        '''
+        Must override if transport does provides its own link
+        If transport provides own link, this method provides the link itself
         '''
         return None
 

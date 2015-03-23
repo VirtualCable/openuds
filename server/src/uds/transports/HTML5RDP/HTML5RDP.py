@@ -33,16 +33,17 @@
 
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_noop as _, ugettext
+from django.utils.translation import ugettext_noop as _
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+
 from uds.core.ui.UserInterface import gui
-from uds.core.util.Cache import Cache
-from uds.core.util import net
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util import OsDetector
+from uds.models import TicketStore
 
-import uuid
 import logging
 
 logger = logging.getLogger(__name__)
@@ -59,7 +60,8 @@ class HTML5RDPTransport(Transport):
     typeType = 'HTML5RDPTransport'
     typeDescription = _('RDP Transport using HTML5 client')
     iconFile = 'rdp.png'
-    needsJava = False  # If this transport needs java for rendering
+
+    ownLink = True
     supportedOss = OsDetector.allOss
     protocol = protocols.RDP
 
@@ -131,7 +133,7 @@ class HTML5RDPTransport(Transport):
 
         return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
 
-    def renderForHtml(self, userService, transport, ip, os, user, password):
+    def getLink(self, userService, transport, ip, os, user, password, request):
         ci = self.processUserPassword(userService, user, password)
         username, password, domain = ci['username'], ci['password'], ci['domain']
 
@@ -155,18 +157,6 @@ class HTML5RDPTransport(Transport):
 
         logger.debug('RDP Params: {0}'.format(params))
 
-        cache = Cache('guacamole')
-        key = uuid.uuid4().hex
-        cache.put(key, params)
+        ticket = TicketStore.create(params)
 
-        url = "{0}/transport/?{1}".format(self.guacamoleServer.value, key)
-        return '''
-        <script type="text/javascript">
-        $(document).ready(function() {{
-            var url = "{0}&" + window.location.protocol + "//" + window.location.host + "/";
-            window.location = url;
-        }})
-        </script>
-        <div>{1}...</div>
-        '''.format(url, ugettext('Launching HTML5 RDP connection'))
-
+        return HttpResponseRedirect("{}/transport/?{}&{}".format(self.guacamoleServer.value, ticket, reverse('Index')))

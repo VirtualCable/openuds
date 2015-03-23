@@ -36,6 +36,8 @@ from django.http import HttpResponse
 from uds.core.util.Cache import Cache
 from uds.core.util import net
 from uds.core.auths import auth
+from uds.models import TicketStore
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -47,7 +49,7 @@ CONTENT_TYPE = 'text/plain'
 
 
 def dict2resp(dct):
-    return '\r'.join((k + '\t' + v  for k, v in dct.iteritems()))
+    return '\r'.join((k + '\t' + v for k, v in dct.iteritems()))
 
 
 @auth.trustedSourceRequired
@@ -55,18 +57,14 @@ def guacamole(request, tunnelId):
     logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
 
     try:
-        cache = Cache('guacamole')
-
-        val = cache.get(tunnelId, None)
-
+        val = TicketStore.get(tunnelId, invalidate=False)
         # Remove key from cache, just 1 use
         # Cache has a limit lifetime, so we will allow to "reload" the page
         # cache.remove(tunnelId)
 
         # response = 'protocol\trdp\rhostname\tw7adolfo\rusername\tadmin\rpassword\ttemporal'
         response = dict2resp(val)
-
-    except:
+    except Exception:
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
 
     return HttpResponse(response, content_type=CONTENT_TYPE)

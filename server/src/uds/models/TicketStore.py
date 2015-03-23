@@ -53,6 +53,8 @@ class TicketStore(UUIDModel):
     This is intended for small images (i will limit them to 128x128), so storing at db is fine
     '''
     DEFAULT_VALIDITY = 60
+    MAX_VALIDITY = 60 * 60 * 12
+    # Cleanup will purge all elements that have been created MAX_VALIDITY ago
 
     stamp = models.DateTimeField()  # Date creation or validation of this entry
     validity = models.IntegerField(default=60)  # Duration allowed for this ticket to be valid, in seconds
@@ -132,6 +134,13 @@ class TicketStore(UUIDModel):
             t.save()
         except TicketStore.DoesNotExist:
             raise Exception('Does not exists')
+
+    @staticmethod
+    def cleanup():
+        now = getSqlDatetime()
+        cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
+        number = TicketStore.objects.filter(stamp__lt=cleanSince).delete()
+        logger.debug('Cleaned {} tickets'.format(number))
 
     def __unicode__(self):
         if self.validator is not None:

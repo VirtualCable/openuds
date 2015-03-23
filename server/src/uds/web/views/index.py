@@ -35,6 +35,7 @@ __updated__ = '2015-03-23'
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
 from uds.core.auths.auth import webLoginRequired, webPassword
@@ -42,6 +43,7 @@ from uds.core.auths.auth import webLoginRequired, webPassword
 from uds.models import DeployedService, Transport, UserService, Network, TicketStore
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import OsDetector
+from uds.core.util import html
 
 from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
@@ -101,17 +103,6 @@ def index(request):
     services = []
     # Select assigned user services
     for svr in availUserServices:
-        # Skip maintenance services...
-        trans = []
-        for t in svr.transports.all().order_by('priority'):
-            typeTrans = t.getType()
-            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
-                trans.append({'id': t.uuid, 'name': t.name, 'needsJava': t.getType().needsJava})
-        if svr.deployed_service.image is not None:
-            imageId = svr.deployed_service.image.uuid
-        else:
-            imageId = 'x'  # Invalid
-
         # Generate ticket
         data = {
             'type': 'A',
@@ -121,7 +112,26 @@ def index(request):
         }
 
         ticket = TicketStore.create(data)
-        link = '{}://{}/{}'.format(proto, ticket, scrambler)
+
+        trans = []
+        for t in svr.transports.all().order_by('priority'):
+            typeTrans = t.getType()
+            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
+                if typeTrans.ownLink is True:
+                    link = reverse('TransportOwnLink', args=('A' + svr.uuid, trans.uuid))
+                else:
+                    link = html.udsLink(request, ticket, scrambler, t)
+                trans.append(
+                    {
+                        'id': t.uuid,
+                        'name': t.name,
+                        'link': link
+                    }
+                )
+        if svr.deployed_service.image is not None:
+            imageId = svr.deployed_service.image.uuid
+        else:
+            imageId = 'x'  # Invalid
 
         services.append({
             'id': 'A' + svr.uuid,
@@ -131,19 +141,37 @@ def index(request):
             'show_transports': svr.deployed_service.show_transports,
             'maintenance': svr.deployed_service.service.provider.maintenance_mode,
             'in_use': svr.in_use,
-            'ticket': ticket,
         })
 
     logger.debug(services)
 
     # Now generic user service
     for svr in availServices:
+        # Generate ticket
+        data = {
+            'type': 'F',
+            'service': svr.uuid,
+            'user': request.user.uuid,
+            'password': password
+        }
+
+        ticket = TicketStore.create(data)
+
         trans = []
         for t in svr.transports.all().order_by('priority'):
-            if t.validForIp(request.ip):
-                typeTrans = t.getType()
-                if typeTrans.supportsOs(os['OS']):
-                    trans.append({'id': t.uuid, 'name': t.name, 'needsJava': typeTrans.needsJava})
+            typeTrans = t.getType()
+            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
+                if typeTrans.ownLink is True:
+                    link = reverse('TransportOwnLink', args=('F' + svr.uuid, t.uuid))
+                else:
+                    link = html.udsLink(request, ticket, scrambler, t)
+                trans.append(
+                    {
+                        'id': t.uuid,
+                        'name': t.name,
+                        'link': link
+                    }
+                )
         if svr.image is not None:
             imageId = svr.image.uuid
         else:
@@ -156,16 +184,6 @@ def index(request):
         else:
             in_use = ads.in_use
 
-        # Generate tickets for every transport
-        data = {
-            'type': 'F',
-            'service': svr.uuid,
-            'user': request.user.uuid,
-            'password': password
-        }
-
-        ticket = TicketStore.create(data)
-
         services.append({
             'id': 'F' + svr.uuid,
             'name': svr.name,
@@ -174,7 +192,6 @@ def index(request):
             'show_transports': svr.show_transports,
             'maintenance': svr.service.provider.maintenance_mode,
             'in_use': in_use,
-            'ticket': ticket,
         })
 
     logger.debug('Services: {0}'.format(services))
@@ -184,6 +201,7 @@ def index(request):
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
+            # TODO: Make this to redirect to uds link directly
             return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
     response = render_to_response(

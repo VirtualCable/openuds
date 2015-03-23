@@ -41,6 +41,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def udsLink(request, ticket, scrambler, transport):
+
+    if request.is_secure():
+        proto = 'udss'
+    else:
+        proto = 'uds'
+
+    return "{}://{}{}/{}/{}".format(proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler, transport.uuid)
+
+
 def parseDate(dateToParse):
     import datetime
 

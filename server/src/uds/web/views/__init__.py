@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-18'
+__updated__ = '2015-03-23'
 
 import logging
 
@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 from .login import login, logout, customAuth
 from .index import index, about
 from .prefs import prefs
-from .service import service, transcomp, sernotify, transportIcon, serviceImage
+from .service import service, trans, transcomp, sernotify, transportIcon, serviceImage
 from .auth import authCallback, authInfo, authJava, ticketAuth
 from .download import download
 from .client_download import client_downloads

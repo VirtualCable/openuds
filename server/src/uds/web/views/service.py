@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-16'
+__updated__ = '2015-03-23'
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -92,6 +92,55 @@ def service(request, idService, idTransport):
                     transportHtml = itrans.renderAsHtml(ads, trans, ip, request)
                     UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, request.user), itrans.protocol)
                     return render_to_response(theme.template('show_transport.html'), {'transport': transportHtml, 'nolang': True}, context_instance=RequestContext(request))
+                else:
+                    log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
+                    logger.debug('Transport is not ready for user service {0}'.format(ads))
+            else:
+                logger.debug('Ip not available from user service {0}'.format(ads))
+        else:
+            log.doLog(ads, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(request.user.name, request.ip), log.WEB)
+        # Not ready, show message and return to this page in a while
+        return render_to_response(theme.template('service_not_ready.html'), context_instance=RequestContext(request))
+    except Exception, e:
+        logger.exception("Exception")
+        return errors.exceptionView(request, e)
+
+
+@webLoginRequired(admin=False)
+def trans(request, idService, idTransport):
+    kind, idService = idService[0], idService[1:]
+    try:
+        logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
+        if kind == 'A':  # This is an assigned service
+            ads = UserService.objects.get(uuid=idService)
+        else:
+            ds = DeployedService.objects.get(uuid=idService)
+            # We first do a sanity check for this, if the user has access to this service
+            # If it fails, will raise an exception
+            ds.validateUser(request.user)
+            # Now we have to locate an instance of the service, so we can assign it to user.
+            ads = UserServiceManager.manager().getAssignationForUser(ds, request.user)
+
+        if ads.isInMaintenance() is True:
+            raise ServiceInMaintenanceMode()
+
+        logger.debug('Found service: {0}'.format(ads))
+        trans = Transport.objects.get(uuid=idTransport)
+        # Test if the service is ready
+        if ads.isReady():
+            log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
+            # If ready, show transport for this service, if also ready ofc
+            iads = ads.getInstance()
+            ip = iads.getIp()
+            events.addEvent(ads.deployed_service, events.ET_ACCESS, username=request.user.name, srcip=request.ip, dstip=ip, uniqueid=ads.unique_id)
+            if ip is not None:
+                itrans = trans.getInstance()
+                if itrans.isAvailableFor(ip):
+                    ads.setConnectionSource(request.ip, 'unknown')
+                    log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
+
+                    UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, request.user), itrans.protocol)
+                    return itrans.getLink(ads, trans, ip, request.os, request.user, webPassword(request), request)
                 else:
                     log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
                     logger.debug('Transport is not ready for user service {0}'.format(ads))

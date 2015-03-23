@@ -35,14 +35,13 @@ js_info_dict = {
     'packages': ('uds',),
 }
 
-
 from django.conf.urls import patterns, include, url
 from uds.core.util.modfinder import loadModulesUrls
 from uds import REST
 
 urlpatterns = patterns(
     'uds',
-    (r'^$', 'web.views.index'),
+    url(r'^$', 'web.views.index', name='Index'),
     (r'^login/$', 'web.views.login'),
     (r'^login/(?P<smallName>.+)$', 'web.views.login'),
     (r'^logout$', 'web.views.logout'),
@@ -54,7 +53,9 @@ urlpatterns = patterns(
     # Error URL
     (r'^error/(?P<idError>.+)$', 'web.views.error'),
     # Transport component url
-    (r'^transcomp/(?P<idTransport>.+)/(?P<componentId>.+)$', 'web.views.transcomp'),
+    url(r'^transcomp/(?P<idTransport>.+)/(?P<componentId>.+)$', 'web.views.transcomp', name='TransportComponent'),
+    # Transport own link processor
+    url(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.trans', name='TransportOwnLink'),
     # Service notification url
     (r'^sernotify/(?P<idUserService>.+)/(?P<notification>.+)$', 'web.views.sernotify'),
     # Authenticators custom html
@@ -76,7 +77,6 @@ urlpatterns = patterns(
     (r'^about', 'web.views.about'),
     # Ticket authentication
     url(r'^tkauth/(?P<ticketId>.+)$', 'web.views.ticketAuth', name='TicketAuth'),
-
 
     # XMLRPC Processor
     (r'^xmlrpc$', 'xmlrpc.views.xmlrpc'),

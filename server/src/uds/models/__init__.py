@@ -97,4 +97,4 @@ from .DelayedTask import DelayedTask
 # Image galery related
 from .Image import Image
 
-from .Ticket import TicketStore
+from .TicketStore import TicketStore

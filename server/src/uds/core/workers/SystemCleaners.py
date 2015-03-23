@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from uds.core.util.Cache import Cache
 from uds.core.jobs.Job import Job
+from uds.models import TicketStore
 import logging
 
 logger = logging.getLogger(__name__)
@@ -51,3 +52,17 @@ class CacheCleaner(Job):
         logger.debug('Starting cache cleanup')
         Cache.cleanUp()
         logger.debug('Done cache cleanup')
+
+
+class TicketStoreCleaner(Job):
+
+    frequency = 3600 * 12  # every twelve hours
+    friendly_name = 'Ticket Storage Cleaner'
+
+    def __init__(self, environment):
+        super(TicketStoreCleaner, self).__init__(environment)
+
+    def run(self):
+        logger.debug('Starting ticket storage cleanup')
+        TicketStore.cleanup()
+        logger.debug('Done ticket storage cleanup')
