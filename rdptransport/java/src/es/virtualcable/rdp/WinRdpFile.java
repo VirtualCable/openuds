@@ -24,6 +24,7 @@ public class WinRdpFile {
 	public boolean compression = false;
 	public boolean displayConnectionBar = true;
 	public boolean showWallpaper = false;
+	public boolean multimon = false;
 
 	public WinRdpFile(boolean fullScreen, String width, String height, String bpp) {
 		this.width = width;
@@ -44,6 +45,7 @@ public class WinRdpFile {
 		String compression = this.compression ? "1" : "0";
 		String bar = displayConnectionBar ? "1" : "0";
 		String disableWallpaper = showWallpaper ? "0" : "1";
+		String useMultimon = multimon ? "0" : "1";
 		
 		FileWriter fstream = new FileWriter(fname);
 		PrintWriter out = new PrintWriter(fstream);
@@ -51,6 +53,7 @@ public class WinRdpFile {
 		out.println("desktopwidth:i:"+this.width);
 		out.println("desktopheight:i:"+this.height);
 		out.println("session bpp:i:"+this.bpp);
+		out.println("use multimon:i:"+useMultimon);
 		out.println("auto connect:i:1");
 		out.println("full address:s:"+this.address);
 		out.println("compression:i:"+compression);

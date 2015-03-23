@@ -66,6 +66,7 @@ class RDPTransport(BaseRDPTransport):
     allowDrives = BaseRDPTransport.allowDrives
     allowSerials = BaseRDPTransport.allowSerials
     wallpaper = BaseRDPTransport.wallpaper
+    multimon = BaseRDPTransport.multimon
 
     def renderForHtml(self, userService, transport, ip, os, user, password):
         # We use helper to keep this clean
@@ -87,7 +88,8 @@ class RDPTransport(BaseRDPTransport):
             'drives': self.allowDrives.isTrue(),
             'serials': self.allowSerials.isTrue(),
             'compression': True,
-            'wallpaper': self.wallpaper.isTrue()
+            'wallpaper': self.wallpaper.isTrue(),
+            'multimon': self.multimon.isTrue()
         }
 
         return generateHtmlForRdp(self, userService.uuid, transport.uuid, os, ip, '3389', username, password, domain, extra)

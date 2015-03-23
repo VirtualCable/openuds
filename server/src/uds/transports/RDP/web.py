@@ -77,6 +77,7 @@ def generateHtmlForRdp(transport, idUserService, idTransport, os, ip, port, user
         'cr:' + (extra['compression'] and '1' or '0'),
         'is:' + idUserService,
         'sw:' + (extra['wallpaper'] and '1' or '0'),
+        'mm:' + (extra['multimon'] and '1' or '0'),
     ]
 
     logger.debug('Data: {0}'.format(data))

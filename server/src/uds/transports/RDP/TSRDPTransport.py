@@ -76,6 +76,7 @@ class TSRDPTransport(BaseRDPTransport):
     allowDrives = BaseRDPTransport.allowDrives
     allowSerials = BaseRDPTransport.allowSerials
     wallpaper = BaseRDPTransport.wallpaper
+    multimon = BaseRDPTransport.multimon
 
     def initialize(self, values):
         if values is not None:
@@ -114,7 +115,8 @@ class TSRDPTransport(BaseRDPTransport):
             'serials': self.allowSerials.isTrue(),
             'tun': tun,
             'compression': True,
-            'wallpaper': self.wallpaper.isTrue()
+            'wallpaper': self.wallpaper.isTrue(),
+            'multimon': self.multimon.isTrue()
         }
 
         return generateHtmlForRdp(self, userService.uuid, transport.uuid, os, ip, '-1', username, password, domain, extra)
