@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
+__updated__ = '2015-03-23'
 
 from django.db import models
 from django.db.models import signals
@@ -248,7 +248,7 @@ class DeployedService(UUIDModel):
             activePub: Active publication used as "current" publication to make checks
         '''
         now = getSqlDatetime()
-        if activePub == None:
+        if activePub is None:
             logger.error('No active publication, don\'t know what to erase!!! (ds = {0})'.format(self))
             return
         for ap in self.publications.exclude(id=activePub.id):

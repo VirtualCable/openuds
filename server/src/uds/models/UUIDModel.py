@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-11-12'
+__updated__ = '2015-03-23'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -57,10 +57,13 @@ class UUIDModel(models.Model):
     class Meta:
         abstract = True
 
+    def genUuid(self):
+        return generateUuid()
+
     # Override default save to add uuid
     def save(self, *args, **kwargs):
         if self.uuid is None or self.uuid == '':
-            self.uuid = generateUuid()
+            self.uuid = self.genUuid()
         elif self.uuid != self.uuid.lower():
             self.uuid = self.uuid.lower()  # If we modify uuid elsewhere, ensure that it's stored in lower case
 

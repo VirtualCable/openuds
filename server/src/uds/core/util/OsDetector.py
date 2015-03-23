@@ -77,6 +77,6 @@ def getOsFromRequest(request):
     try:
         return request.os
     except Exception:
-        request.os = getOsFromUA(request.META['HTTP_USER_AGENT'])
+        request.os = getOsFromUA(request.META.get('HTTP_USER_AGENT'))
 
     return request.os

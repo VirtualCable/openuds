@@ -156,7 +156,12 @@ class Transport(Module):
         '''
         return user.name
 
-    def getUDSTransportInfo(self, userService, transport, ip, os, user, password, request):
+    def getUDSTransportData(self, userService, transport, ip, os, user, password, request):
+        '''
+        Must ve overriden
+        Returns the transport data needed to connect with the userService
+        This is invoked right before service is accesed (secuentally)
+        '''
         return None
 
     def renderAsHtml(self, userService, transport, ip, request):

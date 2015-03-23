@@ -41,6 +41,8 @@ import array
 import uuid
 import datetime
 import codecs
+import random
+import string
 
 import logging
 import six
@@ -141,3 +143,6 @@ class CryptoManager(object):
             obj = six.binary_type(obj)
 
         return six.text_type(uuid.uuid5(self._namespace, six.binary_type(obj))).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
+
+    def randomString(self, length=40):
+        return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))

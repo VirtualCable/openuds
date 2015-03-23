@@ -30,21 +30,22 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
+__updated__ = '2015-03-23'
 
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.template import RequestContext
 
-from uds.core.auths.auth import webLoginRequired
+from uds.core.auths.auth import webLoginRequired, webPassword
 
-from uds.models import DeployedService, Transport, UserService, Network
+from uds.models import DeployedService, Transport, UserService, Network, TicketStore
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import OsDetector
 
 from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.managers import cryptoManager
 
 
 import logging
@@ -67,8 +68,15 @@ def index(request):
     :param request: http request
     '''
     # Session data
-    os = OsDetector.getOsFromRequest(request)
-    java = request.session.get('java', None)
+    os = request.os
+
+    scrambler = cryptoManager().randomString(32)
+    password = cryptoManager().xor(webPassword(request), scrambler)
+
+    if request.is_secure():
+        proto = 'udss'
+    else:
+        proto = 'uds'
 
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
@@ -103,13 +111,28 @@ def index(request):
             imageId = svr.deployed_service.image.uuid
         else:
             imageId = 'x'  # Invalid
-        services.append({'id': 'A' + svr.uuid,
-                         'name': svr['name'],
-                         'transports': trans,
-                         'imageId': imageId,
-                         'show_transports': svr.deployed_service.show_transports,
-                         'maintenance': svr.deployed_service.service.provider.maintenance_mode,
-                         'in_use': svr.in_use})
+
+        # Generate ticket
+        data = {
+            'type': 'A',
+            'service': svr.uuid,
+            'user': request.user.uuid,
+            'password': password
+        }
+
+        ticket = TicketStore.create(data)
+        link = '{}://{}/{}'.format(proto, ticket, scrambler)
+
+        services.append({
+            'id': 'A' + svr.uuid,
+            'name': svr['name'],
+            'transports': trans,
+            'imageId': imageId,
+            'show_transports': svr.deployed_service.show_transports,
+            'maintenance': svr.deployed_service.service.provider.maintenance_mode,
+            'in_use': svr.in_use,
+            'ticket': ticket,
+        })
 
     logger.debug(services)
 
@@ -133,13 +156,26 @@ def index(request):
         else:
             in_use = ads.in_use
 
-        services.append({'id': 'F' + svr.uuid,
-                         'name': svr.name,
-                         'transports': trans,
-                         'imageId': imageId,
-                         'show_transports': svr.show_transports,
-                         'maintenance': svr.service.provider.maintenance_mode,
-                         'in_use': in_use})
+        # Generate tickets for every transport
+        data = {
+            'type': 'F',
+            'service': svr.uuid,
+            'user': request.user.uuid,
+            'password': password
+        }
+
+        ticket = TicketStore.create(data)
+
+        services.append({
+            'id': 'F' + svr.uuid,
+            'name': svr.name,
+            'transports': trans,
+            'imageId': imageId,
+            'show_transports': svr.show_transports,
+            'maintenance': svr.service.provider.maintenance_mode,
+            'in_use': in_use,
+            'ticket': ticket,
+        })
 
     logger.debug('Services: {0}'.format(services))
 
@@ -150,8 +186,16 @@ def index(request):
             request.session['autorunDone'] = '1'
             return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
-    response = render_to_response(theme.template('index.html'),
-                                  {'services': services, 'java': java, 'ip': request.ip, 'nets': nets, 'transports': validTrans},
-                                  context_instance=RequestContext(request)
-                                  )
+    response = render_to_response(
+        theme.template('index.html'),
+        {
+            'services': services,
+            'ip': request.ip,
+            'nets': nets,
+            'transports': validTrans,
+            'host': proto + '://' + request.build_absolute_uri('/').split('//')[1],
+            'scrambler': scrambler,
+        },
+        context_instance=RequestContext(request)
+    )
     return response

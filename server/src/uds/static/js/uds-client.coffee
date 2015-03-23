@@ -157,24 +157,30 @@ launchSafari = (el, url, alt) ->
   ), 800
 
 
-@uds.onLink = ->
+uds.launch = (el) ->
+  url = el.attr('data-href')
+  url = if url? then url else el.attr('href')
+  alt = el.attr('data-href-alt')
+
+  if uds.firefox
+    launchMozilla this, url, alt
+  else if uds.chrome
+    launchChrome this, url, alt
+  else if uds.safari
+    launchSafari this, url, alt
+  else if uds.ie
+    launchIE this, url, alt
+  
+  return
+
+uds.onLink = ->
   $('.uds-service-link').on('click', ((e) ->
     e.preventDefault()
-    el = $(this)
-    url = el.attr('href')
-    alt = el.attr('data-href-alt')
 
-    if uds.firefox
-      launchMozilla this, url, alt
-    else if uds.chrome
-      launchChrome this, url, alt
-    else if uds.safari
-      launchSafari this, url, alt
-    else if uds.ie
-      launchIE this, url, alt
+    uds.launch $(this)
+
     return
   ))
 
-return
-
+  return
 

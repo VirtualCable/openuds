@@ -8,14 +8,14 @@
         {% for ser in services %}
             {% if ser.transports %}
             <div class="service-container">
-                {% with trans=ser.transports|first numTransports=ser.transports|length %}
-                <div class="service{% if not java and trans.needsJava %} nojava{% endif %}{% if ser.maintenance %} maintenance{% endif %}{% if ser.in_use %} inuse{% endif %}"
+                {% with trans=ser.transports|first numTransports=ser.transports|length link=host|add:ser.ticket|add:'/'|add:scrambler|add:'/' %}
+                <div class="service{% if ser.maintenance %} maintenance{% endif %}{% if ser.in_use %} inuse{% endif %}"
                      {% if ser.maintenance %}
                      data-content="{% trans "Under maintenance" %}"
                      {% elif ser.in_use %}
                      data-content="{%trans "Currently in use" %}"
                      {% endif %}
-                     data-url="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}">
+                     data-href="{{ link }}{{ trans.id }}">
                      <div class="service-image">
                         <img src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
                     </div>
@@ -27,7 +27,7 @@
 
                 {% if ser.show_transports and numTransports > 1 %}
                 <div class="modal fade in">
-                  <div class="modal-dialog">
+                  <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -36,7 +36,7 @@
                       <div class="modal-body">
                         <ul>
                             {% for trans in ser.transports %}
-                                <p><a href="{% url "uds.web.views.service" idService=ser.id idTransport=trans.id %}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></p>
+                                <li><a class="uds-service-transport" data-href-alt="{% url 'uds.web.views.client_downloads' %}" href="{{ link }}{{ trans.id }}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
                             {% endfor %}
                         </ul>
 
@@ -72,30 +72,9 @@
           </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
-			
-{% if not java %}
-		<div class="modal fade" id="no-java-dialog">
-		  <div class="modal-dialog">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title">{% trans "Java not found" %}</h4>
-		      </div>
-		      <div class="modal-body text-center">
-				<p>{% trans "Java is not available on your browser, and the selected transport needs it." %}</p>
-				<p>{% trans "Please, install latest version from" %} <a href="http://www.java.com" target="_blank">{% trans "Java website" %}</a> {% trans "and restart browser" %}</p>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		      </div>
-		    </div><!-- /.modal-content -->
-		  </div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
-{% endif %}
 
 
-
-{% if user.isStaff %}
+        {% if user.isStaff %}
         <div class="panel panel-warning">
             <div class="panel-heading">
                 {% trans "Administrator info panel" %}
@@ -108,7 +87,7 @@
                 <p>{% trans "OS" %}: {{ request.session.OS.OS }}</p>
             </div>
         </div>
-{% endif %}
+        {% endif %}
 
 {% endblock %} 
 
@@ -212,18 +191,28 @@
 
             $('.inuse').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto top'});
 
-            $('div.service:not(.maintenance):not(.nojava)').on("click", function (event){
-                if($(this).hasClass('disabled'))
-                    return;
-                $('div.service').addClass('disabled');
-                window.location = $(this).attr('data-url');
+            $('div.service:not(.maintenance)').on("click", function (event){
+                event.preventDefault();
+
+                uds.launch($(this));
                 return false;
             }).on("mouseenter mouseleave", function (event) {
                 $(this).toggleClass('over');
             });
 
-            $('div.service:not(.maintenance):not(.nojava) > span.gear > span.fa').on("click", function (event) {
+            $('.uds-service-transport').on("click", function (event){
+                event.preventDefault();
+
+                var modal = $(this).parent().parent().parent().parent().parent().parent();
+                modal.modal('hide');
+                uds.launch($(this));
+
+                return false;
+            })
+
+            $('div.service:not(.maintenance) > span.gear > span.fa').on("click", function (event) {
                 event.stopPropagation();
+                event.preventDefault();
                 $(this).parent().parent().next().modal();
                 return false;
             });
@@ -234,15 +223,6 @@
                     })
                 return false;
             });
-
-            {% if not java %}
-            $(".nojava").click( function(event) {
-                $('#no-java-dialog').modal({
-                      keyboard: false
-                    })
-                return false;
-            });
-            {% endif %}
 
         });
         </script>
