@@ -65,6 +65,7 @@ class BaseRDPTransport(Transport):
     allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=8, tooltip=_('If checked, this transport will allow the use of user drives'))
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=9, tooltip=_('If checked, this transport will allow the use of user serial ports'))
     wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=10, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
+    multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=10, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'))
 
     def isAvailableFor(self, ip):
         '''

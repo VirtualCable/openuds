@@ -78,6 +78,7 @@ public class WindowsApplet implements OsApplet {
 			rdp.redirectPrinters = params.get("pr").equals("1");
 			rdp.redirectAudio = params.get("au").equals("1");
 			rdp.compression = params.get("cr").equals("1");
+			rdp.multimon = params.get("mm").equals("1");
 			if( params.get("sw") != null ) 
 			{
 				rdp.showWallpaper = params.get("sw").equals("1");
