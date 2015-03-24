@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-09 08:27+0100\n"
+"POT-Creation-Date: 2015-03-24 10:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2302,9 +2302,7 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nr."
 
-#: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/dashboard.html:5
-#: templates/uds/admin/tmpl/osmanagers.html:4
 msgid "overview"
 msgstr "Übersicht"
 
@@ -2954,6 +2952,18 @@ msgstr ""
 "Wenn diese Option aktiviert ist, be die Tapete und Themen Maschine (bessere "
 "User will shown Erfahrung, mehr Bandbreite)"
 
+#: transports/RDP/BaseRDPTransport.py:68
+msgid "Multiple monitors"
+msgstr "Mehrere Monitore"
+
+#: transports/RDP/BaseRDPTransport.py:68
+msgid ""
+"If checked, all client monitors will be used for displaying (only works on "
+"windows clients)"
+msgstr ""
+"Wenn diese Option aktiviert, werden alle Clientmonitore für anzeigen (funktioniert nur auf verwendet "
+"Windows-Clients)"
+
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
 msgstr "RDP Transport (direkt)"
@@ -3003,7 +3013,7 @@ msgstr ""
 "ausgeführt wird, bevor Sie verwendet werden Benutzer zuweisen. (verwenden "
 "Sie HOST: PORT-Format)"
 
-#: transports/RDP/TSRDPTransport.py:83
+#: transports/RDP/TSRDPTransport.py:84
 #: transports/RGS_enterprise/TRGSTransport.py:71
 #: transports/TSNX/TSNXTransport.py:112
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -3013,19 +3023,19 @@ msgstr "HOST: PORT muss in Feld der Tunnel-Server verwendet werden."
 msgid "Remote Desktop Protocol"
 msgstr "Remote Desktop-Protokoll"
 
-#: transports/RDP/web.py:90
+#: transports/RDP/web.py:91
 msgid "In order to use this service, you should first install CoRD."
 msgstr "Um diesen Dienst zu nutzen, sollten Sie zunächst Kabel installieren."
 
-#: transports/RDP/web.py:91
+#: transports/RDP/web.py:92
 msgid "Download CoRD"
 msgstr "Download CoRD"
 
-#: transports/RDP/web.py:94
+#: transports/RDP/web.py:95
 msgid "Attention Safari Users:"
 msgstr "Achtung-Safari-Benutzer:"
 
-#: transports/RDP/web.py:95
+#: transports/RDP/web.py:96
 msgid ""
 "In order to access theese services, you will need to enable this in order to "
 "access to service:"
@@ -3033,13 +3043,13 @@ msgstr ""
 "Um Theese Dienste zuzugreifen, müssen Sie, um dies zu ermöglichen Zugang zu "
 "Service:"
 
-#: transports/RDP/web.py:96
+#: transports/RDP/web.py:97
 msgid "Go to Safari > Preferences > Security > Manage Website Settings"
 msgstr ""
 "Gehen Sie auf Safari > Präferenzen > Sicherheit > Websiteeinstellungen "
 "verwalten"
 
-#: transports/RDP/web.py:97
+#: transports/RDP/web.py:98
 msgid ""
 "Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
 "to Allow Always (also mark \"Unsecure mode\")."
@@ -3047,11 +3057,11 @@ msgstr ""
 "Klicken Sie im linken Feld klickt auf Java, und wählen Sie Site zulassen UDS "
 "Rdp und setzen Sie ihn Immer (auch Mark \"Unsicheren Modus\") zu ermöglichen."
 
-#: transports/RDP/web.py:98
+#: transports/RDP/web.py:99
 msgid "Users of Firefox or Chrome:"
 msgstr "Benutzer von Firefox oder Chrome:"
 
-#: transports/RDP/web.py:99
+#: transports/RDP/web.py:100
 msgid ""
 "If any warning is shown when launching RDP Applet, press \"ignore\" and "
 "continue"
