@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-01'
+__updated__ = '2015-03-24'
 
 from django.db import models
 from django.db.models import signals
@@ -75,7 +75,7 @@ class DeployedService(UUIDModel):
     state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
-    image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices')
+    image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
     cache_l2_srvs = models.PositiveIntegerField(default=0)
