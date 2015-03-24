@@ -163,11 +163,11 @@ uds.launch = (el) ->
   alt = el.attr('data-href-alt')
 
   if uds.firefox
-    launchMozilla this, url, alt
+    launchMozilla el, url, alt
   else if uds.chrome
-    launchChrome this, url, alt
+    launchChrome el, url, alt
   else if uds.safari
-    launchSafari this, url, alt
+    launchSafari el, url, alt
   else if uds.ie
     launchIE this, url, alt
   

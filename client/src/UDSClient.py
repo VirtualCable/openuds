@@ -51,6 +51,7 @@ if __name__ == "__main__":
 
     except Exception:
         QtGui.QMessageBox.critical(None, 'Notice', 'This program is designed to be used by UDS', QtGui.QMessageBox.Ok)
+        sys.exit(1)
 
     QtGui.QMessageBox.critical(None, 'Notice', '{} {} {} {} {}'.format(host, ticket, scrambler, trans, ssl), QtGui.QMessageBox.Ok)
 

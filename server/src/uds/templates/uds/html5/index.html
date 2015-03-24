@@ -15,7 +15,8 @@
                      {% elif ser.in_use %}
                      data-content="{%trans "Currently in use" %}"
                      {% endif %}
-                     data-href="{{ trans.link }}">
+                     data-href="{{ trans.link }}"
+                     data-href-alt="{% url 'uds.web.views.client_downloads' %}">
                      <div class="service-image">
                         <img src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
                     </div>

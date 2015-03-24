@@ -187,9 +187,6 @@ class Image(UUIDModel):
         :note: If destroy raises an exception, the deletion is not taken.
         '''
         toDelete = kwargs['instance']
-        toDelete.deployedServices.update(image=None)
-
-        # Todelete is a group
 
         logger.debug('Deleted image {0}'.format(toDelete))
 
