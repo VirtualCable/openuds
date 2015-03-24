@@ -31,7 +31,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-18'
+__updated__ = '2015-03-24'
 
 from django.db import models
 from django.http import HttpResponse
@@ -194,4 +194,3 @@ class Image(UUIDModel):
         logger.debug('Deleted image {0}'.format(toDelete))
 
 signals.pre_delete.connect(Image.beforeDelete, sender=Image)
-
