@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-09 08:27+0100\n"
-"PO-Revision-Date: 2015-02-09 10:44+0000\n"
+"POT-Creation-Date: 2015-03-24 10:41+0100\n"
+"PO-Revision-Date: 2015-03-10 09:07+0000\n"
 "Last-Translator: blafuente <blafuente@virtualcable.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
 "es/)\n"
@@ -1296,7 +1296,7 @@ msgstr "En mantenimiento"
 
 #: core/util/State.py:81
 msgid "Waiting OS"
-msgstr "OS espera"
+msgstr "Esperando SO "
 
 #: core/util/stats/counters.py:205
 msgid "Assigned"
@@ -1451,8 +1451,8 @@ msgstr "Dominio"
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
 msgid "Domain to join machines to (use FQDN form, Netbios name not allowed)"
 msgstr ""
-"Dominio para unirse a las máquinas para (usar formulario FQDN, nombre "
-"Netbios no permitidos)"
+"Dominio para unir las máquinas a (usar formulario FQDN, nombre Netbios no "
+"permitidos)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid "Account with rights to add machines to domain"
@@ -1471,8 +1471,8 @@ msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
-"Unidad organizativa donde agregar máquinas de dominio (comprobarlo antes de "
-"usar It). es decir: ou = mis máquinas, dc = midominio, dc = local"
+"Unidad organizativa donde agregar máquinas en dominio (comprobar antes de "
+"usarlo). por ej: ou = mis máquinas, dc = midominio, dc = local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
 msgid "Must provide a domain!"
@@ -2279,9 +2279,7 @@ msgstr "Sí"
 msgid "No"
 msgstr "No"
 
-#: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/dashboard.html:5
-#: templates/uds/admin/tmpl/osmanagers.html:4
 msgid "overview"
 msgstr "resumen"
 
@@ -2925,6 +2923,18 @@ msgstr ""
 "Si está marcada, el fondo de pantalla y los temas aparecerán en la máquina "
 "(mayor ancho de banda, mejor experiencia de usuario)"
 
+#: transports/RDP/BaseRDPTransport.py:68
+msgid "Multiple monitors"
+msgstr "Varios monitores"
+
+#: transports/RDP/BaseRDPTransport.py:68
+msgid ""
+"If checked, all client monitors will be used for displaying (only works on "
+"windows clients)"
+msgstr ""
+"Si está marcada, todos los monitores de cliente se utilizará para mostrar (sólo funciona en "
+"clientes de Windows)"
+
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
 msgstr "Transporte RDP (directo)"
@@ -2974,7 +2984,7 @@ msgstr ""
 "se está ejecutando antes de asignárselo al usuario. (utilice el formato "
 "HOST: PUERTO)"
 
-#: transports/RDP/TSRDPTransport.py:83
+#: transports/RDP/TSRDPTransport.py:84
 #: transports/RGS_enterprise/TRGSTransport.py:71
 #: transports/TSNX/TSNXTransport.py:112
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -2984,51 +2994,52 @@ msgstr "Debe utilizar HOST: PUERTO en el Campo Servidor de Túnel"
 msgid "Remote Desktop Protocol"
 msgstr "Protocolo de Escritorio Remoto (RDP)"
 
-#: transports/RDP/web.py:90
+#: transports/RDP/web.py:91
 msgid "In order to use this service, you should first install CoRD."
 msgstr "Para poder utilizar este servicio, primero debe instalar CoRD."
 
-#: transports/RDP/web.py:91
+#: transports/RDP/web.py:92
 msgid "Download CoRD"
 msgstr "Descargar CoRD"
 
-#: transports/RDP/web.py:94
+#: transports/RDP/web.py:95
 msgid "Attention Safari Users:"
 msgstr "Atención usuarios de Safari:"
 
-#: transports/RDP/web.py:95
+#: transports/RDP/web.py:96
 msgid ""
 "In order to access theese services, you will need to enable this in order to "
 "access to service:"
 msgstr ""
-"Para acceder a esos servicios, necesitará habilitar esto con el fin de "
-"acceso al servicio:"
-
-#: transports/RDP/web.py:96
-msgid "Go to Safari > Preferences > Security > Manage Website Settings"
-msgstr ""
-"Ir a Safari &gt; Preferencias > seguridad > administrar la configuración de "
-"sitio web"
+"Para acceder a estos servicios necesitará habilitar esto para acceder al "
+"servicio:"
 
 #: transports/RDP/web.py:97
+msgid "Go to Safari > Preferences > Security > Manage Website Settings"
+msgstr ""
+"Ir a Safari > Preferencias > Seguridad > Administrar la configuración de la "
+"web"
+
+#: transports/RDP/web.py:98
 msgid ""
 "Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
 "to Allow Always (also mark \"Unsecure mode\")."
 msgstr ""
-"Haga clic en Java en el panel izquierdo y seleccione sitio para permitir UDS "
-"Rdp y colóquela para permitir siempre (también marca \"Modo no seguro\")."
+"Haga clic en Java en el panel de la izquierda y seleccione el sitio donde "
+"permitir UDS Rdp y configure Permitir Siempre (marque también \"Modo no "
+"seguro\")."
 
-#: transports/RDP/web.py:98
+#: transports/RDP/web.py:99
 msgid "Users of Firefox or Chrome:"
 msgstr "Usuarios de Firefox o Chrome:"
 
-#: transports/RDP/web.py:99
+#: transports/RDP/web.py:100
 msgid ""
 "If any warning is shown when launching RDP Applet, press \"ignore\" and "
 "continue"
 msgstr ""
-"Si aparece alguna advertencia al iniciar RDP Applet, presione \"ignorar\" y "
-"continuar"
+"Si aparece alguna advertencia al iniciar RDP Applet, haga click en \"ignorar"
+"\" y continuar"
 
 #: transports/RGS_enterprise/RGSTransport.py:34
 msgid "RGS Transport (direct)"

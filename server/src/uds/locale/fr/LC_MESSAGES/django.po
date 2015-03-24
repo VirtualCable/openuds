@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-09 08:27+0100\n"
+"POT-Creation-Date: 2015-03-24 10:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2309,9 +2309,7 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
-#: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/dashboard.html:5
-#: templates/uds/admin/tmpl/osmanagers.html:4
 msgid "overview"
 msgstr "vue d'ensemble"
 
@@ -2957,6 +2955,18 @@ msgstr ""
 "Si coché, le fond d'écran et thèmes seront montrés sur machine (meilleur "
 "utilisateur expérience, plus de bande passante)"
 
+#: transports/RDP/BaseRDPTransport.py:68
+msgid "Multiple monitors"
+msgstr "Plusieurs moniteurs"
+
+#: transports/RDP/BaseRDPTransport.py:68
+msgid ""
+"If checked, all client monitors will be used for displaying (only works on "
+"windows clients)"
+msgstr ""
+"S'il est activé, tous les moniteurs de client seront utilisés pour l'affichage (fonctionne uniquement sur "
+"clients Windows)"
+
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
 msgstr "Transport de RDP (direct)"
@@ -3006,7 +3016,7 @@ msgstr ""
 "s'exécute avant assignant à l'utilisateur. (utilisez le format de l'hôte : "
 "PORT)"
 
-#: transports/RDP/TSRDPTransport.py:83
+#: transports/RDP/TSRDPTransport.py:84
 #: transports/RGS_enterprise/TRGSTransport.py:71
 #: transports/TSNX/TSNXTransport.py:112
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -3016,21 +3026,21 @@ msgstr "Devez utiliser HOST : PORT dans le champ serveur Tunnel"
 msgid "Remote Desktop Protocol"
 msgstr "Protocole Bureau distant"
 
-#: transports/RDP/web.py:90
+#: transports/RDP/web.py:91
 msgid "In order to use this service, you should first install CoRD."
 msgstr "Afin d'utiliser ce service, vous devez d'abord installer cordon."
 
-#: transports/RDP/web.py:91
+#: transports/RDP/web.py:92
 msgid "Download CoRD"
 msgstr ""
 "TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
 "Translate.2224D509"
 
-#: transports/RDP/web.py:94
+#: transports/RDP/web.py:95
 msgid "Attention Safari Users:"
 msgstr "Attention les utilisateurs de Safari :"
 
-#: transports/RDP/web.py:95
+#: transports/RDP/web.py:96
 msgid ""
 "In order to access theese services, you will need to enable this in order to "
 "access to service:"
@@ -3038,13 +3048,13 @@ msgstr ""
 "Pour accéder à ces services, vous devrez activer ceci afin de l'accès au "
 "service :"
 
-#: transports/RDP/web.py:96
+#: transports/RDP/web.py:97
 msgid "Go to Safari > Preferences > Security > Manage Website Settings"
 msgstr ""
 "Allez dans Safari &gt; Préférences > sécurité > gérer les paramètres de site "
 "Web"
 
-#: transports/RDP/web.py:97
+#: transports/RDP/web.py:98
 msgid ""
 "Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
 "to Allow Always (also mark \"Unsecure mode\")."
@@ -3053,11 +3063,11 @@ msgstr ""
 "permettre UDS Rdp et réglez-le permettre à toujours (aussi marque \"mode non "
 "sécurisé\")."
 
-#: transports/RDP/web.py:98
+#: transports/RDP/web.py:99
 msgid "Users of Firefox or Chrome:"
 msgstr "Utilisateurs de Firefox ou Chrome :"
 
-#: transports/RDP/web.py:99
+#: transports/RDP/web.py:100
 msgid ""
 "If any warning is shown when launching RDP Applet, press \"ignore\" and "
 "continue"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-09 08:27+0100\n"
+"POT-Creation-Date: 2015-03-24 10:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2261,9 +2261,7 @@ msgstr "Sì"
 msgid "No"
 msgstr "No"
 
-#: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/dashboard.html:5
-#: templates/uds/admin/tmpl/osmanagers.html:4
 msgid "overview"
 msgstr "Panoramica"
 
@@ -2903,6 +2901,18 @@ msgstr ""
 "Se selezionata, la carta da parati e temi verranno mostrati sulla macchina "
 "(migliore utente esperienza, più larghezza di banda)"
 
+#: transports/RDP/BaseRDPTransport.py:68
+msgid "Multiple monitors"
+msgstr "Monitor multipli"
+
+#: transports/RDP/BaseRDPTransport.py:68
+msgid ""
+"If checked, all client monitors will be used for displaying (only works on "
+"windows clients)"
+msgstr ""
+"Se selezionata, tutti i client monitor verranno utilizzati per la visualizzazione (funziona solo su "
+"client Windows)"
+
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
 msgstr "Trasporto di RDP (diretto)"
@@ -2952,7 +2962,7 @@ msgstr ""
 "in esecuzione prima di assegnandolo all'utente. (utilizzare il formato HOST: "
 "PORT)"
 
-#: transports/RDP/TSRDPTransport.py:83
+#: transports/RDP/TSRDPTransport.py:84
 #: transports/RGS_enterprise/TRGSTransport.py:71
 #: transports/TSNX/TSNXTransport.py:112
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -2962,20 +2972,20 @@ msgstr "Necessario utilizzare HOST: porta nel campo Server di Tunnel"
 msgid "Remote Desktop Protocol"
 msgstr "Remote Desktop Protocol"
 
-#: transports/RDP/web.py:90
+#: transports/RDP/web.py:91
 msgid "In order to use this service, you should first install CoRD."
 msgstr ""
 "Per poter utilizzare questo servizio, è necessario prima installare cavo."
 
-#: transports/RDP/web.py:91
+#: transports/RDP/web.py:92
 msgid "Download CoRD"
 msgstr "Scarica il cavo"
 
-#: transports/RDP/web.py:94
+#: transports/RDP/web.py:95
 msgid "Attention Safari Users:"
 msgstr "Attenzione utenti di Safari:"
 
-#: transports/RDP/web.py:95
+#: transports/RDP/web.py:96
 msgid ""
 "In order to access theese services, you will need to enable this in order to "
 "access to service:"
@@ -2983,11 +2993,11 @@ msgstr ""
 "Al fine di accedere ai servizi di theese, sarà necessario abilitare questo "
 "al fine di accedere al servizio:"
 
-#: transports/RDP/web.py:96
+#: transports/RDP/web.py:97
 msgid "Go to Safari > Preferences > Security > Manage Website Settings"
 msgstr "Vai su Safari > preferenze > sicurezza > gestire impostazioni sito Web"
 
-#: transports/RDP/web.py:97
+#: transports/RDP/web.py:98
 msgid ""
 "Click Java in left hand panel, and select site to allow UDS Rdp, and set it "
 "to Allow Always (also mark \"Unsecure mode\")."
@@ -2996,11 +3006,11 @@ msgstr ""
 "e impostarlo per consentire sempre (anche contrassegno \"Modalità non "
 "protetta\")."
 
-#: transports/RDP/web.py:98
+#: transports/RDP/web.py:99
 msgid "Users of Firefox or Chrome:"
 msgstr "Utenti di Firefox o Chrome:"
 
-#: transports/RDP/web.py:99
+#: transports/RDP/web.py:100
 msgid ""
 "If any warning is shown when launching RDP Applet, press \"ignore\" and "
 "continue"
