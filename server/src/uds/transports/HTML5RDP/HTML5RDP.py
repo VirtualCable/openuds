@@ -159,4 +159,4 @@ class HTML5RDPTransport(Transport):
 
         ticket = TicketStore.create(params)
 
-        return HttpResponseRedirect("{}/transport/?{}&{}".format(self.guacamoleServer.value, ticket, reverse('Index')))
+        return HttpResponseRedirect("{}/transport/?{}&{}".format(self.guacamoleServer.value, ticket, request.build_absolute_uri(reverse('Index'))))
