@@ -29,14 +29,36 @@ $ = jQuery
 
   (table, name) ->
     table = document.getElementById(table)  unless table.nodeType
+    tbl = $(table).dataTable().api()
+    settings = tbl.settings()[0]
+    iDisplayLength = settings._iDisplayLength
+    settings._iDisplayLength = -1
+    tbl.draw()
+
     ctx =
       worksheet: name or "Worksheet"
       table: table.innerHTML
 
-    saveAs new Blob([format(template, ctx)],
-                          type: content_type
-                        ), name + '.xls'
-    # window.location.href = uri + base64(format(template, ctx))
+    content = format(template, ctx)
+
+    settings._iDisplayLength = iDisplayLength
+    tbl.draw()
+
+    setTimeout( (()->
+        saveAs(
+          new Blob([content],
+                   type: content_type
+              ), 
+          name + '.xls'
+        )
+      ), 100)
+
+
+
+    #url = uri + base64(format(template, ctx))
+    #settings._iDisplayLength = iDisplayLength
+    #tbl.draw()
+    #window.location.href = url
     return
 )()
 
