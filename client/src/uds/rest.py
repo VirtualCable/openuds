@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -25,23 +26,50 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-26'
+from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import QObject, QUrl
+from PyQt4.Qt import QString
+from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest
 
-import logging
 
-logger = logging.getLogger(__name__)
+class RestRequest(QObject):
 
-from .login import login, logout, customAuth
-from .index import index, about
-from .prefs import prefs
-from .service import service, trans, transcomp, sernotify, transportIcon, serviceImage, clientEnabler
-from .auth import authCallback, authInfo, authJava, ticketAuth
-from .download import download
-from .client_download import client_downloads
-from .js import jsCatalog
-from ..errors import error
+    restApiUrl = ''  #
+    done = pyqtSignal(QObject)
+
+    def __init__(self, url, done):  # parent not used
+        super(RestRequest, self).__init__()
+        # private
+        self._manager = QNetworkAccessManager()
+        self.data = None
+        self.url = QUrl(RestRequest.restApiUrl + url)
+
+        # connect asynchronous result, when a request finishes
+        self._manager.finished.connect(self._finished)
+
+        self.done.connect(done)
+
+    # private slot, no need to declare as slot
+    def _finished(self, reply):
+        '''
+        Handle signal 'finished'.  A network request has finished.
+        '''
+        self.data = reply.readAll()
+        reply.deleteLater()  # schedule for delete from main event loop
+
+        self.done.emit(self)
+
+    '''
+      Public API
+    '''
+
+    def get(self):
+        print self.url
+        request = QNetworkRequest(self.url)
+        self._manager.get(request)

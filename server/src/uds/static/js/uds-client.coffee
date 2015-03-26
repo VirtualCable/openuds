@@ -25,6 +25,16 @@ uds.firefox = false
 )()
 
 
+blockUI = (message) ->
+  message = message or "<h1><span class=\"fa fa-spinner fa-spin\"></span> " + gettext("Just a moment...") + "</h1>"
+  $.blockUI 
+    message: message
+  return
+
+unblockUI = ->
+  $.unblockUI()
+  return
+
 
 #Default State
 isSupported = false
@@ -96,7 +106,6 @@ launchIE = (el, url, alt) ->
   return
 
 #Handle Firefox
-
 launchMozilla = (el, url, alt) ->
   if $('#hiddenUdsLauncherIFrame').length is 0
     $('body').append('<iframe id="hiddenUdsLauncherIFrame" src="about:blank" style="display:none"></iframe>')
@@ -115,7 +124,6 @@ launchMozilla = (el, url, alt) ->
   return
 
 #Handle Chrome
-
 launchChrome = (el, url, alt) ->
   isSupported = false
   el.focus()
@@ -137,6 +145,7 @@ launchChrome = (el, url, alt) ->
   ), 800
   return
 
+# Handle safari
 launchSafari = (el, url, alt) ->
   if $('#hiddenUdsLauncherIFrame').length is 0
     $('body').append('<iframe id="hiddenUdsLauncherIFrame" src="about:blank" style="display:none"></iframe>')
@@ -154,13 +163,34 @@ launchSafari = (el, url, alt) ->
   setTimeout (->
     window.onblur = null
     result(alt)
-  ), 800
+  ), 1800
 
 
 uds.launch = (el) ->
   url = el.attr('data-href')
   url = if url? then url else el.attr('href')
   alt = el.attr('data-href-alt')
+
+  blockUI()
+
+  # First get using REST the ticket for client
+  url = clientRest + '/' + url.split('//')[1]
+  $.ajax
+    url: url
+    type: "GET"
+    dataType: "json"
+    success: (data) ->
+      unblockUI()
+      alert data
+      return
+
+    error: (jqXHR, textStatus, errorThrown) ->
+      unblockUI()
+      alert gettext('Error accessing service: ') + textStatus
+      return
+
+
+  return
 
   if uds.firefox
     launchMozilla el, url, alt

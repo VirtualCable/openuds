@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import get_language
+from django.core.urlresolvers import reverse
 from django.utils import formats
 
 import re
@@ -41,14 +42,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def udsLink(request, ticket, scrambler, transport):
+def udsLink(request, ticket, scrambler):
 
     if request.is_secure():
         proto = 'udss'
     else:
         proto = 'uds'
 
-    return "{}://{}{}/{}/{}".format(proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler, transport.uuid)
+    return "{}://{}{}/{}".format(proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler)
+
+
+def udsAccessLink(request, serviceId, transportId):
+    return 'udsa://{}/{}'.format(serviceId, transportId)
 
 
 def parseDate(dateToParse):

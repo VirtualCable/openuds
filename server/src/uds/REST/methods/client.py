@@ -36,6 +36,7 @@ from django.utils.translation import ugettext as _
 
 from uds.core.util import log
 from uds.core.util.stats import events
+from django.core.urlresolvers import reverse
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import TicketStore
@@ -51,13 +52,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+CLIENT_VERSION = '1.7.0'
+MIN_CLIENT_VERSION = '1.7.0'
+
 
 # Enclosed methods under /actor path
 class Client(Handler):
     '''
     Processes actor requests
     '''
-    authenticated = False  # Actor requests are not authenticated
+    authenticated = False  # Client requests are not authenticated
 
     @staticmethod
     def result(result=None, error=None):
@@ -84,6 +88,10 @@ class Client(Handler):
         Processes get requests
         '''
         logger.debug("Client args for GET: {0}".format(self._args))
+
+        if len(self._args) == 0:
+            url = self._request.build_absolute_uri(reverse('ClientDownload'))
+            return Client.result({'version': CLIENT_VERSION, 'min_version': MIN_CLIENT_VERSION, 'download_url': url})
 
         if len(self._args) != 3:
             raise RequestError('Invalid request')

@@ -87,9 +87,11 @@
 		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
         <script src="{% get_static_prefix %}js/jquery-ui.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
+        <script src="{% get_static_prefix %}js/jquery.blockUI.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
+        <script>var clientRest = "/" + "{% url 'ClientAccessEnabler' 'x' 'x' %}".split("/")[1];</script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}js/uds-client.coffee"></script>
 
 		<script>

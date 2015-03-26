@@ -36,6 +36,12 @@ import sys
 from PyQt4 import QtCore, QtGui
 import six
 
+from uds.rest import RestRequest
+
+
+def done(data):
+    QtGui.QMessageBox.critical(None, 'Notice', six.text_type(data.data), QtGui.QMessageBox.Ok)
+    sys.exit(0)
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
@@ -47,16 +53,20 @@ if __name__ == "__main__":
             raise Exception()
 
         ssl = uri[3] == 's'
-        host, ticket, scrambler, trans = uri.split('//')[1].split('/')
+        host, ticket, scrambler = uri.split('//')[1].split('/')
 
     except Exception:
         QtGui.QMessageBox.critical(None, 'Notice', 'This program is designed to be used by UDS', QtGui.QMessageBox.Ok)
         sys.exit(1)
 
-    QtGui.QMessageBox.critical(None, 'Notice', '{} {} {} {} {}'.format(host, ticket, scrambler, trans, ssl), QtGui.QMessageBox.Ok)
+    # Build base REST
+    RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
 
-    sys.exit(1)
+    v = RestRequest('', done)
+    v.get()
+
+    # sys.exit(1)
 
     # myapp = UDSConfigDialog(cfg)
     # myapp.show()
-    # sys.exit(app.exec_())
+    sys.exit(app.exec_())

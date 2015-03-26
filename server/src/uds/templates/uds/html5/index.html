@@ -201,7 +201,7 @@
                 url = el.attr('data-href');
                 url = url != null ? url : el.attr('href');
 
-                if ( url.substring(0, 3) == 'uds' ) {
+                if ( url.substring(0, 7) == 'udsa://' ) {
                     uds.launch(el);
                 } else {
                     window.location = url;
@@ -225,7 +225,7 @@
                 url = el.attr('data-href');
                 url = url != null ? url : el.attr('href');
 
-                if ( url.substring(0, 3) == 'uds' ) {
+                if ( url.substring(0, 7) == 'udsa://' ) {
                     uds.launch(el);
                 } else {
                     window.location = url;

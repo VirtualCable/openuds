@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-23'
+__updated__ = '2015-03-26'
 
 from django.shortcuts import render_to_response
 from django.shortcuts import render
@@ -72,14 +72,6 @@ def index(request):
     # Session data
     os = request.os
 
-    scrambler = cryptoManager().randomString(32)
-    password = cryptoManager().xor(webPassword(request), scrambler)
-
-    if request.is_secure():
-        proto = 'udss'
-    else:
-        proto = 'uds'
-
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
     availServices = DeployedService.getDeployedServicesForGroups(groups)
@@ -103,24 +95,14 @@ def index(request):
     services = []
     # Select assigned user services
     for svr in availUserServices:
-        # Generate ticket
-        data = {
-            'type': 'A',
-            'service': svr.uuid,
-            'user': request.user.uuid,
-            'password': password
-        }
-
-        ticket = TicketStore.create(data)
-
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
             if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
                 if typeTrans.ownLink is True:
-                    link = reverse('TransportOwnLink', args=('A' + svr.uuid, trans.uuid))
+                    link = reverse('TransportOwnLink', args=('A' + svr.uuid, t.uuid))
                 else:
-                    link = html.udsLink(request, ticket, scrambler, t)
+                    link = html.udsAccessLink(request, 'A' + svr.uuid, t.uuid)
                 trans.append(
                     {
                         'id': t.uuid,
@@ -148,14 +130,6 @@ def index(request):
     # Now generic user service
     for svr in availServices:
         # Generate ticket
-        data = {
-            'type': 'F',
-            'service': svr.uuid,
-            'user': request.user.uuid,
-            'password': password
-        }
-
-        ticket = TicketStore.create(data)
 
         trans = []
         for t in svr.transports.all().order_by('priority'):
@@ -164,7 +138,7 @@ def index(request):
                 if typeTrans.ownLink is True:
                     link = reverse('TransportOwnLink', args=('F' + svr.uuid, t.uuid))
                 else:
-                    link = html.udsLink(request, ticket, scrambler, t)
+                    link = html.udsAccessLink(request, 'F' + svr.uuid, t.uuid)
                 trans.append(
                     {
                         'id': t.uuid,
@@ -211,8 +185,6 @@ def index(request):
             'ip': request.ip,
             'nets': nets,
             'transports': validTrans,
-            'host': proto + '://' + request.build_absolute_uri('/').split('//')[1],
-            'scrambler': scrambler,
         },
         context_instance=RequestContext(request)
     )
