@@ -30,7 +30,10 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-20'
+__updated__ = '2015-03-26'
+
+from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
+from django.utils.translation import ugettext_noop
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -42,6 +45,15 @@ from uds.core.util.OsDetector import desktopOss
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+UserPrefsManager.manager().registerPrefs(
+    '_uds',
+    ugettext_noop('UDS Plugin preferences'),
+    [
+        CommonPrefs.bypassPluginDetectionPref
+    ]
+)
 
 
 @webLoginRequired(admin=False)

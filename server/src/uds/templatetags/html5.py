@@ -38,6 +38,7 @@ from uds.core.util.request import getRequest
 from uds.core.auths.auth import ROOT_ID
 from uds.core.util.Config import GlobalConfig
 from uds.models.Image import Image
+from uds.core.managers.UserPrefsManager import UserPrefsManager
 
 import logging
 
@@ -113,6 +114,30 @@ def tabindex(parser, token):
         )
 
     return TabIndex(tabIndexName)
+
+
+class Preference(template.Node):
+    def __init__(self, modName, prefName):
+        self.modName = modName
+        self.prefName = prefName
+
+    def render(self, context):
+        prefs = context['user'].prefs(self.modName)
+        return prefs.get(self.prefName)
+
+
+@register.tag(name='preference')
+def preference(parser, token):
+    try:
+        # split_contents() knows not to split quoted strings.
+        tag_name, rest = token.split_contents()
+        modName, prefName = rest.split('.')
+    except ValueError:
+        raise template.TemplateSyntaxError(
+            "%r tag requires a single argument" % token.contents.split()[0]
+        )
+
+    return Preference(modName, prefName)
 
 
 @register.assignment_tag

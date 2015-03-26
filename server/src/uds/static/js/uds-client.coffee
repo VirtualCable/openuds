@@ -26,7 +26,7 @@ uds.firefox = false
 
 
 blockUI = (message) ->
-  message = message or "<h1><span class=\"fa fa-spinner fa-spin\"></span> " + gettext("Just a moment...") + "</h1>"
+  message = message or "<h1><span class=\"fa fa-spinner fa-spin\"></span> " + gettext("Contacting service...") + "</h1>"
   $.blockUI 
     message: message
   return
@@ -112,6 +112,7 @@ launchMozilla = (el, url, alt) ->
   iFrame = $('#hiddenUdsLauncherIFrame')[0]
   isSupported = false
   #Set iframe.src and handle exception
+  console.log "Launching " + url
   try
     iFrame.contentWindow.location.href = url
     isSupported = true
@@ -181,7 +182,13 @@ uds.launch = (el) ->
     dataType: "json"
     success: (data) ->
       unblockUI()
-      alert data
+      if data.error? and data.error isnt ''
+        alert data.error
+      else
+        if bypassPluginDetection is false
+          uds.doLaunch el, data.url, alt
+        else
+          window.location = data.url
       return
 
     error: (jqXHR, textStatus, errorThrown) ->
@@ -192,6 +199,7 @@ uds.launch = (el) ->
 
   return
 
+uds.doLaunch = (el, url, alt) ->
   if uds.firefox
     launchMozilla el, url, alt
   else if uds.chrome

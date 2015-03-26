@@ -210,7 +210,7 @@ def clientEnabler(request, idService, idTransport):
 
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
 
-    response = ''
+    url = ''
     error = _('Service not ready. Please, try again in a while.')
     try:
         res = getService(request, idService, idTransport)
@@ -230,9 +230,9 @@ def clientEnabler(request, idService, idTransport):
 
             ticket = TicketStore.create(data)
             error = ''
-            response = html.udsLink(request, ticket, scrambler)
+            url = html.udsLink(request, ticket, scrambler)
     except Exception as e:
         error = six.text_type(e)
 
     # Not ready, show message and return to this page in a while
-    return HttpResponse('{{ "response": "{}", "error": "{}" }}'.format(response, error), content_type='application/json')
+    return HttpResponse('{{ "url": "{}", "error": "{}" }}'.format(url, error), content_type='application/json')

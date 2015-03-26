@@ -76,10 +76,10 @@ class UserPrefsManager(object):
     def getHtmlForUserPreferences(self, user):
         # First fill data for all preferences
         data = {}
-        for up in user.preferences.all():
+        for up in user.preferences.all().order_by('module'):
             data[self.__nameFor(up.module, up.name)] = up.value
         res = ''
-        for mod, v in self._prefs.iteritems():
+        for mod, v in sorted(self._prefs.iteritems()):
             form = forms.Form()
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
@@ -166,12 +166,12 @@ class UserPreference(object):
         '''
         Returns a form field to add to the preferences form
         '''
-        raise NameError('Can\'t create an abstract preference!!!')
+        raise NotImplementedError('Can\'t create an abstract preference!!!')
 
     def guiField(self):
         '''
         '''
-        raise NameError('Can\'t create an abstract preference!!!')
+        raise NotImplementedError('Can\'t create an abstract preference!!!')
 
 
 class UserTextPreference(UserPreference):
@@ -225,6 +225,12 @@ class UserCheckboxPreference(UserPreference):
     def __init__(self, **kwargs):
         super(self.__class__, self).__init__(**kwargs)
 
+    def formField(self, value):
+        if value is None:
+            value = False
+        logger.debug('Value type: {}'.format(type(value)))
+        return forms.BooleanField(label=_(self._label), initial=value)
+
 
 class CommonPrefs(object):
     SZ_PREF = 'screenSize'
@@ -240,6 +246,8 @@ class CommonPrefs(object):
     DEPTH_16 = '2'
     DEPTH_24 = '3'
     DEPTH_32 = '4'
+
+    BYPASS_PREF = 'bypassPluginDetection'
 
     @staticmethod
     def getWidthHeight(prefsDict):
@@ -284,3 +292,10 @@ class CommonPrefs(object):
                                              (DEPTH_24, ugettext_lazy('24 bits')),
                                              (DEPTH_32, ugettext_lazy('32 bits')))
                                      )
+
+    bypassPluginDetectionPref = UserChoicePreference(name=BYPASS_PREF,
+                                                     label=ugettext_lazy('Plugin detection'),
+                                                     defvalue='0',
+                                                     values=(('0', ugettext_lazy('Detect plugin')),
+                                                             ('1', ugettext_lazy('Bypass plugin detection')))
+                                                     )
