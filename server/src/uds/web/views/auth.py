@@ -30,23 +30,19 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
+__updated__ = '2015-03-27'
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render_to_response
-from django.shortcuts import redirect
-from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from uds.core.auths.auth import webLogin, webLogout, webLoginRequired, authenticateViaCallback, authLogLogin, getUDSCookie
+from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.models import Authenticator, DeployedService, Transport
 from uds.core.util import OsDetector
 from uds.core.util.Ticket import Ticket
 from uds.core.util.State import State
-from uds.core.ui import theme
 from uds.core.auths.Exceptions import InvalidUserException
 from uds.core.services.Exceptions import InvalidServiceException, ServiceInMaintenanceMode
 
@@ -84,12 +80,10 @@ def authCallback(request, authName):
         os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
 
         if user is None:
-            authLogLogin(request, authenticator, '{0}'.format(params), False, os, 'Invalid at auth callback')
+            authLogLogin(request, authenticator, '{0}'.format(params), 'Invalid at auth callback')
             raise auths.Exceptions.InvalidUserException()
 
-        # Redirect to main page through java detection process, so UDS know the availability of java
-        response = render_to_response(theme.template('detectJava.html'), {'idAuth': authenticator.uuid},
-                                      context_instance=RequestContext(request))
+        response = HttpResponseRedirect(reverse('Index'))
 
         webLogin(request, response, user, '')  # Password is unavailable in this case
         request.session['OS'] = os
@@ -135,19 +129,6 @@ def authInfo(request, authName):
         return HttpResponse(info)
     except Exception:
         return HttpResponse(_('Authenticator does not provide information'))
-
-
-@webLoginRequired(admin=False)
-def authJava(request, idAuth, hasJava):
-    request.session['java'] = hasJava == 'y'
-    try:
-        authenticator = Authenticator.objects.get(uuid=idAuth)
-        os = OsDetector.getOsFromRequest(request)
-        authLogLogin(request, authenticator, request.user.name, request.session['java'], os)
-        return redirect('uds.web.views.index')
-
-    except Exception as e:
-        return errors.exceptionView(request, e)
 
 
 @never_cache
@@ -201,8 +182,6 @@ def ticketAuth(request, ticketId):
         # Force cookie generation
         webLogin(request, None, usr, password)
 
-        request.session['java'] = True
-        request.session['OS'] = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
 
         # Check if servicePool is part of the ticket

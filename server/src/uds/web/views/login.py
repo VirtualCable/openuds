@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
+__updated__ = '2015-03-27'
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -51,11 +51,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def login(request, smallName=None):
+def login(request, tag=None):
     '''
     View responsible of logging in an user
     :param request:  http request
-    :param smallName: smallName of login auth
+    :param tag: tag of login auth
     '''
     # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
 
@@ -64,17 +64,17 @@ def login(request, smallName=None):
     # Get Authenticators limitation
     logger.debug('Host: {0}'.format(host))
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(True) is True:
-        if smallName is None:
+        if tag is None:
             try:
                 Authenticator.objects.get(small_name=host)
-                smallName = host
+                tag = host
             except Exception:
                 try:
-                    smallName = Authenticator.objects.order_by('priority')[0].small_name
+                    tag = Authenticator.objects.order_by('priority')[0].small_name
                 except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
-                    smallName = None
+                    tag = None
 
-    logger.debug('Tag: {0}'.format(smallName))
+    logger.debug('Tag: {0}'.format(tag))
 
     logger.debug(request.method)
     if request.method == 'POST':
@@ -82,9 +82,8 @@ def login(request, smallName=None):
             logger.debug('Request does not have uds cookie')
             return errors.errorView(request, errors.COOKIES_NEEDED)  # We need cookies to keep session data
         request.session.cycle_key()
-        form = LoginForm(request.POST, smallName=smallName)
+        form = LoginForm(request.POST, tag=tag)
         if form.is_valid():
-            java = form.cleaned_data['java'] == 'y'
             os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
             try:
                 authenticator = Authenticator.objects.get(pk=form.cleaned_data['authenticator'])
@@ -99,7 +98,7 @@ def login(request, smallName=None):
                 tries = 0
             if authenticator.getInstance().blockUserOnLoginFailures is True and tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
                 form.add_form_error('Too many authentication errors. User temporarily  blocked.')
-                authLogLogin(request, authenticator, userName, java, os, 'Temporarily blocked')
+                authLogLogin(request, authenticator, userName, 'Temporarily blocked')
             else:
                 user = authenticate(userName, form.cleaned_data['password'], authenticator)
                 logger.debug('User: {}'.format(user))
@@ -109,20 +108,18 @@ def login(request, smallName=None):
                     tries += 1
                     cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
                     form.add_form_error('Invalid credentials')
-                    authLogLogin(request, authenticator, userName, java, os, 'Invalid credentials')
+                    authLogLogin(request, authenticator, userName, 'Invalid credentials')
                 else:
                     logger.debug('User {} has logged in'.format(userName))
                     cache.remove(cacheKey)  # Valid login, remove cached tries
                     response = HttpResponseRedirect(reverse('uds.web.views.index'))
                     webLogin(request, response, user, form.cleaned_data['password'])
                     # Add the "java supported" flag to session
-                    request.session['java'] = java
                     request.session['OS'] = os
-                    logger.debug('Navigator supports java? {0}'.format(java))
-                    authLogLogin(request, authenticator, user.name, java, os)
+                    authLogLogin(request, authenticator, user.name)
                     return response
     else:
-        form = LoginForm(smallName=smallName)
+        form = LoginForm(tag=tag)
 
     response = render_to_response(theme.template('login.html'), {'form': form, 'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True)},
                                   context_instance=RequestContext(request))

@@ -43,7 +43,7 @@ urlpatterns = patterns(
     'uds',
     url(r'^$', 'web.views.index', name='Index'),
     (r'^login/$', 'web.views.login'),
-    (r'^login/(?P<smallName>.+)$', 'web.views.login'),
+    (r'^login/(?P<tag>.+)$', 'web.views.login'),
     (r'^logout$', 'web.views.logout'),
     (r'^service/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.service'),
     # Icons
@@ -69,12 +69,12 @@ urlpatterns = patterns(
     # downloads for client
     url(r'^down$', 'web.views.client_downloads', name='ClientDownload'),
     (r'^down/(?P<os>[a-zA-Z0-9-]*)$', 'web.views.client_downloads'),
+    url(r'^pluginDetection/(?P<detection>[a-zA-Z0-9-]*)$', 'web.views.plugin_detection', name='PluginDetection'),
     # Client access enabler
     url(r'^enable/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.clientEnabler', name='ClientAccessEnabler'),
 
     # Custom authentication callback
     (r'^auth/(?P<authName>.+)', 'web.views.authCallback'),
-    (r'^authJava/(?P<idAuth>.+)/(?P<hasJava>.*)$', 'web.views.authJava'),
     (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),
     (r'^about', 'web.views.about'),
     # Ticket authentication

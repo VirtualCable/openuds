@@ -93,14 +93,13 @@
         <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
         <script>
             var clientRest = "/" + "{% url 'ClientAccessEnabler' 'x' 'x' %}".split("/")[1];
-            var bypassPluginDetection = {% preference _uds.bypassPluginDetection %} != 0;
+            var bypassPluginDetection = "{% preference _uds.bypassPluginDetection %}" == "1";
         </script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}js/uds-client.coffee"></script>
 
 		<script>
 			$(function(){
 				$('.selectpicker').selectpicker();
-                window.uds.onLink();
 			});
 		</script>
     {% endcompress %}

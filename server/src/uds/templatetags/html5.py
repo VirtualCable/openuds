@@ -122,6 +122,9 @@ class Preference(template.Node):
         self.prefName = prefName
 
     def render(self, context):
+        if context.get('user') is None:
+            return ''
+
         prefs = context['user'].prefs(self.modName)
         return prefs.get(self.prefName)
 

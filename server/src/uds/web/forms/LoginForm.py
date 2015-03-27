@@ -42,6 +42,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# pylint: disable=no-value-for-parameter, unexpected-keyword-arg
+
 
 class CustomSelect(forms.Select):
     def render(self, name, value, attrs=None):
@@ -64,7 +66,7 @@ class BaseForm(forms.Form):
     def add_form_error(self, message):
         if not self._errors:
             self._errors = ErrorDict()
-        if not NON_FIELD_ERRORS in self._errors:
+        if NON_FIELD_ERRORS not in self._errors:
             self._errors[NON_FIELD_ERRORS] = self.error_class()
         self._errors[NON_FIELD_ERRORS].append(message)
 
@@ -73,17 +75,16 @@ class LoginForm(BaseForm):
     user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())
     password = forms.CharField(label=_('Password'), widget=forms.PasswordInput(attrs={'title': _('Password')}), required=False)
     authenticator = forms.ChoiceField(label=_('Authenticator'), choices=(), widget=CustomSelect(), required=False)
-    java = forms.CharField(widget=forms.HiddenInput())
     standard = forms.CharField(widget=forms.HiddenInput(), required=False)
     nonStandard = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         # If an specified login is passed in, retrieve it & remove it from kwargs dict
-        smallName = kwargs.get('smallName', None)
-        if kwargs.has_key('smallName'):
-            del kwargs['smallName']
+        tag = kwargs.get('tag', None)
+        if 'tag' in kwargs:
+            del kwargs['tag']
 
-        logger.debug('smallName is "{0}"'.format(smallName))
+        logger.debug('tag is "{0}"'.format(tag))
 
         super(LoginForm, self).__init__(*args, **kwargs)
         choices = []
@@ -91,8 +92,8 @@ class LoginForm(BaseForm):
         standard = []
 
         auths = None
-        if smallName is not None:
-            auths = Authenticator.objects.filter(small_name=smallName).order_by('priority', 'name')
+        if tag is not None:
+            auths = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
             if auths.count() == 0:
                 auths = Authenticator.objects.all().order_by('priority', 'name')[0:1]
             logger.debug(auths)
@@ -103,7 +104,7 @@ class LoginForm(BaseForm):
         for a in auths:
             if a.getType() is None:
                 continue
-            if a.getType().isCustom() and smallName == 'disabled':
+            if a.getType().isCustom() and tag == 'disabled':
                 continue
             choices.append((a.id, a.name))
             if a.getType().isCustom():

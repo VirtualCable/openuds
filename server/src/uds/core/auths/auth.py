@@ -49,12 +49,11 @@ from uds.core.util.stats import events
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core.util.State import State
 from uds.models import User
-from uds.core.util.request import getRequest
 
 import logging
 import six
 
-__updated__ = '2015-03-06'
+__updated__ = '2015-03-27'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -102,7 +101,7 @@ def getIp(request):
 
 
 # Decorator to make easier protect pages that needs to be logged in
-def webLoginRequired(admin):
+def webLoginRequired(admin=False):
     '''
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
@@ -113,17 +112,7 @@ def webLoginRequired(admin):
             '''
             Wrapped function for decorator
             '''
-            user = request.session.get(USER_KEY)
-            if user is not None:
-                try:
-                    if user == ROOT_ID:
-                        user = getRootUser()
-                    else:
-                        user = User.objects.get(pk=user)
-                except User.DoesNotExist:
-                    user = None
-
-            if user is None:
+            if request.user is None:
                 url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
                 if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
                     url = url.replace('http://', 'https://')
@@ -131,12 +120,9 @@ def webLoginRequired(admin):
                 return HttpResponseRedirect(url)
 
             if admin is True or admin == 'admin':
-                if user.isStaff() is False or (admin == 'admin' and user.is_admin is False):
+                if request.user.isStaff() is False or (admin == 'admin' and request.user.is_admin is False):
                     return HttpResponseForbidden(_('Forbidden'))
 
-            # Refresh session duration
-            # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
-            request.user = user
             return view_func(request, *args, **kwargs)
         return _wrapped_view
     return decorator
@@ -166,6 +152,8 @@ def __registerUser(authenticator, authInstance, username):
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
     authenticate will return false, if external and return true, will create a reference in database
     '''
+    from uds.core.util.request import getRequest
+
     username = authInstance.transformUsername(username)
     logger.debug('Transformed username: {0}'.format(username))
 
@@ -325,25 +313,24 @@ def webLogout(request, exit_url=None):
     return HttpResponseRedirect(request.build_absolute_uri(exit_url))
 
 
-def authLogLogin(request, authenticator, userName, java, os, logStr=''):
+def authLogLogin(request, authenticator, userName, logStr=''):
     '''
     Logs authentication
     '''
     if logStr == '':
         logStr = 'Logged in'
 
-    javaStr = java and 'Java' or 'No Java'
-    authLogger.info('|'.join([authenticator.name, userName, request.ip, javaStr, os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
+    authLogger.info('|'.join([authenticator.name, userName, request.ip, request.os['OS'], logStr, request.META.get('HTTP_USER_AGENT', 'Undefined')]))
     level = (logStr == 'Logged in') and log.INFO or log.ERROR
-    log.doLog(authenticator, level, 'user {0} has {1} from {2} {3} java and os is {4}'.format(userName, logStr,
-                                                                                              request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB)
+    log.doLog(authenticator, level, 'user {0} has {1} from {2} where os is {3}'.format(userName, logStr,
+                                                                                       request.ip, request.os['OS']), log.WEB)
 
     try:
         user = authenticator.users.get(name=userName)
         log.doLog(user, level,
-                  '{0} from {1} {2} java and os is {3}'.format(logStr, request.ip, java and 'has' or 'has NOT', os['OS']), log.WEB
+                  '{0} from {1} where os is {3}'.format(logStr, request.ip, request.os['OS']), log.WEB
                   )
-    except:
+    except Exception:
         pass
 
 

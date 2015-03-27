@@ -32,11 +32,13 @@
 from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
+from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
+from uds.models import User
 
 import threading
 import logging
 
-__updated__ = '2015-03-18'
+__updated__ = '2015-03-27'
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +62,9 @@ class GlobalRequestMiddleware(object):
         GlobalRequestMiddleware.fillIps(request)
         # Ensures request contains os
         OsDetector.getOsFromRequest(request)
+        # Ensures that requests contains the valid user
+        GlobalRequestMiddleware.getUser(request)
+
         # Add a counter var, reseted on every request
         _requests[getIdent()] = request
         return None
@@ -98,3 +103,22 @@ class GlobalRequestMiddleware(object):
             request.ip_proxy = request.ip
             request.is_proxy = False
 
+    @staticmethod
+    def getUser(request):
+        '''
+        Ensures request user is the correct user
+        '''
+        user = request.session.get(USER_KEY)
+        if user is not None:
+            try:
+                if user == ROOT_ID:
+                    user = getRootUser()
+                else:
+                    user = User.objects.get(pk=user)
+            except User.DoesNotExist:
+                user = None
+
+        if user is not None:
+            request.user = user
+        else:
+            request.user = None

@@ -73,6 +73,12 @@ class UserPrefsManager(object):
                 prefs[p.getName()] = p.getDefValue()
         return prefs
 
+    def setPreferenceForUser(self, user, modName, prefName, value):
+        try:
+            user.preferences.create(module=modName, name=prefName, value=value)
+        except Exception:
+            user.preferences.filter(module=modName, name=prefName).update(value=value)
+
     def getHtmlForUserPreferences(self, user):
         # First fill data for all preferences
         data = {}

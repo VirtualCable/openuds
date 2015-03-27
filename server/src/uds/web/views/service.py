@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-26'
+__updated__ = '2015-03-27'
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect
@@ -62,7 +62,7 @@ logger = logging.getLogger(__name__)
 __updated__ = '2015-02-22'
 
 
-def getService(request, idService, idTransport):
+def getService(request, idService, idTransport, doTest=True):
     kind, idService = idService[0], idService[1:]
 
     logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
@@ -82,6 +82,10 @@ def getService(request, idService, idTransport):
 
     logger.debug('Found service: {0}'.format(ads))
     trans = Transport.objects.get(uuid=idTransport)
+
+    if doTest is False:
+        return (None, ads, None, trans, None)
+
     # Test if the service is ready
     if ads.isReady():
         log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
@@ -213,13 +217,13 @@ def clientEnabler(request, idService, idTransport):
     url = ''
     error = _('Service not ready. Please, try again in a while.')
     try:
-        res = getService(request, idService, idTransport)
+        res = getService(request, idService, idTransport, doTest=False)
         if res is not None:
 
             scrambler = cryptoManager().randomString(32)
             password = cryptoManager().xor(webPassword(request), scrambler)
 
-            ip, ads, iads, trans, itrans = res
+            _x, ads, _x, trans, _x = res
 
             data = {
                 'service': ads.uuid,

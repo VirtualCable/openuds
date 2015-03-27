@@ -30,14 +30,15 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-26'
+__updated__ = '2015-03-27'
 
-from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
+from django.http import HttpResponse
 from django.utils.translation import ugettext_noop
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
 from uds.core.auths.auth import webLoginRequired
 from uds.core.ui import theme
 from uds.core.util.OsDetector import desktopOss
@@ -56,15 +57,22 @@ UserPrefsManager.manager().registerPrefs(
 )
 
 
-@webLoginRequired(admin=False)
 def client_downloads(request, os=None):
     '''
-    Downloadables management
+    Download page for UDS plugins
     '''
     if os not in desktopOss:
         os = request.os['OS']
     logger.debug('User: {}'.format(request.user))
     os = os.lower()
-    return render_to_response(theme.template('client/download_client.html'),
+    return render_to_response(theme.template('download_client.html'),
                               {'os': os, 'user': request.user},
                               context_instance=RequestContext(request))
+
+
+@webLoginRequired(admin=False)
+def plugin_detection(request, detection):
+    if detection != '0':
+        detection = '1'
+    UserPrefsManager.manager().setPreferenceForUser(request.user, '_uds', CommonPrefs.BYPASS_PREF, detection)
+    return HttpResponse(content='', content_type='text/plain')

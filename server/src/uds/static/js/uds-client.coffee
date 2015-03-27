@@ -40,6 +40,7 @@ unblockUI = ->
 isSupported = false
 
 result = (url) ->
+  unblockUI()
   if isSupported is false
     location.href = url
 
@@ -61,6 +62,7 @@ launchIE = (el, url, alt) ->
   #IE10+
   if navigator.msLaunchUri
     navigator.msLaunchUri url, (->
+      unblockUI()
       isSupported = true
       return
     ), ->
@@ -79,6 +81,7 @@ launchIE = (el, url, alt) ->
     console.log 'Blur'
     window.onblur = null
     isSupported = true
+    result(alt)
     return
   )
 
@@ -87,7 +90,7 @@ launchIE = (el, url, alt) ->
   setTimeout (->
     window.onblur = null
     result(alt)
-  ), 800
+  ), 2800
 
   # setTimeout (->
   #   try
@@ -131,8 +134,8 @@ launchChrome = (el, url, alt) ->
 
   window.onblur = ->
     isSupported = true
-    console.log 'onblur called'
     window.onblur = null
+    result(alt)
     return
 
   #will trigger onblur
@@ -143,7 +146,7 @@ launchChrome = (el, url, alt) ->
     if isSupported is false
       result(alt)
     return
-  ), 800
+  ), 2800
   return
 
 # Handle safari
@@ -156,7 +159,7 @@ launchSafari = (el, url, alt) ->
 
   window.onblur = ->
     isSupported = true
-    console.log 'Text Field onblur called'
+    result(alt)
     return
 
   iFrame.contentWindow.location.href = url
@@ -164,7 +167,7 @@ launchSafari = (el, url, alt) ->
   setTimeout (->
     window.onblur = null
     result(alt)
-  ), 1800
+  ), 2800
 
 
 uds.launch = (el) ->
@@ -181,13 +184,13 @@ uds.launch = (el) ->
     type: "GET"
     dataType: "json"
     success: (data) ->
-      unblockUI()
       if data.error? and data.error isnt ''
         alert data.error
       else
         if bypassPluginDetection is false
           uds.doLaunch el, data.url, alt
         else
+          unblockUI()
           window.location = data.url
       return
 
