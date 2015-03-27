@@ -43,7 +43,9 @@ from uds.models import TicketStore
 from uds.models import UserService, Transport, ServicePool, User
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.web import errors
+from uds.web.views.service import getService
 from uds.core.managers import cryptoManager
+
 
 import datetime
 import six
@@ -53,8 +55,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = '1.7.0'
-MIN_CLIENT_VERSION = '1.7.0'
-
+REQUIRED_CLIENT_VERSION = '1.7.0'
 
 # Enclosed methods under /actor path
 class Client(Handler):
@@ -91,9 +92,13 @@ class Client(Handler):
 
         if len(self._args) == 0:
             url = self._request.build_absolute_uri(reverse('ClientDownload'))
-            return Client.result({'version': CLIENT_VERSION, 'min_version': MIN_CLIENT_VERSION, 'download_url': url})
+            return Client.result({
+                'available_version': CLIENT_VERSION,
+                'required_version': REQUIRED_CLIENT_VERSION,
+                'download_url': url
+            })
 
-        if len(self._args) != 3:
+        if len(self._args) != 2:
             raise RequestError('Invalid request')
 
         try:
@@ -101,54 +106,41 @@ class Client(Handler):
         except Exception:
             return Client.result(error=errors.ACCESS_DENIED)
 
-        transportId = self._args[2]
-
         password = cryptoManager().xor(self._args[1], data['password']).decode('utf-8')
+        user = User.objects.get(uuid=data['user'])
+        userService = UserService.objects.get(uuid=data['service'])
+        transport = Transport.objects.get(uuid=data['transport'])
 
         try:
-            logger.debug('Kind of service: {}, idService: {}, idTransport: {}, user: {}'.format(data['type'], data['service'], transportId, data['user']))
+            logger.debug('idService: {}, idTransport: {}, user: {}'.format(data['service'], data['transport'], data['user']))
 
-            user = User.objects.get(uuid=data['user'])
-
-            if data['type'] == 'A':  # This is an assigned service
-                ads = UserService.objects.get(uuid=data['service'])
-            else:
-                ds = ServicePool.objects.get(uuid=data['service'])
-
-                # The user is extracted from ticket itself
-
-                ds.validateUser(user)
-                # Now we have to locate an instance of the service, so we can assign it to user.
-                ads = UserServiceManager.manager().getAssignationForUser(ds, user)
-
-            if ads.isInMaintenance() is True:
+            if userService.isInMaintenance():
                 return Client.result(error=errors.SERVICE_IN_MAINTENANCE)
 
-            logger.debug('Found service: {0}'.format(ads))
-            trans = Transport.objects.get(uuid=transportId)
+            logger.debug('Found service: {0}'.format(userService))
 
             # Test if the service is ready
-            if ads.isReady():
-                log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(user.name, self._request.ip), log.WEB)
+            if userService.isReady():
+                log.doLog(userService, log.INFO, "User {0} from {1} has initiated access".format(user.name, self._request.ip), log.WEB)
                 # If ready, show transport for this service, if also ready ofc
-                iads = ads.getInstance()
-                ip = iads.getIp()
-                events.addEvent(ads.deployed_service, events.ET_ACCESS, username=user.name, srcip=self._request.ip, dstip=ip, uniqueid=ads.unique_id)
+                userServiceIntance = userService.getInstance()
+                ip = userServiceIntance.getIp()
+                events.addEvent(userService.deployed_service, events.ET_ACCESS, username=user.name, srcip=self._request.ip, dstip=ip, uniqueid=userService.unique_id)
                 if ip is not None:
-                    itrans = trans.getInstance()
-                    if itrans.isAvailableFor(ip):
-                        ads.setConnectionSource(self._request.ip, 'unknown')
-                        log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
-                        transportInfo = itrans.getUDSTransportData(ads, trans, ip, self.request.os, user, password, self._request)
-                        UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, user), itrans.protocol)
+                    transportInstance = transport.getInstance()
+                    if transportInstance.isAvailableFor(ip):
+                        userService.setConnectionSource(self._request.ip, 'unknown')
+                        log.doLog(userService, log.INFO, "User service ready, rendering transport", log.WEB)
+                        UserServiceManager.manager().notifyPreconnect(userService, transportInstance.processedUser(userService, user), transportInstance.protocol)
+                        transportInfo = transportInstance.getUDSTransportData(userService, transport, ip, self.request.os, user, password, self._request)
                         return Client.result(transportInfo)
                     else:
-                        log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                        logger.debug('Transport is not ready for user service {0}'.format(ads))
+                        log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
+                        logger.debug('Transport is not ready for user service {0}'.format(userService))
                 else:
-                    logger.debug('Ip not available from user service {0}'.format(ads))
+                    logger.debug('Ip not available from user service {0}'.format(userService))
             else:
-                log.doLog(ads, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(user.name, self._request.ip), log.WEB)
+                log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(user.name, self._request.ip), log.WEB)
             # Not ready, show message and return to this page in a while
             return Client.result(error=errors.SERVICE_NOT_READY)
         except Exception:
