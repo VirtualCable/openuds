@@ -54,8 +54,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-CLIENT_VERSION = '1.7.0'
-REQUIRED_CLIENT_VERSION = '1.7.0'
+CLIENT_VERSION = '1.7.5'
+REQUIRED_CLIENT_VERSION = '1.7.5'
 
 
 # Enclosed methods under /actor path
@@ -74,8 +74,10 @@ class Client(Handler):
         :return: A dictionary, suitable for response to Caller
         '''
         result = result if result is not None else ''
-        res = {'result': result, 'date': datetime.datetime.now()}
+        res = {'result': result}
         if error is not None:
+            if isinstance(error, int):
+                error = errors.errorString(error)
             res['error'] = error
         return res
 
@@ -90,13 +92,14 @@ class Client(Handler):
         Processes get requests
         '''
         logger.debug("Client args for GET: {0}".format(self._args))
+        # return Client.result(error=errors.ACCESS_DENIED)
 
         if len(self._args) == 0:
             url = self._request.build_absolute_uri(reverse('ClientDownload'))
             return Client.result({
-                'available_version': CLIENT_VERSION,
-                'required_version': REQUIRED_CLIENT_VERSION,
-                'download_url': url
+                'availableVersion': CLIENT_VERSION,
+                'requiredVersion': REQUIRED_CLIENT_VERSION,
+                'downloadUrl': url
             })
 
         if len(self._args) != 2:

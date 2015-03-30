@@ -38,6 +38,65 @@ import six
 
 from uds.rest import RestRequest
 from uds.forward import forward
+import webbrowser
+
+from UDSWindow import Ui_MainWindow
+
+# Client connector version
+VERSION = '1.9.5'
+
+
+class UDSClient(QtGui.QMainWindow):
+    def __init__(self):
+        QtGui.QMainWindow.__init__(self)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
+
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        self.ui.progressBar.setValue(0)
+        self.ui.cancelButton.clicked.connect(self.cancelPushed)
+
+        self.activateWindow()
+
+    def closeWindow(self):
+        self.close()
+
+    def processError(self, rest):
+        if 'error' in rest.data:
+            raise Exception(rest.data['error'])
+            # QtGui.QMessageBox.critical(self, 'Request error', rest.data['error'], QtGui.QMessageBox.Ok)
+            # self.closeWindow()
+            # return
+
+    def cancelPushed(self):
+        self.close()
+
+    def version(self, rest):
+        try:
+            self.ui.progressBar.setValue(10)
+
+            self.processError(rest)
+
+            if rest.data['result']['requiredVersion'] > VERSION:
+                QtGui.QMessageBox.critical(self, 'Upgrade required', 'A newer connector version is required.\nA browser will be opened to download it.', QtGui.QMessageBox.Ok)
+                webbrowser.open(rest.data['result']['downloadUrl'])
+                self.closeWindow()
+                return
+
+            QtGui.QMessageBox.critical(self, 'Notice', six.text_type(rest.data), QtGui.QMessageBox.Ok)
+
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
+            self.closeWindow()
+
+    def showEvent(self, *args, **kwargs):
+        '''
+        Starts proccess by requesting version info
+        '''
+        self.ui.info.setText('Requesting required connector version...')
+        self.req = RestRequest('', self, self.version)
+        self.req.get()
 
 
 def done(data):
@@ -46,6 +105,7 @@ def done(data):
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
+    app.setStyle(QtGui.QStyleFactory.create('plastique'))
 
     if six.PY3 is False:
         import threading
@@ -64,14 +124,26 @@ if __name__ == "__main__":
         QtGui.QMessageBox.critical(None, 'Notice', 'This program is designed to be used by UDS', QtGui.QMessageBox.Ok)
         sys.exit(1)
 
-    # Build base REST
-    RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
+    # Setup REST api endpoint
+    # RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
+    RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
 
-    v = RestRequest('', done)
-    v.get()
+    try:
+        win = UDSClient()
+        win.show()
+
+        sys.exit(app.exec_())
+    except Exception as e:
+        QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
+
+    sys.stdin.read()
+    QtGui.QMessageBox.critical(None, 'Error', 'test', QtGui.QMessageBox.Ok)
+    # Build base REST
+
+    # v = RestRequest('', done)
+    # v.get()
 
     # sys.exit(1)
 
     # myapp = UDSConfigDialog(cfg)
     # myapp.show()
-    sys.exit(app.exec_())

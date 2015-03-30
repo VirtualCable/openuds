@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2015 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,8 +34,11 @@ from __future__ import unicode_literals
 
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtCore import QObject, QUrl
-from PyQt4.Qt import QString
-from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest
+from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
+from PyQt4.QtGui import QMessageBox
+
+import json
+import six
 
 
 class RestRequest(QObject):
@@ -43,7 +46,7 @@ class RestRequest(QObject):
     restApiUrl = ''  #
     done = pyqtSignal(QObject)
 
-    def __init__(self, url, done):  # parent not used
+    def __init__(self, url, parentWindow, done):  # parent not used
         super(RestRequest, self).__init__()
         # private
         self._manager = QNetworkAccessManager()
@@ -52,6 +55,8 @@ class RestRequest(QObject):
 
         # connect asynchronous result, when a request finishes
         self._manager.finished.connect(self._finished)
+        self._manager.sslErrors.connect(self._sslError)
+        self._parentWindow = parentWindow
 
         self.done.connect(done)
 
@@ -60,14 +65,32 @@ class RestRequest(QObject):
         '''
         Handle signal 'finished'.  A network request has finished.
         '''
-        self.data = reply.readAll()
-        reply.deleteLater()  # schedule for delete from main event loop
+        try:
+            if reply.error() != QNetworkReply.NoError:
+                raise Exception(reply.errorString())
 
+            data = six.text_type(reply.readAll())
+            self.data = json.loads(data)
+        except Exception as e:
+            self.data = {
+                'result': None,
+                'error': six.text_type(e)
+            }
+
+        reply.deleteLater()  # schedule for delete from main event loop
         self.done.emit(self)
 
-    '''
-      Public API
-    '''
+    def _sslError(self, reply, errors):
+
+        print "SSL Error"
+        print reply
+        cert = errors[0].certificate()
+        errorString = 'The certificate for "{}" has the following errors:\n'.format(cert.subjectInfo(QSslCertificate.CommonName))
+        for err in errors:
+            errorString += err.errorString() + '\n'
+
+        if QMessageBox.warning(self._parentWindow, 'SSL Error', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
+            reply.ignoreSslErrors()
 
     def get(self):
         print self.url

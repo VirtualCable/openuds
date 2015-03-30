@@ -164,7 +164,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.app = app_
 
         style = app.style()
-        icon = QtGui.QIcon(style.standardPixmap(QtGui.QStyle.SP_DesktopIcon))
+        icon = QtGui.QIcon(style.standardPixmap(QtGui.QStyle.SP_ComputerIcon))
 
         QtGui.QSystemTrayIcon.__init__(self, icon, parent)
         self.menu = QtGui.QMenu(parent)
