@@ -57,6 +57,7 @@ logger = logging.getLogger(__name__)
 CLIENT_VERSION = '1.7.0'
 REQUIRED_CLIENT_VERSION = '1.7.0'
 
+
 # Enclosed methods under /actor path
 class Client(Handler):
     '''
@@ -106,44 +107,18 @@ class Client(Handler):
         except Exception:
             return Client.result(error=errors.ACCESS_DENIED)
 
-        password = cryptoManager().xor(self._args[1], data['password']).decode('utf-8')
-        user = User.objects.get(uuid=data['user'])
-        userService = UserService.objects.get(uuid=data['service'])
-        transport = Transport.objects.get(uuid=data['transport'])
+        self._request.user = User.objects.get(uuid=data['user'])
 
         try:
-            logger.debug('idService: {}, idTransport: {}, user: {}'.format(data['service'], data['transport'], data['user']))
+            res = getService(self._request, data['service'], data['transport'])
+            if res is not None:
+                ip, userService, userServiceInstance, transport, transportInstance = res
+                password = cryptoManager().xor(self._args[1], data['password']).decode('utf-8')
 
-            if userService.isInMaintenance():
-                return Client.result(error=errors.SERVICE_IN_MAINTENANCE)
-
-            logger.debug('Found service: {0}'.format(userService))
-
-            # Test if the service is ready
-            if userService.isReady():
-                log.doLog(userService, log.INFO, "User {0} from {1} has initiated access".format(user.name, self._request.ip), log.WEB)
-                # If ready, show transport for this service, if also ready ofc
-                userServiceIntance = userService.getInstance()
-                ip = userServiceIntance.getIp()
-                events.addEvent(userService.deployed_service, events.ET_ACCESS, username=user.name, srcip=self._request.ip, dstip=ip, uniqueid=userService.unique_id)
-                if ip is not None:
-                    transportInstance = transport.getInstance()
-                    if transportInstance.isAvailableFor(ip):
-                        userService.setConnectionSource(self._request.ip, 'unknown')
-                        log.doLog(userService, log.INFO, "User service ready, rendering transport", log.WEB)
-                        UserServiceManager.manager().notifyPreconnect(userService, transportInstance.processedUser(userService, user), transportInstance.protocol)
-                        transportInfo = transportInstance.getUDSTransportData(userService, transport, ip, self.request.os, user, password, self._request)
-                        return Client.result(transportInfo)
-                    else:
-                        log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                        logger.debug('Transport is not ready for user service {0}'.format(userService))
-                else:
-                    logger.debug('Ip not available from user service {0}'.format(userService))
-            else:
-                log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(user.name, self._request.ip), log.WEB)
-            # Not ready, show message and return to this page in a while
-            return Client.result(error=errors.SERVICE_NOT_READY)
-        except Exception:
+                transportInfo = transportInstance.getUDSTransportData(userService, transport, ip, self.request.os, self._request.user, password, self._request)
+                return Client.result(transportInfo)
+        except Exception as e:
             logger.exception("Exception")
+            return Client.result(error=six.text_type(e))
 
-        raise RequestError('Request error')
+        return Client.result(error=errors.SERVICE_NOT_READY)

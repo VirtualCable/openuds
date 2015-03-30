@@ -37,6 +37,7 @@ from PyQt4 import QtCore, QtGui
 import six
 
 from uds.rest import RestRequest
+from uds.forward import forward
 
 
 def done(data):
@@ -45,6 +46,10 @@ def done(data):
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
+
+    if six.PY3 is False:
+        import threading
+        threading._DummyThread._Thread__stop = lambda x: 42
 
     # First parameter must be url
     try:
