@@ -32,25 +32,27 @@
 '''
 from __future__ import unicode_literals
 
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtCore import QObject, QUrl
+from PyQt4.QtCore import pyqtSignal, pyqtSlot
+from PyQt4.QtCore import QObject, QUrl, QSettings
+from PyQt4.QtCore import Qt
 from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
 from PyQt4.QtGui import QMessageBox
 
 import json
+import osDetector
 import six
 
 
 class RestRequest(QObject):
 
     restApiUrl = ''  #
-    done = pyqtSignal(QObject)
+
+    done = pyqtSignal(dict, name='done')
 
     def __init__(self, url, parentWindow, done):  # parent not used
         super(RestRequest, self).__init__()
         # private
         self._manager = QNetworkAccessManager()
-        self.data = None
         self.url = QUrl(RestRequest.restApiUrl + url)
 
         # connect asynchronous result, when a request finishes
@@ -58,9 +60,10 @@ class RestRequest(QObject):
         self._manager.sslErrors.connect(self._sslError)
         self._parentWindow = parentWindow
 
-        self.done.connect(done)
+        self.done.connect(done, Qt.QueuedConnection)
 
     # private slot, no need to declare as slot
+    @pyqtSlot(QNetworkReply)
     def _finished(self, reply):
         '''
         Handle signal 'finished'.  A network request has finished.
@@ -69,30 +72,37 @@ class RestRequest(QObject):
             if reply.error() != QNetworkReply.NoError:
                 raise Exception(reply.errorString())
 
-            data = six.text_type(reply.readAll())
-            self.data = json.loads(data)
+            data = json.loads(six.text_type(reply.readAll()))
         except Exception as e:
-            self.data = {
+            data = {
                 'result': None,
                 'error': six.text_type(e)
             }
 
+        self.done.emit(data)
+
         reply.deleteLater()  # schedule for delete from main event loop
-        self.done.emit(self)
 
+    @pyqtSlot(QNetworkReply, list)
     def _sslError(self, reply, errors):
-
-        print "SSL Error"
-        print reply
+        settings = QSettings()
         cert = errors[0].certificate()
-        errorString = 'The certificate for "{}" has the following errors:\n'.format(cert.subjectInfo(QSslCertificate.CommonName))
-        for err in errors:
-            errorString += err.errorString() + '\n'
+        digest = six.text_type(cert.digest().toHex())
 
-        if QMessageBox.warning(self._parentWindow, 'SSL Error', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
+        approved = settings.value(digest, False).toBool()
+
+        errorString = '<p>The certificate for <b>{}</b> has the following errors:</p><ul>'.format(cert.subjectInfo(QSslCertificate.CommonName))
+
+        for err in errors:
+            errorString += '<li>' + err.errorString() + '</li>'
+
+        errorString += '</ul>'
+
+        if approved or QMessageBox.warning(self._parentWindow, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
+            settings.setValue(digest, True)
             reply.ignoreSslErrors()
 
     def get(self):
-        print self.url
         request = QNetworkRequest(self.url)
+        request.setRawHeader('User-Agent', osDetector.getOs() + " - UDS Connector")
         self._manager.get(request)

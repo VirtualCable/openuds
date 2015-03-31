@@ -32,32 +32,18 @@
 '''
 from __future__ import unicode_literals
 
-import tempfile
-import string
-import random
-import os
-
-_unlinkFiles = []
+import sys
 
 
-def saveTempFile(content, filename=None):
-    if filename is None:
-        filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
-        filename = filename + '.uds'
-    filename = os.path.join(tempfile.gettempdir(), filename)
-    with open(filename, 'w') as f:
-        f.write(content)
-
-    return filename
+LINUX = 'Linux'
+WINDOWS = 'Windows'
+MAC_OS_X = 'Mac os x'
 
 
-def addFileToUnlink(filename):
-    _unlinkFiles.append(filename)
-
-
-def unlinkFiles():
-    for f in _unlinkFiles:
-        try:
-            os.unlink(f)
-        except Exception:
-            pass
+def getOs():
+    if sys.platform.startswith('linux'):
+        return LINUX
+    elif sys.platform.startswith('win'):
+        return WINDOWS
+    elif sys.platform.startswith('darwin'):
+        return MAC_OS_X

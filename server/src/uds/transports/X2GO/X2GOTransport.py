@@ -56,7 +56,6 @@ class X2GOTransport(Transport):
     typeType = 'X2GOTransport'
     typeDescription = _('X2GO Transport for direct connection')
     iconFile = 'x2go.png'
-    needsJava = True  # If this transport needs java for rendering
     protocol = protocols.NX
 
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))
@@ -117,7 +116,8 @@ class X2GOTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def getUDSTransportInfo(self, userService, transport, ip, os, user, password, request):
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
+        logger.debug('Getting X2Go Transport info')
 
         prefs = user.prefs('nx')
 
@@ -138,8 +138,8 @@ class X2GOTransport(Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        # Extra data
-        return {
+        # data
+        data = {
             'username': username,
             'password': password,
             'width': width,
@@ -150,3 +150,15 @@ class X2GOTransport(Transport):
             'cacheDisk': self.cacheDisk.value,
             'cacheMem': self.cacheMem.value
         }
+
+        return '''
+from PyQt4 import QtCore, QtGui
+import six
+from uds import osDetector
+
+data = {data}
+osname = {os}
+
+QtGui.QMessageBox.critical(parent, 'Notice ' + osDetector.getOs(), six.text_type(data), QtGui.QMessageBox.Ok)
+'''.format(data=data, os=os)
+

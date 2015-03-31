@@ -38,7 +38,10 @@ import six
 
 from uds.rest import RestRequest
 from uds.forward import forward
+from uds import tools
+
 import webbrowser
+import time
 
 from UDSWindow import Ui_MainWindow
 
@@ -47,6 +50,10 @@ VERSION = '1.9.5'
 
 
 class UDSClient(QtGui.QMainWindow):
+
+    ticket = None
+    scrambler = None
+
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
@@ -57,46 +64,76 @@ class UDSClient(QtGui.QMainWindow):
         self.ui.progressBar.setValue(0)
         self.ui.cancelButton.clicked.connect(self.cancelPushed)
 
+        self.ui.info.setText('Initializing...')
+
         self.activateWindow()
 
     def closeWindow(self):
         self.close()
 
-    def processError(self, rest):
-        if 'error' in rest.data:
-            raise Exception(rest.data['error'])
+    def processError(self, data):
+        if 'error' in data:
+            raise Exception(data['error'])
             # QtGui.QMessageBox.critical(self, 'Request error', rest.data['error'], QtGui.QMessageBox.Ok)
             # self.closeWindow()
             # return
 
+    def showError(self, e):
+        self.ui.progressBar.setValue(100)
+        self.ui.info.setText('Error')
+        QtGui.QMessageBox.critical(self, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
+        self.closeWindow()
+
     def cancelPushed(self):
         self.close()
 
-    def version(self, rest):
+    @QtCore.pyqtSlot()
+    def getVersion(self):
+        self.req = RestRequest('', self, self.version)
+        self.req.get()
+
+    @QtCore.pyqtSlot(dict)
+    def version(self, data):
         try:
             self.ui.progressBar.setValue(10)
 
-            self.processError(rest)
+            self.processError(data)
 
-            if rest.data['result']['requiredVersion'] > VERSION:
+            self.ui.info.setText('Processing...')
+
+            if data['result']['requiredVersion'] > VERSION:
                 QtGui.QMessageBox.critical(self, 'Upgrade required', 'A newer connector version is required.\nA browser will be opened to download it.', QtGui.QMessageBox.Ok)
-                webbrowser.open(rest.data['result']['downloadUrl'])
+                webbrowser.open(data['result']['downloadUrl'])
                 self.closeWindow()
                 return
 
-            QtGui.QMessageBox.critical(self, 'Notice', six.text_type(rest.data), QtGui.QMessageBox.Ok)
+            self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived)
+            self.req.get()
 
         except Exception as e:
-            QtGui.QMessageBox.critical(self, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
-            self.closeWindow()
+            self.showError(e)
 
-    def showEvent(self, *args, **kwargs):
+    @QtCore.pyqtSlot(dict)
+    def transportDataReceived(self, data):
+        try:
+            self.ui.progressBar.setValue(20)
+            self.processError(data)
+
+            script = data['result']
+            print script
+
+            six.exec_(script, globals(), {'parent': self})
+
+            self.closeWindow()
+        except Exception as e:
+            self.showError(e)
+
+    def start(self):
         '''
         Starts proccess by requesting version info
         '''
-        self.ui.info.setText('Requesting required connector version...')
-        self.req = RestRequest('', self, self.version)
-        self.req.get()
+        self.ui.info.setText('Initializing...')
+        QtCore.QTimer.singleShot(100, self.getVersion)
 
 
 def done(data):
@@ -104,7 +141,13 @@ def done(data):
     sys.exit(0)
 
 if __name__ == "__main__":
+    # Initialize app
     app = QtGui.QApplication(sys.argv)
+
+    # Set several info for settings
+    QtCore.QCoreApplication.setOrganizationName('Virtual Cable S.L.U.')
+    QtCore.QCoreApplication.setApplicationName('UDS Connector')
+
     app.setStyle(QtGui.QStyleFactory.create('plastique'))
 
     if six.PY3 is False:
@@ -118,7 +161,7 @@ if __name__ == "__main__":
             raise Exception()
 
         ssl = uri[3] == 's'
-        host, ticket, scrambler = uri.split('//')[1].split('/')
+        host, UDSClient.ticket, UDSClient.scrambler = uri.split('//')[1].split('/')
 
     except Exception:
         QtGui.QMessageBox.critical(None, 'Notice', 'This program is designed to be used by UDS', QtGui.QMessageBox.Ok)
@@ -131,8 +174,14 @@ if __name__ == "__main__":
     try:
         win = UDSClient()
         win.show()
+        win.start()
 
-        sys.exit(app.exec_())
+        exitVal = app.exec_()
+
+        time.sleep(3)
+        tools.unlinkFiles()
+
+        sys.exit(exitVal)
     except Exception as e:
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
 

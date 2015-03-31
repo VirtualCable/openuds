@@ -158,15 +158,12 @@ class Transport(Module):
         '''
         return user.name
 
-    def getUDSTransportData(self, userService, transport, ip, os, user, password, request):
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         '''
-        Must override if transport does not provides its own link (that is, it is an UDS native transport)
-        Returns the transport data needed to connect with the userService
-        This is invoked right before service is accesed (secuentally).
-
-        The class must provide either this method or the getLink method
+        If this is an uds transport, this will return the tranport script needed for executing
+        this on client
         '''
-        return None
+        return ''
 
     def getLink(self, userService, transport, ip, os, user, password, request):
         '''

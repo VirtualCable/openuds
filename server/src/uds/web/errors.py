@@ -80,7 +80,7 @@ strings = [
     _('Invalid request received'),
     _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome'),
     _('The requested service is in maintenance mode'),
-    _('The service is not ready')
+    _('The service is not ready.\nPlease, try again in a few moments.')
 ]
 
 

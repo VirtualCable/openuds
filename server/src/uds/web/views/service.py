@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-27'
+__updated__ = '2015-03-31'
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect
@@ -226,7 +226,7 @@ def clientEnabler(request, idService, idTransport):
             _x, ads, _x, trans, _x = res
 
             data = {
-                'service': ads.uuid,
+                'service': 'A' + ads.uuid,
                 'transport': trans.uuid,
                 'user': request.user.uuid,
                 'password': password

@@ -35,10 +35,9 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
-from uds.core.transports import protocols
-from uds.core.util import connection
-from .web import generateHtmlForRdp, getHtmlComponent
+from uds.core.util import OsDetector
 from .BaseRDPTransport import BaseRDPTransport
+from .RDPFile import RDPFile
 
 import logging
 
@@ -68,7 +67,45 @@ class RDPTransport(BaseRDPTransport):
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
 
-    def renderForHtml(self, userService, transport, ip, os, user, password):
+    def windowsScript(self, data):
+        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'])
+        r.address = '{}:{}'.format(data['ip'], 3389)
+        r.username = data['username']
+        r.password = '{password}'
+        r.domain = data['domain']
+        r.redirectPrinters = self.allowPrinters.isTrue()
+        r.redirectSmartcards = self.allowSmartcards.isTrue()
+        r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectSerials = self.allowSerials.isTrue()
+        r.showWallpaper = self.wallpaper.isTrue()
+        r.multimon = self.multimon.isTrue()
+
+        # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
+        return '''
+from __future__ import unicode_literals
+
+from PyQt4 import QtCore, QtGui
+import win32crypt
+import os
+import subprocess
+import time
+
+from uds import tools
+
+import six
+
+file = \'\'\'{file}\'\'\'.format(password=win32crypt.CryptProtectData(six.binary_type('{password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'))
+
+filename = tools.saveTempFile(file)
+executable = os.path.join(os.path.join(os.environ['WINDIR'], 'system32'), 'mstsc.exe')
+subprocess.call([executable, filename])
+tools.addFileToUnlink(filename)
+
+# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
+
+'''.format(os=data['os'], file=r.get(), password=data['password'])
+
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
         prefs = user.prefs('rdp')
 
@@ -78,8 +115,14 @@ class RDPTransport(BaseRDPTransport):
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
 
-        # Extra data
-        extra = {
+        # data
+        data = {
+            'os': os['OS'],
+            'ip': ip,
+            'port': 3389,
+            'username': username,
+            'password': password,
+            'domain': domain,
             'width': width,
             'height': height,
             'depth': depth,
@@ -89,7 +132,11 @@ class RDPTransport(BaseRDPTransport):
             'serials': self.allowSerials.isTrue(),
             'compression': True,
             'wallpaper': self.wallpaper.isTrue(),
-            'multimon': self.multimon.isTrue()
+            'multimon': self.multimon.isTrue(),
+            'fullScreen': width == -1 or height == -1
         }
 
-        return generateHtmlForRdp(self, userService.uuid, transport.uuid, os, ip, '3389', username, password, domain, extra)
+        if data['os'] == OsDetector.Windows:
+            return self.windowsScript(data)
+
+        return ''

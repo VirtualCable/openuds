@@ -92,7 +92,6 @@ class Client(Handler):
         Processes get requests
         '''
         logger.debug("Client args for GET: {0}".format(self._args))
-        # return Client.result(error=errors.ACCESS_DENIED)
 
         if len(self._args) == 0:
             url = self._request.build_absolute_uri(reverse('ClientDownload'))
@@ -102,24 +101,30 @@ class Client(Handler):
                 'downloadUrl': url
             })
 
-        if len(self._args) != 2:
+        try:
+            ticket, scrambler = self._args
+        except Exception:
             raise RequestError('Invalid request')
 
         try:
-            data = TicketStore.get(self._args[0])
+            data = TicketStore.get(ticket)
         except Exception:
             return Client.result(error=errors.ACCESS_DENIED)
 
         self._request.user = User.objects.get(uuid=data['user'])
 
         try:
+            logger.debug(data)
             res = getService(self._request, data['service'], data['transport'])
+            logger.debug('Res: {}'.format(res))
             if res is not None:
                 ip, userService, userServiceInstance, transport, transportInstance = res
-                password = cryptoManager().xor(self._args[1], data['password']).decode('utf-8')
+                password = cryptoManager().xor(data['password'], scrambler).decode('utf-8')
+                logger.debug('Password: {}'.format(password))
 
-                transportInfo = transportInstance.getUDSTransportData(userService, transport, ip, self.request.os, self._request.user, password, self._request)
-                return Client.result(transportInfo)
+                transportScript = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
+                logger.debug('Transport script: {}'.format(transportScript))
+                return Client.result(transportScript)
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=six.text_type(e))

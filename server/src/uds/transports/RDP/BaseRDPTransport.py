@@ -52,7 +52,6 @@ class BaseRDPTransport(Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
     iconFile = 'rdp.png'
-    needsJava = True  # If this transport needs java for rendering
     protocol = protocols.RDP
 
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))

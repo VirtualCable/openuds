@@ -55,6 +55,7 @@ def getOsFromUA(ua):
     '''
     Basic OS Client detector (very basic indeed :-))
     '''
+    logger.debug('Examining user agent {}'.format(ua))
     if ua is None:
         os = DEFAULT_OS
     else:
