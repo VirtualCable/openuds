@@ -33,8 +33,6 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
-from uds.core.ui.UserInterface import gui
-from uds.core.transports.BaseTransport import Transport
 from uds.core.util import OsDetector
 from .BaseRDPTransport import BaseRDPTransport
 from .RDPFile import RDPFile
@@ -68,7 +66,7 @@ class RDPTransport(BaseRDPTransport):
     multimon = BaseRDPTransport.multimon
 
     def windowsScript(self, data):
-        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'])
+        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Windows)
         r.address = '{}:{}'.format(data['ip'], 3389)
         r.username = data['username']
         r.password = '{password}'
@@ -88,7 +86,6 @@ from PyQt4 import QtCore, QtGui
 import win32crypt
 import os
 import subprocess
-import time
 
 from uds import tools
 
@@ -99,11 +96,72 @@ file = \'\'\'{file}\'\'\'.format(password=win32crypt.CryptProtectData(six.binary
 filename = tools.saveTempFile(file)
 executable = os.path.join(os.path.join(os.environ['WINDIR'], 'system32'), 'mstsc.exe')
 subprocess.call([executable, filename])
-tools.addFileToUnlink(filename)
+#tools.addFileToUnlink(filename)
 
 # QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
-
 '''.format(os=data['os'], file=r.get(), password=data['password'])
+
+    def macOsXScript(self, data):
+        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Macintosh)
+        r.address = '{}:{}'.format(data['ip'], 3389)
+        r.username = data['username']
+        r.domain = data['domain']
+        r.redirectPrinters = self.allowPrinters.isTrue()
+        r.redirectSmartcards = self.allowSmartcards.isTrue()
+        r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectSerials = self.allowSerials.isTrue()
+        r.showWallpaper = self.wallpaper.isTrue()
+        r.multimon = self.multimon.isTrue()
+
+        if data['domain'] != '':
+            username = '{}\\\\{}'.format(data['domain'], data['username'])
+        else:
+            username = data['username']
+
+        return '''
+from __future__ import unicode_literals
+
+from PyQt4 import QtCore, QtGui
+import subprocess
+
+from uds import tools
+
+import six
+
+file = \'\'\'{file}\'\'\'
+
+filename = tools.saveTempFile(file)
+executable = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
+
+def onExit():
+    import subprocess
+    subprocess.call(['security',
+        'delete-generic-password',
+        '-a', '{username}',
+        '-s', 'Remote Desktop Connection 2 Password for {ip}',
+    ])
+
+try:
+    subprocess.call(['security',
+        'add-generic-password',
+        '-w', '{password}',
+        '-U',
+        '-a', '{username}',
+        '-s', 'Remote Desktop Connection 2 Password for {ip}',
+    ])
+    # Call but do not wait for exit
+    tools.addTaskToWait(subprocess.Popen([executable, filename]))
+    tools.addExecBeforeExit(onExit)
+
+    tools.addFileToUnlink(filename)
+except Exception as e:
+    QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)
+'''.format(os=data['os'],
+           file=r.get(),
+           password=data['password'],
+           username=username,
+           ip=data['ip']
+           )
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
@@ -136,7 +194,11 @@ tools.addFileToUnlink(filename)
             'fullScreen': width == -1 or height == -1
         }
 
+        logger.debug('Detected os: {}'.format(data['os']))
+
         if data['os'] == OsDetector.Windows:
             return self.windowsScript(data)
+        elif data['os'] == OsDetector.Macintosh:
+            return self.macOsXScript(data)
 
         return ''

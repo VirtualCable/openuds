@@ -120,10 +120,11 @@ class Client(Handler):
             if res is not None:
                 ip, userService, userServiceInstance, transport, transportInstance = res
                 password = cryptoManager().xor(data['password'], scrambler).decode('utf-8')
-                logger.debug('Password: {}'.format(password))
 
                 transportScript = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
-                logger.debug('Transport script: {}'.format(transportScript))
+
+                logger.debug('Script:\n{}'.format(transportScript))
+
                 return Client.result(transportScript)
         except Exception as e:
             logger.exception("Exception")

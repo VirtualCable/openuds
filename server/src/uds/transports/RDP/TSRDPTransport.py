@@ -36,10 +36,11 @@ from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
-from uds.core.util import connection
-from uds.core.util.Cache import Cache
-from .web import generateHtmlForRdp, getHtmlComponent
+from uds.models import TicketStore
+from uds.core.util import OsDetector
+
 from .BaseRDPTransport import BaseRDPTransport
+from .RDPFile import RDPFile
 
 import logging
 import random
@@ -83,7 +84,59 @@ class TSRDPTransport(BaseRDPTransport):
             if values['tunnelServer'].count(':') != 1:
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
-    def renderForHtml(self, userService, transport, ip, os, user, password):
+    def windowsScript(self, data):
+        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Windows)
+        r.address = '{address}'
+        r.username = data['username']
+        r.password = '{password}'
+        r.domain = data['domain']
+        r.redirectPrinters = self.allowPrinters.isTrue()
+        r.redirectSmartcards = self.allowSmartcards.isTrue()
+        r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectSerials = self.allowSerials.isTrue()
+        r.showWallpaper = self.wallpaper.isTrue()
+        r.multimon = self.multimon.isTrue()
+
+        # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
+        return '''
+from __future__ import unicode_literals
+
+from PyQt4 import QtCore, QtGui
+import win32crypt
+import os
+import subprocess
+from uds.forward import forward
+
+from uds import tools
+
+import six
+
+forwardThread, port = forward('{tunHost}', {tunPort}, '{tunUser}', '{tunPass}', '{server}', {port})
+
+file = \'\'\'{file}\'\'\'.format(
+    password=win32crypt.CryptProtectData(six.binary_type('{password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'),
+    address='127.0.0.1:{{}}'.format(port)
+)
+
+filename = tools.saveTempFile(file)
+executable = os.path.join(os.path.join(os.environ['WINDIR'], 'system32'), 'mstsc.exe')
+
+
+subprocess.call([executable, filename])
+tools.addFileToUnlink(filename)
+
+# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
+        '''.format(
+            file=r.get(), password=data['password'],
+            server=data['ip'],
+            port=3389,
+            tunUser=data['tunUser'],
+            tunPass=data['tunPass'],
+            tunHost=data['tunHost'],
+            tunPort=data['tunPort']
+        )
+
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
         prefs = user.prefs('rdp')
 
@@ -92,20 +145,25 @@ class TSRDPTransport(BaseRDPTransport):
 
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
-        cache = Cache('pam')
 
-        tunuser = ''.join(random.choice(string.letters + string.digits) for _i in range(12)) + ("%f" % time.time()).split('.')[1]
         tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
-        cache.put(tunuser, tunpass, 60 * 10)  # Credential valid for ten minutes, and for 1 use only
+        tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')
 
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
-        tun = "{0} {1} {2} {3} {4} {5} {6}".format(tunuser, tunpass, sshHost, sshPort, ip, '3389', '9')
-        ip = '127.0.0.1'
 
-        # Extra data
-        extra = {
+        # data
+        data = {
+            'os': os['OS'],
+            'ip': ip,
+            'tunUser': tunuser,
+            'tunPass': tunpass,
+            'tunHost': sshHost,
+            'tunPort': sshPort,
+            'username': username,
+            'password': password,
+            'domain': domain,
             'width': width,
             'height': height,
             'depth': depth,
@@ -113,10 +171,13 @@ class TSRDPTransport(BaseRDPTransport):
             'smartcards': self.allowSmartcards.isTrue(),
             'drives': self.allowDrives.isTrue(),
             'serials': self.allowSerials.isTrue(),
-            'tun': tun,
             'compression': True,
             'wallpaper': self.wallpaper.isTrue(),
-            'multimon': self.multimon.isTrue()
+            'multimon': self.multimon.isTrue(),
+            'fullScreen': width == -1 or height == -1
         }
 
-        return generateHtmlForRdp(self, userService.uuid, transport.uuid, os, ip, '-1', username, password, domain, extra)
+        if data['os'] == OsDetector.Windows:
+            return self.windowsScript(data)
+
+        return ''

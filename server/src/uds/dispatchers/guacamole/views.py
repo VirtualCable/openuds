@@ -33,10 +33,9 @@
 from __future__ import unicode_literals
 
 from django.http import HttpResponse
-from uds.core.util.Cache import Cache
+from uds.models import TicketStore
 from uds.core.util import net
 from uds.core.auths import auth
-from uds.models import TicketStore
 
 import logging
 
@@ -58,11 +57,7 @@ def guacamole(request, tunnelId):
 
     try:
         val = TicketStore.get(tunnelId, invalidate=False)
-        # Remove key from cache, just 1 use
-        # Cache has a limit lifetime, so we will allow to "reload" the page
-        # cache.remove(tunnelId)
 
-        # response = 'protocol\trdp\rhostname\tw7adolfo\rusername\tadmin\rpassword\ttemporal'
         response = dict2resp(val)
     except Exception:
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)

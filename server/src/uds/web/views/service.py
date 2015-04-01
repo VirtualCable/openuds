@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-31'
+__updated__ = '2015-04-01'
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect
@@ -39,7 +39,7 @@ from django.template import RequestContext
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
-from uds.core.services.Exceptions import ServiceInMaintenanceMode
+from uds.core.services.Exceptions import ServiceInMaintenanceMode, InvalidServiceException
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.models import TicketStore
 from uds.core.ui.images import DEFAULT_IMAGE
@@ -69,6 +69,7 @@ def getService(request, idService, idTransport, doTest=True):
     if kind == 'A':  # This is an assigned service
         logger.debug('Getting A service {}'.format(idService))
         ads = UserService.objects.get(uuid=idService)
+        ads.deployed_service.validateUser(request.user)
     else:
         ds = DeployedService.objects.get(uuid=idService)
         # We first do a sanity check for this, if the user has access to this service
@@ -82,6 +83,10 @@ def getService(request, idService, idTransport, doTest=True):
 
     logger.debug('Found service: {0}'.format(ads))
     trans = Transport.objects.get(uuid=idTransport)
+
+    # Ensures that the transport is allowed for this service
+    if trans not in ads.deployed_service.transports.all():
+        raise InvalidServiceException()
 
     if doTest is False:
         return (None, ads, None, trans, None)

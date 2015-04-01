@@ -190,8 +190,6 @@ if __name__ == "__main__":
     except Exception as e:
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
 
-    sys.stdin.read()
-    QtGui.QMessageBox.critical(None, 'Error', 'test', QtGui.QMessageBox.Ok)
     # Build base REST
 
     # v = RestRequest('', done)

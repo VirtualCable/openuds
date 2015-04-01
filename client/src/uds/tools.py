@@ -86,4 +86,4 @@ def addExecBeforeExit(fnc):
 
 def execBeforeExit():
     for fnc in _execBeforeExit:
-        fnc.call()
+        fnc.__call__()

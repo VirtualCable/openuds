@@ -55,7 +55,6 @@ def getOsFromUA(ua):
     '''
     Basic OS Client detector (very basic indeed :-))
     '''
-    logger.debug('Examining user agent {}'.format(ua))
     if ua is None:
         os = DEFAULT_OS
     else:
@@ -69,8 +68,6 @@ def getOsFromUA(ua):
             break
         except Exception:
             pass
-    logger.debug('User-Agent: {0}'.format(ua))
-    logger.debug('Detected OS: {0}'.format(res))
     return res
 
 

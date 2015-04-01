@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.http import HttpResponseNotAllowed, HttpResponse
-from uds.core.util.Cache import Cache
+from uds.models import TicketStore
 from uds.core.auths import auth
 import logging
 
@@ -45,17 +45,15 @@ logger = logging.getLogger(__name__)
 @auth.trustedSourceRequired
 def pam(request):
     response = ''
-    cache = Cache('pam')
     if request.method == 'POST':
         return HttpResponseNotAllowed(['GET'])
     if 'id' in request.GET and 'pass' in request.GET:
         # This is an "auth" request
         logger.debug("Auth request for user [{0}] and pass [{1}]".format(request.GET['id'], request.GET['pass']))
-        password = cache.get(request.GET['id'])
+        password = TicketStore.get(request.GET['id'])
         response = '0'
         if password == request.GET['pass']:
             response = '1'
-            cache.remove(request.GET['id'])  # Ticket valid for just 1 login
 
     elif 'uid' in request.GET:
         # This is an "get name for id" call

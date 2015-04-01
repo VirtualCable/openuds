@@ -36,6 +36,7 @@ Created on Jul 29, 2011
 '''
 from __future__ import unicode_literals
 
+from uds.core.util import OsDetector
 import six
 
 
@@ -58,13 +59,20 @@ class RDPFile(object):
     showWallpaper = False
     multimon = False
 
-    def __init__(self, fullScreen, width, height, bpp):
+    def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
         self.height = six.text_type(height)
         self.bpp = six.text_type(bpp)
         self.fullScreen = fullScreen
+        self.target = target
 
     def get(self):
+        if self.target == OsDetector.Windows:
+            return self.getWindows()
+        elif self.target == OsDetector.Macintosh:
+            return self.getMacOsX()
+
+    def getWindows(self):
         password = "{password}"
         screenMode = self.fullScreen and "2" or "1"
         audioMode = self.redirectAudio and "0" or "2"
@@ -75,7 +83,7 @@ class RDPFile(object):
         compression = self.compression and "1" or "0"
         bar = self.displayConnectionBar and "1" or "0"
         disableWallpaper = self.showWallpaper and "0" or "1"
-        useMultimon = self.multimon and "0" or "1"
+        useMultimon = self.multimon and "1" or "0"
 
         res = ''
         res += 'screen mode id:i:' + screenMode + '\n'
@@ -112,3 +120,201 @@ class RDPFile(object):
         res += 'negotiate security layer:i:1' + '\n'
 
         return res
+
+    def getMacOsX(self):
+        if self.fullScreen:
+            desktopSize = '    <string>DesktopFullScreen</string>'
+        else:
+            desktopSize = '''    <dict>
+        <key>DesktopHeight</key>
+        <integer>{}</integer>
+        <key>DesktopWidth</key>
+        <integer>{}</integer>
+    </dict>'''.format(self.width, self.height)
+
+        return '''
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>AddToKeychain</key>
+    <true/>
+    <key>ApplicationPath</key>
+    <string></string>
+    <key>AudioRedirectionMode</key>
+    <integer>0</integer>
+    <key>AuthenticateLevel</key>
+    <integer>0</integer>
+    <key>AutoReconnect</key>
+    <true/>
+    <key>BitmapCaching</key>
+    <true/>
+    <key>ColorDepth</key>
+    <integer>1</integer>
+    <key>ConnectionString</key>
+    <string>{host}</string>
+    <key>DesktopSize</key>
+    {desktopSize}
+    <key>Display</key>
+    <integer>0</integer>
+    <key>Domain</key>
+    <string>{domain}</string>
+    <key>DontWarnOnChange</key>
+    <true/>
+    <key>DontWarnOnDriveMount</key>
+    <true/>
+    <key>DontWarnOnQuit</key>
+    <true/>
+    <key>DriveRedirectionMode</key>
+    <integer>0</integer>
+    <key>FontSmoothing</key>
+    <true/>
+    <key>FullWindowDrag</key>
+    <false/>
+    <key>HideMacDock</key>
+    <true/>
+    <key>KeyMappingTable</key>
+    <dict>
+        <key>UI_ALPHANUMERIC_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>102</integer>
+            <key>MacModifier</key>
+            <integer>0</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_ALT_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>4294967295</integer>
+            <key>MacModifier</key>
+            <integer>2048</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_CONTEXT_MENU_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>120</integer>
+            <key>MacModifier</key>
+            <integer>2048</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_CONVERSION_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>4294967295</integer>
+            <key>MacModifier</key>
+            <integer>0</integer>
+            <key>On</key>
+            <false/>
+        </dict>
+        <key>UI_HALF_FULL_WIDTH_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>49</integer>
+            <key>MacModifier</key>
+            <integer>256</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_HIRAGANA_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>104</integer>
+            <key>MacModifier</key>
+            <integer>0</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_NON_CONVERSION_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>4294967295</integer>
+            <key>MacModifier</key>
+            <integer>0</integer>
+            <key>On</key>
+            <false/>
+        </dict>
+        <key>UI_NUM_LOCK_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>71</integer>
+            <key>MacModifier</key>
+            <integer>0</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_PAUSE_BREAK_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>99</integer>
+            <key>MacModifier</key>
+            <integer>2048</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_PRINT_SCREEN_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>118</integer>
+            <key>MacModifier</key>
+            <integer>2048</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_SCROLL_LOCK_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>107</integer>
+            <key>MacModifier</key>
+            <integer>0</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_SECONDARY_MOUSE_BUTTON</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>256</integer>
+            <key>MacModifier</key>
+            <integer>4608</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+        <key>UI_WINDOWS_START_KEY</key>
+        <dict>
+            <key>MacKeyCode</key>
+            <integer>122</integer>
+            <key>MacModifier</key>
+            <integer>2048</integer>
+            <key>On</key>
+            <true/>
+        </dict>
+    </dict>
+    <key>MenuAnimations</key>
+    <false/>
+    <key>PrinterRedirection</key>
+    <true/>
+    <key>RedirectFolder</key>
+    <string>/Users/admin</string>
+    <key>RedirectPrinter</key>
+    <string></string>
+    <key>RemoteApplication</key>
+    <false/>
+    <key>Themes</key>
+    <true/>
+    <key>UserName</key>
+    <string>{username}</string>
+    <key>Wallpaper</key>
+    <false/>
+    <key>WorkingDirectory</key>
+    <string></string>
+</dict>
+</plist>'''.format(
+            desktopSize=desktopSize,
+            host=self.address,
+            domain=self.domain,
+            username=self.username
+        )
