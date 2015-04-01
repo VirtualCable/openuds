@@ -1,0 +1,1 @@
+security add-generic-password -w temporal -U -a 172.27.0.208\test -s Remote Desktop Connection 2 Password for 172.27.0.208

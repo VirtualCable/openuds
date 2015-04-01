@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['udsclient.py']
+APP = ['UDSClient.py']
 DATA_FILES = []
 OPTIONS = {
 	'argv_emulation': True,
