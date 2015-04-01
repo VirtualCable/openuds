@@ -178,6 +178,7 @@ if __name__ == "__main__":
 
         exitVal = app.exec_()
 
+        win.showMinimized()  # This is a top most window, minimize to bar
         tools.waitForTasks()
 
         time.sleep(3)

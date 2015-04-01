@@ -77,7 +77,7 @@ def addTaskToWait(taks):
 
 def waitForTasks():
     for t in _tasksToWait:
-        t.join()
+        t.wait()
 
 
 def addExecBeforeExit(fnc):
