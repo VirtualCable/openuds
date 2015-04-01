@@ -184,6 +184,8 @@ if __name__ == "__main__":
         time.sleep(3)
         tools.unlinkFiles()
 
+        tools.execBeforeExit()
+
         sys.exit(exitVal)
     except Exception as e:
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
