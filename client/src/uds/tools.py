@@ -38,6 +38,8 @@ import random
 import os
 
 _unlinkFiles = []
+_tasksToWait = []
+_execBeforeExit = []
 
 
 def saveTempFile(content, filename=None):
@@ -52,12 +54,36 @@ def saveTempFile(content, filename=None):
 
 
 def addFileToUnlink(filename):
+    '''
+    Adds a file to the wait-and-unlink list
+    '''
     _unlinkFiles.append(filename)
 
 
 def unlinkFiles():
+    '''
+    Removes all wait-and-unlink files
+    '''
     for f in _unlinkFiles:
         try:
             os.unlink(f)
         except Exception:
             pass
+
+
+def addTaskToWait(taks):
+    _tasksToWait.append(taks)
+
+
+def waitForTasks():
+    for t in _tasksToWait:
+        t.join()
+
+
+def addExecBeforeExit(fnc):
+    _execBeforeExit.append(fnc)
+
+
+def execBeforeExit():
+    for fnc in _execBeforeExit:
+        fnc.call()

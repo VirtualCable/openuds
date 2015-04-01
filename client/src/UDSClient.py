@@ -178,6 +178,8 @@ if __name__ == "__main__":
 
         exitVal = app.exec_()
 
+        tools.waitForTasks()
+
         time.sleep(3)
         tools.unlinkFiles()
 
