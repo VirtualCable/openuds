@@ -45,6 +45,7 @@
                 <key>CFBundleURLSchemes</key>
                 <array>
                     <string>uds</string>
+                    <string>udss</string>
                 </array>
             </dict>
         </array>

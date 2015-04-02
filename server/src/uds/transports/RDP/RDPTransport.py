@@ -123,6 +123,7 @@ from __future__ import unicode_literals
 
 from PyQt4 import QtCore, QtGui
 import subprocess
+import os
 
 from uds import tools
 
@@ -130,8 +131,19 @@ import six
 
 file = \'\'\'{file}\'\'\'
 
+# First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
+
+
 filename = tools.saveTempFile(file)
-executable = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
+msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
+cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
+
+if os.path.isfile(msrdc):
+    executable = msrdc
+elif os.path.isfile(cord):
+    executable = cord
+else:
+    executable = None
 
 def onExit():
     import subprocess
@@ -141,26 +153,50 @@ def onExit():
         '-s', 'Remote Desktop Connection 2 Password for {ip}',
     ])
 
-try:
-    subprocess.call(['security',
-        'add-generic-password',
-        '-w', '{password}',
-        '-U',
-        '-a', '{username}',
-        '-s', 'Remote Desktop Connection 2 Password for {ip}',
-    ])
-    # Call but do not wait for exit
-    tools.addTaskToWait(subprocess.Popen([executable, filename]))
-    tools.addExecBeforeExit(onExit)
+if executable is None:
+    QtGui.QMessageBox.critical(parent, 'Notice', \'\'\'
+<p><b>Microsoft Remote Desktop Connection not found</b></p>
+<p>In order to connect to UDS RDP Sessions, you need to have at least one of the following:<p>
+<ul>
+    <li>
+        <p><b>Microsoft Remote Desktop Connection version 2.</b> (Recommended)</p>
+        <p>You can get it from <a href="http://www.microsoft.com/es-es/download/details.aspx?id=18140">this link</a></p>
+        <p>Remember that you need to use the One from the Microsoft site (the link provided), not the one from the AppStore</p>
+    </li>
+    <li>
+        <p><b>CoRD</b> (A bit unstable from 10.7 onwards)</p>
+        <p>You can get it from <a href="{this_server}static/other/CoRD.pkg">this link</a></p>
+    </li>
+</ul>
+<p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
 
-    tools.addFileToUnlink(filename)
-except Exception as e:
-    QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)
+\'\'\', QtGui.QMessageBox.Ok)
+elif executable == msrdc:
+    try:
+        subprocess.call(['security',
+            'add-generic-password',
+            '-w', '{password}',
+            '-U',
+            '-a', '{username}',
+            '-s', 'Remote Desktop Connection 2 Password for {ip}',
+            '-T', '/Applications/Remote Desktop Connection.app',
+        ])
+        # Call but do not wait for exit
+        tools.addTaskToWait(subprocess.Popen([executable, filename]))
+        tools.addExecBeforeExit(onExit)
+
+        tools.addFileToUnlink(filename)
+    except Exception as e:
+        QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)
+else: # CoRD
+    pass
+
 '''.format(os=data['os'],
            file=r.get(),
            password=data['password'],
            username=username,
-           ip=data['ip']
+           ip=data['ip'],
+           this_server=data['this_server']
            )
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
@@ -191,7 +227,8 @@ except Exception as e:
             'compression': True,
             'wallpaper': self.wallpaper.isTrue(),
             'multimon': self.multimon.isTrue(),
-            'fullScreen': width == -1 or height == -1
+            'fullScreen': width == -1 or height == -1,
+            'this_server': request.build_absolute_uri('/')
         }
 
         logger.debug('Detected os: {}'.format(data['os']))

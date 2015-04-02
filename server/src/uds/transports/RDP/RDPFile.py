@@ -132,6 +132,9 @@ class RDPFile(object):
         <integer>{}</integer>
     </dict>'''.format(self.width, self.height)
 
+        drives = self.redirectDrives and "1" or "0"
+        audioMode = self.redirectAudio and "0" or "2"
+
         return '''
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -142,7 +145,7 @@ class RDPFile(object):
     <key>ApplicationPath</key>
     <string></string>
     <key>AudioRedirectionMode</key>
-    <integer>0</integer>
+    <integer>{audioMode}</integer>
     <key>AuthenticateLevel</key>
     <integer>0</integer>
     <key>AutoReconnect</key>
@@ -166,7 +169,7 @@ class RDPFile(object):
     <key>DontWarnOnQuit</key>
     <true/>
     <key>DriveRedirectionMode</key>
-    <integer>0</integer>
+    <integer>{drives}</integer>
     <key>FontSmoothing</key>
     <true/>
     <key>FullWindowDrag</key>
@@ -314,6 +317,8 @@ class RDPFile(object):
 </dict>
 </plist>'''.format(
             desktopSize=desktopSize,
+            drives=drives,
+            audioMode=audioMode,
             host=self.address,
             domain=self.domain,
             username=self.username

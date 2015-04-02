@@ -168,8 +168,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Setup REST api endpoint
-    # RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
-    RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
+    RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
+    # RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
 
     try:
         win = UDSClient()
@@ -178,17 +178,24 @@ if __name__ == "__main__":
 
         exitVal = app.exec_()
 
-        win.showMinimized()  # This is a top most window, minimize to bar
+        win.showMinimized()  # This is a top most window, minimize to bar because it is not closed in fact until app exit
         tools.waitForTasks()
-
-        time.sleep(3)
-        tools.unlinkFiles()
-
-        tools.execBeforeExit()
 
         sys.exit(exitVal)
     except Exception as e:
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
+
+    time.sleep(3)
+    try:
+        tools.unlinkFiles()
+    except Exception:
+        pass
+
+    try:
+        tools.execBeforeExit()
+    except Exception:
+        pass
+
 
     # Build base REST
 
