@@ -123,8 +123,25 @@ class UDSClient(QtGui.QMainWindow):
 
             script = data['result'].decode('base64').decode('bz2')
 
-            self.showMinimized()
             six.exec_(script, globals(), {'parent': self})
+            self.showMinimized()
+
+            # After running script, wait for stuff
+            try:
+                tools.waitForTasks()
+            except Exception:
+                pass
+
+            time.sleep(3)
+            try:
+                tools.unlinkFiles()
+            except Exception:
+                pass
+
+            try:
+                tools.execBeforeExit()
+            except Exception:
+                pass
 
             self.closeWindow()
         except Exception as e:
@@ -182,23 +199,6 @@ if __name__ == "__main__":
 
     except Exception as e:
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
-
-    if win.withError is False:
-        try:
-            tools.waitForTasks()
-        except Exception:
-            pass
-
-        time.sleep(3)
-        try:
-            tools.unlinkFiles()
-        except Exception:
-            pass
-
-        try:
-            tools.execBeforeExit()
-        except Exception:
-            pass
 
     sys.exit(exitVal)
 
