@@ -10,6 +10,7 @@ import SocketServer
 import paramiko
 import threading
 import random
+import time
 
 g_verbose = True
 
@@ -70,10 +71,14 @@ class Handler (SocketServer.BaseRequestHandler):
 
 def verbose(s):
     if g_verbose:
-        print(s)
+        with open('/Users/admin/log.txt', 'a') as f:
+            f.write(s)
+            f.write('\n')
 
 
 class ForwardThread(threading.Thread):
+    status = 0  # Connecting
+
     def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime):
         threading.Thread.__init__(self)
         self.client = None
@@ -108,7 +113,12 @@ class ForwardThread(threading.Thread):
 
         verbose('Connecting to ssh host %s:%d ...' % (self.server, self.port))
 
-        self.client.connect(self.server, self.port, username=self.username, password=self.password)
+        try:
+            self.client.connect(self.server, self.port, username=self.username, password=self.password)
+        except Exception as e:
+            verbose('Exception: {}'.format(e))
+            self.status = 2 # Error
+            return
 
         class SubHandler (Handler):
             chain_host = self.redirectHost
@@ -120,6 +130,8 @@ class ForwardThread(threading.Thread):
         verbose('Wait Time: {}'.format(self.waitTime))
         self.timer = threading.Timer(self.waitTime, self._timerFnc)
         self.timer.start()
+        
+        self.status = 1  # Ok, listening
 
         self.fs = ForwardServer(('', self.localPort), SubHandler)
         self.fs.serve_forever()
@@ -154,5 +166,8 @@ def forward(server, port, username, password, redirectHost, redirectPort, localP
     ft = ForwardThread(server, port, username, password, localPort, redirectHost, redirectPort, waitTime)
 
     ft.start()
+
+    while ft.status == 0:
+        time.sleep(0.1)
 
     return (ft, localPort)
