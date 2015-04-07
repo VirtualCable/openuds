@@ -46,7 +46,7 @@ import time
 from UDSWindow import Ui_MainWindow
 
 # Client connector version
-VERSION = '1.9.5'
+VERSION = '1.7.5'
 
 
 class UDSClient(QtGui.QMainWindow):
@@ -122,8 +122,8 @@ class UDSClient(QtGui.QMainWindow):
             self.processError(data)
 
             script = data['result'].decode('base64').decode('bz2')
-            print script
 
+            self.showMinimized()
             six.exec_(script, globals(), {'parent': self})
 
             self.closeWindow()
@@ -184,7 +184,6 @@ if __name__ == "__main__":
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
 
     if win.withError is False:
-        win.showMinimized()  # This is a top most window, minimize to bar because it is not closed in fact until app exit
         try:
             tools.waitForTasks()
         except Exception:
