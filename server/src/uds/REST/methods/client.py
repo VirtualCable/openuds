@@ -34,20 +34,16 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-from uds.core.util import log
-from uds.core.util.stats import events
 from django.core.urlresolvers import reverse
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import TicketStore
-from uds.models import UserService, Transport, ServicePool, User
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.models import User
 from uds.web import errors
 from uds.web.views.service import getService
 from uds.core.managers import cryptoManager
 
 
-import datetime
 import six
 
 import logging

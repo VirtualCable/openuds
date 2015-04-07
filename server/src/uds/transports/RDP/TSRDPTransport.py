@@ -108,6 +108,38 @@ class TSRDPTransport(BaseRDPTransport):
             tunPort=data['tunPort']
         )
 
+    def macOsXScript(self, data):
+        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Macintosh)
+        r.address = '{address}'
+        r.username = data['username']
+        r.domain = data['domain']
+        r.redirectPrinters = self.allowPrinters.isTrue()
+        r.redirectSmartcards = self.allowSmartcards.isTrue()
+        r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectSerials = self.allowSerials.isTrue()
+        r.showWallpaper = self.wallpaper.isTrue()
+        r.multimon = self.multimon.isTrue()
+
+        if data['domain'] != '':
+            username = '{}\\\\{}'.format(data['domain'], data['username'])
+        else:
+            username = data['username']
+
+        return self.getScript('scripts/macosx/tunnel.py').format(
+            os=data['os'],
+            file=r.get(),
+            password=data['password'],
+            username=username,
+            server=data['ip'],
+            this_server=data['this_server'],
+            r=r,
+            port=3389,
+            tunUser=data['tunUser'],
+            tunPass=data['tunPass'],
+            tunHost=data['tunHost'],
+            tunPort=data['tunPort']
+        )
+
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
         prefs = user.prefs('rdp')
@@ -146,10 +178,13 @@ class TSRDPTransport(BaseRDPTransport):
             'compression': True,
             'wallpaper': self.wallpaper.isTrue(),
             'multimon': self.multimon.isTrue(),
-            'fullScreen': width == -1 or height == -1
+            'fullScreen': width == -1 or height == -1,
+            'this_server': request.build_absolute_uri('/')
         }
 
         if data['os'] == OsDetector.Windows:
             return self.windowsScript(data)
+        elif data['os'] == OsDetector.Macintosh:
+            return self.macOsXScript(data)
 
         return ''
