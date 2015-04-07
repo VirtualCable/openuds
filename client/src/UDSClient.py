@@ -97,7 +97,7 @@ class UDSClient(QtGui.QMainWindow):
     @QtCore.pyqtSlot(dict)
     def version(self, data):
         try:
-            self.ui.progressBar.setValue(10)
+            self.ui.progressBar.setValue(50)
 
             self.processError(data)
 
@@ -118,12 +118,14 @@ class UDSClient(QtGui.QMainWindow):
     @QtCore.pyqtSlot(dict)
     def transportDataReceived(self, data):
         try:
-            self.ui.progressBar.setValue(20)
+            self.ui.progressBar.setValue(80)
             self.processError(data)
 
             script = data['result'].decode('base64').decode('bz2')
 
             six.exec_(script, globals(), {'parent': self})
+
+            self.ui.progressBar.setValue(100)
             self.showMinimized()
 
             QtCore.QTimer.singleShot(3000, self.endScript)
