@@ -125,7 +125,7 @@ class Client(Handler):
 
                 logger.debug('Script:\n{}'.format(transportScript))
 
-                return Client.result(transportScript)
+                return Client.result(transportScript.encode('bz2').encode('base64'))
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=six.text_type(e))

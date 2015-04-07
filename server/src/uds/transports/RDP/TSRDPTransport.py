@@ -98,35 +98,7 @@ class TSRDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
 
         # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-        return '''
-from __future__ import unicode_literals
-
-from PyQt4 import QtCore, QtGui
-import win32crypt
-import os
-import subprocess
-from uds.forward import forward
-
-from uds import tools
-
-import six
-
-forwardThread, port = forward('{tunHost}', {tunPort}, '{tunUser}', '{tunPass}', '{server}', {port})
-
-file = \'\'\'{file}\'\'\'.format(
-    password=win32crypt.CryptProtectData(six.binary_type('{password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'),
-    address='127.0.0.1:{{}}'.format(port)
-)
-
-filename = tools.saveTempFile(file)
-executable = os.path.join(os.path.join(os.environ['WINDIR'], 'system32'), 'mstsc.exe')
-
-
-subprocess.call([executable, filename])
-tools.addFileToUnlink(filename)
-
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
-        '''.format(
+        return self.getScript('scripts/windows/tunnel.py').format(
             file=r.get(), password=data['password'],
             server=data['ip'],
             port=3389,

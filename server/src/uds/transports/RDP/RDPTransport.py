@@ -38,6 +38,7 @@ from .BaseRDPTransport import BaseRDPTransport
 from .RDPFile import RDPFile
 
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -79,27 +80,7 @@ class RDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
 
         # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-        return '''
-from __future__ import unicode_literals
-
-from PyQt4 import QtCore, QtGui
-import win32crypt
-import os
-import subprocess
-
-from uds import tools
-
-import six
-
-file = \'\'\'{file}\'\'\'.format(password=win32crypt.CryptProtectData(six.binary_type('{password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'))
-
-filename = tools.saveTempFile(file)
-executable = os.path.join(os.path.join(os.environ['WINDIR'], 'system32'), 'mstsc.exe')
-subprocess.call([executable, filename])
-#tools.addFileToUnlink(filename)
-
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
-'''.format(os=data['os'], file=r.get(), password=data['password'])
+        return self.getScript('scripts/windows/direct.py').format(os=data['os'], file=r.get(), password=data['password'])
 
     def macOsXScript(self, data):
         r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Macintosh)
@@ -118,86 +99,14 @@ subprocess.call([executable, filename])
         else:
             username = data['username']
 
-        return '''
-from __future__ import unicode_literals
-
-from PyQt4 import QtCore, QtGui
-import subprocess
-import os
-
-from uds import tools
-
-import six
-
-file = \'\'\'{file}\'\'\'
-
-# First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
-
-
-filename = tools.saveTempFile(file)
-msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
-cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
-
-if os.path.isfile(msrdc):
-    executable = msrdc
-elif os.path.isfile(cord):
-    executable = cord
-else:
-    executable = None
-
-def onExit():
-    import subprocess
-    subprocess.call(['security',
-        'delete-generic-password',
-        '-a', '{username}',
-        '-s', 'Remote Desktop Connection 2 Password for {ip}',
-    ])
-
-if executable is None:
-    QtGui.QMessageBox.critical(parent, 'Notice', \'\'\'
-<p><b>Microsoft Remote Desktop Connection not found</b></p>
-<p>In order to connect to UDS RDP Sessions, you need to have at least one of the following:<p>
-<ul>
-    <li>
-        <p><b>Microsoft Remote Desktop Connection version 2.</b> (Recommended)</p>
-        <p>You can get it from <a href="http://www.microsoft.com/es-es/download/details.aspx?id=18140">this link</a></p>
-        <p>Remember that you need to use the One from the Microsoft site (the link provided), not the one from the AppStore</p>
-    </li>
-    <li>
-        <p><b>CoRD</b> (A bit unstable from 10.7 onwards)</p>
-        <p>You can get it from <a href="{this_server}static/other/CoRD.pkg">this link</a></p>
-    </li>
-</ul>
-<p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
-
-\'\'\', QtGui.QMessageBox.Ok)
-elif executable == msrdc:
-    try:
-        subprocess.call(['security',
-            'add-generic-password',
-            '-w', '{password}',
-            '-U',
-            '-a', '{username}',
-            '-s', 'Remote Desktop Connection 2 Password for {ip}',
-            '-T', '/Applications/Remote Desktop Connection.app',
-        ])
-        # Call but do not wait for exit
-        tools.addTaskToWait(subprocess.Popen([executable, filename]))
-        tools.addExecBeforeExit(onExit)
-
-        tools.addFileToUnlink(filename)
-    except Exception as e:
-        QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)
-else: # CoRD
-    pass
-
-'''.format(os=data['os'],
-           file=r.get(),
-           password=data['password'],
-           username=username,
-           ip=data['ip'],
-           this_server=data['this_server']
-           )
+        return self.getScript('scripts/macosx/direct.py').format(os=data['os'],
+                                                                 file=r.get(),
+                                                                 password=data['password'],
+                                                                 username=username,
+                                                                 ip=data['ip'],
+                                                                 this_server=data['this_server'],
+                                                                 r=r
+                                                                 )
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean

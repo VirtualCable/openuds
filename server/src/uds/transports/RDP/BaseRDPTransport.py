@@ -37,9 +37,9 @@ from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
 from uds.core.util import connection
-from .web import generateHtmlForRdp, getHtmlComponent
 
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +121,7 @@ class BaseRDPTransport(Transport):
     def getConnectionInfo(self, service, user, password):
         return self.processUserPassword(service, user, password)
 
-    def getHtmlComponent(self, _id, _os, componentId):
-        logger.debug('Component: ID={}'.format(_id))
-        # We use helper to keep this clean
-        return getHtmlComponent(self.__module__, componentId)
+    def getScript(self, script):
+        with open(os.path.join(os.path.dirname(__file__), script)) as f:
+            data = f.read()
+        return data

@@ -53,6 +53,7 @@ class UDSClient(QtGui.QMainWindow):
 
     ticket = None
     scrambler = None
+    withError = False
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -83,6 +84,7 @@ class UDSClient(QtGui.QMainWindow):
         self.ui.info.setText('Error')
         QtGui.QMessageBox.critical(self, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
         self.closeWindow()
+        self.withError = True
 
     def cancelPushed(self):
         self.close()
@@ -119,7 +121,7 @@ class UDSClient(QtGui.QMainWindow):
             self.ui.progressBar.setValue(20)
             self.processError(data)
 
-            script = data['result']
+            script = data['result'].decode('base64').decode('bz2')
             print script
 
             six.exec_(script, globals(), {'parent': self})
@@ -178,24 +180,28 @@ if __name__ == "__main__":
 
         exitVal = app.exec_()
 
-        win.showMinimized()  # This is a top most window, minimize to bar because it is not closed in fact until app exit
-        tools.waitForTasks()
-
-        sys.exit(exitVal)
     except Exception as e:
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
 
-    time.sleep(3)
-    try:
-        tools.unlinkFiles()
-    except Exception:
-        pass
+    if win.withError is False:
+        win.showMinimized()  # This is a top most window, minimize to bar because it is not closed in fact until app exit
+        try:
+            tools.waitForTasks()
+        except Exception:
+            pass
 
-    try:
-        tools.execBeforeExit()
-    except Exception:
-        pass
+        time.sleep(3)
+        try:
+            tools.unlinkFiles()
+        except Exception:
+            pass
 
+        try:
+            tools.execBeforeExit()
+        except Exception:
+            pass
+
+    sys.exit(exitVal)
 
     # Build base REST
 
