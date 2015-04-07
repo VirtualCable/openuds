@@ -12,7 +12,7 @@ import threading
 import random
 import time
 
-g_verbose = True
+g_verbose = False
 
 
 class ForwardServer (SocketServer.ThreadingTCPServer):
@@ -71,9 +71,7 @@ class Handler (SocketServer.BaseRequestHandler):
 
 def verbose(s):
     if g_verbose:
-        with open('/Users/admin/log.txt', 'a') as f:
-            f.write(s)
-            f.write('\n')
+        print s
 
 
 class ForwardThread(threading.Thread):

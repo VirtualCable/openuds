@@ -71,7 +71,7 @@ class RestRequest(QObject):
         try:
             if reply.error() != QNetworkReply.NoError:
                 raise Exception(reply.errorString())
-	    data = six.text_type(reply.readAll())
+            data = six.text_type(reply.readAll())
             data = json.loads(data)
         except Exception as e:
             data = {
