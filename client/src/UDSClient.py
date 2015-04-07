@@ -126,26 +126,29 @@ class UDSClient(QtGui.QMainWindow):
             six.exec_(script, globals(), {'parent': self})
             self.showMinimized()
 
-            # After running script, wait for stuff
-            try:
-                tools.waitForTasks()
-            except Exception:
-                pass
+            QtCore.QTimer.singleShot(3000, self.endScript)
 
-            time.sleep(3)
-            try:
-                tools.unlinkFiles()
-            except Exception:
-                pass
-
-            try:
-                tools.execBeforeExit()
-            except Exception:
-                pass
-
-            self.closeWindow()
         except Exception as e:
             self.showError(e)
+
+    def endScript(self):
+        # After running script, wait for stuff
+        try:
+            tools.waitForTasks()
+        except Exception:
+            pass
+
+        try:
+            tools.unlinkFiles()
+        except Exception:
+            pass
+
+        try:
+            tools.execBeforeExit()
+        except Exception:
+            pass
+
+        self.closeWindow()
 
     def start(self):
         '''

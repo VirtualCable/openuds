@@ -117,7 +117,7 @@ class ForwardThread(threading.Thread):
             self.client.connect(self.server, self.port, username=self.username, password=self.password)
         except Exception as e:
             verbose('Exception: {}'.format(e))
-            self.status = 2 # Error
+            self.status = 2  # Error
             return
 
         class SubHandler (Handler):
@@ -130,7 +130,7 @@ class ForwardThread(threading.Thread):
         verbose('Wait Time: {}'.format(self.waitTime))
         self.timer = threading.Timer(self.waitTime, self._timerFnc)
         self.timer.start()
-        
+
         self.status = 1  # Ok, listening
 
         self.fs = ForwardServer(('', self.localPort), SubHandler)
