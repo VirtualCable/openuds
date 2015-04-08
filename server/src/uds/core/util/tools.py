@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,69 +32,10 @@
 '''
 from __future__ import unicode_literals
 
-import tempfile
-import string
-import random
-import os
-import stat
 
-_unlinkFiles = []
-_tasksToWait = []
-_execBeforeExit = []
+class DictAsObj(object):
+    def __init__(self, dct=None, **kwargs):
+        if dct is not None:
+            self.__dict__.update(dct)
+        self.__dict__.update(kwargs)
 
-
-def saveTempFile(content, filename=None):
-    if filename is None:
-        filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
-        filename = filename + '.uds'
-    filename = os.path.join(tempfile.gettempdir(), filename)
-    with open(filename, 'w') as f:
-        f.write(content)
-
-    return filename
-
-
-def findApp(appName):
-    for path in os.environ['PATH'].split(os.pathsep):
-        fileName = os.path.join(path, appName)
-        if os.path.isfile(fileName) and (os.stat(fileName).st_mode & stat.S_IXUSR) != 0:
-            return fileName
-    return None
-
-
-# Queing operations (to be executed before exit)
-
-def addFileToUnlink(filename):
-    '''
-    Adds a file to the wait-and-unlink list
-    '''
-    _unlinkFiles.append(filename)
-
-
-def unlinkFiles():
-    '''
-    Removes all wait-and-unlink files
-    '''
-    for f in _unlinkFiles:
-        try:
-            os.unlink(f)
-        except Exception:
-            pass
-
-
-def addTaskToWait(taks):
-    _tasksToWait.append(taks)
-
-
-def waitForTasks():
-    for t in _tasksToWait:
-        t.wait()
-
-
-def addExecBeforeExit(fnc):
-    _execBeforeExit.append(fnc)
-
-
-def execBeforeExit():
-    for fnc in _execBeforeExit:
-        fnc.__call__()

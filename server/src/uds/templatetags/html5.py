@@ -33,6 +33,9 @@
 from __future__ import unicode_literals
 
 from django import template
+from django.utils.translation import ugettext as _
+from django.templatetags.static import static
+
 from uds.core.util import html
 from uds.core.util.request import getRequest
 from uds.core.auths.auth import ROOT_ID
@@ -213,9 +216,10 @@ def osName(os):
 
 @register.filter(name='pluginDownloadUrl')
 def pluginDownloadUrl(os):
+    tmpl = '<a href="{url}" class="btn btn-success">' + _('Download UDS Plugin for') + ' {os}</a>'
     if os == 'windows':
-        return '1'
+        return tmpl.format(url=static('client/UDSClientSetup.exe'), os='Windows')
     elif os == 'linux':
         return '2'
     else:
-        return '3'
+        return tmpl.format(url=static('client/UDSClient.dmg'), os='Mac OSX')

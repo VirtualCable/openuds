@@ -67,12 +67,61 @@ class RDPFile(object):
         self.target = target
 
     def get(self):
-        if self.target == OsDetector.Windows:
-            return self.getWindows()
+        if self.target in (OsDetector.Windows, OsDetector.Linux):
+            return self.getGeneric()
         elif self.target == OsDetector.Macintosh:
             return self.getMacOsX()
+        # Unknown target
+        return ''
 
-    def getWindows(self):
+    @property
+    def as_file(self):
+        return self.get()
+
+    @property
+    def as_new_xfreerdp_params(self):
+        params = ['/clipboard', '/t:UDS Connection', '/cert-ignore']
+
+        if self.redirectSmartcards:
+            params.append('/smartcard')
+
+        if self.redirectAudio:
+            params.append('/sound:sys:alsa')
+            params.append('/microphone:sys:alsa')
+            params.append('/multimedia:sys:alsa')
+
+        if self.redirectDrives is True:
+            params.append('/drive:media,/media')
+            params.append('/home-drive')
+
+        if self.redirectPrinters:
+            params.append('/printer')
+
+        if self.compression:
+            params.append('/compression:on')
+
+        if self.showWallpaper:
+            params.append('+themes')
+            params.append('+wallpaper')
+
+        if self.multimon:
+            params.append('/multimon')
+
+        if self.fullScreen:
+            params.append('/f')
+        else:
+            params.append('/w:{}'.format(self.width))
+            params.append('/h:{}'.format(self.height))
+
+        params.append('/bpp:{}'.format(self.bpp))
+        params.append('/u:{}'.format(self.username))
+        params.append('/p:{}'.format(self.password))
+        params.append('/d:{}'.format(self.domain))
+        params.append('/v:{}'.format(self.address))
+
+        return params
+
+    def getGeneric(self):
         password = "{password}"
         screenMode = self.fullScreen and "2" or "1"
         audioMode = self.redirectAudio and "0" or "2"
@@ -105,7 +154,8 @@ class RDPFile(object):
         if len(self.username) != 0:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
-            res += 'password 51:b:' + password + '\n'
+            if self.target == OsDetector.Windows:
+                res += 'password 51:b:' + password + '\n'
 
         res += 'alternate shell:s:' + '\n'
         res += 'shell working directory:s:' + '\n'

@@ -14,22 +14,22 @@ from uds import tools  # @UnresolvedImport
 
 import six
 
-forwardThread, port = forward('{tunHost}', '{tunPort}', '{tunUser}', '{tunPass}', '{server}', '{port}')
+forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389)
 
 if forwardThread.status == 2:
-    QtGui.QMessageBox.critical(parent, 'Error', 'Unable to open tunnel', QtGui.QMessageBox.Ok)  # @UndefinedVariable
+    raise Exception('Unable to open file')
 
-else:
+theFile = '''{m.r.as_file}'''.format(
+    password=win32crypt.CryptProtectData(six.binary_type('{m.password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'),
+    address='127.0.0.1:{{}}'.format(port)
+)
 
-    theFile = '''{file}'''.format(
-        password=win32crypt.CryptProtectData(six.binary_type('{password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'),
-        address='127.0.0.1:{{}}'.format(port)
-    )
+filename = tools.saveTempFile(theFile)
+executable = tools.findApp('mstsc.exe')
+if executable is None:
+    raise Exception('Unable to find mstsc.exe')
 
-    filename = tools.saveTempFile(theFile)
-    executable = os.path.join(os.path.join(os.environ['WINDIR'], 'system32'), 'mstsc.exe')
-
-    subprocess.call([executable, filename])
-    tools.addFileToUnlink(filename)
+subprocess.call([executable, filename])
+tools.addFileToUnlink(filename)
 
 # QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

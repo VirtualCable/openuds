@@ -12,10 +12,10 @@ from uds import tools  # @UnresolvedImport
 
 import six
 
-theFile = '''{file}'''.format(password=win32crypt.CryptProtectData(six.binary_type('{password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'))
+theFile = '''{m.r.as_file}'''.format(password=win32crypt.CryptProtectData(six.binary_type('{m.password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'))
 
 filename = tools.saveTempFile(theFile)
-executable = os.path.join(os.path.join(os.environ['WINDIR'], 'system32'), 'mstsc.exe')
+executable = tools.findApp('mstsc.exe')
 subprocess.call([executable, filename])
 # tools.addFileToUnlink(filename)
 

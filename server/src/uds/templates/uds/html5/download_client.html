@@ -8,10 +8,11 @@
 {% block body %}
 <div class="row">
     <div class="col-md-8 col-md-offset-2 bg-primary img-rounded">
-        <h3 class="text-center">{% trans 'Download UDS Plugin for' %} {{ os|osName }}</h3>
-        <p>{% trans 'In order to be able to execute UDS services, you need to have uds plugin installed.' %}</p>
-        <p class="text-center"><a href="{{ os|pluginDownloadUrl }}" class="btn btn-success">{% trans 'Download UDS Plugin for' %} {{ os|osName }}</a></p>
-        <h3>{% trans 'Or select another version' %}</h3>
+        <h3>{% trans 'Download UDS Plugin for' %} {{ os|osName }}</h3>
+        <p>{% trans 'In order to be able to execute UDS services, you need to have UDS plugin installed.' %}</p>
+        <p class="text-center">{{ os|pluginDownloadUrl|safe }}</a></p>
+        <h3>{% trans 'Or download another version' %}</h3>
+        <p>{% trans 'In case that your platform has been incorrectly detected, you can download manually the version required for your Operating System' %}</p>
         <p>
             {% if os != 'linux' %}
             <p class="text-center">
@@ -31,15 +32,17 @@
         </p>
 
         {% if request.user %}
-        <p>{% trans 'If you already have UDS Plugin installed but this message persists to appear, you can disable it here' %}</p>
+        <p>{% trans 'If you already have UDS Plugin installed but this message persists to appear, you can disable automatic detection here' %}</p>
         <p>
             <form>
                 <select id="plugin" class="selectpicker show-menu-arrow" data-width="100%" data-size="2" style="display: none;">
                     <option value="0">{% trans 'Automatic plugin detection is enabled' %}</option>
-                    <option value="1">{% trans 'Automatic plugin detection is disabled' %}</option>
+                    <option value="1">{% trans 'WARNING: Automatic plugin detection is disabled' %}</option>
                 </select>
             </form>
         </p>
+        <p>{% trans "Please, note that disabling automatic detection will not trigger this page again in case you don't have the plugin installed." %}<br/>
+           {% trans "In this case, you will have to manually download the plugin by using the menu on upper right corner." %}</p>
         <p class="text-center">
             <a href="{% url 'uds.web.views.index' %}" class="btn btn-info"><i class="fa fa-home"></i> {% trans "Return" %}</a>
         </div>

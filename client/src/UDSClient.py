@@ -172,7 +172,8 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setOrganizationName('Virtual Cable S.L.U.')
     QtCore.QCoreApplication.setApplicationName('UDS Connector')
 
-    app.setStyle(QtGui.QStyleFactory.create('plastique'))
+    if 'darwin' not in sys.platform:
+        app.setStyle('plastique')
 
     if six.PY3 is False:
         import threading

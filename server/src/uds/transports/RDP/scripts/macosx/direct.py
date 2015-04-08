@@ -12,7 +12,7 @@ from uds import tools  # @UnresolvedImport
 
 import six
 
-theFile = '''{file}'''
+theFile = '''{m.r.as_file}'''
 
 # First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
 
@@ -35,8 +35,8 @@ def onExit():
         [
             'security',
              'delete-generic-password',
-             '-a', '{username}',
-             '-s', 'Remote Desktop Connection 2 Password for {ip}',
+             '-a', '{m.usernameWithDomain}',
+             '-s', 'Remote Desktop Connection 2 Password for {m.ip}',
         ]
     )
 
@@ -52,7 +52,7 @@ if executable is None:
     </li>
     <li>
         <p><b>CoRD</b> (A bit unstable from 10.7 onwards)</p>
-        <p>You can get it from <a href="{this_server}static/other/CoRD.pkg">this link</a></p>
+        <p>You can get it from <a href="{m.this_server}static/other/CoRD.pkg">this link</a></p>
     </li>
 </ul>
 <p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
@@ -60,54 +60,52 @@ if executable is None:
 ''', QtGui.QMessageBox.Ok)
 elif executable == msrdc:
     try:
-        if '{username}' != '' and '{password}' != '':
+        if {m.hasCredentials}:  # @UndefinedVariable
             subprocess.call(
                 [
                     'security',
                     'add-generic-password',
-                    '-w', '{password}',
+                    '-w', '{m.password}',
                     '-U',
-                    '-a', '{username}',
-                    '-s', 'Remote Desktop Connection 2 Password for {ip}',
+                    '-a', '{m.usernameWithDomain}',
+                    '-s', 'Remote Desktop Connection 2 Password for {m.ip}',
                     '-T', '/Applications/Remote Desktop Connection.app',
                 ]
             )
+            tools.addExecBeforeExit(onExit)
         # Call but do not wait for exit
         tools.addTaskToWait(subprocess.Popen([executable, filename]))
-        tools.addExecBeforeExit(onExit)
 
         tools.addFileToUnlink(filename)
     except Exception as e:
         QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)  # @UndefinedVariable
 else:  # CoRD
     url = 'rdp://'
-    if '\\' in '{username}':
-        username, domain = '{username}'.split('\\')
-    else:
-        username, domain = '{username}', ''
+
+    username, domain = '{m.username}', '{m.domain}'
 
     if username != '':
         url += username
-        if '{password}' != '':
-            url += ':' + urllib.quote('{password}')
+        if '{m.password}' != '':
+            url += ':' + urllib.quote('{m.password}')
         url += '@'
-    url += '{ip}/'
+    url += '{m.ip}/'
     if domain != '':
         url += domain
 
-    url += '?screenDepth={r.bpp}'
+    url += '?screenDepth={m.r.bpp}'
 
-    if {r.fullScreen}:  # @UndefinedVariable
+    if {m.r.fullScreen}:  # @UndefinedVariable
         url += '&fullscreen=true'
     else:
-        url += 'screenWidth={r.width}&screenHeight={r.height}'
+        url += 'screenWidth={m.r.width}&screenHeight={m.r.height}'
 
-    url += '&forwardAudio=' + '01'[{r.redirectAudio}]  # @UndefinedVariable
+    url += '&forwardAudio=' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
 
-    if {r.redirectDrives}:  # @UndefinedVariable
+    if {m.r.redirectDrives}:  # @UndefinedVariable
         url += '&forwardDisks=true'
 
-    if {r.redirectPrinters}:  # @UndefinedVariable
+    if {m.r.redirectPrinters}:  # @UndefinedVariable
         url += '&forwardPrinters=true'
 
     tools.addTaskToWait(subprocess.Popen(['open', url]))

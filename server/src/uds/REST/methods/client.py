@@ -97,6 +97,9 @@ class Client(Handler):
                 'downloadUrl': url
             })
 
+        if len(self._args) == 1:
+            return Client.result(_('Correct'))
+
         try:
             ticket, scrambler = self._args
         except Exception:
@@ -121,7 +124,7 @@ class Client(Handler):
 
                 logger.debug('Script:\n{}'.format(transportScript))
 
-                return Client.result(transportScript.encode('bz2').encode('base64'))
+                return Client.result(result=transportScript.encode('bz2').encode('base64'))
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=six.text_type(e))

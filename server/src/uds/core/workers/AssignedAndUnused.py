@@ -69,5 +69,5 @@ class AssignedAndUnused(Job):
                         osm.processUnused(us)
             else:  # No os manager, simply remove unused services in specified time
                 for us in ds.assignedUserServices().filter(in_use=False, state_date__lt=since_state, state=State.USABLE, os_state=State.USABLE):
-                    logger.debug('Found unused assigned service {0}'.format(us))
+                    logger.debug('Found unused assigned service with no OS Manager {0}'.format(us))
                     us.remove()

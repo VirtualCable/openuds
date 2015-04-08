@@ -2,7 +2,7 @@
 
 #
 # Copyright (c) 2012 Virtual Cable S.L.
-# All rights reserved.
+# All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -34,6 +34,7 @@
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.util import OsDetector
+from uds.core.util import tools
 from .BaseRDPTransport import BaseRDPTransport
 from .RDPFile import RDPFile
 
@@ -66,47 +67,15 @@ class RDPTransport(BaseRDPTransport):
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
 
-    def windowsScript(self, data):
-        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Windows)
-        r.address = '{}:{}'.format(data['ip'], 3389)
-        r.username = data['username']
-        r.password = '{password}'
-        r.domain = data['domain']
-        r.redirectPrinters = self.allowPrinters.isTrue()
-        r.redirectSmartcards = self.allowSmartcards.isTrue()
-        r.redirectDrives = self.allowDrives.isTrue()
-        r.redirectSerials = self.allowSerials.isTrue()
-        r.showWallpaper = self.wallpaper.isTrue()
-        r.multimon = self.multimon.isTrue()
-
+    def windowsScript(self, m):
         # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-        return self.getScript('scripts/windows/direct.py').format(os=data['os'], file=r.get(), password=data['password'])
+        return self.getScript('scripts/windows/direct.py').format(m=m)
 
-    def macOsXScript(self, data):
-        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Macintosh)
-        r.address = '{}:{}'.format(data['ip'], 3389)
-        r.username = data['username']
-        r.domain = data['domain']
-        r.redirectPrinters = self.allowPrinters.isTrue()
-        r.redirectSmartcards = self.allowSmartcards.isTrue()
-        r.redirectDrives = self.allowDrives.isTrue()
-        r.redirectSerials = self.allowSerials.isTrue()
-        r.showWallpaper = self.wallpaper.isTrue()
-        r.multimon = self.multimon.isTrue()
+    def macOsXScript(self, m):
+        return self.getScript('scripts/macosx/direct.py').format(m=m)
 
-        if data['domain'] != '':
-            username = '{}\\\\{}'.format(data['domain'], data['username'])
-        else:
-            username = data['username']
-
-        return self.getScript('scripts/macosx/direct.py').format(os=data['os'],
-                                                                 file=r.get(),
-                                                                 password=data['password'],
-                                                                 username=username,
-                                                                 ip=data['ip'],
-                                                                 this_server=data['this_server'],
-                                                                 r=r
-                                                                 )
+    def getLinuxScript(self, m):
+        return self.getScript('scripts/linux/direct.py').format(m=m)
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
@@ -118,6 +87,18 @@ class RDPTransport(BaseRDPTransport):
         width, height = CommonPrefs.getWidthHeight(prefs)
         depth = CommonPrefs.getDepth(prefs)
 
+        r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
+        r.address = '{}:{}'.format(ip, 3389)
+        r.username = username
+        r.password = password
+        r.domain = domain
+        r.redirectPrinters = self.allowPrinters.isTrue()
+        r.redirectSmartcards = self.allowSmartcards.isTrue()
+        r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectSerials = self.allowSerials.isTrue()
+        r.showWallpaper = self.wallpaper.isTrue()
+        r.multimon = self.multimon.isTrue()
+
         # data
         data = {
             'os': os['OS'],
@@ -125,6 +106,7 @@ class RDPTransport(BaseRDPTransport):
             'port': 3389,
             'username': username,
             'password': password,
+            'hasCredentials': username != '' and password != '',
             'domain': domain,
             'width': width,
             'height': height,
@@ -137,14 +119,23 @@ class RDPTransport(BaseRDPTransport):
             'wallpaper': self.wallpaper.isTrue(),
             'multimon': self.multimon.isTrue(),
             'fullScreen': width == -1 or height == -1,
-            'this_server': request.build_absolute_uri('/')
+            'this_server': request.build_absolute_uri('/'),
+            'r': r,
         }
 
-        logger.debug('Detected os: {}'.format(data['os']))
+        m = tools.DictAsObj(data)
 
-        if data['os'] == OsDetector.Windows:
-            return self.windowsScript(data)
-        elif data['os'] == OsDetector.Macintosh:
-            return self.macOsXScript(data)
+        if m.domain != '':
+            m.usernameWithDomain = '{}\\\\{}'.format(m.domain, m.username)
+        else:
+            m.usernameWithDomain = m.username
+
+        if m.os == OsDetector.Windows:
+            m.r.password = '{password}'
+            return self.windowsScript(m)
+        if m.os == OsDetector.Macintosh:
+            return self.macOsXScript(m)
+        if m.os == OsDetector.Linux:
+            return self.getLinuxScript(m)
 
         return ''

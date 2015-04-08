@@ -38,6 +38,7 @@ from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
 from uds.models import TicketStore
 from uds.core.util import OsDetector
+from uds.core.util import tools
 
 from .BaseRDPTransport import BaseRDPTransport
 from .RDPFile import RDPFile
@@ -84,61 +85,13 @@ class TSRDPTransport(BaseRDPTransport):
             if values['tunnelServer'].count(':') != 1:
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
-    def windowsScript(self, data):
-        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Windows)
-        r.address = '{address}'
-        r.username = data['username']
-        r.password = '{password}'
-        r.domain = data['domain']
-        r.redirectPrinters = self.allowPrinters.isTrue()
-        r.redirectSmartcards = self.allowSmartcards.isTrue()
-        r.redirectDrives = self.allowDrives.isTrue()
-        r.redirectSerials = self.allowSerials.isTrue()
-        r.showWallpaper = self.wallpaper.isTrue()
-        r.multimon = self.multimon.isTrue()
+    def windowsScript(self, m):
 
         # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-        return self.getScript('scripts/windows/tunnel.py').format(
-            file=r.get(), password=data['password'],
-            server=data['ip'],
-            port=3389,
-            tunUser=data['tunUser'],
-            tunPass=data['tunPass'],
-            tunHost=data['tunHost'],
-            tunPort=data['tunPort']
-        )
+        return self.getScript('scripts/windows/tunnel.py').format(m=m)
 
-    def macOsXScript(self, data):
-        r = RDPFile(data['fullScreen'], data['width'], data['height'], data['depth'], target=OsDetector.Macintosh)
-        r.address = '{address}'
-        r.username = data['username']
-        r.domain = data['domain']
-        r.redirectPrinters = self.allowPrinters.isTrue()
-        r.redirectSmartcards = self.allowSmartcards.isTrue()
-        r.redirectDrives = self.allowDrives.isTrue()
-        r.redirectSerials = self.allowSerials.isTrue()
-        r.showWallpaper = self.wallpaper.isTrue()
-        r.multimon = self.multimon.isTrue()
-
-        if data['domain'] != '':
-            username = '{}\\\\{}'.format(data['domain'], data['username'])
-        else:
-            username = data['username']
-
-        return self.getScript('scripts/macosx/tunnel.py').format(
-            os=data['os'],
-            file=r.get(),
-            password=data['password'],
-            username=username,
-            server=data['ip'],
-            this_server=data['this_server'],
-            r=r,
-            port=3389,
-            tunUser=data['tunUser'],
-            tunPass=data['tunPass'],
-            tunHost=data['tunHost'],
-            tunPort=data['tunPort']
-        )
+    def macOsXScript(self, m):
+        return self.getScript('scripts/macosx/tunnel.py').format(m=m)
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
@@ -157,6 +110,18 @@ class TSRDPTransport(BaseRDPTransport):
 
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
 
+        r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
+        r.address = '{address}'
+        r.username = username
+        r.domain = domain
+        r.redirectPrinters = self.allowPrinters.isTrue()
+        r.redirectSmartcards = self.allowSmartcards.isTrue()
+        r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectSerials = self.allowSerials.isTrue()
+        r.showWallpaper = self.wallpaper.isTrue()
+        r.multimon = self.multimon.isTrue()
+
+
         # data
         data = {
             'os': os['OS'],
@@ -167,6 +132,7 @@ class TSRDPTransport(BaseRDPTransport):
             'tunPort': sshPort,
             'username': username,
             'password': password,
+            'hasCredentials': username != '' and password != '',
             'domain': domain,
             'width': width,
             'height': height,
@@ -179,12 +145,21 @@ class TSRDPTransport(BaseRDPTransport):
             'wallpaper': self.wallpaper.isTrue(),
             'multimon': self.multimon.isTrue(),
             'fullScreen': width == -1 or height == -1,
-            'this_server': request.build_absolute_uri('/')
+            'this_server': request.build_absolute_uri('/'),
+            'r': r,
         }
 
-        if data['os'] == OsDetector.Windows:
-            return self.windowsScript(data)
-        elif data['os'] == OsDetector.Macintosh:
-            return self.macOsXScript(data)
+        m = tools.DictAsObj(data)
+
+        if m.domain != '':
+            m.usernameWithDomain = '{}\\\\{}'.format(m.domain, m.username)
+        else:
+            m.usernameWithDomain = m.username
+
+        if m.os == OsDetector.Windows:
+            r.password = '{password}'
+            return self.windowsScript(m)
+        if m.os == OsDetector.Macintosh:
+            return self.macOsXScript(m)
 
         return ''
