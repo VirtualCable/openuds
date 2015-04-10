@@ -67,6 +67,12 @@ class UDSClient(QtGui.QMainWindow):
 
         self.ui.info.setText('Initializing...')
 
+        screen = QtGui.QDesktopWidget().screenGeometry()
+        mysize = self.geometry()
+        hpos = (screen.width() - mysize.width()) / 2
+        vpos = (screen.height() - mysize.height() - mysize.height()) / 2
+        self.move(hpos, vpos)
+
         self.activateWindow()
 
     def closeWindow(self):
@@ -204,6 +210,7 @@ if __name__ == "__main__":
         exitVal = app.exec_()
 
     except Exception as e:
+        exitVal = 128
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
 
     sys.exit(exitVal)

@@ -86,8 +86,6 @@ class TSRDPTransport(BaseRDPTransport):
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
     def windowsScript(self, m):
-
-        # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
         return self.getScript('scripts/windows/tunnel.py').format(m=m)
 
     def macOsXScript(self, m):
@@ -113,6 +111,7 @@ class TSRDPTransport(BaseRDPTransport):
         r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
         r.address = '{address}'
         r.username = username
+        r.password = password
         r.domain = domain
         r.redirectPrinters = self.allowPrinters.isTrue()
         r.redirectSmartcards = self.allowSmartcards.isTrue()
@@ -158,8 +157,15 @@ class TSRDPTransport(BaseRDPTransport):
 
         if m.os == OsDetector.Windows:
             r.password = '{password}'
-            return self.windowsScript(m)
-        if m.os == OsDetector.Macintosh:
-            return self.macOsXScript(m)
 
-        return ''
+        os = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            OsDetector.Macintosh: 'macosx'
+
+        }.get(m.os)
+
+        if os == '':
+            return ''  # In fact, should return an error, but this will be fine right now
+
+        return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)

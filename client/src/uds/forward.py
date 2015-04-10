@@ -113,8 +113,7 @@ class ForwardThread(threading.Thread):
 
         try:
             self.client.connect(self.server, self.port, username=self.username, password=self.password)
-        except Exception as e:
-            verbose('Exception: {}'.format(e))
+        except Exception:
             self.status = 2  # Error
             return
 

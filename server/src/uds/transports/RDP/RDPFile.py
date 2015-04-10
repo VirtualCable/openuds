@@ -38,6 +38,7 @@ from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
 import six
+import os
 
 
 class RDPFile(object):
@@ -80,6 +81,10 @@ class RDPFile(object):
 
     @property
     def as_new_xfreerdp_params(self):
+        '''
+        Parameters for xfreerdp >= 1.1.0 with self rdp description
+        Note that server is not added
+        '''
         params = ['/clipboard', '/t:UDS Connection', '/cert-ignore']
 
         if self.redirectSmartcards:
@@ -93,6 +98,9 @@ class RDPFile(object):
         if self.redirectDrives is True:
             params.append('/drive:media,/media')
             params.append('/home-drive')
+
+        if self.redirectSerials is True:
+            params.append('/serial:/dev/ttyS0')
 
         if self.redirectPrinters:
             params.append('/printer')
@@ -114,10 +122,65 @@ class RDPFile(object):
             params.append('/h:{}'.format(self.height))
 
         params.append('/bpp:{}'.format(self.bpp))
-        params.append('/u:{}'.format(self.username))
-        params.append('/p:{}'.format(self.password))
-        params.append('/d:{}'.format(self.domain))
-        params.append('/v:{}'.format(self.address))
+        if self.username != '':
+            params.append('/u:{}'.format(self.username))
+        if self.password != '':
+            params.append('/p:{}'.format(self.password))
+        if self.domain != '':
+            params.append('/d:{}'.format(self.domain))
+
+        return params
+
+    @property
+    def as_rdesktop_params(self):
+        '''
+        Parameters for rdestop with self rdp description
+        Note that server is not added
+        '''
+
+        params = ['-TUDS Connection', '-P', '-rclipboard:PRIMARYCLIPBOARD]']
+
+        if self.redirectSmartcards:
+            params.append('-rsdcard')
+
+        if self.redirectAudio:
+            params.append('-rsound:local')
+        else:
+            params.append('-rsound:off')
+
+        if self.redirectDrives is True:
+            params.append('-rdisk:home=' + os.environ['HOME'])
+            params.append('-rdisk:media=/media')
+
+        if self.redirectSerials is True:
+            params.append('-rcomport:COM1=/dev/ttyS0')
+
+        if self.redirectPrinters:
+            pass
+
+        if self.compression:
+            params.append('-z')
+
+        if self.showWallpaper:
+            params.append('-xl')
+        else:
+            params.append('-xb')
+
+        if self.multimon:
+            pass
+
+        if self.fullScreen:
+            params.append('-f')
+        else:
+            params.append('-g{}x{}'.format(self.width, self.height))
+
+        params.append('-a{}'.format(self.bpp))
+        if self.username != '':
+            params.append('-u{}'.format(self.username))
+        if self.password != '':
+            params.append('-p-')
+        if self.domain != '':
+            params.append('-d{}'.format(self.domain))
 
         return params
 

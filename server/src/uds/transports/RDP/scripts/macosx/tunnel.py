@@ -59,7 +59,7 @@ if executable is None:
 forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389)
 
 if forwardThread.status == 2:
-    QtGui.QMessageBox.critical(parent, 'Error', 'Unable to open tunnel', QtGui.QMessageBox.Ok)  # @UndefinedVariable
+    raise Exception('Unable to open tunnel')
 
 else:
     theFile = '''{m.r.as_file}'''.format(

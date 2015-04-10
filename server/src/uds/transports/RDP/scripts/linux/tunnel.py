@@ -6,23 +6,24 @@ from __future__ import unicode_literals
 from PyQt4 import QtCore, QtGui
 import subprocess
 import re
+from uds.forward import forward  # @UnresolvedImport
 
 from uds import tools  # @UnresolvedImport
 
 import six
 
 
-def execNewXFreeRdp(parent, xfreerdp):
+def execNewXFreeRdp(parent, xfreerdp, port):
     import subprocess  # @Reimport
-    params = [xfreerdp] + {m.r.as_new_xfreerdp_params} + ['/v:{m.r.address}']  # @UndefinedVariable
+    params = [xfreerdp] + {m.r.as_new_xfreerdp_params} + ['/v:127.0.0.1:{{}}'.format(port)]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
 
-def execRdesktop(parent, rdesktop):
+def execRdesktop(parent, rdesktop, port):
     import subprocess  # @Reimport
-    params = [rdesktop] + {m.r.as_rdesktop_params} + ['{m.r.address}']  # @UndefinedVariable
+    params = [rdesktop] + {m.r.as_rdesktop_params} + ['127.0.0.1:{{}}'.format(port)]  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
-    if '{m.password}' != '':
+    if {m.hasCredentials}:  # @UndefinedVariable
         p.stdin.write('{m.password}')
     p.stdin.close()
     tools.addTaskToWait(p)
@@ -59,4 +60,10 @@ if app is None or fnc is None:
     <p>Also note that xfreerdp prior to version 1.1 will not be taken into consideration.</p>
 ''')
 else:
-    fnc(parent, app)  # @UndefinedVariable
+    # Open tunnel
+    forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389)
+
+    if forwardThread.status == 2:
+        raise Exception('Unable to open tunnel')
+
+    fnc(parent, app, port)  # @UndefinedVariable

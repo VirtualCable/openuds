@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=UDSClient
+Comment=UDS Helper
+Keywords=uds;client;vdi;
+OnlyShowIn=GNOME;Unity;
+Exec=/usr/lib/UDSClient/UDSClient.py %u
+Icon=help-browser
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Utility;
+MimeType=x-scheme-handler/uds;x-scheme-handler/udss;

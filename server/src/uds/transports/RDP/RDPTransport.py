@@ -132,10 +132,15 @@ class RDPTransport(BaseRDPTransport):
 
         if m.os == OsDetector.Windows:
             m.r.password = '{password}'
-            return self.windowsScript(m)
-        if m.os == OsDetector.Macintosh:
-            return self.macOsXScript(m)
-        if m.os == OsDetector.Linux:
-            return self.getLinuxScript(m)
 
-        return ''
+        os = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            OsDetector.Macintosh: 'macosx'
+
+        }.get(m.os)
+
+        if os == '':
+            return ''  # In fact, should return an error, but this will be fine right now
+
+        return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)
