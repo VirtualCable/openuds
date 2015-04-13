@@ -26,6 +26,9 @@ cd ../..
 make DESTDIR=$RPM_BUILD_ROOT DISTRO=rh install
 cd $curdir
 
+%post
+/usr/bin/update-desktop-database
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 curdir=`pwd`
@@ -37,6 +40,7 @@ cd $curdir
 %postun
 # And, posibly, the .pyc leaved behind on /usr/share/UDSActor
 rm -rf /usr/share/UDClient > /dev/null 2>&1
+/usr/bin/update-desktop-database
 
 %description
 This package provides the required components to allow connection to services offered by UDS Broker.

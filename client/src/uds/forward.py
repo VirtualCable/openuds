@@ -23,7 +23,7 @@ class ForwardServer (SocketServer.ThreadingTCPServer):
 class Handler (SocketServer.BaseRequestHandler):
 
     def handle(self):
-        self.thread.alreadyConnected = True
+        self.thread.isConnected = True
 
         try:
             chan = self.ssh_transport.open_channel('direct-tcpip',
@@ -66,7 +66,10 @@ class Handler (SocketServer.BaseRequestHandler):
         except Exception:
             pass
 
-        self.thread.stop()
+        if self.thread.stoppable is True:
+            self.thread.stop()
+
+        self.thread.isConnected = False
 
 
 def verbose(s):
@@ -96,12 +99,14 @@ class ForwardThread(threading.Thread):
         self.stopEvent = threading.Event()
 
         self.timer = None
-        self.alreadyConnected = False
+        self.isConnected = False
+        self.stoppable = False
 
     def _timerFnc(self):
         self.timer = None
-        verbose('Timer fnc: {}'.format(self.alreadyConnected))
-        if self.alreadyConnected is False:
+        verbose('Timer fnc: {}'.format(self.isConnected))
+        self.stoppable = True
+        if self.isConnected is False:
             self.stop()
 
     def run(self):
