@@ -39,7 +39,6 @@ from .BaseRDPTransport import BaseRDPTransport
 from .RDPFile import RDPFile
 
 import logging
-import os
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +139,7 @@ class RDPTransport(BaseRDPTransport):
 
         }.get(m.os)
 
-        if os == '':
-            return ''  # In fact, should return an error, but this will be fine right now
+        if os is None:
+            return super(RDPTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
 
         return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)

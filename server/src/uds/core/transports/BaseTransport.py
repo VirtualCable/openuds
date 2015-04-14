@@ -163,7 +163,14 @@ class Transport(Module):
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
         '''
-        return ''
+        return '''
+from __future__ import unicode_literals
+
+# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
+from PyQt4 import QtCore, QtGui
+
+QtGui.QMessageBox.critical(parent, 'Not supported', 'The transport {transport.name} is not supported on your platform.', QtGui.QMessageBox.Ok)
+'''.format(service=userService, transport=transport)
 
     def getLink(self, userService, transport, ip, os, user, password, request):
         '''
@@ -171,42 +178,6 @@ class Transport(Module):
         If transport provides own link, this method provides the link itself
         '''
         return None
-
-    def renderAsHtml(self, userService, transport, ip, request):
-        os, user, password = OsDetector.getOsFromRequest(request), request.user, webPassword(request)
-        info = self.getUDSTransportInfo(userService, transport, ip, os, user, password, request)
-        if info is not None:
-            ticket = Ticket(data=info)
-            template = loader.get_template('uds/transport/udslink.html')
-            if request.is_secure():
-                uri = 'udss://'
-            else:
-                uri = 'uds://'
-            uri += request.build_absolute_uri('/').split('//')[1]  # Remove http or https
-            uri += ticket.key
-            return template.render(context=Context({'ticket': ticket, 'request': request, 'uri': uri}))
-
-        return self.renderForHtml(userService, transport, ip, os, user, password)
-
-    def renderForHtml(self, userService, transport, ip, os, user, password):
-        '''
-        Requests the html rendering of connector for the destination ip, (dbUser) and password
-        @param: userService: UserService for witch we are rendering the connection (db model)
-        @param transport: Transport (self db model)
-        @param ip: ip of the destination
-        @param user: user (dbUser) logged in
-        @param pass: password used in authentication
-        '''
-        return _('Transport empty')
-
-    def getHtmlComponent(self, id, os, componentId):  # @ReservedAssignment
-        '''
-        This is a method to let the transport add own components (images, applets, or whatever) to the rendered html
-        The reference to object will be the access to the uds.web.views.transcomp, with parameters transportId = ourTransportId and
-        componentId = one id recognized by this method
-        We expect an return array, with first parameter as mime/type and second the content to return
-        '''
-        return ['text/plain', '']
 
     def __str__(self):
         return "Base OS Manager"

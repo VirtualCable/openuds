@@ -36,6 +36,7 @@ import tempfile
 import string
 import random
 import os
+import sys
 import stat
 
 _unlinkFiles = []
@@ -54,8 +55,12 @@ def saveTempFile(content, filename=None):
     return filename
 
 
-def findApp(appName):
-    for path in os.environ['PATH'].split(os.pathsep):
+def findApp(appName, extraPath=None):
+    searchPath = os.environ['PATH'].split(os.pathsep)
+    if extraPath is not None:
+        searchPath += extraPath
+
+    for path in searchPath:
         fileName = os.path.join(path, appName)
         if os.path.isfile(fileName) and (os.stat(fileName).st_mode & stat.S_IXUSR) != 0:
             return fileName

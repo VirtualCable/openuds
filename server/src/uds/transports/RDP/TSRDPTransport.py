@@ -165,7 +165,7 @@ class TSRDPTransport(BaseRDPTransport):
 
         }.get(m.os)
 
-        if os == '':
-            return ''  # In fact, should return an error, but this will be fine right now
+        if os is None:
+            return super(TSRDPTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
 
         return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)
