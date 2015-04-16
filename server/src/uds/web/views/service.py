@@ -36,7 +36,7 @@ from django.template import RequestContext
 from django.views.decorators.cache import cache_page
 
 from uds.core.auths.auth import webLoginRequired, webPassword
-from uds.core.services.Exceptions import ServiceInMaintenanceMode
+from uds.core.services.Exceptions import ServiceInMaintenanceMode, InvalidServiceException
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.ui import theme
@@ -52,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-22'
+__updated__ = '2015-04-16'
 
 
 @webLoginRequired
@@ -75,6 +75,9 @@ def service(request, idService, idTransport):
 
         logger.debug('Found service: {0}'.format(ads))
         trans = Transport.objects.get(uuid=idTransport)
+        if trans.validForIp(request.ip) is False:
+            raise InvalidServiceException()
+
         # Test if the service is ready
         if ads.isReady():
             log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
