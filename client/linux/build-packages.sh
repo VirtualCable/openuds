@@ -31,3 +31,5 @@ for pkg in udsclient-$VERSION.spec udsclient-opensuse-$VERSION.spec; do
 done
 
 #rm udsclient-$VERSION
+
+make DESTDIR=targz DISTRO=targz install
