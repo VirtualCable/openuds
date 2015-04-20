@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-04-01'
+__updated__ = '2015-04-16'
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect
@@ -86,6 +86,10 @@ def getService(request, idService, idTransport, doTest=True):
 
     # Ensures that the transport is allowed for this service
     if trans not in ads.deployed_service.transports.all():
+        raise InvalidServiceException()
+
+    # If transport is not available for the request IP...
+    if trans.validForIp(request.ip) is False:
         raise InvalidServiceException()
 
     if doTest is False:

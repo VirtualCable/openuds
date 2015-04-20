@@ -2,7 +2,10 @@
 
 VERSION=1.7.5
 RELEASE=1
+# Debian based
+dpkg-buildpackage -b
 
+# Now rpm based
 top=`pwd`
 
 cat udsclient-template.spec | 

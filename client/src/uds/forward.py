@@ -12,7 +12,7 @@ import threading
 import random
 import time
 
-g_verbose = False
+g_verbose = True
 
 
 class ForwardServer (SocketServer.ThreadingTCPServer):
@@ -117,8 +117,9 @@ class ForwardThread(threading.Thread):
         verbose('Connecting to ssh host %s:%d ...' % (self.server, self.port))
 
         try:
-            self.client.connect(self.server, self.port, username=self.username, password=self.password)
-        except Exception:
+            self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5, banner_timeout=10)
+        except Exception as e:
+            verbose('Exception connecting: {}'.format(e))
             self.status = 2  # Error
             return
 
@@ -173,3 +174,4 @@ def forward(server, port, username, password, redirectHost, redirectPort, localP
         time.sleep(0.1)
 
     return (ft, localPort)
+

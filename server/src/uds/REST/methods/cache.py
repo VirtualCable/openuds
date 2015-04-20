@@ -70,6 +70,5 @@ class Cache(Handler):
         if len(self._args) != 1:
             raise RequestError('Invalid Request')
 
-
         uCache.purge()
         return 'done'
