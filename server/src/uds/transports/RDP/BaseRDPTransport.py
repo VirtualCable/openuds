@@ -89,7 +89,7 @@ class BaseRDPTransport(Transport):
     def processUserPassword(self, service, user, password):
         username = user.getUsernameForAuth()
 
-        if self.fixedName.value is not '':
+        if self.fixedName.value != '':
             username = self.fixedName.value
 
         proc = username.split('@')
@@ -99,9 +99,9 @@ class BaseRDPTransport(Transport):
             domain = ''
         username = proc[0]
 
-        if self.fixedPassword.value is not '':
+        if self.fixedPassword.value != '':
             password = self.fixedPassword.value
-        if self.fixedDomain.value is not '':
+        if self.fixedDomain.value != '':
             domain = self.fixedDomain.value
         if self.useEmptyCreds.isTrue():
             username, password, domain = '', '', ''
