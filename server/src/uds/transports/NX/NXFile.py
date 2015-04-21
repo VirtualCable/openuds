@@ -36,6 +36,10 @@ Created on Jul 29, 2011
 '''
 from __future__ import unicode_literals
 
+from .NXPassword import NXPassword
+
+import six
+
 EMPTY_PASSWORD = "EMPTY_PASSWORD"
 
 NXTEMPLATE = (
@@ -173,20 +177,19 @@ class NXFile(object):
     password = ''
     desktop = 'gnome'
 
-    def __init__(self, fullScreen, width, height):
+    def __init__(self, fullScreen=False, width=1024, height=768):
         self.fullScreen = fullScreen
-        self.width = width
-        self.height = height
+        self.width = int(width)
+        self.height = int(height)
 
     def get(self):
         rememberPass = 'true'
-        # password = NXPassword.scrambleString(self.password)
-        password = ''
+        password = NXPassword.scrambleString(self.password)
         if password == '':
             rememberPass = "false"
             password = EMPTY_PASSWORD
 
-        resolution = self.width + "x" + self.height
+        resolution = '{}x{}'.format(self.width, self.height)
         if self.fullScreen:
             resolution = "fullscreen"
 
@@ -203,5 +206,5 @@ class NXFile(object):
             PORT=self.port,
             DESKTOP=self.desktop,
             USERNAME=self.username,
-            PASSWORD=self.password
+            PASSWORD=password
         )

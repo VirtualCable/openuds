@@ -35,6 +35,7 @@ from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
 from uds.core.managers.DownloadsManager import DownloadsManager
 from uds.core.util.Config import Config
 from NXTransport import NXTransport
+from TSNXTransport import TSNXTransport
 from django.utils.translation import ugettext_noop as _
 import os.path, sys
 
