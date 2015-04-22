@@ -177,14 +177,28 @@ class NXFile(object):
     password = ''
     desktop = 'gnome'
 
-    def __init__(self, fullScreen=False, width=1024, height=768):
-        self.fullScreen = fullScreen
+    def __init__(self, username='', password='', width=1024, height=768):
+        self.fullScreen = width == -1 or height == -1
         self.width = int(width)
         self.height = int(height)
+        self.username = username
+        self.password = password
 
-    def get(self):
+    @property
+    def as_file(self):
+        return self.get()
+
+    @property
+    def as_file_for_format(self):
+        return self.get(True)
+
+    def get(self, processPassword=False):
         rememberPass = 'true'
         password = NXPassword.scrambleString(self.password)
+        if processPassword:
+            password = password.replace('{', '{{')
+            password = password.replace('}', '}}')
+
         if password == '':
             rememberPass = "false"
             password = EMPTY_PASSWORD

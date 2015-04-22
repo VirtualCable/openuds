@@ -73,7 +73,7 @@ elif executable == msrdc:
                 ]
             )
             tools.addExecBeforeExit(onExit)
-        # Call but do not wait for exit
+        # Call and wait for exit
         tools.addTaskToWait(subprocess.Popen([executable, filename]))
 
         tools.addFileToUnlink(filename)

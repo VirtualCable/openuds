@@ -66,16 +66,6 @@ class RDPTransport(BaseRDPTransport):
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
 
-    def windowsScript(self, m):
-        # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-        return self.getScript('scripts/windows/direct.py').format(m=m)
-
-    def macOsXScript(self, m):
-        return self.getScript('scripts/macosx/direct.py').format(m=m)
-
-    def getLinuxScript(self, m):
-        return self.getScript('scripts/linux/direct.py').format(m=m)
-
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
         prefs = user.prefs('rdp')

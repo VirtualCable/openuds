@@ -38,10 +38,12 @@ from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
+from uds.core.util import OsDetector
 from uds.core.util import connection
-from web import generateHtmlForNX, getHtmlComponent
+from .NXFile import NXFile
 
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -89,12 +91,12 @@ class NXTransport(Transport):
     ])
     cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=9, tooltip=_('Cache size en Mb kept at memory'),
                                values=[
-                                       {'id': '4', 'text': '4 Mb'},
-                                       {'id': '8', 'text': '8 Mb'},
-                                       {'id': '16', 'text': '16 Mb'},
-                                       {'id': '32', 'text': '32 Mb'},
-                                       {'id': '64', 'text': '64 Mb'},
-                                       {'id': '128', 'text': '128 Mb'},
+                                   {'id': '4', 'text': '4 Mb'},
+                                   {'id': '8', 'text': '8 Mb'},
+                                   {'id': '16', 'text': '16 Mb'},
+                                   {'id': '32', 'text': '32 Mb'},
+                                   {'id': '64', 'text': '64 Mb'},
+                                   {'id': '128', 'text': '128 Mb'},
     ])
 
     def __init__(self, environment, values=None):
@@ -122,8 +124,8 @@ class NXTransport(Transport):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join('\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
-                                self._connection, self._session, self._cacheDisk, self._cacheMem ])
+        return str.join('\t', ['v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
+                               self._connection, self._session, self._cacheDisk, self._cacheMem])
 
     def unmarshal(self, string):
         data = string.split('\t')
@@ -159,8 +161,12 @@ class NXTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def renderForHtml(self, userService, transport, ip, os, user, password):
+    def getScript(self, script):
+        with open(os.path.join(os.path.dirname(__file__), script)) as f:
+            data = f.read()
+        return data
 
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         prefs = user.prefs('nx')
 
         username = user.getUsernameForAuth()
@@ -177,22 +183,25 @@ class NXTransport(Transport):
 
         width, height = CommonPrefs.getWidthHeight(prefs)
 
-        # Extra data
-        extra = {
-            'width': width,
-            'height': height,
-            'port': self._listenPort,
-            'connection': self._connection,
-            'session': self._session,
-            'cacheDisk': self._cacheDisk,
-            'cacheMem': self._cacheMem
-        }
-
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return generateHtmlForNX(self, userService.uuid, transport.uuid, ip, os, username, password, extra)
+        r = NXFile(username=username, password=password, width=width, height=height)
+        r.host = ip
+        r.port = self._listenPort
+        r.connection = self._connection
+        r.desktop = self._session
+        r.cachedisk = self._cacheDisk
+        r.cachemem = self._cacheMem
 
-    def getHtmlComponent(self, theId, os, componentId):
-        # We use helper to keep this clean
-        return getHtmlComponent(self.__module__, componentId)
+        os = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            OsDetector.Macintosh: 'macosx'
+
+        }.get(os['OS'])
+
+        if os is None:
+            return super(NXTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+
+        return self.getScript('scripts/{}/direct.py'.format(os)).format(r=r)

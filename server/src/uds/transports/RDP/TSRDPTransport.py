@@ -85,12 +85,6 @@ class TSRDPTransport(BaseRDPTransport):
             if values['tunnelServer'].count(':') != 1:
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
-    def windowsScript(self, m):
-        return self.getScript('scripts/windows/tunnel.py').format(m=m)
-
-    def macOsXScript(self, m):
-        return self.getScript('scripts/macosx/tunnel.py').format(m=m)
-
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
         prefs = user.prefs('rdp')

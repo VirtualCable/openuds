@@ -38,14 +38,16 @@ from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
-from uds.core.util.Cache import Cache
+from uds.models import TicketStore
 from uds.core.util import connection
-from web import generateHtmlForNX, getHtmlComponent
+from uds.core.util import OsDetector
+from uds.core.util.tools import DictAsObj
+from .NXFile import NXFile
 
 import logging
 import random
 import string
-import time
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +64,6 @@ class TSNXTransport(Transport):
     typeDescription = _('NX Transport for tunneled connection')
     iconFile = 'nx.png'
     needsJava = True  # If this transport needs java for rendering
-    supportedOss = ['Windows', 'Macintosh', 'Linux']
     protocol = protocols.NX
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'))
@@ -107,7 +108,7 @@ class TSNXTransport(Transport):
 
     def __init__(self, environment, values=None):
         super(TSNXTransport, self).__init__(environment, values)
-        if values != None:
+        if values is not None:
             if values['tunnelServer'].find(':') == -1:
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
             self._tunnelServer = values['tunnelServer']
@@ -136,8 +137,8 @@ class TSNXTransport(Transport):
         '''
         Serializes the transport data so we can store it in database
         '''
-        return str.join('\t', [ 'v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
-                                self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer ])
+        return str.join('\t', ['v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
+                               self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer])
 
     def unmarshal(self, string):
         data = string.split('\t')
@@ -175,8 +176,12 @@ class TSNXTransport(Transport):
                 self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def renderForHtml(self, userService, transport, ip, os, user, password):
+    def getScript(self, script):
+        with open(os.path.join(os.path.dirname(__file__), script)) as f:
+            data = f.read()
+        return data
 
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         prefs = user.prefs('nx')
 
         username = user.getUsernameForAuth()
@@ -189,34 +194,51 @@ class TSNXTransport(Transport):
         if self._useEmptyCreds is True:
             username, password = '', ''
 
-        width, height = CommonPrefs.getWidthHeight(prefs)
-        cache = Cache('pam')
-
-        tunuser = ''.join(random.choice(string.letters + string.digits) for _i in range(12)) + ("%f" % time.time()).split('.')[1]
         tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
-        cache.put(tunuser, tunpass, 60 * 10)  # Credential valid for ten minutes, and for 1 use only
+        tunuser = TicketStore.create(tunpass)
 
-        sshHost, sshPort = self._tunnelServer.split(':')
+        sshServer = self._tunnelServer
+        if ':' not in sshServer:
+            sshServer += ':443'
+
+        sshHost, sshPort = sshServer.split(':')
 
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
-        tun = "{0} {1} {2} {3} {4} {5} {6}".format(tunuser, tunpass, sshHost, sshPort, ip, self._listenPort, '9')
 
-        # Extra data
-        extra = {
-            'width': width,
-            'height': height,
-            'connection': self._connection,
-            'session': self._session,
-            'cacheDisk': self._cacheDisk,
-            'cacheMem': self._cacheMem,
-            'tun': tun
-        }
-
+        width, height = CommonPrefs.getWidthHeight(prefs)
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return generateHtmlForNX(self, userService.uuid, transport.uuid, os, username, password, extra)
+        m = {
+            'ip': ip,
+            'tunUser': tunuser,
+            'tunPass': tunpass,
+            'tunHost': sshHost,
+            'tunPort': sshPort,
+            'password': password,
+            'port': self._listenPort
+        }
 
-    def getHtmlComponent(self, theId, os, componentId):
-        # We use helper to keep this clean
-        return getHtmlComponent(self.__module__, componentId)
+        r = NXFile(username=username, password=password, width=width, height=height)
+        r.host = '{address}'
+        r.port = '{port}'
+        r.connection = self._connection
+        r.desktop = self._session
+        r.cachedisk = self._cacheDisk
+        r.cachemem = self._cacheMem
+
+        os = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            OsDetector.Macintosh: 'macosx'
+
+        }.get(os['OS'])
+
+        if os is None:
+            return super(TSNXTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+
+        return self.getScript('scripts/{}/tunnel.py'.format(os)).format(
+            r=r,
+            m=DictAsObj(m),
+        )
+
