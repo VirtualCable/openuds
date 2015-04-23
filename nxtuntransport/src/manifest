@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Sealed: true
-Permissions: all-permissions
-Codebase: *
-Application-Name: UDS TunNX Connector
