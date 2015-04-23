@@ -86,9 +86,9 @@ class Connection(Handler):
             # Skip maintenance services...
             trans = []
             for t in svr.transports.all().order_by('priority'):
-                typeTrans = t.getType()
                 if t.validForIp(self._request.ip) and t.getType().providesConnetionInfo():
-                    trans.append({'id': t.uuid, 'name': t.name, 'needsJava': t.getType().needsJava})
+                    trans.append({'id': t.uuid, 'name': t.name})
+
             services.append({'id': 'A' + svr.uuid,
                              'name': svr['name'],
                              'transports': trans,
@@ -102,8 +102,7 @@ class Connection(Handler):
             trans = []
             for t in svr.transports.all().order_by('priority'):
                 if t.validForIp(self._request.ip) and t.getType().providesConnetionInfo():
-                    typeTrans = t.getType()
-                    trans.append({'id': t.uuid, 'name': t.name, 'needsJava': typeTrans.needsJava})
+                    trans.append({'id': t.uuid, 'name': t.name})
 
             # Locate if user service has any already assigned user service for this
             ads = UserServiceManager.manager().getExistingAssignationForUser(svr, self._user)

@@ -1,3 +1,4 @@
 /log/
 /static/
 .coverage
+/uds/static/clients/

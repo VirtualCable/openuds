@@ -14,12 +14,13 @@ cat udsclient-template.spec |
   
 # Now fix dependencies for opensuse
 cat udsclient-template.spec | 
+  sed -e s/"version 1.7.0"/"version ${VERSION}"/g |
   sed -e s/"name udsclient"/"name udsclient-opensuse"/g |
   sed -e s/"PyQt4"/"python-qt4"/g |
   sed -e s/"libXScrnSaver"/"libXss1"/g > udsclient-opensuse-$VERSION.spec
 
 
-# Right now, udsactor-xrdp-1.7.0.spec is not needed
+# Right now, udsactor-xrdp-.spec is not needed
 for pkg in udsclient-$VERSION.spec udsclient-opensuse-$VERSION.spec; do
     
     rm -rf rpm
