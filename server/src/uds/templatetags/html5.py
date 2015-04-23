@@ -217,9 +217,19 @@ def osName(os):
 @register.filter(name='pluginDownloadUrl')
 def pluginDownloadUrl(os):
     tmpl = '<a href="{url}" class="btn btn-success">' + _('Download UDS Plugin for') + ' {os}</a>'
+
     if os == 'windows':
-        return tmpl.format(url=static('client/UDSClientSetup.exe'), os='Windows')
+        return tmpl.format(url=static('clients/UDSClientSetup.exe'), os='Windows')
     elif os == 'linux':
-        return '2'
+        linux_packages = (
+            ('udsclient_1.7.5_all.deb', _('Debian based Linux')),
+            ('udsclient-1.7.5-1.noarch.rpm', _('Red Hat based Linux (RH, Fedora, Centos, ...)')),
+            ('udsclient-opensuse-1.7.5-1.noarch.rpm', _('Suse based Linux')),
+            ('udsclient-1.7.5.tar.gz', _('Generic .tar.gz Linux'))
+        )
+        res = ''
+        for v in linux_packages:
+            res += '<p class="text-center">' + tmpl.format(url=static('clients/' + v[0]), os=v[1]) + '</p>'
+        return res
     else:
-        return tmpl.format(url=static('client/UDSClient.dmg'), os='Mac OSX')
+        return tmpl.format(url=static('clients/UDSClient.dmg'), os='Mac OSX')
