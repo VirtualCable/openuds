@@ -32,9 +32,10 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns
 
-__updated__ = '2015-03-10'
+__updated__ = '2015-04-24'
 
 urlpatterns = patterns(
     'uds.admin.views.reporting',
-    (r'', 'usage'),
+    (r'^usage$', 'usage'),
+    (r'^users/(?P<idAuth>.+)$', 'users')
 )

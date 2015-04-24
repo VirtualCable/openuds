@@ -38,6 +38,8 @@ from django.shortcuts import render_to_response
 
 from uds.core.auths.auth import webLoginRequired
 from uds.core.util.decorators import denyBrowsers
+from uds.models import Authenticator
+from uds.models.Util import NEVER
 
 import io
 import six
@@ -68,8 +70,8 @@ class TestReport(Report):
         height = 0.5 * cm
         elements = (
             ObjectValue(attribute_name='name', left=0.5 * cm),
-            ObjectValue(attribute_name='age', left=3 * cm,
-                        get_value=lambda instance: six.text_type(instance['age'])),
+            ObjectValue(attribute_name='real_name', left=3 * cm),
+            ObjectValue(attribute_name='last_access', left=7 * cm),
         )
 
     class band_page_header(ReportBand):
@@ -77,8 +79,9 @@ class TestReport(Report):
         elements = [
             SystemField(expression='%(report_title)s', top=0.1 * cm, left=0, width=BAND_WIDTH,
                         style={'fontName': 'Helvetica-Bold', 'fontSize': 14, 'alignment': TA_CENTER}),
-            Label(text="ID", top=0.8 * cm, left=0.5 * cm),
-            Label(text=u"Creation Date", top=0.8 * cm, left=3 * cm),
+            Label(text="User ID", top=0.8 * cm, left=0.5 * cm),
+            Label(text="Real Name", top=0.8 * cm, left=3 * cm),
+            Label(text="Last access", top=0.8 * cm, left=7 * cm),
             SystemField(expression=_('Page %(page_number)d of %(page_count)d'), top=0.1 * cm,
                         width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
         ]
@@ -96,19 +99,12 @@ class TestReport(Report):
 
 @denyBrowsers(browsers=['ie<9'])
 @webLoginRequired(admin='admin')
-def usage(request):
+def users(request, idAuth):
     resp = HttpResponse(content_type='application/pdf')
 
-    family = [
-        {'name': 'Leticia', 'age': 29, 'weight': 55.7, 'genre': 'female', 'status': 'parent'},
-        {'name': 'Marinho', 'age': 28, 'weight': 76, 'genre': 'male', 'status': 'parent'},
-        {'name': 'Tarsila', 'age': 4, 'weight': 16.2, 'genre': 'female', 'status': 'child'},
-        {'name': 'Linus', 'age': 0, 'weight': 1.5, 'genre': 'male', 'status': 'child'},
-        {'name': 'Mychelle', 'age': 19, 'weight': 50, 'genre': 'female', 'status': 'nephew'},
-        {'name': 'Mychell', 'age': 17, 'weight': 55, 'genre': 'male', 'status': 'niece'},
-    ]
+    users = Authenticator.objects.get(uuid=idAuth).users.order_by('name')
 
-    report = TestReport(queryset=family)
+    report = TestReport(queryset=users)
     report.generate_by(PDFGenerator, filename=resp)
     return resp
     # return HttpResponse(pdf, content_type='application/pdf')

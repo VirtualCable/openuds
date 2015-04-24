@@ -31,3 +31,4 @@
 from __future__ import unicode_literals
 
 from .usage import usage
+from .users import users
