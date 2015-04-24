@@ -186,7 +186,19 @@
 
 {% block js %}
         <script>
+        function launchURL(el) {
+            var $el = $(el);
+            url = $el.attr('data-href');
+            url = url != null ? url : $el.attr('href');
+            if ( url.substring(0, 7) == 'udsa://' ) {
+                uds.launch($el);
+            } else {
+                window.location = url;
+            }
+        }
+
         $(function() {
+            var autorun = {% if autorun %}true{% else %}false{% endif %};
 
             $('.with-tooltip').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
 
@@ -196,16 +208,7 @@
                 var url, el;
                 event.preventDefault();
 
-                // check url
-                el = $(this)
-                url = el.attr('data-href');
-                url = url != null ? url : el.attr('href');
-
-                if ( url.substring(0, 7) == 'udsa://' ) {
-                    uds.launch(el);
-                } else {
-                    window.location = url;
-                }
+                launchURL(this);
 
                 return false;
             }).on("mouseenter mouseleave", function (event) {
@@ -247,6 +250,12 @@
                     })
                 return false;
             });
+
+            if( autorun ) {
+                if( $('.service').length > 0)
+                    launchURL($('.service')[0]);
+                autorun = false;
+            }
 
         });
         </script>

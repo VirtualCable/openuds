@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-26'
+__updated__ = '2015-04-24'
 
 from django.shortcuts import render_to_response
 from django.shortcuts import render
@@ -172,11 +172,12 @@ def index(request):
 
     services = sorted(services, key=lambda s: s['name'].upper())
 
+    autorun = False
     if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
-            # TODO: Make this to redirect to uds link directly
-            return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
+            autorun = True
+            # return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
     response = render_to_response(
         theme.template('index.html'),
@@ -185,6 +186,7 @@ def index(request):
             'ip': request.ip,
             'nets': nets,
             'transports': validTrans,
+            'autorun': autorun
         },
         context_instance=RequestContext(request)
     )
