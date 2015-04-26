@@ -1,6 +1,6 @@
 %define _topdir %(echo $PWD)/rpm
 %define name udsactor
-%define version 1.7.0
+%define version 0.0.0
 %define release 1
 %define buildroot %{_topdir}/%{name}-%{version}-%{release}-root
 

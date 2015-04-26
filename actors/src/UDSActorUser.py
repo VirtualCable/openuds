@@ -46,6 +46,7 @@ from udsactor import operations
 from about_dialog_ui import Ui_UDSAboutDialog
 from message_dialog_ui import Ui_UDSMessageDialog
 from udsactor.scriptThread import ScriptExecutorThread
+from udsactor import VERSION
 
 trayIcon = None
 
@@ -61,6 +62,7 @@ class UDSAboutDialog(QtGui.QDialog):
         QtGui.QDialog.__init__(self, parent)
         self.ui = Ui_UDSAboutDialog()
         self.ui.setupUi(self)
+        self.ui.VersionLabel.setText("Version " + VERSION)
 
     def closeDialog(self):
         self.hide()

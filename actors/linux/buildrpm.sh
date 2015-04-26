@@ -6,12 +6,12 @@ RELEASE=1
 top=`pwd`
 
 cat udsactor-template.spec | 
-  sed -e s/"version 1.7.0"/"version ${VERSION}"/g |
+  sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
   sed -e s/"release 1"/"release ${RELEASE}"/g > udsactor-$VERSION.spec
   
 # Now fix dependencies for opensuse
 cat udsactor-template.spec | 
-  sed -e s/"version 1.7.0"/"version ${VERSION}"/g |
+  sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
   sed -e s/"name udsactor"/"name udsactor-opensuse"/g |
   sed -e s/"PyQt4"/"python-qt4"/g |
   sed -e s/"libXScrnSaver"/"libXss1"/g > udsactor-opensuse-$VERSION.spec

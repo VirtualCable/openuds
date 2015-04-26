@@ -30,8 +30,6 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-04-16'
-
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -59,7 +57,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-22'
+__updated__ = '2015-04-26'
 
 
 def getService(request, idService, idTransport, doTest=True):
@@ -68,24 +66,24 @@ def getService(request, idService, idTransport, doTest=True):
     logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
     if kind == 'A':  # This is an assigned service
         logger.debug('Getting A service {}'.format(idService))
-        ads = UserService.objects.get(uuid=idService)
-        ads.deployed_service.validateUser(request.user)
+        userService = UserService.objects.get(uuid=idService)
+        userService.deployed_service.validateUser(request.user)
     else:
         ds = DeployedService.objects.get(uuid=idService)
         # We first do a sanity check for this, if the user has access to this service
         # If it fails, will raise an exception
         ds.validateUser(request.user)
         # Now we have to locate an instance of the service, so we can assign it to user.
-        ads = UserServiceManager.manager().getAssignationForUser(ds, request.user)
+        userService = UserServiceManager.manager().getAssignationForUser(ds, request.user)
 
-    if ads.isInMaintenance() is True:
+    if userService.isInMaintenance() is True:
         raise ServiceInMaintenanceMode()
 
-    logger.debug('Found service: {0}'.format(ads))
+    logger.debug('Found service: {0}'.format(userService))
     trans = Transport.objects.get(uuid=idTransport)
 
     # Ensures that the transport is allowed for this service
-    if trans not in ads.deployed_service.transports.all():
+    if trans not in userService.deployed_service.transports.all():
         raise InvalidServiceException()
 
     # If transport is not available for the request IP...
@@ -93,57 +91,41 @@ def getService(request, idService, idTransport, doTest=True):
         raise InvalidServiceException()
 
     if doTest is False:
-        return (None, ads, None, trans, None)
+        return (None, userService, None, trans, None)
 
     # Test if the service is ready
-    if ads.isReady():
-        log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
+    if userService.isReady():
+        log.doLog(userService, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
         # If ready, show transport for this service, if also ready ofc
-        iads = ads.getInstance()
+        iads = userService.getInstance()
         ip = iads.getIp()
-        events.addEvent(ads.deployed_service, events.ET_ACCESS, username=request.user.name, srcip=request.ip, dstip=ip, uniqueid=ads.unique_id)
+        events.addEvent(userService.deployed_service, events.ET_ACCESS, username=request.user.name, srcip=request.ip, dstip=ip, uniqueid=userService.unique_id)
         if ip is not None:
             itrans = trans.getInstance()
             if itrans.isAvailableFor(ip):
-                ads.setConnectionSource(request.ip, 'unknown')
-                log.doLog(ads, log.INFO, "User service ready", log.WEB)
-                UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, request.user), itrans.protocol)
-                return (ip, ads, iads, trans, itrans)
+                userService.setConnectionSource(request.ip, 'unknown')
+                log.doLog(userService, log.INFO, "User service ready", log.WEB)
+                UserServiceManager.manager().notifyPreconnect(userService, itrans.processedUser(userService, request.user), itrans.protocol)
+                return (ip, userService, iads, trans, itrans)
             else:
-                log.doLog(ads, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                logger.debug('Transport is not ready for user service {0}'.format(ads))
+                log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
+                logger.debug('Transport is not ready for user service {0}'.format(userService))
         else:
-            logger.debug('Ip not available from user service {0}'.format(ads))
+            logger.debug('Ip not available from user service {0}'.format(userService))
     else:
-        log.doLog(ads, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(request.user.name, request.ip), log.WEB)
+        log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(request.user.name, request.ip), log.WEB)
 
     return None
 
 
 @webLoginRequired(admin=False)
-def service(request, idService, idTransport):
+def transportOwnLink(request, idService, idTransport):
     try:
         res = getService(request, idService, idTransport)
         if res is not None:
-            ip, ads, iads, trans, itrans = res
-
-            transportHtml = itrans.renderAsHtml(ads, trans, ip, request)
-            return render_to_response(theme.template('show_transport.html'), {'transport': transportHtml, 'nolang': True}, context_instance=RequestContext(request))
-    except Exception, e:
-        logger.exception("Exception")
-        return errors.exceptionView(request, e)
-
-    # Not ready, show message and return to this page in a while
-    return render_to_response(theme.template('service_not_ready.html'), context_instance=RequestContext(request))
-
-
-@webLoginRequired(admin=False)
-def trans(request, idService, idTransport):
-    try:
-        res = getService(request, idService, idTransport)
-        if res is not None:
-            ip, ads, iads, trans, itrans = res
-            return itrans.getLink(ads, trans, ip, request.os, request.user, webPassword(request), request)
+            ip, userService, iads, trans, itrans = res
+            # This returns a response object in fact
+            return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
     except Exception, e:
         logger.exception("Exception")
         return errors.exceptionView(request, e)
@@ -163,35 +145,6 @@ def transcomp(request, idTransport, componentId):
         return response
     except Exception, e:
         return errors.exceptionView(request, e)
-
-
-@webLoginRequired(admin=False)
-def sernotify(request, idUserService, notification):
-    try:
-        if notification == 'hostname':
-            hostname = request.GET.get('hostname', None)[:64]  # Cuts host name to 64 chars
-            ip = request.ip
-
-            if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.getBool(True) is True:
-                ip = request.GET.get('ip', ip)
-
-            if ip is not None and hostname is not None:
-                us = UserService.objects.get(uuid=idUserService)
-                us.setConnectionSource(ip, hostname)
-            else:
-                return HttpResponse('Invalid request!', 'text/plain')
-        elif notification == "log":
-            message = request.GET.get('message', None)
-            level = request.GET.get('level', None)
-            if message is not None and level is not None:
-                us = UserService.objects.get(uuid=idUserService)
-                log.doLog(us, level, message, log.TRANSPORT)
-            else:
-                return HttpResponse('Invalid request!', 'text/plain')
-    except Exception as e:
-        logger.exception("Exception")
-        return errors.errorView(request, e)
-    return HttpResponse('ok', content_type='text/plain')
 
 
 def transportIcon(request, idTrans):
@@ -232,10 +185,10 @@ def clientEnabler(request, idService, idTransport):
             scrambler = cryptoManager().randomString(32)
             password = cryptoManager().xor(webPassword(request), scrambler)
 
-            _x, ads, _x, trans, _x = res
+            _x, userService, _x, trans, _x = res
 
             data = {
-                'service': 'A' + ads.uuid,
+                'service': 'A' + userService.uuid,
                 'transport': trans.uuid,
                 'user': request.user.uuid,
                 'password': password

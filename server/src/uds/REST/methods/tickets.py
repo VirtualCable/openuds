@@ -37,8 +37,7 @@ from uds.REST import RequestError
 from uds.models import Authenticator
 from uds.models import DeployedService
 from uds.models import Transport
-from uds.core.util.Ticket import Ticket
-
+from uds.models import TicketStore
 
 import datetime
 import six
@@ -132,12 +131,11 @@ class Tickets(Handler):
             time = 60 if time < 1 else time
             realname = self._params.get('realname', self._params['username'])
             servicePool = self._params.get('servicePool', None)
-            transport = None
+            transport = self._params.get('transport', None)
 
             if servicePool is not None:
                 servicePool = DeployedService.objects.get(uuid=servicePool.lower())
 
-                transport = self._params.get('transport', None)
                 if transport is not None:
                     transport = Transport.objects.get(uuid=transport.lower())
                     try:
@@ -163,16 +161,16 @@ class Tickets(Handler):
         except Exception as e:
             return Tickets.result(error=six.text_type(e))
 
-        data = {}
-        data['username'] = username
-        data['password'] = password
-        data['realname'] = realname
-        data['groups'] = groups
-        data['auth'] = auth.uuid
-        data['servicePool'] = servicePool
-        data['transport'] = transport
+        data = {
+            'username': username,
+            'password': password,
+            'realname': realname,
+            'groups': groups,
+            'auth': auth.uuid,
+            'servicePool': servicePool,
+            'transport': transport,
+        }
 
-        ticket = Ticket()
-        ticket.save(data, time)
+        ticket = TicketStore.create(data)
 
-        return Tickets.result(ticket.key)
+        return Tickets.result(ticket)

@@ -31,16 +31,18 @@
 '''
 from __future__ import unicode_literals
 
-__title__ = 'udsactor'
-__version__ = '1.7.0'
-__build__ = 0x010700
-__author__ = 'Adolfo Gómez'
-__license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014 VirtualCable S.L.U."
-
-
 # On centos, old six release does not includes byte2int, nor six.PY2
 import six
+
+VERSION = '1.7.5'
+
+__title__ = 'udsactor'
+__version__ = VERSION
+__build__ = 0x010750
+__author__ = 'Adolfo Gómez'
+__license__ = "BSD 3-clause"
+__copyright__ = "Copyright 2014-205 VirtualCable S.L.U."
+
 
 if not hasattr(six, 'byte2int'):
     if six.PY3:

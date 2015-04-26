@@ -42,7 +42,7 @@ from uds.models import User
 from uds.web import errors
 from uds.web.views.service import getService
 from uds.core.managers import cryptoManager
-
+from uds.core.util.Config import GlobalConfig
 
 import six
 
@@ -89,7 +89,7 @@ class Client(Handler):
         '''
         logger.debug("Client args for GET: {0}".format(self._args))
 
-        if len(self._args) == 0:
+        if len(self._args) == 0:  # Gets version
             url = self._request.build_absolute_uri(reverse('ClientDownload'))
             return Client.result({
                 'availableVersion': CLIENT_VERSION,
@@ -97,13 +97,22 @@ class Client(Handler):
                 'downloadUrl': url
             })
 
-        if len(self._args) == 1:
+        if len(self._args) == 1:  # Simple test
             return Client.result(_('Correct'))
 
         try:
-            ticket, scrambler = self._args
+            ticket, scrambler = self._args  # If more than 2 args, got an error
+            hostname = self._params['hostname']  # Or if hostname is not included...
+            srcIp = self._request.ip
+
+            # Ip is optional,
+            if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.getBool() is True:
+                srcIp = self._params.get('ip', srcIp)
+
         except Exception:
             raise RequestError('Invalid request')
+
+        logger.debug('Got Ticket: {}, scrambled: {}, Hostname: {}, Ip: {}'.format(ticket, scrambler, hostname, srcIp))
 
         try:
             data = TicketStore.get(ticket)
@@ -119,6 +128,8 @@ class Client(Handler):
             if res is not None:
                 ip, userService, userServiceInstance, transport, transportInstance = res
                 password = cryptoManager().xor(data['password'], scrambler).decode('utf-8')
+
+                userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
 
                 transportScript = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 

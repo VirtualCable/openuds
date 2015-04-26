@@ -55,7 +55,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class TestReport(Report):
+class UsersReport(Report):
     title = 'Test report'
     author = 'UDS Enterprise'
 
@@ -79,6 +79,7 @@ class TestReport(Report):
         elements = [
             SystemField(expression='%(report_title)s', top=0.1 * cm, left=0, width=BAND_WIDTH,
                         style={'fontName': 'Helvetica-Bold', 'fontSize': 14, 'alignment': TA_CENTER}),
+
             Label(text="User ID", top=0.8 * cm, left=0.5 * cm),
             Label(text="Real Name", top=0.8 * cm, left=3 * cm),
             Label(text="Last access", top=0.8 * cm, left=7 * cm),
@@ -102,9 +103,11 @@ class TestReport(Report):
 def users(request, idAuth):
     resp = HttpResponse(content_type='application/pdf')
 
-    users = Authenticator.objects.get(uuid=idAuth).users.order_by('name')
+    auth = Authenticator.objects.get(uuid=idAuth)
+    users = auth.users.order_by('name')
 
-    report = TestReport(queryset=users)
+    report = UsersReport(queryset=users)
+    report.title = _('Users List for {}').format(auth.name)
     report.generate_by(PDFGenerator, filename=resp)
     return resp
     # return HttpResponse(pdf, content_type='application/pdf')

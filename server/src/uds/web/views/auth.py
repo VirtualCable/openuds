@@ -30,29 +30,34 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-27'
+__updated__ = '2015-04-26'
 
+from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.models import Authenticator, DeployedService, Transport
+from uds.core.util import html
 from uds.core.util import OsDetector
-from uds.core.util.Ticket import Ticket
 from uds.core.util.State import State
+from uds.core.ui import theme
+
+from uds.models import TicketStore
+
 from uds.core.auths.Exceptions import InvalidUserException
 from uds.core.services.Exceptions import InvalidServiceException, ServiceInMaintenanceMode
 
 import uds.web.errors as errors
+from uds.web.views.service import getService
 
 import logging
 
 logger = logging.getLogger(__name__)
-
-from .service import service
 
 
 @csrf_exempt
@@ -136,26 +141,21 @@ def ticketAuth(request, ticketId):
     '''
     Used to authenticate an user via a ticket
     '''
-    ticket = Ticket(ticketId)
-
-    logger.debug('Ticket: {}'.format(ticket))
+    data = TicketStore.get(ticketId)
 
     try:
         try:
             # Extract ticket.data from ticket.data storage, and remove it if success
-            username = ticket.data['username']
-            groups = ticket.data['groups']
-            auth = ticket.data['auth']
-            realname = ticket.data['realname']
-            servicePool = ticket.data['servicePool']
-            password = ticket.data['password']
-            transport = ticket.data['transport']
-        except:
+            username = data['username']
+            groups = data['groups']
+            auth = data['auth']
+            realname = data['realname']
+            servicePool = data['servicePool']
+            password = data['password']
+            transport = data['transport']
+        except Exception:
             logger.error('Ticket stored is not valid')
             raise InvalidUserException()
-
-        # Remove ticket
-        ticket.delete()
 
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
@@ -165,7 +165,7 @@ def ticketAuth(request, ticketId):
             try:
                 grps.append(auth.groups.get(uuid=g))
             except Exception:
-                logger.debug('Group list has changed since ticket assignement')
+                logger.debug('Group list has changed since ticket assignment')
 
         if len(grps) == 0:
             logger.error('Ticket has no valid groups')
@@ -186,15 +186,25 @@ def ticketAuth(request, ticketId):
 
         # Check if servicePool is part of the ticket
         if servicePool is not None:
-            servicePool = DeployedService.objects.get(uuid=servicePool)
-            # Check if service pool can't be accessed by groups
-            servicePool.validateUser(usr)
-            if servicePool.isInMaintenance():
-                raise ServiceInMaintenanceMode()
+            # If service pool is in there, also is transport
+            res = getService(request, servicePool, transport)
+            if res is None:
+                return render_to_response(theme.template('service_not_ready.html'), context_instance=RequestContext(request))
 
-            transport = Transport.objects.get(uuid=transport)
+            ip, userService, userServiceInstance, transport, transportInstance = res
 
-            response = service(request, 'F' + servicePool.uuid, transport.uuid)  # 'A' Indicates 'assigned service'
+            if transportInstance.ownLink is True:
+                link = reverse('TransportOwnLink', args=('F' + userServiceInstance.uuid, transportInstance.uuid))
+            else:
+                link = html.udsAccessLink(request, 'F' + userService.uuid, transport.uuid)
+
+            return render_to_response(
+                theme.template('simpleLauncher.html'),
+                {
+                    'link': link
+                },
+                context_instance=RequestContext(request)
+            )
         else:
             response = HttpResponsePermanentRedirect(reverse('uds.web.views.index'))
 

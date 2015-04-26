@@ -30,14 +30,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from django.conf.urls import patterns, include, url
+from uds.core.util.modfinder import loadModulesUrls
+from uds import REST
+
 js_info_dict = {
     'domain': 'djangojs',
     'packages': ('uds',),
 }
-
-from django.conf.urls import patterns, include, url
-from uds.core.util.modfinder import loadModulesUrls
-from uds import REST
 
 urlpatterns = patterns(
     'uds',
@@ -45,7 +45,6 @@ urlpatterns = patterns(
     (r'^login/$', 'web.views.login'),
     (r'^login/(?P<tag>.+)$', 'web.views.login'),
     (r'^logout$', 'web.views.logout'),
-    (r'^service/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.service'),
     # Icons
     (r'^transicon/(?P<idTrans>.+)$', 'web.views.transportIcon'),
     # Images
@@ -55,9 +54,7 @@ urlpatterns = patterns(
     # Transport component url
     url(r'^transcomp/(?P<idTransport>.+)/(?P<componentId>.+)$', 'web.views.transcomp', name='TransportComponent'),
     # Transport own link processor
-    url(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.trans', name='TransportOwnLink'),
-    # Service notification url
-    (r'^sernotify/(?P<idUserService>.+)/(?P<notification>.+)$', 'web.views.sernotify'),
+    url(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.transportOwnLink', name='TransportOwnLink'),
     # Authenticators custom html
     (r'^customAuth/(?P<idAuth>.*)$', 'web.views.customAuth'),
     # Preferences

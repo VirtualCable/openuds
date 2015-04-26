@@ -1,0 +1,35 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n html5 static %}
+
+{% block title %}{% trans 'Service launcher' %}{% endblock %}
+
+{% block body %}
+        <div class="jumbotron center service" data-href="{{ link }}">
+            <h1> {% trans 'Service launcher' %}</h1>
+            <br />
+            <p>{% trans 'The service you have requested is being launched.' %}</p>
+            <br />
+            <h5>{% trans 'If the service does not launchs automatically, probably you dont have the UDS plugin installed' %}</h5>
+            <h5>{% trans 'You can obtain it from here:' %}<a href="{% url 'ClientDownload' %}">{% trans 'UDS Plugin download page' %}</a></h5>
+        </div>  
+{% endblock %} 
+
+
+{% block js %}
+        <script>
+        function launchURL(el) {
+            var $el = $(el);
+            url = $el.attr('data-href');
+            url = url != null ? url : $el.attr('href');
+            if ( url.substring(0, 7) == 'udsa://' ) {
+                uds.launch($el);
+            } else {
+                window.location = url;
+            }
+        }
+
+        $(function() {
+            launchURL($('.service')[0]);
+        });
+        </script>
+{% endblock %}

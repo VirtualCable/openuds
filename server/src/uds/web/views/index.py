@@ -34,20 +34,17 @@ __updated__ = '2015-04-24'
 
 from django.shortcuts import render_to_response
 from django.shortcuts import render
-from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
-from uds.core.auths.auth import webLoginRequired, webPassword
+from uds.core.auths.auth import webLoginRequired
 
-from uds.models import DeployedService, Transport, UserService, Network, TicketStore
+from uds.models import DeployedService, Transport, UserService, Network
 from uds.core.util.Config import GlobalConfig
-from uds.core.util import OsDetector
 from uds.core.util import html
 
 from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
-from uds.core.managers import cryptoManager
 
 
 import logging
@@ -173,7 +170,7 @@ def index(request):
     services = sorted(services, key=lambda s: s['name'].upper())
 
     autorun = False
-    if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.get(True) == '1' and len(services[0]['transports']) > 0:
+    if len(services) == 1 and GlobalConfig.AUTORUN_SERVICE.getBool(True) and len(services[0]['transports']) > 0:
         if request.session.get('autorunDone', '0') == '0':
             request.session['autorunDone'] = '1'
             autorun = True
