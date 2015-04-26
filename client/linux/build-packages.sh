@@ -9,12 +9,12 @@ dpkg-buildpackage -b
 top=`pwd`
 
 cat udsclient-template.spec | 
-  sed -e s/"version 1.7.0"/"version ${VERSION}"/g |
+  sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
   sed -e s/"release 1"/"release ${RELEASE}"/g > udsclient-$VERSION.spec
   
 # Now fix dependencies for opensuse
 cat udsclient-template.spec | 
-  sed -e s/"version 1.7.0"/"version ${VERSION}"/g |
+  sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
   sed -e s/"name udsclient"/"name udsclient-opensuse"/g |
   sed -e s/"PyQt4"/"python-qt4"/g |
   sed -e s/"libXScrnSaver"/"libXss1"/g > udsclient-opensuse-$VERSION.spec

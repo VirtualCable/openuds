@@ -39,14 +39,11 @@ import six
 from uds.rest import RestRequest
 from uds.forward import forward
 from uds import tools
+from uds import VERSION
 
 import webbrowser
-import time
 
 from UDSWindow import Ui_MainWindow
-
-# Client connector version
-VERSION = '1.7.5'
 
 
 class UDSClient(QtGui.QMainWindow):
@@ -115,7 +112,7 @@ class UDSClient(QtGui.QMainWindow):
                 self.closeWindow()
                 return
 
-            self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived)
+            self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName()})
             self.req.get()
 
         except Exception as e:

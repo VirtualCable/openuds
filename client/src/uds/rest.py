@@ -37,10 +37,12 @@ from PyQt4.QtCore import QObject, QUrl, QSettings
 from PyQt4.QtCore import Qt
 from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslCertificate
 from PyQt4.QtGui import QMessageBox
+from . import VERSION
 
 import json
 import osDetector
 import six
+import urllib
 
 
 class RestRequest(QObject):
@@ -49,10 +51,13 @@ class RestRequest(QObject):
 
     done = pyqtSignal(dict, name='done')
 
-    def __init__(self, url, parentWindow, done):  # parent not used
+    def __init__(self, url, parentWindow, done, params=None):  # parent not used
         super(RestRequest, self).__init__()
         # private
         self._manager = QNetworkAccessManager()
+        if params is not None:
+            url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v))) for k, v in params.iteritems())
+
         self.url = QUrl(RestRequest.restApiUrl + url)
 
         # connect asynchronous result, when a request finishes
@@ -104,5 +109,5 @@ class RestRequest(QObject):
 
     def get(self):
         request = QNetworkRequest(self.url)
-        request.setRawHeader('User-Agent', osDetector.getOs() + " - UDS Connector")
+        request.setRawHeader('User-Agent', osDetector.getOs() + " - UDS Connector " + VERSION)
         self._manager.get(request)

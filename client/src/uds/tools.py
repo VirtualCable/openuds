@@ -36,8 +36,9 @@ import tempfile
 import string
 import random
 import os
-import sys
+import socket
 import stat
+import six
 
 _unlinkFiles = []
 _tasksToWait = []
@@ -67,7 +68,15 @@ def findApp(appName, extraPath=None):
     return None
 
 
+def getHostName():
+    '''
+    Returns current host name
+    In fact, it's a wrapper for socket.gethostname()
+    '''
+    return six.text_type(socket.gethostname())
+
 # Queing operations (to be executed before exit)
+
 
 def addFileToUnlink(filename):
     '''
