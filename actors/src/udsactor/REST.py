@@ -43,7 +43,7 @@ import warnings
 
 from udsactor.log import logger
 
-from udsactor import __version__ as VERSION
+from udsactor import VERSION
 from .utils import exceptionToMessage
 
 VERIFY_CERT = False

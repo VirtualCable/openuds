@@ -30,12 +30,12 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-04-24'
-
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
+import Image as PILImage
 
+from uds.core.util.stats import charts
 from uds.core.auths.auth import webLoginRequired
 from uds.core.util.decorators import denyBrowsers
 
@@ -51,6 +51,8 @@ from reportlab.lib.enums import TA_RIGHT, TA_CENTER
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2015-04-27'
 
 
 class TestReport(Report):
