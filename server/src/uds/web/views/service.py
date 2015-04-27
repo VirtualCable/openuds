@@ -57,7 +57,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-26'
+__updated__ = '2015-04-27'
 
 
 def getService(request, idService, idTransport, doTest=True):
@@ -175,7 +175,7 @@ def serviceImage(request, idImage):
 def clientEnabler(request, idService, idTransport):
 
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
-
+    logger.debug('idService: {}, idTransport: {}'.format(idService, idTransport))
     url = ''
     error = _('Service not ready. Please, try again in a while.')
     try:

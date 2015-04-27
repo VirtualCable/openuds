@@ -32,6 +32,7 @@
 '''
 from __future__ import unicode_literals
 
+from django.db import connection
 from uds.core.jobs.Scheduler import Scheduler
 from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
 from uds.core import jobs
@@ -91,7 +92,12 @@ class TaskManager(object):
     @staticmethod
     def run():
         TaskManager.keepRunning = True
-        # Runs Scheduler in a separate thread and DelayedTasks here
+
+        # Don't know why, but with django 1.8, must "reset" connections so them do not fail on first access...
+        # Is simmilar to https://code.djangoproject.com/ticket/21597#comment:29
+        connection.close()
+
+        # Releases owned schedules so anyone can access them...
         Scheduler.releaseOwnShedules()
 
         TaskManager.registerScheduledTasks()

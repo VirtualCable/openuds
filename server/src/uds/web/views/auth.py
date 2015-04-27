@@ -143,7 +143,7 @@ def ticketAuth(request, ticketId):
     Used to authenticate an user via a ticket
     '''
     try:
-        data = TicketStore.get(ticketId)
+        data = TicketStore.get(ticketId, invalidate=True)
 
         try:
             # Extract ticket.data from ticket.data storage, and remove it if success
@@ -194,14 +194,20 @@ def ticketAuth(request, ticketId):
             # If service pool is in there, also is transport
             res = getService(request, 'F' + servicePool, transport)
             if res is None:
-                return render_to_response(theme.template('service_not_ready.html'), context_instance=RequestContext(request))
+                return render_to_response(
+                    theme.template('service_not_ready.html'),
+                    {
+                        'fromLauncher': True
+                    },
+                    context_instance=RequestContext(request)
+                )
 
             ip, userService, userServiceInstance, transport, transportInstance = res
 
             if transportInstance.ownLink is True:
-                link = reverse('TransportOwnLink', args=('F' + userServiceInstance.uuid, transportInstance.uuid))
+                link = reverse('TransportOwnLink', args=('A' + userServiceInstance.uuid, transportInstance.uuid))
             else:
-                link = html.udsAccessLink(request, 'F' + userService.uuid, transport.uuid)
+                link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 
             return render_to_response(
                 theme.template('simpleLauncher.html'),
@@ -217,7 +223,11 @@ def ticketAuth(request, ticketId):
         getUDSCookie(request, response, True)
         return response
     except TicketStore.InvalidTicket:
-        logger.error('Ticket is invalid: {} requested from {}'.format(ticketId, request.ip))
+        return render_to_response(
+            theme.template('simpleLauncherAlreadyLaunched.html'),
+            context_instance=RequestContext(request)
+        )
+
         return errors.exceptionView(request, InvalidUserException())
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')

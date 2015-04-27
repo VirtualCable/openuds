@@ -184,13 +184,14 @@ uds.launch = (el) ->
     type: "GET"
     dataType: "json"
     success: (data) ->
+
       if data.error? and data.error isnt ''
+        unblockUI()
         alert data.error
       else
         if bypassPluginDetection is false
           uds.doLaunch el, data.url, alt
         else
-          unblockUI()
           window.location = data.url
       return
 

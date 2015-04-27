@@ -107,6 +107,7 @@ class TicketStore(UUIDModel):
             validity = datetime.timedelta(seconds=t.validity)
             now = getSqlDatetime()
 
+            logger.debug('Ticket validity: {} {}'.format(t.stamp + validity, now))
             if t.stamp + validity < now:
                 raise TicketStore.InvalidTicket('Not valid anymore')
 

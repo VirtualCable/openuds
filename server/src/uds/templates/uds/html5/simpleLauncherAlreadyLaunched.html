@@ -5,16 +5,13 @@
 {% block menu %}{% endblock %}
 
 {% block body %}
-        <div class="jumbotron text-center service bg-primary" data-href="{{ link }}">
+        <div class="jumbotron text-center service bg-primary">
             <h1> {% trans 'UDS Service launcher' %}</h1>
             <br />
-            <p>{% trans 'The service you have requested is being launched.' %}</p>
-            <h5>{% trans 'Please, note that reloading this page will not work.' %}</h5>
-            <h5>{% trans 'To relaunch service, you will have to do it from origin.' %}</h5>
+            <p class="text-danger">{% trans 'Please, note that reloading this page will not work.' %}<br/>
+               {% trans 'Close this window and try to relaunch service from origin.' %}</p>
             </p>
-            <br />
-            <h6>{% trans 'If the service does not launchs automatically, probably you dont have the UDS plugin installed' %}</h6>
-            <h6>{% trans 'You can obtain it from the' %} <a href="{% url 'ClientDownload' %}">{% trans 'UDS Plugin download page' %}</a></h6>
+            <h6>{% trans 'You can obtain required UDS plugin from the' %} <a href="{% url 'ClientDownload' %}">{% trans 'UDS Plugin download page' %}</a></h6>
         </div>  
 {% endblock %} 
 
