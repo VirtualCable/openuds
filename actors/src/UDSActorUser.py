@@ -165,8 +165,9 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
     def __init__(self, app_, parent=None):
         self.app = app_
 
-        style = app.style()
-        icon = QtGui.QIcon(style.standardPixmap(QtGui.QStyle.SP_ComputerIcon))
+        # style = app.style()
+        # icon = QtGui.QIcon(style.standardPixmap(QtGui.QStyle.SP_ComputerIcon))
+        icon = QtGui.QIcon(':/images/img/uds.png')
 
         QtGui.QSystemTrayIcon.__init__(self, icon, parent)
         self.menu = QtGui.QMenu(parent)
@@ -180,7 +181,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.showIdleWarn = True
 
         if self.ipc.isAlive() is False:
-            raise Exception('no connection to service, exiting')
+            raise Exception('No connection to service, exiting.')
 
         self.stopped = False
 
@@ -291,7 +292,7 @@ if __name__ == '__main__':
     try:
         trayIcon = UDSSystemTray(app)
     except Exception:
-        logger.error('UDS Service is not running. Tool stopped')
+        logger.error('UDS Service is not running, or it can\'t contact with UDS Server. User Tools stopped')
         sys.exit(1)
 
     # Sets a default idle duration, but will not be used unless idle is notified from server
