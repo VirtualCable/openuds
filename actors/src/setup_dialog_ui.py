@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup-dialog.ui'
 #
-# Created: Tue Dec  9 17:29:24 2014
+# Created: Mon Apr 27 22:05:03 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -139,4 +139,14 @@ class Ui_UdsActorSetupDialog(object):
         self.useSSl.setItemText(0, _translate("UdsActorSetupDialog", "Do not use SSL", None))
         self.useSSl.setItemText(1, _translate("UdsActorSetupDialog", "Use SSL", None))
         self.logLevelLabel.setText(_translate("UdsActorSetupDialog", "Log Level", None))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    UdsActorSetupDialog = QtGui.QDialog()
+    ui = Ui_UdsActorSetupDialog()
+    ui.setupUi(UdsActorSetupDialog)
+    UdsActorSetupDialog.show()
+    sys.exit(app.exec_())
 

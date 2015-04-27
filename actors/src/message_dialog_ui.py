@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'message-dialog.ui'
 #
-# Created: Tue Dec  9 11:27:47 2014
+# Created: Mon Apr 27 22:05:02 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,4 +58,14 @@ class Ui_UDSMessageDialog(object):
 
     def retranslateUi(self, UDSMessageDialog):
         UDSMessageDialog.setWindowTitle(_translate("UDSMessageDialog", "UDS Actor", None))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    UDSMessageDialog = QtGui.QDialog()
+    ui = Ui_UDSMessageDialog()
+    ui.setupUi(UDSMessageDialog)
+    UDSMessageDialog.show()
+    sys.exit(app.exec_())
 

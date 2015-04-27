@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'about-dialog.ui'
 #
-# Created: Tue Dec 09 10:54:30 2014
+# Created: Mon Apr 27 22:05:02 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -152,3 +152,13 @@ class Ui_UDSAboutDialog(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.licenseTab), _translate("UDSAboutDialog", "&License Agreement", None))
 
 import UDSActor_rc
+
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    UDSAboutDialog = QtGui.QDialog()
+    ui = Ui_UDSAboutDialog()
+    ui.setupUi(UDSAboutDialog)
+    UDSAboutDialog.show()
+    sys.exit(app.exec_())
+
