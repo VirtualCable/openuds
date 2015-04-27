@@ -31,8 +31,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-23'
-
 from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
@@ -45,6 +43,8 @@ import random
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2015-04-27'
 
 
 class TicketStore(UUIDModel):
@@ -61,6 +61,9 @@ class TicketStore(UUIDModel):
 
     data = models.BinaryField()  # Associated ticket data
     validator = models.BinaryField(null=True, blank=True, default=None)  # Associated validator for this ticket
+
+    class InvalidTicket(Exception):
+        pass
 
     class Meta:
         '''
@@ -105,7 +108,7 @@ class TicketStore(UUIDModel):
             now = getSqlDatetime()
 
             if t.stamp + validity < now:
-                raise Exception('Not valid anymore')
+                raise TicketStore.InvalidTicket('Not valid anymore')
 
             data = pickle.loads(t.data)
 
@@ -114,7 +117,7 @@ class TicketStore(UUIDModel):
                 validator = pickle.loads(t.validator)
 
                 if validator(data) is False:
-                    raise Exception('Validation failed')
+                    raise TicketStore.InvalidTicket('Validation failed')
 
             if invalidate is True:
                 t.stamp = now - validity - datetime.timedelta(seconds=1)
@@ -122,7 +125,7 @@ class TicketStore(UUIDModel):
 
             return data
         except TicketStore.DoesNotExist:
-            raise Exception('Does not exists')
+            raise TicketStore.InvalidTicket('Does not exists')
 
     @staticmethod
     def revalidate(uuid, validity=None):

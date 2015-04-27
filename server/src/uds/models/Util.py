@@ -33,19 +33,31 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
-
 from datetime import datetime
+from django.db import models
 from django.db import connection
 from time import mktime
 
-
 import logging
+
+__updated__ = '2015-04-27'
+
 
 logger = logging.getLogger(__name__)
 
 NEVER = datetime(1972, 7, 1)
 NEVER_UNIX = int(mktime(NEVER.timetuple()))
+
+
+class UnsavedForeignKey(models.ForeignKey):
+    '''
+    From 1.8 of django, we need to point to "saved" objects.
+    If dont, will raise an InvalidValue exception.
+
+    We need to trick in some cases, because for example, root user is not in DB
+    '''
+    # Allows pointing to an unsaved object
+    allow_unsaved_instance_assignment = True
 
 
 def getSqlDatetime(unix=False):

@@ -33,8 +33,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
-
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
@@ -46,10 +44,13 @@ from uds.models.UUIDModel import UUIDModel
 
 from uds.models.Authenticator import Authenticator
 from uds.models.User import User
+from uds.models.Util import UnsavedForeignKey
 
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2015-04-27'
 
 
 @python_2_unicode_compatible
@@ -58,7 +59,7 @@ class Group(UUIDModel):
     This class represents a group, associated with one authenticator
     '''
     # pylint: disable=model-missing-unicode
-    manager = models.ForeignKey(Authenticator, on_delete=models.CASCADE, related_name='groups')
+    manager = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='groups')
     name = models.CharField(max_length=128, db_index=True)
     state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
     comments = models.CharField(max_length=256, default='')

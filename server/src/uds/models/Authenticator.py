@@ -33,8 +33,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
-
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.db.models import signals
@@ -45,11 +43,11 @@ from uds.models.ManagedObjectModel import ManagedObjectModel
 
 from uds.models.Util import NEVER
 
-
 import logging
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2015-04-27'
 
 @python_2_unicode_compatible
 class Authenticator(ManagedObjectModel):
@@ -58,6 +56,7 @@ class Authenticator(ManagedObjectModel):
     Sample authenticators are LDAP, Active Directory, SAML, ...
     '''
     # pylint: disable=model-missing-unicode
+
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
 

@@ -30,8 +30,6 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-04-26'
-
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.views.decorators.csrf import csrf_exempt
@@ -41,7 +39,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
-from uds.models import Authenticator, DeployedService, Transport
+from uds.models import Authenticator, DeployedService
 from uds.core.util import html
 from uds.core.util import OsDetector
 from uds.core.util.State import State
@@ -50,7 +48,7 @@ from uds.core.ui import theme
 from uds.models import TicketStore
 
 from uds.core.auths.Exceptions import InvalidUserException
-from uds.core.services.Exceptions import InvalidServiceException, ServiceInMaintenanceMode
+from uds.core.services.Exceptions import InvalidServiceException
 
 import uds.web.errors as errors
 from uds.web.views.service import getService
@@ -58,6 +56,9 @@ from uds.web.views.service import getService
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+__updated__ = '2015-04-27'
 
 
 @csrf_exempt
@@ -141,9 +142,9 @@ def ticketAuth(request, ticketId):
     '''
     Used to authenticate an user via a ticket
     '''
-    data = TicketStore.get(ticketId)
-
     try:
+        data = TicketStore.get(ticketId)
+
         try:
             # Extract ticket.data from ticket.data storage, and remove it if success
             username = data['username']
@@ -184,10 +185,14 @@ def ticketAuth(request, ticketId):
 
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
 
+        logger.debug("Service & transport: {}, {}".format(servicePool, transport))
+        for v in DeployedService.objects.all():
+            logger.debug("{} {}".format(v.uuid, v.name))
+
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             # If service pool is in there, also is transport
-            res = getService(request, servicePool, transport)
+            res = getService(request, 'F' + servicePool, transport)
             if res is None:
                 return render_to_response(theme.template('service_not_ready.html'), context_instance=RequestContext(request))
 
@@ -211,13 +216,15 @@ def ticketAuth(request, ticketId):
         # Now ensure uds cookie is at response
         getUDSCookie(request, response, True)
         return response
-
+    except TicketStore.InvalidTicket:
+        logger.error('Ticket is invalid: {} requested from {}'.format(ticketId, request.ip))
+        return errors.exceptionView(request, InvalidUserException())
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
-        return errors.error(request, InvalidUserException())
+        return errors.exceptionView(request, InvalidUserException())
     except DeployedService.DoesNotExist:
         logger.error('Ticket has an invalid Service Pool')
-        return errors.error(request, InvalidServiceException())
+        return errors.exceptionView(request, InvalidServiceException())
     except Exception as e:
         logger.exception('Exception')
         return errors.exceptionView(request, e)

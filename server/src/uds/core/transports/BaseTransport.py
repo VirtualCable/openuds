@@ -33,11 +33,8 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
-from django.template import loader, Context
 
 from uds.core.util import OsDetector
-from uds.core.util.Ticket import Ticket
-from uds.core.auths.auth import webPassword
 from uds.core import Module
 from uds.core.transports import protocols
 
@@ -165,10 +162,7 @@ class Transport(Module):
         '''
         return '''
 from __future__ import unicode_literals
-
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 from PyQt4 import QtCore, QtGui
-
 QtGui.QMessageBox.critical(parent, 'Not supported', 'The transport {transport.name} is not supported on your platform.', QtGui.QMessageBox.Ok)
 '''.format(service=userService, transport=transport)
 

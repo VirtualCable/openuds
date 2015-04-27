@@ -30,9 +30,6 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-26'
-
-from django.http import HttpResponseForbidden
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
@@ -44,6 +41,8 @@ from uds.core.ui import theme
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2015-04-27'
 
 
 @webLoginRequired(admin=True)

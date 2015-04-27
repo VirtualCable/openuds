@@ -30,8 +30,6 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-27'
-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -49,6 +47,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
+__updated__ = '2015-04-27'
 
 
 def login(request, tag=None):

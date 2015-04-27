@@ -33,13 +33,12 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-10-30'
-
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.Authenticator import Authenticator
+from uds.models.Util import UnsavedForeignKey
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 from uds.core.util import log
@@ -49,6 +48,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2015-04-27'
+
 
 @python_2_unicode_compatible
 class User(UUIDModel):
@@ -56,7 +57,7 @@ class User(UUIDModel):
     This class represents a single user, associated with one authenticator
     '''
     # pylint: disable=model-missing-unicode, maybe-no-member
-    manager = models.ForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
+    manager = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
     name = models.CharField(max_length=128, db_index=True)
     real_name = models.CharField(max_length=128)
     comments = models.CharField(max_length=256)

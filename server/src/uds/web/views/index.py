@@ -30,8 +30,6 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-04-24'
-
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -50,6 +48,8 @@ from uds.core.managers.UserServiceManager import UserServiceManager
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2015-04-27'
 
 
 def about(request):
