@@ -225,7 +225,12 @@
         id: "lnk-gallery"
         exec: gui.gallery.link
         cleanup: false
-      }      
+      }
+      {
+        id: "lnk-reports"
+        exec: gui.reports.link
+        cleanup: false
+      }
     ]
     $.each sidebarLinks, (index, value) ->
       gui.doLog "Adding " + value.id

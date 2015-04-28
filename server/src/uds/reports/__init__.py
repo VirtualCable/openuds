@@ -28,30 +28,45 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-UDS Service modules interfaces and classes.
+Transport modules for UDS are contained inside this package.
+To create a new rwpoer module, you will need to follow this steps:
+    1.- Create the report module inside one of the existing (or new one) packages
+    2.- Import the class of your report module at __init__. For example::
+        from Report import SimpleReport
+    3.- Done. At Server restart, the module will be recognized, loaded and treated
+
+The registration of modules is done locating subclases of :py:class:`uds.core.auths.Authentication`
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-from .BaseServiceProvider import ServiceProvider
-from .BaseService import Service
-from .BasePublication import Publication
-from .BaseDeployed import UserDeployment
-
-from .ClusteredServiceProvider import ClusteredServiceProvider
-from .ClusteredService import ClusteredService
-from .ClusteredPublication import ClusteredPublication
-from .ClusteredUserDeployment import ClusteredUserDeployment
-
-import uds.core.services.Exceptions
-
-__updated__ = '2015-04-27'
+availableReports = []
 
 
-def factory():
+def __init__():
     '''
-    Returns factory for register/access to service providers
+    This imports all packages that are descendant of this package, and, after that,
     '''
-    from uds.core.services.ServiceProviderFactory import ServiceProviderFactory
-    return ServiceProviderFactory.factory()
+    import os.path
+    import pkgutil
+    import sys
+    from uds.core import reports
+
+    def addReportCls(cls):
+        availableReports.append(cls)
+
+    # Dinamycally import children of this package. The __init__.py files must import classes
+    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    for _, name, _ in pkgutil.iter_modules([pkgpath]):
+        __import__(name, globals(), locals(), [])
+
+    p = reports.Report
+    for cls in p.__subclasses__():
+        clsSubCls = cls.__subclasses__()
+        if len(clsSubCls) == 0:
+            addReportCls(cls)
+        else:
+            for l2 in clsSubCls:
+                addReportCls(l2)
+
+__init__()

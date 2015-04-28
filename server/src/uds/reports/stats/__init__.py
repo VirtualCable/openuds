@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2015 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,30 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-UDS Service modules interfaces and classes.
-
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-from .BaseServiceProvider import ServiceProvider
-from .BaseService import Service
-from .BasePublication import Publication
-from .BaseDeployed import UserDeployment
-
-from .ClusteredServiceProvider import ClusteredServiceProvider
-from .ClusteredService import ClusteredService
-from .ClusteredPublication import ClusteredPublication
-from .ClusteredUserDeployment import ClusteredUserDeployment
-
-import uds.core.services.Exceptions
-
-__updated__ = '2015-04-27'
-
-
-def factory():
-    '''
-    Returns factory for register/access to service providers
-    '''
-    from uds.core.services.ServiceProviderFactory import ServiceProviderFactory
-    return ServiceProviderFactory.factory()
+from .usage import StatsReportUsage

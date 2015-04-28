@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import get_language, ugettext as _
+import datetime
 import six
 import pickle
 import logging
@@ -208,6 +209,7 @@ class gui(object):
         EDITABLE_LIST = 'editlist'
         CHECKBOX_TYPE = 'checkbox'
         IMAGE_TYPE = 'image'
+        DATE_TYPE = 'date'
 
         DEFAULT_LENTGH = 32  # : If length of some fields are not especified, this value is used as default
 
@@ -370,6 +372,35 @@ class gui(object):
             except Exception:
                 v = 0
             return v
+
+    class DateField(InputField):
+        '''
+        This represents a date field.
+
+        The values of parameres are inherited from :py:class:`InputField`
+
+        Example usage:
+
+           .. code-block:: python
+
+              # Declares an text form field, with label "Password",
+              # tooltip "Password of the user", that is required,
+              # with max length of 32 chars and order = 2, and is
+              # editable after creation.
+              passw = gui.DateField(label = _('Starting date'),
+                  order = 4, tooltip = _('Ending date'),
+                  required = True)
+
+        '''
+        def __init__(self, **options):
+            super(self.__class__, self).__init__(**options)
+            self._type(gui.InputField.DATE_TYPE)
+
+        def date(self):
+            try:
+                return datetime.datetime.strptime(self.value, '%Y/%m/%d')
+            except Exception:
+                return None
 
     class PasswordField(InputField):
         '''

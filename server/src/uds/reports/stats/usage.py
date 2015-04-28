@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2015 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,30 +28,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-UDS Service modules interfaces and classes.
-
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-from .BaseServiceProvider import ServiceProvider
-from .BaseService import Service
-from .BasePublication import Publication
-from .BaseDeployed import UserDeployment
+from django.utils.translation import ugettext, ugettext_noop as _
 
-from .ClusteredServiceProvider import ClusteredServiceProvider
-from .ClusteredService import ClusteredService
-from .ClusteredPublication import ClusteredPublication
-from .ClusteredUserDeployment import ClusteredUserDeployment
-
-import uds.core.services.Exceptions
-
-__updated__ = '2015-04-27'
+from .base import StatsReport
 
 
-def factory():
-    '''
-    Returns factory for register/access to service providers
-    '''
-    from uds.core.services.ServiceProviderFactory import ServiceProviderFactory
-    return ServiceProviderFactory.factory()
+__updated__ = '2015-04-28'
+
+
+class StatsReportUsage(StatsReport):
+    name = _('Usage stats')  # Report name
+    description = _('Statistics of platform use')  # Report description
+    uuid = '9ae54172-ed48-11e4-b8e1-10feed05884b'

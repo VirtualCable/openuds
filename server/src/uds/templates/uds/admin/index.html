@@ -128,6 +128,7 @@
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-config.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-gallery.coffee"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-reports.coffee"></script>
         
         <script>
             $(function() {
@@ -155,6 +156,7 @@
         {% js_template 'gallery' %}
         {% js_template 'permissions' %}
         {% js_template 'permissions_add' %}
+        {% js_template 'reports' %}
 
         <!-- utility pages -->
         {% js_template 'request_failed' %}
