@@ -35,9 +35,9 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from uds.REST import model
-from uds.REST import RequestError, ResponseError
 from uds import reports
 
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -57,9 +57,23 @@ class Reports(model.BaseModelHandler):
         {'group': {'title': _('Group')}},
         {'name': {'title': _('Name')}},  # Will process this field on client in fact, not sent by server
         {'description': {'title': _('Description')}},  # Will process this field on client in fact, not sent by server
+        {'mime_type': {'title': _('Generates')}},  # Will process this field on client in fact, not sent by server
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
+
+    def _findReport(self, uuid, values=None):
+        found = None
+        logger.debug('Looking for report {}'.format(uuid))
+        for i in reports.availableReports:
+            if i.getUuid() == uuid:
+                found = i(values)
+                break
+
+        if found is None:
+            self.invalidRequestException('Invalid report!')
+
+        return found
 
     def get(self):
         logger.debug('method GET for {0}, {1}'.format(self.__class__.__name__, self._args))
@@ -78,23 +92,46 @@ class Reports(model.BaseModelHandler):
             if self._args[0] == model.GUI:
                 return self.getGui(self._args[1])
 
+        return self.invalidRequestException()
+
+    def put(self):
+        '''
+        Processes a PUT request
+        '''
+        logger.debug('method PUT for {0}, {1}, {2}'.format(self.__class__.__name__, self._args, self._params))
+
+        if len(self._args) != 1:
+            return self.invalidRequestException()
+
+        report = self._findReport(self._args[0], self._params)
+
+        try:
+            logger.debug('Report: {}'.format(report))
+            result = report.generateEncoded()
+
+            return {
+                'mime_type': report.mime_type,
+                'filename': report.filename,
+                'data': result
+            }
+
+        except Exception as e:
+            return self.invalidRequestException(six.text_type(e))
+
+            report.__dict__.update()
+
     # Gui related
     def getGui(self, uuid):
-        found = None
-        for i in reports.availableReports:
-            if i.getUuid() == uuid:
-                found = i
-                break
+        report = self._findReport(uuid)
 
-        if found is None:
-            return self.invalidRequestException('Invalid report!')
+        return report.guiDescription(report)
 
-        return []
-
+    # Returns the list of
     def getItems(self):
         return [
             {
                 'id': i.getUuid(),
+                'mime_type': i.mime_type,
                 'group': i.translated_group(),
                 'name': i.translated_name(),
                 'description': i.translated_description()

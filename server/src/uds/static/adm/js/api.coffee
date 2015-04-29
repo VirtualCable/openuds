@@ -420,6 +420,11 @@ api.configuration = new BasicModelRest("config")
 api.gallery = new BasicModelRest("gallery/images")
 api.system = new BasicModelRest("system")
 api.reports = new BasicModelRest("reports") # Not fully used, but basic usage is common
+
+# In fact, reports do not have any type
+api.reports.types = (success_fnc, fail_fnc) ->
+  success_fnc([])
+
 api.system.stats = (type, success_fnc, fail_fnc) ->
   @get
     id: "stats/" + type

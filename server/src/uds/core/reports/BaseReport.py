@@ -40,13 +40,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-28'
+__updated__ = '2015-04-29'
 
 
 class Report(UserInterface):
     mime_type = 'application/pdf'  # Report returns pdfs by default, but could be anything else
     name = _('Base Report')  # Report name
     description = _('Base report')  # Report description
+    filename = 'file.bin'  # Filename that will be returned as 'hint' on rest report request
     group = ''  # So we can "group" reports by kind?
     uuid = None
 
@@ -94,13 +95,34 @@ class Report(UserInterface):
         '''
         #
         UserInterface.__init__(self, values)
-        self.initialize()
+        self.initialize(values)
 
-    def initialize(self):
+    def initialize(self, values):
+        '''
+        Invoked just right after initializing report, so we avoid rewriting __init__
+        if values is None, we are initializing an "new" element, if values is a dict, is the values
+        that self has received on constructuon
+
+        This can be or can be not overriden
+        '''
         pass
 
-    def genReport(self):
-        return ''
+    def generate(self):
+        '''
+        Generates the reports
+
+        An string representing the report is to be expected to be returned
+
+        this MUST be overriden
+        '''
+        raise NotImplementedError()
+
+    def generateEncoded(self):
+        '''
+        Generated base 64 encoded report.
+        Basically calls generate and encodes resuslt as base64
+        '''
+        return self.generate().encode('base64').replace('\n', '')
 
     def __str__(self):
-        return "Base Report"
+        return 'Report {} with uuid {}'.format(self.name, self.uuid)

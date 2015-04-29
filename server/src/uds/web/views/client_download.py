@@ -30,8 +30,6 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-27'
-
 from django.http import HttpResponse
 from django.utils.translation import ugettext_noop
 
@@ -46,6 +44,8 @@ from uds.core.util.OsDetector import desktopOss
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2015-04-28'
 
 
 UserPrefsManager.manager().registerPrefs(

@@ -30,14 +30,13 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
-from django.conf.urls import patterns, include
+from django.conf.urls import patterns
 
-__updated__ = '2015-03-10'
+__updated__ = '2015-04-29'
 
 urlpatterns = patterns(
     'uds.admin.views',
     (r'^$', 'index'),
     (r'^tmpl/(?P<template>[a-zA-Z0-9_-]*)$', 'tmpl'),
     (r'^sample$', 'sample'),
-    (r'^reporting/', include('uds.admin.views.reporting.urls')),
 )

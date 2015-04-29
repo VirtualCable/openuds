@@ -751,7 +751,7 @@ class UserInterface(object):
     def initGui(self):
         '''
         This method gives the oportunity to initialize gui fields before they
-        are send to administartion client.
+        are send to administration client.
         We need this because at initialization time we probably don't have the
         data for gui.
 

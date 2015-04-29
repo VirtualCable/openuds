@@ -232,4 +232,4 @@ def pluginDownloadUrl(os):
             res += '<p class="text-center">' + tmpl.format(url=static('clients/' + v[0]), os=v[1]) + '</p>'
         return res
     else:
-        return tmpl.format(url=static('clients/UDSClient.dmg'), os='Mac OSX')
+        return tmpl.format(url=static('clients/UDSClient.pkg'), os='Mac OSX')

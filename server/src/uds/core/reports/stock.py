@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2015 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,25 +28,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-import sys
-import os
+from PIL import Image
+from uds.core.util import tools
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+__updated__ = '2015-04-29'
+
+LOGO = 'logo-512.png'
 
 
-class DictAsObj(object):
-    def __init__(self, dct=None, **kwargs):
-        if dct is not None:
-            self.__dict__.update(dct)
-        self.__dict__.update(kwargs)
-
-
-def packageRelativeFile(moduleName, fileName):
-    '''
-    Helper to get image path from relative to a module.
-    This allows to keep images alongside report
-    '''
-    pkgpath = os.path.dirname(sys.modules[moduleName].__file__)
-    return os.path.join(pkgpath, fileName)
+def getStockImagePath(stockImg):
+    return tools.packageRelativeFile(__name__, 'stock_images/' + stockImg)

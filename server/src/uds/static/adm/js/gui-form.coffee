@@ -189,6 +189,7 @@
   # Failed operations will show a modal with server error
   gui.forms.launchModal = (options, onSuccess) ->
     options = options or {}
+    gui.doLog options
     id = "modal-" + Math.random().toString().split(".")[1] # Get a random ID for this modal
     ff = gui.forms.fromFields(options.fields, options.item)
     footer = ""
@@ -206,6 +207,7 @@
 
     gui.appendToWorkspace gui.modal(id, options.title, ff.html,
       footer: footer
+      actionButton: options.actionButton
     )
     id = "#" + id # for jQuery
     formSelector = id + " form"
