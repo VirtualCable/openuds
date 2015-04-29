@@ -196,7 +196,7 @@ class CommonService(object):
         return True
 
     def checkIpsChanged(self):
-        if self.api.uuid is None:
+        if self.api is None or self.api.uuid is None:
             return  # Not connected
         netInfo = tuple(operations.getNetworkInfo())
         for i in netInfo:
@@ -207,7 +207,7 @@ class CommonService(object):
                     # Notifies all interfaces IPs
                     self.api.notifyIpChanges(((v.mac, v.ip) for v in netInfo))
                     # Regenerates Known ips
-                    self.knownIps = dict(((i.mac, i.ip) for i in netInfo))
+                    self.knownIps = dict(((v.mac, v.ip) for v in netInfo))
                 except Exception as e:
                     logger.warn('Got an error notifiying IPs to broker: {} (will retry in a bit)'.format(e.message.decode('windows-1250', 'ignore')))
 
