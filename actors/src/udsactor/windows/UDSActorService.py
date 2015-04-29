@@ -291,7 +291,10 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             pythoncom.PumpWaitingMessages()
             if counter >= 60:  # Once every minute
                 counter = 0
-                self.checkIpsChanged()
+                try:
+                    self.checkIpsChanged()
+                except Exception as e:
+                    logger.error('Error checking ip change: {}'.format(e))
             # In milliseconds, will break
             win32event.WaitForSingleObject(self.hWaitStop, 1000)
 
