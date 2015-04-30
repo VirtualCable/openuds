@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2015-03-27'
+__updated__ = '2015-04-30'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -232,7 +232,7 @@ def authenticateViaCallback(authenticator, params):
     username = authInstance.authCallback(params, gm)
 
     if username is None or username == '' or gm.hasValidGroups() is False:
-        raise auths.Exceptions.InvalidUserException('User don\'t has access to UDS')
+        raise auths.Exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
     return __registerUser(authenticator, authInstance, username)
 

@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-27'
+__updated__ = '2015-04-30'
 
 
 @python_2_unicode_compatible
@@ -67,6 +67,7 @@ class User(UUIDModel):
     is_admin = models.BooleanField(default=False)  # is true, this is a super-admin
     last_access = models.DateTimeField(default=NEVER)
     parent = models.CharField(max_length=50, default=None, null=True)
+    created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
     class Meta(UUIDModel.Meta):
         '''

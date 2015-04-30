@@ -33,8 +33,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
-
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
@@ -49,7 +47,20 @@ from uds.models.UUIDModel import UUIDModel
 
 import logging
 
+__updated__ = '2015-04-30'
+
+
 logger = logging.getLogger(__name__)
+
+
+@python_2_unicode_compatible
+class DeployedServicePublicationChangelog(models.Model):
+    publication = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='changelog')
+    revision = models.PositiveIntegerField(default=1)
+    log = models.TextField(default='')
+
+    def __str__(self):
+        return 'Revision log  for publication {0}, rev {1}:  {2}'.format(self.publication.name, self.revision, self.log)
 
 
 @python_2_unicode_compatible
@@ -188,3 +199,6 @@ class DeployedServicePublication(UUIDModel):
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(DeployedServicePublication.beforeDelete, sender=DeployedServicePublication)
+
+ServicePoolPublication = DeployedServicePublication
+

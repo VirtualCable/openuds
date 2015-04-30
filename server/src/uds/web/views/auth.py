@@ -40,6 +40,7 @@ from django.template import RequestContext
 
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.models import Authenticator, DeployedService
+from uds.core.managers import userServiceManager
 from uds.core.util import html
 from uds.core.util import OsDetector
 from uds.core.util.State import State
@@ -48,17 +49,16 @@ from uds.core.ui import theme
 from uds.models import TicketStore
 
 from uds.core.auths.Exceptions import InvalidUserException
-from uds.core.services.Exceptions import InvalidServiceException
+from uds.core.services.Exceptions import InvalidServiceException, ServiceNotReadyError
 
 import uds.web.errors as errors
-from uds.web.views.service import getService
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2015-04-27'
+__updated__ = '2015-04-30'
 
 
 @csrf_exempt
@@ -104,6 +104,9 @@ def authCallback(request, authName):
     except Exception as e:
         logger.exception('authCallback')
         return errors.exceptionView(request, e)
+
+    # Will never reach this
+    raise RuntimeError('Unreachable point reached!!!')
 
 
 @csrf_exempt
@@ -192,16 +195,7 @@ def ticketAuth(request, ticketId):
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             # If service pool is in there, also is transport
-            res = getService(request, 'F' + servicePool, transport)
-            if res is None:
-                return render_to_response(
-                    theme.template('service_not_ready.html'),
-                    {
-                        'fromLauncher': True
-                    },
-                    context_instance=RequestContext(request)
-                )
-
+            res = userServiceManager().getService(request.user, request.ip, 'F' + servicePool, transport)
             ip, userService, userServiceInstance, transport, transportInstance = res
 
             if transportInstance.ownLink is True:
@@ -222,6 +216,16 @@ def ticketAuth(request, ticketId):
         # Now ensure uds cookie is at response
         getUDSCookie(request, response, True)
         return response
+    except ServiceNotReadyError as e:
+        return render_to_response(
+            theme.template('service_not_ready.html'),
+            {
+                'fromLauncher': True,
+                'code': e.code
+            },
+            context_instance=RequestContext(request)
+        )
+
     except TicketStore.InvalidTicket:
         return render_to_response(
             theme.template('simpleLauncherAlreadyLaunched.html'),

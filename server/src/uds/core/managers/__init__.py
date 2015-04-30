@@ -34,7 +34,7 @@ UDS managers (downloads, users preferences, publications, ...)
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2014-02-19'
+__updated__ = '2015-04-30'
 
 
 def cryptoManager():
@@ -60,3 +60,8 @@ def logManager():
 def statsManager():
     from StatsManager import StatsManager
     return StatsManager.manager()
+
+
+def userServiceManager():
+    from UserServiceManager import UserServiceManager
+    return UserServiceManager.manager()

@@ -37,7 +37,7 @@ from django.db.models import Q
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.State import State
 from uds.core.managers.UserServiceManager import UserServiceManager
-from uds.core.services.Exceptions import MaxServicesReachedException
+from uds.core.services.Exceptions import MaxServicesReachedError
 from uds.models import DeployedService
 from uds.core import services
 from uds.core.util import log
@@ -173,7 +173,7 @@ class ServiceCacheUpdater(Job):
                 return
         try:
             UserServiceManager.manager().createCacheFor(sp.activePublication(), services.UserDeployment.L1_CACHE)
-        except MaxServicesReachedException as e:
+        except MaxServicesReachedError as e:
             log.doLog(sp, log.ERROR, 'Max number of services reached for this service', log.INTERNAL)
             logger.error(str(e))
         except:
@@ -190,7 +190,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Growing L2 cache creating a new service for {0}".format(sp))
         try:
             UserServiceManager.manager().createCacheFor(sp.activePublication(), services.UserDeployment.L2_CACHE)
-        except MaxServicesReachedException as e:
+        except MaxServicesReachedError as e:
             logger.error(str(e))
             # TODO: When alerts are ready, notify this
 

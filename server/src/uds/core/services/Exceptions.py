@@ -32,51 +32,56 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-10'
+__updated__ = '2015-04-30'
 
 
-class UnsupportedException(Exception):
+class ServiceException(Exception):
+    def __init__(self, *args, **kwargs):
+        super(ServiceException, self).__init__(*args)
+
+
+class UnsupportedException(ServiceException):
     '''
     Reflects that we request an operation that is not supported, i.e. Cancel a publication with snapshots
     '''
     pass
 
 
-class OperationException(Exception):
+class OperationException(ServiceException):
     '''
     Reflects that the operation requested can't be acomplished, i.e. remove an snapshot without snapshot reference, cancel non running operation, etc...
     '''
     pass
 
 
-class PublishException(Exception):
+class PublishException(ServiceException):
     '''
     Reflects thate the publication can't be done for causes we don't know in advance
     '''
     pass
 
 
-class DeploymentException(Exception):
+class DeploymentException(ServiceException):
     '''
     Reflects that a deployment of a service (at cache, or assigned to user) can't be done for causes we don't know in advance
     '''
     pass
 
 
-class CancelException(Exception):
+class CancelException(ServiceException):
     '''
     Reflects that a "cancel" operation can't be done for some reason
     '''
 
 
-class InvalidServiceException(Exception):
+class InvalidServiceException(ServiceException):
     '''
     Invalid service specified. The service is not ready
     '''
     pass
 
 
-class MaxServicesReachedException(Exception):
+class MaxServicesReachedError(ServiceException):
     '''
     Number of maximum services has been reached, and no more services
     can be created for users.
@@ -84,8 +89,18 @@ class MaxServicesReachedException(Exception):
     pass
 
 
-class ServiceInMaintenanceMode(Exception):
+class ServiceInMaintenanceMode(ServiceException):
     '''
     The service is in maintenance mode and can't be accesed right now
     '''
     pass
+
+
+class ServiceNotReadyError(ServiceException):
+    '''
+    The service is not ready
+    Can include an optional code error
+    '''
+    def __init__(self, *args, **kwargs):
+        super(ServiceNotReadyError, self).__init__(*args, **kwargs)
+        self.code = kwargs.get('code', 0x0000)

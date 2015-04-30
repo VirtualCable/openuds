@@ -42,7 +42,7 @@ from .transformers import scrambleId, transformId
 
 from uds.models import DeployedService, Transport, UserService, Authenticator
 from uds.core.auths.Exceptions import InvalidUserException, InvalidAuthenticatorException
-from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedException, ServiceInMaintenanceMode
+from uds.core.services.Exceptions import InvalidServiceException, MaxServicesReachedError, ServiceInMaintenanceMode, ServiceNotReadyError
 from uds.core.ui import theme
 
 import traceback
@@ -115,12 +115,15 @@ def exceptionView(request, exception):
         return errorView(request, ACCESS_DENIED)
     except InvalidServiceException:
         return errorView(request, INVALID_SERVICE)
-    except MaxServicesReachedException:
+    except MaxServicesReachedError:
         return errorView(request, MAX_SERVICES_REACHED)
     except InvalidAuthenticatorException:
         return errorView(request, INVALID_CALLBACK)
     except ServiceInMaintenanceMode:
         return errorView(request, SERVICE_IN_MAINTENANCE)
+    except ServiceNotReadyError as e:
+        # add code as high bits of idError
+        return errorView(request, e.code << 8 | SERVICE_NOT_READY)
     except Exception as e:
         logger.exception('Exception cautgh at view!!!')
         raise e
@@ -133,4 +136,11 @@ def error(request, idError):
     :param request:
     :param idError:
     '''
-    return render_to_response(theme.template('error.html'), {'errorString': errorString(idError)}, context_instance=RequestContext(request))
+    code = idError >> 8
+    idError = idError & 0xFF
+
+    errStr = errorString(idError)
+    if code != 0:
+        errStr += ' (code {0:04X})'.format(code)
+
+    return render_to_response(theme.template('error.html'), {'errorString': errStr}, context_instance=RequestContext(request))

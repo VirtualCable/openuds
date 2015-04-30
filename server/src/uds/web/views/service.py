@@ -37,100 +37,47 @@ from django.template import RequestContext
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
-from uds.core.services.Exceptions import ServiceInMaintenanceMode, InvalidServiceException
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.managers import userServiceManager, cryptoManager
 from uds.models import TicketStore
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.ui import theme
-from uds.core.util.Config import GlobalConfig
-from uds.core.util.stats import events
-from uds.core.util import log
 from uds.core.util import OsDetector
-from uds.models import DeployedService, Transport, UserService, Image
+from uds.models import Transport, Image
 from uds.core.util import html
+from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReachedError
 
 import uds.web.errors as errors
-from uds.core.managers import cryptoManager
 
 import six
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-27'
-
-
-def getService(request, idService, idTransport, doTest=True):
-    kind, idService = idService[0], idService[1:]
-
-    logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
-    if kind == 'A':  # This is an assigned service
-        logger.debug('Getting A service {}'.format(idService))
-        userService = UserService.objects.get(uuid=idService)
-        userService.deployed_service.validateUser(request.user)
-    else:
-        ds = DeployedService.objects.get(uuid=idService)
-        # We first do a sanity check for this, if the user has access to this service
-        # If it fails, will raise an exception
-        ds.validateUser(request.user)
-        # Now we have to locate an instance of the service, so we can assign it to user.
-        userService = UserServiceManager.manager().getAssignationForUser(ds, request.user)
-
-    if userService.isInMaintenance() is True:
-        raise ServiceInMaintenanceMode()
-
-    logger.debug('Found service: {0}'.format(userService))
-    trans = Transport.objects.get(uuid=idTransport)
-
-    # Ensures that the transport is allowed for this service
-    if trans not in userService.deployed_service.transports.all():
-        raise InvalidServiceException()
-
-    # If transport is not available for the request IP...
-    if trans.validForIp(request.ip) is False:
-        raise InvalidServiceException()
-
-    if doTest is False:
-        return (None, userService, None, trans, None)
-
-    # Test if the service is ready
-    if userService.isReady():
-        log.doLog(userService, log.INFO, "User {0} from {1} has initiated access".format(request.user.name, request.ip), log.WEB)
-        # If ready, show transport for this service, if also ready ofc
-        iads = userService.getInstance()
-        ip = iads.getIp()
-        events.addEvent(userService.deployed_service, events.ET_ACCESS, username=request.user.name, srcip=request.ip, dstip=ip, uniqueid=userService.unique_id)
-        if ip is not None:
-            itrans = trans.getInstance()
-            if itrans.isAvailableFor(ip):
-                userService.setConnectionSource(request.ip, 'unknown')
-                log.doLog(userService, log.INFO, "User service ready", log.WEB)
-                UserServiceManager.manager().notifyPreconnect(userService, itrans.processedUser(userService, request.user), itrans.protocol)
-                return (ip, userService, iads, trans, itrans)
-            else:
-                log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                logger.debug('Transport is not ready for user service {0}'.format(userService))
-        else:
-            logger.debug('Ip not available from user service {0}'.format(userService))
-    else:
-        log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but machine was not ready".format(request.user.name, request.ip), log.WEB)
-
-    return None
+__updated__ = '2015-04-30'
 
 
 @webLoginRequired(admin=False)
 def transportOwnLink(request, idService, idTransport):
     try:
-        res = getService(request, idService, idTransport)
-        if res is not None:
-            ip, userService, iads, trans, itrans = res
-            # This returns a response object in fact
-            return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
-    except Exception, e:
+        res = userServiceManager().getService(request.user, request.ip, idService, idTransport)
+        ip, userService, iads, trans, itrans = res  # @UnusedVariable
+        # This returns a response object in fact
+        return itrans.getLink(userService, trans, ip, request.os, request.user, webPassword(request), request)
+    except ServiceNotReadyError as e:
+        return render_to_response(
+            theme.template('service_not_ready.html'),
+            {
+                'fromLauncher': False,
+                'code': e.code
+            },
+            context_instance=RequestContext(request)
+        )
+    except Exception as e:
         logger.exception("Exception")
         return errors.exceptionView(request, e)
 
-    return render_to_response(theme.template('service_not_ready.html'), context_instance=RequestContext(request))
+    # Will never reach this
+    raise RuntimeError('Unreachable point reached!!!')
 
 
 @webLoginRequired(admin=False)
@@ -179,26 +126,34 @@ def clientEnabler(request, idService, idTransport):
     url = ''
     error = _('Service not ready. Please, try again in a while.')
     try:
-        res = getService(request, idService, idTransport, doTest=False)
-        if res is not None:
+        res = userServiceManager().getService(request.user, request.ip, idService, idTransport, doTest=False)
+        scrambler = cryptoManager().randomString(32)
+        password = cryptoManager().xor(webPassword(request), scrambler)
 
-            scrambler = cryptoManager().randomString(32)
-            password = cryptoManager().xor(webPassword(request), scrambler)
+        _x, userService, _x, trans, _x = res
 
-            _x, userService, _x, trans, _x = res
+        data = {
+            'service': 'A' + userService.uuid,
+            'transport': trans.uuid,
+            'user': request.user.uuid,
+            'password': password
+        }
 
-            data = {
-                'service': 'A' + userService.uuid,
-                'transport': trans.uuid,
-                'user': request.user.uuid,
-                'password': password
-            }
-
-            ticket = TicketStore.create(data)
-            error = ''
-            url = html.udsLink(request, ticket, scrambler)
+        ticket = TicketStore.create(data)
+        error = ''
+        url = html.udsLink(request, ticket, scrambler)
+    except ServiceNotReadyError as e:
+        logger.debug('Service not ready')
+        # Not ready, show message and return to this page in a while
+        error += ' (code {0:04X})'.format(e.code)
+    except MaxServicesReachedError:
+        logger.info('Number of service reached MAX for service pool "{}"'.format(idService))
+        error = _('Maximum number of services reached. Contact your administrator')
     except Exception as e:
+        logger.exception('Error')
         error = six.text_type(e)
 
-    # Not ready, show message and return to this page in a while
-    return HttpResponse('{{ "url": "{}", "error": "{}" }}'.format(url, error), content_type='application/json')
+    return HttpResponse(
+        '{{ "url": "{}", "error": "{}" }}'.format(url, error),
+        content_type='application/json'
+    )

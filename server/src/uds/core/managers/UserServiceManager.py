@@ -41,11 +41,11 @@ from uds.core.services.Exceptions import OperationException
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.util.Config import GlobalConfig
-from uds.core.services.Exceptions import MaxServicesReachedException
-from uds.models import UserService, getSqlDatetime
+from uds.core.services.Exceptions import MaxServicesReachedError, ServiceInMaintenanceMode, InvalidServiceException, ServiceNotReadyError
+from uds.models import ServicePool, UserService, getSqlDatetime, Transport
 from uds.core import services
 from uds.core.services import Service
-from uds.core.util.stats.events import addEvent, ET_CACHE_HIT, ET_CACHE_MISS
+from uds.core.util.stats import events
 
 import requests
 import json
@@ -201,7 +201,7 @@ class UserServiceManager(object):
         numberOfServices = deployedService.userServices.filter(state__in=[State.PREPARING, State.USABLE]).count()
 
         if serviceInstance.maxDeployed <= numberOfServices:
-            raise MaxServicesReachedException('Max number of allowed deployments for service reached')
+            raise MaxServicesReachedError('Max number of allowed deployments for service reached')
 
     def __createCacheAtDb(self, deployedServicePublication, cacheLevel):
         '''
@@ -377,7 +377,7 @@ class UserServiceManager(object):
         # Out of atomic transaction
         if cache is not None:
             logger.debug('Found a cached-ready service from {0} for user {1}, item {2}'.format(ds, user, cache))
-            addEvent(ds, ET_CACHE_HIT, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE).count())
+            events.addEvent(ds, events.ET_CACHE_HIT, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE).count())
             ci = cache.getInstance()  # User Deployment instance
             ci.assignToUser(user)
             cache.updateData(ci)
@@ -399,7 +399,7 @@ class UserServiceManager(object):
         # Out of atomic transaction
         if cache is not None:
             logger.debug('Found a cached-preparing service from {0} for user {1}, item {2}'.format(ds, user, cache))
-            addEvent(ds, ET_CACHE_MISS, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING).count())
+            events.addEvent(ds, events.ET_CACHE_MISS, fld1=ds.cachedUserServices().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING).count())
             ci = cache.getInstance()  # User Deployment instance
             ci.assignToUser(user)
             cache.updateData(ci)
@@ -413,9 +413,9 @@ class UserServiceManager(object):
             inAssigned = ds.assignedUserServices().filter(UserServiceManager.getStateFilter()).count()
             # totalL1Assigned = inCacheL1 + inAssigned
             if inAssigned >= ds.max_srvs:  # cacheUpdater will drop necesary L1 machines, so it's not neccesary to check against inCacheL1
-                raise MaxServicesReachedException()
+                raise MaxServicesReachedError()
         # Can create new service, create it
-        addEvent(ds, ET_CACHE_MISS, fld1=0)
+        events.addEvent(ds, events.ET_CACHE_MISS, fld1=0)
         return self.createAssignedFor(ds, user)
 
     def getServicesInStateForProvider(self, provider_id, state):
@@ -524,3 +524,67 @@ class UserServiceManager(object):
         elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
             uService.setState(State.PREPARING)
             UserServiceOpChecker.makeUnique(uService, ui, state)
+
+    def getService(self, user, srcIp, idService, idTransport, doTest=True):
+        '''
+        Get service info from
+        '''
+        kind, idService = idService[0], idService[1:]
+
+        logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
+        if kind == 'A':  # This is an assigned service
+            logger.debug('Getting A service {}'.format(idService))
+            userService = UserService.objects.get(uuid=idService)
+            userService.deployed_service.validateUser(user)
+        else:
+            ds = ServicePool.objects.get(uuid=idService)
+            # We first do a sanity check for this, if the user has access to this service
+            # If it fails, will raise an exception
+            ds.validateUser(user)
+            # Now we have to locate an instance of the service, so we can assign it to user.
+            userService = self.getAssignationForUser(ds, user)
+
+        if userService.isInMaintenance() is True:
+            raise ServiceInMaintenanceMode()
+
+        logger.debug('Found service: {0}'.format(userService))
+        trans = Transport.objects.get(uuid=idTransport)
+
+        # Ensures that the transport is allowed for this service
+        if trans not in userService.deployed_service.transports.all():
+            raise InvalidServiceException()
+
+        # If transport is not available for the request IP...
+        if trans.validForIp(srcIp) is False:
+            raise InvalidServiceException()
+
+        if doTest is False:
+            return (None, userService, None, trans, None)
+
+        serviceNotReadyCode = 0x0001
+
+        # Test if the service is ready
+        if userService.isReady():
+            serviceNotReadyCode = 0x0002
+            log.doLog(userService, log.INFO, "User {0} from {1} has initiated access".format(user.name, srcIp), log.WEB)
+            # If ready, show transport for this service, if also ready ofc
+            iads = userService.getInstance()
+            ip = iads.getIp()
+            events.addEvent(userService.deployed_service, events.ET_ACCESS, username=user.name, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
+            if ip is not None:
+                serviceNotReadyCode = 0x0003
+                itrans = trans.getInstance()
+                if itrans.isAvailableFor(ip):
+                    userService.setConnectionSource(srcIp, 'unknown')
+                    log.doLog(userService, log.INFO, "User service ready", log.WEB)
+                    UserServiceManager.manager().notifyPreconnect(userService, itrans.processedUser(userService, user), itrans.protocol)
+                    return (ip, userService, iads, trans, itrans)
+                else:
+                    log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
+                    logger.debug('Transport is not ready for user service {0}'.format(userService))
+            else:
+                logger.debug('Ip not available from user service {0}'.format(userService))
+        else:
+            log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but service was not ready".format(user.name, srcIp), log.WEB)
+
+        raise ServiceNotReadyError(code=serviceNotReadyCode)

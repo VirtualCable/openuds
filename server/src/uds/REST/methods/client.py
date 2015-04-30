@@ -40,9 +40,9 @@ from uds.REST import RequestError
 from uds.models import TicketStore
 from uds.models import User
 from uds.web import errors
-from uds.web.views.service import getService
-from uds.core.managers import cryptoManager
+from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.Config import GlobalConfig
+from uds.core.services.Exceptions import ServiceNotReadyError
 
 import six
 
@@ -62,7 +62,7 @@ class Client(Handler):
     authenticated = False  # Client requests are not authenticated
 
     @staticmethod
-    def result(result=None, error=None):
+    def result(result=None, error=None, errorCode=0):
         '''
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -74,6 +74,9 @@ class Client(Handler):
         if error is not None:
             if isinstance(error, int):
                 error = errors.errorString(error)
+            if errorCode != 0:
+                error += ' (code {0:04X})'.format(errorCode)
+
             res['error'] = error
         return res
 
@@ -123,21 +126,23 @@ class Client(Handler):
 
         try:
             logger.debug(data)
-            res = getService(self._request, data['service'], data['transport'])
+            res = userServiceManager().getService(self._request.user, self._request.ip, data['service'], data['transport'])
             logger.debug('Res: {}'.format(res))
-            if res is not None:
-                ip, userService, userServiceInstance, transport, transportInstance = res
-                password = cryptoManager().xor(data['password'], scrambler).decode('utf-8')
+            ip, userService, userServiceInstance, transport, transportInstance = res
+            password = cryptoManager().xor(data['password'], scrambler).decode('utf-8')
 
-                userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
+            userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
 
-                transportScript = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
+            transportScript = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 
-                logger.debug('Script:\n{}'.format(transportScript))
+            logger.debug('Script:\n{}'.format(transportScript))
 
-                return Client.result(result=transportScript.encode('bz2').encode('base64'))
+            return Client.result(result=transportScript.encode('bz2').encode('base64'))
+        except ServiceNotReadyError as e:
+            return Client.result(error=errors.SERVICE_NOT_READY, errorCode=e.code)
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=six.text_type(e))
 
-        return Client.result(error=errors.SERVICE_NOT_READY)
+        # Will never reach this
+        raise RuntimeError('Unreachable point reached!!!')

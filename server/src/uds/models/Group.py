@@ -44,13 +44,13 @@ from uds.models.UUIDModel import UUIDModel
 
 from uds.models.Authenticator import Authenticator
 from uds.models.User import User
-from uds.models.Util import UnsavedForeignKey
+from uds.models.Util import UnsavedForeignKey, getSqlDatetime
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-27'
+__updated__ = '2015-04-30'
 
 
 @python_2_unicode_compatible
@@ -67,6 +67,7 @@ class Group(UUIDModel):
     is_meta = models.BooleanField(default=False, db_index=True)
     meta_if_any = models.BooleanField(default=False)
     groups = models.ManyToManyField('self', symmetrical=False)
+    created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
     class Meta(UUIDModel.Meta):
         '''
