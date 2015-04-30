@@ -289,7 +289,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             # Process SENS messages, This will be a bit asyncronous (1 second
             # delay)
             pythoncom.PumpWaitingMessages()
-            if counter >= 60:  # Once every minute
+            if counter >= 15:  # Once every 15 seconds
                 counter = 0
                 try:
                     self.checkIpsChanged()
