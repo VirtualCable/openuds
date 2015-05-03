@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2015-04-30'
+__updated__ = '2015-05-03'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -157,12 +157,15 @@ def __registerUser(authenticator, authInstance, username):
     username = authInstance.transformUsername(username)
     logger.debug('Transformed username: {0}'.format(username))
 
+    request = getRequest()
+
     usr = authenticator.getOrCreateUser(username, authInstance.getRealName(username))
     if usr is not None and State.isActive(usr.state):
         # Now we update database groups for this user
         usr.getManager().recreateGroups(usr)
         # And add an login event
-        events.addEvent(authenticator, events.ET_LOGIN, username=username, srcip=getRequest().ip)  # pylint: disable=maybe-no-member
+        events.addEvent(authenticator, events.ET_LOGIN, username=username, srcip=request.ip)  # pylint: disable=maybe-no-member
+        events.addEvent(authenticator, events.ET_PLATFORM, platform=request.os.OS, browser=request.os.Browser, version=request.os.Version)  # pylint: disable=maybe-no-member
         return usr
 
     return None
@@ -277,7 +280,7 @@ def webLogin(request, response, user, password):
     request.session.clear()
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)
-    # Ensures that this user will have access througt REST api if logged in through web interface
+    # Ensures that this user will have access through REST api if logged in through web interface
     REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), user.is_admin, user.staff_member)
     return True
 

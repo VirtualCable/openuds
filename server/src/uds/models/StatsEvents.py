@@ -33,14 +33,15 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-01-22'
-
 from django.db import models
 
 from uds.models.Util import NEVER_UNIX
 from uds.models.Util import getSqlDatetime
 
 import logging
+
+__updated__ = '2015-05-03'
+
 
 logger = logging.getLogger(__name__)
 

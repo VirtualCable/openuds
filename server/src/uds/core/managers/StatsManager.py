@@ -165,9 +165,9 @@ class StatsManager(object):
             def noneToEmpty(str):
                 return six.text_type(str) if str is not None else ''
 
-            fld1 = noneToEmpty(kwargs.get('fld1', kwargs.get('username', '')))
-            fld2 = noneToEmpty(kwargs.get('fld2', kwargs.get('srcip', '')))
-            fld3 = noneToEmpty(kwargs.get('fld3', kwargs.get('dstip', '')))
+            fld1 = noneToEmpty(kwargs.get('fld1', kwargs.get('username', kwargs.get('platform', ''))))
+            fld2 = noneToEmpty(kwargs.get('fld2', kwargs.get('srcip', kwargs.get('browser', ''))))
+            fld3 = noneToEmpty(kwargs.get('fld3', kwargs.get('dstip', kwargs.get('version', ''))))
             fld4 = noneToEmpty(kwargs.get('fld4', kwargs.get('uniqueid', '')))
 
             StatsEvents.objects.create(owner_type=owner_type, owner_id=owner_id, event_type=eventType, stamp=stamp, fld1=fld1, fld2=fld2, fld3=fld3, fld4=fld4)

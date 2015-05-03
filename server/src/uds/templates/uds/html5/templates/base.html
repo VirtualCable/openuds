@@ -88,6 +88,7 @@
         <script src="{% get_static_prefix %}js/jquery-ui.min.js"></script>
 		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}js/jquery.blockUI.js"></script>
+        <script src="{% get_static_prefix %}js/jquery.cookiebar.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
 		<script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
@@ -100,6 +101,19 @@
 		<script>
 			$(function(){
 				$('.selectpicker').selectpicker();
+
+                $.cookieBar({
+                  fixed: true,
+                  zindex: 10000,
+                  message: '{% trans "We use cookies to track usage and preferences" %}',
+                  acceptText: '{% trans "I Understand" %}',
+                  policyButton: false,
+                  policyText: '{% trans "Privacy Policy" %}',
+                  policyURL: '/',
+                  forceShow: false,
+                  append: false
+                }); 
+
 			});
 		</script>
     {% endcompress %}
