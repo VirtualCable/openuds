@@ -65,6 +65,18 @@
       
       # Activate "custom" styles
       $(selector + " input:checkbox").bootstrapSwitch()
+
+      $.each $(selector + " input[type=date]:not([readonly])"), (index, tspn) ->
+        $tspn = $(tspn)
+        if $tspn.val() is '2000-01-01'
+          $tspn.val(api.tools.strftime('%Y-01-01'))
+        if $tspn.val() is '2099-12-31'
+          $tspn.val(api.tools.strftime('%Y-12-31'))
+
+        $tspn.attr("type", "text")
+        $tspn.parent().datepicker(
+          format: 'yyyy-mm-dd'
+        )
       
       # Activate "cool" selects
       $(selector + " .selectpicker").selectpicker()

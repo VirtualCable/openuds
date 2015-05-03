@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2015-05-03'
 
 from django.db import models
 
@@ -122,8 +122,7 @@ class StatsCounters(models.Model):
                 last = q.order_by('stamp').reverse()[0].stamp
                 interval = int((last - first) / (elements - 1))
 
-        filt += ' AND stamp>={0} AND stamp<={1} GROUP BY CEIL(stamp/{2}) ORDER BY stamp'.format(
-                            since, to, interval)
+        filt += ' AND stamp>={0} AND stamp<={1} GROUP BY CEIL(stamp/{2}) ORDER BY stamp'.format(since, to, interval)
 
         fnc = kwargs.get('use_max', False) and 'MAX' or 'AVG'
 

@@ -1,0 +1,10 @@
+{% extends "uds/admin/tmpl/fld/basic-input.html" %}
+{% load i18n %}
+{% block field %}
+{% verbatim %}
+        <div class="input-group date">
+            <input type="date" class="form-control {{ css }}" name="{{ name }}" id="{{ name }}_field" placeholder="{{ tooltip }}" value="{{ value }}"{{# if readonly }} readonly{{/ if }} {{# if required }} required {{/ if }} data-minval="{{ minValue }}"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+        </div>
+
+{% endverbatim %}
+{% endblock %}

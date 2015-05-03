@@ -36,11 +36,12 @@ from django.utils.translation import ugettext, ugettext_noop as _
 
 from uds.core.ui.UserInterface import UserInterface
 
+import datetime
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-29'
+__updated__ = '2015-05-03'
 
 
 class Report(UserInterface):

@@ -32,3 +32,4 @@
 '''
 
 from .usage import StatsReportUsage
+from .login import StatsReportLogin

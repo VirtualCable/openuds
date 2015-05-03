@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import get_language, ugettext as _
 import datetime
+import time
 import six
 import pickle
 import logging
@@ -208,7 +209,7 @@ class gui(object):
         MULTI_CHOICE_TYPE = 'multichoice'
         EDITABLE_LIST = 'editlist'
         CHECKBOX_TYPE = 'checkbox'
-        IMAGE_TYPE = 'image'
+        # IMAGE_TYPE = 'image'
         DATE_TYPE = 'date'
 
         DEFAULT_LENTGH = 32  # : If length of some fields are not especified, this value is used as default
@@ -392,15 +393,34 @@ class gui(object):
                   required = True)
 
         '''
+
+        def processValue(self, valueName, options):
+            val = options.get(valueName, '')
+
+            if val == '' and valueName == 'defvalue':
+                val = datetime.date.today()
+            elif val == datetime.date.min:
+                val = datetime.date(2000, 1, 1)
+            elif val == datetime.date.max:
+                val = datetime.date(2099, 12, 31)
+
+            options[valueName] = val
+
         def __init__(self, **options):
+            for v in 'value', 'defvalue':
+                self.processValue(v, options)
+
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.DATE_TYPE)
 
         def date(self):
             try:
-                return datetime.datetime.strptime(self.value, '%Y/%m/%d')
+                return datetime.datetime.strptime(self.value, '%Y-%m-%d').date()  # ISO Format
             except Exception:
                 return None
+
+        def stamp(self):
+            return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
 
     class PasswordField(InputField):
         '''

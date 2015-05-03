@@ -19,6 +19,7 @@
         <link href="{% get_static_prefix %}adm/css/bootstrap-switch.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/jquery.bootstrap-touchspin.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/bootstrap-select.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/bootstrap-datepicker3.standalone.min.css" rel="stylesheet" media="screen">
 
         <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
@@ -72,6 +73,8 @@
         <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.bootstrap-touchspin.js"></script>
+        <script src="{% get_static_prefix %}adm/js/bootstrap-datepicker.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/datepicker-locales/bootstrap-datepicker.{{ LANGUAGE_CODE }}.min.js"></script>
         
         <script src="{% get_static_prefix %}adm/js/bootstrap-select.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
@@ -139,6 +142,12 @@
             	api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
     			// Initialize gui
             	gui.init();
+
+                $.fn.datepicker.defaults.format = 'yyyy/mm/dd';
+                $.fn.datepicker.defaults.todayBtn = "linked";
+                $.fn.datepicker.defaults.autoclose = true;
+                $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
+
             });        
         </script>
         {% block js %}{% endblock %}
@@ -170,7 +179,7 @@
         {% js_template 'comp/modal' %}
         {% js_template 'comp/responsive_table' %}
         {% js_template 'comp/dropdown' %}
-        <!-- fields -->
+        <!-- fields, not really needed but 'caching' them is faster -->
         {% js_template 'fld/checkbox' %}
         {% js_template 'fld/choice' %}
         {% js_template 'fld/editlist' %}
@@ -181,6 +190,7 @@
         {% js_template 'fld/password' %}
         {% js_template 'fld/text' %}
         {% js_template 'fld/textbox' %}
+        {% js_template 'fld/date' %}
         
     </body>
 </html>

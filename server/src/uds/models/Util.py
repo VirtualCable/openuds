@@ -40,7 +40,7 @@ from time import mktime
 
 import logging
 
-__updated__ = '2015-04-27'
+__updated__ = '2015-05-03'
 
 
 logger = logging.getLogger(__name__)
