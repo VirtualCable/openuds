@@ -35,12 +35,26 @@ from __future__ import unicode_literals
 import sys
 import os
 
+__updated__ = '2015-05-03'
+
 
 class DictAsObj(object):
+    '''
+    Returns a mix between a dict and an obj
+    Can be accesses as .xxxx or ['xxx']
+    '''
     def __init__(self, dct=None, **kwargs):
         if dct is not None:
             self.__dict__.update(dct)
         self.__dict__.update(kwargs)
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __unicode__(self):
+        return ', '.join(
+            '{}={}'.format(v, self.__dict__[v]) for v in self.__dict__
+        )
 
 
 def packageRelativeFile(moduleName, fileName):

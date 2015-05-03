@@ -170,13 +170,12 @@ class IfBrowser(template.Node):
 
     def render(self, context):
         if 'request' in context:
-            user_agent = context['request'].META.get('HTTP_USER_AGENT', 'Unknown')
+            for b in self._browsers:
+                if html.checkBrowser(context['request'], b):
+                    return self._nodelistTrue.render(context)
+            if self._nodelistFalse is None:
+                return ''
         else:
-            user_agent = 'Unknown'
-        for b in self._browsers:
-            if html.checkBrowser(user_agent, b):
-                return self._nodelistTrue.render(context)
-        if self._nodelistFalse is None:
             return ''
 
         return self._nodelistFalse.render(context)

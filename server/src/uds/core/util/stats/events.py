@@ -43,8 +43,17 @@ logger = logging.getLogger(__name__)
 
 # Posible events, note that not all are used by every possible owner type
 (
-    ET_LOGIN, ET_LOGOUT, ET_ACCESS, ET_CACHE_HIT, ET_CACHE_MISS
-) = range(5)
+    # Login - logout
+    ET_LOGIN, ET_LOGOUT,
+    # Service access
+    ET_ACCESS,
+    # Cache performance
+    ET_CACHE_HIT, ET_CACHE_MISS,
+    # Platforms detected
+    ET_PLATFORM,
+    # Plugin downloads
+    ET_PLUGIN_DOWNLOAD,
+) = range(7)
 
 (
     OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR,

@@ -46,13 +46,28 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-VALID_PARAMS = ('authId', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool', 'transport')
+VALID_PARAMS = ('authId', 'authTag', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool', 'transport', 'force')
 
 
 # Enclosed methods under /actor path
 class Tickets(Handler):
     '''
-    Processes actor requests
+    Processes tickets access requests.
+    Tickets are element used to "register" & "allow access" to users.
+
+    The rest API accepts the following parameters:
+       authId: uuid of the authenticator for the user                |  Mutually excluyents
+       authSmallName: tag of the authenticator (alias for "authTag") |  But must include one of theese
+       authTag: tag of the authenticator                             |
+       auth: Name of authenticator                                   |
+       username:
+       password:
+       groups:
+       servicePool:
+       transport:
+       force:  If "1" or "true" will ensure that:
+                 - Groups exists on authenticator
+                 - servicePool has these groups in it's allowed list
     '''
     needs_admin = True  # By default, staff is lower level needed
 
@@ -74,7 +89,7 @@ class Tickets(Handler):
 
         raise RequestError('Invalid request')
 
-    # Must be invoked as '/rest/ticket/create, with "username", ("authId" or "authSmallName", "groups" (array) and optionally "time" (in seconds) as paramteres
+    # Must be invoked as '/rest/ticket/create, with "username", ("authId" or ("authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(self):
         '''
         Processes put requests, currently only under "create"
@@ -94,12 +109,20 @@ class Tickets(Handler):
         if 'username' not in self._params or 'groups' not in self._params:
             raise RequestError('Invalid parameters')
 
-        if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
+        found = None
+        for i in ('authId', 'authTag', 'auth', 'authSmallName'):
+            if i in self._params:
+                found = i
+                break
+
+        if found is None:
             raise RequestError('Invalid parameters (no auth)')
+
+        force = self._params.get('force', '0') in ('1', 'true', 'True')
 
         try:
             authId = self._params.get('authId', None)
-            authSmallName = self._params.get('authSmallName', None)
+            authTag = self._params.get('authTag', self._params.get('authSmallName', None))
             authName = self._params.get('auth', None)
 
             # Will raise an exception if no auth found
@@ -108,7 +131,7 @@ class Tickets(Handler):
             elif authName is not None:
                 auth = Authenticator.objects.get(name=authName)
             else:
-                auth = Authenticator.objects.get(small_name=authSmallName)
+                auth = Authenticator.objects.get(small_name=authTag)
 
             username = self._params['username']
             password = self._params.get('password', '')  # Some machines needs password, depending on configuration
@@ -120,7 +143,9 @@ class Tickets(Handler):
                 try:
                     grps.append(auth.groups.get(name=g).uuid)
                 except Exception:
-                    logger.info('Group {} from ticket does not exists'.format(g))
+                    logger.info('Group {} from ticket does not exists on auth {}, forced creation: {}'.format(g, auth, force))
+                    if force:
+                        grps.append(auth.groups.create(name=g, comments='Autocreated form ticket by using force paratemeter').uuid)
 
             if len(grps) == 0:  # No valid group in groups names
                 raise Exception('Authenticator does not contain ANY of the requested groups')
@@ -131,10 +156,16 @@ class Tickets(Handler):
             time = 60 if time < 1 else time
             realname = self._params.get('realname', self._params['username'])
             servicePool = self._params.get('servicePool', None)
+
             transport = self._params.get('transport', None)
 
             if servicePool is not None:
                 servicePool = DeployedService.objects.get(uuid=servicePool.lower())
+
+                # If forced that servicePool must honor groups
+                if force:
+                    for addGrp in set(groups) - set(servicePool.assignedGroups.values_list('uuid', flat=True)):
+                        servicePool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
                 if transport is not None:
                     transport = Transport.objects.get(uuid=transport.lower())

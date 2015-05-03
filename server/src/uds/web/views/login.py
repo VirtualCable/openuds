@@ -47,7 +47,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2015-04-27'
+__updated__ = '2015-05-03'
 
 
 def login(request, tag=None):
@@ -62,7 +62,7 @@ def login(request, tag=None):
 
     # Get Authenticators limitation
     logger.debug('Host: {0}'.format(host))
-    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(True) is True:
+    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
         if tag is None:
             try:
                 Authenticator.objects.get(small_name=host)

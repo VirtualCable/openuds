@@ -32,16 +32,14 @@
 '''
 from __future__ import unicode_literals
 
-from django import http
 from uds.core.util.html import checkBrowser
 from uds.web import errors
 
-from time import sleep
 from functools import wraps
 
 import logging
 
-__updated__ = '2015-03-16'
+__updated__ = '2015-05-03'
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +58,7 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
             Wrapped function for decorator
             '''
             for b in browsers:
-                if checkBrowser(request.META.get('HTTP_USER_AGENT', 'Unknown'), b):
+                if checkBrowser(request, b):
                     return errorResponse(request)
 
             return view_func(request, *args, **kwargs)

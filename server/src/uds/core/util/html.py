@@ -33,11 +33,12 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import get_language
-from django.core.urlresolvers import reverse
+from uds.core.util import OsDetector
 from django.utils import formats
 
-import re
 import logging
+
+__updated__ = '2015-05-03'
 
 logger = logging.getLogger(__name__)
 
@@ -89,29 +90,16 @@ def extractKey(dictionary, key, **kwargs):
         value = default
     return value
 
-# Regular expressions for User Agents
-# These both are for Internet Explorer
-_msie = re.compile(r'MSIE ([0-9]+)\.([0-9]+)')
-_trident = re.compile(r'Trident/.*rv:([0-9]+)\.([0-9]+)')
-# Opera
-_opera = re.compile(r'OPR/([0-9]+)\.([0-9]+)')
-# Firefox
-_firefox = re.compile(r'Firefox/([0-9]+)\.([0-9]+)')
-# Chrome
-_chrome = re.compile(r'Chrome/([0-9]+)\.([0-9]+)')
-# Webkit in general
-_webkit = re.compile(r'AppleWebKit/([0-9]+)\.([0-9]+)')
-
 _browsers = {
-    'ie': [_trident, _msie],
-    'opera': [_opera],
-    'firefox': [_firefox],
-    'chrome': [_chrome],
-    'webkit': [_webkit],
+    'ie': [OsDetector.IExplorer],
+    'opera': [OsDetector.Opera],
+    'firefox': [OsDetector.Firefox, OsDetector.Seamonkey],
+    'chrome': [OsDetector.Chrome, OsDetector.Chromium],
+    'safari': [OsDetector.Safari],
 }
 
 
-def checkBrowser(user_agent, browser):
+def checkBrowser(request, browser):
     '''
     Known browsers right now:
     ie[version]
@@ -121,16 +109,12 @@ def checkBrowser(user_agent, browser):
     needs_version = 0
     needs = ''
 
-    regexs = None
-
-    for b, res in _browsers.iteritems():
+    for b, requires in _browsers.iteritems():
         if browser.startswith(b):
-            logger.debug('Found: b={}, res={}, browser={}'.format(b, res, browser))
-            regexs = res
+            if request.os.Browser not in requires:
+                return False
             browser = browser[len(b):]
-
-    if regexs is None:
-        return False
+            break
 
     browser += ' '  # So we ensure we have at least beowser 0
 
@@ -141,20 +125,12 @@ def checkBrowser(user_agent, browser):
         try:
             needs = '='
             needs_version = int(browser)
-        except:
+        except Exception:
             needs = ''
             needs_version = 0
 
     try:
-        matches = None
-        for r in regexs:
-            matches = r.search(user_agent)
-            if matches is not None:
-                break
-        if matches is None:
-            return False
-
-        version = int(matches.groups()[0])
+        version = int(request.os.Version.split('.')[0])
         if needs == '<':
             return version < needs_version
         elif needs == '>':
@@ -163,7 +139,7 @@ def checkBrowser(user_agent, browser):
             return version == needs_version
 
         return True
-    except:
+    except Exception:
         return False
 
 

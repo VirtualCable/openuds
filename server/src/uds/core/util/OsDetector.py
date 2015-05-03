@@ -30,10 +30,15 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+
+import re
 import logging
+from .tools import DictAsObj
 
 logger = logging.getLogger(__name__)
 
+# Knowns OSs
 Linux = 'Linux'
 WindowsPhone = 'Windows Phone'
 Windows = 'Windows'
@@ -42,13 +47,45 @@ Android = 'Android'
 iPad = 'iPad'
 iPhone = 'iPhone'
 
-knownOss = [WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone]  # Android is linux also, so it is cheched on first place
+knownOss = (WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone)  # Android is linux also, so it is cheched on first place
 
-allOss = list(knownOss)
-desktopOss = [Linux, Windows, Macintosh]
+allOss = tuple(knownOss)
+desktopOss = (Linux, Windows, Macintosh)
 mobilesODD = list(set(allOss) - set(desktopOss))
 
 DEFAULT_OS = 'Windows'
+
+# Known browsers
+Firefox = 'Firefox'
+Seamonkey = 'Seamonkey'
+Chrome = 'Chrome'
+Chromium = 'Chromium'
+Safari = 'Safari'
+Opera = 'Opera'
+IExplorer = 'Explorer'
+Other = 'Other'
+
+knownBrowsers = (Firefox, Seamonkey, Chrome, Chromium, Safari, Opera, IExplorer, Other)
+
+browsersREs = {
+    Firefox: (re.compile(r'Firefox/([0-9.]+)'),),
+    Seamonkey: (re.compile(r'Seamonkey/([0-9.]+)'),),
+    Chrome: (re.compile(r'Chrome/([0-9.]+)'),),
+    Chromium: (re.compile(r'Chromium/([0-9.]+)'),),
+    Safari: (re.compile(r'Safari/([0-9.]+)'),),
+    Opera: (re.compile(r'OPR/([0-9.]+)'), re.compile(r'Opera/([0-9.]+)'),),
+    IExplorer: (re.compile(r';MSIE ([0-9.]+);'), re.compile(r'Trident/.*rv:([0-9.]+)'),)
+}
+
+browserRules = {
+    Chrome: (Chrome, (Chromium, Opera)),
+    Firefox: (Firefox, (Seamonkey,)),
+    IExplorer: (IExplorer, ()),
+    Chromium: (Chromium, (Chrome,)),
+    Safari: (Safari, (Chrome, Chromium, Opera)),
+    Seamonkey: (Seamonkey, (Firefox,)),
+    Opera: (Opera, ()),
+}
 
 
 def getOsFromUA(ua):
@@ -60,14 +97,37 @@ def getOsFromUA(ua):
     else:
         os = 'Unknown'
 
-    res = {'OS': os, 'Version': 'unused'}
+    res = DictAsObj({'OS': os, 'Version': '0.0', 'Browser': 'unknown'})
     for os in knownOss:
         try:
             ua.index(os)
-            res['OS'] = os
+            res.OS = os
             break
         except Exception:
             pass
+
+    for ruleKey, ruleValue in browserRules.iteritems():
+        must, mustNot = ruleValue
+
+        for mustRe in browsersREs[must]:
+            match = mustRe.search(ua)
+            if match is not None:
+                # Check against no machin rules
+                for mustNotREs in mustNot:
+                    for cre in browsersREs[mustNotREs]:
+                        if cre.search(ua) is not None:
+                            match = None
+                            break
+                    if match is None:
+                        break
+            if match is not None:
+                break
+        if match is not None:
+            break
+    if match is not None:
+        res.Browser = ruleKey
+        res.Version = match.groups(1)[0]
+
     return res
 
 

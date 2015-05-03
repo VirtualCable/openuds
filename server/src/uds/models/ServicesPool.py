@@ -33,8 +33,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-23'
-
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
@@ -56,6 +54,9 @@ from uds.models.Util import getSqlDatetime
 
 from datetime import timedelta
 import logging
+
+__updated__ = '2015-05-01'
+
 
 logger = logging.getLogger(__name__)
 
