@@ -50,8 +50,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-CLIENT_VERSION = '1.7.5'
-REQUIRED_CLIENT_VERSION = '1.7.5'
+CLIENT_VERSION = '1.9.0'
+REQUIRED_CLIENT_VERSION = '1.9.0'
 
 
 # Enclosed methods under /actor path
