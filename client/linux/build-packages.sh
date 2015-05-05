@@ -33,4 +33,4 @@ done
 
 #rm udsclient-$VERSION
 
-make DESTDIR=targz DISTRO=targz install
+make DESTDIR=targz DISTRO=targz VERSION=${VERSION} install

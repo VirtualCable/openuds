@@ -1,3 +1,9 @@
+udsclient (1.9.0) stable; urgency=medium
+
+  * Minor fixes & making version match UDS version
+
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Tue, 05 May 2015 07:03:47 +0200
+
 udsclient (1.7.5) stable; urgency=medium
 
   * Initial release.
