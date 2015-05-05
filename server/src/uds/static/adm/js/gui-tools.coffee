@@ -85,8 +85,11 @@
       $.each $(selector + " input[type=numeric]:not([readonly])"), (index, tspn) ->
         $tspn = $(tspn)
         minVal = parseInt $tspn.attr("data-minval")
+        maxVal = parseInt $tspn.attr("data-maxval")
         if minVal == 987654321
           minVal = -999999
+        if maxVal == 987654321
+          maxVal = 999999
         gui.doLog minVal
         $tspn.attr("type", "text")
         $tspn.TouchSpin
@@ -94,7 +97,7 @@
           verticalupclass: 'glyphicon glyphicon-plus'
           verticaldownclass: 'glyphicon glyphicon-minus'
           min: minVal
-          max: 999999
+          max: maxVal
           decimals: 0
         
       # TEST: cooler on mobile devices

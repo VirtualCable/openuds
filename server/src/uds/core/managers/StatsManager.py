@@ -176,7 +176,7 @@ class StatsManager(object):
             logger.exception('Exception handling event stats saving (maybe database is full?)')
         return False
 
-    def getEvents(self, ownerType, eventType, ownerId, since, to):
+    def getEvents(self, ownerType, eventType, **kwargs):
         '''
         Retrieves counters from item
 
@@ -191,11 +191,7 @@ class StatsManager(object):
 
             Iterator, containing (date, counter) each element
         '''
-        # To Unix epoch
-        since = int(time.mktime(since.timetuple()))
-        to = int(time.mktime(to.timetuple()))
-
-        return StatsEvents.get_stats(ownerType, eventType, owner_id=ownerId, since=since, to=to)
+        return StatsEvents.get_stats(ownerType, eventType, **kwargs)
 
     def cleanupEvents(self):
         '''

@@ -40,7 +40,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2015-05-03'
+__updated__ = '2015-05-04'
 
 
 logger = logging.getLogger(__name__)
@@ -92,7 +92,7 @@ class StatsEvents(models.Model):
         since = since and int(since) or NEVER_UNIX
         to = to and int(to) or getSqlDatetime(True)
 
-        fltr = fltr.filter(stamp__gte=since, stamp__lte=to)
+        fltr = fltr.filter(stamp__gte=since, stamp__lt=to)
 
         # We use result as an iterator
         return fltr

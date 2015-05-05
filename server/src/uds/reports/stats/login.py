@@ -32,31 +32,44 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext, ugettext_noop as _
+from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils import formats
+import django.template.defaultfilters as filters
+
 from uds.core.ui.UserInterface import gui
 from uds.core.reports import stock
 from uds.models import StatsEvents
+from uds.core.util.stats import events
+
 import StringIO
+
+import cairo
+import pycha.line
 
 from .base import StatsReport
 
 from uds.core.util import tools
 from geraldo.generators.pdf import PDFGenerator
-from geraldo import Report, landscape, ReportBand, ObjectValue, SystemField, BAND_WIDTH, Label, Image
+from geraldo import Report, landscape, ReportBand, ObjectValue, SystemField, BAND_WIDTH, Label, Image, SubReport
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER
+from PIL import Image as PILImage
 
 import datetime
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-05-03'
+__updated__ = '2015-05-04'
+
+# Width & height
+WIDTH, HEIGHT = 1800, 1000
+GERARLDO_WIDTH = 800
+GERALDO_HEIGHT = GERARLDO_WIDTH * HEIGHT / WIDTH
 
 
-class UsersReport(Report):
-    title = 'Test report'
+class AccessReport(Report):
     author = 'UDS Enterprise'
 
     print_if_empty = True
@@ -67,27 +80,24 @@ class UsersReport(Report):
     margin_bottom = 0.5 * cm
 
     class band_detail(ReportBand):
-        height = 0.5 * cm
+        height = 10 * cm
+        auto_expand_height = True
         elements = (
-            ObjectValue(attribute_name='name', left=0.5 * cm),
-            ObjectValue(attribute_name='real_name', left=3 * cm),
-            ObjectValue(attribute_name='last_access', left=7 * cm),
+            Label(text='Users', top=0.6 * cm, left=10 * cm, style={'fontName': 'Helvetica-Bold'}),
+            Image(get_image=lambda x: x.instance['image'], left=1.0 * cm, top=1.0 * cm, width=GERARLDO_WIDTH, height=GERALDO_HEIGHT, stretch=True),
         )
 
     class band_page_header(ReportBand):
-        height = 2.0 * cm
+        height = 1.8 * cm
         elements = [
             SystemField(expression='%(report_title)s', top=0.5 * cm, left=0, width=BAND_WIDTH,
                         style={'fontName': 'Helvetica-Bold', 'fontSize': 14, 'alignment': TA_CENTER}),
 
-            Label(text="User ID", top=1.5 * cm, left=0.5 * cm),
-            Label(text="Real Name", top=1.5 * cm, left=3 * cm),
-            Label(text="Last access", top=1.5 * cm, left=7 * cm),
             SystemField(expression=_('Page %(page_number)d of %(page_count)d'), top=0.1 * cm,
                         width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
-            Image(filename=stock.getStockImagePath(stock.LOGO), left=0.1 * cm, top=0.0 * cm, width=2 * cm, height=2 * cm),
+            Image(filename=stock.getStockImagePath(stock.LOGO), left=0.1 * cm, top=0.0 * cm, width=2.0 * cm, height=2.0 * cm),
         ]
-        borders = {'bottom': True}
+        # borders = {'bottom': True}
 
     class band_page_footer(ReportBand):
         height = 0.5 * cm
@@ -98,13 +108,35 @@ class UsersReport(Report):
         ]
         borders = {'top': True}
 
+    subreports = [
+        SubReport(
+            queryset_string='%(object)s["data"]',
+            band_header=ReportBand(
+                height=2.5 * cm,
+                elements=(
+                    Label(text='Date range', top=2.0 * cm, left=4.2 * cm, style={'fontName': 'Helvetica-Bold'}),
+                    Label(text='Users', top=2.0 * cm, left=10 * cm, style={'fontName': 'Helvetica-Bold'}),
+                ),
+                borders={'bottom': True}
+            ),
+            band_detail=ReportBand(
+                height=0.5 * cm,
+                elements=(
+                    ObjectValue(attribute_name='date', top=0, left=4.2 * cm),
+                    ObjectValue(attribute_name='users', top=0, left=10 * cm),
+                )
+            ),
+        )
+    ]
+
 
 class StatsReportLogin(StatsReport):
     filename = 'access.pdf'
-    name = _('Users list')  # Report name
-    description = _('List users of platform')  # Report description
+    name = _('Users access report by date')  # Report name
+    description = _('Report of user access to platform by date')  # Report description
     uuid = '0f62f19a-f166-11e4-8f59-10feed05884b'
 
+    # Input fields
     startDate = gui.DateField(
         order=1,
         label=_('Starting date'),
@@ -114,11 +146,21 @@ class StatsReportLogin(StatsReport):
     )
 
     endDate = gui.DateField(
-        order=1,
+        order=2,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
         defvalue=datetime.date.max,
         required=True
+    )
+
+    samplingPoints = gui.NumericField(
+        order=3,
+        label=_('Number of points'),
+        length=3,
+        minValue=16,
+        maxValue=128,
+        tooltip=_('Number of sampling points used in charts'),
+        defvalue='64'
     )
 
     def initialize(self, values):
@@ -128,41 +170,112 @@ class StatsReportLogin(StatsReport):
         pass
 
     def generate(self):
-        # Query:
-        #   SELECT count(*) as number, CEIL(stamp/(3600*24*30))*3600*24*30 as stamp
-        #   FROM `uds_stats_e`
-        #   WHERE `event_type` = 0 and stamp >= 1421888752 and stamp <= 1430638561
-        #   GROUP BY CEIL(stamp/(3600*24*30))
-        #   ORDER BY stamp
+        # Sample query:
+        #   'SELECT *, count(*) as number, CEIL(stamp/(3600))*3600 as block'
+        #   ' FROM {table}'
+        #   ' WHERE event_type = 0 and stamp >= {start} and stamp <= {end}'
+        #   ' GROUP BY CEIL(stamp/(3600))'
+        #   ' ORDER BY block'
 
-        logger.debug('minDate: {}, maxDate: {}'.format(self.startDate.date(), self.endDate.date()))
-        # Graph will have 12 points, no matter where start & end is
-        query = (
-            'SELECT *, count(*) as number, CEIL(stamp/(3600*24))*3600*24 as block'
-            ' FROM {table}'
-            ' WHERE event_type = 0 and stamp >= {start} and stamp <= {end}'
-            ' GROUP BY CEIL(stamp/(3600*24))'
-            ' ORDER BY block'
-        ).format(
-            start=self.startDate.stamp(),
-            end=self.endDate.stamp(),
-            table=StatsEvents._meta.db_table,  # @UndefinedVariable
-        )
+        # Generate the sampling intervals and get data from db
+        start = self.startDate.stamp()
+        end = self.endDate.stamp()
+        samplingPoints = self.samplingPoints.num()
 
-        logger.debug('Query: {}'.format(query))
-        data = list(StatsEvents.objects.raw(query))
+        # x axis label format
+        if end - start > 3600 * 24 * 2:
+            xLabelFormat = 'SHORT_DATE_FORMAT'
+        else:
+            xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
-        logger.debug('StatsEvents: {} -> {}'.format(len(data), data))
+        samplingIntervals = []
+        prevVal = None
+        for val in range(start, end, (end - start) / (samplingPoints + 1)):
+            if prevVal is None:
+                prevVal = val
+                continue
+            samplingIntervals.append((prevVal, val))
+            prevVal = val
 
-        for v in data:
-            logger.debug('DATA: {} {}'.format(v.number, datetime.date.fromtimestamp(v.block)))
+        data = []
+        reportData = []
+        for interval in samplingIntervals:
+            key = (interval[0] + interval[1]) / 2
+            val = events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=interval[0], to=interval[1]).count()
+            data.append((key, val))  # @UndefinedVariable
+            reportData.append(
+                {
+                    'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1]),
+                    'users': val
+                }
+            )
 
-        # auth = Authenticator.objects.get(uuid=self.authenticator.value)
-        # users = auth.users.order_by('name')
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
+
+        dataset = (('Users access to UDS', data),)
+
+        options = {
+            'encoding': 'utf-8',
+            'axis': {
+                'x': {
+                    'ticks': [
+                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(i), xLabelFormat)) for i in range(start, end, (end - start) / 11)
+                    ],
+                    'range': (start, end),
+                    'showLines': True,
+                },
+                'y': {
+                    'tickCount': 10,
+                    'showLines': True,
+                },
+                'tickFontSize': 16,
+            },
+            'background': {
+                'chartColor': '#f0f0f0',
+                'baseColor': '#f0f0f0',
+                'lineColor': '#187FF2'
+            },
+            'colorScheme': {
+                'name': 'gradient',
+                'args': {
+                    'initialColor': '#B8CA16',
+                },
+            },
+            'legend': {
+                'hide': False,
+                'legendFontSize': 16,
+                'position': {
+                    'left': 48,
+                    'bottom': 8,
+                }
+            },
+            'padding': {
+                'left': 48,
+                'top': 16,
+                'right': 48,
+                'bottom': 48,
+            },
+            'title': _('Users usage of UDS')
+        }
+
+        chart = pycha.line.LineChart(surface, options)
+        chart.addDataset(dataset)
+        chart.render()
+
+        img = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
 
         output = StringIO.StringIO()
 
-        # report = UsersReport(queryset=users)
-        # report.title = _('Users List for {}').format(auth.name)
-        # report.generate_by(PDFGenerator, filename=output)
-        return output.getvalue()
+        queryset = [
+            {'image': img, 'data': reportData}
+        ]
+
+        logger.debug(queryset)
+
+        try:
+            report = AccessReport(queryset=queryset)
+            # report = UsersReport(queryset=users)
+            report.generate_by(PDFGenerator, filename=output)
+            return output.getvalue()
+        except:
+            logger.exception('Errool')

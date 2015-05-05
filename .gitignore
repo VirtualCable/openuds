@@ -6,6 +6,7 @@
 .DS_Store
 *_enterprise.*
 .settings/
+.ipynb_checkpoints
 
 # Debian buildings
 *.debhelper*

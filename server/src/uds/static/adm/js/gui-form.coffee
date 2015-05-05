@@ -45,6 +45,7 @@
       html += api.templates.evaluate("tmpl_fld_" + f.gui.type,
         value: value # If no value present, use default value
         minValue: f.gui.minValue
+        maxValue: f.gui.maxValue
         values: f.gui.values
         label: f.gui.label
         length: f.gui.length

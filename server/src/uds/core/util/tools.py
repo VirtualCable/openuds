@@ -32,10 +32,15 @@
 '''
 from __future__ import unicode_literals
 
+from django.utils import formats
+import django.template.defaultfilters as filters
+
+import datetime
+
 import sys
 import os
 
-__updated__ = '2015-05-03'
+__updated__ = '2015-05-04'
 
 
 class DictAsObj(object):
@@ -64,3 +69,11 @@ def packageRelativeFile(moduleName, fileName):
     '''
     pkgpath = os.path.dirname(sys.modules[moduleName].__file__)
     return os.path.join(pkgpath, fileName)
+
+
+def timestampAsStr(stamp, format_='SHORT_DATETIME_FORMAT'):
+    '''
+    Converts a timestamp to date string using specified format (DJANGO format such us SHORT_DATETIME_FORMAT..)
+    '''
+    format_ = formats.get_format(format_)
+    return filters.date(datetime.datetime.fromtimestamp(stamp), format_)

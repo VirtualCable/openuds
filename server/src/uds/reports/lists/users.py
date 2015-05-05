@@ -51,12 +51,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-29'
+__updated__ = '2015-05-03'
 
 
 class UsersReport(Report):
-    title = 'Test report'
-    author = 'UDS Enterprise'
+    title = ''
+    author = 'UDS'
 
     print_if_empty = True
     page_size = A4

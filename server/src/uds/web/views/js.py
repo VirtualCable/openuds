@@ -30,16 +30,15 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
-
 from django.views.decorators.cache import cache_page
 from django.views.i18n import javascript_catalog
 
 import logging
 
-logger = logging.getLogger(__name__)
+__updated__ = '2015-05-04'
 
-__updated__ = '2015-01-28'
+
+logger = logging.getLogger(__name__)
 
 
 # The value returned by get_version() must change when translations change.
