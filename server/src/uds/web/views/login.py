@@ -42,12 +42,13 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
 from uds.core.ui import theme
+from uds.core import VERSION
 
 import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2015-05-03'
+__updated__ = '2015-05-05'
 
 
 def login(request, tag=None):
@@ -120,8 +121,16 @@ def login(request, tag=None):
     else:
         form = LoginForm(tag=tag)
 
-    response = render_to_response(theme.template('login.html'), {'form': form, 'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True)},
-                                  context_instance=RequestContext(request))
+    response = render_to_response(
+        theme.template('login.html'),
+        {
+            'form': form,
+            'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True),
+            'version': VERSION
+
+        },
+        context_instance=RequestContext(request)
+    )
 
     getUDSCookie(request, response)
 

@@ -43,13 +43,13 @@ from uds.core.util import html
 
 from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
-
+from uds.core import VERSION
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-27'
+__updated__ = '2015-05-05'
 
 
 def about(request):
@@ -57,7 +57,13 @@ def about(request):
     Shows the about page
     :param request: http request
     '''
-    return render(request, theme.template('about.html'))
+    return render_to_response(
+        theme.template('about.html'),
+        {
+            'version': VERSION,
+        },
+        context_instance=RequestContext(request)
+    )
 
 
 @webLoginRequired(admin=False)

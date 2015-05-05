@@ -42,6 +42,7 @@ from uds.core.auths.auth import ROOT_ID
 from uds.core.util.Config import GlobalConfig
 from uds.models.Image import Image
 from uds.core.managers.UserPrefsManager import UserPrefsManager
+from uds.REST.methods.client import CLIENT_VERSION
 
 import logging
 
@@ -218,17 +219,17 @@ def pluginDownloadUrl(os):
     tmpl = '<a href="{url}" class="btn btn-success">' + _('Download UDS Plugin for') + ' {os}</a>'
 
     if os == 'windows':
-        return tmpl.format(url=static('clients/UDSClientSetup.exe'), os='Windows')
+        return tmpl.format(url=static('clients/UDSClientSetup-{version}.exe'.format(version=CLIENT_VERSION)), os='Windows')
     elif os == 'linux':
         linux_packages = (
-            ('udsclient_1.7.5_all.deb', _('Debian based Linux')),
-            ('udsclient-1.7.5-1.noarch.rpm', _('Red Hat based Linux (RH, Fedora, Centos, ...)')),
-            ('udsclient-opensuse-1.7.5-1.noarch.rpm', _('Suse based Linux')),
-            ('udsclient-1.7.5.tar.gz', _('Generic .tar.gz Linux'))
+            ('udsclient_{version}_all.deb'.format(version=CLIENT_VERSION), _('Debian based Linux')),
+            ('udsclient-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), _('Red Hat based Linux (RH, Fedora, Centos, ...)')),
+            ('udsclient-opensuse-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), _('Suse based Linux')),
+            ('udsclient-{version}.tar.gz'.format(version=CLIENT_VERSION), _('Generic .tar.gz Linux'))
         )
         res = ''
         for v in linux_packages:
             res += '<p class="text-center">' + tmpl.format(url=static('clients/' + v[0]), os=v[1]) + '</p>'
         return res
     else:
-        return tmpl.format(url=static('clients/UDSClient.pkg'), os='Mac OSX')
+        return tmpl.format(url=static('clients/UDSClient-{version}.pkg'.format(version=CLIENT_VERSION)), os='Mac OSX')
