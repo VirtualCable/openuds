@@ -112,7 +112,7 @@ class UDSClient(QtGui.QMainWindow):
                 self.closeWindow()
                 return
 
-            self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName()})
+            self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName(), 'version': VERSION})
             self.req.get()
 
         except Exception as e:
