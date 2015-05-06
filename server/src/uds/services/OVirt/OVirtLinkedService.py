@@ -35,14 +35,13 @@ from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.services import Service
 from .OVirtPublication import OVirtPublication
 from .OVirtLinkedDeployment import OVirtLinkedDeployment
+from .Helpers import oVirtHelpers
 
 from uds.core.ui import gui
 
 import logging
 
 logger = logging.getLogger(__name__)
-
-from .Helpers import oVirtHelpers
 
 
 class OVirtLinkedService(Service):
@@ -149,6 +148,9 @@ class OVirtLinkedService(Service):
                 raise Service.ValidationException(_('The minimum allowed memory is 256 Mb'))
             if int(self.memoryGuaranteed.value) > int(self.memory.value):
                 self.memoryGuaranteed.value = self.memory.value
+
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env().key()
 
     def initGui(self):
         '''

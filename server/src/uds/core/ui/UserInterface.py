@@ -515,7 +515,7 @@ class gui(object):
             '''
             Checks that the value is true
             '''
-            return self.value == gui.TRUE
+            return self.value is True or self.value == gui.TRUE
 
     class ChoiceField(InputField):
         '''

@@ -30,6 +30,8 @@ from __future__ import unicode_literals
 
 import six
 import XenAPI
+import xmlrpclib
+import ssl
 
 import logging
 
@@ -97,10 +99,11 @@ class XenPowerState(object):
 
 
 class XenServer(object):
-    def __init__(self, host, port, username, password, useSSL=True):
+    def __init__(self, host, port, username, password, useSSL=False, verifySSL=False):
         self._originalHost = self._host = host
         self._port = unicode(port)
         self._useSSL = useSSL and True or False
+        self._verifySSL = verifySSL and True or False
         self._protocol = 'http' + (self._useSSL and 's' or '') + '://'
         self._url = None
         self._loggedIn = False
@@ -148,7 +151,15 @@ class XenServer(object):
     def login(self, switchToMaster=False):
         try:
             self._url = self._protocol + self._host + ':' + self._port
-            self._session = XenAPI.Session(self._url)
+            # On python 2.7.9, HTTPS is verified by default,
+            if self._useSSL and self._verifySSL is False:
+                context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)  # @UndefinedVariable
+                context.verify_mode = ssl.CERT_NONE
+                transport = xmlrpclib.SafeTransport(context=context)
+            else:
+                transport = None
+
+            self._session = XenAPI.Session(self._url, transport=transport)
             self._session.xenapi.login_with_password(self._username, self._password)
             self._loggedIn = True
             self._apiVersion = self._session.API_version

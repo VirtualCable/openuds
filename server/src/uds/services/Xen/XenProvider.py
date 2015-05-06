@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-01-22'
+__updated__ = '2015-05-06'
 
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -100,17 +100,20 @@ class Provider(ServiceProvider):
     password = gui.PasswordField(lenth=32, label=_('Password'), order=3, tooltip=_('Password of the user of XenServer'), required=True)
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF', order=4, rdonly=True,
                               tooltip=_('Range of valid macs for created machines'), required=True)
+    verifySSL = gui.CheckBoxField(label=_('Verify Certificate'), order=5,
+                                  tooltip=_('If selected, certificate will be checked against system valid certificate providers'), required=True)
 
     # XenServer engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def __getApi(self):
+    def __getApi(self, force=False):
         '''
         Returns the connection API object for XenServer (using XenServersdk)
         '''
-        if self._api is None:
-            self._api = XenServer(self.host.value, '443', self.username.value, self.password.value, True)
+        logger.debug('API verifySSL: {} {}'.format(self.verifySSL.value, self.verifySSL.isTrue()))
+        if self._api is None or force:
+            self._api = XenServer(self.host.value, '443', self.username.value, self.password.value, True, self.verifySSL.isTrue())
         return self._api
 
     # There is more fields type, but not here the best place to cover it
