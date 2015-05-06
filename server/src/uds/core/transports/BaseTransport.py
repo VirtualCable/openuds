@@ -62,8 +62,8 @@ class Transport(Module):
     # Linux
     supportedOss = OsDetector.desktopOss  # Supported operating systems
 
-    # If this transport is for an specific provider, this will be != None
-    onlyForProviders = None
+    # If this transport is for an specific provider, this will be an non empty tuple/list
+    allowedProviders = ()
 
     # If this transport is visible via Web, via Thin Client or both
     webTransport = False

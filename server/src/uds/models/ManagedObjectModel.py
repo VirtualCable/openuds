@@ -33,14 +33,14 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-09-16'
-
 from django.db import models
 from uds.core.Environment import Environment
 from uds.models.UUIDModel import UUIDModel
 
-
 import logging
+
+__updated__ = '2015-05-06'
+
 
 logger = logging.getLogger(__name__)
 

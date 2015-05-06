@@ -83,6 +83,7 @@ class ServicesPools(ModelHandler):
             'id': item.uuid,
             'name': item.name,
             'parent': item.service.name,
+            'parent_type': item.service.data_type,
             'comments': item.comments,
             'state': item.state if item.service.provider.maintenance_mode is False else State.MAINTENANCE,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
@@ -97,7 +98,7 @@ class ServicesPools(ModelHandler):
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
             'permission': permissions.getEffectivePermission(self._user, item),
-            'info': Services.serviceInfo(item.service)
+            'info': Services.serviceInfo(item.service),
         }
 
         if item.osmanager is not None:

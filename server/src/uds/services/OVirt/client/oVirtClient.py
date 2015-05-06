@@ -63,7 +63,7 @@ class Client(object):
                 pass
         try:
             cached_api_key = aKey
-            cached_api = API(url='https://' + self._host + '/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=False)
+            cached_api = API(url='https://' + self._host + '/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
             return cached_api
         except:
             logger.exception('Exception connection ovirt at {0}'.format(self._host))
@@ -115,6 +115,8 @@ class Client(object):
             api = self.__getApi()
 
             vms = api.vms.list(query='name!=UDS*')
+
+            logger.debug('oVirt VMS: {}'.format(vms))
 
             res = []
 
@@ -345,7 +347,6 @@ class Client(object):
             lock.acquire(True)
 
             api = self.__getApi()
-
 
             cluster = api.clusters.get(id=clusterId)
             vm = api.vms.get(id=machineId)
@@ -617,6 +618,37 @@ class Client(object):
 
         except IndexError:
             raise Exception('Machine do not have network interfaces!!')
+
+        finally:
+            lock.release()
+
+    def getConnetcionInfo(self, machineId):
+        '''
+        Gets the connetion info for the specified machine
+        '''
+        try:
+            lock.acquire(True)
+            api = self.__getApi()
+
+            vm = api.vms.get(id=machineId)
+
+            if vm is None:
+                raise Exception('Machine not found')
+
+            display = vm.get_display()
+            ticket = vm.ticket().get_ticket()
+            return {
+                'type': display.get_type(),
+                'address': display.get_address(),
+                'port': display.get_port(),
+                'secure_port': display.get_secure_port(),
+                'monitors': display.get_monitors(),
+                'cert_subject': display.get_certificate().get_subject(),
+                'ticket': {
+                    'value': ticket.get_value(),
+                    'expiry': ticket.get_expiry()
+                }
+            }
 
         finally:
             lock.release()

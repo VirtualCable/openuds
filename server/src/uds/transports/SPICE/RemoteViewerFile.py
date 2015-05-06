@@ -1,0 +1,33 @@
+'''
+Created on May 6, 2015
+
+@author: dkmaster
+'''
+
+
+
+'''
+[virt-viewer]
+type=spice
+host=ovirtnode1.dkmon.com
+port=5900
+password=S9MATvnrQNGr
+tls-port=5901
+fullscreen=0
+title=ovirt00004:%d - Press SHIFT+F12 to Release Cursor
+enable-smartcard=0
+enable-usb-autoshare=1
+delete-this-file=1
+usb-filter=-1,-1,-1,-1,0
+tls-ciphers=DEFAULT
+host-subject=O=dkmon.com,CN=ovirtnode1.dkmon.com
+ca=-----BEGIN CERTIFICATE-----\nMIIDsjCCApqgAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwQTELMAkGA1UEBhMCVVMxEjAQBgNVBAoT\nCWRrbW9uLmNvbTEeMBwGA1UEAxMVb3ZpcnQuZGttb24uY29tLjk5MTAxMCIXETEzMTIxMTE5MDA0\nNCswMDAwFw0yMzEyMTAxOTAwNDRaMEExCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlka21vbi5jb20x\nHjAcBgNVBAMTFW92aXJ0LmRrbW9uLmNvbS45OTEwMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBAMeMD3njBOLjuS5XQY0kUu3+dT5S0HUhk2RyPv0Bf59Zun215jLX7qJLrDWCxq8xcdB0\n79Krn2wm+QpPBArSJGVZNXkwQSqnmQK7PGuC119wfOx/bQbgHGJuL6XzuRnLn1xMmcp9N33Q+Cic\nkV5B8bVF+bV5FUWzDbSQKsWJUMFwUXd7px9mZJWBCkY4cOoXdhdu5EMGWcEm2e4RkE+Fb611RAU2\nPL1iJwEu1qtG/OYvWh8DsO9OfFP4dZuJhy2oXmKudHgalNCm8hWYa498c1DA/uXZCGLjoN5en9yy\nXU2wkTDJGA0M95mkGlwoIaNXJMM4i4Q5lmzkU6xntp3/zNkCAwEAAaOBrzCBrDAdBgNVHQ4EFgQU\nOQAXE0qEasnOi3qEFFtMg19GqqYwagYDVR0jBGMwYYAUOQAXE0qEasnOi3qEFFtMg19GqqahRaRD\nMEExCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlka21vbi5jb20xHjAcBgNVBAMTFW92aXJ0LmRrbW9u\nLmNvbS45OTEwMYICEAAwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwDQYJKoZIhvcN\nAQEFBQADggEBABDS5koE1TcBf8hvRP86AEu07KfWby/BvWXMcGuWRgPnkjrLS0mYshXx2Y40Pblm\nYm/DHXtefrDHJ203T/zkuCLtMSI28peeyX5HS32lGhVAMaylKrQ4mRTBQ+TM2hVLyBv7o16FUcei\nBuGNsm6F8b1RtrGTvSlkNxDUU3haDDH6gRMmMjgYrFqVMrozlPgPyHlFc4A1Q9rM/WIXtRioFgAz\ntCL1n5PK61ZIjk6j6a/upj6jYDfq1G0hpR9XOV8CD1bY3ZaCaMwOaILf1yIzQFqNDmx0p5e949at\nZIflG2pSv/5NA7PoRPF2tHf/PfrNmkA81R03dRXps1UAGg5ds3c=\n-----END CERTIFICATE-----\n
+toggle-fullscreen=shift+f11
+release-cursor=shift+f12
+secure-attention=ctrl+alt+end
+secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard
+'''
+
+
+class RemoteViewerFile(object):
+    pass

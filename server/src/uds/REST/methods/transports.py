@@ -94,6 +94,7 @@ class Transports(ModelHandler):
             'networks': [{'id': n.id} for n in item.networks.all()],
             'deployed_count': item.deployedServices.count(),
             'type': type_.type(),
+            'allowedProviders': list(i.type() for i in type_.allowedProviders),
             'permission': permissions.getEffectivePermission(self._user, item)
         }
 

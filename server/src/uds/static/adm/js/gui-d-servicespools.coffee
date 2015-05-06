@@ -315,8 +315,13 @@ gui.servicesPools.link = (event) ->
           onNew: (value, table, refreshFnc) ->
             api.templates.get "pool_add_transport", (tmpl) ->
               api.transports.overview (data) ->
+                gui.doLog "Data Received: ", servPool, data
+                valid = []
+                for i in data
+                  if i.allowedProviders.length == 0 or (servPool.parent_type in i.allowedProviders)
+                    valid.push(i)
                 modalId = gui.launchModal(gettext("Add transport"), api.templates.evaluate(tmpl,
-                  transports: data
+                  transports: valid
                 ))
                 $(modalId + " .button-accept").on "click", (event) ->
                   transport = $(modalId + " #id_transport_select").val()
