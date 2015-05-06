@@ -66,7 +66,7 @@ class BaseRDPTransport(Transport):
     wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=10, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
     multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=10, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'))
 
-    def isAvailableFor(self, ip):
+    def isAvailableFor(self, userService, ip):
         '''
         Checks if the transport is available for the requested destination ip
         Override this in yours transports

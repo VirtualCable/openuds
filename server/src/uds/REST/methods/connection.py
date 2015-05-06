@@ -160,7 +160,7 @@ class Connection(Handler):
                 events.addEvent(ads.deployed_service, events.ET_ACCESS, username=self._user.name, srcip=self._request.ip, dstip=ip, uniqueid=ads.unique_id)
                 if ip is not None:
                     itrans = trans.getInstance()
-                    if itrans.providesConnetionInfo() and (doNotCheck or itrans.isAvailableFor(ip)):
+                    if itrans.providesConnetionInfo() and (doNotCheck or itrans.isAvailableFor(ads, ip)):
                         ads.setConnectionSource(self._request.ip, 'unknown')
                         log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
 
@@ -179,7 +179,7 @@ class Connection(Handler):
                     else:
                         log.doLog(ads, log.WARN, "User service is not accessible by REST (ip {0})".format(ip), log.TRANSPORT)
                         logger.debug('Transport {} is not accesible for user service {} from {}'.format(trans, ads, self._request.ip))
-                        logger.debug("{}, {}".format(itrans.providesConnetionInfo(), itrans.isAvailableFor(ip)))
+                        logger.debug("{}, {}".format(itrans.providesConnetionInfo(), itrans.isAvailableFor(ads, ip)))
                 else:
                     logger.debug('Ip not available from user service {0}'.format(ads))
             else:

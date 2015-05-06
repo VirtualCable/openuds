@@ -62,6 +62,9 @@ class Transport(Module):
     # Linux
     supportedOss = OsDetector.desktopOss  # Supported operating systems
 
+    # If this transport is for an specific provider, this will be != None
+    onlyForProviders = None
+
     # If this transport is visible via Web, via Thin Client or both
     webTransport = False
     tcTransport = False
@@ -99,7 +102,7 @@ class Transport(Module):
         '''
         pass
 
-    def isAvailableFor(self, ip):
+    def isAvailableFor(self, userService, ip):
         '''
         Checks if the transport is available for the requested destination ip
         Override this in yours transports

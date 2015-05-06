@@ -574,7 +574,7 @@ class UserServiceManager(object):
             if ip is not None:
                 serviceNotReadyCode = 0x0003
                 itrans = trans.getInstance()
-                if itrans.isAvailableFor(ip):
+                if itrans.isAvailableFor(userService, ip):
                     userService.setConnectionSource(srcIp, 'unknown')
                     log.doLog(userService, log.INFO, "User service ready", log.WEB)
                     UserServiceManager.manager().notifyPreconnect(userService, itrans.processedUser(userService, user), itrans.protocol)

@@ -160,7 +160,7 @@ class TSNXTransport(Transport):
             'tunnelCheckServer': self._tunnelCheckServer
         }
 
-    def isAvailableFor(self, ip):
+    def isAvailableFor(self, userService, ip):
         '''
         Checks if the transport is available for the requested destination ip
         Override this in yours transports

@@ -81,7 +81,7 @@ class HTML5RDPTransport(Transport):
             raise Transport.ValidationException(_('The server must be http or https'))
 
     # Same check as normal RDP transport
-    def isAvailableFor(self, ip):
+    def isAvailableFor(self, userService, ip):
         '''
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
