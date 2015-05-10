@@ -10,6 +10,8 @@ from ovirtsdk.api import API
 import threading
 import logging
 
+__updated__ = '2015-05-09'
+
 logger = logging.getLogger(__name__)
 
 lock = threading.Lock()
@@ -360,20 +362,30 @@ class Client(object):
             if vm.get_status().get_state() != 'down':
                 raise Exception('Machine must be in down state to publish it')
 
+            print vm.disks.list()
+
             # Create disks description to be created in specified storage domain, one for each disk
             sd = params.StorageDomains(storage_domain=[params.StorageDomain(id=storageId)])
 
             dsks = []
             for dsk in vm.disks.list():
-                dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd))
+                dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd, name='test', alias='test'))
+                # dsks.append(dsk)
 
             disks = params.Disks(disk=dsks)
 
             # Create display description
-            display = params.Display(type_=displayType)
+            # display = params.Display(type_=displayType)
 
-            template = params.Template(name=name, vm=params.VM(id=vm.get_id(), disks=disks),
-                                       cluster=params.Cluster(id=cluster.get_id()), description=comments)
+            # TODO: Restore proper template creation mechanism
+            template = params.Template(
+                name=name,
+                # vm=params.VM(id=vm.get_id(), disks=disks),
+                vm=params.VM(id=vm.get_id()),
+                cluster=params.Cluster(id=cluster.get_id()),
+                description=comments
+            )
+
             # display=display)
 
             return api.templates.add(template).get_id()
@@ -622,7 +634,7 @@ class Client(object):
         finally:
             lock.release()
 
-    def getConnetcionInfo(self, machineId):
+    def getConsoleConnection(self, machineId):
         '''
         Gets the connetion info for the specified machine
         '''
@@ -652,3 +664,6 @@ class Client(object):
 
         finally:
             lock.release()
+
+    def desktopLogin(self, machineId, username, password, domain):
+        pass

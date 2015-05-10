@@ -30,7 +30,6 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
 from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.services import Service
 from .OVirtPublication import OVirtPublication
@@ -40,6 +39,8 @@ from .Helpers import oVirtHelpers
 from uds.core.ui import gui
 
 import logging
+
+__updated__ = '2015-05-09'
 
 logger = logging.getLogger(__name__)
 
@@ -104,29 +105,71 @@ class OVirtLinkedService(Service):
         tooltip=_("Cluster to contain services"), required=True
     )
 
-    datastore = gui.ChoiceField(label=_("Datastore Domain"), rdonly=False, order=3,
-                                       tooltip=_('Datastore domain where to publish and put incrementals'), required=True)
+    datastore = gui.ChoiceField(
+        label=_("Datastore Domain"),
+        rdonly=False,
+        order=3,
+        tooltip=_('Datastore domain where to publish and put incrementals'),
+        required=True
+    )
 
-    minSpaceGB = gui.NumericField(length=3, label=_('Reserved Space'), defvalue='32', order=4, tooltip=_('Minimal free space in GB'), required=True)
+    minSpaceGB = gui.NumericField(
+        length=3,
+        label=_('Reserved Space'),
+        defvalue='32',
+        order=4,
+        tooltip=_('Minimal free space in GB'),
+        required=True
+    )
 
-    memory = gui.NumericField(label=_("Memory (Mb)"), length=4, defvalue=512, rdonly=False, order=5,
-                              tooltip=_('Memory assigned to machines'), required=True)
+    memory = gui.NumericField(
+        label=_("Memory (Mb)"),
+        length=4,
+        defvalue=512,
+        rdonly=False,
+        order=5,
+        tooltip=_('Memory assigned to machines'),
+        required=True
+    )
 
-    memoryGuaranteed = gui.NumericField(label=_("Memory Guaranteed (Mb)"), length=4, defvalue=256, rdonly=False, order=6,
-                              tooltip=_('Physical memory guaranteed to machines'), required=True)
+    memoryGuaranteed = gui.NumericField(
+        label=_("Memory Guaranteed (Mb)"),
+        length=4,
+        defvalue=256,
+        rdonly=False,
+        order=6,
+        tooltip=_('Physical memory guaranteed to machines'),
+        required=True
+    )
 
-    baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=6, tooltip=('Base name for clones from this machine'), required=True)
+    baseName = gui.TextField(
+        label=_('Machine Names'),
+        rdonly=False,
+        order=6,
+        tooltip=('Base name for clones from this machine'),
+        required=True
+    )
 
-    lenName = gui.NumericField(length=1, label=_('Name Length'), defvalue=5, order=7,
-                               tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'), required=True)
+    lenName = gui.NumericField(
+        length=1,
+        label=_('Name Length'),
+        defvalue=5,
+        order=7,
+        tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
+        required=True
+    )
 
-    display = gui.ChoiceField(label=_('Display'), rdonly=False, order=8,
-                              tooltip=_('Display type (only for administration purposes)'),
-                              values=[gui.choiceItem('spice', 'Spice'),
-                                      gui.choiceItem('vnc', 'Vnc')
-                                      ],
-                              defvalue='1'  # Default value is the ID of the choicefield
-                              )
+    display = gui.ChoiceField(
+        label=_('Display'),
+        rdonly=False,
+        order=8,
+        tooltip=_('Display type (only for administration purposes)'),
+        values=[
+            gui.choiceItem('spice', 'Spice'),
+            gui.choiceItem('vnc', 'Vnc')
+        ],
+        defvalue='1'  # Default value is the ID of the choicefield
+    )
 
     ov = gui.HiddenField()
     ev = gui.HiddenField()  # We need to keep the env so we can instantiate the Provider
@@ -347,3 +390,8 @@ class OVirtLinkedService(Service):
         '''
         return self.display.value
 
+    def getConsoleConnection(self, machineId):
+        return self.parent().getConsoleConnection(machineId)
+
+    def desktopLogin(self, machineId, username, password, domain):
+        return self.parent().desktopLogin(machineId, username, password, domain)

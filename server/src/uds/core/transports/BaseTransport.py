@@ -40,6 +40,8 @@ from uds.core.transports import protocols
 
 import logging
 
+__updated__ = '2015-05-06'
+
 logger = logging.getLogger(__name__)
 
 

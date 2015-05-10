@@ -30,13 +30,15 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
 
 import cPickle
 import logging
+
+__updated__ = '2015-05-09'
+
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +182,12 @@ class OVirtLinkedDeployment(UserDeployment):
 
         self.cache().put('ready', '1')
         return State.FINISHED
+
+    def getConsoleConnection(self):
+        return self.service().getConsoleConnection(self._vmid)
+
+    def desktopLogin(self, username, password, domain=''):
+        return self.service().desktopLogin(self._vmId, username, password, domain)
 
     def notifyReadyFromOsManager(self, data):
         # Here we will check for suspending the VM (when full ready)

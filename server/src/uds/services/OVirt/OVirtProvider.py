@@ -45,6 +45,8 @@ from client import oVirtClient
 
 import logging
 
+__updated__ = '2015-05-09'
+
 logger = logging.getLogger(__name__)
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -369,6 +371,14 @@ class Provider(ServiceProvider):
 
     def getMacRange(self):
         return self.macsRange.value
+
+    def getConsoleConnection(self, machineId):
+        return self.__getApi().getConsoleConnection(machineId)
+
+    def desktopLogin(self, machineId, username, password, domain):
+        '''
+        '''
+        return self.__getApi().desktopLogin(machineId, username, password, domain)
 
     @staticmethod
     def test(env, data):

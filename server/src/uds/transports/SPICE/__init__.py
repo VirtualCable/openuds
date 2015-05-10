@@ -35,11 +35,3 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
 from .SPICETransport import SPICETransport
 from .TSPICETransport import TSPICETransport
-
-UserPrefsManager.manager().registerPrefs('rdp',
-                                         _('Remote Desktop Protocol'),
-                                         [
-                                             CommonPrefs.screenSizePref,
-                                             CommonPrefs.depthPref
-                                         ]
-                                         )

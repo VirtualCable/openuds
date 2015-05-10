@@ -51,6 +51,8 @@ import requests
 import json
 import logging
 
+__updated__ = '2015-05-06'
+
 logger = logging.getLogger(__name__)
 
 USERSERVICE_TAG = 'cm-'

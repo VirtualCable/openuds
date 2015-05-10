@@ -44,6 +44,9 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
+__updated__ = '2015-05-10'
+
+
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
@@ -59,26 +62,26 @@ class BaseSpiceTransport(Transport):
     allowedProviders = oVirtProvider.offers
 
     useEmptyCreds = gui.CheckBoxField(
-        label=_('Empty creds'),
         order=1,
+        label=_('Empty creds'),
         tooltip=_('If checked, the credentials used to connect will be emtpy')
     )
     fixedName = gui.TextField(
-        label=_('Username'),
         order=2,
+        label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential')
     )
     fixedPassword = gui.PasswordField(
-        label=_('Password'),
         order=3,
+        label=_('Password'),
         tooltip=_('If not empty, this password will be always used as credential')
     )
     serverCertificate = gui.TextField(
-        order=2,
+        order=4,
         length=4096,
         multiline=4,
         label=_('Certificate'),
-        tooltip=_('Server certificate (public), can be found on your ovirt engine, probably at /etc/pki/ovirt-engine/certs/ca.der'),
+        tooltip=_('Server certificate (public), can be found on your ovirt engine, probably at /etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file).'),
         required=True
     )
 

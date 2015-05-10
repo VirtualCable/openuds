@@ -2,119 +2,51 @@
 # Saved as .py for easier editing
 from __future__ import unicode_literals
 
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-from PyQt4 import QtCore, QtGui
-import subprocess
+# pylint: disable=import-error, no-name-in-module, undefined-variable
 import os
-import urllib
-from uds.forward import forward  # @UnresolvedImport
+import subprocess
 
 from uds import tools  # @UnresolvedImport
+from uds.forward import forward  # @UnresolvedImport
 
-import six
+remoteViewer = '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer'
 
-# First, try to locate  Remote Desktop Connection (version 2, from Microsoft website, not the app store one)
-msrdc = '/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection'
-cord = "/Applications/CoRD.app/Contents/MacOS/CoRD"
+if not os.path.isfile(remoteViewer):
+    raise Exception('''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
+<p>
+    Please, install appropriate package for your system.
+</p>
+<p>
+    <a href="http://virt-manager.org/download/">Open download page</a>
+</p>
+<p>
+    Please, note that in order to UDS Connector to work correctly, you must copy the Remote Viewer app to your Applications Folder.<br/>
+    Also remember, that in order to allow this app to run on your system, you must open it one time once it is copied to your App folder
+</p>
+''')
 
-if os.path.isfile(msrdc):
-    executable = msrdc
-elif os.path.isfile(cord):
-    executable = cord
+
+if {m.port} != -1:  # @UndefinedVariable
+    forwardThread1, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.port})  # @UndefinedVariable
+
+    if forwardThread1.status == 2:
+        raise Exception('Unable to open tunnel')
 else:
-    executable = None
+    port = -1
 
+if {m.secure_port} != -1:  # @UndefinedVariable
+    forwardThread2, secure_port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.secure_port})  # @UndefinedVariable
 
-def onExit():
-    import subprocess  # @Reimport
-    subprocess.call(
-        [
-            'security',
-             'delete-generic-password',
-             '-a', '{m.username}',
-             '-s', 'Remote Desktop Connection 2 Password for 127.0.0.1',
-        ]
-    )
-
-if executable is None:
-    QtGui.QMessageBox.critical(parent, 'Notice',  # @UndefinedVariable
-                               '''<p><b>Microsoft Remote Desktop Connection not found</b></p>
-<p>In order to connect to UDS RDP Sessions, you need to have at least one of the following:<p>
-<ul>
-    <li>
-        <p><b>Microsoft Remote Desktop Connection version 2.</b> (Recommended)</p>
-        <p>You can get it from <a href="http://www.microsoft.com/es-es/download/details.aspx?id=18140">this link</a></p>
-        <p>Remember that you need to use the One from the Microsoft site (the link provided), not the one from the AppStore</p>
-    </li>
-    <li>
-        <p><b>CoRD</b> (A bit unstable from 10.7 onwards)</p>
-        <p>You can get it from <a href="{m.this_server}static/other/CoRD.pkg">this link</a></p>
-    </li>
-</ul>
-<p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
-
-''', QtGui.QMessageBox.Ok)
-
-
-forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389)
-
-if forwardThread.status == 2:
-    raise Exception('Unable to open tunnel')
-
+    if forwardThread2.status == 2:
+        raise Exception('Unable to open tunnel')
 else:
-    theFile = '''{m.r.as_file}'''.format(
-        address='127.0.0.1:{{}}'.format(port)
-    )
-    filename = tools.saveTempFile(theFile)
-    tools.addFileToUnlink(filename)
+    secure_port = -1
 
-    if executable == msrdc:
-        try:
-            if {m.hasCredentials}:  # @UndefinedVariable
-                subprocess.call(
-                    [
-                        'security',
-                        'add-generic-password',
-                        '-w', '{m.password}',
-                        '-U',
-                        '-a', '{m.username}',
-                        '-s', 'Remote Desktop Connection 2 Password for 127.0.0.1'.format(port),
-                        '-T', '/Applications/Remote Desktop Connection.app',
-                    ]
-                )
-                tools.addExecBeforeExit(onExit)
-            # Call but do not wait for exit
-            tools.addTaskToWait(subprocess.Popen([executable, filename]))
+theFile = '''{m.r.as_file}'''.format(
+    secure_port=secure_port,
+    port=port
+)
 
-            tools.addFileToUnlink(filename)
-        except Exception as e:
-            QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)  # @UndefinedVariable
-    else:  # CoRD
-        url = 'rdp://'
-        username, domain = '{m.username}', '{m.domain}'
+filename = tools.saveTempFile(theFile)
 
-        if username != '':
-            url += username
-            if '{m.password}' != '':
-                url += ':' + urllib.quote('{m.password}')
-            url += '@'
-        url += '127.0.0.1:3389/'
-        if domain != '':
-            url += domain
-
-        url += '?screenDepth={m.r.bpp}'
-
-        if {m.r.fullScreen}:  # @UndefinedVariable
-            url += '&fullscreen=true'
-        else:
-            url += 'screenWidth={m.r.width}&screenHeight={m.r.height}'
-
-        url += '&forwardAudio=' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
-
-        if {m.r.redirectDrives}:  # @UndefinedVariable
-            url += '&forwardDisks=true'
-
-        if {m.r.redirectPrinters}:  # @UndefinedVariable
-            url += '&forwardPrinters=true'
-
-        tools.addTaskToWait(subprocess.Popen(['open', url]))
+subprocess.Popen([remoteViewer, filename])

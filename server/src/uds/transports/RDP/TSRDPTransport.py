@@ -46,7 +46,6 @@ from .RDPFile import RDPFile
 import logging
 import random
 import string
-import time
 
 logger = logging.getLogger(__name__)
 

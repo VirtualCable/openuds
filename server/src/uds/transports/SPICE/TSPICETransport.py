@@ -32,24 +32,23 @@
 '''
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
-from uds.models import TicketStore
 from uds.core.util import OsDetector
 from uds.core.util import tools
+from uds.models import TicketStore
 
 from .BaseSPICETransport import BaseSpiceTransport
+from .RemoteViewerFile import RemoteViewerFile
 
 import logging
 import random
 import string
-import time
+
+__updated__ = '2015-05-10'
 
 logger = logging.getLogger(__name__)
-
-READY_CACHE_TIMEOUT = 30
 
 
 class TSPICETransport(BaseSpiceTransport):
@@ -59,17 +58,13 @@ class TSPICETransport(BaseSpiceTransport):
     '''
     typeName = _('SPICE Transport (tunneled)')
     typeType = 'TSSPICETransport'
-    typeDescription = _('SPICE Transport for tunneled connection')
+    typeDescription = _('SPICE Transport for tunneled connection  (EXPERIMENTAL)')
     iconFile = 'rdp.png'
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.SPICE
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'))
-    tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
 
-    useEmptyCreds = BaseSpiceTransport.useEmptyCreds
-    fixedName = BaseSpiceTransport.fixedName
-    fixedPassword = BaseSpiceTransport.fixedPassword
     serverCertificate = BaseSpiceTransport.serverCertificate
 
     def initialize(self, values):
@@ -78,80 +73,40 @@ class TSPICETransport(BaseSpiceTransport):
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        # We use helper to keep this clean
-        prefs = user.prefs('rdp')
+        userServiceInstance = userService.getInstance()
 
-        ci = self.getConnectionInfo(userService, user, password)
-        username, password, domain = ci['username'], ci['password'], ci['domain']
+        # Spice connection
+        con = userServiceInstance.getConsoleConnection()
+        port, secure_port = con['port'], con['secure_port']
+        port = -1 if port is None else port
+        secure_port = -1 if secure_port is None else secure_port
 
-        width, height = CommonPrefs.getWidthHeight(prefs)
-        depth = CommonPrefs.getDepth(prefs)
-
+        # Ticket
         tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')
 
-        logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
+        r = RemoteViewerFile('127.0.0.1', '{port}', '{secure_port}', con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=False)
 
-#         r = SPICEFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
-#         r.address = '{address}'
-#         r.username = username
-#         r.password = password
-#         r.domain = domain
-#         r.redirectPrinters = self.allowPrinters.isTrue()
-#         r.redirectSmartcards = self.allowSmartcards.isTrue()
-#         r.redirectDrives = self.allowDrives.isTrue()
-#         r.redirectSerials = self.allowSerials.isTrue()
-#         r.showWallpaper = self.wallpaper.isTrue()
-#         r.multimon = self.multimon.isTrue()
-#
-#
-#         # data
-#         data = {
-#             'os': os['OS'],
-#             'ip': ip,
-#             'tunUser': tunuser,
-#             'tunPass': tunpass,
-#             'tunHost': sshHost,
-#             'tunPort': sshPort,
-#             'username': username,
-#             'password': password,
-#             'hasCredentials': username != '' and password != '',
-#             'domain': domain,
-#             'width': width,
-#             'height': height,
-#             'depth': depth,
-#             'printers': self.allowPrinters.isTrue(),
-#             'smartcards': self.allowSmartcards.isTrue(),
-#             'drives': self.allowDrives.isTrue(),
-#             'serials': self.allowSerials.isTrue(),
-#             'compression': True,
-#             'wallpaper': self.wallpaper.isTrue(),
-#             'multimon': self.multimon.isTrue(),
-#             'fullScreen': width == -1 or height == -1,
-#             'this_server': request.build_absolute_uri('/'),
-#             'r': r,
-#         }
-#
-#         m = tools.DictAsObj(data)
-#
-#         if m.domain != '':
-#             m.usernameWithDomain = '{}\\\\{}'.format(m.domain, m.username)
-#         else:
-#             m.usernameWithDomain = m.username
-#
-#         if m.os == OsDetector.Windows:
-#             r.password = '{password}'
-#
-#         os = {
-#             OsDetector.Windows: 'windows',
-#             OsDetector.Linux: 'linux',
-#             OsDetector.Macintosh: 'macosx'
-#
-#         }.get(m.os)
-#
-#         if os is None:
-#             return super(TSPICETransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
-#
-#         return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)
+        m = tools.DictAsObj({
+            'r': r,
+            'tunUser': tunuser,
+            'tunPass': tunpass,
+            'tunHost': sshHost,
+            'tunPort': sshPort,
+            'ip': con['address'],
+            'port': port,
+            'secure_port': secure_port
+        })
+
+        os = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            OsDetector.Macintosh: 'macosx'
+        }.get(os.OS)
+
+        if os is None:
+            return super(TSPICETransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+
+        return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)

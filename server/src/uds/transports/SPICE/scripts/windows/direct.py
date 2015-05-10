@@ -3,21 +3,33 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
-from PyQt4 import QtCore, QtGui
-import win32crypt  # @UnresolvedImport
 import os
+import glob
 import subprocess
 
 from uds import tools  # @UnresolvedImport
 
-import six
+# Lets find remote viewer
+# There is a bug that when installed, the remote viewer (at least 64 bits version) does not store correctly its path, so lets find it "a las bravas"
+extraPaths = ()
+for env in ('PROGRAMFILES', 'PROGRAMW6432'):
+    if env in os.environ:
+        extraPaths += tuple(p + '\\bin' for p in glob.glob(os.environ[env] + '\\VirtViewer*'))
 
-# The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-theFile = '''{m.r.as_file}'''.format(password=win32crypt.CryptProtectData(six.binary_type('{m.password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'))
+executable = tools.findApp('remote-viewer.exe', extraPaths)
+
+if executable is None:
+    raise Exception('''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
+<p>
+    Please, install appropriate package for your system.
+</p>
+<p>
+    <a href="http://virt-manager.org/download/">Open download page</a>
+</p>
+''')
+
+theFile = '''{m.r.as_file}'''
 
 filename = tools.saveTempFile(theFile)
-executable = tools.findApp('mstsc.exe')
-subprocess.call([executable, filename])
-tools.addFileToUnlink(filename)
 
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
+subprocess.Popen([executable, filename])
