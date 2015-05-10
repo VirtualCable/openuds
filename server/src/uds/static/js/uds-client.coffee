@@ -6,6 +6,8 @@ uds.safari = false
 uds.ie = false
 uds.firefox = false
 
+uds.reloadCounter = 12
+
 # First, detect browser
 (() ->
   ua = navigator.userAgent.toLowerCase()
@@ -226,3 +228,15 @@ uds.onLink = ->
 
   return
 
+uds.resetReloadCounter = ->
+  uds.reloadCounter = 12
+
+uds.setReload = ->
+  setTimeout uds.reload, 5000
+
+uds.reload = ->
+  if uds.reloadCounter == 0
+    window.location.reload()
+  else
+    uds.reloadCounter -= 1
+    uds.setReload()

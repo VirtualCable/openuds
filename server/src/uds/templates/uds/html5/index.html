@@ -188,6 +188,9 @@
         <script>
         function launchURL(el) {
             var $el = $(el);
+
+            uds.resetReloadCounter();  // Resets page update
+
             url = $el.attr('data-href');
             url = url != null ? url : $el.attr('href');
             if ( url.substring(0, 7) == 'udsa://' ) {
@@ -256,6 +259,8 @@
                     launchURL($('.service')[0]);
                 autorun = false;
             }
+
+            uds.setReload();
 
         });
         </script>
