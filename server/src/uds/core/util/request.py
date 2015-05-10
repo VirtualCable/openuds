@@ -38,7 +38,7 @@ from uds.models import User
 import threading
 import logging
 
-__updated__ = '2015-03-31'
+__updated__ = '2015-05-10'
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class GlobalRequestMiddleware(object):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
         # Ensures request contains os
-        request.os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
+        request.os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT', 'Unknown'))
         # Ensures that requests contains the valid user
         GlobalRequestMiddleware.getUser(request)
 
