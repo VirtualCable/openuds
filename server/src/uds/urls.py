@@ -51,8 +51,6 @@ urlpatterns = patterns(
     (r'^srvimg/(?P<idImage>.+)$', 'web.views.serviceImage'),
     # Error URL
     (r'^error/(?P<idError>.+)$', 'web.views.error'),
-    # Transport component url
-    url(r'^transcomp/(?P<idTransport>.+)/(?P<componentId>.+)$', 'web.views.transcomp', name='TransportComponent'),
     # Transport own link processor
     url(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.transportOwnLink', name='TransportOwnLink'),
     # Authenticators custom html

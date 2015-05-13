@@ -80,20 +80,6 @@ def transportOwnLink(request, idService, idTransport):
     raise RuntimeError('Unreachable point reached!!!')
 
 
-@webLoginRequired(admin=False)
-def transcomp(request, idTransport, componentId):
-    try:
-        # We got translated first id
-        trans = Transport.objects.get(uuid=idTransport.upper())
-        itrans = trans.getInstance()
-        res = itrans.getHtmlComponent(trans.uuid, OsDetector.getOsFromRequest(request), componentId)
-        response = HttpResponse(res[1], content_type=res[0])
-        response['Content-Length'] = len(res[1])
-        return response
-    except Exception, e:
-        return errors.exceptionView(request, e)
-
-
 @cache_page(3600, key_prefix='img')
 def transportIcon(request, idTrans):
     try:

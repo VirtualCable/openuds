@@ -35,13 +35,13 @@ import logging
 from .login import login, logout, customAuth
 from .index import index, about
 from .prefs import prefs
-from .service import transportOwnLink, transcomp, transportIcon, serviceImage, clientEnabler
+from .service import transportOwnLink, transportIcon, serviceImage, clientEnabler
 from .auth import authCallback, authInfo, ticketAuth
 from .download import download
 from .client_download import client_downloads, plugin_detection
 from .js import jsCatalog
 from ..errors import error
 
-__updated__ = '2015-04-26'
+__updated__ = '2015-05-13'
 
 logger = logging.getLogger(__name__)
