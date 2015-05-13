@@ -67,7 +67,7 @@ class IPMachinesService(services.Service):
         if values is None or values.get('ipList', None) is None:
             self._ips = []
         else:
-            self._ips = list(set(values['ipList']))  # Avoid duplicates :-)
+            self._ips = list(set(values['ipList']))  # Allow duplicates right now
             self._ips.sort()
 
     def valuesDict(self):

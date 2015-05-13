@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2015-05-03'
+__updated__ = '2015-05-12'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -279,7 +279,7 @@ def webLogin(request, response, user, password):
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)
+    request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)  # Stores "bytes"
     # Ensures that this user will have access through REST api if logged in through web interface
     REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), user.is_admin, user.staff_member)
     return True
@@ -293,7 +293,7 @@ def webPassword(request):
     @param request: DJango Request
     @return: Unscrambled user password
     '''
-    return CryptoManager.manager().xor(request.session.get(PASS_KEY), request.COOKIES['uds']).decode('utf-8')
+    return CryptoManager.manager().xor(request.session.get(PASS_KEY), request.COOKIES['uds']).decode('utf-8')  # recover as original unicode string
 
 
 def webLogout(request, exit_url=None):

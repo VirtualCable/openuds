@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2015-05-10'
+__updated__ = '2015-05-13'
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class BaseSpiceTransport(Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    iconFile = 'rdp.png'
+    iconFile = 'spice.png'
     protocol = protocols.SPICE
     allowedProviders = oVirtProvider.offers
 

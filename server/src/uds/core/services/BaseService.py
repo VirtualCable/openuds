@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 
-__updated__ = '2014-03-22'
+__updated__ = '2015-05-12'
 
 
 class Service(Module):
@@ -155,6 +155,11 @@ class Service(Module):
     # : from this one). If this attribute is not set, the service will never work
     # : (core will not know how to handle the user deployments)
     deployedType = None
+
+    # : Restricted transports
+    # : If this list contains anything else but emtpy, the only allowed protocol for transports
+    # : will be the ones listed here (on implementation, ofc)
+    allowedProtocols = ()
 
     def __init__(self, environment, parent, values=None):
         '''

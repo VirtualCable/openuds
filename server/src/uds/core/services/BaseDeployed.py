@@ -36,7 +36,7 @@ from uds.core import Environmentable
 from uds.core import Serializable
 from uds.core.util.State import State
 
-__updated__ = '2014-03-22'
+__updated__ = '2015-05-12'
 
 
 class UserDeployment(Environmentable, Serializable):
@@ -228,6 +228,14 @@ class UserDeployment(Environmentable, Serializable):
         Returns the environment unique name generator
         '''
         return self.idGenerators('name')
+
+    def gidGenerator(self):
+        '''
+        Utility method to access provided names generator (inside environment)
+
+        Returns the environment unique global id generator
+        '''
+        return self.idGenerators('id')
 
     def getUniqueId(self):
         '''

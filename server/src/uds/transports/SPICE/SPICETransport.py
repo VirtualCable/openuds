@@ -39,7 +39,7 @@ from .RemoteViewerFile import RemoteViewerFile
 
 import logging
 
-__updated__ = '2015-05-10'
+__updated__ = '2015-05-11'
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class SPICETransport(BaseSpiceTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('SPICE Transport (direct)')
+    typeName = _('RHEV/oVirt SPICE Transport (direct)')
     typeType = 'SPICETransport'
     typeDescription = _('SPICE Transport for direct connection (EXPERIMENTAL)')
 

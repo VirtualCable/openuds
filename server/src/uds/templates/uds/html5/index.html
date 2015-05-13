@@ -32,18 +32,15 @@
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">{% trans "Available transports" %}</h4>
+                        <h4 class="modal-title text-center">{% trans "Connections" %}</h4>
                       </div>
                       <div class="modal-body">
-                        <ul>
+                        <ul class="transports">
                             {% for trans in ser.transports %}
-                                <li><a class="uds-service-transport" data-href-alt="{% url 'uds.web.views.client_downloads' %}" href="{{ trans.link }}"><img src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
+                                <li><a class="uds-service-transport" data-href-alt="{% url 'uds.web.views.client_downloads' %}" href="{{ trans.link }}"><img class="transport" src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
                             {% endfor %}
                         </ul>
 
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </div><!-- /.modal-dialog -->
@@ -96,6 +93,19 @@
         <style media="screen">
             .with-tooltip {
                 z-index: 1000;
+            }
+
+            ul.transports > li {
+                list-style-type: none;
+            }
+
+            img.transport {
+                display: inline-block;
+                vertical-align: middle;
+                height: 32px;
+                width: 32px;
+                margin-right: 8px;
+                margin-bottom: 8px;
             }
 
             div.service-container {

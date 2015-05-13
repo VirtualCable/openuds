@@ -48,7 +48,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2015-05-05'
+__updated__ = '2015-05-12'
 
 
 def login(request, tag=None):
@@ -84,7 +84,7 @@ def login(request, tag=None):
         request.session.cycle_key()
         form = LoginForm(request.POST, tag=tag)
         if form.is_valid():
-            os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT'))
+            os = request.os
             try:
                 authenticator = Authenticator.objects.get(pk=form.cleaned_data['authenticator'])
             except Exception:

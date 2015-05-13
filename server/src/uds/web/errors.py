@@ -136,6 +136,7 @@ def error(request, idError):
     :param request:
     :param idError:
     '''
+    idError = int(idError)
     code = idError >> 8
     idError = idError & 0xFF
 

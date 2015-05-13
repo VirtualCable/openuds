@@ -33,19 +33,22 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
-
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.Environment import Environment
 from uds.core.util import log
+from uds.core.util import unique
 from uds.models.ManagedObjectModel import ManagedObjectModel
 
 from uds.models.Provider import Provider
 
 import logging
+
+
+__updated__ = '2015-05-12'
+
 
 logger = logging.getLogger(__name__)
 
@@ -71,10 +74,18 @@ class Service(ManagedObjectModel):
         '''
         Returns an environment valid for the record this object represents
         '''
-        from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
-        from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
+        # from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
+        # from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
 
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id, {'mac': UniqueMacGenerator, 'name': UniqueNameGenerator})
+        return Environment.getEnvForTableElement(
+            self._meta.verbose_name,
+            self.id,
+            {
+                'mac': unique.UniqueMacGenerator,
+                'name': unique.UniqueNameGenerator,
+                'id': unique.UniqueGIDGenerator,
+            }
+        )
 
     def getInstance(self, values=None):
         '''
