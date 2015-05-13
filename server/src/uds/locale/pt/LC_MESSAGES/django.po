@@ -2626,17 +2626,6 @@ msgstr "Sobre"
 msgid "Preferences"
 msgstr "Preferências"
 
-#: templates/uds/html5/templates/base.html:60
-msgid ""
-"Your browser is supported only partially. Please, upgrade it to a modern "
-"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
-"must also disable \"Compatibility View Mode\" for this site)"
-msgstr ""
-"Seu navegador é suportado apenas parcialmente. Por favor, atualize-o para um "
-"moderno TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.222132A0também deve desativar o \"Modo de exibição de "
-"compatibilidade\" para este site)"
-
 #: templates/uds/internal_page.html:40
 msgid "Log out"
 msgstr "Efetuar logout"
@@ -2719,12 +2708,6 @@ msgstr ""
 #: transports/TSNX/TSNXTransport.py:73
 msgid "If not empty, this password will be always used as credential"
 msgstr "Se não for vazio, essa senha será sempre usada como credencial"
-
-#: transports/HTML5RDP/HTML5RDP.py:70 transports/RDP/BaseRDPTransport.py:61
-msgid "Without Domain"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.222132FB"
 
 #: transports/HTML5RDP/HTML5RDP.py:70 transports/RDP/BaseRDPTransport.py:61
 msgid ""
@@ -2897,16 +2880,6 @@ msgstr ""
 msgid "Show wallpaper"
 msgstr "Mostrar o papel de parede"
 
-#: transports/RDP/BaseRDPTransport.py:67
-msgid ""
-"If checked, the wallpaper and themes will be shown on machine (better user "
-"experience, more bandwidth)"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.222133F4Se marcada, o papel de parede e temas serão mostrados "
-"máquina (usuário melhor TranslateApiException: AppId is over the quota : "
-"ID=5641.V2_Json.Translate.2221347F"
-
 #: transports/RDP/BaseRDPTransport.py:68
 msgid "Multiple monitors"
 msgstr "Vários monitores"
@@ -2980,12 +2953,6 @@ msgstr "Protocolo de área de trabalho remoto"
 #: transports/RDP/web.py:91
 msgid "In order to use this service, you should first install CoRD."
 msgstr "Para utilizar este serviço, você deve primeiro instalar o cabo."
-
-#: transports/RDP/web.py:92
-msgid "Download CoRD"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5107.V2_Json."
-"Translate.221F3349"
 
 #: transports/RDP/web.py:95
 msgid "Attention Safari Users:"

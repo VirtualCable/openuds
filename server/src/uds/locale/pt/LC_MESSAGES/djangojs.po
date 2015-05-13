@@ -269,12 +269,6 @@ msgstr "Excluir rede"
 msgid "Network deletion error"
 msgstr "Erro de exclusão de rede"
 
-#: static/tmp_js/gui-d-gallery.js:14
-msgid "New image"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.22213596"
-
 #: static/tmp_js/gui-d-gallery.js:15
 msgid "Upload"
 msgstr "Fazer upload"
@@ -282,12 +276,6 @@ msgstr "Fazer upload"
 #: static/tmp_js/gui-d-gallery.js:23
 msgid "You must select an image"
 msgstr "Você deve selecionar uma imagem"
-
-#: static/tmp_js/gui-d-gallery.js:31
-msgid "Image is too big (max. upload size is 256Kb)"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.2221367D"
 
 #: static/tmp_js/gui-d-gallery.js:76
 msgid "Delete Image"
@@ -320,12 +308,6 @@ msgstr "Excluir OSManager"
 #: static/tmp_js/gui-d-osmanagers.js:18
 msgid "OSManager deletion error"
 msgstr "OSManager erro de exclusão"
-
-#: static/tmp_js/gui-d-services.js:65
-msgid "In Maintenance"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.22213748"
 
 #: static/tmp_js/gui-d-services.js:67
 msgid "Normal"
@@ -367,21 +349,9 @@ msgstr "Modo de manutenção"
 msgid "Enter Maintenance Mode?"
 msgstr "Entrar no modo de manutenção?"
 
-#: static/tmp_js/gui-d-services.js:133
-msgid "Exit Maintenance Mode?"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5107.V2_Json."
-"Translate.221C5356"
-
 #: static/tmp_js/gui-d-services.js:150
 msgid "Enter maintenance Mode"
 msgstr "Digite o modo de manutenção"
-
-#: static/tmp_js/gui-d-services.js:150
-msgid "Exit Maintenance Mode"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.222138DE"
 
 #: static/tmp_js/gui-d-services.js:154
 msgid "New services provider"
@@ -678,12 +648,6 @@ msgstr "Por favor, insira um valor maior ou igual a {0}."
 #: static/tmp_js/gui.js:269
 msgid "Test passed successfully"
 msgstr "Teste passado com sucesso"
-
-#: static/tmp_js/gui.js:272
-msgid "Test failed:"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.222138F6"
 
 #: static/tmp_js/gui.js:276
 msgid "Test error"

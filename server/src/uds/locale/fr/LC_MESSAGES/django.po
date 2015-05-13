@@ -3030,12 +3030,6 @@ msgstr "Protocole Bureau distant"
 msgid "In order to use this service, you should first install CoRD."
 msgstr "Afin d'utiliser ce service, vous devez d'abord installer cordon."
 
-#: transports/RDP/web.py:92
-msgid "Download CoRD"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=5641.V2_Json."
-"Translate.2224D509"
-
 #: transports/RDP/web.py:95
 msgid "Attention Safari Users:"
 msgstr "Attention les utilisateurs de Safari :"
