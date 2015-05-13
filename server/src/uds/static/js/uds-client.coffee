@@ -236,7 +236,8 @@ uds.setReload = ->
 
 uds.reload = ->
   if uds.reloadCounter == 0
-    window.location.reload()
+    # window.location.reload()
+    window.location.href = window.location.href
   else
     uds.reloadCounter -= 1
     uds.setReload()

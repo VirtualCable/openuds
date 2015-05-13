@@ -53,7 +53,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-30'
+__updated__ = '2015-05-13'
 
 
 @webLoginRequired(admin=False)
@@ -94,6 +94,7 @@ def transcomp(request, idTransport, componentId):
         return errors.exceptionView(request, e)
 
 
+@cache_page(3600, key_prefix='img')
 def transportIcon(request, idTrans):
     try:
         icon = Transport.objects.get(uuid=idTrans).getInstance().icon(False)
@@ -102,7 +103,7 @@ def transportIcon(request, idTrans):
         return HttpResponseRedirect('/static/img/unknown.png')
 
 
-@cache_page(86400, key_prefix='img')
+@cache_page(3600, key_prefix='img')
 def serviceImage(request, idImage):
     try:
         icon = Image.objects.get(uuid=idImage)
