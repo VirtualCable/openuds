@@ -32,13 +32,7 @@
 '''
 
 from __future__ import unicode_literals
-
-__updated__ = '2015-03-23'
-
 import logging
-
-logger = logging.getLogger(__name__)
-
 
 # Permissions
 from .Permissions import Permissions
@@ -98,3 +92,10 @@ from .DelayedTask import DelayedTask
 from .Image import Image
 
 from .TicketStore import TicketStore
+
+
+__updated__ = '2015-05-14'
+
+
+logger = logging.getLogger(__name__)
+

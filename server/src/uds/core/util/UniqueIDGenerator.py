@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from uds.models import UniqueId as dbUniqueId
+from uds.models.UniqueId import UniqueId
 from uds.models import getSqlDatetime
 import logging
 
@@ -51,7 +51,7 @@ class UniqueIDGenerator(object):
         self._baseName = newBaseName
 
     def __filter(self, rangeStart, rangeEnd=MAX_SEQ):
-        return dbUniqueId.objects.filter(basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd)  # @UndefinedVariable
+        return UniqueId.objects.filter(basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd)  # @UndefinedVariable
 
     def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
         '''
@@ -60,12 +60,13 @@ class UniqueIDGenerator(object):
         '''
         # First look for a name in the range defined
         stamp = getSqlDatetime(True)
+        logger.debug(UniqueId)
         try:
-            dbUniqueId.objects.lock()  # @UndefinedVariable
+            UniqueId.objects.lock()  # @UndefinedVariable
             flt = self.__filter(rangeStart, rangeEnd)
             try:
                 item = flt.filter(assigned=False).order_by('seq')[0]
-                dbUniqueId.objects.filter(id=item.id).update(owner=self._owner, assigned=True, stamp=stamp)  # @UndefinedVariable
+                UniqueId.objects.filter(id=item.id).update(owner=self._owner, assigned=True, stamp=stamp)  # @UndefinedVariable
                 seq = item.seq
             except Exception:  # No free element found
                 try:
@@ -76,19 +77,20 @@ class UniqueIDGenerator(object):
                 logger.debug('Found seq {0}'.format(seq))
                 if seq > rangeEnd:
                     return -1  # No ids free in range
-                dbUniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable
+                UniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable
+            logger.debug('Seq: {}'.format(seq))
             return seq
         except Exception:
             logger.exception('Generating unique id sequence')
             return None
         finally:
-            dbUniqueId.objects.unlock()  # @UndefinedVariable
+            UniqueId.objects.unlock()  # @UndefinedVariable
 
     def transfer(self, seq, toUidGen):
         try:
-            dbUniqueId.objects.lock()  # @UndefinedVariable
+            UniqueId.objects.lock()  # @UndefinedVariable
 
-            obj = dbUniqueId.objects.get(owner=self._owner, seq=seq)  # @UndefinedVariable
+            obj = UniqueId.objects.get(owner=self._owner, seq=seq)  # @UndefinedVariable
             obj.owner = toUidGen._owner
             obj.basename = toUidGen._baseName
             obj.stamp = getSqlDatetime(True)
@@ -99,17 +101,17 @@ class UniqueIDGenerator(object):
             logger.exception('EXCEPTION AT transfer')
             return False
         finally:
-            dbUniqueId.objects.unlock()  # @UndefinedVariable
+            UniqueId.objects.unlock()  # @UndefinedVariable
 
     def free(self, seq):
         try:
             logger.debug('Freeing seq {0} from {1}  ({2})'.format(seq, self._owner, self._baseName))
-            dbUniqueId.objects.lock()  # @UndefinedVariable
+            UniqueId.objects.lock()  # @UndefinedVariable
             flt = self.__filter(0).filter(owner=self._owner, seq=seq).update(owner='', assigned=False, stamp=getSqlDatetime(True))
             if flt > 0:
                 self.__purge()
         finally:
-            dbUniqueId.objects.unlock()  # @UndefinedVariable
+            UniqueId.objects.unlock()  # @UndefinedVariable
 
     def __purge(self):
         try:
@@ -121,17 +123,17 @@ class UniqueIDGenerator(object):
 
     def release(self):
         try:
-            dbUniqueId.objects.lock()  # @UndefinedVariable
-            dbUniqueId.objects.filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetime(True))  # @UndefinedVariable
+            UniqueId.objects.lock()  # @UndefinedVariable
+            UniqueId.objects.filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetime(True))  # @UndefinedVariable
             self.__purge()
         finally:
-            dbUniqueId.objects.unlock()  # @UndefinedVariable
+            UniqueId.objects.unlock()  # @UndefinedVariable
 
     def releaseOlderThan(self, stamp):
         stamp = getSqlDatetime(True)
         try:
-            dbUniqueId.objects.lock()  # @UndefinedVariable
-            dbUniqueId.objects.filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
+            UniqueId.objects.lock()  # @UndefinedVariable
+            UniqueId.objects.filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
             self.__purge()
         finally:
-            dbUniqueId.objects.unlock()  # @UndefinedVariable
+            UniqueId.objects.unlock()  # @UndefinedVariable

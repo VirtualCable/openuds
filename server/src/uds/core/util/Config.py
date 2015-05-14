@@ -296,6 +296,7 @@ class GlobalConfig(object):
 
     # Gui vars
     UDS_THEME = Config.section(GLOBAL_SECTION).value('UDS Theme', 'html5', type=Config.TEXT_FIELD)
+    RELOAD_TIME = Config.section(GLOBAL_SECTION).value('Page reload Time', '60', type=Config.NUMERIC_FIELD)
 
     # This is used so templates can change "styles" from admin interface
     UDS_THEME_VISUAL = Config.section(GLOBAL_SECTION).value('UDS Theme Enhaced', '1', type=Config.BOOLEAN_FIELD)

@@ -40,6 +40,8 @@ from uds.core.util import OsDetector
 import six
 import os
 
+__updated__ = '2015-05-14'
+
 
 class RDPFile(object):
     fullScreen = False
@@ -59,6 +61,7 @@ class RDPFile(object):
     displayConnectionBar = True
     showWallpaper = False
     multimon = False
+    desktopComposition = False
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
@@ -231,6 +234,11 @@ class RDPFile(object):
         res += 'enablecredsspsupport:i:1' + '\n'
         res += 'prompt for credentials:i:0' + '\n'
         res += 'negotiate security layer:i:1' + '\n'
+        if self.desktopComposition is True:
+            res += 'allow desktop composition:i:1\n'
+
+        if self.redirectAudio is True:
+            res += 'audiocapturemode:i:1\n'
 
         return res
 

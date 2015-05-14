@@ -35,14 +35,13 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-10'
-
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.Environment import Environment
 from uds.core.util import log
+from uds.core.util import unique
 from uds.core.util.State import State
 from uds.models.UUIDModel import UUIDModel
 
@@ -55,6 +54,9 @@ from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
 import logging
+
+__updated__ = '2015-05-14'
+
 
 logger = logging.getLogger(__name__)
 
@@ -116,9 +118,15 @@ class UserService(UUIDModel):
 
         (see related classes uds.core.util.UniqueNameGenerator and uds.core.util.UniqueMacGenerator)
         '''
-        from uds.core.util.UniqueMacGenerator import UniqueMacGenerator
-        from uds.core.util.UniqueNameGenerator import UniqueNameGenerator
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id, {'mac': UniqueMacGenerator, 'name': UniqueNameGenerator})
+        return Environment.getEnvForTableElement(
+            self._meta.verbose_name,
+            self.id,
+            {
+                'mac': unique.UniqueMacGenerator,
+                'name': unique.UniqueNameGenerator,
+                'id': unique.UniqueGIDGenerator,
+            }
+        )
 
     def getInstance(self):
         '''

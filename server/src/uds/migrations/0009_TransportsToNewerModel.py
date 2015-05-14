@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 from uds.core.ui.UserInterface import gui
 from uds.transports.RDP.RDPTransport import RDPTransport
-from uds.transports.RDP.TSRDPTransport import TSRDPTransport
+from uds.transports.RDP.TRDPTransport import TRDPTransport
 try:
     from uds.transports.RGS import RGSTransport  # @UnresolvedImport, pylint: disable=import-error, no-name-in-module
     from uds.transports.RGS import TRGSTransport  # @UnresolvedImport, pylint: disable=import-error, no-name-in-module
@@ -55,7 +55,7 @@ def unmarshalRDP(str_):
     }
 
 
-def unmarshalTSRDP(str_):
+def unmarshalTRDP(str_):
     data = str_.split('\t')
     if data[0] in ('v1', 'v2', 'v3'):
         useEmptyCreds = gui.strToBool(data[1])
@@ -178,9 +178,9 @@ def transformTransports(apps, schema_editor):
             t.data = rdp.serialize()
             t.save()
 
-        if t.data_type == TSRDPTransport.typeType:
-            values = unmarshalTSRDP(t.data.decode(TSRDPTransport.CODEC))
-            rdp = TSRDPTransport(Environment.getTempEnv(), values)
+        if t.data_type == TRDPTransport.typeType:
+            values = unmarshalTRDP(t.data.decode(TRDPTransport.CODEC))
+            rdp = TRDPTransport(Environment.getTempEnv(), values)
             t.data = rdp.serialize()
             t.save()
 

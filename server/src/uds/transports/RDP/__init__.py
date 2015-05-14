@@ -34,7 +34,7 @@
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
 from .RDPTransport import RDPTransport
-from .TSRDPTransport import TSRDPTransport
+from .TRDPTransport import TRDPTransport
 
 UserPrefsManager.manager().registerPrefs('rdp',
                                          _('Remote Desktop Protocol'),

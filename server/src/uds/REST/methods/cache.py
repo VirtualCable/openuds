@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from uds.core.util.Cache import Cache as uCache
+from django.core.cache import cache as djCache
 from uds.REST import Handler, RequestError, NotFound
 
 import logging
@@ -71,4 +72,5 @@ class Cache(Handler):
             raise RequestError('Invalid Request')
 
         uCache.purge()
+        djCache.clear()
         return 'done'

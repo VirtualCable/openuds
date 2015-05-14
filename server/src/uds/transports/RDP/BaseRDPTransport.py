@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
@@ -40,6 +41,9 @@ from uds.core.util import connection
 
 import logging
 import os
+
+__updated__ = '2015-05-14'
+
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +69,7 @@ class BaseRDPTransport(Transport):
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=9, tooltip=_('If checked, this transport will allow the use of user serial ports'))
     wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=10, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
     multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=10, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'))
+    aero = gui.CheckBoxField(label=_('Allow Aero'), order=11, tooltip=_('If checked, desktop composition will be allowed'))
 
     def isAvailableFor(self, userService, ip):
         '''

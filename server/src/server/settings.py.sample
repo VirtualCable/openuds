@@ -111,6 +111,17 @@ STATICFILES_FINDERS = (
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'uds_response_cache',
+        'OPTIONS': {
+            'MAX_ENTRIES': 5000,
+            'CULL_FREQUENCY': 3,  #  0 = Entire cache will be erased once MAX_ENTRIES is reached, this is faster on DB. if other value, will remove 1/this number items fromm cache
+        }
+    }
+}
+
 # Related to file uploading
 FILE_UPLOAD_PERMISSIONS = 0o640
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o750

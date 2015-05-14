@@ -33,12 +33,14 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
-
 from django.db import models
 from uds.core.db.LockingManager import LockingManager
 
 import logging
+
+
+__updated__ = '2015-05-14'
+
 
 logger = logging.getLogger(__name__)
 
@@ -66,4 +68,3 @@ class UniqueId(models.Model):
 
     def __unicode__(self):
         return u"{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)
-

@@ -34,11 +34,12 @@ from __future__ import unicode_literals
 
 NONE = ''
 RDP = 'rdp'
+RDS = 'rds'  # In fact, RDS (Remote Desktop Services) is RDP, but have "more info" for connection that RDP
 RGS = 'rgs'
 SPICE = 'spice'
 VNC = 'vnc'
 PCOIP = 'pcoip'
-REMOTEFX = 'remotefx'
+REMOTEFX = 'remotefx'  # This in fact is RDP als
 HDX = 'hdx'
 ICA = 'ica'
 NX = 'nx'

@@ -30,7 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
+from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.util import OsDetector
@@ -43,6 +43,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
+
+__updated__ = '2015-05-14'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -65,6 +67,7 @@ class RDPTransport(BaseRDPTransport):
     allowSerials = BaseRDPTransport.allowSerials
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
+    aero = BaseRDPTransport.aero
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
@@ -87,6 +90,7 @@ class RDPTransport(BaseRDPTransport):
         r.redirectSerials = self.allowSerials.isTrue()
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
+        r.desktopComposition = self.aero.isTrue()
 
         # data
         data = {

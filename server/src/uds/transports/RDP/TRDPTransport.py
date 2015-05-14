@@ -30,7 +30,7 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
+from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
@@ -47,12 +47,15 @@ import logging
 import random
 import string
 
+__updated__ = '2015-05-14'
+
+
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
 
-class TSRDPTransport(BaseRDPTransport):
+class TRDPTransport(BaseRDPTransport):
     '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
@@ -78,6 +81,7 @@ class TSRDPTransport(BaseRDPTransport):
     allowSerials = BaseRDPTransport.allowSerials
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
+    aero = BaseRDPTransport.aero
 
     def initialize(self, values):
         if values is not None:
@@ -112,7 +116,7 @@ class TSRDPTransport(BaseRDPTransport):
         r.redirectSerials = self.allowSerials.isTrue()
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
-
+        r.desktopComposition = self.aero.isTrue()
 
         # data
         data = {
@@ -159,6 +163,6 @@ class TSRDPTransport(BaseRDPTransport):
         }.get(m.os)
 
         if os is None:
-            return super(TSRDPTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+            return super(TRDPTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
 
         return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)

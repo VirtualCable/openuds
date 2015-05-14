@@ -6,7 +6,8 @@ uds.safari = false
 uds.ie = false
 uds.firefox = false
 
-uds.reloadCounter = 12
+uds.reloadCounterBase = 60
+uds.counterGranurality = 2 # Every this seconds, reload time will be checked
 
 # First, detect browser
 (() ->
@@ -229,10 +230,10 @@ uds.onLink = ->
   return
 
 uds.resetReloadCounter = ->
-  uds.reloadCounter = 12
+  uds.reloadCounter = uds.reloadCounterBase
 
 uds.setReload = ->
-  setTimeout uds.reload, 5000
+  setTimeout uds.reload, uds.counterGranurality * 1000
 
 uds.reload = ->
   if uds.reloadCounter == 0

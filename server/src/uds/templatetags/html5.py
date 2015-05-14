@@ -153,6 +153,11 @@ def preferences_allowed():
 
 
 @register.assignment_tag
+def pageReloadTime():
+    return GlobalConfig.RELOAD_TIME.getInt(True)
+
+
+@register.assignment_tag
 def root_id():
     return ROOT_ID
 

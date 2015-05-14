@@ -1,6 +1,5 @@
 {% extends "uds/html5/templates/base.html" %}
 {% load i18n html5 static %}
-
 {% block title %}{% trans 'Available services list' %}{% endblock %}
 
 {% block body %}
@@ -195,6 +194,7 @@
 {% endblock %}
 
 {% block js %}
+        {% pageReloadTime as reloadTime %}
         <script>
         function launchURL(el) {
             var $el = $(el);
@@ -212,6 +212,8 @@
 
         $(function() {
             var autorun = {% if autorun %}true{% else %}false{% endif %};
+            uds.reloadCounterBase = {{ reloadTime }} / uds.counterGranurality;
+            uds.resetReloadCounter();
 
             $('.with-tooltip').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
 
