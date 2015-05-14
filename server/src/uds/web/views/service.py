@@ -41,6 +41,7 @@ from uds.core.managers import userServiceManager, cryptoManager
 from uds.models import TicketStore
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.ui import theme
+from uds.core.util.model import processUuid
 from uds.core.util import OsDetector
 from uds.models import Transport, Image
 from uds.core.util import html
@@ -83,7 +84,7 @@ def transportOwnLink(request, idService, idTransport):
 @cache_page(3600, key_prefix='img')
 def transportIcon(request, idTrans):
     try:
-        icon = Transport.objects.get(uuid=idTrans).getInstance().icon(False)
+        icon = Transport.objects.get(uuid=processUuid(idTrans)).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponseRedirect('/static/img/unknown.png')
@@ -92,13 +93,13 @@ def transportIcon(request, idTrans):
 @cache_page(3600, key_prefix='img')
 def serviceImage(request, idImage):
     try:
-        icon = Image.objects.get(uuid=idImage)
+        icon = Image.objects.get(uuid=processUuid(idImage))
         return icon.imageResponse()
     except Image.DoesNotExist:
         pass  # Tries to get image from transport
 
     try:
-        icon = Transport.objects.get(uuid=idImage).getInstance().icon(False)
+        icon = Transport.objects.get(uuid=processUuid(idImage)).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')

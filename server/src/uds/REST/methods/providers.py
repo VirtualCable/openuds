@@ -37,6 +37,7 @@ from uds.models import Provider, Service, UserService
 from uds.REST.methods.services import Services as DetailServices
 from uds.core import services
 from uds.core.util import permissions
+from uds.core.util.model import processUuid
 
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler

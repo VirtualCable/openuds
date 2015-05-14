@@ -40,10 +40,12 @@ from django.utils.translation import ugettext as _
 
 from uds.models import Group, Transport, DeployedServicePublication
 from uds.core.util.State import State
+from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 from uds.core.util import permissions
+
 
 
 import logging
@@ -98,7 +100,7 @@ class AssignedService(DetailHandler):
                 return [AssignedService.itemToDict(k) for k in parent.assignedUserServices().all()
                         .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
             else:
-                return parent.assignedUserServices().get(uuid=item)
+                return parent.assignedUserServices().get(processUuid(uuid=processUuid(item)))
         except Exception:
             logger.exception('getItems')
             self.invalidItemException()
@@ -127,7 +129,7 @@ class AssignedService(DetailHandler):
 
     def getLogs(self, parent, item):
         try:
-            item = parent.assignedUserServices().get(uuid=item)
+            item = parent.assignedUserServices().get(uuid=processUuid(item))
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
         except Exception:
@@ -135,7 +137,7 @@ class AssignedService(DetailHandler):
 
     def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
         try:
-            service = parent.userServices.get(uuid=item)
+            service = parent.userServices.get(uuid=processUuid(item))
         except Exception:
             logger.exception('deleteItem')
             self.invalidItemException()
@@ -163,7 +165,7 @@ class CachedService(AssignedService):
                 return [AssignedService.itemToDict(k, True) for k in parent.cachedUserServices().all()
                         .prefetch_related('properties').prefetch_related('deployed_service').prefetch_related('publication')]
             else:
-                k = parent.cachedUserServices().get(uuid=item)
+                k = parent.cachedUserServices().get(uuid=processUuid(item))
                 return AssignedService.itemToDict(k, True)
         except Exception:
             logger.exception('getItems')
@@ -186,7 +188,7 @@ class CachedService(AssignedService):
 
     def getLogs(self, parent, item):
         try:
-            item = parent.cachedUserServices().get(uuid=item)
+            item = parent.cachedUserServices().get(uuid=processUuid(item))
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
         except Exception:
@@ -222,11 +224,11 @@ class Groups(DetailHandler):
         return {'field': 'state', 'prefix': 'row-state-'}
 
     def saveItem(self, parent, item):
-        parent.assignedGroups.add(Group.objects.get(uuid=self._params['id']))
+        parent.assignedGroups.add(Group.objects.get(uuid=processUuid(self._params['id'])))
         return self.success()
 
     def deleteItem(self, parent, item):
-        parent.assignedGroups.remove(Group.objects.get(uuid=self._args[0]))
+        parent.assignedGroups.remove(Group.objects.get(uuid=processUuid(self._args[0])))
 
 
 class Transports(DetailHandler):
@@ -254,11 +256,11 @@ class Transports(DetailHandler):
         ]
 
     def saveItem(self, parent, item):
-        parent.transports.add(Transport.objects.get(uuid=self._params['id']))
+        parent.transports.add(Transport.objects.get(uuid=processUuid(self._params['id'])))
         return self.success()
 
     def deleteItem(self, parent, item):
-        parent.transports.remove(Transport.objects.get(uuid=self._args[0]))
+        parent.transports.remove(Transport.objects.get(uuid=processUuid(self._args[0])))
 
 
 class Publications(DetailHandler):
@@ -292,7 +294,7 @@ class Publications(DetailHandler):
             self.accessDenied()
 
         try:
-            ds = DeployedServicePublication.objects.get(uuid=uuid)
+            ds = DeployedServicePublication.objects.get(uuid=processUuid(uuid))
             ds.cancel()
         except Exception as e:
             raise ResponseError(unicode(e))

@@ -37,6 +37,7 @@ from django.utils.translation import ugettext as _
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import UserService, DeployedService, Transport
+from uds.core.util.model import processUuid
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util import log
 from uds.core.util.stats import events
@@ -132,9 +133,9 @@ class Connection(Handler):
         try:
             logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
             if kind == 'A':  # This is an assigned service
-                ads = UserService.objects.get(uuid=idService)
+                ads = UserService.objects.get(uuid=processUuid(idService))
             else:
-                ds = DeployedService.objects.get(uuid=idService)
+                ds = DeployedService.objects.get(uuid=processUuid(idService))
                 # We first do a sanity check for this, if the user has access to this service
                 # If it fails, will raise an exception
                 ds.validateUser(self._user)
@@ -145,7 +146,7 @@ class Connection(Handler):
                 return Connection.result(error='Service in maintenance')
 
             logger.debug('Found service: {0}'.format(ads))
-            trans = Transport.objects.get(uuid=idTransport)
+            trans = Transport.objects.get(uuid=processUuid(idTransport))
 
             if trans.validForIp(self._request.ip) is False:
                 return Connection.result(error='Access denied')
