@@ -36,6 +36,7 @@ from django.utils.translation import ugettext as _
 
 from uds.core.util import Config
 from uds.core.util.State import State
+from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.core.managers import cryptoManager
 from uds.REST import Handler
@@ -170,7 +171,7 @@ class Actor(Handler):
 
         # Right now, only "message" posts
         try:
-            service = UserService.objects.get(uuid=uuid)
+            service = UserService.objects.get(uuid=processUuid(uuid))
         except Exception:
             return Actor.result(_('User service not found'), error=ERR_USER_SERVICE_NOT_FOUND)
 

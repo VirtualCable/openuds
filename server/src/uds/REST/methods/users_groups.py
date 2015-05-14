@@ -41,6 +41,7 @@ from uds.core.util.State import State
 
 from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import log
+from uds.core.util.model import processUuid
 from uds.models import Authenticator, User, Group
 from uds.core.auths.User import User as aUser
 from uds.core.managers import cryptoManager
@@ -71,7 +72,7 @@ class Users(DetailHandler):
             if item is None:
                 return list(Users.uuid_to_id(parent.users.all().values('uuid', 'name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent')))
             else:
-                u = parent.users.get(uuid=item)
+                u = parent.users.get(uuid=processUuid(item))
                 res = model_to_dict(u, fields=('name', 'real_name', 'comments', 'state', 'staff_member', 'is_admin', 'last_access', 'parent'))
                 res['id'] = u.uuid
                 usr = aUser(u)
@@ -84,7 +85,7 @@ class Users(DetailHandler):
 
     def getTitle(self, parent):
         try:
-            return _('Users of {0}').format(Authenticator.objects.get(uuid=self._kwargs['parent_id']).name)
+            return _('Users of {0}').format(Authenticator.objects.get(uuid=processUuid(self._kwargs['parent_id'])).name)
         except Exception:
             return _('Current users')
 
@@ -102,7 +103,7 @@ class Users(DetailHandler):
 
     def getLogs(self, parent, item):
         try:
-            user = parent.users.get(uuid=item)
+            user = parent.users.get(uuid=processUuid(item))
         except Exception:
             self.invalidItemException()
 
@@ -129,7 +130,7 @@ class Users(DetailHandler):
                 toSave = {}
                 for k in valid_fields:
                     toSave[k] = fields[k]
-                user = parent.users.get(uuid=item)
+                user = parent.users.get(uuid=processUuid(item))
                 user.__dict__.update(toSave)
 
             logger.debug('User parent: {}'.format(user.parent))
@@ -157,7 +158,7 @@ class Users(DetailHandler):
 
     def deleteItem(self, parent, item):
         try:
-            user = parent.users.get(uuid=item)
+            user = parent.users.get(uuid=processUuid(item))
 
             user.delete()
         except Exception:
@@ -175,7 +176,7 @@ class Groups(DetailHandler):
                 multi = True
                 q = parent.groups.all().order_by('name')
             else:
-                q = parent.groups.filter(uuid=item)
+                q = parent.groups.filter(uuid=processUuid(item))
             res = []
             for i in q:
                 val = {
@@ -198,7 +199,7 @@ class Groups(DetailHandler):
 
     def getTitle(self, parent):
         try:
-            return _('Groups of {0}').format(Authenticator.objects.get(uuid=self._kwargs['parent_id']).name)
+            return _('Groups of {0}').format(Authenticator.objects.get(uuid=processUuid(self._kwargs['parent_id'])).name)
         except:
             return _('Current groups')
 
@@ -258,7 +259,7 @@ class Groups(DetailHandler):
                 toSave['comments'] = fields['comments'][:255]
                 toSave['meta_if_any'] = meta_if_any
 
-                group = parent.groups.get(uuid=item)
+                group = parent.groups.get(uuid=processUuid(item))
                 group.__dict__.update(toSave)
 
             if is_meta:

@@ -40,6 +40,7 @@ from django.db import IntegrityError
 from uds.core.ui.UserInterface import gui as uiGui
 from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
+from uds.core.util.model import processUuid
 
 import fnmatch
 import re
@@ -50,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-02-16'
+__updated__ = '2015-05-14'
 
 
 # a few constants
@@ -332,7 +333,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
                 return self.processTableFields(self.getTitle(parent), self.getFields(parent), self.getRowStyle(parent))
 
             # try to get id
-            return self.getItems(parent, self._args[0].upper())
+            return self.getItems(parent, processUuid(self._args[0]))
 
         if nArgs == 2:
             if self._args[0] == GUI:

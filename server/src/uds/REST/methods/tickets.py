@@ -38,6 +38,7 @@ from uds.models import Authenticator
 from uds.models import DeployedService
 from uds.models import Transport
 from uds.core.util.Ticket import Ticket
+from uds.core.util.model import processUuid
 
 
 import datetime
@@ -105,7 +106,7 @@ class Tickets(Handler):
 
             # Will raise an exception if no auth found
             if authId is not None:
-                auth = Authenticator.objects.get(uuid=authId.lower())
+                auth = Authenticator.objects.get(uuid=processUuid(authId.lower()))
             elif authName is not None:
                 auth = Authenticator.objects.get(name=authName)
             else:
@@ -135,11 +136,11 @@ class Tickets(Handler):
             transport = None
 
             if servicePool is not None:
-                servicePool = DeployedService.objects.get(uuid=servicePool.lower())
+                servicePool = DeployedService.objects.get(uuid=processUuid(servicePool))
 
                 transport = self._params.get('transport', None)
                 if transport is not None:
-                    transport = Transport.objects.get(uuid=transport.lower())
+                    transport = Transport.objects.get(uuid=processUuid(transport))
                     try:
                         servicePool.validateTransport(transport)
                     except Exception:

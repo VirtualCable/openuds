@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
+from uds.core.util.model import processUuid
 from uds.models import Authenticator
 from uds.core.auths.auth import authenticate
 
@@ -90,7 +91,7 @@ class Login(Handler):
                 try:
                     # Will raise an exception if no auth found
                     if authId is not None:
-                        auth = Authenticator.objects.get(uuid=authId)
+                        auth = Authenticator.objects.get(uuid=processUuid(authId))
                     elif authName is not None:
                         auth = Authenticator.objects.get(name=authName)
                     else:

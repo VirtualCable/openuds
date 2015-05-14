@@ -39,6 +39,7 @@ from uds.models import Service, UserService
 
 from uds.core.services import Service as coreService
 from uds.core.util import log
+from uds.core.util.model import processUuid
 from uds.core.Environment import Environment
 from uds.REST.model import DetailHandler
 from uds.REST import NotFound, ResponseError, RequestError
@@ -93,7 +94,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             if item is None:
                 return [Services.serviceToDict(k) for k in parent.services.all()]
             else:
-                k = parent.services.get(uuid=item)
+                k = parent.services.get(uuid=processUuid(item))
                 val = Services.serviceToDict(k)
                 return self.fillIntanceFields(k, val)
         except Exception:
@@ -124,7 +125,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             if item is None:  # Create new
                 service = parent.services.create(**fields)
             else:
-                service = parent.services.get(uuid=item)
+                service = parent.services.get(uuid=processUuid(item))
                 service.__dict__.update(fields)
 
             service.data = service.getInstance(self._params).serialize()
@@ -145,7 +146,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def deleteItem(self, parent, item):
         try:
-            service = parent.services.get(uuid=item)
+            service = parent.services.get(uuid=processUuid(item))
 
             if service.deployedServices.count() != 0:
                 raise RequestError('Item has associated deployed services')
@@ -203,7 +204,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getLogs(self, parent, item):
         try:
-            item = parent.services.get(uuid=item)
+            item = parent.services.get(uuid=processUuid(item))
             logger.debug('Getting logs for {0}'.format(item))
             return log.getLogs(item)
         except Exception:

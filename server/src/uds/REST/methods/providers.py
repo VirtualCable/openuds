@@ -36,6 +36,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider, Service, UserService
 from uds.REST.methods.services import Services as DetailServices
 from uds.core import services
+from uds.core.util.model import processUuid
 
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
@@ -119,7 +120,7 @@ class Providers(ModelHandler):
         Custom method that returns a service by its uuid, no matter who's his daddy
         '''
         try:
-            return DetailServices.serviceToDict(Service.objects.get(uuid=self._args[1]), True)
+            return DetailServices.serviceToDict(Service.objects.get(uuid=processUuid(self._args[1])), True)
         except Exception:
             raise RequestError(ugettext('Service not found'))
 

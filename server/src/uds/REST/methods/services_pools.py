@@ -36,6 +36,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service, Image
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
+from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
@@ -180,7 +181,7 @@ class ServicesPools(ModelHandler):
         # logger.debug(self._params)
         try:
             try:
-                service = Service.objects.get(uuid=fields['service_id'])
+                service = Service.objects.get(uuid=processUuid(fields['service_id']))
                 fields['service_id'] = service.id
             except:
                 raise RequestError(ugettext('Base service does not exist anymore'))
@@ -192,7 +193,7 @@ class ServicesPools(ModelHandler):
                     self._params['publish_on_save'] = False
 
                 if serviceType.needsManager is True:
-                    osmanager = OSManager.objects.get(uuid=fields['osmanager_id'])
+                    osmanager = OSManager.objects.get(uuid=processUuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
                 else:
                     del fields['osmanager_id']
@@ -209,7 +210,7 @@ class ServicesPools(ModelHandler):
             logger.debug('Image id: {}'.format(imgId))
             try:
                 if imgId != '-1':
-                    image = Image.objects.get(uuid=imgId)
+                    image = Image.objects.get(uuid=processUuid(imgId))
                     fields['image_id'] = image.id
             except Exception:
                 logger.exception('At image recovering')

@@ -40,6 +40,7 @@ from uds.core.services.Exceptions import ServiceInMaintenanceMode, InvalidServic
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.ui import theme
+from uds.core.util.model import processUuid
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.stats import events
 from uds.core.util import log
@@ -52,7 +53,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-16'
+__updated__ = '2015-05-14'
 
 
 @webLoginRequired
@@ -61,9 +62,9 @@ def service(request, idService, idTransport):
     try:
         logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
         if kind == 'A':  # This is an assigned service
-            ads = UserService.objects.get(uuid=idService)
+            ads = UserService.objects.get(uuid=processUuid(idService))
         else:
-            ds = DeployedService.objects.get(uuid=idService)
+            ds = DeployedService.objects.get(uuid=processUuid(idService))
             # We first do a sanity check for this, if the user has access to this service
             # If it fails, will raise an exception
             ds.validateUser(request.user)
@@ -74,7 +75,7 @@ def service(request, idService, idTransport):
             raise ServiceInMaintenanceMode()
 
         logger.debug('Found service: {0}'.format(ads))
-        trans = Transport.objects.get(uuid=idTransport)
+        trans = Transport.objects.get(uuid=processUuid(idTransport))
         if trans.validForIp(request.ip) is False:
             raise InvalidServiceException()
 
@@ -111,7 +112,7 @@ def service(request, idService, idTransport):
 def transcomp(request, idTransport, componentId):
     try:
         # We got translated first id
-        trans = Transport.objects.get(uuid=idTransport.upper())
+        trans = Transport.objects.get(uuid=processUuid(idTransport))
         itrans = trans.getInstance()
         res = itrans.getHtmlComponent(trans.uuid, OsDetector.getOsFromRequest(request), componentId)
         response = HttpResponse(res[1], content_type=res[0])
@@ -132,7 +133,7 @@ def sernotify(request, idUserService, notification):
                 ip = request.GET.get('ip', ip)
 
             if ip is not None and hostname is not None:
-                us = UserService.objects.get(uuid=idUserService)
+                us = UserService.objects.get(uuid=processUuid(idUserService))
                 us.setConnectionSource(ip, hostname)
             else:
                 return HttpResponse('Invalid request!', 'text/plain')
@@ -140,7 +141,7 @@ def sernotify(request, idUserService, notification):
             message = request.GET.get('message', None)
             level = request.GET.get('level', None)
             if message is not None and level is not None:
-                us = UserService.objects.get(uuid=idUserService)
+                us = UserService.objects.get(uuid=processUuid(idUserService))
                 log.doLog(us, level, message, log.TRANSPORT)
             else:
                 return HttpResponse('Invalid request!', 'text/plain')
@@ -152,7 +153,7 @@ def sernotify(request, idUserService, notification):
 
 def transportIcon(request, idTrans):
     try:
-        icon = Transport.objects.get(uuid=idTrans).getInstance().icon(False)
+        icon = Transport.objects.get(uuid=processUuid(idTrans)).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponseRedirect('/static/img/unknown.png')
@@ -161,13 +162,13 @@ def transportIcon(request, idTrans):
 @cache_page(86400, key_prefix='img')
 def serviceImage(request, idImage):
     try:
-        icon = Image.objects.get(uuid=idImage)
+        icon = Image.objects.get(uuid=processUuid(idImage))
         return icon.imageResponse()
     except Image.DoesNotExist:
         pass  # Tries to get image from transport
 
     try:
-        icon = Transport.objects.get(uuid=idImage).getInstance().icon(False)
+        icon = Transport.objects.get(uuid=processUuid(idImage)).getInstance().icon(False)
         return HttpResponse(icon, content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
