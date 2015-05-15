@@ -10,6 +10,7 @@ gui.osmanagers.link = (event) ->
       osmanagers: "osmanagers-placeholder"
     )
     gui.osmanagers.table
+      icon: 'osmanagers'
       container: "osmanagers-placeholder"
       rowSelect: "single"
       buttons: [

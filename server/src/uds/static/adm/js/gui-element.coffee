@@ -186,7 +186,9 @@
       )).appendTo "head"
       self.rest.overview (data) -> # Gets "overview" data for table (table contents, but resume form)
         tblParams.onData data  if tblParams.onData
-        table = gui.table(title, tableId)
+        table = gui.table(title, tableId,
+          icon: tblParams.icon
+        )
         if not tblParams.container?
           gui.appendToWorkspace "<div class=\"row\"><div class=\"col-lg-12\">" + table.text + "</div></div>"
         else
@@ -541,7 +543,9 @@
         bSearchable: true
       }
     ]
-    table = gui.table(tblParams.title or gettext("Logs"), tableId)
+    table = gui.table(tblParams.title or gettext("Logs"), tableId,
+      icon: tblParams.icon or 'logs'
+    )
     if not tblParams.container?
       gui.appendToWorkspace "<div class=\"row\"><div class=\"col-lg-12\">" + table.text + "</div></div>"
     else

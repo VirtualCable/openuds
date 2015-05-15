@@ -54,6 +54,7 @@ gui.providers.link = (event) ->
       return
 
     tableId = gui.providers.table(
+      icon: 'providers'
       getPermission: (selected) ->
         gui.doLog "Selected", selected
       container: "providers-placeholder"
@@ -91,6 +92,7 @@ gui.providers.link = (event) ->
         services = new GuiElement(api.providers.detail(id, "services", { permission: selected[0].permission }), "services-" + selected[0].type)
         tmpLogTable = undefined
         servicesTable = services.table(
+          icon: 'services'
           container: "services-placeholder"
           rowSelect: "single"
           onRowSelect: (sselected) ->

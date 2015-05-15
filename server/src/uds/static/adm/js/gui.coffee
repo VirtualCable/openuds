@@ -70,6 +70,7 @@
       size: options.size or 12
       title: title
       table_id: table_id
+      icon: api.config.img_url + 'icons/' + (options.icon or 'maleta') + '.png'
     )
     panelId: panelId
     refreshSelector: "#" + panelId + " span.fa-refresh"

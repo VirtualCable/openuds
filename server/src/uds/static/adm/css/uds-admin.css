@@ -47,6 +47,11 @@ body {
 	cursor: pointer;
 }
 
+.table-icon {
+    width: 1.2em;
+    padding-bottom: 3px;
+}
+
 .cursor-pointer {
 	cursor: pointer !important;
 }

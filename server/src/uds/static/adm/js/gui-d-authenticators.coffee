@@ -118,6 +118,7 @@ gui.authenticators.link = (event) ->
       return
 
     tableId = gui.authenticators.table(
+      icon: 'authenticators'
       container: "auths-placeholder"
       rowSelect: "single"
       buttons: [
@@ -145,6 +146,7 @@ gui.authenticators.link = (event) ->
         user = new GuiElement(api.authenticators.detail(id, "users", { permission: selected[0].permission }), "users")
         group = new GuiElement(api.authenticators.detail(id, "groups", { permission: selected[0].permission }), "groups")
         grpTable = group.table(
+          icon: 'groups'
           container: "groups-placeholder"
           rowSelect: "single"
           buttons: [
@@ -263,6 +265,7 @@ gui.authenticators.link = (event) ->
         ]
         usrButtons = ["new"].concat(usrButtons)  if type.canCreateUsers # New is first button
         usrTable = user.table(
+          icon: 'users'
           container: "users-placeholder"
           rowSelect: "single"
           onRowSelect: (uselected) ->
