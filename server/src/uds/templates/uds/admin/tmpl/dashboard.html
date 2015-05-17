@@ -2,9 +2,9 @@
 
 <div class="row">
   <div class="col-xs-12">
-    <h1>Dashboard <small>{% trans 'overview' %}</small></h1>
+    <h1>{% trans 'Overview' %}</h1>
     <ol class="breadcrumb">
-      <li><a id="lnk-dashboard" href=""><i class="fa fa-dashboard"></i> Dashboard</a></li>
+      <li><a id="lnk-dashboard" href="">Dashboard</a></li>
     </ol>
   </div>
 </div><!-- /.row -->
@@ -27,7 +27,7 @@
       <div class="panel-heading">
         <div class="row">
           <div class="col-xs-6">
-            <i class="fa fa-key fa-5x" style="color: #E2C774;"></i>
+            <img class="info-img" src="{% endverbatim %}{{ STATIC_URL }}{% verbatim %}/adm/img/icons/users.png"/>
           </div>
           <div class="col-xs-6 text-right">
             <p class="announcement-heading">{{ users }}</p>
@@ -54,7 +54,7 @@
       <div class="panel-heading">
         <div class="row">
           <div class="col-xs-6">
-            <i class="fa fa-desktop fa-5x"></i>
+            <img class="info-img" src="{% endverbatim %}{{ STATIC_URL }}{% verbatim %}/adm/img/icons/services.png"/>
           </div>
           <div class="col-xs-6 text-right">
             <p class="announcement-heading">{{ services }}</p>
@@ -81,7 +81,7 @@
       <div class="panel-heading">
         <div class="row">
           <div class="col-xs-6">
-            <i class="fa fa-puzzle-piece fa-5x"></i>
+            <img class="info-img" src="{% endverbatim %}{{ STATIC_URL }}{% verbatim %}/adm/img/icons/assigned.png"/>
           </div>
           <div class="col-xs-6 text-right">
             <p class="announcement-heading">{{ user_services }}</p>

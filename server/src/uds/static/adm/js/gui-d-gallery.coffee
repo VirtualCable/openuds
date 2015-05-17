@@ -60,6 +60,7 @@ gui.gallery.link = ->
       gallery: "gallery-placeholder"
     )
     gui.gallery.table
+      icon: 'gallery'
       container: "gallery-placeholder"
       rowSelect: "single"
       buttons: [

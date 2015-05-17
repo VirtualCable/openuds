@@ -52,6 +52,15 @@ body {
     padding-bottom: 3px;
 }
 
+.info-img {
+    width: 5em;
+}
+
+.navbar-img {
+    width: 2em;
+    margin-top: -8px;
+}
+
 .cursor-pointer {
 	cursor: pointer !important;
 }

@@ -12,6 +12,7 @@ gui.connectivity.link = (event) ->
       networks: "networks-placeholder"
     )
     gui.connectivity.transports.table
+      icon: 'transports'
       rowSelect: "single"
       container: "transports-placeholder"
       buttons: [
@@ -26,6 +27,7 @@ gui.connectivity.link = (event) ->
       onDelete: gui.methods.del(gui.connectivity.transports, gettext("Delete transport"), gettext("Transport deletion error"))
 
     gui.connectivity.networks.table
+      icon: 'networks'
       rowSelect: "single"
       container: "networks-placeholder"
       buttons: [

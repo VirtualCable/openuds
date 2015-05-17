@@ -66,11 +66,10 @@
     panelId = "panel-" + table_id
     text: api.templates.evaluate("tmpl_comp_table",
       panelId: panelId
-      icon: options.icon or "table"
+      icon: api.config.img_url + 'icons/' + (options.icon or 'maleta') + '.png'
       size: options.size or 12
       title: title
       table_id: table_id
-      icon: api.config.img_url + 'icons/' + (options.icon or 'maleta') + '.png'
     )
     panelId: panelId
     refreshSelector: "#" + panelId + " span.fa-refresh"

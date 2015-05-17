@@ -105,6 +105,7 @@ gui.servicesPools.link = (event) ->
     #             * Services pools part
     #             
     servicesPoolsTable = gui.servicesPools.table(
+      icon: 'pools'
       container: "deployed-services-placeholder"
       rowSelect: "single"
       buttons: [
@@ -146,6 +147,7 @@ gui.servicesPools.link = (event) ->
           # Cached items table
           prevCacheLogTbl = null
           cachedItemsTable = cachedItems.table(
+            icon: 'cached'
             container: "cache-placeholder_tbl"
             buttons: [
               "delete"
@@ -186,6 +188,7 @@ gui.servicesPools.link = (event) ->
           
           # Groups items table
           groupsTable = groups.table(
+            icon: 'groups'
             container: "groups-placeholder"
             rowSelect: "single"
             buttons: [
@@ -260,6 +263,7 @@ gui.servicesPools.link = (event) ->
         prevAssignedLogTbl = null
         assignedServices = new GuiElement(api.servicesPools.detail(servPool.id, "services", { permission: servPool.permission }), "services")
         assignedServicesTable = assignedServices.table(
+          icon: 'assigned'
           container: "assigned-services-placeholder_tbl"
           rowSelect: "single"
           buttons: (if info.must_assign_manually then [
@@ -305,6 +309,7 @@ gui.servicesPools.link = (event) ->
         
         # Transports items table
         transportsTable = transports.table(
+          icon: 'transports'
           container: "transports-placeholder"
           rowSelect: "single"
           buttons: [
@@ -369,6 +374,7 @@ gui.servicesPools.link = (event) ->
           
           # Publications table
           publicationsTable = publications.table(
+            icon: 'publications'
             container: "publications-placeholder"
             rowSelect: "single"
             buttons: [

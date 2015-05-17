@@ -8,27 +8,30 @@
 	    			<span class="icon-bar"></span>
 	    			<span class="icon-bar"></span>
 	  			</button>
-	  			<a href="{% url 'uds.admin.views.index' %}"><span class="navbar-brand">UDS Dashboard</span></a>
+          <a class ="navbar-brand lnk-dashboard" href="#">
+            <img alt="Universal Desktop Services" src="{% get_static_prefix %}img/udsicon.png" class="navbar-img pull-left">
+            <span>Universal Desktop Services</span>
+          </a>
 			</div>
             
           <!-- Side bar -->
            <div class="collapse navbar-collapse navbar-ex1-collapse">
               <ul class="nav navbar-nav side-nav">
-                <li><a class="lnk-dashboard" href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                <li><a class="lnk-service_providers" href="#"><i class="fa fa-desktop"></i> {% trans 'Services' %}</a></li>
-                <li><a class="lnk-authenticators" href="#"><i class="fa fa-key"></i> {% trans 'Authenticators' %}</a></li>
-                <li><a class="lnk-osmanagers" href="#"><i class="fa fa-gears"></i> Os Managers</a></li>
-                <li><a class="lnk-connectivity" href="#"><i class="fa fa-sitemap"></i> {% trans 'Connectivity' %}</a></li>
-                <li><a class="lnk-deployed_services" href=""><i class="fa fa-puzzle-piece"></i> {% trans 'Service Pools' %}</a></li>
+                <li><a class="lnk-dashboard" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/dashboard-monitor.png"/> {% trans 'Overview' %}</a></li>
+                <li><a class="lnk-service_providers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/providers.png"/> {% trans 'Services' %}</a></li>
+                <li><a class="lnk-authenticators" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/authenticators.png"/> {% trans 'Authenticators' %}</a></li>
+                <li><a class="lnk-osmanagers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/osmanagers.png"/> Os Managers</a></li>
+                <li><a class="lnk-connectivity" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/transports.png"/> {% trans 'Connectivity' %}</a></li>
+                <li><a class="lnk-deployed_services" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/pools.png"/> {% trans 'Service Pools' %}</a></li>
                 {% if admin %}
                 
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-square-o-down"></i> Tools <b class="caret"></b></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/tools.png"/> Tools <b class="caret"></b></a>
                   <ul class="dropdown-menu">
-                    <li><a class="lnk-gallery" href="#"><i class="fa fa-file-image-o"></i> {% trans 'Gallery' %}</a></li>
-                    <li><a class="lnk-reports" href=""><i class="fa fa-list-alt"></i> {% trans 'Reports' %}</a></li>
-                    <li><a class="lnk-configuration" href="#"><i class="fa fa-database"></i> {% trans 'Configuration' %}</a></li>
-                    <li><a class="lnk-clear_cache" href="#"><i class="fa fa-exclamation-triangle"></i> {% trans 'Flush cache' %}</a></li>
+                    <li><a class="lnk-gallery" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/gallery.png"/> {% trans 'Gallery' %}</a></li>
+                    <li><a class="lnk-reports" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/reports.png"/> {% trans 'Reports' %}</a></li>
+                    <li><a class="lnk-configuration" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/configuration.png"/> {% trans 'Configuration' %}</a></li>
+                    <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/flush-cache.png"/> {% trans 'Flush cache' %}</a></li>
                   </ul>
                 </li>
                 {% endif %}

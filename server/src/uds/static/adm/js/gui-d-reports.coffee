@@ -11,6 +11,7 @@ gui.reports.link = (event) ->
     gui.setLinksEvents()
     
     tableId = gui.reports.table(
+      icon: 'reports'
       container: "reports-placeholder"
       rowSelect: "single"
       buttons: [
