@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2015-05-14'
+__updated__ = '2015-05-18'
 
 
 class RDPFile(object):
@@ -255,6 +255,7 @@ class RDPFile(object):
 
         drives = self.redirectDrives and "1" or "0"
         audioMode = self.redirectAudio and "0" or "2"
+        wallpaper = self.showWallpaper and 'true' or 'false'
 
         return '''
 <?xml version="1.0" encoding="UTF-8"?>
@@ -432,7 +433,7 @@ class RDPFile(object):
     <key>UserName</key>
     <string>{username}</string>
     <key>Wallpaper</key>
-    <false/>
+    <{wallpaper}/>
     <key>WorkingDirectory</key>
     <string></string>
 </dict>
@@ -442,5 +443,6 @@ class RDPFile(object):
             audioMode=audioMode,
             host=self.address,
             domain=self.domain,
-            username=self.username
+            username=self.username,
+            wallpaper=wallpaper
         )

@@ -47,7 +47,7 @@ import logging
 import random
 import string
 
-__updated__ = '2015-05-14'
+__updated__ = '2015-05-18'
 
 
 logger = logging.getLogger(__name__)
@@ -62,8 +62,7 @@ class TRDPTransport(BaseRDPTransport):
     '''
     typeName = _('RDP Transport (tunneled)')
     typeType = 'TSRDPTransport'
-    typeDescription = _('RDP Transport for tunneled connection')
-    iconFile = 'rdp.png'
+    typeDescription = _('RDP Transport with tunneled connection')
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.RDP
 
