@@ -85,10 +85,10 @@ class LinuxRandomPassManager(LinuxOsManager):
         return randomPass
 
     def infoVal(self, service):
-        return 'rename:{0}\t{1}\t\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
+        return 'rename:{0}\t{1}\t\t{2}'.format(self.getName(service), self._userAccount, self.genPassword(service))
 
     def infoValue(self, service):
-        return 'rename\r{0}\t{1}\t\t{3}'.format(self.getName(service), self._userAccount, self.genPassword(service))
+        return 'rename\r{0}\t{1}\t\t{2}'.format(self.getName(service), self._userAccount, self.genPassword(service))
 
     def marshal(self):
         base = super(LinuxRandomPassManager, self).marshal()
