@@ -38,7 +38,7 @@ from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
 from uds.core import Module
 
-__updated__ = '2015-01-27'
+__updated__ = '2015-05-26'
 
 STORAGE_KEY = 'osmk'
 
@@ -186,7 +186,7 @@ class OSManager(Module):
 
         addEvent(userService.deployed_service, ET_LOGIN, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
 
-        log.doLog(userService, log.INFO, "User {0} has logged in", log.OSMANAGER)
+        log.doLog(userService, log.INFO, "User {0} has logged in".format(userName), log.OSMANAGER)
 
         log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
 
@@ -217,7 +217,7 @@ class OSManager(Module):
 
         addEvent(userService.deployed_service, ET_LOGOUT, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
 
-        log.doLog(userService, log.INFO, "User {0} has logged out", log.OSMANAGER)
+        log.doLog(userService, log.INFO, "User {0} has logged out".format(userName), log.OSMANAGER)
 
         log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
 

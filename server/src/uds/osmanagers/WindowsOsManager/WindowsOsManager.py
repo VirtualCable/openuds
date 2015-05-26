@@ -133,7 +133,7 @@ class WindowsOsManager(osmanagers.OSManager):
 
             log.doLog(service, level, msg, origin)
         except Exception:
-            logger.exception('LinuxOs Manager message log: ')
+            logger.exception('WindowsOs Manager message log: ')
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
     def process(self, service, msg, data, options):
