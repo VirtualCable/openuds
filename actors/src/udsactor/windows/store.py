@@ -83,12 +83,13 @@ def readConfig():
         return None
 
 
-def writeConfig(data):
+def writeConfig(data, fixPermissions=True):
     try:
         key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
     except Exception:
         key = wreg.CreateKeyEx(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
-        fixRegistryPermissions(key.handle)
+        if fixPermissions is True:
+            fixRegistryPermissions(key.handle)
 
     wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(cPickle.dumps(data)))  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable

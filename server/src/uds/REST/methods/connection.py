@@ -199,6 +199,9 @@ class Connection(Handler):
         if len(self._args) == 0:
             # Return list of services/transports
             return self.serviceList()
+        if len(self._args) == 1:
+            # Maybe we are requesting a ticket content?
+            return self.getTicketContent()
 
         if len(self._args) == 2:
             # Return connection & validate access for service/transport

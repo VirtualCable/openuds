@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-27'
+__updated__ = '2015-05-25'
 
 
 class TicketStore(UUIDModel):
@@ -78,7 +78,7 @@ class TicketStore(UUIDModel):
     @staticmethod
     def generateUuid():
         # more secure is this:
-        # ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(40))
+        # ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(40))
         return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(40))
 
     @staticmethod

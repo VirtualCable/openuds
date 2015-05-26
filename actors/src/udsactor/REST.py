@@ -183,9 +183,13 @@ class Api(object):
         res = self._request(url)['result']
         logger.debug('Got response parameters: {}'.format(res))
         self.uuid, self.mac = res[0:2]
-        self.idle = int(res[2])
-        if self.idle < 30:
-            self.idle = None  # No values under 30 seconds are allowed :)
+        # Optional idle parameter
+        try:
+            self.idle = int(res[2])
+            if self.idle < 30:
+                self.idle = None  # No values under 30 seconds are allowed :)
+        except Exception:
+            self.idle = None
 
         return self.uuid
 

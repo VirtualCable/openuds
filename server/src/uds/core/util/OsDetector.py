@@ -93,9 +93,9 @@ def getOsFromUA(ua):
     Basic OS Client detector (very basic indeed :-))
     '''
     if ua is None:
-        os = DEFAULT_OS
-    else:
-        os = 'Unknown'
+        ua = 'Unknown'
+
+    os = 'Unknown'
 
     res = DictAsObj({'OS': os, 'Version': '0.0', 'Browser': 'unknown'})
     for os in knownOss:
@@ -106,26 +106,30 @@ def getOsFromUA(ua):
         except Exception:
             pass
 
+    match = None
+
     for ruleKey, ruleValue in browserRules.iteritems():
         must, mustNot = ruleValue
 
         for mustRe in browsersREs[must]:
             match = mustRe.search(ua)
-            if match is not None:
-                # Check against no machin rules
-                for mustNotREs in mustNot:
-                    for cre in browsersREs[mustNotREs]:
-                        if cre.search(ua) is not None:
-                            match = None
-                            break
-                    if match is None:
+            if match is None:
+                continue
+            # Check against no machin rules
+            for mustNotREs in mustNot:
+                for cre in browsersREs[mustNotREs]:
+                    if cre.search(ua) is not None:
+                        match = None
                         break
+                if match is None:
+                    break
             if match is not None:
                 break
         if match is not None:
             break
+
     if match is not None:
-        res.Browser = ruleKey
+        res.Browser = ruleKey  # pylint: disable=undefined-loop-variable
         res.Version = match.groups(1)[0]
 
     return res

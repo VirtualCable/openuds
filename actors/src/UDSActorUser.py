@@ -241,7 +241,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
     def logoff(self):
         self.counter += 1
-        print("Loggof --", self.counter)
+        # print("Logofff --", self.counter)
 
     def information(self, info):
         '''

@@ -39,6 +39,7 @@ from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.core.managers import cryptoManager
+from uds.models import TicketStore
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import UserService
@@ -120,6 +121,21 @@ class Actor(Handler):
 
         return services[0]
 
+    def getTicket(self):
+        '''
+        Processes get requests in order to obtain a ticket content
+        GET /rest/ticket/[ticketId]
+        '''
+        logger.debug("Ticket args for GET: {0}".format(self._args))
+
+        if len(self._args) != 2:
+            raise RequestError('Invalid request')
+
+        try:
+            return Actor.result(TicketStore.get(self._args[1], invalidate=False))  # TODO: Remove False after development
+        except Exception:
+            return Actor.result({})
+
     def get(self):
         '''
         Processes get requests
@@ -128,6 +144,12 @@ class Actor(Handler):
 
         if len(self._args) < 1:
             raise RequestError('Invalid request')
+
+        if self._args[0] == 'ticket':
+            return self.getTicket()
+
+        if self._args[0] == 'testn':  # Test, but without master key
+            return self.test()
 
         # if path is .../test (/rest/actor/[test|init]?key=.....&version=....&id=....)  version & ids are only used on init
         if self._args[0] in ('test', 'init'):

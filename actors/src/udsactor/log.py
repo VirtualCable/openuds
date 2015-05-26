@@ -80,7 +80,7 @@ class Logger(object):
         self.log(WARN, message)
 
     def info(self, message):
-        self.log(WARN, message)
+        self.log(INFO, message)
 
     def error(self, message):
         self.log(ERROR, message)
