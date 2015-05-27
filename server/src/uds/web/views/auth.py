@@ -58,7 +58,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2015-04-30'
+__updated__ = '2015-05-27'
 
 
 @csrf_exempt
@@ -182,7 +182,6 @@ def ticketAuth(request, ticketId):
         # Add groups to user (replace existing groups)
         usr.groups = grps
 
-        # Right now, we assume that user supports java, let's see how this works
         # Force cookie generation
         webLogin(request, None, usr, password)
 
@@ -203,7 +202,7 @@ def ticketAuth(request, ticketId):
             else:
                 link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 
-            return render_to_response(
+            response = render_to_response(
                 theme.template('simpleLauncher.html'),
                 {
                     'link': link

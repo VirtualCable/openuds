@@ -42,7 +42,6 @@ from uds.models import TicketStore
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.ui import theme
 from uds.core.util.model import processUuid
-from uds.core.util import OsDetector
 from uds.models import Transport, Image
 from uds.core.util import html
 from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReachedError
@@ -54,7 +53,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-05-13'
+__updated__ = '2015-05-27'
 
 
 @webLoginRequired(admin=False)

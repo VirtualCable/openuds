@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2015-05-06'
+__updated__ = '2015-05-27'
 
 logger = logging.getLogger(__name__)
 
@@ -361,7 +361,12 @@ class UserServiceManager(object):
         return None
 
     def getAssignationForUser(self, ds, user):
-        assignedUserService = self.getExistingAssignationForUser(ds, user)
+
+        if ds.service.getInstance().spawnsNew is False:
+            assignedUserService = self.getExistingAssignationForUser(ds, user)
+        else:
+            assignedUserService = None
+
         # If has an assigned user service, returns this without any more work
         if assignedUserService is not None:
             return assignedUserService

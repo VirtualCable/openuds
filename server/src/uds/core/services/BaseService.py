@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core import Module
 
-__updated__ = '2015-05-12'
+__updated__ = '2015-05-27'
 
 
 class Service(Module):
@@ -160,6 +160,10 @@ class Service(Module):
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
     allowedProtocols = ()
+
+    # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
+    # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
+    spawnsNew = False
 
     def __init__(self, environment, parent, values=None):
         '''
