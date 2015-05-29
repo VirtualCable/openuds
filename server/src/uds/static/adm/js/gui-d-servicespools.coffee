@@ -51,6 +51,17 @@ gui.servicesPools.link = (event) ->
             $osmFld.prop "disabled", "disabled"
           else
             $osmFld.prop "disabled", false
+
+            api.osmanagers.overview (osm) ->
+              $osmFld.empty()
+              for d in osm
+                for st in d.servicesTypes
+                  if st in data.info.servicesTypeProvided
+                    $osmFld.append('<option value="' + d.id + '">' + d.name + '</option>')
+                    break
+              $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
+              return
+
           if data.info.uses_cache is false
             $cacheFlds.prop "disabled", "disabled"
           else
@@ -323,7 +334,7 @@ gui.servicesPools.link = (event) ->
                 gui.doLog "Data Received: ", servPool, data
                 valid = []
                 for i in data
-                  if i.allowedProviders.length == 0 or (servPool.parent_type in i.allowedProviders)
+                  if (i.protocol in servPool.info.allowedProtocols)
                     valid.push(i)
                 modalId = gui.launchModal(gettext("Add transport"), api.templates.evaluate(tmpl,
                   transports: valid

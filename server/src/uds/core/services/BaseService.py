@@ -34,8 +34,10 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core import Module
+from uds.core.transports import protocols
+from . import types
 
-__updated__ = '2015-05-27'
+__updated__ = '2015-05-28'
 
 
 class Service(Module):
@@ -159,11 +161,15 @@ class Service(Module):
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
-    allowedProtocols = ()
+    allowedProtocols = protocols.GENERIC
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
     spawnsNew = False
+
+    # : 'kind' of services that this service provides:
+    # : For example, VDI, VAPP, ...
+    servicesTypeProvided = types.ALL
 
     def __init__(self, environment, parent, values=None):
         '''

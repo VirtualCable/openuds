@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 
 import logging
 
-__updated__ = '2015-05-06'
+__updated__ = '2015-05-28'
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +63,6 @@ class Transport(Module):
     # Macintosh
     # Linux
     supportedOss = OsDetector.desktopOss  # Supported operating systems
-
-    # If this transport is for an specific provider, this will be an non empty tuple/list
-    allowedProviders = ()
 
     # If this transport is visible via Web, via Thin Client or both
     webTransport = False

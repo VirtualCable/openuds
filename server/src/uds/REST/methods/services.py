@@ -68,6 +68,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'cache_tooltip': _(info.cacheTooltip),
             'cache_tooltip_l2': _(info.cacheTooltip_L2),
             'needs_manager': info.needsManager,
+            'allowedProtocols': info.allowedProtocols,
+            'servicesTypeProvided': info.servicesTypeProvided,
             'must_assign_manually': info.mustAssignManually,
         }
 
@@ -78,12 +80,13 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
         '''
+        itemType = item.getType()
         retVal = {
             'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
             'type': item.data_type,
-            'type_name': _(item.getType().name()),
+            'type_name': _(itemType.name()),
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service=item).count(),
             'maintenance_mode': item.provider.maintenance_mode,

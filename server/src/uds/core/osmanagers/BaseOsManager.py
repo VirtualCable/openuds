@@ -33,12 +33,13 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
+from uds.core.services import types as serviceTypes
 from uds.core.util.State import State
 from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
 from uds.core import Module
 
-__updated__ = '2015-05-26'
+__updated__ = '2015-05-28'
 
 STORAGE_KEY = 'osmk'
 
@@ -60,6 +61,10 @@ class OSManager(Module):
     # If true, this os manager  will be invoked with every user service assigned, but not used
     # The interval is defined as a global config
     processUnusedMachines = False
+
+    # : Type of services for which this OS Manager is designed
+    # : Defaults to all. (list or tuple)
+    servicesType = serviceTypes.ALL
 
     def __init__(self, environment, values):
         super(OSManager, self).__init__(environment, values)

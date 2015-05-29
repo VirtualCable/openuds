@@ -46,3 +46,5 @@ NX = 'nx'
 X11 = 'x11'
 X2GO = 'x2go'
 OTHER = 'other'
+
+GENERIC = (RDP, RGS, VNC, NX, X11, X2GO, OTHER)

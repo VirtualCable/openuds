@@ -33,6 +33,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 from uds.core import services
+from uds.core.services import types as serviceTypes
 from uds.core.util.AutoAttributes import AutoAttributes
 from uds.core.ui.UserInterface import gui
 from IPMachineDeployed import IPMachineDeployed
@@ -62,12 +63,14 @@ class IPMachinesService(services.Service):
 
     deployedType = IPMachineDeployed
 
+    servicesTypeProvided = (serviceTypes.VDI,)
+
     def __init__(self, environment, parent, values=None):
         super(IPMachinesService, self).__init__(environment, parent, values)
         if values is None or values.get('ipList', None) is None:
             self._ips = []
         else:
-            self._ips = list(set(values['ipList']))  # Allow duplicates right now
+            self._ips = list(values['ipList'])  # Allow duplicates right now
             self._ips.sort()
 
     def valuesDict(self):

@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from django.conf import settings
+from uds.core.services import types as serviceTypes
 from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
 from uds.core.util.State import State
@@ -51,6 +52,8 @@ class LinuxOsManager(osmanagers.OSManager):
     typeType = 'LinuxManager'
     typeDescription = _('Os Manager to control linux virtual machines (basically renames machine and notify state)')
     iconFile = 'losmanager.png'
+
+    servicesType = (serviceTypes.VDI,)
 
     onLogout = gui.ChoiceField(
         label=_('On Logout'),

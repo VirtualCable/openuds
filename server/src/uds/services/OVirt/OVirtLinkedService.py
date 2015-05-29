@@ -31,7 +31,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from django.utils.translation import ugettext_noop as _, ugettext
-from uds.core.services import Service
+from uds.core.transports import protocols
+from uds.core.services import Service, types as serviceTypes
 from .OVirtPublication import OVirtPublication
 from .OVirtLinkedDeployment import OVirtLinkedDeployment
 from .Helpers import oVirtHelpers
@@ -40,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2015-05-09'
+__updated__ = '2015-05-29'
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +94,9 @@ class OVirtLinkedService(Service):
     publicationType = OVirtPublication
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = OVirtLinkedDeployment
+
+    allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
+    servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
     machine = gui.ChoiceField(label=_("Base Machine"), order=1, tooltip=_('Service base machine'), required=True)

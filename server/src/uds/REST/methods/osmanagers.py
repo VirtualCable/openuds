@@ -66,6 +66,7 @@ class OsManagers(ModelHandler):
             'name': osm.name,
             'deployed_count': osm.deployedServices.count(),
             'type': type_.type(),
+            'servicesTypes': type_.servicesType,
             'comments': osm.comments,
             'permission': permissions.getEffectivePermission(self._user, osm)
         }
