@@ -132,7 +132,7 @@ class Actor(Handler):
             raise RequestError('Invalid request')
 
         try:
-            return Actor.result(TicketStore.get(self._args[1], invalidate=False))  # TODO: Remove False after development
+            return Actor.result(TicketStore.get(self._args[1], invalidate=True))
         except Exception:
             return Actor.result({})
 
@@ -201,8 +201,12 @@ class Actor(Handler):
             logger.debug('Setting comms url to {}'.format(data))
             service.setCommsUrl(data)
             return Actor.result('ok')
+        elif message == 'version':
+            version = self._params.get('version', 'unknown')
+            logger.debug('Got notified version {}'.format(version))
+            service.setProperty('actor_version', version)
 
-        # Preprocess some messages, common to all clients, such as "log"
+        # "Cook" some messages, common to all clients, such as "log"
         if message == 'log':
             logger.debug(self._params)
             data = '\t'.join((self._params.get('message'), six.text_type(self._params.get('level', 10000))))

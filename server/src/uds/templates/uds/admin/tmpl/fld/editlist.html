@@ -18,7 +18,7 @@
     var idHidden = '#' + id + 'hdn';
     $(idTxt).tooltip({
         placement: 'bottom',
-        title: "{% trans 'Click to edit list' %}",
+        title: "{% endverbatim %}{% trans 'Click to edit list' %}{% verbatim %}",
         delay: { show: 500, hide: 100 },
     });
     $(idTxt).click(function(){

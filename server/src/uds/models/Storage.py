@@ -32,14 +32,14 @@
 '''
 
 from __future__ import unicode_literals
-
-__updated__ = '2014-04-24'
-
 from django.db import models
 from uds.core.db.LockingManager import LockingManager
 
-
 import logging
+
+
+__updated__ = '2015-06-01'
+
 
 logger = logging.getLogger(__name__)
 
@@ -63,5 +63,5 @@ class Storage(models.Model):
         app_label = 'uds'
 
     def __unicode__(self):
-        return u"{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, str.join('/', [self.attr1]))
+        return u"{0} {1} = {2}, {3}".format(self.owner, self.key, self.data, '/'.join([self.attr1]))
 

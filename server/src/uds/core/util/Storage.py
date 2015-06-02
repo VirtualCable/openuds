@@ -101,6 +101,12 @@ class Storage(object):
             v = cPickle.loads(v)
         return v
 
+    def getPickleByAttr1(self, attr1):
+        try:
+            return cPickle.loads(dbStorage.objects.get(owner=self._owner, attr1=attr1).data.decode(Storage.CODEC))  # @UndefinedVariable
+        except Exception:
+            return None
+
     def remove(self, skey):
         try:
             key = self.__getKey(skey)
@@ -122,9 +128,23 @@ class Storage(object):
 
     def locateByAttr1(self, attr1):
         res = []
-        for v in dbStorage.objects.filter(attr1=attr1):  # @UndefinedVariable
+        if isinstance(attr1, (list, tuple)):
+            query = dbStorage.objects.filter(owner=self._owner, attr1_in=attr1)  # @UndefinedVariable
+        else:
+            query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
+
+        for v in query:
             res.append(v.data.decode(Storage.CODEC))
         return res
+
+    def filterPickle(self, attr1=None):
+        if attr1 is None:
+            query = dbStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
+        else:
+            query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
+
+        for v in query:  # @UndefinedVariable
+            yield (v.key, cPickle.loads(v.data.decode(Storage.CODEC)), v.attr1)
 
     @staticmethod
     def delete(owner=None):
