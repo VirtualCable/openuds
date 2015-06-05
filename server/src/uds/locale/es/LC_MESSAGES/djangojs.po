@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # , 2014
 # Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015
@@ -13,15 +13,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-05 10:22+0200\n"
-"PO-Revision-Date: 2015-02-10 08:30+0000\n"
+"POT-Creation-Date: 2015-06-05 12:34+0200\n"
+"PO-Revision-Date: 2015-06-05 10:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
-"es/)\n"
-"Language: es\n"
+"Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: static/adm/js/dataTables.bootstrap.js:6 static/tmp_js/gui.js:19
@@ -522,9 +521,7 @@ msgstr "Publicar en creación"
 
 #: static/tmp_js/gui-d-servicespools.js:409
 msgid "If selected, will initiate the publication inmediatly after creation"
-msgstr ""
-"Si se selecciona, se iniciará la publicación inmediatamente después de la "
-"creación"
+msgstr "Si se selecciona, se iniciará la publicación inmediatamente después de la creación"
 
 #: static/tmp_js/gui-d-servicespools.js:421 static/tmp_js/gui.js:40
 msgid "Edit"
@@ -697,8 +694,7 @@ msgstr "Por favor, introduzca al menos {0} caracteres."
 
 #: static/tmp_js/gui.js:237
 msgid "Please enter a value between {0} and {1} characters long."
-msgstr ""
-"Por favor, introduzca un valor de una longitud entre {0} y {1} caracteres."
+msgstr "Por favor, introduzca un valor de una longitud entre {0} y {1} caracteres."
 
 #: static/tmp_js/gui.js:238
 msgid "Please enter a value between {0} and {1}."

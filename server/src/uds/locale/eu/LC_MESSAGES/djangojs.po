@@ -1,21 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# 
+# Translators:
+# Adolfo Gómez <dkmaster@dkmon.com>, 2015
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-05 10:22+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2015-06-05 12:34+0200\n"
+"PO-Revision-Date: 2015-06-05 10:46+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"Language-Team: Basque (http://www.transifex.com/projects/p/openuds/language/eu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: static/adm/js/dataTables.bootstrap.js:6 static/tmp_js/gui.js:19
@@ -24,83 +24,83 @@ msgstr ""
 
 #: static/tmp_js/api-tools.js:276
 msgid "Sunday"
-msgstr ""
+msgstr "Igande"
 
 #: static/tmp_js/api-tools.js:276
 msgid "Monday"
-msgstr ""
+msgstr "Astelehen"
 
 #: static/tmp_js/api-tools.js:276
 msgid "Tuesday"
-msgstr ""
+msgstr "Astearte"
 
 #: static/tmp_js/api-tools.js:276
 msgid "Wednesday"
-msgstr ""
+msgstr "Asteazken"
 
 #: static/tmp_js/api-tools.js:276
 msgid "Thursday"
-msgstr ""
+msgstr "Osteguna"
 
 #: static/tmp_js/api-tools.js:276
 msgid "Friday"
-msgstr ""
+msgstr "Ostirala"
 
 #: static/tmp_js/api-tools.js:276
 msgid "Saturday"
-msgstr ""
+msgstr "Larunbata"
 
 #: static/tmp_js/api-tools.js:278
 msgid "January"
-msgstr ""
+msgstr "Urtarrila"
 
 #: static/tmp_js/api-tools.js:278
 msgid "February"
-msgstr ""
+msgstr "Otsaila"
 
 #: static/tmp_js/api-tools.js:278
 msgid "March"
-msgstr ""
+msgstr "Martxoa"
 
 #: static/tmp_js/api-tools.js:278
 msgid "April"
-msgstr ""
+msgstr "Apirila"
 
 #: static/tmp_js/api-tools.js:278
 msgid "May"
-msgstr ""
+msgstr "Maiatza"
 
 #: static/tmp_js/api-tools.js:278
 msgid "June"
-msgstr ""
+msgstr "Ekaina"
 
 #: static/tmp_js/api-tools.js:278
 msgid "July"
-msgstr ""
+msgstr "Uztaila"
 
 #: static/tmp_js/api-tools.js:278
 msgid "August"
-msgstr ""
+msgstr "Abuztua"
 
 #: static/tmp_js/api-tools.js:278
 msgid "September"
-msgstr ""
+msgstr "Iraila"
 
 #: static/tmp_js/api-tools.js:278
 msgid "October"
-msgstr ""
+msgstr "Urria"
 
 #: static/tmp_js/api-tools.js:278
 msgid "November"
-msgstr ""
+msgstr "Azaroa"
 
 #: static/tmp_js/api-tools.js:278
 msgid "December"
-msgstr ""
+msgstr "Abendua"
 
 #: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:10
 msgid "Test"
-msgstr ""
+msgstr "Proba"
 
 #: static/tmp_js/gui-d-authenticators.js:42
 msgid "Search error"
@@ -108,7 +108,7 @@ msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:51
 msgid "Accept"
-msgstr ""
+msgstr "onar ezazu"
 
 #: static/tmp_js/gui-d-authenticators.js:146
 msgid "Edit group"
@@ -177,7 +177,7 @@ msgstr ""
 #: static/tmp_js/gui-d-authenticators.js:325
 #: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:82
 msgid "User"
-msgstr ""
+msgstr "erabiltzaile"
 
 #: static/tmp_js/gui-d-authenticators.js:325
 msgid "Users found"
