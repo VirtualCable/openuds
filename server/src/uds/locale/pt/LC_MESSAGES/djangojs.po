@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-02 22:05+0200\n"
+"POT-Creation-Date: 2015-06-05 10:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -584,7 +584,6 @@ msgid "Revoke"
 msgstr "Revogar"
 
 #: static/tmp_js/gui-permissions.js:131
-#| msgid "Permissions"
 msgid "Permissions for"
 msgstr "Permissões para"
 
@@ -737,7 +736,6 @@ msgid "Sucess"
 msgstr "Sucesso"
 
 #: static/tmp_js/uds-client.js:43
-#| msgid "Error accessing service: "
 msgid "Contacting service..."
 msgstr "Entrar em contato com o serviço..."
 

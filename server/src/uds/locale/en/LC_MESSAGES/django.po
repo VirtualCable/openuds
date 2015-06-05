@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-02 22:05+0200\n"
+"POT-Creation-Date: 2015-06-05 10:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1997,35 +1997,35 @@ msgstr ""
 msgid "This service provides access to POWERED-ON Machines by ip"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:27
+#: services/RDS_enterprise/RDSProvider.py:28
 msgid "RDS Provider (Experimental)"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:29
+#: services/RDS_enterprise/RDSProvider.py:30
 msgid "Microsoft RDS based provider"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:33
+#: services/RDS_enterprise/RDSProvider.py:34
 msgid "List of servers"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:35
 msgid "User list for mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:35
+#: services/RDS_enterprise/RDSProvider.py:36
 msgid "User's password"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:35
+#: services/RDS_enterprise/RDSProvider.py:36
 msgid "Default password for users in list mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:58
+#: services/RDS_enterprise/RDSProvider.py:59
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:92
+#: services/RDS_enterprise/RDSProvider.py:89
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."

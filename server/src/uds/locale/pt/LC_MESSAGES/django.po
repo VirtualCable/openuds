@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-02 22:05+0200\n"
+"POT-Creation-Date: 2015-06-05 10:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1545,12 +1545,10 @@ msgstr ""
 "Ator de UDS para openSUSE,... Máquinas para Linux <b>(requer python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:29
-#| msgid "OS Manager"
 msgid "RDS OS Manager"
 msgstr "RDS OS Manager"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
-#| msgid "Cluster to contain services"
 msgid "Os Manager to control RDS provided services"
 msgstr "Gerente de sistema operacional para controle RDS fornecido serviços"
 
@@ -2092,37 +2090,36 @@ msgstr "Máquinas físicas, acessadas por ip"
 msgid "This service provides access to POWERED-ON Machines by ip"
 msgstr "Este serviço fornece acesso a POWERED-ON máquinas por ip"
 
-#: services/RDS_enterprise/RDSProvider.py:27
+#: services/RDS_enterprise/RDSProvider.py:28
 msgid "RDS Provider (Experimental)"
 msgstr "Provedor RDS (Experimental)"
 
-#: services/RDS_enterprise/RDSProvider.py:29
+#: services/RDS_enterprise/RDSProvider.py:30
 msgid "Microsoft RDS based provider"
 msgstr "Provedor Microsoft RDS com base"
 
-#: services/RDS_enterprise/RDSProvider.py:33
+#: services/RDS_enterprise/RDSProvider.py:34
 msgid "List of servers"
 msgstr "Lista de servidores"
 
-#: services/RDS_enterprise/RDSProvider.py:34
-#| msgid "Users List for {}"
+#: services/RDS_enterprise/RDSProvider.py:35
 msgid "User list for mapping"
 msgstr "Lista de usuário para mapeamento"
 
-#: services/RDS_enterprise/RDSProvider.py:35
-#| msgid "password"
+#: services/RDS_enterprise/RDSProvider.py:36
 msgid "User's password"
 msgstr "Senha do usuário"
 
-#: services/RDS_enterprise/RDSProvider.py:35
+#: services/RDS_enterprise/RDSProvider.py:36
 msgid "Default password for users in list mapping"
 msgstr "Senha padrão para os usuários em mapeamento da lista"
 
-#: services/RDS_enterprise/RDSProvider.py:58
+#: services/RDS_enterprise/RDSProvider.py:59
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
-msgstr "Erro: O usuário {} em {} host está sendo usado e não pode ser removido agora"
+msgstr ""
+"Erro: O usuário {} em {} host está sendo usado e não pode ser removido agora"
 
-#: services/RDS_enterprise/RDSProvider.py:92
+#: services/RDS_enterprise/RDSProvider.py:89
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -2137,7 +2134,6 @@ msgid "RDS RemoteAPP based service"
 msgstr "Serviço de RemoteAPP RDS com base"
 
 #: services/RDS_enterprise/RDSService.py:45
-#| msgid "Application alias"
 msgid "Application path"
 msgstr "Caminho do aplicativo"
 
@@ -2562,7 +2558,6 @@ msgid "Used services graph"
 msgstr "Gráfico de utilizar serviços"
 
 #: templates/uds/admin/tmpl/fld/editlist.html:22
-#| msgid "Back to services list"
 msgid "Click to edit list"
 msgstr "Clique para editar a lista"
 
@@ -3431,7 +3426,6 @@ msgid "RDP Transport (tunneled)"
 msgstr "Transporte de RDP (um túnel)"
 
 #: transports/RDP/TRDPTransport.py:65
-#| msgid "RDP Transport for tunneled connection"
 msgid "RDP Transport with tunneled connection"
 msgstr "Transporte de RDP com ligação em túnel"
 
@@ -3440,22 +3434,18 @@ msgid "Remote Desktop Protocol"
 msgstr "Protocolo de área de trabalho remoto"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
-#| msgid "RGS Transport (direct)"
 msgid "RDS Transport (direct)"
 msgstr "Transporte de RDS (direto)"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-#| msgid "RGS Transport for direct connection"
 msgid "RDS Transport for direct connection"
 msgstr "Transporte de RDS para conexão direta"
 
 #: transports/RDS_enterprise/TRDSTransport.py:63
-#| msgid "RGS Transport (tunneled)"
 msgid "RDS Transport (tunneled)"
 msgstr "Transporte de RDS (um túnel)"
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-#| msgid "RGS Transport for tunneled connection"
 msgid "RDS Transport for tunneled connection"
 msgstr "Transporte de RDS para ligação em túnel"
 
