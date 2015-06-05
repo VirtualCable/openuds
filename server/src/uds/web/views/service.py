@@ -53,7 +53,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-05-27'
+__updated__ = '2015-06-05'
 
 
 @webLoginRequired(admin=False)
@@ -135,7 +135,7 @@ def clientEnabler(request, idService, idTransport):
         error += ' (code {0:04X})'.format(e.code)
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "{}"'.format(idService))
-        error = _('Maximum number of services reached. Contact your administrator')
+        error = errors.errorString(errors.MAX_SERVICES_REACHED)
     except Exception as e:
         logger.exception('Error')
         error = six.text_type(e)

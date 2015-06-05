@@ -59,6 +59,7 @@ LANGUAGES = (
   ('de', ugettext('German')),
   ('pt', ugettext('Portuguese')),
   ('it', ugettext('Italian')),
+  ('eu', ugettext('Basque')),
 )
 
 LANGUAGE_COOKIE_NAME = 'uds_lang'
