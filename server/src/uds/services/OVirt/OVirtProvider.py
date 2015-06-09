@@ -45,7 +45,7 @@ from client import oVirtClient
 
 import logging
 
-__updated__ = '2015-05-09'
+__updated__ = '2015-06-09'
 
 logger = logging.getLogger(__name__)
 
@@ -136,6 +136,9 @@ class Provider(ServiceProvider):
         '''
 
         return self.__getApi().test()
+
+    def testValidVersion(self):
+        return self.__getApi().isFullyFunctionalVersion()
 
     def getMachines(self, force=False):
         '''
@@ -411,7 +414,8 @@ class Provider(ServiceProvider):
         # return [True, _('Nothing tested, but all went fine..')]
         ov = Provider(env, data)
         if ov.testConnection() is True:
-            return [True, _('Connection test successful')]
+            return ov.testValidVersion()
+
         return [False, _("Connection failed. Check connection params")]
 
 

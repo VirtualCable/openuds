@@ -37,7 +37,7 @@ from uds.core.util import log
 import cPickle
 import logging
 
-__updated__ = '2015-05-09'
+__updated__ = '2015-06-09'
 
 
 logger = logging.getLogger(__name__)
@@ -222,7 +222,7 @@ class OVirtLinkedDeployment(UserDeployment):
             self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
 
     def __checkMachineState(self, chkState):
-        logger.debug('Checking that state of machine {0} is {1}'.format(self._vmid, chkState))
+        logger.debug('Checking that state of machine {} ({}) is {}'.format(self._vmid, self._name, chkState))
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)

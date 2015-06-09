@@ -10,7 +10,7 @@ from ovirtsdk.api import API
 import threading
 import logging
 
-__updated__ = '2015-05-09'
+__updated__ = '2015-06-09'
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +89,17 @@ class Client(object):
             return False
         finally:
             lock.release()
+
+    def isFullyFunctionalVersion(self):
+        try:
+            lock.acquire(True)
+            version = self.__getApi().get_product_info().version
+            if version.major == 3 and version.minor == 5:  # 3.5 fails if disks are in request
+                return [False, 'Version 3.5 is not fully supported due a BUG in oVirt REST API (but partially supported. See UDS Documentation)']
+        finally:
+            lock.release()
+
+        return [True, 'Test successfully passed']
 
     def getVms(self, force=False):
         '''
@@ -367,9 +378,12 @@ class Client(object):
             # Create disks description to be created in specified storage domain, one for each disk
             sd = params.StorageDomains(storage_domain=[params.StorageDomain(id=storageId)])
 
+            version = api.get_product_info().version
+            fix = version.major == 3 and version.minor == 5  # 3.5 fails if disks are in request
+
             dsks = []
             for dsk in vm.disks.list():
-                dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd, name='test', alias='test'))
+                dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd, alias=dsk.get_alias()))
                 # dsks.append(dsk)
 
             disks = params.Disks(disk=dsks)
@@ -378,10 +392,14 @@ class Client(object):
             # display = params.Display(type_=displayType)
 
             # TODO: Restore proper template creation mechanism
+            if fix is True:
+                vm = params.VM(id=vm.get_id())
+            else:
+                vm = params.VM(id=vm.get_id(), disks=disks)
+
             template = params.Template(
                 name=name,
-                # vm=params.VM(id=vm.get_id(), disks=disks),
-                vm=params.VM(id=vm.get_id()),
+                vm=vm,
                 cluster=params.Cluster(id=cluster.get_id()),
                 description=comments
             )
@@ -438,7 +456,7 @@ class Client(object):
             Id of the machine being created form template
         '''
         logger.debug('Deploying machine with name "{0}" from template {1} at cluster {2} with display {3}, memory {4} and guaranteed {5}'.format(
-                        name, templateId, clusterId, displayType, memoryMB, guaranteedMB))
+            name, templateId, clusterId, displayType, memoryMB, guaranteedMB))
         try:
             lock.acquire(True)
 
