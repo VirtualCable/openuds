@@ -32,22 +32,30 @@
 '''
 
 # Make sure that all services are "available" at service startup
-import uds.services  # to make sure that the packages are initialized at this point
-import uds.auths  # To make sure that the packages are initialized at this point
-import uds.osmanagers  # To make sure that packages are initialized at this point
-import uds.transports  # To make sure that packages are initialized at this point
-import uds.dispatchers
-import uds.models
-import uds.plugins  # To make sure plugins are loaded on memory
-import uds.REST  # To make sure REST initializes all what it needs
+from . import services  # to make sure that the packages are initialized at this point
+from . import auths  # To make sure that the packages are initialized at this point
+from . import osmanagers  # To make sure that packages are initialized at this point
+from . import transports  # To make sure that packages are initialized at this point
+from . import dispatchers
+from . import models
+from . import plugins  # To make sure plugins are loaded on memory
+from . import REST  # To make sure REST initializes all what it needs
 
 import uds.xmlrpc  # To make actor live
+
+from django.db.backends.signals import connection_created
+from django.dispatch import receiver
+import math
+
 
 from django.apps import AppConfig
 
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+__updated__ = '2015-06-09'
 
 
 class UDSAppConfig(AppConfig):
@@ -63,10 +71,6 @@ default_app_config = 'uds.UDSAppConfig'
 
 
 # Sets up several sqlite non existing methods
-from django.db.backends.signals import connection_created
-from django.dispatch import receiver
-import math
-
 
 @receiver(connection_created)
 def extend_sqlite(connection=None, **kwargs):
