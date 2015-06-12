@@ -193,7 +193,7 @@ class PublicationManager(object):
             PublicationManager._manager = PublicationManager()
         return PublicationManager._manager
 
-    def publish(self, servicePool):  # pylint: disable=no-self-use
+    def publish(self, servicePool, changeLog=None):  # pylint: disable=no-self-use
         '''
         Initiates the publication of a service pool, or raises an exception if this cannot be done
         :param servicePool: Service pool object (db object)
@@ -208,6 +208,8 @@ class PublicationManager(object):
             now = getSqlDatetime()
             dsp = None
             dsp = servicePool.publications.create(state=State.LAUNCHING, state_date=now, publish_date=now, revision=servicePool.current_pub_revision)
+            if changeLog:
+                dsp.changelog.create(revision=servicePool.current_pub_revision, log=changeLog)
             DelayedTaskRunner.runner().insert(PublicationLauncher(dsp), 4, PUBTAG + str(dsp.id))
         except Exception as e:
             logger.debug('Caught exception at publish: {0}'.format(e))

@@ -10,7 +10,7 @@ from ovirtsdk.api import API
 import threading
 import logging
 
-__updated__ = '2015-06-09'
+__updated__ = '2015-06-12'
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class Client(object):
                 pass
         try:
             cached_api_key = aKey
-            cached_api = API(url='https://' + self._host + '/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
+            cached_api = API(url='https://' + self._host + '/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=False)
             return cached_api
         except:
             logger.exception('Exception connection ovirt at {0}'.format(self._host))

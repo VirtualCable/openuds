@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 from datetime import timedelta
 import logging
 
-__updated__ = '2015-05-01'
+__updated__ = '2015-06-12'
 
 
 logger = logging.getLogger(__name__)
@@ -326,14 +326,14 @@ class DeployedService(UUIDModel):
         # And generate a single list without duplicates
         return list(set([r for r in list1] + [r for r in list2]))
 
-    def publish(self):
+    def publish(self, changeLog=None):
         '''
         Launches the publication of this deployed service.
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         '''
         from uds.core.managers.PublicationManager import PublicationManager
-        PublicationManager.manager().publish(self)
+        PublicationManager.manager().publish(self, changeLog)
 
     def unpublish(self):
         '''

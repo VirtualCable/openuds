@@ -37,10 +37,11 @@ from django.utils.translation import ugettext, ugettext_noop as _
 from .base import StatsReport
 
 
-__updated__ = '2015-04-28'
+__updated__ = '2015-06-10'
 
 
-class StatsReportUsage(StatsReport):
+class StatsReportUsage(object):  # Disabled from being used
+    # class StatsReportUsage(StatsReport):
     name = _('Usage stats')  # Report name
     description = _('Statistics of platform use')  # Report description
     uuid = '9ae54172-ed48-11e4-b8e1-10feed05884b'

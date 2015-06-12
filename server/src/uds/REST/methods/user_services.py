@@ -274,6 +274,8 @@ class Publications(DetailHandler):
         Custom method "publish", provided to initiate a publication of a deployed service
         :param parent: Parent service pool
         '''
+        changeLog = self._params['changelog'] if 'changelog' in self._params else None
+
         if permissions.checkPermissions(self._user, parent, permissions.PERMISSION_MANAGEMENT) is False:
             logger.debug('Management Permission failed for user {}'.format(self._user))
             self.accessDenied()
