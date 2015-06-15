@@ -428,13 +428,25 @@ gui.servicesPools.link = (event) ->
               "xls"
             ]
             onNew: (action, tbl, refreshFnc) ->
-              gui.promptModal gettext("Publish"), gettext("Launch new publication?"),
-                onYes: ->
+                # Ask for "reason" for publication
+              api.templates.get "publish", (tmpl) ->
+                content = api.templates.evaluate(tmpl,
+                )
+                modalId = gui.launchModal(gettext("Publish"), content,
+                  actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Publish") + "</button>"
+                )
+                gui.tools.applyCustoms modalId
+                $(modalId + " .button-accept").click ->
+                  changelog = encodeURIComponent($('#id_publish_log').val())
+                  $(modalId).modal "hide"
                   pubApi.invoke "publish", (->
                     refreshFnc()
                     return
-                  ), gui.failRequestModalFnc(gettext("Failed creating publication"))
-                  return
+                  ), 
+                  gui.failRequestModalFnc(gettext("Failed creating publication")),
+                  { params: 'changelog=' + changelog }
+
+                return
 
               return
           )

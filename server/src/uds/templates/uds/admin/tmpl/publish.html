@@ -1,9 +1,10 @@
 {% load i18n html5 %}
 {% image_size as size %}
-<h3 class="text-center">{% trans 'Publish service' %}</h3>
-<div class="center-block" style="width: 60%">
+<form class="form-horizontal" role="form">
     <div class="form-group">
         <label for="id_publish_log" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'reason of publication'%}">{% trans 'Reason' %}</label>
-        <input id="id_publish_log" name="image_name" type="text" class="form-control" placeholder="{% trans 'Image name' %}" autofocus required>
+        <div class="col-sm-9">
+          <input id="id_publish_log" name="image_name" type="text" class="form-control" placeholder="{% trans 'Reason for publication (can be empty)' %}" autofocus required maxlength="96">
+        </div>
     </div>
-</div>
+</form>
