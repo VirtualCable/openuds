@@ -198,7 +198,7 @@
         # What execute on refresh button push
         onRefresh = tblParams.onRefresh or ->
 
-        refreshFnc = ->
+        self.refresh = refreshFnc = ->
           # Refreshes table content
           tbl = $("#" + tableId).dataTable()
           

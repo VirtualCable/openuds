@@ -329,3 +329,25 @@ class Publications(DetailHandler):
             'field': 'state',
             'prefix': 'row-state-'
         }
+
+
+class Changelog(DetailHandler):
+    '''
+    Processes the transports detail requests of a Service Pool
+    '''
+    def getItems(self, parent, item):
+        return [{
+            'revision': i.revision,
+            'stamp': i.stamp,
+            'log': i.log,
+        } for i in parent.changelog.all()]
+
+    def getTitle(self, parent):
+        return _('Changelog')
+
+    def getFields(self, parent):
+        return [
+            {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
+            {'stamp': {'title': _('Publish date'), 'type': 'datetime'}},
+            {'log': {'title': _('State')}},
+        ]

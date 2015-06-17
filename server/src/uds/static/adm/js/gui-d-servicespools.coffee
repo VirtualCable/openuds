@@ -98,6 +98,7 @@ gui.servicesPools.link = (event) ->
       groups: "groups-placeholder"
       transports: "transports-placeholder"
       publications: "publications-placeholder"
+      changelog: "changelog-placeholder"
       logs: "logs-placeholder"
     )
     gui.setLinksEvents()
@@ -378,6 +379,8 @@ gui.servicesPools.link = (event) ->
         #                     * Publications part
         #                     
         publications = null
+        changelog = null
+        clTable = null
         if info.needs_publication
           $("#publications-placeholder_tab").removeClass "hidden"
           pubApi = api.servicesPools.detail(servPool.id, "publications")
@@ -437,20 +440,34 @@ gui.servicesPools.link = (event) ->
                 )
                 gui.tools.applyCustoms modalId
                 $(modalId + " .button-accept").click ->
-                  changelog = encodeURIComponent($('#id_publish_log').val())
+                  chlog = encodeURIComponent($('#id_publish_log').val())
                   $(modalId).modal "hide"
                   pubApi.invoke "publish", (->
                     refreshFnc()
+                    changelog.refresh()
+                    # Also changelog
                     return
                   ), 
                   gui.failRequestModalFnc(gettext("Failed creating publication")),
-                  { params: 'changelog=' + changelog }
+                  { params: 'changelog=' + chlog }
 
                 return
 
               return
           )
           prevTables.push publicationsTable
+
+          # changelog
+          clApi = api.servicesPools.detail(servPool.id, "changelog")
+          changelog = new GuiElement(clApi, "changelog", { permission: servPool.permission })
+          clTable = changelog.table(
+            icon: 'publications'
+            container: "changelog-placeholder"
+            rowSelect: "single"
+          )
+          clTables.push clTable
+
+
         else
           $("#publications-placeholder_tab").addClass "hidden"
         

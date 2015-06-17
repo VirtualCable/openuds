@@ -31,7 +31,7 @@
             <li id="{{ cache }}_tab"><a href="#{{ cache }}" data-toggle="tab">{% endverbatim %}{% trans 'Cache' %}{% verbatim %}</a></li>
             <li id="{{ groups }}_tab"><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
             <li><a href="#{{ transports }}" data-toggle="tab">{% endverbatim %}{% trans 'Transports' %}{% verbatim %}</a></li>
-            <li id="{{ publications }}_tab"><a href="#{{ publications }}" data-toggle="tab">{% endverbatim %}{% trans 'Publications' %}{% verbatim %}</a></li>
+            <li id="{{ publications }}_tab"><a href="#{{ publications }}_pane" data-toggle="tab">{% endverbatim %}{% trans 'Publications' %}{% verbatim %}</a></li>
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
         </ul>    
         <div class="tab-content">
@@ -57,7 +57,12 @@
             </div>
             <div class="tab-pane fade" id="{{ groups }}">...</div>
             <div class="tab-pane fade" id="{{ transports }}">...</div>
-            <div class="tab-pane fade" id="{{ publications }}">...</div>
+            <div class="tab-pane fade" id="{{ publications }}_pane">
+                <div  id="{{ publications }}">
+                </div>
+                <div  id="{{ changelog }}">
+                </div>                
+            </div>
             <div class="tab-pane fade" id="{{ logs }}">...</div>
         </div>        
     </div>

@@ -209,7 +209,7 @@ class PublicationManager(object):
             dsp = None
             dsp = servicePool.publications.create(state=State.LAUNCHING, state_date=now, publish_date=now, revision=servicePool.current_pub_revision)
             if changeLog:
-                servicePool.changelog.create(revision=servicePool.current_pub_revision, log=changeLog)
+                servicePool.changelog.create(revision=servicePool.current_pub_revision, log=changeLog, stamp=now)
             DelayedTaskRunner.runner().insert(PublicationLauncher(dsp), 4, PUBTAG + str(dsp.id))
         except Exception as e:
             logger.debug('Caught exception at publish: {0}'.format(e))

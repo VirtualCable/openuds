@@ -47,7 +47,7 @@ from uds.models.UUIDModel import UUIDModel
 
 import logging
 
-__updated__ = '2015-06-15'
+__updated__ = '2015-06-17'
 
 
 logger = logging.getLogger(__name__)
@@ -56,6 +56,7 @@ logger = logging.getLogger(__name__)
 @python_2_unicode_compatible
 class DeployedServicePublicationChangelog(models.Model):
     publication = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='changelog')
+    stamp = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
     log = models.TextField(default='')
 
