@@ -9,23 +9,19 @@ logger = logging.getLogger(__name__)
 
 class UDSImage(Image):
     def _get_height(self):
-        logger.debug('get height called')
-        ret = self._height or (self.image and self.image.size[1] or 0)
-        return ret * cm / 118
+        ret = self._height or (self.image and (self.image.size[1] * cm / 118) or 0)
+        return ret
 
     def _set_height(self, value):
-        logger.debug('set height called')
-        self._height = value / cm * 118
+        self._height = value
 
     height = property(_get_height, _set_height)
 
     def _get_width(self):
-        logger.debug('get width called')
-        ret = self._width or (self.image and self.image.size[0] or 0)
-        return ret * cm / 118
+        ret = self._width or (self.image and (self.image.size[0] * cm / 118) or 0)
+        return ret
 
     def _set_width(self, value):
-        logger.debug('set width called')
-        self._width = value / cm * 118
+        self._width = value
 
     width = property(_get_width, _set_width)

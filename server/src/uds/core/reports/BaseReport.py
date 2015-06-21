@@ -41,15 +41,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-05-03'
+__updated__ = '2015-06-21'
 
 
 class Report(UserInterface):
     mime_type = 'application/pdf'  # Report returns pdfs by default, but could be anything else
     name = _('Base Report')  # Report name
     description = _('Base report')  # Report description
-    filename = 'file.bin'  # Filename that will be returned as 'hint' on rest report request
+    filename = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
     group = ''  # So we can "group" reports by kind?
+    encoded = True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
     uuid = None
 
     @classmethod
@@ -123,7 +124,11 @@ class Report(UserInterface):
         Generated base 64 encoded report.
         Basically calls generate and encodes resuslt as base64
         '''
-        return self.generate().encode('base64').replace('\n', '')
+        data = self.generate()
+        if self.encoded:
+            return data.encode('base64').replace('\n', '')
+        else:
+            return data
 
     def __str__(self):
         return 'Report {} with uuid {}'.format(self.name, self.uuid)

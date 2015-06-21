@@ -32,4 +32,4 @@
 '''
 
 from .usage import StatsReportUsage
-from .login import StatsReportLogin
+from .login import StatsReportLogin, StatsReportLoginCSV

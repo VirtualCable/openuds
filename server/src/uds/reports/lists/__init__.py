@@ -31,4 +31,4 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from .users import ListReportUsers
+from .users import ListReportUsers, ListReportsUsersCSV

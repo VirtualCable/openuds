@@ -38,7 +38,10 @@ gui.reports.link = (event) ->
                   api.reports.save fields, ((data) -> # Success on put
                     closeFnc()
                     gui.doLog data
-                    content = base64.decode(data.data)
+                    if data.encoded
+                      content = base64.decode(data.data)
+                    else
+                      content = data.data
                     setTimeout( (()->
                         saveAs(
                           new Blob([content],

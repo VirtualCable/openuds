@@ -33,16 +33,14 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from django.utils import formats
 import django.template.defaultfilters as filters
 
 from uds.core.ui.UserInterface import gui
-from uds.core.reports import stock
 from uds.core.reports.tools import UDSImage, UDSGeraldoReport
-from uds.models import StatsEvents
 from uds.core.util.stats import events
 
 import StringIO
+import csv
 
 import cairo
 import pycha.line
@@ -52,11 +50,9 @@ from .base import StatsReport
 
 from uds.core.util import tools
 from geraldo.generators.pdf import PDFGenerator
-from geraldo import Report, landscape, ReportBand, ObjectValue, SystemField, BAND_WIDTH, Label, SubReport, Rect
-from reportlab.lib.pagesizes import A4
+from geraldo import ReportBand, ObjectValue, BAND_WIDTH, Label, SubReport
 from reportlab.lib.units import cm, mm
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER
-from reportlab.lib import colors
 from PIL import Image as PILImage
 
 import datetime
@@ -75,8 +71,8 @@ GERALDO_HEIGHT = GERALDO_WIDTH * HEIGHT / WIDTH
 class AccessReport(UDSGeraldoReport):
 
     class band_detail(ReportBand):
-        height = 10 * cm
-        auto_expand_height = True
+        height = 400 * mm  # Height bigger than a page, so a new page is launched
+        # auto_expand_height = True
         elements = (
             Label(text=_('Users access by date'), top=0.6 * cm, left=0, width=BAND_WIDTH,
                   style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
@@ -101,18 +97,23 @@ class AccessReport(UDSGeraldoReport):
         SubReport(
             queryset_string='%(object)s["data"]',
             band_header=ReportBand(
-                height=2.5 * cm,
+                height=1 * cm,
+                auto_expand_height=True,
                 elements=(
-                    Label(text='Date range', top=2.0 * cm, left=4.2 * cm, style={'fontName': 'Helvetica-Bold'}),
-                    Label(text='Users', top=2.0 * cm, left=10 * cm, style={'fontName': 'Helvetica-Bold'}),
+                    Label(text=_('Users access by date'), top=0.2 * cm, left=0, width=BAND_WIDTH,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 12, 'alignment': TA_CENTER}),
+                    Label(text=_('Date range'), top=1.0 * cm, left=1.2 * cm,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 10}),
+                    Label(text=_('Users'), top=1.0 * cm, left=14 * cm,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 10}),
                 ),
-                borders={'bottom': True}
+                # borders={'bottom': True}
             ),
             band_detail=ReportBand(
                 height=0.5 * cm,
                 elements=(
-                    ObjectValue(attribute_name='date', top=0, left=4.2 * cm),
-                    ObjectValue(attribute_name='users', top=0, left=10 * cm),
+                    ObjectValue(attribute_name='date', top=0, left=1.2 * cm, width=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 9}),
+                    ObjectValue(attribute_name='users', top=0, left=14 * cm, style={'fontName': 'Helvetica', 'fontSize': 9}),
                 )
             ),
         )
@@ -158,15 +159,7 @@ class StatsReportLogin(StatsReport):
     def initGui(self):
         pass
 
-    def generate(self):
-        # Sample query:
-        #   'SELECT *, count(*) as number, CEIL(stamp/(3600))*3600 as block'
-        #   ' FROM {table}'
-        #   ' WHERE event_type = 0 and stamp >= {start} and stamp <= {end}'
-        #   ' GROUP BY CEIL(stamp/(3600))'
-        #   ' ORDER BY block'
-
-        # Generate the sampling intervals and get data from db
+    def getRangeData(self):
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         samplingPoints = self.samplingPoints.num()
@@ -177,9 +170,6 @@ class StatsReportLogin(StatsReport):
         else:
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
-        #
-        # User access by date graph
-        #
         samplingIntervals = []
         prevVal = None
         for val in range(start, end, (end - start) / (samplingPoints + 1)):
@@ -197,10 +187,43 @@ class StatsReportLogin(StatsReport):
             data.append((key, val))  # @UndefinedVariable
             reportData.append(
                 {
-                    'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1]),
+                    'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1], xLabelFormat),
                     'users': val
                 }
             )
+
+        return (xLabelFormat, data, reportData)
+
+    def getWeekHourlyData(self):
+        start = self.startDate.stamp()
+        end = self.endDate.stamp()
+
+        dataWeek = [0] * 7
+        dataHour = [0] * 24
+        for val in events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end):
+            s = datetime.datetime.fromtimestamp(val.stamp)
+            dataWeek[s.weekday()] += 1
+            dataHour[s.hour] += 1
+
+        return (dataWeek, dataHour)
+
+    def generate(self):
+        # Sample query:
+        #   'SELECT *, count(*) as number, CEIL(stamp/(3600))*3600 as block'
+        #   ' FROM {table}'
+        #   ' WHERE event_type = 0 and stamp >= {start} and stamp <= {end}'
+        #   ' GROUP BY CEIL(stamp/(3600))'
+        #   ' ORDER BY block'
+
+        # Generate the sampling intervals and get data from db
+        start = self.startDate.stamp()
+        end = self.endDate.stamp()
+
+        xLabelFormat, data, reportData = self.getRangeData()
+
+        #
+        # User access by date graph
+        #
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
 
@@ -259,12 +282,7 @@ class StatsReportLogin(StatsReport):
         #
         # User access by day of week
         #
-        dataWeek = [0] * 7
-        dataHour = [0] * 24
-        for val in events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end):
-            s = datetime.datetime.fromtimestamp(val.stamp)
-            dataWeek[s.weekday()] += 1
-            dataHour[s.hour] += 1
+        dataWeek, dataHour = self.getWeekHourlyData()
 
         dataset = ((ugettext('Users access to UDS'), [(i, dataWeek[i]) for i in range(0, 7)]),)
 
@@ -331,3 +349,30 @@ class StatsReportLogin(StatsReport):
         except Exception:
             logger.exception('Errool')
             return None
+
+
+class StatsReportLoginCSV(StatsReportLogin):
+    filename = 'access.csv'
+    mime_type = 'text/csv'  # Report returns pdfs by default, but could be anything else
+    name = _('Users access report by date')  # Report name
+    description = _('Report of user access to platform by date')  # Report description
+    uuid = '765b5580-1840-11e5-8137-10feed05884b'
+    encoded = False
+
+    # Input fields
+    startDate = StatsReportLogin.startDate
+    endDate = StatsReportLogin.endDate
+    samplingPoints = StatsReportLogin.samplingPoints
+
+    def generate(self):
+        output = StringIO.StringIO()
+        writer = csv.writer(output)
+
+        reportData = self.getRangeData()[2]
+
+        writer.writerow([ugettext('Date range'), ugettext('Users')])
+
+        for v in reportData:
+            writer.writerow([v['date'], v['users']])
+
+        return output.getvalue()

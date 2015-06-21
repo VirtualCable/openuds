@@ -33,10 +33,10 @@
 from __future__ import unicode_literals
 
 from uds.core import reports
+from django.utils.translation import ugettext_noop as _
 
-
-__updated__ = '2015-04-28'
+__updated__ = '2015-06-21'
 
 
 class ListReport(reports.Report):
-    group = 'Lists'  # So we can make submenus with reports
+    group = _('Lists')  # So we can make submenus with reports

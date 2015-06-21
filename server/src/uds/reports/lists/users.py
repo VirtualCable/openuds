@@ -32,26 +32,28 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext, ugettext_noop as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.core.ui.UserInterface import gui
 from uds.core.reports import stock
 from uds.models import Authenticator
+
 import StringIO
+import csv
 
 from .base import ListReport
 
-from uds.core.util import tools
 from geraldo.generators.pdf import PDFGenerator
 from geraldo import Report, landscape, ReportBand, ObjectValue, SystemField, BAND_WIDTH, Label, Image
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER
 
+
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-05-03'
+__updated__ = '2015-06-21'
 
 
 class UsersReport(Report):
@@ -68,9 +70,9 @@ class UsersReport(Report):
     class band_detail(ReportBand):
         height = 0.5 * cm
         elements = (
-            ObjectValue(attribute_name='name', left=0.5 * cm),
-            ObjectValue(attribute_name='real_name', left=3 * cm),
-            ObjectValue(attribute_name='last_access', left=7 * cm),
+            ObjectValue(attribute_name='name', left=0.5 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
+            ObjectValue(attribute_name='real_name', left=6 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
+            ObjectValue(attribute_name='last_access', left=15 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
         )
 
     class band_page_header(ReportBand):
@@ -79,9 +81,9 @@ class UsersReport(Report):
             SystemField(expression='%(report_title)s', top=0.5 * cm, left=0, width=BAND_WIDTH,
                         style={'fontName': 'Helvetica-Bold', 'fontSize': 14, 'alignment': TA_CENTER}),
 
-            Label(text="User ID", top=1.5 * cm, left=0.5 * cm),
-            Label(text="Real Name", top=1.5 * cm, left=3 * cm),
-            Label(text="Last access", top=1.5 * cm, left=7 * cm),
+            Label(text=_('User ID'), top=1.5 * cm, left=0.5 * cm),
+            Label(text=_('Real Name'), top=1.5 * cm, left=6 * cm),
+            Label(text=_('Last access'), top=1.5 * cm, left=15 * cm),
             SystemField(expression=_('Page %(page_number)d of %(page_count)d'), top=0.1 * cm,
                         width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
             Image(filename=stock.getStockImagePath(stock.LOGO), left=0.1 * cm, top=0.0 * cm, width=2 * cm, height=2 * cm),
@@ -134,4 +136,34 @@ class ListReportUsers(ListReport):
         report = UsersReport(queryset=users)
         report.title = _('Users List for {}').format(auth.name)
         report.generate_by(PDFGenerator, filename=output)
+        return output.getvalue()
+
+
+class ListReportsUsersCSV(ListReportUsers):
+    filename = 'users.csv'
+    mime_type = 'text/csv'
+    encoded = False
+
+    uuid = '5da93a76-1849-11e5-ac1a-10feed05884b'
+
+    authenticator = ListReportUsers.authenticator
+
+    def initialize(self, values):
+        if values:
+            auth = Authenticator.objects.get(uuid=self.authenticator.value)
+            self.filename = auth.name + '.csv'
+
+    def generate(self):
+        output = StringIO.StringIO()
+        writer = csv.writer(output)
+        auth = Authenticator.objects.get(uuid=self.authenticator.value)
+        users = auth.users.order_by('name')
+
+        writer.writerow([ugettext('User ID'), ugettext('Real Name'), ugettext('Last access')])
+
+        for v in users:
+            writer.writerow([v.name, v.real_name, v.last_access])
+
+        writer.writerow(['ñoño', 'ádios', 'hola'])
+
         return output.getvalue()

@@ -111,6 +111,7 @@ class Reports(model.BaseModelHandler):
 
             return {
                 'mime_type': report.mime_type,
+                'encoded': report.encoded,
                 'filename': report.filename,
                 'data': result
             }
@@ -133,6 +134,7 @@ class Reports(model.BaseModelHandler):
             {
                 'id': i.getUuid(),
                 'mime_type': i.mime_type,
+                'encoded': i.encoded,
                 'group': i.translated_group(),
                 'name': i.translated_name(),
                 'description': i.translated_description()

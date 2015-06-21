@@ -39,6 +39,13 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+import logging
+
+logger = logging.getLogger(__name__)
+
+__updated__ = '2015-06-21'
+
 
 availableReports = []
 
@@ -55,18 +62,18 @@ def __init__():
     def addReportCls(cls):
         availableReports.append(cls)
 
+    def recursiveAdd(p):
+        if p.generate != reports.Report.generate:
+            addReportCls(p)
+
+        for c in p.__subclasses__():
+            recursiveAdd(c)
+
     # Dinamycally import children of this package. The __init__.py files must import classes
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         __import__(name, globals(), locals(), [])
 
-    p = reports.Report
-    for cls in p.__subclasses__():
-        clsSubCls = cls.__subclasses__()
-        if len(clsSubCls) == 0:
-            addReportCls(cls)
-        else:
-            for l2 in clsSubCls:
-                addReportCls(l2)
+    recursiveAdd(reports.Report)
 
 __init__()
