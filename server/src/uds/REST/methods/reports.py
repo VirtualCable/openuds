@@ -116,6 +116,7 @@ class Reports(model.BaseModelHandler):
             }
 
         except Exception as e:
+            logger.exception('Generating report')
             return self.invalidRequestException(six.text_type(e))
 
             report.__dict__.update()
