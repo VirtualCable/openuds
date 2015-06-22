@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-21 21:22+0200\n"
+"POT-Creation-Date: 2015-06-22 11:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgid "Tag"
 msgstr ""
 
 #: REST/methods/authenticators.py:63 reports/stats/login.py:107
-#: reports/stats/login.py:372 templates/uds/admin/tmpl/authenticators.html:30
+#: reports/stats/login.py:373 templates/uds/admin/tmpl/authenticators.html:30
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/permissions.html:7
 msgid "Users"
@@ -465,7 +465,7 @@ msgid "state"
 msgstr ""
 
 #: REST/methods/users_groups.py:98 reports/lists/users.py:86
-#: reports/lists/users.py:161
+#: reports/lists/users.py:162
 msgid "Last access"
 msgstr ""
 
@@ -1654,11 +1654,11 @@ msgstr ""
 msgid "Lists"
 msgstr ""
 
-#: reports/lists/users.py:84 reports/lists/users.py:161
+#: reports/lists/users.py:84 reports/lists/users.py:162
 msgid "User ID"
 msgstr ""
 
-#: reports/lists/users.py:85 reports/lists/users.py:161
+#: reports/lists/users.py:85 reports/lists/users.py:162
 msgid "Real Name"
 msgstr ""
 
@@ -1695,7 +1695,7 @@ msgstr ""
 msgid "Users access by hour"
 msgstr ""
 
-#: reports/stats/login.py:105 reports/stats/login.py:372
+#: reports/stats/login.py:105 reports/stats/login.py:373
 msgid "Date range"
 msgstr ""
 
@@ -1733,11 +1733,8 @@ msgstr ""
 
 #: reports/stats/login.py:230 reports/stats/login.py:273
 #: reports/stats/login.py:287 reports/stats/login.py:312
-msgid "Users access to UDS"
-msgstr ""
-
 #: reports/stats/login.py:345
-msgid "User access to UDS"
+msgid "Users access to UDS"
 msgstr ""
 
 #: reports/stats/usage.py:45

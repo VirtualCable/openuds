@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-21 21:22+0200\n"
-"PO-Revision-Date: 2015-06-21 19:16+0000\n"
+"POT-Creation-Date: 2015-06-22 11:29+0200\n"
+"PO-Revision-Date: 2015-06-22 09:06+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
 "es/)\n"
@@ -75,7 +75,7 @@ msgid "Tag"
 msgstr "Etiqueta"
 
 #: REST/methods/authenticators.py:63 reports/stats/login.py:107
-#: reports/stats/login.py:372 templates/uds/admin/tmpl/authenticators.html:30
+#: reports/stats/login.py:373 templates/uds/admin/tmpl/authenticators.html:30
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/permissions.html:7
 msgid "Users"
@@ -485,7 +485,7 @@ msgid "state"
 msgstr "estado"
 
 #: REST/methods/users_groups.py:98 reports/lists/users.py:86
-#: reports/lists/users.py:161
+#: reports/lists/users.py:162
 msgid "Last access"
 msgstr "Último acceso"
 
@@ -1582,12 +1582,12 @@ msgid ""
 "Maximum duration in hours for a session (0 means no limit). After this "
 "period, session will be released."
 msgstr ""
-"Duración máxima en horas para una sesión (0 no significa límite). Después de "
-"esto período, período de sesiones será liberado."
+"Duración máxima en horas para una sesión (0 significa sin límite). Después "
+"de esto período, la sesión será liberada."
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:49
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012)"
-msgstr "Agente de UDS RDS (para aplicaciones remotas en Windows Server 2012)"
+msgstr "Agente de UDS RDS (para RemoteApps en Windows Server 2012)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:28
 msgid "Windows Domain OS Manager"
@@ -1752,15 +1752,13 @@ msgstr "Actor UDS para máquinas Windows"
 
 #: reports/lists/base.py:42
 msgid "Lists"
-msgstr "Listas de"
+msgstr "Listados"
 
-#: reports/lists/users.py:84 reports/lists/users.py:161
-#| msgid "User"
+#: reports/lists/users.py:84 reports/lists/users.py:162
 msgid "User ID"
 msgstr "ID de usuario"
 
-#: reports/lists/users.py:85 reports/lists/users.py:161
-#| msgid "Real name attrs"
+#: reports/lists/users.py:85 reports/lists/users.py:162
 msgid "Real Name"
 msgstr "Nombre real"
 
@@ -1797,7 +1795,7 @@ msgstr "Acceso de usuarios por día de la semana"
 msgid "Users access by hour"
 msgstr "Acceso de usuarios por hora"
 
-#: reports/stats/login.py:105 reports/stats/login.py:372
+#: reports/stats/login.py:105 reports/stats/login.py:373
 msgid "Date range"
 msgstr "Rango de fechas"
 
@@ -1835,12 +1833,9 @@ msgstr "Número de puntos de muestreo utilizados en gráficos"
 
 #: reports/stats/login.py:230 reports/stats/login.py:273
 #: reports/stats/login.py:287 reports/stats/login.py:312
-msgid "Users access to UDS"
-msgstr "Los usuarios acceso a UDS"
-
 #: reports/stats/login.py:345
-msgid "User access to UDS"
-msgstr "Acceso del usuario a UDS"
+msgid "Users access to UDS"
+msgstr "Acceso de usuarios a UDS"
 
 #: reports/stats/usage.py:45
 msgid "Usage stats"
@@ -2776,7 +2771,7 @@ msgstr "motivo de la publicación"
 
 #: templates/uds/admin/tmpl/publish.html:7
 msgid "Reason for publication (can be empty)"
-msgstr "Motivo de la publicación (puede ser vacía)"
+msgstr "Motivo de la publicación (puede estar vacio)"
 
 #: templates/uds/admin/tmpl/request_failed.html:4
 msgid "Error on request"

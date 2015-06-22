@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-21 21:22+0200\n"
+"POT-Creation-Date: 2015-06-22 11:29+0200\n"
 "PO-Revision-Date: 2015-06-21 19:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/openuds/language/"
@@ -328,11 +328,11 @@ msgstr "OSManager löschen Fehler"
 msgid "Generate report"
 msgstr "Bericht generieren"
 
-#: static/tmp_js/gui-d-reports.js:49
+#: static/tmp_js/gui-d-reports.js:53
 msgid "Error creating report"
 msgstr "Fehler beim Erstellen des Berichts"
 
-#: static/tmp_js/gui-d-reports.js:52
+#: static/tmp_js/gui-d-reports.js:56
 msgid "Error obtainint report description"
 msgstr "Obtainint Bericht Fehlerbeschreibung"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-21 21:22+0200\n"
+"POT-Creation-Date: 2015-06-22 11:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -326,11 +326,11 @@ msgstr ""
 msgid "Generate report"
 msgstr ""
 
-#: static/tmp_js/gui-d-reports.js:49
+#: static/tmp_js/gui-d-reports.js:53
 msgid "Error creating report"
 msgstr ""
 
-#: static/tmp_js/gui-d-reports.js:52
+#: static/tmp_js/gui-d-reports.js:56
 msgid "Error obtainint report description"
 msgstr ""
 

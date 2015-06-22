@@ -60,7 +60,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-06-21'
+__updated__ = '2015-06-22'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -342,7 +342,7 @@ class StatsReportLogin(StatsReport):
 
         try:
             report = AccessReport(queryset=queryset)
-            report.title = ugettext('User access to UDS')
+            report.title = ugettext('Users access to UDS')
             # report = UsersReport(queryset=users)
             report.generate_by(PDFGenerator, filename=output)
             return output.getvalue()

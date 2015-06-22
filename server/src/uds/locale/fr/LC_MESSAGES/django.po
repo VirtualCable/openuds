@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-21 21:22+0200\n"
-"PO-Revision-Date: 2015-06-21 19:16+0000\n"
+"POT-Creation-Date: 2015-06-22 11:29+0200\n"
+"PO-Revision-Date: 2015-06-21 19:23+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/openuds/language/"
 "fr/)\n"
@@ -70,7 +70,7 @@ msgid "Tag"
 msgstr "Tag"
 
 #: REST/methods/authenticators.py:63 reports/stats/login.py:107
-#: reports/stats/login.py:372 templates/uds/admin/tmpl/authenticators.html:30
+#: reports/stats/login.py:373 templates/uds/admin/tmpl/authenticators.html:30
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/permissions.html:7
 msgid "Users"
@@ -480,7 +480,7 @@ msgid "state"
 msgstr "État"
 
 #: REST/methods/users_groups.py:98 reports/lists/users.py:86
-#: reports/lists/users.py:161
+#: reports/lists/users.py:162
 msgid "Last access"
 msgstr "Dernier accès"
 
@@ -1760,13 +1760,11 @@ msgstr "Acteur UDS pour les machines windows"
 msgid "Lists"
 msgstr "Listes"
 
-#: reports/lists/users.py:84 reports/lists/users.py:161
-#| msgid "User"
+#: reports/lists/users.py:84 reports/lists/users.py:162
 msgid "User ID"
 msgstr "ID de l'utilisateur"
 
-#: reports/lists/users.py:85 reports/lists/users.py:161
-#| msgid "Real name attrs"
+#: reports/lists/users.py:85 reports/lists/users.py:162
 msgid "Real Name"
 msgstr "De son vrai nom"
 
@@ -1803,7 +1801,7 @@ msgstr "Accès des utilisateurs par jour de semaine"
 msgid "Users access by hour"
 msgstr "Accès des utilisateurs par heure"
 
-#: reports/stats/login.py:105 reports/stats/login.py:372
+#: reports/stats/login.py:105 reports/stats/login.py:373
 msgid "Date range"
 msgstr "Plage de dates"
 
@@ -1841,11 +1839,8 @@ msgstr "Nombre de points de prélèvement utilisées dans les graphiques"
 
 #: reports/stats/login.py:230 reports/stats/login.py:273
 #: reports/stats/login.py:287 reports/stats/login.py:312
-msgid "Users access to UDS"
-msgstr "Accès des utilisateurs à l'UDS"
-
 #: reports/stats/login.py:345
-msgid "User access to UDS"
+msgid "Users access to UDS"
 msgstr "Accès des utilisateurs à l'UDS"
 
 #: reports/stats/usage.py:45
