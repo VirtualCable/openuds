@@ -65,12 +65,14 @@ class UserPrefsManager(object):
         '''
         Gets the preferences for an specified module for the user
         '''
+        logger.debug('Self prefs: {}'.format(self._prefs))
         prefs = {}
         for up in user.preferences.filter(module=modName):
             prefs[up.name] = up.value
         for p in self._prefs[modName]['prefs']:
             if p.getName() not in prefs:
                 prefs[p.getName()] = p.getDefValue()
+        logger.debug('Preferences: {}'.format(prefs))
         return prefs
 
     def setPreferenceForUser(self, user, modName, prefName, value):
@@ -260,26 +262,32 @@ class CommonPrefs(object):
         '''
         Get width based on screenSizePref value
         '''
-        return {
-            CommonPrefs.SZ_640x480: (640, 480),
-            CommonPrefs.SZ_800x600: (800, 600),
-            CommonPrefs.SZ_1024x768: (1024, 768),
-            CommonPrefs.SZ_1366x768: (1366, 768),
-            CommonPrefs.SZ_1920x1080: (1920, 1080),
-            CommonPrefs.SZ_FULLSCREEN: (-1, -1)
-        }[prefsDict[CommonPrefs.SZ_PREF]]
+        try:
+            return {
+                CommonPrefs.SZ_640x480: (640, 480),
+                CommonPrefs.SZ_800x600: (800, 600),
+                CommonPrefs.SZ_1024x768: (1024, 768),
+                CommonPrefs.SZ_1366x768: (1366, 768),
+                CommonPrefs.SZ_1920x1080: (1920, 1080),
+                CommonPrefs.SZ_FULLSCREEN: (-1, -1)
+            }[prefsDict[CommonPrefs.SZ_PREF]]
+        except Exception:
+            return CommonPrefs.SZ_1024x768
 
     @staticmethod
     def getDepth(prefsDict):
         '''
         Get depth based on depthPref value
         '''
-        return {
-            CommonPrefs.DEPTH_8: 8,
-            CommonPrefs.DEPTH_16: 16,
-            CommonPrefs.DEPTH_24: 24,
-            CommonPrefs.DEPTH_32: 32
-        }[prefsDict[CommonPrefs.DEPTH_PREF]]
+        try:
+            return {
+                CommonPrefs.DEPTH_8: 8,
+                CommonPrefs.DEPTH_16: 16,
+                CommonPrefs.DEPTH_24: 24,
+                CommonPrefs.DEPTH_32: 32
+            }[prefsDict[CommonPrefs.DEPTH_PREF]]
+        except Exception:
+            return CommonPrefs.DEPTH_24
 
     screenSizePref = UserChoicePreference(name=SZ_PREF,
                                           label=ugettext_lazy('Screen Size'),
