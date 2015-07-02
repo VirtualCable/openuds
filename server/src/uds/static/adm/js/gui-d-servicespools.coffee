@@ -465,7 +465,7 @@ gui.servicesPools.link = (event) ->
             container: "changelog-placeholder"
             rowSelect: "single"
           )
-          clTables.push clTable
+          prevTables.push clTable
 
 
         else
