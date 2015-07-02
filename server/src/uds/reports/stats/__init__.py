@@ -33,3 +33,4 @@
 
 from .usage import StatsReportUsage
 from .login import StatsReportLogin, StatsReportLoginCSV
+from .pool_performance import PoolPerformanceReport
