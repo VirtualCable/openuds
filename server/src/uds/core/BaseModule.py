@@ -237,7 +237,7 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Default implemetation is that on every method call, module will be dirty
 
-        Note: The implementation of this is a work in progress, so right now the module will be serialized out on every acess
+        Note: The implementation of this is a work in progress, so right now the module will be serialized out on every access
         '''
         return True
 

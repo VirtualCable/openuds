@@ -63,7 +63,7 @@ class Serializable(object):
         '''
         This is the method that must be overriden in order to unserialize an object.
 
-        The system will use in fact 'seralize' and 'deserialize' methods, but theese are
+        The system will use in fact 'seralize' and 'deserialize' methods, but these are
         only convenients methods to "codify" serialized values.
 
         Take into account that _str can be '' (empty string), but hopefully it will never be none.
