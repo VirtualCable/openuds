@@ -25,9 +25,8 @@ gui.servicesPools.link = (event) ->
     prevTables = []
     return
 
-  
-  # On change base service
-  preFnc = (formId) ->
+  # Sets on change base service
+  serviceChangedFnc = (formId) ->
     $fld = $(formId + " [name=\"service_id\"]")
     $osmFld = $(formId + " [name=\"osmanager_id\"]")
     selectors = []
@@ -43,43 +42,52 @@ gui.servicesPools.link = (event) ->
     $cacheFlds = $(selectors.join(","))
     $cacheL2Fld = $(formId + " [name=\"cache_l2_srvs\"]")
     $publishOnSaveFld = $(formId + " [name=\"publish_on_save\"]")
-    $fld.on "change", (event) ->
-      unless $fld.val() is -1
-        api.providers.service $fld.val(), (data) ->
-          gui.doLog "Onchange", data
-          if data.info.needs_manager is false
-            $osmFld.prop "disabled", "disabled"
-          else
-            $osmFld.prop "disabled", false
 
-            api.osmanagers.overview (osm) ->
-              $osmFld.empty()
-              for d in osm
-                for st in d.servicesTypes
-                  if st in data.info.servicesTypeProvided
-                    $osmFld.append('<option value="' + d.id + '">' + d.name + '</option>')
-                    break
-              $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
-              return
+    unless $fld.val() is -1
+      api.providers.service $fld.val(), (data) ->
+        gui.doLog "Onchange", data
+        if data.info.needs_manager is false
+          $osmFld.prop "disabled", "disabled"
+        else
+          $osmFld.prop "disabled", false
 
-          if data.info.uses_cache is false
-            $cacheFlds.prop "disabled", "disabled"
+          api.osmanagers.overview (osm) ->
+            $osmFld.empty()
+            for d in osm
+              for st in d.servicesTypes
+                if st in data.info.servicesTypeProvided
+                  $osmFld.append('<option value="' + d.id + '">' + d.name + '</option>')
+                  break
+            $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
+            return
+
+        if data.info.uses_cache is false
+          $cacheFlds.prop "disabled", "disabled"
+        else
+          $cacheFlds.prop "disabled", false
+          if data.info.uses_cache_l2 is false
+            $cacheL2Fld.prop "disabled", "disabled"
           else
-            $cacheFlds.prop "disabled", false
-            if data.info.uses_cache_l2 is false
-              $cacheL2Fld.prop "disabled", "disabled"
-            else
-              $cacheL2Fld.prop "disabled", false
-          gui.doLog "Needs publication?", data.info.needs_publication, $publishOnSaveFld
-          # if switch y not as required..
-          if $publishOnSaveFld.bootstrapSwitch("readonly") is data.info.needs_publication
-            $publishOnSaveFld.bootstrapSwitch "toggleReadonly", true
-          $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
-          return
+            $cacheL2Fld.prop "disabled", false
+        gui.doLog "Needs publication?", data.info.needs_publication, $publishOnSaveFld
+        # if switch y not as required..
+        if $publishOnSaveFld.bootstrapSwitch("readonly") is data.info.needs_publication
+          $publishOnSaveFld.bootstrapSwitch "toggleReadonly", true
+        $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
+        return
 
       return
 
     return
+
+  # 
+  preFnc = (formId) ->
+    $fld = $(formId + " [name=\"service_id\"]")
+    $fld.on "change", (event) ->
+      serviceChangedFnc(formId)
+
+  editDataLoaded = (formId) ->
+    serviceChangedFnc(formId)
 
   # Fill "State" for cached and assigned services
   fillState = (data) ->
@@ -517,7 +525,7 @@ gui.servicesPools.link = (event) ->
 
         preprocessor: preFnc
       )
-      onEdit: gui.methods.typedEdit(gui.servicesPools, gettext("Edit") + " service pool", "Service pool " + gettext("saving error"))
+      onEdit: gui.methods.typedEdit(gui.servicesPools, gettext("Edit") + " service pool", "Service pool " + gettext("saving error"), { preprocessor: editDataLoaded})
       onDelete: gui.methods.del(gui.servicesPools, gettext("Delete") + " service pool", "Service pool " + gettext("deletion error"))
     )
     return

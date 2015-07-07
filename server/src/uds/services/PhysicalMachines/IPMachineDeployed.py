@@ -52,13 +52,13 @@ class IPMachineDeployed(AutoAttributes, services.UserDeployment):
         logger.debug('Setting IP to %s (ignored)' % ip)
 
     def getIp(self):
-        return self._ip
+        return self._ip.split('~')[0]
 
     def getName(self):
-        return _("IP ") + self._ip
+        return _("IP ") + self._ip.replace('~', ':')
 
     def getUniqueId(self):
-        return self._ip
+        return self._ip.replace('~', ':')
 
     def setReady(self):
         self._state = State.FINISHED

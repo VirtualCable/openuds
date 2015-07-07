@@ -74,7 +74,7 @@ class UserServiceRemover(Job):
         super(UserServiceRemover, self).__init__(environment)
 
     def run(self):
-        removeFrom = getSqlDatetime() - timedelta(seconds=10)  # We keep at least 30 seconds the machine before removing it, so we avoid connections errors
+        removeFrom = getSqlDatetime() - timedelta(seconds=10)  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
         removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom,
                                                 deployed_service__service__provider__maintenance_mode=False)[0:UserServiceRemover.removeAtOnce]
         for us in removables:

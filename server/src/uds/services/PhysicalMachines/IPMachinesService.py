@@ -70,11 +70,13 @@ class IPMachinesService(services.Service):
         if values is None or values.get('ipList', None) is None:
             self._ips = []
         else:
-            self._ips = list(values['ipList'])  # Allow duplicates right now
+            self._ips = list('{}~{}'.format(ip, i) for i, ip in enumerate(values['ipList']))  # Allow duplicates right now
             self._ips.sort()
 
     def valuesDict(self):
-        return {'ipList': gui.convertToList(self._ips)}
+        ips = (i.split('~')[0] for i in self._ips)
+
+        return {'ipList': gui.convertToList(ips)}
 
     def marshal(self):
         self.storage().saveData('ips', cPickle.dumps(self._ips))
