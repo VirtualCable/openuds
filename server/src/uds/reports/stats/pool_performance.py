@@ -75,7 +75,7 @@ GERALDO_HEIGHT = GERALDO_WIDTH * HEIGHT / WIDTH
 class AccessReport(UDSGeraldoReport):
 
     class band_detail(ReportBand):
-        height = 400 * mm  # Height bigger than a page, so a new page is launched
+        height = 400 * mm  # Height bigger than a page, so a new page is launched for listings
         # auto_expand_height = True
         elements = (
             Label(text=_('Distinct users by pool'), top=0.6 * cm, left=0, width=BAND_WIDTH,
@@ -90,6 +90,40 @@ class AccessReport(UDSGeraldoReport):
                      width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
                      get_image=lambda x: x.instance['image2']),
         )
+
+    subreports = [
+        SubReport(
+            queryset_string='%(object)s["data"]',
+            band_header=ReportBand(
+                height=1 * cm,
+                auto_expand_height=True,
+                elements=(
+                    Label(text=_('Users access by date'), top=0.2 * cm, left=0, width=BAND_WIDTH,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 12, 'alignment': TA_CENTER}),
+
+                    Label(text=_('Pool'), top=1.0 * cm, left=1.2 * cm,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
+                    Label(text=_('Date range'), top=1.0 * cm, left=8 * cm,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
+                    Label(text=_('Users'), top=1.0 * cm, left=14 * cm,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
+                    Label(text=_('Accesses'), top=1.0 * cm, left=16 * cm,
+                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
+                ),
+                # borders={'bottom': True}
+            ),
+            band_detail=ReportBand(
+                height=0.5 * cm,
+                elements=(
+                    ObjectValue(attribute_name='name', top=0, left=1.2 * cm, width=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
+                    ObjectValue(attribute_name='date', top=0, left=8 * cm, width=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
+                    ObjectValue(attribute_name='users', top=0, left=14 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
+                    ObjectValue(attribute_name='accesses', top=0, left=16 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
+                )
+            ),
+        ),
+    ]
+
 
 
 class PoolPerformanceReport(StatsReport):
@@ -173,10 +207,10 @@ class PoolPerformanceReport(StatsReport):
 
         fld = events.statsManager().getEventFldFor('username')
 
+        reportData = []
         for p in pools:
             dataUsers = []
             dataAccesses = []
-            reportData = []
             for interval in samplingIntervals:
                 key = (interval[0] + interval[1]) / 2
                 q = events.statsManager().getEvents(events.OT_DEPLOYED, events.ET_ACCESS, since=interval[0], to=interval[1], owner_id=p[0]).values(fld).annotate(cnt=Count(fld))
@@ -188,6 +222,7 @@ class PoolPerformanceReport(StatsReport):
                 dataAccesses.append((key, accesses))
                 reportData.append(
                     {
+                        'name': p[1],
                         'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1], xLabelFormat),
                         'users': len(q),
                         'accesses': accesses
@@ -198,17 +233,16 @@ class PoolPerformanceReport(StatsReport):
                 'name': p[1],
                 'dataUsers': dataUsers,
                 'dataAccesses': dataAccesses,
-                'reportData': reportData
             })
 
-        return (xLabelFormat, poolsData)
+        return (xLabelFormat, poolsData, reportData)
 
     def generate(self):
         # Generate the sampling intervals and get dataUsers from db
         start = self.startDate.stamp()
         end = self.endDate.stamp()
 
-        xLabelFormat, poolsData = self.getRangeData()
+        xLabelFormat, poolsData, reportData = self.getRangeData()
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
 
@@ -293,10 +327,8 @@ class PoolPerformanceReport(StatsReport):
 
         # Generate Data for pools, basically joining all pool data
 
-
-
         queryset = [
-            {'image': img, 'image2': img2, 'data': []}
+            {'image': img, 'image2': img2, 'data': reportData }
         ]
 
         logger.debug(queryset)
@@ -316,9 +348,7 @@ class PoolPerformanceReport(StatsReport):
 class PoolPerformanceReportCSV(PoolPerformanceReport):
     filename = 'access.csv'
     mime_type = 'text/csv'  # Report returns pdfs by default, but could be anything else
-    name = _('Users access report by date')  # Report name
-    description = _('Report of user access to platform by date')  # Report description
-    uuid = '765b5580-1840-11e5-8137-10feed05884b'
+    uuid = '6445b526-24ce-11e5-b3cb-10feed05884b'
     encoded = False
 
     # Input fields
@@ -333,9 +363,9 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
 
         reportData = self.getRangeData()[2]
 
-        writer.writerow([ugettext('Date range'), ugettext('Users')])
+        writer.writerow([ugettext('Pool'), ugettext('Date range'), ugettext('Users'), ugettext('Accesses')])
 
         for v in reportData:
-            writer.writerow([v['date'], v['users']])
+            writer.writerow([v['name'], v['date'], v['users'], v['accesses']])
 
         return output.getvalue()
