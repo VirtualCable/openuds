@@ -31,11 +31,13 @@ gui.reports.link = (event) ->
                 fields: guiDefinition
                 item:
                   id: val.id
-                actionButton: '<button type="button" class="btn btn-primary button-accept" data-dismiss="modal">'+ gettext('Generate report') + '</button>'
+                actionButton: '<button type="button" class="btn btn-primary button-accept">'+ gettext('Generate report') + '</button>'
                 success: (form_selector, closeFnc) ->
                   fields = gui.forms.read(form_selector)
                   gui.doLog fields
+                  gui.tools.blockUI()
                   api.reports.save fields, ((data) -> # Success on put
+                    gui.tools.unblockUI()
                     closeFnc()
                     gui.doLog data
                     if data.encoded
@@ -53,7 +55,7 @@ gui.reports.link = (event) ->
                     return
                   ), gui.failRequestModalFnc(gettext('Error creating report'), true)
 
-            ), gui.failRequestModalFnc(gettext('Error obtainint report description'), true)
+            ), gui.failRequestModalFnc(gettext('Error obtaining report description'), true)
             return
 
             return

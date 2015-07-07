@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.core.reports import stock
 
-from geraldo import Report, landscape, ReportBand, ObjectValue, SystemField, BAND_WIDTH, Label, SubReport, Rect
+from geraldo import Report, landscape, ReportBand, ObjectValue, SystemField, BAND_WIDTH, Label, SubReport, Rect, Line
 from uds.core.reports.tools.geraldo_graphics import UDSImage
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
@@ -46,7 +46,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-06-21'
+__updated__ = '2015-07-07'
 
 
 class UDSGeraldoReport(Report):
@@ -70,7 +70,7 @@ class UDSGeraldoReport(Report):
                         width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
             UDSImage(filename=stock.getStockImagePath(stock.LOGO), left=0.0 * cm, top=0.0 * cm, width=2.0 * cm, height=2.0 * cm),
         ]
-        borders = {'bottom': True}
+        borders = {'bottom': Line(stroke_color=colors.red, stroke_width=3)}
 
     class band_page_footer(ReportBand):
         height = 0.5 * cm

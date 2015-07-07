@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.db.models import Count
 import django.template.defaultfilters as filters
 
 from uds.core.ui.UserInterface import gui
@@ -45,15 +46,17 @@ import csv
 import cairo
 import pycha.line
 import pycha.bar
+import pycha.stackedbar
 
 from .base import StatsReport
 
 from uds.core.util import tools
 from uds.models import ServicePool
 from geraldo.generators.pdf import PDFGenerator
-from geraldo import ReportBand, ObjectValue, BAND_WIDTH, Label, SubReport
+from geraldo import ReportBand, ObjectValue, BAND_WIDTH, Label, SubReport, SystemField, Line
 from reportlab.lib.units import cm, mm
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER
+from reportlab.lib import colors
 from PIL import Image as PILImage
 
 import datetime
@@ -61,7 +64,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-07-01'
+__updated__ = '2015-07-07'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -75,50 +78,18 @@ class AccessReport(UDSGeraldoReport):
         height = 400 * mm  # Height bigger than a page, so a new page is launched
         # auto_expand_height = True
         elements = (
-            Label(text=_('Users access by date'), top=0.6 * cm, left=0, width=BAND_WIDTH,
+            Label(text=_('Distinct users by pool'), top=0.6 * cm, left=0, width=BAND_WIDTH,
                   style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
             UDSImage(left=4 * cm, top=1 * cm,
                      width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
                      get_image=lambda x: x.instance['image']),
 
-            Label(text=_('Users access by day of week'), top=GERALDO_HEIGHT + 1.2 * cm, left=0, width=BAND_WIDTH,
+            Label(text=_('Accesses by pool'), top=GERALDO_HEIGHT + 1.2 * cm, left=0, width=BAND_WIDTH,
                   style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
             UDSImage(left=4 * cm, top=GERALDO_HEIGHT + 1.6 * cm,
                      width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
                      get_image=lambda x: x.instance['image2']),
-
-            Label(text=_('Users access by hour'), top=2 * GERALDO_HEIGHT + 2 * cm, left=0, width=BAND_WIDTH,
-                  style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
-            UDSImage(left=4 * cm, top=2 * GERALDO_HEIGHT + 2.4 * cm,
-                     width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
-                     get_image=lambda x: x.instance['image3']),
         )
-
-    subreports = [
-        SubReport(
-            queryset_string='%(object)s["data"]',
-            band_header=ReportBand(
-                height=1 * cm,
-                auto_expand_height=True,
-                elements=(
-                    Label(text=_('Users access by date'), top=0.2 * cm, left=0, width=BAND_WIDTH,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 12, 'alignment': TA_CENTER}),
-                    Label(text=_('Date range'), top=1.0 * cm, left=1.2 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 10}),
-                    Label(text=_('Users'), top=1.0 * cm, left=14 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 10}),
-                ),
-                # borders={'bottom': True}
-            ),
-            band_detail=ReportBand(
-                height=0.5 * cm,
-                elements=(
-                    ObjectValue(attribute_name='date', top=0, left=1.2 * cm, width=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 9}),
-                    ObjectValue(attribute_name='users', top=0, left=14 * cm, style={'fontName': 'Helvetica', 'fontSize': 9}),
-                )
-            ),
-        )
-    ]
 
 
 class PoolPerformanceReport(StatsReport):
@@ -132,6 +103,7 @@ class PoolPerformanceReport(StatsReport):
         order=1,
         label=_('Pools'),
         tooltip=_('Pools for report'),
+        required=True
     )
 
     startDate = gui.DateField(
@@ -154,10 +126,10 @@ class PoolPerformanceReport(StatsReport):
         order=4,
         label=_('Number of points'),
         length=3,
-        minValue=16,
-        maxValue=128,
+        minValue=2,
+        maxValue=24,
         tooltip=_('Number of sampling points used in charts'),
-        defvalue='64'
+        defvalue='8'
     )
 
     def initialize(self, values):
@@ -174,6 +146,11 @@ class PoolPerformanceReport(StatsReport):
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         samplingPoints = self.samplingPoints.num()
+        pools = [(v.id, v.name) for v in ServicePool.objects.filter(uuid__in=self.pools.value)]
+        if len(pools) == 0:
+            raise Exception(_('Select at least a service pool for the report'))
+
+        logger.debug('Pools: {}'.format(pools))
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -181,6 +158,7 @@ class PoolPerformanceReport(StatsReport):
         else:
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
+        # Generate samplings interval
         samplingIntervals = []
         prevVal = None
         for val in range(start, end, (end - start) / (samplingPoints + 1)):
@@ -190,64 +168,58 @@ class PoolPerformanceReport(StatsReport):
             samplingIntervals.append((prevVal, val))
             prevVal = val
 
-        data = []
-        reportData = []
-        for interval in samplingIntervals:
-            key = (interval[0] + interval[1]) / 2
-            val = events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=interval[0], to=interval[1]).count()
-            data.append((key, val))  # @UndefinedVariable
-            reportData.append(
-                {
-                    'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1], xLabelFormat),
-                    'users': val
-                }
-            )
+        # Store dataUsers for all pools
+        poolsData = []
 
-        return (xLabelFormat, data, reportData)
+        fld = events.statsManager().getEventFldFor('username')
 
-    def getWeekHourlyData(self):
-        start = self.startDate.stamp()
-        end = self.endDate.stamp()
+        for p in pools:
+            dataUsers = []
+            dataAccesses = []
+            reportData = []
+            for interval in samplingIntervals:
+                key = (interval[0] + interval[1]) / 2
+                q = events.statsManager().getEvents(events.OT_DEPLOYED, events.ET_ACCESS, since=interval[0], to=interval[1], owner_id=p[0]).values(fld).annotate(cnt=Count(fld))
+                accesses = 0
+                for v in q:
+                    accesses += v['cnt']
 
-        dataWeek = [0] * 7
-        dataHour = [0] * 24
-        for val in events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end):
-            s = datetime.datetime.fromtimestamp(val.stamp)
-            dataWeek[s.weekday()] += 1
-            dataHour[s.hour] += 1
+                dataUsers.append((key, len(q)))  # @UndefinedVariable
+                dataAccesses.append((key, accesses))
+                reportData.append(
+                    {
+                        'date': tools.timestampAsStr(interval[0], xLabelFormat) + ' - ' + tools.timestampAsStr(interval[1], xLabelFormat),
+                        'users': len(q),
+                        'accesses': accesses
+                    }
+                )
+            poolsData.append({
+                'pool': p[0],
+                'name': p[1],
+                'dataUsers': dataUsers,
+                'dataAccesses': dataAccesses,
+                'reportData': reportData
+            })
 
-        return (dataWeek, dataHour)
+        return (xLabelFormat, poolsData)
 
     def generate(self):
-        # Sample query:
-        #   'SELECT *, count(*) as number, CEIL(stamp/(3600))*3600 as block'
-        #   ' FROM {table}'
-        #   ' WHERE event_type = 0 and stamp >= {start} and stamp <= {end}'
-        #   ' GROUP BY CEIL(stamp/(3600))'
-        #   ' ORDER BY block'
-
-        # Generate the sampling intervals and get data from db
+        # Generate the sampling intervals and get dataUsers from db
         start = self.startDate.stamp()
         end = self.endDate.stamp()
 
-        xLabelFormat, data, reportData = self.getRangeData()
-
-        #
-        # User access by date graph
-        #
+        xLabelFormat, poolsData = self.getRangeData()
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
-
-        dataset = ((ugettext('Users access to UDS'), data),)
 
         options = {
             'encoding': 'utf-8',
             'axis': {
                 'x': {
                     'ticks': [
-                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(i), xLabelFormat)) for i in range(start, end, (end - start) / 11)
+                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat)) for i, l in enumerate(range(start, end, (end - start) / self.samplingPoints.num()))
                     ],
-                    'range': (start, end),
+                    'range': (0, self.samplingPoints.num()),
                     'showLines': True,
                 },
                 'y': {
@@ -262,17 +234,17 @@ class PoolPerformanceReport(StatsReport):
                 'lineColor': '#187FF2'
             },
             'colorScheme': {
-                'name': 'gradient',
+                'name': 'rainbow',
                 'args': {
-                    'initialColor': '#B8CA16',
+                    'initialColor': 'blue',
                 },
             },
             'legend': {
                 'hide': False,
                 'legendFontSize': 16,
                 'position': {
-                    'left': 48,
-                    'bottom': 8,
+                    'left': 96,
+                    'top': 40,
                 }
             },
             'padding': {
@@ -281,80 +253,59 @@ class PoolPerformanceReport(StatsReport):
                 'right': 48,
                 'bottom': 48,
             },
-            'title': _('Users access to UDS')
+            'title': _('Users by pool'),
         }
 
-        chart = pycha.line.LineChart(surface, options)
+        # chart = pycha.line.LineChart(surface, options)
+        # chart = pycha.bar.VerticalBarChart(surface, options)
+        chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
+
+        dataset = []
+        for pool in poolsData:
+            logger.debug(pool['dataUsers'])
+            ds = list((i, l[1]) for i, l in enumerate(pool['dataUsers']))
+            logger.debug(ds)
+            dataset.append((ugettext('Users for {}').format(pool['name']), ds))
+
+        logger.debug('Dataset: {}'.format(dataset))
         chart.addDataset(dataset)
+
         chart.render()
 
         img = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
 
-        #
-        # User access by day of week
-        #
-        dataWeek, dataHour = self.getWeekHourlyData()
+        # Accesses
+        chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
 
-        dataset = ((ugettext('Users access to UDS'), [(i, dataWeek[i]) for i in range(0, 7)]),)
+        dataset = []
+        for pool in poolsData:
+            logger.debug(pool['dataAccesses'])
+            ds = list((i, l[1]) for i, l in enumerate(pool['dataAccesses']))
+            logger.debug(ds)
+            dataset.append((ugettext('Accesses for {}').format(pool['name']), ds))
 
-        options['axis'] = {
-            'x': {
-                'ticks': [
-                    dict(v=i, label='Day {}'.format(i)) for i in range(0, 7)
-                ],
-                'range': (0, 6),
-                'showLines': True,
-            },
-            'y': {
-                'tickCount': 10,
-                'showLines': True,
-            },
-            'tickFontSize': 16,
-        }
-
-        chart = pycha.bar.VerticalBarChart(surface, options)
+        logger.debug('Dataset: {}'.format(dataset))
         chart.addDataset(dataset)
+
         chart.render()
 
         img2 = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
 
+        # Generate Data for pools, basically joining all pool data
 
-        # Hourly chart
-        dataset = ((ugettext('Users access to UDS'), [(i, dataHour[i]) for i in range(0, 24)]),)
 
-        options['axis'] = {
-            'x': {
-                'ticks': [
-                    dict(v=i, label='{}:00'.format(i)) for i in range(0, 24)
-                ],
-                'range': (0, 24),
-                'showLines': True,
-            },
-            'y': {
-                'tickCount': 10,
-                'showLines': True,
-            },
-            'tickFontSize': 16,
-        }
-
-        chart = pycha.bar.VerticalBarChart(surface, options)
-        chart.addDataset(dataset)
-        chart.render()
-
-        img3 = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
-
-        output = StringIO.StringIO()
 
         queryset = [
-            {'image': img, 'image2': img2, 'image3': img3, 'data': reportData}
+            {'image': img, 'image2': img2, 'data': []}
         ]
 
         logger.debug(queryset)
 
+        output = StringIO.StringIO()
+
         try:
             report = AccessReport(queryset=queryset)
-            report.title = ugettext('Users access to UDS')
-            # report = UsersReport(queryset=users)
+            report.title = ugettext('UDS Pools Performance Report')
             report.generate_by(PDFGenerator, filename=output)
             return output.getvalue()
         except Exception:
@@ -362,7 +313,7 @@ class PoolPerformanceReport(StatsReport):
             return None
 
 
-class StatsReportLoginCSV(PoolPerformanceReport):
+class PoolPerformanceReportCSV(PoolPerformanceReport):
     filename = 'access.csv'
     mime_type = 'text/csv'  # Report returns pdfs by default, but could be anything else
     name = _('Users access report by date')  # Report name
@@ -371,6 +322,7 @@ class StatsReportLoginCSV(PoolPerformanceReport):
     encoded = False
 
     # Input fields
+    pools = PoolPerformanceReport.pools
     startDate = PoolPerformanceReport.startDate
     endDate = PoolPerformanceReport.endDate
     samplingPoints = PoolPerformanceReport.samplingPoints

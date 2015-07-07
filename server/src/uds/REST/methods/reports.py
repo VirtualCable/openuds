@@ -120,8 +120,6 @@ class Reports(model.BaseModelHandler):
             logger.exception('Generating report')
             return self.invalidRequestException(six.text_type(e))
 
-            report.__dict__.update()
-
     # Gui related
     def getGui(self, uuid):
         report = self._findReport(uuid)

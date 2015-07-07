@@ -133,13 +133,23 @@ class StatsManager(object):
         '''
         self.__doCleanup(StatsCounters)
 
+    def getEventFldFor(self, fld):
+        return {
+            'username': 'fld1',
+            'platform': 'fld1',
+            'srcip': 'fld2',
+            'browser': 'fld2',
+            'dstip': 'fld3',
+            'version': 'fld3',
+            'uniqueid': 'fld4'
+        }.get(fld, None)
+
     # Event stats
-    # Counter stats
     def addEvent(self, owner_type, owner_id, eventType, **kwargs):
         '''
         Adds a new event stat to database.
 
-    stamp=None, fld1=None, fld2=None, fld3=None
+        stamp=None, fld1=None, fld2=None, fld3=None
         Args:
 
             toWhat: if of the counter

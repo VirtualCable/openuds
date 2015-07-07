@@ -40,7 +40,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2015-05-04'
+__updated__ = '2015-07-02'
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +84,11 @@ class StatsEvents(models.Model):
             fltr = fltr.filter(owner_type=owner_type)
 
         if kwargs.get('owner_id', None) is not None:
-            fltr = fltr.filter(owner_id=kwargs['owner_id'])
+            oid = kwargs.get('owner_id')
+            if isinstance(oid, (list, tuple)):
+                fltr = fltr.filter(owner_id__in=oid)
+            else:
+                fltr = fltr.filter(owner_id=oid)
 
         since = kwargs.get('since', None)
         to = kwargs.get('to', None)
