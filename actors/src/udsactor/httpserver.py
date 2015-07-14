@@ -51,6 +51,10 @@ startTime = time.time()
 
 
 class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    protocol_version = 'HTTP/1.0'
+    server_version = 'UDS Actor Server'
+    sys_version = ''
+
     uuid = None
     service = None
     lock = threading.Lock()
@@ -61,6 +65,15 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps({'error': message}))
         return
+
+    def sendJsonResponse(self, data):
+        self.send_response(200)
+        data = json.dumps(data)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Content-Length', len(data))
+        self.end_headers()
+        # Send the html message
+        self.wfile.write(data)
 
     def do_GET(self):
         # Very simple path & params splitter
@@ -75,11 +88,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             return
 
         if len(path) != 2:
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            # Send the html message
-            self.wfile.write(json.dumps("UDS Actor has been running for {} seconds".format(time.time() - startTime)))
+            self.sendJsonResponse("UDS Actor has been running for {} seconds".format(time.time() - startTime))
             return
 
         try:
@@ -93,11 +102,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.sendJsonError(500, str(e))
             return
 
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        # Send the html message
-        self.wfile.write(json.dumps(result))
+        self.sendJsonResponse(result)
 
     def do_POST(self):
         path = self.path.split('?')[0][1:].split('/')
@@ -113,7 +118,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             HTTPServerHandler.lock.acquire()
             length = int(self.headers.getheader('content-length'))
             content = self.rfile.read(length)
-            print(length, ">>", content, '<<')
+            logger.debug('length: {}, content >>{}<<'.format(length, content))
             params = json.loads(content)
 
             operation = getattr(self, 'post_' + path[1])
@@ -128,11 +133,7 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         finally:
             HTTPServerHandler.lock.release()
 
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        # Send the html message
-        self.wfile.write(json.dumps(result))
+        self.sendJsonResponse(result)
 
     def post_logoff(self, params):
         logger.debug('Sending LOGOFF to clients')
@@ -172,6 +173,12 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def get_information(self, params):
         # TODO: Return something useful? :)
         return 'Information'
+
+    def log_error(self, fmt, *args):
+        logger.error('HTTP ' + fmt % args)
+
+    def log_message(self, fmt, *args):
+        logger.info('HTTP ' + fmt % args)
 
 
 class HTTPServerThread(threading.Thread):
