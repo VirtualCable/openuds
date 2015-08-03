@@ -236,4 +236,7 @@ class ServicesPools(ModelHandler):
 
     # Logs
     def getLogs(self, item):
-        return log.getLogs(item)
+        try:
+            return log.getLogs(item)
+        except Exception:
+            return []

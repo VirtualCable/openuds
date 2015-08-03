@@ -45,7 +45,7 @@ from client import oVirtClient
 
 import logging
 
-__updated__ = '2015-06-09'
+__updated__ = '2015-07-24'
 
 logger = logging.getLogger(__name__)
 
@@ -96,9 +96,9 @@ class Provider(ServiceProvider):
     host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('oVirt Server IP or Hostname'), required=True)
     username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on oVirt, (use "user@domain" form)'), required=True, defvalue='admin@internal')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of oVirt'), required=True)
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=5, tooltip=_('Timeout in seconds of connection to VC'), required=True)
+    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=5, tooltip=_('Timeout in seconds of connection to oVirt'), required=True)
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF', order=6, rdonly=True,
-                              tooltip=_('Range of valid macs for created machines'), required=True)
+                              tooltip=_('Range of valid macs for UDS managed machines'), required=True)
 
     # oVirt engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
@@ -291,8 +291,6 @@ class Provider(ServiceProvider):
              Also can return'unknown' if Machine is not known
         '''
         return self.__getApi().getMachineState(machineId)
-
-        return State.INACTIVE
 
     def removeTemplate(self, templateId):
         '''

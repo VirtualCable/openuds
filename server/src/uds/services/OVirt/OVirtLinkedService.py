@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2015-05-29'
+__updated__ = '2015-07-24'
 
 logger = logging.getLogger(__name__)
 
@@ -223,6 +223,7 @@ class OVirtLinkedService(Service):
         vals = []
         for c in clusters:
             vals.append(gui.choiceItem(c['id'], c['name']))
+
         self.cluster.setValues(vals)
 
     def datastoreHasSpace(self):
