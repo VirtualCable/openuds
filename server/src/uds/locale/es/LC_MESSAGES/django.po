@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-22 11:29+0200\n"
+"POT-Creation-Date: 2015-08-03 11:34+0200\n"
 "PO-Revision-Date: 2015-06-22 09:06+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/openuds/language/"
@@ -75,7 +75,9 @@ msgid "Tag"
 msgstr "Etiqueta"
 
 #: REST/methods/authenticators.py:63 reports/stats/login.py:107
-#: reports/stats/login.py:373 templates/uds/admin/tmpl/authenticators.html:30
+#: reports/stats/login.py:373 reports/stats/pool_performance.py:108
+#: reports/stats/pool_performance.py:366
+#: templates/uds/admin/tmpl/authenticators.html:30
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/permissions.html:7
 msgid "Users"
@@ -341,8 +343,9 @@ msgstr ""
 "seleccionadas. Si no esá seleccionada, el transporte estará desactivado para "
 "las redes seleccionadas"
 
-#: REST/methods/transports.py:78 templates/uds/html5/index.html:81
-#: templates/uds/index.html:79
+#: REST/methods/transports.py:78
+#: services/Nutanix_enterprise/NutanixService.py:51
+#: templates/uds/html5/index.html:81 templates/uds/index.html:79
 msgid "Networks"
 msgstr "Redes"
 
@@ -469,6 +472,7 @@ msgstr "Usuarios actuales"
 #: auths/RegexLdap/Authenticator.py:79 auths/SimpleLDAP/Authenticator.py:81
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
+#: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:97
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
@@ -577,6 +581,7 @@ msgstr "Lista de usuarios para {}"
 #: auths/RegexLdap/Authenticator.py:56 auths/SimpleLDAP/Authenticator.py:57
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
+#: services/Nutanix_enterprise/NutanixProvider.py:37
 #: services/OVirt/OVirtProvider.py:96
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
 #: services/Xen/XenProvider.py:98
@@ -630,6 +635,7 @@ msgstr ""
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:86
+#: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:98 services/Sample/SampleService.py:131
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:83
@@ -652,6 +658,7 @@ msgstr "Contraseña del usuario LDAP"
 #: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:62
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:87
+#: services/Nutanix_enterprise/NutanixProvider.py:41
 #: services/OVirt/OVirtProvider.py:99
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 msgid "Timeout"
@@ -739,6 +746,7 @@ msgstr "IP del Servidor EDirectory o nombre de host"
 #: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:58
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
+#: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/Vmware_enterprise/ServiceProviderVC.py:30
 msgid "Port"
 msgstr "Puerto"
@@ -1208,43 +1216,43 @@ msgstr "No se puede anular una publicación que no se está utilizando"
 msgid "Can't unpublish publications with services in process"
 msgstr "No se pueden anular publicaciones con servicios en proceso"
 
-#: core/managers/UserPrefsManager.py:285
+#: core/managers/UserPrefsManager.py:293
 msgid "Screen Size"
 msgstr "Tamaño de pantalla"
 
-#: core/managers/UserPrefsManager.py:292
+#: core/managers/UserPrefsManager.py:300
 msgid "Full Screen"
 msgstr "Pantalla completa"
 
-#: core/managers/UserPrefsManager.py:294
+#: core/managers/UserPrefsManager.py:302
 msgid "Screen colors"
 msgstr "Colores de pantalla"
 
-#: core/managers/UserPrefsManager.py:296
+#: core/managers/UserPrefsManager.py:304
 msgid "8 bits"
 msgstr "8 bits"
 
-#: core/managers/UserPrefsManager.py:297
+#: core/managers/UserPrefsManager.py:305
 msgid "16 bits"
 msgstr "16 bits"
 
-#: core/managers/UserPrefsManager.py:298
+#: core/managers/UserPrefsManager.py:306
 msgid "24 bits"
 msgstr "24 bits"
 
-#: core/managers/UserPrefsManager.py:299
+#: core/managers/UserPrefsManager.py:307
 msgid "32 bits"
 msgstr "32 bits"
 
-#: core/managers/UserPrefsManager.py:303
+#: core/managers/UserPrefsManager.py:311
 msgid "Plugin detection"
 msgstr "Detección de plugin"
 
-#: core/managers/UserPrefsManager.py:305
+#: core/managers/UserPrefsManager.py:313
 msgid "Detect plugin"
 msgstr "Detectar plugin"
 
-#: core/managers/UserPrefsManager.py:306
+#: core/managers/UserPrefsManager.py:314
 msgid "Bypass plugin detection"
 msgstr "Detección de plugin de bypass"
 
@@ -1784,6 +1792,7 @@ msgid "Statistics"
 msgstr "Estadísticas"
 
 #: reports/stats/login.py:77 reports/stats/login.py:103
+#: reports/stats/pool_performance.py:101
 msgid "Users access by date"
 msgstr "Acceso de los usuarios por fecha"
 
@@ -1796,6 +1805,7 @@ msgid "Users access by hour"
 msgstr "Acceso de usuarios por hora"
 
 #: reports/stats/login.py:105 reports/stats/login.py:373
+#: reports/stats/pool_performance.py:106 reports/stats/pool_performance.py:366
 msgid "Date range"
 msgstr "Rango de fechas"
 
@@ -1807,27 +1817,27 @@ msgstr "Informe de accesos de usuarios por fecha"
 msgid "Report of user access to platform by date"
 msgstr "Informe de acceso de usuarios a la plataforma por fecha"
 
-#: reports/stats/login.py:132
+#: reports/stats/login.py:132 reports/stats/pool_performance.py:145
 msgid "Starting date"
 msgstr "Fecha de inicio"
 
-#: reports/stats/login.py:133
+#: reports/stats/login.py:133 reports/stats/pool_performance.py:146
 msgid "starting date for report"
 msgstr "fecha de inicio para informe"
 
-#: reports/stats/login.py:140
+#: reports/stats/login.py:140 reports/stats/pool_performance.py:153
 msgid "Finish date"
 msgstr "Fecha de finalización"
 
-#: reports/stats/login.py:141
+#: reports/stats/login.py:141 reports/stats/pool_performance.py:154
 msgid "finish date for report"
 msgstr "fecha de finalización para informe"
 
-#: reports/stats/login.py:148
+#: reports/stats/login.py:148 reports/stats/pool_performance.py:161
 msgid "Number of points"
 msgstr "Número de puntos"
 
-#: reports/stats/login.py:152
+#: reports/stats/login.py:152 reports/stats/pool_performance.py:165
 msgid "Number of sampling points used in charts"
 msgstr "Número de puntos de muestreo utilizados en gráficos"
 
@@ -1836,6 +1846,66 @@ msgstr "Número de puntos de muestreo utilizados en gráficos"
 #: reports/stats/login.py:345
 msgid "Users access to UDS"
 msgstr "Acceso de usuarios a UDS"
+
+#: reports/stats/pool_performance.py:81
+msgid "Distinct users by pool"
+msgstr "Distintos usuarios de la piscina"
+
+#: reports/stats/pool_performance.py:87
+msgid "Accesses by pool"
+msgstr "Accesos a piscina"
+
+#: reports/stats/pool_performance.py:104 reports/stats/pool_performance.py:366
+msgid "Pool"
+msgstr "Piscina"
+
+#: reports/stats/pool_performance.py:110 reports/stats/pool_performance.py:366
+#| msgid "Access denied"
+msgid "Accesses"
+msgstr "Accesos"
+
+#: reports/stats/pool_performance.py:131
+#| msgid "Users access by date"
+msgid "Pools performance by date"
+msgstr "Funcionamiento de piscinas por fecha"
+
+#: reports/stats/pool_performance.py:132
+#| msgid "Report of user access to platform by date"
+msgid "Report pools performance by date"
+msgstr "Funcionamiento de piscinas de informe por fecha"
+
+#: reports/stats/pool_performance.py:138
+msgid "Pools"
+msgstr "Piscinas"
+
+#: reports/stats/pool_performance.py:139
+#| msgid "finish date for report"
+msgid "Pools for report"
+msgstr "Piscinas para informe"
+
+#: reports/stats/pool_performance.py:185
+#| msgid "Create at least a service before creating a new service pool"
+msgid "Select at least a service pool for the report"
+msgstr "Seleccione al menos un pool de servicio para el informe"
+
+#: reports/stats/pool_performance.py:290
+#| msgid "Users list"
+msgid "Users by pool"
+msgstr "Usuarios de piscina"
+
+#: reports/stats/pool_performance.py:302
+#| msgid "Users of {0}"
+msgid "Users for {}"
+msgstr "Usuarios de {}"
+
+#: reports/stats/pool_performance.py:319
+#| msgid "Users List for {}"
+msgid "Accesses for {}"
+msgstr "Accesos para {}"
+
+#: reports/stats/pool_performance.py:340
+msgid "UDS Pools Performance Report"
+msgstr "Informe de ejecución de piscinas UDS"
 
 #: reports/stats/usage.py:45
 msgid "Usage stats"
@@ -1884,6 +1954,7 @@ msgstr "Máquina Base"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:100
+#: services/Nutanix_enterprise/NutanixService.py:45
 #: services/OVirt/OVirtLinkedService.py:102
 #: services/Xen/XenLinkedService.py:102
 msgid "Service base machine"
@@ -1947,6 +2018,7 @@ msgstr "Nombre base para clones de esta máquina"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:112
+#: services/Nutanix_enterprise/NutanixService.py:66
 #: services/OVirt/OVirtLinkedService.py:159
 #: services/Vmware_enterprise/VCLinkedCloneService.py:81
 #: services/Xen/XenLinkedService.py:120
@@ -1955,6 +2027,7 @@ msgstr "Longitud del nombre"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
 #: services/HyperV_enterprise/HyperVLinkedService.py:113
+#: services/Nutanix_enterprise/NutanixService.py:69
 #: services/OVirt/OVirtLinkedService.py:162
 #: services/Vmware_enterprise/VCLinkedCloneService.py:82
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
@@ -1963,6 +2036,7 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:125
+#: services/Nutanix_enterprise/NutanixService.py:87
 #: services/OVirt/OVirtLinkedService.py:191
 #: services/Vmware_enterprise/VCLinkedCloneService.py:100
 #: services/Xen/XenLinkedService.py:133
@@ -1971,6 +2045,7 @@ msgstr "La longitud de \"basename\" más la longitud no debe ser superior a 15"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
 #: services/HyperV_enterprise/HyperVLinkedService.py:127
+#: services/Nutanix_enterprise/NutanixService.py:89
 #: services/OVirt/OVirtLinkedService.py:193
 #: services/Vmware_enterprise/VCLinkedCloneService.py:102
 #: services/Xen/XenLinkedService.py:135
@@ -2014,6 +2089,7 @@ msgstr "Tiempo de espera en segundos de conexión a HyperV"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:94
 #: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/Nutanix_enterprise/NutanixProvider.py:42
 #: services/OVirt/OVirtProvider.py:100
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:101
@@ -2022,7 +2098,7 @@ msgstr "Rango de Macs"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:95
 #: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/OVirt/OVirtProvider.py:101 services/Xen/XenProvider.py:102
+#: services/Xen/XenProvider.py:102
 msgid "Range of valid macs for created machines"
 msgstr "Rango de macs válidos para máquinas creadas"
 
@@ -2038,7 +2114,8 @@ msgstr "Test de conexión realizado con éxito"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:256
-#: services/OVirt/OVirtProvider.py:419
+#: services/Nutanix_enterprise/NutanixProvider.py:166
+#: services/OVirt/OVirtProvider.py:417
 #: services/Vmware_enterprise/ServiceProviderVC.py:123
 msgid "Connection failed. Check connection params"
 msgstr "La conexión ha fallado. Compruebe los parámetros de conexión"
@@ -2073,6 +2150,78 @@ msgstr "Proveedor de Plataforma HyperV (experimental)"
 #: services/HyperV_enterprise/HyperVProvider.py:68
 msgid "HyperV platform service provider (experimental)"
 msgstr "Proveedor de servicios de plataforma HyperV (experimental)"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:31
+#| msgid "RDS Provider (Experimental)"
+msgid "Nutanix Acropolis Provider (Experimental)"
+msgstr "Proveedor de Nutanix Acrópolis (Experimental)"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:33
+#| msgid "Microsoft RDS based provider"
+msgid "Nutanix based VM provider"
+msgstr "Nutanix basado en proveedor de VM"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:37
+#| msgid "Ldap Server IP or Hostname"
+msgid "Nutanix Acropolis Server IP or Hostname"
+msgstr "Nutanix Acrópolis servidor IP o nombre de host"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:38
+msgid "Nutanix Acropolis server Port (default 9440)"
+msgstr "Servidor de Nutanix Acrópolis puerto (por defecto 9440)"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:39
+#| msgid "User with valid privileges on VC"
+msgid "User with valid privileges on Nutanix Acropolis"
+msgstr "Usuario con privilegios válidos en Nutanix Acrópolis"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:40
+#| msgid "Password of the user of oVirt"
+msgid "Password of the user of Nutanix Acropolis"
+msgstr "Contraseña del usuario de Nutanix Acrópolis"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:41
+#| msgid "Timeout in seconds of connection to VC"
+msgid "Timeout in seconds of connection to Nutanix"
+msgstr "Tiempo de espera en segundos de conexión a Nutanix"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:43
+#: services/OVirt/OVirtProvider.py:101
+#| msgid "Range of valid macs for created machines"
+msgid "Range of valid macs for UDS managed machines"
+msgstr "Gama de macs válidas para UDS manejado máquinas"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:164
+#| msgid "Connections"
+msgid "Connection works fine"
+msgstr "Conexión funciona bien"
+
+#: services/Nutanix_enterprise/NutanixService.py:21
+#| msgid "Xen Linked Clone (Experimental)"
+msgid "Nutanix KVM (Experimental)"
+msgstr "Nutanix KVM (Experimental)"
+
+#: services/Nutanix_enterprise/NutanixService.py:23
+msgid "Nutanix KVM based service"
+msgstr "Nutanix KVM basado en servicio"
+
+#: services/Nutanix_enterprise/NutanixService.py:44
+#| msgid "Base"
+msgid "Base Vm"
+msgstr "Base de Vm"
+
+#: services/Nutanix_enterprise/NutanixService.py:52
+msgid ""
+"Networks for the machines (every machine will be attached to this networks, "
+"each one with its own interface)"
+msgstr ""
+"Redes para las máquinas (cada máquina se unirá a estas redes, "
+"cada uno con su propia interfaz)"
+
+#: services/Nutanix_enterprise/NutanixService.py:57
+#| msgid "Name"
+msgid "Vm Names"
+msgstr "Nombres de VM"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"
@@ -2147,9 +2296,9 @@ msgid "Password of the user of oVirt"
 msgstr "Contraseña del usuario de oVirt"
 
 #: services/OVirt/OVirtProvider.py:99
-#: services/Vmware_enterprise/ServiceProviderVC.py:33
-msgid "Timeout in seconds of connection to VC"
-msgstr "Tiempo de espera en segundos de conexión a VC"
+#| msgid "Timeout in seconds of connection to VC"
+msgid "Timeout in seconds of connection to oVirt"
+msgstr "Tiempo de espera en segundos de conexión a oVirt"
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -2220,9 +2369,20 @@ msgid "Full path of the application this service will represent"
 msgstr ""
 "Ruta de acceso completa de la aplicación que representará este servicio"
 
-#: services/RDS_enterprise/RDSService.py:65
-msgid "The application path to execute is required"
-msgstr "La ruta de la aplicación a ejecutar es necesaria"
+#: services/RDS_enterprise/RDSService.py:54
+#| msgid "Deployed services"
+msgid "Max. Allowd services"
+msgstr "Max. L servicios"
+
+#: services/RDS_enterprise/RDSService.py:59
+#| msgid "Maximum number of services to provide"
+msgid "Maximum number of allowed services (0 means no limit)"
+msgstr "Número máximo de servicios permitidos (0 no significa límite)"
+
+#: services/RDS_enterprise/RDSService.py:76
+#| msgid "The application path to execute is required"
+msgid "A valid application path is required"
+msgstr "Se requiere una ruta de solicitud válida"
 
 #: services/Sample/SampleProvider.py:68
 msgid "Sample Provider"
@@ -2368,6 +2528,10 @@ msgstr "Usuario con privilegios válidos en VC"
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Password of the user of the VC"
 msgstr "Contraseña del usuario de VC"
+
+#: services/Vmware_enterprise/ServiceProviderVC.py:33
+msgid "Timeout in seconds of connection to VC"
+msgstr "Tiempo de espera en segundos de conexión a VC"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
 msgid ""
