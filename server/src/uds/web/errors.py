@@ -64,6 +64,7 @@ INVALID_REQUEST = 10
 BROWSER_NOT_SUPPORTED = 11,
 SERVICE_IN_MAINTENANCE = 12
 SERVICE_NOT_READY = 13
+SERVICE_IN_PREPARATION = 14
 
 
 strings = [
@@ -80,7 +81,8 @@ strings = [
     _('Invalid request received'),
     _('Your browser is not supported. Please, upgrade it to a modern HTML5 browser like Firefox or Chrome'),
     _('The requested service is in maintenance mode'),
-    _('The service is not ready.\nPlease, try again in a few moments.')
+    _('The service is not ready.\nPlease, try again in a few moments.'),
+    _('Preparing service')
 ]
 
 

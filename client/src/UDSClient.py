@@ -45,6 +45,8 @@ import webbrowser
 
 from UDSWindow import Ui_MainWindow
 
+class RetryException(Exception):
+    pass
 
 class UDSClient(QtGui.QMainWindow):
 
@@ -77,6 +79,10 @@ class UDSClient(QtGui.QMainWindow):
 
     def processError(self, data):
         if 'error' in data:
+            # QtGui.QMessageBox.critical(self, 'Request error {}'.format(data.get('retryable', '0')), data['error'], QtGui.QMessageBox.Ok)
+            if data.get('retryable', '0') == '1':
+                raise RetryException(data['error'])
+
             raise Exception(data['error'])
             # QtGui.QMessageBox.critical(self, 'Request error', rest.data['error'], QtGui.QMessageBox.Ok)
             # self.closeWindow()
@@ -92,6 +98,13 @@ class UDSClient(QtGui.QMainWindow):
     def cancelPushed(self):
         self.close()
 
+    def _updateProgressBar(self, increment, maximum=100):
+        val = self.ui.progressBar.value()
+        val += increment
+        if val > maximum:
+            val = maximum
+        self.ui.progressBar.setValue(val)
+
     @QtCore.pyqtSlot()
     def getVersion(self):
         self.req = RestRequest('', self, self.version)
@@ -100,7 +113,7 @@ class UDSClient(QtGui.QMainWindow):
     @QtCore.pyqtSlot(dict)
     def version(self, data):
         try:
-            self.ui.progressBar.setValue(50)
+            self.ui.progressBar.setValue(20)
 
             self.processError(data)
 
@@ -111,18 +124,28 @@ class UDSClient(QtGui.QMainWindow):
                 webbrowser.open(data['result']['downloadUrl'])
                 self.closeWindow()
                 return
+            self.getTransportData()
 
-            self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName(), 'version': VERSION})
-            self.req.get()
+        except RetryException as e:
+            self._updateProgressBar(5, 80)
+            self.ui.info.setText(six.text_type(e))
+            QtCore.QTimer.singleShot(1000, self.getVersion)
 
         except Exception as e:
             self.showError(e)
 
+    @QtCore.pyqtSlot()
+    def getTransportData(self):
+        self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName(), 'version': VERSION})
+        self.req.get()
+
+
     @QtCore.pyqtSlot(dict)
     def transportDataReceived(self, data):
         try:
-            self.ui.progressBar.setValue(80)
             self.processError(data)
+
+            self.ui.progressBar.setValue(80)
 
             script = data['result'].decode('base64').decode('bz2')
 
@@ -132,6 +155,12 @@ class UDSClient(QtGui.QMainWindow):
             self.showMinimized()
 
             QtCore.QTimer.singleShot(3000, self.endScript)
+
+        except RetryException as e:
+            self._updateProgressBar(5, 80)
+            self.ui.info.setText(six.text_type(e) + ', retrying access...')
+            # Retry operation in ten seconds
+            QtCore.QTimer.singleShot(10000, self.getTransportData)
 
         except Exception as e:
             self.showError(e)

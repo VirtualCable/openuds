@@ -63,7 +63,7 @@ class Client(Handler):
     authenticated = False  # Client requests are not authenticated
 
     @staticmethod
-    def result(result=None, error=None, errorCode=0):
+    def result(result=None, error=None, errorCode=0, retryable=False):
         '''
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -79,6 +79,10 @@ class Client(Handler):
                 error += ' (code {0:04X})'.format(errorCode)
 
             res['error'] = error
+            res['retryable'] = retryable and '1' or '0'
+
+        logger.debug('Client Result: {}'.format(res))
+
         return res
 
     def test(self):
@@ -140,7 +144,9 @@ class Client(Handler):
 
             return Client.result(result=transportScript.encode('bz2').encode('base64'))
         except ServiceNotReadyError as e:
-            return Client.result(error=errors.SERVICE_NOT_READY, errorCode=e.code)
+            # Refresh ticket and make this retrayable
+            TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds
+            return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=six.text_type(e))
