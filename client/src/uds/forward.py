@@ -117,7 +117,7 @@ class ForwardThread(threading.Thread):
         verbose('Connecting to ssh host %s:%d ...' % (self.server, self.port))
 
         try:
-            self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5, banner_timeout=10)
+            self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
         except Exception as e:
             verbose('Exception connecting: {}'.format(e))
             self.status = 2  # Error
