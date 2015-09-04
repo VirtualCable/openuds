@@ -60,7 +60,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-06-22'
+__updated__ = '2015-09-04'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -145,7 +145,7 @@ class StatsReportLogin(StatsReport):
 
     samplingPoints = gui.NumericField(
         order=3,
-        label=_('Number of points'),
+        label=_('Number of intervals'),
         length=3,
         minValue=16,
         maxValue=128,

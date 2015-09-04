@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 11:34+0200\n"
+"POT-Creation-Date: 2015-09-04 11:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: REST/methods/actor.py:94 REST/methods/client.py:88
-#: REST/methods/client.py:105
+#: REST/methods/actor.py:94 REST/methods/client.py:92
+#: REST/methods/client.py:109
 msgid "Correct"
 msgstr ""
 
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Unmanaged host"
 msgstr ""
 
-#: REST/methods/actor.py:198 web/errors.py:77
+#: REST/methods/actor.py:198 web/errors.py:78
 msgid "User service not found"
 msgstr ""
 
@@ -53,8 +53,7 @@ msgstr ""
 #: REST/methods/services_pools.py:76 REST/methods/transports.py:57
 #: REST/methods/user_services.py:255 REST/methods/users_groups.py:96
 #: REST/methods/users_groups.py:209 REST/model.py:126
-#: templates/uds/admin/tmpl/group.html:49
-#: templates/uds/admin/tmpl/user.html:40
+#: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr ""
 
@@ -150,7 +149,7 @@ msgid "User Services"
 msgstr ""
 
 #: REST/methods/providers.py:131 dispatchers/wyse_enterprise/views.py:256
-#: dispatchers/wyse_enterprise/views.py:259 web/errors.py:72
+#: dispatchers/wyse_enterprise/views.py:259 web/errors.py:73
 msgid "Service not found"
 msgstr ""
 
@@ -398,8 +397,7 @@ msgstr ""
 
 #: REST/methods/user_services.py:184 REST/methods/user_services.py:220
 #: REST/methods/user_services.py:323 REST/methods/user_services.py:352
-#: templates/uds/admin/tmpl/group.html:54
-#: templates/uds/admin/tmpl/user.html:45
+#: templates/uds/admin/tmpl/group.html:54 templates/uds/admin/tmpl/user.html:45
 msgid "State"
 msgstr ""
 
@@ -527,7 +525,7 @@ msgstr ""
 msgid "Item not found"
 msgstr ""
 
-#: REST/model.py:245 web/errors.py:73
+#: REST/model.py:245 web/errors.py:74
 msgid "Access denied"
 msgstr ""
 
@@ -1030,8 +1028,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/group.html:65
 #: templates/uds/admin/tmpl/permissions.html:22
 #: templates/uds/admin/tmpl/services_pool.html:32
-#: templates/uds/admin/tmpl/user.html:90
-#: templates/uds/admin/tmpl/user.html:104
+#: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
 msgstr ""
 
@@ -1389,7 +1386,7 @@ msgstr ""
 msgid "Invalid credentials used"
 msgstr ""
 
-#: dispatchers/wyse_enterprise/views.py:273 web/errors.py:71
+#: dispatchers/wyse_enterprise/views.py:273 web/errors.py:72
 msgid "Transport not found"
 msgstr ""
 
@@ -1734,7 +1731,7 @@ msgid "finish date for report"
 msgstr ""
 
 #: reports/stats/login.py:148 reports/stats/pool_performance.py:161
-msgid "Number of points"
+msgid "Number of intervals"
 msgstr ""
 
 #: reports/stats/login.py:152 reports/stats/pool_performance.py:165
@@ -1768,7 +1765,7 @@ msgid "Pools performance by date"
 msgstr ""
 
 #: reports/stats/pool_performance.py:132
-msgid "Report pools performance by date"
+msgid "Pools performance report by date"
 msgstr ""
 
 #: reports/stats/pool_performance.py:138
@@ -1996,7 +1993,7 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:256
-#: services/Nutanix_enterprise/NutanixProvider.py:166
+#: services/Nutanix_enterprise/NutanixProvider.py:168
 #: services/OVirt/OVirtProvider.py:417
 #: services/Vmware_enterprise/ServiceProviderVC.py:123
 msgid "Connection failed. Check connection params"
@@ -2066,7 +2063,7 @@ msgstr ""
 msgid "Range of valid macs for UDS managed machines"
 msgstr ""
 
-#: services/Nutanix_enterprise/NutanixProvider.py:164
+#: services/Nutanix_enterprise/NutanixProvider.py:166
 msgid "Connection works fine"
 msgstr ""
 
@@ -2682,8 +2679,7 @@ msgid "UDS Image Gallery"
 msgstr ""
 
 #: templates/uds/admin/tmpl/group.html:24
-#: templates/uds/admin/tmpl/search.html:9
-#: templates/uds/admin/tmpl/user.html:21
+#: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
 msgid "Search"
 msgstr ""
 
@@ -2695,13 +2691,11 @@ msgstr ""
 msgid "Any"
 msgstr ""
 
-#: templates/uds/admin/tmpl/group.html:57
-#: templates/uds/admin/tmpl/user.html:48
+#: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
 msgid "Enabled"
 msgstr ""
 
-#: templates/uds/admin/tmpl/group.html:58
-#: templates/uds/admin/tmpl/user.html:49
+#: templates/uds/admin/tmpl/group.html:58 templates/uds/admin/tmpl/user.html:49
 msgid "Disabled"
 msgstr ""
 
@@ -2844,8 +2838,7 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: templates/uds/admin/tmpl/user.html:92
-#: templates/uds/admin/tmpl/user.html:106
+#: templates/uds/admin/tmpl/user.html:92 templates/uds/admin/tmpl/user.html:106
 #, python-brace-format
 msgid "{0} of {1} selected"
 msgstr ""
@@ -2953,8 +2946,7 @@ msgstr ""
 msgid "An error occurred"
 msgstr ""
 
-#: templates/uds/html5/error.html:16
-#: templates/uds/snippets/back_to_list.html:3
+#: templates/uds/html5/error.html:16 templates/uds/snippets/back_to_list.html:3
 msgid "Back to services list"
 msgstr ""
 
@@ -3618,50 +3610,54 @@ msgstr ""
 msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
 msgstr ""
 
-#: web/errors.py:70
+#: web/errors.py:71
 msgid "Unknown error"
 msgstr ""
 
-#: web/errors.py:74
+#: web/errors.py:75
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr ""
 
-#: web/errors.py:75
+#: web/errors.py:76
 msgid "Maximum services limit reached. Please, contact administrator"
 msgstr ""
 
-#: web/errors.py:76
+#: web/errors.py:77
 msgid "You need to enable cookies to let this application work"
 msgstr ""
 
-#: web/errors.py:78
+#: web/errors.py:79
 msgid "Authenticator not found"
 msgstr ""
 
-#: web/errors.py:79
+#: web/errors.py:80
 msgid "Invalid authenticator"
 msgstr ""
 
-#: web/errors.py:80
+#: web/errors.py:81
 msgid "Invalid request received"
 msgstr ""
 
-#: web/errors.py:81
+#: web/errors.py:82
 msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
 msgstr ""
 
-#: web/errors.py:82
+#: web/errors.py:83
 msgid "The requested service is in maintenance mode"
 msgstr ""
 
-#: web/errors.py:83
+#: web/errors.py:84
 msgid ""
 "The service is not ready.\n"
 "Please, try again in a few moments."
+msgstr ""
+
+#: web/errors.py:85
+msgid "Preparing service"
 msgstr ""
 
 #: web/forms/LoginForm.py:54

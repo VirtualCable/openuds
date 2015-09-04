@@ -64,7 +64,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-07-07'
+__updated__ = '2015-09-04'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -129,7 +129,7 @@ class AccessReport(UDSGeraldoReport):
 class PoolPerformanceReport(StatsReport):
     filename = 'pools_performance.pdf'
     name = _('Pools performance by date')  # Report name
-    description = _('Report pools performance by date')  # Report description
+    description = _('Pools performance report by date')  # Report description
     uuid = '88932b48-1fd3-11e5-a776-10feed05884b'
 
     # Input fields
@@ -158,7 +158,7 @@ class PoolPerformanceReport(StatsReport):
 
     samplingPoints = gui.NumericField(
         order=4,
-        label=_('Number of points'),
+        label=_('Number of intervals'),
         length=3,
         minValue=2,
         maxValue=24,
