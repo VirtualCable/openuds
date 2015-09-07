@@ -37,7 +37,7 @@ from uds.models import User, Service, UserService, DeployedService, getSqlDateti
 from uds.core.util.stats import counters
 from uds.core.util.Cache import Cache
 from uds.REST import Handler, RequestError, ResponseError
-import cPickle
+import pickle
 from datetime import timedelta
 
 import logging
@@ -70,11 +70,11 @@ def getServicesPoolsCounters(servicePool, counter_type):
             for x in counters.getCounters(us, counter_type, since=since, to=to, limit=POINTS, use_max=USE_MAX, all=complete):
                 val.append({'stamp': x[0], 'value': int(x[1])})
             if len(val) > 2:
-                cache.put(cacheKey, cPickle.dumps(val).encode('zip'), 600)
+                cache.put(cacheKey, pickle.dumps(val).encode('zip'), 600)
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
-            val = cPickle.loads(val.decode('zip'))
+            val = pickle.loads(val.decode('zip'))
 
         return val
     except:

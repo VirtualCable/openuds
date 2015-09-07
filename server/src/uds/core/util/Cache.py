@@ -36,7 +36,7 @@ from uds.models import Cache as dbCache, getSqlDatetime
 from datetime import datetime, timedelta
 import hashlib
 import logging
-import cPickle
+import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class Cache(object):
             expired = now > c.created + timedelta(seconds=c.validity)
             if expired:
                 return defValue
-            val = cPickle.loads(c.value.decode(Cache.CODEC))
+            val = pickle.loads(c.value.decode(Cache.CODEC))
             return val
         except dbCache.DoesNotExist:  # @UndefinedVariable
             logger.debug('key not found: {}'.format(skey))
@@ -90,7 +90,7 @@ class Cache(object):
         if validity is None:
             validity = Cache.DEFAULT_VALIDITY
         key = self.__getKey(skey)
-        value = cPickle.dumps(value).encode(Cache.CODEC)
+        value = pickle.dumps(value).encode(Cache.CODEC)
         now = getSqlDatetime()
         try:
             dbCache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable

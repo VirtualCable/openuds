@@ -37,7 +37,7 @@ from uds.core.util import log
 
 from uds.services.Xen.xen_client import XenPowerState
 
-import cPickle
+import pickle
 import logging
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Does nothing right here, we will use envoronment storage in this sample
         '''
-        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, cPickle.dumps(self._queue), self._task])
+        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, pickle.dumps(self._queue), self._task])
 
     def unmarshal(self, str_):
         '''
@@ -85,7 +85,7 @@ class XenLinkedDeployment(UserDeployment):
         vals = str_.split('\1')
         if vals[0] == 'v1':
             self._name, self._ip, self._mac, self._vmid, self._reason, queue, self._task = vals[1:]
-            self._queue = cPickle.loads(queue)
+            self._queue = pickle.loads(queue)
 
     def getName(self):
         '''

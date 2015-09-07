@@ -34,10 +34,10 @@ from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
 
-import cPickle
+import pickle
 import logging
 
-__updated__ = '2015-06-09'
+__updated__ = '2015-09-07'
 
 
 logger = logging.getLogger(__name__)
@@ -75,7 +75,7 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         Does nothing right here, we will use envoronment storage in this sample
         '''
-        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, cPickle.dumps(self._queue)])
+        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, pickle.dumps(self._queue)])
 
     def unmarshal(self, str_):
         '''
@@ -84,7 +84,7 @@ class OVirtLinkedDeployment(UserDeployment):
         vals = str_.split('\1')
         if vals[0] == 'v1':
             self._name, self._ip, self._mac, self._vmid, self._reason, queue = vals[1:]
-            self._queue = cPickle.loads(queue)
+            self._queue = pickle.loads(queue)
 
     def getName(self):
         '''

@@ -37,15 +37,16 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core.services import ServiceProvider
-from OVirtLinkedService import OVirtLinkedService
 from uds.core.ui import gui
 from uds.core.util import validators
 
-from client import oVirtClient
+from .OVirtLinkedService import OVirtLinkedService
+
+from .client import oVirtClient
 
 import logging
 
-__updated__ = '2015-07-24'
+__updated__ = '2015-09-07'
 
 logger = logging.getLogger(__name__)
 

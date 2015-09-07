@@ -4,27 +4,27 @@
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice, 
+#    * Redistributions of source code must retain the above copyright notice,
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors 
-#      may be used to endorse or promote products derived from this software 
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
@@ -35,7 +35,7 @@ Created on Jun 22, 2012
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import ServiceProvider
-from SampleService import ServiceOne, ServiceTwo
+from .SampleService import ServiceOne, ServiceTwo
 from uds.core.ui import gui
 
 import logging
@@ -60,19 +60,19 @@ class Provider(ServiceProvider):
     we MUST register it at package __init__.
 
     '''
-    #: What kind of services we offer, this are classes inherited from Service
+    # : What kind of services we offer, this are classes inherited from Service
     offers = [ServiceOne, ServiceTwo]
-    #: Name to show the administrator. This string will be translated BEFORE
-    #: sending it to administration interface, so don't forget to
-    #: mark it as _ (using ugettext_noop)
+    # : Name to show the administrator. This string will be translated BEFORE
+    # : sending it to administration interface, so don't forget to
+    # : mark it as _ (using ugettext_noop)
     typeName = _('Sample Provider')
-    #: Type used internally to identify this provider
+    # : Type used internally to identify this provider
     typeType = 'SampleProvider'
-    #: Description shown at administration interface for this provider
+    # : Description shown at administration interface for this provider
     typeDescription = _('Sample (and dummy) service provider')
-    #: Icon file used as icon for this provider. This string will be translated
-    #: BEFORE sending it to administration interface, so don't forget to
-    #: mark it as _ (using ugettext_noop)
+    # : Icon file used as icon for this provider. This string will be translated
+    # : BEFORE sending it to administration interface, so don't forget to
+    # : mark it as _ (using ugettext_noop)
     iconFile = 'provider.png'
 
     # now comes the form fields
@@ -85,39 +85,39 @@ class Provider(ServiceProvider):
     # If we don't indicate an order, the output order of fields will be
     # "random"
 
-    #: Remote host. Here core will translate label and tooltip, remember to
-    #: mark them as _ using ugettext_noop.
+    # : Remote host. Here core will translate label and tooltip, remember to
+    # : mark them as _ using ugettext_noop.
     remoteHost = gui.TextField(oder=1,
         length=64,
         label=_('Remote host'),
         tooltip=_('This fields contains a remote host'),
         required=True,
     )
-    #: Name of your pet (sample, not really needed :-) )
+    # : Name of your pet (sample, not really needed :-) )
     petName = gui.TextField(order=2,
         length=32,
         label=_('Your pet\'s name'),
         tooltip=_('If you like, write the name of your pet'),
         requred=False,
-        defvalue='Tux'  #: This will not get translated
+        defvalue='Tux'  # : This will not get translated
     )
-    #: Age of Methuselah (matusalén in spanish)
-    #: in Spain there is a well-known to say that something is very old,
-    #: "Tiene mas años que matusalén"(is older than Methuselah)
+    # : Age of Methuselah (matusalén in spanish)
+    # : in Spain there is a well-known to say that something is very old,
+    # : "Tiene mas años que matusalén"(is older than Methuselah)
     methAge = gui.NumericField(order=3,
         length=4,  # That is, max allowed value is 9999
         label=_('Age of Methuselah'),
         tooltip=_('If you know it, please, tell me!!!'),
-        required=True,  #: Numeric fields have always a value, so this not really needed
+        required=True,  # : Numeric fields have always a value, so this not really needed
         defvalue='4500'
     )
 
-    #: Is Methuselah istill alive?
+    # : Is Methuselah istill alive?
     methAlive = gui.CheckBoxField(order=4,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
-        required=True,  #: Also means nothing. Check boxes has always a value
-        defvalue=gui.TRUE  #: By default, at new item, check this
+        required=True,  # : Also means nothing. Check boxes has always a value
+        defvalue=gui.TRUE  # : By default, at new item, check this
     )
 
     # There is more fields type, but not here the best place to cover it

@@ -40,17 +40,17 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.util.State import State
 from uds.core.util import log
-from uds.models.UUIDModel import UUIDModel
+from .UUIDModel import UUIDModel
 
-from uds.models.Authenticator import Authenticator
-from uds.models.User import User
-from uds.models.Util import UnsavedForeignKey, getSqlDatetime
+from .Authenticator import Authenticator
+from .User import User
+from .Util import UnsavedForeignKey, getSqlDatetime
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-30'
+__updated__ = '2015-09-07'
 
 
 @python_2_unicode_compatible

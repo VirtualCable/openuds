@@ -10,7 +10,7 @@ from ovirtsdk.api import API
 import threading
 import logging
 
-__updated__ = '2015-06-12'
+__updated__ = '2015-09-07'
 
 logger = logging.getLogger(__name__)
 
@@ -373,7 +373,7 @@ class Client(object):
             if vm.get_status().get_state() != 'down':
                 raise Exception('Machine must be in down state to publish it')
 
-            print vm.disks.list()
+            print(vm.disks.list())
 
             # Create disks description to be created in specified storage domain, one for each disk
             sd = params.StorageDomains(storage_domain=[params.StorageDomain(id=storageId)])

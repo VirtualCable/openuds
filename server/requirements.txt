@@ -9,6 +9,6 @@ ovirt-engine-sdk-python
 pycurl
 pyOpenSSL
 python-ldap
-six
 MySQL-python
 reportlab
+bitarray

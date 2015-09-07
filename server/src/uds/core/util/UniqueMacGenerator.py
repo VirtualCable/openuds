@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from UniqueIDGenerator import UniqueIDGenerator
+from .UniqueIDGenerator import UniqueIDGenerator
 import logging
 import re
 

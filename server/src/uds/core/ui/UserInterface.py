@@ -141,7 +141,7 @@ class gui(object):
         '''
         if isinstance(str_, bool):
             return str_
-        if unicode(str_).lower() == gui.TRUE:
+        if six.text_type(str_).lower() == gui.TRUE:
             return True
         return False
 
@@ -219,7 +219,7 @@ class gui(object):
                 'length': options.get('length', gui.InputField.DEFAULT_LENTGH),
                 'required': options.get('required', False),
                 'label': options.get('label', ''),
-                'defvalue': unicode(options.get('defvalue', '')),
+                'defvalue': six.text_type(options.get('defvalue', '')),
                 'rdonly': options.get('rdonly', False),  # This property only affects in "modify" operations
                 'order': options.get('order', 0),
                 'tooltip': options.get('tooltip', ''),

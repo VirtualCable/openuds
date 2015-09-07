@@ -36,7 +36,7 @@ from django.db import transaction
 from uds.models import Storage as dbStorage
 import hashlib
 import logging
-import cPickle
+import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +69,7 @@ class Storage(object):
         return self.saveData(skey, data)
 
     def putPickle(self, skey, data, attr1=None):
-        return self.saveData(skey, cPickle.dumps(data), attr1)
+        return self.saveData(skey, pickle.dumps(data), attr1)
 
     def updateData(self, skey, data, attr1=None):
         self.saveData(skey, data, attr1)
@@ -98,12 +98,12 @@ class Storage(object):
     def getPickle(self, skey):
         v = self.readData(skey, True)
         if v is not None:
-            v = cPickle.loads(v)
+            v = pickle.loads(v)
         return v
 
     def getPickleByAttr1(self, attr1):
         try:
-            return cPickle.loads(dbStorage.objects.get(owner=self._owner, attr1=attr1).data.decode(Storage.CODEC))  # @UndefinedVariable
+            return pickle.loads(dbStorage.objects.get(owner=self._owner, attr1=attr1).data.decode(Storage.CODEC))  # @UndefinedVariable
         except Exception:
             return None
 
@@ -144,7 +144,7 @@ class Storage(object):
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         for v in query:  # @UndefinedVariable
-            yield (v.key, cPickle.loads(v.data.decode(Storage.CODEC)), v.attr1)
+            yield (v.key, pickle.loads(v.data.decode(Storage.CODEC)), v.attr1)
 
     @staticmethod
     def delete(owner=None):

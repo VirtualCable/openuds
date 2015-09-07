@@ -34,11 +34,10 @@
 from django.utils.translation import ugettext_lazy as _
 from uds.core import services
 from uds.core.services import types as serviceTypes
-from uds.core.util.AutoAttributes import AutoAttributes
 from uds.core.ui.UserInterface import gui
-from IPMachineDeployed import IPMachineDeployed
+from .IPMachineDeployed import IPMachineDeployed
 import logging
-import cPickle
+import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -79,12 +78,12 @@ class IPMachinesService(services.Service):
         return {'ipList': gui.convertToList(ips)}
 
     def marshal(self):
-        self.storage().saveData('ips', cPickle.dumps(self._ips))
+        self.storage().saveData('ips', pickle.dumps(self._ips))
         return 'v1'
 
     def unmarshal(self, vals):
         if vals == 'v1':
-            self._ips = cPickle.loads(str(self.storage().readData('ips')))
+            self._ips = pickle.loads(str(self.storage().readData('ips')))
 
     def getUnassignedMachine(self):
         # Search first unassigned machine

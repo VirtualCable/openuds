@@ -28,5 +28,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from OVirtProvider import Provider
+from .OVirtProvider import Provider
 

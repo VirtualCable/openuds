@@ -32,7 +32,7 @@
 '''
 
 from uds.core.Serializable import Serializable
-import cPickle
+import pickle
 import timeit
 
 
@@ -93,7 +93,7 @@ class AutoAttributes(Serializable):
         self.dict = d
 
     def marshal(self):
-        return '\2'.join(['%s\1%s' % (k, cPickle.dumps(v)) for k, v in self.dict.iteritems()]).encode(AutoAttributes.ACODEC)
+        return '\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]).encode(AutoAttributes.ACODEC)
 
     def unmarshal(self, data):
         if data == '':  # Can be empty
@@ -101,7 +101,7 @@ class AutoAttributes(Serializable):
         # We keep original data (maybe incomplete)
         for pair in data.decode(AutoAttributes.ACODEC).split('\2'):
             k, v = pair.split('\1')
-            self.dict[k] = cPickle.loads(str(v))
+            self.dict[k] = pickle.loads(str(v))
 
     def __str__(self):
         str_ = '<AutoAttribute '
