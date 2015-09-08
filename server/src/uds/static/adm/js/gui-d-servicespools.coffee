@@ -3,6 +3,7 @@ gui.servicesPools = new GuiElement(api.servicesPools, "servicespools")
 gui.servicesPools.link = (event) ->
   "use strict"
   gui.clearWorkspace()
+  editMode = false  # To indicate if editing or not. Used for disabling "os manager", due to the fact that os manager are different for apps and vdi
   
   # Clears the details
   # Memory saver :-)
@@ -49,6 +50,7 @@ gui.servicesPools.link = (event) ->
         if data.info.needs_manager is false
           $osmFld.prop "disabled", "disabled"
         else
+          tmpVal = $osmFld.val()
           $osmFld.prop "disabled", false
 
           api.osmanagers.overview (osm) ->
@@ -58,6 +60,9 @@ gui.servicesPools.link = (event) ->
                 if st in data.info.servicesTypeProvided
                   $osmFld.append('<option value="' + d.id + '">' + d.name + '</option>')
                   break
+            $osmFld.val(tmpVal)
+            if editMode is true
+              $osmFld.prop "disabled", "disabled"
             $osmFld.selectpicker "refresh"  if $osmFld.hasClass("selectpicker")
             return
 
@@ -87,6 +92,7 @@ gui.servicesPools.link = (event) ->
       serviceChangedFnc(formId)
 
   editDataLoaded = (formId) ->
+    editMode = true
     serviceChangedFnc(formId)
 
   # Fill "State" for cached and assigned services
@@ -509,6 +515,7 @@ gui.servicesPools.link = (event) ->
 
       onNew: gui.methods.typedNew(gui.servicesPools, gettext("New service pool"), "Service pool " + gettext("creation error"),
         guiProcessor: (guiDef) -> # Create has "save on publish" field
+          editMode = false
           gui.doLog guiDef
           newDef = [].concat(guiDef).concat([
             name: "publish_on_save"
