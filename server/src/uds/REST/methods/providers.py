@@ -34,10 +34,11 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider, Service, UserService
-from uds.REST.methods.services import Services as DetailServices
 from uds.core import services
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
+
+from .services import Services as DetailServices
 
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler

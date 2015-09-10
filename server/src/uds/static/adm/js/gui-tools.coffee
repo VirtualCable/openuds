@@ -120,7 +120,12 @@
     # Datetime renderer (with specified format)
     renderDate: (format) ->
       (data, type, full) ->
-        "<span data-date=\"" + data + "\">" + api.tools.strftime(format, new Date(data * 1000)) + "</span>"
+        if data == "None"
+          data = 7226578800
+          val = gettext('Never')
+        else
+          val = api.tools.strftime(format, new Date(data * 1000))
+        return "<span data-date=\"" + data + "\">" + val + "</span>"
 
     
     # Log level rendererer

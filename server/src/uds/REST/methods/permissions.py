@@ -38,7 +38,7 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds.core.util import permissions
 
-from uds.models import Provider, Service, Authenticator, OSManager, Transport, Network, ServicePool
+from uds.models import Provider, Service, Authenticator, OSManager, Transport, Network, ServicePool, Calendar
 from uds.models import User, Group
 
 import six
@@ -64,7 +64,8 @@ class Permissions(Handler):
             'osmanagers': OSManager,
             'transports': Transport,
             'networks': Network,
-            'servicespools': ServicePool
+            'servicespools': ServicePool,
+            'calendars': Calendar
         }.get(arg, None)
 
         if cls is None:

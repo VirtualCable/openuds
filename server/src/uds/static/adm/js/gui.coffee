@@ -224,12 +224,17 @@
       {
         id: "lnk-gallery"
         exec: gui.gallery.link
-        cleanup: false
+        cleanup: true
       }
       {
         id: "lnk-reports"
         exec: gui.reports.link
-        cleanup: false
+        cleanup: true
+      }
+      {
+        id: "lnk-calendars"
+        exec: gui.calendars.link
+        cleanup: true
       }
     ]
     $.each sidebarLinks, (index, value) ->

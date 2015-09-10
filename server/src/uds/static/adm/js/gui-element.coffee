@@ -86,7 +86,7 @@
   table: (tblParams) ->
     "use strict"
     tblParams = tblParams or {}
-    gui.doLog "Composing table for " + @name
+    gui.doLog "Composing table for " + @name, tblParams
     tableId = @name + "-table"
     self = this # Store this for child functions
     
@@ -135,6 +135,15 @@
       (data, type, full) ->
         dict[data] or renderEmptyCell(data)
 
+    renderCallBack = (fld) ->
+      if tblParams.callback?
+        callBack = tblParams.callback
+        (data, type, value) -> 
+          callBack(fld, data, type, value)
+      else
+        (data) ->
+          fld
+
     @rest.tableInfo (data) -> # Gets tableinfo data (columns, title, visibility of fields, etc...
       row_style = data["row-style"]
       gui.doLog row_style
@@ -172,6 +181,8 @@
                 column.mRender = renderImage
               when "dict"
                 column.mRender = renderTextTransform(opts.dict)  if opts.dict?
+              when "callback"
+                column.mRender = renderCallBack(v)
               else
                 column.sType = opts.type
           columns.push column

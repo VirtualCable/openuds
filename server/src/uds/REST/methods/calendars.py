@@ -28,48 +28,48 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+@itemor: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-09-09'
+from django.utils.translation import ugettext_lazy as _, ugettext
+from uds.models import Calendar
+from uds.core.util import permissions
 
-from uds.models import Provider, Service, OSManager, Transport, Network, ServicePool, UserService, Authenticator, User, Group, StatsCounters, StatsEvents, Calendar, CalendarRule
+from uds.REST.model import ModelHandler
+from .calendarrules import CalendarRules
+
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Constants for each type
-PROVIDER_TYPE = 1
-SERVICE_TYPE = 2
-OSMANAGER_TYPE = 3
-TRANSPORT_TYPE = 4
-NETWORK_TYPE = 5
-POOL_TYPE = 6
-USER_SERVICE_TYPE = 7
-AUTHENTICATOR_TYPE = 8
-USER_TYPE = 9
-GROUP_TYPE = 10
-STATS_COUNTER_TYPE = 11
-STATS_EVENTS_TYPE = 12
-CALENDAR_TYPE = 13
-CALENDAR_RULE_TYPE = 14
+# Enclosed methods under /item path
 
 
-def getObjectType(obj):
-    return {
-        Provider: PROVIDER_TYPE,
-        Service: SERVICE_TYPE,
-        OSManager: OSMANAGER_TYPE,
-        Transport: TRANSPORT_TYPE,
-        Network: NETWORK_TYPE,
-        ServicePool: POOL_TYPE,
-        UserService: USER_SERVICE_TYPE,
-        Authenticator: AUTHENTICATOR_TYPE,
-        User: USER_TYPE,
-        Group: GROUP_TYPE,
-        StatsCounters: STATS_COUNTER_TYPE,
-        StatsEvents: STATS_EVENTS_TYPE,
-        Calendar: CALENDAR_TYPE,
-        CalendarRule: CALENDAR_RULE_TYPE
-    }.get(type(obj))
+class Calendars(ModelHandler):
+    '''
+    Processes REST requests about calendars
+    '''
+    model = Calendar
+    detail = {'rules': CalendarRules}
+
+    save_fields = ['name', 'comments']
+
+    table_title = _('Calendars')
+    table_fields = [
+        {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-calendar text-success'}},
+        {'comments': {'title': _('Comments')}},
+        {'modified': {'title': _('Modified'), 'type': 'datetime'}},
+    ]
+
+    def item_as_dict(self, calendar):
+        return {
+            'id': calendar.uuid,
+            'name': calendar.name,
+            'comments': calendar.comments,
+            'modified': calendar.modified,
+            'permission': permissions.getEffectivePermission(self._user, calendar)
+        }
+
+    def getGui(self, type_):
+        return self.addDefaultFields([], ['name', 'comments'])

@@ -1,0 +1,43 @@
+{% load i18n %}
+<div class="row">
+  <div class="col-xs-12">
+    <h1>{% trans 'Calendars' %}</h1>
+    <ol class="breadcrumb">
+      <li><a class="lnk-dashboard" href="#">Dashboard</a></li>
+      <li>{% trans 'Calendars' %}</li>
+    </ol>
+  </div>
+</div><!-- /.row -->
+{% if messages %}
+<div class="row">
+  <div class="col-md-offset-2 col-md-8">
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+       {{ message }}  
+    </div>
+    {% endfor %} 
+  </div>
+</div>
+{% endif %}
+{% verbatim %}
+<div class="row">
+    <div id="{{ calendars }}" class="col-xs-12"></div>
+</div>
+<div id="detail-placeholder" class="row hidden">
+    <div class="col-xs-12">
+        <ul class="bottom_tabs nav nav-tabs">
+            <li class="active"><a href="#{{ rules }}_tab" data-toggle="tab">{% endverbatim %}{% trans 'Rules' %}{% verbatim %}</a></li>
+        </ul>    
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="{{ rules }}_tab">
+                <div class="row">
+                    <div class="col-xs-12" id="{{ rules }}">
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+{% endverbatim %}

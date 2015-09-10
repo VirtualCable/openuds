@@ -132,6 +132,7 @@
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-config.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-gallery.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-reports.coffee"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-calendar.coffee"></script>
         <!-- base64 encoding -->
         <script src="{% get_static_prefix %}adm/js/base64.js"></script>
         
@@ -168,6 +169,7 @@
         {% js_template 'permissions' %}
         {% js_template 'permissions_add' %}
         {% js_template 'reports' %}
+        {% js_template 'calendars' %}
 
         <!-- utility pages -->
         {% js_template 'request_failed' %}
