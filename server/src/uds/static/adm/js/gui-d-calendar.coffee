@@ -23,7 +23,7 @@ gui.calendars.link = ->
     gettext('Sun'), gettext('Monday'), gettext('Tuesday'), gettext('Wednesday'), gettext('Thursday'), gettext('Friday'), gettext('Saturday')
   ]
 
-  converter = (fld, data, type, record) ->
+  renderer = (fld, data, type, record) ->
     # Display "custom" fields of rules table
     if fld == "interval"
       if record.frequency == "WEEKDAYS"
@@ -64,7 +64,7 @@ gui.calendars.link = ->
         rules = new GuiElement(api.calendars.detail(id, "rules", { permission: selected[0].permission }), "rules")
         rulesTable = rules.table(
           icon: 'calendars'
-          callback: converter
+          callback: renderer
           container: "rules-placeholder"
           rowSelect: "single"
           buttons: [

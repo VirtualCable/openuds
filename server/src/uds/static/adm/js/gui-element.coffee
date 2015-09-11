@@ -136,6 +136,7 @@
         dict[data] or renderEmptyCell(data)
 
     renderCallBack = (fld) ->
+      gui.doLog "Rendering " + fld
       if tblParams.callback?
         callBack = tblParams.callback
         (data, type, value) -> 

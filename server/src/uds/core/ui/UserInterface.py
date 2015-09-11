@@ -121,7 +121,11 @@ class gui(object):
         :note: Text can be anything, the method converts it first to text before
         assigning to dictionary
         '''
-        return {'id': str(id_), 'text': str(text)}
+        return {'id': str(id_), 'text': six.text_type(text)}
+
+    @staticmethod
+    def choiceImage(id_, text, img):
+        return {'id': str(id_), 'text': six.text_type(text), 'img': img }
 
     @staticmethod
     def sortedChoices(choices):
@@ -209,7 +213,7 @@ class gui(object):
         MULTI_CHOICE_TYPE = 'multichoice'
         EDITABLE_LIST = 'editlist'
         CHECKBOX_TYPE = 'checkbox'
-        # IMAGE_TYPE = 'image'
+        IMAGECHOICE_TYPE = 'imgchoice'
         DATE_TYPE = 'date'
 
         DEFAULT_LENTGH = 32  # : If length of some fields are not especified, this value is used as default
@@ -621,6 +625,19 @@ class gui(object):
                 self._data['fills'] = fills
                 gui.callbacks[fills['callbackName']] = fnc
             self._type(gui.InputField.CHOICE_TYPE)
+
+        def setValues(self, values):
+            '''
+            Set the values for this choice field
+            '''
+            self._data['values'] = values
+
+    class ImageChoiceField(InputField):
+        def __init__(self, **options):
+            super(self.__class__, self).__init__(**options)
+            self._data['values'] = options.get('values', [])
+
+            self._type(gui.InputField.IMAGECHOICE_TYPE)
 
         def setValues(self, values):
             '''

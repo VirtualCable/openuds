@@ -70,9 +70,9 @@ class ServicesPools(ModelHandler):
     table_title = _('Service Pools')
     table_fields = [
         {'name': {'title': _('Name')}},
-        {'parent': {'title': _('Parent Service')}},  # Will process this field on client in fact, not sent by server
+        {'parent': {'title': _('Parent Service')}},
         {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
-        {'show_transports': {'title': _('Shows transports')}},  # Will process this field on client in fact, not sent by server
+        {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
         {'comments': {'title': _('Comments')}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
@@ -135,10 +135,10 @@ class ServicesPools(ModelHandler):
             'order': 101,
         }, {
             'name': 'image_id',
-            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Image.objects.all()]),
+            'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
             'label': ugettext('Associated Image'),
             'tooltip': ugettext('Image assocciated with this service'),
-            'type': gui.InputField.CHOICE_TYPE,
+            'type': gui.InputField.IMAGECHOICE_TYPE,
             'order': 102,
         }, {
             'name': 'initial_srvs',

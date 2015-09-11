@@ -79,7 +79,13 @@
         )
       
       # Activate "cool" selects
-      $(selector + " .selectpicker").selectpicker()
+      $.each $(selector + " .selectpicker"), (index, tspn) ->
+        $tspn = $(tspn)
+        length = $tspn.children('option').length
+        if length >= 6
+          $tspn.attr("data-live-search", "true")
+        gui.doLog "Length: " + length
+        $tspn.selectpicker()
 
       # Activate Touchspinner
       $.each $(selector + " input[type=numeric]:not([readonly])"), (index, tspn) ->

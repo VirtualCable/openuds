@@ -104,6 +104,15 @@ gui.servicesPools.link = (event) ->
       return
     return
 
+  # Callback for custom fields
+  renderer = (fld, data, type, record) ->
+    # Display "custom" fields of rules table
+    if fld == "show_transports"
+      if data
+        return gettext('Yes')
+      gettext('No')
+    return fld
+
   api.templates.get "services_pool", (tmpl) ->
     gui.appendToWorkspace api.templates.evaluate(tmpl,
       deployed_services: "deployed-services-placeholder"
@@ -132,6 +141,7 @@ gui.servicesPools.link = (event) ->
     #             
     servicesPoolsTable = gui.servicesPools.table(
       icon: 'pools'
+      callback: renderer
       container: "deployed-services-placeholder"
       rowSelect: "single"
       buttons: [
