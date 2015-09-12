@@ -58,7 +58,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2015-05-27'
+__updated__ = '2015-09-12'
 
 
 @csrf_exempt
@@ -230,8 +230,6 @@ def ticketAuth(request, ticketId):
             theme.template('simpleLauncherAlreadyLaunched.html'),
             context_instance=RequestContext(request)
         )
-
-        return errors.exceptionView(request, InvalidUserException())
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
         return errors.exceptionView(request, InvalidUserException())
