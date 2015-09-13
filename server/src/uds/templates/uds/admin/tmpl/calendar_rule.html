@@ -1,21 +1,78 @@
 {% load i18n html5 %}
 {% image_size as size %}
-<div class="center-block" style="width: 60%">
-    <div class="form-group">
-        <label for="id-rule-name" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Name of this rule'%}">{% trans 'Name' %}</label>
-        <input id="id-rule-name" name="rule_name" type="text" class="form-control" placeholder="{% trans 'Rule name' %}" autofocus required>
+<form class="form-horizontal">
+  <div class="form-group">
+    <label for="id-rule-name" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Name of this rule'%}">{% trans 'Name' %}</label>
+    <div class="col-sm-9">
+      <input id="id-rule-name" name="rule_name" type="text" class="form-control" placeholder="{% trans 'Rule name' %}" autofocus required>
     </div>
+  </div>
 
-    <div class="form-group">
-        <label for="id-rule-comments" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Comments for this rule'%}">{% trans 'Comments' %}</label>
-        <input id="id-rule-comments" name="rule_comments" type="text" class="form-control" placeholder="{% trans 'Rule comments' %}" autofocus required>
+  <div class="form-group">
+    <label for="id-rule-comments" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Comments for this rule'%}">{% trans 'Comments' %}</label>
+    <div class="col-sm-9">
+      <input id="id-rule-comments" name="rule_comments" type="text" class="form-control" placeholder="{% trans 'Rule comments' %}" autofocus required>
     </div>
+  </div>
 
-    <div class="form-group">
-        <label for="id-rule-start" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Start date'%}">{% trans 'Start' %}</label>
-        <div class="input-group date">
-            <input type="date" required placeholder="starting date for rule" id="id-rule-start" name="rule-start" class="form-control modal_field_data" aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-        </div>
+  <div class="form-group">
+    <label for="id-rule-freq" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Frequency for this rule'%}">{% trans 'Frequency' %}</label>
+    <div class="col-sm-9">
+      <div class="input-group col-sm-12">
+        <select class="selectpicker show-menu-arrow show-tick"  name="rule_frequency" data-style="btn-default" data-width="100%" id="id-rule-freq" required>
+          <option value="YEARLY">{% trans 'Yearly' %}</option>
+          <option value="MONTHLY">{% trans 'Monthly' %}</option>
+          <option value="WEEKLY">{% trans 'Weekly' %}</option>
+          <option value="DAILY">{% trans 'Daily' %}</option>
+          <option value="WEEKDAYS">{% trans 'Weekdays' %}</option>
+        </select>
+      </div>
     </div>
+  </div>
 
-</div>
+  <div class="form-group">
+    <label for="id-rule-start" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Start date'%}">{% trans 'Start' %}</label>
+    <div class="col-sm-9">
+      <div class="input-group date">
+          <input type="date" required placeholder="starting date for rule" id="id-rule-start" name="rule_start" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="id-rule-end" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'End date'%}">{% trans 'End' %}</label>
+    <div class="col-sm-9">
+      <div class="input-group date">
+          <input type="date" required placeholder="Ending date for rule" id="id-rule-end" name="rule_end" clear="true" class="form-control modal_field_data" aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="id-rule-interval-num" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Repeat interval for this rule'%}">{% trans 'Interval' %}</label>
+    <div class="col-sm-9">
+      <input id="id-rule-interval-num" name="rule_comments" type="numberic" class="form-control" placeholder="{% trans 'Repeat interval for rule' %}" autofocus required>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Weekdays for this rule'%}">{% trans 'Weekdays' %}</label>
+    <div class="col-sm-9">
+      <div class="btn-group" data-toggle="buttons">
+        {% verbatim %}{{#each days}}
+        <label class="btn btn-default">
+          <input type="checkbox" name="{{ this }}" basic="true" autocomplete="off">{{ this }}
+        </label>
+        {{/each}}{% endverbatim %}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="id-rule-duration" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Duration for this rule'%}">{% trans 'Duration' %}</label>
+    <div class="col-sm-9">
+      <input id="id-rule-duration" name="duration" type="numberic" class="form-control" placeholder="{% trans 'Duration for rule' %}" autofocus required>
+    </div>
+  </div>
+
+</form>

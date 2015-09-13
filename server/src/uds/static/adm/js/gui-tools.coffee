@@ -64,7 +64,10 @@
     applyCustoms: (selector) ->
       
       # Activate "custom" styles
-      $(selector + " input:checkbox").bootstrapSwitch()
+      $.each $(selector + " input:checkbox"), (index, tspn) ->
+        $tspn = $(tspn)
+        if $tspn.attr("basic") != "true"
+          $tspn.bootstrapSwitch()
 
       $.each $(selector + " input[type=date]:not([readonly])"), (index, tspn) ->
         $tspn = $(tspn)
@@ -74,11 +77,16 @@
           $tspn.val(api.tools.strftime('%Y-12-31'))
 
         $tspn.attr("type", "text")
-        $tspn.parent().datepicker(
+
+        options =
           format: 'yyyy-mm-dd'
           container: 'html'
-        )
-      
+
+        if $tspn.attr('clear') == "true"
+          options.clearBtn = true
+
+        $tspn.parent().datepicker options
+
       # Activate "cool" selects
       $.each $(selector + " .selectpicker"), (index, tspn) ->
         $tspn = $(tspn)

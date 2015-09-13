@@ -48,13 +48,14 @@ gui.calendars.link = ->
     realFnc = (value, refreshFnc) ->
       api.templates.get "calendar_rule", (tmpl) ->
         content = api.templates.evaluate(tmpl,
+            days: (w.substr(0, 3) for w in weekDays)
         )
         modalId = gui.launchModal((if value is null then gettext("New rule") else gettext("Edit rule")), content,
           actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Save") + "</button>"
         )
         gui.tools.applyCustoms modalId
         $(modalId + " .button-accept").click ->
-            alert('Save')
+          alert('Save')
 
     if forEdit is true
       (value, event, table, refreshFnc) ->
