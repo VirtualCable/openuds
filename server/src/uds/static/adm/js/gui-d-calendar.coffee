@@ -44,7 +44,25 @@ gui.calendars.link = ->
         return Math.floor(data/60) + ":" + ("00" + data%60).slice(-2) + " " + gettext("hours")
     return fld
     
-    
+  newEditFnc = (forEdit) ->
+    realFnc = (value, refreshFnc) ->
+      api.templates.get "calendar_rule", (tmpl) ->
+        content = api.templates.evaluate(tmpl,
+        )
+        modalId = gui.launchModal((if value is null then gettext("New rule") else gettext("Edit rule")), content,
+          actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Save") + "</button>"
+        )
+        gui.tools.applyCustoms modalId
+        $(modalId + " .button-accept").click ->
+            alert('Save')
+
+    if forEdit is true
+      (value, event, table, refreshFnc) ->
+        realFnc value, refreshFnc
+    else
+      (meth, table, refreshFnc) ->
+        realFnc null, refreshFnc
+
 
   api.templates.get "calendars", (tmpl) ->
     gui.clearWorkspace()
@@ -76,6 +94,9 @@ gui.calendars.link = ->
           onLoad: (k) ->
             # gui.tools.unblockUI()
             return # null return
+          onNew: newEditFnc false
+          onEdit: newEditFnc true
+
         )
         return
 

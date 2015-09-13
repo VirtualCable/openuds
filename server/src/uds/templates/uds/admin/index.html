@@ -19,7 +19,7 @@
         <link href="{% get_static_prefix %}adm/css/bootstrap-switch.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/jquery.bootstrap-touchspin.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/bootstrap-select.min.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/bootstrap-datepicker3.standalone.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/bootstrap-datepicker3.css" rel="stylesheet" media="screen">
 
         <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
@@ -73,7 +73,7 @@
         <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.bootstrap-touchspin.js"></script>
-        <script src="{% get_static_prefix %}adm/js/bootstrap-datepicker.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/bootstrap-datepicker.js"></script>
         <script src="{% get_static_prefix %}adm/js/datepicker-locales/bootstrap-datepicker.{{ LANGUAGE_CODE }}.min.js"></script>
         
         <script src="{% get_static_prefix %}adm/js/bootstrap-select.min.js"></script>
@@ -101,7 +101,7 @@
         <script src="{% get_static_prefix %}adm/js/jasny-bootstrap.min.js"></script>
 
         <!-- template engine -->
-        <script src="{% get_static_prefix %}adm/js/handlebars-v2.0.0.js"></script>
+        <script src="{% get_static_prefix %}adm/js/handlebars-v4.0.2.js"></script>
         
         <!-- First all api related stuff -->
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api.coffee"></script>
@@ -175,6 +175,7 @@
         {% js_template 'request_failed' %}
         <!-- specific pages -->
         {% js_template 'new_image' %}
+        {% js_template 'calendar_rule' %}
         <!-- components -->
         {% js_template 'comp/table' %}
         {% js_template 'comp/modal' %}

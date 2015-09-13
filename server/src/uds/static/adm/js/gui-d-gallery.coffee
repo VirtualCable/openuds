@@ -10,7 +10,7 @@ gui.gallery.link = ->
       api.templates.get "new_image", (tmpl) ->
         content = api.templates.evaluate(tmpl,
         )
-        modalId = gui.launchModal(gettext("New image"), content,
+        modalId = gui.launchModal((if value is null then gettext("New image") else gettext("Edit image")), content,
           actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Upload") + "</button>"
         )
         gui.tools.applyCustoms modalId

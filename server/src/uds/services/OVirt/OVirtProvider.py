@@ -35,7 +35,6 @@ Created on Jun 22, 2012
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
-from uds.core.util.State import State
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -46,7 +45,7 @@ from .client import oVirtClient
 
 import logging
 
-__updated__ = '2015-09-07'
+__updated__ = '2015-09-12'
 
 logger = logging.getLogger(__name__)
 
@@ -101,6 +100,9 @@ class Provider(ServiceProvider):
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF', order=6, rdonly=True,
                               tooltip=_('Range of valid macs for UDS managed machines'), required=True)
 
+    # Own variables
+    _api = None
+
     # oVirt engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
@@ -139,6 +141,9 @@ class Provider(ServiceProvider):
         return self.__getApi().test()
 
     def testValidVersion(self):
+        '''
+        Checks that this version of ovirt if "fully functional" and does not needs "patchs'
+        '''
         return self.__getApi().isFullyFunctionalVersion()
 
     def getMachines(self, force=False):

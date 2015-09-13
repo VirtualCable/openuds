@@ -44,6 +44,13 @@ class XenPublication(Publication):
     '''
     This class provides the publication of a oVirtLinkedService
     '''
+    _name = ''
+    _reason = ''
+    _destroyAfter = 'f'
+    _templateId = ''
+    _state = ''
+    _task = ''
+
 
     suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
 

@@ -34,19 +34,19 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-09-08'
+__updated__ = '2015-09-12'
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _, ugettext
-from dateutil.rrule import DAILY, MONTHLY, WEEKLY, YEARLY, HOURLY, MINUTELY, SECONDLY
+# from django.utils.translation import ugettext_lazy as _, ugettext
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-# @python_2_unicode_compatible
+
+@python_2_unicode_compatible
 class Calendar(UUIDModel):
 
     name = models.CharField(max_length=128, default='')
@@ -59,3 +59,6 @@ class Calendar(UUIDModel):
         '''
         db_table = 'uds_calendar'
         app_label = 'uds'
+
+    def __str__(self):
+        return 'Calendar "{}" modified on {} with {} rules'.format(self.name, self.modified, self.rules.count())
