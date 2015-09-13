@@ -76,6 +76,7 @@
         $tspn.attr("type", "text")
         $tspn.parent().datepicker(
           format: 'yyyy-mm-dd'
+          container: 'html'
         )
       
       # Activate "cool" selects
