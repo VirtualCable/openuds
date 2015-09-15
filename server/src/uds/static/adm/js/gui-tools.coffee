@@ -69,6 +69,7 @@
         if $tspn.attr("basic") != "true"
           $tspn.bootstrapSwitch()
 
+      # datepicker
       $.each $(selector + " input[type=date]:not([readonly])"), (index, tspn) ->
         $tspn = $(tspn)
         if $tspn.val() is '2000-01-01'
@@ -86,6 +87,13 @@
           options.clearBtn = true
 
         $tspn.parent().datepicker options
+
+      # timepicker
+      $.each $(selector + " input[type=time]:not([readonly])"), (index, tspn) ->
+        $tspn = $(tspn)
+        $tspn.timepicker
+          showMeridian: false
+          defaultTime: false
 
       # Activate "cool" selects
       $.each $(selector + " .selectpicker"), (index, tspn) ->

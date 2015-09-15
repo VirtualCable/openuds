@@ -14,10 +14,11 @@ gui.calendars.link = ->
     return
 
   freqDct =
-    'DAILY': [gettext('day'), gettext('days')]
-    'WEEKLY': [gettext('week'), gettext('weeks')]
-    'MONTHLY': [gettext('month'), gettext('months')]
-    'YEARLY': [gettext('year'), gettext('years')]
+    'DAILY': [gettext('day'), gettext('days'), gettext('Dayly')]
+    'WEEKLY': [gettext('week'), gettext('weeks'), gettext('Weekly')]
+    'MONTHLY': [gettext('month'), gettext('months'), gettext('Monthly')]
+    'YEARLY': [gettext('year'), gettext('years'), gettext('Yearly')]
+    'WEEKDAYS': ['', '', gettext('Weekdays')]
 
   weekDays = [
     gettext('Sun'), gettext('Monday'), gettext('Tuesday'), gettext('Wednesday'), gettext('Thursday'), gettext('Friday'), gettext('Saturday')
@@ -46,16 +47,68 @@ gui.calendars.link = ->
     
   newEditFnc = (forEdit) ->
     realFnc = (value, refreshFnc) ->
+      sortFnc = (a, b) ->
+        return 1 if a.value > b.value
+        return -1 if a.value < b.value
+        return 0
+
       api.templates.get "calendar_rule", (tmpl) ->
         content = api.templates.evaluate(tmpl,
+            freqs: ( {id: key, value: val[2]} for own key, val of freqDct)
             days: (w.substr(0, 3) for w in weekDays)
         )
-        modalId = gui.launchModal((if value is null then gettext("New rule") else gettext("Edit rule")), content,
+        modalId = gui.launchModal((if value is null then gettext("New rule") else gettext("Edit rule") + ' <b>' + value.name + '</b>' ), content,
           actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Save") + "</button>"
         )
+        $('#div-interval').show()
+        $('#div-weekdays').hide()
+
+        # Fill in fields if needed
+        if value != null
+            alert('ok')
+
+
+        # apply styles
         gui.tools.applyCustoms modalId
+
+        # Event handlers
+
+        # Change frequency
+        $('#id-rule-freq').on 'change', () ->
+          $this = $(this)
+          if $this.val() == "WEEKDAYS"
+            $('#div-interval').hide()
+            $('#div-weekdays').show()
+          else
+            $('#div-interval').show()
+            $('#div-weekdays').hide()
+          return
+
+        # Save
         $(modalId + " .button-accept").click ->
-          alert('Save')
+
+          value = { id: '' } if value is null
+
+          values = {}
+
+          $(modalId + ' :input').each ()->
+            values[this.name] = $(this).val()
+            return
+
+          $(modalId + ' :input[type=checkbox]').each ()->
+            gui.doLog this.name, $(this).prop('checked')
+            values[this.name] = $(this).prop('checked')
+            return
+
+          value.name = values.rule_name
+
+          if $('#id-rule-freq').val() == 'WEEKDAYS'
+            value.interval = -1
+          else
+            value.interval = values.rule_interval
+
+          gui.doLog value, values
+
 
     if forEdit is true
       (value, event, table, refreshFnc) ->
