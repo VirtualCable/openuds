@@ -1,11 +1,32 @@
 # jshint strict: true 
 ((api, $, undefined_) ->
   "use strict"
-  api.tools = base64: (s) ->
-    window.btoa unescape(encodeURIComponent(s))
+  api.tools = 
+    base64: (s) ->
+      window.btoa unescape(encodeURIComponent(s))
+    input2timeStamp: (inputDate, inputTime) ->
+      # Just parses date & time in two separate inputs
+      # inputTime is in format hours:minutes
+      if inputDate is null or inputDate is undefined
+        v = new Date(0)
+      else
+        tmp = inputDate.split('-')
+        v = new Date(tmp[0], parseInt(tmp[1])-1, tmp[2])
+
+      if inputTime != null and inputTime != undefined
+        tmp = inputTime.split(':')
+        if v.getTime() != 0
+          v.setHours(tmp[0])
+          v.setMinutes(tmp[1])
+        else
+          return parseInt(tmp[0])*3600 + parseInt(tmp[1]) * 60
+
+      return v.getTime() / 1000
+
 
   return
 ) window.api = window.api or {}, jQuery
+
 
 # Insert strftime into tools
 #

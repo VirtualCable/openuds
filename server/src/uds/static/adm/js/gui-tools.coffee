@@ -91,9 +91,11 @@
       # timepicker
       $.each $(selector + " input[type=time]:not([readonly])"), (index, tspn) ->
         $tspn = $(tspn)
-        $tspn.timepicker
+        opts = 
           showMeridian: false
           defaultTime: false
+
+        $tspn.timepicker opts
 
       # Activate "cool" selects
       $.each $(selector + " .selectpicker"), (index, tspn) ->
@@ -101,7 +103,6 @@
         length = $tspn.children('option').length
         if length >= 6
           $tspn.attr("data-live-search", "true")
-        gui.doLog "Length: " + length
         $tspn.selectpicker()
 
       # Activate Touchspinner
@@ -143,7 +144,7 @@
     # Datetime renderer (with specified format)
     renderDate: (format) ->
       (data, type, full) ->
-        if data == "None"
+        if data == "None" or data is null
           data = 7226578800
           val = gettext('Never')
         else

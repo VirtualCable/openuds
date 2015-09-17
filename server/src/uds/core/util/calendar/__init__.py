@@ -42,7 +42,7 @@ import datetime
 import bitarray
 import logging
 
-__updated__ = '2015-09-09'
+__updated__ = '2015-09-17'
 
 
 logger = logging.getLogger(__name__)
@@ -51,6 +51,7 @@ class CalendarChecker(object):
     calendar = None
     inverse = False
     cache = None
+    updates = 0
 
     def __init__(self, calendar, inverse=False):
         self.calendar = calendar
@@ -60,25 +61,36 @@ class CalendarChecker(object):
         self.data_time = None
 
     def _updateData(self, dtime):
+        self.updates += 1
         self.calendar_modified = self.calendar.modified
         self.data_time = dtime.date()
         self.data = bitarray.bitarray(60 * 24)  # Granurality is minute
         self.data.setall(False)
-        start = datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time())
-        end = datetime.datetime.combine(datetime.date.today(), datetime.datetime.max.time())
+
+        start = datetime.datetime.combine(self.data_time, datetime.datetime.min.time())
+        end = datetime.datetime.combine(self.data_time, datetime.datetime.max.time())
 
         for rule in self.calendar.rules.all():
             rr = rule.as_rrule()
+
+            r_end = datetime.datetime.combine(rule.end, datetime.datetime.min.time()) if rule.end is not None else None
+
             duration = rule.duration
-            _start = start if start > rule.start else rule.start - datetime.timedelta(seconds=1)
-            _end = end if rule.end is None or end < rule.end else rule.end
-            print(_start, end)
+            # Relative start, rrule can "spawn" the days, so we get the start at least the duration of rule to see if it "matches"
+            _start = (start if start > rule.start else rule.start) - datetime.timedelta(minutes=rule.freqInMinutes())
+            _end = end if r_end is None or end < r_end else r_end
             for val in rr.between(_start, _end, inc=True):
-                pos = val.hour * 60 + val.minute
-                posdur = pos + duration
+                if val.date() != self.data_time:
+                    diff = int((start - val).total_seconds() / 60)
+                    pos = 0
+                    posdur = duration - diff
+                    if posdur <= 0:
+                        continue
+                else:
+                    pos = val.hour * 60 + val.minute
+                    posdur = pos + duration
                 if posdur >= 60 * 24:
                     posdur = 60 * 24 - 1
-                print(pos, posdur)
                 self.data[pos:posdur] = True
 
         # Now self.data can be accessed as an array of booleans, and if

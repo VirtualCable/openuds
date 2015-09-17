@@ -26,7 +26,7 @@
         </div>
         <div class="col-sm-6">
           <div class="input-group bootstrap-timepicker timepicker">
-              <input type="time" value="00:00" name="rule_start_time" class="form-control input-small">
+              <input type="time" value="00:00" id="id-rule-start-time" name="rule_start_time" class="form-control input-small">
               <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
           </div>
         </div>
@@ -37,18 +37,8 @@
   <div class="form-group">
     <label for="id-rule-end" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'End date'%}">{% trans 'End' %}</label>
     <div class="col-sm-9">
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="input-group date">
-              <input type="date" required placeholder="ending date for rule" id="id-rule-start" name="rule_end_date" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="input-group bootstrap-timepicker timepicker">
-              <input type="time" value="00:00" name="rule_end_time" class="form-control input-small">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-          </div>
-        </div>
+      <div class="input-group date">
+          <input type="date" required placeholder="ending date for rule" id="id-rule-end" name="rule_end_date" clear="true" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
     </div>    
   </div>
@@ -67,7 +57,7 @@
   <div class="form-group" id="div-interval">
     <label for="id-rule-interval-num" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Repeat interval for this rule in frequency units'%}">{% trans 'Interval' %}</label>
     <div class="col-sm-9">
-      <input id="id-rule-interval-num" name="rule_interval" type="numeric" class="form-control" placeholder="{% trans 'Repeat interval for rule' %}" autofocus required>
+      <input id="id-rule-interval-num" name="rule_interval" type="numeric" data-minval="0" class="form-control" placeholder="{% trans 'Repeat interval for rule' %}" autofocus required>
     </div>
   </div>
 
@@ -77,7 +67,7 @@
       <div class="btn-group" data-toggle="buttons">
         {% verbatim %}{{#each days}}
         <label class="btn btn-default">
-          <input type="checkbox" name="wd_{{ this }}" basic="true" autocomplete="off">{{ this }}
+          <input type="checkbox" name="wd_{{ this }}" id="rule-wd-{{ this }}" basic="true" autocomplete="off">{{ this }}
         </label>
         {{/each}}{% endverbatim %}
       </div>
@@ -85,9 +75,12 @@
   </div>
 
   <div class="form-group">
-    <label for="id-rule-duration" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Duration for this rule'%}">{% trans 'Duration' %}</label>
+    <label for="id-rule-duration" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Duration for this rule in hours:minutes (Max duration is 99 hours 59 minutes)'%}">{% trans 'Duration' %}</label>
     <div class="col-sm-9">
-      <input id="id-rule-duration" name="duration" type="numberic" class="form-control" placeholder="{% trans 'Duration for rule' %}" autofocus required>
+      <div class="input-group bootstrap-timepicker timepicker">
+        <input type="time" value="00:00" id="id-rule-duration" data-max-hours="24" name="rule_duration" class="form-control input-small">
+        <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+      </div>
     </div>
   </div>
 

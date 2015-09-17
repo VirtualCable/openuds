@@ -94,7 +94,9 @@ class ContentProcessor(object):
         '''
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         '''
-        if isinstance(obj, (bool, int, float, six.text_type)):
+        if obj is None:
+            return None
+        elif isinstance(obj, (bool, int, float, six.text_type)):
             return obj
         elif isinstance(obj, long):
             return int(obj)
@@ -108,7 +110,7 @@ class ContentProcessor(object):
             for v in obj:
                 res.append(ContentProcessor.procesForRender(v))
             return res
-        elif isinstance(obj, datetime.datetime):
+        elif isinstance(obj, (datetime.datetime, datetime.date)):
             return int(time.mktime(obj.timetuple()))
         elif isinstance(obj, six.binary_type):
             return obj.decode('utf-8')

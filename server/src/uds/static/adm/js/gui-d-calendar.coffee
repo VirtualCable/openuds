@@ -1,4 +1,4 @@
-gui.calendars = new GuiElement(api.calendars, "imgal")
+gui.calendars = new GuiElement(api.calendars, "calendars")
 gui.calendars.link = ->
   "use strict"
 
@@ -45,17 +45,36 @@ gui.calendars.link = ->
         return Math.floor(data/60) + ":" + ("00" + data%60).slice(-2) + " " + gettext("hours")
     return fld
     
-  newEditFnc = (forEdit) ->
-    realFnc = (value, refreshFnc) ->
-      sortFnc = (a, b) ->
-        return 1 if a.value > b.value
-        return -1 if a.value < b.value
-        return 0
+  newEditFnc = (rules, forEdit) ->
+    days = (w.substr(0, 3) for w in weekDays)
+    sortFnc = (a, b) ->
+      return 1 if a.value > b.value
+      return -1 if a.value < b.value
+      return 0
 
+    fillDateTime = (idDate, stamp) ->
+      if stamp is null
+        return
+      date = new Date(stamp * 1000)
+      $(idDate).val(api.tools.strftime('%Y-%m-%d', date))
+      $(idDate + "-time").val(date.toTimeString().split(':')[0..1].join(':'))
+
+    getDateTime = (idDate, withoutTime) ->
+      date = $(idDate).val()
+      if date == '' or date == null
+        return null
+
+      if withoutTime is undefined
+        time = $(idDate + '-time').val()
+        return api.tools.input2timeStamp(date, time)
+      else
+        return apit.tools.input2timeStamp(date)
+
+    realFnc = (value, refreshFnc) ->
       api.templates.get "calendar_rule", (tmpl) ->
         content = api.templates.evaluate(tmpl,
             freqs: ( {id: key, value: val[2]} for own key, val of freqDct)
-            days: (w.substr(0, 3) for w in weekDays)
+            days: days
         )
         modalId = gui.launchModal((if value is null then gettext("New rule") else gettext("Edit rule") + ' <b>' + value.name + '</b>' ), content,
           actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Save") + "</button>"
@@ -63,15 +82,43 @@ gui.calendars.link = ->
         $('#div-interval').show()
         $('#div-weekdays').hide()
 
-        # Fill in fields if needed
+        #
+        # Fill in fields if needed (editing)
+        #
         if value != null
-            alert('ok')
+          gui.doLog "Value: ", value
+          $('#id-rule-name').val(value.name)
+          $('#id-rule-comments').val(value.comments)
+          fillDateTime '#id-rule-start', value.start
+          fillDateTime '#id-rule-end', value.end
+          $('#id-rule-duration').val(Math.floor(value.duration/60) + ':' + ("00" + value.duration%60).slice(-2))
 
+          # If weekdays, set checkboxes
+          $('#id-rule-freq').val(value.frequency)
+          if value.frequency == 'WEEKDAYS'
+            $('#div-interval').hide()
+            $('#div-weekdays').show()
 
+            gui.doLog "Interval", value.interval
+            n = value.interval
+            # Set up Weekdays
+            for i in [0..6]
+              if n & 1 != 0
+                chk = $('#rule-wd-'+days[i])
+                chk.prop('checked', true)
+                chk.parent().addClass('active')
+              n >>= 1
+          else
+            $('#id-rule-interval-num').val(value.interval)
+
+        #
         # apply styles
+        #
         gui.tools.applyCustoms modalId
 
+        #
         # Event handlers
+        #
 
         # Change frequency
         $('#id-rule-freq').on 'change', () ->
@@ -96,18 +143,39 @@ gui.calendars.link = ->
             return
 
           $(modalId + ' :input[type=checkbox]').each ()->
-            gui.doLog this.name, $(this).prop('checked')
             values[this.name] = $(this).prop('checked')
             return
 
-          value.name = values.rule_name
+          data =
+            name: values.rule_name
+            comments: values.rule_comments
+            frequency: values.rule_frequency
+            start: getDateTime('#id-rule-start')
+            end: getDateTime('#id-rule-end')
+            duration: api.tools.input2timeStamp(null, values.rule_duration)/60
 
           if $('#id-rule-freq').val() == 'WEEKDAYS'
-            value.interval = -1
+            n = 1
+            val = 0
+            for i in [0..6]
+              if values['wd_'+days[i]] is true
+                val += n
+              n <<= 1
+            data.interval = val
           else
-            value.interval = values.rule_interval
+            data.interval = values.rule_interval
 
-          gui.doLog value, values
+          closeAndRefresh = () ->
+            $(modalId).modal "hide"
+            refreshFnc()
+
+          if value is null
+            rules.rest.create data, closeAndRefresh, gui.failRequestModalFnc(gettext('Error creating rule'), true)
+          else
+            data.id = value.id
+            rules.rest.save data, closeAndRefresh, gui.failRequestModalFnc(gettext('Error saving rule'), true)
+
+          gui.doLog value, data
 
 
     if forEdit is true
@@ -148,8 +216,9 @@ gui.calendars.link = ->
           onLoad: (k) ->
             # gui.tools.unblockUI()
             return # null return
-          onNew: newEditFnc false
-          onEdit: newEditFnc true
+          onNew: newEditFnc rules, false
+          onEdit: newEditFnc rules, true
+          onDelete: gui.methods.del(rules, gettext("Delete rule"), gettext("Rule deletion error"))
 
         )
         return

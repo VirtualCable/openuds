@@ -10,6 +10,7 @@
     if gui.debug
       try
         console.log args
+      
     return
 
   

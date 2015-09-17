@@ -36,6 +36,7 @@ from django.utils.translation import ugettext as _
 
 
 from uds.models.CalendarRule import freqs, CalendarRule
+from uds.models.Util import getSqlDatetime
 
 from uds.core.util import log
 from uds.core.util import permissions
@@ -47,6 +48,7 @@ from django.db import IntegrityError
 
 import six
 import logging
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +97,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         return [
             {'name': {'title': _('Rule name')}},
             {'start': {'title': _('Start'), 'type': 'datetime'}},
-            {'end': {'title': _('End'), 'type': 'datetime'}},
+            {'end': {'title': _('End'), 'type': 'date'}},
             {'frequency': {'title': _('Frequency'), 'type': 'dict', 'dict': dict((v[0], six.text_type(v[1])) for v in freqs) }},
             {'interval': {'title': _('Interval'), 'type': 'callback'}},
             {'duration': {'title': _('Duration'), 'type': 'callback'}},
@@ -106,7 +108,12 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving rule {0} / {1}'.format(parent, item))
-        fields = self.readFieldsFromParams(['name', 'comments', 'data_type'])
+        fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration'])
+        # Convert timestamps to datetimes
+        fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
+        if fields['end'] != None:
+            fields['end'] = datetime.datetime.fromtimestamp(fields['end'])
+
         calRule = None
         try:
             if item is None:  # Create new
@@ -126,14 +133,14 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         return self.getItems(parent, calRule.uuid)
 
     def deleteItem(self, parent, item):
+        logger.debug('Deleting rule {} from {}'.format(item, parent))
         try:
             calRule = parent.rules.get(uuid=processUuid(item))
-
-            if calRule.deployedServices.count() != 0:
-                raise RequestError('Item has associated deployed rules')
-
+            calRule.calendar.modified = getSqlDatetime()
+            calRule.calendar.save()
             calRule.delete()
         except Exception:
+            logger.exception('Exception')
             self.invalidItemException()
 
         return 'deleted'

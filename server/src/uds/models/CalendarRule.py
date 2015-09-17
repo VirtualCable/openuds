@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-09-09'
+__updated__ = '2015-09-17'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -42,7 +42,9 @@ from dateutil import rrule as rules
 
 from .UUIDModel import UUIDModel
 from .Calendar import Calendar
+from .Util import getSqlDatetime
 
+import datetime
 import logging
 
 logger = logging.getLogger(__name__)
@@ -61,6 +63,13 @@ frq_to_rrl = {
     'MONTHLY': rules.MONTHLY,
     'WEEKLY': rules.WEEKLY,
     'DAILY': rules.DAILY,
+}
+
+frq_to_mins = {
+    'YEARLY': 366 * 24 * 60,
+    'MONTHLY': 31 * 24 * 60,
+    'WEEKLY': 7 * 24 * 60,
+    'DAILY': 24 * 60,
 }
 
 weekdays = [rules.SU, rules.MO, rules.TU, rules.WE, rules.TH, rules.FR, rules.SA]
@@ -98,6 +107,19 @@ class CalendarRule(UUIDModel):
         else:
             return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start)
 
+    def freqInMinutes(self):
+        if self.frequency != WEEKDAYS:
+            return frq_to_mins.get(self.frequency, 0) * self.interval
+        else:
+            return 7 * 24 * 60
+
+
+    def save(self, *args, **kwargs):
+        logger.debug('Saving...')
+        self.calendar.modified = getSqlDatetime()
+        self.calendar.save()
+
+        return UUIDModel.save(self, *args, **kwargs)
 
     def __str__(self):
         return 'Rule {0}: {1}-{2}, {3}, Interval: {4}, duration: {5}'.format(self.name, self.start, self.end, self.frequency, self.interval, self.duration)
