@@ -42,7 +42,7 @@ import datetime
 import bitarray
 import logging
 
-__updated__ = '2015-09-17'
+__updated__ = '2015-09-18'
 
 
 logger = logging.getLogger(__name__)
@@ -73,24 +73,31 @@ class CalendarChecker(object):
         for rule in self.calendar.rules.all():
             rr = rule.as_rrule()
 
-            r_end = datetime.datetime.combine(rule.end, datetime.datetime.min.time()) if rule.end is not None else None
+            r_end = datetime.datetime.combine(rule.end, datetime.datetime.max.time()) if rule.end is not None else None
 
-            duration = rule.duration
-            # Relative start, rrule can "spawn" the days, so we get the start at least the duration of rule to see if it "matches"
-            _start = (start if start > rule.start else rule.start) - datetime.timedelta(minutes=rule.freqInMinutes())
+            ruleDurationMinutes = rule.duration_as_minutes
+            ruleFrequencyMinutes = rule.frequency_as_minutes
+
+            ruleDurationMinutes = ruleDurationMinutes
+            # Relative start, rrule can "spawn" the days, so we get the start at least the ruleDurationMinutes of rule to see if it "matches"
+            # This means, we need the previous matching day to be "executed" so we can get the "actives" correctly
+            diff = ruleFrequencyMinutes if ruleFrequencyMinutes > ruleDurationMinutes else ruleDurationMinutes
+            _start = (start if start > rule.start else rule.start) - datetime.timedelta(minutes=diff)
+
             _end = end if r_end is None or end < r_end else r_end
+
             for val in rr.between(_start, _end, inc=True):
                 if val.date() != self.data_time:
                     diff = int((start - val).total_seconds() / 60)
                     pos = 0
-                    posdur = duration - diff
+                    posdur = ruleDurationMinutes - diff
                     if posdur <= 0:
                         continue
                 else:
                     pos = val.hour * 60 + val.minute
-                    posdur = pos + duration
-                if posdur >= 60 * 24:
-                    posdur = 60 * 24 - 1
+                    posdur = pos + ruleDurationMinutes
+                if posdur > 60 * 24:
+                    posdur = 60 * 24
                 self.data[pos:posdur] = True
 
         # Now self.data can be accessed as an array of booleans, and if

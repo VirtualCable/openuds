@@ -16,7 +16,7 @@
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 # DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
@@ -52,11 +52,13 @@ logger = logging.getLogger(__name__)
 WEEKDAYS = 'WEEKDAYS'
 
 # Frequencies
-freqs = (("YEARLY", _("Yearly")),
-         ("MONTHLY", _("Monthly")),
-         ("WEEKLY", _("Weekly")),
-         ("DAILY", _("Daily")),
-         (WEEKDAYS, _("Weekdays")))
+freqs = (
+    ('YEARLY', _('Yearly')),
+    ('MONTHLY', _('Monthly')),
+    ('WEEKLY', _('Weekly')),
+    ('DAILY', _('Daily')),
+    (WEEKDAYS, _('Weekdays'))
+)
 
 frq_to_rrl = {
     'YEARLY': rules.YEARLY,
@@ -72,6 +74,20 @@ frq_to_mins = {
     'DAILY': 24 * 60,
 }
 
+dunits = (
+    ('MINUTES', _('Minutes')),
+    ('HOURS', _('Hours')),
+    ('DAYS', _('Days')),
+    ('WEEKS', _('Weeks')),
+)
+
+dunit_to_mins = {
+    'MINUTES': 1,
+    'HOURS': 60,
+    'DAYS': 60 * 24,
+    'WEEKS': 60 * 24 * 7
+}
+
 weekdays = [rules.SU, rules.MO, rules.TU, rules.WE, rules.TH, rules.FR, rules.SA]
 
 
@@ -85,6 +101,7 @@ class CalendarRule(UUIDModel):
     frequency = models.CharField(choices=freqs, max_length=32)
     interval = models.IntegerField(default=1)  # If interval is for WEEKDAYS, every bit means a day of week (bit 0 = SUN, 1 = MON, ...)
     duration = models.IntegerField(default=0)  # Duration in minutes
+    duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
 
     calendar = models.ForeignKey(Calendar, related_name='rules')
 
@@ -107,12 +124,16 @@ class CalendarRule(UUIDModel):
         else:
             return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start)
 
-    def freqInMinutes(self):
+    @property
+    def frequency_as_minutes(self):
         if self.frequency != WEEKDAYS:
             return frq_to_mins.get(self.frequency, 0) * self.interval
         else:
             return 7 * 24 * 60
 
+    @property
+    def duration_as_minutes(self):
+        return dunit_to_mins.get(self.duration_unit, 1) * self.duration
 
     def save(self, *args, **kwargs):
         logger.debug('Saving...')

@@ -7,6 +7,10 @@ For more info and more free Bootstrap 3 HTML themes, visit http://startbootstrap
 
 /* ATTN: This is mobile first CSS - to update 786px and up screen width use the media query near the bottom of the document! */
 
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
+
 body {
   margin-top: 50px;
 }

@@ -20,6 +20,12 @@ gui.calendars.link = ->
     'YEARLY': [gettext('year'), gettext('years'), gettext('Yearly')]
     'WEEKDAYS': ['', '', gettext('Weekdays')]
 
+  dunitsDct = 
+    'MINUTES': gettext('Minutes')
+    'HOURS': gettext('Hours')
+    'DAYS': gettext('Days')
+    'WEEKS': gettext('Weeks')
+
   weekDays = [
     gettext('Sun'), gettext('Monday'), gettext('Tuesday'), gettext('Wednesday'), gettext('Thursday'), gettext('Friday'), gettext('Saturday')
   ]
@@ -39,10 +45,7 @@ gui.calendars.link = ->
       catch e
         return e
     else if fld == "duration"
-      if data < 60
-        return data + " " + gettext('minutes')
-      else
-        return Math.floor(data/60) + ":" + ("00" + data%60).slice(-2) + " " + gettext("hours")
+        return data + " " + dunitsDct[record.duration_unit]
     return fld
     
   newEditFnc = (rules, forEdit) ->
@@ -74,6 +77,7 @@ gui.calendars.link = ->
       api.templates.get "calendar_rule", (tmpl) ->
         content = api.templates.evaluate(tmpl,
             freqs: ( {id: key, value: val[2]} for own key, val of freqDct)
+            dunits: ( {id: key, value: val} for own key, val of dunitsDct)
             days: days
         )
         modalId = gui.launchModal((if value is null then gettext("New rule") else gettext("Edit rule") + ' <b>' + value.name + '</b>' ), content,
@@ -91,7 +95,8 @@ gui.calendars.link = ->
           $('#id-rule-comments').val(value.comments)
           fillDateTime '#id-rule-start', value.start
           fillDateTime '#id-rule-end', value.end
-          $('#id-rule-duration').val(Math.floor(value.duration/60) + ':' + ("00" + value.duration%60).slice(-2))
+          $('#id-rule-duration').val(value.duration)
+          $('#id-rule-duration-unit').val(value.duration_unit)
 
           # If weekdays, set checkboxes
           $('#id-rule-freq').val(value.frequency)
@@ -152,7 +157,8 @@ gui.calendars.link = ->
             frequency: values.rule_frequency
             start: getDateTime('#id-rule-start')
             end: getDateTime('#id-rule-end')
-            duration: api.tools.input2timeStamp(null, values.rule_duration)/60
+            duration: values.rule_duration
+            duration_unit: values.rule_duration_unit
 
           if $('#id-rule-freq').val() == 'WEEKDAYS'
             n = 1

@@ -74,6 +74,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             'frequency': item.frequency,
             'interval': item.interval,
             'duration': item.duration,
+            'duration_unit': item.duration_unit,
             'permission': perm
         }
 
@@ -93,13 +94,12 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             self.invalidItemException()
 
     def getFields(self, parent):
-
         return [
             {'name': {'title': _('Rule name')}},
-            {'start': {'title': _('Start'), 'type': 'datetime'}},
-            {'end': {'title': _('End'), 'type': 'date'}},
-            {'frequency': {'title': _('Frequency'), 'type': 'dict', 'dict': dict((v[0], six.text_type(v[1])) for v in freqs) }},
-            {'interval': {'title': _('Interval'), 'type': 'callback'}},
+            {'start': {'title': _('Starts'), 'type': 'datetime'}},
+            {'end': {'title': _('Ends'), 'type': 'date'}},
+            {'frequency': {'title': _('Repeats'), 'type': 'dict', 'dict': dict((v[0], six.text_type(v[1])) for v in freqs) }},
+            {'interval': {'title': _('Every'), 'type': 'callback'}},
             {'duration': {'title': _('Duration'), 'type': 'callback'}},
             {'comments': {'title': _('Comments')}},
         ]
@@ -108,7 +108,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving rule {0} / {1}'.format(parent, item))
-        fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration'])
+        fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration', 'duration_unit'])
         # Convert timestamps to datetimes
         fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
         if fields['end'] != None:

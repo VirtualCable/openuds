@@ -1,6 +1,8 @@
 {% load i18n html5 %}
 {% image_size as size %}
 <form class="form-horizontal">
+  <fieldset>
+  <legend class="col-sm-offset-3 col-sm-9">{% trans 'Name' %}</legend>
   <div class="form-group">
     <label for="id-rule-name" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Name of this rule'%}">{% trans 'Name' %}</label>
     <div class="col-sm-9">
@@ -14,39 +16,63 @@
       <input id="id-rule-comments" name="rule_comments" type="text" class="form-control" placeholder="{% trans 'Rule comments' %}" autofocus required>
     </div>
   </div>
+  </fieldset>
 
+  <fieldset>
+  <legend class="col-sm-offset-3 col-sm-9">{% trans 'Event' %}</legend>
   <div class="form-group">
-    <label for="id-rule-start" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Start date'%}">{% trans 'Start' %}</label>
+    <label for="id-rule-start-time" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Starting hour'%}">{% trans 'Starting hour' %}</label>
     <div class="col-sm-9">
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="input-group date">
-              <input type="date" required placeholder="starting date for rule" id="id-rule-start" name="rule_start_date" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-          </div>
-        </div>
-        <div class="col-sm-6">
           <div class="input-group bootstrap-timepicker timepicker">
               <input type="time" value="00:00" id="id-rule-start-time" name="rule_start_time" class="form-control input-small">
               <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-          </div>
+          </div>    
+    </div>    
+  </div>
+
+  <div class="form-group">
+    <label for="id-rule-duration" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Duration for this rule'%}">{% trans 'Duration' %}</label>
+    <div class="col-sm-9">
+      <div class="row">
+        <div class="col-sm-6">
+          <input id="id-rule-duration" name="rule_duration" type="numeric" value="0" data-minval="0" class="form-control" autofocus required>        
         </div>
+        <div class="col-sm-6">
+          <select class="selectpicker show-menu-arrow show-tick"  name="rule_duration_unit" data-style="btn-default" data-width="100%" id="id-rule-duration-unit" required>
+            {% verbatim %}{{#each dunits}}
+            <option value="{{ id }}">{{ value }}</option>
+            {{/each}}{% endverbatim %}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  </fieldset>
+
+  <fieldset>
+  <legend class="col-sm-offset-3 col-sm-9">{% trans 'Repeat' %}</legend>
+  <div class="form-group">
+    <label for="id-rule-start" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Starting date for repeating'%}">{% trans 'Starts' %}</label>
+    <div class="col-sm-9">
+      <div class="input-group date">
+        <input type="date" required placeholder="starting date for rule" id="id-rule-start" name="rule_start_date" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
     </div>
   </div>
 
   <div class="form-group">
-    <label for="id-rule-end" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'End date'%}">{% trans 'End' %}</label>
+    <label for="id-rule-end" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'End date'%}">{% trans 'Ends' %}</label>
     <div class="col-sm-9">
       <div class="input-group date">
-          <input type="date" required placeholder="ending date for rule" id="id-rule-end" name="rule_end_date" clear="true" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+          <input type="date" required placeholder="Never" id="id-rule-end" name="rule_end_date" clear="true" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
     </div>    
   </div>
 
   <div class="form-group">
-    <label for="id-rule-freq" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Frequency for this rule'%}">{% trans 'Frequency' %}</label>
+    <label for="id-rule-freq" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Frequency for this rule'%}">{% trans 'Repeats' %}</label>
     <div class="col-sm-9">
-      <select class="selectpicker show-menu-arrow show-tick"  name="rule_frequency" data-style="btn-default" data-width="100%" id="id-rule-freq" required>
+      <select class="selectpicker show-menu-arrow show-tick" name="rule_frequency" data-style="btn-default" data-width="100%" id="id-rule-freq" required>
         {% verbatim %}{{#each freqs}}
         <option value="{{ id }}">{{ value }}</option>
         {{/each}}{% endverbatim %}
@@ -55,14 +81,14 @@
   </div>
 
   <div class="form-group" id="div-interval">
-    <label for="id-rule-interval-num" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Repeat interval for this rule in frequency units'%}">{% trans 'Interval' %}</label>
+    <label for="id-rule-interval-num" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Repeat interval for this rule'%}">{% trans 'Repeat every' %}</label>
     <div class="col-sm-9">
-      <input id="id-rule-interval-num" name="rule_interval" type="numeric" data-minval="0" class="form-control" placeholder="{% trans 'Repeat interval for rule' %}" autofocus required>
+      <input id="id-rule-interval-num" value="1" name="rule_interval" type="numeric" data-minval="0" class="form-control" placeholder="{% trans 'Repeat interval for rule' %}" autofocus required>
     </div>
   </div>
 
   <div class="form-group" id="div-weekdays">
-    <label class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Weekdays for this rule'%}">{% trans 'Weekdays' %}</label>
+    <label class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Weekdays for this rule'%}">{% trans 'Repeat on' %}</label>
     <div class="col-sm-9">
       <div class="btn-group" data-toggle="buttons">
         {% verbatim %}{{#each days}}
@@ -73,15 +99,6 @@
       </div>
     </div>
   </div>
-
-  <div class="form-group">
-    <label for="id-rule-duration" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Duration for this rule in hours:minutes (Max duration is 99 hours 59 minutes)'%}">{% trans 'Duration' %}</label>
-    <div class="col-sm-9">
-      <div class="input-group bootstrap-timepicker timepicker">
-        <input type="time" value="00:00" id="id-rule-duration" data-max-hours="24" name="rule_duration" class="form-control input-small">
-        <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-      </div>
-    </div>
-  </div>
+  </fieldset>  
 
 </form>
