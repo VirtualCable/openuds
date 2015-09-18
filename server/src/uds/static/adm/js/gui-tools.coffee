@@ -108,12 +108,17 @@
       # Activate Touchspinner
       $.each $(selector + " input[type=numeric]:not([readonly])"), (index, tspn) ->
         $tspn = $(tspn)
+        postfix = $tspn.attr("data-postfix")
+        if postfix is undefined
+          postfix = ''
+
         minVal = parseInt $tspn.attr("data-minval")
         maxVal = parseInt $tspn.attr("data-maxval")
         if minVal == 987654321
           minVal = -999999
         if maxVal == 987654321
           maxVal = 999999
+
         gui.doLog minVal
         $tspn.attr("type", "text")
         $tspn.TouchSpin
@@ -122,6 +127,7 @@
           verticaldownclass: 'glyphicon glyphicon-minus'
           min: minVal
           max: maxVal
+          postfix: postfix
           decimals: 0
         
       # TEST: cooler on mobile devices

@@ -20,7 +20,7 @@ gui.calendars.link = ->
     'YEARLY': [gettext('year'), gettext('years'), gettext('Yearly')]
     'WEEKDAYS': ['', '', gettext('Weekdays')]
 
-  dunitsDct = 
+  dunitDct = 
     'MINUTES': gettext('Minutes')
     'HOURS': gettext('Hours')
     'DAYS': gettext('Days')
@@ -45,7 +45,7 @@ gui.calendars.link = ->
       catch e
         return e
     else if fld == "duration"
-        return data + " " + dunitsDct[record.duration_unit]
+        return data + " " + dunitDct[record.duration_unit]
     return fld
     
   newEditFnc = (rules, forEdit) ->
@@ -77,12 +77,13 @@ gui.calendars.link = ->
       api.templates.get "calendar_rule", (tmpl) ->
         content = api.templates.evaluate(tmpl,
             freqs: ( {id: key, value: val[2]} for own key, val of freqDct)
-            dunits: ( {id: key, value: val} for own key, val of dunitsDct)
+            dunits: ( {id: key, value: val} for own key, val of dunitDct)
             days: days
         )
         modalId = gui.launchModal((if value is null then gettext("New rule") else gettext("Edit rule") + ' <b>' + value.name + '</b>' ), content,
           actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Save") + "</button>"
         )
+
         $('#div-interval').show()
         $('#div-weekdays').hide()
 
@@ -100,6 +101,7 @@ gui.calendars.link = ->
 
           # If weekdays, set checkboxes
           $('#id-rule-freq').val(value.frequency)
+
           if value.frequency == 'WEEKDAYS'
             $('#div-interval').hide()
             $('#div-weekdays').show()
@@ -115,11 +117,16 @@ gui.calendars.link = ->
               n >>= 1
           else
             $('#id-rule-interval-num').val(value.interval)
+            n = if parseInt($('#id-rule-interval-num').val()) != 1 then 1 else 0
+            $("#id-rule-interval-num").attr('data-postfix', freqDct[value.frequency][n])
+
 
         #
         # apply styles
         #
         gui.tools.applyCustoms modalId
+
+        # And adjust interval spinner
 
         #
         # Event handlers
@@ -134,7 +141,16 @@ gui.calendars.link = ->
           else
             $('#div-interval').show()
             $('#div-weekdays').hide()
+
+          n = if parseInt($('#id-rule-interval-num').val()) != 1 then 1 else 0
+          $(modalId + ' .bootstrap-touchspin-postfix').html(freqDct[$this.val()][n])
           return
+
+        $('#id-rule-interval-num').on 'change', () ->
+          n = if parseInt($('#id-rule-interval-num').val()) != 1 then 1 else 0
+          $(modalId + ' .bootstrap-touchspin-postfix').html(freqDct[$('#id-rule-freq').val()][n])
+          return
+
 
         # Save
         $(modalId + " .button-accept").click ->
