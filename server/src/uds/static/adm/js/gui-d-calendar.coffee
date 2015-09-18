@@ -30,16 +30,27 @@ gui.calendars.link = ->
     gettext('Sun'), gettext('Monday'), gettext('Tuesday'), gettext('Wednesday'), gettext('Thursday'), gettext('Friday'), gettext('Saturday')
   ]
 
+  dateFormat = api.tools.djangoFormat(get_format("SHORT_DATE_FORMAT"))
+
+  getWeekDays = (bits, full) ->
+    res = []
+    for i in [0..6]
+      if bits & 1 != 0
+        if full is undefined
+            res.push(weekDays[i].substr(0,3))
+        else
+            res.push(weekDays[i])
+      bits >>= 1
+    if res.length == 0
+        return gettext("(no days)")
+    return res.join(', ')
+
+
   renderer = (fld, data, type, record) ->
     # Display "custom" fields of rules table
     if fld == "interval"
       if record.frequency == "WEEKDAYS"
-        res = []
-        for i in [0..6]
-          if data & 1 != 0
-            res.push(weekDays[i].substr(0,3))
-          data >>= 1
-        return res.join(",")
+        return getWeekDays data
       try
         return data + " " + freqDct[record.frequency][pluralidx(data)]
       catch e
@@ -72,6 +83,69 @@ gui.calendars.link = ->
         return api.tools.input2timeStamp(date, time)
       else
         return apit.tools.input2timeStamp(date)
+
+    readFields = (modalId) ->
+      values = {}
+      $(modalId + ' :input').each ()->
+        values[this.name] = $(this).val()
+        return
+
+      $(modalId + ' :input[type=checkbox]').each ()->
+        values[this.name] = $(this).prop('checked')
+        return
+
+      data =
+        name: values.rule_name
+        comments: values.rule_comments
+        frequency: values.rule_frequency
+        start: getDateTime('#id-rule-start')
+        end: getDateTime('#id-rule-end')
+        duration: parseInt(values.rule_duration)
+        duration_unit: values.rule_duration_unit
+
+      if $('#id-rule-freq').val() == 'WEEKDAYS'
+        n = 1
+        val = 0
+        for i in [0..6]
+          if values['wd_'+days[i]] is true
+            val += n
+          n <<= 1
+        data.interval = val
+      else
+        data.interval = parseInt(values.rule_interval)
+
+      return data
+
+    updateSummary = (modalId) ->
+      $summary = $('#summary')
+      data = readFields modalId
+      txt = gettext("This rule will be valid every ")
+
+      if data.frequency == 'WEEKDAYS'
+        txt += getWeekDays(data.interval, true) + " " + gettext("of any week")
+      else
+        n = if data.interval != 1 then 1 else 0
+        interval = if n == 0 then "" else data.interval
+        units = freqDct[data.frequency][n]
+        txt += "#{interval} #{units}"
+
+      startDate =  new Date(data.start * 1000)
+      txt += ", " + gettext("from") + " " + api.tools.strftime(dateFormat, startDate)
+      if data.end == null
+        txt += " " + gettext("onwards")
+      else
+        txt += " " + gettext("until ") + api.tools.strftime(dateFormat, new Date(data.end * 1000))
+
+      txt += ", " + gettext("starting at") + " " + startDate.toTimeString().split(':')[0..1].join(':') + " "
+
+      if data.duration > 0
+        dunit = dunitDct[data.duration_unit]
+        txt += gettext("and will remain valid for #{data.duration} #{dunit}")
+      else
+        txt += gettext("with no duration")
+
+
+      $summary.html(txt)
 
     realFnc = (value, refreshFnc) ->
       api.templates.get "calendar_rule", (tmpl) ->
@@ -117,8 +191,13 @@ gui.calendars.link = ->
               n >>= 1
           else
             $('#id-rule-interval-num').val(value.interval)
+
             n = if parseInt($('#id-rule-interval-num').val()) != 1 then 1 else 0
             $("#id-rule-interval-num").attr('data-postfix', freqDct[value.frequency][n])
+        else
+            now = Math.floor(new Date().getTime() / 1000)
+            fillDateTime '#id-rule-start', now
+            
 
 
         #
@@ -126,7 +205,8 @@ gui.calendars.link = ->
         #
         gui.tools.applyCustoms modalId
 
-        # And adjust interval spinner
+        # update summary
+        updateSummary modalId
 
         #
         # Event handlers
@@ -151,41 +231,18 @@ gui.calendars.link = ->
           $(modalId + ' .bootstrap-touchspin-postfix').html(freqDct[$('#id-rule-freq').val()][n])
           return
 
+        # To update summary
+        $(modalId + ' input').on('change', () ->
+            updateSummary modalId
+        )
+
+        $(modalId + ' select').on('change', () ->
+            updateSummary modalId
+        )
 
         # Save
         $(modalId + " .button-accept").click ->
-
-          value = { id: '' } if value is null
-
-          values = {}
-
-          $(modalId + ' :input').each ()->
-            values[this.name] = $(this).val()
-            return
-
-          $(modalId + ' :input[type=checkbox]').each ()->
-            values[this.name] = $(this).prop('checked')
-            return
-
-          data =
-            name: values.rule_name
-            comments: values.rule_comments
-            frequency: values.rule_frequency
-            start: getDateTime('#id-rule-start')
-            end: getDateTime('#id-rule-end')
-            duration: values.rule_duration
-            duration_unit: values.rule_duration_unit
-
-          if $('#id-rule-freq').val() == 'WEEKDAYS'
-            n = 1
-            val = 0
-            for i in [0..6]
-              if values['wd_'+days[i]] is true
-                val += n
-              n <<= 1
-            data.interval = val
-          else
-            data.interval = values.rule_interval
+          data = readFields modalId
 
           closeAndRefresh = () ->
             $(modalId).modal "hide"

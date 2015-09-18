@@ -36,6 +36,7 @@ class Migration(migrations.Migration):
                 ('frequency', models.CharField(max_length=32, choices=[('YEARLY', 'Yearly'), ('MONTHLY', 'Monthly'), ('WEEKLY', 'Weekly'), ('DAILY', 'Daily'), ('WEEKDAYS', 'Weekdays')])),
                 ('interval', models.IntegerField(default=1)),
                 ('duration', models.IntegerField(default=0)),
+                ('duration_unit', models.CharField(default='MINUTES', max_length=32, choices=[('MINUTES', 'Minutes'), ('HOURS', 'Hours'), ('DAYS', 'Days'), ('WEEKS', 'Weeks')])),
                 ('calendar', models.ForeignKey(related_name='rules', to='uds.Calendar')),
             ],
             options={
