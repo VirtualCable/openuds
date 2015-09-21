@@ -9,8 +9,9 @@ from ovirtsdk.api import API
 
 import threading
 import logging
+import re
 
-__updated__ = '2015-09-07'
+__updated__ = '2015-09-21'
 
 logger = logging.getLogger(__name__)
 
@@ -90,16 +91,23 @@ class Client(object):
         finally:
             lock.release()
 
+    def _isFullyFunctionalVersion(self, api):
+        '''
+        Same as isFullyFunctionalVersion, but without locking. For internal use only
+        '''
+        version = re.search('([0-9]+).([0-9]+).([0-9]+)?', api.get_product_info().full_version).groups()
+        if version[0] == '3' and version[1] == '5' and (version[2] is None or version[2] < '4'):  # 3.5 fails if disks are in request
+            return [False, 'Version 3.5 is not fully supported due a BUG in oVirt REST API (but partially supported. See UDS Documentation)']
+
+        return [True, 'Test successfully passed']
+
+
     def isFullyFunctionalVersion(self):
         try:
             lock.acquire(True)
-            version = self.__getApi().get_product_info().version
-            if version.major == 3 and version.minor == 5:  # 3.5 fails if disks are in request
-                return [False, 'Version 3.5 is not fully supported due a BUG in oVirt REST API (but partially supported. See UDS Documentation)']
+            return self._isFullyFunctionalVersion(self.__getApi())
         finally:
             lock.release()
-
-        return [True, 'Test successfully passed']
 
     def getVms(self, force=False):
         '''
@@ -378,8 +386,9 @@ class Client(object):
             # Create disks description to be created in specified storage domain, one for each disk
             sd = params.StorageDomains(storage_domain=[params.StorageDomain(id=storageId)])
 
-            version = api.get_product_info().version
-            fix = version.major == 3 and version.minor == 5  # 3.5 fails if disks are in request
+            fix = not self._isFullyFunctionalVersion(api)[0]  # If we need a fix for "publish"
+
+            print "FIX: {}".format(fix)
 
             dsks = []
             for dsk in vm.disks.list():
@@ -407,8 +416,6 @@ class Client(object):
             # display=display)
 
             return api.templates.add(template).get_id()
-
-            # return api.templates.get(name=name).get_id()
         finally:
             lock.release()
 

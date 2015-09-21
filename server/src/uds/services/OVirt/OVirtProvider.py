@@ -45,7 +45,11 @@ from .client import oVirtClient
 
 import logging
 
+<<<<<<< HEAD
 __updated__ = '2015-09-12'
+=======
+__updated__ = '2015-09-21'
+>>>>>>> origin/v1.9
 
 logger = logging.getLogger(__name__)
 
