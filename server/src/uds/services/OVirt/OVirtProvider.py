@@ -45,7 +45,7 @@ from client import oVirtClient
 
 import logging
 
-__updated__ = '2015-07-24'
+__updated__ = '2015-09-21'
 
 logger = logging.getLogger(__name__)
 
