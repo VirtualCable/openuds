@@ -1,0 +1,8 @@
+// fixes breadcrumb for using
+.breadcrumb {
+  > li {
+    + li:before {
+      content: "/ "; // Unicode space added since inline-block means non-collapsing white-space
+    }
+  }
+}

@@ -14,64 +14,64 @@
           </a>
 			</div>
             
-          <!-- Side bar -->
-           <div class="collapse navbar-collapse navbar-ex1-collapse">
-              <ul class="nav navbar-nav side-nav">
-                <li><a class="lnk-dashboard" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/dashboard-monitor.png"/> {% trans 'Overview' %}</a></li>
-                <li><a class="lnk-service_providers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/providers.png"/> {% trans 'Services' %}</a></li>
-                <li><a class="lnk-authenticators" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/authenticators.png"/> {% trans 'Authenticators' %}</a></li>
-                <li><a class="lnk-osmanagers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/osmanagers.png"/> Os Managers</a></li>
-                <li><a class="lnk-connectivity" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/transports.png"/> {% trans 'Connectivity' %}</a></li>
-                <li><a class="lnk-calendars" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/calendars.png"/> {% trans 'Calendars' %}</a></li>
-                <li><a class="lnk-deployed_services" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/pools.png"/> {% trans 'Service Pools' %}</a></li>
-                {% if admin %}
-                
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/tools.png"/> Tools <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a class="lnk-gallery" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/gallery.png"/> {% trans 'Gallery' %}</a></li>
-                    <li><a class="lnk-reports" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/reports.png"/> {% trans 'Reports' %}</a></li>
-                    <li><a class="lnk-configuration" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/configuration.png"/> {% trans 'Configuration' %}</a></li>
-                    <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/flush-cache.png"/> {% trans 'Flush cache' %}</a></li>
-                  </ul>
-                </li>
+    <!-- Side bar -->
+     <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav side-nav">
+          <li><a class="lnk-dashboard" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/dashboard-monitor.png"/> {% trans 'Overview' %}</a></li>
+          <li><a class="lnk-service_providers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/providers.png"/> {% trans 'Services' %}</a></li>
+          <li><a class="lnk-authenticators" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/authenticators.png"/> {% trans 'Authenticators' %}</a></li>
+          <li><a class="lnk-osmanagers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/osmanagers.png"/> Os Managers</a></li>
+          <li><a class="lnk-connectivity" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/transports.png"/> {% trans 'Connectivity' %}</a></li>
+          <li><a class="lnk-calendars" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/calendars.png"/> {% trans 'Calendars' %}</a></li>
+          <li><a class="lnk-deployed_services" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/pools.png"/> {% trans 'Service Pools' %}</a></li>
+          {% if admin %}
+          
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/tools.png"/> Tools <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a class="lnk-gallery" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/gallery.png"/> {% trans 'Gallery' %}</a></li>
+              <li><a class="lnk-reports" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/reports.png"/> {% trans 'Reports' %}</a></li>
+              <li><a class="lnk-configuration" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/configuration.png"/> {% trans 'Configuration' %}</a></li>
+              <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/flush-cache.png"/> {% trans 'Flush cache' %}</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        
+          <ul class="nav navbar-nav navbar-right navbar-user">
+          </ul>
+          <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+          {% csrf_token %}
+          <input id="id_language" type="hidden" name="language" value=""/>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              {% for lang in LANGUAGES %}
+              {% if lang.0  == LANGUAGE_CODE %}
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><!--<i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>-->
+                <i class="fa fa-comments-o"></i> {% trans lang.1|capfirst %}<b class="caret"></b>
+              </a>
+              {% endif %}
+              {% endfor %}
+              <ul class="dropdown-menu">
+                {% for lang in LANGUAGES %}
+                {% if lang.0  != LANGUAGE_CODE %}
+                <!--  here we force an update of locale of REST api -->
+                <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>{% trans lang.1|capfirst %}</a></li>
                 {% endif %}
+                {% endfor %}
               </ul>
-              
-                <ul class="nav navbar-nav navbar-right navbar-user">
-                </ul>
-                <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
-                {% csrf_token %}
-                <input id="id_language" type="hidden" name="language" value=""/>
-                <ul class="nav navbar-nav navbar-right">
-                  <li class="dropdown">
-                    {% for lang in LANGUAGES %}
-                    {% if lang.0  == LANGUAGE_CODE %}
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><!--<i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>-->
-                      <i class="fa fa-comments-o"></i> {% trans lang.1|capfirst %}<b class="caret"></b>
-                    </a>
-                    {% endif %}
-                    {% endfor %}
-                    <ul class="dropdown-menu">
-                      {% for lang in LANGUAGES %}
-                      {% if lang.0  != LANGUAGE_CODE %}
-                      <!--  here we force an update of locale of REST api -->
-                      <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>{% trans lang.1|capfirst %}</a></li>
-                      {% endif %}
-                      {% endfor %}
-                    </ul>
-                  </li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-dashboard"></i> {{ user.real_name }} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'uds.web.views.index' %}"><span class="fa fa-user"></span> {% trans 'User mode' %}</a></li>
-                        <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> {% trans 'Logout' %}</a></li>
-                    </ul>
-                  </li>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-dashboard"></i> {{ user.real_name }} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                  <li><a href="{% url 'uds.web.views.index' %}"><span class="fa fa-user"></span> {% trans 'User mode' %}</a></li>
+                  <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> {% trans 'Logout' %}</a></li>
+              </ul>
+            </li>
 
-                </ul>
-                </form>
-                
-             </div>
+          </ul>
+          </form>
+          
+       </div>
 			
 		</nav>
