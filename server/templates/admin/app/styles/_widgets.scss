@@ -1,7 +1,7 @@
 // Widgets
 .widget {
   background: #fff;
-  border: 1px solid #c1c1c1;
+  border: 1px solid $uds-background-color-light;
   margin: 0 auto 20px;
   position: static;
 
@@ -10,20 +10,20 @@
   }
 
   .widget-head {
-    background-color: #f8f8f8;
-    background-image: linear-gradient(to bottom, #f8f8f8, #ededed);
-    background-image: -moz-linear-gradient(top, #f8f8f8, #ededed);
-    background-image: -o-linear-gradient(top, #f8f8f8, #ededed);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f8f8f8), to(#ededed));
-    background-image: -webkit-linear-gradient(top, #f8f8f8, #ededed);
+    background-color: $uds-background-color;
+    background-image: linear-gradient(to bottom, $uds-background-color, $uds-background-color);
+    background-image: -moz-linear-gradient(top, $uds-background-color, $uds-background-color);
+    background-image: -o-linear-gradient(top, $uds-background-color, $uds-background-color);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from($uds-background-color), to($uds-background-color));
+    background-image: -webkit-linear-gradient(top, $uds-background-color, $uds-background-color);
     background-repeat: repeat-x;
-    border-bottom: 1px solid #c1c1c1;
-    color: #000;
+    border-bottom: 1px solid #434857;
+    color: $uds-foreground-color;
     height: 40px;
     line-height: 40px;
     padding: 0 15px 0 0;
     position: relative;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    // text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 
     &.progress {
       border-radius: 0 0 0 0;
@@ -49,7 +49,7 @@
     }
 
     .heading {
-      color: #45484d;
+      color: $uds-foreground-color;
       float: left;
       font-size: 14px;
       height: 40px;
@@ -85,36 +85,37 @@
 
     .dropdown-menu li > a {
       &:hover, &:focus {
-        background-color: #47759e;
-        background-image: linear-gradient(to bottom, #47759e, #d24343);
-        background-image: -moz-linear-gradient(top, #47759e, #d24343);
-        background-image: -o-linear-gradient(top, #47759e, #d24343);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#47759e), to(#d24343));
-        background-image: -webkit-linear-gradient(top, #47759e, #d24343);
+        background-color: $uds-background-color;
+        background-image: linear-gradient(to bottom, $uds-background-color, #d24343);
+        background-image: -moz-linear-gradient(top, $uds-background-color, #d24343);
+        background-image: -o-linear-gradient(top, $uds-background-color, #d24343);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from($uds-background-color), to(#d24343));
+        background-image: -webkit-linear-gradient(top, $uds-background-color, #d24343);
         background-repeat: repeat-x;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffda4c4c', endColorstr='#ffd24343', GradientType=0);
       }
     }
 
     .dropdown-submenu:hover > a {
-      background-color: #47759e;
-      background-image: linear-gradient(to bottom, #47759e, #d24343);
-      background-image: -moz-linear-gradient(top, #47759e, #d24343);
-      background-image: -o-linear-gradient(top, #47759e, #d24343);
-      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#47759e), to(#d24343));
-      background-image: -webkit-linear-gradient(top, #47759e, #d24343);
+      background-color: $uds-background-color;
+      background-image: linear-gradient(to bottom, $uds-background-color, #d24343);
+      background-image: -moz-linear-gradient(top, $uds-background-color, #d24343);
+      background-image: -o-linear-gradient(top, $uds-background-color, #d24343);
+      background-image: -webkit-gradient(linear, 0 0, 0 100%, from($uds-background-color), to(#d24343));
+      background-image: -webkit-linear-gradient(top, $uds-background-color, #d24343);
       background-repeat: repeat-x;
       filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffda4c4c', endColorstr='#ffd24343', GradientType=0);
     }
   }
 
   .details {
-    color: #45484d;
+    color: $uds-foreground-color;
     font-size: 8pt;
   }
 
   .widget-body {
     padding: 20px 15px;
+    background-color: $uds-background-color;
 
     form {
       margin: 0;
@@ -154,7 +155,7 @@
           }
 
           .count {
-            color: #47759e;
+            color: $uds-background-color;
             float: right;
           }
 
@@ -220,14 +221,14 @@
           border-color: #dddddd;
 
           i:before {
-            background: #47759e;
+            background: $uds-background-color;
             color: #fff;
             font-weight: normal;
             text-shadow: none;
           }
 
           a {
-            color: #47759e;
+            color: $uds-background-color;
           }
         }
 
@@ -285,9 +286,9 @@
   }
 
   .widget-footer {
-    background: #f7f7f7;
-    border-bottom: 1px solid #ffffff;
-    border-top: 1px solid #e6e6e6;
+    background: $uds-background-color;
+    border-bottom: 1px solid $uds-background-color-light;
+    border-top: 1px solid $uds-background-color-light;
     height: 25px;
     line-height: 25px;
 
@@ -342,7 +343,7 @@
   }
 
   &.widget-body-white .widget-body {
-    background: #fff;
+    background: $uds-background-color;
   }
 }
 

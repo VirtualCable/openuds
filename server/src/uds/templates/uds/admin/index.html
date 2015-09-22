@@ -22,9 +22,9 @@
         <link href="{% get_static_prefix %}adm/css/bootstrap-datepicker3.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/bootstrap-timepicker.css" rel="stylesheet" media="screen">
 
-        <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen">
-        <link href="{% get_static_prefix %}adm/css/dataTables.bootstrap.css" rel="stylesheet" media="screen">
+<!--        <link href="{% get_static_prefix %}adm/css/jquery.dataTables.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/TableTools.css" rel="stylesheet" media="screen"> 
+        <link href="{% get_static_prefix %}adm/css/dataTables.bootstrap.css" rel="stylesheet" media="screen"> -->
         <link href="{% get_static_prefix %}adm/css/jasny-bootstrap.min.css" rel="stylesheet" media="screen">
 
         {% endcompress %}
@@ -133,7 +133,17 @@
         <!-- base64 encoding -->
         <script src="{% get_static_prefix %}adm/js/base64.js"></script>
         
-        <script>
+        <script type="text/javascript">
+            // HOver on dropdown menus
+            function toggleNavbarMethod() {
+                if ($(window).width() > 768) {
+                    $('.navbar .dropdown').on('mouseover', function(){
+                        $('.dropdown-toggle', this).trigger('click'); 
+                    }).on('mouseout', function(){
+                        $('.dropdown-toggle', this).trigger('click').blur();
+                    });
+                }
+            }        
             $(function() {
             	// set default error function
             	api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
@@ -144,6 +154,8 @@
                 $.fn.datepicker.defaults.todayBtn = "linked";
                 $.fn.datepicker.defaults.autoclose = true;
                 $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
+
+                toggleNavbarMethod();
 
             });        
         </script>

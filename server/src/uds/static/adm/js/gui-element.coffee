@@ -264,27 +264,27 @@
             sel = @fnGetSelectedData()
             enable = (if sel.length is 1 then onCheck("edit", sel) else false)
             if enable
-              $(btn).removeClass("disabled").addClass "btn3d-success"
+              $(btn).removeClass("disabled").addClass "btn-success"
             else
-              $(btn).removeClass("btn3d-success").addClass "disabled"
+              $(btn).removeClass("btn-success").addClass "disabled"
             return
 
           deleteSelected = (btn, obj, node) ->
             sel = @fnGetSelectedData()
             enable = (if sel.length is 1 then onCheck("delete", sel) else false)
             if enable
-              $(btn).removeClass("disabled").addClass "btn3d-danger"
+              $(btn).removeClass("disabled").addClass "btn-danger"
             else
-              $(btn).removeClass("btn3d-danger").addClass "disabled"
+              $(btn).removeClass("btn-danger").addClass "disabled"
             return
 
           permissionsSelected = (btn, obj, node) ->
             sel = @fnGetSelectedData()
             enable = (if sel.length is 1 then onCheck("delete", sel) else false)
             if enable
-              $(btn).removeClass("disabled").addClass "btn3d-success"
+              $(btn).removeClass("disabled").addClass "btn-success"
             else
-              $(btn).removeClass("btn3d-success").addClass "disabled"
+              $(btn).removeClass("btn-success").addClass "disabled"
             return
 
           $.each tblParams.buttons, (index, value) -> # Iterate through button definition

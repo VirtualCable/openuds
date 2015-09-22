@@ -1,14 +1,63 @@
+// Own variables
+$sidebar-size: 225px;
+$sidebar-size-collapsed: 40px;
+$sidebar-top: 50px;
+
+$uds-background-color: #252830;
+$uds-background-color-light: #434857;
+$uds-background-color-lighter: #444444;
+$uds-foreground-color: #ffffff;
+
+$uds-color: #1CA8DD;
+
+
+// Bootstrap
 $icon-font-path: "../bower_components/bootstrap-sass/assets/fonts/bootstrap/";
-$breadcrumb-separator: ' -> ';
+
+$text-color: $uds-foreground-color;
+$body-bg: $uds-background-color;
+
+$headings-color: $uds-foreground-color;
 
 $border-radius-base:        0px !default;
 $border-radius-large:       0px !default;
 $border-radius-small:       0px !default;
 
+$navbar-inverse-bg: $uds-background-color;
+$navbar-inverse-border: $uds-background-color;
+$navbar-inverse-link-hover-bg: $uds-background-color-light;
+$navbar-inverse-link-active-bg: $uds-background-color-light;
+
+$modal-content-bg: $uds-background-color-light;
+
+
+$btn-default-color: $uds-foreground-color;
+$btn-default-bg: $uds-background-color;
+$btn-default-border: $uds-background-color-light;
+
+
+$pagination-color: $uds-color;
+$pagination-hover-color: $uds-foreground-color;
+$pagination-disabled-color: $uds-foreground-color;
+
+$pagination-bg: $uds-background-color;
+$pagination-hover-bg: $uds-background-color;
+$pagination-disabled-bg: $uds-background-color;
+
+$pagination-border: $uds-color;
+$pagination-disabled-border: $uds-background-color-light;
+$pagination-hover-border: $uds-color;
+
+$pagination-diabled-border: $uds-color;
+
+
+$breadcrumb-separator: ' -> ';
+$breadcrumb-bg: $uds-background-color;
 
 // bower:scss
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 // endbower
+
 
 @font-face {
   font-family: 'Droid Sans Mono';
@@ -26,6 +75,7 @@ $border-radius-small:       0px !default;
 
 body {
   font-family: 'Droid Sans Mono', sans-serif;
+  background-color: $uds-background-color;
   margin-top: 50px;
 }
 
@@ -119,55 +169,6 @@ body {
 
 /* Tables */
 
-/* Tables "styling" */
-
-.dataTables_wrapper {
-  overflow-x: hidden;
-  min-height: 300px;
-}
-
-/* States */
-
-/*
-This states displays as default
-tr.row-state-A > td, tr.row-state-F > td, tr.row-state-U > td, tr.row-state-W > td {
-}
-*/
-
-tr {
-  &.row-state-B:nth-child(2n) > td, &.row-state-C:nth-child(2n) > td, &.row-state-E:nth-child(2n) > td, &.row-state-Y:nth-child(2n) > td, &.row-state-B:nth-child(2n+1) > td, &.row-state-C:nth-child(2n+1) > td, &.row-state-E:nth-child(2n+1) > td, &.row-state-Y:nth-child(2n+1) > td {
-    color: #FF6600 !important;
-  }
-
-  &.row-state-M:nth-child(2n+1) > td, &.row-state-R:nth-child(2n+1) > td, &.row-state-I:nth-child(2n+1) > td, &.row-state-S > td:nth-child(2n+1) {
-    color: #9A9A9A !important;
-  }
-
-  &.row-state-M:nth-child(2n) > td, &.row-state-R:nth-child(2n) > td, &.row-state-I:nth-child(2n) > td, &.row-state-S > td:nth-child(2n) {
-    color: #858585 !important;
-  }
-
-  &.row-maintenance-true > td {
-    color: #FF6600 !important;
-  }
-
-  &.log-WARN {
-    color: blue;
-  }
-
-  &.log-DEBUG {
-    color: green;
-  }
-
-  &.log-INFO, &.log-OTHER {
-    color: black;
-  }
-
-  &.log-ERROR, &.log-FATAL {
-    color: red;
-  }
-}
-
 /* Logs */
 
 .chart-big {
@@ -208,28 +209,28 @@ tr {
   /* Side Nav */
 
   .side-nav {
-    margin-left: -180px;
-    left: 180px;
-    width: 40px;
+    margin-left: -$sidebar-size;
+    left: $sidebar-size;
+    width: $sidebar-size-collapsed;
     position: fixed;
-    top: 50px;
+    top: $sidebar-top;
     height: 100%;
     border-radius: 0;
     border: none;
-    background-color: #222222;
+    background-color: $uds-background-color;
     overflow-y: auto;
     -webkit-transition: width 0.3s; /* For Safari 3.1 to 6.0 */
     transition: width 0.3s;
 
     &:hover {
-      width: 225px;
+      width: $sidebar-size;
     }
 
 
     > li {
       &.dropdown > ul.dropdown-menu {
         position: relative;
-        min-width: 225px;
+        min-width: $sidebar-size;
         margin: 0;
         padding: 0;
         border: none;
@@ -250,18 +251,18 @@ tr {
       }
 
       > a {
-        width: 225px;
+        width: $sidebar-size;
       }
     }
   }
 
   /* Bootstrap Default Overrides - Customized Dropdowns for the Side Nav */
 
-  .navbar-inverse .navbar-nav > li > a {
+  /*.navbar-inverse .navbar-nav > li > a {
     &:hover, &:focus {
       background-color: #080808;
     }
-  }
+  }*/
 
   .label-tbl-button {
     display: inline-block;
@@ -276,7 +277,7 @@ tr {
 
 /* theme */
 
-@import "theme.scss";
-@import "buttons.scss";
-@import "widgets.scss";
-@import "tables.scss";
+@import "_theme";
+@import "_widgets";
+@import "_data-tables";
+@import "_tables";
