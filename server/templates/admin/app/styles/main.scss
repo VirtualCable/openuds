@@ -8,7 +8,7 @@ $uds-background-color-light: #434857;
 $uds-background-color-lighter: #444444;
 $uds-foreground-color: #ffffff;
 
-$uds-color: #1CA8DD;
+$uds-color-blue: #1CA8DD;
 
 
 // Bootstrap
@@ -36,7 +36,7 @@ $btn-default-bg: $uds-background-color;
 $btn-default-border: $uds-background-color-light;
 
 
-$pagination-color: $uds-color;
+$pagination-color: $uds-color-blue;
 $pagination-hover-color: $uds-foreground-color;
 $pagination-disabled-color: $uds-foreground-color;
 
@@ -44,15 +44,19 @@ $pagination-bg: $uds-background-color;
 $pagination-hover-bg: $uds-background-color;
 $pagination-disabled-bg: $uds-background-color;
 
-$pagination-border: $uds-color;
+$pagination-border: $uds-color-blue;
 $pagination-disabled-border: $uds-background-color-light;
-$pagination-hover-border: $uds-color;
+$pagination-hover-border: $uds-color-blue;
 
-$pagination-diabled-border: $uds-color;
+$pagination-diabled-border: $uds-color-blue;
 
 
 $breadcrumb-separator: ' -> ';
 $breadcrumb-bg: $uds-background-color;
+
+
+$input-color: $uds-foreground-color;
+$input-bg: $uds-background-color;
 
 // bower:scss
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";

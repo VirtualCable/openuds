@@ -125,31 +125,36 @@ div {
  * TableTools styles
  */
 
+ .table {
+  font-family: 'Andale Mono', 'Courier New'
+ }
+
 .table tbody tr.active {
   td, th {
-    background-color: #08C;
-    color: white;
+    background-color: $uds-background-color;
+    color: $uds-foreground-color;
   }
 }
 
 .table-striped > tbody > tr {
   &:nth-child(2n+1) > td {
-    background-color: #606060;
-    color: #F0F0F0;
+    background-color: $uds-background-color;
+    color: $uds-foreground-color;
   }
 
   &:nth-child(2n) > td {
-    background-color: white;
-    color: #000000;
+    background-color: $uds-background-color-light;
+    color: $uds-foreground-color;
   }
 
   &:nth-child(2n+1) > td.sorting_1 {
-    background-color: #505050;
-    color: #FFFFFF;
+    background-color: $uds-background-color-light;
+    color: $uds-color-blue;
   }
 
   &:nth-child(2n) > td.sorting_1 {
-    background-color: #F5F5F5;
+    background-color: $uds-background-color-light;
+    color: $uds-color-blue;
   }
 }
 
