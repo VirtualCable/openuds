@@ -147,45 +147,50 @@
 
     @rest.tableInfo (data) -> # Gets tableinfo data (columns, title, visibility of fields, etc...
       row_style = data["row-style"]
-      gui.doLog row_style
       title = data.title
-      columns = []
+      columns = [ {
+            orderable: false,
+            className: 'select-checkbox'
+            data: null
+            render: () -> return ''
+        } ]
+
       $.each data.fields, (index, value) ->
         for v of value
           opts = value[v]
-          column = mData: v
-          column.sTitle = opts.title
-          column.mRender = renderEmptyCell
-          column.sWidth = opts.width  if opts.width
-          column.bVisible = (if not opts.visible? then true else opts.visible)
-          column.bSortable = opts.sortable  if opts.sortable?
-          column.bSearchable = opts.searchable  if opts.searchable?
-          if opts.type and column.bVisible
+          column = data: v
+          column.title = opts.title
+          column.render = renderEmptyCell
+          column.width = opts.width  if opts.width
+          column.visible = (if not opts.visible? then true else opts.visible)
+          column.orderable = opts.sortable  if opts.sortable?
+          column.searchable = opts.searchable  if opts.searchable?
+          if opts.type and column.visible
             switch opts.type
               when "date"
-                column.sType = "uds-date"
-                column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format("SHORT_DATE_FORMAT")))
+                column.type = "uds-date"
+                column.render = gui.tools.renderDate(api.tools.djangoFormat(get_format("SHORT_DATE_FORMAT")))
               when "datetime"
-                column.sType = "uds-date"
-                column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format("SHORT_DATETIME_FORMAT")))
+                column.type = "uds-date"
+                column.render = gui.tools.renderDate(api.tools.djangoFormat(get_format("SHORT_DATETIME_FORMAT")))
               when "time"
-                column.sType = "uds-date"
-                column.mRender = gui.tools.renderDate(api.tools.djangoFormat(get_format("TIME_FORMAT")))
+                column.type = "uds-date"
+                column.render = gui.tools.renderDate(api.tools.djangoFormat(get_format("TIME_FORMAT")))
               when "iconType"
-                #columnt.sType = 'html'; // html is default, so this is not needed
-                column.mRender = renderTypeIcon
+                #columnt.type = 'html'; // html is default, so this is not needed
+                column.render = renderTypeIcon
               when "icon"
-                column.mRender = renderIcon(opts.icon)  if opts.icon?
+                column.render = renderIcon(opts.icon)  if opts.icon?
               when "icon_dict"
-                column.mRender = renderIconDict(opts.icon_dict)  if opts.icon_dict?
+                column.render = renderIconDict(opts.icon_dict)  if opts.icon_dict?
               when "image"
-                column.mRender = renderImage
+                column.render = renderImage
               when "dict"
-                column.mRender = renderTextTransform(opts.dict)  if opts.dict?
+                column.render = renderTextTransform(opts.dict)  if opts.dict?
               when "callback"
-                column.mRender = renderCallBack(v)
+                column.render = renderCallBack(v)
               else
-                column.sType = opts.type
+                column.type = opts.type
           columns.push column
         return
 
@@ -213,9 +218,6 @@
         self.refresh = refreshFnc = ->
           # Refreshes table content
           tbl = $("#" + tableId).dataTable()
-          
-          # Clears selection first
-          TableTools.fnGetInstance(tableId).fnSelectNone()
           
           #if( data.length > 1000 )
           gui.tools.blockUI()
@@ -309,8 +311,8 @@
                       a.name.localeCompare b.name
                     )
                     btn =
-                      sExtends: "div"
-                      sButtonText: api.templates.evaluate("tmpl_comp_dropdown",
+                      type: "div"
+                      content: api.templates.evaluate("tmpl_comp_dropdown",
                         label: gui.config.dataTableButtons["new"].text
                         css: gui.config.dataTableButtons["new"].css
                         id: menuId
@@ -320,58 +322,58 @@
                       )
                   else
                     btn =
-                      sExtends: "text"
-                      sButtonText: gui.config.dataTableButtons["new"].text
-                      sButtonClass: gui.config.dataTableButtons["new"].css
+                      type: "text"
+                      content: gui.config.dataTableButtons["new"].text
+                      css: gui.config.dataTableButtons["new"].css
                       fnClick: clickHandlerFor(tblParams.onNew, "new", true)
               when "edit"
                 if self.rest.permission() >= api.permissions.MANAGEMENT
                   btn =
-                    sExtends: "text"
-                    sButtonText: gui.config.dataTableButtons.edit.text
+                    type: "text"
+                    content: gui.config.dataTableButtons.edit.text
                     fnSelect: editSelected
                     fnClick: clickHandlerFor(tblParams.onEdit, "edit")
-                    sButtonClass: gui.config.dataTableButtons.edit.css
+                    css: gui.config.dataTableButtons.edit.css
               when "delete"
                 if self.rest.permission() >= api.permissions.MANAGEMENT
                   btn =
-                    sExtends: "text"
-                    sButtonText: gui.config.dataTableButtons["delete"].text
+                    type: "text"
+                    content: gui.config.dataTableButtons["delete"].text
                     fnSelect: deleteSelected
                     fnClick: clickHandlerFor(tblParams.onDelete, "delete")
-                    sButtonClass: gui.config.dataTableButtons["delete"].css
+                    css: gui.config.dataTableButtons["delete"].css
               when "refresh"
                 btn =
-                  sExtends: "text"
-                  sButtonText: gui.config.dataTableButtons.refresh.text
+                  type: "text"
+                  content: gui.config.dataTableButtons.refresh.text
                   fnClick: refreshFnc
-                  sButtonClass: gui.config.dataTableButtons.refresh.css
+                  css: gui.config.dataTableButtons.refresh.css
               when "permissions"
                 if self.rest.permission() == api.permissions.ALL
                   btn =
-                    sExtends: "text"
-                    sButtonText: gui.config.dataTableButtons.permissions.text
+                    type: "text"
+                    content: gui.config.dataTableButtons.permissions.text
                     fnSelect: permissionsSelected
                     fnClick: clickHandlerFor(gui.permissions, self.rest)
-                    sButtonClass: gui.config.dataTableButtons.permissions.css
+                    css: gui.config.dataTableButtons.permissions.css
               when "xls"
                 btn =
-                  sExtends: "text"
-                  sButtonText: gui.config.dataTableButtons.xls.text
+                  type: "text"
+                  content: gui.config.dataTableButtons.xls.text
                   fnClick: -> # Export to excel
                     api.spreadsheet.tableToExcel(tableId, title)
                     return
                   # End export to excell
-                  sButtonClass: gui.config.dataTableButtons.xls.css
+                  css: gui.config.dataTableButtons.xls.css
               else # Custom button, this has to be
                 perm = if value.permission? then value.permission else api.permissions.NONE
                 if self.rest.permission() >= perm
                   try
                     css = ((if value.css then value.css + " " else "")) + gui.config.dataTableButtons.custom.css
                     btn =
-                      sExtends: "text"
-                      sButtonText: value.text
-                      sButtonClass: css
+                      type: "text"
+                      content: value.text
+                      css: css
 
                     if value.click
                       btn.fnClick = (btn) ->
@@ -403,31 +405,25 @@
           aButtons: btns
           sRowSelect: tblParams.rowSelect or "none"
 
-        if tblParams.onRowSelect
-          rowSelectedFnc = tblParams.onRowSelect
-          oTableTools.fnRowSelected = ->
-            rowSelectedFnc @fnGetSelectedData(), $("#" + tableId).dataTable(), self
-            return
-        if tblParams.onRowDeselect
-          rowDeselectedFnc = tblParams.onRowDeselect
-          oTableTools.fnRowDeselected = ->
-            rowDeselectedFnc @fnGetSelectedData(), $("#" + tableId).dataTable(), self
-            return
+        tbId = gui.genRamdonId('tb')
         dataTableOptions =
           aaData: data
+
+          dom: '<"' + tbId + ' btns-tables">frtip'
+          responsive: true
+          colReorder: true
+          select:
+            style: if tblParams.rowSelect == 'multi' then 'os' else 'single'
+            #selector: 'td:first-child'
+
           aaSorting: [[
-            0
+            1
             "asc"
           ]]
           aoColumns: columns
           oLanguage: gui.config.dataTablesLanguage
-          oTableTools: oTableTools
           sPaginationType: "bootstrap"
           
-          # First is upper row,
-          # second row is lower
-          # (pagination) row
-          sDom: "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>"
           bDeferRender: tblParams.deferedRender or false
 
         
@@ -439,12 +435,37 @@
           dataTableOptions.fnCreatedRow = (nRow, aData, iDataIndex) ->
             v = (if dct? then dct[@fnGetData(iDataIndex)[field]] else @fnGetData(iDataIndex)[field])
             $(nRow).addClass prefix + v
-            gui.doLog prefix + v
             return
-        $("#" + tableId).dataTable dataTableOptions
-        
-        # Fix 3dbuttons
-        gui.tools.fix3dButtons "#" + tableId + "_wrapper .btn-group-3d"
+
+        dTable = $("#" + tableId).DataTable dataTableOptions
+
+        # dTable = $("#" + tableId).dataTable()
+
+        if tblParams.onRowSelect
+          rowSelectedFnc = tblParams.onRowSelect
+          dTable.on 'select', (e, dt, type, indexes) ->
+            rows = dt.rows({selected: true}).data() 
+            # rows = dt.rows(indexes).data()  # This gets selected rows on call
+            rowSelectedFnc rows, dt
+            return
+            #rowSelectedFnc @fnGetSelectedData(), $("#" + tableId).dataTable(), self
+
+        if tblParams.onRowDeselect
+          rowDeselectedFnc = tblParams.onRowDeselect
+          dTable.on 'deselect', (e, dt, type, indexes) ->
+            rows = dt.rows(indexes).data()
+            rowDeselectedFnc rows, dt
+            return
+
+        # Add buttons
+        for btn in btns
+          $div = $('div.'+tbId)
+          if btn.type == 'text'
+            btnId = gui.genRamdonId('btn')
+            $div.append('<button id="' + btnId + '" class="' + btn.css + '">' + btn.content + '</button>')
+            $('#'+btnId).on('click', btn.fnClick)
+          else
+            $div.append('<div style="float: left;">' + btn.content + '</div>')
         
         # Fix form 
         $("#" + tableId + "_filter input").addClass "form-control"
@@ -522,37 +543,37 @@
     # Columns description
     columns = [
       {
-        mData: "date"
-        sTitle: gettext("Date")
-        sType: "uds-date"
+        data: "date"
+        title: gettext("Date")
+        type: "uds-date"
         asSorting: [
           "desc"
           "asc"
         ]
-        mRender: gui.tools.renderDate(api.tools.djangoFormat(get_format("SHORT_DATE_FORMAT") + " " + get_format("TIME_FORMAT")))
-        bSortable: true
-        bSearchable: true
+        render: gui.tools.renderDate(api.tools.djangoFormat(get_format("SHORT_DATE_FORMAT") + " " + get_format("TIME_FORMAT")))
+        orderable: true
+        searchable: true
       }
       {
-        mData: "level"
-        sTitle: gettext("level")
-        mRender: logRenderer
-        sWidth: "5em"
-        bSortable: true
-        bSearchable: true
+        data: "level"
+        title: gettext("level")
+        render: logRenderer
+        width: "5em"
+        orderable: true
+        searchable: true
       }
       {
-        mData: "source"
-        sTitle: gettext("source")
-        sWidth: "5em"
-        bSortable: true
-        bSearchable: true
+        data: "source"
+        title: gettext("source")
+        width: "5em"
+        orderable: true
+        searchable: true
       }
       {
-        mData: "message"
-        sTitle: gettext("message")
-        bSortable: true
-        bSearchable: true
+        data: "message"
+        title: gettext("message")
+        orderable: true
+        searchable: true
       }
     ]
     table = gui.table(tblParams.title or gettext("Logs"), tableId,

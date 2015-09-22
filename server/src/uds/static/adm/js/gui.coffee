@@ -32,27 +32,33 @@
       sLast: "<span class=\"fa fa-fast-forward\"></span> "
       sNext: "<span class=\"fa fa-forward\"></span> "
       sPrevious: "<span class=\"fa fa-backward\"></span> "
+    select:
+      rows:
+        _: gettext("Selected %d rows")
+        0: gettext("Click on a row to select it")
+        1: gettext("Selected one row")
+
 
   gui.config.dataTableButtons =
     new:
       text: "<span class=\"fa fa-pencil\"></span> <span class=\"label-tbl-button\">" + gettext("New") + "</span>"
-      css: "btn btn-primary btn3d-tables"
+      css: "btn btn-primary btn-tables"
 
     edit:
       text: "<span class=\"fa fa-edit\"></span> <span class=\"label-tbl-button\">" + gettext("Edit") + "</span>"
-      css: "btn disabled btn-default btn3d-tables"
+      css: "btn disabled btn-default btn-tables"
 
     delete:
       text: "<span class=\"fa fa-trash-o\"></span> <span class=\"label-tbl-button\">" + gettext("Delete") + "</span>"
-      css: "btn disabled btn-default btn3d-tables"
+      css: "btn disabled btn-default btn-tables"
 
     permissions:
       text: "<span class=\"fa fa-save\"></span> <span class=\"label-tbl-button\">" + gettext("Permissions") + "</span>"
-      css: "btn disabled btn-default btn3d-tables"
+      css: "btn disabled btn-default btn-tables"
 
     xls:
       text: "<span class=\"fa fa-save\"></span> <span class=\"label-tbl-button\">" + gettext("Xls") + "</span>"
-      css: "btn btn-info btn3d-tables"
+      css: "btn btn-info btn-tables"
 
     custom:
       text: null
@@ -165,12 +171,6 @@
   gui.cleanup = ->
     gui.doLog "Cleaning up things"
     
-    # Tabletools creates divs at end that do not get removed, here is a good place to ensure there is no garbage left behind
-    # And anyway, if this div does not exists, it creates a new one...
-    $(".DTTT_dropdown").remove() # Tabletools keep adding garbage to end of body on each new table creation, so we simply remove it on each new creation
-    TableTools._aInstances = [] # Same for internal references
-    TableTools._aListeners = []
-    
     # Destroy any created datatable
     $.each $.fn.dataTable.fnTables(), (undefined_, tbl) ->
       $tbl = $(tbl).dataTable()
@@ -253,7 +253,7 @@
     return
 
   gui.init = ->
-    
+    gui.doLog $
     # Load jquery validator strings
     $.extend $.validator.messages,
       required: gettext("This field is required.")

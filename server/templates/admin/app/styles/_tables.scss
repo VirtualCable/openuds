@@ -1,41 +1,97 @@
+/*
+This states displays as default
+*/
+
+tr {
+  &.row-state-B:nth-child(2n) > td, &.row-state-C:nth-child(2n) > td, &.row-state-E:nth-child(2n) > td, &.row-state-Y:nth-child(2n) > td, &.row-state-B:nth-child(2n+1) > td, &.row-state-C:nth-child(2n+1) > td, &.row-state-E:nth-child(2n+1) > td, &.row-state-Y:nth-child(2n+1) > td {
+    color: #FF6600 !important;
+  }
+
+  &.row-state-M:nth-child(2n+1) > td, &.row-state-R:nth-child(2n+1) > td, &.row-state-I:nth-child(2n+1) > td, &.row-state-S > td:nth-child(2n+1) {
+    color: #9A9A9A !important;
+  }
+
+  &.row-state-M:nth-child(2n) > td, &.row-state-R:nth-child(2n) > td, &.row-state-I:nth-child(2n) > td, &.row-state-S > td:nth-child(2n) {
+    color: #858585 !important;
+  }
+
+  &.row-maintenance-true > td {
+    color: #FF6600 !important;
+  }
+
+  &.log-WARN {
+    color: blue;
+  }
+
+  &.log-DEBUG {
+    color: green;
+  }
+
+  &.log-INFO, &.log-OTHER {
+    color: black;
+  }
+
+  &.log-ERROR, &.log-FATAL {
+    color: red;
+  }
+}
+
+
+// To position correctly things
+.btn-tables {
+  margin-top: 0px;
+  margin-botton: 8px;
+  margin-right: 8px;
+}
+
+.btns-tables {
+  float: left;
+}
+
+.dataTables_info {
+  float: left;
+}
+
+.dataTables_paginate {
+  float: right;
+}
+
+
+ .table {
+  font-family: 'Andale Mono', 'Courier New'
+ }
+
+.table tbody tr.active {
+  td, th {
+    background-color: $uds-background-color;
+    color: $uds-foreground-color;
+  }
+}
+
+.table tbody tr.selected {
+  td, th {
+    background-color: $uds-color-blue !important;
+    color: $uds-foreground-color !important;
+  }
+}
+
+.table-striped > tbody > tr {
+  td.sorting_1 {
+    color: $uds-color-blue;
+  }
+}
+
+.dataTables_wrapper {
+  overflow-x: hidden;
+  min-height: $uds-panel-min-height;
+}
+
 @media (max-width: 768px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
+  .label-tbl-button {
+    display: none;
+
+  .dataTables_wrapper {
+    min-height: 0px;
   }
-
-  /* Hide table headers (but not display: none;, for accessibility) */
-
-  thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-
-  tr {
-    border: 1px solid #ccc;
-  }
-
-  td {
-    /* Behave  like a "row" */
-    border: none;
-    border-bottom: 1px solid #eee;
-    position: relative;
-    padding-left: 50% !important;
-    white-space: normal;
-    text-align: left;
-
-    &:before {
-      /* Now like a table header */
-      position: absolute;
-
-      /* Top/left values mimic padding */
-      top: 6px;
-      left: 6px;
-      width: 45%;
-      padding-right: 10px;
-      white-space: nowrap;
-      text-align: left;
-      font-weight: bold;
-    }
-  }
+}
 }

@@ -15,6 +15,7 @@
         {% compress css %}
         <!-- Bootstrap -->
         <link href="{% get_static_prefix %}adm/css/uds.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}adm/css/datatables.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/font-awesome.min.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/bootstrap-switch.css" rel="stylesheet" media="screen">
         <link href="{% get_static_prefix %}adm/css/jquery.bootstrap-touchspin.css" rel="stylesheet" media="screen">
@@ -65,6 +66,7 @@
         <!-- minified js from: 'jquery', 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
             'jquery.dataTables.min', 'TableTools.min', 'Blob', 'FileSaver', 'ZeroClipboard', 'dataTables.bootstrap', 'handlebars-v1.1.2', UDS admin JS's -->
         <script src="{% get_static_prefix %}adm/js/jquery-2.1.3.min.js"></script>
+        <script src="{% get_static_prefix %}adm/js/datatables.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.cookie.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-switch.min.js"></script>
@@ -76,15 +78,11 @@
         <script src="{% get_static_prefix %}adm/js/bootstrap-select.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
-        <script src="{% get_static_prefix %}adm/js/jquery.dataTables.min.js"></script>
 
         <!-- Flot charts -->
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.resize.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.time.min.js"></script>
-        
-        <!-- Table tools -->
-        <script src="{% get_static_prefix %}adm/js/dataTables.tableTools.min.js"></script>
         
         <!-- for "save" from javascript -->
         <script src="{% get_static_prefix %}adm/js/Blob.js"></script>

@@ -78,11 +78,16 @@ gui.providers.link = (event) ->
 
         return
 
-      onRowDeselect: ->
-        clearDetails()
+      onRowDeselect: (deselected, dtable)->
+        if dtable.rows({selected: true}).length == 0
+          clearDetails()
         return
 
       onRowSelect: (selected) ->
+        if selected.length > 1
+          clearDetails()
+          return
+
         gui.tools.blockUI()
         clearDetails()
         $("#detail-placeholder").removeClass "hidden"

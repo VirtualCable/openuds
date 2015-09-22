@@ -428,7 +428,7 @@ module.exports = function (grunt) {
     'postcss',
     'concat',
     'cssmin',
-    'uglify',
+//    'uglify',
     'copy:dist',
     'modernizr',
     'filerev',

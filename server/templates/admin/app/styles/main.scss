@@ -10,9 +10,10 @@ $uds-foreground-color: #ffffff;
 
 $uds-color-blue: #1CA8DD;
 
+$uds-panel-min-height: 500px;
 
 // Bootstrap
-$icon-font-path: "../bower_components/bootstrap-sass/assets/fonts/bootstrap/";
+$icon-font-path: "../fonts/";
 
 $text-color: $uds-foreground-color;
 $body-bg: $uds-background-color;
@@ -58,6 +59,9 @@ $breadcrumb-bg: $uds-background-color;
 $input-color: $uds-foreground-color;
 $input-bg: $uds-background-color;
 
+$table-bg-hover: $uds-color-blue;
+$table-bg-accent: $uds-background-color-light;
+
 // bower:scss
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 // endbower
@@ -90,22 +94,6 @@ body {
 #page-wrapper {
   width: 100%;
   padding: 5px 15px;
-}
-
-/* Custom */
-
-.btn3d-tables {
-  margin-top: 0px;
-  margin-botton: 8px;
-  margin-right: 8px;
-}
-
-.btn-group-3d {
-  margin-bottom: 12px;
-}
-
-.label-tbl-button {
-  display: none;
 }
 
 /* collapsable && closeable pannels */
@@ -268,10 +256,6 @@ body {
     }
   }*/
 
-  .label-tbl-button {
-    display: inline-block;
-  }
-
   .modal-dialog {
     /* new custom width */
     width: 60%;
@@ -283,5 +267,5 @@ body {
 
 @import "_theme";
 @import "_widgets";
-@import "_data-tables";
+//@import "_data-tables";
 @import "_tables";
