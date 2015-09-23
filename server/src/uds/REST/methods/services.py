@@ -158,14 +158,15 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         try:
             service = parent.services.get(uuid=processUuid(item))
 
-            if service.deployedServices.count() != 0:
-                raise RequestError('Item has associated deployed services')
+            if service.deployedServices.count() == 0:
+                service.delete()
+                return 'deleted'
 
-            service.delete()
         except Exception:
+            logger.exception('Deleting service')
             self.invalidItemException()
 
-        return 'deleted'
+        raise RequestError('Item has associated deployed services')
 
     def getTitle(self, parent):
         try:

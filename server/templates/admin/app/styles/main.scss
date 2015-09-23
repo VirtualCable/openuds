@@ -9,34 +9,64 @@ $uds-background-color-lighter: #444444;
 $uds-foreground-color: #ffffff;
 
 $uds-color-blue: #1CA8DD;
+$uds-color-blue-dark: #165B75;
 
 $uds-panel-min-height: 500px;
 
 // Bootstrap
 $icon-font-path: "../fonts/";
 
+// Brand colors
+// $brand-primary: 
+$brand-success: #1BC98E;
+$brand-info: #9F86FF;
+$brand-warning: #E4D836;
+$brand-danger: #E64759;
+
+// Main page colors
 $text-color: $uds-foreground-color;
 $body-bg: $uds-background-color;
 
-$headings-color: $uds-foreground-color;
+// Headings colors
+$headings-color: $brand-info;
 
+// Border radious
 $border-radius-base:        0px !default;
 $border-radius-large:       0px !default;
 $border-radius-small:       0px !default;
 
+// Navbar colors
 $navbar-inverse-bg: $uds-background-color;
 $navbar-inverse-border: $uds-background-color;
 $navbar-inverse-link-hover-bg: $uds-background-color-light;
 $navbar-inverse-link-active-bg: $uds-background-color-light;
 
+// Modal color
 $modal-content-bg: $uds-background-color-light;
 
+// State colors
+$state-success-bg: $brand-success;
+$state-success-text: $brand-success;
 
+$state-info-bg: $brand-info;
+$state-info-text: $brand-info;
+
+$state-warning-bg: $brand-warning;
+$state-warning-text: $brand-warning;
+
+$state-danger-bg: $brand-danger;
+$state-danger-text: $brand-danger;
+
+// panel colors
+$panel-bg: $uds-background-color-light;
+$panel-footer-bg: $uds-background-color-light;
+
+// Btn colors
 $btn-default-color: $uds-foreground-color;
 $btn-default-bg: $uds-background-color;
 $btn-default-border: $uds-background-color-light;
 
-
+// Pagination colors
 $pagination-color: $uds-color-blue;
 $pagination-hover-color: $uds-foreground-color;
 $pagination-disabled-color: $uds-foreground-color;
@@ -51,16 +81,27 @@ $pagination-hover-border: $uds-color-blue;
 
 $pagination-diabled-border: $uds-color-blue;
 
-
+// Breadcrums
 $breadcrumb-separator: ' -> ';
 $breadcrumb-bg: $uds-background-color;
 
-
+// Input colors
 $input-color: $uds-foreground-color;
 $input-bg: $uds-background-color;
 
-$table-bg-hover: $uds-color-blue;
+// Table colors
+$table-bg-hover: $uds-color-blue-dark;
 $table-bg-accent: $uds-background-color-light;
+
+// badges
+$badge-color: $uds-foreground-color;
+
+// pannels
+$panel-primary-text: $uds-foreground-color;
+$panel-success-text: $uds-foreground-color;
+$panel-info-text: $uds-foreground-color;
+$panel-warning-text: $uds-foreground-color;
+$panel-danger-text: $uds-foreground-color;
 
 // bower:scss
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
@@ -233,7 +274,7 @@ body {
 
         > li > a {
           color: #999999;
-          padding: 15px 15px 15px 25px;
+          padding: 15px 15px 15px 15px;
 
           &:hover, &.active, &:focus {
             color: #fff;

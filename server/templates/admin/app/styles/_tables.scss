@@ -2,7 +2,28 @@
 This states displays as default
 */
 
-tr {
+.row-maintenance-true {
+  color: $brand-danger;
+}
+
+.log-WARN {
+  color: $brand-warning;
+}
+
+.log-DEBUG {
+  color: $brand-success;
+}
+
+.log-INFO, .log-OTHER {
+  color: $brand-info;
+}
+
+.log-ERROR, &.log-FATAL {
+  color: $brand-danger;
+}
+
+
+/*tr {
   &.row-state-B:nth-child(2n) > td, &.row-state-C:nth-child(2n) > td, &.row-state-E:nth-child(2n) > td, &.row-state-Y:nth-child(2n) > td, &.row-state-B:nth-child(2n+1) > td, &.row-state-C:nth-child(2n+1) > td, &.row-state-E:nth-child(2n+1) > td, &.row-state-Y:nth-child(2n+1) > td {
     color: #FF6600 !important;
   }
@@ -34,7 +55,7 @@ tr {
   &.log-ERROR, &.log-FATAL {
     color: red;
   }
-}
+}*/
 
 
 // To position correctly things
@@ -61,25 +82,19 @@ tr {
   font-family: 'Andale Mono', 'Courier New'
  }
 
-.table tbody tr.active {
-  td, th {
-    background-color: $uds-background-color;
-    color: $uds-foreground-color;
-  }
-}
-
 .table tbody tr.selected {
-  td, th {
-    background-color: $uds-color-blue !important;
-    color: $uds-foreground-color !important;
-  }
+    background-color: $uds-color-blue;
+    color: $brand-warning;
+    &:hover {
+      background-color: $uds-color-blue-dark;
+    }
 }
 
-.table-striped > tbody > tr {
+/*.table-striped > tbody > tr {
   td.sorting_1 {
     color: $uds-color-blue;
   }
-}
+}*/
 
 .dataTables_wrapper {
   overflow-x: hidden;

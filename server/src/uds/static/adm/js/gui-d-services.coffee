@@ -110,12 +110,10 @@ gui.providers.link = (event) ->
             return
 
           onCheck: (check, items) ->
-            if check is "delete"
-              for i of items
-                return false  if items[i].deployed_services_count > 0
-              return true
-            true
-
+            if check is "delete" and items.length is 1
+              return false  if items[0].deployed_services_count > 0
+            return true
+ 
           buttons: [
             "new"
             "edit"

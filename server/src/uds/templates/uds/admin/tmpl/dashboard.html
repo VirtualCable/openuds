@@ -26,10 +26,10 @@
     <div class="panel panel-info">
       <div class="panel-heading">
         <div class="row">
-          <div class="col-xs-6">
+          <div class="col-xs-3">
             <img class="info-img" src="{% endverbatim %}{{ STATIC_URL }}{% verbatim %}/adm/img/icons/users.png"/>
           </div>
-          <div class="col-xs-6 text-right">
+          <div class="col-xs-9 text-right">
             <p class="announcement-heading">{{ users }}</p>
             <p class="announcement-text">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</p>
           </div>
@@ -38,10 +38,10 @@
       <a class="lnk-authenticators" href="#">
         <div class="panel-footer announcement-bottom">
           <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-10">
               {% endverbatim %}{% trans 'View Authenticators' %}{% verbatim %}
             </div>
-            <div class="col-xs-6 text-right">
+            <div class="col-xs-2 text-right">
               <i class="fa fa-arrow-circle-right"></i>
             </div>
           </div>
@@ -53,10 +53,10 @@
     <div class="panel panel-info">
       <div class="panel-heading">
         <div class="row">
-          <div class="col-xs-6">
+          <div class="col-xs-3">
             <img class="info-img" src="{% endverbatim %}{{ STATIC_URL }}{% verbatim %}/adm/img/icons/services.png"/>
           </div>
-          <div class="col-xs-6 text-right">
+          <div class="col-xs-9 text-right">
             <p class="announcement-heading">{{ services }}</p>
             <p class="announcement-text">{% endverbatim %}{% trans 'Services' %}{% verbatim %}</p>
           </div>
@@ -65,10 +65,10 @@
       <a class="lnk-service_providers" href="#">
         <div class="panel-footer announcement-bottom">
           <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-10">
               {% endverbatim %}{% trans 'View services' %}{% verbatim %}
             </div>
-            <div class="col-xs-6 text-right">
+            <div class="col-xs-2 text-right">
               <i class="fa fa-arrow-circle-right"></i>
             </div>
           </div>
@@ -80,10 +80,10 @@
     <div class="panel panel-success">
       <div class="panel-heading">
         <div class="row">
-          <div class="col-xs-6">
+          <div class="col-xs-3">
             <img class="info-img" src="{% endverbatim %}{{ STATIC_URL }}{% verbatim %}/adm/img/icons/assigned.png"/>
           </div>
-          <div class="col-xs-6 text-right">
+          <div class="col-xs-9 text-right">
             <p class="announcement-heading">{{ user_services }}</p>
             <p class="announcement-text">{% endverbatim %}{% trans 'User services' %}{% verbatim %}</p>
           </div>
@@ -92,10 +92,10 @@
       <a class="lnk-deployed_services" href="#">
         <div class="panel-footer announcement-bottom">
           <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-10">
               {% endverbatim %}{% trans 'View services pools' %}{% verbatim %}
             </div>
-            <div class="col-xs-6 text-right">
+            <div class="col-xs-2 text-right">
               <i class="fa fa-arrow-circle-right"></i>
             </div>
           </div>
@@ -107,10 +107,10 @@
     <div class="panel panel-{{# if restrained_services_pools }}danger{{ else }}success{{/ if }}">
       <div class="panel-heading">
         <div class="row">
-          <div class="col-xs-6">
+          <div class="col-xs-3">
             <i class="fa fa-heart fa-5x" style="color: #C03030;"></i>
           </div>
-          <div class="col-xs-6 text-right">
+          <div class="col-xs-9 text-right">
             <p class="announcement-heading">{{ restrained_services_pools }}</p>
             <p class="announcement-text">{% endverbatim %}{% trans 'Restrained services pools' %}{% verbatim %}</p>
           </div>
@@ -119,10 +119,10 @@
       <a class="lnk-deployed_services" href="#">
         <div class="panel-footer announcement-bottom">
           <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-10">
               {% endverbatim %}{% trans 'View services pools' %}{% verbatim %}
             </div>
-            <div class="col-xs-6 text-right">
+            <div class="col-xs-2 text-right">
               <i class="fa fa-arrow-circle-right"></i>
             </div>
           </div>

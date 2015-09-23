@@ -196,11 +196,6 @@
 
       
       # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
-      $("#style-" + tableId).remove() # Remove existing style for table before adding new one, if it exist ofc
-      $(api.templates.evaluate("tmpl_comp_responsive_table",
-        tableId: tableId
-        columns: columns
-      )).appendTo "head"
       self.rest.overview (data) -> # Gets "overview" data for table (table contents, but resume form)
         tblParams.onData data  if tblParams.onData
         table = gui.table(title, tableId,
@@ -260,31 +255,28 @@
           onCheck = tblParams.onCheck or -> # Default oncheck always returns true
             true
 
+          setBtnState = (btn, enable, cls) ->
+            if enable
+              $(btn).prop('disabled', false)
+              $(btn).addClass('disabled')
+              $(btn).removeClass("disabled").addClass cls
+            else
+              $(btn).prop('disabled', true)
+              $(btn).removeClass(cls).addClass "disabled"
+            return
+
+          activeOnOneSelected = (cls) ->
+            (btn, sel, dtable) ->
+              setBtnState btn, (if sel.length is 1 then onCheck("edit", sel) else false), cls
+
+          activeOnManySelected = (cls) ->
+            (btn, sel, dtable) ->
+              setBtnState btn, (if sel.length >= 1 then onCheck("delete", sel) else false), cls
           
           # methods for buttons on row select
-          editSelected = (btn, sel, dtable) ->
-            enable = (if sel.length is 1 then onCheck("edit", sel) else false)
-            if enable
-              $(btn).removeClass("disabled").addClass "btn-success"
-            else
-              $(btn).removeClass("btn-success").addClass "disabled"
-            return
-
-          deleteSelected = (btn, sel, dtable) ->
-            enable = (if sel.length >= 1 then onCheck("delete", sel) else false)
-            if enable
-              $(btn).removeClass("disabled").addClass "btn-danger"
-            else
-              $(btn).removeClass("btn-danger").addClass "disabled"
-            return
-
-          permissionsSelected = (btn, sel, dtable) ->
-            enable = (if sel.length is 1 then onCheck("delete", sel) else false)
-            if enable
-              $(btn).removeClass("disabled").addClass "btn-success"
-            else
-              $(btn).removeClass("btn-success").addClass "disabled"
-            return
+          editSelected = activeOnOneSelected('btn-success')
+          deleteSelected = activeOnManySelected('btn-danger')
+          permissionsSelected = activeOnOneSelected('btn-success')
 
           $.each tblParams.buttons, (index, value) -> # Iterate through button definition
             btn = null
@@ -476,6 +468,7 @@
               selCallbackList.push
                 btnId: '#' + btnId
                 callback: btn.fnSelect
+              btn.fnSelect $btn, [], dTable
           else
             $div.append('<div style="float: left;">' + btn.content + '</div>')
         
