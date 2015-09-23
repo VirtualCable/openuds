@@ -237,22 +237,22 @@
           false # This may be used on button or href, better disable execution of it
 
         btns = []
-        if tblParams.buttons
-          
+        if tblParams.buttons       
           # Generic click handler generator for this table
           clickHandlerFor = (handler, action, newHandler) ->
-            handleFnc = handler or (val, action, tbl) ->
-              gui.doLog "Default handler called for ", action
+            gui.doLog "Setting click handler for ", handler, action, newHandler
+
+            handleFnc = handler or (sel, action, dtable, refreshFnc) ->
+              gui.doLog "Default handler called for ", sel, action
               return
 
-            (btn) ->
-              tbl = $("#" + tableId).dataTable()
-              val = @fnGetSelectedData()[0]
+            fnc = (btn, sel, dtable) ->
+              gui.doLog "click handler: ", action, btn, sel, dtable
               setTimeout (->
                 if newHandler
-                  handleFnc action, tbl, refreshFnc
+                  handleFnc action, dtable, refreshFnc
                 else
-                  handleFnc val, action, tbl, refreshFnc
+                  handleFnc sel, action, dtable, refreshFnc
                 return
               ), 0
               return
@@ -262,8 +262,7 @@
 
           
           # methods for buttons on row select
-          editSelected = (btn, obj, node) ->
-            sel = @fnGetSelectedData()
+          editSelected = (btn, sel, dtable) ->
             enable = (if sel.length is 1 then onCheck("edit", sel) else false)
             if enable
               $(btn).removeClass("disabled").addClass "btn-success"
@@ -271,17 +270,15 @@
               $(btn).removeClass("btn-success").addClass "disabled"
             return
 
-          deleteSelected = (btn, obj, node) ->
-            sel = @fnGetSelectedData()
-            enable = (if sel.length is 1 then onCheck("delete", sel) else false)
+          deleteSelected = (btn, sel, dtable) ->
+            enable = (if sel.length >= 1 then onCheck("delete", sel) else false)
             if enable
               $(btn).removeClass("disabled").addClass "btn-danger"
             else
               $(btn).removeClass("btn-danger").addClass "disabled"
             return
 
-          permissionsSelected = (btn, obj, node) ->
-            sel = @fnGetSelectedData()
+          permissionsSelected = (btn, sel, dtable) ->
             enable = (if sel.length is 1 then onCheck("delete", sel) else false)
             if enable
               $(btn).removeClass("disabled").addClass "btn-success"
@@ -325,14 +322,20 @@
                       type: "text"
                       content: gui.config.dataTableButtons["new"].text
                       css: gui.config.dataTableButtons["new"].css
-                      fnClick: clickHandlerFor(tblParams.onNew, "new", true)
+                      fnClick: () ->
+                        selecteds = dTable.rows({selected: true}).data()
+                        gui.doLog "New click: ", selecteds, dTable, refreshFnc
+                        tblParams.onNew "new", dTable, refreshFnc
               when "edit"
                 if self.rest.permission() >= api.permissions.MANAGEMENT
                   btn =
                     type: "text"
                     content: gui.config.dataTableButtons.edit.text
                     fnSelect: editSelected
-                    fnClick: clickHandlerFor(tblParams.onEdit, "edit")
+                    fnClick: () ->
+                      selecteds = dTable.rows({selected: true}).data()
+                      gui.doLog "Edit click: ", selecteds, dTable, refreshFnc
+                      tblParams.onEdit selecteds[0], "edit", dTable, refreshFnc
                     css: gui.config.dataTableButtons.edit.css
               when "delete"
                 if self.rest.permission() >= api.permissions.MANAGEMENT
@@ -340,8 +343,11 @@
                     type: "text"
                     content: gui.config.dataTableButtons["delete"].text
                     fnSelect: deleteSelected
-                    fnClick: clickHandlerFor(tblParams.onDelete, "delete")
                     css: gui.config.dataTableButtons["delete"].css
+                    fnClick: () ->
+                      selecteds = dTable.rows({selected: true}).data()
+                      gui.doLog "delete click: ", selecteds, dTable, refreshFnc
+                      tblParams.onDelete selecteds, "delete", dTable, refreshFnc
               when "refresh"
                 btn =
                   type: "text"
@@ -376,20 +382,17 @@
                       css: css
 
                     if value.click
-                      btn.fnClick = (btn) ->
-                        tbl = $("#" + tableId).dataTable()
-                        val = @fnGetSelectedData()[0]
+                      btn.fnClick = () ->
+                        selecteds = dTable.rows({selected: true}).data()
                         setTimeout (->
-                          value.click val, value, btn, tbl, refreshFnc
+                          value.click selecteds, value, this, dTable, refreshFnc
                           return
                         ), 0
                         return
                     if value.select
-                      btn.fnSelect = (btn) ->
-                        tbl = $("#" + tableId).dataTable()
-                        val = @fnGetSelectedData()[0]
+                      btn.fnSelect = (btn, selecteds, dtable) ->
                         setTimeout (->
-                          value.select val, value, btn, tbl, refreshFnc
+                          value.select selecteds, value, btn, dTable, refreshFnc
                           return
                         ), 0
                         return
@@ -457,16 +460,34 @@
             rowDeselectedFnc rows, dt
             return
 
+
+        # For storing on select callbacks
+        selCallbackList = []
         # Add buttons
         for btn in btns
           $div = $('div.'+tbId)
           if btn.type == 'text'
             btnId = gui.genRamdonId('btn')
             $div.append('<button id="' + btnId + '" class="' + btn.css + '">' + btn.content + '</button>')
-            $('#'+btnId).on('click', btn.fnClick)
+            $btn = $('#'+btnId)
+            $btn.on 'click', btn.fnClick
+              
+            if btn.fnSelect?
+              selCallbackList.push
+                btnId: '#' + btnId
+                callback: btn.fnSelect
           else
             $div.append('<div style="float: left;">' + btn.content + '</div>')
         
+        # Listener for callbacks
+        selCallback = (e, dt, type, indexes) ->
+          for v in selCallbackList
+            rows = dt.rows({selected: true}).data()
+            v.callback($(v.btnId), rows, dt)
+
+        dTable.on 'select', selCallback
+        dTable.on 'deselect', selCallback
+
         # Fix form 
         $("#" + tableId + "_filter input").addClass "form-control"
         

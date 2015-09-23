@@ -62,7 +62,7 @@
 
     custom:
       text: null
-      css: "btn btn-default btn3d-tables"
+      css: "btn btn-default btn-tables"
 
   gui.genRamdonId = (prefix) ->
     prefix = prefix or ""
@@ -398,20 +398,43 @@
       return
 
   gui.methods.del = (parent, modalTitle, modalErrorMsg) ->
-    (value, event, table, refreshFnc) ->
-      gui.doLog value
-      name = value.name or value.friendly_name
-      content = gettext("Are you sure do you want to delete ") + "<b>" + name + "</b>"
+    (values, type, table, refreshFnc) ->
+      names = ((value.name or value.friendly_name) for value in values).join(', ')
+      content = gettext("Are you sure do you want to delete ") + values.length + ' ' + gettext('items:') + " <b>" + names + "</b>"
       modalId = gui.launchModal(modalTitle, content,
         actionButton: "<button type=\"button\" class=\"btn btn-danger button-accept\">" + gettext("Delete") + "</button>"
       )
+
+      # Will show results once 
+      msgs = []
+      count = values.length
+      deletedFnc = (name, errorMsg) ->
+        count -= 1
+        if errorMsg?
+          msgs.push '<span class="text-danger">' + gettext("Error deleting") + " <b>" + name + "</b>: " + errorMsg + '</span>'
+        else
+          msgs.push gettext("Successfully deleted") + " <b>" + name + "</b>"
+
+        if count == 0
+          gui.tools.unblockUI()
+          refreshFnc()
+          gui.launchModal gettext('Deletion results'), '<ul><li>' + msgs.join('</li><li>') + '</li></ul>',
+            actionButton: " "
+            closeButton: '<button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>'
+
+
+
       $(modalId + " .button-accept").click ->
         $(modalId).modal "hide"
-        parent.rest.del value.id, (->
-          refreshFnc()
-          gui.notify gettext("Sucess"), "success"
-          return
-        ), gui.failRequestModalFnc(modalErrorMsg)
+        gui.tools.blockUI()
+        for value in values
+          ((value) ->
+            parent.rest.del value.id, (->
+              name = value.name or value.friendly_name
+              deletedFnc name
+              return
+            ), (jqXHR, textStatus, errorThrown) -> # fail on put
+              deletedFnc name, jqXHR.responseText)(value)
         return
 
       return

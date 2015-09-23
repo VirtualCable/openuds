@@ -20,7 +20,6 @@ gui.providers.link = (event) ->
 
   prevTables = []
   clearDetails = ->
-    gui.doLog "Clearing details"
     $.each prevTables, (undefined_, tbl) ->
       $tbl = $(tbl).dataTable()
       $tbl.fnClearTable()
@@ -58,15 +57,8 @@ gui.providers.link = (event) ->
       getPermission: (selected) ->
         gui.doLog "Selected", selected
       container: "providers-placeholder"
-      rowSelect: "single"
+      rowSelect: "multi"
       onCheck: (check, items) -> # Check if item can be deleted
-        #if( check == 'delete' ) {
-        #                    for( var i in items ) {
-        #                        if( items[i].services_count > 0)
-        #                            return false;
-        #                    }
-        #                    return true;
-        #                }
         true
 
       onData: (data) ->
@@ -99,7 +91,7 @@ gui.providers.link = (event) ->
         servicesTable = services.table(
           icon: 'services'
           container: "services-placeholder"
-          rowSelect: "single"
+          rowSelect: "multi"
           onRowSelect: (sselected) ->
             gui.tools.blockUI()
             sId = sselected[0].id
@@ -152,7 +144,13 @@ gui.providers.link = (event) ->
           permission: api.permissions.MANAGEMENT
           text: gettext("Maintenance")
           css: "disabled"
-          click: (val, value, btn, tbl, refreshFnc) ->
+          click: (vals, value, btn, tbl, refreshFnc) ->
+
+            if vals.length > 1
+              return
+
+            val = vals[0]
+
             gui.promptModal gettext("Maintenance Mode"), (if val.maintenance_mode is false then gettext("Enter Maintenance Mode?") else gettext("Exit Maintenance Mode?")),
               onYes: ->
                 gui.doLog 'Val: ', val
@@ -166,12 +164,13 @@ gui.providers.link = (event) ->
 
             return
 
-          select: (val, value, btn, tbl, refreshFnc) ->
-            unless val
-              $(btn).removeClass("btn3d-warning").addClass "disabled"
+          select: (vals, value, btn, tbl, refreshFnc) ->
+            unless vals.length == 1
+              $(btn).removeClass("btn-warning").addClass "disabled"
               $(btn).empty().append(gettext("Maintenance"))
               return
-            $(btn).removeClass("disabled").addClass "btn3d-warning"
+            val = vals[0]
+            $(btn).removeClass("disabled").addClass "btn-warning"
             $(btn).empty().append('<div>' + (if val.maintenance_mode is false then gettext('Enter maintenance Mode') else gettext('Exit Maintenance Mode')) + '</div>')
             return
         }
