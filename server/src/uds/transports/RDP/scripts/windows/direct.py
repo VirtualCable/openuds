@@ -17,7 +17,7 @@ theFile = '''{m.r.as_file}'''.format(password=win32crypt.CryptProtectData(six.bi
 
 filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
-subprocess.call([executable, filename])
+subprocess.Popen([executable, filename])
 tools.addFileToUnlink(filename)
 
 # QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

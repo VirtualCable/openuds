@@ -149,12 +149,13 @@ class UDSClient(QtGui.QMainWindow):
 
             script = data['result'].decode('base64').decode('bz2')
 
-            six.exec_(script, globals(), {'parent': self})
-
             self.ui.progressBar.setValue(100)
-            self.showMinimized()
+            # self.showMinimized()
 
             QtCore.QTimer.singleShot(3000, self.endScript)
+            self.hide()
+
+            six.exec_(script, globals(), {'parent': self})
 
         except RetryException as e:
             self._updateProgressBar(5, 80)

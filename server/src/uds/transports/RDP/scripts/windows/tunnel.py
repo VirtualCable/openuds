@@ -30,7 +30,7 @@ executable = tools.findApp('mstsc.exe')
 if executable is None:
     raise Exception('Unable to find mstsc.exe')
 
-subprocess.call([executable, filename])
+subprocess.Popen([executable, filename])
 tools.addFileToUnlink(filename)
 
 # QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
