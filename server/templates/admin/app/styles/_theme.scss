@@ -6,3 +6,15 @@
     }
   }
 }
+
+.bootstrap-timepicker-widget a.btn, .bootstrap-timepicker-widget input {
+  background: $input-bg;
+  border-color: $brand-primary;
+  border-radius: 0;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.bootstrap-timepicker-widget table td a {
+  color: $brand-primary;
+}
