@@ -10,15 +10,13 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <!-- build:css(.) styles/vendor.css -->
+    <!-- build:css(.) css/vendor.css -->
     <!-- bower:css -->
     <!-- endbower -->
     <!-- endbuild -->
-    <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
-    <!-- endbuild -->
-    <!-- build:js scripts/vendor/modernizr.js -->
-    <script src="/bower_components/modernizr/modernizr.js"></script>
+    <link rel="stylesheet" href="css/datatables.css">
+    <!-- build:css(.tmp) css/main.css -->
+    <link rel="stylesheet" href="css/main.css">
     <!-- endbuild -->
     
   </head>
@@ -36,7 +34,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class ="navbar-brand lnk-dashboard" href="#">
-            <img alt="Universal Desktop Services" src="images/udsicon.png" class="navbar-img pull-left">
+            <img alt="Universal Desktop Services" src="img/udsicon.png" class="navbar-img pull-left">
             <span>Universal Desktop Services</span>
           </a>
       </div>
@@ -44,31 +42,27 @@
     <!-- Side bar -->
      <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
-          <li><a class="lnk-dashboard" href="#"><img class="table-icon" src="images/icons/dashboard-monitor.png"/> Overview</a></li>
-          <li><a class="lnk-service_providers" href="#"><img class="table-icon" src="images/icons/providers.png"/> Services</a></li>
-          <li><a class="lnk-authenticators" href="#"><img class="table-icon" src="images/icons/authenticators.png"/> Authenticators</a></li>
-          <li><a class="lnk-osmanagers" href="#"><img class="table-icon" src="images/icons/osmanagers.png"/> Os Managers</a></li>
-          <li><a class="lnk-connectivity" href="#"><img class="table-icon" src="images/icons/transports.png"/> Connectivity</a></li>
-          <li><a class="lnk-calendars" href="#"><img class="table-icon" src="images/icons/calendars.png"/> Calendars</a></li>
-          <li><a class="lnk-deployed_services" href=""><img class="table-icon" src="images/icons/pools.png"/> Service Pools</a></li>
-          {% if admin %}
-          
+          <li><a class="lnk-dashboard" href="#"><img class="table-icon" src="img/icons/dashboard-monitor.png"/> Overview</a></li>
+          <li><a class="lnk-service_providers" href="#"><img class="table-icon" src="img/icons/providers.png"/> Services</a></li>
+          <li><a class="lnk-authenticators" href="#"><img class="table-icon" src="img/icons/authenticators.png"/> Authenticators</a></li>
+          <li><a class="lnk-osmanagers" href="#"><img class="table-icon" src="img/icons/osmanagers.png"/> Os Managers</a></li>
+          <li><a class="lnk-connectivity" href="#"><img class="table-icon" src="img/icons/transports.png"/> Connectivity</a></li>
+          <li><a class="lnk-calendars" href="#"><img class="table-icon" src="img/icons/calendars.png"/> Calendars</a></li>
+          <li><a class="lnk-deployed_services" href=""><img class="table-icon" src="img/icons/pools.png"/> Service Pools</a></li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="images/icons/tools.png"/> Tools <b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="img/icons/tools.png"/> Tools <b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a class="lnk-gallery" href="#"><img class="table-icon" src="images/icons/gallery.png"/> Gallery</a></li>
-              <li><a class="lnk-reports" href=""><img class="table-icon" src="images/icons/reports.png"/> Reports</a></li>
-              <li><a class="lnk-configuration" href="#"><img class="table-icon" src="images/icons/configuration.png"/> Configuration</a></li>
-              <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="images/icons/flush-cache.png"/> Flush cache</a></li>
+              <li><a class="lnk-gallery" href="#"><img class="table-icon" src="img/icons/gallery.png"/> Gallery</a></li>
+              <li><a class="lnk-reports" href=""><img class="table-icon" src="img/icons/reports.png"/> Reports</a></li>
+              <li><a class="lnk-configuration" href="#"><img class="table-icon" src="img/icons/configuration.png"/> Configuration</a></li>
+              <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="img/icons/flush-cache.png"/> Flush cache</a></li>
             </ul>
           </li>
-          {% endif %}
         </ul>
         
           <ul class="nav navbar-nav navbar-right navbar-user">
           </ul>
           <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
-          {% csrf_token %}
           <input id="id_language" type="hidden" name="language" value=""/>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -104,366 +98,1293 @@
             <div id="content">
               <!-- start -->
 
-<div class="row">
-  <div class="col-xs-12">
-    <h1>Services</h1>
-    <ol class="breadcrumb">
-      <li><a class="lnk-dashboard" href="#">Dashboard</a></li>
-      <li>Services</li>
-    </ol>
-  </div>
-</div><!-- /.row -->
+
+  <h1>Bootstrap 3 Preview</h1>
+
+      <!-- Navbar
+      ================================================== -->
+      <div class="bs-docs-section clearfix">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="navbar">Navbar</h1>
+            </div>
+
+            <div class="bs-example">
+              <div class="navbar navbar-default">
+                <div class="container">
+                  <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Brand</a>
+                  </div>
+                  <div class="navbar-collapse collapse navbar-responsive-collapse">
+                    <ul class="nav navbar-nav">
+                      <li class="active"><a href="#">Active</a></li>
+                      <li><a href="#">Link</a></li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#">Action</a></li>
+                          <li><a href="#">Another action</a></li>
+                          <li><a href="#">Something else here</a></li>
+                          <li class="divider"></li>
+                          <li class="dropdown-header">Dropdown header</li>
+                          <li><a href="#">Separated link</a></li>
+                          <li><a href="#">One more separated link</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                    <form class="navbar-form navbar-left">
+                      <input class="form-control col-lg-8" placeholder="Search" type="text">
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                      <li><a href="#">Link</a></li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#">Action</a></li>
+                          <li><a href="#">Another action</a></li>
+                          <li><a href="#">Something else here</a></li>
+                          <li class="divider"></li>
+                          <li><a href="#">Separated link</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div><!-- /.nav-collapse -->
+                </div><!-- /.container -->
+              </div><!-- /.navbar -->
 
 
-<div class="row">
-    <div id="providers-placeholder" class="col-xs-12">
-<div class="widget" id="panel-provi-table"> <!-- TYPE PANEL -->
-    <div class="widget-head"> <!-- HEAD PANEL -->
-        <h4 class="heading"><img class="table-icon" src="/static/adm/img/icons/providers.png"> Service providers</h4>
-        <span class="pull-right">
-            <span class="widget-icon fa fa-chevron-circle-up toggler"> </span>
-            <span class="widget-icon fa fa-refresh"> </span>
-        </span>
-    </div><!-- /HEAD PANEL -->
-    
-    <div class="widget-body collapse in"> <!-- CONTENT PANEL -->
-        <div class="dataTables_wrapper form-inline no-footer" id="provi-table_wrapper"><div class="tb04150293379051817 btns-tables"><div style="float: left;">
+              <div class="navbar navbar-inverse">
+                <div class="container">
+                  <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-inverse-collapse">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Brand</a>
+                  </div>
+                  <div class="navbar-collapse collapse navbar-inverse-collapse">
+                    <ul class="nav navbar-nav">
+                      <li class="active"><a href="#">Active</a></li>
+                      <li><a href="#">Link</a></li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#">Action</a></li>
+                          <li><a href="#">Another action</a></li>
+                          <li><a href="#">Something else here</a></li>
+                          <li class="divider"></li>
+                          <li class="dropdown-header">Dropdown header</li>
+                          <li><a href="#">Separated link</a></li>
+                          <li><a href="#">One more separated link</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                    <form class="navbar-form navbar-left">
+                      <input class="form-control col-lg-8" placeholder="Search" type="text">
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                      <li><a href="#">Link</a></li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#">Action</a></li>
+                          <li><a href="#">Another action</a></li>
+                          <li><a href="#">Something else here</a></li>
+                          <li class="divider"></li>
+                          <li><a href="#">Separated link</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div><!-- /.nav-collapse -->
+                </div><!-- /.container -->
+              </div><!-- /.navbar -->
+            </div><!-- /example -->
 
-<div class="dropdown">
-  <button class="btn btn-primary btn-tables dropdown-toggle" type="button" data-toggle="dropdown">
-    <span class="fa fa-pencil"></span> <span class="label-tbl-button">New</span>
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" role="menu" aria-labelledby="">
-        <li role="presentation"><a data-original-title="HyperV platform service provider (experimental)" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="HyperVPlatform"><span class="provi-HyperVPlatform"></span> HyperV Platform Provider (experimental)</a></li>
-        <li role="presentation"><a data-original-title="Nutanix based VM provider" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="NutanixProvider"><span class="provi-NutanixProvider"></span> Nutanix Acropolis Provider (Experimental)</a></li>
-        <li role="presentation"><a data-original-title="oVirt platform service provider" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="oVirtPlatform"><span class="provi-oVirtPlatform"></span> oVirt/RHEV Platform Provider</a></li>
-        <li role="presentation"><a data-original-title="Provides connection to Virtual Center Services" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="PhysicalMachinesServiceProvider"><span class="provi-PhysicalMachinesServiceProvider"></span> Physical Machines Provider</a></li>
-        <li role="presentation"><a data-original-title="Microsoft RDS based provider" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="RDSProvider"><span class="provi-RDSProvider"></span> RDS Provider (Experimental)</a></li>
-        <li role="presentation"><a data-original-title="Sample (and dummy) service provider" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="SampleProvider"><span class="provi-SampleProvider"></span> Sample Provider</a></li>
-        <li role="presentation"><a data-original-title="Test (and dummy) service provider" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="TestProvider"><span class="provi-TestProvider"></span> Test Provider</a></li>
-        <li role="presentation"><a data-original-title="Provides connection to Virtual Center Services" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="VmwareVCServiceProvider"><span class="provi-VmwareVCServiceProvider"></span> VMWare Virtual Center Provider</a></li>
-        <li role="presentation"><a data-original-title="XenServer platform service provider" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="XenPlatform"><span class="provi-XenPlatform"></span> Xenserver Platform Provider</a></li>
-  </ul>
-</div>
-</div><button id="btn4894666662856193" class="btn btn-default btn-tables btn-success"><span class="fa fa-edit"></span> <span class="label-tbl-button">Edit</span></button><button id="btn3144350755347225" class="btn btn-default btn-tables btn-warning"><div>Exit Maintenance Mode</div></button><button id="btn2464097307776003" class="btn btn-default btn-tables btn-danger"><span class="fa fa-trash-o"></span> <span class="label-tbl-button">Delete</span></button><button id="btn8805267266017943" class="btn btn-info btn-tables"><span class="fa fa-save"></span> <span class="label-tbl-button">Xls</span></button><button id="btn7826621415146036" class="btn btn-default btn-tables btn-success"><span class="fa fa-save"></span> <span class="label-tbl-button">Permissions</span></button></div><div class="dataTables_filter" id="provi-table_filter"><label>Filter<input aria-controls="provi-table" placeholder="" class="form-control input-sm" type="search"></label></div><table style="width: 100%;" aria-describedby="provi-table_info" role="grid" class="table table-striped table-hover dt-responsive dataTable no-footer dtr-inline" id="provi-table" width="100%">
-        <thead><tr role="row"><th aria-label="" data-column-index="0" style="width: 23px;" colspan="1" rowspan="1" class="select-checkbox sorting_disabled"></th><th aria-label="Name: activate to sort column descending" aria-sort="ascending" data-column-index="1" style="width: 514px;" colspan="1" rowspan="1" aria-controls="provi-table" tabindex="0" class="sorting_asc">Name</th><th aria-label="Comments: activate to sort column ascending" data-column-index="2" style="width: 554px;" colspan="1" rowspan="1" aria-controls="provi-table" tabindex="0" class="sorting">Comments</th><th aria-label="Status: activate to sort column ascending" data-column-index="3" style="width: 278px;" colspan="1" rowspan="1" aria-controls="provi-table" tabindex="0" class="sorting">Status</th><th aria-label="Services: activate to sort column ascending" data-column-index="4" style="width: 70px;" colspan="1" rowspan="1" aria-controls="provi-table" tabindex="0" class="sorting">Services</th><th aria-label="User Services: activate to sort column ascending" data-column-index="5" style="width: 112px;" colspan="1" rowspan="1" aria-controls="provi-table" tabindex="0" class="sorting">User Services</th></tr></thead><tbody><tr role="row" class="row-maintenance-false odd"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-PhysicalMachinesServiceProvider"></span> juanje</td><td>Prueba report málaga</td><td>Normal</td><td>1</td><td>0</td></tr><tr role="row" class="row-maintenance-false even"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-PhysicalMachinesServiceProvider"></span> Maquinas Fisicas</td><td>Pruebas con maquinas fisicas</td><td>Normal</td><td>2</td><td>0</td></tr><tr role="row" class="row-maintenance-true odd selected"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-NutanixProvider"></span> Nutanix</td><td>Nutanix</td><td>In Maintenance</td><td>0</td><td>0</td></tr><tr role="row" class="row-maintenance-true even"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-oVirtPlatform"></span> Ovirt</td><td>-</td><td>In Maintenance</td><td>1</td><td>0</td></tr><tr role="row" class="row-maintenance-false odd"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-RDSProvider"></span> Remote Desktop Services</td><td>-</td><td>Normal</td><td>3</td><td>0</td></tr><tr role="row" class="row-maintenance-false even"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-TestProvider"></span> test</td><td>test</td><td>Normal</td><td>0</td><td>0</td></tr><tr role="row" class="row-maintenance-false odd"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-VmwareVCServiceProvider"></span> VC</td><td>-</td><td>Normal</td><td>1</td><td>1</td></tr><tr role="row" class="row-maintenance-false even"><td class=" select-checkbox"></td><td class="sorting_1"><span class="provi-XenPlatform"></span> Xen</td><td>Plataforma Xen Server</td><td>Normal</td><td>1</td><td>0</td></tr></tbody></table><div aria-live="polite" role="status" id="provi-table_info" class="dataTables_info">Records 1 to 8 of 8<span class="select-info"><span class="select-item">Selected one row</span><span class="select-item"></span><span class="select-item"></span></span></div><div id="provi-table_paginate" class="dataTables_paginate paging_bootstrap pagination"><ul class="pagination"><li class="first disabled"><a href="#"><span class="fa fa-fast-backward "></span> </a></li><li class="prev  disabled"><a href="#"><span class="fa fa-backward"></span> </a></li><li class="active"><a href="#">1</a></li><li class="next  disabled"><a href="#"><span class="fa fa-forward"></span> </a></li><li class="last  disabled"><a href="#"><span class="fa fa-fast-forward"></span> </a></li></ul></div></div>    
-    </div><!-- /CONTENT PANEL -->
-    
-    <div class="widget-footer"><!-- FOOTER PANEL--> 
-        <span class="widget-icon fa fa-chevron-circle-up toggler" data-placement="right"> </span>
-    </div><!-- /FOOTER PANEL--> 
-    
-</div> <!-- /TYPE PANEL -->
+          </div>
+        </div>
+      </div>
 
-<script>(function(){
-    $( "#panel-provi-table .toggler" ).click(function() {
-        $("#panel-provi-table .widget-body").slideToggle( "slow" );
-      
-        $("#panel-provi-table .toggler").toggleClass(function() {
-            if ($(this).is('.fa fa-chevron-circle-down')) {
-                return '.fa fa-chevron-circle-up';
-            } else {
-                return '.fa fa-chevron-circle-down';
-            }
-        })
-    });
-}());
-</script>
-<!--
-<div class="panel panel-primary" id="">
-    <div class="panel-heading">
-        <h3 class="panel-title"><span class="fa fa-"></span> 
-            <span class="panel-icon fa chevron pull-right" data-toggle="collapse" 
-                data-target="# > div.panel-body"> </span>
-            <span class="panel-icon fa fa-refresh pull-right"> </span>
-        </h3>
-    </div>
-    <div class="panel-body collapse in">
-        <table class="table table-striped table-bordered table-hover" id="" width="100%">
-        </table>
-    </div>
-</div> -->
-</div>
-</div>
-<div id="detail-placeholder" class="row">
-    <div class="col-xs-12">
-        <ul class="bottom_tabs nav nav-tabs">
-            <li class="active"><a href="#services-placeholder_tab" data-toggle="tab">Services</a></li>
-            <li><a href="#logs-placeholder" data-toggle="tab">Logs</a></li>
-        </ul>    
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="services-placeholder_tab">
-                <div class="row">
-                    <div class="col-xs-12" id="services-placeholder">
-<div class="widget" id="panel-services-NutanixProvider-table"> <!-- TYPE PANEL -->
-    <div class="widget-head"> <!-- HEAD PANEL -->
-        <h4 class="heading"><img class="table-icon" src="/static/adm/img/icons/services.png"> Services of Nutanix</h4>
-        <span class="pull-right">
-            <span class="widget-icon fa fa-chevron-circle-up toggler"> </span>
-            <span class="widget-icon fa fa-refresh"> </span>
-        </span>
-    </div><!-- /HEAD PANEL -->
-    
-    <div class="widget-body collapse in"> <!-- CONTENT PANEL -->
-        <div class="dataTables_wrapper form-inline no-footer" id="services-NutanixProvider-table_wrapper"><div class="tb5780644602707348 btns-tables"><div style="float: left;">
 
-<div class="dropdown">
-  <button class="btn btn-primary btn-tables dropdown-toggle" type="button" data-toggle="dropdown">
-    <span class="fa fa-pencil"></span> <span class="label-tbl-button">New</span>
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" role="menu" aria-labelledby="">
-        <li role="presentation"><a data-original-title="Nutanix KVM based service" role="menuitem" tabindex="-1" data-toggle="tooltip" title="" href="#" data-type="NutanixService"><span class="services-NutanixProvider-NutanixService"></span> Nutanix KVM (Experimental)</a></li>
-  </ul>
-</div>
-</div><button id="btn1908676482165773" class="btn disabled btn-default btn-tables"><span class="fa fa-edit"></span> <span class="label-tbl-button">Edit</span></button><button id="btn24958838548762874" class="btn disabled btn-default btn-tables"><span class="fa fa-trash-o"></span> <span class="label-tbl-button">Delete</span></button><button id="btn49633085964872303" class="btn btn-info btn-tables"><span class="fa fa-save"></span> <span class="label-tbl-button">Xls</span></button></div><div class="dataTables_filter" id="services-NutanixProvider-table_filter"><label>Filter<input aria-controls="services-NutanixProvider-table" placeholder="" class="form-control input-sm" type="search"></label></div><table style="width: 100%;" aria-describedby="services-NutanixProvider-table_info" role="grid" class="table table-striped table-hover dt-responsive dataTable no-footer dtr-inline" id="services-NutanixProvider-table" width="100%">
-        <thead><tr role="row"><th aria-label="" data-column-index="0" style="width: 58px;" colspan="1" rowspan="1" class="select-checkbox sorting_disabled"></th><th aria-label="Service name: activate to sort column descending" aria-sort="ascending" data-column-index="1" style="width: 580px;" colspan="1" rowspan="1" aria-controls="services-NutanixProvider-table" tabindex="0" class="sorting_asc">Service name</th><th aria-label="Comments: activate to sort column ascending" data-column-index="2" style="width: 432px;" colspan="1" rowspan="1" aria-controls="services-NutanixProvider-table" tabindex="0" class="sorting">Comments</th><th aria-label="Type: activate to sort column ascending" data-column-index="3" style="width: 285px;" colspan="1" rowspan="1" aria-controls="services-NutanixProvider-table" tabindex="0" class="sorting">Type</th><th aria-label="Deployed services: activate to sort column ascending" data-column-index="4" style="width: 98px;" colspan="1" rowspan="1" aria-controls="services-NutanixProvider-table" tabindex="0" class="sorting">Deployed services</th><th aria-label="User services: activate to sort column ascending" data-column-index="5" style="width: 98px;" colspan="1" rowspan="1" aria-controls="services-NutanixProvider-table" tabindex="0" class="sorting">User services</th></tr></thead><tbody><tr class="odd"><td class="dataTables_empty" colspan="6" valign="top">Empty</td></tr></tbody></table><div aria-live="polite" role="status" id="services-NutanixProvider-table_info" class="dataTables_info">No records</div><div id="services-NutanixProvider-table_paginate" class="dataTables_paginate paging_bootstrap pagination"><ul class="pagination"><li class="first disabled"><a href="#"><span class="fa fa-fast-backward "></span> </a></li><li class="prev  disabled"><a href="#"><span class="fa fa-backward"></span> </a></li><li class="next  disabled"><a href="#"><span class="fa fa-forward"></span> </a></li><li class="last  disabled"><a href="#"><span class="fa fa-fast-forward"></span> </a></li></ul></div></div>    
-    </div><!-- /CONTENT PANEL -->
-    
-    <div class="widget-footer"><!-- FOOTER PANEL--> 
-        <span class="widget-icon fa fa-chevron-circle-up toggler" data-placement="right"> </span>
-    </div><!-- /FOOTER PANEL--> 
-    
-</div> <!-- /TYPE PANEL -->
+      <!-- Buttons
+      ================================================== -->
+      <div class="bs-docs-section">
+        <div class="page-header">
+          <div class="row">
+            <div class="col-lg-12">
+              <h1 id="buttons">Buttons</h1>
+            </div>
+          </div>
+        </div>
 
-<script>(function(){
-    $( "#panel-services-NutanixProvider-table .toggler" ).click(function() {
-        $("#panel-services-NutanixProvider-table .widget-body").slideToggle( "slow" );
-      
-        $("#panel-services-NutanixProvider-table .toggler").toggleClass(function() {
-            if ($(this).is('.fa fa-chevron-circle-down')) {
-                return '.fa fa-chevron-circle-up';
-            } else {
-                return '.fa fa-chevron-circle-down';
-            }
-        })
-    });
-}());
-</script>
-<!--
-<div class="panel panel-primary" id="">
-    <div class="panel-heading">
-        <h3 class="panel-title"><span class="fa fa-"></span> 
-            <span class="panel-icon fa chevron pull-right" data-toggle="collapse" 
-                data-target="# > div.panel-body"> </span>
-            <span class="panel-icon fa fa-refresh pull-right"> </span>
-        </h3>
-    </div>
-    <div class="panel-body collapse in">
-        <table class="table table-striped table-bordered table-hover" id="" width="100%">
-        </table>
-    </div>
-</div> -->
-</div>
+        <div class="row">
+          <div class="col-lg-6">
+
+            <div class="bs-example">
+              <p>
+                <button type="button" class="btn btn-default">Default</button>
+                <button type="button" class="btn btn-primary">Primary</button>
+                <button type="button" class="btn btn-success">Success</button>
+                <button type="button" class="btn btn-info">Info</button><br><br>
+                <button type="button" class="btn btn-warning">Warning</button>
+                <button type="button" class="btn btn-danger">Danger</button>
+                <button type="button" class="btn btn-link">Link</button>
+              </p>
+            </div>
+
+            <div class="bs-example">
+              <p>
+                <button type="button" class="btn btn-default disabled">Default</button>
+                <button type="button" class="btn btn-primary disabled">Primary</button>
+                <button type="button" class="btn btn-success disabled">Success</button>
+                <button type="button" class="btn btn-info disabled">Info</button><br><br>
+                <button type="button" class="btn btn-warning disabled">Warning</button>
+                <button type="button" class="btn btn-danger disabled">Danger</button>
+                <button type="button" class="btn btn-link disabled">Link</button>
+              </p>
+            </div>
+
+
+            <div class="bs-example" style="margin-bottom: 15px;">
+              <div class="btn-toolbar" style="margin: 0;">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default">Default</button>
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary">Primary</button>
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-success">Success</button>
+                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+                <br><br>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-info">Info</button>
+                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-warning">Warning</button>
+                  <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+              </div><!-- /btn-toolbar -->
+            </div>
+
+            <div class="bs-example">
+              <p>
+                <button type="button" class="btn btn-primary btn-lg">Large button</button>
+                <button type="button" class="btn btn-primary">Default button</button><br><br>
+                <button type="button" class="btn btn-primary btn-sm">Small button</button>
+                <button type="button" class="btn btn-primary btn-xs">Mini button</button>
+              </p>
+            </div>
+            
+          </div>
+          <div class="col-lg-6">
+
+            <div class="bs-example">
+              <p>
+                <button type="button" class="btn btn-default btn-lg btn-block">Block level button</button>
+              </p>
+            </div>
+
+
+            <div class="bs-example" style="margin-bottom: 15px;">
+              <div class="btn-group btn-group-justified">
+                <a href="#" class="btn btn-default">Left</a>
+                <a href="#" class="btn btn-default">Right</a>
+                <a href="#" class="btn btn-default">Middle</a>
+              </div>
+            </div>
+
+            <div class="bs-example" style="margin-bottom: 15px;">
+              <div class="btn-toolbar">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default">1</button>
+                  <button type="button" class="btn btn-default">2</button>
+                  <button type="button" class="btn btn-default">3</button>
+                  <button type="button" class="btn btn-default">4</button>
                 </div>
-                <div class="row">
-                    <div class="col-xs-12" id="services-log-placeholder">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default">5</button>
+                  <button type="button" class="btn btn-default">6</button>
+                  <button type="button" class="btn btn-default">7</button>
+                </div>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default">8</button>
+
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                      Dropdown
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Dropdown link</a></li>
+                      <li><a href="#">Dropdown link</a></li>
+                      <li><a href="#">Dropdown link</a></li>
+                     </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bs-example">
+              <div class="btn-group-vertical">
+                  <button type="button" class="btn btn-default">Button</button>
+                  <button type="button" class="btn btn-default">Button</button>
+                  <button type="button" class="btn btn-default">Button</button>
+                  <button type="button" class="btn btn-default">Button</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Typography
+      ================================================== -->
+      <div class="bs-docs-section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="type">Typography</h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- Headings -->
+
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="bs-example bs-example-type">
+              <h1>Heading 1</h1>
+              <h2>Heading 2</h2>
+              <h3>Heading 3</h3>
+              <h4>Heading 4</h4>
+              <h5>Heading 5</h5>
+              <h6>Heading 6</h6>
+            </div>
+            <div class="bs-example">
+              <p class="lead">Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
+            </div>     
+          </div>
+          <div class="col-lg-4">
+            <div class="bs-example">
+              <h2>Example body text</h2>
+              <p>Nullam quis risus eget <a href="#">urna mollis ornare</a> vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
+              <p><small>This line of text is meant to be treated as fine print.</small></p>
+              <p>The following snippet of text is <strong>rendered as bold text</strong>.</p>
+              <p>The following snippet of text is <em>rendered as italicized text</em>.</p>
+              <p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.</p>
+            </div>
+
+          </div>
+          <div class="col-lg-4">
+
+            <h2>Emphasis classes</h2>
+            <div class="bs-example">
+              <p class="text-muted">Fusce dapibus, tellus ac cursus commodo, tortor mauris nibh.</p>
+              <p class="text-primary">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+              <p class="text-warning">Etiam porta sem malesuada magna mollis euismod.</p>
+              <p class="text-danger">Donec ullamcorper nulla non metus auctor fringilla.</p>
+              <p class="text-success">Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
+              <p class="text-info">Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- Blockquotes -->
+
+        <div class="row">
+          <div class="col-lg-12">
+            <h2 id="type-blockquotes">Blockquotes</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <blockquote>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+              <small>Someone famous in <cite data-original-title="Source Title" title="">Source Title</cite></small>
+            </blockquote>
+          </div>
+          <div class="col-lg-6">
+            <blockquote class="pull-right">
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+              <small>Someone famous in <cite title="Source Title">Source Title</cite></small>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tables
+      ================================================== -->
+      <div class="bs-docs-section">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="tables">Tables</h1>
+            </div>
+
+            <div class="bs-example">
+              <table class="table table-striped table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column heading</th>
+                    <th>Column heading</th>
+                    <th>Column heading</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="success">
+                    <td>4</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="danger">
+                    <td>5</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="warning">
+                    <td>6</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="active">
+                    <td>7</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div><!-- /example -->
+            
+            <div class="bs-example">
+              <table class="table table-striped table-hover" id="table1">
+                <thead>
+                    <tr>
+                        <th>Lorem</th>
+                        <th>Ipsum</th>
+                        <th>Dolor</th>
+                        <th>Amet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                </tbody>
+              </table>              
+            </div>
+
+            <div class="bs-example">
+              <table class="table table-hover" id="table2">
+                <thead>
+                    <tr>
+                        <th>Lorem</th>
+                        <th>Ipsum</th>
+                        <th>Dolor</th>
+                        <th>Amet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem</td>
+                        <td>Ipsum</td>
+                        <td>Dolor</td>
+                        <td>Amet</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                    <tr>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                        <td>Lorem ipsum dolor sit amet.</td>
+                    </tr>
+                </tbody>
+              </table>              
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Forms
+      ================================================== -->
+      <div class="bs-docs-section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="forms">Forms</h1>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="well">
+              <form class="bs-example form-horizontal">
+                <fieldset>
+                  <legend>Legend</legend>
+                  <div class="form-group">
+                    <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="inputEmail" placeholder="Email" type="text">
                     </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="inputPassword" placeholder="Password" type="password">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox"> Checkbox
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="textArea" class="col-lg-2 control-label">Textarea</label>
+                    <div class="col-lg-10">
+                      <textarea class="form-control" rows="3" id="textArea"></textarea>
+                      <span class="help-block">A longer block of help text that breaks onto a new line and may extend beyond one line.</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Radios</label>
+                    <div class="col-lg-10">
+                      <div class="radio">
+                        <label>
+                          <input name="optionsRadios" id="optionsRadios1" value="option1" checked="" type="radio">
+                          Option one is this
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input name="optionsRadios" id="optionsRadios2" value="option2" type="radio">
+                          Option two can be something else
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="select" class="col-lg-2 control-label">Selects</label>
+                    <div class="col-lg-10">
+                      <select class="form-control" id="select">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </select>
+                      <br>
+                      <select multiple="" class="form-control">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                      <button class="btn btn-default">Cancel</button> 
+                      <button type="submit" class="btn btn-primary">Submit</button> 
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-4 col-lg-offset-1">
+
+              <form class="bs-example">
+                <div class="form-group">
+                  <label class="control-label" for="focusedInput">Focused input</label>
+                  <input class="form-control" id="focusedInput" value="This is focused..." type="text">
                 </div>
+                <div class="form-group">
+                  <label class="control-label" for="disabledInput">Disabled input</label>
+                  <input class="form-control" id="disabledInput" placeholder="Disabled input here..." disabled="" type="text">
+                </div>
+                <div class="form-group has-warning">
+                  <label class="control-label" for="inputWarning">Input warning</label>
+                  <input class="form-control" id="inputWarning" type="text">
+                </div>
+                <div class="form-group has-error">
+                  <label class="control-label" for="inputError">Input error</label>
+                  <input class="form-control" id="inputError" type="text">
+                </div>
+                <div class="form-group has-success">
+                  <label class="control-label" for="inputSuccess">Input success</label>
+                  <input class="form-control" id="inputSuccess" type="text">
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="inputLarge">Large input</label>
+                  <input class="form-control input-lg" id="inputLarge" type="text">
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="inputDefault">Default input</label>
+                  <input class="form-control" id="inputDefault" type="text">
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="inputSmall">Small input</label>
+                  <input class="form-control input-sm" id="inputSmall" type="text">
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Input addons</label>
+                  <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    <input class="form-control" type="text">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button">Button</button>
+                    </span>
+                  </div>
+                </div>
+              </form>
+              
+          </div>
+        </div>
+      </div>
+
+      <!-- Navs
+      ================================================== -->
+      <div class="bs-docs-section">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="nav">Navs</h1>
             </div>
-            <div class="tab-pane fade" id="logs-placeholder">
-<div class="widget" id="panel-provi-table-log"> <!-- TYPE PANEL -->
-    <div class="widget-head"> <!-- HEAD PANEL -->
-        <h4 class="heading"><img class="table-icon" src="/static/adm/img/icons/logs.png"> Logs</h4>
-        <span class="pull-right">
-            <span class="widget-icon fa fa-chevron-circle-up toggler"> </span>
-            <span class="widget-icon fa fa-refresh"> </span>
-        </span>
-    </div><!-- /HEAD PANEL -->
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4">
+            <h2 id="nav-tabs">Tabs</h2>
+            <div class="bs-example">
+              <ul class="nav nav-tabs" style="margin-bottom: 15px;">
+                <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
+                <li><a href="#profile" data-toggle="tab">Profile</a></li>
+                <li class="disabled"><a>Disabled</a></li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Dropdown <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#dropdown1" data-toggle="tab">Action</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#dropdown2" data-toggle="tab">Another action</a></li>
+                  </ul>
+                </li>
+              </ul>
+              <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade active in" id="home">
+                  <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>
+                </div>
+                <div class="tab-pane fade" id="profile">
+                  <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.</p>
+                </div>
+                <div class="tab-pane fade" id="dropdown1">
+                  <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork.</p>
+                </div>
+                <div class="tab-pane fade" id="dropdown2">
+                  <p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin. Cred vinyl keffiyeh DIY salvia PBR, banh mi before they sold out farm-to-table VHS viral locavore cosby sweater.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <h2 id="nav-pills">Pills</h2>
+            <div class="bs-example">
+              <ul class="nav nav-pills">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li class="disabled"><a href="#">Disabled</a></li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Dropdown <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <br>
+            <div class="bs-example">
+              <ul class="nav nav-pills nav-stacked" style="max-width: 300px;">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li class="disabled"><a href="#">Disabled</a></li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Dropdown <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <h2 id="nav-breadcrumbs">Breadcrumbs</h2>
+            <div class="bs-example">
+              <ul class="breadcrumb">
+                <li class="active">Home</li>
+              </ul>
+              <ul class="breadcrumb">
+                <li><a href="#">Home</a></li>
+                <li class="active">Library</li>
+              </ul>
+              <ul class="breadcrumb" style="margin-bottom: 5px;">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Library</a></li>
+                <li class="active">Data</li>
+              </ul>
+            </div>
+            
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-lg-4">
+            <h2 id="pagination">Pagination</h2>
+            <div class="bs-example">
+              <ul class="pagination">
+                <li class="disabled"><a href="#">«</a></li>
+                <li class="active"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li><a href="#">»</a></li>
+              </ul>
+              <ul class="pagination pagination-lg">
+                <li class="disabled"><a href="#">«</a></li>
+                <li class="active"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">»</a></li>
+              </ul>
+              <ul class="pagination pagination-sm">
+                <li class="disabled"><a href="#">«</a></li>
+                <li class="active"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li><a href="#">»</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <h2 id="pager">Pager</h2>
+            <div class="bs-example">
+              <ul class="pager">
+                <li><a href="#">Previous</a></li>
+                <li><a href="#">Next</a></li>
+              </ul>
+            </div>
+            <div class="bs-example">
+              <ul class="pager">
+                <li class="previous disabled"><a href="#">← Older</a></li>
+                <li class="next"><a href="#">Newer →</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicators
+      ================================================== -->
+      <div class="bs-docs-section">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="indicators">Indicators</h1>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>Alerts</h2>
+            <div class="bs-example">
+              <div class="alert alert-dismissable alert-warning">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <h4>Warning!</h4>
+                <p>Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, <a href="#" class="alert-link">vel scelerisque nisl consectetur et</a>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="alert alert-dismissable alert-danger">
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              <strong>Oh snap!</strong> <a href="#" class="alert-link">Change a few things up</a> and try submitting again.
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="alert alert-dismissable alert-success">
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              <strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert message</a>.
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="alert alert-dismissable alert-info">
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              <strong>Heads up!</strong> This <a href="#" class="alert-link">alert needs your attention</a>, but it's not super important.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <h2>Labels</h2>
+            <div class="bs-example" style="margin-bottom: 40px;">
+              <span class="label label-default">Default</span>
+              <span class="label label-primary">Primary</span>
+              <span class="label label-success">Success</span>
+              <span class="label label-warning">Warning</span>
+              <span class="label label-danger">Danger</span>
+              <span class="label label-info">Info</span>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <h2>Badges</h2>
+            <div class="bs-example">
+              <ul class="nav nav-pills">
+                <li class="active"><a href="#">Home <span class="badge">42</span></a></li>
+                <li><a href="#">Profile <span class="badge"></span></a></li>
+                <li><a href="#">Messages <span class="badge">3</span></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress bars
+      ================================================== -->
+      <div class="bs-docs-section">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="progress">Progress bars</h1>
+            </div>
+            
+
+            <h3 id="progress-basic">Basic</h3>
+            <div class="bs-example">
+              <div class="progress">
+                <div class="progress-bar" style="width: 60%;"></div>
+              </div>
+            </div>
+
+            <h3 id="progress-alternatives">Contextual alternatives</h3>
+            <div class="bs-example">
+              <div class="progress" style="margin-bottom: 9px;">
+                <div class="progress-bar progress-bar-info" style="width: 20%"></div>
+              </div>
+              <div class="progress" style="margin-bottom: 9px;">
+                <div class="progress-bar progress-bar-success" style="width: 40%"></div>
+              </div>
+              <div class="progress" style="margin-bottom: 9px;">
+                <div class="progress-bar progress-bar-warning" style="width: 60%"></div>
+              </div>
+              <div class="progress">
+                <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
+              </div>
+            </div>
+
+            <h3 id="progress-striped">Striped</h3>
+            <div class="bs-example">
+              <div class="progress progress-striped" style="margin-bottom: 9px;">
+                <div class="progress-bar progress-bar-info" style="width: 20%"></div>
+              </div>
+              <div class="progress progress-striped" style="margin-bottom: 9px;">
+                <div class="progress-bar progress-bar-success" style="width: 40%"></div>
+              </div>
+              <div class="progress progress-striped" style="margin-bottom: 9px;">
+                <div class="progress-bar progress-bar-warning" style="width: 60%"></div>
+              </div>
+              <div class="progress progress-striped">
+                <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
+              </div>
+            </div>
+
+            <h3 id="progress-animated">Animated</h3>
+            <div class="bs-example">
+              <div class="progress progress-striped active">
+                <div class="progress-bar" style="width: 45%"></div>
+              </div>
+            </div>
+
+            <h3 id="progress-stacked">Stacked</h3>
+            <div class="bs-example">
+              <div class="progress">
+                <div class="progress-bar progress-bar-success" style="width: 35%"></div>
+                <div class="progress-bar progress-bar-warning" style="width: 20%"></div>
+                <div class="progress-bar progress-bar-danger" style="width: 10%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Containers
+      ================================================== -->
+      <div class="bs-docs-section">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="container">Containers</h1>
+            </div>
+            <div class="bs-example">
+              <div class="jumbotron">
+                <h1>Jumbotron</h1>
+                <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+                <p><a class="btn btn-primary btn-lg">Learn more</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>List groups</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="bs-example">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <span class="badge">14</span>
+                  Cras justo odio
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">2</span>
+                  Dapibus ac facilisis in
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">1</span>
+                  Morbi leo risus
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="bs-example">
+              <div class="list-group">
+                <a href="#" class="list-group-item active">
+                  Cras justo odio
+                </a>
+                <a href="#" class="list-group-item">Dapibus ac facilisis in
+                </a>
+                <a href="#" class="list-group-item">Morbi leo risus
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="bs-example">
+              <div class="list-group">
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                </a>
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>Panels</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">        
+            <div class="panel panel-default">
+              <div class="panel-body">
+                Basic panel
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">Panel heading</div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                Panel content
+              </div>
+              <div class="panel-footer">Panel footer</div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Panel primary</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+            <div class="panel panel-success">
+              <div class="panel-heading">
+                <h3 class="panel-title">Panel success</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+            <div class="panel panel-warning">
+              <div class="panel-heading">
+                <h3 class="panel-title">Panel warning</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="panel panel-danger">
+              <div class="panel-heading">
+                <h3 class="panel-title">Panel danger</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+            <div class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title">Panel info</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>Wells</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="well">
+              Look, I'm in a well!
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="well well-sm">
+              Look, I'm in a small well!
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="well well-lg">
+              Look, I'm in a large well!
+            </div>
+          </div>
+        </div>
+      </div>
     
-    <div class="widget-body collapse in"> <!-- CONTENT PANEL -->
-        <div class="dataTables_wrapper form-inline no-footer" id="provi-table-log_wrapper"><div class="row"><div class="col-xs-8"></div><div class="col-xs-4"><div class="dataTables_filter" id="provi-table-log_filter"><label>Filter<input aria-controls="provi-table-log" placeholder="" class="form-control input-sm" type="search"></label></div></div></div><table style="width: 100%;" aria-describedby="provi-table-log_info" role="grid" class="table table-striped table-hover dt-responsive dataTable no-footer dtr-inline" id="provi-table-log" width="100%">
-        <thead><tr role="row"><th aria-label="Date: activate to sort column ascending" aria-sort="descending" colspan="1" rowspan="1" aria-controls="provi-table-log" tabindex="0" class="sorting_desc">Date</th><th aria-label="level: activate to sort column ascending" style="width: 70px;" colspan="1" rowspan="1" aria-controls="provi-table-log" tabindex="0" class="sorting">level</th><th aria-label="source: activate to sort column ascending" style="width: 70px;" colspan="1" rowspan="1" aria-controls="provi-table-log" tabindex="0" class="sorting">source</th><th aria-label="message: activate to sort column ascending" colspan="1" rowspan="1" aria-controls="provi-table-log" tabindex="0" class="sorting">message</th></tr></thead><tbody><tr class="odd"><td class="dataTables_empty" colspan="4" valign="top">Empty</td></tr></tbody></table><div class="row"><div class="col-xs-5"><div aria-live="polite" role="status" id="provi-table-log_info" class="dataTables_info">No records</div></div><div class="col-xs-7"><div id="provi-table-log_paginate" class="dataTables_paginate paging_bootstrap pagination"><ul class="pagination"><li class="first disabled"><a href="#"><span class="fa fa-fast-backward "></span> </a></li><li class="prev  disabled"><a href="#"><span class="fa fa-backward"></span> </a></li><li class="next  disabled"><a href="#"><span class="fa fa-forward"></span> </a></li><li class="last  disabled"><a href="#"><span class="fa fa-fast-forward"></span> </a></li></ul></div></div></div></div>    
-    </div><!-- /CONTENT PANEL -->
-    
-    <div class="widget-footer"><!-- FOOTER PANEL--> 
-        <span class="widget-icon fa fa-chevron-circle-up toggler" data-placement="right"> </span>
-    </div><!-- /FOOTER PANEL--> 
-    
-</div> <!-- /TYPE PANEL -->
-
-<script>(function(){
-    $( "#panel-provi-table-log .toggler" ).click(function() {
-        $("#panel-provi-table-log .widget-body").slideToggle( "slow" );
-      
-        $("#panel-provi-table-log .toggler").toggleClass(function() {
-            if ($(this).is('.fa fa-chevron-circle-down')) {
-                return '.fa fa-chevron-circle-up';
-            } else {
-                return '.fa fa-chevron-circle-down';
-            }
-        })
-    });
-}());
-</script>
-<!--
-<div class="panel panel-primary" id="">
-    <div class="panel-heading">
-        <h3 class="panel-title"><span class="fa fa-"></span> 
-            <span class="panel-icon fa chevron pull-right" data-toggle="collapse" 
-                data-target="# > div.panel-body"> </span>
-            <span class="panel-icon fa fa-refresh pull-right"> </span>
-        </h3>
-    </div>
-    <div class="panel-body collapse in">
-        <table class="table table-striped table-bordered table-hover" id="" width="100%">
-        </table>
-    </div>
-</div> -->
-</div>
-        </div>        
-    </div>
-</div>
-
-
-<div class="row">
-  <div class="col-xs-12">
-    <h1>Overview</h1>
-    <ol class="breadcrumb">
-      <li><a id="lnk-dashboard" href="">Dashboard</a></li>
-    </ol>
-  </div>
-</div><!-- /.row -->
-
-
-<div class="row">
-  <div class="col-lg-3">
-    <div class="panel panel-info">
-      <div class="panel-heading">
-        <div class="row">
-          <div class="col-xs-6">
-            <img class="info-img" src="/static//adm/img/icons/users.png">
-          </div>
-          <div class="col-xs-6 text-right">
-            <p class="announcement-heading">236</p>
-            <p class="announcement-text">Users</p>
-          </div>
-        </div>
-      </div>
-      <a class="lnk-authenticators" href="#">
-        <div class="panel-footer announcement-bottom">
-          <div class="row">
-            <div class="col-xs-6">
-              View Authenticators
-            </div>
-            <div class="col-xs-6 text-right">
-              <i class="fa fa-arrow-circle-right"></i>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div class="col-lg-3">
-    <div class="panel panel-info">
-      <div class="panel-heading">
-        <div class="row">
-          <div class="col-xs-6">
-            <img class="info-img" src="/static//adm/img/icons/services.png">
-          </div>
-          <div class="col-xs-6 text-right">
-            <p class="announcement-heading">9</p>
-            <p class="announcement-text">Services</p>
-          </div>
-        </div>
-      </div>
-      <a class="lnk-service_providers" href="#">
-        <div class="panel-footer announcement-bottom">
-          <div class="row">
-            <div class="col-xs-6">
-              View services
-            </div>
-            <div class="col-xs-6 text-right">
-              <i class="fa fa-arrow-circle-right"></i>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div class="col-lg-3">
-    <div class="panel panel-success">
-      <div class="panel-heading">
-        <div class="row">
-          <div class="col-xs-6">
-            <img class="info-img" src="/static//adm/img/icons/assigned.png">
-          </div>
-          <div class="col-xs-6 text-right">
-            <p class="announcement-heading">1</p>
-            <p class="announcement-text">User services</p>
-          </div>
-        </div>
-      </div>
-      <a class="lnk-deployed_services" href="#">
-        <div class="panel-footer announcement-bottom">
-          <div class="row">
-            <div class="col-xs-6">
-              View services pools
-            </div>
-            <div class="col-xs-6 text-right">
-              <i class="fa fa-arrow-circle-right"></i>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div class="col-lg-3">
-    <div class="panel panel-success">
-      <div class="panel-heading">
-        <div class="row">
-          <div class="col-xs-6">
-            <i class="fa fa-heart fa-5x" style="color: #C03030;"></i>
-          </div>
-          <div class="col-xs-6 text-right">
-            <p class="announcement-heading">0</p>
-            <p class="announcement-text">Restrained services pools</p>
-          </div>
-        </div>
-      </div>
-      <a class="lnk-deployed_services" href="#">
-        <div class="panel-footer announcement-bottom">
-          <div class="row">
-            <div class="col-xs-6">
-              View services pools
-            </div>
-            <div class="col-xs-6 text-right">
-              <i class="fa fa-arrow-circle-right"></i>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-  </div>
-</div><!-- /.row -->
-
-<div class="row">
-  <div class="col-lg-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Assigned services graph</h3>
-      </div>
-      <div class="panel-body">
-        <div class="chart-medium">
-          <div style="padding: 0px; position: relative;" id="placeholder-assigned-chart" class="chart-content"><canvas height="250" width="848" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 848px; height: 250px;" class="flot-base"></canvas><div style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);" class="flot-text"><div style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;" class="flot-x-axis flot-x1-axis xAxis x1Axis"><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 13px; text-align: center;">10/01/2014</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 84px; text-align: center;">11/01/2014</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 153px; text-align: center;">12/01/2014</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 224px; text-align: center;">01/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 296px; text-align: center;">02/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 360px; text-align: center;">03/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 431px; text-align: center;">04/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 500px; text-align: center;">05/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 571px; text-align: center;">06/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 640px; text-align: center;">07/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 712px; text-align: center;">08/01/2015</div></div><div style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;" class="flot-y-axis flot-y1-axis yAxis y1Axis"><div class="flot-tick-label tickLabel" style="position: absolute; top: 219px; left: 8px; text-align: right;">0</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 175px; left: 8px; text-align: right;">2</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 131px; left: 8px; text-align: right;">4</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 88px; left: 8px; text-align: right;">6</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 44px; left: 8px; text-align: right;">8</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 0px; left: 2px; text-align: right;">10</div></div></div><canvas height="250" width="848" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 848px; height: 250px;" class="flot-overlay"></canvas></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Used services graph</h3>
-      </div>
-      <div class="panel-body">
-        <div class="chart-medium">
-          <div style="padding: 0px; position: relative;" id="placeholder-inuse-chart" class="chart-content"><canvas height="250" width="848" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 848px; height: 250px;" class="flot-base"></canvas><div style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);" class="flot-text"><div style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;" class="flot-x-axis flot-x1-axis xAxis x1Axis"><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 13px; text-align: center;">10/01/2014</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 84px; text-align: center;">11/01/2014</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 153px; text-align: center;">12/01/2014</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 224px; text-align: center;">01/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 296px; text-align: center;">02/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 360px; text-align: center;">03/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 431px; text-align: center;">04/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 500px; text-align: center;">05/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 571px; text-align: center;">06/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 640px; text-align: center;">07/01/2015</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 65px; top: 232px; left: 712px; text-align: center;">08/01/2015</div></div><div style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;" class="flot-y-axis flot-y1-axis yAxis y1Axis"><div class="flot-tick-label tickLabel" style="position: absolute; top: 219px; left: 2px; text-align: right;">0.0</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 188px; left: 2px; text-align: right;">0.5</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 156px; left: 2px; text-align: right;">1.0</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 125px; left: 2px; text-align: right;">1.5</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 94px; left: 2px; text-align: right;">2.0</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 63px; left: 2px; text-align: right;">2.5</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 31px; left: 2px; text-align: right;">3.0</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 0px; left: 2px; text-align: right;">3.5</div></div></div><canvas height="250" width="848" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 848px; height: 250px;" class="flot-overlay"></canvas></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
              <!-- end -->
             </div> 
@@ -471,14 +1392,14 @@
      </div>
     
 
-    <!-- build:js(.) scripts/vendor.js -->
+    <!-- build:js(.) js/vendor.js -->
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
     
-    <!-- build:js(.) scripts/plugins.js -->
+    <!-- build:js(.) js/plugins.js -->
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script>
@@ -494,8 +1415,9 @@
     <!-- endbuild -->
     
 
-    <!-- build:js scripts/main.js -->
-    <script src="scripts/main.js"></script>
+    <!-- build:js js/main.js -->
+    <script src="js/datatables.min.js"></script>
+    <script src="js/main.js"></script>
     <!-- endbuild -->
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

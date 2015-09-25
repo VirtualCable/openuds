@@ -58,7 +58,7 @@ api.getJson = (path, options) ->
     dataType: "json"
     success: (data) ->
       api.doLog "Success on GET \"" + url + "\"."
-      api.doLog "Received ", data
+      #api.doLog "Received ", data
       success_fnc data
       return
 
@@ -87,7 +87,7 @@ api.putJson = (path, data, options) ->
     data: JSON.stringify(data)
     success: (data) ->
       api.doLog "Success on PUT \"" + url + "\"."
-      api.doLog "Received ", data
+      # api.doLog "Received ", data
       success_fnc data
       return
 
@@ -115,7 +115,7 @@ api.deleteJson = (path, options) ->
     dataType: "json"
     success: (data) ->
       api.doLog "Success on DELETE \"" + url + "\"."
-      api.doLog "Received ", data
+      # api.doLog "Received ", data
       success_fnc data
       return
 

@@ -10,9 +10,10 @@ gui.servicesPools.link = (event) ->
   prevTables = []
   clearDetails = ->
     $.each prevTables, (undefined_, tbl) ->
-      $tbl = $(tbl).dataTable()
-      $tbl.fnClearTable()
-      $tbl.fnDestroy()
+      $(tbl).DataTable().destroy()
+      #$tbl = $(tbl).dataTable()
+      #$tbl.fnClearTable()
+      #$tbl.fnDestroy()
       return
 
     $("#assigned-services-placeholder_tbl").empty()
@@ -185,11 +186,12 @@ gui.servicesPools.link = (event) ->
           cachedItemsTable = cachedItems.table(
             icon: 'cached'
             container: "cache-placeholder_tbl"
+            rowSelect: "single"
+            doNotLoadData: true
             buttons: [
               "delete"
               "xls"
             ]
-            rowSelect: "single"
             onData: (data) ->
               fillState data
               return
@@ -227,6 +229,7 @@ gui.servicesPools.link = (event) ->
             icon: 'groups'
             container: "groups-placeholder"
             rowSelect: "single"
+            doNotLoadData: true
             buttons: [
               "new"
               "delete"
@@ -347,6 +350,7 @@ gui.servicesPools.link = (event) ->
         transportsTable = transports.table(
           icon: 'transports'
           container: "transports-placeholder"
+          doNotLoadData: true
           rowSelect: "single"
           buttons: [
             "new"
@@ -414,6 +418,7 @@ gui.servicesPools.link = (event) ->
           publicationsTable = publications.table(
             icon: 'publications'
             container: "publications-placeholder"
+            doNotLoadData: true            
             rowSelect: "single"
             buttons: [
               "new"
@@ -486,6 +491,7 @@ gui.servicesPools.link = (event) ->
           changelog = new GuiElement(clApi, "changelog", { permission: servPool.permission })
           clTable = changelog.table(
             icon: 'publications'
+            doNotLoadData: true
             container: "changelog-placeholder"
             rowSelect: "single"
           )

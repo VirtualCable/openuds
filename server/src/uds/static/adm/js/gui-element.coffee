@@ -148,10 +148,11 @@
     @rest.tableInfo (data) -> # Gets tableinfo data (columns, title, visibility of fields, etc...
       row_style = data["row-style"]
       title = data.title
-      columns = [ {
+      columns = []
+      columnss = [ {
             orderable: false,
             className: 'select-checkbox'
-            data: null
+            # width: 32
             render: () -> return ''
         } ]
 
@@ -162,6 +163,7 @@
           column.title = opts.title
           column.render = renderEmptyCell
           column.width = opts.width  if opts.width
+          # column.width = "100px"
           column.visible = (if not opts.visible? then true else opts.visible)
           column.orderable = opts.sortable  if opts.sortable?
           column.searchable = opts.searchable  if opts.searchable?
@@ -196,7 +198,7 @@
 
       
       # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
-      self.rest.overview (data) -> # Gets "overview" data for table (table contents, but resume form)
+      initTable = (data) ->
         tblParams.onData data  if tblParams.onData
         table = gui.table(title, tableId,
           icon: tblParams.icon
@@ -212,16 +214,22 @@
 
         self.refresh = refreshFnc = ->
           # Refreshes table content
-          tbl = $("#" + tableId).dataTable()
+          tbl = $("#" + tableId).DataTable()
           
           #if( data.length > 1000 )
           gui.tools.blockUI()
           self.rest.overview (data) -> # Restore overview
             tblParams.onData data  if tblParams.onData
             setTimeout (->
-              tbl.fnClearTable()
+              tbl.rows().remove()
               if data.length > 0  # Only adds data if data is available
-                tbl.fnAddData data
+                tbl.rows.add(data)
+
+              tbl.columns.adjust().draw()
+
+              # tbl.responsive.recalc()
+              # tbl.scroller.measure()
+
               onRefresh self
               gui.tools.unblockUI()
               return
@@ -395,31 +403,33 @@
 
         # End buttoon iteration
         
-        # Initializes oTableTools
-        oTableTools =
-          aButtons: btns
-          sRowSelect: tblParams.rowSelect or "none"
-
         tbId = gui.genRamdonId('tb')
         dataTableOptions =
-          aaData: data
+          #responsive: true
+          #colReorder: true
+          #stateSave: true
+          # scrollY: 500
+          # scroller: true
+          paging: true
+          info: true
+          autoWidth: true
+          lengthChange: false
+          pageLength: 10
+
+          ordering: true
+          order: [[ 0, 'asc' ]]
 
           dom: '<"' + tbId + ' btns-tables">frtip'
-          responsive: true
-          colReorder: true
+
           select:
             style: if tblParams.rowSelect == 'multi' then 'os' else 'single'
             #selector: 'td:first-child'
 
-          aaSorting: [[
-            1
-            "asc"
-          ]]
-          aoColumns: columns
+          columns: columns
+          data: data
+          deferRender: tblParams.deferedRender or false
+
           oLanguage: gui.config.dataTablesLanguage
-          sPaginationType: "bootstrap"
-          
-          bDeferRender: tblParams.deferedRender or false
 
         
         # If row is "styled"
@@ -519,6 +529,12 @@
         tblParams.onLoad self  if tblParams.onLoad
         return
 
+      if tblParams.doNotLoadData isnt true
+        self.rest.overview (data) -> # Gets "overview" data for table (table contents, but resume form)
+          initTable(data)
+      else
+        initTable([])
+
       return
 
     # End Overview data
@@ -613,8 +629,6 @@
           0
           "desc"
         ]]
-        oTableTools:
-          aButtons: []
 
         aoColumns: columns
         oLanguage: gui.config.dataTablesLanguage
