@@ -148,11 +148,10 @@
     @rest.tableInfo (data) -> # Gets tableinfo data (columns, title, visibility of fields, etc...
       row_style = data["row-style"]
       title = data.title
-      columns = []
-      columnss = [ {
+      columns = [ {
             orderable: false,
             className: 'select-checkbox'
-            # width: 32
+            width: 32
             render: () -> return ''
         } ]
 
@@ -208,7 +207,7 @@
         else
           $("#" + tblParams.container).empty()
           $("#" + tblParams.container).append table.text
-        
+
         # What execute on refresh button push
         onRefresh = tblParams.onRefresh or ->
 
@@ -218,23 +217,20 @@
           
           #if( data.length > 1000 )
           gui.tools.blockUI()
-          self.rest.overview (data) -> # Restore overview
-            tblParams.onData data  if tblParams.onData
-            setTimeout (->
+          setTimeout (->
+            self.rest.overview (data) -> # Restore overview
+              tblParams.onData data  if tblParams.onData
               tbl.rows().remove()
               if data.length > 0  # Only adds data if data is available
                 tbl.rows.add(data)
 
               tbl.columns.adjust().draw()
 
-              # tbl.responsive.recalc()
-              # tbl.scroller.measure()
-
               onRefresh self
               gui.tools.unblockUI()
-              return
-            ), 0
             return
+            ), 0
+          return
 
           # End restore overview
           false # This may be used on button or href, better disable execution of it
@@ -405,11 +401,9 @@
         
         tbId = gui.genRamdonId('tb')
         dataTableOptions =
-          #responsive: true
-          #colReorder: true
-          #stateSave: true
-          # scrollY: 500
-          # scroller: true
+          responsive: false
+          colReorder: true
+          stateSave: true
           paging: true
           info: true
           autoWidth: true
@@ -417,9 +411,9 @@
           pageLength: 10
 
           ordering: true
-          order: [[ 0, 'asc' ]]
+          order: [[ 1, 'asc' ]]
 
-          dom: '<"' + tbId + ' btns-tables">frtip'
+          dom: '<"' + tbId + ' btns-tables">fr<"uds-table"t>ip'
 
           select:
             style: if tblParams.rowSelect == 'multi' then 'os' else 'single'
@@ -427,8 +421,8 @@
 
           columns: columns
           data: data
-          deferRender: tblParams.deferedRender or false
-
+          deferRender: tblParams.deferedRender or tblParams.deferRender or false
+          
           oLanguage: gui.config.dataTablesLanguage
 
         
@@ -459,9 +453,9 @@
           rowDeselectedFnc = tblParams.onRowDeselect
           dTable.on 'deselect', (e, dt, type, indexes) ->
             rows = dt.rows(indexes).data()
+            gui.doLog "Deselect: ", dt.rows({selected: true}).length, dt.rows({selected: true}).data().length
             rowDeselectedFnc rows, dt
             return
-
 
         # For storing on select callbacks
         selCallbackList = []

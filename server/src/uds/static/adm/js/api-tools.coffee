@@ -23,9 +23,22 @@
 
       return v.getTime() / 1000
 
+    strCut: (str, maxLen) ->
+      if maxLen < 3
+        maxLen = 3
+      sl = str.length
+      if str.length > maxLen
+        mid = Math.floor(maxLen/2)
+        first = mid - 1
+        remain = maxLen - mid - 2
+        str = str.substr(0, first) + "..." + str.substr(sl-remain)
+        
+      return str
+
 
   return
 ) window.api = window.api or {}, jQuery
+
 
 
 # Insert strftime into tools

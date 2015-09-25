@@ -117,6 +117,7 @@ gui.servicesPools.link = (event) ->
   api.templates.get "services_pool", (tmpl) ->
     gui.appendToWorkspace api.templates.evaluate(tmpl,
       deployed_services: "deployed-services-placeholder"
+      pool_info: "pool-info"
       assigned_services: "assigned-services-placeholder"
       cache: "cache-placeholder"
       groups: "groups-placeholder"
@@ -144,7 +145,7 @@ gui.servicesPools.link = (event) ->
       icon: 'pools'
       callback: renderer
       container: "deployed-services-placeholder"
-      rowSelect: "single"
+      rowSelect: "multi"
       buttons: [
         "new"
         "edit"
@@ -152,11 +153,17 @@ gui.servicesPools.link = (event) ->
         "xls"
         "permissions"
       ]
-      onRowDeselect: ->
-        clearDetails()
+      onRowDeselect: (deselected, dtable) ->
+        gui.doLog "Selecteds: ", dtable.rows({selected: true}).length
+        if dtable.rows({selected: true}).count() == 0
+          clearDetails()
         return
 
       onRowSelect: (selected) ->
+        if selected.length > 1
+          clearDetails()
+          return
+
         servPool = selected[0]
         gui.doLog "Selected services pool", servPool
         clearDetails()
@@ -187,6 +194,7 @@ gui.servicesPools.link = (event) ->
             icon: 'cached'
             container: "cache-placeholder_tbl"
             rowSelect: "single"
+            deferRender: true
             doNotLoadData: true
             buttons: [
               "delete"

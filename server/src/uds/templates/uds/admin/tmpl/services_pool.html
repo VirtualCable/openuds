@@ -27,15 +27,19 @@
 <div id="detail-placeholder" class="row hidden">
     <div class="col-xs-12">
         <ul class="bottom_tabs nav nav-tabs">
-            <li class="active"><a href="#{{ assigned_services }}" data-toggle="tab">{% endverbatim %}{% trans 'Assigned services' %}{% verbatim %}</a></li>
-            <li id="{{ cache }}_tab"><a href="#{{ cache }}" data-toggle="tab">{% endverbatim %}{% trans 'Cache' %}{% verbatim %}</a></li>
-            <li id="{{ groups }}_tab"><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
+            <li class="active"><a href="#{{ pool_info }}" data-toggle="tab">{% endverbatim %}{% trans 'Overview' %}{% verbatim %}</a></li>
+            <li><a href="#{{ assigned_services }}" data-toggle="tab">{% endverbatim %}{% trans 'Assigned services' %}{% verbatim %}</a></li>
+            <li><a href="#{{ cache }}" data-toggle="tab">{% endverbatim %}{% trans 'Cache' %}{% verbatim %}</a></li>
+            <li><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
             <li><a href="#{{ transports }}" data-toggle="tab">{% endverbatim %}{% trans 'Transports' %}{% verbatim %}</a></li>
-            <li id="{{ publications }}_tab"><a href="#{{ publications }}_pane" data-toggle="tab">{% endverbatim %}{% trans 'Publications' %}{% verbatim %}</a></li>
+            <li><a href="#{{ publications }}_pane" data-toggle="tab">{% endverbatim %}{% trans 'Publications' %}{% verbatim %}</a></li>
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
         </ul>    
         <div class="tab-content">
-            <div class="tab-pane fade in active" id="{{ assigned_services }}">
+            <div class="tab-pane fade in active" id="{{ pool_info }}">
+                ...
+            </div>
+            <div class="tab-pane fade" id="{{ assigned_services }}">
                 <div class="row">
                     <div class="col-xs-12" id="{{ assigned_services }}_tbl">
                     </div>

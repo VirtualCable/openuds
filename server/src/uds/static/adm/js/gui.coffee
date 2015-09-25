@@ -363,6 +363,31 @@
       ), gui.failRequestModalFnc(modalErrorMsg, true)
       return
 
+  gui.methods.typedShow = (parent, value, placeholder, modalErrorMsg, options) ->
+    options = options or {}
+    parent.rest.gui value.type, ((guiDefinition) ->
+      parent.rest.item value.id, (item) ->
+        gui.doLog "Item", item, "Gui", guiDefinition
+        data = []
+        flds = gui.forms.fieldsToHtml(guiDefinition, item, "readonly")
+        gui.doLog(flds)
+        #for fld in guiDefinition
+        #  name = fld.name
+        #  val = item[fld.name]
+        #  switch fld.gui.type
+        #    when "password"
+        #      val = "********"
+        #    when "editlist"
+        #      val = val.join(', ')
+        #  data.push "<p><span class='text-primary'>#{name}: </span>#{val}</p>"
+        html = api.templates.evaluate "tmpl_comp_overview_record", 
+          legend: gettext('Overview')
+          fields: flds.html
+        $(placeholder).html(html)
+      return
+      ), gui.failRequestModalFnc(modalErrorMsg, true)
+    return
+
   
   # "Generic" new method to set onNew table
   gui.methods.typedNew = (parent, modalTitle, modalErrorMsg, options) ->

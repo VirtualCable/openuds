@@ -37,6 +37,7 @@ gui.providers.link = (event) ->
     gui.clearWorkspace()
     gui.appendToWorkspace api.templates.evaluate(tmpl,
       providers: "providers-placeholder"
+      provider_info: "provider-info-placeholder"
       services: "services-placeholder"
       services_log: "services-log-placeholder"
       logs: "logs-placeholder"
@@ -45,7 +46,7 @@ gui.providers.link = (event) ->
     
     # Append tabs click events
     $(".bottom_tabs").on "click", (event) ->
-      gui.doLog event.target
+      gui.doLog "Tab pressed", event.target
       setTimeout (->
         $($(event.target).attr("href") + " span.fa-refresh").click()
         return
@@ -71,7 +72,7 @@ gui.providers.link = (event) ->
         return
 
       onRowDeselect: (deselected, dtable)->
-        if dtable.rows({selected: true}).length == 0
+        if dtable.rows({selected: true}).count() == 0
           clearDetails()
         return
 
@@ -83,6 +84,10 @@ gui.providers.link = (event) ->
         gui.tools.blockUI()
         clearDetails()
         $("#detail-placeholder").removeClass "hidden"
+
+        # Load provider "info"
+        gui.methods.typedShow gui.providers, selected[0], '#provider-info-placeholder .well', gettext('Error accessing data')
+
         id = selected[0].id
 
         # Giving the name compossed with type, will ensure that only styles will be reattached once
@@ -91,6 +96,7 @@ gui.providers.link = (event) ->
         servicesTable = services.table(
           icon: 'services'
           container: "services-placeholder"
+          doNotLoadData: true
           rowSelect: "multi"
           onRowSelect: (sselected) ->
             gui.tools.blockUI()
@@ -130,6 +136,7 @@ gui.providers.link = (event) ->
         )
         logTable = gui.providers.logTable(id,
           container: "logs-placeholder"
+          doNotLoadData: true
         )
         prevTables.push servicesTable
         prevTables.push logTable

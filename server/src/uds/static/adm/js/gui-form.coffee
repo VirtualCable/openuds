@@ -24,6 +24,7 @@
     # itemGui is expected to have fields sorted by .gui.order (REST api returns them sorted)
     $.each itemGui, (index, f) ->
       # Not exactly a field, maybe some other info...
+      gui.doLog "Processing ", f
       return  if not f.gui?
       
       # Fix multiline text fields to textbox
@@ -50,7 +51,7 @@
         label: f.gui.label
         length: f.gui.length
         multiline: f.gui.multiline
-        readonly: (if editing then f.gui.rdonly else false) # rdonly applies just to editing
+        readonly: (if editing is true then f.gui.rdonly else if editing is "readonly" then true else false) # rdonly applies just to editing
         required: f.gui.required
         tooltip: f.gui.tooltip
         type: f.gui.type

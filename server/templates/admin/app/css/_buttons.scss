@@ -1,0 +1,177 @@
+.btn3d {
+  margin: 4px;
+  box-shadow: 1px 1px 5px #888888;
+}
+
+.btn3d-xs {
+  font-weight: 300;
+}
+
+.btn3d-danger {
+  color: #fff;
+  background-color: #db5566;
+  border-bottom: 2px solid #af4451;
+
+  &:hover {
+    color: #fff;
+    background-color: #df6a78;
+    border-bottom: 2px solid #b25560;
+    outline: none;
+  }
+}
+
+.btn3d-primary.active:focus, .btn3d-danger:focus, .open > .dropdown-toggle.btn3d-danger {
+  color: #fff;
+  background-color: #df6a78;
+  border-bottom: 2px solid #b25560;
+  outline: none;
+}
+
+.btn3d-danger {
+  &:active, &.active {
+    color: #fff;
+    background-color: #c04b59;
+    border-top: 2px solid #9a3c47;
+    margin-top: 2px;
+  }
+}
+
+.btn3d-warning {
+  color: #fff;
+  background-color: #f4ad49;
+  border-bottom: 2px solid #c38a3a;
+
+  &:hover {
+    color: #fff;
+    background-color: #f5b75f;
+    border-bottom: 2px solid #c4924c;
+    outline: none;
+  }
+}
+
+.btn3d-primary.active:focus, .btn3d-warning:focus, .open > .dropdown-toggle.btn3d-warning {
+  color: #fff;
+  background-color: #f5b75f;
+  border-bottom: 2px solid #c4924c;
+  outline: none;
+}
+
+.btn3d-warning {
+  &:active, &.active {
+    color: #fff;
+    background-color: #d69840;
+    border-top: 2px solid #ab7a33;
+    margin-top: 2px;
+  }
+}
+
+.btn3d-success {
+  color: #fff;
+  background-color: #51bf87;
+  border-bottom: 2px solid #41996c;
+
+  &:hover {
+    color: #fff;
+    background-color: #66c796;
+    border-bottom: 2px solid #529f78;
+    outline: none;
+  }
+}
+
+.btn3d-primary.active:focus, .btn3d-success:focus, .open > .dropdown-toggle.btn3d-success {
+  color: #fff;
+  background-color: #66c796;
+  border-bottom: 2px solid #529f78;
+  outline: none;
+}
+
+.btn3d-success {
+  &:active, &.active {
+    color: #fff;
+    background-color: #47a877;
+    border-top: 2px solid #39865f;
+    outline: none;
+    outline-offset: none;
+    margin-top: 2px;
+  }
+}
+
+.btn3d-primary {
+  color: #fff;
+  background-color: #0bacd3;
+  border-bottom: 2px solid #098aa9;
+
+  &:hover, &.active:focus, &:focus {
+    color: #fff;
+    background-color: #29b6d8;
+    border-bottom: 2px solid #2192ad;
+    outline: none;
+  }
+}
+
+.open > .dropdown-toggle.btn3d-primary {
+  color: #fff;
+  background-color: #29b6d8;
+  border-bottom: 2px solid #2192ad;
+  outline: none;
+}
+
+.btn3d-primary {
+  &:active, &.active {
+    color: #fff;
+    background-color: #0a97b9;
+    border-top: 2px solid #087994;
+    outline-offset: none;
+    margin-top: 2px;
+  }
+}
+
+.btn3d {
+  &:focus, &:active:focus, &.active:focus {
+    outline: none;
+    outline-offset: 0px;
+  }
+}
+
+/*
+.btn3d {
+    transition:all .08s linear;
+    position:relative;
+    outline:medium none;
+    -moz-outline-style:none;
+    border:0px;
+    margin-right:10px;
+    margin-top:15px;
+}
+.btn3d:focus {
+    outline:medium none;
+    -moz-outline-style:none;
+}
+.btn3d:active {
+    top:9px;
+}
+.btn3d-default {
+    box-shadow:0 0 0 1px #ebebeb inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #adadad, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+    background-color:#fff;
+}
+.btn3d-primary {
+    box-shadow:0 0 0 1px #428bca inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #357ebd, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+    background-color:#428bca;
+}
+ .btn3d-success {
+    box-shadow:0 0 0 1px #5cb85c inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #4cae4c, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+    background-color:#5cb85c;
+}
+ .btn3d-info {
+    box-shadow:0 0 0 1px #5bc0de inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #46b8da, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+    background-color:#5bc0de;
+}
+.btn3d-warning {
+    box-shadow:0 0 0 1px #f0ad4e inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #eea236, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+    background-color:#f0ad4e;
+}
+.btn3d-danger {
+    box-shadow:0 0 0 1px #c63702 inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #C24032, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+    background-color:#c63702;
+}
+*/
