@@ -1,15 +1,25 @@
-// Own variables
-$sidebar-size: 90px;  // 225 px
-$sidebar-size-collapsed: 90px; // 40px;
-$sidebar-top: 50px;
-
-
-$uds-panel-min-height: 500px;
-
 // Bootstrap
 $icon-font-path: "../fonts/";
 
 @import "_udsvars";
+
+// Own variables
+$sidebar-icon-width: 24px;
+$sidebar-icon-width-collapsed: 36px;
+
+$sidebar-size: 225px;  // 225 px
+$sidebar-size-collapsed: $sidebar-icon-width-collapsed + 2*$font-size-base; // 40px;
+$sidebar-top: 50px;
+
+
+$sidebar-switcher-size: 14px;
+$sizebar-switcher-font-size: $sidebar-switcher-size - 2px;
+$sidebar-switcher-pos: $sidebar-size - $sidebar-switcher-size;
+$sidebar-switcher-pos-collapsed: $sidebar-size-collapsed - $sidebar-switcher-size;
+
+
+$uds-panel-min-height: 500px;
+
 
 // bower:scss
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
@@ -135,6 +145,20 @@ body {
   height: 100%;
 }
 
+// Hides switcher on small devices, so menu displays correctly
+.side-nav {
+  padding-top: 0px;
+  .switcher {
+    visibility: hidden;
+    width: 0px;
+    height: 0px;
+  }
+  .icon {
+    width: 24px;
+    vertical-align: center;
+    padding-bottom: 3px;
+  }
+}
 
 /* Edit Below to Customize Widths > 768px */
 @media (min-width: 768px) {
@@ -142,6 +166,12 @@ body {
 
   #wrapper {
     padding-left: $sidebar-size;
+    -webkit-transition: padding 0.3s; /* For Safari 3.1 to 6.0 */
+    transition: padding 0.3s;
+    
+    &.full {
+      padding-left: $sidebar-size-collapsed;
+    }
   }
 
   #page-wrapper {
@@ -149,24 +179,119 @@ body {
   }
 
   /* Side Nav */
-
   .side-nav {
-    margin-left: -$sidebar-size;
-    left: $sidebar-size;
-    width: $sidebar-size-collapsed;
     position: fixed;
     top: $sidebar-top;
     height: 100%;
+    overflow-y: auto;
     border-radius: 0;
-    border-color: $navbar-inverse-border;
+    border-color: $navbar-default-border;
     border-style: solid;
     border-width: 0 1px 0 0;    
-    background-color: $navbar-inverse-bg;
-    overflow-y: auto;
+    background-color: $navbar-default-bg;
     -webkit-transition: width 0.3s; /* For Safari 3.1 to 6.0 */
     transition: width 0.3s;
 
-    &:hover {
+    margin-left: -$sidebar-size-collapsed;
+    padding-top: $sidebar-switcher-size;
+    left: $sidebar-size-collapsed;
+    width: $sidebar-size-collapsed;
+
+    .icon {
+      width: $sidebar-icon-width-collapsed;
+      -webkit-transition: all 0.3s; /* For Safari 3.1 to 6.0 */
+      transition: all 0.3s;
+
+    }
+
+    .menu-lnk {
+      display: none;
+      overflow-x: hidden;
+    }
+
+    .switcher {
+      visibility: visible;
+      position: absolute;
+      left: $sidebar-switcher-pos-collapsed;
+      top: 0;
+      background-color: $navbar-inverse-bg;
+      color: $gray-lighter;
+      width: $sidebar-switcher-size;
+      height: $sidebar-switcher-size;
+      font-size: $sizebar-switcher-font-size;
+      text-align: center;
+      cursor: pointer;
+      z-index: $zindex-popover;
+      -webkit-transition: left 0.3s; /* For Safari 3.1 to 6.0 */
+      transition: left 0.3s;
+      &:before {
+        content:"\f101";
+      }
+    }
+
+    > ul > li {
+      width: $sidebar-size;
+      overflow-x: hidden;
+      // border-bottom: 1px solid $navbar-default-border;
+
+      &:hover, &.active, &:focus {
+        color: $brand-primary;
+        background-color: darken($navbar-default-bg, 15%);
+      }
+
+      &.dropdown > ul.dropdown-menu {
+        width: $sidebar-size;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        background-color: transparent;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+
+
+        > li > a {
+          color: inherit;
+          padding: $font-size-base;
+
+          &:hover, &.active, &:focus {
+            color: #fff;
+            background-color: #080808;
+          }
+        }
+      }
+    }
+
+
+    &.full {
+      margin-left: -$sidebar-size;
+      left: $sidebar-size;
+      width: $sidebar-size;
+      .switcher {
+        left: $sidebar-switcher-pos;
+        &:before {
+          content:"\f100";
+        }
+      }
+
+      .icon {
+        width: $sidebar-icon-width;
+      }
+
+      .menu-lnk {
+        display: inline;
+        opacity: 1.0;
+        width: 100%;
+      }
+
+      > ul > li {
+        //border-bottom: none;
+      }
+
+    }
+
+    /*&:hover {
       width: $sidebar-size;
     }
 
@@ -208,10 +333,10 @@ body {
         }
 
       }
-/*      > a {
-        width: $sidebar-size;
-      }*/
-    }
+      //> a {
+      //  width: $sidebar-size;
+      //}
+    }*/
   }
 
   /* Bootstrap Default Overrides - Customized Dropdowns for the Side Nav */

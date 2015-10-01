@@ -16,27 +16,29 @@
             
     <!-- Side bar -->
      <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <ul class="nav navbar-nav side-nav">
-          <li><a class="lnk-dashboard" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/dashboard-monitor.png"/> {% trans 'Overview' %}</a></li>
-          <li><a class="lnk-service_providers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/providers.png"/> {% trans 'Services' %}</a></li>
-          <li><a class="lnk-authenticators" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/authenticators.png"/> {% trans 'Authenticators' %}</a></li>
-          <li><a class="lnk-osmanagers" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/osmanagers.png"/> Os Managers</a></li>
-          <li><a class="lnk-connectivity" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/transports.png"/> {% trans 'Connectivity' %}</a></li>
-          <li><a class="lnk-calendars" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/calendars.png"/> {% trans 'Calendars' %}</a></li>
-          <li><a class="lnk-deployed_services" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/pools.png"/> {% trans 'Service Pools' %}</a></li>
-          {% if admin %}
-          
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/tools.png"/> Tools <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a class="lnk-gallery" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/gallery.png"/> {% trans 'Gallery' %}</a></li>
-              <li><a class="lnk-reports" href=""><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/reports.png"/> {% trans 'Reports' %}</a></li>
-              <li><a class="lnk-configuration" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/configuration.png"/> {% trans 'Configuration' %}</a></li>
-              <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="{{ STATIC_URL }}/adm/img/icons/flush-cache.png"/> {% trans 'Flush cache' %}</a></li>
+        <div class="side-nav">
+          <div class="switcher fa"> </div>
+            <ul class="nav navbar-nav">
+              <li><a class="lnk-dashboard" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/dashboard-monitor.png"/> <span class="menu-lnk">{% trans 'Overview' %}</span></a></li>
+              <li><a class="lnk-service_providers" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/providers.png"/> <span class="menu-lnk">{% trans 'Services' %}</span></a></li>
+              <li><a class="lnk-authenticators" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/authenticators.png"/> <span class="menu-lnk">{% trans 'Authenticators' %}</span></a></li>
+              <li><a class="lnk-osmanagers" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/osmanagers.png"/> <span class="menu-lnk">Os Managers</span></a></li>
+              <li><a class="lnk-connectivity" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/transports.png"/> <span class="menu-lnk">{% trans 'Connectivity' %}</span></a></li>
+              <li><a class="lnk-calendars" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/calendars.png"/> <span class="menu-lnk">{% trans 'Calendars' %}</span></a></li>
+              <li><a class="lnk-deployed_services" href=""><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/pools.png"/> <span class="menu-lnk">{% trans 'Service Pools' %}</span></a></li>
+              {% if admin %}
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/tools.png"/> <span class="menu-lnk">{% trans 'Tools' %} <b class="caret"></b></span></a>
+                <ul class="dropdown-menu">
+                  <li><a class="lnk-gallery" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/gallery.png"/> <span class="menu-lnk">{% trans 'Gallery' %}</span></a></li>
+                  <li><a class="lnk-reports" href=""><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/reports.png"/> <span class="menu-lnk">{% trans 'Reports' %}</a></span></li>
+                  <li><a class="lnk-configuration" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/configuration.png"/> <span class="menu-lnk">{% trans 'Configuration' %}</span></a></li>
+                  <li><a class="lnk-clear_cache" href="#"><img class="icon" src="{{ STATIC_URL }}/adm/img/icons/flush-cache.png"/> <span class="menu-lnk">{% trans 'Flush cache' %}</span></a></li>
+                </ul>
+              </li>
+              {% endif %}
             </ul>
-          </li>
-          {% endif %}
-        </ul>
+          </div>
         
           <ul class="nav navbar-nav navbar-right navbar-user">
           </ul>

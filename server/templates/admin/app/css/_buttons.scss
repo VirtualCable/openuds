@@ -1,23 +1,16 @@
+$btn-margin: $font-size-base/2;
+
 .btn-alert {
-  @include button-variant($btn-default-color, darken($brand-danger, 40%), darken($brand-danger, 60%));
-  &.disabled,
-  &[disabled] {
-    @include button-variant(darken($btn-default-color, 20%), darken($brand-danger, 40%), $btn-default-border);
-  }
+  @include button-variant(complement($brand-danger), darken($brand-danger, 10%), darken($brand-danger, 20%));
+  margin-right: $btn-margin;
 }
 
 .btn-action {
-  @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
-  &.disabled,
-  &[disabled] {
-    @include button-variant(darken($btn-default-color, 20%), darken($btn-default-bg, 20%), $btn-default-border);
-  }
+  @include button-variant($btn-default-color, invert($btn-default-color), $btn-default-border);
+  margin-right: $font-size-base/2;
 }
 
 .btn-export {
   @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
-  &.disabled,
-  &[disabled] {
-    @include button-variant(darken($btn-default-color, 20%), darken($btn-default-bg, 20%), $btn-default-border);
-  }
+  margin-right: $font-size-base/2;
 }

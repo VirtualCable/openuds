@@ -44,50 +44,53 @@
             
     <!-- Side bar -->
      <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <ul class="nav navbar-nav side-nav">
-          <li><a class="lnk-dashboard" href="#"><span class="fa fa-dashboard"> </span>Overview</a></li>
-          <li><a class="lnk-service_providers" href="#"><img class="table-icon" src="img/icons/providers.png"/> Services</a></li>
-          <li><a class="lnk-authenticators" href="#"><img class="table-icon" src="img/icons/authenticators.png"/> Authenticators</a></li>
-          <li><a class="lnk-osmanagers" href="#"><img class="table-icon" src="img/icons/osmanagers.png"/> Os Managers</a></li>
-          <li><a class="lnk-connectivity" href="#"><img class="table-icon" src="img/icons/transports.png"/> Connectivity</a></li>
-          <li><a class="lnk-calendars" href="#"><img class="table-icon" src="img/icons/calendars.png"/> Calendars</a></li>
-          <li><a class="lnk-deployed_services" href=""><img class="table-icon" src="img/icons/pools.png"/> Service Pools</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="img/icons/tools.png"/> Tools <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a class="lnk-gallery" href="#"><img class="table-icon" src="img/icons/gallery.png"/> Gallery</a></li>
-              <li><a class="lnk-reports" href=""><img class="table-icon" src="img/icons/reports.png"/> Reports</a></li>
-              <li><a class="lnk-configuration" href="#"><img class="table-icon" src="img/icons/configuration.png"/> Configuration</a></li>
-              <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="img/icons/flush-cache.png"/> Flush cache</a></li>
+        <div class="side-nav">
+          <div class="switcher fa"> </div>
+          <ul class="nav navbar-nav">
+            <li><a class="lnk-dashboard" href="#"><img src="img/icons/dashboard-monitor.png" class="icon"> <span class="menu-lnk">Overview</span></a></li>
+            <li><a class="lnk-service_providers" href="#"><img class="icon" src="img/icons/providers.png"/> <span class="menu-lnk">Services</span></a></li>
+            <li><a class="lnk-authenticators" href="#"><img class="icon" src="img/icons/authenticators.png"/> <span class="menu-lnk">Authenticators</span></a></li>
+            <li><a class="lnk-osmanagers" href="#"><img class="icon" src="img/icons/osmanagers.png"/> <span class="menu-lnk">Os Managers</span></a></li>
+            <li><a class="lnk-connectivity" href="#"><img class="icon" src="img/icons/transports.png"/> <span class="menu-lnk">Connectivity</span></a></li>
+            <li><a class="lnk-calendars" href="#"><img class="icon" src="img/icons/calendars.png"/> <span class="menu-lnk">Calendars</span></a></li>
+            <li><a class="lnk-deployed_services" href=""><img class="icon" src="img/icons/pools.png"/> <span class="menu-lnk">Service Pools</span></a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="img/icons/tools.png"/> Tools <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a class="lnk-gallery" href="#"><img class="table-icon" src="img/icons/gallery.png"/> Gallery</a></li>
+                <li><a class="lnk-reports" href=""><img class="table-icon" src="img/icons/reports.png"/> Reports</a></li>
+                <li><a class="lnk-configuration" href="#"><img class="table-icon" src="img/icons/configuration.png"/> Configuration</a></li>
+                <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="img/icons/flush-cache.png"/> Flush cache</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+          
+            <ul class="nav navbar-nav navbar-right navbar-user">
             </ul>
-          </li>
-        </ul>
-        
-          <ul class="nav navbar-nav navbar-right navbar-user">
-          </ul>
-          <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
-          <input id="id_language" type="hidden" name="language" value=""/>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><!--<i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>-->
-                <i class="fa fa-comments-o"></i> Spanish<b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                <!--  here we force an update of locale of REST api -->
-                <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>English</a></li>
-                <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>French</a></li>
-                <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>German</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-dashboard"></i> Username <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                  <li><a href="{% url 'uds.web.views.index"><span class="fa fa-user"></span> User mode</a></li>
-                  <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> Logout</a></li>
-              </ul>
-            </li>
+            <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+            <input id="id_language" type="hidden" name="language" value=""/>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><!--<i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>-->
+                  <i class="fa fa-comments-o"></i> Spanish<b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <!--  here we force an update of locale of REST api -->
+                  <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>English</a></li>
+                  <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>French</a></li>
+                  <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>German</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-dashboard"></i> Username <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{% url 'uds.web.views.index"><span class="fa fa-user"></span> User mode</a></li>
+                    <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> Logout</a></li>
+                </ul>
+              </li>
 
-          </ul>
+            </ul>
           </form>
           
        </div>
@@ -137,14 +140,20 @@
     <script src="js/main.js"></script>
     <!-- endbuild -->
 
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
-      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-      e.src='https://www.google-analytics.com/analytics.js';
-      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-      ga('create','UA-XXXXX-X');ga('send','pageview');
+      $(function(){
+        $('.side-nav .switcher').on('click', function() {
+          var rr = [$('.side-nav'), $('#wrapper')];
+          for( var r = 0; r < 2; r++ ) {
+            if( rr[r].attr('class').contains('full') ) {
+              rr[r].removeClass('full');
+            } else {
+              rr[r].addClass('full');
+            }
+          }
+        });
+      });
     </script>
+
   </body>
 </html>

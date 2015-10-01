@@ -29,7 +29,7 @@
     
     <body>
         <!-- Navigation bar -->
-        <div id="wrapper">
+        <div id="wrapper" class="full">
         
         {% block menu %}{% include 'uds/admin/snippets/navbar.html' with admin=request.user.is_admin %}{% endblock %}
         <!-- End of menu -->
@@ -126,26 +126,49 @@
         <script src="{% get_static_prefix %}adm/js/base64.js"></script>
         
         <script type="text/javascript">
-            // HOver on dropdown menus
-            function toggleNavbarMethod() {
-                if ($(window).width() > 768) {
-                    $('.navbar .dropdown').on('mouseover', function(){
-                        $('.dropdown-toggle', this).trigger('click'); 
-                    }).on('mouseout', function(){
-                        $('.dropdown-toggle', this).trigger('click').blur();
-                    });
-                }
-            }        
-            $(function() {
-            	// set default error function
-            	api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
-    			// Initialize gui
-            	gui.init();
+          function showHideTooltip() {
+            if( $('.side-nav').attr('class').indexOf('full') != -1) {
+              $('.side-nav > ul > li').find('img').tooltip('destroy');
+            } else {
+              $('.side-nav > ul > li').each(function(index, element) {
+                var $element = $(element).find('a');
+                var title = $element.find('.menu-lnk').text();
+                $element.find('img').tooltip({
+                  placement: 'right',
+                  title: title,
+                  container: 'body',
+                  delay: { 
+                    show: 500,
+                    hide: 100
+                  }
+                });
+              });
+            }
+          }
 
-                $.fn.datepicker.defaults.format = 'yyyy/mm/dd';
-                $.fn.datepicker.defaults.todayBtn = "linked";
-                $.fn.datepicker.defaults.autoclose = true;
-                $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
+          $(function(){
+            showHideTooltip();
+            $('.side-nav .switcher').on('click', function() {
+              var rr = [$('.side-nav'), $('#wrapper')];
+
+              for( var r = 0; r < 2; r++ ) {
+                if( rr[r].attr('class').indexOf('full') != -1 ) {
+                  rr[r].removeClass('full');
+                } else {
+                  rr[r].addClass('full');
+                }
+              }
+              showHideTooltip();
+            });
+              // set default error function
+        	  api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
+    		  // Initialize gui
+        	  gui.init();
+
+              $.fn.datepicker.defaults.format = 'yyyy/mm/dd';
+              $.fn.datepicker.defaults.todayBtn = "linked";
+              $.fn.datepicker.defaults.autoclose = true;
+              $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
 
             });        
         </script>
