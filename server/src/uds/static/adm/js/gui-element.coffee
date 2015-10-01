@@ -263,7 +263,7 @@
             if enable
               $(btn).prop('disabled', false)
               $(btn).addClass('disabled')
-              $(btn).removeClass("disabled").addClass cls
+              $(btn).removeClass("disabled") # .addClass cls
             else
               $(btn).prop('disabled', true)
               $(btn).removeClass(cls).addClass "disabled"

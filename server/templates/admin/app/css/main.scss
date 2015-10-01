@@ -1,15 +1,8 @@
 // Own variables
-$sidebar-size: 225px;
-$sidebar-size-collapsed: 40px;
+$sidebar-size: 90px;  // 225 px
+$sidebar-size-collapsed: 90px; // 40px;
 $sidebar-top: 50px;
 
-$uds-background-color: #252830;
-$uds-background-color-light: #434857;
-$uds-background-color-lighter: #444444;
-$uds-foreground-color: #ffffff;
-
-$uds-color-blue: #1CA8DD;
-$uds-color-blue-dark: #165B75;
 
 $uds-panel-min-height: 500px;
 
@@ -39,7 +32,7 @@ $icon-font-path: "../fonts/";
 
 body {
   font-family: 'Droid Sans Mono', sans-serif;
-  background-color: $uds-background-color;
+  background-color: $body-bg;
   margin-top: 50px;
 }
 
@@ -142,12 +135,13 @@ body {
   height: 100%;
 }
 
+
 /* Edit Below to Customize Widths > 768px */
 @media (min-width: 768px) {
   /* Wrappers */
 
   #wrapper {
-    padding-left: 64px;
+    padding-left: $sidebar-size;
   }
 
   #page-wrapper {
@@ -201,8 +195,22 @@ body {
       }
 
       > a {
-        width: $sidebar-size;
+        border-bottom: 1px solid darken($body-bg, 50%);
+        color: $text-color;
+        display: block;
+        font-size: 10px;
+        min-height: 60px;
+        padding-top: 12px;
+        text-align: center;
+        width: $sidebar-size-collapsed;
+        > img {
+          min-width: 32px;
+        }
+
       }
+/*      > a {
+        width: $sidebar-size;
+      }*/
     }
   }
 
@@ -225,5 +233,6 @@ body {
 
 @import "_theme";
 @import "_widgets";
+@import "_buttons";
 //@import "_data-tables";
 @import "_tables";

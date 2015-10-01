@@ -3,7 +3,7 @@ This states displays as default
 */
 
 .row-maintenance-true {
-  color: $brand-danger;
+  color: lighten($brand-danger, 20%);
 }
 
 .log-WARN {
@@ -21,42 +21,6 @@ This states displays as default
 .log-ERROR, &.log-FATAL {
   color: $brand-danger;
 }
-
-
-/*tr {
-  &.row-state-B:nth-child(2n) > td, &.row-state-C:nth-child(2n) > td, &.row-state-E:nth-child(2n) > td, &.row-state-Y:nth-child(2n) > td, &.row-state-B:nth-child(2n+1) > td, &.row-state-C:nth-child(2n+1) > td, &.row-state-E:nth-child(2n+1) > td, &.row-state-Y:nth-child(2n+1) > td {
-    color: #FF6600 !important;
-  }
-
-  &.row-state-M:nth-child(2n+1) > td, &.row-state-R:nth-child(2n+1) > td, &.row-state-I:nth-child(2n+1) > td, &.row-state-S > td:nth-child(2n+1) {
-    color: #9A9A9A !important;
-  }
-
-  &.row-state-M:nth-child(2n) > td, &.row-state-R:nth-child(2n) > td, &.row-state-I:nth-child(2n) > td, &.row-state-S > td:nth-child(2n) {
-    color: #858585 !important;
-  }
-
-  &.row-maintenance-true > td {
-    color: #FF6600 !important;
-  }
-
-  &.log-WARN {
-    color: blue;
-  }
-
-  &.log-DEBUG {
-    color: green;
-  }
-
-  &.log-INFO, &.log-OTHER {
-    color: black;
-  }
-
-  &.log-ERROR, &.log-FATAL {
-    color: red;
-  }
-}*/
-
 
 // To position correctly things
 .btn-tables {
@@ -78,7 +42,11 @@ This states displays as default
 }
 
  .table {
-  font-family: 'Andale Mono', 'Courier New'
+  // $font-family-monospace
+  // $font-family-serif
+  // $font-family-sans-serif
+  font-family: $font-family-monospace;
+  font-size: $font-size-large;
  }
 
 /*.table tbody tr.selected {

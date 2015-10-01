@@ -41,28 +41,28 @@
 
   gui.config.dataTableButtons =
     new:
-      text: "<span class=\"fa fa-pencil\"></span> <span class=\"label-tbl-button\">" + gettext("New") + "</span>"
-      css: "btn btn-primary btn-tables"
+      text: "<span class=\"fa fa-pencil\"></span> " + gettext("New") + ""
+      css: "btn btn-action btn-tables"
 
     edit:
       text: "<span class=\"fa fa-edit\"></span> <span class=\"label-tbl-button\">" + gettext("Edit") + "</span>"
-      css: "btn disabled btn-default btn-tables"
+      css: "btn disabled btn-action btn-tables"
 
     delete:
       text: "<span class=\"fa fa-trash-o\"></span> <span class=\"label-tbl-button\">" + gettext("Delete") + "</span>"
-      css: "btn disabled btn-default btn-tables"
+      css: "btn disabled btn-alert btn-tables"
 
     permissions:
       text: "<span class=\"fa fa-save\"></span> <span class=\"label-tbl-button\">" + gettext("Permissions") + "</span>"
-      css: "btn disabled btn-default btn-tables"
+      css: "btn disabled btn-action btn-tables"
 
     xls:
       text: "<span class=\"fa fa-save\"></span> <span class=\"label-tbl-button\">" + gettext("Xls") + "</span>"
-      css: "btn btn-info btn-tables"
+      css: "btn btn-export btn-tables"
 
     custom:
       text: null
-      css: "btn btn-default btn-tables"
+      css: "btn btn-action btn-tables"
 
   gui.genRamdonId = (prefix) ->
     prefix = prefix or ""
