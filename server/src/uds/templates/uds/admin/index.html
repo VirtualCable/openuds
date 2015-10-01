@@ -128,12 +128,12 @@
         <script type="text/javascript">
           function showHideTooltip() {
             if( $('.side-nav').attr('class').indexOf('full') != -1) {
-              $('.side-nav > ul > li').find('img').tooltip('destroy');
+              $('.side-nav li').find('img').tooltip('destroy');
             } else {
-              $('.side-nav > ul > li').each(function(index, element) {
-                var $element = $(element).find('a');
-                var title = $element.find('.menu-lnk').text();
-                $element.find('img').tooltip({
+              $('.side-nav li').each(function(index, element) {
+                var $element = $(element).find('a').eq(0);
+                var title = $element.find('.menu-lnk').eq(0).text();
+                $element.find('img').eq(0).tooltip({
                   placement: 'right',
                   title: title,
                   container: 'body',

@@ -23,14 +23,9 @@ This states displays as default
 }
 
 // To position correctly things
-.btn-tables {
-  margin-top: 0px;
-  margin-botton: 8px;
-  margin-right: 8px;
-}
-
 .btns-tables {
   float: left;
+  margin-bottom: 16px;
 }
 
 .dataTables_info {
@@ -71,7 +66,7 @@ This states displays as default
 }
 
 .uds-table {
-    min-height: $uds-panel-min-height;
+    min-height: $uds-panel-min-height - 48px;
 }
 
 @media (max-width: 768px) {
