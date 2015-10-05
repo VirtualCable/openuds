@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2015-05-14'
+__updated__ = '2015-10-05'
 
 
 logger = logging.getLogger(__name__)
@@ -105,6 +105,11 @@ class UserService(UUIDModel):
         db_table = 'uds__user_service'
         ordering = ('creation_date',)
         app_label = 'uds'
+        index_together = (
+            'deployed_service',
+            'cache_level',
+            'state'
+        )
 
     def getEnvironment(self):
         '''

@@ -28,7 +28,7 @@ gui.gallery.link = ->
 
           if file.size > 256*1024
             gui.notify gettext("Image is too big (max. upload size is 256Kb)")
-            return
+            returng
 
           $(modalId).modal "hide"
           reader = new FileReader()

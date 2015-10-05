@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2015-10-05'
 
 from django.db import models
 from django.db.models import signals
@@ -70,7 +70,7 @@ class Scheduler(models.Model):
 
     name = models.CharField(max_length=64, unique=True)
     frecuency = models.PositiveIntegerField(default=DAY)
-    last_execution = models.DateTimeField(auto_now_add=True)
+    last_execution = models.DateTimeField(auto_now_add=True, db_index=True)
     next_execution = models.DateTimeField(default=NEVER, db_index=True)
     owner_server = models.CharField(max_length=64, db_index=True, default='')
     state = models.CharField(max_length=1, default=State.FOR_EXECUTE, db_index=True)

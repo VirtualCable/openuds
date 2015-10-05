@@ -1,16 +1,21 @@
 $btn-margin: $font-size-base/2;
 
 .btn-alert {
-  @include button-variant(complement($brand-danger), darken($brand-danger, 10%), darken($brand-danger, 20%));
+  //@include button-variant(complement($brand-danger), darken($brand-danger, 10%), darken($brand-danger, 20%));
+  @include pretty-buttons(complement($brand-danger), darken($brand-danger, 10%));
   margin-right: $btn-margin;
 }
 
 .btn-action {
-  @include button-variant($btn-default-color, invert($btn-default-color), $btn-default-border);
+  //@include button-variant($btn-default-color, invert($btn-default-color), $btn-default-border);
+  @include pretty-buttons($btn-default-color, $btn-default-bg);
+
   margin-right: $font-size-base/2;
 }
 
 .btn-export {
-  @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
+  //@include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
+  @include pretty-buttons($btn-default-color, $btn-default-bg);
+
   margin-right: $font-size-base/2;
 }
