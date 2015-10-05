@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.db.models import Q
-from django.db import transaction, DatabaseError
+from django.db import transaction, DatabaseError, connection
 from uds.models import Scheduler as dbScheduler, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.jobs.JobsFactory import JobsFactory
@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-04-15'
+__updated__ = '2015-10-05'
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,9 @@ class JobThread(threading.Thread):
                 # Databases locked, maybe because we are on a multitask environment, let's try again in a while
                 logger.info('Database access locked... Retrying')
                 time.sleep(1)
+
+        # Ensures DB connection is released after job is done
+        connection.close()
 
     def __updateDb(self):
         '''
