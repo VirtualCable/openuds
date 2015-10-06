@@ -27,4 +27,21 @@
     <div class="col-lg-6" id="{{ networks }}">
     </div>
 </div>
+<div id="detail-placeholder" class="row hidden">
+    <div class="col-xs-12">
+        <ul class="bottom_tabs nav nav-tabs">
+            <li class="active"><a href="#{{ transport_info }}" data-toggle="tab">{% endverbatim %}{% trans 'Overview' %}{% verbatim %}</a></li>
+        </ul>    
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="{{ transport_info }}">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="well">
+                  </div>
+                </div>
+              </div>              
+            </div>
+        </div>
+    </div>
+</div>
 {% endverbatim %}

@@ -3,6 +3,9 @@ gui.providers = new GuiElement(api.providers, "provi")
 gui.providers.link = (event) ->
   "use strict"
   
+  maintenanceText = (icon, text) ->
+    '<span class="fa ' + icon + '"> </span> <span class="label-tbl-button">' + text + '</span>'
+
   # Button definition to trigger "Test" action
   testButton = testButton:
     text: gettext("Test")
@@ -59,12 +62,16 @@ gui.providers.link = (event) ->
       onCheck: (check, items) -> # Check if item can be deleted
         true
 
+      onRefresh: (tbl) ->
+        clearDetails()
+        return
+
       onData: (data) ->
         $.each data, (index, value) ->
           if value.maintenance_mode is true
             value.maintenance_state = gettext('In Maintenance')
           else
-            value.maintenance_state = gettext('Normal')
+            value.maintenance_state = gettext('Active')
 
         return
 
@@ -146,7 +153,7 @@ gui.providers.link = (event) ->
         "edit"
         {
           permission: api.permissions.MANAGEMENT
-          text: gettext("Maintenance")
+          text: maintenanceText('fa-ambulance', gettext("Maintenance"))
           css: "disabled"
           click: (vals, value, btn, tbl, refreshFnc) ->
 
@@ -170,12 +177,19 @@ gui.providers.link = (event) ->
 
           select: (vals, value, btn, tbl, refreshFnc) ->
             unless vals.length == 1
-              $(btn).removeClass("btn-warning").addClass "disabled"
-              $(btn).empty().append(gettext("Maintenance"))
+              $(btn).removeClass("btn-warning").removeClass("btn-info").addClass "disabled"
+              $(btn).empty().append(maintenanceText('fa-ambulance', gettext("Maintenance")))
               return
             val = vals[0]
-            $(btn).removeClass("disabled").addClass "btn-warning"
-            $(btn).empty().append('<div>' + (if val.maintenance_mode is false then gettext('Enter maintenance Mode') else gettext('Exit Maintenance Mode')) + '</div>')
+            if val.maintenance_mode is false
+              content = maintenanceText('fa-ambulance', gettext('Enter maintenance Mode'))
+              cls = 'btn-warning'
+            else
+              content = maintenanceText('fa-truck',gettext('Exit Maintenance Mode'))
+              cls = 'btn-info'
+
+            $(btn).removeClass("disabled").addClass(cls)
+            $(btn).empty().append(content)
             return
         }
         "delete"

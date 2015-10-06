@@ -41,7 +41,7 @@
 
   gui.config.dataTableButtons =
     new:
-      text: "<span class=\"fa fa-pencil\"></span> " + gettext("New") + ""
+      text: "<span class=\"fa fa-file\"></span> <span class=\"label-tbl-button\">" + gettext("New") + "</span>"
       css: "btn btn-action btn-tables"
 
     edit:

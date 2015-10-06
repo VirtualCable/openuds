@@ -275,6 +275,11 @@ gui.calendars.link = ->
       icon: 'calendars'
       container: "calendars-placeholder"
       rowSelect: "single"
+
+      onRefresh: (tbl) ->
+        clearRules()
+        return
+
       onRowSelect: (selected) ->
         clearRules()
         $("#detail-placeholder").removeClass "hidden"

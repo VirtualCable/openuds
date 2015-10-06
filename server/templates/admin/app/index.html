@@ -1719,8 +1719,9 @@ dn=ou=[^,]*,.*?ou=([^,]*)
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
     <!-- endbuild -->
-    
+  
 
+    <script src="js/jquery.hoverIntent.minified.js"></script>   
     <script src="js/datatables.min.js"></script>
     <script src="js/bootstrap-switch.min.js"></script>
     <script src="js/jquery.bootstrap-touchspin.js"></script>
@@ -1730,16 +1731,43 @@ dn=ou=[^,]*,.*?ou=([^,]*)
     <!-- endbuild -->
 
     <script>
+       function showHideTooltip() {
+          console.log("ShowHide");
+          if( $('.side-nav').attr('class').indexOf('full') != -1) {
+            $('.side-nav li').find('img').tooltip('destroy');
+          } else {
+            $('.side-nav li').each(function(index, element) {
+              var $element = $(element).find('a').eq(0);
+              var title = $element.find('.menu-lnk').eq(0).text();
+              $element.find('img').eq(0).tooltip({
+                placement: 'right',
+                title: title,
+                container: 'body',
+                delay: { 
+                  show: 200,
+                  hide: 100
+                }
+              });
+            });
+          }
+        }
+
       $(function(){
-       $('input:checkbox').bootstrapSwitch();
-       $('.side-nav').hover(function(){
-          $('.side-nav').addClass('full');
-          //showHideTooltip();
-       }, function (){
-          $('.side-nav').removeClass('full');
-          $('.side-nav > ul > li.dropdown').removeClass('open');
-          //showHideTooltip();
-       });
+        showHideTooltip();
+        $('input:checkbox').bootstrapSwitch();
+        $('.side-nav').hoverIntent({
+          over: function() {
+            $('.side-nav').addClass('full');
+            showHideTooltip();
+          },
+          out: function() {
+            $('.side-nav').removeClass('full');
+            $('.side-nav > ul > li.dropdown').removeClass('open');
+            showHideTooltip();
+          },
+          timeout: 500,
+          interval: 800
+        });
       });
 
 

@@ -74,6 +74,7 @@
         <script src="{% get_static_prefix %}adm/js/bootstrap-select.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
+        <script src="{% get_static_prefix %}adm/js/jquery.hoverIntent.minified.js"></script>
 
         <!-- Flot charts -->
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.min.js"></script>
@@ -126,15 +127,41 @@
         <script src="{% get_static_prefix %}adm/js/base64.js"></script>
         
         <script type="text/javascript">
+           function showHideTooltip() {
+              console.log("ShowHide");
+              if( $('.side-nav').attr('class').indexOf('full') != -1) {
+                $('.side-nav li').find('img').tooltip('destroy');
+              } else {
+                $('.side-nav li').each(function(index, element) {
+                  var $element = $(element).find('a').eq(0);
+                  var title = $element.find('.menu-lnk').eq(0).text();
+                  $element.find('img').eq(0).tooltip({
+                    placement: 'right',
+                    title: title,
+                    container: 'body',
+                    delay: { 
+                      show: 200,
+                      hide: 100
+                    }
+                  });
+                });
+              }
+            }
 
           $(function(){
-            $('.side-nav').hover(function(){
-               $('.side-nav').addClass('full');
-              //showHideTooltip();
-            }, function (){
-               $('.side-nav').removeClass('full');
-               $('.side-nav > ul > li.dropdown').removeClass('open');
-               //showHideTooltip();
+            showHideTooltip();
+            $('.side-nav').hoverIntent({
+              over: function() {
+                $('.side-nav').addClass('full');
+                showHideTooltip();
+              },
+              out: function() {
+                $('.side-nav').removeClass('full');
+                $('.side-nav > ul > li.dropdown').removeClass('open');
+                showHideTooltip();
+              },
+              timeout: 200,
+              interval: 500
             });
 
             // set default error function

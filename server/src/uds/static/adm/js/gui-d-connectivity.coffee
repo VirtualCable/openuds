@@ -5,16 +5,42 @@ gui.connectivity =
 
 gui.connectivity.link = (event) ->
   "use strict"
+
+  clearDetails = ->
+    $("#detail-placeholder").addClass "hidden"
+
   api.templates.get "connectivity", (tmpl) ->
     gui.clearWorkspace()
     gui.appendToWorkspace api.templates.evaluate(tmpl,
       transports: "transports-placeholder"
       networks: "networks-placeholder"
+      transport_info: 'transports-info-placeholder'
     )
     gui.connectivity.transports.table
       icon: 'transports'
-      rowSelect: "single"
       container: "transports-placeholder"
+      rowSelect: "multi"
+
+      onRefresh: (tbl) ->
+        clearDetails()
+
+      onRowDeselect: (deselected, dtable) ->
+        if dtable.rows({selected: true}).count() != 1
+          clearDetails()
+        return
+
+      onRowSelect: (selected) ->
+        if selected.length > 1
+          clearDetails()
+          return
+
+        clearDetails()
+        $("#detail-placeholder").removeClass "hidden"
+        $('#detail-placeholder a[href="#transports-info-placeholder"]').tab('show')
+
+        # Load osmanager "info"
+        gui.methods.typedShow gui.connectivity.transports, selected[0], '#transports-info-placeholder .well', gettext('Error accessing data')
+
       buttons: [
         "new"
         "edit"
@@ -28,7 +54,7 @@ gui.connectivity.link = (event) ->
 
     gui.connectivity.networks.table
       icon: 'networks'
-      rowSelect: "single"
+      rowSelect: "multi"
       container: "networks-placeholder"
       buttons: [
         "new"

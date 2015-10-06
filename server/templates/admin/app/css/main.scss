@@ -68,6 +68,12 @@ body {
   }
 }
 
+.widget-icon.fa-refresh {
+  &:hover {
+    animation: 2s linear 0s normal none infinite running fa-spin;
+  }
+}
+
 .panel-icon {
   margin-left: 0.6em !important;
   cursor: pointer;

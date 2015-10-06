@@ -129,6 +129,12 @@ gui.authenticators.link = (event) ->
         "xls"
         "permissions"
       ]
+
+      onRefresh: (tbl) ->
+        gui.doLog 'Refresh called for authenticators'
+        clearDetails()
+        return
+
       onRowDeselect: (deselected, dtable) ->
         clearDetails()
         return

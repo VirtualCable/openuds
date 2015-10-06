@@ -18,6 +18,9 @@ gui.osmanagers.link = (event) ->
       container: "osmanagers-placeholder"
       rowSelect: "multi"
 
+      onRefresh: (tbl) ->
+        clearDetails()
+
       onRowDeselect: (deselected, dtable) ->
         if dtable.rows({selected: true}).count() != 1
           clearDetails()

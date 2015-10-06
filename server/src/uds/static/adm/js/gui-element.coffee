@@ -83,6 +83,8 @@
   #                   1.- the selected item data (single object, as got from api...get)
   #                   2.- the event that fired this (new, delete, edit, ..)
   #                   4.- the DataTable that raised the event
+  #   onRefesh: ...
+  #
   table: (tblParams) ->
     "use strict"
     tblParams = tblParams or {}
