@@ -25,7 +25,7 @@ $widget-border-color: darken($body-bg, 25%);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from($widget-head-bg-start), to($widget-head-bg-end));
     background-image: -webkit-linear-gradient(top, $widget-head-bg-start, $widget-head-bg-end);
     background-repeat: repeat-x;
-    border-bottom: 1px solid #434857;
+    border-bottom: 1px solid $widget-border-color;
     color: $text-color;
     height: 40px;
     line-height: 40px;
@@ -295,8 +295,8 @@ $widget-border-color: darken($body-bg, 25%);
 
   .widget-footer {
     background: $body-bg;
-    border-bottom: 1px solid $body-bg;
-    border-top: 1px solid $body-bg;
+    // border-bottom: 1px solid $widget-border-color;
+    border-top: 1px solid $widget-border-color;
     height: 25px;
     line-height: 25px;
 

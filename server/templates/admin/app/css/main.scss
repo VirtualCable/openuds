@@ -210,55 +210,38 @@ body {
       overflow-x: hidden;
     }
 
-    .switcher {
-      visibility: visible;
-      position: absolute;
-      left: $sidebar-switcher-pos-collapsed;
-      top: 0;
-      background-color: $navbar-inverse-bg;
-      color: $gray-lighter;
-      width: $sidebar-switcher-size;
-      height: $sidebar-switcher-size;
-      font-size: $sizebar-switcher-font-size;
-      text-align: center;
-      cursor: pointer;
-      z-index: $zindex-popover;
-      -webkit-transition: left 0.3s; /* For Safari 3.1 to 6.0 */
-      transition: left 0.3s;
-      &:before {
-        content:"\f101";
-      }
-    }
-
-    > ul > li {
-      width: $sidebar-size;
-      overflow-x: hidden;
-      // border-bottom: 1px solid $navbar-default-border;
-
-      &:hover, &.active, &:focus {
-        color: $brand-primary;
-        background-color: darken($navbar-default-bg, 15%);
-      }
-
-      &.dropdown > ul.dropdown-menu {
+    > ul {
+        // border-top: 1px solid $navbar-default-border;
+      > li {
         width: $sidebar-size;
-        position: relative;
-        margin: 0;
-        padding: 0;
-        border: none;
-        border-radius: 0;
-        background-color: transparent;
-        box-shadow: none;
-        -webkit-box-shadow: none;
+        overflow-x: hidden;
+        // border-bottom: 1px solid $navbar-default-border;
+
+        &:hover, &.active, &:focus {
+          color: $brand-primary;
+          background-color: darken($navbar-default-bg, 15%);
+        }
+
+        &.dropdown > ul.dropdown-menu {
+          width: $sidebar-size;
+          position: relative;
+          margin: 0;
+          padding: 0;
+          border: none;
+          border-radius: 0;
+          background-color: transparent;
+          box-shadow: none;
+          -webkit-box-shadow: none;
 
 
-        > li > a {
-          color: inherit;
-          padding: $font-size-base;
+          > li > a {
+            color: inherit;
+            padding: $font-size-base;
 
-          &:hover, &.active, &:focus {
-            color: #fff;
-            background-color: #080808;
+            &:hover, &.active, &:focus {
+              color: #fff;
+              background-color: #080808;
+            }
           }
         }
       }
@@ -269,12 +252,6 @@ body {
       margin-left: -$sidebar-size;
       left: $sidebar-size;
       width: $sidebar-size;
-      .switcher {
-        left: $sidebar-switcher-pos;
-        &:before {
-          content:"\f100";
-        }
-      }
 
       .icon {
         width: $sidebar-icon-width;
@@ -287,6 +264,7 @@ body {
       }
 
       > ul > li {
+        // border-bottom: none;
         //border-bottom: none;
       }
 

@@ -27,12 +27,21 @@
 <div id="detail-placeholder" class="row hidden">
     <div class="col-xs-12">
         <ul class="bottom_tabs nav nav-tabs">
-            <li class="active"><a href="#{{ users }}_tab" data-toggle="tab">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</a></li>
+            <li class="active"><a href="#{{ auths_info }}" data-toggle="tab">{% endverbatim %}{% trans 'Overview' %}{% verbatim %}</a></li>
+            <li><a href="#{{ users }}_tab" data-toggle="tab">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</a></li>
             <li><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
         </ul>
         <div class="tab-content">
-            <div class="tab-pane{% endverbatim %}{% enhaced_visual %} fade in{% endenhaced_visual%}{% verbatim %} active" id="{{ users }}_tab">
+            <div class="tab-pane{% endverbatim %}{% enhaced_visual %} fade in{% endenhaced_visual%}{% verbatim %} active" id="{{ auths_info }}">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="well">
+                  </div>
+                </div>
+              </div>              
+            </div>       
+            <div class="tab-pane" id="{{ users }}_tab">
                 <div class="row">
                     <div class="col-xs-12" id="{{ users }}">
                     </div>

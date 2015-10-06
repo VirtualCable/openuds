@@ -356,7 +356,11 @@
                     type: "text"
                     content: gui.config.dataTableButtons.permissions.text
                     fnSelect: permissionsSelected
-                    fnClick: clickHandlerFor(gui.permissions, self.rest)
+                    fnClick: () ->
+                      selecteds = dTable.rows({selected: true}).data()
+                      gui.doLog "Permissions click: ", selecteds, dTable, refreshFnc
+                      gui.permissions selecteds[0], self.rest, dTable, refreshFnc
+
                     css: gui.config.dataTableButtons.permissions.css
               when "xls"
                 btn =
@@ -615,7 +619,7 @@
       tableId: tableId
       columns: columns
     )).appendTo "head"
-    self.rest.getLogs itemId, (data) ->
+    initLog = (data) ->
       gui.doLog data
       $("#" + tableId).dataTable
         aaData: data
@@ -644,4 +648,11 @@
       tblParams.onLoad self  if tblParams.onLoad
       return
 
-    "#" + tableId
+    if tblParams.doNotLoadData isnt true
+      self.rest.getLogs itemId, (data) -> # Gets "overview" data for table (table contents, but resume form)
+        initLog(data)
+    else
+      initLog([])
+
+     
+    return "#" + tableId

@@ -11,6 +11,9 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link rel="stylesheet" href="css/datatables.css">
     <link href="css/font-awesome.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="css/bootstrap-switch.css">
+    <link rel="stylesheet" href="css/jquery.bootstrap-touchspin.css">
+
     
     <!-- build:css(.) css/vendor.css -->
     <!-- bower:css -->
@@ -45,7 +48,6 @@
     <!-- Side bar -->
      <div class="collapse navbar-collapse navbar-ex1-collapse">
         <div class="side-nav">
-          <div class="switcher fa"> </div>
           <ul class="nav navbar-nav">
             <li><a class="lnk-dashboard" href="#"><img src="img/icons/dashboard-monitor.png" class="icon"> <span class="menu-lnk">Overview</span></a></li>
             <li><a class="lnk-service_providers" href="#"><img class="icon" src="img/icons/providers.png"/> <span class="menu-lnk">Services</span></a></li>
@@ -1487,6 +1489,192 @@
     
 </div> <!-- /TYPE PANEL -->
 
+<form role="form" class="form-horizontal" novalidate="novalidate"><input type="hidden" value="53a53965-8a90-5e3b-96c4-91937d0042f0" class="modal_field_data" name="id">
+
+<div class="form-group">
+    <label data-title="Name of this element" data-toggle="tooltip" class="col-sm-3 control-label" for="name_field" data-original-title="" title="">Name</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="987654321" required="" value="Ldap AD por RegEx" placeholder="Name of this element" id="name_field" name="name" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Comments for this element" data-toggle="tooltip" class="col-sm-3 control-label" for="comments_field" data-original-title="" title="">Comments</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="987654321" value="en el del vmware" placeholder="Comments for this element" id="comments_field" name="comments" class="form-control modal_field_data">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Selects the priority of this element (lower number means higher priority)" data-toggle="tooltip" class="col-sm-3 control-label" for="priority_field" data-original-title="" title="">Priority</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <div class="input-group bootstrap-touchspin"><span class="input-group-addon bootstrap-touchspin-prefix" style="display: none;"></span><input type="text" data-maxval="" data-minval="987654321" required="" value="1" placeholder="Selects the priority of this element (lower number means higher priority)" id="priority_field" name="priority" class="form-control modal_field_data" style="display: block;" aria-required="true"><span class="input-group-addon bootstrap-touchspin-postfix" style="display: none;"></span><span class="input-group-btn-vertical"><button type="button" class="btn btn-default bootstrap-touchspin-up"><i class="glyphicon glyphicon-plus"></i></button><button type="button" class="btn btn-default bootstrap-touchspin-down"><i class="glyphicon glyphicon-minus"></i></button></span></div>
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Tag for this element" data-toggle="tooltip" class="col-sm-3 control-label" for="small_name_field" data-original-title="" title="">Tag</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="987654321" required="" value="read" placeholder="Tag for this element" id="small_name_field" name="small_name" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Ldap Server Host" data-toggle="tooltip" class="col-sm-3 control-label" for="host_field" data-original-title="" title="">Host</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="" required="" value="172.27.0.66" placeholder="Ldap Server Host" id="host_field" name="host" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Ldap port (usually 389 for non ssl and 636 for ssl)" data-toggle="tooltip" class="col-sm-3 control-label" for="port_field" data-original-title="" title="">Port</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <div class="input-group bootstrap-touchspin"><span class="input-group-addon bootstrap-touchspin-prefix" style="display: none;"></span><input type="text" data-maxval="987654321" data-minval="987654321" required="" value="389" placeholder="Ldap port (usually 389 for non ssl and 636 for ssl)" id="port_field" name="port" class="form-control modal_field_data" style="display: block;" aria-required="true"><span class="input-group-addon bootstrap-touchspin-postfix" style="display: none;"></span><span class="input-group-btn-vertical"><button type="button" class="btn btn-default bootstrap-touchspin-up"><i class="glyphicon glyphicon-plus"></i></button><button type="button" class="btn btn-default bootstrap-touchspin-down"><i class="glyphicon glyphicon-minus"></i></button></span></div>
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="If checked, the connection will be ssl, using port 636 instead of 389" data-toggle="tooltip" class="col-sm-3 control-label" for="ssl_field" data-original-title="" title="">Use SSL</label>
+    <div class="col-sm-9">
+ 
+        
+
+    <input type="checkbox" id="ssl_field" name="ssl" class="modal_field_data" data-off-text="No" data-on-text="Yes">
+
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Username with read privileges on the base selected" data-toggle="tooltip" class="col-sm-3 control-label" for="username_field" data-original-title="" title="">Ldap User</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="" required="" value="administrador@dom.dkmon.com" placeholder="Username with read privileges on the base selected" id="username_field" name="username" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Password of the ldap user" data-toggle="tooltip" class="col-sm-3 control-label" for="password_field" data-original-title="" title="">Password</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="password" data-maxval="" data-minval="" required="" value="Temporal2012" placeholder="Password of the ldap user" id="password_field" name="password" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Timeout in seconds of connection to LDAP" data-toggle="tooltip" class="col-sm-3 control-label" for="timeout_field" data-original-title="" title="">Timeout</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <div class="input-group bootstrap-touchspin"><span class="input-group-addon bootstrap-touchspin-prefix" style="display: none;"></span><input type="text" data-maxval="987654321" data-minval="1" required="" value="10" placeholder="Timeout in seconds of connection to LDAP" id="timeout_field" name="timeout" class="form-control modal_field_data" style="display: block;" aria-required="true"><span class="input-group-addon bootstrap-touchspin-postfix" style="display: none;"></span><span class="input-group-btn-vertical"><button type="button" class="btn btn-default bootstrap-touchspin-up"><i class="glyphicon glyphicon-plus"></i></button><button type="button" class="btn btn-default bootstrap-touchspin-down"><i class="glyphicon glyphicon-minus"></i></button></span></div>
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Common search base (used for &quot;users&quot; and &quot;groups&quot;)" data-toggle="tooltip" class="col-sm-3 control-label" for="ldapBase_field" data-original-title="" title="">Base</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="" required="" value="dc=dom,dc=dkmon,dc=com" placeholder="Common search base (used for &quot;users&quot; and &quot;groups&quot;)" id="ldapBase_field" name="ldapBase" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Class for LDAP users (normally posixAccount)" data-toggle="tooltip" class="col-sm-3 control-label" for="userClass_field" data-original-title="" title="">User class</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="" required="" value="user" placeholder="Class for LDAP users (normally posixAccount)" id="userClass_field" name="userClass" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Attribute that contains the user id" data-toggle="tooltip" class="col-sm-3 control-label" for="userIdAttr_field" data-original-title="" title="">User Id Attr</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <input type="text" data-maxval="" data-minval="" required="" value="sAMAccountName" placeholder="Attribute that contains the user id" id="userIdAttr_field" name="userIdAttr" class="form-control modal_field_data" aria-required="true">
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Attributes that contains the user name (list of comma separated values)" data-toggle="tooltip" class="col-sm-3 control-label" for="userNameAttr_field" data-original-title="" title="">User Name Attr</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <textarea placeholder="Attributes that contains the user name (list of comma separated values)" id="userNameAttr_field" name="userNameAttr" class="form-control modal_field_data">cn</textarea>
+
+
+    </div>
+</div>
+
+<div class="form-group">
+    <label data-title="Attribute that contains the group name" data-toggle="tooltip" class="col-sm-3 control-label" for="groupNameAttr_field" data-original-title="" title="">Group Name Attr</label>
+    <div class="col-sm-9">
+ 
+        
+
+        <textarea placeholder="Attribute that contains the group name" id="groupNameAttr_field" name="groupNameAttr" class="form-control modal_field_data">dn=ou=([^,]*)
+dn=ou=[^,]*,.*?ou=([^,]*)
+
+</textarea>
+
+
+    </div>
+</div></form>
+
 <!--
 <div class="panel panel-primary" id="">
     <div class="panel-heading">
@@ -1533,48 +1721,28 @@
     <!-- endbuild -->
     
 
-    <!-- build:js js/main.js -->
     <script src="js/datatables.min.js"></script>
+    <script src="js/bootstrap-switch.min.js"></script>
+    <script src="js/jquery.bootstrap-touchspin.js"></script>
+
+    <!-- build:js js/main.js -->
     <script src="js/main.js"></script>
     <!-- endbuild -->
 
     <script>
-
-      function showHideTooltip() {
-        if( $('.side-nav').attr('class').indexOf('full') != -1) {
-          $('.side-nav li').find('img').tooltip('destroy');
-        } else {
-          $('.side-nav li').each(function(index, element) {
-            var $element = $(element).find('a').eq(0);
-            var title = $element.find('.menu-lnk').eq(0).text();
-            $element.find('img').eq(0).tooltip({
-              placement: 'right',
-              title: title,
-              container: 'body',
-              delay: { 
-                show: 500,
-                hide: 100
-              }
-            });
-          });
-        }
-      }
-
       $(function(){
-        showHideTooltip();
-        $('.side-nav .switcher').on('click', function() {
-          var rr = [$('.side-nav'), $('#wrapper')];
-
-          for( var r = 0; r < 2; r++ ) {
-            if( rr[r].attr('class').indexOf('full') != -1 ) {
-              rr[r].removeClass('full');
-            } else {
-              rr[r].addClass('full');
-            }
-          }
-          showHideTooltip();
-        });
+       $('input:checkbox').bootstrapSwitch();
+       $('.side-nav').hover(function(){
+          $('.side-nav').addClass('full');
+          //showHideTooltip();
+       }, function (){
+          $('.side-nav').removeClass('full');
+          $('.side-nav > ul > li.dropdown').removeClass('open');
+          //showHideTooltip();
+       });
       });
+
+
     </script>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

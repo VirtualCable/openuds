@@ -126,51 +126,28 @@
         <script src="{% get_static_prefix %}adm/js/base64.js"></script>
         
         <script type="text/javascript">
-          function showHideTooltip() {
-            if( $('.side-nav').attr('class').indexOf('full') != -1) {
-              $('.side-nav li').find('img').tooltip('destroy');
-            } else {
-              $('.side-nav li').each(function(index, element) {
-                var $element = $(element).find('a').eq(0);
-                var title = $element.find('.menu-lnk').eq(0).text();
-                $element.find('img').eq(0).tooltip({
-                  placement: 'right',
-                  title: title,
-                  container: 'body',
-                  delay: { 
-                    show: 500,
-                    hide: 100
-                  }
-                });
-              });
-            }
-          }
 
           $(function(){
-            showHideTooltip();
-            $('.side-nav .switcher').on('click', function() {
-              var rr = [$('.side-nav'), $('#wrapper')];
-
-              for( var r = 0; r < 2; r++ ) {
-                if( rr[r].attr('class').indexOf('full') != -1 ) {
-                  rr[r].removeClass('full');
-                } else {
-                  rr[r].addClass('full');
-                }
-              }
-              showHideTooltip();
+            $('.side-nav').hover(function(){
+               $('.side-nav').addClass('full');
+              //showHideTooltip();
+            }, function (){
+               $('.side-nav').removeClass('full');
+               $('.side-nav > ul > li.dropdown').removeClass('open');
+               //showHideTooltip();
             });
-              // set default error function
-        	  api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
-    		  // Initialize gui
-        	  gui.init();
 
-              $.fn.datepicker.defaults.format = 'yyyy/mm/dd';
-              $.fn.datepicker.defaults.todayBtn = "linked";
-              $.fn.datepicker.defaults.autoclose = true;
-              $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
+            // set default error function
+            api.defaultFail = gui.failRequestModalFnc(gettext('Error on request'));
+    		// Initialize gui
+        	gui.init();
 
-            });        
+            $.fn.datepicker.defaults.format = 'yyyy/mm/dd';
+            $.fn.datepicker.defaults.todayBtn = "linked";
+            $.fn.datepicker.defaults.autoclose = true;
+            $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
+
+          });        
         </script>
         {% block js %}{% endblock %}
         {% endcompress %}
@@ -203,8 +180,8 @@
         {% js_template 'comp/modal' %}
         {% js_template 'comp/responsive_table' %}
         {% js_template 'comp/dropdown' %}
-
-        {% js_template 'comp/overview_fld' %}
+        
+        <!-- overview -->
         {% js_template 'comp/overview_record' %}
 
 

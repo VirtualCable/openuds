@@ -46,7 +46,6 @@ gui.providers.link = (event) ->
     
     # Append tabs click events
     $(".bottom_tabs").on "click", (event) ->
-      gui.doLog "Tab pressed", event.target
       setTimeout (->
         $($(event.target).attr("href") + " span.fa-refresh").click()
         return
@@ -55,8 +54,6 @@ gui.providers.link = (event) ->
 
     tableId = gui.providers.table(
       icon: 'providers'
-      getPermission: (selected) ->
-        gui.doLog "Selected", selected
       container: "providers-placeholder"
       rowSelect: "multi"
       onCheck: (check, items) -> # Check if item can be deleted
@@ -71,8 +68,8 @@ gui.providers.link = (event) ->
 
         return
 
-      onRowDeselect: (deselected, dtable)->
-        if dtable.rows({selected: true}).count() == 0
+      onRowDeselect: (deselected, dtable) ->
+        if dtable.rows({selected: true}).count() != 1
           clearDetails()
         return
 
@@ -84,6 +81,8 @@ gui.providers.link = (event) ->
         gui.tools.blockUI()
         clearDetails()
         $("#detail-placeholder").removeClass "hidden"
+        $('#detail-placeholder a[href="#provider-info-placeholder"]').tab('show')
+
 
         # Load provider "info"
         gui.methods.typedShow gui.providers, selected[0], '#provider-info-placeholder .well', gettext('Error accessing data')

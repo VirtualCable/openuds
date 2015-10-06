@@ -60,7 +60,7 @@ gui.permissions = (val, rest, tbl, refreshFnc) ->
                     )
               return
             
-            # Makes form "beautyfull" :-)
+            # Makes form "beautyful" :-)
             gui.tools.applyCustoms modalId
             return
 

@@ -19,3 +19,58 @@ $btn-margin: $font-size-base/2;
 
   margin-right: $font-size-base/2;
 }
+
+
+// Default buttons a bit more beautiful
+.btn {
+  &.btn-default {
+    @include pretty-buttons($btn-default-color, $btn-default-bg);
+  }
+  &.btn-primary {
+    @include pretty-buttons($btn-primary-color, $btn-primary-bg);
+  }
+  &.btn-success {
+    @include pretty-buttons($btn-success-color, $btn-success-bg);
+  }
+  &.btn-info {
+    @include pretty-buttons($btn-info-color, $btn-info-bg);
+  }
+  &.btn-warning {
+    @include pretty-buttons($btn-warning-color, $btn-warning-bg);
+  }
+  &.btn-danger {
+    @include pretty-buttons($btn-danger-color, $btn-danger-bg);
+  }
+  &.btn-inverse {
+    @include pretty-buttons(white, #474949);
+  }
+}
+
+
+/*.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
+    background: #337ab7 none repeat scroll 0 0;
+    color: #fff;
+}*/
+
+.bootstrap-switch {
+  .bootstrap-switch-label {
+    @include pretty-buttons($btn-default-color, $btn-default-bg);
+  }
+  .bootstrap-switch-handle-on {
+    &.bootstrap-switch-default {
+      @include pretty-buttons($btn-default-color, $btn-default-bg); 
+    }
+    &.bootstrap-switch-primary {
+      @include pretty-buttons($btn-primary-color, $btn-primary-bg); 
+    }
+  }
+
+  .bootstrap-switch-handle-off {
+    &.bootstrap-switch-default {
+      @include pretty-buttons($btn-warning-color, $btn-warning-bg); 
+    }
+    &.bootstrap-switch-primary {
+      @include pretty-buttons($btn-warning-color, $btn-warning-bg); 
+    }
+  }
+}

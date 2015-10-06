@@ -101,6 +101,7 @@ gui.authenticators.link = (event) ->
     gui.clearWorkspace()
     gui.appendToWorkspace api.templates.evaluate(tmpl,
       auths: "auths-placeholder"
+      auths_info: "auths-info-placeholder"
       users: "users-placeholder"
       users_log: "users-log-placeholder"
       groups: "groups-placeholder"
@@ -120,7 +121,7 @@ gui.authenticators.link = (event) ->
     tableId = gui.authenticators.table(
       icon: 'authenticators'
       container: "auths-placeholder"
-      rowSelect: "single"
+      rowSelect: "multi"
       buttons: [
         "new"
         "edit"
@@ -128,18 +129,27 @@ gui.authenticators.link = (event) ->
         "xls"
         "permissions"
       ]
-      onRowDeselect: ->
+      onRowDeselect: (deselected, dtable) ->
         clearDetails()
         return
 
       onRowSelect: (selected) ->
+        clearDetails()
+ 
+        if selected.length > 1
+          return
         
         # We can have lots of users, so memory can grow up rapidly if we do not keep thins clean
         # To do so, we empty previous table contents before storing new table contents
         # Anyway, TabletTools will keep "leaking" memory, but we can handle a little "leak" that will be fixed as soon as we change the section
-        clearDetails()
         $("#detail-placeholder").removeClass "hidden"
+        $('#detail-placeholder a[href="#auths-info-placeholder"]').tab('show')
+
         gui.tools.blockUI()
+
+        # Load provider "info"
+        gui.methods.typedShow gui.authenticators, selected[0], '#auths-info-placeholder .well', gettext('Error accessing data')
+
         id = selected[0].id
         type = gui.authenticators.types[selected[0].type]
         gui.doLog "Type", type
@@ -148,7 +158,8 @@ gui.authenticators.link = (event) ->
         grpTable = group.table(
           icon: 'groups'
           container: "groups-placeholder"
-          rowSelect: "single"
+          doNotLoadData: true
+          rowSelect: "multi"
           buttons: [
             "new"
             "edit"
@@ -267,7 +278,8 @@ gui.authenticators.link = (event) ->
         usrTable = user.table(
           icon: 'users'
           container: "users-placeholder"
-          rowSelect: "single"
+          doNotLoadData: true
+          rowSelect: "multi"
           onRowSelect: (uselected) ->
             gui.doLog 'User row selected ', uselected
             gui.tools.blockUI()
@@ -388,6 +400,7 @@ gui.authenticators.link = (event) ->
         )
         logTable = gui.authenticators.logTable(id,
           container: "logs-placeholder"
+          doNotLoadData: true
         )
         
         # So we can destroy the tables beforing adding new ones
