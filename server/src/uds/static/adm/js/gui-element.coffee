@@ -211,31 +211,30 @@
           $("#" + tblParams.container).append table.text
 
         # What execute on refresh button push
-        onRefresh = tblParams.onRefresh or ->
-
-        self.refresh = refreshFnc = ->
-          # Refreshes table content
-          tbl = $("#" + tableId).DataTable()
-          
-          #if( data.length > 1000 )
-          gui.tools.blockUI()
-          setTimeout (->
-            self.rest.overview (data) -> # Restore overview
-              tblParams.onData data  if tblParams.onData
-              tbl.rows().remove()
-              if data.length > 0  # Only adds data if data is available
-                tbl.rows.add(data)
-
-              tbl.columns.adjust().draw()
-
-              onRefresh self
-              gui.tools.unblockUI()
+        if not tblParams.onRefresh?
+          tblParams.onRefresh = (tbl) ->
             return
-            ), 0
-          return
 
-          # End restore overview
-          false # This may be used on button or href, better disable execution of it
+         self.refresh = refreshFnc = () ->
+            # Refreshes table content
+            tbl = $("#" + tableId).DataTable()
+            
+            #if( data.length > 1000 )
+            gui.tools.blockUI()
+            setTimeout (->
+              self.rest.overview (data) -> # Restore overview
+                tblParams.onData data  if tblParams.onData
+                tbl.rows().remove()
+                if data.length > 0  # Only adds data if data is available
+                  tbl.rows.add(data)
+
+                tbl.columns.adjust().draw()
+                gui.doLog "onRefresh", tblParams.onRefresh
+                tblParams.onRefresh self
+                gui.tools.unblockUI()
+              return
+              ), 0
+            return
 
         btns = []
         if tblParams.buttons       

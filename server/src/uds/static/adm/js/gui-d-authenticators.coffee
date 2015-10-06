@@ -415,10 +415,6 @@ gui.authenticators.link = (event) ->
         prevTables.push logTable
         false
 
-      onRefresh: ->
-        $("#users-placeholder").empty() # Remove detail on parent refresh
-        return
-
       onNew: gui.methods.typedNew(gui.authenticators, gettext("New authenticator"), gettext("Authenticator creation error"), testButton)
       onEdit: gui.methods.typedEdit(gui.authenticators, gettext("Edit authenticator"), gettext("Authenticator saving error"), testButton)
       onDelete: gui.methods.del(gui.authenticators, gettext("Delete authenticator"), gettext("Authenticator deletion error"))
