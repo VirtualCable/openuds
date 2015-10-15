@@ -32,7 +32,7 @@ DATABASES = {
         'PASSWORD': 'PASSWOR',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
-	      'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
+	    # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
     }
 }
 ALLOWED_HOSTS = '*'
@@ -121,6 +121,9 @@ CACHES = {
             'MAX_ENTRIES': 5000,
             'CULL_FREQUENCY': 3,  #  0 = Entire cache will be erased once MAX_ENTRIES is reached, this is faster on DB. if other value, will remove 1/this number items fromm cache
         }
+    },
+    'memory': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 
