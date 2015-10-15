@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-10-05'
+__updated__ = '2015-10-15'
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +185,11 @@ class Scheduler(object):
             try:
                 time.sleep(self.granularity)
                 self.executeOneJob()
-            except Exception, e:
+            except Exception as e:
                 logger.exception('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+                try:
+                    connection.close()
+                except Exception:
+                    logger.exception('Exception clossing connection at delayed task')
         logger.info('Exiting Scheduler because stop has been requested')
         self.releaseOwnShedules()
