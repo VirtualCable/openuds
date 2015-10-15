@@ -53,7 +53,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-06-05'
+__updated__ = '2015-10-09'
 
 
 @webLoginRequired(admin=False)
@@ -80,7 +80,7 @@ def transportOwnLink(request, idService, idTransport):
     raise RuntimeError('Unreachable point reached!!!')
 
 
-@cache_page(3600, key_prefix='img')
+@cache_page(3600, key_prefix='img', cache='memory')
 def transportIcon(request, idTrans):
     try:
         icon = Transport.objects.get(uuid=processUuid(idTrans)).getInstance().icon(False)
@@ -89,7 +89,7 @@ def transportIcon(request, idTrans):
         return HttpResponseRedirect('/static/img/unknown.png')
 
 
-@cache_page(3600, key_prefix='img')
+@cache_page(3600, key_prefix='img', cache='memory')
 def serviceImage(request, idImage):
     try:
         icon = Image.objects.get(uuid=processUuid(idImage))
