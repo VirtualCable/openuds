@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.db import transaction
+from django.db import transaction, connection
 from django.db.models import Q
 from uds.models import DelayedTask as dbDelayedTask
 from uds.models import getSqlDatetime
@@ -44,7 +44,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-01-21'
+__updated__ = '2015-10-15'
 
 logger = logging.getLogger(__name__)
 
@@ -173,6 +173,10 @@ class DelayedTaskRunner(object):
             try:
                 time.sleep(self.granularity)
                 self.executeOneDelayedTask()
-            except Exception, e:
+            except Exception as e:
                 logger.error('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+                try:
+                    connection.close()
+                except Exception:
+                    logger.exception('Exception clossing connection at delayed task')
         logger.info('Exiting DelayedTask Runner because stop has been requested')

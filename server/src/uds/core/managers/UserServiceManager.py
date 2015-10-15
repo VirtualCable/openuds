@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2015-05-27'
+__updated__ = '2015-10-15'
 
 logger = logging.getLogger(__name__)
 
@@ -480,12 +480,12 @@ class UserServiceManager(object):
                               data=json.dumps({'user': userName, 'protocol': protocol}),
                               headers={'content-type': 'application/json'},
                               verify=False,
-                              timeout=5)
+                              timeout=2)
             r = json.loads(r.content)
             logger.debug('Sent pre connection to client using {}: {}'.format(url, r))
             # In fact we ignore result right now
         except Exception as e:
-            logger.error('Exception caught notifiying preConnection: {}. Check connection on destination machine: {}'.format(e, url))
+            logger.info('preConnection failed: {}. Check connection on destination machine: {}'.format(e, url))
 
     def sendScript(self, uService, script):
         '''

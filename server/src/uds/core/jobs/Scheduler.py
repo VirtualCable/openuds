@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-10-05'
+__updated__ = '2015-10-15'
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,11 @@ class JobThread(threading.Thread):
                 done = True
             except Exception:
                 # Databases locked, maybe because we are on a multitask environment, let's try again in a while
-                logger.info('Database access locked... Retrying')
+                try:
+                    connection.close()
+                except Exception as e:
+                    logger.error('On job executor, closing db connection: {}'.format(e))
+                logger.info('Database access failed... Retrying')
                 time.sleep(1)
 
         # Ensures DB connection is released after job is done
@@ -160,7 +164,8 @@ class Scheduler(object):
             # This in fact means that we have to retry operation, and retry will happen on main loop
             # Look at this http://dev.mysql.com/doc/refman/5.0/en/innodb-deadlocks.html
             # I have got some deadlock errors, but looking at that url, i found that it is not so abnormal
-            logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
+            # logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
+            raise DatabaseError('Database access problems. Retrying connection')
 
     @staticmethod
     def releaseOwnShedules():
@@ -185,7 +190,11 @@ class Scheduler(object):
             try:
                 time.sleep(self.granularity)
                 self.executeOneJob()
-            except Exception, e:
-                logger.exception('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+            except Exception as e:
+                logger.error('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+                try:
+                    connection.close()
+                except Exception:
+                    logger.exception('Exception clossing connection at delayed task')
         logger.info('Exiting Scheduler because stop has been requested')
         self.releaseOwnShedules()
