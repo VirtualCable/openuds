@@ -20,18 +20,19 @@
   # Several convenience "constants" for tables
   gui.config.dataTablesLanguage =
     sLengthMenu: gettext("_MENU_ records per page")
-    sZeroRecords: gettext("Empty")
-    sInfo: gettext("Records _START_ to _END_ of _TOTAL_")
-    sInfoEmpty: gettext("No records")
-    sInfoFiltered: gettext("(filtered from _MAX_ total records)")
-    sProcessing: gettext("Please wait, processing")
-    sSearch: gettext("Filter")
-    sInfoThousands: django.formats.THOUSAND_SEPARATOR
-    oPaginate:
-      sFirst: "<span class=\"fa fa-fast-backward \"></span> "
-      sLast: "<span class=\"fa fa-fast-forward\"></span> "
-      sNext: "<span class=\"fa fa-forward\"></span> "
-      sPrevious: "<span class=\"fa fa-backward\"></span> "
+    emptyTable: gettext("Empty")
+    zeroRecords:  gettext("No records")
+    info: gettext("Records _START_ to _END_ of _TOTAL_")
+    infoEmpty: gettext("No records")
+    infoFiltered: ' ' + gettext("(filtered from _MAX_ total records)")
+    processing: gettext("Please wait, processing")
+    search: gettext("Filter")
+    thousands: django.formats.THOUSAND_SEPARATOR
+    paginate:
+      first: "<span class=\"fa fa-fast-backward \"></span> "
+      last: "<span class=\"fa fa-fast-forward\"></span> "
+      next: "<span class=\"fa fa-forward\"></span> "
+      previous: "<span class=\"fa fa-backward\"></span> "
     select:
       rows:
         _: gettext("Selected %d rows")

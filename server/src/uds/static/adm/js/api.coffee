@@ -180,8 +180,10 @@ class BasicModelRest
       success_fnc {}
       return
     if cacheKey isnt "." and @cache.get(cacheKey)
+      api.doLog "Cache SUCCESS for " + cacheKey
       success_fnc @cache.get(cacheKey)
     else
+      api.doLog "Cache FAIL for " + cacheKey
       $this = @
       api.doLog 'Obtaining json for ', path
       api.getJson path,
@@ -321,7 +323,7 @@ class BasicModelRest
       path = @guiPath
 
     @_requestPath path,
-      cacheKey: "."
+      cacheKey: path
       success: success_fnc
       fail: fail_fnc
 
@@ -333,6 +335,7 @@ class BasicModelRest
 
     path = @tableInfoPath
     @_requestPath path,
+      cacheKey: path
       success: success_fnc
       fail: fail_fnc
 

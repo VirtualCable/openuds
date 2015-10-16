@@ -117,7 +117,7 @@ gui.servicesPools.link = (event) ->
   api.templates.get "services_pool", (tmpl) ->
     gui.appendToWorkspace api.templates.evaluate(tmpl,
       deployed_services: "deployed-services-placeholder"
-      pool_info: "pool-info"
+      pool_info: "pool-info-placeholder"
       assigned_services: "assigned-services-placeholder"
       cache: "cache-placeholder"
       groups: "groups-placeholder"
@@ -176,6 +176,10 @@ gui.servicesPools.link = (event) ->
           return
 
         $("#detail-placeholder").removeClass "hidden"
+        $('#detail-placeholder a[href="#pool-info-placeholder"]').tab('show')
+
+        # Load provider "info"
+        gui.methods.typedShow gui.servicesPools, selected[0], '#pool-info-placeholder .well', gettext('Error accessing data')
         
         # 
         #                     * Cache Part
@@ -186,11 +190,13 @@ gui.servicesPools.link = (event) ->
         # Shows/hides cache
         if info.uses_cache or info.uses_cache_l2
           $("#cache-placeholder_tab").removeClass "hidden"
+
           cachedItems = new GuiElement(api.servicesPools.detail(servPool.id, "cache", { permission: servPool.permission }), "cache")
           
           # Cached items table
           prevCacheLogTbl = null
           cachedItemsTable = cachedItems.table(
+            doNotLoadData: true
             icon: 'cached'
             container: "cache-placeholder_tbl"
             rowSelect: "single"
@@ -205,7 +211,6 @@ gui.servicesPools.link = (event) ->
               return
 
             onRowSelect: (selected) ->
-              gui.do
               cached = selected[0]
               if prevCacheLogTbl
                 $tbl = $(prevCacheLogTbl).dataTable()
@@ -234,6 +239,7 @@ gui.servicesPools.link = (event) ->
           
           # Groups items table
           groupsTable = groups.table(
+            doNotLoadData: true
             icon: 'groups'
             container: "groups-placeholder"
             rowSelect: "single"
@@ -310,6 +316,7 @@ gui.servicesPools.link = (event) ->
         prevAssignedLogTbl = null
         assignedServices = new GuiElement(api.servicesPools.detail(servPool.id, "services", { permission: servPool.permission }), "services")
         assignedServicesTable = assignedServices.table(
+          doNotLoadData: true
           icon: 'assigned'
           container: "assigned-services-placeholder_tbl"
           rowSelect: "single"
@@ -356,6 +363,7 @@ gui.servicesPools.link = (event) ->
         
         # Transports items table
         transportsTable = transports.table(
+          doNotLoadData: true
           icon: 'transports'
           container: "transports-placeholder"
           doNotLoadData: true
@@ -424,6 +432,7 @@ gui.servicesPools.link = (event) ->
           
           # Publications table
           publicationsTable = publications.table(
+            doNotLoadData: true
             icon: 'publications'
             container: "publications-placeholder"
             doNotLoadData: true            
@@ -513,6 +522,7 @@ gui.servicesPools.link = (event) ->
         #                     * Log table
         #                     
         logTable = gui.servicesPools.logTable(servPool.id,
+          doNotLoadData: true
           container: "logs-placeholder"
         )
         prevTables.push logTable
@@ -538,7 +548,7 @@ gui.servicesPools.link = (event) ->
         return
 
       onNew: gui.methods.typedNew(gui.servicesPools, gettext("New service pool"), "Service pool " + gettext("creation error"),
-        guiProcessor: (guiDef) -> # Create has "save on publish" field
+        guiProcessor: (guiDef) -> # Create has "publish on save" field
           editMode = false
           gui.doLog guiDef
           newDef = [].concat(guiDef).concat([

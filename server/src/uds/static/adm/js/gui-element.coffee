@@ -428,7 +428,7 @@
           data: data
           deferRender: tblParams.deferedRender or tblParams.deferRender or false
           
-          oLanguage: gui.config.dataTablesLanguage
+          language: gui.config.dataTablesLanguage
 
         
         # If row is "styled"
@@ -436,9 +436,14 @@
           field = row_style.field
           dct = row_style.dict
           prefix = row_style.prefix
-          dataTableOptions.fnCreatedRow = (nRow, aData, iDataIndex) ->
-            v = (if dct? then dct[@fnGetData(iDataIndex)[field]] else @fnGetData(iDataIndex)[field])
-            $(nRow).addClass prefix + v
+          dataTableOptions.createdRow = (row, data, dataIndex) ->
+            # gui.doLog row, data, dataIndex, data[field]
+            try
+              v = (if dct? then dct[data[field]] else data[field])
+              $(row).addClass prefix + v
+            catch err
+              gui.doLog "Exception got: ", err
+
             return
 
         dTable = $("#" + tableId).DataTable dataTableOptions
@@ -615,27 +620,25 @@
       $("#" + tblParams.container).append table.text
     
     # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
-    $("#style-" + tableId).remove() # Remove existing style for table before adding new one
-    $(api.templates.evaluate("tmpl_comp_responsive_table",
-      tableId: tableId
-      columns: columns
-    )).appendTo "head"
     initLog = (data) ->
-      gui.doLog data
-      $("#" + tableId).dataTable
-        aaData: data
-        aaSorting: [[
-          0
-          "desc"
-        ]]
+      $("#" + tableId).DataTable
+        data: data
+        ordering: true
+        order: [[ 1, 'desc' ]]
 
-        aoColumns: columns
-        oLanguage: gui.config.dataTablesLanguage
-        sDom: "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>"
-        bDeferRender: tblParams.deferedRender or false
-        fnCreatedRow: (nRow, aData, iDataIndex) ->
-          v = "log-" + logRenderer(@fnGetData(iDataIndex).level)
-          $(nRow).addClass v
+        columns: columns
+        language: gui.config.dataTablesLanguage
+        # dom: '<"' + tbId + ' btns-tables">fr<"uds-table"t>ip'
+        dom: "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>"
+        deferRender: tblParams.deferedRender or tblParams.deferRender or false
+        # bDeferRender: tblParams.deferedRender or false
+        createdRow: (row, data, dataIndex) ->
+          try
+            v = "log-" + logRenderer(data.level)
+            $(row).addClass v
+          catch error
+            gui.doLog "Log cretedRow error", error
+
           return
 
       
