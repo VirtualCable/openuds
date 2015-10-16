@@ -44,7 +44,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-10-15'
+__updated__ = '2015-10-16'
 
 logger = logging.getLogger(__name__)
 
@@ -141,6 +141,10 @@ class DelayedTaskRunner(object):
                 break
             except Exception, e:
                 logger.info('Exception inserting a delayed task {0}: {1}'.format(str(e.__class__), e))
+                try:
+                    connection.close()
+                except Exception:
+                    logger.exception('Closing db connection at insert')
                 time.sleep(1)  # Wait a bit before next try...
         # If retries == 0, this is a big error
         if retries == 0:
