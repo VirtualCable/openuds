@@ -19,8 +19,10 @@ gui.reports.link = (event) ->
           permission: api.permissions.MANAGEMENT
           text: gettext("Generate report")
           css: "disabled"
-          click: (val, value, btn, tbl, refreshFnc) ->
-            gui.doLog val.id
+          click: (selecteds, value, btn, tbl, refreshFnc) ->
+            if selecteds.length != 1
+              return
+            val = selecteds[0]
             gui.tools.blockUI()
             # Get gui definition
             api.reports.gui val.id, ((guiDefinition) ->
@@ -60,11 +62,13 @@ gui.reports.link = (event) ->
 
             return
 
-          select: (val, value, btn, tbl, refreshFnc) ->
-            unless val
-              $(btn).removeClass("btn3d-primary").addClass "disabled"
-              return
-            $(btn).removeClass("disabled").addClass "btn3d-primary"
+          select: (selecteds, clicked, btn, tbl, refreshFnc) ->
+            gui.doLog "Selected", selecteds
+
+            if selecteds.length is 0
+              btn.addClass "disabled"
+            else
+              btn.removeClass("disabled")
             return
         }
       ]

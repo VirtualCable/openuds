@@ -36,7 +36,7 @@ This states displays as default
   float: right;
 }
 
- *.table {
+.table {
   color: #00496b;
   border: 1px solid $brand-primary;
   // $font-family-monospace
@@ -44,6 +44,9 @@ This states displays as default
   // $font-family-sans-serif
   // font-family: $font-family-monospace;
   // font-size: $font-size-large;
+  > tbody > tr {
+    cursor: pointer;
+  }
  }
 
 /*.table tbody tr.selected {
