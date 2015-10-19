@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.glyptodon.guacamole.GuacamoleException;
 import org.glyptodon.guacamole.net.GuacamoleSocket;
 import org.glyptodon.guacamole.net.GuacamoleTunnel;
+import org.glyptodon.guacamole.net.SimpleGuacamoleTunnel;
 import org.glyptodon.guacamole.net.InetGuacamoleSocket;
 import org.glyptodon.guacamole.protocol.ConfiguredGuacamoleSocket;
 import org.glyptodon.guacamole.protocol.GuacamoleClientInformation;
@@ -128,7 +129,7 @@ public class TunnelServlet
         System.out.println("Initializing socket " + socket.toString());
 
         // Establish the tunnel using the connected socket
-        GuacamoleTunnel tunnel = new GuacamoleTunnel(socket);
+        GuacamoleTunnel tunnel = new SimpleGuacamoleTunnel(socket);
 
         System.out.println("Initializing tunnel " + tunnel.toString());
         
