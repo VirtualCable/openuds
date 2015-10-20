@@ -177,9 +177,9 @@ class CommonService(object):
             except REST.UserServiceNotFoundError:
                 logger.error('The host has lost the sync state with broker! (host uuid changed?)')
                 return False
-            except Exception as e:
+            except Exception as err:
                 if counter % 60 == 0:
-                    logger.warn('Too many retries in progress, though still trying (last error: {})'.format(exceptionToMessage(e)))
+                    logger.warn('Too many retries in progress, though still trying (last error: {})'.format(exceptionToMessage(err)))
                 counter += 1
                 # Any other error is expectable and recoverable, so let's wait
                 # a bit and retry again
