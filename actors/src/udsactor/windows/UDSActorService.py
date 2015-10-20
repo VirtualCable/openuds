@@ -138,8 +138,8 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         currName = operations.getComputerName()
         if currName.lower() == name.lower():
             currDomain = operations.getDomainName()
-            logger.debug('Name: "{}" vs "{}", Domain: "{}" vs "{}"'.format(currName.lower(), name.lower(), currDomain.lower(), domain.lower()))
             if currDomain is not None:
+                # logger.debug('Name: "{}" vs "{}", Domain: "{}" vs "{}"'.format(currName.lower(), name.lower(), currDomain.lower(), domain.lower()))
                 logger.info(
                     'Machine {} is part of domain {}'.format(name, domain))
                 self.setReady()
@@ -155,7 +155,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
     def joinDomain(self, name, domain, ou, account, password):
         ver = operations.getWindowsVersion()
         ver = ver[0] * 10 + ver[1]
-        logger.info('Starting joining domain {} with name {} (detected operating version: {})'.format(
+        logger.debug('Starting joining domain {} with name {} (detected operating version: {})'.format(
             domain, name, ver))
         # Accepts one step joinDomain, also remember XP is no more supported by
         # microsoft, but this also must works with it because will do a "multi

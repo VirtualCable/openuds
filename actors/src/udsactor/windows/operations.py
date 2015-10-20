@@ -172,8 +172,8 @@ def joinDomain(domain, ou, account, password, executeInOneStep=False):
         error = getErrorMessage(res)
         if res == 1355:
             error = "DC Is not reachable"
-        print res, error
-        raise Exception('Error joining domain {}, with credentials {}/*****{}: {}, {}'.format(domain.value, account.value, ', under OU {}'.format(ou.value) if ou.value is not None else '', res, error))
+        logger.error('Error joining domain: {}, {}'.format(error, res))
+        raise Exception('Error joining domain {}, with credentials {}/*****{}: {}, {}'.format(domain, account, ', under OU {}'.format(ou) if ou is not None else '', res, error))
 
 
 def changeUserPassword(user, oldPassword, newPassword):

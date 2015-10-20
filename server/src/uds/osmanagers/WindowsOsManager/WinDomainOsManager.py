@@ -65,7 +65,7 @@ class WinDomainOsManager(WindowsOsManager):
         self._ou = self._ou.replace(' ', '')
         if self._domain != '' and self._ou != '':
             lpath = 'dc=' + ',dc='.join(self._domain.split('.'))
-            if self._ou.find(lpath) == -1:
+            if self._ou.lower().find(lpath) == -1:
                 self._ou += ',' + lpath
 
     def __getLdapError(self, e):
