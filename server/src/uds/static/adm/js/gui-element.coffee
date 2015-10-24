@@ -381,6 +381,7 @@
                       type: "text"
                       content: value.text
                       css: css
+                      disabled: value.disabled? and value.disabled is true
 
                     if value.click
                       btn.fnClick = () ->
@@ -473,8 +474,17 @@
         for btn in btns
           $div = $('div.'+tbId)
           if btn.type == 'text'
+            gui.doLog "Button: ", btn
+
             btnId = gui.genRamdonId('btn')
-            $div.append('<button id="' + btnId + '" class="' + btn.css + '">' + btn.content + '</button>')
+            btnHtml = '<button id="' + btnId + '" class="' + btn.css + '"'
+            if btn.disabled? and btn.disabled is true
+              btnHtml += ' disabled'
+            btnHtml += '>' + btn.content + '</button>'
+
+            gui.doLog "Button2: ", btnHtml
+
+            $div.append btnHtml
             $btn = $('#'+btnId)
             $btn.on 'click', btn.fnClick
               

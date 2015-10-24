@@ -63,7 +63,7 @@ class Storage(object):
             dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
         except Exception:
             dbStorage.objects.filter(key=key).update(owner=self._owner, data=data, attr1=attr1)  # @UndefinedVariable
-        logger.debug('Key saved')
+        # logger.debug('Key saved')
 
     def put(self, skey, data):
         return self.saveData(skey, data)
@@ -127,24 +127,26 @@ class Storage(object):
         dbStorage.objects.unlock()  # @UndefinedVariable
 
     def locateByAttr1(self, attr1):
-        res = []
         if isinstance(attr1, (list, tuple)):
             query = dbStorage.objects.filter(owner=self._owner, attr1_in=attr1)  # @UndefinedVariable
         else:
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         for v in query:
-            res.append(v.data.decode(Storage.CODEC))
-        return res
+            yield v.data.decode(Storage.CODEC)
 
-    def filterPickle(self, attr1=None):
+    def filter(self, attr1):
         if attr1 is None:
             query = dbStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         for v in query:  # @UndefinedVariable
-            yield (v.key, pickle.loads(v.data.decode(Storage.CODEC)), v.attr1)
+            yield (v.key, v.data.decode(Storage.CODEC), v.attr1)
+
+    def filterPickle(self, attr1=None):
+        for v in self.filter(attr1):
+            yield (v[0], pickle.loads(v[1]), v[2])
 
     @staticmethod
     def delete(owner=None):

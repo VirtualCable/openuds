@@ -44,7 +44,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-10-16'
+__updated__ = '2015-10-24'
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +60,8 @@ class DelayedTaskThread(threading.Thread):
     def run(self):
         try:
             self._taskInstance.execute()
-        except Exception, e:
-            logger.debug("Exception in thread {0}: {1}".format(e.__class__, e))
+        except Exception as e:
+            logger.exception("Exception in thread {0}: {1}".format(e.__class__, e))
 
 
 class DelayedTaskRunner(object):

@@ -52,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-28'
+__updated__ = '2015-10-23'
 
 
 # a few constants
@@ -238,8 +238,9 @@ class BaseModelHandler(Handler):
         '''
         Raises a NotFound exception, with location info
         '''
-        message = _('Item not found') if message is None else None
-        raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
+        message = _('Item not found') if message is None else message
+        raise NotFound(message)
+        # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
     def accessDenied(self, message=None):
         raise AccessDenied(message or _('Access denied'))

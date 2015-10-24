@@ -199,7 +199,7 @@ gui.servicesPools.link = (event) ->
             doNotLoadData: true
             icon: 'cached'
             container: "cache-placeholder_tbl"
-            rowSelect: "single"
+            rowSelect: "multi"
             deferRender: true
             doNotLoadData: true
             buttons: [
@@ -442,6 +442,7 @@ gui.servicesPools.link = (event) ->
               {
                 text: gettext("Cancel")
                 css: "disabled"
+                disabled: true
                 click: (val, value, btn, tbl, refreshFnc) ->
                   gui.promptModal gettext("Publish"), gettext("Cancel publication"),
                     onYes: ->
@@ -453,10 +454,13 @@ gui.servicesPools.link = (event) ->
 
                   return
 
-                select: (val, value, btn, tbl, refreshFnc) ->
-                  unless val
-                    $(btn).removeClass("btn3d-warning").addClass "disabled"
+                select: (vals, self, btn, tbl, refreshFnc) ->
+                  unless vals.length == 1
+                    $(btn).addClass "disabled"
+                    $(btn).prop('disabled', true)
                     return
+
+                  val = vals[0]
 
                   if val.state == 'K'
                     $(btn).empty().append(gettext("Force Cancel"))
@@ -465,12 +469,12 @@ gui.servicesPools.link = (event) ->
 
                   # Waiting for publication, Preparing or running
                   gui.doLog "State: ", val.state
-                  $(btn).removeClass("disabled").addClass "btn3d-warning"  if [
-                    "P"
-                    "W"
-                    "L"
-                    "K"
-                  ].indexOf(val.state) != -1
+                  if ["P", "W", "L", "K"].indexOf(val.state) != -1
+                    $(btn).removeClass("disabled")
+                    $(btn).prop('disabled', false)
+                  else
+                    $(btn).addClass("disabled")
+                    $(btn).prop('disabled', true)
 
                   return
               }

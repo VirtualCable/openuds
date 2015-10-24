@@ -60,7 +60,7 @@ class UniqueIDGenerator(object):
         '''
         # First look for a name in the range defined
         stamp = getSqlDatetime(True)
-        logger.debug(UniqueId)
+        # logger.debug(UniqueId)
         try:
             UniqueId.objects.lock()  # @UndefinedVariable
             flt = self.__filter(rangeStart, rangeEnd)
@@ -74,7 +74,7 @@ class UniqueIDGenerator(object):
                     seq = last.seq + 1
                 except Exception:  # If there is no assigned at database
                     seq = rangeStart
-                logger.debug('Found seq {0}'.format(seq))
+                # logger.debug('Found seq {0}'.format(seq))
                 if seq > rangeEnd:
                     return -1  # No ids free in range
                 UniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable

@@ -50,15 +50,9 @@
                                  {{# ifequals value.type 3 }}
                                  <input type="checkbox" data-on-text="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-text="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="config-ctrl" {{# ifequals value.value 1 }} checked{{/ ifequals }} data-section="{{ cfg_section }}" data-key="{{ cfg_key }}">
                                  {{ else }}
-                                 {{# ifequals value.type 2 }}
-                                 <div>
-                                     <input type="numeric" class="form-control config-ctrl" data-section="{{ ../../../../../key }}" data-key="{{ key }}" value="{{ value.value }}">
-                                 </div>
-                                 {{ else }}
                                  <div>
                                      <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" value="{{ value.value }}">
                                  </div>
-                                 {{/ ifequals }}
                                  {{/ ifequals }}
                                  {{/ ifequals }}
                                {{/ if }}

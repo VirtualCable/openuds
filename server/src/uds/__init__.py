@@ -46,6 +46,7 @@ import uds.xmlrpc  # To make actor live
 from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 import math
+import ssl
 
 
 from django.apps import AppConfig
@@ -55,7 +56,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2015-06-09'
+__updated__ = '2015-10-20'
+
+
+# Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    # Legacy Python that doesn't verify HTTPS certificates by default
+    pass
+else:
+    # Handle target environment that doesn't support HTTPS verification
+    ssl._create_default_https_context = _create_unverified_https_context
+
 
 
 class UDSAppConfig(AppConfig):

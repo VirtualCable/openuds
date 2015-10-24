@@ -143,10 +143,12 @@ class AssignedService(DetailHandler):
             self.invalidItemException()
 
         logger.debug('Deleting assigned service')
-        if service.state == State.USABLE:
+        if service.state in (State.USABLE, State.REMOVING):
             service.remove()
         elif service.state == State.PREPARING:
             service.cancel()
+        elif service.state == State.REMOVABLE:
+            self.invalidItemException(_('Item already being removed'))
         else:
             self.invalidItemException(_('Item is not removable'))
 

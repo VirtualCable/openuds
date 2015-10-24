@@ -155,6 +155,7 @@ gui.providers.link = (event) ->
           permission: api.permissions.MANAGEMENT
           text: maintenanceText('fa-ambulance', gettext("Maintenance"))
           css: "disabled"
+          disabled: true
           click: (vals, value, btn, tbl, refreshFnc) ->
 
             if vals.length > 1

@@ -212,6 +212,9 @@ class ServicesPools(ModelHandler):
             except Exception:
                 raise RequestError(ugettext('This service requires an OS Manager'))
 
+            # If max < initial or cache_1 or cache_l2
+            fields['max_srvs'] = max((int(fields['initial_srvs']), int(fields['cache_l1_srvs']), int(fields['max_srvs'])))
+
             imgId = fields['image_id']
             fields['image_id'] = None
             logger.debug('Image id: {}'.format(imgId))

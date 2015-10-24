@@ -431,7 +431,7 @@
       deletedFnc = (name, errorMsg) ->
         count -= 1
         if errorMsg?
-          msgs.push '<span class="text-danger">' + gettext("Error deleting") + " <b>" + name + "</b>: " + errorMsg + '</span>'
+          msgs.push gettext("Error deleting") + " <b>" + name + '</b>: <span class="text-danger">' + errorMsg + '</span>'
         else
           msgs.push gettext("Successfully deleted") + " <b>" + name + "</b>"
 
@@ -449,12 +449,12 @@
         gui.tools.blockUI()
         for value in values
           ((value) ->
+            name = value.name or value.friendly_name
             parent.rest.del value.id, (->
-              name = value.name or value.friendly_name
               deletedFnc name
               return
-            ), (jqXHR, textStatus, errorThrown) -> # fail on put
-              deletedFnc name, jqXHR.responseText)(value)
+            ), (jqXHR, textStatus, errorThrown) -> # fail on delete
+              deletedFnc(name, jqXHR.responseText))(value)
         return
 
       return

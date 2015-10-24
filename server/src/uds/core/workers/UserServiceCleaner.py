@@ -78,4 +78,7 @@ class UserServiceRemover(Job):
         removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom,
                                                 deployed_service__service__provider__maintenance_mode=False)[0:UserServiceRemover.removeAtOnce]
         for us in removables:
-            UserServiceManager.manager().remove(us)
+            try:
+                UserServiceManager.manager().remove(us)
+            except Exception:
+                logger.exception('Exception invoking remove user service {}'.format(us))
