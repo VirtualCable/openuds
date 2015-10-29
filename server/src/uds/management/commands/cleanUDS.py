@@ -32,21 +32,29 @@
 '''
 from __future__ import unicode_literals
 
-from .UniqueIDGenerator import UniqueIDGenerator, MAX_SEQ
+from django.core.management.base import BaseCommand
+from django.core.cache import cache
+
+from uds.core.util.Config import GlobalConfig
+from uds.core.util.Cache import Cache
+
 import logging
+import sys
 
 logger = logging.getLogger(__name__)
 
 
-class UniqueGIDGenerator(UniqueIDGenerator):
+class Command(BaseCommand):
+    args = "None"
+    help = "Clean up all uneeded data from UDS (cache, ...). This is mainly used for versions installations, so he have clean data"
 
-    def __init__(self, owner):
-        super(UniqueGIDGenerator, self).__init__('id', owner,)
+    def handle(self, *args, **options):
+        sys.stdout.write("Cleaning up UDS\n")
+        GlobalConfig.initialize()
 
-    def __toName(self, seq):
-        if seq == -1:
-            raise KeyError('No more GIDS available.')
-        return "%s%0*d" % (self._baseName, 8, seq)
+        # UDSs cache
+        Cache.cleanUp()
+        # Django caches
+        cache.clear()
 
-    def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
-        return self.__toName(super(UniqueGIDGenerator, self).get())
+        sys.stdout.write("UDS Cleaned UP\n")

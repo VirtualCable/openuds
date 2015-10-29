@@ -215,7 +215,7 @@
           tblParams.onRefresh = (tbl) ->
             return
 
-         self.refresh = refreshFnc = () ->
+         self.refresh = refreshFnc = () -> 
             # Refreshes table content
             tbl = $("#" + tableId).DataTable()
             

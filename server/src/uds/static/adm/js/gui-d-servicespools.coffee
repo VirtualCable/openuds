@@ -153,6 +153,10 @@ gui.servicesPools.link = (event) ->
         "xls"
         "permissions"
       ]
+      onRefresh: () ->
+        clearDetails()
+        return
+
       onRowDeselect: (deselected, dtable) ->
         gui.doLog "Selecteds: ", dtable.rows({selected: true}).length
         if dtable.rows({selected: true}).count() == 0
@@ -470,11 +474,9 @@ gui.servicesPools.link = (event) ->
                   # Waiting for publication, Preparing or running
                   gui.doLog "State: ", val.state
                   if ["P", "W", "L", "K"].indexOf(val.state) != -1
-                    $(btn).removeClass("disabled")
-                    $(btn).prop('disabled', false)
+                    $(btn).removeClass("disabled").prop('disabled', false)
                   else
-                    $(btn).addClass("disabled")
-                    $(btn).prop('disabled', true)
+                    $(btn).addClass("disabled").prop('disabled', true)
 
                   return
               }

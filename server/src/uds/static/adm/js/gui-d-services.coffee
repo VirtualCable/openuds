@@ -63,6 +63,7 @@ gui.providers.link = (event) ->
         true
 
       onRefresh: (tbl) ->
+        gui.doLog 'Invoked onRefresh for a provider'
         clearDetails()
         return
 
@@ -178,7 +179,7 @@ gui.providers.link = (event) ->
 
           select: (vals, value, btn, tbl, refreshFnc) ->
             unless vals.length == 1
-              $(btn).removeClass("btn-warning").removeClass("btn-info").addClass "disabled"
+              $(btn).removeClass("btn-warning").removeClass("btn-info").addClass("disabled").prop('disabled', true)
               $(btn).empty().append(maintenanceText('fa-ambulance', gettext("Maintenance")))
               return
             val = vals[0]
@@ -189,7 +190,7 @@ gui.providers.link = (event) ->
               content = maintenanceText('fa-truck',gettext('Exit Maintenance Mode'))
               cls = 'btn-info'
 
-            $(btn).removeClass("disabled").addClass(cls)
+            $(btn).removeClass("disabled").addClass(cls).prop('disabled', false)
             $(btn).empty().append(content)
             return
         }
