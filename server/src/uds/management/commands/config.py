@@ -35,7 +35,6 @@ from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 from uds.core.util.Config import Config, GLOBAL_SECTION, GlobalConfig
 import logging
-import urllib
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +48,7 @@ class Command(BaseCommand):
         GlobalConfig.initialize()
         try:
             for param in args:
-                config = urllib.unquote(param).decode('utf-8')
+                config = param.decode('utf-8')
                 logger.debug('Config: {}'.format(config))
                 first, value = config.split('=')
                 first = first.split('.')

@@ -61,6 +61,7 @@ class Tickets(Handler):
        authSmallName: tag of the authenticator (alias for "authTag") |  But must include one of theese
        authTag: tag of the authenticator                             |
        auth: Name of authenticator                                   |
+       userIp: Direccion IP del cliente. Si no se pasa, no se puede filtar
        username:
        password:
        groups:
