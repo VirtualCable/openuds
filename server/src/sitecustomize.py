@@ -1,3 +1,4 @@
 import sys
+reload(sys)
 
-sys.setdefaultencoding('UTF-8')  # @UndefinedVariable
+sys.setdefaultencoding('utf-8')  # @UndefinedVariable
