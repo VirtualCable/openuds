@@ -237,7 +237,7 @@
             return
 
         btns = []
-        if tblParams.buttons       
+        if tblParams.buttons
           # Generic click handler generator for this table
           clickHandlerFor = (handler, action, newHandler) ->
             gui.doLog "Setting click handler for ", handler, action, newHandler

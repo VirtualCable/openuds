@@ -192,6 +192,9 @@ uds.launch = (el) ->
         unblockUI()
         alert data.error
       else
+        # Fix access provided in url in case of https
+        # if window.location.protocol is 'https:'
+        #   data.url = data.url.replace('uds://', 'udss://') # Ensures that protocol is https also for plugin, fixing if needed UDS provided info
         if bypassPluginDetection is false
           uds.doLaunch el, data.url, alt
         else
