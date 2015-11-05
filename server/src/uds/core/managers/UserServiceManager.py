@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2015-10-24'
+__updated__ = '2015-11-05'
 
 logger = logging.getLogger(__name__)
 
@@ -139,9 +139,9 @@ class UserServiceOpChecker(DelayedTask):
         @param pi: Instance of Publication manager for the object
         '''
         # Do not add task if already exists one that updates this service
-        if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + userService.uuid):
+        if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + str(userService.id)):
             return
-        DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + userService.uuid)
+        DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + str(userService.id))
 
     def run(self):
         logger.debug('Checking user service finished {0}'.format(self._svrId))
@@ -325,9 +325,8 @@ class UserServiceManager(object):
         Removes a uService element
         @return: the uService removed (marked for removal)
         '''
-        uService.refresh_from_db()
-        # uService = UserService.objects.get(id=uService.id)
-        logger.debug('Removing uService {}'.format(uService))
+        uService = UserService.objects.get(id=uService.id)
+        logger.debug('Removing uService {0}'.format(uService))
         if uService.isUsable() is False and State.isRemovable(uService.state) is False:
             raise OperationException(_('Can\'t remove a non active element'))
 
