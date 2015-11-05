@@ -39,6 +39,7 @@ from uds.models import DeployedService
 from uds.models import Transport
 from uds.models import TicketStore
 from uds.core.util.model import processUuid
+from uds.core.util import tools
 
 import datetime
 import six
@@ -47,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-VALID_PARAMS = ('authId', 'authTag', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool', 'transport', 'force')
+VALID_PARAMS = ('authId', 'authTag', 'authSmallName', 'auth', 'username', 'realname', 'password', 'groups', 'servicePool', 'transport', 'force', 'userIp')
 
 
 # Enclosed methods under /actor path
@@ -122,6 +123,8 @@ class Tickets(Handler):
 
         force = self._params.get('force', '0') in ('1', 'true', 'True')
 
+        userIp = self._params.get('userIp', None)
+
         try:
             authId = self._params.get('authId', None)
             authTag = self._params.get('authTag', self._params.get('authSmallName', None))
@@ -177,13 +180,21 @@ class Tickets(Handler):
                         logger.error('Transport {} is not valid for Service Pool {}'.format(transport.name, servicePool.name))
                         raise Exception('Invalid transport for Service Pool')
                 else:
-                    transport = servicePool.transports.order_by('priority').first()
-                    if transport is None:
-                        logger.error('Service pool {} does not has transports')
-                        raise Exception('Service pool does not has any assigned transports')
+                    if userIp is None:
+                        transport = tools.DictAsObj({'uuid': None})
+                    else:
+                        transport = None
+                        for v in servicePool.transports.order_by('priority'):
+                            if v.validForIp(userIp):
+                                transport = v
+                                break
+
+                        if transport is None:
+                            logger.error('Service pool {} does not has valid transports for ip {}'.format(servicePool.name, userIp))
+                            raise Exception('Service pool does not has any valid transports for ip {}'.format(userIp))
 
                 servicePool = servicePool.uuid
-                transport = transport.uuid
+                transport = transport.uuid  # pylint: disable=maybe-no-member
 
         except Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')

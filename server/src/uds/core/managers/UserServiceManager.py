@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2015-10-15'
+__updated__ = '2015-11-05'
 
 logger = logging.getLogger(__name__)
 
@@ -555,7 +555,17 @@ class UserServiceManager(object):
             raise ServiceInMaintenanceMode()
 
         logger.debug('Found service: {0}'.format(userService))
-        trans = Transport.objects.get(uuid=idTransport)
+
+        if idTransport is None:  # Find a suitable transport
+            for v in userService.deployed_service.transports.order_by('priority'):
+                if v.validForIp(srcIp):
+                    idTransport = v.uuid
+                    break
+
+        try:
+            trans = Transport.objects.get(uuid=idTransport)
+        except Exception:
+            raise InvalidServiceException()
 
         # Ensures that the transport is allowed for this service
         if trans not in userService.deployed_service.transports.all():
