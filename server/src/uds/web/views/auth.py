@@ -195,8 +195,9 @@ def ticketAuth(request, ticketId):
         if servicePool is not None:
             # If service pool is in there, also is transport
             res = userServiceManager().getService(request.user, request.ip, 'F' + servicePool, transport, False)
-            ip, userService, userServiceInstance, transport, transportInstance = res
+            _x, userService, _x, transport, _x = res
 
+            transportInstance = transport.getInstance()
             if transportInstance.ownLink is True:
                 link = reverse('TransportOwnLink', args=('A' + userService.uuid, transport.uuid))
             else:
