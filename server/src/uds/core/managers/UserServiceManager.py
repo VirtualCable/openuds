@@ -57,6 +57,100 @@ logger = logging.getLogger(__name__)
 
 USERSERVICE_TAG = 'cm-'
 
+class StateUpdater(object):
+    def __init__(self, userService, userServiceInstance=None):
+        self.userService = userService
+        self.userServiceInstance = userServiceInstance if userServiceInstance is not None else userService.getInstance()
+
+    def setError(self, msg=None):
+        self.userService.setState(State.ERROR)
+        self.userService.save()
+        if msg is not None:
+            log.doLog(self.userService, log.ERROR, msg, log.INTERNAL)
+
+    def save(self, newState=None):
+        if newState is not None:
+            self.userService.setState(newState)
+        self.userService.updateData(self.userServiceInstance)
+        self.userService.save()
+
+    def checkLater(self):
+        UserServiceOpChecker.checkLater(self.userService, self.userServiceInstance)
+
+    def run(self, state):
+        executor = {
+         State.RUNNING: self.running,
+         State.ERROR: self.error,
+         State.FINISHED: self.finish
+        }.get(state, self.error)
+
+        try:
+            executor()
+        except Exception as e:
+            self.setError('Exception: {}'.format(e))
+
+    def finish(self):
+        raise NotImplementedError('finish method must be overriden')
+
+    def running(self):
+        raise NotImplementedError('running method must be overriden')
+
+    def error(self):
+        self.setError(self.userServiceInstance.reasonOfError())
+
+
+class UpdateFromPreparing(StateUpdater):
+    def finish(self):
+        self.userServiceInstance.finish()
+
+        osManager = self.userServiceInstance.osmanager()
+
+        state = State.REMOVABLE  # By default, if not valid publication, service will be marked for removal on preparation finished
+        if self.userService.isValidPublication():
+            logger.debug('Publication is valid for {}'.format(self.userService.friendly_name))
+            state = State.USABLE
+            # and make this usable if os manager says that it is usable, else it pass to configuring state
+            if osManager is not None and State.isPreparing(self.userService.os_state):
+                logger.debug('Has valid osmanager for {}'.format(self.userService.friendly_name))
+                stateOs = osManager.checkState(self.userService)
+                # If state is finish, we need to notify the userService again that os has finished
+                if State.isFinished(stateOs):
+                    state = self.userServiceInstance.notifyReadyFromOsManager('')
+            else:
+                stateOs = State.FINISHED
+
+            logger.debug('State {}, StateOS {} for {}'.format(State.toString(state), State.toString(stateOs), self.userService.friendly_name))
+            if State.isRuning(stateOs):
+                self.userService.setOsState(State.PREPARING)
+            else:
+                self.userService.setOsState(State.USABLE)
+
+        self.save(state)
+
+    def running(self):
+        self.checkLater()
+
+class UpdateFromRemoving(StateUpdater):
+    def finish(self):
+        pass
+
+    def running(self):
+        pass
+
+class UpdateFromCanceling(StateUpdater):
+    def finish(self):
+        self.save(State.CANCELED)
+
+    def running(self):
+        self.checkLater()
+
+class UpdateFromOther(StateUpdater):
+    def finish(self):
+        self.setError('Unknown running transition from {}'.format(State.toString(self.userService.state)))
+
+    def running(self):
+        self.setError('Unknown running transition from {}'.format(State.toString(self.userService.state)))
+
 
 class UserServiceOpChecker(DelayedTask):
     def __init__(self, service):
@@ -79,52 +173,18 @@ class UserServiceOpChecker(DelayedTask):
         Return True if it has to continue checking, False if finished
         '''
         try:
-            prevState = userService.state
+            # Fills up basic data
             userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
             userService.friendly_name = userServiceInstance.getName()  # And name, both methods can modify serviceInstance, so we save it later
-            if State.isFinished(state):
-                checkLater = False
-                userServiceInstance.finish()
-                if State.isPreparing(prevState):
-                    if userServiceInstance.service().publicationType is None or userService.publication == userService.deployed_service.activePublication():
-                        userService.setState(State.USABLE)
-                        # and make this usable if os manager says that it is usable, else it pass to configuring state
-                        if userServiceInstance.osmanager() is not None and userService.os_state == State.PREPARING:  # If state is already "Usable", do not recheck it
-                            stateOs = userServiceInstance.osmanager().checkState(userService)
-                            # If state is finish, we need to notify the userService again that os has finished
-                            if State.isFinished(stateOs):
-                                state = userServiceInstance.notifyReadyFromOsManager('')
-                                userService.updateData(userServiceInstance)
-                        else:
-                            stateOs = State.FINISHED
 
-                        if State.isRuning(stateOs):
-                            userService.setOsState(State.PREPARING)
-                        else:
-                            userService.setOsState(State.USABLE)
-                    else:
-                        # We ignore OsManager info and if userService don't belong to "current" publication, mark it as removable
-                        userService.setState(State.REMOVABLE)
-                elif State.isRemoving(prevState):
-                    if userServiceInstance.osmanager() is not None:
-                        userServiceInstance.osmanager().release(userService)
-                    userService.setState(State.REMOVED)
-                else:
-                    # Canceled,
-                    logger.debug("Canceled us {2}: {0}, {1}".format(prevState, State.toString(state), State.toString(userService)))
-                    userService.setState(State.CANCELED)
-                    userServiceInstance.osmanager().release(userService)
-                userService.updateData(userServiceInstance)
-            elif State.isErrored(state):
-                checkLater = False
-                userService.updateData(userServiceInstance)
-                userService.setState(State.ERROR)
-            else:
-                checkLater = True  # The task is running
-                userService.updateData(userServiceInstance)
-            userService.save()
-            if checkLater:
-                UserServiceOpChecker.checkLater(userService, userServiceInstance)
+            updater = {
+                State.PREPARING: UpdateFromPreparing,
+                State.REMOVING: UpdateFromRemoving,
+                State.CANCELING: UpdateFromCanceling
+            }.get(userService.state, UpdateFromOther)
+
+            updater(userService, userServiceInstance).run(state)
+
         except Exception as e:
             logger.exception('Checking service state')
             log.doLog(userService, log.ERROR, 'Exception: {0}'.format(e), log.INTERNAL)
@@ -139,9 +199,9 @@ class UserServiceOpChecker(DelayedTask):
         @param pi: Instance of Publication manager for the object
         '''
         # Do not add task if already exists one that updates this service
-        if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + str(userService.id)):
+        if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + userService.uuid):
             return
-        DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + str(userService.id))
+        DelayedTaskRunner.runner().insert(UserServiceOpChecker(userService), ci.suggestedTime, USERSERVICE_TAG + userService.uuid)
 
     def run(self):
         logger.debug('Checking user service finished {0}'.format(self._svrId))

@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2015-10-05'
+__updated__ = '2015-11-06'
 
 
 logger = logging.getLogger(__name__)
@@ -462,6 +462,12 @@ class UserService(UUIDModel):
 
     def getLoggedIP(self):
         return self.getProperty('ip', '0.0.0.0')
+
+    def isValidPublication(self):
+        '''
+        Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
+        '''
+        return self.deployed_service.service.getType().publicationType is None or self.publication == self.deployed_service.activePublication()
 
     def __str__(self):
         return "User service {0}, cache_level {1}, user {2}, name {3}, state {4}:{5}".format(self.id, self.cache_level, self.user, self.friendly_name,
