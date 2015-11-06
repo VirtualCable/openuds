@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2015-05-12'
+__updated__ = '2015-11-06'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -293,7 +293,7 @@ def webPassword(request):
     @param request: DJango Request
     @return: Unscrambled user password
     '''
-    return CryptoManager.manager().xor(request.session.get(PASS_KEY), request.COOKIES['uds']).decode('utf-8')  # recover as original unicode string
+    return CryptoManager.manager().xor(request.session.get(PASS_KEY, ''), getUDSCookie(request)).decode('utf-8')  # recover as original unicode string
 
 
 def webLogout(request, exit_url=None):
