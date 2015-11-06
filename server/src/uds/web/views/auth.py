@@ -58,7 +58,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2015-09-12'
+__updated__ = '2015-11-06'
 
 
 @csrf_exempt
@@ -194,11 +194,11 @@ def ticketAuth(request, ticketId):
         # Check if servicePool is part of the ticket
         if servicePool is not None:
             # If service pool is in there, also is transport
-            res = userServiceManager().getService(request.user, request.ip, 'F' + servicePool, transport)
+            res = userServiceManager().getService(request.user, request.ip, 'F' + servicePool, transport, False)
             ip, userService, userServiceInstance, transport, transportInstance = res
 
             if transportInstance.ownLink is True:
-                link = reverse('TransportOwnLink', args=('A' + userServiceInstance.uuid, transportInstance.uuid))
+                link = reverse('TransportOwnLink', args=('A' + userService.uuid, transport.uuid))
             else:
                 link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 

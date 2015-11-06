@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-04-30'
+__updated__ = '2015-11-06'
 
 
 class ServiceException(Exception):
@@ -104,3 +104,5 @@ class ServiceNotReadyError(ServiceException):
     def __init__(self, *args, **kwargs):
         super(ServiceNotReadyError, self).__init__(*args, **kwargs)
         self.code = kwargs.get('code', 0x0000)
+        self.service = kwargs.get('service', None)
+        self.transport = kwargs.get('transport', None)

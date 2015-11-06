@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2015-11-05'
+__updated__ = '2015-11-06'
 
 logger = logging.getLogger(__name__)
 
@@ -556,7 +556,7 @@ class UserServiceManager(object):
 
         logger.debug('Found service: {0}'.format(userService))
 
-        if idTransport is None:  # Find a suitable transport
+        if idTransport is None or idTransport == '':  # Find a suitable transport
             for v in userService.deployed_service.transports.order_by('priority'):
                 if v.validForIp(srcIp):
                     idTransport = v.uuid
@@ -604,4 +604,4 @@ class UserServiceManager(object):
         else:
             log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but service was not ready".format(user.name, srcIp), log.WEB)
 
-        raise ServiceNotReadyError(code=serviceNotReadyCode)
+        raise ServiceNotReadyError(code=serviceNotReadyCode, service=userService, transport=trans)
