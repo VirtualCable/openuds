@@ -323,7 +323,7 @@ class BasicModelRest
       path = @guiPath
 
     @_requestPath path,
-      cacheKey: path
+      cacheKey: '.'
       success: success_fnc
       fail: fail_fnc
 
