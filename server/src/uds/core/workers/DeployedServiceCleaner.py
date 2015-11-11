@@ -129,9 +129,17 @@ class DeployedServiceRemover(Job):
         if len(rems) > 0:
             logger.debug('Found a deployed service marked for removal. Starting removal of {0}'.format(rems))
             for ds in rems:
-                # Skips checking deployed services in maintenance mode
-                if ds.service.provider.maintenance_mode is False:
-                    self.startRemovalOf(ds)
+                try:
+                    # Skips checking deployed services in maintenance mode
+                    if ds.service.provider.maintenance_mode is False:
+                        self.startRemovalOf(ds)
+                except Exception as e1:
+                    logger.error('Error removing {}: {}'.format(ds, e1))
+                    try:
+                        ds.delete()
+                    except Exception as e2:
+                        logger.error('Could not delete {}'.format(e2))
+
 
         rems = DeployedService.objects.filter(state=State.REMOVING)[:10]
         if len(rems) > 0:
