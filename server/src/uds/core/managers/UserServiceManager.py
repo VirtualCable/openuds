@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2015-11-10'
+__updated__ = '2015-11-11'
 
 logger = logging.getLogger(__name__)
 
@@ -259,7 +259,9 @@ class UserServiceManager(object):
 
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():
-            cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
+            cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE, os_state=State.USABLE)[:1]
+            if len(cache) == 0:
+                cache = ds.cachedUserServices().select_for_update().filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[:1]
             if len(cache) > 0:
                 cache = cache[0]
                 cache.assignToUser(user)

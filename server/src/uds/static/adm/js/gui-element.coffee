@@ -222,7 +222,7 @@
             #if( data.length > 1000 )
             gui.tools.blockUI()
             setTimeout (->
-              self.rest.overview (data) -> # Restore overview
+              self.rest.overview( ((data) -> # Restore overview
                 tblParams.onData data  if tblParams.onData
                 tbl.rows().remove()
                 if data.length > 0  # Only adds data if data is available
@@ -231,7 +231,8 @@
                 tbl.columns.adjust().draw()
                 gui.doLog "onRefresh", tblParams.onRefresh
                 tblParams.onRefresh self
-                gui.tools.unblockUI()
+                gui.tools.unblockUI()), gui.failRequestModalFnc(gettext("Refresh operation failed"))
+              )
               return
               ), 0
             return

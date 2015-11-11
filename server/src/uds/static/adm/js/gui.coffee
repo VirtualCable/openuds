@@ -128,8 +128,10 @@
 
   gui.failRequestModalFnc = (title) ->
     (jqXHR, textStatus, errorThrown) -> # fail on put
+      # gui.doLog jqXHR, textStatus, errorThrown, jqXHR.status == 0
+      errorText = if jqXHR.status == 0 then gettext('Connection failed') else jqXHR.responseText
       gui.tools.unblockUI()
-      gui.launchModal "<b class=\"text-danger\">" + title + "</b>", jqXHR.responseText,
+      gui.launchModal "<b class=\"text-danger\">" + title + "</b>", errorText,
         actionButton: " "
 
       return
