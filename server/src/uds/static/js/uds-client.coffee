@@ -30,12 +30,12 @@ uds.counterGranurality = 2 # Every this seconds, reload time will be checked
 
 blockUI = (message) ->
   message = message or "<h1><span class=\"fa fa-spinner fa-spin\"></span> " + gettext("Contacting service...") + "</h1>"
-  $.blockUI 
-    message: message
+  # $.blockUI 
+  #  message: message
   return
 
 unblockUI = ->
-  $.unblockUI()
+  # $.unblockUI()
   return
 
 
