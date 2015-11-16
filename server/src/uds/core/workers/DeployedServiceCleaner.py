@@ -65,6 +65,11 @@ class DeployedServiceRemover(Job):
         super(DeployedServiceRemover, self).__init__(environment)
 
     def startRemovalOf(self, ds):
+        if ds.service is None:  # Maybe an inconsistent value?
+            logger.error('Found service pool {} without service')
+            ds.delete()
+            return
+
         # Get publications in course...., can be at most 1!!!
         logger.debug('Removal process of {0}'.format(ds))
 
@@ -131,7 +136,7 @@ class DeployedServiceRemover(Job):
             for ds in rems:
                 try:
                     # Skips checking deployed services in maintenance mode
-                    if ds.isInMaintenance():
+                    if ds.isInMaintenance() is False:
                         self.startRemovalOf(ds)
                 except Exception as e1:
                     logger.error('Error removing {}: {}'.format(ds, e1))

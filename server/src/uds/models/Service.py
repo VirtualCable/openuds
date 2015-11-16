@@ -47,7 +47,7 @@ from uds.models.Provider import Provider
 import logging
 
 
-__updated__ = '2015-05-12'
+__updated__ = '2015-11-16'
 
 
 logger = logging.getLogger(__name__)
@@ -121,6 +121,9 @@ class Service(ManagedObjectModel):
         :note: We only need to get info from this, not access specific data (class specific info)
         '''
         return self.provider.getType().getServiceByType(self.data_type)
+
+    def isInMaintenance(self):
+        return self.provider is not None and self.provider.isInMaintenance()
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)

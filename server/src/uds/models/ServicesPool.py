@@ -175,7 +175,7 @@ class DeployedService(UUIDModel):
         return False
 
     def isInMaintenance(self):
-        return self.service is not None and self.service.provider.maintenance_mode
+        return self.service is not None and self.service.isInMaintenance()
 
     def storeValue(self, name, value):
         '''
