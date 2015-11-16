@@ -72,7 +72,7 @@
 						    {% endfor %}
 						    <div class="form-group">
 				                <input id="id_{{form.user.name}}" name="{{form.user.name}}" type="text" class="form-control" placeholder="{% trans 'username'|capfirst %}" autofocus required>
-				                <input id="id_{{form.password.name}}" name="{{form.password.name}}" type="password" class="form-control" placeholder="{% trans 'password'|capfirst %}">
+				                <input id="id_{{form.password.name}}" name="{{form.password.name}}" type="password" class="form-control" placeholder="{% trans 'password'|capfirst %}" required>
 				                {{ form.authenticator }}
 			                </div>
 			                <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="fa fa-sign-in"></span> {% trans 'Sign in' %}</button>
