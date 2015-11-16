@@ -38,6 +38,7 @@ import six
 
 from uds.rest import RestRequest
 from uds.forward import forward
+from uds.log import logger
 from uds import tools
 from uds import VERSION
 
@@ -198,6 +199,7 @@ def done(data):
     sys.exit(0)
 
 if __name__ == "__main__":
+    logger.debug('Initializing connector')
     # Initialize app
     app = QtGui.QApplication(sys.argv)
 
@@ -206,40 +208,50 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setApplicationName('UDS Connector')
 
     if 'darwin' not in sys.platform:
+        logger.debug('Mac OS *NOT* Detected')
         app.setStyle('plastique')
 
     if six.PY3 is False:
+        logger.debug('Fixing threaded execution of commands')
         import threading
         threading._DummyThread._Thread__stop = lambda x: 42
 
     # First parameter must be url
     try:
         uri = sys.argv[1]
+        logger.debug('URI: {}'.format(uri))
         if uri[:6] != 'uds://' and uri[:7] != 'udss://':
             raise Exception()
 
         ssl = uri[3] == 's'
         host, UDSClient.ticket, UDSClient.scrambler = uri.split('//')[1].split('/')
+        logger.debug('ssl: {}, host:{}, ticket:{}, scrambler:{}'.format(ssl, host, UDSClient.ticket, UDSClient.scrambler))
 
     except Exception:
+        logger.debug('Detected execution without valid URI, exiting')
         QtGui.QMessageBox.critical(None, 'Notice', 'This program is designed to be used by UDS', QtGui.QMessageBox.Ok)
         sys.exit(1)
 
     # Setup REST api endpoint
     RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
+    logger.debug('Setting requert URL to {}'.format(RestRequest.restApiUrl))
     # RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
 
     try:
+        logger.debug('Starting execution')
         win = UDSClient()
         win.show()
         win.start()
 
         exitVal = app.exec_()
+        logger.debug('Execution finished correctly')
 
     except Exception as e:
+        logger.exception('Got an exception executing client:')
         exitVal = 128
         QtGui.QMessageBox.critical(None, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
 
+    logger.debug('Exiting')
     sys.exit(exitVal)
 
     # Build base REST

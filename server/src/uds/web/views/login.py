@@ -34,6 +34,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext
 
 from uds.core.auths.auth import webLogin, authenticate, authLogLogin, authLogLogout, getUDSCookie, webLoginRequired, webLogout
 from uds.models import Authenticator
@@ -48,7 +49,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2015-05-12'
+__updated__ = '2015-11-16'
 
 
 def login(request, tag=None):
@@ -100,14 +101,18 @@ def login(request, tag=None):
                 form.add_form_error('Too many authentication errors. User temporarily  blocked.')
                 authLogLogin(request, authenticator, userName, 'Temporarily blocked')
             else:
-                user = authenticate(userName, form.cleaned_data['password'], authenticator)
+                password = form.cleaned_data['password']
+                user = None
+                if password == '':
+                    password = 'axd56adhg466jasd6q8sadñ€sáé--v'
+                user = authenticate(userName, password, authenticator)
                 logger.debug('User: {}'.format(user))
 
                 if user is None:
                     logger.debug("Invalid credentials for user {0}".format(userName))
                     tries += 1
                     cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
-                    form.add_form_error('Invalid credentials')
+                    form.add_form_error(ugettext('Invalid credentials'))
                     authLogLogin(request, authenticator, userName, 'Invalid credentials')
                 else:
                     logger.debug('User {} has logged in'.format(userName))
@@ -118,6 +123,8 @@ def login(request, tag=None):
                     request.session['OS'] = os
                     authLogLogin(request, authenticator, user.name)
                     return response
+        else:
+            logger.info('Invalid form received')
     else:
         form = LoginForm(tag=tag)
 

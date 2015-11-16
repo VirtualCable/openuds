@@ -12,8 +12,7 @@ import threading
 import random
 import time
 
-g_verbose = True
-
+from .log import logger
 
 class ForwardServer (SocketServer.ThreadingTCPServer):
     daemon_threads = True
@@ -30,16 +29,16 @@ class Handler (SocketServer.BaseRequestHandler):
                                                    (self.chain_host, self.chain_port),
                                                    self.request.getpeername())
         except Exception as e:
-            verbose('Incoming request to %s:%d failed: %s' % (self.chain_host,
+            logger.exception('Incoming request to %s:%d failed: %s' % (self.chain_host,
                                                               self.chain_port,
                                                               repr(e)))
             return
         if chan is None:
-            verbose('Incoming request to %s:%d was rejected by the SSH server.' %
+            logger.error('Incoming request to %s:%d was rejected by the SSH server.' %
                     (self.chain_host, self.chain_port))
             return
 
-        verbose('Connected!  Tunnel open %r -> %r -> %r' % (self.request.getpeername(),
+        logger.debug('Connected!  Tunnel open %r -> %r -> %r' % (self.request.getpeername(),
                                                             chan.getpeername(), (self.chain_host, self.chain_port)))
         try:
             while self.event.is_set() is False:
@@ -62,7 +61,7 @@ class Handler (SocketServer.BaseRequestHandler):
             peername = self.request.getpeername()
             chan.close()
             self.request.close()
-            verbose('Tunnel closed from %r' % (peername,))
+            logger.debug('Tunnel closed from %r' % (peername,))
         except Exception:
             pass
 
@@ -70,12 +69,6 @@ class Handler (SocketServer.BaseRequestHandler):
             self.thread.stop()
 
         self.thread.isConnected = False
-
-
-def verbose(s):
-    if g_verbose:
-        print s
-
 
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
@@ -104,7 +97,7 @@ class ForwardThread(threading.Thread):
 
     def _timerFnc(self):
         self.timer = None
-        verbose('Timer fnc: {}'.format(self.isConnected))
+        logger.debug('Timer fnc: {}'.format(self.isConnected))
         self.stoppable = True
         if self.isConnected is False:
             self.stop()
@@ -114,12 +107,12 @@ class ForwardThread(threading.Thread):
         self.client.load_system_host_keys()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        verbose('Connecting to ssh host %s:%d ...' % (self.server, self.port))
+        logger.debug('Connecting to ssh host %s:%d ...' % (self.server, self.port))
 
         try:
             self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
         except Exception as e:
-            verbose('Exception connecting: {}'.format(e))
+            logger.exception('Exception connecting: ')
             self.status = 2  # Error
             return
 
@@ -130,7 +123,7 @@ class ForwardThread(threading.Thread):
             event = self.stopEvent
             thread = self
 
-        verbose('Wait Time: {}'.format(self.waitTime))
+        logger.debug('Wait Time: {}'.format(self.waitTime))
         self.timer = threading.Timer(self.waitTime, self._timerFnc)
         self.timer.start()
 
@@ -150,6 +143,7 @@ class ForwardThread(threading.Thread):
             if self.client is not None:
                 self.client.close()
         except Exception:
+            logger.exception('Exception stopping')
             pass
 
 
@@ -163,7 +157,7 @@ def forward(server, port, username, password, redirectHost, redirectPort, localP
     if localPort is None:
         localPort = random.randrange(40000, 50000)
 
-    verbose('Connecting to {}:{} using {}/{} redirecting to {}:{}, listening on 127.0.0.1:{}'.format(
+    logger.debug('Connecting to {}:{} using {}/{} redirecting to {}:{}, listening on 127.0.0.1:{}'.format(
         server, port, username, password, redirectHost, redirectPort, localPort))
 
     ft = ForwardThread(server, port, username, password, localPort, redirectHost, redirectPort, waitTime)
