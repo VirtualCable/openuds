@@ -81,4 +81,4 @@ class UserServiceRemover(Job):
             try:
                 UserServiceManager.manager().remove(us)
             except Exception:
-                logger.exception('Exception invoking remove user service {}'.format(us))
+                logger.exception('Exception removing user service')

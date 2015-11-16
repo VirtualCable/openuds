@@ -43,7 +43,7 @@ from uds.models.ManagedObjectModel import ManagedObjectModel
 import logging
 
 
-__updated__ = '2015-05-12'
+__updated__ = '2015-11-16'
 
 
 logger = logging.getLogger(__name__)
@@ -76,6 +76,9 @@ class Provider(ManagedObjectModel):
             The python type for this record object
         '''
         return services.factory().lookup(self.data_type)
+
+    def isInMaintenance(self):
+        return self.maintenance_mode
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)

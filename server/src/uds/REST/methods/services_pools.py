@@ -87,7 +87,7 @@ class ServicesPools(ModelHandler):
             'parent': item.service.name,
             'parent_type': item.service.data_type,
             'comments': item.comments,
-            'state': item.state if item.service.provider.maintenance_mode is False else State.MAINTENANCE,
+            'state': item.state if item.isInMaintenance() is False else State.MAINTENANCE,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,

@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 from datetime import timedelta
 import logging
 
-__updated__ = '2015-06-12'
+__updated__ = '2015-11-16'
 
 
 logger = logging.getLogger(__name__)
@@ -175,7 +175,7 @@ class DeployedService(UUIDModel):
         return False
 
     def isInMaintenance(self):
-        return self.service.provider.maintenance_mode
+        return self.service is not None and self.service.isInMaintenance()
 
     def storeValue(self, name, value):
         '''
