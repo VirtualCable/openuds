@@ -93,7 +93,7 @@ class Connection(Handler):
             services.append({'id': 'A' + svr.uuid,
                              'name': svr['name'],
                              'transports': trans,
-                             'maintenance': svr.deployed_service.service.provider.maintenance_mode,
+                             'maintenance': svr.isInMaintenance(),
                              'in_use': svr.in_use})
 
         logger.debug(services)
@@ -115,7 +115,7 @@ class Connection(Handler):
             services.append({'id': 'F' + svr.uuid,
                              'name': svr.name,
                              'transports': trans,
-                             'maintenance': svr.service.provider.maintenance_mode,
+                             'maintenance': svr.isInMaintenance(),
                              'in_use': in_use})
 
         logger.debug('Services: {0}'.format(services))
