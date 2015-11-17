@@ -151,7 +151,8 @@ class UDSClient(QtGui.QMainWindow):
             script = data['result'].decode('base64').decode('bz2')
 
             self.ui.progressBar.setValue(100)
-            # self.showMinimized()
+            if 'darwin' in sys.platform:
+                self.showMinimized()
 
             QtCore.QTimer.singleShot(3000, self.endScript)
             self.hide()
