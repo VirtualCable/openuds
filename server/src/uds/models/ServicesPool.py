@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 from datetime import timedelta
 import logging
 
-__updated__ = '2015-11-16'
+__updated__ = '2015-11-18'
 
 
 logger = logging.getLogger(__name__)
@@ -228,11 +228,12 @@ class DeployedService(UUIDModel):
 
         A background worker will check for removed deloyed services and clean database of them.
         '''
-        self.transports.clear()
-        self.assignedGroups.clear()
-        self.osmanager = None
-        self.service = None
-        self.setState(State.REMOVED)
+        # self.transports.clear()
+        # self.assignedGroups.clear()
+        # self.osmanager = None
+        # self.service = None
+        # self.setState(State.REMOVED)
+        self.delete()
 
     def markOldUserServicesAsRemovables(self, activePub):
         '''
