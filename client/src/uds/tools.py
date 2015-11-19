@@ -39,6 +39,7 @@ import os
 import socket
 import stat
 import six
+import sys
 
 _unlinkFiles = []
 _tasksToWait = []
@@ -49,6 +50,8 @@ def saveTempFile(content, filename=None):
     if filename is None:
         filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         filename = filename + '.uds'
+    if 'win32' in sys.platform:
+        filename = filename.encode('utf-8')
     filename = os.path.join(tempfile.gettempdir(), filename)
     with open(filename, 'w') as f:
         f.write(content)
@@ -57,6 +60,8 @@ def saveTempFile(content, filename=None):
 
 
 def findApp(appName, extraPath=None):
+    if 'win32' in sys.platform and isinstance(appName, six.text_type):
+        appName = six.binary_type(appName)
     searchPath = os.environ['PATH'].split(os.pathsep)
     if extraPath is not None:
         searchPath += list(extraPath)
