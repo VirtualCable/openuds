@@ -143,6 +143,7 @@ class UDSClient(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(dict)
     def transportDataReceived(self, data):
+        logger.debug('Transport data received')
         try:
             self.processError(data)
 
@@ -166,6 +167,7 @@ class UDSClient(QtGui.QMainWindow):
             QtCore.QTimer.singleShot(10000, self.getTransportData)
 
         except Exception as e:
+            logger.exception('Got exception executing script:')
             self.showError(e)
 
     def endScript(self):

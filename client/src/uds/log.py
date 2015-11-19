@@ -36,7 +36,7 @@ import os
 import tempfile
 
 logging.basicConfig(
-    filename=os.path.join(tempfile.gettempdir(), 'udsclient.log'),
+    filename=os.path.join(tempfile.gettempdir(), b'udsclient.log'),
     filemode='a',
     format='%(levelname)s %(asctime)s %(message)s',
     level=logging.INFO
