@@ -72,6 +72,8 @@ class IPMachineDeployed(AutoAttributes, services.UserDeployment):
         else:
             self._ip = ip
             self._state = State.FINISHED
+        self.dbservice().setInUse(True)
+        self.dbservice().save()
         return self._state
 
     def deployForUser(self, user):
