@@ -91,6 +91,7 @@ class RestRequest(QObject):
     @pyqtSlot(QNetworkReply, list)
     def _sslError(self, reply, errors):
         settings = QSettings()
+        settings.beginGroup('ssl')
         cert = errors[0].certificate()
         digest = six.text_type(cert.digest().toHex())
 
@@ -106,6 +107,8 @@ class RestRequest(QObject):
         if approved or QMessageBox.warning(self._parentWindow, 'SSL Warning', errorString, QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
             settings.setValue(digest, True)
             reply.ignoreSslErrors()
+
+        settings.endGroup()
 
     def get(self):
         request = QNetworkRequest(self.url)

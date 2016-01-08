@@ -201,6 +201,23 @@ def done(data):
     QtGui.QMessageBox.critical(None, 'Notice', six.text_type(data.data), QtGui.QMessageBox.Ok)
     sys.exit(0)
 
+# Ask user to aprobe endpoint
+def approveHost(host, parentWindow=None):
+    settings = QtCore.QSettings()
+    settings.beginGroup('endpoints')
+
+    approved = settings.value(host, False).toBool()
+
+    errorString = '<p>The host <b>{}</b> needs to be approve:</p>'.format(host)
+    errorString += '<p>Only approve UDS servers that you trust to avoid security issues.</p>'
+
+    if approved or QtGui.QMessageBox.warning(parentWindow, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+        settings.setValue(host, True)
+        approved = True
+
+    settings.endGroup()
+    return approved
+
 if __name__ == "__main__":
     logger.debug('Initializing connector')
     # Initialize app
@@ -242,8 +259,15 @@ if __name__ == "__main__":
 
     try:
         logger.debug('Starting execution')
+
+        # Approbe before going on
+        if approveHost(host) is False:
+            raise Exception('Host {} was not approved'.format(host))
+
         win = UDSClient()
         win.show()
+
+
         win.start()
 
         exitVal = app.exec_()
