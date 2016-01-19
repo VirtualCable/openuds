@@ -102,8 +102,8 @@ def getEvents(obj, eventType, **kwargs):
     else:
         owner_id = obj.pk
 
-    for i in statsManager().getEvents(__transDict[type(obj)], eventType, owner_id, since, to):
-        val = (datetime.datetime.fromtimestamp(i.stamp), i.fld1, i.fld2, i.fld3)
+    for i in statsManager().getEvents(__transDict[type(obj)], eventType, owner_id=owner_id, since=since, to=to):
+        val = (datetime.datetime.fromtimestamp(i.stamp), i.fld1, i.fld2, i.fld3, i.fld4, i.event_type)
         yield val
 
 

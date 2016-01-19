@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-05-25'
+__updated__ = '2016-01-14'
 
 
 class TicketStore(UUIDModel):
@@ -83,12 +83,19 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def create(data, validator=None, validity=DEFAULT_VALIDITY):
+        '''
+        validity is in seconds
+        '''
         if validator is not None:
             validator = pickle.dumps(validator)
         return TicketStore.objects.create(stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity).uuid
 
     @staticmethod
     def store(uuid, data, validator=None, validity=DEFAULT_VALIDITY):
+        '''
+        Stores an ticketstore. If one with this uuid already exists, replaces it. Else, creates a new one
+        validity is in seconds
+        '''
         if validator is not None:
             validator = pickle.dumps(validator)
         try:
