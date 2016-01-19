@@ -175,11 +175,11 @@ class UsageByPoolCSV(UsageByPool):
         output = StringIO.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.getRangeData()[2]
+        reportData, poolName = self.getData()
 
-        writer.writerow([ugettext('Pool'), ugettext('Date range'), ugettext('Users'), ugettext('Accesses')])
+        writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds')])
 
         for v in reportData:
-            writer.writerow([v['name'], v['date'], v['users'], v['accesses']])
+            writer.writerow([v['date'], v['name'], v['time']])
 
         return output.getvalue()
