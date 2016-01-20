@@ -146,11 +146,12 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             else:
                 operations.joinDomain(
                     domain, ou, account, password, executeInOneStep=False)
+                self.reboot()
         else:
             operations.renameComputer(name)
             logger.info(
                 'Rebooting computer got activate new name {}'.format(name))
-        self.reboot()
+            self.reboot()
 
     def joinDomain(self, name, domain, ou, account, password):
         ver = operations.getWindowsVersion()
