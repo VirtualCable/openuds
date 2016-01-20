@@ -48,7 +48,7 @@ from .base import StatsReport
 from uds.core.util import tools
 from uds.models import ServicePool
 from geraldo.generators.pdf import PDFGenerator
-from geraldo import ReportBand, ObjectValue
+from geraldo import ReportBand, ObjectValue, Label
 from reportlab.lib.units import cm, mm
 
 import datetime
@@ -56,7 +56,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-01-19'
+__updated__ = '2016-01-20'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -67,6 +67,15 @@ GERALDO_HEIGHT = GERALDO_WIDTH * HEIGHT / WIDTH
 class UsersReport(UDSGeraldoReport):
     title = ''
     author = 'UDS'
+
+    header_elements = [
+        Label(text=_('Access Datetime'), top=2.0 * cm, left=0.5 * cm),
+        Label(text=_('User'), top=2.0 * cm, left=5.5 * cm),
+        Label(text=_('Duration(seconds)'), top=2.0 * cm, left=12 * cm),
+    ]
+
+    header_height = 2.5 * cm
+
 
     class band_detail(ReportBand):
         height = 0.5 * cm

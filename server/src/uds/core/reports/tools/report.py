@@ -46,7 +46,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-07-07'
+__updated__ = '2016-01-20'
 
 
 class UDSGeraldoReport(Report):
@@ -59,6 +59,9 @@ class UDSGeraldoReport(Report):
     margin_top = 0.5 * cm
     margin_right = 0.5 * cm
     margin_bottom = 0.5 * cm
+
+    header_elements = []
+    header_height = 1.8 * cm
 
     class band_page_header(ReportBand):
         height = 1.8 * cm
@@ -80,6 +83,12 @@ class UDSGeraldoReport(Report):
                         width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
         ]
         borders = {'top': True}
+
+    def __init__(self, queryset=None):
+        self.band_page_header.elements += self.header_elements
+        self.band_page_header.height = self.header_height
+        Report.__init__(self, queryset=queryset)
+
 
     @staticmethod
     def viewSize():
