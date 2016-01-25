@@ -10,6 +10,7 @@
   @rest = restItem
   @name = name
   @types = {}
+  @initialized = false
   @init()
   return
 
@@ -23,6 +24,7 @@
     @rest.types (data) ->
       styles = ""
       alreadyAttached = $("#gui-style-" + self.name).length isnt 0
+      self.types = {}
       $.each data, (index, value) ->
         className = self.name + "-" + value.type
         self.types[value.type] = value
@@ -38,6 +40,10 @@
         # If style already attached, do not re-attach it
         styles = "<style id=\"gui-style-" + self.name + "\" media=\"screen\">" + styles + "</style>"
         $(styles).appendTo "head"
+
+      # Initialization finished
+      self.initialized = true
+
       return
 
     return
@@ -87,10 +93,21 @@
   #
   table: (tblParams) ->
     "use strict"
+
     tblParams = tblParams or {}
+    self = this # Store this for child functions
+
+    if self.initialized is false
+      setTimeout (->
+        gui.doLog 'Delaying table creation'
+        self.table(tblParams)
+        return
+      ), 100
+      return
+
+
     gui.doLog "Composing table for " + @name, tblParams
     tableId = @name + "-table"
-    self = this # Store this for child functions
     
     # ---------------
     # Cells renderers
@@ -290,7 +307,7 @@
 
               when "new"
                 if self.rest.permission() >= api.permissions.MANAGEMENT
-                  if Object.keys(self.types).length isnt 0
+                  if not api.tools.isEmpty(self.types)
                     menuId = gui.genRamdonId("dd-")
                     ordered = []
                     $.each self.types, (k, v) ->

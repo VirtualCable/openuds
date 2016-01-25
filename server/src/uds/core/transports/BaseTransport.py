@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 
 import logging
 
-__updated__ = '2015-05-28'
+__updated__ = '2016-01-20'
 
 logger = logging.getLogger(__name__)
 
@@ -107,6 +107,15 @@ class Transport(Module):
         Override this in yours transports
         '''
         return False
+
+    @classmethod
+    def supportsProtocol(cls, protocol):
+        if isinstance(protocol, (list, tuple)):
+            for v in protocol:
+                if cls.supportsProtocol(v) is True:
+                    return True
+            return False
+        return protocol.lower() == cls.protocol.lower()
 
     @classmethod
     def supportsOs(cls, osName):

@@ -35,6 +35,8 @@
         
       return str
 
+    isEmpty: (obj) ->
+      return $.isEmptyObject(obj)
 
   return
 ) window.api = window.api or {}, jQuery

@@ -49,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-11-16'
+__updated__ = '2016-01-20'
 
 
 def about(request):
@@ -132,8 +132,6 @@ def index(request):
 
     # Now generic user service
     for svr in availServices:
-        # Generate ticket
-
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
