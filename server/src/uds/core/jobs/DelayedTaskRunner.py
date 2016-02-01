@@ -44,7 +44,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-10-16'
+__updated__ = '2016-02-01'
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ class DelayedTaskRunner(object):
 
     def executeOneDelayedTask(self):
         now = getSqlDatetime()
-        filt = Q(execution_time__lt=now) | Q(insert_date__gt=now)
+        filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=30))
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
         taskInstance = None
         try:
