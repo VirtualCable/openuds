@@ -138,8 +138,8 @@ class UsageByPool(StatsReport):
         logins = {}
         data = []
         for i in items:
-            if '\\' in i.fld1:
-                continue
+            # if '\\' in i.fld1:
+            #    continue
 
             if i.event_type == events.ET_LOGIN:
                 logins[i.fld4] = i.stamp
