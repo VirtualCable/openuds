@@ -94,7 +94,7 @@ else:
         username, domain = '{m.username}', '{m.domain}'
 
         if username != '':
-            url += username
+            url += urllib.quote(username)
             if '{m.password}' != '':
                 url += ':' + urllib.quote('{m.password}')
             url += '@'
