@@ -96,10 +96,10 @@ class OSManager(Module):
         pass
 
     # These methods must be overriden
-    def process(self, service, message, data, options=None):
+    def process(self, userService, message, data, options=None):
         '''
         This method must be overriden so your so manager can manage requests and responses from agent.
-        @param service: Service that sends the request (virtual machine or whatever)
+        @param userService: Service that sends the request (virtual machine or whatever)
         @param message: message to process (os manager dependent)
         @param data: Data for this message
         '''

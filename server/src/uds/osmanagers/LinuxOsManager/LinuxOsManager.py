@@ -132,7 +132,7 @@ class LinuxOsManager(osmanagers.OSManager):
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
-    def process(self, service, msg, data, options):
+    def process(self, userService, msg, data, options):
         '''
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), old method
@@ -141,47 +141,47 @@ class LinuxOsManager(osmanagers.OSManager):
         * msg = logoff, data = Username, Informs that the username has logged out of the machine
         * msg = ready, data = None, Informs machine ready to be used
         '''
-        logger.info("Invoked LinuxOsManager for {0} with params: {1},{2}".format(service, msg, data))
-        # We get from storage the name for this service. If no name, we try to assign a new one
+        logger.info("Invoked LinuxOsManager for {0} with params: {1},{2}".format(userService, msg, data))
+        # We get from storage the name for this userService. If no name, we try to assign a new one
         ret = "ok"
         notifyReady = False
         doRemove = False
-        state = service.os_state
+        state = userService.os_state
 
         # Old "info" state, will be removed in a near future
         if msg == "info":
-            ret = self.infoVal(service)
+            ret = self.infoVal(userService)
             state = State.PREPARING
         elif msg == "information":
-            ret = self.infoValue(service)
+            ret = self.infoValue(userService)
             state = State.PREPARING
         elif msg == "log":
-            self.doLog(service, data, log.ACTOR)
+            self.doLog(userService, data, log.ACTOR)
         elif msg == "login":
-            self.loggedIn(service, data, False)
+            self.loggedIn(userService, data, False)
         elif msg == "logout":
-            self.loggedOut(service, data, False)
+            self.loggedOut(userService, data, False)
             if self._onLogout == 'remove':
                 doRemove = True
         elif msg == "ip":
-            # This ocurss on main loop inside machine, so service is usable
+            # This ocurss on main loop inside machine, so userService is usable
             state = State.USABLE
-            self.notifyIp(service.unique_id, service, data)
+            self.notifyIp(userService.unique_id, userService, data)
         elif msg == "ready":
             state = State.USABLE
             notifyReady = True
-            self.notifyIp(service.unique_id, service, data)
+            self.notifyIp(userService.unique_id, userService, data)
 
-        service.setOsState(state)
+        userService.setOsState(state)
 
         # If notifyReady is not true, save state, let UserServiceManager do it for us else
         if doRemove is True:
-            service.remove()
+            userService.release()
         else:
             if notifyReady is False:
-                service.save()
+                userService.save()
             else:
-                UserServiceManager.manager().notifyReadyFromOsManager(service, '')
+                UserServiceManager.manager().notifyReadyFromOsManager(userService, '')
         logger.debug('Returning {0}'.format(ret))
         return ret
 

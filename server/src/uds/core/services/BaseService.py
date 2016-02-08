@@ -37,7 +37,7 @@ from uds.core import Module
 from uds.core.transports import protocols
 from . import types
 
-__updated__ = '2015-05-28'
+__updated__ = '2016-02-08'
 
 
 class Service(Module):
@@ -170,6 +170,10 @@ class Service(Module):
     # : 'kind' of services that this service provides:
     # : For example, VDI, VAPP, ...
     servicesTypeProvided = types.ALL
+
+    # : If the service can provide any other option on release appart of "delete" & "keep assigned"
+    # : Defaults to None (no any other options are provided)
+    actionsOnRelease = None
 
     def __init__(self, environment, parent, values=None):
         '''
