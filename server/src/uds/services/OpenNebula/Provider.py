@@ -41,6 +41,7 @@ from uds.core.util import validators
 from defusedxml import minidom
 
 from .LiveService import LiveService
+from . import on
 
 
 import logging
@@ -49,7 +50,7 @@ import six
 # Python bindings for OpenNebula
 import oca
 
-__updated__ = '2016-02-08'
+__updated__ = '2016-02-09'
 
 logger = logging.getLogger(__name__)
 
@@ -100,8 +101,6 @@ class Provider(ServiceProvider):
     username = gui.TextField(length=32, label=_('Username'), order=4, tooltip=_('User with valid privileges on OpenNebula'), required=True, defvalue='oneadmin')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=5, tooltip=_('Password of the user of OpenNebula'), required=True)
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=6, tooltip=_('Timeout in seconds of connection to OpenNebula'), required=True)
-    macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF', order=7, rdonly=True,
-                              tooltip=_('Range of valid macs for UDS managed machines'), required=True)
 
     # Own variables
     _api = None
@@ -115,9 +114,8 @@ class Provider(ServiceProvider):
         self._api = None
 
         if values is not None:
-            self.macsRange.value = validators.validateMacRange(self.macsRange.value)
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
-            logger.debug('Endpoint: {}'.format(self.endPoint))
+            logger.debug('Endpoint: {}'.format(self.endpoint))
 
     @property
     def endpoint(self):
@@ -135,11 +133,7 @@ class Provider(ServiceProvider):
         self._api = None
 
     def sanitizeVmName(self, name):
-        '''
-        Ovirt only allows machine names with [a-zA-Z0-9_-]
-        '''
-        import re
-        return re.sub("[^a-zA-Z0-9_-]", "_", name)
+        return on.sanitizeName(name)
 
     def testConnection(self):
         '''
@@ -180,128 +174,19 @@ class Provider(ServiceProvider):
         return vmpool
 
     def getDatastores(self, datastoreType=0):
-        '''
-        0 seems to be images datastore
-        '''
-        datastores = oca.DatastorePool(self.api)
-        datastores.info()
-
-        for ds in datastores:
-            if ds.type == datastoreType:
-                yield ds
+        return on.storage.enumerateDatastores(self.api, datastoreType)
 
     def getTemplates(self, force=False):
-        logger.debug('Api: {}'.format(self.api))
-        templatesPool = oca.VmTemplatePool(self.api)
-        templatesPool.info()
-
-        for t in templatesPool:
-            if t.name[:4] != 'UDSP':
-                yield t
+        return on.template.getTemplates(self.api, force)
 
     def makeTemplate(self, fromTemplateId, name, toDataStore):
-        '''
-        Publish the machine (makes a template from it so we can create COWs) and returns the template id of
-        the creating machine
-
-        Args:
-            fromTemplateId: id of the base template
-            name: Name of the machine (care, only ascii characters and no spaces!!!)
-
-        Returns
-            Raises an exception if operation could not be acomplished, or returns the id of the template being created.
-
-        Note:
-            Maybe we need to also clone the hard disk?
-        '''
-        try:
-            # First, we clone the themplate itself
-            templateId = self.api.call('template.clone', int(fromTemplateId), name)
-
-            # Now copy cloned images if possible
-            try:
-                imgs = oca.ImagePool(self.api)
-                imgs.info()
-                imgs = dict(((i.name, i.id) for i in imgs))
-
-                info = self.api.call('template.info', templateId)
-                template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
-                logger.debug('XML: {}'.format(template.toxml()))
-
-                counter = 0
-                for dsk in template.getElementsByTagName('DISK'):
-                    counter += 1
-                    imgIds = dsk.getElementsByTagName('IMAGE_ID')
-                    if len(imgIds) == 0:
-                        fromId = False
-                        node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
-                        imgName = node.data
-                        # Locate
-                        imgId = imgs[imgName]
-                    else:
-                        fromId = True
-                        node = imgIds[0].childNodes[0]
-                        imgId = node.data
-
-                    logger.debug('Found {} for cloning'.format(imgId))
-
-                    # Now clone the image
-                    imgName = self.sanitizeVmName(name + ' DSK ' + six.text_type(counter))
-                    newId = self.api.call('image.clone', int(imgId), imgName, int(toDataStore))
-                    if fromId is True:
-                        node.data = six.text_type(newId)
-                    else:
-                        node.data = imgName
-
-                # Now update the clone
-                self.api.call('template.update', templateId, template.toxml())
-            except:
-                logger.exception('Exception cloning image')
-
-            return six.text_type(templateId)
-        except Exception as e:
-            logger.error('Creating template on OpenNebula: {}'.format(e))
-            raise
+        return on.template.create(self.api, fromTemplateId, name, toDataStore)
 
     def removeTemplate(self, templateId):
-        '''
-        Removes a template from ovirt server
+        return on.template.remove(self.api, templateId)
 
-        Returns nothing, and raises an Exception if it fails
-        '''
-        try:
-            # First, remove Images (wont be possible if there is any images already in use, but will try)
-            # Now copy cloned images if possible
-            try:
-                imgs = oca.ImagePool(self.api)
-                imgs.info()
-                imgs = dict(((i.name, i.id) for i in imgs))
-
-                info = self.api.call('template.info', int(templateId))
-                template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
-                logger.debug('XML: {}'.format(template.toxml()))
-
-                counter = 0
-                for dsk in template.getElementsByTagName('DISK'):
-                    imgIds = dsk.getElementsByTagName('IMAGE_ID')
-                    if len(imgIds) == 0:
-                        node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
-                        imgId = imgs[node.data]
-                    else:
-                        node = imgIds[0].childNodes[0]
-                        imgId = node.data
-
-                    logger.debug('Found {} for cloning'.format(imgId))
-
-                    # Now delete the image
-                    self.api.call('image.delete', int(imgId))
-
-            except:
-                logger.exception('Exception cloning image')
-
-            self.api.call('template.delete', int(templateId))
-        except Exception as e:
-            logger.error('Creating template on OpenNebula: {}'.format(e))
+    def deployFromTemplate(self, name, templateId):
+        return on.template.deployFrom(self.api, templateId, name)
 
     def getMachineState(self, machineId):
         '''
@@ -312,32 +197,15 @@ class Provider(ServiceProvider):
             machineId: Id of the machine to get state
 
         Returns:
-            one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
+            one of the on.VmState Values
         '''
-        return self.__getApi().getMachineState(machineId)
+        try:
+            vm = oca.VirtualMachine.new_with_id(self.api, int(machineId))
+            vm.info()
+            return vm.state
+        except Exception as e:
+            logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
 
-    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB):
-        '''
-        Deploys a virtual machine on selected cluster from selected template
-
-        Args:
-            name: Name (sanitized) of the machine
-            comments: Comments for machine
-            templateId: Id of the template to deploy from
-            clusterId: Id of the cluster to deploy to
-            displayType: 'vnc' or 'spice'. Display to use ad OpenNebula admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
-
-        Returns:
-            Id of the machine being created form template
-        '''
-        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB)
 
     def startMachine(self, machineId):
         '''
@@ -350,7 +218,7 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().startMachine(machineId)
+        on.vm.startMachine(self.api, machineId)
 
     def stopMachine(self, machineId):
         '''
@@ -361,7 +229,7 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().stopMachine(machineId)
+        on.vm.stopMachine(self.api, machineId)
 
     def suspendMachine(self, machineId):
         '''
@@ -372,7 +240,7 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().suspendMachine(machineId)
+        on.vm.suspendMachine(self.api, machineId)
 
     def removeMachine(self, machineId):
         '''
@@ -383,24 +251,13 @@ class Provider(ServiceProvider):
 
         Returns:
         '''
-        return self.__getApi().removeMachine(machineId)
+        on.vm.removeMachine(self.api, machineId)
 
-    def updateMachineMac(self, machineId, macAddres):
+    def getNetInfo(self, machineId, networkId=None):
         '''
         Changes the mac address of first nic of the machine to the one specified
         '''
-        return self.__getApi().updateMachineMac(machineId, macAddres)
-
-    def getMacRange(self):
-        return self.macsRange.value
-
-    def getConsoleConnection(self, machineId):
-        return self.__getApi().getConsoleConnection(machineId)
-
-    def desktopLogin(self, machineId, username, password, domain):
-        '''
-        '''
-        return self.__getApi().desktopLogin(machineId, username, password, domain)
+        return on.vm.getNetInfo(self.api, machineId, networkId)
 
     @staticmethod
     def test(env, data):

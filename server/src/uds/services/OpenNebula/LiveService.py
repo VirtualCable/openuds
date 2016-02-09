@@ -35,13 +35,12 @@ from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
 from .LivePublication import LivePublication
 from .LiveDeployment import LiveDeployment
-from . import Helpers
 
 from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-02-08'
+__updated__ = '2016-02-09'
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +134,7 @@ class LiveService(Service):
         templates = self.parent().getTemplates()
         vals = []
         for t in templates:
-            vals.append(gui.choiceItem(t.id, t.name))
+            vals.append(gui.choiceItem(t[0], t[1]))
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
@@ -144,7 +143,7 @@ class LiveService(Service):
         datastores = self.parent().getDatastores()
         vals = []
         for d in datastores:
-            vals.append(gui.choiceItem(d.id, d.name))
+            vals.append(gui.choiceItem(d[0], d[1]))
 
         self.datastore.setValues(vals)
 
@@ -154,20 +153,7 @@ class LiveService(Service):
     def makeTemplate(self, templateName):
         return self.parent().makeTemplate(self.template.value, templateName, self.datastore.value)
 
-    def getTemplateState(self, templateId):
-        '''
-        Invokes getTemplateState from parent provider
-
-        Args:
-            templateId: templateId to remove
-
-        Returns nothing
-
-        Raises an exception if operation fails.
-        '''
-        return self.parent().getTemplateState(templateId)
-
-    def deployFromTemplate(self, name, comments, templateId):
+    def deployFromTemplate(self, name, templateId):
         '''
         Deploys a virtual machine on selected cluster from selected template
 
@@ -183,9 +169,8 @@ class LiveService(Service):
             Id of the machine being created form template
         '''
         logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
-        self.datastoreHasSpace()
-        return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value,
-                                                self.display.value, int(self.memory.value), int(self.memoryGuaranteed.value))
+        # self.datastoreHasSpace()
+        return self.parent().deployFromTemplate(name, templateId)
 
     def removeTemplate(self, templateId):
         '''
@@ -257,17 +242,11 @@ class LiveService(Service):
         '''
         return self.parent().removeMachine(machineId)
 
-    def updateMachineMac(self, machineId, macAddres):
+    def getNetInfo(self, machineId, networkId=None):
         '''
         Changes the mac address of first nic of the machine to the one specified
         '''
-        return self.parent().updateMachineMac(machineId, macAddres)
-
-    def getMacRange(self):
-        '''
-        Returns de selected mac range
-        '''
-        return self.parent().getMacRange()
+        return self.parent().getNetInfo(machineId, networkId=None)
 
     def getBaseName(self):
         '''
@@ -286,9 +265,3 @@ class LiveService(Service):
         Returns the selected display type (for created machines, for administration
         '''
         return self.display.value
-
-    def getConsoleConnection(self, machineId):
-        return self.parent().getConsoleConnection(machineId)
-
-    def desktopLogin(self, machineId, username, password, domain):
-        return self.parent().desktopLogin(machineId, username, password, domain)

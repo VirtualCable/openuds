@@ -34,15 +34,17 @@ from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
 
+from . import on
+
 import pickle
 import logging
 
-__updated__ = '2016-01-28'
+__updated__ = '2016-02-09'
 
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opChangeMac = range(10)
+opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(8)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
@@ -139,8 +141,6 @@ class LiveDeployment(UserDeployment):
         The get method of a mac generator takes one param, that is the mac range
         to use to get an unused mac.
         '''
-        if self._mac == '':
-            self._mac = self.macGenerator().get(self.service().getMacRange())
         return self._mac
 
     def getIp(self):
@@ -173,12 +173,10 @@ class LiveDeployment(UserDeployment):
 
         state = self.service().getMachineState(self._vmid)
 
-        if state == 'unknown':
+        if state == on.VmState.UNKNOWN:
             return self.__error('Machine is not available anymore')
 
-        if state not in ('up', 'powering_up', 'restoring_state'):
-            self._queue = [opStart, opFinish]
-            return self.__executeQueue()
+        self.service().startMachine()
 
         self.cache().put('ready', '1')
         return State.FINISHED
@@ -217,24 +215,23 @@ class LiveDeployment(UserDeployment):
     def __initQueueForDeploy(self, forLevel2=False):
 
         if forLevel2 is False:
-            self._queue = [opCreate, opChangeMac, opStart, opFinish]
+            self._queue = [opCreate, opStart, opFinish]
         else:
-            self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
 
     def __checkMachineState(self, chkState):
         logger.debug('Checking that state of machine {} ({}) is {}'.format(self._vmid, self._name, chkState))
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == 'unknown' and chkState != 'unknown':
+        if state == on.VmState.UNKNOWN:
             return self.__error('Machine not found')
 
         ret = State.RUNNING
+
         if type(chkState) is list:
-            for cks in chkState:
-                if state == cks:
-                    ret = State.FINISHED
-                    break
+            if state in chkState:
+                ret = State.FINISHED
         else:
             if state == chkState:
                 ret = State.FINISHED
@@ -270,11 +267,9 @@ class LiveDeployment(UserDeployment):
         logger.debug('Setting error state, reason: {0}'.format(reason))
         self.doLog(log.ERROR, reason)
 
-        if self._vmid != '':  # Powers off
+        if self._vmid != '':  # Powers off & delete it
             try:
-                state = self.service().getMachineState(self._vmid)
-                if state in ('up', 'suspended'):
-                    self.service().stopMachine(self._vmid)
+                self.service().removeMachine(self._vmid)
             except:
                 logger.debug('Can\t set machine state to stopped')
 
@@ -296,11 +291,9 @@ class LiveDeployment(UserDeployment):
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
-            opStop: self.__stopMachine,
             opSuspend: self.__suspendMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
-            opChangeMac: self.__changeMac
         }
 
         try:
@@ -341,12 +334,14 @@ class LiveDeployment(UserDeployment):
         if name == NO_MORE_NAMES:
             raise Exception('No more names available for this service. (Increase digits for this service to fix)')
 
-        name = self.service().sanitizeVmName(name)  # oVirt don't let us to create machines with more than 15 chars!!!
-        comments = 'UDS Linked clone'
+        name = self.service().sanitizeVmName(name)  # OpenNebula don't let us to create machines with more than 15 chars!!!
 
-        self._vmid = self.service().deployFromTemplate(name, comments, templateId)
+        self._vmid = self.service().deployFromTemplate(name, templateId)
         if self._vmid is None:
             raise Exception('Can\'t create machine')
+
+        # Get IP & MAC (early stage)
+        self._mac, self._ip = self.service().getNetInfo(self._vmid)
 
     def __remove(self):
         '''
@@ -354,110 +349,47 @@ class LiveDeployment(UserDeployment):
         '''
         state = self.service().getMachineState(self._vmid)
 
-        if state == 'unknown':
+        if state == on.VmState.UNKNOWN:
             raise Exception('Machine not found')
 
-        if state != 'down':
-            self.__pushFrontOp(opStop)
-            self.__executeQueue()
-        else:
-            self.service().removeMachine(self._vmid)
+        self.service().removeMachine(self._vmid)
 
     def __startMachine(self):
         '''
         Powers on the machine
         '''
-        state = self.service().getMachineState(self._vmid)
-
-        if state == 'unknown':
-            raise Exception('Machine not found')
-
-        if state == 'up':  # Already started, return
-            return
-
-        if state != 'down' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
-        else:
-            self.service().startMachine(self._vmid)
-
-    def __stopMachine(self):
-        '''
-        Powers off the machine
-        '''
-        state = self.service().getMachineState(self._vmid)
-
-        if state == 'unknown':
-            raise Exception('Machine not found')
-
-        if state == 'down':  # Already stoped, return
-            return
-
-        if state != 'up' and state != 'suspended':
-            self.__pushFrontOp(opRetry)  # Will call "check Retry", that will finish inmediatly and again call this one
-        else:
-            self.service().stopMachine(self._vmid)
+        self.service().startMachine(self._vmid)
 
     def __suspendMachine(self):
         '''
         Suspends the machine
         '''
-        state = self.service().getMachineState(self._vmid)
-
-        if state == 'unknown':
-            raise Exception('Machine not found')
-
-        if state == 'suspended':  # Already suspended, return
-            return
-
-        if state != 'up':
-            self.__pushFrontOp(opRetry)  # Remember here, the return State.FINISH will make this retry be "poped" right ar return
-        else:
-            self.service().suspendMachine(self._vmid)
-
-    def __changeMac(self):
-        '''
-        Changes the mac of the first nic
-        '''
-        self.service().updateMachineMac(self._vmid, self.getUniqueId())
+        self.service().suspendMachine(self._vmid)
 
     # Check methods
     def __checkCreate(self):
         '''
         Checks the state of a deploy for an user or cache
         '''
-        return self.__checkMachineState('down')
+        return self.__checkMachineState(on.VmState.ACTIVE)
 
     def __checkStart(self):
         '''
         Checks if machine has started
         '''
-        return self.__checkMachineState('up')
-
-    def __checkStop(self):
-        '''
-        Checks if machine has stoped
-        '''
-        return self.__checkMachineState('down')
+        return self.__checkMachineState(on.VmState.ACTIVE)
 
     def __checkSuspend(self):
         '''
         Check if the machine has suspended
         '''
-        return self.__checkMachineState('suspended')
+        return self.__checkMachineState(on.VmState.SUSPENDED)
 
     def __checkRemoved(self):
         '''
         Checks if a machine has been removed
         '''
-        return self.__checkMachineState('unknown')
-
-    def __checkMac(self):
-        '''
-        Checks if change mac operation has finished.
-
-        Changing nic configuration es 1-step operation, so when we check it here, it is already done
-        '''
-        return State.FINISHED
+        return State.FINISHED  # No check at all, always true
 
     def checkState(self):
         '''
@@ -477,10 +409,8 @@ class LiveDeployment(UserDeployment):
             opRetry: self.__retry,
             opWait: self.__wait,
             opStart: self.__checkStart,
-            opStop: self.__checkStop,
             opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
-            opChangeMac: self.__checkMac
         }
 
         try:
@@ -570,10 +500,10 @@ class LiveDeployment(UserDeployment):
             return self.__error('Machine is already in error state!')
 
         if op == opFinish or op == opWait:
-            self._queue = [opStop, opRemove, opFinish]
+            self._queue = [opRemove, opFinish]
             return self.__executeQueue()
 
-        self._queue = [op, opStop, opRemove, opFinish]
+        self._queue = [op, opRemove, opFinish]
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
@@ -594,14 +524,12 @@ class LiveDeployment(UserDeployment):
         return {
             opCreate: 'create',
             opStart: 'start',
-            opStop: 'stop',
             opSuspend: 'suspend',
             opRemove: 'remove',
             opWait: 'wait',
             opError: 'error',
             opFinish: 'finish',
             opRetry: 'retry',
-            opChangeMac: 'changing mac'
         }.get(op, '????')
 
     def __debug(self, txt):
