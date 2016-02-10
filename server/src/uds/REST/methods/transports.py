@@ -88,6 +88,7 @@ class Transports(ModelHandler):
         return {
             'id': item.uuid,
             'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'priority': item.priority,
             'nets_positive': item.nets_positive,

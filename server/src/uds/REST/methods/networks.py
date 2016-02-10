@@ -88,6 +88,7 @@ class Networks(ModelHandler):
         return {
             'id': item.uuid,
             'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
             'net_string': item.net_string,
             'networks_count': item.transports.count(),
             'permission': permissions.getEffectivePermission(self._user, item)

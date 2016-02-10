@@ -89,6 +89,7 @@ class Authenticators(ModelHandler):
         return {
             'id': auth.uuid,
             'name': auth.name,
+            'tags': [tag.tag for tag in auth.tags.all()],
             'comments': auth.comments,
             'priority': auth.priority,
             'small_name': auth.small_name,

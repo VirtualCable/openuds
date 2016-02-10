@@ -84,6 +84,7 @@ class ServicesPools(ModelHandler):
         val = {
             'id': item.uuid,
             'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
             'parent': item.service.name,
             'parent_type': item.service.data_type,
             'comments': item.comments,

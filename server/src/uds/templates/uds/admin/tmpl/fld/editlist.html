@@ -14,8 +14,8 @@
 (function(){
     "use strict";
     var id = '{{ name }}_field_';
-    var idTxt = '#' + id + 'txt';
-    var idHidden = '#' + id + 'hdn';
+    var idTxt = 'input#' + id + 'txt';
+    var idHidden = 'input#' + id + 'hdn';
     $(idTxt).tooltip({
         placement: 'bottom',
         title: "{% endverbatim %}{% trans 'Click to edit list' %}{% verbatim %}",

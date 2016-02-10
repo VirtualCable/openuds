@@ -1,0 +1,29 @@
+{% extends "uds/admin/tmpl/fld/form-group.html" %}
+{% load i18n %}
+{% block field %}{% verbatim %}
+    {{# each value }}
+        <span class="label label-default"><i class="fa fa-close closeable tag_eliminator"></i> <b class="tag">{{ this }}</b></span>
+    {{/ each }}
+    </select>
+{% endverbatim %}
+{% comment %}<script>/*This is a little trick to make IDE recognize sintax hightlight, will not be show on render :-)*/{% endcomment %}
+
+{% verbatim %}{{# javascript }}
+(function(){
+    "use strict";
+    $('i.tag_eliminator').on('click', function() {
+        var $this = $(this);
+        var val = $this.parent().find('b.tag').text();
+        if(prompt(gettext('Remove') + val) == true) {
+            $(this).parent().html('');
+        }
+
+    })
+}());
+
+
+
+{{/ javascript }}{% endverbatim %}
+{% comment %}</script>{% endcomment %}
+
+{% endblock %}

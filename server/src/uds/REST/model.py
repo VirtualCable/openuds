@@ -52,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-10-23'
+__updated__ = '2016-02-10'
 
 
 # a few constants
@@ -112,6 +112,14 @@ class BaseModelHandler(Handler):
         :param gui: Gui list where the "default" fielsds will be added
         :param flds: List of fields names requested to be added. Valid values are 'name', 'comments', 'priority' and 'small_name'
         '''
+        if 'tags' in flds:
+            self.addField(gui, {
+                'name': 'tags',
+                'label': _('Tags'),
+                'type': 'taglist',
+                'tooltip': _('Tags for this element'),
+                'order': 0 - 101,
+            })
         if 'name' in flds:
             self.addField(gui, {
                 'name': 'name',
@@ -137,17 +145,17 @@ class BaseModelHandler(Handler):
                 'required': True,
                 'value': 1,
                 'length': 4,
-                'order': 0 - 98,
+                'order': 0 - 97,
             })
         if 'small_name' in flds:
             self.addField(gui, {
                 'name': 'small_name',
                 'type': 'text',
-                'label': _('Tag'),
-                'tooltip': _('Tag for this element'),
+                'label': _('Label'),
+                'tooltip': _('Label for this element'),
                 'required': True,
                 'length': 128,
-                'order': 0 - 97,
+                'order': 0 - 96,
             })
 
         return gui

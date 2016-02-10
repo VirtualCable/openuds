@@ -60,6 +60,10 @@ class Tag(UUIDModel):
         db_table = 'uds_tag'
         app_label = 'uds'
 
+    @property
+    def vtag(self):
+        return self.tag.capitalize()
+
     def __unicode__(self):
         return 'Tag: {} {}'.format(self.uuid, self.tag)
 

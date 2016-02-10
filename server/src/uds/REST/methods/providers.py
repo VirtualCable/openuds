@@ -84,6 +84,7 @@ class Providers(ModelHandler):
         return {
             'id': provider.uuid,
             'name': provider.name,
+            'tags': [tag.vtag for tag in provider.tags.all()],
             'services_count': provider.services.count(),
             'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).count(),
             'maintenance_mode': provider.maintenance_mode,
@@ -104,7 +105,7 @@ class Providers(ModelHandler):
     # Gui related
     def getGui(self, type_):
         try:
-            return self.addDefaultFields(services.factory().lookup(type_).guiDescription(), ['name', 'comments'])
+            return self.addDefaultFields(services.factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags'])
         except Exception:
             raise NotFound('type not found')
 

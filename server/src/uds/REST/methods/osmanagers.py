@@ -64,6 +64,7 @@ class OsManagers(ModelHandler):
         return {
             'id': osm.uuid,
             'name': osm.name,
+            'tags': [tag.tag for tag in osm.tags.all()],
             'deployed_count': osm.deployedServices.count(),
             'type': type_.type(),
             'servicesTypes': type_.servicesType,

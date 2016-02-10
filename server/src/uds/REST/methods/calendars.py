@@ -66,6 +66,7 @@ class Calendars(ModelHandler):
         return {
             'id': calendar.uuid,
             'name': calendar.name,
+            'tags': [tag.tag for tag in calendar.tags.all()],
             'comments': calendar.comments,
             'modified': calendar.modified,
             'permission': permissions.getEffectivePermission(self._user, calendar)

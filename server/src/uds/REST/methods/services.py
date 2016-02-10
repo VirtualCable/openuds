@@ -84,6 +84,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         retVal = {
             'id': item.uuid,
             'name': item.name,
+            'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'type': item.data_type,
             'type_name': _(itemType.name()),

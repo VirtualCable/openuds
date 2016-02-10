@@ -338,6 +338,14 @@ body {
   }
 }
 
+// tag elimicator (close)
+.closeable {
+    &:hover {
+      cursor: pointer;
+      color: red;
+    }
+}
+
 
 /* theme */
 
