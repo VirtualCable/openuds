@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
+__updated__ = '2016-02-10'
 
 from django.db import models
 from django.db.models import signals
@@ -42,6 +42,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from uds.models.Transport import Transport
 from uds.core.util import net
 from uds.models.UUIDModel import UUIDModel
+from uds.models.Tag import TaggingMixin
 
 import logging
 
@@ -49,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Network(UUIDModel):
+class Network(UUIDModel, TaggingMixin):
     '''
     This model is used for keeping information of networks associated with transports (right now, just transports..)
     '''

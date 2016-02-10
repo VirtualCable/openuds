@@ -41,20 +41,21 @@ from uds.core.Environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
 from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.Tag import TaggingMixin
 
 from uds.models.Provider import Provider
 
 import logging
 
 
-__updated__ = '2015-11-16'
+__updated__ = '2016-02-10'
 
 
 logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Service(ManagedObjectModel):
+class Service(ManagedObjectModel, TaggingMixin):
     '''
     A Service represents an specidied type of service offered to final users, with it configuration (i.e. a KVM Base Machine for cloning
     or a Terminal Server configuration).

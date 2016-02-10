@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-02'
+__updated__ = '2016-02-10'
 
 from django.db import models
 from django.db.models import signals
@@ -42,6 +42,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from uds.core.util import net
 
 from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.Tag import TaggingMixin
 
 import logging
 
@@ -49,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Transport(ManagedObjectModel):
+class Transport(ManagedObjectModel, TaggingMixin):
     '''
     A Transport represents a way of connecting the user with the service.
 

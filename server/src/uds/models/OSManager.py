@@ -33,13 +33,14 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-10-31'
+__updated__ = '2016-02-10'
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import IntegrityError
 from django.db.models import signals
 
 from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.Tag import TaggingMixin
 
 import logging
 
@@ -47,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class OSManager(ManagedObjectModel):
+class OSManager(ManagedObjectModel, TaggingMixin):
     '''
     An OS Manager represents a manager for responding requests for agents inside services.
     '''

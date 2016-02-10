@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Model based on https://github.com/llazzaro/django-scheduler
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -38,28 +37,35 @@ __updated__ = '2016-02-10'
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
-from django.utils.encoding import python_2_unicode_compatible
-# from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models.Tag import TaggingMixin
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class Calendar(UUIDModel, TaggingMixin):
+class Tag(UUIDModel):
+    '''
+    Log model associated with an object.
 
-    name = models.CharField(max_length=128, default='')
-    comments = models.CharField(max_length=256, default='')
-    modified = models.DateTimeField(auto_now=True)
+    This log is mainly used to keep track of log relative to objects
+    (such as when a user access a machine, or information related to user logins/logout, errors, ...)
+    '''
+
+    tag = models.CharField(max_length=32, db_index=True, unique=True)
 
     class Meta:
         '''
         Meta class to declare db table
         '''
-        db_table = 'uds_calendar'
+        db_table = 'uds_tag'
         app_label = 'uds'
 
-    def __str__(self):
-        return 'Calendar "{}" modified on {} with {} rules'.format(self.name, self.modified, self.rules.count())
+    def __unicode__(self):
+        return 'Tag: {} {}'.format(self.uuid, self.tag)
+
+
+class TaggingMixin(models.Model):
+    tags = models.ManyToManyField(Tag)
+
+    class Meta:
+        abstract = True

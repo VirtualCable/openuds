@@ -40,6 +40,7 @@ from django.db.models import signals
 from uds.core.util import log
 from uds.core.util.State import State
 from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.Tag import TaggingMixin
 
 from uds.models.Util import NEVER
 
@@ -47,10 +48,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-27'
+__updated__ = '2016-02-10'
 
 @python_2_unicode_compatible
-class Authenticator(ManagedObjectModel):
+class Authenticator(ManagedObjectModel, TaggingMixin):
     '''
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...

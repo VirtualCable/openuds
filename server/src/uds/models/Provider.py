@@ -39,18 +39,19 @@ from django.db.models import signals
 
 from uds.core.util import log
 from uds.models.ManagedObjectModel import ManagedObjectModel
+from uds.models.Tag import TaggingMixin
 
 import logging
 
 
-__updated__ = '2015-11-16'
+__updated__ = '2016-02-10'
 
 
 logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Provider(ManagedObjectModel):
+class Provider(ManagedObjectModel, TaggingMixin):
     '''
     A Provider represents the Service provider itself, (i.e. a KVM Server or a Terminal Server)
     '''

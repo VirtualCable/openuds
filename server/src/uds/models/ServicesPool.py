@@ -42,6 +42,7 @@ from uds.core.util import log
 from uds.core.util.State import State
 from uds.core.services.Exceptions import InvalidServiceException
 from uds.models.UUIDModel import UUIDModel
+from uds.models.Tag import TaggingMixin
 
 from uds.models.OSManager import OSManager
 from uds.models.Service import Service
@@ -55,14 +56,14 @@ from uds.models.Util import getSqlDatetime
 from datetime import timedelta
 import logging
 
-__updated__ = '2015-11-18'
+__updated__ = '2016-02-10'
 
 
 logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class DeployedService(UUIDModel):
+class DeployedService(UUIDModel, TaggingMixin):
     '''
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     '''
