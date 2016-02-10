@@ -338,12 +338,19 @@ body {
   }
 }
 
-// tag elimicator (close)
+// closeable
 .closeable {
-    &:hover {
-      cursor: pointer;
-      color: red;
-    }
+  &:hover {
+    cursor: pointer;
+    color: red;
+  }
+}
+
+// Tag add
+.adder {
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 

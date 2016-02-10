@@ -4,7 +4,14 @@
     {{# each value }}
         <span class="label label-default"><i class="fa fa-close closeable tag_eliminator"></i> <b class="tag">{{ this }}</b></span>
     {{/ each }}
+        <span class="label label-success tag-adder">{% endverbatim %}{% trans 'Add Tag...' %}{% verbatim %}</span>
+
+    <select id="{{ name }}_field_hdn" class="{{ css }} hidden" name="{{ name }}" multiple>
+    {{# each value }}
+        <option selected>{{ this }}</option>
+    {{/ each }}
     </select>
+
 {% endverbatim %}
 {% comment %}<script>/*This is a little trick to make IDE recognize sintax hightlight, will not be show on render :-)*/{% endcomment %}
 

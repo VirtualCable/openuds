@@ -1,0 +1,159 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>admin</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="stylesheet" href="css/datatables.css">
+    <link href="css/font-awesome.min.css" rel="stylesheet" media="screen">
+    
+    <!-- build:css(.) css/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+
+    <!-- build:css(.tmp) css/main.css -->
+    <link rel="stylesheet" href="css/main.css">
+    <!-- endbuild -->
+    
+  </head>
+  <body>
+    <!-- Navigation bar -->
+    <div id="wrapper">
+
+          <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class ="navbar-brand lnk-dashboard" href="#">
+            <img alt="Universal Desktop Services" src="img/udsicon.png" class="navbar-img pull-left">
+            <span>Universal Desktop Services</span>
+          </a>
+      </div>
+            
+    <!-- Side bar -->
+     <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <div class="side-nav">
+          <div class="switcher fa"> </div>
+          <ul class="nav navbar-nav">
+            <li><a class="lnk-dashboard" href="#"><img src="img/icons/dashboard-monitor.png" class="icon"> <span class="menu-lnk">Overview</span></a></li>
+            <li><a class="lnk-service_providers" href="#"><img class="icon" src="img/icons/providers.png"/> <span class="menu-lnk">Services</span></a></li>
+            <li><a class="lnk-authenticators" href="#"><img class="icon" src="img/icons/authenticators.png"/> <span class="menu-lnk">Authenticators</span></a></li>
+            <li><a class="lnk-osmanagers" href="#"><img class="icon" src="img/icons/osmanagers.png"/> <span class="menu-lnk">Os Managers</span></a></li>
+            <li><a class="lnk-connectivity" href="#"><img class="icon" src="img/icons/transports.png"/> <span class="menu-lnk">Connectivity</span></a></li>
+            <li><a class="lnk-calendars" href="#"><img class="icon" src="img/icons/calendars.png"/> <span class="menu-lnk">Calendars</span></a></li>
+            <li><a class="lnk-deployed_services" href=""><img class="icon" src="img/icons/pools.png"/> <span class="menu-lnk">Service Pools</span></a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="table-icon" src="img/icons/tools.png"/> Tools <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a class="lnk-gallery" href="#"><img class="table-icon" src="img/icons/gallery.png"/> Gallery</a></li>
+                <li><a class="lnk-reports" href=""><img class="table-icon" src="img/icons/reports.png"/> Reports</a></li>
+                <li><a class="lnk-configuration" href="#"><img class="table-icon" src="img/icons/configuration.png"/> Configuration</a></li>
+                <li><a class="lnk-clear_cache" href="#"><img class="table-icon" src="img/icons/flush-cache.png"/> Flush cache</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+          
+            <ul class="nav navbar-nav navbar-right navbar-user">
+            </ul>
+            <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+            <input id="id_language" type="hidden" name="language" value=""/>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><!--<i class="glyphicon bfh-flag-{{ lang.0|country }}"></i>-->
+                  <i class="fa fa-comments-o"></i> Spanish<b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <!--  here we force an update of locale of REST api -->
+                  <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>English</a></li>
+                  <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>French</a></li>
+                  <li><a href="#" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit();'>German</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-dashboard"></i> Username <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{% url 'uds.web.views.index"><span class="fa fa-user"></span> User mode</a></li>
+                    <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> Logout</a></li>
+                </ul>
+              </li>
+
+            </ul>
+          </form>
+          
+       </div>
+      
+    </nav>
+
+
+    <!-- End of menu -->
+    <!-- Content -->
+         <div id="page-wrapper">
+            <div id="content">
+              <!-- start -->
+
+
+
+             <!-- end -->
+            </div> 
+        </div>
+     </div>
+    
+
+    <!-- build:js(.) js/vendor.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    
+    <!-- build:js(.) js/plugins.js -->
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/modal.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/transition.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/button.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/popover.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/carousel.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
+    <!-- endbuild -->
+    
+
+    <!-- build:js js/main.js -->
+    <script src="js/datatables.min.js"></script>
+    <script src="js/main.js"></script>
+    <!-- endbuild -->
+
+    <script>
+      $(function(){
+        $('.side-nav .switcher').on('click', function() {
+          var rr = [$('.side-nav'), $('#wrapper')];
+          for( var r = 0; r < 2; r++ ) {
+            if( rr[r].attr('class').contains('full') ) {
+              rr[r].removeClass('full');
+            } else {
+              rr[r].addClass('full');
+            }
+          }
+        });
+      });
+    </script>
+
+  </body>
+</html>
