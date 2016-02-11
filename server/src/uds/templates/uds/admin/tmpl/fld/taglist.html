@@ -1,16 +1,14 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
 {% block field %}{% verbatim %}
-    {{# each value }}
-        <span class="label label-default"><i class="fa fa-close closeable tag_eliminator"></i> <b class="tag">{{ this }}</b></span>
-    {{/ each }}
-        <span class="label label-success tag-adder">{% endverbatim %}{% trans 'Add Tag...' %}{% verbatim %}</span>
+    <div id="tags{{ id }}">
+    </div>
 
-    <select id="{{ name }}_field_hdn" class="{{ css }} hidden" name="{{ name }}" multiple>
-    {{# each value }}
-        <option selected>{{ this }}</option>
-    {{/ each }}
-    </select>
+    {{# unless readonly }}
+    <span class="label label-success tag tagadder" id="adder{{ id }}">{% endverbatim %}{% trans 'Add Tag...' %}{% verbatim %}</span>
+    {{/ unless }}
+
+    <input id="h{{ id }}" type="hidden" data-uds="list" name="{{ name }}" value="{{ value }}" class="{{ css }}" />
 
 {% endverbatim %}
 {% comment %}<script>/*This is a little trick to make IDE recognize sintax hightlight, will not be show on render :-)*/{% endcomment %}
@@ -18,14 +16,96 @@
 {% verbatim %}{{# javascript }}
 (function(){
     "use strict";
-    $('i.tag_eliminator').on('click', function() {
-        var $this = $(this);
-        var val = $this.parent().find('b.tag').text();
-        if(prompt(gettext('Remove') + val) == true) {
-            $(this).parent().html('');
-        }
 
-    })
+    var $data = $('#h{{ id }}');
+    var $tags = $('#tags{{ id }}');
+
+    function tag(text) {
+        {{# if readonly }}
+        return '<span class="label label-default tag"><b class="tag">' + text + '</b></span>';
+        {{ else }}
+        return '<span class="label label-default tag"><i class="fa fa-close closeable tag_eliminator"></i> <b class="tag">' + text + '</b></span>';
+        {{/ if }}
+    }
+
+    {{# unless readonly }}
+    function setEvents() {
+        $('i.tag_eliminator').on('click', function() {
+            var $this = $(this);
+            var val = $this.parent().find('b.tag').text();
+            gui.promptModal(val, gettext('Are you sure to remove tag?'), {
+                onYes: function() {
+                    removeTag(val);
+                }
+            });
+        })
+    }
+
+    // Tagadder never gets destroyed, so we only set the event once
+    $('#adder{{ id }}').on('click', function(){
+        var text = prompt('Enter new tag');
+        addTag(text);
+    });
+
+    {{/ unless }}
+
+    function updateVisibleTags() {
+        $tags.empty()
+        if ($data.val() != '')  // No values
+            $.each($data.val().split(','), function(idx, val) {
+                $tags.append(tag(val));
+                gui.doLog(idx, val);
+
+            })
+        {{# unless readonly }}setEvents(){{/ unless }}
+    }
+
+    function addTag(text) {
+        var curr;
+        var found = false;
+
+        text = api.tools.capitalize(text);
+
+        if ($data.val() == '')  // No values
+            curr = [text];
+        else {
+            curr = $data.val().split(',');
+
+            $.each(curr, function(idx, val){
+                if( val == text) {
+                    found = true;
+                }
+            })
+            if( !found )
+                curr.push(text);
+        }
+        $data.val(curr.join(','));
+        updateVisibleTags();
+    }
+
+    function removeTag(text) {
+        var curr;
+
+        text = api.tools.capitalize(text);
+
+        if ($data.val() != '')  // No values
+            curr = $data.val().split(',');
+        else
+            curr = [];
+
+        $data.val('');
+        updateVisibleTags();
+
+        gui.doLog(curr);
+        $.each(curr, function(idx, val){
+            if( val != text )
+                addTag(val);
+        });
+    }
+
+    // Start showing current tags
+    updateVisibleTags();
+
 }());
 
 

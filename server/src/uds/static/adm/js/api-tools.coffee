@@ -32,6 +32,10 @@
         first = mid - 1
         remain = maxLen - mid - 2
         str = str.substr(0, first) + "..." + str.substr(sl-remain)
+
+    capitalize: (str) ->
+      str = str.toLowerCase()
+      return str.substr(0,1).toUpperCase() + str.substr(1)
         
       return str
 

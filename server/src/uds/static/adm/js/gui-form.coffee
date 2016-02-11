@@ -42,8 +42,12 @@
           return
         value = newValue
 
+      # Generate an unique id so templates can use it if needed
+      id = "uniq" + Math.random().toString().split(".")[1]
+
       originalValues[f.name] = value # Store original value
       html += api.templates.evaluate("tmpl_fld_" + f.gui.type,
+        id: id
         value: value # If no value present, use default value
         minValue: f.gui.minValue
         maxValue: f.gui.maxValue
@@ -169,6 +173,10 @@
         name = $field.attr("name")
         if $field.attr("type") is "checkbox"
           res[name] = $field.is(":checked")
+        else if $field.attr("data-uds") is "list"
+          res[name] = $field.val().split('/**/')
+        else if $field.attr("data-uds") is "commaList"
+          res[name] = $field.val().split(',')
         else
           res[name] = $field.val()
           res[name] = []  if not res[name]? and $field.is("select")

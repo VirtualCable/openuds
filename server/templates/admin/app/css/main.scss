@@ -347,12 +347,18 @@ body {
 }
 
 // Tag add
-.adder {
+.tagadder {
   &:hover {
     cursor: pointer;
   }
 }
 
+span.tag {
+  float: left;
+  margin-bottom: 4px;
+  margin-right: 4px;
+  padding-bottom: 4px;
+}
 
 /* theme */
 
