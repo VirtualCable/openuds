@@ -56,6 +56,7 @@ class ServicesPoolGroup(UUIDModel):
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
+    priority = models.IntegerField(default=0, db_index=True)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGrou', on_delete=models.SET_NULL)
 
     class Meta(UUIDModel.Meta):

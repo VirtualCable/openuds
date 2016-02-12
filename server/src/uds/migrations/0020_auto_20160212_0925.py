@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
                 ('uuid', models.CharField(default=None, max_length=50, unique=True, null=True)),
                 ('name', models.CharField(default='', max_length=128)),
                 ('comments', models.CharField(default='', max_length=256)),
+                ('priority', models.IntegerField(default=0, db_index=True)),
                 ('image', models.ForeignKey(related_name='servicesPoolsGrou', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='uds.Image', null=True)),
             ],
             options={

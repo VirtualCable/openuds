@@ -55,12 +55,14 @@ class ServicesPoolGroups(ModelHandler):
 
     path = 'gallery'
     model = ServicesPoolGroup
-    save_fields = ['name', 'comments', 'image_id']
+    save_fields = ['name', 'comments', 'image_id', 'priority']
 
     table_title = _('Services Pool Groups')
     table_fields = [
+        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
+        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image', 'width': '96px' }},
         {'name': {'title': _('Name')}},
-        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image'}},
+        {'comments': {'title': _('Comments')}},
     ]
 
     def beforeSave(self, fields):
@@ -76,7 +78,7 @@ class ServicesPoolGroups(ModelHandler):
 
     # Gui related
     def getGui(self, type_):
-        g = self.addDefaultFields([], ['name', 'comments'])
+        g = self.addDefaultFields([], ['name', 'comments', 'priority'])
 
         for f in [{
             'name': 'image_id',
@@ -93,13 +95,17 @@ class ServicesPoolGroups(ModelHandler):
     def item_as_dict(self, item):
         return {
             'id': item.uuid,
+            'priority': item.priority,
             'name': item.name,
+            'comments': item.comments,
             'image_id': item.image.uuid,
         }
 
     def item_as_dict_overview(self, item):
         return {
             'id': item.uuid,
+            'priority': item.priority,
             'name': item.name,
+            'comments': item.comments,
             'thumb': item.image.thumb64,
         }

@@ -57,9 +57,9 @@ class Images(ModelHandler):
 
     table_title = _('Image Gallery')
     table_fields = [
+        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image', 'width': '96px' }},
         {'name': {'title': _('Name')}},
         {'size': {'title': _('Size')}},
-        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image'}},
     ]
 
     def beforeSave(self, fields):

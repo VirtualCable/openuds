@@ -12,9 +12,9 @@ gui.sPoolGroups.link = ->
       sPoolGroups: "sPoolGroups-placeholder"
     )
     gui.sPoolGroups.table
-      icon: 'sPoolGroups'
+      icon: 'spool-group'
       container: "sPoolGroups-placeholder"
-      rowSelect: "single"
+      rowSelect: "multi"
       buttons: [
         "new"
         "edit"

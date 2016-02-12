@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 class Transports(ModelHandler):
     model = Transport
-    save_fields = ['name', 'comments', 'tags', ' priority', 'nets_positive']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'nets_positive']
 
     table_title = _('Current Transports')
     table_fields = [

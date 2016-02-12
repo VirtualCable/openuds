@@ -170,17 +170,18 @@
       columns = [ {
             orderable: false,
             className: 'select-checkbox'
-            width: 32
+            width: "32px"
             render: () -> return ''
         } ]
 
       $.each data.fields, (index, value) ->
         for v of value
           opts = value[v]
+          gui.doLog('***', opts, v, value)
           column = data: v
           column.title = opts.title
           column.render = renderEmptyCell
-          column.width = opts.width  if opts.width
+          column.width = opts.width  if opts.width?
           # column.width = "100px"
           column.visible = (if not opts.visible? then true else opts.visible)
           column.orderable = opts.sortable  if opts.sortable?
@@ -213,6 +214,8 @@
                 column.type = opts.type
           columns.push column
         return
+
+      gui.doLog('** Colums', columns)
 
       
       # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
