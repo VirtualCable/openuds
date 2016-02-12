@@ -60,6 +60,7 @@ class Calendars(ModelHandler):
         {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-calendar text-success'}},
         {'comments': {'title': _('Comments')}},
         {'modified': {'title': _('Modified'), 'type': 'datetime'}},
+        {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
     def item_as_dict(self, calendar):

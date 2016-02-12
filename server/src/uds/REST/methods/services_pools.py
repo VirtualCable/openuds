@@ -73,7 +73,8 @@ class ServicesPools(ModelHandler):
         {'parent': {'title': _('Parent Service')}},
         {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
         {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
-        {'servicesPoolGroup': {'title': _('Services Pool Group')}},
+        {'servicesPoolGroup': {'title': _('Pool Group')}},
+        {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}

@@ -59,7 +59,8 @@ class Networks(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success'}},
         {'net_string': {'title': _('Range')}},
-        {'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+        {'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
+        {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
     def beforeSave(self, fields):

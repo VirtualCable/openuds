@@ -136,27 +136,6 @@
 
       return
 
-  gui.promptModal = (title, question, options) ->
-    options = options or {}
-    options.actionButton = "<button type=\"button\" class=\"btn btn-primary button-yes\">" + (options.yesButton or gettext("yes")) + "</button>"
-    options.closeButton = "<button type=\"button\" class=\"btn btn-danger button-no\">" + (options.yesButton or gettext("no")) + "</button>"
-    onYes = options.onYes or ->
-
-    onNo = options.onNo or ->
-
-    modalId = gui.launchModal(title, question, options)
-    $(modalId + " .button-yes").on "click", (event) ->
-      $(modalId).modal "hide"
-      onYes()
-      return
-
-    $(modalId + " .button-no").on "click", (event) ->
-      $(modalId).modal "hide"
-      onNo()
-      return
-
-    return
-
   gui.clearWorkspace = ->
     $("#content").empty()
     $("#minimized").empty()

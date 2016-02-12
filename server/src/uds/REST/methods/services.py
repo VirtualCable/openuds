@@ -186,6 +186,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             {'type_name': {'title': _('Type')}},
             {'deployed_services_count': {'title': _('Deployed services'), 'type': 'numeric', 'width': '7em'}},
             {'user_services_count': {'title': _('User services'), 'type': 'numeric', 'width': '7em'}},
+            {'tags': {'title': _('tags'), 'visible': False}},
         ]
 
     def getTypes(self, parent, forType):

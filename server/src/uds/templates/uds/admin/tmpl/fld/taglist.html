@@ -1,7 +1,7 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
 {% block field %}{% verbatim %}
-    <div id="tags{{ id }}">
+    <div id="tags{{ id }}" tabindex="{{ index }}">
     </div>
 
     {{# unless readonly }}
@@ -33,7 +33,7 @@
         $('i.tag_eliminator').on('click', function() {
             var $this = $(this);
             var val = $this.parent().find('b.tag').text();
-            gui.promptModal(val, gettext('Are you sure to remove tag?'), {
+            gui.forms.confirmModal(val, gettext('Are you sure to remove tag?'), {
                 onYes: function() {
                     removeTag(val);
                 }
@@ -43,9 +43,16 @@
 
     // Tagadder never gets destroyed, so we only set the event once
     $('#adder{{ id }}').on('click', function(){
-        var text = prompt('Enter new tag');
-        $.each( text.split(','), function (idx, value) {
-            addTag(value);
+        gui.forms.promptModal('Tag', gettext('Enter new tag'), {
+            onAccept: function(text) {
+                text = api.tools.cleanWhiteSpaces(text);
+                if( text == '')
+                    return;
+
+                $.each( text.split(','), function (idx, value) {
+                    addTag(value);
+                });
+            }
         });
     });
 

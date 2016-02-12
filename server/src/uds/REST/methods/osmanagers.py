@@ -56,7 +56,8 @@ class OsManagers(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
-        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
+        {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
     def osmToDict(self, osm):

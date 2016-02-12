@@ -22,7 +22,9 @@
     fillers = [] # Fillers (callbacks)
     originalValues = {} # Initial stored values (defaults to "reset" form and also used on fillers callback to try to restore previous value)
     # itemGui is expected to have fields sorted by .gui.order (REST api returns them sorted)
+    index = 0
     $.each itemGui, (index, f) ->
+      index = index + 1
       # Not exactly a field, maybe some other info...
       gui.doLog "Processing ", f
       return  if not f.gui?
@@ -47,6 +49,7 @@
 
       originalValues[f.name] = value # Store original value
       html += api.templates.evaluate("tmpl_fld_" + f.gui.type,
+        index: index
         id: id
         value: value # If no value present, use default value
         minValue: f.gui.minValue
@@ -200,7 +203,7 @@
   gui.forms.launchModal = (options, onSuccess) ->
     options = options or {}
     gui.doLog options
-    id = "modal-" + Math.random().toString().split(".")[1] # Get a random ID for this modal
+    id = "modal-" + api.tools.random() # Get a random ID for this modal
     ff = gui.forms.fromFields(options.fields, options.item)
     footer = ""
     clickEventHandlers = []
@@ -281,6 +284,58 @@
     $(id).modal(keyboard: false).on "hidden.bs.modal", ->
       $(id).remove()
       return
+
+    return
+
+  gui.forms.confirmModal = (title, question, options) ->
+    options = options or {}
+    options.actionButton = "<button type=\"button\" class=\"btn btn-primary button-yes\">" + (options.yesButton or gettext("yes")) + "</button>"
+    options.closeButton = "<button type=\"button\" class=\"btn btn-danger button-no\">" + (options.noButton or gettext("no")) + "</button>"
+    onYes = options.onYes or ->
+
+    onNo = options.onNo or ->
+
+    modalId = gui.launchModal(title, question, options)
+    $(modalId + " .button-yes").on "click", (event) ->
+      $(modalId).modal "hide"
+      onYes()
+      return
+
+    $(modalId + " .button-no").on "click", (event) ->
+      $(modalId).modal "hide"
+      onNo()
+      return
+
+    return
+
+  gui.forms.promptModal = (title, message, options) ->
+    options = options or {}
+    options.actionButton = "<button type=\"button\" class=\"btn btn-primary button-yes\">" + (options.acceptButton or gettext("Accept")) + "</button>"
+    options.closeButton = "<button type=\"button\" class=\"btn btn-danger button-no\">" + (options.closeButton or gettext("Close")) + "</button>"
+
+    onAccept = options.onAccept or ->
+    onClose = options.onClose or ->
+
+    html = '<div class="row"><div class="col-sm-12">' + message + '</div></div><div class="row"><div class="col-sm-12"><input class="form-control" type="text" name="text" autofocus></div></div>'
+
+    modalId = gui.launchModal(title, html, options)
+
+    textField = $(modalId + ' input[name="text"]')
+    setTimeout ()->
+      textField.focus()
+    , 100
+
+    $(modalId + " .button-yes").on "click", (event) ->
+      text = textField.val()
+      $(modalId).modal "hide"
+      onAccept(text)
+      return
+
+    $(modalId + " .button-no").on "click", (event) ->
+      $(modalId).modal "hide"
+      onClose()
+      return
+    gui.doLog "***** Datos ", modalId, textField
 
     return
 

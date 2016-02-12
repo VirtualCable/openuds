@@ -42,6 +42,12 @@
     isEmpty: (obj) ->
       return $.isEmptyObject(obj)
 
+    random: () ->
+      return Math.random().toString().split(".")[1]
+
+    cleanWhiteSpaces: (str) ->
+      return str.split(' ').join('')
+
   return
 ) window.api = window.api or {}, jQuery
 

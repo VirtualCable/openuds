@@ -3,7 +3,7 @@
 {% comment %}The choice item MUST be a Select.{% endcomment %}
 {% block field %}
 {% verbatim %}
-<select class="selectpicker show-menu-arrow {{ css }}" multiple data-style="btn-default" data-selected-text-format="count>3" data-width="100%" name="{{ name }}" id="{{ name }}_field" {{# if readonly }} disabled{{/ if }}{{# if required }} required{{/ if }}>
+<select class="selectpicker show-menu-arrow {{ css }}" multiple data-style="btn-default" data-selected-text-format="count>3" data-width="100%" name="{{ name }}" id="{{ name }}_field" {{# if readonly }} disabled{{/ if }}{{# if required }} required{{/ if }} tabindex="{{ index }}">
     {{#each values }}
     <option value="{{ id }}"{{# ifbelongs id ../value }}selected{{/ ifbelongs }}>{{ text }}</option>
     {{/each}}

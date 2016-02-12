@@ -164,7 +164,7 @@ gui.providers.link = (event) ->
 
             val = vals[0]
 
-            gui.promptModal gettext("Maintenance Mode"), (if val.maintenance_mode is false then gettext("Enter Maintenance Mode?") else gettext("Exit Maintenance Mode?")),
+            gui.forms.confirmModal gettext("Maintenance Mode"), (if val.maintenance_mode is false then gettext("Enter Maintenance Mode?") else gettext("Exit Maintenance Mode?")),
               onYes: ->
                 gui.doLog 'Val: ', val
                 api.providers.maintenance val.id, (->

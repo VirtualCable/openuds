@@ -7,7 +7,8 @@
            data-off-text="{% endverbatim %}{% trans 'No' %}{% verbatim %}"
            class="{{ css }}"
            name="{{ name }}"
-           id="{{ name }}_field"{{# ifequals value true }} checked{{/ ifequals }}{{# if readonly }} disabled{{/ if }}>
+           id="{{ name }}_field"{{# ifequals value true }} checked{{/ ifequals }}{{# if readonly }} disabled{{/ if }}
+           tabindex="{{ index }}">
 
 {% endverbatim %}
 {% endblock %}

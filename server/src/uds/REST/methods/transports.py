@@ -55,7 +55,8 @@ class Transports(ModelHandler):
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
-        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
+        {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
     def enum_types(self):

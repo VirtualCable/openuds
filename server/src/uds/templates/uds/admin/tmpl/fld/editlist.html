@@ -1,7 +1,7 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
 {% block field %}{% verbatim %}
-    <input name="{{ name }}_nonused1" type="text" id="{{ name }}_field_txt" class="form-control cursor-pointer" value="{{ truncatechars 64 value }}" readonly>
+    <input name="{{ name }}_nonused1" type="text" id="{{ name }}_field_txt" class="form-control cursor-pointer" value="{{ truncatechars 64 value }}" readonly tabindex="{{ index }}">
     {{! We use a Select to get an array of selected values on ".val()" }}
     <select id="{{ name }}_field_hdn" class="{{ css }} hidden" name="{{ name }}" multiple>
     {{# each value }}

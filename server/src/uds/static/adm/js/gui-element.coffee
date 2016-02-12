@@ -177,7 +177,6 @@
       $.each data.fields, (index, value) ->
         for v of value
           opts = value[v]
-          gui.doLog('***', opts, v, value)
           column = data: v
           column.title = opts.title
           column.render = renderEmptyCell
@@ -214,8 +213,6 @@
                 column.type = opts.type
           columns.push column
         return
-
-      gui.doLog('** Colums', columns)
 
       
       # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes

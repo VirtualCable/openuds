@@ -60,7 +60,8 @@ class Authenticators(ModelHandler):
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
         {'small_name': {'title': _('Tag')}},
-        {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}}
+        {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
+        {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
     def enum_types(self):

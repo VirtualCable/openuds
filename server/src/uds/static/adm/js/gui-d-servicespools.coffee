@@ -449,7 +449,7 @@ gui.servicesPools.link = (event) ->
                 disabled: true
                 click: (val, value, btn, tbl, refreshFnc) ->
                   gui.doLog val, val[0]
-                  gui.promptModal gettext("Publish"), gettext("Cancel publication?"),
+                  gui.forms.confirmModal gettext("Publish"), gettext("Cancel publication?"),
                     onYes: ->
                       pubApi.invoke val[0].id + "/cancel", ->
                         refreshFnc()
