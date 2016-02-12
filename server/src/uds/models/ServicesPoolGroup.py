@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,49 +28,43 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@itemor: Adolfo Gómez, dkmaster at dkmon dot com
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models import Calendar
-from uds.core.util import permissions
+from django.db import models
+from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
 
-from uds.REST.model import ModelHandler
-from .calendarrules import CalendarRules
+from uds.models.UUIDModel import UUIDModel
+from uds.models.Image import Image
 
 import logging
 
+__updated__ = '2016-02-12'
+
+
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /item path
 
-
-class Calendars(ModelHandler):
+@python_2_unicode_compatible
+class ServicesPoolGroup(UUIDModel):
     '''
-    Processes REST requests about calendars
+    A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     '''
-    model = Calendar
-    detail = {'rules': CalendarRules}
+    # pylint: disable=model-missing-unicode
+    name = models.CharField(max_length=128, default='')
+    comments = models.CharField(max_length=256, default='')
+    image = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGrou', on_delete=models.SET_NULL)
 
-    save_fields = ['name', 'comments', 'tags']
+    class Meta(UUIDModel.Meta):
+        '''
+        Meta class to declare the name of the table at database
+        '''
+        db_table = 'uds__pools_groups'
+        app_label = 'uds'
 
-    table_title = _('Calendars')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-calendar text-success'}},
-        {'comments': {'title': _('Comments')}},
-        {'modified': {'title': _('Modified'), 'type': 'datetime'}},
-    ]
+    def __str__(self):
+        return u"Service Pool group {0}({1})".format(self.name, self.comments)
 
-    def item_as_dict(self, calendar):
-        return {
-            'id': calendar.uuid,
-            'name': calendar.name,
-            'tags': [tag.tag for tag in calendar.tags.all()],
-            'comments': calendar.comments,
-            'modified': calendar.modified,
-            'permission': permissions.getEffectivePermission(self._user, calendar)
-        }
-
-    def getGui(self, type_):
-        return self.addDefaultFields([], ['name', 'comments', 'tags'])

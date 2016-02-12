@@ -56,7 +56,7 @@ class Providers(ModelHandler):
     detail = {'services': DetailServices}
     custom_methods = [('allservices', False), ('service', False), ('maintenance', True)]
 
-    save_fields = ['name', 'comments']
+    save_fields = ['name', 'comments', 'tags']
 
     table_title = _('Service providers')
 

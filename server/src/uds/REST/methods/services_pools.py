@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import DeployedService, OSManager, Service, Image
+from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
@@ -64,7 +64,7 @@ class ServicesPools(ModelHandler):
         'changelog': Changelog
     }
 
-    save_fields = ['name', 'comments', 'service_id', 'osmanager_id', 'image_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports']
+    save_fields = ['name', 'comments', 'tags', 'service_id', 'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports']
     remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
@@ -73,7 +73,7 @@ class ServicesPools(ModelHandler):
         {'parent': {'title': _('Parent Service')}},
         {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
         {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
-        {'comments': {'title': _('Comments')}},
+        {'servicesPoolGroup': {'title': _('Services Pool Group')}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
@@ -93,6 +93,8 @@ class ServicesPools(ModelHandler):
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
+            'servicesPoolGroup_id': item.servicesPoolGroup.uuid if item.servicesPoolGroup is not None else None,
+            'servicesPoolGroup': item.servicesPoolGroup.name if item.servicesPoolGroup is not None else _('Default'),
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
             'cache_l2_srvs': item.cache_l2_srvs,
@@ -116,7 +118,7 @@ class ServicesPools(ModelHandler):
         if Service.objects.count() < 1:
             raise ResponseError(ugettext('Create at least a service before creating a new service pool'))
 
-        g = self.addDefaultFields([], ['name', 'comments'])
+        g = self.addDefaultFields([], ['name', 'comments', 'tags'])
 
         for f in [{
             'name': 'service_id',
@@ -142,13 +144,20 @@ class ServicesPools(ModelHandler):
             'type': gui.InputField.IMAGECHOICE_TYPE,
             'order': 102,
         }, {
+            'name': 'servicesPoolGroup_id',
+            'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.image.thumb64) for v in ServicesPoolGroup.objects.all()]),
+            'label': ugettext('Pool group'),
+            'tooltip': ugettext('Pool group for this pool (for pool clasify on display)'),
+            'type': gui.InputField.IMAGECHOICE_TYPE,
+            'order': 103,
+        }, {
             'name': 'initial_srvs',
             'value': '0',
             'minValue': '0',
             'label': ugettext('Initial available services'),
             'tooltip': ugettext('Services created initially for this service pool'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 103,
+            'order': 110,
         }, {
             'name': 'cache_l1_srvs',
             'value': '0',
@@ -156,7 +165,7 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Services to keep in cache'),
             'tooltip': ugettext('Services kept in cache for improved user service assignation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 104,
+            'order': 111,
         }, {
             'name': 'cache_l2_srvs',
             'value': '0',
@@ -164,7 +173,7 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Services to keep in L2 cache'),
             'tooltip': ugettext('Services kept in cache of level2 for improved service generation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 105,
+            'order': 112,
         }, {
             'name': 'max_srvs',
             'value': '0',
@@ -172,14 +181,14 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Maximum number of services to provide'),
             'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 106,
+            'order': 113,
         }, {
             'name': 'show_transports',
             'value': True,
             'label': ugettext('Show transports'),
             'tooltip': ugettext('If active, alternative transports for user will be shown'),
             'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 107,
+            'order': 120,
         }]:
             self.addField(g, f)
 
@@ -225,6 +234,17 @@ class ServicesPools(ModelHandler):
                     fields['image_id'] = image.id
             except Exception:
                 logger.exception('At image recovering')
+
+            # Servicepool Group
+            spgrpId = fields['servicesPoolGroup_id']
+            fields['servicesPoolGroup_id'] = None
+            logger.debug('servicesPoolGroup_id: {}'.format(spgrpId))
+            try:
+                if imgId != '-1':
+                    spgrp = ServicesPoolGroup.objects.get(uuid=processUuid(spgrpId))
+                    fields['servicesPoolGroup_id'] = spgrp.id
+            except Exception:
+                logger.exception('At service pool group recovering')
 
         except (RequestError, ResponseError):
             raise

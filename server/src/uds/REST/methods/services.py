@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 
-from uds.models import Service, UserService
+from uds.models import Service, UserService, Tag
 
 from uds.core.services import Service as coreService
 from uds.core.util import log
@@ -130,7 +130,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving service {0} / {1}'.format(parent, item))
-        fields = self.readFieldsFromParams(['name', 'comments', 'data_type'])
+        fields = self.readFieldsFromParams(['name', 'comments', 'data_type', 'tags'])
+        tags = fields['tags']
+        del fields['tags']
         service = None
         try:
             if item is None:  # Create new
@@ -138,6 +140,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             else:
                 service = parent.services.get(uuid=processUuid(item))
                 service.__dict__.update(fields)
+
+            service.tags = [Tag.objects.get_or_create(tag=val)[0] for val in tags]
 
             service.data = service.getInstance(self._params).serialize()
             service.save()
@@ -209,7 +213,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             parentInstance = parent.getInstance()
             serviceType = parentInstance.getServiceByType(forType)
             service = serviceType(Environment.getTempEnv(), parentInstance)  # Instantiate it so it has the opportunity to alter gui description based on parent
-            return self.addDefaultFields(service.guiDescription(service), ['name', 'comments'])
+            return self.addDefaultFields(service.guiDescription(service), ['name', 'comments', 'tags'])
         except Exception as e:
             logger.exception('getGui')
             raise ResponseError(unicode(e))

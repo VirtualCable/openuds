@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 class OsManagers(ModelHandler):
     model = OSManager
-    save_fields = ['name', 'comments']
+    save_fields = ['name', 'comments', 'tags']
 
     table_title = _('Current OS Managers')
     table_fields = [
@@ -89,6 +89,6 @@ class OsManagers(ModelHandler):
     # Gui related
     def getGui(self, type_):
         try:
-            return self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments'])
+            return self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags'])
         except:
             raise NotFound('type not found')

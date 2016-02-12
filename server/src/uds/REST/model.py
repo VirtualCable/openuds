@@ -42,6 +42,8 @@ from uds.REST.handlers import Handler, HandlerError
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
+from uds.models import Tag
+
 
 import fnmatch
 import re
@@ -52,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-10'
+__updated__ = '2016-02-12'
 
 
 # a few constants
@@ -841,6 +843,13 @@ class ModelHandler(BaseModelHandler):
             args = self.readFieldsFromParams(self.save_fields)
             logger.debug('Args: {}'.format(args))
             self.beforeSave(args)
+            # If tags is in save fields, treat it "specially"
+            if 'tags' in self.save_fields:
+                tags = args['tags']
+                del args['tags']
+            else:
+                tags = None
+
             deleteOnError = False
             if len(self._args) == 0:  # create new
                 item = self.model.objects.create(**args)
@@ -852,6 +861,12 @@ class ModelHandler(BaseModelHandler):
                     if v in args:
                         del args[v]
                 item.__dict__.update(args)  # Update fields from args
+
+            # Now if tags, update them
+            if tags is not None:
+                logger.debug('Updating tags: {}'.format(tags))
+                item.tags = [ Tag.objects.get_or_create(tag=val)[0] for val in tags]
+
         except self.model.DoesNotExist:
             raise NotFound('Item not found')
         except IntegrityError:  # Duplicate key probably

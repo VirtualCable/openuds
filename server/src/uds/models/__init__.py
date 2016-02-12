@@ -65,6 +65,7 @@ from .Group import Group
 # Provisioned services
 from .ServicesPool import DeployedService  # Old name, will continue here for a while already
 from .ServicesPool import ServicePool  # New name
+from .ServicesPoolGroup import ServicesPoolGroup
 from .ServicesPoolPublication import DeployedServicePublication
 from .UserService import UserService
 from .UserServiceProperty import UserServiceProperty
@@ -101,7 +102,7 @@ from .CalendarRule import CalendarRule
 # Tagging
 from .Tag import Tag
 
-__updated__ = '2016-02-10'
+__updated__ = '2016-02-12'
 
 
 logger = logging.getLogger(__name__)

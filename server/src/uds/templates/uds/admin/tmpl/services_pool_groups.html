@@ -1,0 +1,28 @@
+{% load i18n html5 static %}
+
+<div class="row">
+  <div class="col-xs-12">
+    <h1>{% trans 'UDS Services Pool Groups' %}</h1>
+    <!-- <ol class="breadcrumb">
+      <li><a class="lnk-dashboard" href="#">Dashboard</a></li>
+      <li>{% trans 'Gallery' %}</li>
+    </ol> -->
+  </div>
+</div><!-- /.row -->
+{% if messages %}
+<div class="row">
+  <div class="col-md-offset-2 col-md-8">
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+       {{ message }}  
+    </div>
+    {% endfor %}       
+  </div>
+</div>
+{% endif %}
+{% verbatim %}
+<div class="row">
+    <div id="{{ sPoolGroups }}" class="col-xs-12"></div>
+</div>
+{% endverbatim %}

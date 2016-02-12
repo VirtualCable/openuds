@@ -49,6 +49,7 @@ from uds.models.Service import Service
 from uds.models.Transport import Transport
 from uds.models.Group import Group
 from uds.models.Image import Image
+from uds.models.ServicesPoolGroup import ServicesPoolGroup
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
@@ -56,7 +57,7 @@ from uds.models.Util import getSqlDatetime
 from datetime import timedelta
 import logging
 
-__updated__ = '2016-02-10'
+__updated__ = '2016-02-12'
 
 
 logger = logging.getLogger(__name__)
@@ -78,11 +79,15 @@ class DeployedService(UUIDModel, TaggingMixin):
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
+
+    servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
+
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
     cache_l2_srvs = models.PositiveIntegerField(default=0)
     max_srvs = models.PositiveIntegerField(default=0)
     current_pub_revision = models.PositiveIntegerField(default=1)
+
 
     # Meta service related
     meta_pools = models.ManyToManyField('self', symmetrical=False)

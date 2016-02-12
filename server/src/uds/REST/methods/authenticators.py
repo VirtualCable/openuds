@@ -52,7 +52,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'priority', 'small_name']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name']
 
     table_title = _('Current authenticators')
     table_fields = [
@@ -80,7 +80,7 @@ class Authenticators(ModelHandler):
 
     def getGui(self, type_):
         try:
-            return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments', 'priority', 'small_name'])
+            return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority', 'small_name'])
         except:
             raise NotFound('type not found')
 

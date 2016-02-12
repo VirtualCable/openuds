@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 class Transports(ModelHandler):
     model = Transport
-    save_fields = ['name', 'comments', 'priority', 'nets_positive']
+    save_fields = ['name', 'comments', 'tags', ' priority', 'nets_positive']
 
     table_title = _('Current Transports')
     table_fields = [
@@ -64,7 +64,7 @@ class Transports(ModelHandler):
     def getGui(self, type_):
         try:
             return self.addField(
-                self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'priority']), {
+                self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority']), {
                     'name': 'nets_positive',
                     'value': True,
                     'label': ugettext('Network access'),

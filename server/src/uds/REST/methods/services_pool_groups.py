@@ -33,12 +33,12 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models import Network
-from uds.core.util import net
-from uds.core.util import permissions
+from uds.models import ServicesPoolGroup, Image
+from uds.core.util.model import processUuid
 from uds.core.ui.UserInterface import gui
+from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
-from uds.REST.model import ModelHandler, SaveException
+from uds.REST.model import ModelHandler
 
 import logging
 
@@ -47,49 +47,59 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class Networks(ModelHandler):
+class ServicesPoolGroups(ModelHandler):
     '''
-    Processes REST requests about networks
-    Implements specific handling for network related requests using GUI
+    Handles the gallery REST interface
     '''
-    model = Network
-    save_fields = ['name', 'net_string', 'tags']
+    needs_admin = True
 
-    table_title = _('Current Networks')
+    path = 'gallery'
+    model = ServicesPoolGroup
+    save_fields = ['name', 'comments', 'image_id']
+
+    table_title = _('Services Pool Groups')
     table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'icon', 'icon': 'fa fa-globe text-success'}},
-        {'net_string': {'title': _('Range')}},
-        {'networks_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}}
+        {'name': {'title': _('Name')}},
+        {'thumb': {'title': _('Image'), 'visible': True, 'type': 'image'}},
     ]
 
     def beforeSave(self, fields):
-        logger.debug('Before {0}'.format(fields))
+        imgId = fields['image_id']
+        fields['image_id'] = None
+        logger.debug('Image id: {}'.format(imgId))
         try:
-            nr = net.networksFromString(fields['net_string'], False)
-            fields['net_start'] = nr[0]
-            fields['net_end'] = nr[1]
-        except Exception as e:
-            raise SaveException(ugettext('Invalid network: ') + unicode(e))
-        logger.debug('Processed {0}'.format(fields))
+            if imgId != '-1':
+                image = Image.objects.get(uuid=processUuid(imgId))
+                fields['image_id'] = image.id
+        except Exception:
+            logger.exception('At image recovering')
 
+    # Gui related
     def getGui(self, type_):
-        return self.addField(
-            self.addDefaultFields([], ['name', 'tags']), {
-                'name': 'net_string',
-                'value': '',
-                'label': ugettext('Network range'),
-                'tooltip': ugettext('Network range. Accepts most network definitions formats (range, subnet, host, etc...'),
-                'type': gui.InputField.TEXT_TYPE,
-                'order': 100,  # At end
-            }
-        )
+        g = self.addDefaultFields([], ['name', 'comments'])
+
+        for f in [{
+            'name': 'image_id',
+            'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
+            'label': ugettext('Associated Image'),
+            'tooltip': ugettext('Image assocciated with this service'),
+            'type': gui.InputField.IMAGECHOICE_TYPE,
+            'order': 102,
+        }]:
+            self.addField(g, f)
+
+        return g
 
     def item_as_dict(self, item):
         return {
             'id': item.uuid,
             'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'net_string': item.net_string,
-            'networks_count': item.transports.count(),
-            'permission': permissions.getEffectivePermission(self._user, item)
+            'image_id': item.image.uuid,
+        }
+
+    def item_as_dict_overview(self, item):
+        return {
+            'id': item.uuid,
+            'name': item.name,
+            'thumb': item.image.thumb64,
         }

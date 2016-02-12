@@ -8,7 +8,7 @@
     <span class="label label-success tag tagadder" id="adder{{ id }}">{% endverbatim %}{% trans 'Add Tag...' %}{% verbatim %}</span>
     {{/ unless }}
 
-    <input id="h{{ id }}" type="hidden" data-uds="list" name="{{ name }}" value="{{ value }}" class="{{ css }}" />
+    <input id="h{{ id }}" type="hidden" data-uds="commaList" name="{{ name }}" value="{{ value }}" class="{{ css }}" />
 
 {% endverbatim %}
 {% comment %}<script>/*This is a little trick to make IDE recognize sintax hightlight, will not be show on render :-)*/{% endcomment %}
@@ -44,7 +44,9 @@
     // Tagadder never gets destroyed, so we only set the event once
     $('#adder{{ id }}').on('click', function(){
         var text = prompt('Enter new tag');
-        addTag(text);
+        $.each( text.split(','), function (idx, value) {
+            addTag(value);
+        });
     });
 
     {{/ unless }}

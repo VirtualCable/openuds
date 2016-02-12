@@ -240,6 +240,11 @@
         exec: gui.calendars.link
         cleanup: true
       }
+      {
+        id: "lnk-spoolsgroup"
+        exec: gui.sPoolGroups.link
+        cleanup: true
+      }
     ]
     $.each sidebarLinks, (index, value) ->
       gui.doLog "Adding " + value.id
