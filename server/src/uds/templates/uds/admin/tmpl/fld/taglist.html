@@ -66,6 +66,8 @@
         var curr;
         var found = false;
 
+        text = text.split(' ').join(''); // Remove white spaces
+        
         text = api.tools.capitalize(text);
 
         if ($data.val() == '')  // No values
