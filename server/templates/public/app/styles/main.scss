@@ -13,6 +13,33 @@ body {
   padding-top: 60px;
 }
 
+.service-item {
+  border: 2px solid #141414;
+  margin-right: 16px;
+  cursor: pointer;
+  outline: 0 none;
+}
+
+.service-title {
+
+}
+
+.service-image {
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  padding: 25% 0;
+  -moz-transition: background-size 400ms;
+  transition: background-size 400ms;
+  &:hover {
+    background-size: auto 125%;
+  }
+}
+
+
+
+/* old */
+
 .st-sticky-wrap {
   min-height: 100%;
   height: auto !important;

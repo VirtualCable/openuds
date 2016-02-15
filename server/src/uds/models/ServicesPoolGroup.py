@@ -42,7 +42,7 @@ from uds.models.Image import Image
 
 import logging
 
-__updated__ = '2016-02-12'
+__updated__ = '2016-02-15'
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class ServicesPoolGroup(UUIDModel):
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     priority = models.IntegerField(default=0, db_index=True)
-    image = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGrou', on_delete=models.SET_NULL)
+    image = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGroup', on_delete=models.SET_NULL)
 
     class Meta(UUIDModel.Meta):
         '''
