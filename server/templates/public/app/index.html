@@ -1,0 +1,145 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+
+
+    <meta charset="utf-8">
+    <title>public</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <!-- build:js scripts/vendor/modernizr.js -->
+    <script src="/bower_components/modernizr/modernizr.js"></script>
+    <!-- endbuild -->
+    
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    
+    <div class="container">
+      <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button data-target=".navbar-ex1-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand">
+                  <img class="navbar-img pull-left" src="img/udsicon.png" alt="Universal Desktop Services">
+                  <span>Universal Desktop Services</span>
+                </a>
+            </div>
+                   <div class="collapse navbar-collapse navbar-ex1-collapse">
+                      <ul class="nav navbar-nav">
+                      </ul>
+                      <form method="post" action="/i18n/setlang/" id="form_language">
+                      <input type="hidden" value="zWr48z50KDHA2mmsgTdLvkByo7FSaYgD" name="csrfmiddlewaretoken">
+                      <input type="hidden" value="" name="language" id="id_language">
+                      <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/about">About</a></li>
+                        <li class="dropdown">
+                          <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="fa fa-comments-o"></i> English<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                            <li><a onclick="$(&quot;#id_language&quot;).val(&quot;es&quot;); $(&quot;#form_language&quot;).submit()" href="#">Spanish</a></li>
+                            <li><a onclick="$(&quot;#id_language&quot;).val(&quot;fr&quot;); $(&quot;#form_language&quot;).submit()" href="#">French</a></li>
+                            <li><a onclick="$(&quot;#id_language&quot;).val(&quot;de&quot;); $(&quot;#form_language&quot;).submit()" href="#">German</a></li>
+                            <li><a onclick="$(&quot;#id_language&quot;).val(&quot;pt&quot;); $(&quot;#form_language&quot;).submit()" href="#">Portuguese</a></li>
+                            <li><a onclick="$(&quot;#id_language&quot;).val(&quot;it&quot;); $(&quot;#form_language&quot;).submit()" href="#">Italian</a></li>
+                            <li><a onclick="$(&quot;#id_language&quot;).val(&quot;eu&quot;); $(&quot;#form_language&quot;).submit()" href="#">Basque</a></li>
+                          </ul>
+                        </li>
+                        
+                        <li class="dropdown">
+                          <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="fa fa-user"></i> 172.27.0.8 <b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="/prefs"><span class="fa fa-edit"></span> Preferences</a></li>
+                              <li><a href="/down"><span class="fa fa-download"></span> UDS Plugin</a></li>
+                              <li><a href="/idown/"><span class="fa fa-download"></span> Downloads</a></li>
+                              <li><a href="/adm/"><span class="fa fa-dashboard"></span> Dashboard</a></li>
+                              <li><a href="/logout"><span class="fa fa-power-off text-danger"></span> Logout</a></li>
+                          </ul>
+                        </li>
+                        
+
+                      </ul>
+                      </form>
+                      
+                   </div>
+            
+          </nav>      
+
+      <div class="jumbotron">
+        <h1>'Allo, 'Allo!</h1>
+        <p class="lead">Always a pleasure scaffolding your apps.</p>
+        <p><a class="btn btn-lg btn-success" href="#">Splendid! <span class="glyphicon glyphicon-ok"></span></a></p>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-6">
+          <h4><a href="https://html5boilerplate.com/">HTML5 Boilerplate</a></h4>
+          <p>HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.</p>
+
+          <h4><a href="http://libsass.org/">Sass</a></h4>
+          <p>Sass is a mature, stable, and powerful professional grade CSS extension language.</p>
+          
+
+          <h4><a href="http://getbootstrap.com/">Bootstrap</a></h4>
+          <p>Sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.</p>
+
+          <h4><a href="http://modernizr.com/">Modernizr</a></h4>
+          <p>Modernizr is an open-source JavaScript library that helps you build the next generation of HTML5 and CSS3-powered websites.</p>
+          
+        </div>
+      </div>
+
+      <div class="footer">
+        <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
+      </div>
+    </div>
+    
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    
+    <!-- build:js(.) scripts/plugins.js -->
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/modal.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/transition.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/button.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/popover.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/carousel.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
+    <!-- endbuild -->
+    
+
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/main.js"></script>
+    <!-- endbuild -->
+
+  </body>
+</html>
