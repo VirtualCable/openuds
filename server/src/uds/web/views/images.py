@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -26,62 +25,30 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
 from __future__ import unicode_literals
 
-from django.db import models
-from django.utils.translation import ugettext as _
+from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 
-from django.utils.encoding import python_2_unicode_compatible
+from uds.core.ui.images import DEFAULT_IMAGE
+from uds.core.util.model import processUuid
+from uds.models import Image
 
-from uds.models.UUIDModel import UUIDModel
-from uds.models.Image import Image
 
 import logging
 
-__updated__ = '2016-02-16'
-
-
 logger = logging.getLogger(__name__)
 
-
-@python_2_unicode_compatible
-class ServicesPoolGroup(UUIDModel):
-    '''
-    A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
-    '''
-    # pylint: disable=model-missing-unicode
-    name = models.CharField(max_length=128, default='', db_index=True, unique=True)
-    comments = models.CharField(max_length=256, default='')
-    priority = models.IntegerField(default=0, db_index=True)
-    image = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGroup', on_delete=models.SET_NULL)
-
-    class Meta(UUIDModel.Meta):
-        '''
-        Meta class to declare the name of the table at database
-        '''
-        db_table = 'uds__pools_groups'
-        app_label = 'uds'
-
-    def __str__(self):
-        return u"Service Pool group {0}({1})".format(self.name, self.comments)
+__updated__ = '2016-02-15'
 
 
-    @property
-    def as_dict(self):
-        return {
-            'name': self.name,
-            'comments': self.comments,
-            'priority': self.priority,
-            'imageUuid': self.image.uuid if self.image is not None else 'x'
-        }
-
-    @staticmethod
-    def default():
-        return ServicesPoolGroup(name=_('General'), comments='Default group', priority=-10000)
-
-
+@cache_page(3600, key_prefix='img', cache='memory')
+def image(request, idImage):
+    try:
+        icon = Image.objects.get(uuid=processUuid(idImage))
+        return icon.imageResponse()
+    except Image.DoesNotExist:
+        return HttpResponse(DEFAULT_IMAGE, content_type='image/png')

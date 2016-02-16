@@ -241,7 +241,7 @@ uds.setReload = ->
 uds.reload = ->
   if uds.reloadCounter == 0
     # window.location.reload()
-    window.location.href = window.location.href
+    window.location.href = window.location.href.split('?')[0].split('#')[0] + '?tab=' + $("ul#services-tabs li.active").attr('data-name')
   else
     uds.reloadCounter -= 1
     uds.setReload()

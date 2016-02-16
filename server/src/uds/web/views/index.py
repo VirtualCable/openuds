@@ -39,7 +39,7 @@ from django.template import RequestContext
 
 from uds.core.auths.auth import webLoginRequired
 
-from uds.models import DeployedService, Transport, UserService, Network
+from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import html
 
@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-15'
+__updated__ = '2016-02-16'
 
 
 def about(request):
@@ -121,7 +121,7 @@ def index(request):
             imageId = 'x'  # Invalid
 
         # Extract app group
-        group = (svr.deployed_service.servicesPoolGroup.name, svr.deployed_service.servicesPoolGroup.priority) if svr.deployed_service.servicesPoolGroup is not None else (ugettext('Default'), -1000)
+        group = svr.deployed_service.servicesPoolGroup if svr.deployed_service.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
 
         services.append({
             'id': 'A' + svr.uuid,
@@ -165,7 +165,7 @@ def index(request):
         else:
             in_use = ads.in_use
 
-        group = (svr.servicesPoolGroup.name, svr.servicesPoolGroup.priority) if svr.servicesPoolGroup is not None else (ugettext('Default'), -1000)
+        group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
 
         services.append({
             'id': 'F' + svr.uuid,
@@ -190,20 +190,21 @@ def index(request):
             # return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
     # List of services groups
-    groups = list(set([v[0] for v in sorted([ser['group'] for ser in services], key=lambda s: s[1])]))
+    allGroups = [v for v in sorted([ser['group'] for ser in services], key=lambda s: s['priority'])]
+    # Now remove duplicates
+    groups = []
+    already = []
+    for g in allGroups:
+        if g['name'] not in already:
+            already.append(g['name'])
+            groups.append(g)
 
-    byGroup = {}
-    for s in services:
-        grpName = s['group'][0]
-        if grpName not in byGroup:
-            byGroup[grpName] = []
-        byGroup[grpName].append(s)
+    logger.debug('Groups: {}'.format(groups))
 
     response = render_to_response(
         theme.template('index.html'),
         {
             'groups': groups,
-            'byGroup': byGroup,
             'services': services,
             'ip': request.ip,
             'nets': nets,

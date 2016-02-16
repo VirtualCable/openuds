@@ -49,6 +49,7 @@ urlpatterns = patterns(
     (r'^transicon/(?P<idTrans>.+)$', 'web.views.transportIcon'),
     # Images
     (r'^srvimg/(?P<idImage>.+)$', 'web.views.serviceImage'),
+    url(r'^galimg/(?P<idImage>.+)$', 'web.views.image', name='galleryImage'),
     # Error URL
     (r'^error/(?P<idError>.+)$', 'web.views.error'),
     # Transport own link processor
