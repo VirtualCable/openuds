@@ -50,6 +50,7 @@ from uds.models.Transport import Transport
 from uds.models.Group import Group
 from uds.models.Image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
+from uds.models.Calendar import Calendar
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
@@ -57,11 +58,10 @@ from uds.models.Util import getSqlDatetime
 from datetime import timedelta
 import logging
 
-__updated__ = '2016-02-12'
+__updated__ = '2016-02-17'
 
 
 logger = logging.getLogger(__name__)
-
 
 @python_2_unicode_compatible
 class DeployedService(UUIDModel, TaggingMixin):
@@ -81,6 +81,12 @@ class DeployedService(UUIDModel, TaggingMixin):
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
     servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
+
+    accessCalendars = models.ManyToManyField(Calendar, related_name='accessSP', through='CalendarAccess')
+    # Default fallback action for access
+    fallbackAccessAllow = models.BooleanField(default=True)
+    actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
+
 
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)

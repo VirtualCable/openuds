@@ -37,29 +37,26 @@ from __future__ import unicode_literals
 __updated__ = '2016-02-17'
 
 from django.db import models
-from uds.models.UUIDModel import UUIDModel
+from uds.models.Calendar import Calendar
+from uds.models.ServicesPool import ServicePool
 from django.utils.encoding import python_2_unicode_compatible
 # from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models.Tag import TaggingMixin
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
-class Calendar(UUIDModel, TaggingMixin):
-
-    name = models.CharField(max_length=128, default='')
-    comments = models.CharField(max_length=256, default='')
-    modified = models.DateTimeField(auto_now=True)
+class CalendarAction(models.Model):
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    servicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
+    action = models.CharField(max_length=64)
+    params = models.CharField(max_length=1024)
 
     class Meta:
         '''
         Meta class to declare db table
         '''
-        db_table = 'uds_calendar'
+        db_table = 'uds_cal_action'
         app_label = 'uds'
 
-    def __str__(self):
-        return 'Calendar "{}" modified on {} with {} rules'.format(self.name, self.modified, self.rules.count())

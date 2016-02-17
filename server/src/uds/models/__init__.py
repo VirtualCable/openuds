@@ -99,10 +99,13 @@ from .TicketStore import TicketStore
 from .Calendar import Calendar
 from .CalendarRule import CalendarRule
 
+from .CalendarAccess import CalendarAccess
+from .CalendarAction import CalendarAction
+
 # Tagging
 from .Tag import Tag
 
-__updated__ = '2016-02-12'
+__updated__ = '2016-02-17'
 
 
 logger = logging.getLogger(__name__)

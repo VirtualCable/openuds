@@ -44,6 +44,7 @@ from uds.models import ServicePool, UserService, getSqlDatetime, Transport
 from uds.core import services
 from uds.core.services import Service
 from uds.core.util.stats import events
+from uds.core.util.calendar import CalendarChecker
 
 from .userservice.opchecker  import UserServiceOpChecker
 
@@ -51,7 +52,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2015-11-11'
+__updated__ = '2016-02-17'
 
 logger = logging.getLogger(__name__)
 
@@ -419,6 +420,22 @@ class UserServiceManager(object):
         elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
             uService.setState(State.PREPARING)
             UserServiceOpChecker.makeUnique(uService, ui, state)
+
+    def accessAllowed(self, servicePool, chkDateTime=None):
+        '''
+        Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
+        '''
+        if chkDateTime is None:
+            chkDateTime = getSqlDatetime()
+
+        allow = servicePool.fallbackAccessAllow
+        # Let's see if we can access by current datetime
+        for ac in servicePool.accessCalendars.all():
+            if CalendarChecker(ac.calender).check(chkDateTime) is True:
+                allow = ac.allow
+
+        return allow
+
 
     def getService(self, user, srcIp, idService, idTransport, doTest=True):
         '''
