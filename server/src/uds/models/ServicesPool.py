@@ -55,10 +55,12 @@ from uds.models.Calendar import Calendar
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
+from uds.core.util.calendar import CalendarChecker
+
 from datetime import timedelta
 import logging
 
-__updated__ = '2016-02-17'
+__updated__ = '2016-02-18'
 
 
 logger = logging.getLogger(__name__)
@@ -188,6 +190,22 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     def isInMaintenance(self):
         return self.service is not None and self.service.isInMaintenance()
+
+    def isAccessAllowed(self, chkDateTime=None):
+        '''
+        Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
+        '''
+        if chkDateTime is None:
+            chkDateTime = getSqlDatetime()
+
+        allow = self.fallbackAccessAllow
+        # Let's see if we can access by current datetime
+        for ac in self.calendaraccess_set.all():
+            if CalendarChecker(ac.calendar).check(chkDateTime) is True:
+                allow = ac.allow
+
+        return allow
+
 
     def storeValue(self, name, value):
         '''

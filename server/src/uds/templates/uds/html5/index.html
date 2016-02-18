@@ -23,9 +23,11 @@
                     {% if ser.transports %}
                     <div class="service-container">
                         {% with trans=ser.transports|first numTransports=ser.transports|length %}
-                        <div class="service{% if ser.maintenance %} maintenance{% endif %}{% if ser.in_use %} inuse{% endif %}"
+                        <div class="service{% if ser.maintenance %} maintenance{% endif %}{% if ser.not_accesible %} notaccesible{% endif %}{% if ser.in_use %} inuse{% endif %}"
                              {% if ser.maintenance %}
                              data-content="{% trans "Under maintenance" %}"
+                             {% elif ser.not_accesible %}
+                             data-content="{% trans "Access limited by calendar" %}"
                              {% elif ser.in_use %}
                              data-content="{%trans "Currently in use" %}"
                              {% endif %}
@@ -88,6 +90,23 @@
           </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
+        <div class="modal fade" id="notaccesible-dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans "Service access not allowed" %}</h4>
+              </div>
+              <div class="modal-body text-center">
+                <p>{% trans "This service is currently not accesible due to schedule restrictions" %}</p>
+                <p>{% trans "Please, retry access in a while." %}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
 
         {% if user.isStaff %}
@@ -277,7 +296,7 @@
 
             $('.inuse').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto top'});
 
-            $('div.service:not(.maintenance)').on("click", function (event){
+            $('div.service:not(.maintenance, .notaccesible)').on("click", function (event){
                 var url, el;
                 event.preventDefault();
 
@@ -310,7 +329,7 @@
                 return false;
             })
 
-            $('div.service:not(.maintenance) > span.gear > span.fa').on("click", function (event) {
+            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.fa').on("click", function (event) {
                 event.stopPropagation();
                 event.preventDefault();
                 $(this).parent().parent().next().modal();
@@ -319,6 +338,13 @@
 
             $(".maintenance").click( function(event) {
                 $('#maintenance-dialog').modal({
+                      keyboard: false
+                    })
+                return false;
+            });
+
+            $(".notaccesible").click( function(event) {
+                $('#notaccesible-dialog').modal({
                       keyboard: false
                     })
                 return false;

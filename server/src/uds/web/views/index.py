@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-16'
+__updated__ = '2016-02-18'
 
 
 def about(request):
@@ -131,6 +131,7 @@ def index(request):
             'imageId': imageId,
             'show_transports': svr.deployed_service.show_transports,
             'maintenance': svr.deployed_service.isInMaintenance(),
+            'not_accesible': not svr.deployed_service.isAccessAllowed(),
             'in_use': svr.in_use,
         })
 
@@ -175,6 +176,7 @@ def index(request):
             'imageId': imageId,
             'show_transports': svr.show_transports,
             'maintenance': svr.isInMaintenance(),
+            'not_accesible': not svr.isAccessAllowed(),
             'in_use': in_use,
         })
 

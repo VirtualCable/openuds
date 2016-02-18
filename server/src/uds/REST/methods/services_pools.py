@@ -43,6 +43,7 @@ from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from .user_services import AssignedService, CachedService, Groups, Transports, Publications, Changelog
+from .services_pool_calendars import AccessCalendars
 from .services import Services
 
 import logging
@@ -61,7 +62,8 @@ class ServicesPools(ModelHandler):
         'groups': Groups,
         'transports': Transports,
         'publications': Publications,
-        'changelog': Changelog
+        'changelog': Changelog,
+        'access': AccessCalendars,
     }
 
     save_fields = ['name', 'comments', 'tags', 'service_id', 'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports']
@@ -103,6 +105,7 @@ class ServicesPools(ModelHandler):
             'user_services_count': item.userServices.count(),
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
+            'allowAccessByDefault': item.fallbackAccessAllow,
             'permission': permissions.getEffectivePermission(self._user, item),
             'info': Services.serviceInfo(item.service),
         }

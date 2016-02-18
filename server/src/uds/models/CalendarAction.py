@@ -34,10 +34,11 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-17'
+__updated__ = '2016-02-18'
 
 from django.db import models
 from uds.models.Calendar import Calendar
+from uds.models.UUIDModel import UUIDModel
 from uds.models.ServicesPool import ServicePool
 from django.utils.encoding import python_2_unicode_compatible
 # from django.utils.translation import ugettext_lazy as _, ugettext
@@ -47,7 +48,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class CalendarAction(models.Model):
+class CalendarAction(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     servicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
     action = models.CharField(max_length=64)

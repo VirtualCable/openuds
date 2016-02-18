@@ -22,6 +22,8 @@ gui.servicesPools.link = (event) ->
     $("#cache-placeholder_log").empty()
     $("#transports-placeholder").empty()
     $("#groups-placeholder").empty()
+    $("#access-placeholder").empty()
+    $("#scheduling-placeholder").empty()
     $("#logs-placeholder").empty()
     $("#detail-placeholder").addClass "hidden"
     prevTables = []
@@ -124,6 +126,8 @@ gui.servicesPools.link = (event) ->
       transports: "transports-placeholder"
       publications: "publications-placeholder"
       changelog: "changelog-placeholder"
+      scheduling: "scheduling-placeholder"
+      access: "access-placeholder"
       logs: "logs-placeholder"
     )
     gui.setLinksEvents()
@@ -246,7 +250,7 @@ gui.servicesPools.link = (event) ->
             doNotLoadData: true
             icon: 'groups'
             container: "groups-placeholder"
-            rowSelect: "single"
+            rowSelect: "multi"
             doNotLoadData: true
             buttons: [
               "new"
@@ -323,7 +327,7 @@ gui.servicesPools.link = (event) ->
           doNotLoadData: true
           icon: 'assigned'
           container: "assigned-services-placeholder_tbl"
-          rowSelect: "single"
+          rowSelect: "multi"
           buttons: (if info.must_assign_manually then [
             "new"
             "delete"
@@ -371,7 +375,7 @@ gui.servicesPools.link = (event) ->
           icon: 'transports'
           container: "transports-placeholder"
           doNotLoadData: true
-          rowSelect: "single"
+          rowSelect: "multi"
           buttons: [
             "new"
             "delete"
@@ -524,7 +528,24 @@ gui.servicesPools.link = (event) ->
 
         else
           $("#publications-placeholder_tab").addClass "hidden"
-        
+
+        # 
+        # Access calendars
+        #
+        accessCalendars = new GuiElement(api.servicesPools.detail(servPool.id, "access", { permission: servPool.permission }), "access")
+        accessCalendarsTable = accessCalendars.table(
+          doNotLoadData: false
+          icon: 'assigned'
+          container: "access-placeholder"
+          rowSelect: "multi"
+          buttons: [
+            "new"
+            "delete"
+            "xls"
+          ]
+        )
+        prevTables.push accessCalendarsTable
+
         #
         #                     * Log table
         #                     

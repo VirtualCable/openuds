@@ -34,12 +34,12 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-17'
+__updated__ = '2016-02-18'
 
 from django.db import models
+from uds.models.UUIDModel import UUIDModel
 from uds.models.Calendar import Calendar
 from uds.models.ServicesPool import ServicePool
-from django.utils.encoding import python_2_unicode_compatible
 # from django.utils.translation import ugettext_lazy as _, ugettext
 
 import logging
@@ -47,7 +47,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class CalendarAccess(models.Model):
+class CalendarAccess(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     servicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
     allow = models.BooleanField(default=True)
@@ -58,5 +58,6 @@ class CalendarAccess(models.Model):
         Meta class to declare db table
         '''
         db_table = 'uds_cal_access'
+        ordering = ('priority',)
         app_label = 'uds'
 
