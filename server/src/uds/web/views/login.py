@@ -49,7 +49,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2015-11-16'
+__updated__ = '2016-02-19'
 
 
 def login(request, tag=None):
@@ -98,7 +98,7 @@ def login(request, tag=None):
             if tries is None:
                 tries = 0
             if authenticator.getInstance().blockUserOnLoginFailures is True and tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
-                form.add_form_error('Too many authentication errors. User temporarily  blocked.')
+                form.add_error(None, 'Too many authentication errors. User temporarily  blocked.')
                 authLogLogin(request, authenticator, userName, 'Temporarily blocked')
             else:
                 password = form.cleaned_data['password']
@@ -112,7 +112,7 @@ def login(request, tag=None):
                     logger.debug("Invalid credentials for user {0}".format(userName))
                     tries += 1
                     cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
-                    form.add_form_error(ugettext('Invalid credentials'))
+                    form.add_error(None, ugettext('Invalid credentials'))
                     authLogLogin(request, authenticator, userName, 'Invalid credentials')
                 else:
                     logger.debug('User {} has logged in'.format(userName))

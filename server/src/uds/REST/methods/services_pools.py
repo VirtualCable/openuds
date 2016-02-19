@@ -105,7 +105,7 @@ class ServicesPools(ModelHandler):
             'user_services_count': item.userServices.count(),
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
-            'allowAccessByDefault': ALLOW if item.fallbackAccessAllow is True else DENY,
+            'allowAccessByDefault': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
             'info': Services.serviceInfo(item.service),
         }

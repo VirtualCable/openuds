@@ -36,7 +36,6 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
 from django.utils.safestring import mark_safe
 from django.forms.forms import NON_FIELD_ERRORS
-# from django.forms.util import ErrorDict
 from uds.models import Authenticator
 import logging
 
@@ -56,20 +55,6 @@ class CustomSelect(forms.Select):
             res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
         res += '</select>'
         return mark_safe('<div class="form-group"{0}><label>'.format(visible) + unicode(_('authenticator')) + '</label>' + res + '</div>')
-
-
-# class BaseForm(forms.Form):
-#
-#     def __init__(self, *args, **kwargs):
-#         super(BaseForm, self).__init__(*args, **kwargs)
-#
-#     def add_form_error(self, message):
-#         if not self._errors:
-#             self._errors = ErrorDict()
-#         if NON_FIELD_ERRORS not in self._errors:
-#             self._errors[NON_FIELD_ERRORS] = self.error_class()
-#         self._errors[NON_FIELD_ERRORS].append(message)
-
 
 class LoginForm(forms.Form):
     user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())

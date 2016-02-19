@@ -69,12 +69,13 @@ class UDSAppConfig(AppConfig):
         # We have to take care with this, because it's supposed to be executed
         # with ANY command from manage.
         logger.debug('Initializing app (ready) ***************')
+
+        # Now, ensures that all dynamic elements are loadad and present
         from . import services  # to make sure that the packages are initialized at this point
         from . import auths  # To make sure that the packages are initialized at this point
         from . import osmanagers  # To make sure that packages are initialized at this point
         from . import transports  # To make sure that packages are initialized at this point
-        from . import dispatchers
-        from . import models
+        from . import dispatchers  # Ensure all dischatchers all also available
         from . import plugins  # To make sure plugins are loaded on memory
         from . import REST  # To make sure REST initializes all what it needs
 
