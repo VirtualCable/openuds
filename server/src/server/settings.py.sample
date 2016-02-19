@@ -145,18 +145,17 @@ TEMPLATE_LOADERS = (
 )
 
 # Own context processors plus django's own
-TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + [
     'uds.core.util.Config.context_processor',
     'uds.core.util.html.context',
     'django.core.context_processors.request',
-)
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'uds.core.util.request.GlobalRequestMiddleware',
     'uds.core.util.middleware.XUACompatibleMiddleware',
@@ -245,7 +244,7 @@ LOGGING = {
     'handlers': {
         'null': {
             'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
+            'class':'logging.NullHandler',
         },
                  
         'file':{

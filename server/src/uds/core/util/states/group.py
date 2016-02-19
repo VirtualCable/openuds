@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2015 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,18 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-Core of UDS.
-This package contains all core-related code for UDS
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-# Core needs tasks manager to register scheduled jobs, so we ensure of that here
-from uds.core.Environment import Environmentable
-from uds.core.Serializable import Serializable
-from uds.core.BaseModule import Module
-# from uds.core import services
-# from uds.core import auths
-# from uds.core import transports
+# pylint: disable=unused-import
+from .common import ACTIVE  # @UnusedImport
 
-VERSION = '2.0.0'
+__updated__ = '2016-02-19'

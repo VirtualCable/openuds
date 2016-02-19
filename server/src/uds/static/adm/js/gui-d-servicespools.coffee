@@ -543,6 +543,14 @@ gui.servicesPools.link = (event) ->
             "delete"
             "xls"
           ]
+
+          onData: (data) ->
+            data.push 
+              id: -1,
+              name: 'DEFAULT',
+              priority: '<span style="visibility: hidden;">10000000</span>FallBack',
+              action: servPool.allowAccessByDefault
+
         )
         prevTables.push accessCalendarsTable
 

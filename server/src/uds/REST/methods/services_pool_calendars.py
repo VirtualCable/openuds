@@ -64,7 +64,7 @@ class AccessCalendars(DetailHandler):
         return [{
             'id': i.uuid,
             'name': i.calendar.name,
-            'allow': ALLOW if i.allow  else DENY,
+            'action': ALLOW if i.allow  else DENY,
             'priority': i.priority,
         } for i in parent.calendaraccess_set.all()]
 
@@ -75,7 +75,7 @@ class AccessCalendars(DetailHandler):
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Name')}},
-            {'allow': {'title': _('Rule')}},
+            {'action': {'title': _('Rule')}},
         ]
 
     def saveItem(self, parent, item):

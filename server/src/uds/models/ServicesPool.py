@@ -39,7 +39,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from uds.core.Environment import Environment
 from uds.core.util import log
-from uds.core.util.State import State
+from uds.core.util import states
 from uds.core.services.Exceptions import InvalidServiceException
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Tag import TaggingMixin
@@ -60,7 +60,7 @@ from uds.core.util.calendar import CalendarChecker
 from datetime import timedelta
 import logging
 
-__updated__ = '2016-02-18'
+__updated__ = '2016-02-19'
 
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     osmanager = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices')
     transports = models.ManyToManyField(Transport, related_name='deployedServices', db_table='uds__ds_trans')
     assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
-    state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
+    state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
@@ -86,7 +86,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     accessCalendars = models.ManyToManyField(Calendar, related_name='accessSP', through='CalendarAccess')
     # Default fallback action for access
-    fallbackAccessAllow = models.BooleanField(default=True)
+    fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
     actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
 
 
@@ -123,7 +123,7 @@ class DeployedService(UUIDModel, TaggingMixin):
             None if there is no valid publication for this deployed service.
         '''
         try:
-            return self.publications.filter(state=State.USABLE)[0]
+            return self.publications.filter(state=states.publication.USABLE)[0]
         except Exception:
             return None
 
@@ -154,7 +154,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
 
         res = []
-        for v in UserService.objects.filter(state=State.ERROR, state_date__gt=date).values('deployed_service').annotate(how_many=Count('deployed_service')):
+        for v in UserService.objects.filter(state=states.userService.ERROR, state_date__gt=date).values('deployed_service').annotate(how_many=Count('deployed_service')):
             if v['how_many'] >= min_:
                 res.append(v['deployed_service'])
         return DeployedService.objects.filter(pk__in=res)
@@ -183,7 +183,7 @@ class DeployedService(UUIDModel, TaggingMixin):
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
         date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
-        if self.userServices.filter(state=State.ERROR, state_date__gt=date).count() >= GlobalConfig.RESTRAINT_COUNT.getInt():
+        if self.userServices.filter(state=states.userService.ERROR, state_date__gt=date).count() >= GlobalConfig.RESTRAINT_COUNT.getInt():
             return True
 
         return False
@@ -198,13 +198,13 @@ class DeployedService(UUIDModel, TaggingMixin):
         if chkDateTime is None:
             chkDateTime = getSqlDatetime()
 
-        allow = self.fallbackAccessAllow
+        access = self.fallbackAccess
         # Let's see if we can access by current datetime
         for ac in self.calendaraccess_set.all():
             if CalendarChecker(ac.calendar).check(chkDateTime) is True:
-                allow = ac.allow
+                access = ac.access
 
-        return allow
+        return access == states.action.ALLOW
 
 
     def storeValue(self, name, value):
@@ -250,7 +250,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         The background worker will be the responsible for removing the deployed service
         '''
-        self.setState(State.REMOVABLE)
+        self.setState(states.servicePool.REMOVABLE)
 
     def removed(self):
         '''
@@ -284,10 +284,10 @@ class DeployedService(UUIDModel, TaggingMixin):
             logger.error('No active publication, don\'t know what to erase!!! (ds = {0})'.format(self))
             return
         for ap in self.publications.exclude(id=activePub.id):
-            for u in ap.userServices.filter(state=State.PREPARING):
+            for u in ap.userServices.filter(state=states.userService.PREPARING):
                 u.cancel()
-            ap.userServices.exclude(cache_level=0).filter(state=State.USABLE).update(state=State.REMOVABLE, state_date=now)
-            ap.userServices.filter(cache_level=0, state=State.USABLE, in_use=False).update(state=State.REMOVABLE, state_date=now)
+            ap.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(state=states.userService.REMOVABLE, state_date=now)
+            ap.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
 
     def validateGroups(self, grps):
         '''
@@ -349,11 +349,11 @@ class DeployedService(UUIDModel, TaggingMixin):
         '''
         from uds.core import services
         # Get services that HAS publications
-        list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=State.ACTIVE,
-                                               state=State.ACTIVE).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
+        list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE,
+                                               state=states.servicePool.ACTIVE).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
         # Now get deployed services that DO NOT NEED publication
         doNotNeedPublishing = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
-        list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=State.ACTIVE, service__data_type__in=doNotNeedPublishing, state=State.ACTIVE)
+        list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE, service__data_type__in=doNotNeedPublishing, state=states.servicePool.ACTIVE)
         # And generate a single list without duplicates
         return list(set([r for r in list1] + [r for r in list2]))
 

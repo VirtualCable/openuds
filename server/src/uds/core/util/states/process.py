@@ -32,12 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-import logging
+# pylint: disable=unused-import
+from .common import ERROR, FINISHED, RUNNING  # @UnusedImport
 
-__updated__ = '2015-11-17'
-
-logger = logging.getLogger(__name__)
-
-ERROR = 'E'
-FINISHED = 'F'
-RUNNING = 'W'
+__updated__ = '2016-02-19'

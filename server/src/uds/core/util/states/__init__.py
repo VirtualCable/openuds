@@ -28,18 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-Core of UDS.
-This package contains all core-related code for UDS
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-# Core needs tasks manager to register scheduled jobs, so we ensure of that here
-from uds.core.Environment import Environmentable
-from uds.core.Serializable import Serializable
-from uds.core.BaseModule import Module
-# from uds.core import services
-# from uds.core import auths
-# from uds.core import transports
-
-VERSION = '2.0.0'
+from . import action
+from . import process
+from . import userService
+from . import servicePool
+from . import task
+from . import group

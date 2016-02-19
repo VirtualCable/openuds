@@ -33,7 +33,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.apps import apps
-from uds.models import Config as dbConfig
+import uds.models.Config
 from uds.core.managers.CryptoManager import CryptoManager
 import logging
 
@@ -86,7 +86,7 @@ class Config(object):
             try:
                 if force or self._data is None:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
-                    readed = dbConfig.objects.get(section=self._section.name(), key=self._key)  # @UndefinedVariable
+                    readed = uds.models.Config.objects.get(section=self._section.name(), key=self._key)  # @UndefinedVariable
                     self._data = readed.value
                     self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
                     self._longText = readed.long
@@ -149,7 +149,7 @@ class Config(object):
             '''
             logger.debug('Saving config {0}.{1} as {2}'.format(self._section.name(), self._key, value))
             try:
-                obj, _ = dbConfig.objects.get_or_create(section=self._section.name(), key=self._key)  # @UndefinedVariable
+                obj, _ = uds.models.Config.objects.get_or_create(section=self._section.name(), key=self._key)  # @UndefinedVariable
                 obj.value, obj.crypt, obj.long, obj.field_type = value, self._crypt, self._longText, self._type
                 obj.save()
             except Exception:
@@ -180,7 +180,7 @@ class Config(object):
     @staticmethod
     def enumerate():
         GlobalConfig.initialize()  # Ensures DB contains all values
-        for cfg in dbConfig.objects.all().order_by('key'):  # @UndefinedVariable
+        for cfg in uds.models.Config.objects.all().order_by('key'):  # @UndefinedVariable
             logger.debug('{0}.{1}:{2},{3}'.format(cfg.section, cfg.key, cfg.value, cfg.field_type))
             if cfg.crypt is True:
                 val = Config.section(cfg.section).valueCrypt(cfg.key)
@@ -192,7 +192,7 @@ class Config(object):
     def update(section, key, value):
         # If cfg value does not exists, simply ignore request
         try:
-            cfg = dbConfig.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
+            cfg = uds.models.Config.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
             if cfg.crypt is True:
                 value = CryptoManager.manager().encrypt(value)
             cfg.value = value

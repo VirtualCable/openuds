@@ -43,7 +43,7 @@ from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from .user_services import AssignedService, CachedService, Groups, Transports, Publications, Changelog
-from .services_pool_calendars import AccessCalendars
+from .services_pool_calendars import AccessCalendars, ALLOW, DENY
 from .services import Services
 
 import logging
@@ -105,7 +105,7 @@ class ServicesPools(ModelHandler):
             'user_services_count': item.userServices.count(),
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
-            'allowAccessByDefault': item.fallbackAccessAllow,
+            'allowAccessByDefault': ALLOW if item.fallbackAccessAllow is True else DENY,
             'permission': permissions.getEffectivePermission(self._user, item),
             'info': Services.serviceInfo(item.service),
         }

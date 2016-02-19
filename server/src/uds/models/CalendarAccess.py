@@ -34,9 +34,10 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-18'
+__updated__ = '2016-02-19'
 
 from django.db import models
+from uds.core.util import states
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Calendar import Calendar
 from uds.models.ServicesPool import ServicePool
@@ -46,11 +47,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class CalendarAccess(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     servicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
-    allow = models.BooleanField(default=True)
+    access = models.CharField(max_length=8, default=states.action.DENY)
     priority = models.IntegerField(default=0, db_index=True)
 
     class Meta:

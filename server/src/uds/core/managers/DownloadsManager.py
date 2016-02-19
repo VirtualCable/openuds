@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 import os
 import uuid
 from django.http import HttpResponse, Http404
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 
 from uds.core.managers import cryptoManager
 

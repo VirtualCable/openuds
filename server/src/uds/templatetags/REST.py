@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from django import template
 from django.conf import settings
+from django.utils import safestring
 from uds.REST import AUTH_TOKEN_HEADER
 import re
 
@@ -70,8 +71,8 @@ def js_template(context, template_name, template_id=None):
     tmpl = template.loader.get_template(context['template_path'] + '/' + template_name + '.html').render(context)
     # Clean tmpl
     if not settings.DEBUG:
-        tmpl = re.sub('\s+', ' ', tmpl)
-    return '<script id="{0}" type="template/uds">{1}</script>'.format(template_id, tmpl)
+        tmpl = re.sub(r'\s+', ' ', tmpl)
+    return safestring.mark_safe('<script id="{0}" type="template/uds">{1}</script>'.format(template_id, tmpl))
 
 
 @register.simple_tag(name='js_template_jade', takes_context=True)
@@ -81,4 +82,4 @@ def js_template_jade(context, template_name, template_id=None):
     # Clean tmpl
     if not settings.DEBUG:
         tmpl = re.sub('\s+', ' ', tmpl)
-    return '<script id="{0}" type="template/uds">{1}</script>'.format(template_id, tmpl)
+    return safestring.mark_safe('<script id="{0}" type="template/uds">{1}</script>'.format(template_id, tmpl))
