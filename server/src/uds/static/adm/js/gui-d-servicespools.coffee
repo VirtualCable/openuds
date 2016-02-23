@@ -1,10 +1,10 @@
-# jshint strict: true 
+# jshint strict: true
 gui.servicesPools = new GuiElement(api.servicesPools, "servicespools")
 gui.servicesPools.link = (event) ->
   "use strict"
   gui.clearWorkspace()
   editMode = false  # To indicate if editing or not. Used for disabling "os manager", due to the fact that os manager are different for apps and vdi
-  
+
   # Clears the details
   # Memory saver :-)
   prevTables = []
@@ -88,7 +88,7 @@ gui.servicesPools.link = (event) ->
 
     return
 
-  # 
+  #
   preFnc = (formId) ->
     $fld = $(formId + " [name=\"service_id\"]")
     $fld.on "change", (event) ->
@@ -131,7 +131,7 @@ gui.servicesPools.link = (event) ->
       logs: "logs-placeholder"
     )
     gui.setLinksEvents()
-    
+
     # Append tabs click events
     $(".bottom_tabs").on "click", (event) ->
       gui.doLog event.target
@@ -141,10 +141,10 @@ gui.servicesPools.link = (event) ->
       ), 10
       return
 
-    
+
     #
     #             * Services pools part
-    #             
+    #
     servicesPoolsTable = gui.servicesPools.table(
       icon: 'pools'
       callback: renderer
@@ -188,19 +188,19 @@ gui.servicesPools.link = (event) ->
 
         # Load provider "info"
         gui.methods.typedShow gui.servicesPools, selected[0], '#pool-info-placeholder .well', gettext('Error accessing data')
-        
-        # 
+
+        #
         #                     * Cache Part
-        #                     
+        #
         cachedItems = null
-        
+
         # If service does not supports cache, do not show it
         # Shows/hides cache
         if info.uses_cache or info.uses_cache_l2
           $("#cache-placeholder_tab").removeClass "hidden"
 
           cachedItems = new GuiElement(api.servicesPools.detail(servPool.id, "cache", { permission: servPool.permission }), "cache")
-          
+
           # Cached items table
           prevCacheLogTbl = null
           cachedItemsTable = cachedItems.table(
@@ -234,17 +234,17 @@ gui.servicesPools.link = (event) ->
           prevTables.push cachedItemsTable
         else
           $("#cache-placeholder_tab").addClass "hidden"
-        
+
         #
         #                     * Groups part
-        #                     
+        #
         groups = null
-        
+
         # Shows/hides groups
         if info.must_assign_manually is false
           $("#groups-placeholder_tab").removeClass "hidden"
           groups = new GuiElement(api.servicesPools.detail(servPool.id, "groups", { permission: servPool.permission }), "groups")
-          
+
           # Groups items table
           groupsTable = groups.table(
             doNotLoadData: true
@@ -275,7 +275,7 @@ gui.servicesPools.link = (event) ->
                         $select.append "<option value=\"" + value.id + "\">" + value.name + "</option>"
                         return
 
-                      
+
                       # Refresh selectpicker if item is such
                       $select.selectpicker "refresh"  if $select.hasClass("selectpicker")
                       return
@@ -297,7 +297,7 @@ gui.servicesPools.link = (event) ->
 
                     return
 
-                  
+
                   # Makes form "beautyfull" :-)
                   gui.tools.applyCustoms modalId
                   return
@@ -317,10 +317,10 @@ gui.servicesPools.link = (event) ->
           prevTables.push groupsTable
         else
           $("#groups-placeholder_tab").addClass "hidden"
-        
+
         #
         #                     * Assigned services part
-        #                     
+        #
         prevAssignedLogTbl = null
         assignedServices = new GuiElement(api.servicesPools.detail(servPool.id, "services", { permission: servPool.permission }), "services")
         assignedServicesTable = assignedServices.table(
@@ -336,7 +336,7 @@ gui.servicesPools.link = (event) ->
             "delete"
             "xls"
           ])
-          
+
           onData: (data) ->
             fillState data
             $.each data, (index, value) ->
@@ -360,203 +360,36 @@ gui.servicesPools.link = (event) ->
 
           onDelete: gui.methods.del(assignedServices, gettext("Remove Assigned service"), gettext("Deletion error"))
         )
-        
+
         # Log of assigned services (right under assigned services)
         prevTables.push assignedServicesTable
-        
+
         #
         #                     * Transports part
-        #                     
-        transports = new GuiElement(api.servicesPools.detail(servPool.id, "transports", { permission: servPool.permission }), "transports")
-        
-        # Transports items table
-        transportsTable = transports.table(
-          doNotLoadData: true
-          icon: 'transports'
-          container: "transports-placeholder"
-          doNotLoadData: true
-          rowSelect: "multi"
-          buttons: [
-            "new"
-            "delete"
-            "xls"
-          ]
-          onNew: (value, table, refreshFnc) ->
-            api.templates.get "pool_add_transport", (tmpl) ->
-              api.transports.overview (data) ->
-                gui.doLog "Data Received: ", servPool, data
-                valid = []
-                for i in data
-                  if (i.protocol in servPool.info.allowedProtocols)
-                    valid.push(i)
-                modalId = gui.launchModal(gettext("Add transport"), api.templates.evaluate(tmpl,
-                  transports: valid
-                ))
-                $(modalId + " .button-accept").on "click", (event) ->
-                  transport = $(modalId + " #id_transport_select").val()
-                  if transport is -1
-                    gui.notify gettext("You must provide a transport"), "danger"
-                  else # Save & close modal
-                    transports.rest.create
-                      id: transport
-                    , (data) ->
-                      $(modalId).modal "hide"
-                      refreshFnc()
-                      return
+        #
+        for v in gui.servicesPools.transports(servPool, info)
+          prevTables.push v
 
-                  return
 
-                
-                # Makes form "beautyfull" :-)
-                gui.tools.applyCustoms modalId
-                return
-
-              return
-
-            return
-
-          onDelete: gui.methods.del(transports, gettext("Remove transport"), gettext("Transport removal error"))
-          onData: (data) ->
-            $.each data, (undefined_, value) ->
-              style = "display:inline-block; background: url(data:image/png;base64," + value.type.icon + "); ; background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
-              value.trans_type = value.type.name
-              value.name = "<span style=\"" + style + "\"></span> " + value.name
-              return
-
-            return
-        )
-        prevTables.push transportsTable
-        
         #
         #                     * Publications part
-        #                     
-        publications = null
-        changelog = null
-        clTable = null
+        #
         if info.needs_publication
           $("#publications-placeholder_tab").removeClass "hidden"
-          pubApi = api.servicesPools.detail(servPool.id, "publications")
-          publications = new GuiElement(pubApi, "publications", { permission: servPool.permission })
-          
-          # Publications table
-          publicationsTable = publications.table(
-            doNotLoadData: true
-            icon: 'publications'
-            container: "publications-placeholder"
-            doNotLoadData: true            
-            rowSelect: "single"
-            buttons: [
-              "new"
-              {
-                text: gettext("Cancel")
-                css: "disabled"
-                disabled: true
-                click: (val, value, btn, tbl, refreshFnc) ->
-                  gui.doLog val, val[0]
-                  gui.forms.confirmModal gettext("Publish"), gettext("Cancel publication?"),
-                    onYes: ->
-                      pubApi.invoke val[0].id + "/cancel", ->
-                        refreshFnc()
-                        return
-
-                      return
-
-                  return
-
-                select: (vals, self, btn, tbl, refreshFnc) ->
-                  unless vals.length == 1
-                    $(btn).addClass "disabled"
-                    $(btn).prop('disabled', true)
-                    return
-
-                  val = vals[0]
-
-                  if val.state == 'K'
-                    $(btn).empty().append(gettext("Force Cancel"))
-                  else
-                    $(btn).empty().append(gettext("Cancel"))
-
-                  # Waiting for publication, Preparing or running
-                  gui.doLog "State: ", val.state
-                  if ["P", "W", "L", "K"].indexOf(val.state) != -1
-                    $(btn).removeClass("disabled").prop('disabled', false)
-                  else
-                    $(btn).addClass("disabled").prop('disabled', true)
-
-                  return
-              }
-              "xls"
-            ]
-            onNew: (action, tbl, refreshFnc) ->
-                # Ask for "reason" for publication
-              api.templates.get "publish", (tmpl) ->
-                content = api.templates.evaluate(tmpl,
-                )
-                modalId = gui.launchModal(gettext("Publish"), content,
-                  actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Publish") + "</button>"
-                )
-                gui.tools.applyCustoms modalId
-                $(modalId + " .button-accept").click ->
-                  chlog = encodeURIComponent($('#id_publish_log').val())
-                  $(modalId).modal "hide"
-                  pubApi.invoke "publish", (->
-                    refreshFnc()
-                    changelog.refresh()
-                    # Also changelog
-                    return
-                  ), 
-                  gui.failRequestModalFnc(gettext("Failed creating publication")),
-                  { params: 'changelog=' + chlog }
-
-                return
-
-              return
-          )
-          prevTables.push publicationsTable
-
-          # changelog
-          clApi = api.servicesPools.detail(servPool.id, "changelog")
-          changelog = new GuiElement(clApi, "changelog", { permission: servPool.permission })
-          clTable = changelog.table(
-            icon: 'publications'
-            doNotLoadData: true
-            container: "changelog-placeholder"
-            rowSelect: "single"
-          )
-          prevTables.push clTable
-
-
+          for v in gui.servicesPools.publications(servPool, info)
+            prevTables.push v
         else
           $("#publications-placeholder_tab").addClass "hidden"
 
-        # 
+        #
         # Access calendars
         #
-        accessCalendars = new GuiElement(api.servicesPools.detail(servPool.id, "access", { permission: servPool.permission }), "access")
-        accessCalendarsTable = accessCalendars.table(
-          doNotLoadData: false
-          icon: 'assigned'
-          container: "access-placeholder"
-          rowSelect: "multi"
-          buttons: [
-            "new"
-            "delete"
-            "xls"
-          ]
-
-          onData: (data) ->
-            data.push 
-              id: -1,
-              name: 'DEFAULT',
-              priority: '<span style="visibility: hidden;">10000000</span>FallBack',
-              action: servPool.allowAccessByDefault
-
-        )
-        prevTables.push accessCalendarsTable
+        for v in gui.servicesPools.accessCalendars(servPool, info)
+          prevTables.push v
 
         #
         #                     * Log table
-        #                     
+        #
         logTable = gui.servicesPools.logTable(servPool.id,
           doNotLoadData: true
           container: "logs-placeholder"
@@ -564,7 +397,7 @@ gui.servicesPools.link = (event) ->
         prevTables.push logTable
         return
 
-      
+
       # Pre-process data received to add "icon" to deployed service
       onData: (data) ->
         gui.doLog "onData", data

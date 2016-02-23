@@ -60,13 +60,26 @@ class AccessCalendars(DetailHandler):
     '''
     Processes the transports detail requests of a Service Pool
     '''
+    @staticmethod
+    def as_dict(item):
+        return {
+            'id': item.uuid,
+            'calendarId': item.calendar.uuid,
+            'name': item.calendar.name,
+            'access': item.access,
+            'priority': item.priority,
+        }
+
     def getItems(self, parent, item):
-        return [{
-            'id': i.uuid,
-            'name': i.calendar.name,
-            'action': ALLOW if i.allow  else DENY,
-            'priority': i.priority,
-        } for i in parent.calendaraccess_set.all()]
+        try:
+            if item is None:
+                return [AccessCalendars.as_dict(i) for i in parent.calendaraccess_set.all()]
+            else:
+                i = CalendarAccess.objects.get(uuid=processUuid(item))
+                return AccessCalendars.as_dict(i)
+        except Exception:
+            raise InvalidItemException()
+
 
     def getTitle(self, parent):
         return _('Access restrictions by calendar')
@@ -75,28 +88,28 @@ class AccessCalendars(DetailHandler):
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Name')}},
-            {'action': {'title': _('Rule')}},
+            {'access': {'title': _('Access')}},
         ]
 
     def saveItem(self, parent, item):
         # If already exists
-        uuid = self._params['id']
+        uuid = processUuid(self._params['id']) if 'id' in self._params else None
+
         calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
-        allow = self._params['allow'].upper() == ALLOW
+        access = self._params['access'].upper()
         priority = int(self._params['priority'])
 
-        try:
+        if uuid is not None:
             calAccess = CalendarAccess.objects.get(uuid=uuid)
             calAccess.calendar = calendar
             calAccess.servicePool = parent
-            calAccess.allow = allow
+            calAccess.access = access
             calAccess.priority = priority
             calAccess.save()
-        except CalendarAccess.DoesNotExist:
-            CalendarAccess.objects.create(uuid=uuid, calendar=calendar, servicePool=parent, allow=allow, priority=priority)
+        else:
+            CalendarAccess.objects.create(calendar=calendar, servicePool=parent, access=access, priority=priority)
 
         return self.success()
 
     def deleteItem(self, parent, item):
-        Calendar.objects.get(uuid=processUuid(self._args[0])).delete()
-
+        CalendarAccess.objects.get(uuid=processUuid(self._args[0])).delete()

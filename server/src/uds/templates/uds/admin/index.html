@@ -26,11 +26,11 @@
         <link href="{% get_static_prefix %}adm/css/uds.css" rel="stylesheet" media="screen">
         {% endcompress %}
     </head>
-    
+
     <body>
         <!-- Navigation bar -->
         <div id="wrapper" class="full">
-        
+
         {% block menu %}{% include 'uds/admin/snippets/navbar.html' with admin=request.user.is_admin %}{% endblock %}
         <!-- End of menu -->
         <!-- Content -->
@@ -39,7 +39,7 @@
                 </div>
             </div>
          </div>
-         
+
         <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
         <script>
             // Initialize a few settings, needed for api to work
@@ -55,8 +55,8 @@
                 };
             }(window.api = window.api || {}));
         </script>
-        
-        
+
+
 
         {% compress js %}
         <!-- minified js from: 'jquery', 'jquery.cookie', 'bootstrap.min', 'bootstrap-switch.min', 'bootstrap-select.min', 'jquery.validate.min', 'jquery.blockUI', 'flot',
@@ -70,7 +70,7 @@
         <script src="{% get_static_prefix %}adm/js/bootstrap-datepicker.js"></script>
         <script src="{% get_static_prefix %}adm/js/bootstrap-timepicker.js"></script>
         <script src="{% get_static_prefix %}adm/js/datepicker-locales/bootstrap-datepicker.{{ LANGUAGE_CODE }}.min.js"></script>
-        
+
         <script src="{% get_static_prefix %}adm/js/bootstrap-select.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.validate.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/jquery.blockUI.js"></script>
@@ -80,37 +80,38 @@
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.resize.min.js"></script>
         <script src="{% get_static_prefix %}adm/js/flot/jquery.flot.time.min.js"></script>
-        
+
         <!-- for "save" from javascript -->
         <script src="{% get_static_prefix %}adm/js/Blob.js"></script>
         <script src="{% get_static_prefix %}adm/js/FileSaver.min.js"></script>
-        
+
         <script src="{% get_static_prefix %}adm/js/ZeroClipboard.js"></script>
-        
+
         <!-- For Image preview on file upload -->
         <script src="{% get_static_prefix %}adm/js/jasny-bootstrap.min.js"></script>
 
         <!-- template engine -->
         <script src="{% get_static_prefix %}adm/js/handlebars-v4.0.2.js"></script>
-        
+
         <!-- First all api related stuff -->
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api.coffee"></script>
 
         <!-- utilities attached to api -->
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api-tools.coffee"></script>
-        
+
         <!--  templates related, inserts itself into api -->
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api-templates.coffee"></script>
-        
+
         <!--  export to xls, inserts itself into api -->
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/api-spreadsheet.coffee"></script>
-        
+
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui.coffee"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-methods.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-tools.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-form.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-permissions.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-element.coffee"></script>
-        
+
         <!-- user interface management -->
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-definition.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-dashboard.coffee"></script>
@@ -119,6 +120,9 @@
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-osmanagers.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-connectivity.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools.coffee"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools-calendars.coffee"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools-publications.coffee"></script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespools-transports.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-config.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-gallery.coffee"></script>
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-servicespoolsgroup.coffee"></script>
@@ -126,7 +130,7 @@
         <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}adm/js/gui-d-calendar.coffee"></script>
         <!-- base64 encoding -->
         <script src="{% get_static_prefix %}adm/js/base64.js"></script>
-        
+
         <script type="text/javascript">
            function showHideTooltip() {
               console.log("ShowHide");
@@ -140,7 +144,7 @@
                     placement: 'right',
                     title: title,
                     container: 'body',
-                    delay: { 
+                    delay: {
                       show: 200,
                       hide: 100
                     }
@@ -175,11 +179,11 @@
             $.fn.datepicker.defaults.autoclose = true;
             $.fn.datepicker.defaults.language = "{{ LANGUAGE_CODE }}";
 
-          });        
+          });
         </script>
         {% block js %}{% endblock %}
         {% endcompress %}
-        
+
         {% js_template_path 'uds/admin/tmpl' %}
         <!-- preloading of templates -->
         <!-- page contents -->
@@ -207,7 +211,7 @@
         {% js_template 'comp/modal' %}
         {% js_template 'comp/responsive_table' %}
         {% js_template 'comp/dropdown' %}
-        
+
         <!-- overview -->
         {% js_template 'comp/overview_record' %}
 
@@ -226,6 +230,6 @@
         {% js_template 'fld/textbox' %}
         {% js_template 'fld/date' %}
         {% js_template 'fld/taglist' %}
-        
+
     </body>
 </html>

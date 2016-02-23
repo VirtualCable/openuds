@@ -1,4 +1,4 @@
-# jshint strict: true 
+# jshint strict: true
 "use strict"
 @api = @api ? {}
 $ = jQuery
@@ -152,7 +152,7 @@ class BasicModelRest
   constructor: (path, options) ->
     options = options or {}
     path = path or ""
-    
+
     # Requests paths
     @path = path
     @getPath = options.getPath or path
@@ -172,8 +172,11 @@ class BasicModelRest
       api.doLog "success function not provided for " + path
       return
 
-    fail_fnc = options.fail or ->
+    fail_fnc = options.fail or (jqXHR, textStatus, errorThrown) ->
       api.doLog "failFnc not provided for " + path
+      gui.tools.unblockUI()
+      gui.notify 'Error ocurred: ' + textStatus, 'danger'
+
     cacheKey = options.cacheKey or path
     api.doLog 'CacheKey ', cacheKey
     if path is "."
@@ -283,7 +286,7 @@ class BasicModelRest
     return api.permissions.NONE
 
   getPermissions: (id, success_fnc, fail_fnc) ->
-    path = "permissions/" + @path + '/' + id 
+    path = "permissions/" + @path + '/' + id
     @_requestPath path,
       cacheKey: "."
       success: success_fnc
@@ -356,7 +359,7 @@ class DetailModelRestApi extends BasicModelRest
 
   permission: () ->
     if @moptions.permission? then @moptions.permission else api.permissions.ALL
-  
+
   create: (data, success_fnc, fail_fnc) ->
     @put data,
       success: success_fnc
@@ -407,7 +410,7 @@ api.providers.maintenance = (id, success_fnc, fail_fnc) ->
   @get
     id: id + "/maintenance"
     success: success_fnc
-    fail: fail_fnc    
+    fail: fail_fnc
 
 api.authenticators = new BasicModelRest("authenticators")
 

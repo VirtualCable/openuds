@@ -1,22 +1,22 @@
-# jshint strict: true 
+# jshint strict: true
 ((gui, $, undefined_) ->
   "use strict"
 
   # Public attributes
   gui.debug = on
-  
+
   # "public" methods
   gui.doLog = (args...)->
     if gui.debug
       try
         console.log args
-      
+
     return
 
-  
+
   # nothing can be logged
   gui.config = gui.config or {}
-  
+
   # Several convenience "constants" for tables
   gui.config.dataTablesLanguage =
     sLengthMenu: gettext("_MENU_ records per page")
@@ -93,7 +93,7 @@
     list += "<li class=\"active\">" + active + "</li>"
     "<div class=\"row\"><div class=\"col-lg-12\"><ol class=\"breadcrumb\">" + list + "</ol></div></div>"
 
-  
+
   # By default, actionButton has class "button-accept", so you can use returned id + this class to select it
   # and do whatever is needed (for example, insert an "on click" event (this method returns id without '#'
   # Example: $('#' + id + ' .button-accept').on('click', ...
@@ -106,7 +106,7 @@
       footer: options.footer
       button1: options.closeButton
       button2: options.actionButton
-  
+
   # As previous, this creates the modal and shows it. in this case, the id of the modal returned already has '#'
   gui.launchModal = (title, content, options) ->
     options = options or {}
@@ -145,14 +145,14 @@
     $(data).appendTo "#content"
     return
 
-  
+
   # Clean up several "internal" data
   # I have discovered some "items" that are keep in memory, or that adds garbage to body (datatable && tabletools mainly)
   # Whenever we change "section", we clean up as much as we can, so we can keep things as clean as possible
   # Main problem where comming with "tabletools" and keeping references to all instances created
   gui.cleanup = ->
     gui.doLog "Cleaning up things"
-    
+
     # Destroy any created datatable
     $.each $.fn.dataTable.fnTables(), (undefined_, tbl) ->
       $tbl = $(tbl).dataTable()
@@ -260,13 +260,13 @@
       max: $.validator.format(gettext("Please enter a value less than or equal to {0}."))
       min: $.validator.format(gettext("Please enter a value greater than or equal to {0}."))
 
-    
+
     # Set blockui params
     $.blockUI.defaults.baseZ = 2000
     $.fn.dataTableExt.oSort["uds-date-pre"] = (s) ->
       parseInt s.split("\"")[1], 10
 
-    
+
     # Sort for "date" columns (our "dates" are in fact postfix dates rendered as dates with locale format
     $.fn.dataTableExt.oSort["uds-date-asc"] = (x, y) ->
       val = ((if (x < y) then -1 else ((if (x > y) then 1 else 0))))
@@ -276,7 +276,7 @@
       val = ((if (x < y) then 1 else ((if (x > y) then -1 else 0))))
       val
 
-    
+
     # Wait a bit before activating links to give tome tine to initializations
     setTimeout (->
       gui.setLinksEvents()
@@ -289,7 +289,6 @@
     gui.dashboard.link()
     return
 
-  
   # Generic "methods" for editing, creating, etc... 
   gui.methods = {}
   gui.methods.typedTestButton = (rest, text, css, type) ->
@@ -315,7 +314,7 @@
         return
     ]
 
-  
+
   # "Generic" edit method to set onEdit table
   gui.methods.typedEdit = (parent, modalTitle, modalErrorMsg, options) ->
     options = options or {}
@@ -359,7 +358,7 @@
         data = []
         flds = gui.forms.fieldsToHtml(guiDefinition, item, "readonly")
         gui.doLog(flds)
-        html = api.templates.evaluate "tmpl_comp_overview_record", 
+        html = api.templates.evaluate "tmpl_comp_overview_record",
           id: formId
           legend: gettext('Overview')
           fields: flds.html
@@ -369,7 +368,7 @@
       ), gui.failRequestModalFnc(modalErrorMsg, true)
     return
 
-  
+
   # "Generic" new method to set onNew table
   gui.methods.typedNew = (parent, modalTitle, modalErrorMsg, options) ->
     options = options or {}
@@ -411,7 +410,7 @@
         actionButton: "<button type=\"button\" class=\"btn btn-danger button-accept\">" + gettext("Delete") + "</button>"
       )
 
-      # Will show results once 
+      # Will show results once
       msgs = []
       count = values.length
       deletedFnc = (name, errorMsg) ->
