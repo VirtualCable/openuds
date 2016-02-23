@@ -1,4 +1,5 @@
 gui.servicesPools.accessCalendars = (servPool, info) ->
+  accessList = ['ALLOW', 'DENY']
   accessCalendars = new GuiElement(api.servicesPools.detail(servPool.id, "access", { permission: servPool.permission }), "access")
   accessCalendarsTable = accessCalendars.table(
     doNotLoadData: true
@@ -36,6 +37,7 @@ gui.servicesPools.accessCalendars = (servPool, info) ->
             calendars: data
             priority: 1
             calendarId: ''
+            accessList: accessList
             access: 'ALLOW'
           ))
           $(modalId + " .button-accept").on "click", (event) ->
@@ -64,7 +66,20 @@ gui.servicesPools.accessCalendars = (servPool, info) ->
 
     onEdit: (value, event, table, refreshFnc) ->
       if value.id == -1
-        alert('Changing default')
+        api.templates.get "pool_access_default", (tmpl) ->
+            modalId = gui.launchModal(gettext("Default fallback access"), api.templates.evaluate(tmpl,
+              accessList: accessList
+              access: servPool.fallbackAccess
+            ))
+            $(modalId + " .button-accept").on "click", (event) ->
+              access = $(modalId + " #id_access_select").val()
+              servPool.fallbackAccess = access
+              gui.servicesPools.rest.setFallbackAccess servPool.id, access, (data) ->
+                $(modalId).modal "hide"
+                refreshFnc()
+                return
+            # Makes form "beautyfull" :-)
+            gui.tools.applyCustoms modalId
         return
       api.templates.get "pool_add_access", (tmpl) ->
         accessCalendars.rest.item value.id, (item) ->
@@ -74,12 +89,22 @@ gui.servicesPools.accessCalendars = (servPool, info) ->
               calendars: data
               priority: item.priority
               calendarId: item.calendarId
+              accessList: accessList
               access: item.access
             ))
             $(modalId + " .button-accept").on "click", (event) ->
-              alert('Saving')
-              $(modalId).modal "hide"
-              refreshFnc()
+              priority = $(modalId + " #id_priority").val()
+              calendar = $(modalId + " #id_calendar_select").val()
+              access = $(modalId + " #id_access_select").val()
+              accessCalendars.rest.save
+                id: item.id
+                calendarId: calendar
+                access: access
+                priority: priority
+              , (data) ->
+                $(modalId).modal "hide"
+                refreshFnc()
+                return
               return
             # Makes form "beautyfull" :-)
             gui.tools.applyCustoms modalId

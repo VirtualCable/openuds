@@ -78,7 +78,7 @@ class AccessCalendars(DetailHandler):
                 i = CalendarAccess.objects.get(uuid=processUuid(item))
                 return AccessCalendars.as_dict(i)
         except Exception:
-            raise InvalidItemException()
+            self.invalidItemException()
 
 
     def getTitle(self, parent):

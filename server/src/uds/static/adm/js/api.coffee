@@ -425,7 +425,14 @@ api.authenticators.search = (id, type, term, success_fnc, fail_fnc) ->
 api.osmanagers = new BasicModelRest("osmanagers")
 api.transports = new BasicModelRest("transports")
 api.networks = new BasicModelRest("networks")
+
 api.servicesPools = new BasicModelRest("servicespools")
+api.servicesPools.setFallbackAccess = (id, fallbackAccess, success_fnc, fail_fnc) ->
+  @get
+    id: id + '/setFallbackAccess?fallbackAccess=' + fallbackAccess
+    success: success_fnc
+    fail: fail_fnc
+
 api.configuration = new BasicModelRest("config")
 api.gallery = new BasicModelRest("gallery/images")
 api.sPoolGroups = new BasicModelRest("gallery/servicespoolgroups")

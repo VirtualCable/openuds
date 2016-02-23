@@ -24,8 +24,9 @@
     <label for="id_action_select" class="col-sm-2 control-label">{% endverbatim %}{% trans 'Access action' %}{% verbatim %}</label>
     <div class="col-sm-10">
       <select  id="id_access_select" class="selectpicker show-menu-arrow show-tick modal_field_data" data-style="btn-default" data-width="100%">
-        <option value="ALLOW">ALLOW</option>
-        <option value="DENY">DENY</option>
+        {{# each accessList }}
+          <option value="{{ this }}"{{# ifequals this ../access }} selected{{/ ifequals }}>{{ this }}</option>
+        {{/ each }}
       </select>
     </div>
   </div>

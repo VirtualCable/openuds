@@ -43,7 +43,7 @@ from uds.REST.model import ModelHandler
 from uds.REST import RequestError, ResponseError
 from uds.core.ui.UserInterface import gui
 from .user_services import AssignedService, CachedService, Groups, Transports, Publications, Changelog
-from .services_pool_calendars import AccessCalendars, ALLOW, DENY
+from .services_pool_calendars import AccessCalendars
 from .services import Services
 
 import logging
@@ -80,6 +80,8 @@ class ServicesPools(ModelHandler):
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
+
+    custom_methods = [('setFallbackAccess', True)]
 
     def item_as_dict(self, item):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -268,3 +270,11 @@ class ServicesPools(ModelHandler):
             return log.getLogs(item)
         except Exception:
             return []
+
+    # Set fallback status
+    def setFallbackAccess(self, item):
+        fallback = self._params.get('fallbackAccess')
+        logger.debug('Setting fallback of {} to {}'.format(item.name, fallback))
+        item.fallbackAccess = fallback
+        item.save()
+        return ''
