@@ -80,7 +80,7 @@ class ClusterUpdateStatsTask(DelayedTask):
                     'freeMemory': s.get('freeMemory', None),
                     'totalMemory': s.get('totalMemory')
                 }
-            cluster.storage().putPickle('ClusterStats', stats)
+            cluster.storage.putPickle('ClusterStats', stats)
         except:
             logger.exception('Update Stats Task')
             # Removed provider, no problem at all, no update is done

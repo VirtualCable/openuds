@@ -59,6 +59,7 @@ class Environment(object):
         self._storage = Storage(uniqueKey)
         self._idGenerators = idGenerators
 
+    @property
     def cache(self):
         '''
         Method to acces the cache of the environment.
@@ -66,6 +67,7 @@ class Environment(object):
         '''
         return self._cache
 
+    @property
     def storage(self):
         '''
         Method to acces the cache of the environment.
@@ -83,6 +85,7 @@ class Environment(object):
         '''
         return self._idGenerators.get(generatorId, None)
 
+    @property
     def key(self):
         '''
         @return: the key used for this environment
@@ -156,15 +159,7 @@ class Environmentable(object):
         '''
         self._env = environment
 
-    def setEnv(self, environment):
-        '''
-        Assigns a new environment
-
-        Args:
-            environment: Environment to assign
-        '''
-        self._env = environment
-
+    @property
     def env(self):
         '''
         Utility method to access the envionment contained by this object
@@ -174,6 +169,18 @@ class Environmentable(object):
         '''
         return self._env
 
+    @env.setter
+    def env(self, environment):
+        '''
+        Assigns a new environment
+
+        Args:
+            environment: Environment to assign
+        '''
+        self._env = environment
+
+
+    @property
     def cache(self):
         '''
         Utility method to access the cache of the environment containe by this object
@@ -181,8 +188,9 @@ class Environmentable(object):
         Returns:
             Cache for the object
         '''
-        return self._env.cache()
+        return self._env.cache
 
+    @property
     def storage(self):
         '''
         Utility method to access the storage of the environment containe by this object
@@ -190,7 +198,7 @@ class Environmentable(object):
         Returns:
             Storage for the object
         '''
-        return self._env.storage()
+        return self._env.storage
 
     def idGenerators(self, generatorId):
         '''

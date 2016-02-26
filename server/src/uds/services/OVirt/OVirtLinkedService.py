@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2015-07-24'
+__updated__ = '2016-02-26'
 
 logger = logging.getLogger(__name__)
 
@@ -197,7 +197,7 @@ class OVirtLinkedService(Service):
                 self.memoryGuaranteed.value = self.memory.value
 
         self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env().key()
+        self.ev.value = self.parent().env.key
 
     def initGui(self):
         '''
@@ -208,7 +208,7 @@ class OVirtLinkedService(Service):
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
         self.ov.defValue = self.parent().serialize()
-        self.ev.defValue = self.parent().env().key()
+        self.ev.defValue = self.parent().env.key
 
         machines = self.parent().getMachines()
         vals = []

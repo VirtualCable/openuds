@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-10'
+__updated__ = '2016-02-26'
 
 from django.db import models
 from django.db.models import signals
@@ -134,7 +134,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         if toDelete.data != '':
             s = toDelete.getInstance()
             s.destroy()
-            s.env().clearRelatedData()
+            s.env.clearRelatedData()
 
         # Clears related permissions
         clean(toDelete)

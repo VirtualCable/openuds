@@ -45,7 +45,7 @@ from .client import oVirtClient
 
 import logging
 
-__updated__ = '2015-09-22'
+__updated__ = '2016-02-26'
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ class Provider(ServiceProvider):
         Returns the connection API object for oVirt (using ovirtsdk)
         '''
         if self._api is None:
-            self._api = oVirtClient.Client(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache())
+            self._api = oVirtClient.Client(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache)
         return self._api
 
     # There is more fields type, but not here the best place to cover it

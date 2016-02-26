@@ -166,14 +166,14 @@ class TSNXTransport(Transport):
         Override this in yours transports
         '''
         logger.debug('Checking availability for {0}'.format(ip))
-        ready = self.cache().get(ip)
+        ready = self.cache.get(ip)
         if ready is None:
             # Check again for readyness
             if connection.testServer(ip, self._listenPort) is True:
-                self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
+                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:
-                self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
+                self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
     def getScript(self, script):

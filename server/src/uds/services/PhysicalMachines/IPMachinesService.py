@@ -78,33 +78,33 @@ class IPMachinesService(services.Service):
         return {'ipList': gui.convertToList(ips)}
 
     def marshal(self):
-        self.storage().saveData('ips', pickle.dumps(self._ips))
+        self.storage.saveData('ips', pickle.dumps(self._ips))
         return 'v1'
 
     def unmarshal(self, vals):
         if vals == 'v1':
-            self._ips = pickle.loads(str(self.storage().readData('ips')))
+            self._ips = pickle.loads(str(self.storage.readData('ips')))
 
     def getUnassignedMachine(self):
         # Search first unassigned machine
         try:
-            self.storage().lock()
+            self.storage.lock()
             for ip in self._ips:
-                if self.storage().readData(ip) == None:
-                    self.storage().saveData(ip, ip)
+                if self.storage.readData(ip) == None:
+                    self.storage.saveData(ip, ip)
                     return ip
             return None
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
             return None
         finally:
-            self.storage().unlock()
+            self.storage.unlock()
 
     def unassignMachine(self, ip):
         try:
-            self.storage().lock()
-            self.storage().remove(ip)
+            self.storage.lock()
+            self.storage.remove(ip)
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
         finally:
-            self.storage().unlock()
+            self.storage.unlock()

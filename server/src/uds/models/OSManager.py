@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-10'
+__updated__ = '2016-02-26'
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import IntegrityError
@@ -112,7 +112,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         if toDelete.data != '':
             s = toDelete.getInstance()
             s.destroy()
-            s.env().clearRelatedData()
+            s.env.clearRelatedData()
 
         logger.debug('Before delete os manager {}'.format(toDelete))
 

@@ -60,7 +60,7 @@ from uds.core.util.calendar import CalendarChecker
 from datetime import timedelta
 import logging
 
-__updated__ = '2016-02-19'
+__updated__ = '2016-02-26'
 
 
 logger = logging.getLogger(__name__)
@@ -215,7 +215,7 @@ class DeployedService(UUIDModel, TaggingMixin):
             name: Name of the value to store
             value: Value of the value to store
         '''
-        self.getEnvironment().storage().put(name, value)
+        self.getEnvironment().storage.put(name, value)
 
     def recoverValue(self, name):
         '''
@@ -227,7 +227,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         Returns:
             Stored value, None if no value was stored
         '''
-        return self.getEnvironment().storage().get(name)
+        return self.getEnvironment().storage.get(name)
 
     def setState(self, state, save=True):
         '''

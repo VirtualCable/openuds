@@ -36,7 +36,7 @@ from uds.core import Environmentable
 from uds.core import Serializable
 from uds.core.util.State import State
 
-__updated__ = '2015-05-12'
+__updated__ = '2016-02-26'
 
 
 class UserDeployment(Environmentable, Serializable):
@@ -118,7 +118,7 @@ class UserDeployment(Environmentable, Serializable):
         '''
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, **kwargs)"
         We want to use the env, service and storage methods outside class. If not called, you must implement your own methods
-        service and storage are "convenient" methods to access _env.service() and _env.storage()
+        service and storage are "convenient" methods to access _env.service() and _env.storage
 
         Invoking this from derived classes is a MUST, again, do not forget it or your
         module will probable never work.

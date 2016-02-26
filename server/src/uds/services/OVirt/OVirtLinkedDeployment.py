@@ -37,7 +37,7 @@ from uds.core.util import log
 import pickle
 import logging
 
-__updated__ = '2015-09-07'
+__updated__ = '2016-02-26'
 
 
 logger = logging.getLogger(__name__)
@@ -168,7 +168,7 @@ class OVirtLinkedDeployment(UserDeployment):
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
         '''
-        if self.cache().get('ready') == '1':
+        if self.cache.get('ready') == '1':
             return State.FINISHED
 
         state = self.service().getMachineState(self._vmid)
@@ -180,7 +180,7 @@ class OVirtLinkedDeployment(UserDeployment):
             self._queue = [opStart, opFinish]
             return self.__executeQueue()
 
-        self.cache().put('ready', '1')
+        self.cache.put('ready', '1')
         return State.FINISHED
 
     def getConsoleConnection(self):

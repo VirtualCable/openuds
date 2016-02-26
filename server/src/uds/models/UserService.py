@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2016-02-08'
+__updated__ = '2016-02-26'
 
 
 logger = logging.getLogger(__name__)
@@ -230,7 +230,7 @@ class UserService(UUIDModel):
         # To transition between old stor at storage table and new properties table
         # If value is found on property, use it, else, try to recover it from storage
         if val is None:
-            val = self.getEnvironment().storage().get(name)
+            val = self.getEnvironment().storage.get(name)
         return val
 
     def setConnectionSource(self, ip, hostname=''):

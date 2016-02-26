@@ -43,7 +43,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 import oca
 
-__updated__ = '2016-02-09'
+__updated__ = '2016-02-25'
 
 logger = logging.getLogger(__name__)
 
@@ -56,8 +56,8 @@ for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED',
 
 
 # Import submodules
-from common import *
-import template
-import vm
-import storage
+from .common import *
+from . import template
+from . import vm
+from . import storage
 

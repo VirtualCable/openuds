@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from uds.core import Environmentable
 from uds.core import Serializable
 
-__updated__ = '2014-03-22'
+__updated__ = '2016-02-26'
 
 
 class Publication(Environmentable, Serializable):
@@ -81,7 +81,7 @@ class Publication(Environmentable, Serializable):
         '''
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         We want to use the env, cache and storage methods outside class. If not called, you must implement your own methods
-        cache and storage are "convenient" methods to access _env.cache() and _env.storage()
+        cache and storage are "convenient" methods to access _env.cache and _env.storage
         @param environment: Environment assigned to this publication
         '''
         Environmentable.__init__(self, environment)

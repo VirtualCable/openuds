@@ -37,7 +37,7 @@ from uds.core.util.Config import GlobalConfig
 
 import logging
 
-__updated__ = '2014-11-11'
+__updated__ = '2016-02-26'
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class ClusteredServiceProvider(ServiceProvider):
 
     # This methods do not need to be overriden
     def clusterStats(self):
-        stats = self.storage().getPickle('ClusterStats')
+        stats = self.storage.getPickle('ClusterStats')
         if stats is None:
             stats = {}
         return stats

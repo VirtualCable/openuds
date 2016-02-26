@@ -207,8 +207,8 @@ class Module(UserInterface, Environmentable, Serializable):
         We want to use the env, cache and storage methods outside class.
         If not called, you must implement your own methods.
 
-        cache and storage are "convenient" methods to access _env.cache() and
-        _env.storage()
+        cache and storage are "convenient" methods to access _env.cache and
+        _env.storage
 
         The values param is passed directly to UserInterface base.
 

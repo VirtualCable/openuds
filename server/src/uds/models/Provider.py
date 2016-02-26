@@ -44,7 +44,7 @@ from uds.models.Tag import TaggingMixin
 import logging
 
 
-__updated__ = '2016-02-10'
+__updated__ = '2016-02-26'
 
 
 logger = logging.getLogger(__name__)
@@ -103,7 +103,7 @@ class Provider(ManagedObjectModel, TaggingMixin):
         if toDelete.data != '':
             s = toDelete.getInstance()
             s.destroy()
-            s.env().clearRelatedData()
+            s.env.clearRelatedData()
 
         # Clears related logs
         log.clearLogs(toDelete)

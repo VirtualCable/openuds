@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-10'
+__updated__ = '2016-02-26'
 
 @python_2_unicode_compatible
 class Authenticator(ManagedObjectModel, TaggingMixin):
@@ -194,7 +194,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         if toDelete.data != '':
             s = toDelete.getInstance()
             s.destroy()
-            s.env().clearRelatedData()
+            s.env.clearRelatedData()
 
         # Clears related logs
         log.clearLogs(toDelete)

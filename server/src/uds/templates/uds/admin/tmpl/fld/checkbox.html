@@ -2,13 +2,13 @@
 {% load i18n %}
 {% block field %}
 {% verbatim %}
-    <input type="checkbox" 
-           data-on-text="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" 
+    <input type="checkbox"
+           data-on-text="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}"
            data-off-text="{% endverbatim %}{% trans 'No' %}{% verbatim %}"
            class="{{ css }}"
            name="{{ name }}"
            id="{{ name }}_field"{{# ifequals value true }} checked{{/ ifequals }}{{# if readonly }} disabled{{/ if }}
-           tabindex="{{ index }}">
+           {{# unless readonly }}tabindex="{{ index }}"{{/ unless }}>
 
 {% endverbatim %}
 {% endblock %}

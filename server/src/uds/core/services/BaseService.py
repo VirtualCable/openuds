@@ -37,7 +37,7 @@ from uds.core import Module
 from uds.core.transports import protocols
 from . import types
 
-__updated__ = '2016-02-08'
+__updated__ = '2016-02-26'
 
 
 class Service(Module):
@@ -179,7 +179,7 @@ class Service(Module):
         '''
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, parent, values)".
         We want to use the env, parent methods outside class. If not called, you must implement your own methods
-        cache and storage are "convenient" methods to access _env.cache() and _env.storage()
+        cache and storage are "convenient" methods to access _env.cache and _env.storage
         '''
         super(Service, self).__init__(environment, values)
         self._provider = parent

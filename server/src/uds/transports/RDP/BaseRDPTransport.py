@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2015-05-14'
+__updated__ = '2016-02-26'
 
 
 logger = logging.getLogger(__name__)
@@ -77,14 +77,14 @@ class BaseRDPTransport(Transport):
         Override this in yours transports
         '''
         logger.debug('Checking availability for {0}'.format(ip))
-        ready = self.cache().get(ip)
+        ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
             if connection.testServer(ip, '3389') is True:
-                self.cache().put(ip, 'Y', READY_CACHE_TIMEOUT)
+                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:
-                self.cache().put(ip, 'N', READY_CACHE_TIMEOUT)
+                self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
     def processedUser(self, userService, userName):
