@@ -107,7 +107,7 @@ class LiveService(Service):
     )
     availabilityZone = gui.ChoiceField(label=_("Availability Zones"), order=3, tooltip=_('Service availability zones'), required=True)
     volume = gui.ChoiceField(label=_("Volume"), order=4, tooltip=_('Base volume for service'), required=True)
-    volumeType = gui.ChoiceField(label=_("Volume Type"), order=5, tooltip=_('Volume type for service'), required=True)
+    # volumeType = gui.ChoiceField(label=_("Volume Type"), order=5, tooltip=_('Volume type for service'), required=True)
     networks = gui.MultiChoiceField(label=_("Networks"), order=6, tooltip=_('Networks to attach to this service'), required=True)
     flavor = gui.ChoiceField(label=_("Flavor"), order=7, tooltip=_('Flavor for service'), required=True)
 
@@ -179,11 +179,15 @@ class LiveService(Service):
     def sanitizeVmName(self, name):
         return self.parent().sanitizeVmName(name)
 
-    def makeTemplate(self, templateName):
-        #
-        return self.parent().makeTemplate(self.template.value, templateName, self.datastore.value)
+    def makeTemplate(self, templateName, description=None):
+        # First, ensures that volume has not any running instances
+        if self.api.getVolume(self.volume.value)['status'] != 'available':
+            raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
 
-    def deployFromTemplate(self, name, templateId):
+        description = 'UDS Template snapshot' if description is None else description
+        return self.api.createVolumeSnapshot(self.volume.value, templateName, description)
+
+    def deployFromTemplate(self, name, snapshotId):
         '''
         Deploys a virtual machine on selected cluster from selected template
 
@@ -198,9 +202,9 @@ class LiveService(Service):
         Returns:
             Id of the machine being created form template
         '''
-        logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
+        logger.debug('Deploying from template {0} machine {1}'.format(snapshotId, name))
         # self.datastoreHasSpace()
-        return self.parent().deployFromTemplate(name, templateId)
+        # self.api.
 
     def removeTemplate(self, templateId):
         '''

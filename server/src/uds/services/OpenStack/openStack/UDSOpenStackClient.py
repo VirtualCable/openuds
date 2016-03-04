@@ -239,6 +239,7 @@ class Client(object):
                                     errMsg='List Vms'):
             yield { 'name': v['name'], 'id': v['id'] }
 
+
     @authProjectRequired
     def listImages(self):
         for i in getRecurringUrlJson(self._getEndpointFor('image') + '/v2/images?status=active',
@@ -246,6 +247,7 @@ class Client(object):
                                      key='images',
                                      errMsg='List Images'):
             yield { 'name': i['name'], 'size': i['size'], 'visibility': i['visibility'], 'format': i['disk_format'] }
+
 
     @authProjectRequired
     def listVolumeTypes(self):
@@ -255,6 +257,7 @@ class Client(object):
                                      errMsg='List Volume Types'):
             yield { 'id':  t['id'], 'name': t['name'] }
 
+
     @authProjectRequired
     def listVolumes(self):
         # self._getEndpointFor('volumev2') + '/volumes'
@@ -263,6 +266,7 @@ class Client(object):
                                      key='volumes',
                                      errMsg='List Volumes'):
             yield { 'id':  v['id'], 'name': v['name'], 'size': v['size'], 'status': v['status'] }
+
 
     @authProjectRequired
     def listVolumeSnapshots(self, volumeId):
@@ -283,6 +287,7 @@ class Client(object):
             if az['zoneState']['available'] is True:
                 yield az['zoneName']
 
+
     @authProjectRequired
     def listFlavors(self):
         for f in getRecurringUrlJson(self._getEndpointFor('compute') + '/flavors',
@@ -300,6 +305,7 @@ class Client(object):
                                      errMsg='List Networks'):
             yield { 'id': n['id'], 'name': n['label'] }
 
+
     @authProjectRequired
     def listSecurityGroups(self):
         for s in getRecurringUrlJson(self._getEndpointFor('compute') + '/os-security-groups',
@@ -307,6 +313,7 @@ class Client(object):
                                      key='security_groups',
                                      errMsg='List security groups'):
             yield { 'id': s['id'], 'name': s['name'] }
+
 
     @authProjectRequired
     def getVolume(self, volumeId):
@@ -318,7 +325,8 @@ class Client(object):
 
         v = r.json()['volume']
 
-        return { 'id':  v['id'], 'name': v['name'], 'size': v['size'], 'status': v['status'] }
+        return v
+
 
     @authProjectRequired
     def getSnapshot(self, snapshotId):
@@ -335,12 +343,12 @@ class Client(object):
 
 
     @authProjectRequired
-    def createVolumeSnapshot(self, volumeId, snapshotName, snapshotDescription=None):
-        snapshotDescription = 'UDS Snapshot' if snapshotDescription is None else snapshotDescription
+    def createVolumeSnapshot(self, volumeId, name, description=None):
+        description = 'UDS Snapshot' if description is None else description
         data = {
             'snapshot': {
-                'name': snapshotName,
-                'description': snapshotDescription,
+                'name': name,
+                'description': description,
                 'volume_id': volumeId,
                 'force': True
             }
@@ -354,10 +362,31 @@ class Client(object):
                           verify=VERIFY_SSL,
                           timeout=self._timeout)
 
-        ensureResponseIsValid(r, 'Cannot Snapshot creation. Ensure volume is in state "available"')
+        ensureResponseIsValid(r, 'Cannot create snapshot. Ensure volume is in state "available"')
 
         return r.json()
 
+    @authProjectRequired
+    def createVolumeFromSnapshot(self, snapshotId, name, description=None):
+        description = 'UDS Volume' if description is None else description
+        data = {
+                'volume': {
+                        'name': name,
+                        'description': description,
+                        # 'volume_type': volType,  # This is the volume type, not the id
+                        'snapshot_id': snapshotId
+                }
+        }
+
+        r = requests.post(self._getEndpointFor('volumev2') + '/volumes',
+                          data=json.dumps(data),
+                          headers=self._requestHeaders(),
+                          verify=VERIFY_SSL,
+                          timeout=self._timeout)
+
+        ensureResponseIsValid(r, 'Cannot create volume from snapshot.')
+
+        return r.json()
 
 
     def testConnection(self):
@@ -378,4 +407,4 @@ class Client(object):
                 except Exception:
                     raise Exception('Authentication error')
 
-        raise Exception('Openstack does not support identity API 3.2 or newer. This openstack is not compatible with UDS.')
+        raise Exception(_('Openstack does not support identity API 3.2 or newer. This OpenStack server is not compatible with UDS.'))
