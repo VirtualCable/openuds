@@ -35,8 +35,10 @@ from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
 from .LivePublication import LivePublication
 from .LiveDeployment import LiveDeployment
+from . import helpers
 
 from uds.core.ui import gui
+
 
 import logging
 
@@ -47,16 +49,16 @@ logger = logging.getLogger(__name__)
 
 class LiveService(Service):
     '''
-    Opennebula Live Service
+    OpenStack Live Service
     '''
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('OpenNebula Live Images')
+    typeName = _('OpenStack Live Volume')
     # : Type used internally to identify this provider
-    typeType = 'openNebulaLiveService'
+    typeType = 'openStackLiveService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenNebula live images bases service')
+    typeDescription = _('OpenStack live images bases service')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -75,6 +77,8 @@ class LiveService(Service):
     # : because we don't use it
     cacheTooltip = _('Number of desired machines to keep running waiting for an user')
 
+    usesCache_L2 = True  # L2 Cache are running machines in suspended state
+    cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use')
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
     needsManager = True
@@ -92,14 +96,28 @@ class LiveService(Service):
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
-    template = gui.ChoiceField(label=_("Base Template"), order=1, tooltip=_('Service base template'), required=True)
-    datastore = gui.ChoiceField(label=_("Datastore"), order=2, tooltip=_('Service clones datastore'), required=True)
+    region = gui.ChoiceField(label=_("Region"), order=1, tooltip=_('Service region'), required=True)
+    project = gui.ChoiceField(label=_("Project"), order=2,
+        fills={
+            'callbackName' : 'osFillResources',
+            'function' : helpers.getResources,
+            'parameters' : ['ov', 'ev', 'project', 'region']
+            },
+        tooltip=_('Project for this service'), required=True
+    )
+    availabilityZone = gui.ChoiceField(label=_("Availability Zones"), order=3, tooltip=_('Service availability zones'), required=True)
+    volume = gui.ChoiceField(label=_("Volume"), order=4, tooltip=_('Base volume for service'), required=True)
+    volumeType = gui.ChoiceField(label=_("Volume Type"), order=5, tooltip=_('Volume type for service'), required=True)
+    networks = gui.MultiChoiceField(label=_("Networks"), order=6, tooltip=_('Networks to attach to this service'), required=True)
+    flavor = gui.ChoiceField(label=_("Flavor"), order=7, tooltip=_('Flavor for service'), required=True)
+
+    securityGroups = gui.MultiChoiceField(label=_("Security Groups"), order=8, tooltip=_('Service security groups'), required=True)
 
     baseName = gui.TextField(
         label=_('Machine Names'),
         rdonly=False,
-        order=6,
-        tooltip=('Base name for clones from this machine'),
+        order=9,
+        tooltip=_('Base name for clones from this machine'),
         required=True
     )
 
@@ -107,10 +125,13 @@ class LiveService(Service):
         length=1,
         label=_('Name Length'),
         defvalue=5,
-        order=7,
+        order=10,
         tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
         required=True
     )
+
+    ov = gui.HiddenField()
+    ev = gui.HiddenField()  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values):
         '''
@@ -126,31 +147,40 @@ class LiveService(Service):
             if self.baseName.value.isdigit():
                 raise Service.ValidationException(_('The machine name can\'t be only numbers'))
 
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env.key
+
+        self._api = None
+
+
     def initGui(self):
         '''
         Loads required values inside
         '''
+        api = self.parent().api()
+        regions = [gui.choiceItem(r, r) for r in api.listRegions()]
+        self.region.setValues(regions)
 
-        templates = self.parent().getTemplates()
-        vals = []
-        for t in templates:
-            vals.append(gui.choiceItem(t[0], t[1]))
+        tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
+        self.project.setValues(tenants)
 
-        # This is not the same case, values is not the "value" of the field, but
-        # the list of values shown because this is a "ChoiceField"
-        self.template.setValues(vals)
+        # So we can instantiate parent to get API
+        logger.debug(self.parent().serialize())
+        self.ov.setDefValue(self.parent().serialize())
+        self.ev.setDefValue(self.parent().env.key)
 
-        datastores = self.parent().getDatastores()
-        vals = []
-        for d in datastores:
-            vals.append(gui.choiceItem(d[0], d[1]))
+    @property
+    def api(self):
+        if self._api is None:
+            self._api = self.parent().api(projectId=self.project.value, region=self.region.value)
 
-        self.datastore.setValues(vals)
+        return self._api
 
     def sanitizeVmName(self, name):
         return self.parent().sanitizeVmName(name)
 
     def makeTemplate(self, templateName):
+        #
         return self.parent().makeTemplate(self.template.value, templateName, self.datastore.value)
 
     def deployFromTemplate(self, name, templateId):

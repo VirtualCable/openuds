@@ -215,6 +215,7 @@ class gui(object):
         CHECKBOX_TYPE = 'checkbox'
         IMAGECHOICE_TYPE = 'imgchoice'
         DATE_TYPE = 'date'
+        INFO_TYPE = 'dummy'
 
         DEFAULT_LENTGH = 32  # : If length of some fields are not especified, this value is used as default
 
@@ -535,7 +536,7 @@ class gui(object):
 
            .. code-block:: python
 
-              choices = gui.ChoiceField(label="choices", values = [ {'id':'1',
+              choices = gui.ChoiceField(label="choices", values=[ {'id':'1',
                   'text':'Text 1'}, {'id':'xxx', 'text':'Text 2'}])
 
            You can specify a multi valuated field via id-values, or a
@@ -734,11 +735,19 @@ class gui(object):
 
     class ImageField(InputField):
         '''
-        Basically, this is a looooong text field
+        Image field
         '''
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
+
+    class InfoField(InputField):
+        '''
+        Informational field (no input is done)
+        '''
+        def __init__(self, **options):
+            super(self.__class__, self).__init__(**options)
+            self._type(gui.InputField.INFO_TYPE)
 
 
 class UserInterfaceType(type):
@@ -862,6 +871,9 @@ class UserInterface(object):
             logger.debug('serializing Key: {0}/{1}'.format(k, v.value))
             if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
                 logger.debug('Field {0} is not serializable'.format(k))
+                continue
+            if v.isType(gui.InputField.INFO_TYPE):
+                logger.debug('Field {} is a dummy field and will not be serialized')
                 continue
             if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 logger.debug('Serializing value {0}'.format(v.value))

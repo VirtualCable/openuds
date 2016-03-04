@@ -23,7 +23,6 @@ gui.methods.typedTestButton = (rest, text, css, type) ->
       return
   ]
 
-
 # "Generic" edit method to set onEdit table
 gui.methods.typedEdit = (parent, modalTitle, modalErrorMsg, options) ->
   options = options or {}

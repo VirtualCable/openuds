@@ -44,7 +44,7 @@ import dateutil.parser
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2016-03-03'
+__updated__ = '2016-03-04'
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,9 @@ logger = logging.getLogger(__name__)
 # In case we Cache time for endpoints. This is more likely to not change never, so we will tray to keep it as long as we can (1 hour for example?)
 # ENDPOINTS_TIMEOUT = 1 * 3600
 
+# Do not verify SSL conections right now
+VERIFY_SSL = False
+
 # Helpers
 def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
@@ -67,6 +70,26 @@ def ensureResponseIsValid(response, errMsg=None):
         print response.content
         print response
         raise Exception(errMsg)
+
+
+def getRecurringUrlJson(url, headers, key, errMsg=None):
+    counter = 0
+    while True:
+        counter += 1
+        logger.debug('Requesting url #{}: {}'.format(counter, url))
+        r = requests.get(url, headers=headers, verify=VERIFY_SSL)
+
+        ensureResponseIsValid(r, errMsg)
+
+        json = r.json()
+
+        for v in json[key]:
+            yield v
+
+        if 'next' not in json:
+            break
+
+        url = json['next']
 
 
 # Decorators
@@ -85,7 +108,7 @@ def authProjectRequired(func):
     return ensurer
 
 
-class UDSOpenStackClient(object):
+class Client(object):
     cache = Cache('uds-openstack')
 
     PUBLIC = 'public'
@@ -97,7 +120,7 @@ class UDSOpenStackClient(object):
         self._tokenId = None
         self._catalog = None
 
-        self._access = UDSOpenStackClient.PUBLIC if access is None else access
+        self._access = Client.PUBLIC if access is None else access
         self._host, self._port = host, int(port)
         self._domain, self._username, self._password = domain, username, password
         self._userId = None
@@ -164,7 +187,7 @@ class UDSOpenStackClient(object):
         r = requests.post(self._authUrl + 'v3/auth/tokens',
                           data=json.dumps(data),
                           headers={'content-type': 'application/json'},
-                          verify=False,
+                          verify=VERIFY_SSL,
                           timeout=self._timeout)
 
         ensureResponseIsValid(r, 'Invalid Credentials')
@@ -191,88 +214,160 @@ class UDSOpenStackClient(object):
 
     @authRequired
     def listProjects(self):
-        r = requests.get(self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
-                         headers=self._requestHeaders())
+        for p in getRecurringUrlJson(self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
+                                     headers=self._requestHeaders(),
+                                     key='projects',
+                                     errMsg='List Projects'):
 
-        ensureResponseIsValid(r, 'List Tenants')
-
-        for p in json.loads(r.content)['projects']:
             yield p
 
 
     @authRequired
     def listRegions(self):
-        r = requests.get(self._authUrl + 'v3/regions/',
-                         headers=self._requestHeaders())
-
-        ensureResponseIsValid(r, 'List Regions')
-
-        for r in json.loads(r.content)['regions']:
-            yield r
+        for r in getRecurringUrlJson(self._authUrl + 'v3/regions/',
+                                     headers=self._requestHeaders(),
+                                     key='regions',
+                                     errMsg='List Regions'):
+            yield r['id']
 
 
     @authProjectRequired
     def listVms(self):
-        url = self._getEndpointFor('compute') + '/servers'
-        while True:
-            r = requests.get(url, headers=self._requestHeaders())
-
-            ensureResponseIsValid(r, 'List Vms')
-
-            json = r.json()
-
-            for v in json['servers']:
-                yield { 'name': v['name'], 'id': v['id'] }
-
-            if 'next' not in json:
-                break
-
-            url = json['next']
+        for v in getRecurringUrlJson(self._getEndpointFor('compute') + '/servers',
+                                    headers=self._requestHeaders(),
+                                    key='servers',
+                                    errMsg='List Vms'):
+            yield { 'name': v['name'], 'id': v['id'] }
 
     @authProjectRequired
     def listImages(self):
-        url = self._getEndpointFor('image') + '/v2/images?status=active'
-        while True:
-            r = requests.get(url, headers=self._requestHeaders())
+        for i in getRecurringUrlJson(self._getEndpointFor('image') + '/v2/images?status=active',
+                                     headers=self._requestHeaders(),
+                                     key='images',
+                                     errMsg='List Images'):
+            yield { 'name': i['name'], 'size': i['size'], 'visibility': i['visibility'], 'format': i['disk_format'] }
 
-            ensureResponseIsValid(r, 'List Images')
-
-            json = r.json()
-
-            for i in json['images']:
-                yield { 'name': i['name'], 'size': i['size'], 'visibility': i['visibility'], 'format': i['disk_format'] }
-
-            if 'next' not in json:
-                break
-
-            url = json['next']
+    @authProjectRequired
+    def listVolumeTypes(self):
+        for t in getRecurringUrlJson(self._getEndpointFor('volumev2') + '/types',
+                                     headers=self._requestHeaders(),
+                                     key='volume_types',
+                                     errMsg='List Volume Types'):
+            yield { 'id':  t['id'], 'name': t['name'] }
 
     @authProjectRequired
     def listVolumes(self):
-        url = self._getEndpointFor('volumev2') + '/volumes'
+        # self._getEndpointFor('volumev2') + '/volumes'
+        for v in getRecurringUrlJson(self._getEndpointFor('volumev2') + '/volumes/detail',
+                                     headers=self._requestHeaders(),
+                                     key='volumes',
+                                     errMsg='List Volumes'):
+            yield { 'id':  v['id'], 'name': v['name'], 'size': v['size'], 'status': v['status'] }
 
-        while True:
-            r = requests.get(url, headers=self._requestHeaders())
-
-            ensureResponseIsValid(r, 'List Volumes')
-
-            json = r.json()
-
-            for i in json['volumes']:
-                yield { 'id':  i['id'], 'name': i['name'] }
-
-            if 'next' not in json:
-                break
-
-            url = json['next']
+    @authProjectRequired
+    def listVolumeSnapshots(self, volumeId):
+        for s in getRecurringUrlJson(self._getEndpointFor('volumev2') + '/snapshots',
+                                     headers=self._requestHeaders(),
+                                     key='snapshots',
+                                     errMsg='List snapshots'):
+            if s['volume_id'] == volumeId:
+                yield { 'id': s['id'], 'name': s['name'], 'description': s['description'], 'status': s['status'] }
 
 
-    def testConection(self):
+    @authProjectRequired
+    def listAvailabilityZones(self):
+        for az in getRecurringUrlJson(self._getEndpointFor('compute') + '/os-availability-zone',
+                                     headers=self._requestHeaders(),
+                                     key='availabilityZoneInfo',
+                                     errMsg='List Availability Zones'):
+            if az['zoneState']['available'] is True:
+                yield az['zoneName']
+
+    @authProjectRequired
+    def listFlavors(self):
+        for f in getRecurringUrlJson(self._getEndpointFor('compute') + '/flavors',
+                                     headers=self._requestHeaders(),
+                                     key='flavors',
+                                     errMsg='List Flavors'):
+            yield { 'id': f['id'], 'name': f['name'] }
+
+
+    @authProjectRequired
+    def listNetworks(self):
+        for n in getRecurringUrlJson(self._getEndpointFor('compute') + '/os-tenant-networks',
+                                     headers=self._requestHeaders(),
+                                     key='networks',
+                                     errMsg='List Networks'):
+            yield { 'id': n['id'], 'name': n['label'] }
+
+    @authProjectRequired
+    def listSecurityGroups(self):
+        for s in getRecurringUrlJson(self._getEndpointFor('compute') + '/os-security-groups',
+                                     headers=self._requestHeaders(),
+                                     key='security_groups',
+                                     errMsg='List security groups'):
+            yield { 'id': s['id'], 'name': s['name'] }
+
+    @authProjectRequired
+    def getVolume(self, volumeId):
+        r = requests.get(self._getEndpointFor('volumev2') + '/volumes/{volume_id}'.format(volume_id=volumeId),
+                         headers=self._requestHeaders(),
+                         verify=VERIFY_SSL)
+
+        ensureResponseIsValid(r, 'Get Volume information')
+
+        v = r.json()['volume']
+
+        return { 'id':  v['id'], 'name': v['name'], 'size': v['size'], 'status': v['status'] }
+
+    @authProjectRequired
+    def getSnapshot(self, snapshotId):
+        r = requests.get(self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+                         headers=self._requestHeaders(),
+                         verify=VERIFY_SSL)
+
+        ensureResponseIsValid(r, 'Get Snaphost information')
+
+        v = r.json()['snapshot']
+
+        return { 'id':  v['id'], 'name': v['name'], 'status': v['status'], 'volume_id': v['volume_id']  }
+
+
+
+    @authProjectRequired
+    def createVolumeSnapshot(self, volumeId, snapshotName, snapshotDescription=None):
+        snapshotDescription = 'UDS Snapshot' if snapshotDescription is None else snapshotDescription
+        data = {
+            'snapshot': {
+                'name': snapshotName,
+                'description': snapshotDescription,
+                'volume_id': volumeId,
+                'force': True
+            }
+        }
+
+        # First, ensure volume is in state "available"
+
+        r = requests.post(self._getEndpointFor('volumev2') + '/snapshots',
+                          data=json.dumps(data),
+                          headers=self._requestHeaders(),
+                          verify=VERIFY_SSL,
+                          timeout=self._timeout)
+
+        ensureResponseIsValid(r, 'Cannot Snapshot creation. Ensure volume is in state "available"')
+
+        return r.json()
+
+
+
+    def testConnection(self):
         # First, ensure requested api is supported
         # We need api version 3.2 or greater
-
-        r = requests.get(self._authUrl,
-                         headers=self._requestHeaders())
+        try:
+            r = requests.get(self._authUrl,
+                             headers=self._requestHeaders())
+        except Exception:
+            raise Exception('Connection error')
 
         for v in r.json()['versions']['values']:
             if v['id'] >= 'v3.2':
@@ -281,6 +376,6 @@ class UDSOpenStackClient(object):
                     self.authPassword()
                     return True
                 except Exception:
-                    return False
+                    raise Exception('Authentication error')
 
-        return False
+        raise Exception('Openstack does not support identity API 3.2 or newer. This openstack is not compatible with UDS.')
