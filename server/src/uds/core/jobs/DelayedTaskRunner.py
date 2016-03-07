@@ -44,7 +44,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2016-02-01'
+__updated__ = '2016-03-07'
 
 logger = logging.getLogger(__name__)
 
@@ -116,8 +116,7 @@ class DelayedTaskRunner(object):
 
         if taskInstance is not None:
             logger.debug('Executing delayedTask:>{0}<'.format(task))
-            env = Environment.getEnvForType(taskInstance.__class__)
-            taskInstance.setEnv(env)
+            taskInstance.env = Environment.getEnvForType(taskInstance.__class__)
             DelayedTaskThread(taskInstance).start()
 
     def __insert(self, instance, delay, tag):

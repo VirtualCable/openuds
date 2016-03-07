@@ -38,7 +38,7 @@ def getResources(parameters):
     data = [
         {'name': 'availabilityZone', 'values': zones },
         {'name': 'volume', 'values': volumes },
-        {'name': 'networks', 'values': networks },
+        {'name': 'network', 'values': networks },
         {'name': 'flavor', 'values': flavors },
         {'name': 'securityGroups', 'values': securityGroups },
         {'name': 'volumeType', 'values': volumeTypes },

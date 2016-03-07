@@ -39,7 +39,7 @@ from . import openStack
 import pickle
 import logging
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-03-07'
 
 
 logger = logging.getLogger(__name__)
@@ -58,8 +58,13 @@ class LiveDeployment(UserDeployment):
     provider of this elements.
 
     The logic for managing ovirt deployments (user machines in this case) is here.
-
     '''
+    _name = ''
+    _ip = ''
+    _mac = ''
+    _vmid = ''
+    _reason = ''
+    _queue = None
 
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 6
@@ -171,12 +176,17 @@ class LiveDeployment(UserDeployment):
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
-        state = self.service().getMachineState(self._vmid)
+        status = self.service().getMachineState(self._vmid)
 
-        if state == openStack.VmState.UNKNOWN:
+        if openStack.statusIsLost(status):
             return self.__error('Machine is not available anymore')
 
-        self.service().startMachine()
+        if status == openStack.PAUSED:
+            self.service().resumeMachine(self._vmid)
+        elif status == openStack.STOPPED:
+            self.service().startMachine(self._vmId)
+
+        # Right now, we suppose the machine is ready
 
         self.cache.put('ready', '1')
         return State.FINISHED
@@ -215,25 +225,25 @@ class LiveDeployment(UserDeployment):
     def __initQueueForDeploy(self, forLevel2=False):
 
         if forLevel2 is False:
-            self._queue = [opCreate, opStart, opFinish]
+            self._queue = [opCreate, opFinish]
         else:
-            self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opWait, opSuspend, opFinish]
 
     def __checkMachineState(self, chkState):
         logger.debug('Checking that state of machine {} ({}) is {}'.format(self._vmid, self._name, chkState))
-        state = self.service().getMachineState(self._vmid)
+        status = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == openStack.VmState.UNKNOWN:
-            return self.__error('Machine not found')
+        if openStack.statusIsLost(status):
+            return self.__error('Machine not available')
 
         ret = State.RUNNING
 
         if type(chkState) is list:
-            if state in chkState:
+            if status in chkState:
                 ret = State.FINISHED
         else:
-            if state == chkState:
+            if status == chkState:
                 ret = State.FINISHED
 
         return ret
@@ -340,16 +350,13 @@ class LiveDeployment(UserDeployment):
         if self._vmid is None:
             raise Exception('Can\'t create machine')
 
-        # Get IP & MAC (early stage)
-        self._mac, self._ip = self.service().getNetInfo(self._vmid)
-
     def __remove(self):
         '''
         Removes a machine from system
         '''
-        state = self.service().getMachineState(self._vmid)
+        status = self.service().getMachineState(self._vmid)
 
-        if state == openStack.VmState.UNKNOWN:
+        if openStack.statusIsLost(status):
             raise Exception('Machine not found')
 
         self.service().removeMachine(self._vmid)
@@ -371,19 +378,25 @@ class LiveDeployment(UserDeployment):
         '''
         Checks the state of a deploy for an user or cache
         '''
-        return self.__checkMachineState(openStack.VmState.ACTIVE)
+        ret = self.__checkMachineState(openStack.ACTIVE)
+        if ret == State.FINISHED:
+            # Get IP & MAC (early stage)
+            self._mac, self._ip = self.service().getNetInfo(self._vmid)
+
+        return ret
+
 
     def __checkStart(self):
         '''
         Checks if machine has started
         '''
-        return self.__checkMachineState(openStack.VmState.ACTIVE)
+        return self.__checkMachineState(openStack.ACTIVE)
 
     def __checkSuspend(self):
         '''
         Check if the machine has suspended
         '''
-        return self.__checkMachineState(openStack.VmState.SUSPENDED)
+        return self.__checkMachineState(openStack.SUSPENDED)
 
     def __checkRemoved(self):
         '''

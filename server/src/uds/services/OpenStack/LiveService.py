@@ -39,10 +39,10 @@ from . import helpers
 
 from uds.core.ui import gui
 
-
+import six
 import logging
 
-__updated__ = '2016-03-04'
+__updated__ = '2016-03-07'
 
 logger = logging.getLogger(__name__)
 
@@ -105,10 +105,10 @@ class LiveService(Service):
             },
         tooltip=_('Project for this service'), required=True
     )
-    availabilityZone = gui.ChoiceField(label=_("Availability Zones"), order=3, tooltip=_('Service availability zones'), required=True)
+    availabilityZone = gui.ChoiceField(label=_("Availability Zones"), order=3, tooltip=_('Service availability zones'), required=True, rdonly=True)
     volume = gui.ChoiceField(label=_("Volume"), order=4, tooltip=_('Base volume for service'), required=True)
     # volumeType = gui.ChoiceField(label=_("Volume Type"), order=5, tooltip=_('Volume type for service'), required=True)
-    networks = gui.MultiChoiceField(label=_("Networks"), order=6, tooltip=_('Networks to attach to this service'), required=True)
+    network = gui.ChoiceField(label=_("Network"), order=6, tooltip=_('Network to attach to this service'), required=True)
     flavor = gui.ChoiceField(label=_("Flavor"), order=7, tooltip=_('Flavor for service'), required=True)
 
     securityGroups = gui.MultiChoiceField(label=_("Security Groups"), order=8, tooltip=_('Service security groups'), required=True)
@@ -137,7 +137,7 @@ class LiveService(Service):
         '''
         We check here form values to see if they are valid.
 
-        Note that we check them throught FROM variables, that already has been
+        Note that we check them through FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
         '''
         if values is not None:
@@ -158,7 +158,7 @@ class LiveService(Service):
         Loads required values inside
         '''
         api = self.parent().api()
-        regions = [gui.choiceItem(r, r) for r in api.listRegions()]
+        regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
         self.region.setValues(regions)
 
         tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
@@ -187,6 +187,12 @@ class LiveService(Service):
         description = 'UDS Template snapshot' if description is None else description
         return self.api.createVolumeSnapshot(self.volume.value, templateName, description)
 
+    def getTemplate(self, snapshotId):
+        '''
+        Checks current state of a template (an snapshot)
+        '''
+        return self.api.getSnapshot(snapshotId)
+
     def deployFromTemplate(self, name, snapshotId):
         '''
         Deploys a virtual machine on selected cluster from selected template
@@ -194,45 +200,58 @@ class LiveService(Service):
         Args:
             name: Name (sanitized) of the machine
             comments: Comments for machine
-            templateId: Id of the template to deploy from
-            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
+            snapshotId: Id of the snapshot to deploy from
 
         Returns:
             Id of the machine being created form template
         '''
         logger.debug('Deploying from template {0} machine {1}'.format(snapshotId, name))
         # self.datastoreHasSpace()
-        # self.api.
+        return self.api.createServerFromSnapshot(snapshotId=snapshotId,
+                                          name=name,
+                                          availabilityZone=self.availabilityZone.value,
+                                          flavorId=self.flavor.value,
+                                          networkId=self.network.value,
+                                          securityGroupsIdsList=self.securityGroups.value)['id']
 
     def removeTemplate(self, templateId):
         '''
         invokes removeTemplate from parent provider
         '''
-        return self.parent().removeTemplate(templateId)
+        self.api.deleteSnapshot(templateId)
 
     def getMachineState(self, machineId):
         '''
-        Invokes getMachineState from parent provider
-        (returns if machine is "active" or "inactive"
+        Invokes getServer from openstack client
 
         Args:
             machineId: If of the machine to get state
 
         Returns:
             one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
+                ACTIVE. The server is active.
+                BUILDING. The server has not finished the original build process.
+                DELETED. The server is permanently deleted.
+                ERROR. The server is in error.
+                HARD_REBOOT. The server is hard rebooting. This is equivalent to pulling the power plug on a physical server, plugging it back in, and rebooting it.
+                MIGRATING. The server is being migrated to a new host.
+                PASSWORD. The password is being reset on the server.
+                PAUSED. In a paused state, the state of the server is stored in RAM. A paused server continues to run in frozen state.
+                REBOOT. The server is in a soft reboot state. A reboot command was passed to the operating system.
+                REBUILD. The server is currently being rebuilt from an image.
+                RESCUED. The server is in rescue mode. A rescue image is running with the original server image attached.
+                RESIZED. Server is performing the differential copy of data that changed during its initial copy. Server is down for this stage.
+                REVERT_RESIZE. The resize or migration of a server failed for some reason. The destination server is being cleaned up and the original source server is restarting.
+                SOFT_DELETED. The server is marked as deleted but the disk images are still available to restore.
+                STOPPED. The server is powered off and the disk image still persists.
+                SUSPENDED. The server is suspended, either by request or necessity. This status appears for only the XenServer/XCP, KVM, and ESXi hypervisors. Administrative users can suspend an instance if it is infrequently used or to perform system maintenance. When you suspend an instance, its VM state is stored on disk, all memory is written to disk, and the virtual machine is stopped. Suspending an instance is similar to placing a device in hibernation; memory and vCPUs become available to create other instances.
+                VERIFY_RESIZE. System is awaiting confirmation that the server is operational after a move or resize.
         '''
-        return self.parent().getMachineState(machineId)
+        return self.api.getServer(machineId)['status']
 
     def startMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt.
+        Tries to start a machine. No check is done, it is simply requested to OpenStack.
 
         This start also "resume" suspended/paused machines
 
@@ -241,46 +260,60 @@ class LiveService(Service):
 
         Returns:
         '''
-        return self.parent().startMachine(machineId)
+        return self.api.startServer(machineId)
 
     def stopMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
         '''
-        return self.parent().stopMachine(machineId)
+        return self.api.stopServer(machineId)
 
     def suspendMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to suspend a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
         '''
-        return self.parent().suspendMachine(machineId)
+        return self.api.suspendServer(machineId)
+
+    def resumeMachine(self, machineId):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to OpenStack
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        '''
+        return self.api.suspendServer(machineId)
+
 
     def removeMachine(self, machineId):
         '''
-        Tries to delete a machine. No check is done, it is simply requested to oVirt
+        Tries to delete a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
         '''
-        return self.parent().removeMachine(machineId)
+        return self.api.deleteServer(machineId)
 
-    def getNetInfo(self, machineId, networkId=None):
+    def getNetInfo(self, machineId):
         '''
-        Changes the mac address of first nic of the machine to the one specified
+        Gets the mac address of first nic of the machine
         '''
-        return self.parent().getNetInfo(machineId, networkId=None)
+        net = self.api.getServer(machineId)['addresses']
+        vals = six.next(six.itervalues(net))[0]  # Returns "any" mac address of any interface. We just need only one interface info
+        return (vals['OS-EXT-IPS-MAC:mac_addr'], vals['addr'])
 
     def getBaseName(self):
         '''
@@ -293,9 +326,3 @@ class LiveService(Service):
         Returns the length of numbers part
         '''
         return int(self.lenName.value)
-
-    def getDisplay(self):
-        '''
-        Returns the selected display type (for created machines, for administration
-        '''
-        return self.display.value

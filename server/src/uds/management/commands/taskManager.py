@@ -30,13 +30,13 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+# pylint: disable=protected-access
 from __future__ import unicode_literals
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand  # , CommandError
 from optparse import make_option
 from django.conf import settings
 
-from django.utils.daemonize import become_daemon
 from uds.core.managers.TaskManager import TaskManager
 from uds.core.util.Config import GlobalConfig
 import logging
@@ -53,6 +53,41 @@ PID_FILE = 'taskmanager.pid'
 
 def getPidFile():
     return settings.BASE_DIR + '/' + PID_FILE
+
+# become_daemon seems te be removed on django 1.9
+# This is a copy of posix version from django 1.8
+buffering = int(six.PY3)
+def become_daemon(our_home_dir='.', out_log='/dev/null',
+                  err_log='/dev/null', umask=0o022):
+    "Robustly turn into a UNIX daemon, running in our_home_dir."
+    # First fork
+    try:
+        if os.fork() > 0:
+            sys.exit(0)  # kill off parent
+    except OSError as e:
+        sys.stderr.write("fork #1 failed: (%d) %s\n" % (e.errno, e.strerror))
+        sys.exit(1)
+    os.setsid()
+    os.chdir(our_home_dir)
+    os.umask(umask)
+
+    # Second fork
+    try:
+        if os.fork() > 0:
+            os._exit(0)
+    except OSError as e:
+        sys.stderr.write("fork #2 failed: (%d) %s\n" % (e.errno, e.strerror))
+        os._exit(1)
+
+    si = open('/dev/null', 'r')
+    so = open(out_log, 'a+', buffering)
+    se = open(err_log, 'a+', buffering)
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
+    # Set custom file descriptors so that they get proper buffering.
+    sys.stdout, sys.stderr = so, se
+
 
 
 class Command(BaseCommand):
@@ -82,7 +117,7 @@ class Command(BaseCommand):
 
         pid = None
         try:
-            pid = int(file(getPidFile(), 'r').readline())
+            pid = int(open(getPidFile(), 'r').readline())
         except Exception:
             pid = None
 

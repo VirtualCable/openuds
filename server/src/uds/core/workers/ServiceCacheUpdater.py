@@ -85,7 +85,7 @@ class ServiceCacheUpdater(Job):
             sp.userServices.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it
             if sp.activePublication() is None and sp.service.getInstance().publicationType is not None:
-                logger.debug('Needs publication but do not have one, cache test ignored')
+                logger.debug('{} Needs publication but do not have one, cache test ignored'.format(sp))
                 continue
             # If it has any running publication, do not generate cache anymore
             if sp.publications.filter(state=State.PREPARING).count() > 0:

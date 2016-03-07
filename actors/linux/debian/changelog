@@ -1,3 +1,15 @@
+udsactor (2.0.0) stable; urgency=medium
+
+  * Upgrade for 2.0.0
+
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Tue, 01 Mar 2016 03:39:21 +0100
+
+udsactor (1.9.1) stable; urgency=medium
+
+  * Upgrade for 1.9.1
+
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Tue, 01 Mar 2016 03:19:21 +0100
+
 udsactor (1.9.0) stable; urgency=medium
 
   * Upgrade for 1.9.0 (fixed package version)

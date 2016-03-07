@@ -41,7 +41,7 @@ import six
 from defusedxml import minidom
 
 
-__updated__ = '2016-03-04'
+__updated__ = '2016-03-07'
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +49,4 @@ logger = logging.getLogger(__name__)
 from .common import *
 
 from .UDSOpenStackClient import Client
-
-from . import template
-from . import vm
-from . import storage
 

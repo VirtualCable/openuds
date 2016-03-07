@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-03-04'
+__updated__ = '2016-03-07'
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +161,7 @@ class LiveService(Service):
             name: Name (sanitized) of the machine
             comments: Comments for machine
             templateId: Id of the template to deploy from
-            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
+            displayType: 'vnc' or 'spice'. Display to use ad OpenNebula admin interface
             memoryMB: Memory requested for machine, in MB
             guaranteedMB: Minimum memory guaranteed for this machine
 
@@ -198,7 +198,7 @@ class LiveService(Service):
 
     def startMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt.
+        Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
         This start also "resume" suspended/paused machines
 
@@ -211,7 +211,7 @@ class LiveService(Service):
 
     def stopMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
@@ -222,7 +222,7 @@ class LiveService(Service):
 
     def suspendMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
@@ -233,7 +233,7 @@ class LiveService(Service):
 
     def removeMachine(self, machineId):
         '''
-        Tries to delete a machine. No check is done, it is simply requested to oVirt
+        Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine

@@ -35,10 +35,13 @@ from django.utils.translation import ugettext as _
 from uds.core.services import Publication
 from uds.core.util.State import State
 from datetime import datetime
+
+import six
+
 import logging
 
 
-__updated__ = '2016-02-08'
+__updated__ = '2016-03-07'
 
 
 logger = logging.getLogger(__name__)
@@ -48,6 +51,11 @@ class LivePublication(Publication):
     '''
     This class provides the publication of a oVirtLinkedService
     '''
+    _name = ''
+    _reason = ''
+    _templateId = ''
+    _state = 'r'
+    _destroyAfter = 'n'
 
     suggestedTime = 2  # : Suggested recheck time if publication is unfinished in seconds
 
@@ -65,12 +73,13 @@ class LivePublication(Publication):
         self._reason = ''
         self._templateId = ''
         self._state = 'r'
+        self._destroyAfter = 'n'
 
     def marshal(self):
         '''
         returns data from an instance of Sample Publication serialized
         '''
-        return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state])
+        return '\t'.join(['v1', self._name, self._reason, self._templateId, self._state, self._destroyAfter])
 
     def unmarshal(self, data):
         '''
@@ -79,7 +88,7 @@ class LivePublication(Publication):
         logger.debug('Data: {0}'.format(data))
         vals = data.split('\t')
         if vals[0] == 'v1':
-            self._name, self._reason, self._templateId, self._state = vals[1:]
+            self._name, self._reason, self._templateId, self._state, self._destroyAfter = vals[1:]
 
     def publish(self):
         '''
@@ -87,13 +96,16 @@ class LivePublication(Publication):
         '''
         self._name = self.service().sanitizeVmName('UDSP ' + self.dsName() + "-" + str(self.revision()))
         self._reason = ''  # No error, no reason for it
-        self._state = 'ok'
+        self._destroyAfter = 'n'
 
         try:
-            self._templateId = self.service().makeTemplate(self._name)
+            res = self.service().makeTemplate(self._name)
+            logger.debug('Result: {}'.format(res))
+            self._templateId = res['id']
+            self._state = res['status']
         except Exception as e:
             self._state = 'error'
-            self._reason = str(e)
+            self._reason = 'Got error {}'.format(e)
             return State.ERROR
 
         return State.RUNNING
@@ -105,11 +117,15 @@ class LivePublication(Publication):
         if self._state == 'error':
             return State.ERROR
 
-        if self._state == 'ok':
+        if self._state == 'available':
             return State.FINISHED
 
-        self._state = 'ok'
-        return State.FINISHED
+        self._state = self.service().getTemplate(self._templateId)['status']  # For next check
+
+        if self._destroyAfter == 'y' and self._state == 'available':
+            return self.destroy()
+
+        return State.RUNNING
 
     def finish(self):
         '''
@@ -139,11 +155,18 @@ class LivePublication(Publication):
         State.FINISHED or State.ERROR.
         '''
         # We do not do anything else to destroy this instance of publication
+        if self._state == 'error':
+            return  # Nothing to cancel
+
+        if self._state == 'creating':
+            self._destroyAfter = 'y'
+            return State.RUNNING
+
         try:
             self.service().removeTemplate(self._templateId)
         except Exception as e:
             self._state = 'error'
-            self._reason = str(e)
+            self._reason = six.text_type(e)
             return State.ERROR
 
         return State.FINISHED
