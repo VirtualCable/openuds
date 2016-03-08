@@ -42,7 +42,7 @@ from uds.core.ui import gui
 import six
 import logging
 
-__updated__ = '2016-03-07'
+__updated__ = '2016-03-08'
 
 logger = logging.getLogger(__name__)
 
@@ -96,22 +96,29 @@ class LiveService(Service):
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
-    region = gui.ChoiceField(label=_("Region"), order=1, tooltip=_('Service region'), required=True)
-    project = gui.ChoiceField(label=_("Project"), order=2,
+    region = gui.ChoiceField(label=_('Region'), order=1, tooltip=_('Service region'), required=True, rdonly=True)
+    project = gui.ChoiceField(label=_('Project'), order=2,
         fills={
             'callbackName' : 'osFillResources',
             'function' : helpers.getResources,
             'parameters' : ['ov', 'ev', 'project', 'region']
             },
-        tooltip=_('Project for this service'), required=True
+        tooltip=_('Project for this service'), required=True, rdonly=True
     )
-    availabilityZone = gui.ChoiceField(label=_("Availability Zones"), order=3, tooltip=_('Service availability zones'), required=True, rdonly=True)
-    volume = gui.ChoiceField(label=_("Volume"), order=4, tooltip=_('Base volume for service'), required=True)
-    # volumeType = gui.ChoiceField(label=_("Volume Type"), order=5, tooltip=_('Volume type for service'), required=True)
-    network = gui.ChoiceField(label=_("Network"), order=6, tooltip=_('Network to attach to this service'), required=True)
-    flavor = gui.ChoiceField(label=_("Flavor"), order=7, tooltip=_('Flavor for service'), required=True)
+    availabilityZone = gui.ChoiceField(label=_('Availability Zones'), order=3,
+        fills={
+            'callbackName' : 'osFillVolumees',
+            'function' : helpers.getVolumes,
+            'parameters' : ['ov', 'ev', 'project', 'region', 'availabilityZone']
+            },
+        tooltip=_('Service availability zones'), required=True, rdonly=True
+    )
+    volume = gui.ChoiceField(label=_('Volume'), order=4, tooltip=_('Base volume for service (restricted by availability zone)'), required=True)
+    # volumeType = gui.ChoiceField(label=_('Volume Type'), order=5, tooltip=_('Volume type for service'), required=True)
+    network = gui.ChoiceField(label=_('Network'), order=6, tooltip=_('Network to attach to this service'), required=True)
+    flavor = gui.ChoiceField(label=_('Flavor'), order=7, tooltip=_('Flavor for service'), required=True)
 
-    securityGroups = gui.MultiChoiceField(label=_("Security Groups"), order=8, tooltip=_('Service security groups'), required=True)
+    securityGroups = gui.MultiChoiceField(label=_('Security Groups'), order=8, tooltip=_('Service security groups'), required=True)
 
     baseName = gui.TextField(
         label=_('Machine Names'),

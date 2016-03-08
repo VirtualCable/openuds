@@ -43,11 +43,15 @@ logger = logging.getLogger(__name__)
 
 
 class Cache(object):
+    hits = 0
+    misses = 0
+
     DEFAULT_VALIDITY = 60
     CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
 
     def __init__(self, owner):
         self._owner = owner.encode('utf-8')
+        # Simple hits vs missses counters
 
     def __getKey(self, key):
         h = hashlib.md5()
@@ -64,8 +68,10 @@ class Cache(object):
             if expired:
                 return defValue
             val = pickle.loads(c.value.decode(Cache.CODEC))
+            Cache.hits += 1
             return val
         except uds.models.Cache.DoesNotExist:  # @UndefinedVariable
+            Cache.misses += 1
             logger.debug('key not found: {}'.format(skey))
             return defValue
 

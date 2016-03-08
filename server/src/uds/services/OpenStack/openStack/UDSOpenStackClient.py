@@ -30,7 +30,7 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-# pylint: disable=maybe-no-member
+# pylint: disable=maybe-no-member,protected-access
 from django.utils.translation import ugettext as _
 
 from uds.core.util.Cache import Cache
@@ -39,9 +39,11 @@ import logging
 import requests
 import json
 import dateutil.parser
+import hashlib
+import six
 
 
-__updated__ = '2016-03-07'
+__updated__ = '2016-03-08'
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +99,12 @@ def getRecurringUrlJson(url, headers, key, params=None, errMsg=None, timeout=10)
 def authRequired(func):
     def ensurer(obj, *args, **kwargs):
         obj.ensureAuthenticated()
-        return func(obj, *args, **kwargs)
+        try:
+            return func(obj, *args, **kwargs)
+        except Exception as e:
+            logger.error('Got error {} for openstack'.format(e))
+            obj._cleanCache()  # On any request error, force next time auth
+            raise
     return ensurer
 
 def authProjectRequired(func):
@@ -133,14 +140,16 @@ class Client(object):
         self._authUrl = 'http{}://{}:{}/'.format('s' if useSSL else '', host, port)
 
         # Generates a hash for auth + credentials
-        # h = hashlib.md5()
-        # h.update(six.binary_type(username))
-        # h.update(six.binary_type(password))
-        # h.update(six.binary_type(host))
-        # h.update(six.binary_type(port))
-        # h.update(six.binary_type(tenant))
-
-        # self._cacheKey = h.hexdigest()
+        h = hashlib.md5()
+        h.update(six.binary_type(host))
+        h.update(six.binary_type(port))
+        h.update(six.binary_type(domain))
+        h.update(six.binary_type(username))
+        h.update(six.binary_type(password))
+        h.update(six.binary_type(useSSL))
+        h.update(six.binary_type(projectId))
+        h.update(six.binary_type(region))
+        self._cacheKey = h.hexdigest()
 
     def _getEndpointFor(self, type_):  # If no region is indicatad, first endpoint is returned
         for i in self._catalog:
@@ -156,7 +165,38 @@ class Client(object):
 
         return headers
 
+    def _getFromCache(self):
+        cached = self.cache.get(self._cacheKey)
+        if cached is not None:
+            self._authenticated = True
+            self._tokenId = cached['tokenId']
+            # Extract the token id
+            self._userId = cached['userId']
+            self._projectId = cached['projectId']
+            self._catalog = cached['catalog']
+
+            return True
+
+        return False
+
+    def _saveToCache(self, validity=600):
+        self.cache.put(self._cacheKey,
+                       {
+                        'tokenId': self._tokenId,
+                        'userId': self._userId,
+                        'projectId': self._projectId,
+                        'catalog': self._catalog
+                       },
+                       validity - 60)  # We substract some seconds to allow some time desynchronization
+
+    def _clearCache(self):
+        self.cache.remove(self._cacheKey)
+
     def authPassword(self):
+        # If cached data exists, use it as auth
+        if self._getFromCache() is True:
+            return
+
         data = {
             'auth': {
                 'identity': {
@@ -207,6 +247,7 @@ class Client(object):
         if self._projectId is not None:
             self._catalog = token['catalog']
 
+        self._saveToCache(validity)
 
     def ensureAuthenticated(self):
         if self._authenticated is False:
