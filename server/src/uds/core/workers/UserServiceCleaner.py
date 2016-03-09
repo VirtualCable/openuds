@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.db import transaction
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core import managers
 from uds.core.util.Config import GlobalConfig
 from uds.models import UserService, getSqlDatetime
 from uds.core.util.State import State
@@ -79,6 +79,7 @@ class UserServiceRemover(Job):
                                                 deployed_service__service__provider__maintenance_mode=False)[0:UserServiceRemover.removeAtOnce]
         for us in removables:
             try:
-                UserServiceManager.manager().remove(us)
+                if managers.userServiceManager().canRemoveServiceFromDeployedService(us.deployed_service) is True:
+                    managers.userServiceManager().remove(us)
             except Exception:
                 logger.exception('Exception removing user service')

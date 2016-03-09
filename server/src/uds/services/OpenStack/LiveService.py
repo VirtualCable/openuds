@@ -42,7 +42,7 @@ from uds.core.ui import gui
 import six
 import logging
 
-__updated__ = '2016-03-08'
+__updated__ = '2016-03-09'
 
 logger = logging.getLogger(__name__)
 
@@ -137,8 +137,8 @@ class LiveService(Service):
         required=True
     )
 
-    ov = gui.HiddenField()
-    ev = gui.HiddenField()  # We need to keep the env so we can instantiate the Provider
+    ov = gui.HiddenField(value=None)
+    ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values):
         '''
@@ -154,8 +154,8 @@ class LiveService(Service):
             if self.baseName.value.isdigit():
                 raise Service.ValidationException(_('The machine name can\'t be only numbers'))
 
-        self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env.key
+        # self.ov.value = self.parent().serialize()
+        # self.ev.value = self.parent().env.key
 
         self._api = None
 
@@ -173,6 +173,7 @@ class LiveService(Service):
 
         # So we can instantiate parent to get API
         logger.debug(self.parent().serialize())
+
         self.ov.setDefValue(self.parent().serialize())
         self.ev.setDefValue(self.parent().env.key)
 

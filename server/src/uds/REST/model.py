@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-12'
+__updated__ = '2016-03-09'
 
 
 # a few constants
@@ -222,7 +222,9 @@ class BaseModelHandler(Handler):
         :param res: Dictionary to "extend" with instance key-values pairs
         '''
         if hasattr(item, 'getInstance'):
-            for key, value in item.getInstance().valuesDict().iteritems():
+            i = item.getInstance()
+            i.initGui()  # Defaults & stuff
+            for key, value in i.valuesDict().iteritems():
                 if type(value) in (unicode, str):
                     value = {"true": True, "false": False}.get(value, value)  # Translate "true" & "false" to True & False (booleans)
                 logger.debug('{0} = {1}'.format(key, value))

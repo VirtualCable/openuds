@@ -39,7 +39,7 @@ from uds.models.UUIDModel import UUIDModel
 
 import logging
 
-__updated__ = '2015-05-06'
+__updated__ = '2016-03-09'
 
 
 logger = logging.getLogger(__name__)
@@ -55,6 +55,8 @@ class ManagedObjectModel(UUIDModel):
     data_type = models.CharField(max_length=128)
     data = models.TextField(default='')
     comments = models.CharField(max_length=256)
+
+    _cachedInstance = None
 
     class Meta(UUIDModel.Meta):
         '''
@@ -77,6 +79,8 @@ class ManagedObjectModel(UUIDModel):
         if values is None and self.data is not None and self.data != '':
             obj.unserialize(self.data)
 
+        self._cachedInstance = None  # Ensures returns correct value on getInstance
+
     def getInstance(self, values=None):
         '''
         Instantiates the object this record contains.
@@ -92,10 +96,17 @@ class ManagedObjectModel(UUIDModel):
         Notes:
             Can be overriden
         '''
+        if self._cachedInstance is not None and values is None:
+            logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
+            return self._cachedInstance
+
         klass = self.getType()
         env = self.getEnvironment()
         obj = klass(env, values)
         self.deserialize(obj, values)
+
+        self._cachedInstance = obj
+
         return obj
 
     def getType(self):

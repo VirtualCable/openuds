@@ -38,16 +38,13 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
-from defusedxml import minidom
 
 from .LiveService import LiveService
 from . import openStack
 
-
 import logging
-import six
 
-__updated__ = '2016-03-04'
+__updated__ = '2016-03-09'
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +104,12 @@ class Provider(ServiceProvider):
     domain = gui.TextField(length=64, label=_('Domain'), order=8, tooltip=_('Domain name (default is Default)'), required=True, defvalue='Default')
     username = gui.TextField(length=64, label=_('Username'), order=9, tooltip=_('User with valid privileges on OpenStack'), required=True, defvalue='admin')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=10, tooltip=_('Password of the user of OpenStack'), required=True)
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=99, tooltip=_('Timeout in seconds of connection to OpenStack'), required=True)
+
+    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=128, order=50, tooltip=_('Maximum number of concurrently removing VMs'), required=True)
+    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=128, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True)
+
+    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', minValue=1, maxValue=128, order=99, tooltip=_('Timeout in seconds of connection to OpenStack'), required=True)
+
 
     # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
     # region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='RegionOne')

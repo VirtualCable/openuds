@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-02-18'
+__updated__ = '2016-03-09'
 
 logger = logging.getLogger(__name__)
 
@@ -322,9 +322,11 @@ class UserServiceManager(object):
     def canRemoveServiceFromDeployedService(self, ds):
         '''
         checks if we can do a "remove" from a deployed service
+        serviceIsntance is just a helper, so if we already have unserialized deployedService
         '''
         removing = self.getServicesInStateForProvider(ds.service.provider_id, State.REMOVING)
-        if removing >= GlobalConfig.MAX_REMOVING_SERVICES.getInt() and GlobalConfig.IGNORE_LIMITS.getBool() is False:
+        serviceInstance = ds.service.getInstance()
+        if removing >= serviceInstance.parent().getMaxRemovingServices() and serviceInstance.parent().getIgnoreLimits() is False:
             return False
         return True
 
@@ -333,7 +335,8 @@ class UserServiceManager(object):
         Checks if we can start a new service
         '''
         preparing = self.getServicesInStateForProvider(ds.service.provider_id, State.PREPARING)
-        if preparing >= GlobalConfig.MAX_PREPARING_SERVICES.getInt() and GlobalConfig.IGNORE_LIMITS.getBool() is False:
+        serviceInstance = ds.service.getInstance()
+        if preparing >= serviceInstance.parent().getMaxPreparingServices() and serviceInstance.parent().getIgnoreLimits() is False:
             return False
         return True
 

@@ -48,7 +48,7 @@ from uds.models.Provider import Provider
 import logging
 
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-03-09'
 
 
 logger = logging.getLogger(__name__)
@@ -103,12 +103,19 @@ class Service(ManagedObjectModel, TaggingMixin):
 
         Raises:
         '''
+        if self._cachedInstance is not None and values is None:
+            logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
+            return self._cachedInstance
+
         prov = self.provider.getInstance()
         sType = prov.getServiceByType(self.data_type)
         env = self.getEnvironment()
-        s = sType(env, prov, values)
-        self.deserialize(s, values)
-        return s
+        obj = sType(env, prov, values)
+        self.deserialize(obj, values)
+
+        self._cachedInstance = obj
+
+        return obj
 
     def getType(self):
         '''

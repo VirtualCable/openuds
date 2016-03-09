@@ -39,7 +39,7 @@ from . import openStack
 import pickle
 import logging
 
-__updated__ = '2016-03-07'
+__updated__ = '2016-03-09'
 
 
 logger = logging.getLogger(__name__)
@@ -66,8 +66,8 @@ class LiveDeployment(UserDeployment):
     _reason = ''
     _queue = None
 
-    # : Recheck every six seconds by default (for task methods)
-    suggestedTime = 6
+    # : Recheck every this seconds by default (for task methods)
+    suggestedTime = 20
 
     def initialize(self):
         self._name = ''

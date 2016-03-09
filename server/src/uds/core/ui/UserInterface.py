@@ -250,9 +250,12 @@ class gui(object):
         @property
         def value(self):
             '''
-            Obtains the stored value
+            Obtains the stored value.
+            If the stored value is None (this will only happens if value is forced to be so, by default empty value is ''),
+            returns default value instead.
+            This is mainly used for hidden fields, so we have correctly initialized
             '''
-            return self._data['value']
+            return self._data['value'] if self._data['value'] is not None else self.defValue
 
         @value.setter
         def value(self, value):
@@ -850,9 +853,13 @@ class UserInterface(object):
                 dic[k] = gui.convertToList(v.value)
             elif v.isType(gui.InputField.MULTI_CHOICE_TYPE):
                 dic[k] = gui.convertToChoices(v.value)
+#            elif v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False and v.value == '':
+#                # This solves initializing some vars used to "pass" values to callbacks of form editors.
+#                # Now, we only need to initialize the hidden form fields on initGue
+#                dic[k] = v.defValue
             else:
                 dic[k] = v.value
-        logger.debug('Dict: {0}'.format(dic))
+        logger.debug('Values Dict: {0}'.format(dic))
         return dic
 
     def serializeForm(self):
@@ -866,17 +873,21 @@ class UserInterface(object):
         Note: Hidens are not serialized, they are ignored
 
         '''
+
+        # import inspect
+        # logger.debug('Caller is : {}'.format(inspect.stack()))
+
         arr = []
         for k, v in self._gui.iteritems():
             logger.debug('serializing Key: {0}/{1}'.format(k, v.value))
             if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
-                logger.debug('Field {0} is not serializable'.format(k))
+                # logger.debug('Field {0} is not serializable'.format(k))
                 continue
             if v.isType(gui.InputField.INFO_TYPE):
-                logger.debug('Field {} is a dummy field and will not be serialized')
+                # logger.debug('Field {} is a dummy field and will not be serialized')
                 continue
             if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(gui.InputField.MULTI_CHOICE_TYPE):
-                logger.debug('Serializing value {0}'.format(v.value))
+                # logger.debug('Serializing value {0}'.format(v.value))
                 val = '\001' + pickle.dumps(v.value)
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = six.text_type(int(v.num()))

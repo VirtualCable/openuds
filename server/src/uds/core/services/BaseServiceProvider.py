@@ -33,11 +33,13 @@
 from __future__ import unicode_literals
 
 from uds.core import Module
+from uds.core.util.Config import GlobalConfig
+from uds.core.ui.UserInterface import gui
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2014-03-22'
+__updated__ = '2016-03-09'
 
 
 class ServiceProvider(Module):
@@ -103,6 +105,22 @@ class ServiceProvider(Module):
     # : your own py:meth:`uds.core.BaseModule.BaseModule.icon` method.
     iconFile = 'provider.png'
 
+    # : This defines the maximum number of concurrent services that should be in state "in preparation" for this provider
+    # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
+    # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
+    maxPreparingServices = None
+
+    # : This defines the maximum number of concurrent services that should be in state "removing" for this provider
+    # : Default is return the GlobalConfig value of GlobalConfig.MAX_REMOVING_SERVICES
+    # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
+    maxRemovingServices = None
+
+    # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
+    # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
+    # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
+    ignoreLimits = None
+
+
     @classmethod
     def getServicesTypes(cls):
         '''
@@ -154,6 +172,28 @@ class ServiceProvider(Module):
         Default implementation does nothing
         '''
         pass
+
+    def getMaxPreparingServices(self):
+        val = self.maxPreparingServices
+        if val is None:
+            val = self.maxPreparingServices = GlobalConfig.MAX_PREPARING_SERVICES.getInt(force=True)  # Recover global an cache till restart
+
+        return int(getattr(val, 'value', val))
+
+    def getMaxRemovingServices(self):
+        val = self.maxRemovingServices
+        if val is None:
+            val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(force=True)  # Recover global an cache till restart
+
+        return int(getattr(val, 'value', val))
+
+    def getIgnoreLimits(self):
+        val = self.ignoreLimits
+        if val is None:
+            val = self.ignoreLimits = GlobalConfig.IGNORE_LIMITS.getBool(force=True)  # Recover global an cache till restart
+
+        val = getattr(val, 'value', val)
+        return val is True or val == gui.TRUE
 
     def __str__(self):
         '''

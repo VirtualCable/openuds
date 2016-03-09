@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-03-09'
 
 logger = logging.getLogger(__name__)
 
@@ -175,8 +175,8 @@ class OVirtLinkedService(Service):
         defvalue='1'  # Default value is the ID of the choicefield
     )
 
-    ov = gui.HiddenField()
-    ev = gui.HiddenField()  # We need to keep the env so we can instantiate the Provider
+    ov = gui.HiddenField(value=None)
+    ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values):
         '''
@@ -195,9 +195,6 @@ class OVirtLinkedService(Service):
                 raise Service.ValidationException(_('The minimum allowed memory is 256 Mb'))
             if int(self.memoryGuaranteed.value) > int(self.memory.value):
                 self.memoryGuaranteed.value = self.memory.value
-
-        self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env.key
 
     def initGui(self):
         '''

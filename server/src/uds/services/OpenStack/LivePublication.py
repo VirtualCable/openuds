@@ -41,7 +41,7 @@ import six
 import logging
 
 
-__updated__ = '2016-03-07'
+__updated__ = '2016-03-09'
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class LivePublication(Publication):
     _state = 'r'
     _destroyAfter = 'n'
 
-    suggestedTime = 2  # : Suggested recheck time if publication is unfinished in seconds
+    suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
 
     def initialize(self):
         '''

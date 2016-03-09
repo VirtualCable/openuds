@@ -37,7 +37,7 @@ from uds.core import Module
 from uds.core.transports import protocols
 from . import types
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-03-09'
 
 
 class Service(Module):
