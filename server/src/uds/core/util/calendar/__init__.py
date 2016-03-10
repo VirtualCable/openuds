@@ -30,7 +30,7 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
+# pylint: disable=maybe-no-member
 from __future__ import unicode_literals
 
 from uds.models.Util import NEVER
@@ -45,17 +45,14 @@ import six
 import bitarray
 import logging
 
-__updated__ = '2016-02-17'
+__updated__ = '2016-03-10'
 
 
 logger = logging.getLogger(__name__)
 
 
 class CalendarChecker(object):
-    data = None
-    data_time = None
     calendar = None
-    inverse = False
 
     # For performance checking
     updates = 0
@@ -64,33 +61,20 @@ class CalendarChecker(object):
 
     cache = Cache('calChecker')
 
-    def __init__(self, calendar, inverse=False):
+    def __init__(self, calendar):
         self.calendar = calendar
-        self.calendar_modified = None
-        self.inverse = inverse
-        self.data = None
-        self.data_time = None
 
     def _updateData(self, dtime):
         # Else, update the array
         CalendarChecker.updates += 1
-        self.calendar_modified = self.calendar.modified
-        self.data_time = dtime.date()
 
-        # First, try to get data from cache if it is valid
-        cacheKey = six.text_type(self.calendar.modified.toordinal()) + six.text_type(self.data_time.toordinal()) + self.calendar.uuid
-        cached = CalendarChecker.cache.get(cacheKey, None)
-        if cached is not None:
-            self.data = bitarray.bitarray()  # Empty bitarray
-            self.data.frombytes(cached)
-            CalendarChecker.cache_hit += 1
-            return
+        data = bitarray.bitarray(60 * 24)  # Granurality is minute
+        data.setall(False)
 
-        self.data = bitarray.bitarray(60 * 24)  # Granurality is minute
-        self.data.setall(False)
+        data_date = dtime.date()
 
-        start = datetime.datetime.combine(self.data_time, datetime.datetime.min.time())
-        end = datetime.datetime.combine(self.data_time, datetime.datetime.max.time())
+        start = datetime.datetime.combine(data_date, datetime.datetime.min.time())
+        end = datetime.datetime.combine(data_date, datetime.datetime.max.time())
 
         for rule in self.calendar.rules.all():
             rr = rule.as_rrule()
@@ -109,7 +93,7 @@ class CalendarChecker(object):
             _end = end if r_end is None or end < r_end else r_end
 
             for val in rr.between(_start, _end, inc=True):
-                if val.date() != self.data_time:
+                if val.date() != data_date:
                     diff = int((start - val).total_seconds() / 60)
                     pos = 0
                     posdur = ruleDurationMinutes - diff
@@ -120,11 +104,22 @@ class CalendarChecker(object):
                     posdur = pos + ruleDurationMinutes
                 if posdur > 60 * 24:
                     posdur = 60 * 24
-                self.data[pos:posdur] = True
+                data[pos:posdur] = True
 
-        # Now self.data can be accessed as an array of booleans.
-        # Store data on persistent cache
-        CalendarChecker.cache.put(cacheKey, self.data.tobytes(), 3600 * 24)
+        return data
+
+
+    def _updateEvents(self, checkFrom):
+
+        next_event = None
+        for rule in self.calendar.rules.all():
+            event = rule.as_rrule().after(checkFrom)
+            duration = rule.duration_as_minutes
+
+            if next_event is None or self.next_event[0] > event:
+                next_event = (event, datetime.timedelta(minutes=duration))
+
+        return next_event
 
     def check(self, dtime=None):
         '''
@@ -133,18 +128,45 @@ class CalendarChecker(object):
         TODO: We can improve performance of this by getting from a cache first if we can
         '''
         if dtime is None:
-            dtime = datetime.datetime.now()
-        if self.calendar_modified != self.calendar.modified or self.data is None or self.data_time != dtime.date():
-            self._updateData(dtime)
+            dtime = getSqlDatetime()
+
+        # First, try to get data from cache if it is valid
+        cacheKey = six.text_type(self.calendar.modified.toordinal()) + six.text_type(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
+        cached = CalendarChecker.cache.get(cacheKey, None)
+
+        if cached is not None:
+            data = bitarray.bitarray()  # Empty bitarray
+            data.frombytes(cached)
+            CalendarChecker.cache_hit += 1
+        else:
+            data = self._updateData(dtime)
+
+            # Now data can be accessed as an array of booleans.
+            # Store data on persistent cache
+            CalendarChecker.cache.put(cacheKey, data.tobytes(), 3600 * 24)
+
+        return data[dtime.hour * 60 + dtime.minute]
+
+    def nextEvent(self, checkFrom=None):
+        '''
+        Returns next event for this interval
+        Returns a list of two elements. First is datetime of event begining, second is timedelta of duration
+        '''
+        if checkFrom is None:
+            checkFrom = getSqlDatetime()
+
+        cacheKey = six.text_type(self.calendar.modified.toordinal()) + self.calendar.uuid + six.text_type(checkFrom.toordinal()) + 'event'
+        next_event = CalendarChecker.cache.get(cacheKey, None)
+
+        if next_event is None:
+            next_event = self._updateEvents(checkFrom)
+            CalendarChecker.cache.put(cacheKey, next_event, 3600)
         else:
             CalendarChecker.hits += 1
 
-        return self.data[dtime.hour * 60 + dtime.minute]
+        return next_event
+
 
     def debug(self):
-        if self.data is None:
-            self.check()
 
-        return '\n'.join([
-            '{1}:{2} is {0}'.format(self.data[i], i / 60, i % 60) for i in range(60 * 24)
-        ])
+        return "Calendar checker for {}".format(self.calendar)
