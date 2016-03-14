@@ -236,6 +236,19 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             # ********************************************************
             # * Ask brokers what to do before proceding to main loop *
             # ********************************************************
+            while True:
+                brokerConnected = self.interactWithBroker()
+                if brokerConnected is False:
+                    logger.debug('Interact with broker returned false, stopping service after a while')
+                    self.notifyStop()
+                    win32event.WaitForSingleObject(self.hWaitStop, 5000)
+                    return
+                elif brokerConnected is True:
+                    break
+
+                # If brokerConnected returns None, repeat the cycle
+                self.doWait(16000)  # Wait for a looong while
+
             if self.interactWithBroker() is False:
                 logger.debug('Interact with broker returned false, stopping service after a while')
                 self.notifyStop()
