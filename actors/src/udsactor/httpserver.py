@@ -172,7 +172,10 @@ class HTTPServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def get_information(self, params):
         # TODO: Return something useful? :)
-        return 'Information'
+        return 'Up and running'
+
+    def get_uuid(self, params):
+        return self.service.api.uuid
 
     def log_error(self, fmt, *args):
         logger.error('HTTP ' + fmt % args)
@@ -188,9 +191,13 @@ class HTTPServerThread(threading.Thread):
         if HTTPServerHandler.uuid is None:
             HTTPServerHandler.uuid = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(48))
 
+        self.certFile = createSelfSignedCert()
         HTTPServerHandler.service = service
 
-        self.certFile = createSelfSignedCert()
+        self.initiateServer(address)
+
+
+    def initiateServer(self, address):
         self.server = socketserver.TCPServer(address, HTTPServerHandler)
         self.server.socket = ssl.wrap_socket(self.server.socket, certfile=self.certFile, server_side=True)
 
@@ -200,6 +207,15 @@ class HTTPServerThread(threading.Thread):
     def stop(self):
         logger.debug('Stopping REST Service')
         self.server.shutdown()
+
+    def restart(self, address=None):
+
+        if address is None:
+            address = self.server.server_address
+
+        self.stop()
+
+        self.initiateServer(address)
 
     def run(self):
         self.server.serve_forever()
