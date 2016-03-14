@@ -45,7 +45,7 @@ import six
 import bitarray
 import logging
 
-__updated__ = '2016-03-10'
+__updated__ = '2016-03-14'
 
 
 logger = logging.getLogger(__name__)
@@ -109,15 +109,17 @@ class CalendarChecker(object):
         return data
 
 
-    def _updateEvents(self, checkFrom):
+    def _updateEvents(self, checkFrom, startEvent=True):
 
         next_event = None
         for rule in self.calendar.rules.all():
-            event = rule.as_rrule().after(checkFrom)
-            duration = rule.duration_as_minutes
+            if startEvent:
+                event = rule.as_rrule().after(checkFrom)  # At start
+            else:
+                event = rule.as_rrule_end().after(checkFrom)  # At end
 
-            if next_event is None or self.next_event[0] > event:
-                next_event = (event, datetime.timedelta(minutes=duration))
+            if next_event is None or next_event > event:
+                next_event = event
 
         return next_event
 
@@ -147,7 +149,7 @@ class CalendarChecker(object):
 
         return data[dtime.hour * 60 + dtime.minute]
 
-    def nextEvent(self, checkFrom=None):
+    def nextEvent(self, checkFrom=None, startEvent=True):
         '''
         Returns next event for this interval
         Returns a list of two elements. First is datetime of event begining, second is timedelta of duration
@@ -155,11 +157,12 @@ class CalendarChecker(object):
         if checkFrom is None:
             checkFrom = getSqlDatetime()
 
-        cacheKey = six.text_type(self.calendar.modified.toordinal()) + self.calendar.uuid + six.text_type(checkFrom.toordinal()) + 'event'
+        cacheKey = six.text_type(self.calendar.modified.toordinal()) + self.calendar.uuid + six.text_type(checkFrom.toordinal()) + 'event' + ('x' if startEvent is True else '_')
+        print cacheKey
         next_event = CalendarChecker.cache.get(cacheKey, None)
-
+        print next_event
         if next_event is None:
-            next_event = self._updateEvents(checkFrom)
+            next_event = self._updateEvents(checkFrom, startEvent)
             CalendarChecker.cache.put(cacheKey, next_event, 3600)
         else:
             CalendarChecker.hits += 1

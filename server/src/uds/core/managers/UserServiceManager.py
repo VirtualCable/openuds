@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-03-09'
+__updated__ = '2016-03-14'
 
 logger = logging.getLogger(__name__)
 
@@ -378,6 +378,34 @@ class UserServiceManager(object):
         except Exception as e:
             logger.info('preConnection failed: {}. Check connection on destination machine: {}'.format(e, url))
 
+    def checkUuid(self, uService):
+
+        url = uService.getCommsUrl()
+
+        if url is None:
+            logger.debug('No uuid to retrieve because agent does not supports notifications')
+            return True  # UUid is valid because it is not supported checking it
+
+        if uService.getProperty('actor_version', '') < '2.0.0':  # Just for 2.0 or newer, previous actors will not support this method
+            return True
+
+        url += '/uuid'
+
+        try:
+            r = requests.get(url, verify=False, timeout=2)
+            uuid = json.loads(r.content)
+            if uuid != uService.uuid:
+                logger.info('The requested machine has uuid {} and the expected was {}'.format(uuid, uService.uuid))
+                return False
+
+            logger.debug('Got uuid from machine: {} {} {}'.format(url, uuid, uService.uuid))
+            # In fact we ignore result right now
+        except Exception as e:
+            logger.info('Get uuid failed: {}. Check connection on destination machine: {}'.format(e, url))
+            return False
+
+        return True
+
     def sendScript(self, uService, script):
         '''
         If allowed, send script to user service
@@ -478,20 +506,26 @@ class UserServiceManager(object):
             # If ready, show transport for this service, if also ready ofc
             iads = userService.getInstance()
             ip = iads.getIp()
-            events.addEvent(userService.deployed_service, events.ET_ACCESS, username=user.name, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
-            if ip is not None:
-                serviceNotReadyCode = 0x0003
-                itrans = trans.getInstance()
-                if itrans.isAvailableFor(userService, ip):
-                    userService.setConnectionSource(srcIp, 'unknown')
-                    log.doLog(userService, log.INFO, "User service ready", log.WEB)
-                    UserServiceManager.manager().notifyPreconnect(userService, itrans.processedUser(userService, user), itrans.protocol)
-                    return (ip, userService, iads, trans, itrans)
-                else:
-                    log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                    logger.debug('Transport is not ready for user service {0}'.format(userService))
+
+            if self.checkUuid(userService) is False:  # Machine is not what is expected
+                serviceNotReadyCode = 0x0004
+                log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
+                logger.debug('Transport is not ready for user service {0}'.format(userService))
             else:
-                logger.debug('Ip not available from user service {0}'.format(userService))
+                events.addEvent(userService.deployed_service, events.ET_ACCESS, username=user.name, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
+                if ip is not None:
+                    serviceNotReadyCode = 0x0003
+                    itrans = trans.getInstance()
+                    if itrans.isAvailableFor(userService, ip):
+                        userService.setConnectionSource(srcIp, 'unknown')
+                        log.doLog(userService, log.INFO, "User service ready", log.WEB)
+                        self.notifyPreconnect(userService, itrans.processedUser(userService, user), itrans.protocol)
+                        return (ip, userService, iads, trans, itrans)
+                    else:
+                        log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
+                        logger.debug('Transport is not ready for user service {0}'.format(userService))
+                else:
+                    logger.debug('Ip not available from user service {0}'.format(userService))
         else:
             log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but service was not ready".format(user.name, srcIp), log.WEB)
 

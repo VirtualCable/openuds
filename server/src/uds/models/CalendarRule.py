@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-09-17'
+__updated__ = '2016-03-14'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -123,6 +123,18 @@ class CalendarRule(UUIDModel):
             return rules.rrule(rules.DAILY, byweekday=dw, dtstart=self.start)
         else:
             return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start)
+
+    def as_rrule_end(self):
+        if self.frequency == WEEKDAYS:
+            dw = []
+            l = self.interval
+            for i in range(7):
+                if l & 1 == 1:
+                    dw.append(weekdays[i])
+                l >>= 1
+            return rules.rrule(rules.DAILY, byweekday=dw, dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes))
+        else:
+            return rules.rrule(frq_to_rrl[self.frequency], interval=self.interval, dtstart=self.start + datetime.timedelta(minutes=self.duration_as_minutes))
 
     @property
     def frequency_as_minutes(self):

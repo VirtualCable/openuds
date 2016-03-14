@@ -127,7 +127,6 @@ class CommonService(object):
                 return False  # On unmanaged hosts, there is no reason right now to continue running
             except Exception as e:
                 logger.debug('Exception on network info: retrying')
-                logger.exception()
                 # Any other error is expectable and recoverable, so let's wait a bit and retry again
                 # but, if too many errors, will log it (one every minute, for
                 # example)
@@ -164,11 +163,11 @@ class CommonService(object):
                         break
                     except Exception as e:
                         logger.error('Error at computer renaming stage: {}'.format(e.message))
-                        return False
+                        return None  # Will retry complete broker connection if this point is reached
                 elif data[0] == 'domain':
                     if len(params) != 5:
                         logger.error('Got invalid parameters for domain message: {}'.format(params))
-                        return False
+                        return False  # Stop running service
                     self.joinDomain(params[0], params[1], params[2], params[3], params[4])
                     break
                 else:
