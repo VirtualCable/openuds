@@ -38,7 +38,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 
-from uds.models import CalendarAccess, Calendar
+from uds.models import CalendarAccess, CalendarAction, Calendar
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
@@ -113,3 +113,68 @@ class AccessCalendars(DetailHandler):
 
     def deleteItem(self, parent, item):
         CalendarAccess.objects.get(uuid=processUuid(self._args[0])).delete()
+
+
+
+class ActionsCalendars(DetailHandler):
+    '''
+    Processes the transports detail requests of a Service Pool
+    '''
+    @staticmethod
+    def as_dict(item):
+        return {
+            'id': item.uuid,
+            'calendarId': item.calendar.uuid,
+            'name': item.calendar.name,
+            'action': item.action,
+            'atStart': item.atStart,
+            'offset': item.eventOffset,
+            'params': item.params
+        }
+
+    def getItems(self, parent, item):
+        try:
+            if item is None:
+                return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
+            else:
+                i = CalendarAction.objects.get(uuid=processUuid(item))
+                return ActionsCalendars.as_dict(i)
+        except Exception:
+            self.invalidItemException()
+
+
+    def getTitle(self, parent):
+        return _('Scheduled actions')
+
+    def getFields(self, parent):
+        return [
+            {'name': {'title': _('Name')}},
+            {'action': {'title': _('Action')}},
+            {'atStart': {'title': _('Referer')}},
+            {'offset': {'title': _('Time offset')}},
+        ]
+
+    def saveItem(self, parent, item):
+        # If already exists
+        uuid = processUuid(self._params['id']) if 'id' in self._params else None
+
+        calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
+        action = self._params['action'].upper()
+        eventOffset = int(self._params['eventOffset'])
+        atStart = (self._params['atStart'] == 'true')
+
+        if uuid is not None:
+            calAction = CalendarAction.objects.get(uuid=uuid)
+            calAction.calendar = calendar
+            calAction.servicePool = parent
+            calAction.action = action
+            calAction.atStart = atStart
+            calAction.eventOffset = eventOffset
+            calAction.save()
+        else:
+            CalendarAction.objects.create(calendar=calendar, servicePool=parent, action=action, atStart=atStart, eventOffset=eventOffset)
+
+        return self.success()
+
+    def deleteItem(self, parent, item):
+        CalendarAction.objects.get(uuid=processUuid(self._args[0])).delete()

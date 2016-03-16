@@ -14,9 +14,9 @@
     {% for message in messages %}
     <div class="alert alert-danger alert-dismissable">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-       {{ message }}  
+       {{ message }}
     </div>
-    {% endfor %}       
+    {% endfor %}
   </div>
 </div>
 {% endif %}
@@ -33,10 +33,10 @@
             <li><a href="#{{ groups }}" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
             <li><a href="#{{ transports }}" data-toggle="tab">{% endverbatim %}{% trans 'Transports' %}{% verbatim %}</a></li>
             <li><a id="{{ publications }}_tab" href="#{{ publications }}" data-toggle="tab">{% endverbatim %}{% trans 'Publications' %}{% verbatim %}</a></li>
-            <li><a id="{{ scheduling }}_tab" href="#{{ scheduling }}" data-toggle="tab">{% endverbatim %}{% trans 'Scheduled actions' %}{% verbatim %}</a></li>
+            <li><a id="{{ actions }}_tab" href="#{{ actions }}" data-toggle="tab">{% endverbatim %}{% trans 'Scheduled actions' %}{% verbatim %}</a></li>
             <li><a id="{{ access }}_tab" href="#{{ access }}" data-toggle="tab">{% endverbatim %}{% trans 'Access Calendars' %}{% verbatim %}</a></li>
             <li><a href="#{{ logs }}" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
-        </ul>    
+        </ul>
         <div class="tab-content">
             <div class="tab-pane fade in active" id="{{ pool_info }}">
               <div class="row">
@@ -44,7 +44,7 @@
                   <div class="well">
                   </div>
                 </div>
-              </div>              
+              </div>
             </div>
             <div class="tab-pane fade" id="{{ assigned_services }}">
                 <div class="row">
@@ -72,12 +72,12 @@
                 <div  id="{{ publications }}">
                 </div>
                 <div  id="{{ changelog }}">
-                </div>                
+                </div>
             </div>
-            <div class="tab-pane fade" id="{{ scheduling }}">...</div>
+            <div class="tab-pane fade" id="{{ actions }}">...</div>
             <div class="tab-pane fade" id="{{ access }}">...</div>
             <div class="tab-pane fade" id="{{ logs }}">...</div>
-        </div>        
+        </div>
     </div>
 </div>
 {% endverbatim %}

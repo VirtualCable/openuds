@@ -42,7 +42,7 @@ from uds.models import User
 from uds.web import errors
 from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.Config import GlobalConfig
-from uds.core.services.Exceptions import ServiceNotReadyError
+from uds.core.services.Exceptions import ServiceNotReadyError, ServiceAccessDeniedByCalendar, ServiceInMaintenanceMode
 from uds.core import VERSION as UDS_VERSION
 
 import six
@@ -147,6 +147,10 @@ class Client(Handler):
             # Refresh ticket and make this retrayable
             TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds
             return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+        except ServiceAccessDeniedByCalendar:
+            return Client.result(error=errors.SERVICE_CALENDAR_DENIED)
+        except ServiceInMaintenanceMode:
+            return Client.result(error=errors.SERVICE_IN_MAINTENANCE)
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=six.text_type(e))

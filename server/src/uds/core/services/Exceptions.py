@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-11-06'
+__updated__ = '2016-03-16'
 
 
 class ServiceException(Exception):
@@ -92,6 +92,12 @@ class MaxServicesReachedError(ServiceException):
 class ServiceInMaintenanceMode(ServiceException):
     '''
     The service is in maintenance mode and can't be accesed right now
+    '''
+    pass
+
+class ServiceAccessDeniedByCalendar(ServiceException):
+    '''
+    This service can't be accessed right now, probably due to date-time restrictions
     '''
     pass
 

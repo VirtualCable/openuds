@@ -39,7 +39,7 @@ from uds.core.services.Exceptions import OperationException
 from uds.core.util.State import State
 from uds.core.util import log
 from uds.core.util.Config import GlobalConfig
-from uds.core.services.Exceptions import MaxServicesReachedError, ServiceInMaintenanceMode, InvalidServiceException, ServiceNotReadyError
+from uds.core.services.Exceptions import MaxServicesReachedError, ServiceInMaintenanceMode, InvalidServiceException, ServiceNotReadyError, ServiceAccessDeniedByCalendar
 from uds.models import ServicePool, UserService, getSqlDatetime, Transport
 from uds.core import services
 from uds.core.services import Service
@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-03-14'
+__updated__ = '2016-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -470,10 +470,13 @@ class UserServiceManager(object):
             # Now we have to locate an instance of the service, so we can assign it to user.
             userService = self.getAssignationForUser(ds, user)
 
+        logger.debug('Found service: {0}'.format(userService))
+
         if userService.isInMaintenance() is True:
             raise ServiceInMaintenanceMode()
 
-        logger.debug('Found service: {0}'.format(userService))
+        if userService.deployed_service.isAccessAllowed() is False:
+            raise ServiceAccessDeniedByCalendar()
 
         if idTransport is None or idTransport == '':  # Find a suitable transport
             for v in userService.deployed_service.transports.order_by('priority'):

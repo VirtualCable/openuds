@@ -34,7 +34,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-18'
+__updated__ = '2016-03-16'
 
 from django.db import models
 from uds.models.Calendar import Calendar
@@ -47,12 +47,20 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Current posible actions
+ACTION_PUBLISH = 'PUBLISH'
+ACTION_CACHE_L1 = 'CACHEL1'
+ACTION_CACHE_L2 = 'CACHEL2'
+ACTION_INITIAL = 'INITIAL'
+ACTION_MAX = 'MAX'
 
 class CalendarAction(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     servicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
-    action = models.CharField(max_length=64)
-    params = models.CharField(max_length=1024)
+    action = models.CharField(max_length=64, default='')
+    atStart = models.BooleanField(default=False)  # If false, action is done at end of event
+    eventsOffset = models.IntegerField(default=0)  # In minutes
+    params = models.CharField(max_length=1024, default='')
 
     class Meta:
         '''

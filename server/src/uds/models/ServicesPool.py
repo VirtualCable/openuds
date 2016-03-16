@@ -60,7 +60,7 @@ from uds.core.util.calendar import CalendarChecker
 from datetime import timedelta
 import logging
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-03-16'
 
 
 logger = logging.getLogger(__name__)
@@ -203,6 +203,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         for ac in self.calendaraccess_set.all():
             if CalendarChecker(ac.calendar).check(chkDateTime) is True:
                 access = ac.access
+                break  # Stops on first rule match found
 
         return access == states.action.ALLOW
 

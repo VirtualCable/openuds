@@ -126,7 +126,7 @@ gui.servicesPools.link = (event) ->
       transports: "transports-placeholder"
       publications: "publications-placeholder"
       changelog: "changelog-placeholder"
-      scheduling: "scheduling-placeholder"
+      actions: "actions-placeholder"
       access: "access-placeholder"
       logs: "logs-placeholder"
     )
@@ -380,6 +380,10 @@ gui.servicesPools.link = (event) ->
             prevTables.push v
         else
           $("#publications-placeholder_tab").addClass "hidden"
+
+        # Actions calendars
+        for v in gui.servicesPools.actionsCalendars(servPool, info)
+          prevTables.push v
 
         #
         # Access calendars

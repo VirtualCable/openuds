@@ -44,16 +44,17 @@ from uds.core.ui import theme
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
 from uds.core.util import html
-from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReachedError
+from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
 import uds.web.errors as errors
 
 import six
+import json
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-10-09'
+__updated__ = '2016-03-16'
 
 
 @webLoginRequired(admin=False)
@@ -136,11 +137,18 @@ def clientEnabler(request, idService, idTransport):
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "{}"'.format(idService))
         error = errors.errorString(errors.MAX_SERVICES_REACHED)
+    except ServiceAccessDeniedByCalendar:
+        logger.info('Access tried to a calendar limited access pool "{}"'.format(idService))
+        error = errors.errorString(errors.SERVICE_CALENDAR_DENIED)
     except Exception as e:
         logger.exception('Error')
         error = six.text_type(e)
 
+
     return HttpResponse(
-        '{{ "url": "{}", "error": "{}" }}'.format(url, error),
+        json.dumps({
+            'url': six.text_type(url),
+            'error': six.text_type(error)
+        }),
         content_type='application/json'
     )
