@@ -42,4 +42,4 @@ from uds.core import services
 from uds.core import auths
 from uds.core import transports
 
-VERSION = '1.9.0'
+VERSION = '1.9.1'
