@@ -38,8 +38,8 @@ from __future__ import unicode_literals
 from uds.core.Environment import Environmentable
 from uds.core.Serializable import Serializable
 from uds.core.BaseModule import Module
-# from uds.core import services
-# from uds.core import auths
-# from uds.core import transports
+from uds.core import services
+from uds.core import auths
+from uds.core import transports
 
 VERSION = '2.0.0'
