@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-CLIENT_VERSION = '1.9.0'
+CLIENT_VERSION = '1.9.1'
 REQUIRED_CLIENT_VERSION = '1.9.0'
 
 
