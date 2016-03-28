@@ -143,14 +143,15 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
             service.tags = [Tag.objects.get_or_create(tag=val)[0] for val in tags]
 
-            service.data = service.getInstance(self._params).serialize()
+            service.data = service.getInstance(self._params).serialize()  # This may launch an validation exception (the getInstance(...) part)
             service.save()
         except Service.DoesNotExist:
             self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)'))
         except coreService.ValidationException as e:
-            self._deleteIncompleteService(service)
+            if item is None:
+                self._deleteIncompleteService(service)
             raise RequestError(_('Input error: {0}'.format(unicode(e))))
         except Exception as e:
             self._deleteIncompleteService(service)
