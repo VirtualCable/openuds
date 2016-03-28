@@ -145,7 +145,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)'))
         except coreService.ValidationException as e:
-            self._deleteIncompleteService(service)
+            if item is None:
+                self._deleteIncompleteService(service)
             raise RequestError(_('Input error: {0}'.format(unicode(e))))
         except Exception as e:
             self._deleteIncompleteService(service)
