@@ -1,6 +1,6 @@
 gui.servicesPools.actionsCalendars = (servPool, info) ->
-  accessCalendars = new GuiElement(api.servicesPools.detail(servPool.id, "actions", { permission: servPool.permission }), "actions")
-  accessCalendarsTable = accessCalendars.table(
+  actionsCalendars = new GuiElement(api.servicesPools.detail(servPool.id, "actions", { permission: servPool.permission }), "actions")
+  actionsCalendarsTable = actionsCalendars.table(
     doNotLoadData: true
     icon: 'assigned'
     container: "actions-placeholder"
@@ -24,35 +24,53 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
     onNew: (value, table, refreshFnc) ->
       api.templates.get "pool_add_access", (tmpl) ->
         api.calendars.overview (data) ->
-          modalId = gui.launchModal(gettext("Add access calendar"), api.templates.evaluate(tmpl,
-            calendars: data
-            priority: 1
-            calendarId: ''
-            accessList: accessList
-            access: 'ALLOW'
-          ))
-          $(modalId + " .button-accept").on "click", (event) ->
-            priority = $(modalId + " #id_priority").val()
-            calendar = $(modalId + " #id_calendar_select").val()
-            access = $(modalId + " #id_access_select").val()
-            accessCalendars.rest.create
-              calendarId: calendar
-              access: access
-              priority: priority
-            , (data) ->
-              $(modalId).modal "hide"
-              refreshFnc()
+          api.servicesPools.actionsList servPool.id, (actionsList) ->
+            modalId = gui.launchModal(gettext("Add scheduled action"), api.templates.evaluate(tmpl,
+              calendars: data
+              priority: 1
+              calendarId: ''
+              actionsList: actionsList
+              action: ''
+              eventOffset: 0
+              atStart: true
+            ))
+            $(modalId + " .button-accept").on "click", (event) ->
+              priority = $(modalId + " #id_priority").val()
+              calendar = $(modalId + " #id_calendar_select").val()
+              action = $(modalId + " #id_action_select").val()
+              actionsCalendars.rest.create
+                calendarId: calendar
+                action: action
+                priority: priority
+              , (data) ->
+                $(modalId).modal "hide"
+                refreshFnc()
+                return
+
               return
-
+            $(modalId + ' #id_action_select').on "change", (event) ->
+              action = $(modalId + " #id_action_select").val()
+              if action == '-1'
+                return
+              $(modalId + " #parameters").empty()
+              for i in actionsList
+                if i['id'] == action
+                  if i['params'].length > 0
+                    html = ''
+                    for j in i['params']
+                      if j['type'] == 'numeric'
+                        defval = '1'
+                      else
+                        defval = ''
+                      html += '<div class="form-group"><label for="fld_' + j['name'] + '" class="col-sm-3 control-label">' + j['description'] + '</label><div class="col-sm-9"><input type="' + j['type'] + '" class="modal_field_data" id="fld_' + j['name'] + '" value="' + defval + '"></div></div>'
+                    $(modalId + " #parameters").html(html)
+                    gui.tools.applyCustoms modalId
+              return
+            # Makes form "beautyfull" :-)
+            gui.tools.applyCustoms modalId
             return
-
-
-          # Makes form "beautyfull" :-)
-          gui.tools.applyCustoms modalId
           return
-
         return
-
       return
 
     onEdit: (value, event, table, refreshFnc) ->
@@ -73,7 +91,7 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
             gui.tools.applyCustoms modalId
         return
       api.templates.get "pool_add_access", (tmpl) ->
-        accessCalendars.rest.item value.id, (item) ->
+        actionsCalendars.rest.item value.id, (item) ->
           api.calendars.overview (data) ->
             gui.doLog "Item: ", item
             modalId = gui.launchModal(gettext("Edit access calendar"), api.templates.evaluate(tmpl,
@@ -87,7 +105,7 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
               priority = $(modalId + " #id_priority").val()
               calendar = $(modalId + " #id_calendar_select").val()
               access = $(modalId + " #id_access_select").val()
-              accessCalendars.rest.save
+              actionsCalendars.rest.save
                 id: item.id
                 calendarId: calendar
                 access: access
@@ -103,7 +121,7 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
           return
         return
 
-    onDelete: gui.methods.del(accessCalendars, gettext("Remove access calendar"), gettext("Access calendar removal error"))
+    onDelete: gui.methods.del(actionsCalendars, gettext("Remove access calendar"), gettext("Access calendar removal error"))
   )
 
-  return [accessCalendarsTable]
+  return [actionsCalendarsTable]

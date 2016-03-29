@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup
+from uds.models.CalendarAction import CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_PUBLISH
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
@@ -82,7 +83,8 @@ class ServicesPools(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
 
-    custom_methods = [('setFallbackAccess', True)]
+    custom_methods = [('setFallbackAccess', True), ('actionsList', True)]
+
 
     def item_as_dict(self, item):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -279,3 +281,17 @@ class ServicesPools(ModelHandler):
         item.fallbackAccess = fallback
         item.save()
         return ''
+
+    #  Returns the action list based on current element, for calendar
+    def actionsList(self, item):
+        validActions = ()
+        itemInfo = item.service.getType()
+        if itemInfo.usesCache is True:
+            validActions += (CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_MAX)
+            if itemInfo.usesCache_L2 is True:
+                validActions += (CALENDAR_ACTION_CACHE_L2,)
+
+        if itemInfo.publicationType is not None:
+            validActions += (CALENDAR_ACTION_PUBLISH,)
+
+        return validActions

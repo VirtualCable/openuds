@@ -34,8 +34,9 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-03-16'
+__updated__ = '2016-03-29'
 
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from uds.models.Calendar import Calendar
 from uds.models.UUIDModel import UUIDModel
@@ -48,11 +49,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Current posible actions
-ACTION_PUBLISH = 'PUBLISH'
-ACTION_CACHE_L1 = 'CACHEL1'
-ACTION_CACHE_L2 = 'CACHEL2'
-ACTION_INITIAL = 'INITIAL'
-ACTION_MAX = 'MAX'
+# Each line describes:
+#
+CALENDAR_ACTION_PUBLISH = { 'id' : 'PUBLISH', 'description': _('Publish'), 'params': () }
+CALENDAR_ACTION_CACHE_L1 = { 'id': 'CACHEL1', 'description': _('Sets cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size') },) }
+CALENDAR_ACTION_CACHE_L2 = { 'id': 'CACHEL2', 'description': _('Sets L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size') },) }
+CALENDAR_ACTION_INITIAL = { 'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services') },) }
+CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Change maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services') },) }
 
 class CalendarAction(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)

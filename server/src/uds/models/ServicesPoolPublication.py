@@ -47,7 +47,7 @@ from uds.models.UUIDModel import UUIDModel
 
 import logging
 
-__updated__ = '2015-06-17'
+__updated__ = '2016-03-29'
 
 
 logger = logging.getLogger(__name__)
@@ -132,7 +132,7 @@ class DeployedServicePublication(UUIDModel):
             raise Exception('Tried to get a publication instance for a service that do not needs it')
 
         if serviceInstance.publicationType is None:
-            raise Exception('Class {0} do not have defined publicationType but needs to be published!!!'.format(serviceInstance.__class__.__name))
+            raise Exception('Class {0} do not have defined publicationType but needs to be published!!!'.format(serviceInstance.__class__))
 
         dpl = serviceInstance.publicationType(self.getEnvironment(), service=serviceInstance, osManager=osManagerInstance, revision=self.revision, dsName=self.deployed_service.name)
         # Only invokes deserialization if data has something. '' is nothing

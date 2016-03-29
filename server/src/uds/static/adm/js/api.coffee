@@ -432,6 +432,11 @@ api.servicesPools.setFallbackAccess = (id, fallbackAccess, success_fnc, fail_fnc
     id: id + '/setFallbackAccess?fallbackAccess=' + fallbackAccess
     success: success_fnc
     fail: fail_fnc
+api.servicesPools.actionsList = (id, success_fnc, fail_fnc) ->
+  @get
+    id: id + '/actionsList'
+    success: success_fnc
+    fail: fail_fnc
 
 api.configuration = new BasicModelRest("config")
 api.gallery = new BasicModelRest("gallery/images")
