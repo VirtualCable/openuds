@@ -147,6 +147,6 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getTitle(self, parent):
         try:
-            return _('Services of {0}').format(parent.name)
+            return _('Rules of {0}').format(parent.name)
         except Exception:
             return _('Current rules')

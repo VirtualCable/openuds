@@ -39,6 +39,7 @@ from django.utils.translation import ugettext as _
 
 
 from uds.models import CalendarAccess, CalendarAction, Calendar
+from uds.models.CalendarAction import CALENDAR_ACTION_DICT
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
@@ -46,8 +47,7 @@ from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 from uds.core.util import permissions
 
-
-
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -93,7 +93,7 @@ class AccessCalendars(DetailHandler):
 
     def saveItem(self, parent, item):
         # If already exists
-        uuid = processUuid(self._params['id']) if 'id' in self._params else None
+        uuid = processUuid(item) if item is not None else None
 
         calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
         access = self._params['access'].upper()
@@ -126,10 +126,10 @@ class ActionsCalendars(DetailHandler):
             'id': item.uuid,
             'calendarId': item.calendar.uuid,
             'name': item.calendar.name,
-            'action': item.action,
+            'action':  CALENDAR_ACTION_DICT[item.action]['description'],
             'atStart': item.atStart,
-            'offset': item.eventOffset,
-            'params': item.params
+            'offset': item.eventsOffset,
+            'params': json.loads(item.params)
         }
 
     def getItems(self, parent, item):
@@ -150,18 +150,22 @@ class ActionsCalendars(DetailHandler):
         return [
             {'name': {'title': _('Name')}},
             {'action': {'title': _('Action')}},
-            {'atStart': {'title': _('Referer')}},
+            {'params': {'title': _('Parameters')}},
+            {'atStart': {'title': _('Relative to')}},
             {'offset': {'title': _('Time offset')}},
         ]
 
     def saveItem(self, parent, item):
         # If already exists
-        uuid = processUuid(self._params['id']) if 'id' in self._params else None
+        uuid = processUuid(item) if item is not None else None
 
         calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
         action = self._params['action'].upper()
-        eventOffset = int(self._params['eventOffset'])
-        atStart = (self._params['atStart'] == 'true')
+        eventsOffset = int(self._params['eventsOffset'])
+        atStart = self._params['atStart'] not in ('false', False, '0', 0)
+        params = json.dumps(self._params['params'])
+
+        logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, eventsOffset, atStart, params))
 
         if uuid is not None:
             calAction = CalendarAction.objects.get(uuid=uuid)
@@ -169,10 +173,11 @@ class ActionsCalendars(DetailHandler):
             calAction.servicePool = parent
             calAction.action = action
             calAction.atStart = atStart
-            calAction.eventOffset = eventOffset
+            calAction.eventsOffset = eventsOffset
+            calAction.params = params
             calAction.save()
         else:
-            CalendarAction.objects.create(calendar=calendar, servicePool=parent, action=action, atStart=atStart, eventOffset=eventOffset)
+            CalendarAction.objects.create(calendar=calendar, servicePool=parent, action=action, atStart=atStart, eventsOffset=eventsOffset, params=params)
 
         return self.success()
 

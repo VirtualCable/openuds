@@ -21,8 +21,18 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
 
       return true
 
+    onData: (data) ->
+      $.each data, (index, value) ->
+        value.params = ( k + "=" + value.params[k] for k in Object.keys(value.params)).toString()
+        value.atStart = if value.atStart then gettext('Beginning') else gettext('Ending')
+
     onNew: (value, table, refreshFnc) ->
-      api.templates.get "pool_add_access", (tmpl) ->
+      readParamsFromInputs = (modalId) ->
+        a = {}
+        a[$(v).attr('name')] = $(v).val() for v in $(modalId + ' .action_parameters')
+        return a
+
+      api.templates.get "pool_add_action", (tmpl) ->
         api.calendars.overview (data) ->
           api.servicesPools.actionsList servPool.id, (actionsList) ->
             modalId = gui.launchModal(gettext("Add scheduled action"), api.templates.evaluate(tmpl,
@@ -31,17 +41,22 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
               calendarId: ''
               actionsList: actionsList
               action: ''
-              eventOffset: 0
+              eventsOffset: 0
               atStart: true
             ))
             $(modalId + " .button-accept").on "click", (event) ->
-              priority = $(modalId + " #id_priority").val()
+              offset = $(modalId + " #id_offset").val()
               calendar = $(modalId + " #id_calendar_select").val()
               action = $(modalId + " #id_action_select").val()
+              atStart = $(modalId + " #atStart_field").is(":checked")
               actionsCalendars.rest.create
                 calendarId: calendar
                 action: action
-                priority: priority
+                eventsOffset: offset
+                atStart: atStart
+                action: action
+                params: readParamsFromInputs(modalId)
+
               , (data) ->
                 $(modalId).modal "hide"
                 refreshFnc()
@@ -62,7 +77,11 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
                         defval = '1'
                       else
                         defval = ''
-                      html += '<div class="form-group"><label for="fld_' + j['name'] + '" class="col-sm-3 control-label">' + j['description'] + '</label><div class="col-sm-9"><input type="' + j['type'] + '" class="modal_field_data" id="fld_' + j['name'] + '" value="' + defval + '"></div></div>'
+                      html += '<div class="form-group"><label for="fld_' + j['name'] +
+                              '" class="col-sm-3 control-label">' + j['description'] +
+                              '</label><div class="col-sm-9"><input type="' + j['type'] +
+                              '" class="action_parameters" name="' + j['name'] +
+                              '" value="' + defval + '"></div></div>'
                     $(modalId + " #parameters").html(html)
                     gui.tools.applyCustoms modalId
               return

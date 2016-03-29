@@ -57,6 +57,8 @@ CALENDAR_ACTION_CACHE_L2 = { 'id': 'CACHEL2', 'description': _('Sets L2 cache si
 CALENDAR_ACTION_INITIAL = { 'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services') },) }
 CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Change maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services') },) }
 
+CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
+                                                        CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX)))
 class CalendarAction(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     servicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
