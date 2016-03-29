@@ -1,0 +1,50 @@
+{% load i18n %}
+{% verbatim %}
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+  <label for="id_calendar_select" class="col-sm-3 control-label">{% endverbatim %}{% trans 'Calendar' %}{% verbatim %}</label>
+    <div class="col-sm-9">
+      <select  id="id_calendar_select" class="selectpicker show-menu-arrow show-tick modal_field_data" data-style="btn-default" data-width="100%">
+        <option value="-1"></option>
+      {{# each calendars }}
+        <option value="{{ id }}"{{# ifequals id ../calendarId }} selected{{/ ifequals }}>{{ name }}</option>
+      {{/ each }}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="id_offset" class="col-sm-3 control-label">{% endverbatim %}{% trans 'Events Offset (minutes)' %}{% verbatim %}</label>
+    <div class="col-sm-9">
+      <input type="numeric" class="modal_field_data" id="id_offset" value="{{ eventsOffset }}">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="atStart_field" class="col-sm-3 control-label">{% endverbatim %}{% trans 'At interval beginning?' %}{% verbatim %}</label>
+    <div class="col-sm-9">
+      <input type="checkbox"
+             data-on-text="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}"
+             data-off-text="{% endverbatim %}{% trans 'No' %}{% verbatim %}"
+             class="modal_field_data"
+             id="atStart_field"{{# ifequals atStart true }} checked{{/ ifequals }}>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="id_action_select" class="col-sm-3 control-label">{% endverbatim %}{% trans 'Action' %}{% verbatim %}</label>
+    <div class="col-sm-9">
+      <select id="id_action_select" class="selectpicker show-menu-arrow show-tick modal_field_data" data-style="btn-default" data-width="100%">
+          <option value="-1"></option>
+        {{# each actionsList }}
+          <option value="{{ id }}"{{# ifequals id ../action }} selected{{/ ifequals }}>{{ description }}</option>
+        {{/ each }}
+      </select>
+    </div>
+  </div>
+
+  <div id="parameters">
+  </div>
+
+</form>
+{% endverbatim %}
