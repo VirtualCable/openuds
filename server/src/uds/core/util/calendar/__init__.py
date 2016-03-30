@@ -41,11 +41,12 @@ from uds.models.Calendar import Calendar
 from uds.core.util.Cache import Cache
 
 import datetime
+import time
 import six
 import bitarray
 import logging
 
-__updated__ = '2016-03-14'
+__updated__ = '2016-03-30'
 
 
 logger = logging.getLogger(__name__)
@@ -113,6 +114,9 @@ class CalendarChecker(object):
 
         next_event = None
         for rule in self.calendar.rules.all():
+            if rule.start > checkFrom or (rule.end is not None and rule.end < checkFrom.date()):
+                continue
+
             if startEvent:
                 event = rule.as_rrule().after(checkFrom)  # At start
             else:
@@ -149,22 +153,28 @@ class CalendarChecker(object):
 
         return data[dtime.hour * 60 + dtime.minute]
 
-    def nextEvent(self, checkFrom=None, startEvent=True):
+    def nextEvent(self, checkFrom=None, startEvent=True, offset=None):
         '''
         Returns next event for this interval
         Returns a list of two elements. First is datetime of event begining, second is timedelta of duration
         '''
+        logger.debug('Obtainint nextEvent')
         if checkFrom is None:
             checkFrom = getSqlDatetime()
 
-        cacheKey = six.text_type(self.calendar.modified.toordinal()) + self.calendar.uuid + six.text_type(checkFrom.toordinal()) + 'event' + ('x' if startEvent is True else '_')
-        print cacheKey
+        if offset is None:
+            offset = datetime.timedelta(minutes=0)
+
+        cacheKey = six.text_type(self.calendar.modified.toordinal()) + self.calendar.uuid + six.text_type(offset.seconds) + six.text_type(int(time.mktime(checkFrom.timetuple()))) + 'event' + ('x' if startEvent is True else '_')
         next_event = CalendarChecker.cache.get(cacheKey, None)
-        print next_event
         if next_event is None:
-            next_event = self._updateEvents(checkFrom, startEvent)
+            logger.debug('Regenerating cached nextEvent')
+            next_event = self._updateEvents(checkFrom - offset, startEvent)  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
+            if next_event is not None:
+                next_event += offset
             CalendarChecker.cache.put(cacheKey, next_event, 3600)
         else:
+            logger.debug('nextEvent cache hit')
             CalendarChecker.hits += 1
 
         return next_event

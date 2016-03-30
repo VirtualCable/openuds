@@ -1,5 +1,32 @@
+readParamsFromInputs = (modalId) ->
+  a = {}
+  a[$(v).attr('name')] = $(v).val() for v in $(modalId + ' .action_parameters')
+  return a
+
+actionSelectChangeFnc = (modalId, actionsList) ->
+  gui.doLog "onChange"
+  action = $(modalId + " #id_action_select").val()
+  if action == '-1'
+    return
+  $(modalId + " #parameters").empty()
+  for i in actionsList
+    if i['id'] == action
+      if i['params'].length > 0
+        html = ''
+        for j in i['params']
+          html += '<div class="form-group"><label for="fld_' + j['name'] +
+                  '" class="col-sm-3 control-label">' + j['description'] +
+                  '</label><div class="col-sm-9"><input type="' + j['type'] +
+                  '" class="action_parameters" name="' + j['name'] +
+                  '" value="' + j['default'] + '"></div></div>'
+        $(modalId + " #parameters").html(html)
+        gui.tools.applyCustoms modalId
+  return
+
+
 gui.servicesPools.actionsCalendars = (servPool, info) ->
-  actionsCalendars = new GuiElement(api.servicesPools.detail(servPool.id, "actions", { permission: servPool.permission }), "actions")
+  actionsApi = api.servicesPools.detail(servPool.id, "actions", { permission: servPool.permission })
+  actionsCalendars = new GuiElement(actionsApi, "actions")
   actionsCalendarsTable = actionsCalendars.table(
     doNotLoadData: true
     icon: 'assigned'
@@ -8,6 +35,34 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
     buttons: [
       "new"
       "edit"
+      {
+        text: gettext("Launch Now")
+        css: "disabled"
+        disabled: true
+        click: (val, value, btn, tbl, refreshFnc) ->
+          if val.length != 1
+            return
+            
+          gui.doLog val, val[0]
+          gui.forms.confirmModal gettext("Execute action"), gettext("Launch action execution right now?"),
+            onYes: ->
+              actionsApi.invoke val[0].id + "/execute", ->
+                refreshFnc()
+                return
+          return
+
+        select: (vals, self, btn, tbl, refreshFnc) ->
+          unless vals.length == 1
+            $(btn).addClass "disabled"
+            $(btn).prop('disabled', true)
+            return
+
+          val = vals[0]
+
+          $(btn).removeClass("disabled").prop('disabled', false)
+          # $(btn).addClass("disabled").prop('disabled', true)
+          return
+      }
       "delete"
       "xls"
     ]
@@ -27,17 +82,12 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
         value.atStart = if value.atStart then gettext('Beginning') else gettext('Ending')
 
     onNew: (value, table, refreshFnc) ->
-      readParamsFromInputs = (modalId) ->
-        a = {}
-        a[$(v).attr('name')] = $(v).val() for v in $(modalId + ' .action_parameters')
-        return a
 
       api.templates.get "pool_add_action", (tmpl) ->
         api.calendars.overview (data) ->
           api.servicesPools.actionsList servPool.id, (actionsList) ->
             modalId = gui.launchModal(gettext("Add scheduled action"), api.templates.evaluate(tmpl,
               calendars: data
-              priority: 1
               calendarId: ''
               actionsList: actionsList
               action: ''
@@ -64,27 +114,7 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
 
               return
             $(modalId + ' #id_action_select').on "change", (event) ->
-              action = $(modalId + " #id_action_select").val()
-              if action == '-1'
-                return
-              $(modalId + " #parameters").empty()
-              for i in actionsList
-                if i['id'] == action
-                  if i['params'].length > 0
-                    html = ''
-                    for j in i['params']
-                      if j['type'] == 'numeric'
-                        defval = '1'
-                      else
-                        defval = ''
-                      html += '<div class="form-group"><label for="fld_' + j['name'] +
-                              '" class="col-sm-3 control-label">' + j['description'] +
-                              '</label><div class="col-sm-9"><input type="' + j['type'] +
-                              '" class="action_parameters" name="' + j['name'] +
-                              '" value="' + defval + '"></div></div>'
-                    $(modalId + " #parameters").html(html)
-                    gui.tools.applyCustoms modalId
-              return
+              actionSelectChangeFnc(modalId, actionsList)
             # Makes form "beautyfull" :-)
             gui.tools.applyCustoms modalId
             return
@@ -93,49 +123,56 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
       return
 
     onEdit: (value, event, table, refreshFnc) ->
-      if value.id == -1
-        api.templates.get "pool_access_default", (tmpl) ->
-            modalId = gui.launchModal(gettext("Default fallback access"), api.templates.evaluate(tmpl,
-              accessList: accessList
-              access: servPool.fallbackAccess
-            ))
-            $(modalId + " .button-accept").on "click", (event) ->
-              access = $(modalId + " #id_access_select").val()
-              servPool.fallbackAccess = access
-              gui.servicesPools.rest.setFallbackAccess servPool.id, access, (data) ->
-                $(modalId).modal "hide"
-                refreshFnc()
+      api.templates.get "pool_add_action", (tmpl) ->
+        api.servicesPools.actionsList servPool.id, (actionsList) ->
+          actionsCalendars.rest.item value.id, (item) ->
+            for i in actionsList
+              if i['id'] == item.action
+                gui.doLog "Found ", i
+                for j in Object.keys(item.params)
+                  gui.doLog "Testing ", j
+                  for k in i['params']
+                    gui.doLog 'Checking ', k
+                    if k['name'] == j
+                      gui.doLog 'Setting value'
+                      k['default'] = item.params[j]
+
+            api.calendars.overview (data) ->
+              gui.doLog "Item: ", item
+              modalId = gui.launchModal(gettext("Edit access calendar"), api.templates.evaluate(tmpl,
+                calendars: data
+                calendarId: item.calendarId
+                actionsList: actionsList
+                action: item.action
+                eventsOffset: item.eventsOffset
+                atStart: item.atStart
+              ))
+              $(modalId + " .button-accept").on "click", (event) ->
+                offset = $(modalId + " #id_offset").val()
+                calendar = $(modalId + " #id_calendar_select").val()
+                action = $(modalId + " #id_action_select").val()
+                atStart = $(modalId + " #atStart_field").is(":checked")
+                actionsCalendars.rest.save
+                  id: item.id
+                  calendarId: calendar
+                  action: action
+                  eventsOffset: offset
+                  atStart: atStart
+                  action: action
+                  params: readParamsFromInputs(modalId)
+                , (data) ->
+                  $(modalId).modal "hide"
+                  refreshFnc()
+                  return
                 return
-            # Makes form "beautyfull" :-)
-            gui.tools.applyCustoms modalId
-        return
-      api.templates.get "pool_add_access", (tmpl) ->
-        actionsCalendars.rest.item value.id, (item) ->
-          api.calendars.overview (data) ->
-            gui.doLog "Item: ", item
-            modalId = gui.launchModal(gettext("Edit access calendar"), api.templates.evaluate(tmpl,
-              calendars: data
-              priority: item.priority
-              calendarId: item.calendarId
-              accessList: accessList
-              access: item.access
-            ))
-            $(modalId + " .button-accept").on "click", (event) ->
-              priority = $(modalId + " #id_priority").val()
-              calendar = $(modalId + " #id_calendar_select").val()
-              access = $(modalId + " #id_access_select").val()
-              actionsCalendars.rest.save
-                id: item.id
-                calendarId: calendar
-                access: access
-                priority: priority
-              , (data) ->
-                $(modalId).modal "hide"
-                refreshFnc()
-                return
+              $(modalId + ' #id_action_select').on "change", (event) ->
+                actionSelectChangeFnc(modalId, actionsList)
+
+              # Triggers the event manually
+              actionSelectChangeFnc(modalId, actionsList)
+              # Makes form "beautyfull" :-)
+              gui.tools.applyCustoms modalId
               return
-            # Makes form "beautyfull" :-)
-            gui.tools.applyCustoms modalId
             return
           return
         return

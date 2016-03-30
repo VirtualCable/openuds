@@ -25,7 +25,7 @@ gui.servicesPools.accessCalendars = (servPool, info) ->
     onData: (data) ->
       data.push
         id: -1,
-        name: 'DEFAULT',
+        calendar: '-',
         priority: '<span style="visibility: hidden;font-size: 0px;">10000000</span>FallBack',
         access: servPool.fallbackAccess
       gui.doLog data

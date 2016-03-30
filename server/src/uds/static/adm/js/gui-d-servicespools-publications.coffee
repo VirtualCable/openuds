@@ -1,6 +1,6 @@
 gui.servicesPools.publications = (servPool, info) ->
-  pubApi = api.servicesPools.detail(servPool.id, "publications")
-  publications = new GuiElement(pubApi, "publications", { permission: servPool.permission })
+  pubApi = api.servicesPools.detail(servPool.id, "publications", { permission: servPool.permission })
+  publications = new GuiElement(pubApi, "publications")
 
   # Publications table
   publicationsTable = publications.table(

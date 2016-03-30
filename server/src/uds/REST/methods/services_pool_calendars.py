@@ -65,7 +65,7 @@ class AccessCalendars(DetailHandler):
         return {
             'id': item.uuid,
             'calendarId': item.calendar.uuid,
-            'name': item.calendar.name,
+            'calendar': item.calendar.name,
             'access': item.access,
             'priority': item.priority,
         }
@@ -87,7 +87,7 @@ class AccessCalendars(DetailHandler):
     def getFields(self, parent):
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-            {'name': {'title': _('Name')}},
+            {'calendar': {'title': _('Calendar')}},
             {'access': {'title': _('Access')}},
         ]
 
@@ -120,16 +120,21 @@ class ActionsCalendars(DetailHandler):
     '''
     Processes the transports detail requests of a Service Pool
     '''
+    custom_methods = ('execute')
+
     @staticmethod
     def as_dict(item):
         return {
             'id': item.uuid,
             'calendarId': item.calendar.uuid,
-            'name': item.calendar.name,
-            'action':  CALENDAR_ACTION_DICT[item.action]['description'],
+            'calendar': item.calendar.name,
+            'action': item.action,
+            'actionDescription':  CALENDAR_ACTION_DICT[item.action]['description'],
             'atStart': item.atStart,
-            'offset': item.eventsOffset,
-            'params': json.loads(item.params)
+            'eventsOffset': item.eventsOffset,
+            'params': json.loads(item.params),
+            'nextExecution': item.nextExecution,
+            'lastExecution': item.lastExecution
         }
 
     def getItems(self, parent, item):
@@ -148,11 +153,13 @@ class ActionsCalendars(DetailHandler):
 
     def getFields(self, parent):
         return [
-            {'name': {'title': _('Name')}},
-            {'action': {'title': _('Action')}},
+            {'calendar': {'title': _('Calendar')}},
+            {'actionDescription': {'title': _('Action')}},
             {'params': {'title': _('Parameters')}},
             {'atStart': {'title': _('Relative to')}},
-            {'offset': {'title': _('Time offset')}},
+            {'eventsOffset': {'title': _('Time offset')}},
+            {'nextExecution': {'title': _('Next execution'), 'type': 'datetime'}},
+            {'lastExecution': {'title': _('Last execution'), 'type': 'datetime'}},
         ]
 
     def saveItem(self, parent, item):
@@ -183,3 +190,11 @@ class ActionsCalendars(DetailHandler):
 
     def deleteItem(self, parent, item):
         CalendarAction.objects.get(uuid=processUuid(self._args[0])).delete()
+
+    def execute(self, parent, item):
+        logger.debug('Launching action')
+        uuid = processUuid(item)
+        calAction = CalendarAction.objects.get(uuid=uuid)
+        calAction.execute()
+
+        return self.success()

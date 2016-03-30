@@ -34,16 +34,20 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-03-29'
+__updated__ = '2016-03-30'
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from uds.models.Calendar import Calendar
 from uds.models.UUIDModel import UUIDModel
+from uds.models.Util import NEVER, getSqlDatetime
+from uds.core.util import calendar
 from uds.models.ServicesPool import ServicePool
 from django.utils.encoding import python_2_unicode_compatible
 # from django.utils.translation import ugettext_lazy as _, ugettext
 
+import datetime
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -52,10 +56,10 @@ logger = logging.getLogger(__name__)
 # Each line describes:
 #
 CALENDAR_ACTION_PUBLISH = { 'id' : 'PUBLISH', 'description': _('Publish'), 'params': () }
-CALENDAR_ACTION_CACHE_L1 = { 'id': 'CACHEL1', 'description': _('Sets cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size') },) }
-CALENDAR_ACTION_CACHE_L2 = { 'id': 'CACHEL2', 'description': _('Sets L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size') },) }
-CALENDAR_ACTION_INITIAL = { 'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services') },) }
-CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Change maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services') },) }
+CALENDAR_ACTION_CACHE_L1 = { 'id': 'CACHEL1', 'description': _('Sets cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size'), 'default': '1' },) }
+CALENDAR_ACTION_CACHE_L2 = { 'id': 'CACHEL2', 'description': _('Sets L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1' },) }
+CALENDAR_ACTION_INITIAL = { 'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services'), 'default': '1' },) }
+CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Change maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10' },) }
 
 CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
                                                         CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX)))
@@ -66,6 +70,9 @@ class CalendarAction(UUIDModel):
     atStart = models.BooleanField(default=False)  # If false, action is done at end of event
     eventsOffset = models.IntegerField(default=0)  # In minutes
     params = models.CharField(max_length=1024, default='')
+    # Not to be edited, just to be used as indicators for executions
+    lastExecution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
+    nextExecution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
 
     class Meta:
         '''
@@ -74,3 +81,38 @@ class CalendarAction(UUIDModel):
         db_table = 'uds_cal_action'
         app_label = 'uds'
 
+    @property
+    def offset(self):
+        return datetime.timedelta(minutes=self.eventsOffset)
+
+    def execute(self, save=True):
+        logger.debug('Executing action')
+        self.lastExecution = getSqlDatetime()
+        params = json.loads(self.params)
+
+        saveServicePool = save
+
+        if CALENDAR_ACTION_CACHE_L1['id'] == self.action:
+            self.servicePool.cache_l1_srvs = int(params['size'])
+        elif CALENDAR_ACTION_CACHE_L2['id'] == self.action:
+            self.servicePool.cache_l1_srvs = int(params['size'])
+        elif CALENDAR_ACTION_INITIAL['id'] == self.action:
+            self.servicePool.initial_srvs = int(params['size'])
+        elif CALENDAR_ACTION_MAX['id'] == self.action:
+            self.servicePool.max_srvs = int(params['size'])
+        elif CALENDAR_ACTION_PUBLISH['id'] == self.action:
+            self.servicePool.publish(changeLog='Scheduled publication action')
+            saveServicePool = False
+
+        # On save, will regenerate nextExecution
+        if save:
+            self.save()
+
+        if saveServicePool:
+            self.servicePool.save()
+
+
+    def save(self, *args, **kwargs):
+        self.nextExecution = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=self.lastExecution, startEvent=self.atStart, offset=self.offset)
+
+        return UUIDModel.save(self, *args, **kwargs)
