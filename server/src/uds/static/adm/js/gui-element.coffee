@@ -1,4 +1,4 @@
-# jshint strict: true 
+# jshint strict: true
 
 # Operations commmon to most elements
 @BasicGuiElement = (name) ->
@@ -36,7 +36,7 @@
         return
 
       if styles isnt ""
-        
+
         # If style already attached, do not re-attach it
         styles = "<style id=\"gui-style-" + self.name + "\" media=\"screen\">" + styles + "</style>"
         $(styles).appendTo "head"
@@ -48,7 +48,7 @@
 
     return
 
-  
+
   # Options: dictionary
   #   container: container ID of parent for the table. If undefined, table will be appended to workspace
   #   buttons: array of visible buttons (strings), valid are [ 'new', 'edit', 'refresh', 'delete', 'xls' ],
@@ -56,7 +56,7 @@
   #   rowSelect: type of allowed row selection, valid values are 'single' and 'multi'
   #   scrollToTable: if True, will scroll page to show table
   #   deferedRender: if True, datatable will be created with "bDeferRender": true, that will improve a lot creation of huge tables
-  #   
+  #
   #   onData: Event (function). If defined, will be invoked on data load (to allow preprocess of data)
   #   onLoad: Event (function). If defined, will be invoked when table is fully loaded.
   #           Receives 1 parameter, that is the gui element (GuiElement) used to render table
@@ -69,7 +69,7 @@
   #                Receives 3 parameters:
   #                   1.- the array of selected items data (objects, as got from api...get)
   #                   2.- the DataTable that raised the event
-  #   onCheck:    Event (function), 
+  #   onCheck:    Event (function),
   #               It determines the state of buttons on selection: if returns "true", the indicated button will be enabled, and disabled if returns "false"
   #               Receives 2 parameters:
   #                   1.- the event fired, that can be "edit" or "delete"
@@ -108,17 +108,17 @@
 
     gui.doLog "Composing table for " + @name, tblParams
     tableId = @name + "-table"
-    
+
     # ---------------
     # Cells renderers
     # ---------------
-    
+
     # Empty cells transform
     renderEmptyCell = (data) ->
       return "-"  if data is ""
       data
 
-    
+
     # Icon renderer, based on type (created on init methods in styles)
     renderTypeIcon = (data, type, value) ->
       if type is "display"
@@ -128,10 +128,10 @@
       else
         renderEmptyCell data
 
-    
+
     renderImage = (data) ->
       "<img src=\"data:image/png;base64," + data + "\">"
-    
+
     # Custom icon renderer, in fact span with defined class
     renderIcon = (icon) ->
       (data, type, full) ->
@@ -148,7 +148,7 @@
         else
           renderEmptyCell data
 
-    
+
     # Text transformation, dictionary based
     renderTextTransform = (dict) ->
       (data, type, full) ->
@@ -158,7 +158,7 @@
       gui.doLog "Rendering " + fld
       if tblParams.callback?
         callBack = tblParams.callback
-        (data, type, value) -> 
+        (data, type, value) ->
           callBack(fld, data, type, value)
       else
         (data) ->
@@ -214,7 +214,7 @@
           columns.push column
         return
 
-      
+
       # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
       initTable = (data) ->
         tblParams.onData data  if tblParams.onData
@@ -232,10 +232,10 @@
           tblParams.onRefresh = (tbl) ->
             return
 
-         self.refresh = refreshFnc = () -> 
+         self.refresh = refreshFnc = () ->
             # Refreshes table content
             tbl = $("#" + tableId).DataTable()
-            
+
             #if( data.length > 1000 )
             gui.tools.blockUI()
             setTimeout (->
@@ -246,6 +246,7 @@
                   tbl.rows.add(data)
 
                 tbl.columns.adjust().draw()
+                selCallback null, tbl, null, null
                 gui.doLog "onRefresh", tblParams.onRefresh
                 tblParams.onRefresh self
                 gui.tools.unblockUI()), gui.failRequestModalFnc(gettext("Refresh operation failed"))
@@ -295,7 +296,7 @@
           activeOnManySelected = (cls) ->
             (btn, sel, dtable) ->
               setBtnState btn, (if sel.length >= 1 then onCheck("delete", sel) else false), cls
-          
+
           # methods for buttons on row select
           editSelected = activeOnOneSelected('btn-success')
           deleteSelected = activeOnManySelected('btn-danger')
@@ -422,7 +423,7 @@
             return
 
         # End buttoon iteration
-        
+
         tbId = gui.genRamdonId('tb')
         dataTableOptions =
           responsive: false
@@ -446,10 +447,10 @@
           columns: columns
           data: data
           deferRender: tblParams.deferedRender or tblParams.deferRender or false
-          
+
           language: gui.config.dataTablesLanguage
 
-        
+
         # If row is "styled"
         if row_style.field
           field = row_style.field
@@ -472,7 +473,7 @@
         if tblParams.onRowSelect
           rowSelectedFnc = tblParams.onRowSelect
           dTable.on 'select', (e, dt, type, indexes) ->
-            rows = dt.rows({selected: true}).data() 
+            rows = dt.rows({selected: true}).data()
             # rows = dt.rows(indexes).data()  # This gets selected rows on call
             rowSelectedFnc rows, dt
             return
@@ -505,7 +506,7 @@
             $div.append btnHtml
             $btn = $('#'+btnId)
             $btn.on 'click', btn.fnClick
-              
+
             if btn.fnSelect?
               selCallbackList.push
                 btnId: '#' + btnId
@@ -513,7 +514,7 @@
               btn.fnSelect $btn, [], dTable
           else
             $div.append('<div style="float: left;">' + btn.content + '</div>')
-        
+
         # Listener for callbacks
         selCallback = (e, dt, type, indexes) ->
           for v in selCallbackList
@@ -523,12 +524,13 @@
         dTable.on 'select', selCallback
         dTable.on 'deselect', selCallback
 
-        # Fix form 
+        # Fix filter
+        $("#" + tableId + "_filter label").addClass "form-inline"
         $("#" + tableId + "_filter input").addClass "form-control"
-        
+
         # Add refresh action to panel
         $(table.refreshSelector).click refreshFnc
-        
+
         # Add tooltips to "new" buttons
         $("#" + table.panelId + " [data-toggle=\"tooltip\"]").tooltip
           container: "body"
@@ -538,13 +540,13 @@
 
           placement: "auto right"
 
-        
+
         # And the handler of the new "dropdown" button links
         if tblParams.onNew # If onNew, set the handlers for dropdown
           $("#" + table.panelId + " [data-type]").on "click", (event) ->
             event.preventDefault()
             tbl = $("#" + tableId).dataTable()
-            
+
             # Executes "onNew" outside click event
             type = $(this).attr("data-type")
             setTimeout (->
@@ -556,7 +558,7 @@
         if tblParams.scrollToTable is true
           tableTop = $("#" + tableId).offset().top
           $("html, body").scrollTop tableTop
-        
+
         # if table rendered event
         tblParams.onLoad self  if tblParams.onLoad
         return
@@ -579,7 +581,7 @@
     gui.doLog "Composing log for " + @name
     tableId = @name + "-table-log"
     self = this # Store this for child functions
-    
+
     # Renderers for columns
     refreshFnc = ->
       # Refreshes table content
@@ -598,10 +600,10 @@
       # End restore overview
       false # This may be used on button or href, better disable execution of it
 
-    
+
     # Log level "translator" (renderer)
     logRenderer = gui.tools.renderLogLovel()
-    
+
     # Columns description
     columns = [
       {
@@ -646,7 +648,7 @@
     else
       $("#" + tblParams.container).empty()
       $("#" + tblParams.container).append table.text
-    
+
     # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
     initLog = (data) ->
       $("#" + tableId).DataTable
@@ -669,13 +671,13 @@
 
           return
 
-      
-      # Fix form 
+
+      # Fix form
       $("#" + tableId + "_filter input").addClass "form-control"
-      
+
       # Add refresh action to panel
       $(table.refreshSelector).click refreshFnc
-      
+
       # if table rendered event
       tblParams.onLoad self  if tblParams.onLoad
       return
@@ -686,5 +688,5 @@
     else
       initLog([])
 
-     
+
     return "#" + tableId

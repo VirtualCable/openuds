@@ -1,13 +1,20 @@
 console.log('\'Allo \'Allo!'); // eslint-disable-line no-console
 $(function(){
     var options = {
-      dom: '<"table-tbar btns-tables">frti',
-
+      //dom: '<"table-tbar btns-tables">frti',
+      dom: '<"table-tbar btns-tables">fr<"uds-table"t>ip',
       responsive: true,
       colReorder: true,
       stateSave: true,
+      paging: true,
+      info: true,
+      autoWidth: true,
+      lengthChange: false,
+      pageLength: 10,
+
       deferRender: true,
       paging: true,
+      // pagingType: 'full',
       info: true,
 
       columnDefs: [ {

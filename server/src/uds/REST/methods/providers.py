@@ -65,8 +65,8 @@ class Providers(ModelHandler):
         {'name': {'title': _('Name'), 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
         {'maintenance_state': {'title': _('Status')}},
-        {'services_count': {'title': _('Services'), 'type': 'numeric', 'width': '5em'}},
-        {'user_services_count': {'title': _('User Services'), 'type': 'numeric', 'width': '8em'}},
+        {'services_count': {'title': _('Services'), 'type': 'numeric'}},
+        {'user_services_count': {'title': _('User Services'), 'type': 'numeric'}},  # , 'width': '132px'
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
