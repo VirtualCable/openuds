@@ -102,12 +102,12 @@ class AccessCalendars(DetailHandler):
         if uuid is not None:
             calAccess = CalendarAccess.objects.get(uuid=uuid)
             calAccess.calendar = calendar
-            calAccess.servicePool = parent
+            calAccess.service_pool = parent
             calAccess.access = access
             calAccess.priority = priority
             calAccess.save()
         else:
-            CalendarAccess.objects.create(calendar=calendar, servicePool=parent, access=access, priority=priority)
+            CalendarAccess.objects.create(calendar=calendar, service_pool=parent, access=access, priority=priority)
 
         return self.success()
 
@@ -130,11 +130,11 @@ class ActionsCalendars(DetailHandler):
             'calendar': item.calendar.name,
             'action': item.action,
             'actionDescription':  CALENDAR_ACTION_DICT[item.action]['description'],
-            'atStart': item.atStart,
-            'eventsOffset': item.eventsOffset,
+            'atStart': item.at_start,
+            'eventsOffset': item.events_offset,
             'params': json.loads(item.params),
-            'nextExecution': item.nextExecution,
-            'lastExecution': item.lastExecution
+            'nextExecution': item.next_execution,
+            'lastExecution': item.last_execution
         }
 
     def getItems(self, parent, item):
@@ -177,14 +177,14 @@ class ActionsCalendars(DetailHandler):
         if uuid is not None:
             calAction = CalendarAction.objects.get(uuid=uuid)
             calAction.calendar = calendar
-            calAction.servicePool = parent
+            calAction.service_pool = parent
             calAction.action = action
-            calAction.atStart = atStart
-            calAction.eventsOffset = eventsOffset
+            calAction.at_start = atStart
+            calAction.events_offset = eventsOffset
             calAction.params = params
             calAction.save()
         else:
-            CalendarAction.objects.create(calendar=calendar, servicePool=parent, action=action, atStart=atStart, eventsOffset=eventsOffset, params=params)
+            CalendarAction.objects.create(calendar=calendar, service_pool=parent, action=action, at_start=atStart, events_offset=eventsOffset, params=params)
 
         return self.success()
 

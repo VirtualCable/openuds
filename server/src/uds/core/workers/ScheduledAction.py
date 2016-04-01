@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Model based on https://github.com/llazzaro/django-scheduler
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -29,35 +28,33 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
 from __future__ import unicode_literals
 
-__updated__ = '2016-04-01'
+from django.db import transaction
 
-from django.db import models
-from uds.core.util import states
-from uds.models.UUIDModel import UUIDModel
-from uds.models.Calendar import Calendar
-from uds.models.ServicesPool import ServicePool
-# from django.utils.translation import ugettext_lazy as _, ugettext
-
+from uds.core.util.Config import GlobalConfig
+from uds.models import CalendarAction, getSqlDatetime
+from uds.core.util.State import State
+from uds.core.jobs.Job import Job
+from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
 
-class CalendarAccess(UUIDModel):
-    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    service_pool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
-    access = models.CharField(max_length=8, default=states.action.DENY)
-    priority = models.IntegerField(default=0, db_index=True)
 
-    class Meta:
-        '''
-        Meta class to declare db table
-        '''
-        db_table = 'uds_cal_access'
-        ordering = ('priority',)
-        app_label = 'uds'
+class ScheduledAction(Job):
+    frecuency = 29  # Frecuncy for this job
+    friendly_name = 'Scheduled action runner'
 
+    def __init__(self, environment):
+        super(ScheduledAction, self).__init__(environment)
+
+    def run(self):
+        for ca in CalendarAction.objects.filter(service_pool__service__provider__maintenance_mode=False, next_execution__lt=getSqlDatetime()).order_by('next_execution'):
+            logger.debug('Executing calendar action {}.{}'.format(ca.service_pool.name, ca.calendar.name))
+            try:
+                ca.execute()
+            except Exception as e:
+                logger.exception('Got an exception executing calendar access action: {}'.format(e))

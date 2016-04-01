@@ -34,7 +34,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-03-30'
+__updated__ = '2016-04-01'
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
@@ -63,16 +63,18 @@ CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Change maximum number of 
 
 CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
                                                         CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX)))
+
+@python_2_unicode_compatible
 class CalendarAction(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    servicePool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
+    service_pool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
     action = models.CharField(max_length=64, default='')
-    atStart = models.BooleanField(default=False)  # If false, action is done at end of event
-    eventsOffset = models.IntegerField(default=0)  # In minutes
+    at_start = models.BooleanField(default=False)  # If false, action is done at end of event
+    events_offset = models.IntegerField(default=0)  # In minutes
     params = models.CharField(max_length=1024, default='')
     # Not to be edited, just to be used as indicators for executions
-    lastExecution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
-    nextExecution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
+    last_execution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
+    next_execution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
 
     class Meta:
         '''
@@ -83,25 +85,25 @@ class CalendarAction(UUIDModel):
 
     @property
     def offset(self):
-        return datetime.timedelta(minutes=self.eventsOffset)
+        return datetime.timedelta(minutes=self.events_offset)
 
     def execute(self, save=True):
         logger.debug('Executing action')
-        self.lastExecution = getSqlDatetime()
+        self.last_execution = getSqlDatetime()
         params = json.loads(self.params)
 
         saveServicePool = save
 
         if CALENDAR_ACTION_CACHE_L1['id'] == self.action:
-            self.servicePool.cache_l1_srvs = int(params['size'])
+            self.service_pool.cache_l1_srvs = int(params['size'])
         elif CALENDAR_ACTION_CACHE_L2['id'] == self.action:
-            self.servicePool.cache_l1_srvs = int(params['size'])
+            self.service_pool.cache_l1_srvs = int(params['size'])
         elif CALENDAR_ACTION_INITIAL['id'] == self.action:
-            self.servicePool.initial_srvs = int(params['size'])
+            self.service_pool.initial_srvs = int(params['size'])
         elif CALENDAR_ACTION_MAX['id'] == self.action:
-            self.servicePool.max_srvs = int(params['size'])
+            self.service_pool.max_srvs = int(params['size'])
         elif CALENDAR_ACTION_PUBLISH['id'] == self.action:
-            self.servicePool.publish(changeLog='Scheduled publication action')
+            self.service_pool.publish(changeLog='Scheduled publication action')
             saveServicePool = False
 
         # On save, will regenerate nextExecution
@@ -109,10 +111,16 @@ class CalendarAction(UUIDModel):
             self.save()
 
         if saveServicePool:
-            self.servicePool.save()
+            self.service_pool.save()
 
 
     def save(self, *args, **kwargs):
-        self.nextExecution = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=self.lastExecution, startEvent=self.atStart, offset=self.offset)
+        self.next_execution = calendar.CalendarChecker(self.calendar).nextEvent(checkFrom=self.last_execution, startEvent=self.at_start, offset=self.offset)
 
         return UUIDModel.save(self, *args, **kwargs)
+
+
+    def __str__(self):
+        return 'Calendar of {}, last_execution = {}, next execution = {}, action = {}, params = {}'.format(
+            self.service_pool.name, self.last_execution, self.next_execution, self.action, self.params
+        )
