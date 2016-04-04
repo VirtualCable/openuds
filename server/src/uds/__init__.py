@@ -52,12 +52,10 @@ __updated__ = '2016-04-04'
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
 try:
     _create_unverified_https_context = ssl._create_unverified_context
+    ssl._create_default_https_context = _create_unverified_https_context
 except AttributeError:
     # Legacy Python that doesn't verify HTTPS certificates by default
     pass
-else:
-    # Handle target environment that doesn't support HTTPS verification
-    ssl._create_default_https_context = _create_unverified_https_context
 
 
 
