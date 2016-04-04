@@ -76,9 +76,6 @@ urlpatterns = patterns(
     # Ticket authentication
     url(r'^tkauth/(?P<ticketId>.+)$', 'web.views.ticketAuth', name='TicketAuth'),
 
-    # XMLRPC Processor
-    (r'^xmlrpc$', 'xmlrpc.views.xmlrpc'),
-
     # REST Api
     url(r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
 
