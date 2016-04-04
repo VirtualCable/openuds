@@ -41,7 +41,6 @@
         })
     }
 
-    // Tagadder never gets destroyed, so we only set the event once
     $('#adder{{ id }}').on('click', function(){
         gui.forms.promptModal('Tag', gettext('Enter new tag'), {
             onAccept: function(text) {
@@ -59,25 +58,25 @@
     {{/ unless }}
 
     function updateVisibleTags() {
-        $tags.empty()
-        if ($data.val() != '')  // No values
+        $tags.empty();
+        if ($data.val() != '') 
             $.each($data.val().split(','), function(idx, val) {
                 $tags.append(tag(val));
                 gui.doLog(idx, val);
 
-            })
-        {{# unless readonly }}setEvents(){{/ unless }}
+            });
+        {{# unless readonly }}setEvents();{{/ unless }}
     }
 
     function addTag(text) {
         var curr;
         var found = false;
 
-        text = text.split(' ').join(''); // Remove white spaces
+        text = text.split(' ').join(''); 
         
         text = api.tools.capitalize(text);
 
-        if ($data.val() == '')  // No values
+        if ($data.val() == '')
             curr = [text];
         else {
             curr = $data.val().split(',');
@@ -86,7 +85,7 @@
                 if( val == text) {
                     found = true;
                 }
-            })
+            });
             if( !found )
                 curr.push(text);
         }
@@ -99,7 +98,7 @@
 
         text = api.tools.capitalize(text);
 
-        if ($data.val() != '')  // No values
+        if ($data.val() != '')
             curr = $data.val().split(',');
         else
             curr = [];
@@ -114,7 +113,6 @@
         });
     }
 
-    // Start showing current tags
     updateVisibleTags();
 
 }());
