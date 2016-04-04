@@ -1754,7 +1754,7 @@ msgstr "Acesso de usuários a UDS"
 
 #: reports/stats/pool_performance.py:81
 msgid "Distinct users by pool"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49DE36"
+msgstr ""
 
 #: reports/stats/pool_performance.py:87
 msgid "Accesses by pool"
@@ -1770,7 +1770,7 @@ msgstr "Acessos"
 
 #: reports/stats/pool_performance.py:131
 msgid "Pools performance by date"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49DF47"
+msgstr ""
 
 #: reports/stats/pool_performance.py:132
 msgid "Pools performance report by date"
@@ -1786,7 +1786,7 @@ msgstr "Piscinas para relatório"
 
 #: reports/stats/pool_performance.py:185
 msgid "Select at least a service pool for the report"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49E075"
+msgstr ""
 
 #: reports/stats/pool_performance.py:290
 msgid "Users by pool"
@@ -1794,7 +1794,7 @@ msgstr "Usuários de piscina"
 
 #: reports/stats/pool_performance.py:302
 msgid "Users for {}"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49E0F7"
+msgstr ""
 
 #: reports/stats/pool_performance.py:319
 msgid "Accesses for {}"
@@ -2046,7 +2046,7 @@ msgstr "Provedor de Nutanix Acrópole (Experimental)"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 msgid "Nutanix based VM provider"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49E2DD"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixProvider.py:37
 msgid "Nutanix Acropolis Server IP or Hostname"
@@ -2087,13 +2087,13 @@ msgstr "Nutanix KVM serviço baseado"
 
 #: services/Nutanix_enterprise/NutanixService.py:44
 msgid "Base Vm"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49E6E7"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixService.py:52
 msgid ""
 "Networks for the machines (every machine will be attached to this networks, "
 "each one with its own interface)"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49E776cada um com sua própria interface)"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixService.py:57
 msgid "Vm Names"
@@ -2171,7 +2171,7 @@ msgstr "Senha do usuário do oVirt"
 
 #: services/OVirt/OVirtProvider.py:99
 msgid "Timeout in seconds of connection to oVirt"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49E915"
+msgstr ""
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -2246,7 +2246,7 @@ msgstr "Max. Allowd serviços"
 
 #: services/RDS_enterprise/RDSService.py:59
 msgid "Maximum number of allowed services (0 means no limit)"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49E9B0"
+msgstr ""
 
 #: services/RDS_enterprise/RDSService.py:76
 msgid "A valid application path is required"

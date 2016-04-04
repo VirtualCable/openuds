@@ -2045,7 +2045,7 @@ msgstr "Acropoli di Nutanix Provider (sperimentale)"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 msgid "Nutanix based VM provider"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49D5E7"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixProvider.py:37
 msgid "Nutanix Acropolis Server IP or Hostname"
@@ -2057,7 +2057,7 @@ msgstr "Server di Nutanix Acropoli porta (default 9440)"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 msgid "User with valid privileges on Nutanix Acropolis"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49D6FC"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 msgid "Password of the user of Nutanix Acropolis"
@@ -2065,7 +2065,7 @@ msgstr "Password dell'utente di Nutanix Acropolis"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:41
 msgid "Timeout in seconds of connection to Nutanix"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49D7AF"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixProvider.py:43
 #: services/OVirt/OVirtProvider.py:101
@@ -2074,7 +2074,7 @@ msgstr "Gamma di Mac valido per UDS gestito macchine"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:166
 msgid "Connection works fine"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49D8A4"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixService.py:21
 msgid "Nutanix KVM (Experimental)"
@@ -2092,11 +2092,11 @@ msgstr "Base Vm"
 msgid ""
 "Networks for the machines (every machine will be attached to this networks, "
 "each one with its own interface)"
-msgstr "Reti per le macchine (ogni macchina sarà allegata a questo reti, TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49DB19"
+msgstr ""
 
 #: services/Nutanix_enterprise/NutanixService.py:57
 msgid "Vm Names"
-msgstr "TranslateApiException: AppId is over the quota : ID=6346.V2_Json.Translate.4B49DB5B"
+msgstr ""
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"
