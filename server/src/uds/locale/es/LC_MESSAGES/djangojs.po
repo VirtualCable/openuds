@@ -959,7 +959,7 @@ msgstr "Filtro"
 #: static/tmp_js/gui.js:36
 #, javascript-format
 msgid "Selected %d rows"
-msgstr "%D las filas"
+msgstr "%d filas seleccionadas"
 
 #: static/tmp_js/gui.js:37
 msgid "Click on a row to select it"
