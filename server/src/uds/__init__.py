@@ -79,8 +79,6 @@ class UDSAppConfig(AppConfig):
         from . import plugins  # To make sure plugins are loaded on memory
         from . import REST  # To make sure REST initializes all what it needs
 
-        import uds.xmlrpc  # To make actor live
-
 
 default_app_config = 'uds.UDSAppConfig'
 
