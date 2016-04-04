@@ -33,7 +33,8 @@
 from __future__ import unicode_literals
 
 # from django.utils import simplejson as json
-import ujson as json
+#import ujson as json
+import json
 from xml_marshaller import xml_marshaller
 import datetime
 import time

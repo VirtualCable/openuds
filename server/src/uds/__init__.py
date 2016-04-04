@@ -46,7 +46,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2016-02-19'
+__updated__ = '2016-04-04'
 
 
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
@@ -78,6 +78,8 @@ class UDSAppConfig(AppConfig):
         from . import dispatchers  # Ensure all dischatchers all also available
         from . import plugins  # To make sure plugins are loaded on memory
         from . import REST  # To make sure REST initializes all what it needs
+
+        plugins.appLoaded()
 
         import uds.xmlrpc  # To make actor live
 

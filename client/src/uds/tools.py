@@ -40,6 +40,7 @@ import socket
 import stat
 import six
 import sys
+import time
 
 _unlinkFiles = []
 _tasksToWait = []
@@ -94,6 +95,8 @@ def unlinkFiles():
     '''
     Removes all wait-and-unlink files
     '''
+    if len(_unlinkFiles) > 0:
+        time.sleep(5)  # Wait 5 seconds before deleting anything
     for f in _unlinkFiles:
         try:
             os.unlink(f)
