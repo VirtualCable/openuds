@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2016 Virtual Cable S.L.
 # All rights reserved.
@@ -26,63 +25,25 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-from uds.core.util.html import checkBrowser
-from uds.web import errors
+from uds.models import DBFile
+from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 
-from functools import wraps
-
+import mimetypes
 import logging
-
-__updated__ = '2016-04-05'
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2016-04-05'
 
-# Decorator that protects pages that needs at least a browser version
-# Default is to deny IE < 9
-def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)):
-    '''
-    Decorator to set protection to access page
-    Look for samples at uds.core.web.views
-    '''
-    def wrap(view_func):
-        @wraps(view_func)
-        def _wrapped_view(request, *args, **kwargs):
-            '''
-            Wrapped function for decorator
-            '''
-            for b in browsers:
-                if checkBrowser(request, b):
-                    return errorResponse(request)
+@cache_page(3600, key_prefix='file', cache='memory')
+def file_storage(request, uuid):
+    f = DBFile.objects.get(uuid=uuid)
+    content_type, encoding = mimetypes.guess_type(f.name)
 
-            return view_func(request, *args, **kwargs)
-        return _wrapped_view
-    return wrap
-
-
-def deprecated(func):
-    '''This is a decorator which can be used to mark functions
-    as deprecated. It will result in a warning being emitted
-    when the function is used.'''
-    import inspect
-
-    @wraps(func)
-    def new_func(*args, **kwargs):
-        try:
-            caller = inspect.stack()[1]
-            logger.warn(
-                "Call to deprecated function {0} from {1}:{2}.".format(func.__name__,
-                                                                       caller[1], caller[2]
-                                                                       )
-            )
-        except Exception:
-            logger.info('No stack info on deprecated function call {0}'.format(func.__name__))
-
-        return func(*args, **kwargs)
-    return new_func
+    return HttpResponse(f.data, content_type=content_type)

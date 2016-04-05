@@ -82,6 +82,9 @@ urlpatterns = patterns(
     # Web admin GUI
     (r'^adm/', include('uds.admin.urls')),
 
+    # Files
+    (r'^files/(?P<uuid>.+)', 'web.views.file_storage'),
+
     # Internacionalization in javascript
     # Javascript catalog
     (r'^jsi18n/(?P<lang>[a-z]*)$', 'web.views.jsCatalog', js_info_dict),

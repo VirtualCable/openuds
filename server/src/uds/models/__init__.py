@@ -105,7 +105,10 @@ from .CalendarAction import CalendarAction
 # Tagging
 from .Tag import Tag
 
-__updated__ = '2016-02-17'
+# Utility
+from .DBFile import DBFile
+
+__updated__ = '2016-04-05'
 
 
 logger = logging.getLogger(__name__)

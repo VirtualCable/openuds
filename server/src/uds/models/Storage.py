@@ -38,7 +38,7 @@ from uds.core.db.LockingManager import LockingManager
 import logging
 
 
-__updated__ = '2015-06-01'
+__updated__ = '2016-04-05'
 
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 class Storage(models.Model):
     '''
-    General storage model. Used to store specific instances (transport, service, servicemanager, ...) persinstent information
+    General storage model. Used to store specific instances (transport, service, servicemanager, ...) persistent information
     not intended to be serialized/deserialized everytime one object instance is loaded/saved.
     '''
     owner = models.CharField(max_length=128, db_index=True)

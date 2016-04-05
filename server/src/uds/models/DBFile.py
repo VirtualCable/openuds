@@ -37,27 +37,31 @@ from __future__ import unicode_literals
 __updated__ = '2016-04-05'
 
 from django.db import models
-from uds.core.util import states
+from django.utils.encoding import python_2_unicode_compatible
 from uds.models.UUIDModel import UUIDModel
-from uds.models.Calendar import Calendar
-from uds.models.ServicesPool import ServicePool
-# from django.utils.translation import ugettext_lazy as _, ugettext
 
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
-class CalendarAccess(UUIDModel):
-    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    service_pool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
-    access = models.CharField(max_length=8, default=states.action.DENY)
-    priority = models.IntegerField(default=0, db_index=True)
 
-    class Meta:
-        '''
-        Meta class to declare db table
-        '''
-        db_table = 'uds_cal_access'
-        ordering = ('priority',)
-        app_label = 'uds'
+@python_2_unicode_compatible
+class DBFile(UUIDModel):
+    name = models.CharField(max_length=255, primary_key=True)
+    content = models.TextField(blank=True)
+    size = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
+    @property
+    def data(self):
+        return self.content.decode('base64').decode('zip')
+
+    @data.setter
+    def data(self, value):
+        self.size = len(value)
+        self.content = value.encode('zip').encode('base64')
+
+    def __str__(self):
+        return 'File: {} {} {} {}'.format(self.name, self.size, self.created, self.modified)

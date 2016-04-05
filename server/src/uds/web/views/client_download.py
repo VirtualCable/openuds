@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,7 +45,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-28'
+__updated__ = '2016-04-05'
 
 
 UserPrefsManager.manager().registerPrefs(

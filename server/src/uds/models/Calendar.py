@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,7 +34,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-17'
+__updated__ = '2016-04-05'
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
