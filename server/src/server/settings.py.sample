@@ -122,8 +122,12 @@ CACHES = {
             'CULL_FREQUENCY': 3,  #  0 = Entire cache will be erased once MAX_ENTRIES is reached, this is faster on DB. if other value, will remove 1/this number items fromm cache
         }
     },
+#    'memory': {
+#        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#    }
     'memory': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
     }
 }
 

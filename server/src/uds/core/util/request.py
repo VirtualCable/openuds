@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -38,7 +38,7 @@ from uds.models import User
 import threading
 import logging
 
-__updated__ = '2015-05-10'
+__updated__ = '2016-04-06'
 
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -37,7 +37,6 @@ from django.utils.translation import ugettext as _
 from django.templatetags.static import static
 
 from uds.core.util import html
-from uds.core.util.request import getRequest
 from uds.core.auths.auth import ROOT_ID
 from uds.core.util.Config import GlobalConfig
 from uds.models.Image import Image
