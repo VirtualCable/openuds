@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-04-07'
 
 
 logger = logging.getLogger(__name__)
@@ -58,18 +58,18 @@ class BaseRDPTransport(Transport):
     iconFile = 'rdp.png'
     protocol = protocols.RDP
 
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order=2, tooltip=_('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order=3, tooltip=_('If not empty, this password will be always used as credential'))
-    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=4, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
-    fixedDomain = gui.TextField(label=_('Domain'), order=5, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=6, tooltip=_('If checked, this transport will allow the use of smartcards'))
-    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=7, tooltip=_('If checked, this transport will allow the use of user printers'))
-    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=8, tooltip=_('If checked, this transport will allow the use of user drives'))
-    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=9, tooltip=_('If checked, this transport will allow the use of user serial ports'))
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=10, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
-    multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=10, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'))
-    aero = gui.CheckBoxField(label=_('Allow Aero'), order=11, tooltip=_('If checked, desktop composition will be allowed'))
+    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=11, tooltip=_('If checked, the credentials used to connect will be emtpy'))
+    fixedName = gui.TextField(label=_('Username'), order=12, tooltip=_('If not empty, this username will be always used as credential'))
+    fixedPassword = gui.PasswordField(label=_('Password'), order=13, tooltip=_('If not empty, this password will be always used as credential'))
+    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=14, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
+    fixedDomain = gui.TextField(label=_('Domain'), order=15, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
+    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=16, tooltip=_('If checked, this transport will allow the use of smartcards'))
+    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=17, tooltip=_('If checked, this transport will allow the use of user printers'))
+    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=18, tooltip=_('If checked, this transport will allow the use of user drives'))
+    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=19, tooltip=_('If checked, this transport will allow the use of user serial ports'))
+    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=20, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
+    multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=21, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'))
+    aero = gui.CheckBoxField(label=_('Allow Aero'), order=22, tooltip=_('If checked, desktop composition will be allowed'))
 
     def isAvailableFor(self, userService, ip):
         '''
