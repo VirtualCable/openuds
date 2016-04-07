@@ -770,6 +770,7 @@ class UserInterfaceType(type):
         return type.__new__(cls, classname, bases, newClassDict)
 
 
+@six.add_metaclass(UserInterfaceType)
 class UserInterface(object):
     '''
     This class provides the management for gui descriptions (user forms)
@@ -781,7 +782,7 @@ class UserInterface(object):
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
     '''
-    __metaclass__ = UserInterfaceType
+    # __metaclass__ = UserInterfaceType
 
     def __init__(self, values=None):
         import copy

@@ -50,7 +50,7 @@ import six
 # Python bindings for OpenNebula
 import oca
 
-__updated__ = '2016-02-09'
+__updated__ = '2016-04-07'
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,11 @@ class Provider(ServiceProvider):
     ssl = gui.CheckBoxField(label=_('Use SSL'), order=3, tooltip=_('If checked, the connection will be forced to be ssl (will not work if server is not providing ssl)'))
     username = gui.TextField(length=32, label=_('Username'), order=4, tooltip=_('User with valid privileges on OpenNebula'), required=True, defvalue='oneadmin')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=5, tooltip=_('Password of the user of OpenNebula'), required=True)
-    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=6, tooltip=_('Timeout in seconds of connection to OpenNebula'), required=True)
+
+    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently removing VMs'), required=True)
+    maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True)
+
+    timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to OpenNebula'), required=True)
 
     # Own variables
     _api = None

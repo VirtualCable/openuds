@@ -89,66 +89,63 @@ msgstr "Utilisateurs"
 #: REST/methods/providers.py:70 REST/methods/services.py:190
 #: REST/methods/services_pools.py:81 REST/methods/transports.py:59
 msgid "tags"
-msgstr ""
+msgstr "Tags"
 
 #: REST/methods/calendarrules.py:98
 #: templates/uds/admin/tmpl/calendar_rule.html:9
-#, fuzzy
 #| msgid "username"
 msgid "Rule name"
-msgstr "nom d'utilisateur"
+msgstr "Nom de la règle"
 
 #: REST/methods/calendarrules.py:99
 #: templates/uds/admin/tmpl/calendar_rule.html:55
 msgid "Starts"
-msgstr ""
+msgstr "Mises en chantier"
 
 #: REST/methods/calendarrules.py:100
 #: templates/uds/admin/tmpl/calendar_rule.html:64
 msgid "Ends"
-msgstr ""
+msgstr "Se termine"
 
 #: REST/methods/calendarrules.py:101
 #: templates/uds/admin/tmpl/calendar_rule.html:73
 msgid "Repeats"
-msgstr ""
+msgstr "Se répète"
 
 #: REST/methods/calendarrules.py:102
 msgid "Every"
-msgstr ""
+msgstr "Chaque"
 
 #: REST/methods/calendarrules.py:103
 #: templates/uds/admin/tmpl/calendar_rule.html:34
-#, fuzzy
 #| msgid "Configuration"
 msgid "Duration"
-msgstr "Configuration"
+msgstr "Durée"
 
 #: REST/methods/calendarrules.py:128 REST/methods/services.py:151
 msgid "Element already exists (duplicate key error)"
 msgstr "Élément existe déjà (erreur de clé en double)"
 
 #: REST/methods/calendarrules.py:150
-#, fuzzy, python-brace-format
+#, python-brace-format
 #| msgid "Users of {0}"
 msgid "Rules of {0}"
-msgstr "Utilisateurs de {0}"
+msgstr "Règles de {0}"
 
 #: REST/methods/calendarrules.py:152
-#, fuzzy
 #| msgid "Current users"
 msgid "Current rules"
-msgstr "Utilisateurs actuels"
+msgstr "Règles actuelles"
 
 #: REST/methods/calendars.py:58 templates/uds/admin/snippets/navbar.html.py:26
 #: templates/uds/admin/tmpl/calendars.html:4
 #: templates/uds/admin/tmpl/calendars.html:7
 msgid "Calendars"
-msgstr ""
+msgstr "Calendriers"
 
 #: REST/methods/calendars.py:62
 msgid "Modified"
-msgstr ""
+msgstr "Modifié"
 
 #: REST/methods/images.py:58
 msgid "Image Gallery"
@@ -284,17 +281,16 @@ msgstr "Services aux utilisateurs"
 
 #: REST/methods/services_pool_calendars.py:85
 msgid "Access restrictions by calendar"
-msgstr ""
+msgstr "Restrictions d'accès par calendrier"
 
 #: REST/methods/services_pool_calendars.py:90
 #: REST/methods/services_pool_calendars.py:156
 #: templates/uds/admin/tmpl/pool_add_access.html:12
 #: templates/uds/admin/tmpl/pool_add_action.html:5
 msgid "Calendar"
-msgstr ""
+msgstr "Calendrier"
 
 #: REST/methods/services_pool_calendars.py:91
-#, fuzzy
 #| msgid "Accesses"
 msgid "Access"
 msgstr "Accès"
@@ -302,46 +298,41 @@ msgstr "Accès"
 #: REST/methods/services_pool_calendars.py:152
 #: templates/uds/admin/tmpl/services_pool.html:36
 msgid "Scheduled actions"
-msgstr ""
+msgstr "Actions prévues"
 
 #: REST/methods/services_pool_calendars.py:157
 #: templates/uds/admin/tmpl/pool_add_action.html:35
-#, fuzzy
 #| msgid "Active"
 msgid "Action"
-msgstr "Active"
+msgstr "Action"
 
 #: REST/methods/services_pool_calendars.py:158
 msgid "Parameters"
-msgstr ""
+msgstr "Paramètres"
 
 #: REST/methods/services_pool_calendars.py:159
 msgid "Relative to"
-msgstr ""
+msgstr "Par rapport à"
 
 #: REST/methods/services_pool_calendars.py:160
-#, fuzzy
 #| msgid "Timeout"
 msgid "Time offset"
-msgstr "Temporisation"
+msgstr "Décalage horaire"
 
 #: REST/methods/services_pool_calendars.py:161
-#, fuzzy
 #| msgid "Waiting execution"
 msgid "Next execution"
-msgstr "Exécution en attente"
+msgstr "Prochaine exécution"
 
 #: REST/methods/services_pool_calendars.py:162
-#, fuzzy
 #| msgid "Waiting execution"
 msgid "Last execution"
-msgstr "Exécution en attente"
+msgstr "Dernière exécution"
 
 #: REST/methods/services_pool_groups.py:60
-#, fuzzy
 #| msgid "Service Pools"
 msgid "Services Pool Groups"
-msgstr "Piscines service"
+msgstr "Groupes de services piscine"
 
 #: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:151
 msgid "Associated Image"
@@ -371,14 +362,13 @@ msgid "Shows transports"
 msgstr "Montre transports"
 
 #: REST/methods/services_pools.py:80
-#, fuzzy
 #| msgid "Group"
 msgid "Pool Group"
-msgstr "Groupe"
+msgstr "Groupe piscine"
 
 #: REST/methods/services_pools.py:105 REST/methods/services_pools.py:157
 msgid "Default"
-msgstr ""
+msgstr "Par défaut"
 
 #: REST/methods/services_pools.py:126
 msgid "Create at least one OS Manager before creating a new service pool"
@@ -405,14 +395,13 @@ msgid "OS Manager used as base of this service pool"
 msgstr "Gestionnaire de l'OS utilisé comme base de cette piscine service"
 
 #: REST/methods/services_pools.py:158
-#, fuzzy
 #| msgid "Meta group"
 msgid "Pool group"
-msgstr "Groupe Meta"
+msgstr "Groupe piscine"
 
 #: REST/methods/services_pools.py:159
 msgid "Pool group for this pool (for pool clasify on display)"
-msgstr ""
+msgstr "Groupe de piscine pour ce pool (pour piscine Benodigd sur écran)"
 
 #: REST/methods/services_pools.py:166
 msgid "Initial available services"
@@ -554,7 +543,7 @@ msgstr "Version de l'acteur"
 
 #: REST/methods/user_services.py:151
 msgid "Item already being removed"
-msgstr ""
+msgstr "Élément déjà retiré"
 
 #: REST/methods/user_services.py:153
 msgid "Item is not removable"
@@ -670,13 +659,12 @@ msgstr "UDS Meta Group"
 
 #: REST/model.py:120
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 #: REST/model.py:122
-#, fuzzy
 #| msgid "Tag for this element"
 msgid "Tags for this element"
-msgstr "Tag pour cet élément"
+msgstr "Tags pour cet élément"
 
 #: REST/model.py:130
 msgid "Name of this element"
@@ -695,13 +683,12 @@ msgstr ""
 
 #: REST/model.py:156
 msgid "Label"
-msgstr ""
+msgstr "Étiquette"
 
 #: REST/model.py:157
-#, fuzzy
 #| msgid "Tag for this element"
 msgid "Label for this element"
-msgstr "Tag pour cet élément"
+msgstr "Étiquette pour cet élément"
 
 #: REST/model.py:240
 msgid "Invalid Request"
@@ -1657,90 +1644,83 @@ msgstr ""
 "temps en temps."
 
 #: models/CalendarAction.py:58
-#, fuzzy
 #| msgid "Publish date"
 msgid "Publish"
-msgstr "La date de publication"
+msgstr "Publier"
 
 #: models/CalendarAction.py:59
 msgid "Sets cache size"
-msgstr ""
+msgstr "Taille du cache de jeux"
 
 #: models/CalendarAction.py:59
-#, fuzzy
 #| msgid "Cached services"
 msgid "Cache size"
-msgstr "Services de mise en cache"
+msgstr "Taille du cache"
 
 #: models/CalendarAction.py:60
 msgid "Sets L2 cache size"
-msgstr ""
+msgstr "Définit la taille du cache L2"
 
 #: models/CalendarAction.py:60
-#, fuzzy
 #| msgid "Cached services"
 msgid "Cache L2 size"
-msgstr "Services de mise en cache"
+msgstr "Taille du cache L2"
 
 #: models/CalendarAction.py:61
-#, fuzzy
 #| msgid "Current services"
 msgid "Set initial services"
-msgstr "Services actuels"
+msgstr "Réglage initiales services"
 
 #: models/CalendarAction.py:61
-#, fuzzy
 #| msgid "Initial available services"
 msgid "Initial services"
-msgstr "Initiales services disponibles"
+msgstr "Services initiales"
 
 #: models/CalendarAction.py:62
-#, fuzzy
 #| msgid "Maximum number of services to provide"
 msgid "Change maximum number of services"
-msgstr "Nombre maximum de services à fournir"
+msgstr "Modifier le nombre maximum de services"
 
 #: models/CalendarAction.py:62
-#, fuzzy
 #| msgid "View services"
 msgid "Maximum services"
-msgstr "Services de consultation"
+msgstr "Services maximum"
 
 #: models/CalendarRule.py:56
 msgid "Yearly"
-msgstr ""
+msgstr "Tous les ans"
 
 #: models/CalendarRule.py:57
 msgid "Monthly"
-msgstr ""
+msgstr "Mensuel"
 
 #: models/CalendarRule.py:58
 msgid "Weekly"
-msgstr ""
+msgstr "Hebdomadaire"
 
 #: models/CalendarRule.py:59
 msgid "Daily"
-msgstr ""
+msgstr "Tous les jours"
 
 #: models/CalendarRule.py:60
 msgid "Weekdays"
-msgstr ""
+msgstr "Lundi au vendredi"
 
 #: models/CalendarRule.py:78
 msgid "Minutes"
-msgstr ""
+msgstr "Minutes"
 
 #: models/CalendarRule.py:79
 msgid "Hours"
-msgstr ""
+msgstr "Heures"
 
 #: models/CalendarRule.py:80
 msgid "Days"
-msgstr ""
+msgstr "Jours"
 
 #: models/CalendarRule.py:81
 msgid "Weeks"
-msgstr ""
+msgstr "Semaines"
 
 #: models/Permissions.py:80
 msgid "Read"
@@ -1755,10 +1735,9 @@ msgid "All"
 msgstr "Tous les"
 
 #: models/ServicesPoolGroup.py:85
-#, fuzzy
 #| msgid "Generates"
 msgid "General"
-msgstr "Génère"
+msgstr "Générales"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:51
 msgid "Linux OS Manager"
@@ -2193,44 +2172,40 @@ msgid "Statistics of platform use"
 msgstr "Statistiques d'utilisation de la plate-forme"
 
 #: reports/stats/usage_by_pool.py:72
-#, fuzzy
 #| msgid "Access denied"
 msgid "Access Datetime"
-msgstr "Accès refusé"
+msgstr "Accès Datetime"
 
 #: reports/stats/usage_by_pool.py:74
 msgid "Duration(seconds)"
-msgstr ""
+msgstr "Duration(seconds)"
 
 #: reports/stats/usage_by_pool.py:91
 msgid "Pools usage by users"
-msgstr ""
+msgstr "Utilisation des piscines par les utilisateurs"
 
 #: reports/stats/usage_by_pool.py:92
-#, fuzzy
 #| msgid "Pools for report"
 msgid "Pools usage by user report"
-msgstr "Piscines pour rapport"
+msgstr "Utilisation des piscines par le rapport de l'utilisateur"
 
 #: reports/stats/usage_by_pool.py:99
-#, fuzzy
 #| msgid "Pools for report"
 msgid "Pool for report"
-msgstr "Piscines pour rapport"
+msgstr "Piscine pour rapport"
 
 #: reports/stats/usage_by_pool.py:167
-#, fuzzy
 #| msgid "Users List for {}"
 msgid "Users usage list for {}"
-msgstr "Liste des utilisateurs des {}"
+msgstr "Liste d'utilisation aux utilisateurs pour {}"
 
 #: reports/stats/usage_by_pool.py:189
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: reports/stats/usage_by_pool.py:189
 msgid "Seconds"
-msgstr ""
+msgstr "Secondes"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
@@ -2614,257 +2589,230 @@ msgstr "Délai d'attente en secondes de connexion à oVirt"
 
 #: services/OpenNebula/LiveService.py:55
 msgid "OpenNebula Live Images"
-msgstr ""
+msgstr "OpenNebula Images Live"
 
 #: services/OpenNebula/LiveService.py:59
 msgid "OpenNebula live images bases service"
-msgstr ""
+msgstr "OpenNebula live service de bases d'images"
 
 #: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:40
-#, fuzzy
 #| msgid "Number of desired machines to keep running waiting for a user"
 msgid "Number of desired machines to keep running waiting for an user"
-msgstr "Nombre de machines désirés de courir d'attente pour un utilisateur."
+msgstr "Nombre d'ordinateurs de votre choix pour continuer à fonctionner en attente pour un utilisateur"
 
 #: services/OpenNebula/LiveService.py:95
-#, fuzzy
 #| msgid "Base Report"
 msgid "Base Template"
-msgstr "Rapport de base"
+msgstr "Modèle de base"
 
 #: services/OpenNebula/LiveService.py:95
-#, fuzzy
 #| msgid "Service base machine"
 msgid "Service base template"
-msgstr "Machine de base de service"
+msgstr "Modèle de base de service"
 
 #: services/OpenNebula/LiveService.py:96
-#, fuzzy
 #| msgid "Pub.Datastores"
 msgid "Datastore"
-msgstr "Pub.Datastores"
+msgstr "Magasin de données"
 
 #: services/OpenNebula/LiveService.py:96
-#, fuzzy
 #| msgid "Service under maintenance"
 msgid "Service clones datastore"
-msgstr "Service en maintenance"
+msgstr "Service des clones datastore"
 
 #: services/OpenNebula/Provider.py:79
-#, fuzzy
 #| msgid "Xenserver Platform Provider"
 msgid "OpenNebula Platform Provider"
-msgstr "Fournisseur de plates-formes de XenServer"
+msgstr "Fournisseur de plates-formes de OpenNebula"
 
 #: services/OpenNebula/Provider.py:83
-#, fuzzy
 #| msgid "XenServer platform service provider"
 msgid "OpenNebula platform service provider"
-msgstr "Fournisseur de services de plate-forme XenServer"
+msgstr "Fournisseur de services de plate-forme OpenNebula"
 
 #: services/OpenNebula/Provider.py:98
 msgid "OpenNebula Host"
-msgstr ""
+msgstr "OpenNebula hôte"
 
 #: services/OpenNebula/Provider.py:99
 msgid "OpenNebula Port (default is 2633 for non ssl connection)"
-msgstr ""
+msgstr "Port de OpenNebula (valeur par défaut est 2633 pour connexion ssl non)"
 
 #: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
-#, fuzzy
 #| msgid ""
 #| "If checked, the connection will be ssl, using port 636 instead of 389"
 msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
 msgstr ""
-"S'il est activé, la connexion sera ssl, en utilisant le port 636 au lieu de "
-"389"
+"S'il est activé, la connexion sera forcée d'être ssl (ne fonctionnera pas si serveur "
+"ne fournit pas de ssl)"
 
 #: services/OpenNebula/Provider.py:101
-#, fuzzy
 #| msgid "User with valid privileges on XenServer"
 msgid "User with valid privileges on OpenNebula"
-msgstr "Utilisateur avec des privilèges valides sur XenServer"
+msgstr "Utilisateur avec des privilèges valides sur OpenNebula"
 
 #: services/OpenNebula/Provider.py:102
-#, fuzzy
 #| msgid "Password of the user of HyperV"
 msgid "Password of the user of OpenNebula"
-msgstr "Mot de passe de l'utilisateur de HyperV"
+msgstr "Mot de passe de l'utilisateur de OpenNebula"
 
 #: services/OpenNebula/Provider.py:103
-#, fuzzy
 #| msgid "Timeout in seconds of connection to Nutanix"
 msgid "Timeout in seconds of connection to OpenNebula"
-msgstr "Délai d'attente en secondes de connexion à Nutanix"
+msgstr "Délai d'attente en secondes de connexion à OpenNebula"
 
 #: services/OpenNebula/Provider.py:153
 msgid "Opennebula test connection passed"
-msgstr ""
+msgstr "Opennebula test de connexion passée"
 
 #: services/OpenStack/LiveService.py:57
 msgid "OpenStack Live Volume"
-msgstr ""
+msgstr "OpenStack Volume direct"
 
 #: services/OpenStack/LiveService.py:61
 msgid "OpenStack live images bases service"
-msgstr ""
+msgstr "OpenStack live service de bases d'images"
 
 #: services/OpenStack/LiveService.py:99
 msgid "Region"
-msgstr ""
+msgstr "Région"
 
 #: services/OpenStack/LiveService.py:99
-#, fuzzy
 #| msgid "Service name"
 msgid "Service region"
-msgstr "Nom du service"
+msgstr "Service de la région"
 
 #: services/OpenStack/LiveService.py:100
 msgid "Project"
-msgstr ""
+msgstr "Projet"
 
 #: services/OpenStack/LiveService.py:106
-#, fuzzy
 #| msgid "Base machine for this service"
 msgid "Project for this service"
-msgstr "Machine de base pour ce service"
+msgstr "Projet pour ce service"
 
 #: services/OpenStack/LiveService.py:108
-#, fuzzy
 #| msgid "Available reports"
 msgid "Availability Zones"
-msgstr "Rapports disponibles"
+msgstr "Zones de disponibilité"
 
 #: services/OpenStack/LiveService.py:114
-#, fuzzy
 #| msgid "No services available"
 msgid "Service availability zones"
-msgstr "Aucun service disponible"
+msgstr "Zones de disponibilité de service"
 
 #: services/OpenStack/LiveService.py:116
 msgid "Volume"
-msgstr ""
+msgstr "Volume"
 
 #: services/OpenStack/LiveService.py:116
 msgid "Base volume for service (restricted by availability zone)"
-msgstr ""
+msgstr "Volume de base pour le service (limité par zone de disponibilité)"
 
 #: services/OpenStack/LiveService.py:118
-#, fuzzy
 #| msgid "Base machine for this service"
 msgid "Network to attach to this service"
-msgstr "Machine de base pour ce service"
+msgstr "Réseau d'attacher à ce service"
 
 #: services/OpenStack/LiveService.py:119
 msgid "Flavor"
-msgstr ""
+msgstr "Saveur"
 
 #: services/OpenStack/LiveService.py:119
-#, fuzzy
 #| msgid "Base service"
 msgid "Flavor for service"
-msgstr "Service de base"
+msgstr "Goût pour le service"
 
 #: services/OpenStack/LiveService.py:121
-#, fuzzy
 #| msgid "UDS Meta Group"
 msgid "Security Groups"
-msgstr "UDS Meta Group"
+msgstr "Groupes de sécurité"
 
 #: services/OpenStack/LiveService.py:121
-#, fuzzy
 #| msgid "Service providers"
 msgid "Service security groups"
-msgstr "Fournisseurs de services"
+msgstr "Groupes de sécurité service"
 
 #: services/OpenStack/Provider.py:79
-#, fuzzy
 #| msgid "Xenserver Platform Provider"
 msgid "OpenStack Platform Provider"
-msgstr "Fournisseur de plates-formes de XenServer"
+msgstr "Fournisseur de plates-formes OpenStack"
 
 #: services/OpenStack/Provider.py:83
-#, fuzzy
 #| msgid "XenServer platform service provider"
 msgid "OpenStack platform service provider"
-msgstr "Fournisseur de services de plate-forme XenServer"
+msgstr "Fournisseur de services de plate-forme OpenStack"
 
 #: services/OpenStack/Provider.py:98
-#, fuzzy
 #| msgid "Src Host"
 msgid "OpenStack Host"
-msgstr "Hôte de la SRC"
+msgstr "OpenStack hôte"
 
 #: services/OpenStack/Provider.py:99
 msgid "OpenStack Port"
-msgstr ""
+msgstr "OpenStack Port"
 
 #: services/OpenStack/Provider.py:102
-#, fuzzy
 #| msgid "Access denied"
 msgid "Access interface"
-msgstr "Accès refusé"
+msgstr "Interface d'accès aux"
 
 #: services/OpenStack/Provider.py:102
 msgid "Access interface to be used"
-msgstr ""
+msgstr "Interface d'accès à utiliser"
 
 #: services/OpenStack/Provider.py:104
 msgid "Domain name (default is Default)"
-msgstr ""
+msgstr "Nom de domaine (valeur par défaut est la valeur par défaut)"
 
 #: services/OpenStack/Provider.py:105
-#, fuzzy
 #| msgid "User with valid privileges on XenServer"
 msgid "User with valid privileges on OpenStack"
-msgstr "Utilisateur avec des privilèges valides sur XenServer"
+msgstr "Utilisateur avec des privilèges valides sur OpenStack"
 
 #: services/OpenStack/Provider.py:106
-#, fuzzy
 #| msgid "Password of the user of HyperV"
 msgid "Password of the user of OpenStack"
-msgstr "Mot de passe de l'utilisateur de HyperV"
+msgstr "Mot de passe de l'utilisateur de OpenStack"
 
 #: services/OpenStack/Provider.py:108
-#, fuzzy
 #| msgid "Creation date"
 msgid "Creation concurrency"
-msgstr "Date de création"
+msgstr "Simultanéité de la création"
 
 #: services/OpenStack/Provider.py:108 services/OpenStack/Provider.py:109
-#, fuzzy
 #| msgid "Maximum number of services to provide"
 msgid "Maximum number of concurrently removing VMs"
-msgstr "Nombre maximum de services à fournir"
+msgstr "Nombre maximal d'éliminer simultanément les VMs"
 
 #: services/OpenStack/Provider.py:109
 msgid "Removal concurrency"
-msgstr ""
+msgstr "Simultanéité d'enlèvement"
 
 #: services/OpenStack/Provider.py:111
-#, fuzzy
 #| msgid "Timeout in seconds of connection to HyperV"
 msgid "Timeout in seconds of connection to OpenStack"
-msgstr "Délai d'attente en secondes de connexion pour HyperV"
+msgstr "Délai d'attente en secondes de connexion à OpenStack"
 
 #: services/OpenStack/Provider.py:155
 msgid "OpenStack test connection passed"
-msgstr ""
+msgstr "OpenStack test de connexion passée"
 
 #: services/OpenStack/openStack/UDSOpenStackClient.py:610
-#, fuzzy
 #| msgid "Authenticator"
 msgid "Authentication error"
-msgstr "Authentificateur"
+msgstr "Erreur d'authentification"
 
 #: services/OpenStack/openStack/UDSOpenStackClient.py:612
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
 msgstr ""
+"OpenStack ne supporte pas l'identité API 3.2 ou plus récent. Ce serveur OpenStack "
+"n'est pas compatible avec l'UDS."
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -3185,13 +3133,12 @@ msgstr "Entrepôts de données où mettre des sauvegardes incrémentales"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:85
 msgid "Remove found duplicates"
-msgstr ""
+msgstr "Supprimer les doublons trouvés"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#, fuzzy
 #| msgid "Full path of the application this service will represent"
 msgid "If active, found duplicates clones for this service will be removed"
-msgstr "Chemin d'accès complet de la demande que ce service représentera"
+msgstr "S'il est activé, clones de doublons trouvés pour ce service seront supprimés"
 
 #: services/Xen/XenLinkedService.py:56
 msgid "Xen Linked Clone (Experimental)"
@@ -3295,10 +3242,9 @@ msgid "Connectivity"
 msgstr "Connectivité"
 
 #: templates/uds/admin/snippets/navbar.html:30
-#, fuzzy
 #| msgid "Pools"
 msgid "Tools"
-msgstr "Piscines"
+msgstr "Outils"
 
 #: templates/uds/admin/snippets/navbar.html:32
 #: templates/uds/admin/tmpl/gallery.html:8
@@ -3307,10 +3253,9 @@ msgid "Gallery"
 msgstr "Galerie"
 
 #: templates/uds/admin/snippets/navbar.html:33
-#, fuzzy
 #| msgid "Service Pools"
 msgid "Services Pool Group"
-msgstr "Piscines service"
+msgstr "Groupe des services de piscine"
 
 #: templates/uds/admin/snippets/navbar.html:34
 #: templates/uds/admin/tmpl/reports.html:4
@@ -3343,88 +3288,80 @@ msgid "Logs"
 msgstr "Journaux"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:7
-#, fuzzy
 #| msgid "Name of this element"
 msgid "Name of this rule"
-msgstr "Nom de cet élément"
+msgstr "Nom de cette règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:14
-#, fuzzy
 #| msgid "Comments for this element"
 msgid "Comments for this rule"
-msgstr "Commentaires pour cet élément"
+msgstr "Commentaires pour cette règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:16
-#, fuzzy
 #| msgid "comments"
 msgid "Rule comments"
-msgstr "Commentaires"
+msgstr "Commentaires de la règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:22
 msgid "Event"
-msgstr ""
+msgstr "Événement"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:24
-#, fuzzy
 #| msgid "Starting date"
 msgid "Starting hour"
-msgstr "Date de départ"
+msgstr "Heure de démarrage"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:34
-#, fuzzy
 #| msgid "Tag for this element"
 msgid "Duration for this rule"
-msgstr "Tag pour cet élément"
+msgstr "Durée pour cette règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:53
 msgid "Repeat"
-msgstr ""
+msgstr "Répétez"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:55
-#, fuzzy
 #| msgid "starting date for report"
 msgid "Starting date for repeating"
-msgstr "date de début de rapport"
+msgstr "Date de début de répétition"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:64
-#, fuzzy
 #| msgid "Finish date"
 msgid "End date"
 msgstr "Date de fin"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:73
 msgid "Frequency for this rule"
-msgstr ""
+msgstr "Fréquence pour cette règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:84
 msgid "Repeat interval for this rule"
-msgstr ""
+msgstr "Intervalle de répétition pour cette règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:84
 msgid "Repeat every"
-msgstr ""
+msgstr "Répétez chaque"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:86
 msgid "Repeat interval for rule"
-msgstr ""
+msgstr "Intervalle de répétition pour la règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:91
-#, fuzzy
 #| msgid "Tag for this element"
 msgid "Weekdays for this rule"
-msgstr "Tag pour cet élément"
+msgstr "Lundi au vendredi pour cette règle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:91
 msgid "Repeat on"
-msgstr ""
+msgstr "Répétez sur"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:105
 msgid "Summary"
-msgstr ""
+msgstr "Résumé"
 
 #: templates/uds/admin/tmpl/calendars.html:30
 msgid "Rules"
-msgstr ""
+msgstr "Règles"
 
 #: templates/uds/admin/tmpl/comp/modal.html:19
 msgid "Close"
@@ -3504,7 +3441,7 @@ msgstr "Ajouter"
 
 #: templates/uds/admin/tmpl/fld/taglist.html:8
 msgid "Add Tag..."
-msgstr ""
+msgstr "Ajouter un Tag..."
 
 #: templates/uds/admin/tmpl/gallery.html:5
 msgid "UDS Image Gallery"
@@ -3603,18 +3540,17 @@ msgstr "Accès complet"
 
 #: templates/uds/admin/tmpl/pool_access_default.html:5
 #: templates/uds/admin/tmpl/pool_add_access.html:24
-#, fuzzy
 #| msgid "Access denied"
 msgid "Access action"
-msgstr "Accès refusé"
+msgstr "Action d'accès"
 
 #: templates/uds/admin/tmpl/pool_add_action.html:17
 msgid "Events Offset (minutes)"
-msgstr ""
+msgstr "Événements Offset (minutes)"
 
 #: templates/uds/admin/tmpl/pool_add_action.html:24
 msgid "At interval beginning?"
-msgstr ""
+msgstr "Au début de l'intervalle ?"
 
 #: templates/uds/admin/tmpl/pool_add_transport.html:5
 msgid "Transport"
@@ -3680,16 +3616,14 @@ msgid "Transports"
 msgstr "Transports"
 
 #: templates/uds/admin/tmpl/services_pool.html:37
-#, fuzzy
 #| msgid "Access denied"
 msgid "Access Calendars"
-msgstr "Accès refusé"
+msgstr "Calendriers d'accès"
 
 #: templates/uds/admin/tmpl/services_pool_groups.html:5
-#, fuzzy
 #| msgid "Service Pools"
 msgid "UDS Services Pool Groups"
-msgstr "Piscines service"
+msgstr "UDS Services groupes piscine"
 
 #: templates/uds/admin/tmpl/user.html:56
 msgid "Staff member"
@@ -3837,7 +3771,7 @@ msgstr "Cours de maintenance"
 
 #: templates/uds/html5/index.html:31
 msgid "Access limited by calendar"
-msgstr ""
+msgstr "Accès limité par calendrier"
 
 #: templates/uds/html5/index.html:33
 msgid "Currently in use"
@@ -3860,14 +3794,13 @@ msgid "Please, retry access in a while."
 msgstr "Recommencez l'accès depuis un moment."
 
 #: templates/uds/html5/index.html:99
-#, fuzzy
 #| msgid "Service not found"
 msgid "Service access not allowed"
-msgstr "Service introuvable"
+msgstr "Accès non autorisé au service"
 
 #: templates/uds/html5/index.html:102
 msgid "This service is currently not accesible due to schedule restrictions"
-msgstr ""
+msgstr "Ce service n'est actuellement pas accessible en raison des restrictions d'horaire"
 
 #: templates/uds/html5/index.html:116
 msgid "Administrator info panel"
@@ -4316,34 +4249,28 @@ msgid "NX Protocol"
 msgstr "Protocole de NX"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
-#, fuzzy
 #| msgid "RDS Provider (Experimental)"
 msgid "PCoIP Transport (Experimental)"
-msgstr "Fournisseur de RDS (expérimental)"
+msgstr "Transport de PCoIP (expérimental)"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-#, fuzzy
 #| msgid "RDS Provider (Experimental)"
 msgid "PCoIP Transport, Experimental"
-msgstr "Fournisseur de RDS (expérimental)"
+msgstr "Transport de PCoIP, expérimental"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:57
-#, fuzzy
 #| msgid "Connection"
 msgid "Connetion Manager"
-msgstr "Connexion"
+msgstr "Gestionnaire de connetion"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:57
 msgid "Hostname or address of connection manager"
-msgstr ""
+msgstr "Nom d'hôte ou l'adresse du gestionnaire de connexions"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
-#, fuzzy
 #| msgid "If not empty, this username will be always used as credential"
 msgid "If not empty, this domain will be always used as credential domain"
-msgstr ""
-"Si ce n'est vide, ce nom d'utilisateur sera toujours utilisé comme des "
-"titres de compétences"
+msgstr "Si non vide, ce domaine sera toujours utilisé comme domaine d'informations d'identification"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:69
@@ -4645,7 +4572,7 @@ msgstr "Préparation de service"
 
 #: web/errors.py:87
 msgid "Service access denied by calendars"
-msgstr ""
+msgstr "Service accès refusé par les calendriers"
 
 #: web/forms/LoginForm.py:53
 msgid "Select authenticator"

@@ -2045,7 +2045,7 @@ msgstr "Acropoli di Nutanix Provider (sperimentale)"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 msgid "Nutanix based VM provider"
-msgstr ""
+msgstr "Nutanix VM provider basato su"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:37
 msgid "Nutanix Acropolis Server IP or Hostname"
@@ -2057,7 +2057,7 @@ msgstr "Server di Nutanix Acropoli porta (default 9440)"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:39
 msgid "User with valid privileges on Nutanix Acropolis"
-msgstr ""
+msgstr "Utente con privilegi validi sull'Acropoli di Nutanix"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:40
 msgid "Password of the user of Nutanix Acropolis"
@@ -2065,7 +2065,7 @@ msgstr "Password dell'utente di Nutanix Acropolis"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:41
 msgid "Timeout in seconds of connection to Nutanix"
-msgstr ""
+msgstr "Timeout in secondi di connessione a Nutanix"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:43
 #: services/OVirt/OVirtProvider.py:101
@@ -2074,7 +2074,7 @@ msgstr "Gamma di Mac valido per UDS gestito macchine"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:166
 msgid "Connection works fine"
-msgstr ""
+msgstr "Connessione funziona bene"
 
 #: services/Nutanix_enterprise/NutanixService.py:21
 msgid "Nutanix KVM (Experimental)"
@@ -2093,10 +2093,12 @@ msgid ""
 "Networks for the machines (every machine will be attached to this networks, "
 "each one with its own interface)"
 msgstr ""
+"Reti per le macchine (ogni macchina sarà allegata a questo reti, "
+"ognuno con la propria interfaccia)"
 
 #: services/Nutanix_enterprise/NutanixService.py:57
 msgid "Vm Names"
-msgstr ""
+msgstr "Nomi di VM"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"

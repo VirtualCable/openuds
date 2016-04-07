@@ -11,7 +11,7 @@ import threading
 import logging
 import re
 
-__updated__ = '2015-09-21'
+__updated__ = '2016-04-07'
 
 logger = logging.getLogger(__name__)
 
@@ -387,8 +387,6 @@ class Client(object):
             sd = params.StorageDomains(storage_domain=[params.StorageDomain(id=storageId)])
 
             fix = not self._isFullyFunctionalVersion(api)[0]  # If we need a fix for "publish"
-
-            print "FIX: {}".format(fix)
 
             dsks = []
             for dsk in vm.disks.list():

@@ -110,10 +110,9 @@ msgstr "Accepter"
 #: static/tmp_js/gui-d-authenticators.js:131
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
 #: static/tmp_js/gui-d-services.js:95 static/tmp_js/gui-d-servicespools.js:182
-#, fuzzy
 #| msgid "Error accessing service: "
 msgid "Error accessing data"
-msgstr "Erreur d'accès au service : "
+msgstr "Erreur d'accès aux données"
 
 #: static/tmp_js/gui-d-authenticators.js:157
 msgid "Edit group"
@@ -221,194 +220,179 @@ msgid "Authenticator deletion error"
 msgstr "Erreur suppression authentificateur"
 
 #: static/tmp_js/gui-d-calendar.js:23
-#, fuzzy
 #| msgid "May"
 msgid "day"
-msgstr "Mai"
+msgstr "Journée"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "days"
-msgstr ""
+msgstr "jours"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "Dayly"
-msgstr ""
+msgstr "Dayly"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "week"
-msgstr ""
+msgstr "semaine"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "weeks"
-msgstr ""
+msgstr "semaines"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "Weekly"
-msgstr ""
+msgstr "Hebdomadaire"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "month"
-msgstr ""
+msgstr "mois"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "months"
-msgstr ""
+msgstr "mois"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "Monthly"
-msgstr ""
+msgstr "Mensuel"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "year"
-msgstr ""
+msgstr "année"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "years"
-msgstr ""
+msgstr "années"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "Yearly"
-msgstr ""
+msgstr "Tous les ans"
 
 #: static/tmp_js/gui-d-calendar.js:27
 msgid "Weekdays"
-msgstr ""
+msgstr "Lundi au vendredi"
 
 #: static/tmp_js/gui-d-calendar.js:30
 msgid "Minutes"
-msgstr ""
+msgstr "Minutes"
 
 #: static/tmp_js/gui-d-calendar.js:31
 msgid "Hours"
-msgstr ""
+msgstr "Heures"
 
 #: static/tmp_js/gui-d-calendar.js:32
 msgid "Days"
-msgstr ""
+msgstr "Jours"
 
 #: static/tmp_js/gui-d-calendar.js:33
 msgid "Weeks"
-msgstr ""
+msgstr "Semaines"
 
 #: static/tmp_js/gui-d-calendar.js:35
-#, fuzzy
 #| msgid "Sunday"
 msgid "Sun"
-msgstr "Dimanche"
+msgstr "Sun"
 
 #: static/tmp_js/gui-d-calendar.js:51
 msgid "(no days)"
-msgstr ""
+msgstr "(pas de jours)"
 
 #: static/tmp_js/gui-d-calendar.js:151
 msgid "This rule will be valid every "
-msgstr ""
+msgstr "Cette règle sera valide chaque "
 
 #: static/tmp_js/gui-d-calendar.js:153
 msgid "of any week"
-msgstr ""
+msgstr "de n'importe quelle semaine"
 
 #: static/tmp_js/gui-d-calendar.js:161
 msgid "from"
-msgstr ""
+msgstr "De"
 
 #: static/tmp_js/gui-d-calendar.js:163
 msgid "onwards"
-msgstr ""
+msgstr "à partir"
 
 #: static/tmp_js/gui-d-calendar.js:165
 msgid "until "
-msgstr ""
+msgstr "jusqu'au "
 
 #: static/tmp_js/gui-d-calendar.js:167
 msgid "starting at"
-msgstr ""
+msgstr "à partir de"
 
 #: static/tmp_js/gui-d-calendar.js:170
 msgid "and will remain valid for "
-msgstr ""
+msgstr "et restera valable pour "
 
 #: static/tmp_js/gui-d-calendar.js:172
-#, fuzzy
 #| msgid "Publish on creation"
 msgid "with no duration"
-msgstr "Publier sur création"
+msgstr "avec aucune durée"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#, fuzzy
 #| msgid "New user"
 msgid "New rule"
-msgstr "Nouvel utilisateur"
+msgstr "Nouvelle règle"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#, fuzzy
 #| msgid "Edit user"
 msgid "Edit rule"
-msgstr "Modifier utilisateur"
+msgstr "Modifier la règle"
 
 #: static/tmp_js/gui-d-calendar.js:209
 msgid "Save"
-msgstr ""
+msgstr "Enregistrer"
 
 #: static/tmp_js/gui-d-calendar.js:277
-#, fuzzy
 #| msgid "Error creating report"
 msgid "Error creating rule"
-msgstr "Erreur de création du rapport"
+msgstr "Règle de création erreur"
 
 #: static/tmp_js/gui-d-calendar.js:280
-#, fuzzy
 #| msgid "Error creating report"
 msgid "Error saving rule"
-msgstr "Erreur de création du rapport"
+msgstr "Règle une erreur"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#, fuzzy
 #| msgid "Delete user"
 msgid "Delete rule"
-msgstr "Supprimer l'utilisateur"
+msgstr "Supprimer la règle"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#, fuzzy
 #| msgid "deletion error"
 msgid "Rule deletion error"
-msgstr "erreur de suppression"
+msgstr "Erreur de suppression de règle"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#, fuzzy
 #| msgid "New OSManager"
 msgid "New calendar"
-msgstr "Nouveau OSManager"
+msgstr "Nouveau calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#, fuzzy
 #| msgid "OSManager creation error"
 msgid "Calendar creation error"
-msgstr "Erreur de création de OSManager"
+msgstr "Erreur de création de calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#, fuzzy
 #| msgid "Edit OSManager"
 msgid "Edit calendar"
-msgstr "Modifier OSManager"
+msgstr "Modifier le calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#, fuzzy
 #| msgid "OSManager saving error"
 msgid "Calendar saving error"
-msgstr "OSManager erreur de sauvegarde"
+msgstr "Calendrier sauver erreur"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#, fuzzy
 #| msgid "Delete OSManager"
 msgid "Delete calendar"
-msgstr "Supprimer OSManager"
+msgstr "Supprimer le calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#, fuzzy
 #| msgid "User deletion error"
 msgid "Calendar deletion error"
-msgstr "Erreur de suppression d'utilisateur"
+msgstr "Erreur de suppression de calendrier"
 
 #: static/tmp_js/gui-d-config.js:56
 msgid "Configuration saved"
@@ -475,10 +459,9 @@ msgid "New image"
 msgstr "Nouvelle image"
 
 #: static/tmp_js/gui-d-gallery.js:17
-#, fuzzy
 #| msgid "Edit OSManager"
 msgid "Edit image"
-msgstr "Modifier OSManager"
+msgstr "Modifier l'image"
 
 #: static/tmp_js/gui-d-gallery.js:18
 msgid "Upload"
@@ -543,7 +526,7 @@ msgstr "Dans l'entretien"
 
 #: static/tmp_js/gui-d-services.js:74
 msgid "Active"
-msgstr ""
+msgstr "Actif"
 
 #: static/tmp_js/gui-d-services.js:131
 msgid "Edit service"
@@ -620,54 +603,52 @@ msgstr "Erreur de suppression de fournisseur de services"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:54
 msgid "Launch Now"
-msgstr ""
+msgstr "Lancez maintenant"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Execute action"
-msgstr ""
+msgstr "Exécuter l'action"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Launch action execution right now?"
-msgstr ""
+msgstr "Lancer dès maintenant l'exécution de l'action ?"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:108
 msgid "Beginning"
-msgstr ""
+msgstr "Début"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:108
 msgid "Ending"
-msgstr ""
+msgstr "Se terminant"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:116
 msgid "Add scheduled action"
-msgstr ""
+msgstr "Ajouter une action planifiée"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:178
 #: static/tmp_js/gui-d-servicespools-calendars.js:92
 msgid "Edit access calendar"
-msgstr ""
+msgstr "Modifier le calendrier d'accès"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#, fuzzy
 #| msgid "Remove Cache element"
 msgid "Remove access calendar"
-msgstr "Remove, élément de Cache"
+msgstr "Supprimer le calendrier d'accès"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#, fuzzy
 #| msgid "Transport removal error"
 msgid "Access calendar removal error"
-msgstr "Erreur de suppression de transport"
+msgstr "Erreur de suppression d'accès calendrier"
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:41
 msgid "Add access calendar"
-msgstr ""
+msgstr "Ajouter un accès calendrier"
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:70
 msgid "Default fallback access"
-msgstr ""
+msgstr "Accès de secours par défaut"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:17
 #: static/tmp_js/gui-d-servicespools-publications.js:41
@@ -681,10 +662,9 @@ msgid "Publish"
 msgstr "Publier"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
-#, fuzzy
 #| msgid "Cancel publication"
 msgid "Cancel publication?"
-msgstr "Annuler la publication"
+msgstr "Annuler la publication ?"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:39
 msgid "Force Cancel"
@@ -791,34 +771,29 @@ msgid "deletion error"
 msgstr "erreur de suppression"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#, fuzzy
 #| msgid "New services provider"
 msgid "New services Services Pool Group"
-msgstr "Nouveau fournisseur de services"
+msgstr "Nouveaux services Services piscine groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#, fuzzy
 #| msgid "Services provider creation error"
 msgid "Services Services Pool Group creation error"
-msgstr "Erreur de création de fournisseur de services"
+msgstr "Erreur de création de services Services piscine groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-#, fuzzy
 #| msgid "Edit services provider"
 msgid "Edit services Services Pool Group"
-msgstr "Modifier le fournisseur de services"
+msgstr "Modifier les services Services piscine groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#, fuzzy
 #| msgid "Delete services provider"
 msgid "Delete Services Pool Group"
-msgstr "Supprimer le fournisseur de services"
+msgstr "Supprimer le Pool Services groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#, fuzzy
 #| msgid "Service creation error"
 msgid "Services Pool Group error"
-msgstr "Erreur de création de service"
+msgstr "Erreur de services piscine groupe"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache"
@@ -830,7 +805,7 @@ msgstr "Cache a été vidé"
 
 #: static/tmp_js/gui-element.js:229
 msgid "Refresh operation failed"
-msgstr ""
+msgstr "Actualiser l'opération a échoué"
 
 #: static/tmp_js/gui-element.js:604
 msgid "Date"
@@ -862,7 +837,7 @@ msgstr "ne"
 
 #: static/tmp_js/gui-form.js:283
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: static/tmp_js/gui-methods.js:17
 msgid "Test passed successfully"
@@ -882,7 +857,7 @@ msgstr "Edition faite avec succès"
 
 #: static/tmp_js/gui-methods.js:78
 msgid "Overview"
-msgstr ""
+msgstr "Vue d'ensemble"
 
 #: static/tmp_js/gui-methods.js:100
 msgid "of type"
@@ -898,25 +873,22 @@ msgstr "Êtes-vous sûr que vous souhaitez supprimer "
 
 #: static/tmp_js/gui-methods.js:138
 msgid "items:"
-msgstr ""
+msgstr "Articles :"
 
 #: static/tmp_js/gui-methods.js:147
-#, fuzzy
 #| msgid "Error creating report"
 msgid "Error deleting"
-msgstr "Erreur de création du rapport"
+msgstr "Suppression de l'erreur"
 
 #: static/tmp_js/gui-methods.js:149
-#, fuzzy
 #| msgid "Edition successfully done"
 msgid "Successfully deleted"
-msgstr "Edition faite avec succès"
+msgstr "A été correctement supprimé"
 
 #: static/tmp_js/gui-methods.js:154
-#, fuzzy
 #| msgid "Deletion error"
 msgid "Deletion results"
-msgstr "Erreur de suppression"
+msgstr "Résultats de la suppression"
 
 #: static/tmp_js/gui-permissions.js:42
 msgid "Add"
@@ -948,7 +920,7 @@ msgstr "Un instant..."
 
 #: static/tmp_js/gui-tools.js:145
 msgid "Never"
-msgstr ""
+msgstr "Jamais"
 
 #: static/tmp_js/gui.js:19
 msgid "_MENU_ records per page"
@@ -981,15 +953,15 @@ msgstr "Filtre"
 #: static/tmp_js/gui.js:36
 #, javascript-format
 msgid "Selected %d rows"
-msgstr ""
+msgstr "Certains %d lignes"
 
 #: static/tmp_js/gui.js:37
 msgid "Click on a row to select it"
-msgstr ""
+msgstr "Cliquez sur une ligne pour la sélectionner"
 
 #: static/tmp_js/gui.js:38
 msgid "Selected one row"
-msgstr ""
+msgstr "Sélectionné une ligne"
 
 #: static/tmp_js/gui.js:44
 msgid "New"
@@ -1008,10 +980,9 @@ msgid "Message"
 msgstr "Message"
 
 #: static/tmp_js/gui.js:130
-#, fuzzy
 #| msgid "Test failed:"
 msgid "Connection failed"
-msgstr "Test a échoué :"
+msgstr "Échoué de la connexion"
 
 #: static/tmp_js/gui.js:224
 msgid "This field is required."
