@@ -2,3 +2,4 @@ CMakeCache.txt
 CMakeFiles
 *.cmake
 Makefile
+*.so
