@@ -52,7 +52,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '1.9.0'
+REQUIRED_CLIENT_VERSION = '2.0.0'
 
 
 # Enclosed methods under /actor path

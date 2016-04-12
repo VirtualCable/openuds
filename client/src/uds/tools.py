@@ -59,6 +59,25 @@ def saveTempFile(content, filename=None):
 
     return filename
 
+def readTempFile(filename):
+    if 'win32' in sys.platform:
+        filename = filename.encode('utf-8')
+
+    filename = os.path.join(tempfile.gettempdir(), filename)
+    try:
+        with open(filename, 'w') as f:
+            return f.read()
+    except Exception:
+        return None
+
+def testServer(host, port, timeOut=4):
+    try:
+        sock = socket.create_connection((host, int(port)), timeOut)
+        sock.close()
+    except Exception:
+        return False
+    return True
+
 
 def findApp(appName, extraPath=None):
     if 'win32' in sys.platform and isinstance(appName, six.text_type):

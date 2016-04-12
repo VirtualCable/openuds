@@ -43,7 +43,7 @@ def testServer(host, port, timeOut=4):
         logger.debug('Checking connection to {0}:{1} with {2} seconds timeout'.format(host, port, timeOut))
         sock = socket.create_connection((host, int(port)), timeOut)
         sock.close()
-    except Exception, e:
+    except Exception as e:
         logger.debug('Exception checking {0}:{1} with {2} timeout: {3}'.format(host, port, timeOut, e))
         return False
     return True

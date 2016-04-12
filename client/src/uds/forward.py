@@ -14,15 +14,15 @@ import time
 
 from .log import logger
 
-class ForwardServer (SocketServer.ThreadingTCPServer):
+class ForwardServer(SocketServer.ThreadingTCPServer):
     daemon_threads = True
     allow_reuse_address = True
 
 
-class Handler (SocketServer.BaseRequestHandler):
+class Handler(SocketServer.BaseRequestHandler):
 
     def handle(self):
-        self.thread.isConnected = True
+        self.thread.currentConnections += 1
 
         try:
             chan = self.ssh_transport.open_channel('direct-tcpip',
@@ -68,7 +68,7 @@ class Handler (SocketServer.BaseRequestHandler):
         if self.thread.stoppable is True:
             self.thread.stop()
 
-        self.thread.isConnected = False
+        self.thread.currentConnections -= 1
 
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
@@ -92,14 +92,14 @@ class ForwardThread(threading.Thread):
         self.stopEvent = threading.Event()
 
         self.timer = None
-        self.isConnected = False
+        self.currentConnections = 0
         self.stoppable = False
 
     def _timerFnc(self):
         self.timer = None
-        logger.debug('Timer fnc: {}'.format(self.isConnected))
+        logger.debug('Timer fnc: {}'.format(self.currentConnections))
         self.stoppable = True
-        if self.isConnected is False:
+        if self.currentConnections <= 0:
             self.stop()
 
     def run(self):
@@ -116,7 +116,7 @@ class ForwardThread(threading.Thread):
             self.status = 2  # Error
             return
 
-        class SubHandler (Handler):
+        class SubHandler(Handler):
             chain_host = self.redirectHost
             chain_port = self.redirectPort
             ssh_transport = self.client.get_transport()
