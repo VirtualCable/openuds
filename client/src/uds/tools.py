@@ -65,7 +65,7 @@ def readTempFile(filename):
 
     filename = os.path.join(tempfile.gettempdir(), filename)
     try:
-        with open(filename, 'w') as f:
+        with open(filename, 'r') as f:
             return f.read()
     except Exception:
         return None
@@ -129,7 +129,13 @@ def addTaskToWait(taks):
 
 def waitForTasks():
     for t in _tasksToWait:
-        t.wait()
+        try:
+            if hasattr(t, 'join'):
+                t.join()
+            elif hasattr(t, 'wait'):
+                t.wait()
+        except Exception:
+            pass
 
 
 def addExecBeforeExit(fnc):
