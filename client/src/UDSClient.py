@@ -56,7 +56,7 @@ class UDSClient(QtGui.QMainWindow):
     withError = False
     animTimer = None
     anim = 0
-    animInc = 1
+    animInverted = False
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -100,9 +100,8 @@ class UDSClient(QtGui.QMainWindow):
 
     def showError(self, e):
         self.stopAnim()
-        self.ui.progressBar.setValue(100)
-        self.ui.info.setText('Error')
-        QtGui.QMessageBox.critical(self, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
+        self.ui.info.setText('UDS Plugin Error')  # In fact, main window is hidden, so this is not visible... :)
+        QtGui.QMessageBox.critical(None, 'UDS Plugin Error', '{}'.format(e), QtGui.QMessageBox.Ok)
         self.closeWindow()
         self.withError = True
 
@@ -111,17 +110,19 @@ class UDSClient(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def updateAnim(self):
-        self.anim += self.animInc
-        if self.anim < 1 or self.anim > 99:
-            self.ui.progressBar.invertedAppearance = not self.ui.progressBar.invertedAppearance
-            self.animInc = -self.animInc
+        self.anim += 2
+        if self.anim > 99:
+            self.animInverted = not self.animInverted
+            self.ui.progressBar.setInvertedAppearance(self.animInverted)
+            self.anim = 0
 
         self.ui.progressBar.setValue(self.anim)
 
     def startAnim(self):
         self.ui.progressBar.invertedAppearance = False
         self.anim = 0
-        self.animInc = 1
+        self.animInverted = False
+        self.ui.progressBar.setInvertedAppearance(self.animInverted)
         self.animTimer.start(40)
 
     def stopAnim(self):
@@ -256,6 +257,10 @@ if __name__ == "__main__":
     # First parameter must be url
     try:
         uri = sys.argv[1]
+
+        if uri == '--test':
+            sys.exit(0)
+
         logger.debug('URI: {}'.format(uri))
         if uri[:6] != 'uds://' and uri[:7] != 'udss://':
             raise Exception()
@@ -298,12 +303,3 @@ if __name__ == "__main__":
     logger.debug('Exiting')
     sys.exit(exitVal)
 
-    # Build base REST
-
-    # v = RestRequest('', done)
-    # v.get()
-
-    # sys.exit(1)
-
-    # myapp = UDSConfigDialog(cfg)
-    # myapp.show()
