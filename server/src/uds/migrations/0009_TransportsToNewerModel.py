@@ -5,12 +5,6 @@ from django.db import models, migrations
 from uds.core.ui.UserInterface import gui
 from uds.transports.RDP.RDPTransport import RDPTransport
 from uds.transports.RDP.TRDPTransport import TRDPTransport
-try:
-    from uds.transports.RGS import RGSTransport  # @UnresolvedImport, pylint: disable=import-error, no-name-in-module
-    from uds.transports.RGS import TRGSTransport  # @UnresolvedImport, pylint: disable=import-error, no-name-in-module
-except Exception:
-    from uds.transports.RGS_enterprise import RGSTransport  # @UnresolvedImport @Reimport, pylint: disable=import-error, no-name-in-module
-    from uds.transports.RGS_enterprise import TRGSTransport  # @UnresolvedImport @Reimport, pylint: disable=import-error, no-name-in-module
 
 from uds.core.Environment import Environment
 
@@ -97,75 +91,6 @@ def unmarshalTRDP(str_):
         'tunnelCheckServer': tunnelCheckServer
     }
 
-
-def unmarshalRGS(data):
-    data = data.split('\t')
-    if data[0] == 'v1':
-        useEmptyCreds = gui.strToBool(data[1])
-        fixedName = data[2]
-        fixedPassword = data[3]
-        fixedDomain = data[4]
-        imageQuality = data[5]
-        adjustableQuality = gui.strToBool(data[6])
-        minAdjustableQuality = data[7]
-        minAdjustableRate = data[8]
-        matchLocalDisplay = gui.strToBool(data[9])
-        redirectUSB = gui.strToBool(data[10])
-        redirectAudio = gui.strToBool(data[11])
-        redirectMIC = gui.strToBool(data[12])
-
-    return {
-        'fixedName': fixedName,
-        'fixedPassword': fixedPassword,
-        'fixedDomain': fixedDomain,
-        'useEmptyCreds': useEmptyCreds,
-        'imageQuality': imageQuality,
-        'adjustableQuality': adjustableQuality,
-        'minAdjustableQuality': minAdjustableQuality,
-        'minAdjustableRate': minAdjustableRate,
-        'matchLocalDisplay': matchLocalDisplay,
-        'redirectUSB': redirectUSB,
-        'redirectAudio': redirectAudio,
-        'redirectMIC': redirectMIC
-    }
-
-
-def unmarshalTRGS(data):
-    data = data.split('\t')
-    if data[0] == 'v1':
-        useEmptyCreds = gui.strToBool(data[1])
-        fixedName = data[2]
-        fixedPassword = data[3]
-        fixedDomain = data[4]
-        imageQuality = int(data[5])
-        adjustableQuality = gui.strToBool(data[6])
-        minAdjustableQuality = int(data[7])
-        minAdjustableRate = int(data[8])
-        matchLocalDisplay = gui.strToBool(data[9])
-        redirectUSB = gui.strToBool(data[10])
-        redirectAudio = gui.strToBool(data[11])
-        redirectMIC = gui.strToBool(data[12])
-        tunnelServer = data[13]
-        tunnelCheckServer = data[14]
-
-    return {
-        'fixedName': fixedName,
-        'fixedPassword': fixedPassword,
-        'fixedDomain': fixedDomain,
-        'useEmptyCreds': useEmptyCreds,
-        'imageQuality': imageQuality,
-        'adjustableQuality': adjustableQuality,
-        'minAdjustableQuality': minAdjustableQuality,
-        'minAdjustableRate': minAdjustableRate,
-        'matchLocalDisplay': matchLocalDisplay,
-        'redirectUSB': redirectUSB,
-        'redirectAudio': redirectAudio,
-        'redirectMIC': redirectMIC,
-        'tunnelServer': tunnelServer,
-        'tunnelCheckServer': tunnelCheckServer
-    }
-
-
 def transformTransports(apps, schema_editor):
     '''
     Move serialization to a better model (it's time, the mode is there since 1.1 :) )
@@ -182,18 +107,6 @@ def transformTransports(apps, schema_editor):
             values = unmarshalTRDP(t.data.decode(TRDPTransport.CODEC))
             rdp = TRDPTransport(Environment.getTempEnv(), values)
             t.data = rdp.serialize()
-            t.save()
-
-        if t.data_type == RGSTransport.typeType:
-            values = unmarshalRGS(t.data.decode(RGSTransport.CODEC))
-            rgs = RGSTransport(Environment.getTempEnv(), values)
-            t.data = rgs.serialize()
-            t.save()
-
-        if t.data_type == TRGSTransport.typeType:
-            values = unmarshalTRGS(t.data.decode(TRGSTransport.CODEC))
-            rgs = TRGSTransport(Environment.getTempEnv(), values)
-            t.data = rgs.serialize()
             t.save()
 
 
