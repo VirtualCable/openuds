@@ -54,6 +54,9 @@ class UDSClient(QtGui.QMainWindow):
     ticket = None
     scrambler = None
     withError = False
+    animTimer = None
+    anim = 0
+    animInc = 1
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -73,7 +76,13 @@ class UDSClient(QtGui.QMainWindow):
         vpos = (screen.height() - mysize.height() - mysize.height()) / 2
         self.move(hpos, vpos)
 
+        self.animTimer = QtCore.QTimer()
+        QtCore.QObject.connect(self.animTimer, QtCore.SIGNAL('timeout()'), self.updateAnim)
+
         self.activateWindow()
+
+        self.startAnim()
+
 
     def closeWindow(self):
         self.close()
@@ -90,6 +99,7 @@ class UDSClient(QtGui.QMainWindow):
             # return
 
     def showError(self, e):
+        self.stopAnim()
         self.ui.progressBar.setValue(100)
         self.ui.info.setText('Error')
         QtGui.QMessageBox.critical(self, 'Error', six.text_type(e), QtGui.QMessageBox.Ok)
@@ -99,12 +109,24 @@ class UDSClient(QtGui.QMainWindow):
     def cancelPushed(self):
         self.close()
 
-    def _updateProgressBar(self, increment, maximum=100):
-        val = self.ui.progressBar.value()
-        val += increment
-        if val > maximum:
-            val = maximum
-        self.ui.progressBar.setValue(val)
+    @QtCore.pyqtSlot()
+    def updateAnim(self):
+        self.anim += self.animInc
+        if self.anim < 1 or self.anim > 99:
+            self.ui.progressBar.invertedAppearance = not self.ui.progressBar.invertedAppearance
+            self.animInc = -self.animInc
+
+        self.ui.progressBar.setValue(self.anim)
+
+    def startAnim(self):
+        self.ui.progressBar.invertedAppearance = False
+        self.anim = 0
+        self.animInc = 1
+        self.animTimer.start(40)
+
+    def stopAnim(self):
+        self.ui.progressBar.invertedAppearance = False
+        self.animTimer.stop()
 
     @QtCore.pyqtSlot()
     def getVersion(self):
@@ -114,10 +136,7 @@ class UDSClient(QtGui.QMainWindow):
     @QtCore.pyqtSlot(dict)
     def version(self, data):
         try:
-            self.ui.progressBar.setValue(20)
-
             self.processError(data)
-
             self.ui.info.setText('Processing...')
 
             if data['result']['requiredVersion'] > VERSION:
@@ -128,12 +147,12 @@ class UDSClient(QtGui.QMainWindow):
             self.getTransportData()
 
         except RetryException as e:
-            self._updateProgressBar(5, 80)
             self.ui.info.setText(six.text_type(e))
             QtCore.QTimer.singleShot(1000, self.getVersion)
 
         except Exception as e:
             self.showError(e)
+
 
     @QtCore.pyqtSlot()
     def getTransportData(self):
@@ -147,11 +166,10 @@ class UDSClient(QtGui.QMainWindow):
         try:
             self.processError(data)
 
-            self.ui.progressBar.setValue(80)
-
             script = data['result'].decode('base64').decode('bz2')
 
-            self.ui.progressBar.setValue(100)
+            self.stopAnim()
+
             if 'darwin' in sys.platform:
                 self.showMinimized()
 
@@ -161,7 +179,6 @@ class UDSClient(QtGui.QMainWindow):
             six.exec_(script, globals(), {'parent': self})
 
         except RetryException as e:
-            self._updateProgressBar(5, 80)
             self.ui.info.setText(six.text_type(e) + ', retrying access...')
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)

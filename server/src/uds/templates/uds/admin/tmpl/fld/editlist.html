@@ -1,7 +1,7 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% load i18n %}
 {% block field %}{% verbatim %}
-    <input name="{{ name }}_nonused1" type="text" id="{{ name }}_field_txt" class="form-control cursor-pointer" value="{{ truncatechars 64 value }}" readonly tabindex="{{ index }}">
+    <input name="{{ name }}_nonused1" type="text" id="{{ name }}_field_txt" class="form-control cursor-pointer" value="{{ truncatechars 64 value }}" readonly>
     {{! We use a Select to get an array of selected values on ".val()" }}
     <select id="{{ name }}_field_hdn" class="{{ css }} hidden" name="{{ name }}" multiple>
     {{# each value }}
@@ -14,8 +14,8 @@
 (function(){
     "use strict";
     var id = '{{ name }}_field_';
-    var idTxt = 'input#' + id + 'txt';
-    var idHidden = 'input#' + id + 'hdn';
+    var idTxt = '#' + id + 'txt';
+    var idHidden = '#' + id + 'hdn';
     $(idTxt).tooltip({
         placement: 'bottom',
         title: "{% endverbatim %}{% trans 'Click to edit list' %}{% verbatim %}",
