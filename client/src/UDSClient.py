@@ -208,7 +208,7 @@ def approveHost(host, parentWindow=None):
 
     approved = settings.value(host, False).toBool()
 
-    errorString = '<p>The host <b>{}</b> needs to be approve:</p>'.format(host)
+    errorString = '<p>The server <b>{}</b> must be approved:</p>'.format(host)
     errorString += '<p>Only approve UDS servers that you trust to avoid security issues.</p>'
 
     if approved or QtGui.QMessageBox.warning(parentWindow, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
