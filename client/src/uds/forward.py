@@ -65,10 +65,11 @@ class Handler(SocketServer.BaseRequestHandler):
         except Exception:
             pass
 
-        if self.thread.stoppable is True:
+        self.thread.currentConnections -= 1
+
+        if self.thread.stoppable is True and self.thread.currentConnections == 0:
             self.thread.stop()
 
-        self.thread.currentConnections -= 1
 
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
