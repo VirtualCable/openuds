@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2015-11-06'
+__updated__ = '2016-04-15'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -303,7 +303,7 @@ def webLogout(request, exit_url=None):
     '''
     # Invoke exit for authenticator
 
-    if request.user.id != ROOT_ID:
+    if request.user is not None and request.user.id != ROOT_ID:
         events.addEvent(request.user.manager, events.ET_LOGOUT, username=request.user.name, srcip=request.ip)
 
     request.session.clear()
