@@ -42,7 +42,7 @@ from uds.core.ui import gui
 import six
 import logging
 
-__updated__ = '2016-03-09'
+__updated__ = '2016-04-18'
 
 logger = logging.getLogger(__name__)
 
@@ -113,19 +113,20 @@ class LiveService(Service):
             },
         tooltip=_('Service availability zones'), required=True, rdonly=True
     )
-    volume = gui.ChoiceField(label=_('Volume'), order=4, tooltip=_('Base volume for service (restricted by availability zone)'), required=True)
+    volume = gui.ChoiceField(label=_('Volume'), order=4, tooltip=_('Base volume for service (restricted by availability zone)'), required=True, tab=_('Machine'))
     # volumeType = gui.ChoiceField(label=_('Volume Type'), order=5, tooltip=_('Volume type for service'), required=True)
-    network = gui.ChoiceField(label=_('Network'), order=6, tooltip=_('Network to attach to this service'), required=True)
-    flavor = gui.ChoiceField(label=_('Flavor'), order=7, tooltip=_('Flavor for service'), required=True)
+    network = gui.ChoiceField(label=_('Network'), order=6, tooltip=_('Network to attach to this service'), required=True, tab=_('Machine'))
+    flavor = gui.ChoiceField(label=_('Flavor'), order=7, tooltip=_('Flavor for service'), required=True, tab=_('Machine'))
 
-    securityGroups = gui.MultiChoiceField(label=_('Security Groups'), order=8, tooltip=_('Service security groups'), required=True)
+    securityGroups = gui.MultiChoiceField(label=_('Security Groups'), order=8, tooltip=_('Service security groups'), required=True, tab=_('Machine'))
 
     baseName = gui.TextField(
         label=_('Machine Names'),
         rdonly=False,
         order=9,
         tooltip=_('Base name for clones from this machine'),
-        required=True
+        required=True,
+        tab=_('Machine')
     )
 
     lenName = gui.NumericField(
@@ -134,7 +135,8 @@ class LiveService(Service):
         defvalue=5,
         order=10,
         tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
-        required=True
+        required=True,
+        tab=_('Machine')
     )
 
     ov = gui.HiddenField(value=None)

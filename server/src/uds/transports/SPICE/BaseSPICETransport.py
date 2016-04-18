@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2015-05-13'
+__updated__ = '2016-04-18'
 
 
 logger = logging.getLogger(__name__)
@@ -64,17 +64,20 @@ class BaseSpiceTransport(Transport):
     useEmptyCreds = gui.CheckBoxField(
         order=1,
         label=_('Empty creds'),
-        tooltip=_('If checked, the credentials used to connect will be emtpy')
+        tooltip=_('If checked, the credentials used to connect will be emtpy'),
+        tab=gui.CREDENTIALS_TAB
     )
     fixedName = gui.TextField(
         order=2,
         label=_('Username'),
-        tooltip=_('If not empty, this username will be always used as credential')
+        tooltip=_('If not empty, this username will be always used as credential'),
+        tab=gui.CREDENTIALS_TAB
     )
     fixedPassword = gui.PasswordField(
         order=3,
         label=_('Password'),
-        tooltip=_('If not empty, this password will be always used as credential')
+        tooltip=_('If not empty, this password will be always used as credential'),
+        tab=gui.CREDENTIALS_TAB
     )
     serverCertificate = gui.TextField(
         order=4,

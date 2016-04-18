@@ -59,20 +59,20 @@ class HTML5RDPTransport(Transport):
     typeName = _('HTML5 RDP Transport')
     typeType = 'HTML5RDPTransport'
     typeDescription = _('RDP Transport using HTML5 client')
-    iconFile = 'rdp.png'
+    iconFile = 'html5.png'
 
     ownLink = True
     supportedOss = OsDetector.allOss
     protocol = protocols.RDP
 
-    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order=1, tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue='https://', length=64, required=True)
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=2, tooltip=_('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order=3, tooltip=_('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order=4, tooltip=_('If not empty, this password will be always used as credential'))
-    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=5, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
-    fixedDomain = gui.TextField(label=_('Domain'), order=6, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=7, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'))
-    enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=8, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'))
+    guacamoleServer = gui.TextField(label=_('Tunnel Server'), order=1, tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue='https://', length=64, required=True, tab=gui.TUNNEL_TAB)
+    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=2, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
+    fixedName = gui.TextField(label=_('Username'), order=3, tooltip=_('If not empty, this username will be always used as credential'), tab=gui.CREDENTIALS_TAB)
+    fixedPassword = gui.PasswordField(label=_('Password'), order=4, tooltip=_('If not empty, this password will be always used as credential'), tab=gui.CREDENTIALS_TAB)
+    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=5, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'), tab=gui.CREDENTIALS_TAB)
+    fixedDomain = gui.TextField(label=_('Domain'), order=6, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'), tab=gui.CREDENTIALS_TAB)
+    enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=7, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
+    enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=8, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
 
     def initialize(self, values):
         if values is None:

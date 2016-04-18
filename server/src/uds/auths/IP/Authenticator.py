@@ -43,13 +43,13 @@ from uds.core.ui.UserInterface import gui
 
 import logging
 
-__updated__ = '2015-01-21'
+__updated__ = '2016-04-18'
 
 logger = logging.getLogger(__name__)
 
 
 class IPAuth(Authenticator):
-    acceptProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'))
+    acceptProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'), tab=gui.ADVANCED_TAB)
 
     typeName = _('IP Authenticator')
     typeType = 'IPAuth'

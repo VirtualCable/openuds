@@ -39,7 +39,7 @@ from .RemoteViewerFile import RemoteViewerFile
 
 import logging
 
-__updated__ = '2015-05-11'
+__updated__ = '2016-04-18'
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +53,9 @@ class SPICETransport(BaseSpiceTransport):
     typeType = 'SPICETransport'
     typeDescription = _('SPICE Transport for direct connection (EXPERIMENTAL)')
 
-    useEmptyCreds = BaseSpiceTransport.useEmptyCreds
-    fixedName = BaseSpiceTransport.fixedName
-    fixedPassword = BaseSpiceTransport.fixedPassword
+    # useEmptyCreds = BaseSpiceTransport.useEmptyCreds
+    # fixedName = BaseSpiceTransport.fixedName
+    # fixedPassword = BaseSpiceTransport.fixedPassword
     serverCertificate = BaseSpiceTransport.serverCertificate
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):

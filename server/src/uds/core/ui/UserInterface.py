@@ -84,6 +84,9 @@ class gui(object):
 
     # : String for advanced tabs
     ADVANCED_TAB = ugettext_noop('Advanced')
+    PARAMETERS_TAB = ugettext_noop('Parameters')
+    CREDENTIALS_TAB = ugettext_noop('Credentials')
+    TUNNEL_TAB = ugettext_noop('Tunnel')
 
     # : Static Callbacks simple registry
     callbacks = {}

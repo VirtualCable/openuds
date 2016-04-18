@@ -66,12 +66,12 @@ class TSNXTransport(Transport):
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.NX
 
-    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'))
-    tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'))
+    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
+    tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=3, tooltip=_('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'))
+    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=3, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
+    fixedName = gui.TextField(label=_('Username'), order=4, tooltip=_('If not empty, this username will be always used as credential'), tab=gui.CREDENTIALS_TAB)
+    fixedPassword = gui.PasswordField(label=_('Password'), order=5, tooltip=_('If not empty, this password will be always used as credential'), tab=gui.CREDENTIALS_TAB)
     listenPort = gui.NumericField(label=_('Listening port'), length=5, order=6, tooltip=_('Listening port of NX (ssh) at client machine'), defvalue='22')
     connection = gui.ChoiceField(label=_('Connection'), order=7, tooltip=_('Connection speed for this transport (quality)'),
                                  values=[
@@ -80,13 +80,13 @@ class TSNXTransport(Transport):
                                      {'id': 'adsl', 'text': 'adsl'},
                                      {'id': 'wan', 'text': 'wan'},
                                      {'id': 'lan', 'text': 'lan'},
-    ])
+    ], tab=gui.PARAMETERS_TAB)
     session = gui.ChoiceField(label=_('Session'), order=8, tooltip=_('Desktop session'),
                               values=[
                                   {'id': 'gnome', 'text': 'gnome'},
                                   {'id': 'kde', 'text': 'kde'},
                                   {'id': 'cde', 'text': 'cde'},
-    ])
+    ], tab=gui.PARAMETERS_TAB)
     cacheDisk = gui.ChoiceField(label=_('Disk Cache'), order=9, tooltip=_('Cache size en Mb stored at disk'),
                                 values=[
                                     {'id': '0', 'text': '0 Mb'},
@@ -95,7 +95,7 @@ class TSNXTransport(Transport):
                                     {'id': '128', 'text': '128 Mb'},
                                     {'id': '256', 'text': '256 Mb'},
                                     {'id': '512', 'text': '512 Mb'},
-    ])
+    ], tab=gui.PARAMETERS_TAB)
     cacheMem = gui.ChoiceField(label=_('Memory Cache'), order=10, tooltip=_('Cache size en Mb kept at memory'),
                                values=[
                                    {'id': '4', 'text': '4 Mb'},
@@ -104,7 +104,7 @@ class TSNXTransport(Transport):
                                    {'id': '32', 'text': '32 Mb'},
                                    {'id': '64', 'text': '64 Mb'},
                                    {'id': '128', 'text': '128 Mb'},
-    ])
+    ], tab=gui.PARAMETERS_TAB)
 
     def __init__(self, environment, values=None):
         super(TSNXTransport, self).__init__(environment, values)

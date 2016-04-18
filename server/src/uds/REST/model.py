@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-03-09'
+__updated__ = '2016-04-18'
 
 
 # a few constants
@@ -88,7 +88,7 @@ class BaseModelHandler(Handler):
         :param gui: List of "gui" items where the field will be added
         :param field: Field to be added (dictionary)
         '''
-        gui.append({
+        v = {
             'name': field.get('name', ''),
             'value': '',
             'gui': {
@@ -105,7 +105,10 @@ class BaseModelHandler(Handler):
                 'order': field.get('order', 0),
                 'values': field.get('values', [])
             }
-        })
+        }
+        if 'tab' in field:
+            v['gui']['tab'] = field['tab']
+        gui.append(v)
         return gui
 
     def addDefaultFields(self, gui, flds):

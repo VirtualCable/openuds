@@ -117,7 +117,7 @@
       $.each fields.tabs, (index, tab) ->
         h = gui.forms.fieldsToHtml(tab.fields, item)
         tabsContent.push "<div class=\"tab-pane fade" + active + "\" id=\"" + id + index + "\">" + h.html + "</div>"
-        tabs.push "<li><a href=\"#" + id + index + "\" data-toggle=\"tab\">" + tab.title + "</a></li>"
+        tabs.push "<li class='" + active + "'><a href=\"#" + id + index + "\" data-toggle=\"tab\">" + tab.title + "</a></li>"
         active = ""
         fillers = fillers.concat(h.fillers) # Fillers (callback based)
         $.extend originalValues, h.originalValues # Original values
@@ -269,15 +269,24 @@
 
     # Validation
 
-
+    firstErrorTab = null
     $form.validate
-      debug: true
-      ignore: ':hidden:not("select")'
+      debug: false
+      ignore: ':hidden:not("select"):not(".modal_field_data")'
       errorClass: "text-danger"
       validClass: "has-success"
+      focusInvalid: true
       highlight: (element) ->
-        $(element).closest(".form-group").addClass "has-error"
+        group = $(element).closest(".form-group")
+        group.addClass "has-error"
+        if firstErrorTab == null && group.parent().hasClass('tab-pane')
+          firstErrorTab = $("a[href='#" + group.parent().attr('id') + "']")
+          firstErrorTab.tab('show')
         return
+
+      showErrors: (errorMap, errorList) ->
+        firstErrorTab = null  # Show errors is invoked before Hightlihg, that is isnoved from defaultShowErrors
+        this.defaultShowErrors()
 
       success: (element) ->
         $(element).closest(".form-group").removeClass "has-error"

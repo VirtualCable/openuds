@@ -152,6 +152,7 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Image assocciated with this service'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
             'order': 102,
+            'tab': ugettext('Display'),
         }, {
             'name': 'servicesPoolGroup_id',
             'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.image.thumb64) for v in ServicesPoolGroup.objects.all()]),
@@ -159,6 +160,7 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Pool group for this pool (for pool clasify on display)'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
             'order': 103,
+            'tab': ugettext('Display'),
         }, {
             'name': 'initial_srvs',
             'value': '0',
@@ -167,6 +169,7 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Services created initially for this service pool'),
             'type': gui.InputField.NUMERIC_TYPE,
             'order': 110,
+            'tab': ugettext('Availability'),
         }, {
             'name': 'cache_l1_srvs',
             'value': '0',
@@ -175,6 +178,7 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Services kept in cache for improved user service assignation'),
             'type': gui.InputField.NUMERIC_TYPE,
             'order': 111,
+            'tab': ugettext('Availability'),
         }, {
             'name': 'cache_l2_srvs',
             'value': '0',
@@ -183,6 +187,7 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Services kept in cache of level2 for improved service generation'),
             'type': gui.InputField.NUMERIC_TYPE,
             'order': 112,
+            'tab': ugettext('Availability'),
         }, {
             'name': 'max_srvs',
             'value': '0',
@@ -191,6 +196,7 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
             'type': gui.InputField.NUMERIC_TYPE,
             'order': 113,
+            'tab': ugettext('Availability'),
         }, {
             'name': 'show_transports',
             'value': True,

@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2016-04-07'
+__updated__ = '2016-04-18'
 
 
 logger = logging.getLogger(__name__)
@@ -58,18 +58,18 @@ class BaseRDPTransport(Transport):
     iconFile = 'rdp.png'
     protocol = protocols.RDP
 
-    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=11, tooltip=_('If checked, the credentials used to connect will be emtpy'))
-    fixedName = gui.TextField(label=_('Username'), order=12, tooltip=_('If not empty, this username will be always used as credential'))
-    fixedPassword = gui.PasswordField(label=_('Password'), order=13, tooltip=_('If not empty, this password will be always used as credential'))
-    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=14, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'))
-    fixedDomain = gui.TextField(label=_('Domain'), order=15, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'))
-    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=16, tooltip=_('If checked, this transport will allow the use of smartcards'))
-    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=17, tooltip=_('If checked, this transport will allow the use of user printers'))
-    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=18, tooltip=_('If checked, this transport will allow the use of user drives'))
-    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=19, tooltip=_('If checked, this transport will allow the use of user serial ports'))
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=20, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'))
-    multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=21, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'))
-    aero = gui.CheckBoxField(label=_('Allow Aero'), order=22, tooltip=_('If checked, desktop composition will be allowed'))
+    useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=11, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
+    fixedName = gui.TextField(label=_('Username'), order=12, tooltip=_('If not empty, this username will be always used as credential'), tab=gui.CREDENTIALS_TAB)
+    fixedPassword = gui.PasswordField(label=_('Password'), order=13, tooltip=_('If not empty, this password will be always used as credential'), tab=gui.CREDENTIALS_TAB)
+    withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=14, tooltip=_('If checked, the domain part will always be emptied (to connect to xrdp for example is needed)'), tab=gui.CREDENTIALS_TAB)
+    fixedDomain = gui.TextField(label=_('Domain'), order=15, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'), tab=gui.CREDENTIALS_TAB)
+    allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=16, tooltip=_('If checked, this transport will allow the use of smartcards'), tab=gui.PARAMETERS_TAB)
+    allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=17, tooltip=_('If checked, this transport will allow the use of user printers'), tab=gui.PARAMETERS_TAB)
+    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=18, tooltip=_('If checked, this transport will allow the use of user drives'), tab=gui.PARAMETERS_TAB)
+    allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=19, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
+    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=20, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.PARAMETERS_TAB)
+    multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=21, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'), tab=gui.PARAMETERS_TAB)
+    aero = gui.CheckBoxField(label=_('Allow Aero'), order=22, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
 
     def isAvailableFor(self, userService, ip):
         '''

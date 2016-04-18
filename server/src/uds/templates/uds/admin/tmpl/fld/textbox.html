@@ -1,6 +1,6 @@
 {% extends "uds/admin/tmpl/fld/form-group.html" %}
 {% block field %}
 {% verbatim %}
-        <textarea class="form-control {{ css }}" name="{{ name }}" id="{{ name }}_field" placeholder="{{ tooltip }}" {{# if readonly }} readonly{{/ if }} tabindex="{{ index }}">{{ value }}</textarea>
+        <textarea class="form-control {{ css }}" rows="{{ multiline }}" name="{{ name }}" id="{{ name }}_field" placeholder="{{ tooltip }}" {{# if readonly }} readonly{{/ if }} tabindex="{{ index }}">{{ value }}</textarea>
 {% endverbatim %}
 {% endblock %}

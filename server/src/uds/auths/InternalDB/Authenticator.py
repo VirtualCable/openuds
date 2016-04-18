@@ -43,7 +43,7 @@ from uds.core.util.State import State
 import dns
 import logging
 
-__updated__ = '2015-02-02'
+__updated__ = '2016-04-18'
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +60,8 @@ class InternalDBAuth(Authenticator):
     # This is the only internal source
     isExternalSource = False
 
-    differentForEachHost = gui.CheckBoxField(label=_('Different user for each host'), order=1, tooltip=_('If checked, each host will have a different user name'), defvalue="false", rdonly=True)
-    reverseDns = gui.CheckBoxField(label=_('Reverse DNS'), order=2, tooltip=_('If checked, the host will be reversed dns'), defvalue="false", rdonly=True)
+    differentForEachHost = gui.CheckBoxField(label=_('Different user for each host'), order=1, tooltip=_('If checked, each host will have a different user name'), defvalue="false", rdonly=True, tab=gui.ADVANCED_TAB)
+    reverseDns = gui.CheckBoxField(label=_('Reverse DNS'), order=2, tooltip=_('If checked, the host will be reversed dns'), defvalue="false", rdonly=True, tab=gui.ADVANCED_TAB)
 
     def initialize(self, values):
         if values is None:
