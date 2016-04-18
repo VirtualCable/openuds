@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
-"PO-Revision-Date: 2015-08-03 09:37+0000\n"
+"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -102,14 +102,13 @@ msgstr "Prova"
 msgid "Search error"
 msgstr "Errore di ricerca"
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:282
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:306
 msgid "Accept"
 msgstr "Accettare"
 
 #: static/tmp_js/gui-d-authenticators.js:131
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
 #: static/tmp_js/gui-d-services.js:95 static/tmp_js/gui-d-servicespools.js:182
-#| msgid "Error accessing service: "
 msgid "Error accessing data"
 msgstr "Errore di accesso ai dati"
 
@@ -219,7 +218,6 @@ msgid "Authenticator deletion error"
 msgstr "Errore di omissione autenticatore"
 
 #: static/tmp_js/gui-d-calendar.js:23
-#| msgid "May"
 msgid "day"
 msgstr "giorno"
 
@@ -288,7 +286,6 @@ msgid "Weeks"
 msgstr "Settimane"
 
 #: static/tmp_js/gui-d-calendar.js:35
-#| msgid "Sunday"
 msgid "Sun"
 msgstr "Sole"
 
@@ -325,17 +322,14 @@ msgid "and will remain valid for "
 msgstr "e rimarranno validi per "
 
 #: static/tmp_js/gui-d-calendar.js:172
-#| msgid "Publish on creation"
 msgid "with no duration"
 msgstr "con nessuna durata"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "New user"
 msgid "New rule"
 msgstr "Nuova regola"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "Edit user"
 msgid "Edit rule"
 msgstr "Modificare la regola"
 
@@ -344,52 +338,42 @@ msgid "Save"
 msgstr "Salva"
 
 #: static/tmp_js/gui-d-calendar.js:277
-#| msgid "Error creating report"
 msgid "Error creating rule"
 msgstr "Regola di creazione di errore"
 
 #: static/tmp_js/gui-d-calendar.js:280
-#| msgid "Error creating report"
 msgid "Error saving rule"
 msgstr "Errore di salvataggio della regola"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "Delete user"
 msgid "Delete rule"
 msgstr "Elimina regola"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "deletion error"
 msgid "Rule deletion error"
 msgstr "Errore di eliminazione di regole"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "New OSManager"
 msgid "New calendar"
 msgstr "Nuovo calendario"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "OSManager creation error"
 msgid "Calendar creation error"
 msgstr "Errore di creazione del calendario"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "Edit OSManager"
 msgid "Edit calendar"
 msgstr "Modifica calendario"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "OSManager saving error"
 msgid "Calendar saving error"
 msgstr "Calendario risparmio errore"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "Delete OSManager"
 msgid "Delete calendar"
 msgstr "Elimina calendario"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "User deletion error"
 msgid "Calendar deletion error"
 msgstr "Errore di eliminazione del calendario"
 
@@ -458,7 +442,6 @@ msgid "New image"
 msgstr "Nuova immagine"
 
 #: static/tmp_js/gui-d-gallery.js:17
-#| msgid "Edit OSManager"
 msgid "Edit image"
 msgstr "Modifica immagine"
 
@@ -630,13 +613,11 @@ msgstr "Modificare il calendario di access"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Remove Cache element"
 msgid "Remove access calendar"
 msgstr "Rimuovere il calendario di access"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Transport removal error"
 msgid "Access calendar removal error"
 msgstr "Errore di rimozione di accesso calendario"
 
@@ -660,7 +641,6 @@ msgid "Publish"
 msgstr "Pubblicare"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
-#| msgid "Cancel publication"
 msgid "Cancel publication?"
 msgstr "Annullare la pubblicazione?"
 
@@ -769,27 +749,22 @@ msgid "deletion error"
 msgstr "errore di omissione"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "New services provider"
 msgid "New services Services Pool Group"
 msgstr "Nuovi servizi Servizi piscina gruppo"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "Services provider creation error"
 msgid "Services Services Pool Group creation error"
 msgstr "Errore di creazione del gruppo di servizi Servizi piscina"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-#| msgid "Edit services provider"
 msgid "Edit services Services Pool Group"
 msgstr "Modificare servizi Servizi piscina gruppo"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Delete services provider"
 msgid "Delete Services Pool Group"
 msgstr "Elimina Servizi piscina gruppo"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Service creation error"
 msgid "Services Pool Group error"
 msgstr "Errore Servizi piscina gruppo"
 
@@ -825,15 +800,19 @@ msgstr "Messaggio"
 msgid "Logs"
 msgstr "Registri"
 
-#: static/tmp_js/gui-form.js:265
+#: static/tmp_js/gui-form.js:95
+msgid "Main"
+msgstr "Main"
+
+#: static/tmp_js/gui-form.js:289
 msgid "yes"
 msgstr "Sì"
 
-#: static/tmp_js/gui-form.js:266
+#: static/tmp_js/gui-form.js:290
 msgid "no"
 msgstr "No"
 
-#: static/tmp_js/gui-form.js:283
+#: static/tmp_js/gui-form.js:307
 msgid "Close"
 msgstr "Chiudere"
 
@@ -874,17 +853,14 @@ msgid "items:"
 msgstr "articoli:"
 
 #: static/tmp_js/gui-methods.js:147
-#| msgid "Error creating report"
 msgid "Error deleting"
 msgstr "Errore durante l'eliminazione"
 
 #: static/tmp_js/gui-methods.js:149
-#| msgid "Edition successfully done"
 msgid "Successfully deleted"
 msgstr "Eliminato correttamente"
 
 #: static/tmp_js/gui-methods.js:154
-#| msgid "Deletion error"
 msgid "Deletion results"
 msgstr "Risultati di eliminazione"
 
@@ -978,7 +954,6 @@ msgid "Message"
 msgstr "Messaggio"
 
 #: static/tmp_js/gui.js:130
-#| msgid "Test failed:"
 msgid "Connection failed"
 msgstr "Connessione non riuscita"
 

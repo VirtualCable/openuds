@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import get_language, ugettext as _
+from django.utils.translation import get_language, ugettext as _, ugettext_noop
 import datetime
 import time
 import six
@@ -81,6 +81,9 @@ class gui(object):
     TRUE = 'true'
     # : False string value
     FALSE = 'false'
+
+    # : String for advanced tabs
+    ADVANCED_TAB = ugettext_noop('Advanced')
 
     # : Static Callbacks simple registry
     callbacks = {}
@@ -231,6 +234,8 @@ class gui(object):
                 'type': gui.InputField.TEXT_TYPE,
                 'value': options.get('value', ''),
             }
+            if 'tab' in options:
+                self._data['tab'] = options.get('tab')
 
         def _type(self, type_):
             '''
@@ -280,6 +285,8 @@ class gui(object):
             data = self._data.copy()
             data['label'] = data['label'] != '' and _(data['label']) or ''
             data['tooltip'] = data['tooltip'] != '' and _(data['tooltip']) or ''
+            if 'tab' in data:
+                data['tab'] = _(data['tab'])
             return data
 
         @property
@@ -949,7 +956,7 @@ class UserInterface(object):
             object: If not none, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
         '''
-        logger.debug('Active languaje for theGui translation: {0}'.format(get_language()))
+        logger.debug('Active language for theGui translation: {0}'.format(get_language()))
         theGui = cls
         if obj is not None:
             obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client

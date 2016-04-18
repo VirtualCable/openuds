@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
-"PO-Revision-Date: 2015-09-04 09:56+0000\n"
+"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -93,7 +93,6 @@ msgstr "Markierungen"
 
 #: REST/methods/calendarrules.py:98
 #: templates/uds/admin/tmpl/calendar_rule.html:9
-#| msgid "username"
 msgid "Rule name"
 msgstr "Regelname"
 
@@ -118,7 +117,6 @@ msgstr "Jeder"
 
 #: REST/methods/calendarrules.py:103
 #: templates/uds/admin/tmpl/calendar_rule.html:34
-#| msgid "Configuration"
 msgid "Duration"
 msgstr "Dauer"
 
@@ -128,12 +126,10 @@ msgstr "Element ist bereits vorhanden (doppelte Schlüsselfehler)"
 
 #: REST/methods/calendarrules.py:150
 #, python-brace-format
-#| msgid "Users of {0}"
 msgid "Rules of {0}"
 msgstr "Regeln von {0}"
 
 #: REST/methods/calendarrules.py:152
-#| msgid "Current users"
 msgid "Current rules"
 msgstr "Geltenden Vorschriften"
 
@@ -237,7 +233,7 @@ msgstr "Verfügbare Berichte"
 #: REST/methods/users_groups.py:215
 #: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:81
-#: auths/RegexLdap/Authenticator.py:81 auths/SAML_enterprise/SAML.py:115
+#: auths/RegexLdap/Authenticator.py:81 auths/SAML_enterprise/SAML.py:116
 #: auths/SimpleLDAP/Authenticator.py:83
 #: templates/uds/admin/tmpl/pool_add_group.html:17
 msgid "Group"
@@ -293,7 +289,6 @@ msgid "Calendar"
 msgstr "Kalender"
 
 #: REST/methods/services_pool_calendars.py:91
-#| msgid "Accesses"
 msgid "Access"
 msgstr "Zugang"
 
@@ -304,7 +299,6 @@ msgstr "Geplante Aktionen"
 
 #: REST/methods/services_pool_calendars.py:157
 #: templates/uds/admin/tmpl/pool_add_action.html:35
-#| msgid "Active"
 msgid "Action"
 msgstr "Aktion"
 
@@ -317,22 +311,18 @@ msgid "Relative to"
 msgstr "Relativ zur"
 
 #: REST/methods/services_pool_calendars.py:160
-#| msgid "Timeout"
 msgid "Time offset"
 msgstr "Zeitverschiebung"
 
 #: REST/methods/services_pool_calendars.py:161
-#| msgid "Waiting execution"
 msgid "Next execution"
 msgstr "Nächste Ausführung"
 
 #: REST/methods/services_pool_calendars.py:162
-#| msgid "Waiting execution"
 msgid "Last execution"
 msgstr "Letzte Ausführung"
 
 #: REST/methods/services_pool_groups.py:60
-#| msgid "Service Pools"
 msgid "Services Pool Groups"
 msgstr "Services-Pool-Gruppen"
 
@@ -364,7 +354,6 @@ msgid "Shows transports"
 msgstr "Zeigt Transporte"
 
 #: REST/methods/services_pools.py:80
-#| msgid "Group"
 msgid "Pool Group"
 msgstr "Schwimmbad-Gruppe"
 
@@ -401,13 +390,13 @@ msgid "OS Manager used as base of this service pool"
 msgstr "OS-Manager verwendet als Grundlage dieser Service-pool"
 
 #: REST/methods/services_pools.py:158
-#| msgid "Meta group"
 msgid "Pool group"
 msgstr "Schwimmbad-Gruppe"
 
 #: REST/methods/services_pools.py:159
 msgid "Pool group for this pool (for pool clasify on display)"
-msgstr "Schwimmbad-Gruppe für diesen Pool (für Schwimmbad-Clasify auf dem Display)"
+msgstr ""
+"Schwimmbad-Gruppe für diesen Pool (für Schwimmbad-Clasify auf dem Display)"
 
 #: REST/methods/services_pools.py:166
 msgid "Initial available services"
@@ -665,7 +654,6 @@ msgid "Tags"
 msgstr "Markierungen"
 
 #: REST/model.py:122
-#| msgid "Tag for this element"
 msgid "Tags for this element"
 msgstr "Tags für dieses element"
 
@@ -689,7 +677,6 @@ msgid "Label"
 msgstr "Etikett"
 
 #: REST/model.py:157
-#| msgid "Tag for this element"
 msgid "Label for this element"
 msgstr "Bezeichnung für dieses element"
 
@@ -819,11 +806,11 @@ msgstr "Kennwort für den Ldap-Benutzer"
 #: auths/EDirectory_enterprise/Authenticator.py:67
 #: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:62
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
-#: services/HyperV_enterprise/HyperVProvider.py:87
-#: services/Nutanix_enterprise/NutanixProvider.py:41
-#: services/OVirt/OVirtProvider.py:99 services/OpenNebula/Provider.py:103
+#: services/HyperV_enterprise/HyperVProvider.py:91
+#: services/Nutanix_enterprise/NutanixProvider.py:44
+#: services/OVirt/OVirtProvider.py:103 services/OpenNebula/Provider.py:107
 #: services/OpenStack/Provider.py:111
-#: services/Vmware_enterprise/ServiceProviderVC.py:33
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
 msgid "Timeout"
 msgstr "Timeout"
 
@@ -1115,24 +1102,24 @@ msgstr ""
 "LDAP Gruppe Id-Attribut scheint nicht korrekt (keine Gruppe gefunden, die -"
 "Attribut)"
 
-#: auths/SAML_enterprise/SAML.py:81
+#: auths/SAML_enterprise/SAML.py:82
 msgid "SAML Authenticator"
 msgstr "SAML Authenticator"
 
-#: auths/SAML_enterprise/SAML.py:93
+#: auths/SAML_enterprise/SAML.py:94
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML (v2. 0) Authenticator"
 
-#: auths/SAML_enterprise/SAML.py:112 reports/stats/usage_by_pool.py:73
+#: auths/SAML_enterprise/SAML.py:113 reports/stats/usage_by_pool.py:73
 #: reports/stats/usage_by_pool.py:189 templates/uds/internal_page.html.py:28
 msgid "User"
 msgstr "Benutzer"
 
-#: auths/SAML_enterprise/SAML.py:121
+#: auths/SAML_enterprise/SAML.py:122
 msgid "Private key"
 msgstr "Der Private Schlüssel"
 
-#: auths/SAML_enterprise/SAML.py:122
+#: auths/SAML_enterprise/SAML.py:123
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1140,58 +1127,58 @@ msgstr ""
 "Privater Schlüssel zum Zeichen und Encription, wie base-64 von generiert "
 "OpenSSL"
 
-#: auths/SAML_enterprise/SAML.py:123 transports/SPICE/BaseSPICETransport.py:83
+#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:83
 msgid "Certificate"
 msgstr "Zertifikat"
 
-#: auths/SAML_enterprise/SAML.py:124
+#: auths/SAML_enterprise/SAML.py:125
 msgid "Server certificate (public), , as generated in base 64 from openssl"
 msgstr "Server-Zertifikat als base-64 von Openssl erzeugte (öffentlich),"
 
-#: auths/SAML_enterprise/SAML.py:125
+#: auths/SAML_enterprise/SAML.py:126
 msgid "IDP Metadata"
 msgstr "IDP-Metadaten"
 
-#: auths/SAML_enterprise/SAML.py:126
+#: auths/SAML_enterprise/SAML.py:127
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "Sie können hier die URL oder die IDP-Metadaten oder die Metadaten selbst "
 "(Xml) eingeben."
 
-#: auths/SAML_enterprise/SAML.py:128
+#: auths/SAML_enterprise/SAML.py:129
 msgid "Entity ID"
 msgstr "Einheits-ID"
 
-#: auths/SAML_enterprise/SAML.py:129
+#: auths/SAML_enterprise/SAML.py:130
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP-ID Wenn leer, wird dies automatisch vom Server URL sein."
 
-#: auths/SAML_enterprise/SAML.py:131
+#: auths/SAML_enterprise/SAML.py:132
 msgid "User name attrs"
 msgstr "Benutzer Name attrs"
 
-#: auths/SAML_enterprise/SAML.py:132
+#: auths/SAML_enterprise/SAML.py:133
 msgid "Fields from where to extract user name"
 msgstr "Felder aus wo Sie Benutzernamen extrahieren"
 
-#: auths/SAML_enterprise/SAML.py:134
+#: auths/SAML_enterprise/SAML.py:135
 msgid "Group name attrs"
 msgstr "Gruppe Name attrs"
 
-#: auths/SAML_enterprise/SAML.py:135
+#: auths/SAML_enterprise/SAML.py:136
 msgid "Fields from where to extract the groups"
 msgstr "Felder von wo die Gruppen zu extrahieren"
 
-#: auths/SAML_enterprise/SAML.py:137
+#: auths/SAML_enterprise/SAML.py:138
 msgid "Real name attrs"
 msgstr "Richtiger Name attrs"
 
-#: auths/SAML_enterprise/SAML.py:138
+#: auths/SAML_enterprise/SAML.py:139
 msgid "Fields from where to extract the real name"
 msgstr "Felder aus wo man den richtigen Namen zu extrahieren"
 
-#: auths/SAML_enterprise/SAML.py:161
+#: auths/SAML_enterprise/SAML.py:162
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1199,11 +1186,11 @@ msgstr ""
 "Server-Zertifikat sollte ein gültiger PEM (PEM-Zertifikate-beginnt mit---"
 "BEGIN CERTIFICATE---)"
 
-#: auths/SAML_enterprise/SAML.py:166
+#: auths/SAML_enterprise/SAML.py:167
 msgid "Invalid server certificate. "
 msgstr "Ungültigen Serverzertifikats. "
 
-#: auths/SAML_enterprise/SAML.py:169
+#: auths/SAML_enterprise/SAML.py:170
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1211,20 +1198,20 @@ msgstr ""
 "Der Private Schlüssel sollte ein gültiger PEM (PEM private Schlüssel beginnt "
 "mit---BEGIN RSA PRIVATE KEY---"
 
-#: auths/SAML_enterprise/SAML.py:198
+#: auths/SAML_enterprise/SAML.py:202
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Kann nicht abgerufen werden Url {0}: {1}"
 
-#: auths/SAML_enterprise/SAML.py:209
+#: auths/SAML_enterprise/SAML.py:213
 msgid " (obtained from URL)"
 msgstr " (gewonnen von URL)"
 
-#: auths/SAML_enterprise/SAML.py:210
+#: auths/SAML_enterprise/SAML.py:214
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML scheint gültig für IDP Metadaten nicht "
 
-#: auths/SAML_enterprise/SAML.py:228
+#: auths/SAML_enterprise/SAML.py:235
 msgid "Can't access idp metadata"
 msgstr "Idp-Metadaten kann nicht zugegriffen werden."
 
@@ -1465,6 +1452,11 @@ msgstr "Keine"
 msgid "Base Clustered Service"
 msgstr "Base gruppierten Dienst"
 
+#: core/ui/UserInterface.py:86
+#| msgid "Canceled"
+msgid "Advanced"
+msgstr "Erweiterte"
+
 #: core/util/State.py:64 core/util/states/common.py:63
 msgid "Active"
 msgstr "Aktive"
@@ -1637,7 +1629,6 @@ msgstr ""
 "Weile."
 
 #: models/CalendarAction.py:58
-#| msgid "Publish date"
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -1646,7 +1637,6 @@ msgid "Sets cache size"
 msgstr "Legt den cache Größe"
 
 #: models/CalendarAction.py:59
-#| msgid "Cached services"
 msgid "Cache size"
 msgstr "Cache-Größe"
 
@@ -1655,27 +1645,22 @@ msgid "Sets L2 cache size"
 msgstr "Legt die Größe des L2-cache"
 
 #: models/CalendarAction.py:60
-#| msgid "Cached services"
 msgid "Cache L2 size"
 msgstr "L2-Cache-Größe"
 
 #: models/CalendarAction.py:61
-#| msgid "Current services"
 msgid "Set initial services"
 msgstr "Erste Service Set"
 
 #: models/CalendarAction.py:61
-#| msgid "Initial available services"
 msgid "Initial services"
 msgstr "Erste Dienste"
 
 #: models/CalendarAction.py:62
-#| msgid "Maximum number of services to provide"
 msgid "Change maximum number of services"
 msgstr "Maximale Anzahl der Dienste zu ändern"
 
 #: models/CalendarAction.py:62
-#| msgid "View services"
 msgid "Maximum services"
 msgstr "Maximale Leistungen"
 
@@ -1728,7 +1713,6 @@ msgid "All"
 msgstr "Alle"
 
 #: models/ServicesPoolGroup.py:85
-#| msgid "Generates"
 msgid "General"
 msgstr "Allgemeine"
 
@@ -2162,7 +2146,6 @@ msgid "Statistics of platform use"
 msgstr "Statistik Plattform Nutzungsbedingungen"
 
 #: reports/stats/usage_by_pool.py:72
-#| msgid "Access denied"
 msgid "Access Datetime"
 msgstr "Zugang Datetime"
 
@@ -2175,17 +2158,14 @@ msgid "Pools usage by users"
 msgstr "Pool-Nutzung durch Anwender"
 
 #: reports/stats/usage_by_pool.py:92
-#| msgid "Pools for report"
 msgid "Pools usage by user report"
 msgstr "Pool-Nutzung durch Anwenderbericht"
 
 #: reports/stats/usage_by_pool.py:99
-#| msgid "Pools for report"
 msgid "Pool for report"
 msgstr "Pool für Bericht"
 
 #: reports/stats/usage_by_pool.py:167
-#| msgid "Users List for {}"
 msgid "Users usage list for {}"
 msgstr "Benutzer-Verwendungsliste für {}"
 
@@ -2370,22 +2350,22 @@ msgid "Password of the user of HyperV"
 msgstr "Passwort des Benutzers des Hyper-v"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
-#: services/HyperV_enterprise/HyperVProvider.py:87
+#: services/HyperV_enterprise/HyperVProvider.py:91
 msgid "Timeout in seconds of connection to HyperV"
 msgstr "Timeout in Sekunden der Verbindung zum Hyper-v"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:94
-#: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/OVirt/OVirtProvider.py:100
-#: services/Vmware_enterprise/ServiceProviderVC.py:34
-#: services/Xen/XenProvider.py:101
+#: services/HyperV_enterprise/HyperVProvider.py:92
+#: services/Nutanix_enterprise/NutanixProvider.py:46
+#: services/OVirt/OVirtProvider.py:104
+#: services/Vmware_enterprise/ServiceProviderVC.py:39
+#: services/Xen/XenProvider.py:105
 msgid "Macs range"
 msgstr "Mac-Bereich"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:95
-#: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Xen/XenProvider.py:102
+#: services/HyperV_enterprise/HyperVProvider.py:93
+#: services/Xen/XenProvider.py:106
 msgid "Range of valid macs for created machines"
 msgstr "Bereich gültige Mac erstellte Maschinen"
 
@@ -2394,16 +2374,16 @@ msgid "The selected server is not a cluster"
 msgstr "Der ausgewählte Server ist keines Clusters"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:299
-#: services/HyperV_enterprise/HyperVProvider.py:255
-#: services/Xen/XenProvider.py:392
+#: services/HyperV_enterprise/HyperVProvider.py:259
+#: services/Xen/XenProvider.py:396
 msgid "Connection test successful"
 msgstr "Verbindungstest erfolgreich"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
-#: services/HyperV_enterprise/HyperVProvider.py:256
-#: services/Nutanix_enterprise/NutanixProvider.py:168
-#: services/OVirt/OVirtProvider.py:423
-#: services/Vmware_enterprise/ServiceProviderVC.py:125
+#: services/HyperV_enterprise/HyperVProvider.py:260
+#: services/Nutanix_enterprise/NutanixProvider.py:172
+#: services/OVirt/OVirtProvider.py:427
+#: services/Vmware_enterprise/ServiceProviderVC.py:141
 msgid "Connection failed. Check connection params"
 msgstr "Verbindung ist fehlgeschlagen. Kontrollkästchen Verbindung params"
 
@@ -2438,6 +2418,39 @@ msgstr "Hyper-v-Plattform-Anbieter (experimentell)"
 msgid "HyperV platform service provider (experimental)"
 msgstr "Hyper-v-Plattform-Service-Provider (experimentell)"
 
+#: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/OVirt/OVirtProvider.py:100 services/OpenNebula/Provider.py:104
+#: services/OpenStack/Provider.py:108
+#: services/Vmware_enterprise/ServiceProviderVC.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:80
+#: services/Xen/XenProvider.py:102
+msgid "Creation concurrency"
+msgstr "Erstellung Parallelität"
+
+#: services/HyperV_enterprise/HyperVProvider.py:88
+#: services/HyperV_enterprise/HyperVProvider.py:89
+#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/Nutanix_enterprise/NutanixProvider.py:43
+#: services/OVirt/OVirtProvider.py:100 services/OVirt/OVirtProvider.py:101
+#: services/OpenNebula/Provider.py:104 services/OpenNebula/Provider.py:105
+#: services/OpenStack/Provider.py:108 services/OpenStack/Provider.py:109
+#: services/Vmware_enterprise/ServiceProviderVC.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:36
+#: services/Xen/XenProvider.py:102 services/Xen/XenProvider.py:103
+msgid "Maximum number of concurrently removing VMs"
+msgstr "Maximale Anzahl der gleichzeitig entfernen VMs"
+
+#: services/HyperV_enterprise/HyperVProvider.py:89
+#: services/Nutanix_enterprise/NutanixProvider.py:43
+#: services/OVirt/OVirtProvider.py:101 services/OpenNebula/Provider.py:105
+#: services/OpenStack/Provider.py:109
+#: services/Vmware_enterprise/ServiceProviderVC.py:36
+#: services/Vmware_enterprise/ServiceProviderVC.py:81
+#: services/Xen/XenProvider.py:103
+msgid "Removal concurrency"
+msgstr "Entfernung-Parallelität"
+
 #: services/Nutanix_enterprise/NutanixProvider.py:31
 msgid "Nutanix Acropolis Provider (Experimental)"
 msgstr "Nutanix Akropolis-Anbieter (experimentell)"
@@ -2462,16 +2475,16 @@ msgstr "Benutzer mit gültigen Berechtigungen auf Nutanix Akropolis"
 msgid "Password of the user of Nutanix Acropolis"
 msgstr "Kennwort des Benutzers Nutanix Akropolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:41
+#: services/Nutanix_enterprise/NutanixProvider.py:44
 msgid "Timeout in seconds of connection to Nutanix"
 msgstr "Timeout in Sekunden der Verbindung zum Nutanix"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:43
-#: services/OVirt/OVirtProvider.py:101
+#: services/Nutanix_enterprise/NutanixProvider.py:47
+#: services/OVirt/OVirtProvider.py:105
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Angebot gültig Macs für UDS verwalteten Maschinen"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:166
+#: services/Nutanix_enterprise/NutanixProvider.py:170
 msgid "Connection works fine"
 msgstr "Verbindung funktioniert gut"
 
@@ -2571,7 +2584,7 @@ msgstr ""
 msgid "Password of the user of oVirt"
 msgstr "Passwort des Benutzers des oVirt"
 
-#: services/OVirt/OVirtProvider.py:99
+#: services/OVirt/OVirtProvider.py:103
 msgid "Timeout in seconds of connection to oVirt"
 msgstr "Timeout in Sekunden der Verbindung zum oVirt"
 
@@ -2585,37 +2598,32 @@ msgstr "OpenNebula live Bilder-Grundlagen-service"
 
 #: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:40
-#| msgid "Number of desired machines to keep running waiting for a user"
 msgid "Number of desired machines to keep running waiting for an user"
-msgstr "Anzahl der gewünschten Maschinen warten auf einen Benutzer weiterhin ausgeführt"
+msgstr ""
+"Anzahl der gewünschten Maschinen warten auf einen Benutzer weiterhin "
+"ausgeführt"
 
 #: services/OpenNebula/LiveService.py:95
-#| msgid "Base Report"
 msgid "Base Template"
 msgstr "Basisvorlage"
 
 #: services/OpenNebula/LiveService.py:95
-#| msgid "Service base machine"
 msgid "Service base template"
 msgstr "Service-Vorlage basieren"
 
 #: services/OpenNebula/LiveService.py:96
-#| msgid "Pub.Datastores"
 msgid "Datastore"
 msgstr "Datastore"
 
 #: services/OpenNebula/LiveService.py:96
-#| msgid "Service under maintenance"
 msgid "Service clones datastore"
 msgstr "Service-Klone-datastore"
 
 #: services/OpenNebula/Provider.py:79
-#| msgid "Xenserver Platform Provider"
 msgid "OpenNebula Platform Provider"
 msgstr "OpenNebula-Plattform-Anbieter"
 
 #: services/OpenNebula/Provider.py:83
-#| msgid "XenServer platform service provider"
 msgid "OpenNebula platform service provider"
 msgstr "OpenNebula-Plattform-Service-provider"
 
@@ -2628,31 +2636,26 @@ msgid "OpenNebula Port (default is 2633 for non ssl connection)"
 msgstr "OpenNebula-Port (Standardwert ist 2633 für nicht-Ssl-Verbindung)"
 
 #: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
-#| msgid ""
-#| "If checked, the connection will be ssl, using port 636 instead of 389"
 msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
 msgstr ""
-"Wenn aktiviert, wird die Verbindung zu Ssl gezwungen werden (funktioniert nicht, wenn Server "
-"Ssl stellt nicht zur Verfügung)"
+"Wenn aktiviert, wird die Verbindung zu Ssl gezwungen werden (funktioniert "
+"nicht, wenn Server Ssl stellt nicht zur Verfügung)"
 
 #: services/OpenNebula/Provider.py:101
-#| msgid "User with valid privileges on XenServer"
 msgid "User with valid privileges on OpenNebula"
 msgstr "Benutzer mit gültigen Berechtigungen für OpenNebula"
 
 #: services/OpenNebula/Provider.py:102
-#| msgid "Password of the user of HyperV"
 msgid "Password of the user of OpenNebula"
 msgstr "Passwort des Benutzers des OpenNebula"
 
-#: services/OpenNebula/Provider.py:103
-#| msgid "Timeout in seconds of connection to Nutanix"
+#: services/OpenNebula/Provider.py:107
 msgid "Timeout in seconds of connection to OpenNebula"
 msgstr "Timeout in Sekunden der Verbindung zum OpenNebula"
 
-#: services/OpenNebula/Provider.py:153
+#: services/OpenNebula/Provider.py:157
 msgid "Opennebula test connection passed"
 msgstr "Opennebula Testverbindung übergeben"
 
@@ -2669,7 +2672,6 @@ msgid "Region"
 msgstr "Gebiet"
 
 #: services/OpenStack/LiveService.py:99
-#| msgid "Service name"
 msgid "Service region"
 msgstr "Service-Gebiet"
 
@@ -2678,17 +2680,14 @@ msgid "Project"
 msgstr "Projekt"
 
 #: services/OpenStack/LiveService.py:106
-#| msgid "Base machine for this service"
 msgid "Project for this service"
 msgstr "Projekt für diesen Dienst"
 
 #: services/OpenStack/LiveService.py:108
-#| msgid "Available reports"
 msgid "Availability Zones"
 msgstr "Verfügbarkeit-Zonen"
 
 #: services/OpenStack/LiveService.py:114
-#| msgid "No services available"
 msgid "Service availability zones"
 msgstr "Servicegebiete Verfügbarkeit"
 
@@ -2701,7 +2700,6 @@ msgid "Base volume for service (restricted by availability zone)"
 msgstr "Base Band für Service (beschränkte Verfügbarkeit Zone)"
 
 #: services/OpenStack/LiveService.py:118
-#| msgid "Base machine for this service"
 msgid "Network to attach to this service"
 msgstr "Netzwerk auf diesen Dienst Anhängen"
 
@@ -2710,32 +2708,26 @@ msgid "Flavor"
 msgstr "Geschmack"
 
 #: services/OpenStack/LiveService.py:119
-#| msgid "Base service"
 msgid "Flavor for service"
 msgstr "Geschmack für service"
 
 #: services/OpenStack/LiveService.py:121
-#| msgid "UDS Meta Group"
 msgid "Security Groups"
 msgstr "Sicherheitsgruppen"
 
 #: services/OpenStack/LiveService.py:121
-#| msgid "Service providers"
 msgid "Service security groups"
 msgstr "Service-Sicherheitsgruppen"
 
 #: services/OpenStack/Provider.py:79
-#| msgid "Xenserver Platform Provider"
 msgid "OpenStack Platform Provider"
 msgstr "OpenStack-Plattform-Anbieter"
 
 #: services/OpenStack/Provider.py:83
-#| msgid "XenServer platform service provider"
 msgid "OpenStack platform service provider"
 msgstr "OpenStack-Plattform-Service-provider"
 
 #: services/OpenStack/Provider.py:98
-#| msgid "Src Host"
 msgid "OpenStack Host"
 msgstr "OpenStack Host"
 
@@ -2744,7 +2736,6 @@ msgid "OpenStack Port"
 msgstr "OpenStack Port"
 
 #: services/OpenStack/Provider.py:102
-#| msgid "Access denied"
 msgid "Access interface"
 msgstr "Access Benutzeroberfläche"
 
@@ -2757,31 +2748,14 @@ msgid "Domain name (default is Default)"
 msgstr "Domain-Namen (Standard ist Standard)"
 
 #: services/OpenStack/Provider.py:105
-#| msgid "User with valid privileges on XenServer"
 msgid "User with valid privileges on OpenStack"
 msgstr "Benutzer mit gültigen Berechtigungen auf OpenStack"
 
 #: services/OpenStack/Provider.py:106
-#| msgid "Password of the user of HyperV"
 msgid "Password of the user of OpenStack"
 msgstr "Passwort des Benutzers des OpenStack"
 
-#: services/OpenStack/Provider.py:108
-#| msgid "Creation date"
-msgid "Creation concurrency"
-msgstr "Erstellung Parallelität"
-
-#: services/OpenStack/Provider.py:108 services/OpenStack/Provider.py:109
-#| msgid "Maximum number of services to provide"
-msgid "Maximum number of concurrently removing VMs"
-msgstr "Maximale Anzahl der gleichzeitig entfernen VMs"
-
-#: services/OpenStack/Provider.py:109
-msgid "Removal concurrency"
-msgstr "Entfernung-Parallelität"
-
 #: services/OpenStack/Provider.py:111
-#| msgid "Timeout in seconds of connection to HyperV"
 msgid "Timeout in seconds of connection to OpenStack"
 msgstr "Timeout in Sekunden der Verbindung zum OpenStack"
 
@@ -2790,7 +2764,6 @@ msgid "OpenStack test connection passed"
 msgstr "OpenStack Testverbindung übergeben"
 
 #: services/OpenStack/openStack/UDSOpenStackClient.py:610
-#| msgid "Authenticator"
 msgid "Authentication error"
 msgstr "Authentifizierungsfehler"
 
@@ -2799,8 +2772,8 @@ msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
 msgstr ""
-"Openstack unterstützt keine Identität API 3.2 oder neuer. Diese OpenStack-server "
-"ist nicht kompatibel mit UDS."
+"Openstack unterstützt keine Identität API 3.2 oder neuer. Diese OpenStack-"
+"server ist nicht kompatibel mit UDS."
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -3029,11 +3002,11 @@ msgstr "Benutzer mit gültigen Berechtigungen für VC"
 msgid "Password of the user of the VC"
 msgstr "Kennwort des Benutzers des VC"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:33
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
 msgid "Timeout in seconds of connection to VC"
 msgstr "Timeout in Sekunden der Verbindung zum VC"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
@@ -3041,19 +3014,19 @@ msgstr ""
 "Bereich gültige Mac erstellte Maschinen. Muss innerhalb "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:40
+#: services/Vmware_enterprise/ServiceProviderVC.py:46
 msgid "VMWare Virtual Center Provider"
 msgstr "VMWare Virtual Center-Anbieter"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:42
+#: services/Vmware_enterprise/ServiceProviderVC.py:48
 msgid "Provides connection to Virtual Center Services"
 msgstr "Stellt Verbindung zu Virtual-Center-Dienstleistungen"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:116
+#: services/Vmware_enterprise/ServiceProviderVC.py:132
 msgid "VmwareVC Provider: "
 msgstr "VmwareVC-Anbieter: "
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:123
+#: services/Vmware_enterprise/ServiceProviderVC.py:139
 msgid "Connection params ok"
 msgstr "Verbindung Params ok"
 
@@ -3125,9 +3098,9 @@ msgid "Remove found duplicates"
 msgstr "Gefundenen Duplikate entfernen"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#| msgid "Full path of the application this service will represent"
 msgid "If active, found duplicates clones for this service will be removed"
-msgstr "Wenn aktiv, werden gefundenen Duplikate Klone für diesen Dienst entfernt"
+msgstr ""
+"Wenn aktiv, werden gefundenen Duplikate Klone für diesen Dienst entfernt"
 
 #: services/Xen/XenLinkedService.py:56
 msgid "Xen Linked Clone (Experimental)"
@@ -3183,11 +3156,11 @@ msgstr "Benutzer mit gültigen Berechtigungen auf XenServer"
 msgid "Password of the user of XenServer"
 msgstr "Passwort des Benutzers des XenServer"
 
-#: services/Xen/XenProvider.py:103
+#: services/Xen/XenProvider.py:107
 msgid "Verify Certificate"
 msgstr "Zertifikat prüfen"
 
-#: services/Xen/XenProvider.py:104
+#: services/Xen/XenProvider.py:108
 msgid ""
 "If selected, certificate will be checked against system valid certificate "
 "providers"
@@ -3195,7 +3168,7 @@ msgstr ""
 "Wenn aktiviert, werden Zertifikat gegen System gültiges Zertifikat überprüft "
 "Anbieter"
 
-#: services/Xen/XenProvider.py:394
+#: services/Xen/XenProvider.py:398
 #, python-brace-format
 msgid "Connection failed: {0}"
 msgstr "Verbindung fehlgeschlagen: {0}"
@@ -3231,7 +3204,6 @@ msgid "Connectivity"
 msgstr "Konnektivität"
 
 #: templates/uds/admin/snippets/navbar.html:30
-#| msgid "Pools"
 msgid "Tools"
 msgstr "Werkzeuge"
 
@@ -3242,7 +3214,6 @@ msgid "Gallery"
 msgstr "Galerie"
 
 #: templates/uds/admin/snippets/navbar.html:33
-#| msgid "Service Pools"
 msgid "Services Pool Group"
 msgstr "Pool-Dienstleistungsgruppe"
 
@@ -3277,17 +3248,14 @@ msgid "Logs"
 msgstr "Protokolle"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:7
-#| msgid "Name of this element"
 msgid "Name of this rule"
 msgstr "Namen für diese Regel"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:14
-#| msgid "Comments for this element"
 msgid "Comments for this rule"
 msgstr "Kommentare für diese Regel"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:16
-#| msgid "comments"
 msgid "Rule comments"
 msgstr "Regel-Kommentare"
 
@@ -3296,12 +3264,10 @@ msgid "Event"
 msgstr "Ereignis"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:24
-#| msgid "Starting date"
 msgid "Starting hour"
 msgstr "Ab Stunde"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:34
-#| msgid "Tag for this element"
 msgid "Duration for this rule"
 msgstr "Dauer für diese Regel"
 
@@ -3310,12 +3276,10 @@ msgid "Repeat"
 msgstr "Wiederholen Sie die"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:55
-#| msgid "starting date for report"
 msgid "Starting date for repeating"
 msgstr "Startdatum für wiederholte"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:64
-#| msgid "Finish date"
 msgid "End date"
 msgstr "End-Datum"
 
@@ -3336,7 +3300,6 @@ msgid "Repeat interval for rule"
 msgstr "Wiederholungsintervall für Regel"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:91
-#| msgid "Tag for this element"
 msgid "Weekdays for this rule"
 msgstr "Wochentagen für diese Regel"
 
@@ -3530,7 +3493,6 @@ msgstr "Vollzugriff"
 
 #: templates/uds/admin/tmpl/pool_access_default.html:5
 #: templates/uds/admin/tmpl/pool_add_access.html:24
-#| msgid "Access denied"
 msgid "Access action"
 msgstr "Zugang-Aktion"
 
@@ -3607,12 +3569,10 @@ msgid "Transports"
 msgstr "Transporte"
 
 #: templates/uds/admin/tmpl/services_pool.html:37
-#| msgid "Access denied"
 msgid "Access Calendars"
 msgstr "Zugang-Kalender"
 
 #: templates/uds/admin/tmpl/services_pool_groups.html:5
-#| msgid "Service Pools"
 msgid "UDS Services Pool Groups"
 msgstr "UDS-Dienstleistungen-Pool-Gruppen"
 
@@ -3671,7 +3631,7 @@ msgstr "Zurück"
 msgid "Download UDS plugin for"
 msgstr "Download UDS-Plugin für"
 
-#: templates/uds/html5/download_client.html:11 templatetags/html5.py:224
+#: templates/uds/html5/download_client.html:11 templatetags/html5.py:223
 msgid "Download UDS Plugin for"
 msgstr "Download UDS-Plugin für"
 
@@ -3784,13 +3744,13 @@ msgid "Please, retry access in a while."
 msgstr "Bitte wiederholen Sie Zugang in eine Weile."
 
 #: templates/uds/html5/index.html:99
-#| msgid "Service not found"
 msgid "Service access not allowed"
 msgstr "-Zugriff nicht erlaubt"
 
 #: templates/uds/html5/index.html:102
 msgid "This service is currently not accesible due to schedule restrictions"
-msgstr "Dieser Service ist derzeit nicht zugänglich wegen Zeitplan Beschränkungen"
+msgstr ""
+"Dieser Service ist derzeit nicht zugänglich wegen Zeitplan Beschränkungen"
 
 #: templates/uds/html5/index.html:116
 msgid "Administrator info panel"
@@ -4003,19 +3963,19 @@ msgstr "Geben Sie"
 msgid "Language"
 msgstr "Sprache"
 
-#: templatetags/html5.py:230
+#: templatetags/html5.py:229
 msgid "Debian based Linux"
 msgstr "Debian basierten Linux"
 
-#: templatetags/html5.py:231
+#: templatetags/html5.py:230
 msgid "Red Hat based Linux (RH, Fedora, Centos, ...)"
 msgstr "Red Hat Basis Linux (RH, Fedora, Centos,...)"
 
-#: templatetags/html5.py:232
+#: templatetags/html5.py:231
 msgid "Suse based Linux"
 msgstr "SUSE basierten Linux"
 
-#: templatetags/html5.py:233
+#: templatetags/html5.py:232
 msgid "Generic .tar.gz Linux"
 msgstr "Generische. tar.gz Linux"
 
@@ -4239,17 +4199,14 @@ msgid "NX Protocol"
 msgstr "NX-Protokoll"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
-#| msgid "RDS Provider (Experimental)"
 msgid "PCoIP Transport (Experimental)"
 msgstr "PCoIP Transport (experimentell)"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-#| msgid "RDS Provider (Experimental)"
 msgid "PCoIP Transport, Experimental"
 msgstr "PCoIP Transport, experimentelle"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:57
-#| msgid "Connection"
 msgid "Connetion Manager"
 msgstr "Connetion Manager"
 
@@ -4258,9 +4215,10 @@ msgid "Hostname or address of connection manager"
 msgstr "Hostname oder die Adresse des Verbindungs-Managers"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
-#| msgid "If not empty, this username will be always used as credential"
 msgid "If not empty, this domain will be always used as credential domain"
-msgstr "Wenn nicht leer, diese Domäne immer verwendet werden als Anmeldeinformationen Domäne"
+msgstr ""
+"Wenn nicht leer, diese Domäne immer verwendet werden als "
+"Anmeldeinformationen Domäne"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:69

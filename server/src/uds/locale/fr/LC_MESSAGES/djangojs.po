@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
-"PO-Revision-Date: 2015-08-03 09:37+0000\n"
+"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -103,14 +103,13 @@ msgstr "Test"
 msgid "Search error"
 msgstr "Erreur de recherche"
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:282
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:306
 msgid "Accept"
 msgstr "Accepter"
 
 #: static/tmp_js/gui-d-authenticators.js:131
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
 #: static/tmp_js/gui-d-services.js:95 static/tmp_js/gui-d-servicespools.js:182
-#| msgid "Error accessing service: "
 msgid "Error accessing data"
 msgstr "Erreur d'accès aux données"
 
@@ -220,7 +219,6 @@ msgid "Authenticator deletion error"
 msgstr "Erreur suppression authentificateur"
 
 #: static/tmp_js/gui-d-calendar.js:23
-#| msgid "May"
 msgid "day"
 msgstr "Journée"
 
@@ -289,7 +287,6 @@ msgid "Weeks"
 msgstr "Semaines"
 
 #: static/tmp_js/gui-d-calendar.js:35
-#| msgid "Sunday"
 msgid "Sun"
 msgstr "Sun"
 
@@ -326,17 +323,14 @@ msgid "and will remain valid for "
 msgstr "et restera valable pour "
 
 #: static/tmp_js/gui-d-calendar.js:172
-#| msgid "Publish on creation"
 msgid "with no duration"
 msgstr "avec aucune durée"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "New user"
 msgid "New rule"
 msgstr "Nouvelle règle"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "Edit user"
 msgid "Edit rule"
 msgstr "Modifier la règle"
 
@@ -345,52 +339,42 @@ msgid "Save"
 msgstr "Enregistrer"
 
 #: static/tmp_js/gui-d-calendar.js:277
-#| msgid "Error creating report"
 msgid "Error creating rule"
 msgstr "Règle de création erreur"
 
 #: static/tmp_js/gui-d-calendar.js:280
-#| msgid "Error creating report"
 msgid "Error saving rule"
 msgstr "Règle une erreur"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "Delete user"
 msgid "Delete rule"
 msgstr "Supprimer la règle"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "deletion error"
 msgid "Rule deletion error"
 msgstr "Erreur de suppression de règle"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "New OSManager"
 msgid "New calendar"
 msgstr "Nouveau calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "OSManager creation error"
 msgid "Calendar creation error"
 msgstr "Erreur de création de calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "Edit OSManager"
 msgid "Edit calendar"
 msgstr "Modifier le calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "OSManager saving error"
 msgid "Calendar saving error"
 msgstr "Calendrier sauver erreur"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "Delete OSManager"
 msgid "Delete calendar"
 msgstr "Supprimer le calendrier"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "User deletion error"
 msgid "Calendar deletion error"
 msgstr "Erreur de suppression de calendrier"
 
@@ -459,7 +443,6 @@ msgid "New image"
 msgstr "Nouvelle image"
 
 #: static/tmp_js/gui-d-gallery.js:17
-#| msgid "Edit OSManager"
 msgid "Edit image"
 msgstr "Modifier l'image"
 
@@ -632,13 +615,11 @@ msgstr "Modifier le calendrier d'accès"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Remove Cache element"
 msgid "Remove access calendar"
 msgstr "Supprimer le calendrier d'accès"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Transport removal error"
 msgid "Access calendar removal error"
 msgstr "Erreur de suppression d'accès calendrier"
 
@@ -662,7 +643,6 @@ msgid "Publish"
 msgstr "Publier"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
-#| msgid "Cancel publication"
 msgid "Cancel publication?"
 msgstr "Annuler la publication ?"
 
@@ -771,27 +751,22 @@ msgid "deletion error"
 msgstr "erreur de suppression"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "New services provider"
 msgid "New services Services Pool Group"
 msgstr "Nouveaux services Services piscine groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "Services provider creation error"
 msgid "Services Services Pool Group creation error"
 msgstr "Erreur de création de services Services piscine groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-#| msgid "Edit services provider"
 msgid "Edit services Services Pool Group"
 msgstr "Modifier les services Services piscine groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Delete services provider"
 msgid "Delete Services Pool Group"
 msgstr "Supprimer le Pool Services groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Service creation error"
 msgid "Services Pool Group error"
 msgstr "Erreur de services piscine groupe"
 
@@ -827,15 +802,19 @@ msgstr "Message"
 msgid "Logs"
 msgstr "Journaux"
 
-#: static/tmp_js/gui-form.js:265
+#: static/tmp_js/gui-form.js:95
+msgid "Main"
+msgstr "Principal"
+
+#: static/tmp_js/gui-form.js:289
 msgid "yes"
 msgstr "Oui"
 
-#: static/tmp_js/gui-form.js:266
+#: static/tmp_js/gui-form.js:290
 msgid "no"
 msgstr "ne"
 
-#: static/tmp_js/gui-form.js:283
+#: static/tmp_js/gui-form.js:307
 msgid "Close"
 msgstr "Fermer"
 
@@ -876,17 +855,14 @@ msgid "items:"
 msgstr "Articles :"
 
 #: static/tmp_js/gui-methods.js:147
-#| msgid "Error creating report"
 msgid "Error deleting"
 msgstr "Suppression de l'erreur"
 
 #: static/tmp_js/gui-methods.js:149
-#| msgid "Edition successfully done"
 msgid "Successfully deleted"
 msgstr "A été correctement supprimé"
 
 #: static/tmp_js/gui-methods.js:154
-#| msgid "Deletion error"
 msgid "Deletion results"
 msgstr "Résultats de la suppression"
 
@@ -980,7 +956,6 @@ msgid "Message"
 msgstr "Message"
 
 #: static/tmp_js/gui.js:130
-#| msgid "Test failed:"
 msgid "Connection failed"
 msgstr "Échoué de la connexion"
 

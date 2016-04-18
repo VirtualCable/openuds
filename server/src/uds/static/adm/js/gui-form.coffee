@@ -1,4 +1,4 @@
-# jshint strict: true 
+# jshint strict: true
 ((gui, $, undefined_) ->
   "use strict"
   gui.forms = {}
@@ -15,7 +15,7 @@
 
     return
 
-  
+
   # Returns form fields that will manage a gui description (new or edit)
   gui.forms.fieldsToHtml = (itemGui, item, editing) ->
     html = ""
@@ -28,14 +28,14 @@
       # Not exactly a field, maybe some other info...
       gui.doLog "Processing ", f
       return  if not f.gui?
-      
+
       # Fix multiline text fields to textbox
       f.gui.type = "textbox" if f.gui.type is "text" and f.gui.multiline
       value = item[f.name]
       if !value?    # If a is null or undefined
         gui.doLog "Value is null"
         value =  f.gui.value or f.gui.defvalue
-      
+
       # We need to convert "array" values for multichoices to single list of ids (much more usable right here)
       if f.gui.type is "multichoice"
         newValue = []
@@ -86,11 +86,34 @@
     form = "<form class=\"form-horizontal\" role=\"form\">" + "<input type=\"hidden\" name=\"id\" class=\"modal_field_data\" value=\"" + item.id + "\">"
     fillers = []
     originalValues = {}
-    if fields.tabs
+
+    if !fields.tabs
+      tabs = {}
+      tabsArray = []
+      for k in fields
+        if !k.gui.tab?
+          k.gui.tab = gettext('Main')
+        tab = k.gui.tab
+        if tabs[tab]?
+          tabs[tab].fields.push k
+        else
+          tabs[tab] =
+            title: tab
+            fields: [k]
+          tabsArray.push tabs[tab]
+
+      gui.doLog "Tabs ", tabsArray, tabsArray.length
+
+    if tabsArray.length > 1
+      fields.tabs = tabsArray
+
+
+    if fields.tabs?
       id = "tab-" + Math.random().toString().split(".")[1] # Get a random base ID for tab entries
       tabs = []
       tabsContent = []
       active = " active in"
+
       $.each fields.tabs, (index, tab) ->
         h = gui.forms.fieldsToHtml(tab.fields, item)
         tabsContent.push "<div class=\"tab-pane fade" + active + "\" id=\"" + id + index + "\">" + h.html + "</div>"
@@ -118,8 +141,8 @@
       onChange = (filler) ->
         ->
           gui.doLog "Onchange invoked for ", filler
-          
-          # Attach on change method to each filler, and after that, all 
+
+          # Attach on change method to each filler, and after that, all
           params = []
           $.each filler.parameters, (undefined_, p) ->
             val = $(formSelector + " [name=\"" + p + "\"]").val()
@@ -131,7 +154,7 @@
 
           gui.forms.callback formSelector, filler.callbackName, params, (data) ->
             $.each data, (undefined_, sel) ->
-              
+
               # Update select contents with returned values
               $select = $(formSelector + " [name=\"" + sel.name + "\"]")
               $select.empty()
@@ -140,10 +163,10 @@
                 return
 
               $select.val originalValues[sel.name]
-              
+
               # Refresh selectpicker if item is such
               $select.selectpicker "refresh"  if $select.hasClass("selectpicker")
-              
+
               # Trigger change for the changed item
               $select.trigger "change"
               return
@@ -152,13 +175,13 @@
 
           return
 
-      
+
       # Sets the "on change" event for select with fillers (callbacks that fills other fields)
       $.each fillers, (undefined_, f) ->
         $(formSelector + " [name=\"" + f.name + "\"]").on "change", onChange(f)
         return
 
-      
+
       # Trigger first filler if it exists, this will cascade rest of "changes" if they exists
       $(formSelector + " [name=\"" + fillers[0].name + "\"]").trigger "change"  if fillers.length
       return
@@ -166,7 +189,7 @@
     html: form # Returns the form and a initialization function for the form, that must be invoked to start it
     init: init
 
-  
+
   # Reads fields from a form
   gui.forms.read = (formSelector) ->
     res = {}
@@ -188,7 +211,7 @@
     gui.doLog res
     res
 
-  
+
   # Options has this keys:
   #   title
   #   fields
@@ -229,7 +252,7 @@
       return
 
     ff.init id  if ff.init
-    
+
     # Append click events for custom buttons on footer
     $.each clickEventHandlers, (undefined_, value) ->
       if value.action?
@@ -239,11 +262,11 @@
 
       return
 
-    
+
     # Get form
     $form = $(id + " form")
     gui.tools.applyCustoms id
-    
+
     # Validation
 
 
@@ -264,8 +287,8 @@
     # Generate rules for required select fields
     for s in $($form.selector + " select[multiple][required]")
       gui.doLog "Rules ", $(s).rules()
-    
-    
+
+
     # And catch "accept" (default is "Save" in fact) button click
     $("#{id} .button-accept").click ->
       return  unless $form.valid()
@@ -276,10 +299,10 @@
         closeFnc()
       return
 
-    
+
     # If preprocessors of modal (maybe custom event handlers)
     options.preprocessor id  if options.preprocessor
-    
+
     # Launch modal
     $(id).modal(keyboard: false).on "hidden.bs.modal", ->
       $(id).remove()
@@ -339,7 +362,7 @@
 
     return
 
-  
+
   # simple gui generators
   gui.forms.guiField = (name, type, label, tooltip, value, values, length, multiline, readonly, required) ->
     length = length or 128

@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
-"PO-Revision-Date: 2015-08-03 09:37+0000\n"
+"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -108,14 +108,13 @@ msgstr "Prueba"
 msgid "Search error"
 msgstr "Error en la búsqueda"
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:282
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:306
 msgid "Accept"
 msgstr "Aceptar"
 
 #: static/tmp_js/gui-d-authenticators.js:131
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
 #: static/tmp_js/gui-d-services.js:95 static/tmp_js/gui-d-servicespools.js:182
-#| msgid "Error accessing service: "
 msgid "Error accessing data"
 msgstr "Error de acceso a datos"
 
@@ -225,7 +224,6 @@ msgid "Authenticator deletion error"
 msgstr "Error al eliminar autenticador"
 
 #: static/tmp_js/gui-d-calendar.js:23
-#| msgid "May"
 msgid "day"
 msgstr "día"
 
@@ -294,7 +292,6 @@ msgid "Weeks"
 msgstr "Semanas"
 
 #: static/tmp_js/gui-d-calendar.js:35
-#| msgid "Sunday"
 msgid "Sun"
 msgstr "Sol"
 
@@ -331,17 +328,14 @@ msgid "and will remain valid for "
 msgstr "y seguirá siendo válido para "
 
 #: static/tmp_js/gui-d-calendar.js:172
-#| msgid "Publish on creation"
 msgid "with no duration"
 msgstr "no hay duración"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "New user"
 msgid "New rule"
 msgstr "Nueva regla"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "Edit user"
 msgid "Edit rule"
 msgstr "Editar regla"
 
@@ -350,52 +344,42 @@ msgid "Save"
 msgstr "Guardar"
 
 #: static/tmp_js/gui-d-calendar.js:277
-#| msgid "Error creating report"
 msgid "Error creating rule"
 msgstr "Regla de creación de error"
 
 #: static/tmp_js/gui-d-calendar.js:280
-#| msgid "Error creating report"
 msgid "Error saving rule"
 msgstr "Error al guardar la regla"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "Delete user"
 msgid "Delete rule"
 msgstr "Eliminar regla"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "deletion error"
 msgid "Rule deletion error"
 msgstr "Error de regla de eliminación"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "New OSManager"
 msgid "New calendar"
 msgstr "Nuevo calendario"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "OSManager creation error"
 msgid "Calendar creation error"
 msgstr "Error de creación de calendario"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "Edit OSManager"
 msgid "Edit calendar"
 msgstr "Editar calendario"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "OSManager saving error"
 msgid "Calendar saving error"
 msgstr "Calendario de ahorro error"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "Delete OSManager"
 msgid "Delete calendar"
 msgstr "Eliminar calendario"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "User deletion error"
 msgid "Calendar deletion error"
 msgstr "Error de eliminación de calendario"
 
@@ -464,7 +448,6 @@ msgid "New image"
 msgstr "Nueva imagen"
 
 #: static/tmp_js/gui-d-gallery.js:17
-#| msgid "Edit OSManager"
 msgid "Edit image"
 msgstr "Editar imagen"
 
@@ -636,13 +619,11 @@ msgstr "Editar calendario de acceso"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Remove Cache element"
 msgid "Remove access calendar"
 msgstr "Eliminar calendario de acceso"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Transport removal error"
 msgid "Access calendar removal error"
 msgstr "Error de extracción de calendario de acceso"
 
@@ -666,7 +647,6 @@ msgid "Publish"
 msgstr "Publicar"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
-#| msgid "Cancel publication"
 msgid "Cancel publication?"
 msgstr "¿Cancelar la publicación?"
 
@@ -777,27 +757,22 @@ msgid "deletion error"
 msgstr "error al eliminar"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "New services provider"
 msgid "New services Services Pool Group"
 msgstr "Nuevos servicios de grupo de servicios de la piscina"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "Services provider creation error"
 msgid "Services Services Pool Group creation error"
 msgstr "Error de creación de grupo de servicios servicios piscina"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-#| msgid "Edit services provider"
 msgid "Edit services Services Pool Group"
 msgstr "Editar servicios de grupo de servicios de la piscina"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Delete services provider"
 msgid "Delete Services Pool Group"
 msgstr "Grupo de la cancelación servicios piscina"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Service creation error"
 msgid "Services Pool Group error"
 msgstr "Error de grupo de servicios piscina"
 
@@ -833,15 +808,19 @@ msgstr "Mensaje"
 msgid "Logs"
 msgstr "Logs"
 
-#: static/tmp_js/gui-form.js:265
+#: static/tmp_js/gui-form.js:95
+msgid "Main"
+msgstr "Principal"
+
+#: static/tmp_js/gui-form.js:289
 msgid "yes"
 msgstr "sí"
 
-#: static/tmp_js/gui-form.js:266
+#: static/tmp_js/gui-form.js:290
 msgid "no"
 msgstr "no"
 
-#: static/tmp_js/gui-form.js:283
+#: static/tmp_js/gui-form.js:307
 msgid "Close"
 msgstr "Cerrar"
 
@@ -882,17 +861,14 @@ msgid "items:"
 msgstr "artículos:"
 
 #: static/tmp_js/gui-methods.js:147
-#| msgid "Error creating report"
 msgid "Error deleting"
 msgstr "Eliminar error"
 
 #: static/tmp_js/gui-methods.js:149
-#| msgid "Edition successfully done"
 msgid "Successfully deleted"
 msgstr "Eliminado correctamente"
 
 #: static/tmp_js/gui-methods.js:154
-#| msgid "Deletion error"
 msgid "Deletion results"
 msgstr "Resultados de la eliminación"
 
@@ -986,7 +962,6 @@ msgid "Message"
 msgstr "Mensaje"
 
 #: static/tmp_js/gui.js:130
-#| msgid "Test failed:"
 msgid "Connection failed"
 msgstr "Fallado la conexión"
 

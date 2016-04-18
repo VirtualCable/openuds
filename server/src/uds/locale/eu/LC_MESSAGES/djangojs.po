@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
-"PO-Revision-Date: 2015-08-03 09:37+0000\n"
+"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -103,7 +103,7 @@ msgstr "Proba"
 msgid "Search error"
 msgstr ""
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:282
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:306
 msgid "Accept"
 msgstr "onar ezazu"
 
@@ -219,10 +219,8 @@ msgid "Authenticator deletion error"
 msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:23
-#, fuzzy
-#| msgid "May"
 msgid "day"
-msgstr "Maiatza"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "days"
@@ -289,10 +287,8 @@ msgid "Weeks"
 msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:35
-#, fuzzy
-#| msgid "Sunday"
 msgid "Sun"
-msgstr "Igande"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:51
 msgid "(no days)"
@@ -805,15 +801,19 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:265
+#: static/tmp_js/gui-form.js:95
+msgid "Main"
+msgstr ""
+
+#: static/tmp_js/gui-form.js:289
 msgid "yes"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:266
+#: static/tmp_js/gui-form.js:290
 msgid "no"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:283
+#: static/tmp_js/gui-form.js:307
 msgid "Close"
 msgstr ""
 

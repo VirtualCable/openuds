@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
+"POT-Creation-Date: 2016-04-18 07:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,7 +101,7 @@ msgstr ""
 msgid "Search error"
 msgstr ""
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:282
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:306
 msgid "Accept"
 msgstr ""
 
@@ -799,15 +799,19 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:265
+#: static/tmp_js/gui-form.js:95
+msgid "Main"
+msgstr ""
+
+#: static/tmp_js/gui-form.js:289
 msgid "yes"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:266
+#: static/tmp_js/gui-form.js:290
 msgid "no"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:283
+#: static/tmp_js/gui-form.js:307
 msgid "Close"
 msgstr ""
 

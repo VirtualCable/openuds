@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
-"PO-Revision-Date: 2015-08-03 09:37+0000\n"
+"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -103,14 +103,13 @@ msgstr "Test"
 msgid "Search error"
 msgstr "Suche Fehler"
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:282
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:306
 msgid "Accept"
 msgstr "Akzeptieren"
 
 #: static/tmp_js/gui-d-authenticators.js:131
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
 #: static/tmp_js/gui-d-services.js:95 static/tmp_js/gui-d-servicespools.js:182
-#| msgid "Error accessing service: "
 msgid "Error accessing data"
 msgstr "Fehler beim Zugriff auf Daten"
 
@@ -220,7 +219,6 @@ msgid "Authenticator deletion error"
 msgstr "Authentifikator löschen Fehler"
 
 #: static/tmp_js/gui-d-calendar.js:23
-#| msgid "May"
 msgid "day"
 msgstr "Tag"
 
@@ -289,7 +287,6 @@ msgid "Weeks"
 msgstr "Wochen"
 
 #: static/tmp_js/gui-d-calendar.js:35
-#| msgid "Sunday"
 msgid "Sun"
 msgstr "Sun"
 
@@ -326,17 +323,14 @@ msgid "and will remain valid for "
 msgstr "und bleibt gültig für "
 
 #: static/tmp_js/gui-d-calendar.js:172
-#| msgid "Publish on creation"
 msgid "with no duration"
 msgstr "mit keine Dauer"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "New user"
 msgid "New rule"
 msgstr "Neue Regel"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "Edit user"
 msgid "Edit rule"
 msgstr "Regel bearbeiten"
 
@@ -345,52 +339,42 @@ msgid "Save"
 msgstr "Sie sparen"
 
 #: static/tmp_js/gui-d-calendar.js:277
-#| msgid "Error creating report"
 msgid "Error creating rule"
 msgstr "Erstellen von Fehler-Regel"
 
 #: static/tmp_js/gui-d-calendar.js:280
-#| msgid "Error creating report"
 msgid "Error saving rule"
 msgstr "Fehler beim Speichern der Regel"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "Delete user"
 msgid "Delete rule"
 msgstr "Regel löschen"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "deletion error"
 msgid "Rule deletion error"
 msgstr "Regelfehler löschen"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "New OSManager"
 msgid "New calendar"
 msgstr "Neuer Kalender"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "OSManager creation error"
 msgid "Calendar creation error"
 msgstr "Fehler beim Erstellen von Kalender"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "Edit OSManager"
 msgid "Edit calendar"
 msgstr "Kalender bearbeiten"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "OSManager saving error"
 msgid "Calendar saving error"
 msgstr "Kalender speichern Fehler"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "Delete OSManager"
 msgid "Delete calendar"
 msgstr "Kalender löschen"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "User deletion error"
 msgid "Calendar deletion error"
 msgstr "Kalender löschen Fehler"
 
@@ -459,7 +443,6 @@ msgid "New image"
 msgstr "Neues Bild"
 
 #: static/tmp_js/gui-d-gallery.js:17
-#| msgid "Edit OSManager"
 msgid "Edit image"
 msgstr "Bild bearbeiten"
 
@@ -631,13 +614,11 @@ msgstr "Bearbeiten von Access-Kalender"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Remove Cache element"
 msgid "Remove access calendar"
 msgstr "Entfernen Sie die Access-Kalender"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Transport removal error"
 msgid "Access calendar removal error"
 msgstr "Fehler beim Zugriff auf Kalender entfernen"
 
@@ -661,7 +642,6 @@ msgid "Publish"
 msgstr "Veröffentlichen"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
-#| msgid "Cancel publication"
 msgid "Cancel publication?"
 msgstr "Einzustellen Veröffentlichung?"
 
@@ -771,27 +751,22 @@ msgid "deletion error"
 msgstr "Fehler löschen"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "New services provider"
 msgid "New services Services Pool Group"
 msgstr "Neue Dienstleistungen Dienstleistungsgruppe Pool"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "Services provider creation error"
 msgid "Services Services Pool Group creation error"
 msgstr "Fehler beim Erstellen der Services-Services-Pool Group"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-#| msgid "Edit services provider"
 msgid "Edit services Services Pool Group"
 msgstr "Bearbeiten von Services Services Pool Group"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Delete services provider"
 msgid "Delete Services Pool Group"
 msgstr "Service-Pool-Gruppe löschen"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Service creation error"
 msgid "Services Pool Group error"
 msgstr "Dienstleistungsgruppe Pool Fehler"
 
@@ -827,15 +802,19 @@ msgstr "Nachricht"
 msgid "Logs"
 msgstr "Protokolle"
 
-#: static/tmp_js/gui-form.js:265
+#: static/tmp_js/gui-form.js:95
+msgid "Main"
+msgstr "Main"
+
+#: static/tmp_js/gui-form.js:289
 msgid "yes"
 msgstr "Ja"
 
-#: static/tmp_js/gui-form.js:266
+#: static/tmp_js/gui-form.js:290
 msgid "no"
 msgstr "Nein"
 
-#: static/tmp_js/gui-form.js:283
+#: static/tmp_js/gui-form.js:307
 msgid "Close"
 msgstr "Schließen"
 
@@ -876,17 +855,14 @@ msgid "items:"
 msgstr "Elemente:"
 
 #: static/tmp_js/gui-methods.js:147
-#| msgid "Error creating report"
 msgid "Error deleting"
 msgstr "Fehler beim Löschen"
 
 #: static/tmp_js/gui-methods.js:149
-#| msgid "Edition successfully done"
 msgid "Successfully deleted"
 msgstr "Erfolgreich gelöscht"
 
 #: static/tmp_js/gui-methods.js:154
-#| msgid "Deletion error"
 msgid "Deletion results"
 msgstr "Löschung-Ergebnisse"
 
@@ -980,7 +956,6 @@ msgid "Message"
 msgstr "Nachricht"
 
 #: static/tmp_js/gui.js:130
-#| msgid "Test failed:"
 msgid "Connection failed"
 msgstr "Verbindung fehlgeschlagen"
 
