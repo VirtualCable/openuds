@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"POT-Creation-Date: 2016-04-19 10:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,13 +101,14 @@ msgstr ""
 msgid "Search error"
 msgstr ""
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:306
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:318
 msgid "Accept"
 msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:131
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
-#: static/tmp_js/gui-d-services.js:95 static/tmp_js/gui-d-servicespools.js:182
+#: static/tmp_js/gui-d-services.js:82 static/tmp_js/gui-d-services.js:123
+#: static/tmp_js/gui-d-servicespools.js:182
 msgid "Error accessing data"
 msgstr ""
 
@@ -500,84 +501,92 @@ msgstr ""
 msgid "Error obtaining report description"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:72
+#: static/tmp_js/gui-d-services.js:59
 msgid "In Maintenance"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:74
+#: static/tmp_js/gui-d-services.js:61
 msgid "Active"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:131
+#: static/tmp_js/gui-d-services.js:104
+msgid "Information"
+msgstr ""
+
+#: static/tmp_js/gui-d-services.js:120
+msgid "Service information"
+msgstr ""
+
+#: static/tmp_js/gui-d-services.js:141
 msgid "Edit service"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:131
+#: static/tmp_js/gui-d-services.js:141
 msgid "Service creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:132
+#: static/tmp_js/gui-d-services.js:142
 msgid "New service"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:132
+#: static/tmp_js/gui-d-services.js:142
 msgid "Service saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:133
+#: static/tmp_js/gui-d-services.js:143
 msgid "Delete service"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:133
+#: static/tmp_js/gui-d-services.js:143
 msgid "Service deletion error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:149 static/tmp_js/gui-d-services.js:172
+#: static/tmp_js/gui-d-services.js:159 static/tmp_js/gui-d-services.js:182
 msgid "Maintenance"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:158
+#: static/tmp_js/gui-d-services.js:168
 msgid "Maintenance Mode"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:158
+#: static/tmp_js/gui-d-services.js:168
 msgid "Enter Maintenance Mode?"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:158
+#: static/tmp_js/gui-d-services.js:168
 msgid "Exit Maintenance Mode?"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:177
+#: static/tmp_js/gui-d-services.js:187
 msgid "Enter maintenance Mode"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:180
+#: static/tmp_js/gui-d-services.js:190
 msgid "Exit Maintenance Mode"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:188
+#: static/tmp_js/gui-d-services.js:198
 msgid "New services provider"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:188
+#: static/tmp_js/gui-d-services.js:198
 msgid "Services provider creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:189
+#: static/tmp_js/gui-d-services.js:199
 msgid "Edit services provider"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:189
+#: static/tmp_js/gui-d-services.js:199
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Provider saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:190
+#: static/tmp_js/gui-d-services.js:200
 msgid "Delete services provider"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:190
+#: static/tmp_js/gui-d-services.js:200
 msgid "Services Provider deletion error"
 msgstr ""
 
@@ -738,7 +747,7 @@ msgstr ""
 msgid "saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-servicespools.js:395 static/tmp_js/gui-methods.js:140
+#: static/tmp_js/gui-d-servicespools.js:395 static/tmp_js/gui-methods.js:141
 #: static/tmp_js/gui.js:52
 msgid "Delete"
 msgstr ""
@@ -803,15 +812,15 @@ msgstr ""
 msgid "Main"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:289
+#: static/tmp_js/gui-form.js:301
 msgid "yes"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:290
+#: static/tmp_js/gui-form.js:302
 msgid "no"
 msgstr ""
 
-#: static/tmp_js/gui-form.js:307
+#: static/tmp_js/gui-form.js:319
 msgid "Close"
 msgstr ""
 
@@ -835,31 +844,31 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
-#: static/tmp_js/gui-methods.js:100
+#: static/tmp_js/gui-methods.js:101
 msgid "of type"
 msgstr ""
 
-#: static/tmp_js/gui-methods.js:118
+#: static/tmp_js/gui-methods.js:119
 msgid "Creation successfully done"
 msgstr ""
 
-#: static/tmp_js/gui-methods.js:138
+#: static/tmp_js/gui-methods.js:139
 msgid "Are you sure do you want to delete "
 msgstr ""
 
-#: static/tmp_js/gui-methods.js:138
+#: static/tmp_js/gui-methods.js:139
 msgid "items:"
 msgstr ""
 
-#: static/tmp_js/gui-methods.js:147
+#: static/tmp_js/gui-methods.js:148
 msgid "Error deleting"
 msgstr ""
 
-#: static/tmp_js/gui-methods.js:149
+#: static/tmp_js/gui-methods.js:150
 msgid "Successfully deleted"
 msgstr ""
 
-#: static/tmp_js/gui-methods.js:154
+#: static/tmp_js/gui-methods.js:155
 msgid "Deletion results"
 msgstr ""
 

@@ -1,25 +1,15 @@
-# jshint strict: true 
+# jshint strict: true
 gui.providers = new GuiElement(api.providers, "provi")
 gui.providers.link = (event) ->
   "use strict"
-  
-  maintenanceText = (icon, text) ->
+
+  iconAndText = (icon, text) ->
     '<span class="fa ' + icon + '"> </span> <span class="label-tbl-button">' + text + '</span>'
 
   # Button definition to trigger "Test" action
   testButton = testButton:
     text: gettext("Test")
     css: "btn-info"
-
-  detailLogTable = undefined
-  clearDetailLog = ->
-    if detailLogTable
-      $tbl = $(detailLogTable).dataTable()
-      $tbl.fnClearTable()
-      $tbl.fnDestroy()
-      $("#services-log-placeholder").empty()
-      detailLogTable = undefined
-    return
 
   prevTables = []
   clearDetails = ->
@@ -29,7 +19,6 @@ gui.providers.link = (event) ->
       $tbl.fnDestroy()
       return
 
-    clearDetailLog()
     prevTables = []
     $("#services-placeholder").empty()
     $("#logs-placeholder").empty()
@@ -42,11 +31,10 @@ gui.providers.link = (event) ->
       providers: "providers-placeholder"
       provider_info: "provider-info-placeholder"
       services: "services-placeholder"
-      services_log: "services-log-placeholder"
       logs: "logs-placeholder"
     )
     gui.setLinksEvents()
-    
+
     # Append tabs click events
     $(".bottom_tabs").on "click", (event) ->
       setTimeout (->
@@ -98,38 +86,58 @@ gui.providers.link = (event) ->
         id = selected[0].id
 
         # Giving the name compossed with type, will ensure that only styles will be reattached once
-        services = new GuiElement(api.providers.detail(id, "services", { permission: selected[0].permission }), "services-" + selected[0].type)
+        servicesAPI = api.providers.detail(id, "services", { permission: selected[0].permission })
+        services = new GuiElement(servicesAPI, "services-" + selected[0].type)
         tmpLogTable = undefined
         servicesTable = services.table(
           icon: 'services'
           container: "services-placeholder"
           doNotLoadData: true
           rowSelect: "multi"
-          onRowSelect: (sselected) ->
-            gui.tools.blockUI()
-            sId = sselected[0].id
-            clearDetailLog()
-            tmpLogTable = services.logTable(sId,
-              container: "services-log-placeholder"
-              onLoad: ->
-                detailLogTable = tmpLogTable
-                gui.tools.unblockUI()
-                return
-            )
-            return
-
-          onRowDeselect: ->
-            clearDetailLog()
-            return
 
           onCheck: (check, items) ->
             if check is "delete" and items.length is 1
               return false  if items[0].deployed_services_count > 0
             return true
- 
+
           buttons: [
             "new"
             "edit"
+            {
+              text: iconAndText( 'fa-info', gettext('Information') )
+              css: "disabled"
+              disabled: true
+              click: (vals, value, btn, tbl, refreshFnc) ->
+                gui.doLog "Value:", value, vals[0]
+                api.cache.clear()
+                val = vals[0]
+                servicesAPI.invoke val.id + "/servicesPools", (pools) ->
+                  gui.doLog "Pools", pools
+                  api.templates.get "service-info", (tmpl) ->
+                    content = api.templates.evaluate(tmpl,
+                      id: 'information',
+                      pools: pools
+                    )
+                    modalId = gui.launchModal(gettext('Service information'), content,
+                      actionButton: ""
+                    )
+                    gui.methods.typedShow services, val, '#information-overview', gettext('Error accessing data')
+                    tmpLogTable = services.logTable(val.id,
+                      container: "information-logs"
+                      onLoad: ->
+                        return
+                    )
+                    $('#information-pools-table').DataTable();
+                  return
+
+              select: (vals, value, btn, tbl, refreshFnc) ->
+                unless vals.length == 1
+                  $(btn).addClass("disabled").prop('disabled', true)
+                  return
+
+                $(btn).removeClass("disabled").prop('disabled', false)
+
+            }
             "delete"
             "xls"
           ]
@@ -154,7 +162,7 @@ gui.providers.link = (event) ->
         "edit"
         {
           permission: api.permissions.MANAGEMENT
-          text: maintenanceText('fa-ambulance', gettext("Maintenance"))
+          text: iconAndText('fa-ambulance', gettext("Maintenance"))
           css: "disabled"
           disabled: true
           click: (vals, value, btn, tbl, refreshFnc) ->
@@ -180,14 +188,14 @@ gui.providers.link = (event) ->
           select: (vals, value, btn, tbl, refreshFnc) ->
             unless vals.length == 1
               $(btn).removeClass("btn-warning").removeClass("btn-info").addClass("disabled").prop('disabled', true)
-              $(btn).empty().append(maintenanceText('fa-ambulance', gettext("Maintenance")))
+              $(btn).empty().append(iconAndText('fa-ambulance', gettext("Maintenance")))
               return
             val = vals[0]
             if val.maintenance_mode is false
-              content = maintenanceText('fa-ambulance', gettext('Enter maintenance Mode'))
+              content = iconAndText('fa-ambulance', gettext('Enter maintenance Mode'))
               cls = 'btn-warning'
             else
-              content = maintenanceText('fa-truck',gettext('Exit Maintenance Mode'))
+              content = iconAndText('fa-truck',gettext('Exit Maintenance Mode'))
               cls = 'btn-info'
 
             $(btn).removeClass("disabled").addClass(cls).prop('disabled', false)

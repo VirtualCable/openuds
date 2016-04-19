@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 09:28+0200\n"
-"PO-Revision-Date: 2015-08-03 09:37+0000\n"
+"POT-Creation-Date: 2016-04-19 10:01+0200\n"
+"PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -102,14 +102,14 @@ msgstr "Teste"
 msgid "Search error"
 msgstr "Erro de pesquisa"
 
-#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:282
+#: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:318
 msgid "Accept"
 msgstr "Aceitar"
 
 #: static/tmp_js/gui-d-authenticators.js:131
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
-#: static/tmp_js/gui-d-services.js:95 static/tmp_js/gui-d-servicespools.js:182
-#| msgid "Error accessing service: "
+#: static/tmp_js/gui-d-services.js:82 static/tmp_js/gui-d-services.js:123
+#: static/tmp_js/gui-d-servicespools.js:182
 msgid "Error accessing data"
 msgstr "Erro ao acessar dados"
 
@@ -219,7 +219,6 @@ msgid "Authenticator deletion error"
 msgstr "Erro de exclusão do autenticador"
 
 #: static/tmp_js/gui-d-calendar.js:23
-#| msgid "May"
 msgid "day"
 msgstr "dia"
 
@@ -288,7 +287,6 @@ msgid "Weeks"
 msgstr "Semanas"
 
 #: static/tmp_js/gui-d-calendar.js:35
-#| msgid "Sunday"
 msgid "Sun"
 msgstr "Sol"
 
@@ -325,17 +323,14 @@ msgid "and will remain valid for "
 msgstr "e permanecerá válido para "
 
 #: static/tmp_js/gui-d-calendar.js:172
-#| msgid "Publish on creation"
 msgid "with no duration"
 msgstr "com nenhuma duração"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "New user"
 msgid "New rule"
 msgstr "Nova regra"
 
 #: static/tmp_js/gui-d-calendar.js:208
-#| msgid "Edit user"
 msgid "Edit rule"
 msgstr "Editar regra"
 
@@ -344,52 +339,42 @@ msgid "Save"
 msgstr "Salvar"
 
 #: static/tmp_js/gui-d-calendar.js:277
-#| msgid "Error creating report"
 msgid "Error creating rule"
 msgstr "Regra de criação de erro"
 
 #: static/tmp_js/gui-d-calendar.js:280
-#| msgid "Error creating report"
 msgid "Error saving rule"
 msgstr "Erro ao salvar regra"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "Delete user"
 msgid "Delete rule"
 msgstr "Excluir a regra"
 
 #: static/tmp_js/gui-d-calendar.js:326
-#| msgid "deletion error"
 msgid "Rule deletion error"
 msgstr "Erro de exclusão de regra"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "New OSManager"
 msgid "New calendar"
 msgstr "Novo calendário"
 
 #: static/tmp_js/gui-d-calendar.js:333
-#| msgid "OSManager creation error"
 msgid "Calendar creation error"
 msgstr "Erro de criação do calendário"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "Edit OSManager"
 msgid "Edit calendar"
 msgstr "Editar o calendário"
 
 #: static/tmp_js/gui-d-calendar.js:334
-#| msgid "OSManager saving error"
 msgid "Calendar saving error"
 msgstr "Calendário salvando o erro"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "Delete OSManager"
 msgid "Delete calendar"
 msgstr "Excluir calendário"
 
 #: static/tmp_js/gui-d-calendar.js:335
-#| msgid "User deletion error"
 msgid "Calendar deletion error"
 msgstr "Erro de exclusão de calendário"
 
@@ -458,7 +443,6 @@ msgid "New image"
 msgstr "Nova imagem"
 
 #: static/tmp_js/gui-d-gallery.js:17
-#| msgid "Edit OSManager"
 msgid "Edit image"
 msgstr "Editar imagem"
 
@@ -518,84 +502,94 @@ msgstr "Erro ao criar o relatório"
 msgid "Error obtaining report description"
 msgstr "Descrição de relatório de obtenção do erro"
 
-#: static/tmp_js/gui-d-services.js:72
+#: static/tmp_js/gui-d-services.js:59
 msgid "In Maintenance"
 msgstr "Em manutenção"
 
-#: static/tmp_js/gui-d-services.js:74
+#: static/tmp_js/gui-d-services.js:61
 msgid "Active"
 msgstr "Ativo"
 
-#: static/tmp_js/gui-d-services.js:131
+#: static/tmp_js/gui-d-services.js:104
+msgid "Information"
+msgstr ""
+
+#: static/tmp_js/gui-d-services.js:120
+#, fuzzy
+#| msgid "Service creation error"
+msgid "Service information"
+msgstr "Erro de criação do serviço"
+
+#: static/tmp_js/gui-d-services.js:141
 msgid "Edit service"
 msgstr "Editar serviço"
 
-#: static/tmp_js/gui-d-services.js:131
+#: static/tmp_js/gui-d-services.js:141
 msgid "Service creation error"
 msgstr "Erro de criação do serviço"
 
-#: static/tmp_js/gui-d-services.js:132
+#: static/tmp_js/gui-d-services.js:142
 msgid "New service"
 msgstr "Novo serviço"
 
-#: static/tmp_js/gui-d-services.js:132
+#: static/tmp_js/gui-d-services.js:142
 msgid "Service saving error"
 msgstr "Salvando o erro de serviço"
 
-#: static/tmp_js/gui-d-services.js:133
+#: static/tmp_js/gui-d-services.js:143
 msgid "Delete service"
 msgstr "Excluir o serviço"
 
-#: static/tmp_js/gui-d-services.js:133
+#: static/tmp_js/gui-d-services.js:143
 msgid "Service deletion error"
 msgstr "Erro de exclusão do serviço"
 
-#: static/tmp_js/gui-d-services.js:149 static/tmp_js/gui-d-services.js:172
+#: static/tmp_js/gui-d-services.js:159 static/tmp_js/gui-d-services.js:182
 msgid "Maintenance"
 msgstr "Manutenção"
 
-#: static/tmp_js/gui-d-services.js:158
+#: static/tmp_js/gui-d-services.js:168
 msgid "Maintenance Mode"
 msgstr "Modo de manutenção"
 
-#: static/tmp_js/gui-d-services.js:158
+#: static/tmp_js/gui-d-services.js:168
 msgid "Enter Maintenance Mode?"
 msgstr "Entrar no modo de manutenção?"
 
-#: static/tmp_js/gui-d-services.js:158
+#: static/tmp_js/gui-d-services.js:168
 msgid "Exit Maintenance Mode?"
 msgstr "Sair do modo de manutenção?"
 
-#: static/tmp_js/gui-d-services.js:177
+#: static/tmp_js/gui-d-services.js:187
 msgid "Enter maintenance Mode"
 msgstr "Digite o modo de manutenção"
 
-#: static/tmp_js/gui-d-services.js:180
+#: static/tmp_js/gui-d-services.js:190
 msgid "Exit Maintenance Mode"
 msgstr "Sair do modo de manutenção"
 
-#: static/tmp_js/gui-d-services.js:188
+#: static/tmp_js/gui-d-services.js:198
 msgid "New services provider"
 msgstr "Novo provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:188
+#: static/tmp_js/gui-d-services.js:198
 msgid "Services provider creation error"
 msgstr "Erro de criação do provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:189
+#: static/tmp_js/gui-d-services.js:199
 msgid "Edit services provider"
 msgstr "Editar Provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:189
+#: static/tmp_js/gui-d-services.js:199
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Provider saving error"
 msgstr "Salvando o erro do prestador de serviços"
 
-#: static/tmp_js/gui-d-services.js:190
+#: static/tmp_js/gui-d-services.js:200
 msgid "Delete services provider"
 msgstr "Exclua o provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:190
+#: static/tmp_js/gui-d-services.js:200
 msgid "Services Provider deletion error"
 msgstr "Erro de exclusão do provedor de serviços"
 
@@ -630,13 +624,11 @@ msgstr "Editar o calendário de acesso"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Remove Cache element"
 msgid "Remove access calendar"
 msgstr "Remover acesso calendário"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:215
 #: static/tmp_js/gui-d-servicespools-calendars.js:119
-#| msgid "Transport removal error"
 msgid "Access calendar removal error"
 msgstr "Erro de remoção de calendário de acesso"
 
@@ -660,7 +652,6 @@ msgid "Publish"
 msgstr "Publicar"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
-#| msgid "Cancel publication"
 msgid "Cancel publication?"
 msgstr "Cancelar a publicação?"
 
@@ -759,7 +750,7 @@ msgstr "Editar"
 msgid "saving error"
 msgstr "salvando o erro"
 
-#: static/tmp_js/gui-d-servicespools.js:395 static/tmp_js/gui-methods.js:140
+#: static/tmp_js/gui-d-servicespools.js:395 static/tmp_js/gui-methods.js:141
 #: static/tmp_js/gui.js:52
 msgid "Delete"
 msgstr "Excluir"
@@ -769,27 +760,22 @@ msgid "deletion error"
 msgstr "erro de exclusão"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "New services provider"
 msgid "New services Services Pool Group"
 msgstr "Novos serviços de grupo de consórcio de serviços"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-#| msgid "Services provider creation error"
 msgid "Services Services Pool Group creation error"
 msgstr "Erro de criação do grupo de consórcio de serviços serviços"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-#| msgid "Edit services provider"
 msgid "Edit services Services Pool Group"
 msgstr "Editar serviços de grupo de consórcio de serviços"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Delete services provider"
 msgid "Delete Services Pool Group"
 msgstr "Excluir grupo de consórcio de serviços"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-#| msgid "Service creation error"
 msgid "Services Pool Group error"
 msgstr "Erro de grupo de consórcio de serviços"
 
@@ -825,15 +811,19 @@ msgstr "Mensagem"
 msgid "Logs"
 msgstr "Logs"
 
-#: static/tmp_js/gui-form.js:265
+#: static/tmp_js/gui-form.js:95
+msgid "Main"
+msgstr ""
+
+#: static/tmp_js/gui-form.js:301
 msgid "yes"
 msgstr "Sim"
 
-#: static/tmp_js/gui-form.js:266
+#: static/tmp_js/gui-form.js:302
 msgid "no"
 msgstr "Não"
 
-#: static/tmp_js/gui-form.js:283
+#: static/tmp_js/gui-form.js:319
 msgid "Close"
 msgstr "Fechar"
 
@@ -857,34 +847,31 @@ msgstr "Edição com sucesso"
 msgid "Overview"
 msgstr "Visão geral"
 
-#: static/tmp_js/gui-methods.js:100
+#: static/tmp_js/gui-methods.js:101
 msgid "of type"
 msgstr "do tipo"
 
-#: static/tmp_js/gui-methods.js:118
+#: static/tmp_js/gui-methods.js:119
 msgid "Creation successfully done"
 msgstr "Criação feita com sucesso"
 
-#: static/tmp_js/gui-methods.js:138
+#: static/tmp_js/gui-methods.js:139
 msgid "Are you sure do you want to delete "
 msgstr "Você tem certeza que quer excluir "
 
-#: static/tmp_js/gui-methods.js:138
+#: static/tmp_js/gui-methods.js:139
 msgid "items:"
 msgstr "itens:"
 
-#: static/tmp_js/gui-methods.js:147
-#| msgid "Error creating report"
+#: static/tmp_js/gui-methods.js:148
 msgid "Error deleting"
 msgstr "Erro de exclusão"
 
-#: static/tmp_js/gui-methods.js:149
-#| msgid "Edition successfully done"
+#: static/tmp_js/gui-methods.js:150
 msgid "Successfully deleted"
 msgstr "Excluído com êxito"
 
-#: static/tmp_js/gui-methods.js:154
-#| msgid "Deletion error"
+#: static/tmp_js/gui-methods.js:155
 msgid "Deletion results"
 msgstr "Resultados de exclusão"
 
@@ -978,7 +965,6 @@ msgid "Message"
 msgstr "Mensagem"
 
 #: static/tmp_js/gui.js:130
-#| msgid "Test failed:"
 msgid "Connection failed"
 msgstr "Conexão falhado"
 

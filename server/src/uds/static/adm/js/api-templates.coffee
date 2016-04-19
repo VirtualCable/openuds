@@ -1,4 +1,4 @@
-# jshint strict: true 
+# jshint strict: true
 
 # -------------------------------
 # Templates related
@@ -62,11 +62,11 @@ Handlebars.registerHelper "ifbelongs", (context1, context2, options) ->
     options.inverse this
 
 
-# Counters. 
+# Counters.
 # Create a counter with {{counter [id] [startValue]}}
 # increment the counter with {{inc_counter [id]}}
 # get the counter value tiwh {{get_counter [id}}
-# Values are stored on current 
+# Values are stored on current
 Handlebars.registerHelper "set_counter", (id, value, options) ->
   options.data["_counter_" + id] = value
   return
@@ -122,8 +122,8 @@ api.templates.get = (name, success_fnc) ->
     if $this.cache.get(name + "------")
       success_fnc $this.cache.get(name)
       return
-    
-    # Let's check if a "preloaded template" exists                
+
+    # Let's check if a "preloaded template" exists
     else if document.getElementById("tmpl_" + name)
       $this.cache.put name, "tmpl_" + name # In fact, this is not neccesary...
       success_fnc "tmpl_" + name
@@ -155,7 +155,7 @@ api.templates.evaluate = (str, context) ->
   # Figure out if we're getting a template, or if we need to
   # load the template - and be sure to cache the result (compiled template).
   cached = null
-  unless /\W/.test(str)
+  if /^[\w_-]*$/.test(str)
     cached = @cache.get("_" + str)
     if not cached?
       cached = api.templates.evaluate(document.getElementById(str).innerHTML)

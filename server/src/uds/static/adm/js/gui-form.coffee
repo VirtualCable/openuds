@@ -80,16 +80,16 @@
     fillers: fillers
     originalValues: originalValues
 
-  gui.forms.fromFields = (fields, item) ->
+  gui.forms.fromFields = (fields, item, forShow) ->
     editing = item? # Locate real Editing
     item = item or id: ""
     form = "<form class=\"form-horizontal\" role=\"form\">" + "<input type=\"hidden\" name=\"id\" class=\"modal_field_data\" value=\"" + item.id + "\">"
     fillers = []
     originalValues = {}
 
-    if !fields.tabs
+    tabsArray = []
+    if !fields.tabs? and !forShow?
       tabs = {}
-      tabsArray = []
       for k in fields
         if !k.gui.tab?
           k.gui.tab = gettext('Main')
@@ -115,7 +115,7 @@
       active = " active in"
 
       $.each fields.tabs, (index, tab) ->
-        h = gui.forms.fieldsToHtml(tab.fields, item)
+        h = gui.forms.fieldsToHtml(tab.fields, item, editing)
         tabsContent.push "<div class=\"tab-pane fade" + active + "\" id=\"" + id + index + "\">" + h.html + "</div>"
         tabs.push "<li class='" + active + "'><a href=\"#" + id + index + "\" data-toggle=\"tab\">" + tab.title + "</a></li>"
         active = ""
@@ -126,7 +126,7 @@
 
       form += "<ul class=\"nav nav-tabs\">" + tabs.join("\n") + "</ul><div class=\"tab-content\">" + tabsContent.join("\n") + "</div>"
     else
-      h = gui.forms.fieldsToHtml(fields, item, editing)
+      h = gui.forms.fieldsToHtml(fields, item, if forShow? then "readonly" else editing)
       form += h.html
       fillers = fillers.concat(h.fillers)
       $.extend originalValues, h.originalValues

@@ -64,13 +64,15 @@ gui.methods.typedShow = (parent, value, placeholder, modalErrorMsg, options) ->
     parent.rest.item value.id, (item) ->
       gui.doLog "Item", item, "Gui", guiDefinition
       data = []
-      flds = gui.forms.fieldsToHtml(guiDefinition, item, "readonly")
+      # flds = gui.forms.fieldsToHtml(guiDefinition, item, "readonly")
+      flds = gui.forms.fromFields(guiDefinition, item, true)
       gui.doLog(flds)
       html = api.templates.evaluate "tmpl_comp_overview_record",
         id: formId
         legend: gettext('Overview')
         fields: flds.html
       $(placeholder).html(html)
+      flds.init('#' + formId)
       gui.tools.applyCustoms '#' + formId
     return
     ), gui.failRequestModalFnc(modalErrorMsg, true)

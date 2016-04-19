@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-18 07:06+0200\n"
+"POT-Creation-Date: 2016-04-19 10:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,7 @@ msgstr ""
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:76 REST/methods/transports.py:56
 #: REST/methods/user_services.py:220 REST/methods/user_services.py:255
-#: REST/methods/users_groups.py:95 REST/model.py:129
+#: REST/methods/users_groups.py:95 REST/model.py:132
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
 #: templates/uds/admin/tmpl/user.html:29 templates/uds/admin/tmpl/user.html:32
@@ -53,10 +53,10 @@ msgstr ""
 
 #: REST/methods/authenticators.py:60 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:66 REST/methods/services.py:186
+#: REST/methods/providers.py:66 REST/methods/services.py:188
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:57
 #: REST/methods/user_services.py:257 REST/methods/users_groups.py:96
-#: REST/methods/users_groups.py:209 REST/model.py:136
+#: REST/methods/users_groups.py:209 REST/model.py:139
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -64,7 +64,7 @@ msgstr ""
 
 #: REST/methods/authenticators.py:61 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:55
-#: REST/methods/user_services.py:254 REST/model.py:145
+#: REST/methods/user_services.py:254 REST/model.py:148
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr ""
@@ -84,7 +84,7 @@ msgstr ""
 
 #: REST/methods/authenticators.py:64 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:70 REST/methods/services.py:190
+#: REST/methods/providers.py:70 REST/methods/services.py:192
 #: REST/methods/services_pools.py:81 REST/methods/transports.py:59
 msgid "tags"
 msgstr ""
@@ -118,7 +118,7 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: REST/methods/calendarrules.py:128 REST/methods/services.py:151
+#: REST/methods/calendarrules.py:128 REST/methods/services.py:153
 msgid "Element already exists (duplicate key error)"
 msgstr ""
 
@@ -148,6 +148,7 @@ msgstr ""
 #: REST/methods/images.py:60 REST/methods/images.py:79
 #: REST/methods/services_pool_groups.py:63
 #: templates/uds/admin/tmpl/new_image.html:10
+#: templates/uds/admin/tmpl/service-info.html:21
 msgid "Image"
 msgstr ""
 
@@ -227,7 +228,7 @@ msgstr ""
 #: REST/methods/users_groups.py:215
 #: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:81
-#: auths/RegexLdap/Authenticator.py:81 auths/SAML_enterprise/SAML.py:116
+#: auths/RegexLdap/Authenticator.py:82 auths/SAML_enterprise/SAML.py:116
 #: auths/SimpleLDAP/Authenticator.py:83
 #: templates/uds/admin/tmpl/pool_add_group.html:17
 msgid "Group"
@@ -241,33 +242,33 @@ msgstr ""
 msgid "Generates"
 msgstr ""
 
-#: REST/methods/services.py:155
+#: REST/methods/services.py:157
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr ""
 
-#: REST/methods/services.py:179
+#: REST/methods/services.py:181
 #, python-brace-format
 msgid "Services of {0}"
 msgstr ""
 
-#: REST/methods/services.py:181
+#: REST/methods/services.py:183
 msgid "Current services"
 msgstr ""
 
-#: REST/methods/services.py:185
+#: REST/methods/services.py:187
 msgid "Service name"
 msgstr ""
 
-#: REST/methods/services.py:187 REST/methods/user_services.py:256
+#: REST/methods/services.py:189 REST/methods/user_services.py:256
 msgid "Type"
 msgstr ""
 
-#: REST/methods/services.py:188
+#: REST/methods/services.py:190
 msgid "Deployed services"
 msgstr ""
 
-#: REST/methods/services.py:189 templates/uds/admin/tmpl/dashboard.html.py:88
+#: REST/methods/services.py:191 templates/uds/admin/tmpl/dashboard.html.py:88
 msgid "User services"
 msgstr ""
 
@@ -296,7 +297,7 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: REST/methods/services_pool_calendars.py:158
+#: REST/methods/services_pool_calendars.py:158 core/ui/UserInterface.py:87
 msgid "Parameters"
 msgstr ""
 
@@ -351,7 +352,7 @@ msgstr ""
 msgid "Pool Group"
 msgstr ""
 
-#: REST/methods/services_pools.py:105 REST/methods/services_pools.py:157
+#: REST/methods/services_pools.py:105 REST/methods/services_pools.py:158
 msgid "Default"
 msgstr ""
 
@@ -379,61 +380,71 @@ msgstr ""
 msgid "OS Manager used as base of this service pool"
 msgstr ""
 
-#: REST/methods/services_pools.py:158
-msgid "Pool group"
+#: REST/methods/services_pools.py:155 REST/methods/services_pools.py:163
+#: services/OVirt/OVirtLinkedService.py:167
+msgid "Display"
 msgstr ""
 
 #: REST/methods/services_pools.py:159
+msgid "Pool group"
+msgstr ""
+
+#: REST/methods/services_pools.py:160
 msgid "Pool group for this pool (for pool clasify on display)"
 msgstr ""
 
-#: REST/methods/services_pools.py:166
+#: REST/methods/services_pools.py:168
 msgid "Initial available services"
 msgstr ""
 
-#: REST/methods/services_pools.py:167
+#: REST/methods/services_pools.py:169
 msgid "Services created initially for this service pool"
 msgstr ""
 
-#: REST/methods/services_pools.py:174
+#: REST/methods/services_pools.py:172 REST/methods/services_pools.py:181
+#: REST/methods/services_pools.py:190 REST/methods/services_pools.py:199
+msgid "Availability"
+msgstr ""
+
+#: REST/methods/services_pools.py:177
 msgid "Services to keep in cache"
 msgstr ""
 
-#: REST/methods/services_pools.py:175
+#: REST/methods/services_pools.py:178
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
 
-#: REST/methods/services_pools.py:182
+#: REST/methods/services_pools.py:186
 msgid "Services to keep in L2 cache"
 msgstr ""
 
-#: REST/methods/services_pools.py:183
+#: REST/methods/services_pools.py:187
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr ""
 
-#: REST/methods/services_pools.py:190
+#: REST/methods/services_pools.py:195
 msgid "Maximum number of services to provide"
 msgstr ""
 
-#: REST/methods/services_pools.py:191
+#: REST/methods/services_pools.py:196
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
 msgstr ""
 
-#: REST/methods/services_pools.py:197
+#: REST/methods/services_pools.py:203
 msgid "Show transports"
 msgstr ""
 
-#: REST/methods/services_pools.py:198
+#: REST/methods/services_pools.py:204
 msgid "If active, alternative transports for user will be shown"
 msgstr ""
 
-#: REST/methods/services_pools.py:213
+#: REST/methods/services_pools.py:219
 msgid "Base service does not exist anymore"
 msgstr ""
 
-#: REST/methods/services_pools.py:232
+#: REST/methods/services_pools.py:238
 msgid "This service requires an OS Manager"
 msgstr ""
 
@@ -578,7 +589,7 @@ msgstr ""
 #: REST/methods/users_groups.py:94
 #: auths/ActiveDirectory_enterprise/Authenticator.py:54
 #: auths/EDirectory_enterprise/Authenticator.py:79
-#: auths/RegexLdap/Authenticator.py:79 auths/SimpleLDAP/Authenticator.py:81
+#: auths/RegexLdap/Authenticator.py:80 auths/SimpleLDAP/Authenticator.py:81
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:39
@@ -592,7 +603,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:45
 #: transports/RGS_enterprise/TRGSTransport.py:53
-#: transports/SPICE/BaseSPICETransport.py:71 web/forms/LoginForm.py:60
+#: transports/SPICE/BaseSPICETransport.py:72 web/forms/LoginForm.py:60
 msgid "Username"
 msgstr ""
 
@@ -630,52 +641,52 @@ msgstr ""
 msgid "UDS Meta Group"
 msgstr ""
 
-#: REST/model.py:120
+#: REST/model.py:123
 msgid "Tags"
 msgstr ""
 
-#: REST/model.py:122
+#: REST/model.py:125
 msgid "Tags for this element"
 msgstr ""
 
-#: REST/model.py:130
+#: REST/model.py:133
 msgid "Name of this element"
 msgstr ""
 
-#: REST/model.py:137
+#: REST/model.py:140
 msgid "Comments for this element"
 msgstr ""
 
-#: REST/model.py:146
+#: REST/model.py:149
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 
-#: REST/model.py:156
+#: REST/model.py:159
 msgid "Label"
 msgstr ""
 
-#: REST/model.py:157
+#: REST/model.py:160
 msgid "Label for this element"
 msgstr ""
 
-#: REST/model.py:240
+#: REST/model.py:243
 msgid "Invalid Request"
 msgstr ""
 
-#: REST/model.py:247
+#: REST/model.py:250
 msgid "Method not found in {}: {}"
 msgstr ""
 
-#: REST/model.py:253
+#: REST/model.py:256
 msgid "Item not found"
 msgstr ""
 
-#: REST/model.py:258 web/errors.py:75
+#: REST/model.py:261 web/errors.py:75
 msgid "Access denied"
 msgstr ""
 
-#: REST/model.py:261
+#: REST/model.py:264
 msgid "Operation not supported"
 msgstr ""
 
@@ -736,8 +747,11 @@ msgid "Compatibility of AD connection (Usually windows 2000 and later)"
 msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:60
-msgid "Ldap User"
+#: auths/EDirectory_enterprise/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:59 auths/SAML_enterprise/SAML.py:113
+#: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
+#: templates/uds/internal_page.html:28
+msgid "User"
 msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
@@ -749,7 +763,7 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
 #: auths/EDirectory_enterprise/Authenticator.py:66
-#: auths/RegexLdap/Authenticator.py:60 auths/RegexLdap/Authenticator.py:83
+#: auths/RegexLdap/Authenticator.py:60 auths/RegexLdap/Authenticator.py:84
 #: auths/SimpleLDAP/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:85
 #: core/auths/BaseAuthenticator.py:140
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
@@ -767,7 +781,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:63
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:54
-#: transports/SPICE/BaseSPICETransport.py:76 web/forms/LoginForm.py:61
+#: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:61
 msgid "Password"
 msgstr ""
 
@@ -814,7 +828,7 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/Authenticator.py:408
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
-#: auths/RegexLdap/Authenticator.py:314 auths/RegexLdap/Authenticator.py:355
+#: auths/RegexLdap/Authenticator.py:315 auths/RegexLdap/Authenticator.py:356
 #: auths/SimpleLDAP/Authenticator.py:281 auths/SimpleLDAP/Authenticator.py:324
 msgid "Username not found"
 msgstr ""
@@ -827,7 +841,7 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/Authenticator.py:428
 #: auths/ActiveDirectory_enterprise/Authenticator.py:446
 #: auths/EDirectory_enterprise/Authenticator.py:305
-#: auths/RegexLdap/Authenticator.py:377 auths/SimpleLDAP/Authenticator.py:341
+#: auths/RegexLdap/Authenticator.py:378 auths/SimpleLDAP/Authenticator.py:341
 #: auths/SimpleLDAP/Authenticator.py:357
 msgid "Too many results, be more specific"
 msgstr ""
@@ -854,7 +868,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:499
 #: auths/EDirectory_enterprise/Authenticator.py:360
-#: auths/RegexLdap/Authenticator.py:436 auths/SimpleLDAP/Authenticator.py:435
+#: auths/RegexLdap/Authenticator.py:437 auths/SimpleLDAP/Authenticator.py:435
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr ""
 
@@ -883,10 +897,6 @@ msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:65
-msgid "Admin user"
-msgstr ""
-
-#: auths/EDirectory_enterprise/Authenticator.py:65
 msgid "Username with read privileges on the eDirectory"
 msgstr ""
 
@@ -904,17 +914,17 @@ msgid "Authenticate against eDirectory"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:125
-#: auths/RegexLdap/Authenticator.py:237 auths/SimpleLDAP/Authenticator.py:171
+#: auths/RegexLdap/Authenticator.py:238 auths/SimpleLDAP/Authenticator.py:171
 msgid "Ldap connection error: "
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:325
-#: auths/RegexLdap/Authenticator.py:397 auths/SimpleLDAP/Authenticator.py:377
+#: auths/RegexLdap/Authenticator.py:398 auths/SimpleLDAP/Authenticator.py:377
 msgid "Ldap search base is incorrect"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:330
-#: auths/RegexLdap/Authenticator.py:402 auths/SimpleLDAP/Authenticator.py:382
+#: auths/RegexLdap/Authenticator.py:403 auths/SimpleLDAP/Authenticator.py:382
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 
@@ -996,61 +1006,70 @@ msgstr ""
 msgid "Username with read privileges on the base selected"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:63
 msgid "Base"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:63
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:63 auths/RegexLdap/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:65 auths/RegexLdap/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:63
+#: auths/SimpleLDAP/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:65
+#: auths/SimpleLDAP/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:67
+#: auths/SimpleLDAP/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:69
+msgid "Ldap info"
+msgstr ""
+
+#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:64
 msgid "User class"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:64
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:65
 msgid "User Id Attr"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:65
 msgid "Attribute that contains the user id"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
 msgid "User Name Attr"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67
 msgid "Group Name Attr"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67
 msgid "Attribute that contains the group name"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:69
+#: auths/RegexLdap/Authenticator.py:70
 msgid "Regex LDAP Authenticator"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:71
+#: auths/RegexLdap/Authenticator.py:72
 msgid "Regular Expressions LDAP authenticator"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:411
+#: auths/RegexLdap/Authenticator.py:412
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:425 auths/SimpleLDAP/Authenticator.py:406
+#: auths/RegexLdap/Authenticator.py:426 auths/SimpleLDAP/Authenticator.py:406
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1064,11 +1083,6 @@ msgstr ""
 msgid "SAML (v2.0) Authenticator"
 msgstr ""
 
-#: auths/SAML_enterprise/SAML.py:113 reports/stats/usage_by_pool.py:73
-#: reports/stats/usage_by_pool.py:189 templates/uds/internal_page.html.py:28
-msgid "User"
-msgstr ""
-
 #: auths/SAML_enterprise/SAML.py:122
 msgid "Private key"
 msgstr ""
@@ -1079,7 +1093,11 @@ msgid ""
 "openssl"
 msgstr ""
 
-#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:83
+#: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
+msgid "Certificates"
+msgstr ""
+
+#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:86
 msgid "Certificate"
 msgstr ""
 
@@ -1096,6 +1114,10 @@ msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 
+#: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
+msgid "Metadata"
+msgstr ""
+
 #: auths/SAML_enterprise/SAML.py:129
 msgid "Entity ID"
 msgstr ""
@@ -1110,6 +1132,11 @@ msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:133
 msgid "Fields from where to extract user name"
+msgstr ""
+
+#: auths/SAML_enterprise/SAML.py:133 auths/SAML_enterprise/SAML.py:136
+#: auths/SAML_enterprise/SAML.py:139
+msgid "Attributes"
 msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:135
@@ -1192,6 +1219,10 @@ msgstr ""
 
 #: auths/SimpleLDAP/Authenticator.py:57
 msgid "Ldap Server IP or Hostname"
+msgstr ""
+
+#: auths/SimpleLDAP/Authenticator.py:60
+msgid "Ldap User"
 msgstr ""
 
 #: auths/SimpleLDAP/Authenticator.py:67
@@ -1386,6 +1417,14 @@ msgstr ""
 
 #: core/ui/UserInterface.py:86
 msgid "Advanced"
+msgstr ""
+
+#: core/ui/UserInterface.py:88
+msgid "Credentials"
+msgstr ""
+
+#: core/ui/UserInterface.py:89
+msgid "Tunnel"
 msgstr ""
 
 #: core/util/State.py:64 core/util/states/common.py:63
@@ -1996,6 +2035,7 @@ msgstr ""
 
 #: reports/stats/pool_performance.py:104 reports/stats/pool_performance.py:366
 #: reports/stats/usage_by_pool.py:98
+#: templates/uds/admin/tmpl/service-info.html:22
 msgid "Pool"
 msgstr ""
 
@@ -2107,7 +2147,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:100
 #: services/OVirt/OVirtLinkedService.py:102
-#: services/Vmware_enterprise/VCLinkedCloneService.py:74
+#: services/Vmware_enterprise/VCLinkedCloneService.py:81
 #: services/Xen/XenLinkedService.py:102
 msgid "Base Machine"
 msgstr ""
@@ -2123,14 +2163,14 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
 #: services/HyperV_enterprise/HyperVLinkedService.py:101
 #: services/OpenStack/LiveService.py:118
-#: services/Vmware_enterprise/VCLinkedCloneService.py:62
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
 #: services/Xen/XenLinkedService.py:107
 msgid "Network"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:102
-#: services/Vmware_enterprise/VCLinkedCloneService.py:63
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
@@ -2138,14 +2178,14 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:104
 #: services/OVirt/OVirtLinkedService.py:130
-#: services/Vmware_enterprise/VCLinkedCloneService.py:75
+#: services/Vmware_enterprise/VCLinkedCloneService.py:82
 #: services/Xen/XenLinkedService.py:112
 msgid "Memory (Mb)"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
 #: services/HyperV_enterprise/HyperVLinkedService.py:105
-#: services/Vmware_enterprise/VCLinkedCloneService.py:76
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
 msgid "Memory for machines deployed from this service"
 msgstr ""
 
@@ -2163,7 +2203,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:110
 #: services/OVirt/OVirtLinkedService.py:150
 #: services/OpenNebula/LiveService.py:99 services/OpenStack/LiveService.py:124
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 #: services/Xen/XenLinkedService.py:118
 msgid "Machine Names"
 msgstr ""
@@ -2171,7 +2211,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:110
 #: services/OpenStack/LiveService.py:127
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 msgid "Base name for clones from this machine"
 msgstr ""
 
@@ -2179,8 +2219,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:112
 #: services/Nutanix_enterprise/NutanixService.py:66
 #: services/OVirt/OVirtLinkedService.py:159
-#: services/OpenNebula/LiveService.py:108 services/OpenStack/LiveService.py:133
-#: services/Vmware_enterprise/VCLinkedCloneService.py:82
+#: services/OpenNebula/LiveService.py:108 services/OpenStack/LiveService.py:134
+#: services/Vmware_enterprise/VCLinkedCloneService.py:90
 #: services/Xen/XenLinkedService.py:120
 msgid "Name Length"
 msgstr ""
@@ -2189,8 +2229,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:113
 #: services/Nutanix_enterprise/NutanixService.py:69
 #: services/OVirt/OVirtLinkedService.py:162
-#: services/OpenNebula/LiveService.py:111 services/OpenStack/LiveService.py:136
-#: services/Vmware_enterprise/VCLinkedCloneService.py:83
+#: services/OpenNebula/LiveService.py:111 services/OpenStack/LiveService.py:137
+#: services/Vmware_enterprise/VCLinkedCloneService.py:91
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr ""
 
@@ -2198,8 +2238,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:125
 #: services/Nutanix_enterprise/NutanixService.py:87
 #: services/OVirt/OVirtLinkedService.py:191
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:153
-#: services/Vmware_enterprise/VCLinkedCloneService.py:103
+#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:155
+#: services/Vmware_enterprise/VCLinkedCloneService.py:110
 #: services/Xen/XenLinkedService.py:133
 msgid "The length of basename plus length must not be greater than 15"
 msgstr ""
@@ -2208,8 +2248,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:127
 #: services/Nutanix_enterprise/NutanixService.py:89
 #: services/OVirt/OVirtLinkedService.py:193
-#: services/OpenNebula/LiveService.py:127 services/OpenStack/LiveService.py:155
-#: services/Vmware_enterprise/VCLinkedCloneService.py:105
+#: services/OpenNebula/LiveService.py:127 services/OpenStack/LiveService.py:157
+#: services/Vmware_enterprise/VCLinkedCloneService.py:112
 #: services/Xen/XenLinkedService.py:135
 msgid "The machine name can't be only numbers"
 msgstr ""
@@ -2440,10 +2480,6 @@ msgstr ""
 msgid "Physical memory guaranteed to machines"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:167
-msgid "Display"
-msgstr ""
-
 #: services/OVirt/OVirtLinkedService.py:170
 msgid "Display type (only for administration purposes)"
 msgstr ""
@@ -2582,6 +2618,20 @@ msgstr ""
 
 #: services/OpenStack/LiveService.py:116
 msgid "Base volume for service (restricted by availability zone)"
+msgstr ""
+
+#: services/OpenStack/LiveService.py:116 services/OpenStack/LiveService.py:118
+#: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:121
+#: services/OpenStack/LiveService.py:129 services/OpenStack/LiveService.py:139
+#: services/Vmware_enterprise/VCLinkedCloneService.py:77
+#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
+#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+msgid "Machine"
 msgstr ""
 
 #: services/OpenStack/LiveService.py:118
@@ -2924,56 +2974,56 @@ msgstr ""
 msgid "Datacenter containing base machine"
 msgstr ""
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:64
+#: services/Vmware_enterprise/VCLinkedCloneService.py:62
 msgid "Pub. Resource Pool"
 msgstr ""
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:64
+#: services/Vmware_enterprise/VCLinkedCloneService.py:62
 msgid "Resource Pool where deploy clones"
 msgstr ""
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:65
-msgid "Clones Folder"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:65
-msgid "Folder where deploy clones"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:66
-msgid "Resource Pool"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:72
-msgid "Resource Pool containing base machine"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:74
-msgid "Base machine for this service"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:77
+#: services/Vmware_enterprise/VCLinkedCloneService.py:64
 msgid "Pub.Datastores"
 msgstr ""
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:78
+#: services/Vmware_enterprise/VCLinkedCloneService.py:65
 msgid "Datastores where to put publications"
 msgstr ""
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:79
-msgid "Inc.Datastores"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:80
-msgid "Datastores where to put incrementals"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid "Remove found duplicates"
 msgstr ""
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid "If active, found duplicates clones for this service will be removed"
+msgstr ""
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:69
+msgid "Resource Pool"
+msgstr ""
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:75
+msgid "Resource Pool containing base machine"
+msgstr ""
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+msgid "Base machine for this service"
+msgstr ""
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+msgid "Clones Folder"
+msgstr ""
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+msgid "Folder where deploy clones"
+msgstr ""
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:87
+msgid "Inc.Datastores"
+msgstr ""
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+msgid "Datastores where to put incrementals"
 msgstr ""
 
 #: services/Xen/XenLinkedService.py:56
@@ -3057,6 +3107,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/dashboard.html:5
 #: templates/uds/admin/tmpl/osmanagers.html:31
 #: templates/uds/admin/tmpl/providers.html:30
+#: templates/uds/admin/tmpl/service-info.html:4
 #: templates/uds/admin/tmpl/services_pool.html:30
 msgid "Overview"
 msgstr ""
@@ -3113,6 +3164,7 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/authenticators.html:33
 #: templates/uds/admin/tmpl/providers.html:32
+#: templates/uds/admin/tmpl/service-info.html:6
 #: templates/uds/admin/tmpl/services_pool.html:38
 msgid "Logs"
 msgstr ""
@@ -3422,6 +3474,10 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/restricted.html:36
 msgid "Thank you."
+msgstr ""
+
+#: templates/uds/admin/tmpl/service-info.html:5
+msgid "Services Pools"
 msgstr ""
 
 #: templates/uds/admin/tmpl/services_pool.html:32
@@ -3856,7 +3912,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:45
 #: transports/RGS_enterprise/TRGSTransport.py:53
-#: transports/SPICE/BaseSPICETransport.py:72
+#: transports/SPICE/BaseSPICETransport.py:73
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
 
@@ -3866,7 +3922,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:63
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:54
-#: transports/SPICE/BaseSPICETransport.py:77
+#: transports/SPICE/BaseSPICETransport.py:79
 msgid "If not empty, this password will be always used as credential"
 msgstr ""
 
@@ -3875,7 +3931,7 @@ msgstr ""
 msgid "Without Domain"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:72 transports/RDP/BaseRDPTransport.py:64
+#: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/RDS_enterprise/BaseRDSTransport.py:67
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
@@ -4030,6 +4086,12 @@ msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 msgid "If not empty, this domain will be always used as credential domain"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:64
+msgid ""
+"If checked, the domain part will always be emptied (to connect to xrdp for "
+"example is needed)"
 msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:66
@@ -4236,7 +4298,7 @@ msgstr ""
 msgid "RGS Transport for tunneled connection"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:84
+#: transports/SPICE/BaseSPICETransport.py:87
 msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
 "etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."

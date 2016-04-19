@@ -56,6 +56,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     Detail handler for Services, whose parent is a Provider
     '''
 
+    custom_methods = ['servicesPools']
+
     @staticmethod
     def serviceInfo(item):
         info = item.getType()
@@ -227,3 +229,17 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             return log.getLogs(item)
         except Exception:
             self.invalidItemException()
+
+    def servicesPools(self, parent, item):
+        logger.debug('Got parameters for servicepools: {}, {}'.format(parent, item))
+        uuid = processUuid(item)
+        service = parent.services.get(uuid=uuid)
+        res = []
+        for i in service.deployedServices.all():
+            res.append({
+                'id': i.uuid,
+                'name': i.name,
+                'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
+            })
+
+        return res
