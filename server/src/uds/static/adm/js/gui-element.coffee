@@ -650,6 +650,7 @@
       $("#" + tblParams.container).append table.text
 
     # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
+    tbId = gui.genRamdonId('tb')
     initLog = (data) ->
       $("#" + tableId).DataTable
         data: data
@@ -659,7 +660,9 @@
         columns: columns
         language: gui.config.dataTablesLanguage
         # dom: '<"' + tbId + ' btns-tables">fr<"uds-table"t>ip'
-        dom: "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>"
+        dom: '<"' + tbId + ' btns-tables">fr<"uds-table"t>ip'
+
+        # dom: "<'row'<'col-xs-8'T><'col-xs-4'f>r>t<'row'<'col-xs-5'i><'col-xs-7'p>>"
         deferRender: tblParams.deferedRender or tblParams.deferRender or false
         # bDeferRender: tblParams.deferedRender or false
         createdRow: (row, data, dataIndex) ->
@@ -673,6 +676,7 @@
 
 
       # Fix form
+      $("#" + tableId + "_filter label").addClass "form-inline"
       $("#" + tableId + "_filter input").addClass "form-control"
 
       # Add refresh action to panel
