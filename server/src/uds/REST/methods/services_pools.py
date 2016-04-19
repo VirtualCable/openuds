@@ -282,6 +282,8 @@ class ServicesPools(ModelHandler):
 
     # Set fallback status
     def setFallbackAccess(self, item):
+        self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
+
         fallback = self._params.get('fallbackAccess')
         logger.debug('Setting fallback of {} to {}'.format(item.name, fallback))
         item.fallbackAccess = fallback

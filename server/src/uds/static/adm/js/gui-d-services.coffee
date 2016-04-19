@@ -119,7 +119,7 @@ gui.providers.link = (event) ->
                       pools: pools
                     )
                     modalId = gui.launchModal(gettext('Service information'), content,
-                      actionButton: ""
+                      actionButton: " "
                     )
                     gui.methods.typedShow services, val, '#information-overview', gettext('Error accessing data')
                     tmpLogTable = services.logTable(val.id,
@@ -127,7 +127,30 @@ gui.providers.link = (event) ->
                       onLoad: ->
                         return
                     )
-                    $('#information-pools-table').DataTable();
+                    $('#information-pools-table').DataTable(
+                      colReorder: true
+                      stateSave: true
+                      paging: true
+                      info: true
+                      autoWidth: false
+                      lengthChange: false
+                      pageLength: 10
+
+                      columnDefs: [
+                        { 'width': '50%', 'targets': 0 },
+                        { 'width': '120px', 'targets': 1 },
+                        { 'width': '40px', 'targets': 2 },
+                        { 'width': '160px', 'targets': 3 },
+                      ]
+
+                      ordering: true
+                      order: [[ 1, 'asc' ]]
+
+                      dom: '<>fr<"uds-table"t>ip'
+
+                      language: gui.config.dataTablesLanguage
+                    )
+
                   return
 
               select: (vals, value, btn, tbl, refreshFnc) ->

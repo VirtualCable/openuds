@@ -192,6 +192,7 @@ class ActionsCalendars(DetailHandler):
         CalendarAction.objects.get(uuid=processUuid(self._args[0])).delete()
 
     def execute(self, parent, item):
+        self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
         logger.debug('Launching action')
         uuid = processUuid(item)
         calAction = CalendarAction.objects.get(uuid=uuid)
