@@ -40,10 +40,11 @@ from uds.models import Authenticator as dbAuthenticator
 from uds.core.ui import gui
 from uds.core.managers import cryptoManager
 from uds.core.util.State import State
+from uds.core.util.request import getRequest
 import dns
 import logging
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-04-20'
 
 logger = logging.getLogger(__name__)
 
@@ -62,12 +63,14 @@ class InternalDBAuth(Authenticator):
 
     differentForEachHost = gui.CheckBoxField(label=_('Different user for each host'), order=1, tooltip=_('If checked, each host will have a different user name'), defvalue="false", rdonly=True, tab=gui.ADVANCED_TAB)
     reverseDns = gui.CheckBoxField(label=_('Reverse DNS'), order=2, tooltip=_('If checked, the host will be reversed dns'), defvalue="false", rdonly=True, tab=gui.ADVANCED_TAB)
+    acceptProxy = gui.CheckBoxField(label=_('Accept proxy'), order=3, tooltip=_('If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'), tab=gui.ADVANCED_TAB)
 
     def initialize(self, values):
         if values is None:
             return
 
-    def getIp(self, ip):
+    def getIp(self):
+        ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
         if self.reverseDns.isTrue():
             try:
                 return str(dns.resolver.query(dns.reversename.from_address(ip), 'PTR')[0])
@@ -76,9 +79,8 @@ class InternalDBAuth(Authenticator):
         return ip
 
     def transformUsername(self, username):
-        from uds.core.util.request import getRequest
         if self.differentForEachHost.isTrue():
-            newUsername = self.getIp(getRequest().ip) + '-' + username  # pylint: disable=maybe-no-member
+            newUsername = self.getIp() + '-' + username  # pylint: disable=maybe-no-member
             # Duplicate basic user into username.
             auth = self.dbAuthenticator()
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user

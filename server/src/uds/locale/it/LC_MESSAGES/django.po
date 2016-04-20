@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-19 10:01+0200\n"
+"POT-Creation-Date: 2016-04-20 15:06+0200\n"
 "PO-Revision-Date: 2016-04-18 05:02+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -44,7 +44,7 @@ msgstr "Autenticatori correnti"
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:65
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:76 REST/methods/transports.py:56
-#: REST/methods/user_services.py:220 REST/methods/user_services.py:255
+#: REST/methods/user_services.py:225 REST/methods/user_services.py:260
 #: REST/methods/users_groups.py:95 REST/model.py:132
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
@@ -54,9 +54,9 @@ msgstr "Nome"
 
 #: REST/methods/authenticators.py:60 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:66 REST/methods/services.py:188
+#: REST/methods/providers.py:66 REST/methods/services.py:189
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:57
-#: REST/methods/user_services.py:257 REST/methods/users_groups.py:96
+#: REST/methods/user_services.py:262 REST/methods/users_groups.py:96
 #: REST/methods/users_groups.py:209 REST/model.py:139
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
@@ -65,7 +65,7 @@ msgstr "Commenti"
 
 #: REST/methods/authenticators.py:61 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:55
-#: REST/methods/user_services.py:254 REST/model.py:148
+#: REST/methods/user_services.py:259 REST/model.py:148
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Priorità"
@@ -85,7 +85,7 @@ msgstr "Utenti"
 
 #: REST/methods/authenticators.py:64 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:70 REST/methods/services.py:192
+#: REST/methods/providers.py:70 REST/methods/services.py:193
 #: REST/methods/services_pools.py:81 REST/methods/transports.py:59
 msgid "tags"
 msgstr "Tag"
@@ -119,7 +119,7 @@ msgstr "Ogni"
 msgid "Duration"
 msgstr "Durata"
 
-#: REST/methods/calendarrules.py:128 REST/methods/services.py:153
+#: REST/methods/calendarrules.py:128 REST/methods/services.py:154
 msgid "Element already exists (duplicate key error)"
 msgstr "Elemento già esistente (errore chiave duplicata)"
 
@@ -149,7 +149,7 @@ msgstr "Galleria di immagini"
 #: REST/methods/images.py:60 REST/methods/images.py:79
 #: REST/methods/services_pool_groups.py:63
 #: templates/uds/admin/tmpl/new_image.html:10
-#: templates/uds/admin/tmpl/service-info.html:21
+#: templates/uds/admin/tmpl/service-info.html:23
 msgid "Image"
 msgstr "Immagine"
 
@@ -245,35 +245,43 @@ msgstr "Descrizione"
 msgid "Generates"
 msgstr "Genera"
 
-#: REST/methods/services.py:157
+#: REST/methods/services.py:158
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Errore di input: {0}"
 
-#: REST/methods/services.py:181
+#: REST/methods/services.py:182
 #, python-brace-format
 msgid "Services of {0}"
 msgstr "Servizi di {0}"
 
-#: REST/methods/services.py:183
+#: REST/methods/services.py:184
 msgid "Current services"
 msgstr "Servizi attuali"
 
-#: REST/methods/services.py:187
+#: REST/methods/services.py:188
 msgid "Service name"
 msgstr "Nome servizio"
 
-#: REST/methods/services.py:189 REST/methods/user_services.py:256
+#: REST/methods/services.py:190 REST/methods/user_services.py:261
 msgid "Type"
 msgstr "Tipo"
 
-#: REST/methods/services.py:190
+#: REST/methods/services.py:191
 msgid "Deployed services"
 msgstr "Servizi distribuiti"
 
-#: REST/methods/services.py:191 templates/uds/admin/tmpl/dashboard.html.py:88
+#: REST/methods/services.py:192 templates/uds/admin/tmpl/dashboard.html.py:88
 msgid "User services"
 msgstr "Servizi utente"
+
+#: REST/methods/services.py:246
+msgid "With errors"
+msgstr "Con errori"
+
+#: REST/methods/services.py:246
+msgid "Ok"
+msgstr "Ok"
 
 #: REST/methods/services_pool_calendars.py:85
 msgid "Access restrictions by calendar"
@@ -324,11 +332,11 @@ msgstr "Ultima esecuzione"
 msgid "Services Pool Groups"
 msgstr "Servizi piscina gruppi"
 
-#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:151
+#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:160
 msgid "Associated Image"
 msgstr "Immagine associata"
 
-#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:152
+#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:161
 msgid "Image assocciated with this service"
 msgstr "Immagine assocciated con questo servizio"
 
@@ -343,7 +351,7 @@ msgstr "Servizio piscine"
 msgid "Parent Service"
 msgstr "Servizio padre"
 
-#: REST/methods/services_pools.py:78 REST/methods/user_services.py:118
+#: REST/methods/services_pools.py:78 REST/methods/user_services.py:122
 msgid "status"
 msgstr "stato"
 
@@ -355,83 +363,83 @@ msgstr "Trasporti spettacoli"
 msgid "Pool Group"
 msgstr "Gruppo piscina"
 
-#: REST/methods/services_pools.py:105 REST/methods/services_pools.py:158
+#: REST/methods/services_pools.py:93 REST/methods/services_pools.py:167
 msgid "Default"
 msgstr "Impostazione predefinita"
 
-#: REST/methods/services_pools.py:126
+#: REST/methods/services_pools.py:135
 msgid "Create at least one OS Manager before creating a new service pool"
 msgstr "Creare almeno un OS Manager prima di creare un nuovo pool di servizio"
 
-#: REST/methods/services_pools.py:128
+#: REST/methods/services_pools.py:137
 msgid "Create at least a service before creating a new service pool"
 msgstr "Creare almeno un servizio prima di creare un nuovo pool di servizio"
 
-#: REST/methods/services_pools.py:135
+#: REST/methods/services_pools.py:144
 msgid "Base service"
 msgstr "Servizio di base"
 
-#: REST/methods/services_pools.py:136
+#: REST/methods/services_pools.py:145
 msgid "Service used as base of this service pool"
 msgstr "Servizio utilizzato come base di questo servizio piscina"
 
-#: REST/methods/services_pools.py:143
+#: REST/methods/services_pools.py:152
 msgid "OS Manager"
 msgstr "OS Manager"
 
-#: REST/methods/services_pools.py:144
+#: REST/methods/services_pools.py:153
 msgid "OS Manager used as base of this service pool"
 msgstr "OS Manager utilizzato come base di questo servizio piscina"
 
-#: REST/methods/services_pools.py:155 REST/methods/services_pools.py:163
+#: REST/methods/services_pools.py:164 REST/methods/services_pools.py:172
 #: services/OVirt/OVirtLinkedService.py:167
 msgid "Display"
 msgstr "Visualizzazione"
 
-#: REST/methods/services_pools.py:159
+#: REST/methods/services_pools.py:168
 msgid "Pool group"
 msgstr "Gruppo piscina"
 
-#: REST/methods/services_pools.py:160
+#: REST/methods/services_pools.py:169
 msgid "Pool group for this pool (for pool clasify on display)"
 msgstr "Gruppo del pool per il pool (per piscina classificare sul display)"
 
-#: REST/methods/services_pools.py:168
+#: REST/methods/services_pools.py:177
 msgid "Initial available services"
 msgstr "Servizi disponibili iniziali"
 
-#: REST/methods/services_pools.py:169
+#: REST/methods/services_pools.py:178
 msgid "Services created initially for this service pool"
 msgstr "Servizi creati inizialmente per questo servizio piscina"
 
-#: REST/methods/services_pools.py:172 REST/methods/services_pools.py:181
-#: REST/methods/services_pools.py:190 REST/methods/services_pools.py:199
+#: REST/methods/services_pools.py:181 REST/methods/services_pools.py:190
+#: REST/methods/services_pools.py:199 REST/methods/services_pools.py:208
 #| msgid "Compatibility"
 msgid "Availability"
 msgstr "Disponibilità"
 
-#: REST/methods/services_pools.py:177
+#: REST/methods/services_pools.py:186
 msgid "Services to keep in cache"
 msgstr "Servizi per mantenere nella cache"
 
-#: REST/methods/services_pools.py:178
+#: REST/methods/services_pools.py:187
 msgid "Services kept in cache for improved user service assignation"
 msgstr "Servizi tenuti in cache per assegnazione servizio utente migliorata"
 
-#: REST/methods/services_pools.py:186
+#: REST/methods/services_pools.py:195
 msgid "Services to keep in L2 cache"
 msgstr "Servizi per mantenere in cache L2"
 
-#: REST/methods/services_pools.py:187
+#: REST/methods/services_pools.py:196
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr ""
 "Servizi mantenuto nella cache di level2 per generazione migliore servizio"
 
-#: REST/methods/services_pools.py:195
+#: REST/methods/services_pools.py:204
 msgid "Maximum number of services to provide"
 msgstr "Numero massimo di servizi per fornire"
 
-#: REST/methods/services_pools.py:196
+#: REST/methods/services_pools.py:205
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -439,19 +447,19 @@ msgstr ""
 "Numero massimo di servizio (assegnate e cache L1) che possono essere creati "
 "per Questo servizio"
 
-#: REST/methods/services_pools.py:203
+#: REST/methods/services_pools.py:212
 msgid "Show transports"
 msgstr "Visualizza trasporti"
 
-#: REST/methods/services_pools.py:204
+#: REST/methods/services_pools.py:213
 msgid "If active, alternative transports for user will be shown"
 msgstr "Se attivo, verranno mostrati trasporti alternativi per utente"
 
-#: REST/methods/services_pools.py:219
+#: REST/methods/services_pools.py:228
 msgid "Base service does not exist anymore"
 msgstr "Servizio di base non esiste più"
 
-#: REST/methods/services_pools.py:238
+#: REST/methods/services_pools.py:247
 msgid "This service requires an OS Manager"
 msgstr "Questo servizio richiede un OS Manager"
 
@@ -489,102 +497,104 @@ msgstr ""
 msgid "unknown"
 msgstr "sconosciuto"
 
-#: REST/methods/user_services.py:109
+#: REST/methods/user_services.py:113
 #: templates/uds/admin/tmpl/services_pool.html:31
 msgid "Assigned services"
 msgstr "Servizi assegnati"
 
-#: REST/methods/user_services.py:113 REST/methods/user_services.py:181
+#: REST/methods/user_services.py:117 REST/methods/user_services.py:185
 msgid "Creation date"
 msgstr "Data di creazione"
 
-#: REST/methods/user_services.py:114 REST/methods/user_services.py:182
-#: REST/methods/user_services.py:323 REST/methods/user_services.py:352
+#: REST/methods/user_services.py:118 REST/methods/user_services.py:186
+#: REST/methods/user_services.py:328 REST/methods/user_services.py:357
 msgid "Revision"
 msgstr "Revisione"
 
-#: REST/methods/user_services.py:116 REST/methods/user_services.py:184
+#: REST/methods/user_services.py:120 REST/methods/user_services.py:188
 #: auths/IP/Authenticator.py:60
 msgid "IP"
 msgstr "IP"
 
-#: REST/methods/user_services.py:117 REST/methods/user_services.py:185
+#: REST/methods/user_services.py:121 REST/methods/user_services.py:189
 msgid "Friendly name"
 msgstr "Nome descrittivo"
 
-#: REST/methods/user_services.py:119
+#: REST/methods/user_services.py:123
 msgid "Status date"
 msgstr "Data stato"
 
-#: REST/methods/user_services.py:120
+#: REST/methods/user_services.py:124
 msgid "In Use"
 msgstr "In uso"
 
-#: REST/methods/user_services.py:121
+#: REST/methods/user_services.py:125
 msgid "Src Host"
 msgstr "Src Host"
 
-#: REST/methods/user_services.py:122
+#: REST/methods/user_services.py:126
 msgid "Src Ip"
 msgstr "Src Ip"
 
-#: REST/methods/user_services.py:123
+#: REST/methods/user_services.py:127
 msgid "Owner"
 msgstr "Proprietario"
 
-#: REST/methods/user_services.py:124 REST/methods/user_services.py:188
+#: REST/methods/user_services.py:128 REST/methods/user_services.py:192
 msgid "Actor version"
 msgstr "Versione attore"
 
-#: REST/methods/user_services.py:151
+#: REST/methods/user_services.py:155
 msgid "Item already being removed"
 msgstr "Elemento già essere rimosso"
 
-#: REST/methods/user_services.py:153
+#: REST/methods/user_services.py:157
 msgid "Item is not removable"
 msgstr "Elemento non è rimovibile"
 
-#: REST/methods/user_services.py:177
+#: REST/methods/user_services.py:181
 msgid "Cached services"
 msgstr "Servizi memorizzati nella cache"
 
-#: REST/methods/user_services.py:186 REST/methods/user_services.py:222
-#: REST/methods/user_services.py:325 REST/methods/user_services.py:354
-#: templates/uds/admin/tmpl/group.html:54 templates/uds/admin/tmpl/user.html:45
+#: REST/methods/user_services.py:190 REST/methods/user_services.py:227
+#: REST/methods/user_services.py:330 REST/methods/user_services.py:359
+#: templates/uds/admin/tmpl/group.html:54
+#: templates/uds/admin/tmpl/service-info.html:22
+#: templates/uds/admin/tmpl/user.html:45
 msgid "State"
 msgstr "Stato"
 
-#: REST/methods/user_services.py:187
+#: REST/methods/user_services.py:191
 msgid "Cache level"
 msgstr "Livello della cache"
 
-#: REST/methods/user_services.py:215
+#: REST/methods/user_services.py:220
 msgid "Assigned groups"
 msgstr "Gruppi assegnati"
 
-#: REST/methods/user_services.py:221 templates/uds/admin/tmpl/group.html.py:46
+#: REST/methods/user_services.py:226 templates/uds/admin/tmpl/group.html.py:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Commenti"
 
-#: REST/methods/user_services.py:250
+#: REST/methods/user_services.py:255
 msgid "Assigned transports"
 msgstr "Trasporti assegnati"
 
-#: REST/methods/user_services.py:319
+#: REST/methods/user_services.py:324
 #: templates/uds/admin/tmpl/services_pool.html:35
 msgid "Publications"
 msgstr "Pubblicazioni"
 
-#: REST/methods/user_services.py:324 REST/methods/user_services.py:353
+#: REST/methods/user_services.py:329 REST/methods/user_services.py:358
 msgid "Publish date"
 msgstr "Data di pubblicazione"
 
-#: REST/methods/user_services.py:326 templates/uds/admin/tmpl/publish.html.py:5
+#: REST/methods/user_services.py:331 templates/uds/admin/tmpl/publish.html.py:5
 msgid "Reason"
 msgstr "Motivo"
 
-#: REST/methods/user_services.py:348
+#: REST/methods/user_services.py:353
 msgid "Changelog"
 msgstr "Changelog"
 
@@ -969,11 +979,11 @@ msgstr ""
 "LDAP dell'utente utente o classe id attr è probabilmente sbagliato (Ldap è "
 "un eDirectory?)"
 
-#: auths/IP/Authenticator.py:52
+#: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid "Accept proxy"
 msgstr "Accettare il proxy"
 
-#: auths/IP/Authenticator.py:52
+#: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -994,35 +1004,35 @@ msgstr "Intervallo IP"
 msgid "All seems to be fine."
 msgstr "Tutto sembra andare bene."
 
-#: auths/InternalDB/Authenticator.py:52
+#: auths/InternalDB/Authenticator.py:53
 msgid "Internal Database"
 msgstr "Database interno"
 
-#: auths/InternalDB/Authenticator.py:54
+#: auths/InternalDB/Authenticator.py:55
 msgid "Internal dabasase authenticator. Doesn't use external sources"
 msgstr "Database interno autenticatore. Non utilizzare fonti esterne"
 
-#: auths/InternalDB/Authenticator.py:63
+#: auths/InternalDB/Authenticator.py:64
 msgid "Different user for each host"
 msgstr "Utente diverso per ogni host"
 
-#: auths/InternalDB/Authenticator.py:63
+#: auths/InternalDB/Authenticator.py:64
 msgid "If checked, each host will have a different user name"
 msgstr "Se selezionata, ogni ospite avrà un nome utente diverso"
 
-#: auths/InternalDB/Authenticator.py:64
+#: auths/InternalDB/Authenticator.py:65
 msgid "Reverse DNS"
 msgstr "Reverse DNS"
 
-#: auths/InternalDB/Authenticator.py:64
+#: auths/InternalDB/Authenticator.py:65
 msgid "If checked, the host will be reversed dns"
 msgstr "Se selezionata, l'ospite sarà invertito dns"
 
-#: auths/InternalDB/Authenticator.py:128
+#: auths/InternalDB/Authenticator.py:130
 msgid "Internal structures seems ok"
 msgstr "Strutture interne sembra ok"
 
-#: auths/InternalDB/Authenticator.py:131
+#: auths/InternalDB/Authenticator.py:133
 msgid "All seems fine in the authenticator."
 msgstr "Tutto sembra bene nell'autenticatore."
 
@@ -2127,7 +2137,7 @@ msgstr "Accessi da piscina"
 
 #: reports/stats/pool_performance.py:104 reports/stats/pool_performance.py:366
 #: reports/stats/usage_by_pool.py:98
-#: templates/uds/admin/tmpl/service-info.html:22
+#: templates/uds/admin/tmpl/service-info.html:21
 msgid "Pool"
 msgstr "Piscina"
 
