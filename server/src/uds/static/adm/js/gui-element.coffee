@@ -214,6 +214,23 @@
           columns.push column
         return
 
+      lookupUuid = (dTable) ->
+        if gui.lookupUuid?
+          gui.doLog "Looking up #{gui.lookupUuid}"
+          dTable.rows().every( (rowIdx, tableLoop, rowLoop) ->
+              # rowLoop holds the position in sorted table
+              try
+                if this.data().id == gui.lookupUuid
+                  gui.doLog "Found: #{this.data()}"
+                  gui.lookupUuid = null
+                  page = Math.floor(rowLoop / dTable.page.info().length)
+                  dTable.page(page).draw(false)
+                  this.select()
+                  if tblParams.onFoundUuid?
+                    tblParams.onFoundUuid(this)
+              catch error
+                ;
+            )
 
       # Responsive style for tables, using tables.css and this code generates the "titles" for vertical display on small sizes
       initTable = (data) ->
@@ -249,6 +266,7 @@
                 selCallback null, tbl, null, null
                 gui.doLog "onRefresh", tblParams.onRefresh
                 tblParams.onRefresh self
+                lookupUuid(tbl)
                 gui.tools.unblockUI()), gui.failRequestModalFnc(gettext("Refresh operation failed"))
               )
               return
@@ -558,6 +576,10 @@
         if tblParams.scrollToTable is true
           tableTop = $("#" + tableId).offset().top
           $("html, body").scrollTop tableTop
+
+        gui.test = dTable
+        # Try to locate gui.lookupUuid as last action
+        lookupUuid(dTable)
 
         # if table rendered event
         tblParams.onLoad self  if tblParams.onLoad

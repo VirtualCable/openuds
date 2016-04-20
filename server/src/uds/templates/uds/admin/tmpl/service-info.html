@@ -21,13 +21,13 @@
                     <th>{% endverbatim %}{% trans 'Pool' %}{% verbatim %}</th>
                     <th>{% endverbatim %}{% trans 'State' %}{% verbatim %}</th>
                     <th>{% endverbatim %}{% trans 'Image' %}{% verbatim %}</th>
-                    <th>{% endverbatim %}{% trans 'User Services' %}{% verbatim %}</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {{#each pools }}
                     <tr>
-                      <td>{{ name }}</td>
+                      <td>{{ name }}<span style="float: right;"><a href="#{{ id }}" class="{{ ../goClass }}"><i class="fa fa-external-link"> </i></a></span></td>
                       <td>{{ state }}</td>
                       <td><img src="data:image/png;base64,{{ thumb }}" style="width: 32px; height: auto;"/></td>
                       <td>{{ user_services_count }}</td>

@@ -1,14 +1,14 @@
-# jshint strict: true 
+# jshint strict: true
 gui.authenticators = new GuiElement(api.authenticators, "auth")
 gui.authenticators.link = (event) ->
   "use strict"
-  
+
   # Button definition to trigger "Test" action
   testButton = testButton:
     text: gettext("Test")
     css: "btn-info"
 
-  
+
   # Clears the log of the detail, in this case, the log of "users"
   # Memory saver :-)
   detailLogTable = null
@@ -21,7 +21,7 @@ gui.authenticators.link = (event) ->
     $("#users-log-placeholder").empty()
     return
 
-  
+
   # Clears the details
   # Memory saver :-)
   prevTables = []
@@ -41,7 +41,7 @@ gui.authenticators.link = (event) ->
     prevTables = []
     return
 
-  
+
   # Search button event generator for user/group
   searchForm = (parentModalId, type, id, title, searchLabel, resultsLabel) ->
     errorModal = gui.failRequestModalFnc(gettext("Search error"))
@@ -108,7 +108,7 @@ gui.authenticators.link = (event) ->
       logs: "logs-placeholder"
     )
     gui.setLinksEvents()
-    
+
     # Append tabs click events
     $(".bottom_tabs").on "click", (event) ->
       gui.doLog event.target
@@ -130,6 +130,21 @@ gui.authenticators.link = (event) ->
         "permissions"
       ]
 
+      onFoundUuid: (item) ->
+        # Invoked if our table has found a "desirable" item (uuid)
+        if gui.lookup2Uuid?
+          type = gui.lookup2Uuid[0]
+          gui.lookupUuid = gui.lookup2Uuid.substr(1)
+          gui.lookup2Uuid = null
+          setTimeout( () ->
+            if type == 'g'
+              $('a[href="#groups-placeholder"]').tab('show')
+              $("#groups-placeholder span.fa-refresh").click()
+            else
+              $('a[href="#users-placeholder_tab"]').tab('show')
+              $("#users-placeholder_tab span.fa-refresh").click()
+          , 500)
+
       onRefresh: (tbl) ->
         gui.doLog 'Refresh called for authenticators'
         clearDetails()
@@ -141,10 +156,10 @@ gui.authenticators.link = (event) ->
 
       onRowSelect: (selected) ->
         clearDetails()
- 
+
         if selected.length > 1
           return
-        
+
         # We can have lots of users, so memory can grow up rapidly if we do not keep thins clean
         # To do so, we empty previous table contents before storing new table contents
         # Anyway, TabletTools will keep "leaking" memory, but we can handle a little "leak" that will be fixed as soon as we change the section
@@ -185,7 +200,7 @@ gui.authenticators.link = (event) ->
                   modalId = gui.launchModal(gettext("Edit group") + " <b>" + item.name + "</b>", api.templates.evaluate(tmpl,
                     id: item.id
                     type: item.type
-                    meta_if_any: item.meta_if_any 
+                    meta_if_any: item.meta_if_any
                     groupname: item.name
                     groupname_label: type.groupNameLabel
                     comments: item.comments
@@ -215,7 +230,7 @@ gui.authenticators.link = (event) ->
               return
 
             if value.type is "meta"
-              
+
               # Meta will get all groups
               group.rest.overview (groups) ->
                 exec groups
@@ -273,7 +288,7 @@ gui.authenticators.link = (event) ->
           onDelete: gui.methods.del(group, gettext("Delete group"), gettext("Group deletion error"))
         )
         tmpLogTable = null
-        
+
         # New button will only be shown on authenticators that can create new users
         usrButtons = [
           "edit"
@@ -322,7 +337,7 @@ gui.authenticators.link = (event) ->
             api.templates.get "user", (tmpl) -> # Get form template
               group.rest.overview (groups) -> # Get groups
                 user.rest.item value.id, (item) -> # Get item to edit
-                  
+
                   # Creates modal
                   modalId = gui.launchModal(gettext("Edit user") + " <b>" + value.name + "</b>", api.templates.evaluate(tmpl,
                     id: item.id
@@ -345,7 +360,7 @@ gui.authenticators.link = (event) ->
                   gui.tools.unblockUI()
                   $(modalId + " .button-accept").click ->
                     fields = gui.forms.read(modalId)
-                    
+
                     # If needs password, and password has changed
                     gui.doLog "passwords", type.needsPassword, password, fields.password
                     delete fields.password  if fields.password is password  if type.needsPassword
@@ -385,7 +400,7 @@ gui.authenticators.link = (event) ->
                 searchForm modalId, "user", id, gettext("Search users"), gettext("User"), gettext("Users found") # Enable search button click, if it exist ofc
                 $(modalId + " .button-accept").click ->
                   fields = gui.forms.read(modalId)
-                  
+
                   # If needs password, and password has changed
                   gui.doLog "Fields", fields
                   user.rest.create fields, ((data) -> # Success on put
@@ -408,7 +423,7 @@ gui.authenticators.link = (event) ->
           container: "logs-placeholder"
           doNotLoadData: true
         )
-        
+
         # So we can destroy the tables beforing adding new ones
         prevTables.push grpTable
         prevTables.push usrTable

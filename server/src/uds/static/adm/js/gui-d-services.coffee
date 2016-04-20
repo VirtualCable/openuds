@@ -50,8 +50,16 @@ gui.providers.link = (event) ->
       onCheck: (check, items) -> # Check if item can be deleted
         true
 
+      onFoundUuid: (item) ->
+        # Invoked if our table has found a "desirable" item (uuid)
+        setTimeout( () ->
+           $('a[href="#services-placeholder_tab"]').tab('show')
+           $("#services-placeholder_tab span.fa-refresh").click()
+        , 500)
+        gui.lookupUuid = gui.lookup2Uuid
+        gui.lookup2Uuid = null
+
       onRefresh: (tbl) ->
-        gui.doLog 'Invoked onRefresh for a provider'
         clearDetails()
         return
 
@@ -116,7 +124,8 @@ gui.providers.link = (event) ->
                   api.templates.get "service-info", (tmpl) ->
                     content = api.templates.evaluate(tmpl,
                       id: 'information',
-                      pools: pools
+                      pools: pools,
+                      goClass: 'goLink'
                     )
                     modalId = gui.launchModal(gettext('Service information'), content,
                       actionButton: " "
@@ -149,6 +158,16 @@ gui.providers.link = (event) ->
                       dom: '<>fr<"uds-table"t>ip'
 
                       language: gui.config.dataTablesLanguage
+                    )
+
+                    $('.goLink').on('click', (event) ->
+                      $this = $(this);
+                      event.preventDefault();
+                      gui.lookupUuid = $this.attr('href').substr(1)
+                      $(modalId).modal('hide')
+                      setTimeout( ->
+                        $(".lnk-deployed_services").click();
+                      , 500);
                     )
 
                   return

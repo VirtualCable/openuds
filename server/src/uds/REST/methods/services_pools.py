@@ -77,7 +77,7 @@ class ServicesPools(ModelHandler):
         {'parent': {'title': _('Parent Service')}},
         {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
         {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
-        {'servicesPoolGroup': {'title': _('Pool Group')}},
+        {'pool_group_name': {'title': _('Pool Group')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
@@ -89,6 +89,14 @@ class ServicesPools(ModelHandler):
     def item_as_dict(self, item):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
+        poolGroupId = None
+        poolGroupName = _('Default')
+        poolGroupThumb = DEFAULT_THUMB_BASE64
+        if item.servicesPoolGroup is not None:
+            poolGroupId = item.servicesPoolGroup.uuid
+            poolGroupName = item.servicesPoolGroup.name
+            if item.servicesPoolGroup.image is not None:
+                poolGroupThumb = item.servicesPoolGroup.image.thumb64
         val = {
             'id': item.uuid,
             'name': item.name,
@@ -101,8 +109,9 @@ class ServicesPools(ModelHandler):
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
-            'servicesPoolGroup_id': item.servicesPoolGroup.uuid if item.servicesPoolGroup is not None else None,
-            'servicesPoolGroup': item.servicesPoolGroup.name if item.servicesPoolGroup is not None else _('Default'),
+            'pool_group_id': poolGroupId,
+            'pool_group_name': poolGroupName,
+            'pool_group_thumb': poolGroupThumb,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
             'cache_l2_srvs': item.cache_l2_srvs,

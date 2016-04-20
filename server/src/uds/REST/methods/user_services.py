@@ -86,6 +86,10 @@ class AssignedService(DetailHandler):
         else:
             val.update({
                 'owner': item.user.manager.name + "-" + item.user.name,
+                'owner_info': {
+                   'auth_id': item.user.manager.uuid,
+                   'user_id': item.user.uuid
+                },
                 'in_use': item.in_use,
                 'in_use_date': item.in_use_date,
                 'source_host': item.src_hostname,
@@ -204,6 +208,7 @@ class Groups(DetailHandler):
     def getItems(self, parent, item):
         return [{
             'id': i.uuid,
+            'auth_id': i.manager.uuid,
             'name': i.name,
             'comments': i.comments,
             'state': i.state,

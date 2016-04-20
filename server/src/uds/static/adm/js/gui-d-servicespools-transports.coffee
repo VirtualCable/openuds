@@ -52,7 +52,7 @@ gui.servicesPools.transports = (servPool, info) ->
       $.each data, (undefined_, value) ->
         style = "display:inline-block; background: url(data:image/png;base64," + value.type.icon + "); ; background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
         value.trans_type = value.type.name
-        value.name = "<span style=\"" + style + "\"></span> " + value.name
+        value.name = gui.fastLink("<span style=\"" + style + "\"></span> #{value.name}", value.id, 'gui.servicesPools.fastLink', 'goTransportLink')
         return
 
       return

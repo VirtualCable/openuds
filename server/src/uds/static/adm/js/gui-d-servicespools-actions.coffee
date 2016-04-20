@@ -42,7 +42,7 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
         click: (val, value, btn, tbl, refreshFnc) ->
           if val.length != 1
             return
-            
+
           gui.doLog val, val[0]
           gui.forms.confirmModal gettext("Execute action"), gettext("Launch action execution right now?"),
             onYes: ->
@@ -80,6 +80,7 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
       $.each data, (index, value) ->
         value.params = ( k + "=" + value.params[k] for k in Object.keys(value.params)).toString()
         value.atStart = if value.atStart then gettext('Beginning') else gettext('Ending')
+        value.calendar = gui.fastLink(value.calendar, value.calendarId, 'gui.servicesPools.fastLink', 'goCalendarLink')
 
     onNew: (value, table, refreshFnc) ->
 

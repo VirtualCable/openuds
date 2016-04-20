@@ -23,6 +23,9 @@ gui.servicesPools.accessCalendars = (servPool, info) ->
       return true
 
     onData: (data) ->
+      $.each data, (index, value) ->
+         # value.calendar = "<a href='##{value.calendarId}' class='goCalendarLink'>#{value.calendar}</a>"
+         value.calendar = gui.fastLink(value.calendar, value.calendarId, 'gui.servicesPools.fastLink', 'goCalendarLink')
       data.push
         id: -1,
         calendar: '-',

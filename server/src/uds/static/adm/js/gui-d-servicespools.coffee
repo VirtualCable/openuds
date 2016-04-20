@@ -1,5 +1,47 @@
 # jshint strict: true
 gui.servicesPools = new GuiElement(api.servicesPools, "servicespools")
+
+# To allow fast admin navigation
+gui.servicesPools.fastLink = (event, obj) ->
+  gui.doLog 'FastLink clicked', obj
+  event.preventDefault();
+  event.stopPropagation();
+  $obj = $(obj);
+  if $obj.hasClass('goServiceLink')
+    vals = $obj.attr('href').substr(1).split(',')
+    gui.lookupUuid = vals[0]
+    gui.lookup2Uuid = vals[1]
+    setTimeout( ->
+      $(".lnk-service_providers").click();
+    , 50
+    )
+  else if $obj.hasClass('goPoolGroupLink')
+    gui.lookupUuid = $obj.attr('href').substr(1)
+    setTimeout( ->
+      $(".lnk-spoolsgroup").click();
+    , 50
+    )
+  else if $obj.hasClass('goAuthLink')
+    vals = $obj.attr('href').substr(1).split(',')
+    gui.lookupUuid = vals[0]
+    gui.lookup2Uuid = vals[1]
+    setTimeout( ->
+      $(".lnk-authenticators").click();
+    , 50)
+  else if $obj.hasClass('goTransportLink')
+    gui.lookupUuid = $obj.attr('href').substr(1)
+    setTimeout( ->
+      $(".lnk-connectivity").click();
+    , 50)
+  else if $obj.hasClass('goCalendarLink')
+    gui.lookupUuid = $obj.attr('href').substr(1)
+    setTimeout( ->
+      $(".lnk-calendars").click();
+    , 50)
+
+
+
+
 gui.servicesPools.link = (event) ->
   "use strict"
   gui.clearWorkspace()
@@ -306,13 +348,14 @@ gui.servicesPools.link = (event) ->
 
               return
 
-            onDelete: gui.methods.del(groups, gettext("Remove group"), gettext("Group removal error"))
             onData: (data) ->
               $.each data, (undefined_, value) ->
-                value.group_name = "<b>" + value.auth_name + "</b>\\" + value.name
+                value.group_name = gui.fastLink(value.auth_name, "#{value.auth_id},g#{value.id}", 'gui.servicesPools.fastLink', 'goAuthLink')
                 return
 
               return
+
+            onDelete: gui.methods.del(groups, gettext("Remove group"), gettext("Group removal error"))
           )
           prevTables.push groupsTable
         else
@@ -344,6 +387,7 @@ gui.servicesPools.link = (event) ->
                 value.in_use = gettext('Yes')
               else
                 value.in_use = gettext('No')
+              value.owner = gui.fastLink(value.owner, "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.servicesPools.fastLink', 'goAuthLink')
 
             return
 
@@ -401,15 +445,17 @@ gui.servicesPools.link = (event) ->
         prevTables.push logTable
         return
 
-
       # Pre-process data received to add "icon" to deployed service
       onData: (data) ->
-        gui.doLog "onData", data
+        gui.doLog "onData for services pools", data
         $.each data, (index, value) ->
-          gui.doLog value.thumb
           try
             style = "display:inline-block; background: url(data:image/png;base64," + value.thumb + "); background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
-            gui.doLog style
+            style_grp = "display:inline-block; background: url(data:image/png;base64," + value.pool_group_thumb + "); background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
+            value.parent = gui.fastLink(value.parent, "#{value.provider_id},#{value.service_id}", 'gui.servicesPools.fastLink', 'goServiceLink')
+            value.pool_group_name = "<span style='#{style_grp}'></span> #{value.pool_group_name}"
+            if value.pool_group_id?
+               value.pool_group_name = gui.fastLink(value.pool_group_name, value.pool_group_id, 'gui.servicesPools.fastLink', 'goPoolGroupLink')
             if value.restrained
               value.name = "<span class=\"fa fa-exclamation text-danger\"></span> " + value.name
               value.state = gettext("Restrained")

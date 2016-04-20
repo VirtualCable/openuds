@@ -5,6 +5,10 @@
   # Public attributes
   gui.debug = on
 
+  # Used for lookup items on some circustances
+  gui.lookupUuid = null
+  gui.lookup2Uuid = null  # Used for going to second level of tables. Take into account that this is used by some guis
+
   # "public" methods
   gui.doLog = (args...)->
     if gui.debug
@@ -161,6 +165,9 @@
       return
 
     return
+
+  gui.fastLink = (text, href, onClick, clas) ->
+    "<span>#{text}</span><span style='float:right;'><a href='##{href}' onclick='#{onClick}(event, this);' class='#{clas}'><i class='fa fa-external-link'> </i></a></span>"
 
   gui.setLinksEvents = ->
     sidebarLinks = [
