@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-03-07'
+__updated__ = '2016-04-21'
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class LiveService(Service):
     # : Type used internally to identify this provider
     typeType = 'openNebulaLiveService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenNebula live images bases service')
+    typeDescription = _('OpenNebula live images based service')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)

@@ -42,7 +42,7 @@ from uds.core.ui import gui
 import six
 import logging
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-04-21'
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ class LiveService(Service):
     # : Type used internally to identify this provider
     typeType = 'openStackLiveService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenStack live images bases service')
+    typeDescription = _('OpenStack live images based service')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)

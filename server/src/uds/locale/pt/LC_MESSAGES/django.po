@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-20 15:06+0200\n"
-"PO-Revision-Date: 2016-04-18 05:02+0000\n"
+"POT-Creation-Date: 2016-04-21 10:40+0200\n"
+"PO-Revision-Date: 2016-04-21 08:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -407,7 +407,8 @@ msgstr "Grupo de piscina"
 
 #: REST/methods/services_pools.py:169
 msgid "Pool group for this pool (for pool clasify on display)"
-msgstr "Grupo de consórcio para este pool (para piscina classificá em exibição)"
+msgstr ""
+"Grupo de consórcio para este pool (para piscina classificá em exibição)"
 
 #: REST/methods/services_pools.py:177
 msgid "Initial available services"
@@ -419,7 +420,6 @@ msgstr "Serviços criados inicialmente para este pool de serviço"
 
 #: REST/methods/services_pools.py:181 REST/methods/services_pools.py:190
 #: REST/methods/services_pools.py:199 REST/methods/services_pools.py:208
-#| msgid "Compatibility"
 msgid "Availability"
 msgstr "Disponibilidade"
 
@@ -1142,7 +1142,6 @@ msgstr ""
 "OpenSSL"
 
 #: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
-#| msgid "Certificate"
 msgid "Certificates"
 msgstr "Certificados"
 
@@ -1166,7 +1165,6 @@ msgstr ""
 "(xml)"
 
 #: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
-#| msgid "IDP Metadata"
 msgid "Metadata"
 msgstr "Metadados"
 
@@ -1485,17 +1483,14 @@ msgid "Base Clustered Service"
 msgstr "Base em Cluster Service"
 
 #: core/ui/UserInterface.py:86
-#| msgid "Canceled"
 msgid "Advanced"
 msgstr "Avançado"
 
 #: core/ui/UserInterface.py:88
-#| msgid "Invalid credentials"
 msgid "Credentials"
 msgstr "Credenciais"
 
 #: core/ui/UserInterface.py:89
-#| msgid "Tunnel Server"
 msgid "Tunnel"
 msgstr "Túnel"
 
@@ -2632,13 +2627,15 @@ msgid "OpenNebula Live Images"
 msgstr "OpenNebula imagens ao vivo"
 
 #: services/OpenNebula/LiveService.py:59
-msgid "OpenNebula live images bases service"
-msgstr "OpenNebula live serviço de bases de imagens"
+msgid "OpenNebula live images based service"
+msgstr "Imagens ao vivo de OpenNebula serviço baseado"
 
 #: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:40
 msgid "Number of desired machines to keep running waiting for an user"
-msgstr "Número de máquinas desejados para continuar funcionando à espera de um usuário"
+msgstr ""
+"Número de máquinas desejados para continuar funcionando à espera de um "
+"usuário"
 
 #: services/OpenNebula/LiveService.py:95
 msgid "Base Template"
@@ -2677,8 +2674,8 @@ msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
 msgstr ""
-"Se marcada, a conexão será forçado a ser ssl (não funcionará se servidor "
-"Não está fornecendo o ssl)"
+"Se marcada, a conexão será forçado a ser ssl (não funcionará se servidor Não "
+"está fornecendo o ssl)"
 
 #: services/OpenNebula/Provider.py:101
 msgid "User with valid privileges on OpenNebula"
@@ -2701,8 +2698,8 @@ msgid "OpenStack Live Volume"
 msgstr "Ao vivo Volume OpenStack"
 
 #: services/OpenStack/LiveService.py:61
-msgid "OpenStack live images bases service"
-msgstr "Serviço de bases de imagens de live OpenStack"
+msgid "OpenStack live images based service"
+msgstr "Serviço baseado em imagens ao vivo de OpenStack"
 
 #: services/OpenStack/LiveService.py:99
 msgid "Region"
@@ -2734,7 +2731,8 @@ msgstr "Volume de"
 
 #: services/OpenStack/LiveService.py:116
 msgid "Base volume for service (restricted by availability zone)"
-msgstr "Volume de base para o serviço (restringido pela zona de disponibilidade)"
+msgstr ""
+"Volume de base para o serviço (restringido pela zona de disponibilidade)"
 
 #: services/OpenStack/LiveService.py:116 services/OpenStack/LiveService.py:118
 #: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:121
@@ -2747,7 +2745,6 @@ msgstr "Volume de base para o serviço (restringido pela zona de disponibilidade
 #: services/Vmware_enterprise/VCLinkedCloneService.py:88
 #: services/Vmware_enterprise/VCLinkedCloneService.py:89
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
-#| msgid "Base Machine"
 msgid "Machine"
 msgstr "Máquina"
 
@@ -2824,8 +2821,8 @@ msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
 msgstr ""
-"Openstack não oferece suporte a API de identidade 3.2 ou mais recente. Este servidor OpenStack "
-"Não é compatível com UDS."
+"Openstack não oferece suporte a API de identidade 3.2 ou mais recente. Este "
+"servidor OpenStack Não é compatível com UDS."
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -3120,7 +3117,8 @@ msgstr "Remover duplicatas encontradas"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid "If active, found duplicates clones for this service will be removed"
-msgstr "Se ativo, clones de duplicatas encontrado para este serviço serão removidos"
+msgstr ""
+"Se ativo, clones de duplicatas encontrado para este serviço serão removidos"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:69
 msgid "Resource Pool"
@@ -3609,7 +3607,6 @@ msgid "Thank you."
 msgstr "Obrigado."
 
 #: templates/uds/admin/tmpl/service-info.html:5
-#| msgid "Service Pools"
 msgid "Services Pools"
 msgstr "Serviços de piscinas"
 
@@ -4260,18 +4257,16 @@ msgstr "Nome do host ou o endereço do Gerenciador de conexão"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 msgid "If not empty, this domain will be always used as credential domain"
-msgstr "Se não for vazio, este domínio será sempre usado como domínio de credencial"
+msgstr ""
+"Se não for vazio, este domínio será sempre usado como domínio de credencial"
 
 #: transports/RDP/BaseRDPTransport.py:64
-#| msgid ""
-#| "If checked, the domain part will always be emptied (to connecto to xrdp "
-#| "for example is needed)"
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
 msgstr ""
-"Se marcada, a parte de domínio sempre será esvaziada (para conectar a xrdp para "
-"exemplo é necessário)"
+"Se marcada, a parte de domínio sempre será esvaziada (para conectar a xrdp "
+"para exemplo é necessário)"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:69

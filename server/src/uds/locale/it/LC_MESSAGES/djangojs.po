@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-20 15:06+0200\n"
-"PO-Revision-Date: 2016-04-18 05:02+0000\n"
+"POT-Creation-Date: 2016-04-21 10:40+0200\n"
+"PO-Revision-Date: 2016-04-20 13:25+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -515,7 +515,6 @@ msgid "Information"
 msgstr "Informazioni"
 
 #: static/tmp_js/gui-d-services.js:128
-#| msgid "Service creation error"
 msgid "Service information"
 msgstr "Informazioni di servizio"
 

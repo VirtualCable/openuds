@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-20 15:06+0200\n"
-"PO-Revision-Date: 2016-04-18 05:02+0000\n"
+"POT-Creation-Date: 2016-04-21 10:40+0200\n"
+"PO-Revision-Date: 2016-04-21 08:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -2530,7 +2530,7 @@ msgid "OpenNebula Live Images"
 msgstr ""
 
 #: services/OpenNebula/LiveService.py:59
-msgid "OpenNebula live images bases service"
+msgid "OpenNebula live images based service"
 msgstr ""
 
 #: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
@@ -2597,7 +2597,7 @@ msgid "OpenStack Live Volume"
 msgstr ""
 
 #: services/OpenStack/LiveService.py:61
-msgid "OpenStack live images bases service"
+msgid "OpenStack live images based service"
 msgstr ""
 
 #: services/OpenStack/LiveService.py:99

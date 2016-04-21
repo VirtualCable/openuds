@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-20 15:06+0200\n"
-"PO-Revision-Date: 2016-04-18 05:02+0000\n"
+"POT-Creation-Date: 2016-04-21 10:40+0200\n"
+"PO-Revision-Date: 2016-04-21 08:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -414,7 +414,6 @@ msgstr "Servizi creati inizialmente per questo servizio piscina"
 
 #: REST/methods/services_pools.py:181 REST/methods/services_pools.py:190
 #: REST/methods/services_pools.py:199 REST/methods/services_pools.py:208
-#| msgid "Compatibility"
 msgid "Availability"
 msgstr "Disponibilità"
 
@@ -1139,7 +1138,6 @@ msgstr ""
 "da OpenSSL"
 
 #: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
-#| msgid "Certificate"
 msgid "Certificates"
 msgstr "Certificati"
 
@@ -1162,7 +1160,6 @@ msgstr ""
 "Qui è possibile immettere l'URL o i metadati IDP o i metadati stesso (xml)"
 
 #: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
-#| msgid "IDP Metadata"
 msgid "Metadata"
 msgstr "Metadati"
 
@@ -1484,17 +1481,14 @@ msgid "Base Clustered Service"
 msgstr "Base in cluster Service"
 
 #: core/ui/UserInterface.py:86
-#| msgid "Canceled"
 msgid "Advanced"
 msgstr "Avanzate"
 
 #: core/ui/UserInterface.py:88
-#| msgid "Invalid credentials"
 msgid "Credentials"
 msgstr "Credenziali"
 
 #: core/ui/UserInterface.py:89
-#| msgid "Tunnel Server"
 msgid "Tunnel"
 msgstr "Tunnel"
 
@@ -2629,13 +2623,14 @@ msgid "OpenNebula Live Images"
 msgstr "OpenNebula immagini in diretta"
 
 #: services/OpenNebula/LiveService.py:59
-msgid "OpenNebula live images bases service"
-msgstr "OpenNebula immagini basi servizio live"
+msgid "OpenNebula live images based service"
+msgstr "Servizio basato su immagini live OpenNebula"
 
 #: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:40
 msgid "Number of desired machines to keep running waiting for an user"
-msgstr "Numero di macchine desiderate per continuare a correre in attesa di un utente"
+msgstr ""
+"Numero di macchine desiderate per continuare a correre in attesa di un utente"
 
 #: services/OpenNebula/LiveService.py:95
 msgid "Base Template"
@@ -2674,8 +2669,8 @@ msgid ""
 "If checked, the connection will be forced to be ssl (will not work if server "
 "is not providing ssl)"
 msgstr ""
-"Se selezionata, la connessione sarà costretto a essere ssl (non funzionerà se server "
-"non fornisce ssl)"
+"Se selezionata, la connessione sarà costretto a essere ssl (non funzionerà "
+"se server non fornisce ssl)"
 
 #: services/OpenNebula/Provider.py:101
 msgid "User with valid privileges on OpenNebula"
@@ -2698,8 +2693,8 @@ msgid "OpenStack Live Volume"
 msgstr "Volume in tensione OpenStack"
 
 #: services/OpenStack/LiveService.py:61
-msgid "OpenStack live images bases service"
-msgstr "OpenStack immagini basi servizio live"
+msgid "OpenStack live images based service"
+msgstr "Servizio basato su OpenStack immagini in diretta"
 
 #: services/OpenStack/LiveService.py:99
 msgid "Region"
@@ -2744,7 +2739,6 @@ msgstr "Volume di base per il servizio (limitato dalla zona di disponibilità)"
 #: services/Vmware_enterprise/VCLinkedCloneService.py:88
 #: services/Vmware_enterprise/VCLinkedCloneService.py:89
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
-#| msgid "Base Machine"
 msgid "Machine"
 msgstr "Macchina"
 
@@ -2821,8 +2815,8 @@ msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
 msgstr ""
-"OpenStack non supporta API di identità 3.2 o più recente. Questo server di OpenStack "
-"non è compatibile con UDS."
+"OpenStack non supporta API di identità 3.2 o più recente. Questo server di "
+"OpenStack non è compatibile con UDS."
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -3117,7 +3111,8 @@ msgstr "Rimuovere i duplicati trovati"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid "If active, found duplicates clones for this service will be removed"
-msgstr "Se attivo, i duplicati trovati cloni per questo servizio verranno rimossi"
+msgstr ""
+"Se attivo, i duplicati trovati cloni per questo servizio verranno rimossi"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:69
 msgid "Resource Pool"
@@ -3605,7 +3600,6 @@ msgid "Thank you."
 msgstr "Grazie."
 
 #: templates/uds/admin/tmpl/service-info.html:5
-#| msgid "Service Pools"
 msgid "Services Pools"
 msgstr "Servizi piscine"
 
@@ -3797,7 +3791,9 @@ msgstr "Servizio accesso non consentito"
 
 #: templates/uds/html5/index.html:102
 msgid "This service is currently not accesible due to schedule restrictions"
-msgstr "Questo servizio non è attualmente accessibile a causa di restrizioni di orario"
+msgstr ""
+"Questo servizio non è attualmente accessibile a causa di restrizioni di "
+"orario"
 
 #: templates/uds/html5/index.html:116
 msgid "Administrator info panel"
@@ -4257,18 +4253,17 @@ msgstr "Nome host o l'indirizzo della gestione connessione"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 msgid "If not empty, this domain will be always used as credential domain"
-msgstr "Se non vuota, questo dominio verrà sempre utilizzato come dominio delle credenziali"
+msgstr ""
+"Se non vuota, questo dominio verrà sempre utilizzato come dominio delle "
+"credenziali"
 
 #: transports/RDP/BaseRDPTransport.py:64
-#| msgid ""
-#| "If checked, the domain part will always be emptied (to connecto to xrdp "
-#| "for example is needed)"
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
 msgstr ""
-"Se selezionata, la parte di dominio sarà sempre svuotata (per connettersi a xrdp per "
-"esempio è necessario)"
+"Se selezionata, la parte di dominio sarà sempre svuotata (per connettersi a "
+"xrdp per esempio è necessario)"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:69

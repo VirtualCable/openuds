@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-20 15:06+0200\n"
-"PO-Revision-Date: 2016-04-18 05:02+0000\n"
+"POT-Creation-Date: 2016-04-21 10:40+0200\n"
+"PO-Revision-Date: 2016-04-21 08:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -415,7 +415,6 @@ msgstr "Services créés initialement pour ce pool service"
 
 #: REST/methods/services_pools.py:181 REST/methods/services_pools.py:190
 #: REST/methods/services_pools.py:199 REST/methods/services_pools.py:208
-#| msgid "Availability Zones"
 msgid "Availability"
 msgstr "Disponibilité"
 
@@ -1154,7 +1153,6 @@ msgstr ""
 "OpenSSL"
 
 #: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
-#| msgid "Certificate"
 msgid "Certificates"
 msgstr "Certificats"
 
@@ -1178,7 +1176,6 @@ msgstr ""
 "lui-même (xml)"
 
 #: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
-#| msgid "IDP Metadata"
 msgid "Metadata"
 msgstr "Métadonnées"
 
@@ -1502,17 +1499,14 @@ msgid "Base Clustered Service"
 msgstr "Base en cluster Service"
 
 #: core/ui/UserInterface.py:86
-#| msgid "Canceled"
 msgid "Advanced"
 msgstr "Advanced"
 
 #: core/ui/UserInterface.py:88
-#| msgid "Invalid credentials"
 msgid "Credentials"
 msgstr "Informations d'identification"
 
 #: core/ui/UserInterface.py:89
-#| msgid "Tunnel Server"
 msgid "Tunnel"
 msgstr "Tunnel"
 
@@ -2655,8 +2649,8 @@ msgid "OpenNebula Live Images"
 msgstr "OpenNebula Images Live"
 
 #: services/OpenNebula/LiveService.py:59
-msgid "OpenNebula live images bases service"
-msgstr "OpenNebula live service de bases d'images"
+msgid "OpenNebula live images based service"
+msgstr "OpenNebula images live de base du service"
 
 #: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:40
@@ -2726,8 +2720,8 @@ msgid "OpenStack Live Volume"
 msgstr "OpenStack Volume direct"
 
 #: services/OpenStack/LiveService.py:61
-msgid "OpenStack live images bases service"
-msgstr "OpenStack live service de bases d'images"
+msgid "OpenStack live images based service"
+msgstr "OpenStack images live de base du service"
 
 #: services/OpenStack/LiveService.py:99
 msgid "Region"
@@ -2772,7 +2766,6 @@ msgstr "Volume de base pour le service (limité par zone de disponibilité)"
 #: services/Vmware_enterprise/VCLinkedCloneService.py:88
 #: services/Vmware_enterprise/VCLinkedCloneService.py:89
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
-#| msgid "Base Machine"
 msgid "Machine"
 msgstr "Machine"
 
@@ -3636,7 +3629,6 @@ msgid "Thank you."
 msgstr "Merci."
 
 #: templates/uds/admin/tmpl/service-info.html:5
-#| msgid "Service Pools"
 msgid "Services Pools"
 msgstr "Piscines services"
 
@@ -4304,15 +4296,12 @@ msgstr ""
 "d'identification"
 
 #: transports/RDP/BaseRDPTransport.py:64
-#| msgid ""
-#| "If checked, the domain part will always be emptied (to connecto to xrdp "
-#| "for example is needed)"
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
 msgstr ""
-"Si cochée, la partie domaine sera toujours vidée (pour vous connecter à xrdp pour "
-"exemple est nécessaire)"
+"Si cochée, la partie domaine sera toujours vidée (pour vous connecter à xrdp "
+"pour exemple est nécessaire)"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:69
