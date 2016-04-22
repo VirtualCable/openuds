@@ -90,6 +90,7 @@ class GlobalRequestMiddleware(object):
 
         Returns the obtained IP, that is always be a valid ip address.
         '''
+        behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
         try:
             request.ip = request.META['REMOTE_ADDR']
         except:
@@ -98,6 +99,11 @@ class GlobalRequestMiddleware(object):
 
         try:
             request.ip_proxy = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0]
+
+            if behind_proxy  is True:
+                request.ip = request.ip_proxy
+                request.ip_proxy = request.META['HTTP_X_FORWARDED_FOR'].split(",")[1]  # Try to get next proxy
+
             request.is_proxy = True
         except:
             request.ip_proxy = request.ip
