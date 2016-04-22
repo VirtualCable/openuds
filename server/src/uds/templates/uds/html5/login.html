@@ -16,7 +16,7 @@
 			});
 		}
 	}
-	
+
 	$(document).ready(function() {
 		var nonStandard = $('#id_nonStandard').val();
 
@@ -47,9 +47,9 @@
 		// Check initial value (may default auth is non Standard)
 		chkNonStandardAuth($('#id_authenticator').val(), nonStandard);
 	   });
-	   
-	
-</script>	
+
+
+</script>
 {% endblock %}
 
 {% block body %}
@@ -73,9 +73,18 @@
 						    <div class="form-group">
 				                <input id="id_{{form.user.name}}" name="{{form.user.name}}" type="text" class="form-control" placeholder="{% trans 'username'|capfirst %}" autofocus required>
 				                <input id="id_{{form.password.name}}" name="{{form.password.name}}" type="password" class="form-control" placeholder="{% trans 'password'|capfirst %}" required>
-				                {{ form.authenticator }}
-			                </div>
-			                <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="fa fa-sign-in"></span> {% trans 'Sign in' %}</button>
+								</div>
+								{% if form.fields.authenticator.choices|length > 1 %}
+								<div class="form-group">
+										<label>{% trans 'Authenticator' %}</label>
+										<select data-width="100%" data-size="8" data-header="{% trans 'Select authenticator' %}" class="selectpicker show-menu-arrow" name="{{ form.authenticator.name }}" id="id_{{ form.authenticator.name }}">
+											{% for val, txt in form.fields.authenticator.choices %}
+											<option value="{{ val }}"{% if form.fields.authenticator.value == x %} selected{% endif %}>{{ txt }}</option>
+											{% endfor %}
+									  </select>
+								</div>
+								{% endif %}
+                <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="fa fa-sign-in"></span> {% trans 'Sign in' %}</button>
 							<div id="nonStandard" style="display: none">
 								<div id="nonStandardLogin" class="form">
 								  non standard logins
@@ -89,7 +98,7 @@
 		        </div>
 		    </div>
 			<div class="row" id="customHtml">
-					{% autoescape off %} 
+					{% autoescape off %}
 					{{ customHtml }}
 					{% endautoescape %}
 			</div>

@@ -45,6 +45,9 @@ logger = logging.getLogger(__name__)
 
 
 class CustomSelect(forms.Select):
+
+    bootstrap = False
+
     def render(self, name, value, attrs=None):
         if len(self.choices) < 2:
             visible = ' style="display: none;"'
