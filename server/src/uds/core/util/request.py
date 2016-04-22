@@ -110,10 +110,6 @@ class GlobalRequestMiddleware(object):
             request.ip_proxy = request.ip
             request.is_proxy = False
 
-        # Always honor proxy if we are behind a proxy
-        if GlobalConfig.BEHIND_PROXY.getBool(False) is True:
-            request.ip = request.ip_proxy
-
     @staticmethod
     def getUser(request):
         '''
