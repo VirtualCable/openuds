@@ -1,0 +1,13 @@
+.uds-body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.uds-content {
+  flex: 1;
+}
+
+footer {
+  text-align: right;
+}

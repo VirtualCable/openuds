@@ -79,7 +79,7 @@
 										<label>{% trans 'Authenticator' %}</label>
 										<select data-width="100%" data-size="8" data-header="{% trans 'Select authenticator' %}" class="selectpicker show-menu-arrow" name="{{ form.authenticator.name }}" id="id_{{ form.authenticator.name }}">
 											{% for val, txt in form.fields.authenticator.choices %}
-											<option value="{{ val }}"{% if form.fields.authenticator.value == x %} selected{% endif %}>{{ txt }}</option>
+											<option value="{{ val }}">{{ txt }}</option>
 											{% endfor %}
 									  </select>
 								</div>
