@@ -32,8 +32,8 @@
 from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
-from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
 from uds.core.util.Config import GlobalConfig
+from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
 from uds.models import User
 
 import threading
