@@ -1,0 +1,28 @@
+{% load i18n %}
+{% verbatim %}
+<div class="ui five link cards">
+{{#each this}}
+<div class="card">
+  <div class="ui fluid image centered">
+    <img src="{{ image }}">
+  </div>
+  <div class="content">
+    <a class="header">{{ name }}</a>
+    <div class="meta">
+      <span>{{#if in_use }}{% endverbatim %}{% trans 'Session in use' %}{% verbatim %}{{/if}}</span>
+      <span>{{#if maintenance }}{% endverbatim %}{% trans 'Maintenance' %}{% verbatim %}{{/if}}</span>
+    </div>
+    <div class="description">
+      {{ description }}
+    </div>
+  </div>
+  <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      22 Friends
+    </a>
+  </div>
+</div>
+{{/each }}
+</div>
+{% endverbatim %}

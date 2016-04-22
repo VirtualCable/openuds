@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-18'
+__updated__ = '2016-04-22'
 
 
 def about(request):
@@ -126,6 +126,7 @@ def index(request):
         services.append({
             'id': 'A' + svr.uuid,
             'name': svr.name,
+            'description': svr.deployed_service.comments,
             'group': group,
             'transports': trans,
             'imageId': imageId,
@@ -171,6 +172,7 @@ def index(request):
         services.append({
             'id': 'F' + svr.uuid,
             'name': svr.name,
+            'description': svr.comments,
             'group': group,
             'transports': trans,
             'imageId': imageId,

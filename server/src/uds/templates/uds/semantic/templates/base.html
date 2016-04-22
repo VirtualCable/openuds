@@ -47,20 +47,19 @@
    		 	<!-- Content -->
 			{% block body %}{% endblock %}
   			<!--  End of content -->
-    	</div> <!-- End of container -->
-      <div class="st-sticky-push"></div>
     </div>
 		<footer class="footer">
 			<div class="container">
-		{% block footer %}
+			{% block footer %}
 				<a href="http://www.udsenterprise.com">UDS Enterprise Edition. &copy; 2012-2016 Virtual Cable S.L.U.</a>
-		{% endblock %}
+			{% endblock %}
 			</div>
 		</footer>
 
     <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
     {% compress js %}
 		<script src="{% get_static_prefix %}semantic/js/jquery.min.js"></script>
+		<script src="{% get_static_prefix %}semantic/js/handlebars-v4.0.2.js"></script>
 		<script src="{% get_static_prefix %}semantic/js/semantic.min.js"></script>
     <script>
         var clientRest = "/" + "{% url 'ClientAccessEnabler' 'x' 'x' %}".split("/")[1];
@@ -81,6 +80,6 @@
     {% compress js %}
 		{% block js %}{% endblock %}
     {% endcompress %}
-
+		{% block jsnc %}{% endblock %}
 	</body>
 </html>
