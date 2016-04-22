@@ -1,0 +1,14 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "UDS User Preferences" %}{% endblock %}
+
+{% block body %}
+		<form name="form1" method="post" class="form-preferences">
+    		{% csrf_token %}
+    		{% autoescape off %}{{ prefs_form }}{% endautoescape %}
+            <a href="{% url "uds.web.views.index" %}" class="btn btn-warning">{% trans "Cancel" %}</a>
+            <button type="submit" class="btn btn-success pull-right">{% trans "Save Preferences" %}</button>
+		</form>
+{% endblock %}

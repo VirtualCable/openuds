@@ -1,0 +1,36 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n html5 static %}
+
+{% block title %}{% trans 'Service launcher' %}{% endblock %}
+{% block menu %}{% endblock %}
+
+{% block body %}
+        <div class="jumbotron text-center service bg-primary">
+            <h1> {% trans 'UDS Service launcher' %}</h1>
+            <br />
+            <p class="text-danger">{% trans 'Please, note that reloading this page will not work.' %}<br/>
+               {% trans 'Close this window and try to relaunch service from origin.' %}</p>
+            </p>
+            <h6>{% trans 'You can obtain required UDS plugin from the' %} <a href="{% url 'ClientDownload' %}">{% trans 'UDS Plugin download page' %}</a></h6>
+        </div>  
+{% endblock %} 
+
+
+{% block js %}
+        <script>
+        function launchURL(el) {
+            var $el = $(el);
+            url = $el.attr('data-href');
+            url = url != null ? url : $el.attr('href');
+            if ( url.substring(0, 7) == 'udsa://' ) {
+                uds.launch($el);
+            } else {
+                window.location = url;
+            }
+        }
+
+        $(function() {
+            launchURL($('.service')[0]);
+        });
+        </script>
+{% endblock %}

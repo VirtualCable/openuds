@@ -1,0 +1,42 @@
+{% load i18n html5 static %}
+  {% preferences_allowed as show_prefs %}
+  {% root_id as rootid %}
+  <div class="ui menu">
+    <a class="header item" href="/">
+      <img class="ui mini spaced image" src="{% get_static_prefix %}img/udsicon.png">Universal Desktop Services
+    </a>
+    <div class="right menu">
+      <div class="item">
+        <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+          {% csrf_token %}
+          <select class="ui search selection dropdown" id="id_language" type="hidden" name="language">
+            {% for lang in LANGUAGES %}
+            <option value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected{%endif %}>{% trans lang.1|capfirst %}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+      <a class="item" href="{% url 'uds.web.views.about' %}">
+        {% trans 'About' %}
+      </a>
+      {% if user and user.pk != None %}
+      <div class="item">
+        <div class="ui dropdown item">
+          <i class="user icon"></i> {{ user.real_name }}
+          <i class="dropdown icon"></i>
+          <div class="menu">
+              {% if show_prefs and user.id != rootid %}
+              <a class="item" href="{% url "uds.web.views.prefs" %}"><i class="edit icon"></i> {% trans 'Preferences' %}</a>
+              {% endif %}
+              <a class="item" href="{% url "ClientDownload" %}"><i class="disk download icon"></i> {% trans 'UDS Plugin' %}</a>
+              {% if user.staff_member or user.is_admin %}
+              <a class="item" href="{% url "uds.web.views.download" idDownload='' %}"><i class="cloud download icon"></i> {% trans 'Downloads' %}</a>
+              <a class="item" href="{% url "uds.admin.views.index" %}"><i class="dashboard icon"></i> {% trans 'Dashboard' %}</a>
+              {% endif %}
+              <a class="item" href="{% url "uds.web.views.logout" %}"><i class="toggle off icon"></i> {% trans 'Logout' %}</a>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>

@@ -1,0 +1,18 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans 'Error' %}{% endblock %}
+{% block css %}
+		<style>
+		.center {text-align: center; margin-left: auto; margin-right: auto; margin-bottom: auto; margin-top: auto;}
+		</style>
+{% endblock %}
+{% block body %}
+      <div class="jumbotron center">
+          <h1>{% trans 'An error occurred' %}</h1>
+          <br />
+          <p>{% trans "Error" %}: <b class="text-danger">{{ errorString }}</b></p>
+          <br />
+          <a href="{% url 'uds.web.views.index' %}" class="btn btn-lg btn-info"><i class="fa fa-home"></i> {% trans "Back to services list" %}</a>
+        </div>
+{% endblock %}

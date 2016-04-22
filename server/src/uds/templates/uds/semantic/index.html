@@ -1,0 +1,369 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n html5 static %}
+{% block title %}{% trans 'Available services list' %}{% endblock %}
+
+{% block body %}
+        <ul class="nav nav-tabs nav-justified" id="services-tabs">
+        {% for grp in groups %}
+            <li{% if forloop.first %} class="active"{% endif %} data-name='tab-services-{{ forloop.counter }}'>
+                <a href="#tab-services-{{ forloop.counter }}" data-toggle="tab">
+                    <img src="{% url 'galleryImage' grp.imageUuid %}" class="img-round se-agranda" style="width: 40px;">
+                    {{ grp.name }}
+                </a>
+                {% comment %}<a href="#tab-services-{{ forloop.counter }}" data-toggle="tab" style="background: url('{% url 'galleryImage' grp.imageUuid %}') no-repeat left; display: block; background-size: 32px; min-width: 128px; padding-left: 32px; height: 40px;">{{ grp.name }}</a>{% endcomment %}
+            </li>
+        {% endfor %}
+        </ul> 
+        <div class="tab-content">
+        {% for grp in groups %}
+            <div class="tab-pane fade{% if forloop.first %} in active{% endif %}" id="tab-services-{{ forloop.counter }}">
+
+            {% for ser in services %}
+                {% if ser.group.name == grp.name %}
+                    {% if ser.transports %}
+                    <div class="service-container">
+                        {% with trans=ser.transports|first numTransports=ser.transports|length %}
+                        <div class="service{% if ser.maintenance %} maintenance{% endif %}{% if ser.not_accesible %} notaccesible{% endif %}{% if ser.in_use %} inuse{% endif %}"
+                             {% if ser.maintenance %}
+                             data-content="{% trans "Under maintenance" %}"
+                             {% elif ser.not_accesible %}
+                             data-content="{% trans "Access limited by calendar" %}"
+                             {% elif ser.in_use %}
+                             data-content="{%trans "Currently in use" %}"
+                             {% endif %}
+                             data-href="{{ trans.link }}"
+                             data-href-alt="{% url 'uds.web.views.client_downloads' %}">
+                             <div class="service-image">
+                                <img class="se-agranda" src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
+                            </div>
+                            <span {% if ser.name|length > 16 %}class="with-tooltip" data-content="{{ser.name|capfirst}}"{% endif %}{% if ser.show_transports and numTransports > 1 %} style="width: 80%;"{% endif %}>{{ ser.name|capfirst|truncatechars:16 }}</span>
+                            {% if ser.show_transports and numTransports > 1 %}
+                            <span class="gear"><span class="fa fa-gear fa-spin"> </span></span>
+                            {% endif %}
+                        </div>
+
+                        {% if ser.show_transports and numTransports > 1 %}
+                        <div class="modal fade in">
+                          <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title text-center">{% trans "Connections" %}</h4>
+                              </div>
+                              <div class="modal-body">
+                                <ul class="transports">
+                                    {% for trans in ser.transports %}
+                                        <li><a class="uds-service-transport" data-href-alt="{% url 'uds.web.views.client_downloads' %}" href="{{ trans.link }}"><img class="transport" src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+
+                              </div>
+                            </div><!-- /.modal-content -->
+                          </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+                        {% endif %}
+
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endfor %}
+        </div>
+
+        <div class="modal fade" id="maintenance-dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans "Service under maintenance" %}</h4>
+              </div>
+              <div class="modal-body text-center">
+                <p>{% trans "This service is in maintenance mode." %}</p>
+                <p>{% trans "Please, retry access in a while." %}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div class="modal fade" id="notaccesible-dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans "Service access not allowed" %}</h4>
+              </div>
+              <div class="modal-body text-center">
+                <p>{% trans "This service is currently not accesible due to schedule restrictions" %}</p>
+                <p>{% trans "Please, retry access in a while." %}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+
+        {% if user.isStaff %}
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                {% trans "Administrator info panel" %}
+            </div>
+            <div class="panel-body">
+                <p>{% trans "Ip" %}: {{ ip }}</p>
+                <p>{% trans "Networks" %}: {{ nets }}</p>
+                <p>{% trans "Transports" %}: {{ transports }}</p>
+                <p>{% trans "User Agent" %}: {{ request.META.HTTP_USER_AGENT }}</p>
+                <p>{% trans "OS" %}: {{ request.session.OS.OS }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+{% endblock %} 
+
+{% block css %}
+        <style media="screen">
+
+            .tab-content {
+                margin-top: 16px;
+            }        
+
+            
+            .with-tooltip {
+                z-index: 1000;
+            }
+
+            ul.transports > li {
+                list-style-type: none;
+            }
+
+            img.transport {
+                display: inline-block;
+                vertical-align: middle;
+                height: 32px;
+                width: 32px;
+                margin-right: 8px;
+                margin-bottom: 8px;
+            }
+
+            div.service-container {
+                display: inline-block;
+                width: 140px;
+                height: 162px;
+                margin: 0px 8px 24px 8px;
+            }
+
+            div.service {
+                /*background-color: #FAFAFA;*/
+                /*background-image: url("{% get_static_prefix %}/img/uds-small-back.png");*/
+                padding: 6px;
+                /*border: 1px solid #BABABA;
+                border-radius: 2px;*/
+                display: block;
+                position: relative;
+                width: 100%;
+                height: 100%;
+                box-shadow: 6px 6px 5px #E0E0E0;
+                cursor: pointer;
+            }
+
+            div.service.disabled {
+                opacity: 0.4;
+                filter: alpha(opacity=40);
+            }
+
+            div.service.maintenance {
+                opacity: 0.6;
+                filter: alpha(opacity=60);
+            }
+
+            div.service.inuse {
+                background-color: #DCDCFF;
+
+            }
+
+            div.service-image {
+                width: 128px;
+                height: 128px;
+            }
+
+
+            img.se-agranda {
+                max-width: 100%; 
+                opacity: .8; 
+                -webkit-transform: scale(.8,.8);
+                        transform: scale(.8,.8);
+                -webkit-transition: all 0.3s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        transition: all 0.3s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+
+            li.active > a > img.se-agranda,
+            img.se-agranda:hover,
+            img.se-agranda:focus {
+                opacity: 1; 
+                -webkit-transform: none;
+                        transform: none;
+                -webkit-transition: all 0.3s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        transition: all 0.3s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+
+            div.service.over:not(.disabled) {
+                background-color: #F0F0F0;
+                animation: pulse 0.5s infinite alternate;
+                -webkit-animation-name: pulse;
+                -webkit-animation-duration: 0.8s;
+                -webkit-animation-iteration-count: infinite;
+                -webkit-animation-timing-function: alternate;
+            }
+
+            @keyframes pulse {
+              from { box-shadow: 0px 0px 3px 3px #0066cc; }
+              to { box-shadow: 0px 0px 8px 5px #0066cc; }
+            }
+
+            @-webkit-keyframes pulse {
+              from { box-shadow: 0px 0px 3px 3px #0066cc; }
+              to { box-shadow: 0px 0px 8px 5px #0066cc; }
+            }
+
+
+            div.service > img {
+                width: 100%;
+            }
+
+            div.service > span {
+                display: inline-block;
+                position: absolute;
+                vertical-align: bottom;
+                text-align: center;
+                left: 0px;
+                bottom: 0px;
+                width: 100%;
+            }
+
+            div.service > span.gear {
+                text-align: right;
+                padding-right: 12px;
+            }
+
+            span.gear > span.fa {
+                cursor: zoom-in;
+            }
+        </style>
+{% endblock %}
+
+{% block js %}
+        {% pageReloadTime as reloadTime %}
+        <script>
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }        
+        function launchURL(el) {
+            var $el = $(el);
+
+            uds.resetReloadCounter();  // Resets page update
+
+            url = $el.attr('data-href');
+            url = url != null ? url : $el.attr('href');
+            if ( url.substring(0, 7) == 'udsa://' ) {
+                uds.launch($el);
+            } else {
+                window.location = url;
+            }
+        }
+
+        $(function() {
+
+            var autorun = {% if autorun %}true{% else %}false{% endif %};
+            uds.reloadCounterBase = {{ reloadTime }};
+            uds.reloadCounterBase /= uds.counterGranurality;
+            uds.resetReloadCounter();
+
+            $('.with-tooltip').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
+
+            $('.inuse').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto top'});
+
+            $('div.service:not(.maintenance, .notaccesible)').on("click", function (event){
+                var url, el;
+                event.preventDefault();
+
+                launchURL(this);
+
+                return false;
+            }).on("mouseenter mouseleave", function (event) {
+                $(this).toggleClass('over');
+            });
+
+            $('.uds-service-transport').on("click", function (event){
+                var url, el, modal;
+
+                event.preventDefault();
+
+                modal = $(this).parent().parent().parent().parent().parent().parent();
+                modal.modal('hide');
+
+                // check url
+                el = $(this)
+                url = el.attr('data-href');
+                url = url != null ? url : el.attr('href');
+
+                if ( url.substring(0, 7) == 'udsa://' ) {
+                    uds.launch(el);
+                } else {
+                    window.location = url;
+                }
+
+                return false;
+            })
+
+            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.fa').on("click", function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+                $(this).parent().parent().next().modal();
+                return false;
+            });
+
+            $(".maintenance").click( function(event) {
+                $('#maintenance-dialog').modal({
+                      keyboard: false
+                    })
+                return false;
+            });
+
+            $(".notaccesible").click( function(event) {
+                $('#notaccesible-dialog').modal({
+                      keyboard: false
+                    })
+                return false;
+            });
+
+            if( autorun ) {
+                if( $('.service').length > 0)
+                    launchURL($('.service')[0]);
+                autorun = false;
+            }
+
+            uds.setReload();
+
+            // Select the correct tab if needed (on reload)
+            var tab = getUrlVars().tab;
+            if (tab != undefined) {
+                $("ul#services-tabs a[href='#" + tab + "']").tab('show')
+            }
+
+        });
+        </script>
+{% endblock %}

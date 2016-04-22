@@ -1,0 +1,74 @@
+{% extends "uds/html5/templates/base.html" %}
+{% load i18n html5 static %}
+
+{% block title %}
+{% trans 'Download UDS plugin for' %} {{ os|osName }}
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 col-md-offset-2 bg-primary img-rounded">
+        <h3>{% trans 'Download UDS Plugin for' %} {{ os|osName }}</h3>
+        <p>{% trans 'In order to be able to execute UDS services, you need to have UDS plugin installed.' %}</p>
+        <div class="text-center">{{ os|pluginDownloadUrl|safe }}</div>
+        <h3>{% trans 'Or download another version' %}</h3>
+        <p>{% trans 'In case that your platform has been incorrectly detected, you can download manually the version required for your Operating System' %}</p>
+        <p>
+            {% if os != 'linux' %}
+            <p class="text-center">
+                <a href="{% url 'uds.web.views.client_downloads' os='Linux' %}" class="btn btn-warning">{% trans 'Linux UDS plugin' %}</a>
+            </p>
+            {% endif %}
+            {% if os != 'windows' %}
+            <p class="text-center">
+                <a href="{% url 'uds.web.views.client_downloads' os='Windows' %}" class="btn btn-warning">{% trans 'Windows UDS plugin' %}</a>
+            </p>
+            {% endif %}
+            {% if os != 'mac' %}
+            <p class="text-center">
+                <a href="{% url 'uds.web.views.client_downloads' os='Mac' %}" class="btn btn-warning">{% trans 'Mac OSX (>10.5) UDS plugin' %}</a>
+            </p>
+            {% endif %}
+        </p>
+
+        {% if request.user %}
+        <p>{% trans 'If you already have UDS Plugin installed but this message persists to appear, you can disable automatic detection here' %}</p>
+        <p>
+            <form>
+                <select id="plugin" class="selectpicker show-menu-arrow" data-width="100%" data-size="2" style="display: none;">
+                    <option value="0">{% trans 'Automatic plugin detection is enabled' %}</option>
+                    <option value="1">{% trans 'WARNING: Automatic plugin detection is disabled' %}</option>
+                </select>
+            </form>
+        </p>
+        <p>{% trans "Please, note that disabling automatic detection will not trigger this page again in case you don't have the plugin installed." %}<br/>
+           {% trans "In this case, you will have to manually download the plugin by using the menu on upper right corner." %}</p>
+        <p class="text-center">
+            <a href="{% url 'uds.web.views.index' %}" class="btn btn-info"><i class="fa fa-home"></i> {% trans "Return" %}</a>
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{% if request.user %}
+<script>
+    $(function(){
+        $("#plugin").on('change', function(){
+            $.ajax({
+              url: {% url 'PluginDetection' '' %} + $(this).val(),
+              type: "GET",
+              success: function(data) {
+
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                alert(gettext('Error communicating with UDS: ') + textStatus);
+              }
+            });
+        }).val('{% preference _uds.bypassPluginDetection %}');
+        $('.selectpicker').selectpicker('render');
+    });
+</script>
+{% endif %}
+{% endblock %}
