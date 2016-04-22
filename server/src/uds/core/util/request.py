@@ -33,12 +33,13 @@ from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
 from uds.core.auths.auth import ROOT_ID, USER_KEY, getRootUser
+from uds.core.util.Config import GlobalConfig
 from uds.models import User
 
 import threading
 import logging
 
-__updated__ = '2016-04-06'
+__updated__ = '2016-04-22'
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +91,7 @@ class GlobalRequestMiddleware(object):
 
         Returns the obtained IP, that is always be a valid ip address.
         '''
+        behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
         try:
             request.ip = request.META['REMOTE_ADDR']
         except:
@@ -98,6 +100,11 @@ class GlobalRequestMiddleware(object):
 
         try:
             request.ip_proxy = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0]
+
+            if behind_proxy is True:
+                request.ip = request.ip_proxy
+                request.ip_proxy = request.META['HTTP_X_FORWARDED_FOR'].split(",")[1]  # Try to get next proxy
+
             request.is_proxy = True
         except:
             request.ip_proxy = request.ip
