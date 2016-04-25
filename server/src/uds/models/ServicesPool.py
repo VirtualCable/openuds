@@ -60,7 +60,7 @@ from uds.core.util.calendar import CalendarChecker
 from datetime import timedelta
 import logging
 
-__updated__ = '2016-03-16'
+__updated__ = '2016-04-25'
 
 
 logger = logging.getLogger(__name__)
@@ -154,7 +154,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
 
         res = []
-        for v in UserService.objects.filter(state=states.userService.ERROR, state_date__gt=date).values('deployed_service').annotate(how_many=Count('deployed_service')):
+        for v in UserService.objects.filter(state=states.userService.ERROR, state_date__gt=date).values('deployed_service').annotate(how_many=Count('deployed_service')).order_by('deployed_service'):
             if v['how_many'] >= min_:
                 res.append(v['deployed_service'])
         return DeployedService.objects.filter(pk__in=res)
