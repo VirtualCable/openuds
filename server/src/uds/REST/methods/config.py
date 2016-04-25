@@ -60,7 +60,8 @@ class Config(Handler):
                 'value': cfg.get(),
                 'crypt': cfg.isCrypted(),
                 'longText': cfg.isLongText(),
-                'type': cfg.getType()
+                'type': cfg.getType(),
+                'params': cfg.getParams()
             }
         logger.debug('Configuration: {0}'.format(res))
         return res

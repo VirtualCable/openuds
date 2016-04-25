@@ -47,6 +47,8 @@ CLUSTER_SECTION = 'Cluster'
 saveLater = []
 getLater = []
 
+# For custom params (for choices mainly)
+configParams = {}
 
 class Config(object):
     '''
@@ -58,10 +60,13 @@ class Config(object):
     LONGTEXT_FIELD = 1
     NUMERIC_FIELD = 2
     BOOLEAN_FIELD = 3
+    CHOICE_FIELD = 4  # Choice fields must set its parameters on global "configParams" (better by calling ".setParams" method)
 
     class _Value(object):
         def __init__(self, section, key, default='', crypt=False, longText=False, **kwargs):
+            logger.debug('Var: {} {} KWARGS: {}'.format(section, key, kwargs))
             self._type = kwargs.get('type', -1)
+
             self._section = section
             self._key = key
             self._crypt = crypt
@@ -90,7 +95,7 @@ class Config(object):
                     self._data = readed.value
                     self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
                     self._longText = readed.long
-                    if readed.field_type == -1 and self._type != -1:
+                    if self._type != -1:  # readed.field_type == -1 and
                         readed.field_type = self._type
                         readed.save()
                     self._type = readed.field_type
@@ -105,6 +110,9 @@ class Config(object):
                 return CryptoManager.manager().decrypt(self._data)
             else:
                 return self._data
+
+        def setParams(self, params):
+            configParams[self._section.name() + self._key] = params
 
         def getInt(self, force=False):
             try:
@@ -136,6 +144,9 @@ class Config(object):
 
         def getType(self):
             return self._type
+
+        def getParams(self):
+            return configParams.get(self._section.name() + self._key, None)
 
         def set(self, value):
             if GlobalConfig.initDone is False:
@@ -298,13 +309,27 @@ class GlobalConfig(object):
     CLUSTER_ELEGIBLE_MEMORYLOAD = Config.section(CLUSTER_SECTION).value('Migration Free Memory', '40', type=Config.NUMERIC_FIELD)
 
     # Gui vars
-    UDS_THEME = Config.section(GLOBAL_SECTION).value('UDS Theme', 'html5', type=Config.TEXT_FIELD)
+    UDS_THEME = Config.section(GLOBAL_SECTION).value('UDS Theme', 'html5', type=Config.CHOICE_FIELD)
     RELOAD_TIME = Config.section(GLOBAL_SECTION).value('Page reload Time', '300', type=Config.NUMERIC_FIELD)
 
     # This is used so templates can change "styles" from admin interface
     UDS_THEME_VISUAL = Config.section(GLOBAL_SECTION).value('UDS Theme Enhaced', '1', type=Config.BOOLEAN_FIELD)
 
     initDone = False
+
+    @staticmethod
+    def initThemes():
+        import os
+        themes = []
+        try:
+            for d in os.listdir(os.path.join(os.path.dirname(uds.__file__), 'templates', 'uds')):
+                if d != 'admin':
+                    themes.append(d)
+        except Exception as e:
+            pass
+
+        GlobalConfig.UDS_THEME.setParams(themes)
+
 
     @staticmethod
     def initialize():
@@ -326,6 +351,13 @@ class GlobalConfig(object):
                     logger.debug('Saving delayed value: {}'.format(c))
                     c.set(v)
                 saveLater[:] = []
+
+                # Process some global config parameters
+                # GlobalConfig.UDS_THEME.setParams(['html5', 'semantic'])
+
+                # Search for themes & set them
+                GlobalConfig.initThemes()
+
             except Exception:
                 logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
 

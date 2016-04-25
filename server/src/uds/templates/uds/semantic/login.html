@@ -60,76 +60,80 @@
 {% endblock %}
 
 {% block body %}
+<div class="ui three column grid">
+	<div class="row">
+		<div class="six wide column centered" id="login">
+			{% if form.errors %}
+			<div class="alert alert-dismissable alert-danger">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						{% trans 'invalid credentials'|capfirst %}
+			</div>
+			{% endif %}
+			<form id="loginform" name="loginform" method="post">
+				{% csrf_token %}
+				{% for hidden in form.hidden_fields %}
+				{{ hidden }}
+				{% endfor %}
+				<div class="ui raised segment signin">
+					<h3 class="ui inverted blue block header"> {% trans 'Welcome to UDS' %} {{ version }}</h3>
+					<div class="ui one column grid basic segment">
+						<div class="column">
+							<div class="ui blue stacked segment">
+								<div class="ui form">
+									<div class="field">
+										<label> {% trans "Username" %} </label>
+										<div class="ui left labeled icon input">
+											<input type="text" id="id_{{form.user.name}}" name="{{form.user.name}}">
+											<i class="user icon"></i>
+										</div>
+									</div>
+									<div class="field">
+										<label> {% trans "Password" %} </label>
+										<div class="ui left labeled icon input">
+											<input type="password" id="id_{{form.password.name}}" name="{{form.password.name}}">
+											<i class="lock icon"></i>
+										</div>
+									</div>
+									{% if form.fields.authenticator.choices|length > 1 %}
+									<div class="inline field">
+										<label> {% trans "Authenticator" %} </label>
+										<select class="ui fluid dropdown"  name="{{ form.authenticator.name }}" id="id_{{ form.authenticator.name }}">
+											{% for val, txt in form.fields.authenticator.choices %}
+											<option value="{{ val }}">{{ txt }}</option>
+											{% endfor %}
+										</select>
+									</div>
+									{% endif %}
+									<div class="ui vertical animated blue small button signin">
+							      <div class="visible content"> {% trans "Log In" %} </div>
+							      <div class="hidden content">
+							        <i class="sign in icon"></i>
+							      </div>
+							    </div>
 
-<div class="ui container one column" id="login">
-	{% if form.errors %}
-	<div class="alert alert-dismissable alert-danger">
-		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				{% trans 'invalid credentials'|capfirst %}
-	</div>
-	{% endif %}
-	<form id="loginform" name="loginform" method="post">
-		{% csrf_token %}
-		{% for hidden in form.hidden_fields %}
-		{{ hidden }}
-		{% endfor %}
-		<div class="ui raised segment signin">
-			<h3 class="ui inverted blue block header"> {% trans 'Welcome to UDS' %} {{ version }}</h3>
-			<div class="ui one column grid basic segment">
-				<div class="column">
-					<div class="ui blue stacked segment">
-						<div class="ui form">
-							<div class="field">
-								<label> {% trans "Username" %} </label>
-								<div class="ui left labeled icon input">
-									<input type="text" id="id_{{form.user.name}}" name="{{form.user.name}}">
-									<i class="user icon"></i>
 								</div>
 							</div>
-							<div class="field">
-								<label> {% trans "Password" %} </label>
-								<div class="ui left labeled icon input">
-									<input type="password" id="id_{{form.password.name}}" name="{{form.password.name}}">
-									<i class="lock icon"></i>
-								</div>
-							</div>
-							{% if form.fields.authenticator.choices|length > 1 %}
-							<div class="inline field">
-								<label> {% trans "Authenticator" %} </label>
-								<select class="ui fluid dropdown"  name="{{ form.authenticator.name }}" id="id_{{ form.authenticator.name }}">
-									{% for val, txt in form.fields.authenticator.choices %}
-									<option value="{{ val }}">{{ txt }}</option>
-									{% endfor %}
-								</select>
-							</div>
-							{% endif %}
-							<div class="ui vertical animated blue small button signin">
-					      <div class="visible content"> {% trans "Log In" %} </div>
-					      <div class="hidden content">
-					        <i class="sign in icon"></i>
-					      </div>
-					    </div>
-
 						</div>
 					</div>
 				</div>
-		</div>
-	</form>
+			</form>
 
-	<div id="nonStandard" style="display: none">
-		<div id="nonStandardLogin" class="form">
-			non standard logins
-		</div>
-		<div id="divBackToLogin">
-			<a href="#" id="backToLogin" title="{% trans "Back to login" %}">{% trans "Back to login" %}</a>
+			<div id="nonStandard" style="display: none">
+				<div id="nonStandardLogin" class="form">
+					non standard logins
+				</div>
+				<div id="divBackToLogin">
+					<a href="#" id="backToLogin" title="{% trans "Back to login" %}">{% trans "Back to login" %}</a>
+				</div>
+			</div>
+			<div class="row" id="customHtml">
+					{% autoescape off %}
+					{{ customHtml }}
+					{% endautoescape %}
+			</div>
+
 		</div>
 	</div>
-	<div class="row" id="customHtml">
-			{% autoescape off %}
-			{{ customHtml }}
-			{% endautoescape %}
-	</div>
-
 </div>
 
 {% endblock %}

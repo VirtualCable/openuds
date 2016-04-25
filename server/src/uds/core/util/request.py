@@ -39,7 +39,7 @@ from uds.models import User
 import threading
 import logging
 
-__updated__ = '2016-04-22'
+__updated__ = '2016-04-25'
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +89,7 @@ class GlobalRequestMiddleware(object):
         '''
         Obtains the IP of a Django Request, even behind a proxy
 
-        Returns the obtained IP, that is always be a valid ip address.
+        Returns the obtained IP, that always will be a valid ip address.
         '''
         behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
         try:

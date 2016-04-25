@@ -47,13 +47,21 @@
                                  {{# ifequals value.type 1 }}
                                  <textarea class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" rows="3">{{ value.value }}</textarea>
                                  {{ else }}
-                                 {{# ifequals value.type 3 }}
-                                 <input type="checkbox" data-on-text="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-text="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="config-ctrl" {{# ifequals value.value 1 }} checked{{/ ifequals }} data-section="{{ cfg_section }}" data-key="{{ cfg_key }}">
-                                 {{ else }}
-                                 <div>
-                                     <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" value="{{ value.value }}">
-                                 </div>
-                                 {{/ ifequals }}
+                                   {{# ifequals value.type 3 }}
+                                   <input type="checkbox" data-on-text="{% endverbatim %}{% trans 'Yes' %}{% verbatim %}" data-off-text="{% endverbatim %}{% trans 'No' %}{% verbatim %}" class="config-ctrl" {{# ifequals value.value 1 }} checked{{/ ifequals }} data-section="{{ cfg_section }}" data-key="{{ cfg_key }}">
+                                   {{ else }}
+                                     {{# ifequals value.type 4 }}
+                                     <select class="selectpicker show-menu-arrow show-tick config-ctrl" data-style="btn-default" data-width="100%" id="{{ name }}_field" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}">
+                                       {{#each value.params }}
+                                       <option value="{{ this }}"{{# ifequals this ../value.value }} selected{{/ ifequals }}>{{ this }}</option>
+                                       {{/each}}
+                                     </select>
+                                     {{ else }}
+                                     <div>
+                                         <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" value="{{ value.value }}">
+                                     </div>
+                                     {{/ ifequals }}
+                                   {{/ ifequals }}
                                  {{/ ifequals }}
                                {{/ if }}
                                </div>
@@ -64,7 +72,7 @@
                         {{ unset_var "cfg_section" }}
                         {{/ eachKey }}
                     </div>
-                </div>        
+                </div>
             </div>
     </div>
     <div class="row">

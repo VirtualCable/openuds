@@ -19,7 +19,6 @@ gui.configuration.link = ->
         val = if $element.attr('type') is 'checkbox' then (if $element.is(":checked") then "1" else "0") else $element.val()
         $element.attr "data-val", val
 
-      
       # Add handlers to buttons
       $("#form_config .button-undo").on "click", (event) ->
         fld = $(this).attr("data-fld")

@@ -45,7 +45,7 @@ from .client import oVirtClient
 
 import logging
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-04-25'
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +97,7 @@ class Provider(ServiceProvider):
     username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on oVirt, (use "user@domain" form)'), required=True, defvalue='admin@internal')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of oVirt'), required=True)
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
     maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
 
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=90, tooltip=_('Timeout in seconds of connection to oVirt'), required=True, tab=gui.ADVANCED_TAB)

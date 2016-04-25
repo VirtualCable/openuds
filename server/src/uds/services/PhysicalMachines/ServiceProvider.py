@@ -40,9 +40,9 @@ class PhysicalMachinesProvider(services.ServiceProvider):
 
     # What services do we offer?
     offers = []
-    typeName = 'Physical Machines Provider'
+    typeName = 'Static IP Machines Provider'
     typeType = 'PhysicalMachinesServiceProvider'
-    typeDescription = 'Provides connection to Virtual Center Services'
+    typeDescription = 'Provides connection to machines by IP'
     iconFile = 'provider.png'
 
     from .IPMachinesService import IPMachinesService

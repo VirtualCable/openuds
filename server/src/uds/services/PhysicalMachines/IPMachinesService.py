@@ -48,7 +48,7 @@ class IPMachinesService(services.Service):
     ipList = gui.EditableList(label=_('List of IPS'))
 
     # Description of service
-    typeName = _('Physical machines accessed by ip')
+    typeName = _('Static IP machines service')
     typeType = 'IPMachinesService'
     typeDescription = _('This service provides access to POWERED-ON Machines by ip')
     iconFile = 'machine.png'

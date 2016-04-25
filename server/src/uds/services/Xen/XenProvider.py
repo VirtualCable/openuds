@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-04-25'
 
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -99,7 +99,7 @@ class Provider(ServiceProvider):
     username = gui.TextField(length=32, label=_('Username'), order=2, tooltip=_('User with valid privileges on XenServer'), required=True, defvalue='root')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=3, tooltip=_('Password of the user of XenServer'), required=True)
 
-    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
+    maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
     maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
 
     macsRange = gui.TextField(length=36, label=_('Macs range'), defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF', order=90, rdonly=True,
