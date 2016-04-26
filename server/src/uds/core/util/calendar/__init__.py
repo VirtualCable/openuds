@@ -46,7 +46,7 @@ import six
 import bitarray
 import logging
 
-__updated__ = '2016-03-30'
+__updated__ = '2016-04-26'
 
 
 logger = logging.getLogger(__name__)
@@ -137,7 +137,7 @@ class CalendarChecker(object):
             dtime = getSqlDatetime()
 
         # First, try to get data from cache if it is valid
-        cacheKey = six.text_type(self.calendar.modified.toordinal()) + six.text_type(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
+        cacheKey = six.text_type(hash(self.calendar.modified)) + six.text_type(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
         cached = CalendarChecker.cache.get(cacheKey, None)
 
         if cached is not None:
@@ -165,7 +165,7 @@ class CalendarChecker(object):
         if offset is None:
             offset = datetime.timedelta(minutes=0)
 
-        cacheKey = six.text_type(self.calendar.modified.toordinal()) + self.calendar.uuid + six.text_type(offset.seconds) + six.text_type(int(time.mktime(checkFrom.timetuple()))) + 'event' + ('x' if startEvent is True else '_')
+        cacheKey = six.text_type(hash(self.calendar.modified)) + self.calendar.uuid + six.text_type(offset.seconds) + six.text_type(int(time.mktime(checkFrom.timetuple()))) + 'event' + ('x' if startEvent is True else '_')
         next_event = CalendarChecker.cache.get(cacheKey, None)
         if next_event is None:
             logger.debug('Regenerating cached nextEvent')
