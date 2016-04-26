@@ -62,7 +62,7 @@
         required: f.gui.required
         tooltip: f.gui.tooltip
         type: f.gui.type
-        name: f.name
+        name: f.name + (if editing is "readonly" then '__' else '')
         css: "modal_field_data"
       )
 

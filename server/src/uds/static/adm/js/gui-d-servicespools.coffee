@@ -350,7 +350,7 @@ gui.servicesPools.link = (event) ->
 
             onData: (data) ->
               $.each data, (undefined_, value) ->
-                value.group_name = gui.fastLink(value.auth_name, "#{value.auth_id},g#{value.id}", 'gui.servicesPools.fastLink', 'goAuthLink')
+                value.group_name = gui.fastLink("#{value.auth_name}\\#{value.name}", "#{value.auth_id},g#{value.id}", 'gui.servicesPools.fastLink', 'goAuthLink')
                 return
 
               return

@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-04-26'
 
 
 logger = logging.getLogger(__name__)
@@ -310,8 +310,9 @@ class UserService(UUIDModel):
             save: Defaults to true. If false, record will not be saved to db, just modified
 
         '''
-        self.state_date = getSqlDatetime()
-        self.state = state
+        if state != self.state:
+            self.state_date = getSqlDatetime()
+            self.state = state
 
     def setOsState(self, state):
         '''
@@ -323,8 +324,9 @@ class UserService(UUIDModel):
             save: Defaults to true. If false, record will not be saved to db, just modified
 
         '''
-        self.state_date = getSqlDatetime()
-        self.os_state = state
+        if state != self.os_state:
+            self.state_date = getSqlDatetime()
+            self.os_state = state
 
     def assignToUser(self, user):
         '''

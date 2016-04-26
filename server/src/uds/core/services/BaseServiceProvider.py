@@ -39,7 +39,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-03-09'
+__updated__ = '2016-04-25'
 
 
 class ServiceProvider(Module):
@@ -178,14 +178,16 @@ class ServiceProvider(Module):
         if val is None:
             val = self.maxPreparingServices = GlobalConfig.MAX_PREPARING_SERVICES.getInt(force=True)  # Recover global an cache till restart
 
-        return int(getattr(val, 'value', val))
+        retVal = int(getattr(val, 'value', val))
+        return retVal if retVal > 0 else 1
 
     def getMaxRemovingServices(self):
         val = self.maxRemovingServices
         if val is None:
             val = self.maxRemovingServices = GlobalConfig.MAX_REMOVING_SERVICES.getInt(force=True)  # Recover global an cache till restart
 
-        return int(getattr(val, 'value', val))
+        retVal = int(getattr(val, 'value', val))
+        return retVal if retVal > 0 else 1
 
     def getIgnoreLimits(self):
         val = self.ignoreLimits
