@@ -15,7 +15,22 @@
   <div class="ui bottom attached segment">
     <p></p>
   </div>
+
+  {% if user.isStaff %}
+  <h4 class="ui horizontal divider header">
+    <i class="tag icon"></i> {% trans "Administrator info" %}
+  </h4>
+  <div class="ui segment">
+    <p>{% trans "Ip" %}: {{ ip }}</p>
+    <p>{% trans "Networks" %}: {{ nets }}</p>
+    <p>{% trans "Transports" %}: {{ transports }}</p>
+    <p>{% trans "User Agent" %}: {{ request.META.HTTP_USER_AGENT }}</p>
+    <p>{% trans "OS" %}: {{ request.session.OS.OS }}</p>
+  </div>
+  {% endif %}
+
 </div>
+
 {% endblock %}
 
 {% block jsnc %}
@@ -56,9 +71,12 @@ var groups = {
 
 function showSelectedTabItems() {
   var gName = $(".tab.active").attr('data-group');
-  $('.attached.segment').html(itemsTemplate(groups[gName].items));
+  $('.attached.segment').html(itemsTemplate({
+    'data': groups[gName].items
+  }));
 }
 
+// Ready function
 $(function(){
   itemsTemplate = Handlebars.compile($("#tmpl_items").html());
 

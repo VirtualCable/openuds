@@ -1,28 +1,32 @@
 {% load i18n %}
 {% verbatim %}
-<div class="ui five link cards">
-{{#each this}}
-<div class="card">
-  <div class="ui fluid image centered">
-    <img src="{{ image }}">
-  </div>
-  <div class="content">
-    <a class="header">{{ name }}</a>
-    <div class="meta">
-      <span>{{#if in_use }}{% endverbatim %}{% trans 'Session in use' %}{% verbatim %}{{/if}}</span>
-      <span>{{#if maintenance }}{% endverbatim %}{% trans 'Maintenance' %}{% verbatim %}{{/if}}</span>
+<div class="ui five doubling link cards">
+  {{#each data}}
+  <div class="card">
+    <div class="content">
+      <div class="right floated mini ui image">
+        <img src="{{ image }}">
+      </div>
+      <a class="header">{{ name }}</a>
+      <div class="meta">
+        <span>{{#if in_use }}{% endverbatim %}{% trans 'Session in use' %}{% verbatim %}{{/if}}</span>
+        <span>{{#if maintenance }}{% endverbatim %}{% trans 'Maintenance' %}{% verbatim %}{{/if}}</span>
+      </div>
+      <div class="description">
+        {{ description }}
+      </div>
     </div>
-    <div class="description">
-      {{ description }}
+    {{# if show_transports }}
+    {{# compare transports.length 1 operator=">" }}
+    <div class="extra content">
+      <a>
+        <i class="open folder icon"></i>
+        {% endverbatim %}{% trans 'Transports' %}{% verbatim %}{{ transports.length }}
+      </a>
     </div>
+    {{/ compare }}
+    {{/ if }}
   </div>
-  <div class="extra content">
-    <a>
-      <i class="user icon"></i>
-      22 Friends
-    </a>
-  </div>
-</div>
-{{/each }}
+  {{/each }}
 </div>
 {% endverbatim %}
