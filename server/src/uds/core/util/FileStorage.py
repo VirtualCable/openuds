@@ -64,6 +64,8 @@ class FileStorage(Storage):
 
         self.cache = cache
 
+        self.cache._cache.flush_all()  # On start, ensures that cache is empty to avoid surprises
+
         Storage.__init__(self, *args, **kwargs)
 
 
@@ -151,8 +153,9 @@ class FileStorage(Storage):
         self._removeFromCache(name)
 
     def exists(self, name):
+        logger.debug('Called exists for {}')
         try:
-            self._dbFileForReadOnly(name)
+            self._dbFileForReadOnly(name).uuid
             return True
         except DBFile.DoesNotExist:
             return False

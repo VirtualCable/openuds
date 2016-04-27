@@ -83,6 +83,8 @@
 											{% endfor %}
 									  </select>
 								</div>
+								{% else %}
+								<input type="hidden" name="{{ form.authenticator.name }}" id="id_{{ form.authenticator.name }}" value="{{ form.fields.authenticator.choices.0.0 }}">
 								{% endif %}
                 <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="fa fa-sign-in"></span> {% trans 'Sign in' %}</button>
 							<div id="nonStandard" style="display: none">

@@ -103,6 +103,8 @@
 											{% endfor %}
 										</select>
 									</div>
+									{% else %}
+									<input type="hidden" name="{{ form.authenticator.name }}" id="id_{{ form.authenticator.name }}" value="{{ form.fields.authenticator.choices.0.0 }}">
 									{% endif %}
 									<div class="ui vertical animated blue small button signin">
 							      <div class="visible content"> {% trans "Log In" %} </div>
