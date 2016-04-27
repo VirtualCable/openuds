@@ -56,7 +56,7 @@ class RestRequest(QObject):
         # private
         self._manager = QNetworkAccessManager()
         if params is not None:
-            url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v))) for k, v in params.iteritems())
+            url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())
 
         self.url = QUrl(RestRequest.restApiUrl + url)
 

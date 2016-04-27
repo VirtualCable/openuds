@@ -137,8 +137,12 @@ class UDSClient(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def getTransportData(self):
-        self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName(), 'version': VERSION})
-        self.req.get()
+        try:
+            self.req = RestRequest('/{}/{}'.format(self.ticket, self.scrambler), self, self.transportDataReceived, params={'hostname': tools.getHostName(), 'version': VERSION})
+            self.req.get()
+        except Exception as e:
+            logger.exception('Got exception: {}'.format(e))
+            raise e
 
 
     @QtCore.pyqtSlot(dict)
@@ -232,7 +236,7 @@ if __name__ == "__main__":
 
     except Exception:
         logger.debug('Detected execution without valid URI, exiting')
-        QtGui.QMessageBox.critical(None, 'Notice', 'This program is designed to be used by UDS', QtGui.QMessageBox.Ok)
+        QtGui.QMessageBox.critical(None, 'Notice', 'UDS Client Version {}'.format(VERSION), QtGui.QMessageBox.Ok)
         sys.exit(1)
 
     # Setup REST api endpoint
