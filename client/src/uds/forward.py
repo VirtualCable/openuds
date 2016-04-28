@@ -101,7 +101,7 @@ class ForwardThread(threading.Thread):
         if localPort is None:
             localPort = random.randrange(40000, 50000)
 
-        ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort. self.waitTime)
+        ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort, self.waitTime)
         ft.client = self.client
         self.client.useCount += 1  # One more using this client
         ft.start()
@@ -134,8 +134,6 @@ class ForwardThread(threading.Thread):
                 logger.exception('Exception connecting: ')
                 self.status = 2  # Error
                 return
-
-        self.clientUseCount += 1
 
         class SubHandler(Handler):
             chain_host = self.redirectHost
