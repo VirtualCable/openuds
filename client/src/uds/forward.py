@@ -109,7 +109,7 @@ class ForwardThread(threading.Thread):
         while ft.status == 0:
             time.sleep(0.1)
 
-        return ft
+        return (ft, localPort)
 
 
     def _timerFnc(self):
