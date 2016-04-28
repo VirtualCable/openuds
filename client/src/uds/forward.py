@@ -73,7 +73,6 @@ class Handler(SocketServer.BaseRequestHandler):
 
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
-    clientUseCounter = 0
 
     def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime):
         threading.Thread.__init__(self)
@@ -104,6 +103,7 @@ class ForwardThread(threading.Thread):
 
         ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort. self.waitTime)
         ft.client = self.client
+        self.client.useCount += 1  # One more using this client
         ft.start()
 
         while ft.status == 0:
@@ -122,6 +122,7 @@ class ForwardThread(threading.Thread):
     def run(self):
         if self.client is None:
             self.client = paramiko.SSHClient()
+            self.client.useCount = 1  # Custom added variable, to keep track on when to close tunnel
             self.client.load_system_host_keys()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -133,6 +134,8 @@ class ForwardThread(threading.Thread):
                 logger.exception('Exception connecting: ')
                 self.status = 2  # Error
                 return
+
+        self.clientUseCount += 1
 
         class SubHandler(Handler):
             chain_host = self.redirectHost
@@ -147,8 +150,6 @@ class ForwardThread(threading.Thread):
 
         self.status = 1  # Ok, listening
 
-        ForwardThread.clientUseCounter += 1
-
         self.fs = ForwardServer(('', self.localPort), SubHandler)
         self.fs.serve_forever()
 
@@ -161,9 +162,10 @@ class ForwardThread(threading.Thread):
             self.fs.shutdown()
 
             if self.client is not None:
-                ForwardThread.clientUseCounter -= 1
-                if ForwardThread.clientUseCounter == 0:
+                self.client.useCount -= 1
+                if self.client.useCount == 0:
                     self.client.close()
+                self.client = None  # Clean up
         except Exception:
             logger.exception('Exception stopping')
             pass
