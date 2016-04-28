@@ -30,7 +30,7 @@ else:
     port = -1
 
 if {m.secure_port} != -1:  # @UndefinedVariable
-    forwardThread2, secure_port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.secure_port})  # @UndefinedVariable
+    forwardThread2, secure_port = forwardThread1.clone('{m.ip}', {m.secure_port})  # @UndefinedVariable
 
     if forwardThread2.status == 2:
         raise Exception('Unable to open tunnel')
