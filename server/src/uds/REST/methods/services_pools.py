@@ -264,7 +264,7 @@ class ServicesPools(ModelHandler):
             fields['servicesPoolGroup_id'] = None
             logger.debug('servicesPoolGroup_id: {}'.format(spgrpId))
             try:
-                if imgId != '-1':
+                if spgrpId != '-1':
                     spgrp = ServicesPoolGroup.objects.get(uuid=processUuid(spgrpId))
                     fields['servicesPoolGroup_id'] = spgrp.id
             except Exception:

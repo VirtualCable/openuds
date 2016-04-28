@@ -73,6 +73,7 @@ class Handler(SocketServer.BaseRequestHandler):
 
 class ForwardThread(threading.Thread):
     status = 0  # Connecting
+    clientUseCounter = 0
 
     def __init__(self, server, port, username, password, localPort, redirectHost, redirectPort, waitTime):
         threading.Thread.__init__(self)
@@ -95,6 +96,21 @@ class ForwardThread(threading.Thread):
         self.timer = None
         self.currentConnections = 0
         self.stoppable = False
+        self.client = None
+
+    def clone(self, redirectHost, redirectPort, localPort=None):
+        if localPort is None:
+            localPort = random.randrange(40000, 50000)
+
+        ft = ForwardThread(self.server, self.port, self.username, self.password, localPort, redirectHost, redirectPort. self.waitTime)
+        ft.client = self.client
+        ft.start()
+
+        while ft.status == 0:
+            time.sleep(0.1)
+
+        return ft
+
 
     def _timerFnc(self):
         self.timer = None
@@ -104,18 +120,19 @@ class ForwardThread(threading.Thread):
             self.stop()
 
     def run(self):
-        self.client = paramiko.SSHClient()
-        self.client.load_system_host_keys()
-        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        if self.client is None:
+            self.client = paramiko.SSHClient()
+            self.client.load_system_host_keys()
+            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        logger.debug('Connecting to ssh host %s:%d ...' % (self.server, self.port))
+            logger.debug('Connecting to ssh host %s:%d ...' % (self.server, self.port))
 
-        try:
-            self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
-        except Exception as e:
-            logger.exception('Exception connecting: ')
-            self.status = 2  # Error
-            return
+            try:
+                self.client.connect(self.server, self.port, username=self.username, password=self.password, timeout=5)
+            except Exception as e:
+                logger.exception('Exception connecting: ')
+                self.status = 2  # Error
+                return
 
         class SubHandler(Handler):
             chain_host = self.redirectHost
@@ -130,6 +147,8 @@ class ForwardThread(threading.Thread):
 
         self.status = 1  # Ok, listening
 
+        ForwardThread.clientUseCounter += 1
+
         self.fs = ForwardServer(('', self.localPort), SubHandler)
         self.fs.serve_forever()
 
@@ -142,7 +161,9 @@ class ForwardThread(threading.Thread):
             self.fs.shutdown()
 
             if self.client is not None:
-                self.client.close()
+                ForwardThread.clientUseCounter -= 1
+                if ForwardThread.clientUseCounter == 0:
+                    self.client.close()
         except Exception:
             logger.exception('Exception stopping')
             pass

@@ -39,9 +39,6 @@ gui.servicesPools.fastLink = (event, obj) ->
       $(".lnk-calendars").click();
     , 50)
 
-
-
-
 gui.servicesPools.link = (event) ->
   "use strict"
   gui.clearWorkspace()
