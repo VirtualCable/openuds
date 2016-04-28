@@ -243,7 +243,6 @@ gui.servicesPools.link = (event) ->
           # Cached items table
           prevCacheLogTbl = null
           cachedItemsTable = cachedItems.table(
-            doNotLoadData: true
             icon: 'cached'
             container: "cache-placeholder_tbl"
             rowSelect: "multi"
