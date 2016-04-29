@@ -57,7 +57,7 @@ def _getMacAddr(ifname):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifname[:15])))
-        return six.text_type(''.join(['%02x:' % char for char in info[18:24]])[:-1])
+        return six.text_type(''.join(['%02x:' % char for char in info[18:24]])[:-1]).upper()
     except Exception:
         return None
 
