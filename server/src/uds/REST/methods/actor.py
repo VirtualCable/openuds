@@ -111,7 +111,7 @@ class Actor(Handler):
         logger.debug('Getting User services from ids: {}'.format(self._params.get('id')))
 
         try:
-            clientIds = self._params.get('id').split(',')[:5]
+            clientIds = [i.upper() for i in self._params.get('id').split(',')[:5]]
         except Exception:
             raise RequestError('Invalid request: (no id found)')
 
