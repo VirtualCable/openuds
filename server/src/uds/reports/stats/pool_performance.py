@@ -64,7 +64,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-09-04'
+__updated__ = '2016-05-04'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -98,8 +98,8 @@ class AccessReport(UDSGeraldoReport):
                 height=1 * cm,
                 auto_expand_height=True,
                 elements=(
-                    Label(text=_('Users access by date'), top=0.2 * cm, left=0, width=BAND_WIDTH,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 12, 'alignment': TA_CENTER}),
+                    # Label(text=_('Users access by date'), top=0.2 * cm, left=0, width=BAND_WIDTH,
+                    #      style={'fontName': 'Helvetica-Bold', 'fontSize': 12, 'alignment': TA_CENTER}),
 
                     Label(text=_('Pool'), top=1.0 * cm, left=1.2 * cm,
                           style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),

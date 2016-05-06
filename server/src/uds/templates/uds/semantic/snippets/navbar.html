@@ -1,42 +1,62 @@
 {% load i18n html5 static %}
   {% preferences_allowed as show_prefs %}
   {% root_id as rootid %}
-  <div class="ui menu doubling grid">
+  <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="language" id="id_language" value=""/>
+  </form>
+  <div class="computer tablet only ui menu grid">
     <a class="header item" href="/">
       <img class="ui mini spaced image" src="{% get_static_prefix %}img/udsicon.png">Universal Desktop Services
     </a>
+
     <div class="right menu">
-      <div class="item">
-        <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
-          {% csrf_token %}
-          <select class="ui search selection dropdown" id="id_language" type="hidden" name="language">
-            {% for lang in LANGUAGES %}
-            <option value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected{%endif %}>{% trans lang.1|capfirst %}</option>
-            {% endfor %}
-          </select>
-        </form>
+      <div class="ui dropdown item">
+        {{ LANGUAGE_INFO.name }} <i class="dropdown icon"></i>
+        <div class="menu">
+          {% for lang in LANGUAGES %}
+          <a class="item" onclick='$("#id_language").val("{{ lang.0 }}"); $("#form_language").submit()'>{% trans lang.1|capfirst %}</a>
+          {% endfor %}
+        </div>
       </div>
       <a class="item" href="{% url 'uds.web.views.about' %}">
         {% trans 'About' %}
       </a>
-      {% if user and user.pk != None %}
-      <div class="item">
-        <div class="ui dropdown selection item">
-          <i class="user icon"></i> {{ user.real_name }}
-          <i class="dropdown icon"></i>
-          <div class="menu">
-              {% if show_prefs and user.id != rootid %}
-              <a class="item" href="{% url "uds.web.views.prefs" %}"><i class="edit icon"></i> {% trans 'Preferences' %}</a>
-              {% endif %}
-              <a class="item" href="{% url "ClientDownload" %}"><i class="disk download icon"></i> {% trans 'UDS Plugin' %}</a>
-              {% if user.staff_member or user.is_admin %}
-              <a class="item" href="{% url "uds.web.views.download" idDownload='' %}"><i class="cloud download icon"></i> {% trans 'Downloads' %}</a>
-              <a class="item" href="{% url "uds.admin.views.index" %}"><i class="dashboard icon"></i> {% trans 'Dashboard' %}</a>
-              {% endif %}
-              <a class="item" href="{% url "uds.web.views.logout" %}"><i class="toggle off icon"></i> {% trans 'Logout' %}</a>
+      {% include 'uds/semantic/snippets/user-menu.html' %}
+    </div>
+  </div>
+
+  <div class="mobile only ui stackable menu grid">
+    <div class="ui styled fluid accordion">
+      <div class="title">
+        <img class="ui mini spaced image" src="{% get_static_prefix %}img/udsicon.png">
+        Universal Desktop Services
+      </div>
+      <div class="content">
+        <div class="ui styled fluid accordion">
+          <div class="active title">
+            <i class="dropdown icon"></i>
+            What is a dog?
+          </div>
+          <div class="active content">
+            <p>A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it can be found as a welcome guest in many households across the world.</p>
+          </div>
+          <div class="title">
+            <i class="dropdown icon"></i>
+            What kinds of dogs are there?
+          </div>
+          <div class="content">
+            <p>There are many breeds of dogs. Each breed varies in size and temperament. Owners often select a breed of dog that they find to be compatible with their own lifestyle and desires from a companion.</p>
+          </div>
+          <div class="title">
+            <i class="dropdown icon"></i>
+            How do you acquire a dog?
+          </div>
+          <div class="content">
+            <p>Three common ways for a prospective owner to acquire a dog is from pet shops, private owners, or shelters.</p>
+            <p>A pet shop may be the most convenient way to buy a dog. Buying a dog from a private owner allows you to assess the pedigree and upbringing of your dog before choosing to take it home. Lastly, finding your dog from a shelter, helps give a good home to a dog who may not find one so readily.</p>
           </div>
         </div>
       </div>
-      {% endif %}
     </div>
   </div>

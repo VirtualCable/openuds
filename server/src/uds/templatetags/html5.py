@@ -226,10 +226,10 @@ def pluginDownloadUrl(os):
         return tmpl.format(url=static('clients/UDSClientSetup-{version}.exe'.format(version=CLIENT_VERSION)), os='Windows')
     elif os == 'linux':
         linux_packages = (
-            ('udsclient_{version}_all.deb'.format(version=CLIENT_VERSION), _('Debian based Linux')),
-            ('udsclient-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), _('Red Hat based Linux (RH, Fedora, Centos, ...)')),
-            ('udsclient-opensuse-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), _('Suse based Linux')),
-            ('udsclient-{version}.tar.gz'.format(version=CLIENT_VERSION), _('Generic .tar.gz Linux'))
+            ('udsclient_{version}_all.deb'.format(version=CLIENT_VERSION), _('Debian based Linux') + ' ' + _('(requires Python-2.7)')),
+            ('udsclient-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), _('Red Hat based Linux (RH, Fedora, Centos, ...)') + ' ' + _('(requires Python-2.7)')),
+            ('udsclient-opensuse-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), _('Suse based Linux') + ' ' + _('(requires Python-2.7)')),
+            ('udsclient-{version}.tar.gz'.format(version=CLIENT_VERSION), _('Generic .tar.gz Linux') + ' ' + _('(requires Python-2.7)'))
         )
         res = ''
         for v in linux_packages:

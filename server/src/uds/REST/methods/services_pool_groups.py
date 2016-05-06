@@ -51,7 +51,7 @@ class ServicesPoolGroups(ModelHandler):
     '''
     Handles the gallery REST interface
     '''
-    needs_admin = True
+    # needs_admin = True
 
     path = 'gallery'
     model = ServicesPoolGroup
