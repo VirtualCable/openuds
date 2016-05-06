@@ -30,7 +30,7 @@ uds.counterGranurality = 2 # Every this seconds, reload time will be checked
 
 blockUI = (message) ->
   message = message or "<h1><span class=\"fa fa-spinner fa-spin\"></span> " + gettext("Contacting service...") + "</h1>"
-  # $.blockUI 
+  # $.blockUI
   #  message: message
   return
 
@@ -173,10 +173,13 @@ launchSafari = (el, url, alt) ->
   ), 2800
 
 
-uds.launch = (el) ->
-  url = el.attr('data-href')
-  url = if url? then url else el.attr('href')
-  alt = el.attr('data-href-alt')
+uds.launch = (el, url, alt) ->
+  if url is undefined
+    url = el.attr('data-href')
+    url = if url? then url else el.attr('href')
+
+  if alt is undefined
+    alt = el.attr('data-href-alt')
 
   blockUI()
 
@@ -187,7 +190,6 @@ uds.launch = (el) ->
     type: "GET"
     dataType: "json"
     success: (data) ->
-
       if data.error? and data.error isnt ''
         unblockUI()
         alert data.error
@@ -218,7 +220,7 @@ uds.doLaunch = (el, url, alt) ->
     launchSafari el, url, alt
   else if uds.ie
     launchIE this, url, alt
-  
+
   return
 
 uds.onLink = ->

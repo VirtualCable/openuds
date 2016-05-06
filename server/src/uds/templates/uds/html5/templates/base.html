@@ -1,6 +1,7 @@
 {% load l10n i18n static html5 compress %}{% spaceless %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_available_languages as LANGUAGES %}
+{% get_language_info for LANGUAGE_CODE as LANGUAGE_INFO %}
 <!DOCTYPE html>{% endspaceless %}
 <html lang='{{LANGUAGE_CODE}}'>
 	<head>

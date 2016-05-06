@@ -1,8 +1,8 @@
 {% load i18n %}
 {% verbatim %}
-<div class="ui five doubling link cards">
+<div class="ui four doubling stackable link cards">
   {{#each data}}
-  <div class="card">
+  <div class="card" data-item="{{ @index }}">
     <div class="content">
       <div class="right floated mini ui image">
         <img src="{{ image }}">
@@ -19,9 +19,9 @@
     {{# if show_transports }}
     {{# compare transports.length 1 operator=">" }}
     <div class="extra content">
-      <a>
+      <a class="show-transports">
         <i class="open folder icon"></i>
-        {% endverbatim %}{% trans 'Transports' %}{% verbatim %}{{ transports.length }}
+        {% endverbatim %}{% trans 'Connections' %}{% verbatim %}
       </a>
     </div>
     {{/ compare }}

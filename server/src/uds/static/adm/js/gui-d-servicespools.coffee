@@ -4,8 +4,8 @@ gui.servicesPools = new GuiElement(api.servicesPools, "servicespools")
 # To allow fast admin navigation
 gui.servicesPools.fastLink = (event, obj) ->
   gui.doLog 'FastLink clicked', obj
-  event.preventDefault();
-  event.stopPropagation();
+  event.preventDefault()
+  event.stopPropagation()
   $obj = $(obj);
   if $obj.hasClass('goServiceLink')
     vals = $obj.attr('href').substr(1).split(',')

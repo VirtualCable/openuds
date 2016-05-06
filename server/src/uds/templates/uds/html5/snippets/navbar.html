@@ -24,11 +24,7 @@
                 <ul class="nav navbar-nav navbar-right">
                   <li><a href="{% url 'uds.web.views.about' %}">{% trans 'About' %}</a></li>
                   <li class="dropdown">
-                    {% for lang in LANGUAGES %}
-                    {% if lang.0  == LANGUAGE_CODE %}
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-comments-o"></i> {% trans lang.1|capfirst %}<b class="caret"></b></a>
-                    {% endif %}
-                    {% endfor %}
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-comments-o"></i> {% trans LANGUAGE_INFO.name|capfirst %}<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       {% for lang in LANGUAGES %}
                       {% if lang.0  != LANGUAGE_CODE %}
@@ -47,7 +43,7 @@
                         <li><a href="{% url 'ClientDownload' %}"><span class="fa fa-download"></span> UDS Plugin</a></li>
                     {% if user.staff_member or user.is_admin %}
                         <li><a href="{% url "uds.web.views.download" idDownload='' %}"><span class="fa fa-download"></span> {% trans "Downloads" %}</a></li>
-                        {% ifbrowser ie<8 %} 
+                        {% ifbrowser ie<8 %}
                         {% else %}
                         <li><a href="{% url "uds.admin.views.index" %}"><span class="fa fa-dashboard"></span> Dashboard</a></li>
                         {% endifbrowser %}
@@ -59,7 +55,7 @@
 
                 </ul>
                 </form>
-                
+
              </div>
-			
+
 		</nav>

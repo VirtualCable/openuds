@@ -49,7 +49,7 @@ class Images(ModelHandler):
     '''
     Handles the gallery REST interface
     '''
-    needs_admin = True
+    # needs_admin = True
 
     path = 'gallery'
     model = Image

@@ -1,6 +1,7 @@
 {% load l10n i18n static html5 compress %}{% spaceless %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_available_languages as LANGUAGES %}
+{% get_language_info for LANGUAGE_CODE as LANGUAGE_INFO %}
 <!DOCTYPE html>{% endspaceless %}
 <html class="no-js" lang='{{LANGUAGE_CODE}}'>
 	<head>
@@ -23,7 +24,7 @@
     {% endcompress %}
 	</head>
 
-	<body class="uds-body">
+	<body>
 		<!-- Navigation bar -->
 	  {% block menu %}{% include 'uds/semantic/snippets/navbar.html' %}{% endblock %}
 		{% ifbrowser ie<10 %}
@@ -68,9 +69,9 @@
 					$('.ui.dropdown')
 					  .dropdown()
 					;
-					$('#id_language').on('change', function() {
-						$('#form_language').submit();
-					});
+					$('.ui.accordion')
+  					.accordion()
+					;
 				})
     </script>
     <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}js/uds-client.coffee"></script>

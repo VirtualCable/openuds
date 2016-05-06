@@ -9,7 +9,7 @@
 		console.log(val, nonStandard);
 		if( $.inArray(val.toString(), nonStandard) >= 0) {
 		    var vv = val;
-			$("#login").hide(300, function() {
+			$("#loginform").hide(300, function() {
 				$.get('{%url "uds.web.views.customAuth" idAuth=''%}' + vv, function(data) {
 				  $('#nonStandardLogin').html(data);
 				  $('#nonStandard').show(300);
@@ -62,7 +62,7 @@
 {% block body %}
 <div class="ui three column grid">
 	<div class="row">
-		<div class="six wide column centered" id="login">
+		<div class="six wide column centered doubling stackable" id="login">
 			{% if form.errors %}
 			<div class="alert alert-dismissable alert-danger">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
