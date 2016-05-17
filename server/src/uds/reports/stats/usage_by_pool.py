@@ -56,7 +56,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-01-20'
+__updated__ = '2016-05-17'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000

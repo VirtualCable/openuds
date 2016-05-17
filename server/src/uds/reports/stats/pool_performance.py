@@ -64,7 +64,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-05-04'
+__updated__ = '2016-05-17'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -73,6 +73,8 @@ GERALDO_HEIGHT = GERALDO_WIDTH * HEIGHT / WIDTH
 
 
 class AccessReport(UDSGeraldoReport):
+
+    header_elements = []
 
     class band_detail(ReportBand):
         height = 400 * mm  # Height bigger than a page, so a new page is launched for listings
@@ -244,7 +246,7 @@ class PoolPerformanceReport(StatsReport):
 
         xLabelFormat, poolsData, reportData = self.getRangeData()
 
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         options = {
             'encoding': 'utf-8',

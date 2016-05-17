@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2015-08-31'
+__updated__ = '2016-05-13'
 
 
 class RDPFile(object):
@@ -141,7 +141,7 @@ class RDPFile(object):
         Note that server is not added
         '''
 
-        params = ['-TUDS Connection', '-P', '-rclipboard:PRIMARYCLIPBOARD]']
+        params = ['-TUDS Connection', '-P', '-rclipboard:PRIMARYCLIPBOARD']
 
         if self.redirectSmartcards:
             params.append('-rsdcard')
@@ -152,7 +152,6 @@ class RDPFile(object):
             params.append('-rsound:off')
 
         if self.redirectDrives is True:
-            params.append('-rdisk:home=' + os.environ['HOME'])
             params.append('-rdisk:media=/media')
 
         if self.redirectSerials is True:
