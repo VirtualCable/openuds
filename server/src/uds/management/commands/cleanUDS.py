@@ -37,6 +37,8 @@ from django.core.cache import cache
 
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
+from uds.core.util.State import State
+from uds.models import Scheduler
 
 import logging
 import sys
@@ -52,9 +54,18 @@ class Command(BaseCommand):
         sys.stdout.write("Cleaning up UDS\n")
         GlobalConfig.initialize()
 
+        sys.stdout.write("Cache...\n")
         # UDSs cache
         Cache.cleanUp()
         # Django caches
         cache.clear()
+
+        sys.stdout.write("Releasing schedulers...\n")
+        # Release all Schedulers
+        Scheduler.objects.all().update(owner_server='', state=State.FOR_EXECUTE)
+
+        sys.stdout.write("Reseting UDS Theme (setting to html5)...\n")
+        # Reset theme to html5
+        GlobalConfig.UDS_THEME.set('html5')
 
         sys.stdout.write("UDS Cleaned UP\n")

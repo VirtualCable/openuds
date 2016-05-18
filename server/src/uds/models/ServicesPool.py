@@ -57,10 +57,10 @@ from uds.models.Util import getSqlDatetime
 
 from uds.core.util.calendar import CalendarChecker
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 import logging
 
-__updated__ = '2016-04-26'
+__updated__ = '2016-05-18'
 
 
 logger = logging.getLogger(__name__)
@@ -206,6 +206,28 @@ class DeployedService(UUIDModel, TaggingMixin):
                 break  # Stops on first rule match found
 
         return access == states.action.ALLOW
+
+    def getDeadline(self, chkDateTime=None):
+        '''
+        Gets the deadline for an access on chkDateTime
+        '''
+        if chkDateTime is None:
+            chkDateTime = getSqlDatetime()
+
+        if self.isAccessAllowed(chkDateTime) is False:
+            return 0
+
+        deadLine = None
+        for ac in self.calendaraccess_set.all():
+            if ac.access == states.action.ALLOW:
+                nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
+                if deadLine is None or deadLine > nextE:
+                    deadLine = nextE
+
+        if deadLine is None:
+            return None
+
+        return int((deadLine - chkDateTime).total_seconds())
 
 
     def storeValue(self, name, value):
