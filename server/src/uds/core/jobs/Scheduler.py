@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2015-10-15'
+__updated__ = '2016-05-18'
 
 logger = logging.getLogger(__name__)
 
@@ -175,6 +175,7 @@ class Scheduler(object):
         logger.debug('Releasing all owned scheduled tasks')
         with transaction.atomic():
             dbScheduler.objects.select_for_update().filter(owner_server=platform.node()).update(owner_server='')  # @UndefinedVariable
+            dbScheduler.objects.select_for_update().filter(last_execution__lt=getSqlDatetime() - timedelta(minutes=15), state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)  # @UndefinedVariable
             dbScheduler.objects.select_for_update().filter(owner_server='').update(state=State.FOR_EXECUTE)  # @UndefinedVariable
 
     def run(self):
