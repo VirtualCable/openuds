@@ -25,11 +25,13 @@
                     {% if ser.transports %}
                     <div class="service-container">
                         {% with trans=ser.transports|first numTransports=ser.transports|length %}
-                        <div class="service{% if ser.maintenance %} maintenance{% endif %}{% if ser.not_accesible %} notaccesible{% endif %}{% if ser.in_use %} inuse{% endif %}"
+                        <div class="service{% if ser.maintenance %} maintenance{% endif %}{% if ser.not_accesible %} notaccesible{% endif %}{% if ser.in_use %} inuse{% endif %}{% if ser.to_be_replaced %} to_be_replaced{% endif %}"
                              {% if ser.maintenance %}
                              data-content="{% trans "Under maintenance" %}"
                              {% elif ser.not_accesible %}
                              data-content="{% trans "Access limited by calendar" %}"
+                             {% elif ser.to_be_replaced %}
+                             data-content="{{ ser.to_be_replaced_text }}"
                              {% elif ser.in_use %}
                              data-content="{%trans "Currently in use" %}"
                              {% endif %}
@@ -187,6 +189,10 @@
             div.service.inuse {
                 background-color: #DCDCFF;
 
+            }
+
+            div.service.to_be_replaced {
+              background-color: #B22222 !important;
             }
 
             div.service-image {

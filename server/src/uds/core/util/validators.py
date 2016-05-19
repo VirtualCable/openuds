@@ -110,6 +110,8 @@ def validateMacRange(macRange):
 
         if macRE.match(macRangeStart) is None or macRE.match(macRangeEnd) is None:
             raise Exception()
+        if macRangeStart > macRangeEnd:
+            raise Exception()
     except Exception:
         raise Module.ValidationException(_('Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:XX:XX'))
 

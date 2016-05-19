@@ -41,6 +41,8 @@ from uds.models import DeployedServicePublication, getSqlDatetime
 from uds.core.util.State import State
 from uds.core.util import log
 import logging
+import datetime
+import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +93,7 @@ class PublicationLauncher(DelayedTask):
             state = pi.publish()
             deployedService = servicePoolPub.deployed_service
             deployedService.current_pub_revision += 1
+            deployedService.storeValue('toBeReplacedIn', pickle.dumps(datetime.datetime.now() + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))))
             deployedService.save()
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
         except Exception:

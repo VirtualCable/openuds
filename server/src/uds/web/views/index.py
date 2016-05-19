@@ -34,6 +34,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext
+from django.utils import formats
 
 from django.template import RequestContext
 
@@ -51,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-22'
+__updated__ = '2016-05-19'
 
 
 def about(request):
@@ -98,7 +99,7 @@ def index(request):
 
     # Extract required data to show to user
     services = []
-    # Select assigned user services
+    # Select assigned user services (manually assigned)
     for svr in availUserServices:
         trans = []
         for t in svr.transports.all().order_by('priority'):
@@ -134,6 +135,7 @@ def index(request):
             'maintenance': svr.deployed_service.isInMaintenance(),
             'not_accesible': not svr.deployed_service.isAccessAllowed(),
             'in_use': svr.in_use,
+            'to_be_replaced': False,  # Manually assigned will not be autoremoved never
         })
 
     logger.debug(services)
@@ -169,6 +171,13 @@ def index(request):
 
         group = svr.servicesPoolGroup.as_dict if svr.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
 
+        tbr = svr.toBeReplaced()
+        if tbr is not None:
+            tbr = formats.date_format(tbr, "SHORT_DATETIME_FORMAT")
+            tbrt = ugettext('This service is about to be replaced by a new version. Please, close the session & save all your work to avoid loosing it.<br>This action will be executed at {}').format(tbr)
+        else:
+            tbrt = ''
+
         services.append({
             'id': 'F' + svr.uuid,
             'name': svr.name,
@@ -180,6 +189,8 @@ def index(request):
             'maintenance': svr.isInMaintenance(),
             'not_accesible': not svr.isAccessAllowed(),
             'in_use': in_use,
+            'to_be_replaced': tbr,
+            'to_be_replaced_text': tbrt
         })
 
     logger.debug('Services: {0}'.format(services))

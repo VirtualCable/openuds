@@ -70,7 +70,7 @@ class DeployedServiceRemover(Job):
             ds.delete()
             return
 
-        # Get publications in course...., can be at most 1!!!
+        # Get publications in course...., that only can be one :)
         logger.debug('Removal process of {0}'.format(ds))
 
         publishing = ds.publications.filter(state=State.PREPARING)
