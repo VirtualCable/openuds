@@ -46,7 +46,7 @@ from uds.core.util import html
 
 from uds.core.ui import theme
 from uds.core.managers.UserServiceManager import UserServiceManager
-from uds.core import VERSION
+from uds.core import VERSION, VERSION_STAMP
 
 import logging
 
@@ -64,6 +64,7 @@ def about(request):
         theme.template('about.html'),
         {
             'version': VERSION,
+            'version_stamp': VERSION_STAMP
         },
         context_instance=RequestContext(request)
     )
