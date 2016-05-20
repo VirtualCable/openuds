@@ -196,7 +196,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         # return datetime.now()
         activePub = self.activePublication()
         if activePub is None or activePub.revision == self.current_pub_revision - 1:
-           return None
+            return None
 
         # Return the date
         try:
