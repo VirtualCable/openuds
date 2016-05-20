@@ -195,13 +195,17 @@ class DeployedService(UUIDModel, TaggingMixin):
     def toBeReplaced(self):
         # return datetime.now()
         activePub = self.activePublication()
-        # if activePub is None or activePub.revision == self.current_pub_revision - 1:
-        #    return None
+        if activePub is None or activePub.revision == self.current_pub_revision - 1:
+           return None
 
         # Return the date
-        ret = self.recoverValue('toBeReplacedIn')
-        if ret is not None:
-            return pickle.loads(ret)
+        try:
+            ret = self.recoverValue('toBeReplacedIn')
+            if ret is not None:
+                return pickle.loads(ret)
+        except Exception:
+            logger.exception('Recovering publication death line')
+
         return None
 
 
