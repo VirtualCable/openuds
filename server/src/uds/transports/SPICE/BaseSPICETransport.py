@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-05-19'
 
 
 logger = logging.getLogger(__name__)

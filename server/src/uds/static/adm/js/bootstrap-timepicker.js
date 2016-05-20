@@ -1,7 +1,7 @@
 /*!
  * Timepicker Component for Twitter Bootstrap
  *
- * Copyright 2013 Joris de Wit
+ * Copyright 2013 Joris de Wit and bootstrap-timepicker contributors
  *
  * Contributors https://github.com/jdewit/bootstrap-timepicker/graphs/contributors
  *
@@ -174,10 +174,12 @@
       case 9: //tab
         if (e.shiftKey) {
           if (this.highlightedUnit === 'hour') {
+            this.hideWidget();
             break;
           }
           this.highlightPrevUnit();
         } else if ((this.showMeridian && this.highlightedUnit === 'meridian') || (this.showSeconds && this.highlightedUnit === 'second') || (!this.showMeridian && !this.showSeconds && this.highlightedUnit ==='minute')) {
+          this.hideWidget();
           break;
         } else {
           this.highlightNextUnit();
@@ -887,7 +889,7 @@
         } else {
           if (hour >= this.maxHours) {
             hour = this.maxHours - 1;
-          } else if (hour < 0) {
+          } else if ((hour < 0) || (hour === 12 && timeMode === 1)){
             hour = 0;
           }
         }

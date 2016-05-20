@@ -24,10 +24,10 @@
       <label for="id-rule-start-time" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Starting hour'%}">{% trans 'Starting hour' %}</label>
       <div class="col-sm-9">
             <div class="input-group bootstrap-timepicker timepicker">
-                <input type="time" value="00:00" id="id-rule-start-time" name="rule_start_time" class="form-control input-small">
+                <input type="udstime" value="00:00" id="id-rule-start-time" name="rule_start_time" class="form-control input-small">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-            </div>    
-      </div>    
+            </div>
+      </div>
     </div>
 
     <div class="form-group">
@@ -35,7 +35,7 @@
       <div class="col-sm-9">
         <div class="row">
           <div class="col-sm-6">
-            <input id="id-rule-duration" name="rule_duration" type="numeric" value="0" data-minval="0" class="form-control" autofocus required>        
+            <input id="id-rule-duration" name="rule_duration" type="numeric" value="0" data-minval="0" class="form-control" autofocus required>
           </div>
           <div class="col-sm-6">
             <select class="selectpicker show-menu-arrow show-tick"  name="rule_duration_unit" data-style="btn-default" data-width="100%" id="id-rule-duration-unit" required>
@@ -66,7 +66,7 @@
         <div class="input-group date">
             <input type="date" required placeholder="Never" id="id-rule-end" name="rule_end_date" clear="true" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
         </div>
-      </div>    
+      </div>
     </div>
 
     <div class="form-group">

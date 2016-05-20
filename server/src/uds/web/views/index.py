@@ -52,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-05-19'
+__updated__ = '2016-05-20'
 
 
 def about(request):
@@ -174,7 +174,7 @@ def index(request):
         tbr = svr.toBeReplaced()
         if tbr is not None:
             tbr = formats.date_format(tbr, "SHORT_DATETIME_FORMAT")
-            tbrt = ugettext('This service is about to be replaced by a new version. Please, close the session & save all your work to avoid loosing it.<br>This action will be executed at {}').format(tbr)
+            tbrt = ugettext('This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.').format(tbr)
         else:
             tbrt = ''
 

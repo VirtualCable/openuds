@@ -61,7 +61,7 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2016-05-19'
+__updated__ = '2016-05-20'
 
 
 logger = logging.getLogger(__name__)
@@ -195,8 +195,8 @@ class DeployedService(UUIDModel, TaggingMixin):
     def toBeReplaced(self):
         # return datetime.now()
         activePub = self.activePublication()
-        if activePub is None or activePub.revision == self.current_pub_revision - 1:
-            return None
+        # if activePub is None or activePub.revision == self.current_pub_revision - 1:
+        #    return None
 
         # Return the date
         ret = self.recoverValue('toBeReplacedIn')
