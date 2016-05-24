@@ -39,7 +39,7 @@ from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
 from uds.core import Module
 
-__updated__ = '2015-05-28'
+__updated__ = '2016-05-24'
 
 STORAGE_KEY = 'osmk'
 
@@ -129,7 +129,14 @@ class OSManager(Module):
     def maxIdle(self):
         '''
         If os manager request "max idle", this method will return a value different to None so actors will get informed on Connection
-        @return Must return None (default if not overriden), or a "max idle" in seconds
+        @return Must return None (default if not override), or a "max idle" in seconds
+        '''
+        return None
+
+    def maxSession(self):
+        '''
+        If os manager requests "max session duration", this methos will return a value distinct of None so actors will get informed on Connection
+        @return Must return None (default if not override), or a "max session duration" in seconds
         '''
         return None
 

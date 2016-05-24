@@ -76,7 +76,7 @@ class SensLogon(win32com.server.policy.DesignatedWrapPolicy):
                 data = self.service.api.login(args[0])
                 logger.debug('Data received for login: {}'.format(data))
                 data = data.split('\t')
-                if len(data) == 2:
+                if len(data) >= 2:
                     logger.debug('Data is valid: {}'.format(data))
                     windir = os.environ['windir']
                     with open(os.path.join(windir, 'remoteip.txt'), 'w') as f:

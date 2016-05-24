@@ -226,7 +226,11 @@ class CommonService(object):
             return
 
         if msg == ipc.REQ_LOGIN:
-            self.api.login(data)
+            res = self.api.login(data).split('\t')
+            # third parameter, if exists, sets maxSession duration to this.
+            # First & second parameters are ip & hostname of connection source
+            if len(res) >= 3:
+                self.api.maxSession = int(res[3])  # Third parameter is max session duration
         elif msg == ipc.REQ_LOGOUT:
             self.api.logout(data)
             self.onLogout(data)
@@ -234,6 +238,8 @@ class CommonService(object):
             info = {}
             if self.api.idle is not None:
                 info['idle'] = self.api.idle
+            if self.api.maxSession is not None:
+                info['maxSession'] = self.api.maxSession
             self.ipc.sendInformationMessage(info)
 
     def initIPC(self):

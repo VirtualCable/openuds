@@ -37,6 +37,7 @@ from PyQt4 import QtGui
 from PyQt4 import QtCore
 import pickle
 import time
+import datetime
 import signal
 from udsactor import ipc
 from udsactor import utils
@@ -175,10 +176,13 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         exitAction.triggered.connect(self.about)
         self.setContextMenu(self.menu)
         self.ipc = MessagesProcessor()
+        self.sessionStart = datetime.datetime.now()
         self.maxIdleTime = None
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.checkIdle)
         self.showIdleWarn = True
+        self.maxSessionTime = None
+        self.showMaxSessionWarn = True
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.checkTimers)
 
         if self.ipc.isAlive() is False:
             raise Exception('No connection to service, exiting.')
@@ -205,6 +209,20 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         self.ipc.start()
         # If this is running, it's because he have logged in
         self.ipc.sendLogin(operations.getCurrentUser())
+
+    def checkTimers(self):
+        self.checkIdle()
+        self.checkMaxSession()
+
+    def checkMaxSession(self):
+        if self.maxSessionTime is None or self.maxSessionTime == 0:
+            return
+
+        remainingTime = (datetime.datetime.now() - self.sessionStart).total_seconds() - self.maxSessionTime
+
+        if self.showMaxSessionWarn is True and remainingTime < 300:  # With five minutes, show a warning message
+            self.showMaxSessionWarn = False
+            self.msgDlg.displayMessage('Your session will expire in less that 5 minutes. Please, save your work and disconnect.')
 
     def checkIdle(self):
         if self.maxIdleTime is None:  # No idle check
@@ -255,6 +273,12 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
             logger.debug('Set screensaver launching to {}'.format(idle))
         else:
             self.maxIdleTime = None
+
+        if 'maxSession' in info:
+            maxSession = int(info['maxSession'])
+            # operations.initMaxSession(maxSession)
+            self.maxSessionTime = maxSession
+            logger.debug('Set maxsession to {}'.format(maxSession))
 
     def about(self):
         self.aboutDlg.exec_()

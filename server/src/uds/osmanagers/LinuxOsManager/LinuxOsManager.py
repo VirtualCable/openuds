@@ -159,6 +159,10 @@ class LinuxOsManager(osmanagers.OSManager):
             self.doLog(userService, data, log.ACTOR)
         elif msg == "login":
             self.loggedIn(userService, data, False)
+            ip, hostname = userService.getConnectionSource()
+            deadLine = userService.deployed_service.getDeadline()
+            ret = "{0}\t{1}\t{2}".format(ip, hostname, 0 if deadLine is None else deadLine)
+
         elif msg == "logout":
             self.loggedOut(userService, data, False)
             if self._onLogout == 'remove':

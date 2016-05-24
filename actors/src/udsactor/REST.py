@@ -109,6 +109,7 @@ class Api(object):
         self.mac = None
         self.url = "{}://{}/rest/actor/".format(('http', 'https')[self.useSSL], self.host)
         self.idle = None
+        self.maxSession = None
         self.secretKey = six.text_type(uuid.uuid4())
         try:
             self.newerRequestLib = requests.__version__.split('.')[0] >= '1'
