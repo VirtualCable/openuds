@@ -46,10 +46,11 @@ Macintosh = 'Mac'
 Android = 'Android'
 iPad = 'iPad'
 iPhone = 'iPhone'
+Unknown = 'Unknown'
 
 knownOss = (WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone)  # Android is linux also, so it is cheched on first place
 
-allOss = tuple(knownOss)
+allOss = tuple(knownOss) + tuple(Unknown)
 desktopOss = (Linux, Windows, Macintosh)
 mobilesODD = list(set(allOss) - set(desktopOss))
 
@@ -93,9 +94,9 @@ def getOsFromUA(ua):
     Basic OS Client detector (very basic indeed :-))
     '''
     if ua is None:
-        ua = 'Unknown'
+        ua = Unknown
 
-    os = 'Unknown'
+    os = Unknown
 
     res = DictAsObj({'OS': os, 'Version': '0.0', 'Browser': 'unknown'})
     for os in knownOss:

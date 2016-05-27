@@ -46,7 +46,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-05-27'
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +65,7 @@ class TSPICETransport(BaseSpiceTransport):
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
     serverCertificate = BaseSpiceTransport.serverCertificate
+    fullScreen = BaseSpiceTransport.fullScreen
 
     def initialize(self, values):
         if values is not None:
@@ -86,7 +87,7 @@ class TSPICETransport(BaseSpiceTransport):
 
         sshHost, sshPort = self.tunnelServer.value.split(':')
 
-        r = RemoteViewerFile('127.0.0.1', '{port}', '{secure_port}', con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=False)
+        r = RemoteViewerFile('127.0.0.1', '{port}', '{secure_port}', con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=self.fullScreen.isTrue())
 
         m = tools.DictAsObj({
             'r': r,

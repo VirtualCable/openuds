@@ -239,6 +239,11 @@
               to { box-shadow: 0px 0px 8px 5px #0066cc; }
             }
 
+            div.notaccesible {
+              background-image: url("{% get_static_prefix %}/img/alert.png");
+              background-repeat: no-repeat;
+              background-size: 16px 16px;
+            }
 
             div.service > img {
                 width: 100%;
@@ -303,6 +308,7 @@
             $('.with-tooltip').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto bottom'});
 
             $('.inuse').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto top'});
+            $('.notaccesible').popover({container: 'body', trigger: 'hover', delay: { show: 500, hide: 100 }, placement: 'auto top'});
 
             $('div.service:not(.maintenance, .notaccesible)').on("click", function (event){
                 var url, el;

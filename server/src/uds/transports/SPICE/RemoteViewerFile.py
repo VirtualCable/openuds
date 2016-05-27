@@ -8,7 +8,7 @@ import six
 import os
 
 
-__updated__ = '2015-05-10'
+__updated__ = '2016-05-27'
 
 
 TEMPLATE = '''[virt-viewer]
@@ -56,7 +56,7 @@ class RemoteViewerFile(object):
         self.password = password
         self.ca = ca
         self.host_subject = host_subject
-        self.fullscreen = False
+        self.fullscreen = fullscreen
 
     @property
     def as_file(self):

@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2016-05-19'
+__updated__ = '2016-05-27'
 
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class BaseSpiceTransport(Transport):
 
     useEmptyCreds = gui.CheckBoxField(
         order=1,
-        label=_('Empty creds'),
+        label=_('Empty credentials'),
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=gui.CREDENTIALS_TAB
     )
@@ -86,6 +86,12 @@ class BaseSpiceTransport(Transport):
         label=_('Certificate'),
         tooltip=_('Server certificate (public), can be found on your ovirt engine, probably at /etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file).'),
         required=True
+    )
+    fullScreen = gui.CheckBoxField(
+        order=5,
+        label=_('Show fullscreen'),
+        tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
+        tab=gui.ADVANCED_TAB
     )
 
     def isAvailableFor(self, userService, ip):
