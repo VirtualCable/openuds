@@ -168,7 +168,10 @@ class WindowsOsManager(osmanagers.OSManager):
             # We get the userService logged hostname & ip and returns this
             ip, hostname = userService.getConnectionSource()
             deadLine = userService.deployed_service.getDeadline()
-            ret = "{0}\t{1}\t{2}".format(ip, hostname, 0 if deadLine is None else deadLine)
+            if userService.getProperty('actor_version', None) >= '2.0.0':
+                ret = "{0}\t{1}\t{2}".format(ip, hostname, 0 if deadLine is None else deadLine)
+            else:
+                ret = "{0}\t{1}".format(ip, hostname)
         elif msg == "logoff" or msg == 'logout':
             self.loggedOut(userService, data, False)
             if self._onLogout == 'remove':
