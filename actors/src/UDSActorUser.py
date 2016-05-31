@@ -216,13 +216,20 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
     def checkMaxSession(self):
         if self.maxSessionTime is None or self.maxSessionTime == 0:
+            logger.debug('Returning because maxSessionTime is cero')
             return
 
-        remainingTime = (datetime.datetime.now() - self.sessionStart).total_seconds() - self.maxSessionTime
+        remainingTime = self.maxSessionTime - (datetime.datetime.now() - self.sessionStart).total_seconds()
+        logger.debug('Remaining time: {}'.format(remainingTime))
 
         if self.showMaxSessionWarn is True and remainingTime < 300:  # With five minutes, show a warning message
             self.showMaxSessionWarn = False
             self.msgDlg.displayMessage('Your session will expire in less that 5 minutes. Please, save your work and disconnect.')
+            return
+
+        if remainingTime <= 0:
+            logger.debug('Remaining time is less than cero, exiting')
+            self.quit()
 
     def checkIdle(self):
         if self.maxIdleTime is None:  # No idle check
@@ -240,13 +247,13 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         logger.debug('User has been idle for: {}'.format(idleTime))
 
-        if remainingTime <= 0:
-            logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
-            self.quit()
-
         if self.showIdleWarn is True and remainingTime < 120:  # With two minutes, show a warning message
             self.showIdleWarn = False
             self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
+
+        if remainingTime <= 0:
+            logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
+            self.quit()
 
     def displayMessage(self, message):
         logger.debug('Displaying message')
@@ -265,7 +272,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         '''
         Invoked when received information from service
         '''
-        logger.debug('Got information message: {}'.format(info))
+        logger.info('Got information message: {}'.format(info))
         if 'idle' in info:
             idle = int(info['idle'])
             operations.initIdleDuration(idle)

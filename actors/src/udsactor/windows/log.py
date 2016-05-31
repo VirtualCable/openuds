@@ -48,7 +48,7 @@ class LocalLogger(object):
             filename=os.path.join(tempfile.gettempdir(), 'udsactor.log'),
             filemode='a',
             format='%(levelname)s %(asctime)s %(message)s',
-            level=logging.DEBUG
+            level=logging.INFO
         )
         self.logger = logging.getLogger('udsactor')
         self.serviceLogger = False

@@ -230,11 +230,12 @@ class CommonService(object):
             # third parameter, if exists, sets maxSession duration to this.
             # First & second parameters are ip & hostname of connection source
             if len(res) >= 3:
-                self.api.maxSession = int(res[3])  # Third parameter is max session duration
-        elif msg == ipc.REQ_LOGOUT:
+                self.api.maxSession = int(res[2])  # Third parameter is max session duration
+                msg = ipc.REQ_INFORMATION  # Senf information, requested or not, to client on login notification
+        if msg == ipc.REQ_LOGOUT:
             self.api.logout(data)
             self.onLogout(data)
-        elif msg == ipc.REQ_INFORMATION:
+        if msg == ipc.REQ_INFORMATION:
             info = {}
             if self.api.idle is not None:
                 info['idle'] = self.api.idle

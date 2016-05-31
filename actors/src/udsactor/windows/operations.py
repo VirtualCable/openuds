@@ -45,6 +45,7 @@ from udsactor.log import logger
 
 
 def getErrorMessage(res=0):
+    # sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
     msg = win32api.FormatMessage(res)
     return msg.decode('windows-1250', 'ignore')
 

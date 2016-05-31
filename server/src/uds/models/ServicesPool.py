@@ -61,7 +61,7 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2016-05-20'
+__updated__ = '2016-05-31'
 
 
 logger = logging.getLogger(__name__)
@@ -233,7 +233,7 @@ class DeployedService(UUIDModel, TaggingMixin):
             chkDateTime = getSqlDatetime()
 
         if self.isAccessAllowed(chkDateTime) is False:
-            return 0
+            return -1
 
         deadLine = None
         for ac in self.calendaraccess_set.all():
