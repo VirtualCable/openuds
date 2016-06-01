@@ -50,7 +50,7 @@ class IPMachinesService(services.Service):
     # Description of service
     typeName = _('Static IP machines service')
     typeType = 'IPMachinesService'
-    typeDescription = _('This service provides access to POWERED-ON Machines by ip')
+    typeDescription = _('This service provides access to POWERED-ON Machines by IP')
     iconFile = 'machine.png'
 
     # Characteristics of service

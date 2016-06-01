@@ -61,7 +61,7 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2016-05-31'
+__updated__ = '2016-06-01'
 
 
 logger = logging.getLogger(__name__)
@@ -236,14 +236,22 @@ class DeployedService(UUIDModel, TaggingMixin):
             return -1
 
         deadLine = None
+
         for ac in self.calendaraccess_set.all():
             if ac.access == states.action.ALLOW:
                 nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
                 if deadLine is None or deadLine > nextE:
                     deadLine = nextE
+            else:  # DENY
+                nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, True)
+                if deadLine is None or deadLine > nextE:
+                    deadLine = nextE
 
         if deadLine is None:
-            return None
+            if self.fallbackAccess == states.action.ALLOW:
+                return None
+            else:
+                return -1
 
         return int((deadLine - chkDateTime).total_seconds())
 
