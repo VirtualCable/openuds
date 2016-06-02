@@ -238,11 +238,11 @@ class DeployedService(UUIDModel, TaggingMixin):
         deadLine = None
 
         for ac in self.calendaraccess_set.all():
-            if ac.access == states.action.ALLOW:
+            if ac.access == states.action.ALLOW and self.fallbackAccess == states.action.DENY:
                 nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
                 if deadLine is None or deadLine > nextE:
                     deadLine = nextE
-            else:  # DENY
+            elif ac.access == states.action.DENY:  # DENY
                 nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, True)
                 if deadLine is None or deadLine > nextE:
                     deadLine = nextE
