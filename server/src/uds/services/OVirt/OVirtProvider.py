@@ -45,7 +45,7 @@ from .client import oVirtClient
 
 import logging
 
-__updated__ = '2016-04-25'
+__updated__ = '2016-06-04'
 
 logger = logging.getLogger(__name__)
 
@@ -310,7 +310,7 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().removeTemplate(templateId)
 
-    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB):
+    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB):
         '''
         Deploys a virtual machine on selected cluster from selected template
 
@@ -326,7 +326,7 @@ class Provider(ServiceProvider):
         Returns:
             Id of the machine being created form template
         '''
-        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB)
+        return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB)
 
     def startMachine(self, machineId):
         '''

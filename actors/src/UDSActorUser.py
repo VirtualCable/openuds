@@ -242,7 +242,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         idleTime = operations.getIdleDuration()
         remainingTime = self.maxIdleTime - idleTime
 
-        if remainingTime > 300:  # Reset show Warning dialog if we have more than 5 minutes left
+        if remainingTime > 120:  # Reset show Warning dialog if we have more than 5 minutes left
             self.showIdleWarn = True
 
         logger.debug('User has been idle for: {}'.format(idleTime))

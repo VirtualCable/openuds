@@ -11,7 +11,7 @@ import threading
 import logging
 import re
 
-__updated__ = '2016-04-07'
+__updated__ = '2016-06-04'
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +142,7 @@ class Client(object):
             res = []
 
             for vm in vms:
-                res.append({'name': vm.get_name(), 'id': vm.get_id(), 'cluster_id': vm.get_cluster().get_id()})
+                res.append({'name': vm.get_name(), 'id': vm.get_id(), 'cluster_id': vm.get_cluster().get_id(), 'usb': (vm.get_usb().get_enabled(), vm.get_usb().get_type()) })
 
             self._cache.put(vmsKey, res, Client.CACHE_TIME_LOW)
 
@@ -444,7 +444,7 @@ class Client(object):
         finally:
             lock.release()
 
-    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, memoryMB, guaranteedMB):
+    def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB):
         '''
         Deploys a virtual machine on selected cluster from selected template
 
@@ -460,8 +460,8 @@ class Client(object):
         Returns:
             Id of the machine being created form template
         '''
-        logger.debug('Deploying machine with name "{0}" from template {1} at cluster {2} with display {3}, memory {4} and guaranteed {5}'.format(
-            name, templateId, clusterId, displayType, memoryMB, guaranteedMB))
+        logger.debug('Deploying machine with name "{0}" from template {1} at cluster {2} with display {3} and usb {4}, memory {5} and guaranteed {6}'.format(
+            name, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB))
         try:
             lock.acquire(True)
 
@@ -472,10 +472,15 @@ class Client(object):
             cluster = params.Cluster(id=clusterId)
             template = params.Template(id=templateId)
             display = params.Display(type_=displayType)
+            if usbType in ('native', 'legacy'):
+                usb = params.Usb(enabled=True, type_=usbType)
+            else:
+                usb = params.Usb(enabled=False)
 
             memoryPolicy = params.MemoryPolicy(guaranteed=guaranteedMB * 1024 * 1024)
             par = params.VM(name=name, cluster=cluster, template=template, description=comments,
-                            type_='desktop', memory=memoryMB * 1024 * 1024, memory_policy=memoryPolicy)  # display=display,
+                            type_='desktop', memory=memoryMB * 1024 * 1024, memory_policy=memoryPolicy,
+                            usb=usb)  # display=display,
 
             return api.vms.add(par).get_id()
 

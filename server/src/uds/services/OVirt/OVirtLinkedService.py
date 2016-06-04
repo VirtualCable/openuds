@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-03-09'
+__updated__ = '2016-06-04'
 
 logger = logging.getLogger(__name__)
 
@@ -163,10 +163,23 @@ class OVirtLinkedService(Service):
         required=True
     )
 
+    usb = gui.ChoiceField(
+        label=_('USB'),
+        rdonly=False,
+        order=9,
+        tooltip=_('Enable usb redirection for SPICE'),
+        values=[
+            gui.choiceItem('disabled', 'disabled'),
+            gui.choiceItem('native', 'native'),
+            gui.choiceItem('legacy', 'legacy')
+        ],
+        defvalue='1'  # Default value is the ID of the choicefield
+    )
+
     display = gui.ChoiceField(
         label=_('Display'),
         rdonly=False,
-        order=8,
+        order=9,
         tooltip=_('Display type (only for administration purposes)'),
         values=[
             gui.choiceItem('spice', 'Spice'),
@@ -290,7 +303,7 @@ class OVirtLinkedService(Service):
         logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
         self.datastoreHasSpace()
         return self.parent().deployFromTemplate(name, comments, templateId, self.cluster.value,
-                                                self.display.value, int(self.memory.value), int(self.memoryGuaranteed.value))
+                                                self.display.value, self.usb.value, int(self.memory.value), int(self.memoryGuaranteed.value))
 
     def removeTemplate(self, templateId):
         '''
