@@ -12,7 +12,7 @@
         <p>{% trans 'In order to be able to execute UDS services, you need to have UDS plugin installed.' %}</p>
         <div class="text-center">{{ os|pluginDownloadUrl|safe }}</div>
         <h3>{% trans 'Or download another version' %}</h3>
-        <p>{% trans 'In case that your platform has been incorrectly detected, you can download manually the version required for your Operating System' %}</p>
+        <p>{% trans 'If your platform couldn’t be detected correctly, you can manually download the version required for your Operating System.' %}</p>
         <p>
             {% if os != 'linux' %}
             <p class="text-center">
@@ -32,7 +32,7 @@
         </p>
 
         {% if request.user %}
-        <p>{% trans 'If you already have UDS Plugin installed but this message persists to appear, you can disable automatic detection here' %}</p>
+        <p>{% trans 'If you already have UDS Plugin installed and you can still see this message, you can disable automatic detection here.' %}</p>
         <p>
             <form>
                 <select id="plugin" class="selectpicker show-menu-arrow" data-width="100%" data-size="2" style="display: none;">
@@ -42,7 +42,7 @@
             </form>
         </p>
         <p>{% trans "Please, note that disabling automatic detection will not trigger this page again in case you don't have the plugin installed." %}<br/>
-           {% trans "In this case, you will have to manually download the plugin by using the menu on upper right corner." %}</p>
+           {% trans "Hence, you will have to manually download the plugin by using the menu on upper right corner." %}</p>
         <p class="text-center">
             <a href="{% url 'uds.web.views.index' %}" class="btn btn-info"><i class="fa fa-home"></i> {% trans "Return" %}</a>
         </p>

@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-21 10:40+0200\n"
-"PO-Revision-Date: 2016-04-21 08:30+0000\n"
-"Last-Translator: blafuente <blafuente@virtualcable.es>\n"
+"POT-Creation-Date: 2016-06-07 18:10+0200\n"
+"PO-Revision-Date: 2016-06-07 10:26+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -80,9 +80,9 @@ msgstr "Prioridad"
 msgid "Tag"
 msgstr "Etiqueta"
 
-#: REST/methods/authenticators.py:63 reports/stats/login.py:107
-#: reports/stats/login.py:373 reports/stats/pool_performance.py:108
-#: reports/stats/pool_performance.py:366
+#: REST/methods/authenticators.py:63 reports/stats/login.py:108
+#: reports/stats/login.py:374 reports/stats/pool_performance.py:110
+#: reports/stats/pool_performance.py:368
 #: templates/uds/admin/tmpl/authenticators.html:31
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/permissions.html:7
@@ -216,7 +216,7 @@ msgstr "Estado"
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
-#: templates/uds/admin/tmpl/providers.html:31 templates/uds/index.html.py:51
+#: templates/uds/admin/tmpl/providers.html:31
 msgid "Services"
 msgstr "Servicios"
 
@@ -398,7 +398,7 @@ msgid "OS Manager used as base of this service pool"
 msgstr "OS Manager utilizado como base de este pool de servicios"
 
 #: REST/methods/services_pools.py:164 REST/methods/services_pools.py:172
-#: services/OVirt/OVirtLinkedService.py:167
+#: services/OVirt/OVirtLinkedService.py:180
 msgid "Display"
 msgstr "Pantalla"
 
@@ -490,7 +490,7 @@ msgstr ""
 
 #: REST/methods/transports.py:79
 #: services/Nutanix_enterprise/NutanixService.py:51
-#: templates/uds/html5/index.html:120 templates/uds/index.html.py:79
+#: templates/uds/html5/index.html:124 templates/uds/semantic/index.html:29
 msgid "Networks"
 msgstr "Redes"
 
@@ -627,13 +627,13 @@ msgstr "Usuarios actuales"
 #: services/OpenStack/Provider.py:105
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html.py:16
-#: transports/HTML5RDP/HTML5RDP.py:70 transports/NX/NXTransport.py:66
-#: transports/NX/TSNXTransport.py:73
+#: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:70
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:58
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:45
 #: transports/RGS_enterprise/TRGSTransport.py:53
-#: transports/SPICE/BaseSPICETransport.py:72 web/forms/LoginForm.py:60
+#: transports/SPICE/BaseSPICETransport.py:72 web/forms/LoginForm.py:63
 msgid "Username"
 msgstr "Nombre de usuario"
 
@@ -783,7 +783,6 @@ msgstr ""
 #: auths/EDirectory_enterprise/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:59 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
-#: templates/uds/internal_page.html:28
 msgid "User"
 msgstr "Usuario"
 
@@ -810,13 +809,13 @@ msgstr ""
 #: services/OpenStack/Provider.py:106 services/Sample/SampleService.py:131
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html.py:83
-#: transports/HTML5RDP/HTML5RDP.py:71 transports/NX/NXTransport.py:67
-#: transports/NX/TSNXTransport.py:74
+#: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:71
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:63
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:54
-#: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:61
+#: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:64
 msgid "Password"
 msgstr "Contraseña"
 
@@ -851,7 +850,7 @@ msgid "Authenticate against Active Directory"
 msgstr "Autenticar contra Active Directory"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:73
-#: auths/ActiveDirectory_enterprise/Authenticator.py:464
+#: auths/ActiveDirectory_enterprise/Authenticator.py:465
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr ""
 "Debe especificar el nombre de usuario con este formato: "
@@ -861,8 +860,8 @@ msgstr ""
 msgid "Active directory connection error: "
 msgstr "Error de conexión de Active Directory: "
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:360
-#: auths/ActiveDirectory_enterprise/Authenticator.py:408
+#: auths/ActiveDirectory_enterprise/Authenticator.py:361
+#: auths/ActiveDirectory_enterprise/Authenticator.py:409
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
 #: auths/RegexLdap/Authenticator.py:315 auths/RegexLdap/Authenticator.py:356
@@ -870,41 +869,41 @@ msgstr "Error de conexión de Active Directory: "
 msgid "Username not found"
 msgstr "Nombre de usuario no encontrado"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:393
+#: auths/ActiveDirectory_enterprise/Authenticator.py:394
 #: auths/SimpleLDAP/Authenticator.py:314
 msgid "Group not found"
 msgstr "Grupo no encontrado"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:428
-#: auths/ActiveDirectory_enterprise/Authenticator.py:446
+#: auths/ActiveDirectory_enterprise/Authenticator.py:429
+#: auths/ActiveDirectory_enterprise/Authenticator.py:447
 #: auths/EDirectory_enterprise/Authenticator.py:305
 #: auths/RegexLdap/Authenticator.py:378 auths/SimpleLDAP/Authenticator.py:341
 #: auths/SimpleLDAP/Authenticator.py:357
 msgid "Too many results, be more specific"
 msgstr "Demasiados resultados, sea más específico"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:473
+#: auths/ActiveDirectory_enterprise/Authenticator.py:474
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Dominio parece incorrecto, por favor compruébelo"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:478
+#: auths/ActiveDirectory_enterprise/Authenticator.py:479
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de usuario)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:486
+#: auths/ActiveDirectory_enterprise/Authenticator.py:487
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de grupo)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:494
+#: auths/ActiveDirectory_enterprise/Authenticator.py:495
 msgid ""
 "Server does not seem an Active Directory (it does not have any user nor "
 "groups)"
 msgstr ""
 "Servidor no parece un Active Directory (no tiene ni usuarios ni grupos)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:499
+#: auths/ActiveDirectory_enterprise/Authenticator.py:500
 #: auths/EDirectory_enterprise/Authenticator.py:360
 #: auths/RegexLdap/Authenticator.py:437 auths/SimpleLDAP/Authenticator.py:435
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1384,27 +1383,27 @@ msgstr "Administrador del sistema"
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: core/managers/PublicationManager.py:202
+#: core/managers/PublicationManager.py:205
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Ya hay una publicación en curso. Espere a que termine e inténtelo de nuevo."
 
-#: core/managers/PublicationManager.py:205
+#: core/managers/PublicationManager.py:208
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr ""
 "El servicio está en modo de mantenimiento y no se permiten nuevas "
 "publicaciones"
 
-#: core/managers/PublicationManager.py:238
+#: core/managers/PublicationManager.py:241
 msgid "Can't cancel non running publication"
 msgstr "No se puede cancelar una publicación que no se está ejecutando"
 
-#: core/managers/PublicationManager.py:260
+#: core/managers/PublicationManager.py:263
 msgid "Can't unpublish non usable publication"
 msgstr "No se puede anular una publicación que no se está utilizando"
 
-#: core/managers/PublicationManager.py:263
+#: core/managers/PublicationManager.py:266
 msgid "Can't unpublish publications with services in process"
 msgstr "No se pueden anular publicaciones con servicios en proceso"
 
@@ -1551,8 +1550,8 @@ msgid "Canceling"
 msgstr "Cancelando"
 
 #: core/util/State.py:75 core/util/states/common.py:74
-#: templates/uds/error.html:6 templates/uds/error.html.py:11
 #: templates/uds/html5/error.html:4 templates/uds/html5/error.html.py:14
+#: templates/uds/semantic/error.html:4 templates/uds/semantic/error.html:14
 msgid "Error"
 msgstr "Error"
 
@@ -1573,6 +1572,7 @@ msgid "Balancing"
 msgstr "Equilibrando"
 
 #: core/util/State.py:80 core/util/states/common.py:79
+#: templates/uds/semantic/index.html:124
 msgid "In maintenance"
 msgstr "En mantenimiento"
 
@@ -1615,7 +1615,7 @@ msgstr "{0} debe ser inferior o igual a {1}"
 msgid "{0} contains invalid characters"
 msgstr "{0} contiene caracteres no válidos"
 
-#: core/util/validators.py:114
+#: core/util/validators.py:116
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
@@ -1671,7 +1671,6 @@ msgstr "Transporte no encontrado"
 #: dispatchers/wyse_enterprise/views.py:279
 #: dispatchers/wyse_enterprise/views.py:286
 #: dispatchers/wyse_enterprise/views.py:291
-#: templates/uds/service_not_ready.html:6
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 "El servicio no está disponible en este momento. Por favor, inténtelo de "
@@ -2055,7 +2054,9 @@ msgid "Real Name"
 msgstr "Nombre real"
 
 #: reports/lists/users.py:112 templates/uds/admin/tmpl/permissions_add.html:5
-#: templates/uds/admin/tmpl/pool_add_group.html:5 web/forms/LoginForm.py:62
+#: templates/uds/admin/tmpl/pool_add_group.html:5
+#: templates/uds/html5/login.html:79 templates/uds/semantic/login.html.py:99
+#: web/forms/LoginForm.py:65
 msgid "Authenticator"
 msgstr "Autenticador"
 
@@ -2075,117 +2076,116 @@ msgstr "Lista de usuarios de la plataforma"
 msgid "Statistics"
 msgstr "Estadísticas"
 
-#: reports/stats/login.py:77 reports/stats/login.py:103
-#: reports/stats/pool_performance.py:101
+#: reports/stats/login.py:78 reports/stats/login.py:104
 msgid "Users access by date"
 msgstr "Acceso de los usuarios por fecha"
 
-#: reports/stats/login.py:83
+#: reports/stats/login.py:84
 msgid "Users access by day of week"
 msgstr "Acceso de usuarios por día de la semana"
 
-#: reports/stats/login.py:89
+#: reports/stats/login.py:90
 msgid "Users access by hour"
 msgstr "Acceso de usuarios por hora"
 
-#: reports/stats/login.py:105 reports/stats/login.py:373
-#: reports/stats/pool_performance.py:106 reports/stats/pool_performance.py:366
+#: reports/stats/login.py:106 reports/stats/login.py:374
+#: reports/stats/pool_performance.py:108 reports/stats/pool_performance.py:368
 msgid "Date range"
 msgstr "Rango de fechas"
 
-#: reports/stats/login.py:125 reports/stats/login.py:357
+#: reports/stats/login.py:126 reports/stats/login.py:358
 msgid "Users access report by date"
 msgstr "Informe de accesos de usuarios por fecha"
 
-#: reports/stats/login.py:126 reports/stats/login.py:358
+#: reports/stats/login.py:127 reports/stats/login.py:359
 msgid "Report of user access to platform by date"
 msgstr "Informe de acceso de usuarios a la plataforma por fecha"
 
-#: reports/stats/login.py:132 reports/stats/pool_performance.py:145
+#: reports/stats/login.py:133 reports/stats/pool_performance.py:147
 #: reports/stats/usage_by_pool.py:105
 msgid "Starting date"
 msgstr "Fecha de inicio"
 
-#: reports/stats/login.py:133 reports/stats/pool_performance.py:146
+#: reports/stats/login.py:134 reports/stats/pool_performance.py:148
 #: reports/stats/usage_by_pool.py:106
 msgid "starting date for report"
 msgstr "fecha de inicio para informe"
 
-#: reports/stats/login.py:140 reports/stats/pool_performance.py:153
+#: reports/stats/login.py:141 reports/stats/pool_performance.py:155
 #: reports/stats/usage_by_pool.py:113
 msgid "Finish date"
 msgstr "Fecha de finalización"
 
-#: reports/stats/login.py:141 reports/stats/pool_performance.py:154
+#: reports/stats/login.py:142 reports/stats/pool_performance.py:156
 #: reports/stats/usage_by_pool.py:114
 msgid "finish date for report"
 msgstr "fecha de finalización para informe"
 
-#: reports/stats/login.py:148 reports/stats/pool_performance.py:161
+#: reports/stats/login.py:149 reports/stats/pool_performance.py:163
 msgid "Number of intervals"
 msgstr "Número de intervalos"
 
-#: reports/stats/login.py:152 reports/stats/pool_performance.py:165
+#: reports/stats/login.py:153 reports/stats/pool_performance.py:167
 msgid "Number of sampling points used in charts"
 msgstr "Número de puntos de muestreo utilizados en gráficos"
 
-#: reports/stats/login.py:230 reports/stats/login.py:273
-#: reports/stats/login.py:287 reports/stats/login.py:312
-#: reports/stats/login.py:345
+#: reports/stats/login.py:231 reports/stats/login.py:274
+#: reports/stats/login.py:288 reports/stats/login.py:313
+#: reports/stats/login.py:346
 msgid "Users access to UDS"
 msgstr "Acceso de usuarios a UDS"
 
-#: reports/stats/pool_performance.py:81
+#: reports/stats/pool_performance.py:83
 msgid "Distinct users by pool"
 msgstr "Usuarios diferentes por Pool"
 
-#: reports/stats/pool_performance.py:87
+#: reports/stats/pool_performance.py:89
 msgid "Accesses by pool"
 msgstr "Accesos por Pool"
 
-#: reports/stats/pool_performance.py:104 reports/stats/pool_performance.py:366
+#: reports/stats/pool_performance.py:106 reports/stats/pool_performance.py:368
 #: reports/stats/usage_by_pool.py:98
 #: templates/uds/admin/tmpl/service-info.html:21
 msgid "Pool"
 msgstr "Pool"
 
-#: reports/stats/pool_performance.py:110 reports/stats/pool_performance.py:366
+#: reports/stats/pool_performance.py:112 reports/stats/pool_performance.py:368
 msgid "Accesses"
 msgstr "Accesos"
 
-#: reports/stats/pool_performance.py:131
+#: reports/stats/pool_performance.py:133
 msgid "Pools performance by date"
 msgstr "Rendimiento de Pools por fecha"
 
-#: reports/stats/pool_performance.py:132
+#: reports/stats/pool_performance.py:134
 msgid "Pools performance report by date"
 msgstr "Informe de rendimiento de Pools por fecha"
 
-#: reports/stats/pool_performance.py:138
+#: reports/stats/pool_performance.py:140
 msgid "Pools"
 msgstr "Pools"
 
-#: reports/stats/pool_performance.py:139
+#: reports/stats/pool_performance.py:141
 msgid "Pools for report"
 msgstr "Pools para informe"
 
-#: reports/stats/pool_performance.py:185
+#: reports/stats/pool_performance.py:187
 msgid "Select at least a service pool for the report"
 msgstr "Seleccione al menos un Pool de Servicio para el informe"
 
-#: reports/stats/pool_performance.py:290
+#: reports/stats/pool_performance.py:292
 msgid "Users by pool"
 msgstr "Usuarios por Pool"
 
-#: reports/stats/pool_performance.py:302
+#: reports/stats/pool_performance.py:304
 msgid "Users for {}"
 msgstr "Usuarios para {}"
 
-#: reports/stats/pool_performance.py:319
+#: reports/stats/pool_performance.py:321
 msgid "Accesses for {}"
 msgstr "Accesos para {}"
 
-#: reports/stats/pool_performance.py:340
+#: reports/stats/pool_performance.py:342
 msgid "UDS Pools Performance Report"
 msgstr "Informe de rendimeinto de Pools de UDS"
 
@@ -2283,7 +2283,6 @@ msgstr "Red"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:102
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
@@ -2355,7 +2354,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:125
 #: services/Nutanix_enterprise/NutanixService.py:87
-#: services/OVirt/OVirtLinkedService.py:191
+#: services/OVirt/OVirtLinkedService.py:204
 #: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:155
 #: services/Vmware_enterprise/VCLinkedCloneService.py:110
 #: services/Xen/XenLinkedService.py:133
@@ -2365,7 +2364,7 @@ msgstr "La longitud de \"basename\" más la longitud no debe ser superior a 15"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
 #: services/HyperV_enterprise/HyperVLinkedService.py:127
 #: services/Nutanix_enterprise/NutanixService.py:89
-#: services/OVirt/OVirtLinkedService.py:193
+#: services/OVirt/OVirtLinkedService.py:206
 #: services/OpenNebula/LiveService.py:127 services/OpenStack/LiveService.py:157
 #: services/Vmware_enterprise/VCLinkedCloneService.py:112
 #: services/Xen/XenLinkedService.py:135
@@ -2482,17 +2481,13 @@ msgid "Creation concurrency"
 msgstr "Concurrencia de creación"
 
 #: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/Nutanix_enterprise/NutanixProvider.py:43
-#: services/OVirt/OVirtProvider.py:100 services/OVirt/OVirtProvider.py:101
-#: services/OpenNebula/Provider.py:104 services/OpenNebula/Provider.py:105
-#: services/OpenStack/Provider.py:108 services/OpenStack/Provider.py:109
+#: services/OVirt/OVirtProvider.py:100 services/OpenNebula/Provider.py:104
+#: services/OpenStack/Provider.py:108
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:36
-#: services/Xen/XenProvider.py:102 services/Xen/XenProvider.py:103
-msgid "Maximum number of concurrently removing VMs"
-msgstr "Número máximo de VMs que se pueden eliminar al mismo tiempo "
+#: services/Xen/XenProvider.py:102
+msgid "Maximum number of concurrently creating VMs"
+msgstr "Número máximo de forma simultánea creación de VMs"
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:43
@@ -2504,9 +2499,18 @@ msgstr "Número máximo de VMs que se pueden eliminar al mismo tiempo "
 msgid "Removal concurrency"
 msgstr "Concurrencia de eliminación"
 
+#: services/HyperV_enterprise/HyperVProvider.py:89
+#: services/Nutanix_enterprise/NutanixProvider.py:43
+#: services/OVirt/OVirtProvider.py:101 services/OpenNebula/Provider.py:105
+#: services/OpenStack/Provider.py:109
+#: services/Vmware_enterprise/ServiceProviderVC.py:36
+#: services/Xen/XenProvider.py:103
+msgid "Maximum number of concurrently removing VMs"
+msgstr "Número máximo de VMs que se pueden eliminar al mismo tiempo "
+
 #: services/Nutanix_enterprise/NutanixProvider.py:31
-msgid "Nutanix Acropolis Provider (Experimental)"
-msgstr "Proveedor Nutanix Acrópolis (Experimental)"
+msgid "Nutanix Acropolis Platform Provider"
+msgstr "Proveedor de plataforma Nutanix Acrópolis"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 msgid "Nutanix based VM provider"
@@ -2542,12 +2546,12 @@ msgid "Connection works fine"
 msgstr "Conexión funciona bien"
 
 #: services/Nutanix_enterprise/NutanixService.py:21
-msgid "Nutanix KVM (Experimental)"
-msgstr "Nutanix KVM (Experimental)"
+msgid "Nutanix Acropolis Service"
+msgstr "Servicio Nutanix Acrópolis"
 
 #: services/Nutanix_enterprise/NutanixService.py:23
-msgid "Nutanix KVM based service"
-msgstr "Servicio basado en Nutanix KVM "
+msgid "Nutanix Acropolis based service"
+msgstr "Servicio basado en Nutanix Acrópolis"
 
 #: services/Nutanix_enterprise/NutanixService.py:44
 msgid "Base Vm"
@@ -2603,11 +2607,19 @@ msgstr "Memoria Garantizada (Mb)"
 msgid "Physical memory guaranteed to machines"
 msgstr "Memoria física garantizada para las máquinas"
 
+#: services/OVirt/OVirtLinkedService.py:167
+msgid "USB"
+msgstr "USB"
+
 #: services/OVirt/OVirtLinkedService.py:170
+msgid "Enable usb redirection for SPICE"
+msgstr "Habilitar la redirección de usb para especia"
+
+#: services/OVirt/OVirtLinkedService.py:183
 msgid "Display type (only for administration purposes)"
 msgstr "Tipo de pantalla (sólo para tareas de administración)"
 
-#: services/OVirt/OVirtLinkedService.py:195
+#: services/OVirt/OVirtLinkedService.py:208
 #: services/Xen/XenLinkedService.py:137
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "El mínimo de memoria permitido es de 256 Mb"
@@ -2847,16 +2859,16 @@ msgid "List of IPS"
 msgstr "Lista de IPS"
 
 #: services/PhysicalMachines/IPMachinesService.py:51
-msgid "Physical machines accessed by ip"
-msgstr "Máquinas físicas a las que se ha accedido a través de IP"
+msgid "Static IP machines service"
+msgstr "Servicio de máquinas IP estática"
 
 #: services/PhysicalMachines/IPMachinesService.py:53
-msgid "This service provides access to POWERED-ON Machines by ip"
-msgstr "Este servicio provee acceso a máquinas EJECUTADAS por IP"
+msgid "This service provides access to POWERED-ON Machines by IP"
+msgstr "Este servicio proporciona acceso a las máquinas de POWERED-ON por IP"
 
 #: services/RDS_enterprise/RDSProvider.py:28
-msgid "RDS Provider (Experimental)"
-msgstr "Proveedor de RDS (Experimental)"
+msgid "RDS Platform Provider (Experimental)"
+msgstr "Proveedor de plataforma RDS (Experimental)"
 
 #: services/RDS_enterprise/RDSProvider.py:30
 msgid "Microsoft RDS based provider"
@@ -2891,12 +2903,12 @@ msgid "Nothing tested, but all went fine.."
 msgstr "No se ha comprobado nada, pero todo salió bien..."
 
 #: services/RDS_enterprise/RDSService.py:20
-msgid "RDS RemoteAPP (Experimental)"
-msgstr "RDS RemoteAPP (Experimental)"
+msgid "RDS Platform RemoteAPP (Experimental)"
+msgstr "RemoteAPP de plataforma RDS (Experimental)"
 
 #: services/RDS_enterprise/RDSService.py:22
-msgid "RDS RemoteAPP based service"
-msgstr "Servicio basado en RDS RemoteAPP "
+msgid "RDS Platform RemoteAPP based service"
+msgstr "Servicio de RDS plataforma RemoteAPP basados"
 
 #: services/RDS_enterprise/RDSService.py:45
 msgid "Application path"
@@ -3049,8 +3061,8 @@ msgid "UDS Publication for {0} created at {1}"
 msgstr "Publicación de UDS para {0} creado en {1}"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
-msgid "VMWare VC Server IP or Hostname"
-msgstr "IP del Servidor o nombre de host VC VMware "
+msgid "VMWare VCenter Server IP or Hostname"
+msgstr "VMWare VCenter Server IP o nombre de host"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:30
 msgid "VMWare VC Server Port (usually 443)"
@@ -3077,8 +3089,8 @@ msgstr ""
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:46
-msgid "VMWare Virtual Center Provider"
-msgstr "Proveedor de VMWare Virtual Center "
+msgid "VMWare VCenter Platform Provider"
+msgstr "Proveedor de plataformas de VMWare VCenter"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:48
 msgid "Provides connection to Virtual Center Services"
@@ -3093,8 +3105,8 @@ msgid "Connection params ok"
 msgstr "Parámetros de conexión ok"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:32
-msgid "VMWare Linked clone base"
-msgstr "VMware Linked Clone base"
+msgid "VMWare VCenter Platform Linked clone"
+msgstr "VMWare VCenter plataforma vinculados clon"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:34
 msgid ""
@@ -3148,6 +3160,14 @@ msgstr "Pool de recursos que contiene la máquina base"
 #: services/Vmware_enterprise/VCLinkedCloneService.py:81
 msgid "Base machine for this service"
 msgstr "Máquina base para este servicio"
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+msgid ""
+"If more than one interface is found in machine, use the first found on this "
+"network as main"
+msgstr ""
+"Si más de una interfaz se encuentra en la máquina, utilice el primero "
+"encontrado en este red como principal"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid "Clones Folder"
@@ -3301,7 +3321,8 @@ msgid "User mode"
 msgstr "Modo de usuario"
 
 #: templates/uds/admin/snippets/navbar.html:70
-#: templates/uds/html5/snippets/navbar.html:55
+#: templates/uds/html5/snippets/navbar.html:51
+#: templates/uds/semantic/snippets/user-menu.html:15
 msgid "Logout"
 msgstr "Cerrar sesión"
 
@@ -3385,7 +3406,7 @@ msgid "Close"
 msgstr "Cerrar"
 
 #: templates/uds/admin/tmpl/comp/modal.html:26
-#: templates/uds/admin/tmpl/configuration.html:72
+#: templates/uds/admin/tmpl/configuration.html:80
 msgid "Save"
 msgstr "Guardar"
 
@@ -3592,7 +3613,7 @@ msgstr ""
 "Hubo un error al solicitar los datos del servidor, por favor, pruebe otra vez"
 
 #: templates/uds/admin/tmpl/request_failed.html:9
-#: templates/uds/snippets/admin_user.html:8
+#: templates/uds/semantic/snippets/user-menu.html:13
 msgid "Dashboard"
 msgstr "Panel de control"
 
@@ -3634,7 +3655,7 @@ msgid "Cache"
 msgstr "Caché"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
-#: templates/uds/html5/index.html:121 templates/uds/index.html.py:80
+#: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:30
 msgid "Transports"
 msgstr "Transportes"
 
@@ -3651,7 +3672,6 @@ msgid "Staff member"
 msgstr "Miembro del personal"
 
 #: templates/uds/admin/tmpl/user.html:68
-#: templates/uds/snippets/admin_user.html:4
 msgid "Admin"
 msgstr "Admin"
 
@@ -3660,51 +3680,39 @@ msgstr "Admin"
 msgid "{0} of {1} selected"
 msgstr "{0} de {1} seleccionado"
 
-#: templates/uds/base.html:7
-msgid "UDS"
-msgstr "UDS"
-
-#: templates/uds/downloads.html:8 templates/uds/html5/downloads.html.py:7
-#: templates/uds/html5/snippets/navbar.html:49
-#: templates/uds/snippets/admin_user.html:7
-msgid "Downloads"
-msgstr "Descargas"
-
-#: templates/uds/downloads.html:11 templates/uds/html5/downloads.html.py:10
-msgid ""
-"This page contains a list of downloadables provided by different modules"
-msgstr ""
-"Esta página contiene una lista de descargas proporcionadas por diferentes "
-"módulos"
-
-#: templates/uds/html5/about.html:13
+#: templates/uds/html5/about.html:13 templates/uds/semantic/about.html.py:13
 msgid "You can access UDS Open Source code at"
 msgstr "Puede acceder al código Open Source de UDS en"
 
-#: templates/uds/html5/about.html:14
+#: templates/uds/html5/about.html:14 templates/uds/semantic/about.html.py:14
 msgid "UDS has been developed using these components:"
 msgstr "UDS ha sido desarrollado utilizando estos componentes:"
 
-#: templates/uds/html5/about.html:41
-msgid ""
-"If you found that we missed to mention any component, please let us know"
+#: templates/uds/html5/about.html:40
+msgid "If you find that we missed any component, please let us know"
 msgstr ""
-"Si ve que nos hemos dejado algún componente, háganoslo saber, por favor"
+"Si usted encuentra que perdimos cualquier componente, por favor háganoslo "
+"saber"
 
-#: templates/uds/html5/about.html:42
+#: templates/uds/html5/about.html:41
 #: templates/uds/html5/service_not_ready.html:21
+#: templates/uds/semantic/about.html:42
+#: templates/uds/semantic/service_not_ready.html:21
 msgid "Back"
 msgstr "Atrás"
 
 #: templates/uds/html5/download_client.html:5
+#: templates/uds/semantic/download_client.html:5
 msgid "Download UDS plugin for"
 msgstr "Descargar plugin UDS para"
 
-#: templates/uds/html5/download_client.html:11 templatetags/html5.py:223
+#: templates/uds/html5/download_client.html:11
+#: templates/uds/semantic/download_client.html:11 templatetags/html5.py:223
 msgid "Download UDS Plugin for"
 msgstr "Descargar Plugin UDS para"
 
 #: templates/uds/html5/download_client.html:12
+#: templates/uds/semantic/download_client.html:12
 msgid ""
 "In order to be able to execute UDS services, you need to have UDS plugin "
 "installed."
@@ -3713,46 +3721,53 @@ msgstr ""
 "instalado."
 
 #: templates/uds/html5/download_client.html:14
+#: templates/uds/semantic/download_client.html:14
 msgid "Or download another version"
 msgstr "O descargar otra versión"
 
 #: templates/uds/html5/download_client.html:15
 msgid ""
-"In case that your platform has been incorrectly detected, you can download "
-"manually the version required for your Operating System"
+"If your platform couldn’t be detected correctly, you can manually download "
+"the version required for your Operating System."
 msgstr ""
-"En caso que su plataforma no haya sido bien detectada, puede descargar "
-"manualmente la versión necesaria para su sistema operativo"
+"Si su plataforma no se detecta correctamente, usted puede descargar "
+"manualmente la versión para tu sistema operativo."
 
 #: templates/uds/html5/download_client.html:19
+#: templates/uds/semantic/download_client.html:19
 msgid "Linux UDS plugin"
 msgstr "Plugin UDS Linux "
 
 #: templates/uds/html5/download_client.html:24
+#: templates/uds/semantic/download_client.html:24
 msgid "Windows UDS plugin"
 msgstr "Plugin UDS Windows "
 
 #: templates/uds/html5/download_client.html:29
+#: templates/uds/semantic/download_client.html:29
 msgid "Mac OSX (>10.5) UDS plugin"
 msgstr "Plugin UDS Mac OSX (> 10.5) "
 
 #: templates/uds/html5/download_client.html:35
 msgid ""
-"If you already have UDS Plugin installed but this message persists to "
-"appear, you can disable automatic detection here"
+"If you already have UDS Plugin installed and you can still see this message, "
+"you can disable automatic detection here."
 msgstr ""
-"Si ya tienes instalado el Plugin UDS pero este mensaje sigue apareciendo, "
-"puede desactivar la detección automática aquí"
+"Si ya tienes instalado el Plugin UDS y todavía se puede ver este mensaje, "
+"para deshabilitar la detección automática aquí."
 
 #: templates/uds/html5/download_client.html:39
+#: templates/uds/semantic/download_client.html:39
 msgid "Automatic plugin detection is enabled"
 msgstr "La detección automática del plugin está habilitada"
 
 #: templates/uds/html5/download_client.html:40
+#: templates/uds/semantic/download_client.html:40
 msgid "WARNING: Automatic plugin detection is disabled"
 msgstr "ADVERTENCIA: La detección automática del plugin está desactivada"
 
 #: templates/uds/html5/download_client.html:44
+#: templates/uds/semantic/download_client.html:44
 msgid ""
 "Please, note that disabling automatic detection will not trigger this page "
 "again in case you don't have the plugin installed."
@@ -3762,87 +3777,105 @@ msgstr ""
 
 #: templates/uds/html5/download_client.html:45
 msgid ""
-"In this case, you will have to manually download the plugin by using the "
-"menu on upper right corner."
+"Hence, you will have to manually download the plugin by using the menu on "
+"upper right corner."
 msgstr ""
-"En este caso, tendrá que descargar el plugin manualmente  usando el menú de "
-"la esquina superior derecha."
+"Por lo tanto, usted tendrá que descargar manualmente el plugin mediante el "
+"menú en esquina superior derecha."
 
 #: templates/uds/html5/download_client.html:47
+#: templates/uds/semantic/download_client.html:47
 msgid "Return"
 msgstr "Regreso"
 
-#: templates/uds/html5/error.html:12
+#: templates/uds/html5/downloads.html:7
+#: templates/uds/html5/snippets/navbar.html:45
+#: templates/uds/semantic/downloads.html:7
+#: templates/uds/semantic/snippets/user-menu.html:12
+msgid "Downloads"
+msgstr "Descargas"
+
+#: templates/uds/html5/downloads.html:10
+#: templates/uds/semantic/downloads.html:10
+msgid ""
+"This page contains a list of downloadables provided by different modules"
+msgstr ""
+"Esta página contiene una lista de descargas proporcionadas por diferentes "
+"módulos"
+
+#: templates/uds/html5/error.html:12 templates/uds/semantic/error.html.py:12
 msgid "An error occurred"
 msgstr "Se ha producido un error"
 
-#: templates/uds/html5/error.html:16 templates/uds/snippets/back_to_list.html:3
+#: templates/uds/html5/error.html:16 templates/uds/semantic/error.html.py:16
 msgid "Back to services list"
 msgstr "Volver a la lista de servicios"
 
-#: templates/uds/html5/index.html:3
+#: templates/uds/html5/index.html:3 templates/uds/semantic/index.html.py:3
 msgid "Available services list"
 msgstr "Lista de servicios disponibles"
 
-#: templates/uds/html5/index.html:29
+#: templates/uds/html5/index.html:31
 msgid "Under maintenance"
 msgstr "En mantenimiento"
 
-#: templates/uds/html5/index.html:31
+#: templates/uds/html5/index.html:33
 msgid "Access limited by calendar"
 msgstr "Acceso limitado por calendario"
 
-#: templates/uds/html5/index.html:33
+#: templates/uds/html5/index.html:37
 msgid "Currently in use"
 msgstr "Actualmente en uso"
 
-#: templates/uds/html5/index.html:52
+#: templates/uds/html5/index.html:56 templates/uds/semantic/tmpl/items.html:24
+#: templates/uds/semantic/tmpl/trans.html:8
 msgid "Connections"
 msgstr "Conexiones"
 
-#: templates/uds/html5/index.html:81
+#: templates/uds/html5/index.html:85
 msgid "Service under maintenance"
 msgstr "Servicio en mantenimiento"
 
-#: templates/uds/html5/index.html:84
+#: templates/uds/html5/index.html:88
 msgid "This service is in maintenance mode."
 msgstr "Este servicio está en modo de mantenimiento."
 
-#: templates/uds/html5/index.html:85 templates/uds/html5/index.html.py:103
+#: templates/uds/html5/index.html:89 templates/uds/html5/index.html.py:107
 msgid "Please, retry access in a while."
 msgstr "Por favor, intente entrar de nuevo en unos momentos"
 
-#: templates/uds/html5/index.html:99
+#: templates/uds/html5/index.html:103
 msgid "Service access not allowed"
 msgstr "Acceso a los servicios no permitido"
 
-#: templates/uds/html5/index.html:102
+#: templates/uds/html5/index.html:106
 msgid "This service is currently not accesible due to schedule restrictions"
 msgstr ""
 "Este servicio no es accesible en este momento debido a las restricciones de "
 "horario"
 
-#: templates/uds/html5/index.html:116
+#: templates/uds/html5/index.html:120
 msgid "Administrator info panel"
 msgstr "Panel de información del administrador"
 
-#: templates/uds/html5/index.html:119 templates/uds/index.html.py:78
+#: templates/uds/html5/index.html:123 templates/uds/semantic/index.html:27
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/html5/index.html:122
+#: templates/uds/html5/index.html:126 templates/uds/semantic/index.html:31
 msgid "User Agent"
 msgstr "Agente de usuario"
 
-#: templates/uds/html5/index.html:123
+#: templates/uds/html5/index.html:127
 msgid "OS"
 msgstr "SO"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html.py:59
+#: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
 msgid "Welcome to UDS"
 msgstr "Bienvenido a UDS"
 
-#: templates/uds/html5/login.html:66
+#: templates/uds/html5/login.html:66 templates/uds/semantic/login.html.py:69
 msgid "invalid credentials"
 msgstr "credenciales no válidas"
 
@@ -3854,32 +3887,39 @@ msgstr "nombre de usuario"
 msgid "password"
 msgstr "contraseña"
 
-#: templates/uds/html5/login.html:78
+#: templates/uds/html5/login.html:80 web/forms/LoginForm.py:56
+msgid "Select authenticator"
+msgstr "Seleccione autenticador"
+
+#: templates/uds/html5/login.html:89
 msgid "Sign in"
 msgstr "Inicie sesión"
 
-#: templates/uds/html5/login.html:84 templates/uds/login.html.py:93
+#: templates/uds/html5/login.html:95 templates/uds/semantic/login.html:128
 msgid "Back to login"
 msgstr "Volver a iniciar sesión"
 
-#: templates/uds/html5/prefs.html:5 templates/uds/prefs.html.py:6
+#: templates/uds/html5/prefs.html:5 templates/uds/semantic/prefs.html.py:5
 msgid "UDS User Preferences"
 msgstr "Preferencias de usuario de UDS "
 
-#: templates/uds/html5/prefs.html:11
+#: templates/uds/html5/prefs.html:11 templates/uds/semantic/prefs.html.py:11
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: templates/uds/html5/prefs.html:12 templates/uds/prefs.html.py:16
+#: templates/uds/html5/prefs.html:12 templates/uds/semantic/prefs.html.py:12
 msgid "Save Preferences"
 msgstr "Guardar Preferencias"
 
 #: templates/uds/html5/service_not_ready.html:4
 #: templates/uds/html5/service_not_ready.html:15
+#: templates/uds/semantic/service_not_ready.html:4
+#: templates/uds/semantic/service_not_ready.html:15
 msgid "The service is not ready"
 msgstr "El servicio no está preparado"
 
 #: templates/uds/html5/service_not_ready.html:17
+#: templates/uds/semantic/service_not_ready.html:17
 msgid ""
 "The service is not ready at this moment. Please, try it again after a few "
 "seconds."
@@ -3888,6 +3928,7 @@ msgstr ""
 "después de unos segundos."
 
 #: templates/uds/html5/service_not_ready.html:18
+#: templates/uds/semantic/service_not_ready.html:18
 msgid ""
 "The service you have requested was not ready, and it is being created right "
 "now. It will be availabe shortly"
@@ -3896,34 +3937,44 @@ msgstr ""
 "justo ahora. Estará disponible en unos momentos"
 
 #: templates/uds/html5/service_not_ready.html:23
+#: templates/uds/semantic/service_not_ready.html:23
 msgid "Please, close this window and relaunch again after a while."
 msgstr "Por favor, cierre esta ventana y ábrala de nuevo en unos momentos."
 
 #: templates/uds/html5/simpleLauncher.html:4
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:4
+#: templates/uds/semantic/simpleLauncher.html:4
+#: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:4
 msgid "Service launcher"
 msgstr "Lanzador de servicio"
 
 #: templates/uds/html5/simpleLauncher.html:9
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:9
+#: templates/uds/semantic/simpleLauncher.html:9
+#: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:9
 msgid "UDS Service launcher"
 msgstr "Lanzador de servicio UDS "
 
 #: templates/uds/html5/simpleLauncher.html:11
+#: templates/uds/semantic/simpleLauncher.html:11
 msgid "The service you have requested is being launched."
 msgstr "El servicio que ha solicitado se está activando"
 
 #: templates/uds/html5/simpleLauncher.html:12
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:11
+#: templates/uds/semantic/simpleLauncher.html:12
+#: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:11
 msgid "Please, note that reloading this page will not work."
 msgstr ""
 "Por favor, tenga en cuenta que volver a cargar esta página no funcionará."
 
 #: templates/uds/html5/simpleLauncher.html:13
+#: templates/uds/semantic/simpleLauncher.html:13
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "Para reanudar el servicio, deberás hacerlo desde el origen."
 
 #: templates/uds/html5/simpleLauncher.html:16
+#: templates/uds/semantic/simpleLauncher.html:16
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS plugin installed"
@@ -3932,19 +3983,24 @@ msgstr ""
 "Instalado el plugin UDS"
 
 #: templates/uds/html5/simpleLauncher.html:17
+#: templates/uds/semantic/simpleLauncher.html:17
 msgid "You can obtain it from the"
 msgstr "Puede obtenerlo de la"
 
 #: templates/uds/html5/simpleLauncher.html:17
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:14
+#: templates/uds/semantic/simpleLauncher.html:17
+#: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:14
 msgid "UDS Plugin download page"
 msgstr "Página para descargar Plugin UDS"
 
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:12
+#: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:12
 msgid "Close this window and try to relaunch service from origin."
 msgstr "Cierra esta ventana e intenta reanudar el servicio desde el origen."
 
 #: templates/uds/html5/simpleLauncherAlreadyLaunched.html:14
+#: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:14
 msgid "You can obtain required UDS plugin from the"
 msgstr "Usted puede obtener el plugin UDS requerido desde el"
 
@@ -3953,15 +4009,17 @@ msgid "toggle navigation"
 msgstr "navegación alterna"
 
 #: templates/uds/html5/snippets/navbar.html:25
+#: templates/uds/semantic/snippets/navbar.html:23
 msgid "About"
 msgstr "Acerca de"
 
-#: templates/uds/html5/snippets/navbar.html:45
-#: templates/uds/internal_page.html:34 templates/uds/prefs.html.py:12
+#: templates/uds/html5/snippets/navbar.html:41
+#: templates/uds/semantic/snippets/user-menu.html:8
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: templates/uds/html5/templates/base.html:60
+#: templates/uds/html5/templates/base.html:61
+#: templates/uds/semantic/templates/base.html:33
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
 "html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
@@ -3972,68 +4030,84 @@ msgstr ""
 "tiene que ser 10 o superior y debe desactivar el \"Modo de vista de "
 "compatibilidad\" para este sitio)"
 
-#: templates/uds/html5/templates/base.html:108
+#: templates/uds/html5/templates/base.html:109
 msgid "We use cookies to track usage and preferences"
 msgstr "Utilizamos cookies para rastrear el uso y preferencias"
 
-#: templates/uds/html5/templates/base.html:109
+#: templates/uds/html5/templates/base.html:110
 msgid "I Understand"
 msgstr "Entiendo"
 
-#: templates/uds/html5/templates/base.html:111
+#: templates/uds/html5/templates/base.html:112
 msgid "Privacy Policy"
 msgstr "Política de privacidad"
 
-#: templates/uds/index.html:70
-msgid "Java not found"
-msgstr "Java no encontrado"
-
-#: templates/uds/index.html:71
+#: templates/uds/semantic/about.html:41
 msgid ""
-"Java is not available on your browser, and the selected transport needs it."
+"If you found that we missed to mention any component, please let us know"
 msgstr ""
-"Java no está disponible en su navegador, y el transporte seleccionado lo "
-"necesita"
+"Si ve que nos hemos dejado algún componente, háganoslo saber, por favor"
 
-#: templates/uds/index.html:72
-msgid "Please, install latest version from"
-msgstr "Por favor, instale la versión mas reciente desde "
+#: templates/uds/semantic/download_client.html:15
+msgid ""
+"In case that your platform has been incorrectly detected, you can download "
+"manually the version required for your Operating System"
+msgstr ""
+"En caso que su plataforma no haya sido bien detectada, puede descargar "
+"manualmente la versión necesaria para su sistema operativo"
 
-#: templates/uds/index.html:72
-msgid "Java website"
-msgstr "web de Java"
+#: templates/uds/semantic/download_client.html:35
+msgid ""
+"If you already have UDS Plugin installed but this message persists to "
+"appear, you can disable automatic detection here"
+msgstr ""
+"Si ya tienes instalado el Plugin UDS pero este mensaje sigue apareciendo, "
+"puede desactivar la detección automática aquí"
 
-#: templates/uds/index.html:72
-msgid "and restart browser"
-msgstr "y reinicie el navegador"
+#: templates/uds/semantic/download_client.html:45
+msgid ""
+"In this case, you will have to manually download the plugin by using the "
+"menu on upper right corner."
+msgstr ""
+"En este caso, tendrá que descargar el plugin manualmente  usando el menú de "
+"la esquina superior derecha."
 
-#: templates/uds/internal_page.html:40
-msgid "Log out"
-msgstr "Cerrar sesión"
+#: templates/uds/semantic/index.html:23
+msgid "Administrator info"
+msgstr "Información del administrador"
 
-#: templates/uds/login.html:6
-msgid "Login to UDS"
-msgstr "Iniciar sesión en UDS"
+#: templates/uds/semantic/index.html:32
+msgid "Browser Info"
+msgstr "Información de navegador"
 
-#: templates/uds/login.html:78
-msgid "Login"
-msgstr "Iniciar sesión"
+#: templates/uds/semantic/index.html:124
+msgid "The service is currently in maintenance and cannot be accessed."
+msgstr "El servicio está actualmente en mantenimiento y no se puede acceder."
 
-#: templates/uds/login.html:83
-msgid "Login data"
-msgstr "Datos de acceso"
+#: templates/uds/semantic/login.html:110
+msgid "Log In"
+msgstr "Inicia sesión"
 
-#: templates/uds/login.html:86
-msgid "Enter"
-msgstr "Entrar"
+#: templates/uds/semantic/snippets/user-menu.html:10
+msgid "UDS Plugin"
+msgstr "Plugin UDS"
 
-#: templates/uds/snippets/lang.html:9
-msgid "Language"
-msgstr "Idioma"
+#: templates/uds/semantic/tmpl/items.html:12
+msgid "Session in use"
+msgstr "Sesión en uso"
+
+#: templates/uds/semantic/tmpl/items.html:13
+msgid "Maintenance"
+msgstr "Mantenimiento"
 
 #: templatetags/html5.py:229
 msgid "Debian based Linux"
 msgstr "Basado en Debian Linux"
+
+#: templatetags/html5.py:229 templatetags/html5.py:230
+#: templatetags/html5.py:231 templatetags/html5.py:232
+msgid "(requires Python-2.7)"
+msgstr "(requiere Python 2.7)"
 
 #: templatetags/html5.py:230
 msgid "Red Hat based Linux (RH, Fedora, Centos, ...)"
@@ -4072,7 +4146,6 @@ msgstr ""
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 #: transports/RGS_enterprise/RGSTransport.py:44
 #: transports/RGS_enterprise/TRGSTransport.py:52
-#: transports/SPICE/BaseSPICETransport.py:66
 msgid "Empty creds"
 msgstr "Credenciales vacías"
 
@@ -4255,7 +4328,7 @@ msgstr ""
 #: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:88
 #: transports/RDS_enterprise/TRDSTransport.py:81
 #: transports/RGS_enterprise/TRGSTransport.py:76
-#: transports/SPICE/TSPICETransport.py:72
+#: transports/SPICE/TSPICETransport.py:73
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Debe utilizar HOST: PUERTO en el Campo Servidor de Túnel"
 
@@ -4391,16 +4464,16 @@ msgid "Remote Desktop Protocol"
 msgstr "Protocolo de Escritorio Remoto (RDP)"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
-msgid "RDS Transport (direct)"
-msgstr "Transporte RDS (directo)"
+msgid "RDS Transport Experimental (direct)"
+msgstr "RDS transporte Experimental (directo)"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
 msgid "RDS Transport for direct connection"
 msgstr "Transporte RDS para conexión directa"
 
 #: transports/RDS_enterprise/TRDSTransport.py:63
-msgid "RDS Transport (tunneled)"
-msgstr "Transporte de RDS (túnel)"
+msgid "RDS Transport Experimental (tunneled)"
+msgstr "RDS transporte Experimental (tunelizado)"
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
 msgid "RDS Transport for tunneled connection"
@@ -4512,6 +4585,10 @@ msgstr "Transporte RGS (túnel)"
 msgid "RGS Transport for tunneled connection"
 msgstr "Transporte RGS para la conexión túnel"
 
+#: transports/SPICE/BaseSPICETransport.py:66
+msgid "Empty credentials"
+msgstr "Credenciales de vacías"
+
 #: transports/SPICE/BaseSPICETransport.py:87
 msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
@@ -4520,6 +4597,14 @@ msgstr ""
 "Certificado del servidor (público), puede encontrarse en su motor oVirt, "
 "probablemente en /etc/PKI/ovirt-Engine/certs/CA.der (usar el contenido de "
 "este archivo)."
+
+#: transports/SPICE/BaseSPICETransport.py:92
+msgid "Show fullscreen"
+msgstr "Mostrar pantalla completa"
+
+#: transports/SPICE/BaseSPICETransport.py:93
+msgid "If checked, viewer will be shown on fullscreen mode-"
+msgstr "Si está marcada, visor aparecerá en modo de pantalla completa-"
 
 #: transports/SPICE/SPICETransport.py:52
 msgid "RHEV/oVirt SPICE Transport (direct)"
@@ -4599,11 +4684,7 @@ msgstr "Preparando servicio"
 msgid "Service access denied by calendars"
 msgstr "Acceso al servicio denegado por calendarios"
 
-#: web/forms/LoginForm.py:53
-msgid "Select authenticator"
-msgstr "Seleccione autenticador"
-
-#: web/forms/LoginForm.py:57
+#: web/forms/LoginForm.py:60
 msgid "authenticator"
 msgstr "autenticador"
 
@@ -4614,6 +4695,15 @@ msgstr "El Autenticador no proporciona información"
 #: web/views/client_download.py:53
 msgid "UDS Plugin preferences"
 msgstr "Preferencias del Plugin UDS"
+
+#: web/views/index.py:178
+msgid ""
+"This service is about to be replaced by a new version. Please, close the "
+"session before {} and save all your work to avoid loosing it."
+msgstr ""
+"Este servicio está a punto de ser reemplazado por una nueva versión. Por "
+"favor, cierre la sesión antes de {} y guarde todo su trabajo para evitar "
+"perderla."
 
 #: web/views/service.py:115
 msgid "Service not ready. Please, try again in a while."

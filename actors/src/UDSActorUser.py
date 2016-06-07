@@ -242,16 +242,18 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         idleTime = operations.getIdleDuration()
         remainingTime = self.maxIdleTime - idleTime
 
-        if remainingTime > 120:  # Reset show Warning dialog if we have more than 5 minutes left
+        if idleTime < 30:
             self.showIdleWarn = True
+            return  # No notification if idle time is less than 30 seconds
 
         logger.debug('User has been idle for: {}'.format(idleTime))
 
-        if self.showIdleWarn is True and remainingTime < 120:  # With two minutes, show a warning message
+        if self.showIdleWarn is True and remainingTime < 300:  # With less than five minutes, and 30 seconds at least of idle, show message
             self.showIdleWarn = False
             self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
+            return
 
-        if remainingTime <= 0:
+        if self.showIdleWarn is False and remainingTime <= 0:
             logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
             self.quit()
 
