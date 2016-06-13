@@ -77,6 +77,7 @@ class HTML5RDPTransport(Transport):
     def initialize(self, values):
         if values is None:
             return
+        self.guacamoleServer.value = self.guacamoleServer.value.strip()
         if self.guacamoleServer.value[0:4] != 'http':
             raise Transport.ValidationException(_('The server must be http or https'))
 
