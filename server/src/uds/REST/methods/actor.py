@@ -124,7 +124,7 @@ class Actor(Handler):
     def getTicket(self):
         '''
         Processes get requests in order to obtain a ticket content
-        GET /rest/ticket/[ticketId]
+        GET /rest/actor/ticket/[ticketId]
         '''
         logger.debug("Ticket args for GET: {0}".format(self._args))
 
