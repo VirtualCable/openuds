@@ -35,6 +35,7 @@ from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Util import getSqlDatetime
+from uds.core.managers import cryptoManager
 
 import datetime
 import pickle
@@ -44,7 +45,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-01-14'
+__updated__ = '2016-06-15'
 
 
 class TicketStore(UUIDModel):
@@ -82,13 +83,17 @@ class TicketStore(UUIDModel):
         return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(40))
 
     @staticmethod
-    def create(data, validator=None, validity=DEFAULT_VALIDITY):
+    def create(data, validator=None, validity=DEFAULT_VALIDITY, secure=False):
         '''
         validity is in seconds
         '''
         if validator is not None:
             validator = pickle.dumps(validator)
-        return TicketStore.objects.create(stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity).uuid
+        uuid = TicketStore.objects.create(stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity).uuid
+        if secure is False:
+            return uuid
+        else:
+            return cryptoManager().encrypt(uuid)[:-2]
 
     @staticmethod
     def store(uuid, data, validator=None, validity=DEFAULT_VALIDITY):
@@ -108,7 +113,9 @@ class TicketStore(UUIDModel):
             t = TicketStore.objects.create(uuid=uuid, stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity)
 
     @staticmethod
-    def get(uuid, invalidate=True):
+    def get(uuid, invalidate=True, secure=False):
+        if secure:
+            uuid = cryptoManager().decrypt(uuid + "=\n")
         try:
             t = TicketStore.objects.get(uuid=uuid)
             validity = datetime.timedelta(seconds=t.validity)

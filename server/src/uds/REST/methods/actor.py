@@ -121,10 +121,10 @@ class Actor(Handler):
 
         return services[0]
 
-    def getTicket(self):
+    def getTicket(self, secure=False):
         '''
         Processes get requests in order to obtain a ticket content
-        GET /rest/ticket/[ticketId]
+        GET /rest/actor/ticket/[ticketId]
         '''
         logger.debug("Ticket args for GET: {0}".format(self._args))
 
@@ -132,9 +132,17 @@ class Actor(Handler):
             raise RequestError('Invalid request')
 
         try:
-            return Actor.result(TicketStore.get(self._args[1], invalidate=True))
+            return Actor.result(TicketStore.get(self._args[1], invalidate=True, secure=secure))
         except Exception:
             return Actor.result({})
+
+    def getSecureTicket(self):
+        logger.debug('Get secure ticket value for {}'.format(self._args))
+        v = self.validateRequestKey()
+        if v is not None:
+            return v
+
+        return self.getTicket(secure=True)
 
     def get(self):
         '''
@@ -147,6 +155,9 @@ class Actor(Handler):
 
         if self._args[0] == 'ticket':
             return self.getTicket()
+
+        if self._args[0] == 'secureTicket':
+            return self.getSecureTicket()
 
         if self._args[0] == 'testn':  # Test, but without master key
             return self.test()
