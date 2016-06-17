@@ -65,6 +65,9 @@ ERR_HOST_NOT_MANAGED = 2
 ERR_USER_SERVICE_NOT_FOUND = 3
 ERR_OSMANAGER_ERROR = 4
 
+# Constants for tickets
+OWNER = 'ACTOR'
+SECURE_OWNER = 'SACTOR'
 
 # Enclosed methods under /actor path
 class Actor(Handler):
@@ -132,17 +135,24 @@ class Actor(Handler):
             raise RequestError('Invalid request')
 
         try:
-            return Actor.result(TicketStore.get(self._args[1], invalidate=True, secure=secure))
+            return Actor.result(TicketStore.get(self._args[1], invalidate=True, owner=SECURE_OWNER if secure else OWNER))
         except Exception:
             return Actor.result({})
 
     def getSecureTicket(self):
+        '''
+        Processes get request for SECURE tickets request, i.e. tickets that can only be got by actors with valid credentials
+        GET /rest/actor/sticket/[ticketId]?key=[master key]
+        '''
         logger.debug('Get secure ticket value for {}'.format(self._args))
-        v = self.validateRequestKey()
-        if v is not None:
-            return v
+        # v = self.validateRequestKey()
+        # if v is not None:
+        #    return v
 
-        return self.getTicket(secure=True)
+        # TODO: Remove this, is just for testings
+        # return Actor.result({'username': 'user', 'password': 'password', 'domain': None})
+        # return self.getTicket(secure=True)
+        raise RequestError('Invalid request')
 
     def get(self):
         '''
@@ -156,7 +166,7 @@ class Actor(Handler):
         if self._args[0] == 'ticket':
             return self.getTicket()
 
-        if self._args[0] == 'secureTicket':
+        if self._args[0] == 'sticket':
             return self.getSecureTicket()
 
         if self._args[0] == 'testn':  # Test, but without master key
@@ -174,6 +184,7 @@ class Actor(Handler):
             actorVersion = self._params.get('version', 'unknown')
             service = self.getUserServiceByIds()
             if service is None:
+                logger.info('Unmanaged host request: {}'.format(self._args))
                 return Actor.result(_('Unmanaged host'), error=ERR_HOST_NOT_MANAGED)
             else:
                 # Set last seen actor version
@@ -211,6 +222,10 @@ class Actor(Handler):
         if message == 'notifyComms':
             logger.debug('Setting comms url to {}'.format(data))
             service.setCommsUrl(data)
+            return Actor.result('ok')
+        elif message == 'ssoAvailable':
+            logger.debug('Setting that SSO is available')
+            service.setProperty('sso_available', 1)
             return Actor.result('ok')
         elif message == 'version':
             version = self._params.get('version', 'unknown')

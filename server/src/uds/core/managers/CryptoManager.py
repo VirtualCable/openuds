@@ -36,6 +36,7 @@ from django.conf import settings
 from Crypto.PublicKey import RSA
 from OpenSSL import crypto
 from Crypto.Random import atfork
+
 import hashlib
 import array
 import uuid
@@ -58,6 +59,7 @@ logger = logging.getLogger(__name__)
 
 class CryptoManager(object):
     CODEC = 'base64'
+    INITIAL_VECTOR = 'UDS AES Initial.'
 
     instance = None
 
