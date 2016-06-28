@@ -54,8 +54,10 @@ class WinRandomPassManager(WindowsOsManager):
 
     def processUserPassword(self, service, username, password):
         if username == self._userAccount:
-            return [username, service.recoverValue('winOsRandomPass')]
-        return [username, password]
+            password = service.recoverValue('winOsRandomPass')
+
+        return WindowsOsManager.processUserPassword(self, service, username, password)
+
 
     def genPassword(self, service):
         import random

@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2016-05-13'
+__updated__ = '2016-06-17'
 
 
 class RDPFile(object):
@@ -62,6 +62,7 @@ class RDPFile(object):
     showWallpaper = False
     multimon = False
     desktopComposition = False
+    enablecredsspsupport = True
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
@@ -238,6 +239,8 @@ class RDPFile(object):
 
         if self.redirectAudio is True:
             res += 'audiocapturemode:i:1\n'
+
+        res += 'enablecredsspsupport:i:{}\n'.format(0 if self.enablecredsspsupport is False else 1)
 
         return res
 

@@ -18,6 +18,9 @@ from uds.core import osmanagers
 from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util.State import State
 from uds.core.util import log
+from uds.models import TicketStore
+from uds.REST.methods.actor import SECURE_OWNER
+
 import six
 
 import logging
@@ -200,6 +203,25 @@ class WindowsOsManager(osmanagers.OSManager):
         if options is not None and options.get('scramble', True) is False:
             return ret
         return scrambleMsg(ret)
+
+    def processUserPassword(self, service, username, password):
+        if service.getProperty('sso_available') == '1':
+            # Generate a ticket, store it and return username with no password
+            domain = ''
+            if '@' in username:
+                username, domain = username.split('@')
+            elif '\\' in username:
+                username, domain = username.split('\\')
+
+            creds = {
+                'username': username,
+                'password': password,
+                'domain': domain
+            }
+            ticket = TicketStore.create(creds, validator=None, validity=300, owner=SECURE_OWNER, secure=True)
+            return (ticket, '')
+        else:
+            return osmanagers.OSManager.processUserPassword(self, service, username, password)
 
     def processUnused(self, userService):
         '''

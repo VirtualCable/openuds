@@ -292,9 +292,10 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
     def about(self):
         self.aboutDlg.exec_()
 
-    def quit(self):
-        logger.debug('Quit invoked')
+    def cleanUp(self):
+        logger.debug('Cleaning up')
         if self.stopped is False:
+            logger.debug('Not stopped, proceding to cleanup')
             self.stopped = True
             try:
                 # If we close Client, send Logoff to Broker
@@ -305,12 +306,21 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
                 # May we have lost connection with server, simply exit in that case
                 pass
 
-        try:
-            operations.loggoff()  # Invoke log off
-        except Exception:
-            pass
+            try:
+                operations.loggoff()  # Invoke log off
+            except Exception:
+                pass
 
-        self.app.quit()
+    def quit(self):
+        logger.debug('Quit invoked')
+        if self.stopped is False:
+            self.cleanUp()
+            self.app.quit()
+
+    def closeEvent(self, event):
+        event.accept()
+        self.quit()
+
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
@@ -327,6 +337,8 @@ if __name__ == '__main__':
     except Exception:
         logger.error('UDS Service is not running, or it can\'t contact with UDS Server. User Tools stopped')
         sys.exit(1)
+
+    app.aboutToQuit.connect(trayIcon.cleanUp)
 
     # Sets a default idle duration, but will not be used unless idle is notified from server
     operations.initIdleDuration(3600 * 10)

@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2015-05-14'
+__updated__ = '2016-06-17'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -91,6 +91,8 @@ class RDPTransport(BaseRDPTransport):
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
+        r.enablecredsspsupport = not ci['sso']  # with SSO, credssspsuport must be disabled
+        logger.debug('SSO: {}'.format(ci['sso']))
 
         # data
         data = {

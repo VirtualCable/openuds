@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-06-17'
 
 
 logger = logging.getLogger(__name__)
@@ -117,14 +117,25 @@ class BaseRDPTransport(Transport):
         if '.' in domain:  # Dotter domain form
             username = username + '@' + domain
             domain = ''
+        else:  # In case of a NETBIOS domain (not recomended), join it so processUserPassword can deal with it
+            username = domain + '\\' + username
+            domain = ''
+
+        # Temporal "fix" to check if we do something on processUserPassword
 
         # Fix username/password acording to os manager
         username, password = service.processUserPassword(username, password)
 
+        # Recover domain name if needed
+        if '\\' in username:
+            username, domain = username.split('\\')
+
         return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
 
     def getConnectionInfo(self, service, user, password):
-        return self.processUserPassword(service, user, password)
+        dct = self.processUserPassword(service, user, password)
+        dct['sso'] = service.getProperty('sso_available') == '1'
+        return dct
 
     def getScript(self, script):
         with open(os.path.join(os.path.dirname(__file__), script)) as f:
