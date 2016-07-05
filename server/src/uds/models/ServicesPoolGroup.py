@@ -40,6 +40,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Image import Image
+from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
 import logging
 
@@ -80,8 +81,10 @@ class ServicesPoolGroup(UUIDModel):
             'imageUuid': self.image.uuid if self.image is not None else 'x'
         }
 
+    @property
+    def thumb64(self):
+        return self.image.thumb64 if self.image is not None else  DEFAULT_THUMB_BASE64
+
     @staticmethod
     def default():
         return ServicesPoolGroup(name=_('General'), comments='Default group', priority=-10000)
-
-

@@ -109,7 +109,7 @@ class ServicesPools(ModelHandler):
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
-            'pool_group_id': poolGroupId,
+            'servicesPoolGroup_id': poolGroupId,
             'pool_group_name': poolGroupName,
             'pool_group_thumb': poolGroupThumb,
             'initial_srvs': item.initial_srvs,
@@ -164,7 +164,7 @@ class ServicesPools(ModelHandler):
             'tab': ugettext('Display'),
         }, {
             'name': 'servicesPoolGroup_id',
-            'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.image.thumb64) for v in ServicesPoolGroup.objects.all()]),
+            'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in ServicesPoolGroup.objects.all()]),
             'label': ugettext('Pool group'),
             'tooltip': ugettext('Pool group for this pool (for pool clasify on display)'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
