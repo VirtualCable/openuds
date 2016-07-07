@@ -192,7 +192,7 @@ def index(request):
             'not_accesible': not svr.isAccessAllowed(),
             'in_use': in_use,
             'to_be_replaced': tbr,
-            'to_be_replaced_text': tbrt
+            'to_be_replaced_text': tbrt,
             'comments': svr.comments,
         })
 
