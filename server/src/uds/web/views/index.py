@@ -137,6 +137,7 @@ def index(request):
             'not_accesible': not svr.deployed_service.isAccessAllowed(),
             'in_use': svr.in_use,
             'to_be_replaced': False,  # Manually assigned will not be autoremoved never
+            'comments': svr.comments,
         })
 
     logger.debug(services)
@@ -192,6 +193,7 @@ def index(request):
             'in_use': in_use,
             'to_be_replaced': tbr,
             'to_be_replaced_text': tbrt
+            'comments': svr.comments,
         })
 
     logger.debug('Services: {0}'.format(services))
