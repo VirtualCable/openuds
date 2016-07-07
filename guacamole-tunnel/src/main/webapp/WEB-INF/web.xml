@@ -20,22 +20,9 @@
         </servlet-class>
     </servlet>
 
-    <servlet>
-        <description>Credentials Servlet</description>
-        <servlet-name>Credentials</servlet-name>
-        <servlet-class>
-           org.openuds.guacamole.CredentialsServlet
-        </servlet-class>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>Tunnel</servlet-name>
         <url-pattern>/tunnel</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Credentials</servlet-name>
-        <url-pattern>/creds</url-pattern>
     </servlet-mapping>
 
 </web-app>
