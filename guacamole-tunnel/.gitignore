@@ -1,0 +1,13 @@
+# Backup files
+*~
+
+# Generated files
+src/main/webapp/META-INF/
+src/main/webapp/generated/
+target/
+
+# IDE-specific configuration
+nb-configuration.xml
+.classpath
+.project
+
