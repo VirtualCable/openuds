@@ -1005,18 +1005,18 @@ GuacUI.Client.connect = function() {
     
     var connect_string =
         queryArr.join('&')
-        + "&width="  + Math.floor(optimal_width)
-        + "&height=" + Math.floor(optimal_height)
-        + "&dpi="    + Math.floor(optimal_dpi);
+        + "&GUAC_WIDTH="  + Math.floor(optimal_width)
+        + "&GUAC_HEIGHT=" + Math.floor(optimal_height)
+        + "&GUAC_DPI="    + Math.floor(optimal_dpi);
 
     // Add audio mimetypes to connect_string
     GuacUI.Audio.supported.forEach(function(mimetype) {
-        connect_string += "&audio=" + encodeURIComponent(mimetype);
+        connect_string += "&GUAC_AUDIO=" + encodeURIComponent(mimetype);
     });
 
     // Add video mimetypes to connect_string
     GuacUI.Video.supported.forEach(function(mimetype) {
-        connect_string += "&video=" + encodeURIComponent(mimetype);
+        connect_string += "&GUAC_VIDEO=" + encodeURIComponent(mimetype);
     });
 
     // Show connection errors from tunnel
