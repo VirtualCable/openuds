@@ -1,5 +1,8 @@
-This portion of UDS (HTML5 tunnel) is based on guacamole. As such, the code used for creating this is fully GPL compliant.
+This portion of UDS (HTML5 tunnel) is based on Apache Guacamole. The source
+code that produced this war file can be obtained from:
 
-To obtain the code that produced this war file, you can do it from http://openuds.org.
+    http://openuds.org/
 
-Guacamole source code is accesible from http://guac-dev.org/
+The Apache Guacamole source code is available from:
+
+    http://guacamole.incubator.apache.org/
