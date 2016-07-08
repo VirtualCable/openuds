@@ -964,14 +964,14 @@ GuacUI.Client.connect = function() {
     var tunnel;
 
     // If WebSocket available, try to use it.
-    /*if (window.WebSocket)
+    if (window.WebSocket)
         tunnel = new Guacamole.ChainedTunnel(
             new Guacamole.WebSocketTunnel("websocket-tunnel"),
             new Guacamole.HTTPTunnel("tunnel")
-        )
+        );
 
     // If no WebSocket, then use HTTP.
-    else*/
+    else
         tunnel = new Guacamole.HTTPTunnel("tunnel");
 
     // Instantiate client
