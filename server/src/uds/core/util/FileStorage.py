@@ -149,11 +149,12 @@ class FileStorage(Storage):
         return self._dbFileForReadOnly(name).size
 
     def delete(self, name):
+        logger.debug('Delete callef for {}'.format(name))
         self._dbFileForReadWrite(name).delete()
         self._removeFromCache(name)
 
     def exists(self, name):
-        logger.debug('Called exists for {}')
+        logger.debug('Called exists for {}'.format(name))
         try:
             self._dbFileForReadOnly(name).uuid
             return True
