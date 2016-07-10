@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class DBFile(UUIDModel):
+    owner = models.CharField(max_length=32, default='')  # Not indexed, used for cleanups only
     name = models.CharField(max_length=255, primary_key=True)
     content = models.TextField(blank=True)
     size = models.IntegerField(default=0)
