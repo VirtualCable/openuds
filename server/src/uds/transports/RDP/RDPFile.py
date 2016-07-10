@@ -95,9 +95,13 @@ class RDPFile(object):
             params.append('/smartcard')
 
         if self.redirectAudio:
-            params.append('/sound:sys:alsa')
-            params.append('/microphone:sys:alsa')
-            params.append('/multimedia:sys:alsa')
+            # params.append('/sound:sys:alsa')
+            # params.append('/microphone:sys:alsa')
+            # params.append('/multimedia:sys:alsa')
+            # Let freerdp decide if pulse o alsa
+            params.append('/sound')
+            params.append('/microphone')
+            params.append('/multimedia')
 
         if self.redirectDrives is True:
             params.append('/drive:media,/media')

@@ -63,6 +63,11 @@ class FileStorage(Storage):
             cache = None
 
         self.cache = cache
+        if 'owner' in kwargs:
+            self.owner = kwargs.get('owner')
+            del kwargs['owner']
+        else:
+            self.owner = 'fstor'
 
         self.cache._cache.flush_all()  # On start, ensures that cache is empty to avoid surprises
 
@@ -126,7 +131,7 @@ class FileStorage(Storage):
         try:
             f = self._dbFileForReadWrite(name)
         except DBFile.DoesNotExist:
-            f = DBFile.objects.create(name=name)
+            f = DBFile.objects.create(owner=self.owner, name=name)
 
         f.data = content.read()
         f.save()
@@ -149,11 +154,12 @@ class FileStorage(Storage):
         return self._dbFileForReadOnly(name).size
 
     def delete(self, name):
+        logger.debug('Delete callef for {}'.format(name))
         self._dbFileForReadWrite(name).delete()
         self._removeFromCache(name)
 
     def exists(self, name):
-        logger.debug('Called exists for {}')
+        logger.debug('Called exists for {}'.format(name))
         try:
             self._dbFileForReadOnly(name).uuid
             return True
@@ -163,3 +169,8 @@ class FileStorage(Storage):
     def url(self, name):
         uuid = self._dbFileForReadWrite(name).uuid
         return urlparse.urljoin(self._base_url, uuid)
+
+class CompressorFileStorage(FileStorage):
+    def __init__(self, *args, **kwargs):
+        FileStorage.__init__(self, *args, **dict(kwargs, owner='compressor'))
+

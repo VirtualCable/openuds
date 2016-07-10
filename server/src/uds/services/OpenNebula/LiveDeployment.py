@@ -141,7 +141,7 @@ class LiveDeployment(UserDeployment):
         The get method of a mac generator takes one param, that is the mac range
         to use to get an unused mac.
         '''
-        return self._mac
+        return self._mac.upper()
 
     def getIp(self):
         '''
@@ -176,7 +176,7 @@ class LiveDeployment(UserDeployment):
         if state == on.VmState.UNKNOWN:
             return self.__error('Machine is not available anymore')
 
-        self.service().startMachine()
+        self.service().startMachine(self._vmid)
 
         self.cache.put('ready', '1')
         return State.FINISHED
