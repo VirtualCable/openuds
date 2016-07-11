@@ -98,7 +98,7 @@ class ServicesPoolGroups(ModelHandler):
             'priority': item.priority,
             'name': item.name,
             'comments': item.comments,
-            'image_id': item.image.uuid,
+            'image_id': item.image.uuid if item.image is not None else None,
         }
 
     def item_as_dict_overview(self, item):
@@ -107,5 +107,5 @@ class ServicesPoolGroups(ModelHandler):
             'priority': item.priority,
             'name': item.name,
             'comments': item.comments,
-            'thumb': item.image.thumb64,
+            'thumb': item.thumb64,
         }
