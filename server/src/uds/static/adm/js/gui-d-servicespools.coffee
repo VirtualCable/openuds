@@ -289,7 +289,6 @@ gui.servicesPools.link = (event) ->
             icon: 'groups'
             container: "groups-placeholder"
             rowSelect: "multi"
-            doNotLoadData: true
             buttons: [
               "new"
               "delete"
