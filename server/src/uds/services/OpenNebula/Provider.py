@@ -50,7 +50,7 @@ import six
 # Python bindings for OpenNebula
 import oca
 
-__updated__ = '2016-04-25'
+__updated__ = '2016-07-11'
 
 logger = logging.getLogger(__name__)
 
@@ -149,8 +149,9 @@ class Provider(ServiceProvider):
         '''
 
         try:
-            if self.api.version() < '4.1':
-                return [False, 'OpenNebula version is not supported (required version 4.1 or newer)']
+            ver = self.api.version()
+            if ver < '4.1' or ver >= '5':
+                return [False, 'OpenNebula version is not supported (required version 4.x)']
         except Exception as e:
             return [False, '{}'.format(e)]
 
