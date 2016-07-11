@@ -50,7 +50,7 @@ import six
 # Python bindings for OpenNebula
 import oca
 
-__updated__ = '2016-04-25'
+__updated__ = '2016-07-11'
 
 logger = logging.getLogger(__name__)
 
@@ -129,7 +129,7 @@ class Provider(ServiceProvider):
     @property
     def api(self):
         if self._api is None:
-            self._api = oca.Client('{}:{}'.format(self.username.value, self.password.value), self.endpoint)
+            self._api = on.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
 
         return self._api
 

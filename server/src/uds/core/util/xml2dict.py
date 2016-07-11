@@ -1,7 +1,12 @@
+'''
+Created on Jul 11, 2016
+
+@author: dkmaster
+'''
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2013 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,19 +32,30 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+from __future__ import unicode_literals
+from collections import defaultdict
+from xml.etree import cElementTree
 
-import logging
+def etree_to_dict(t):
+    d = {t.tag: {} if t.attrib else None}
+    children = list(t)
+    if children:
+        dd = defaultdict(list)
+        for dc in map(etree_to_dict, children):
+            for k, v in dc.items():
+                dd[k].append(v)
+        d = {t.tag: {k:v[0] if len(v) == 1 else v for k, v in dd.items()}}
+    if t.attrib:
+        d[t.tag].update(('@' + k, v) for k, v in t.attrib.items())
+    if t.text:
+        text = t.text.strip()
+        if children or t.attrib:
+            if text:
+                d[t.tag]['#text'] = text
+        else:
+            d[t.tag] = text
+    return d
 
+def parse(xml_string):
+    return  etree_to_dict(cElementTree.XML(xml_string))  # @UndefinedVariable
 
-__updated__ = '2016-07-11'
-
-logger = logging.getLogger(__name__)
-
-def enumerateDatastores(api, datastoreType=0):
-    '''
-    0 seems to be images datastore
-    '''
-    return api.enumStorage(datastoreType)

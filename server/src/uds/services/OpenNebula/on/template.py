@@ -39,20 +39,16 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2016-02-09'
+__updated__ = '2016-07-11'
 
 logger = logging.getLogger(__name__)
 
 
 def getTemplates(api, force=False):
-    logger.debug('Api: {}'.format(api))
-    templatesPool = oca.VmTemplatePool(api)
-    templatesPool.info()
 
-    for t in templatesPool:
-        if t.name[:4] != 'UDSP':
-            yield (t.id, t.name)
-
+    for t in api.enumTemplates():
+        if t[1][:4] != 'UDSP':  # 0 = id, 1 = name
+            yield t
 
 def create(api, fromTemplateId, name, toDataStore):
     '''
