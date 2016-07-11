@@ -13,7 +13,7 @@ body {
     height: auto !important;
     height: 100%;
     margin: 0 auto -40px; /* Change height. Can use px, ems or % */
-    
+
     @media (min-width: 768px) {
          margin: 0 auto -24px; /* Change height. Can use px, ems or % */
     }
@@ -22,7 +22,7 @@ body {
 .st-sticky-push,
 footer {
     height: 40px; /* Change height. Can use px, ems or % */
-    
+
     @media (min-width: 768px) {
         height: 40px; /* Change height. Can use px, ems or % */
     }
@@ -183,6 +183,16 @@ footer {
 }
 #cookie-bar .cb-policy:hover {
   background: #0055dd;
+}
+
+# For Image rendering on Chrome
+img {
+  image-rendering: optimizeSpeed;             /*                     */
+  image-rendering: -moz-crisp-edges;          /* Firefox             */
+  image-rendering: -o-crisp-edges;            /* Opera               */
+  image-rendering: -webkit-optimize-contrast; /* Chrome (and Safari) */
+  image-rendering: optimize-contrast;         /* CSS3 Proposed       */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
 }
 
 @media (max-width: 768px) {
