@@ -35,6 +35,9 @@ from __future__ import unicode_literals
 from uds.core.util.Cache import Cache
 from uds.core.jobs.Job import Job
 from uds.models import TicketStore
+from django.conf import settings
+from importlib import import_module
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -56,7 +59,7 @@ class CacheCleaner(Job):
 
 class TicketStoreCleaner(Job):
 
-    frequency = 3600 * 12  # every twelve hours
+    frecuency = 3600 * 12  # every twelve hours
     friendly_name = 'Ticket Storage Cleaner'
 
     def __init__(self, environment):
@@ -66,3 +69,27 @@ class TicketStoreCleaner(Job):
         logger.debug('Starting ticket storage cleanup')
         TicketStore.cleanup()
         logger.debug('Done ticket storage cleanup')
+
+
+class SessionsCleaner(Job):
+
+    frecuency = 3600 * 24 * 7  # Once a day will be enough
+    friendly_name = 'User Sessions cleaner'
+
+    def __init__(self, environment):
+        super(SessionsCleaner, self).__init__(environment)
+
+    def run(self):
+        logger.debug('Starting session cleanup')
+        try:
+            engine = import_module(settings.SESSION_ENGINE)
+        except Exception:
+            logger.exception('DjangoSessionsCleaner')
+            return
+
+        try:
+            engine.SessionStore.clear_expired()
+        except NotImplementedError:
+            pass  # No problem if no cleanup
+
+        logger.debug('Done session cleanup')
