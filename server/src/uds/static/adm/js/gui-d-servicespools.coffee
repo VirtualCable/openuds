@@ -242,6 +242,16 @@ gui.servicesPools.link = (event) ->
 
           # Cached items table
           prevCacheLogTbl = null
+
+          clearCacheLog = (doHide) ->
+            if prevCacheLogTbl
+              $tbl = $(prevCacheLogTbl).dataTable()
+              $tbl.fnClearTable()
+              $tbl.fnDestroy()
+              prevCacheLogTbl = null
+              if doHide
+                $('#cache-placeholder_log').empty()
+
           cachedItemsTable = cachedItems.table(
             icon: 'cached'
             container: "cache-placeholder_tbl"
@@ -256,12 +266,16 @@ gui.servicesPools.link = (event) ->
               fillState data
               return
 
+            onRefresh: () ->
+              clearCacheLog(true)
+              return
+
+            onRowDeselect: (deselected, dtable) ->
+              clearCacheLog(true)
+
             onRowSelect: (selected) ->
               cached = selected[0]
-              if prevCacheLogTbl
-                $tbl = $(prevCacheLogTbl).dataTable()
-                $tbl.fnClearTable()
-                $tbl.fnDestroy()
+              clearCacheLog(false)
               prevCacheLogTbl = cachedItems.logTable(cached.id,
                 container: "cache-placeholder_log"
               )
@@ -360,6 +374,16 @@ gui.servicesPools.link = (event) ->
         #                     * Assigned services part
         #
         prevAssignedLogTbl = null
+
+        clearAssignedLog = (doHide) ->
+            if prevAssignedLogTbl
+              $tbl = $(prevAssignedLogTbl).dataTable()
+              $tbl.fnClearTable()
+              $tbl.fnDestroy()
+              prevAssignedLogTbl = null
+              if doHide
+                $("#assigned-services-placeholder_log").empty()
+
         assignedServices = new GuiElement(api.servicesPools.detail(servPool.id, "services", { permission: servPool.permission }), "services")
         assignedServicesTable = assignedServices.table(
           doNotLoadData: true
@@ -386,16 +410,21 @@ gui.servicesPools.link = (event) ->
 
             return
 
+          onRefresh: () ->
+            clearAssignedLog(true)
+            return
+
+          onRowDeselect: (deselected, dtable) ->
+            clearAssignedLog(true)
+
           onRowSelect: (selected) ->
             svr = selected[0]
-            if prevAssignedLogTbl
-              $tbl = $(prevAssignedLogTbl).dataTable()
-              $tbl.fnClearTable()
-              $tbl.fnDestroy()
+            clearAssignedLog(false)
             prevAssignedLogTbl = assignedServices.logTable(svr.id,
               container: "assigned-services-placeholder_log"
             )
             return
+
 
           onDelete: gui.methods.del(assignedServices, gettext("Remove Assigned service"), gettext("Deletion error"))
         )
