@@ -48,7 +48,7 @@ import logging
 import six
 
 # Python bindings for OpenNebula
-import oca
+# import oca
 
 __updated__ = '2016-07-11'
 
@@ -131,6 +131,7 @@ class Provider(ServiceProvider):
         if self._api is None:
             self._api = on.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
 
+        logger.debug('Api: {}'.format(self._api))
         return self._api
 
     def resetApi(self):
@@ -149,33 +150,12 @@ class Provider(ServiceProvider):
         '''
 
         try:
-            if self.api.version() < '4.1':
+            if self.api.version[0] < '4':
                 return [False, 'OpenNebula version is not supported (required version 4.1 or newer)']
         except Exception as e:
             return [False, '{}'.format(e)]
 
         return [True, _('Opennebula test connection passed')]
-
-
-    def getMachines(self, force=False):
-        '''
-        Obtains the list of machines inside OpenNebula.
-        Machines starting with UDS are filtered out
-
-        Args:
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-            An array of dictionaries, containing:
-                'name'
-                'id'
-                'cluster_id'
-        '''
-        vmpool = oca.VirtualMachinePool(self.api)
-        vmpool.info()
-
-        return vmpool
 
     def getDatastores(self, datastoreType=0):
         return on.storage.enumerateDatastores(self.api, datastoreType)
@@ -203,12 +183,7 @@ class Provider(ServiceProvider):
         Returns:
             one of the on.VmState Values
         '''
-        try:
-            vm = oca.VirtualMachine.new_with_id(self.api, int(machineId))
-            vm.info()
-            return vm.state
-        except Exception as e:
-            logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
+        return on.vm.getMachineState(self.api, machineId)
 
 
     def startMachine(self, machineId):

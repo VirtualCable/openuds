@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-04-21'
+__updated__ = '2016-07-11'
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ class LiveService(Service):
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = LiveDeployment
 
-    allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
+    allowedProtocols = protocols.GENERIC
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part

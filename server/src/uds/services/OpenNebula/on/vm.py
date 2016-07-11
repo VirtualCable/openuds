@@ -33,13 +33,13 @@
 
 import logging
 import six
-import oca
+# import oca
 
 from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import VmState
 
-__updated__ = '2016-02-09'
+__updated__ = '2016-07-11'
 
 logger = logging.getLogger(__name__)
 
@@ -56,9 +56,10 @@ def getMachineState(api, machineId):
         one of the on.VmState Values
     '''
     try:
-        vm = oca.VirtualMachine.new_with_id(api, int(machineId))
-        vm.info()
-        return vm.state
+        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
+        # vm.info()
+        # return vm.state
+        return api.getVMState(machineId)
     except Exception as e:
         logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
 
@@ -77,8 +78,9 @@ def startMachine(api, machineId):
     Returns:
     '''
     try:
-        vm = oca.VirtualMachine.new_with_id(api, int(machineId))
-        vm.resume()
+        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
+        # vm.resume()
+        api.VMAction(machineId, 'resume')
     except Exception as e:
         logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
 
@@ -92,8 +94,9 @@ def stopMachine(api, machineId):
     Returns:
     '''
     try:
-        vm = oca.VirtualMachine.new_with_id(api, int(machineId))
-        vm.poweroff_hard()
+        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
+        # vm.poweroff_hard()
+        api.VMAction(machineId, 'poweroff-hard')
     except Exception as e:
         logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
 
@@ -119,13 +122,14 @@ def removeMachine(api, machineId):
     Returns:
     '''
     try:
-        vm = oca.VirtualMachine.new_with_id(api, int(machineId))
-        vm.delete()
+        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
+        # vm.delete()
+        api.deleteVM(machineId)
     except Exception as e:
         logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
 
 
-def enumerateMachines(self):
+def enumerateMachines(api):
     '''
     Obtains the list of machines inside OpenNebula.
     Machines starting with UDS are filtered out
@@ -140,18 +144,15 @@ def enumerateMachines(self):
             'id'
             'cluster_id'
     '''
-    vmpool = oca.VirtualMachinePool(self.api)
-    vmpool.info()
-
-    for vm in vmpool:
-        yield (vm.id, vm.name)
+    return api.enumVMs()
 
 
 def getNetInfo(api, machineId, networkId=None):
     '''
     Changes the mac address of first nic of the machine to the one specified
     '''
-    md = minidom.parseString(api.call('vm.info', int(machineId)))
+    # md = minidom.parseString(api.call('vm.info', int(machineId)))
+    md = minidom.parseString(api.VMInfo(machineId)[1])
     node = md
 
     for nic in md.getElementsByTagName('NIC'):
@@ -159,9 +160,13 @@ def getNetInfo(api, machineId, networkId=None):
         if networkId is None or int(netId) == int(networkId):
             node = nic
             break
+    logger.debug(node.toxml())
 
     # Default, returns first MAC found (or raise an exception if there is no MAC)
-    return (node.getElementsByTagName('MAC')[0].childNodes[0].data, node.getElementsByTagName('IP')[0].childNodes[0].data)
+    try:
+        return (node.getElementsByTagName('MAC')[0].childNodes[0].data, node.getElementsByTagName('IP')[0].childNodes[0].data)
+    except Exception:
+        raise Exception('No network interface found on template. Please, add a network and republish.')
 
 # Sample NIC Content (there will be as much as nics)
 #         <NIC>
