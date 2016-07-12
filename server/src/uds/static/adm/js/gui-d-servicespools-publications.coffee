@@ -6,7 +6,7 @@ gui.servicesPools.publications = (servPool, info) ->
   publicationsTable = publications.table(
     doNotLoadData: true
     icon: 'publications'
-    container: "publications-placeholder"
+    container: "publications-placeholder_tbl"
     doNotLoadData: true
     rowSelect: "single"
     buttons: [
