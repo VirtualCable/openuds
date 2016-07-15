@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2016-06-24'
+__updated__ = '2016-07-15'
 
 
 class RDPFile(object):
@@ -88,7 +88,7 @@ class RDPFile(object):
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
         '''
-        params = ['/clipboard', '/t:UDS Connection', '/cert-ignore', '/sec:rdp']
+        params = ['/clipboard', '/t:UDS-Connection', '/cert-ignore', '/sec:rdp']
 
         if self.redirectSmartcards:
             params.append('/smartcard')
