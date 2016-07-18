@@ -41,7 +41,7 @@ import six
 import xmlrpclib
 from uds.core.util import xml2dict
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-07-18'
 
 logger = logging.getLogger(__name__)
 
@@ -183,7 +183,7 @@ class OpenNebulaClient(object):
         1.- Session string
         2.- Object ID (integer)
         3.- The new template contents. Syntax can be the usual attribute=value or XML.
-        4.- Update type. 0 replace the whote template, 1 merge with the existing one
+        4.- Update type. 0 replace the whole template, 1 merge with the existing one
         '''
         result = self.connection.one.template.update(self.sessionString, int(templateId), template, int(updateType))
         return checkResult(result, parseResult=False)

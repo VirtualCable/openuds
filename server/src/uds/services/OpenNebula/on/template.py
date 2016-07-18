@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-07-18'
 
 logger = logging.getLogger(__name__)
 
@@ -158,10 +158,6 @@ def deployFrom(api, templateId, name):
         name: Name (sanitized) of the machine
         comments: Comments for machine
         templateId: Id of the template to deploy from
-        clusterId: Id of the cluster to deploy to
-        displayType: 'vnc' or 'spice'. Display to use ad OpenNebula admin interface
-        memoryMB: Memory requested for machine, in MB
-        guaranteedMB: Minimum memory guaranteed for this machine
 
     Returns:
         Id of the machine being created form template
