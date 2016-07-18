@@ -33,26 +33,21 @@
 
 import logging
 import six
-import oca
 
 from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2016-02-09'
+__updated__ = '2016-07-18'
 
 logger = logging.getLogger(__name__)
 
 
 def getTemplates(api, force=False):
-    logger.debug('Api: {}'.format(api))
-    templatesPool = oca.VmTemplatePool(api)
-    templatesPool.info()
 
-    for t in templatesPool:
-        if t.name[:4] != 'UDSP':
-            yield (t.id, t.name)
-
+    for t in api.enumTemplates():
+        if t[1][:4] != 'UDSP':  # 0 = id, 1 = name
+            yield t
 
 def create(api, fromTemplateId, name, toDataStore):
     '''
@@ -71,15 +66,14 @@ def create(api, fromTemplateId, name, toDataStore):
     '''
     try:
         # First, we clone the themplate itself
-        templateId = api.call('template.clone', int(fromTemplateId), name)
+        # templateId = api.call('template.clone', int(fromTemplateId), name)
+        templateId = api.cloneTemplate(fromTemplateId, name)
 
         # Now copy cloned images if possible
         try:
-            imgs = oca.ImagePool(api)
-            imgs.info()
-            imgs = dict(((i.name, i.id) for i in imgs))
+            imgs = dict(((i[1], i[0]) for i in api.enumImages()))
 
-            info = api.call('template.info', templateId)
+            info = api.templateInfo(templateId)[1]
             template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
             logger.debug('XML: {}'.format(template.toxml()))
 
@@ -102,14 +96,15 @@ def create(api, fromTemplateId, name, toDataStore):
 
                 # Now clone the image
                 imgName = sanitizeName(name + ' DSK ' + six.text_type(counter))
-                newId = api.call('image.clone', int(imgId), imgName, int(toDataStore))
+                newId = api.cloneImage(imgId, imgName, toDataStore)  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
                 if fromId is True:
                     node.data = six.text_type(newId)
                 else:
                     node.data = imgName
 
             # Now update the clone
-            api.call('template.update', templateId, template.toxml())
+            # api.call('template.update', templateId, template.toxml())
+            api.updateTemplate(templateId, template.toxml())
         except Exception:
             logger.exception('Exception cloning image')
 
@@ -128,11 +123,9 @@ def remove(api, templateId):
         # First, remove Images (wont be possible if there is any images already in use, but will try)
         # Now copy cloned images if possible
         try:
-            imgs = oca.ImagePool(api)
-            imgs.info()
-            imgs = dict(((i.name, i.id) for i in imgs))
+            imgs = dict(((i[1], i[0]) for i in api.enumImages()))
 
-            info = api.call('template.info', int(templateId))
+            info = api.templateInfo(templateId)[1]
             template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
             logger.debug('XML: {}'.format(template.toxml()))
 
@@ -148,12 +141,12 @@ def remove(api, templateId):
                 logger.debug('Found {} for cloning'.format(imgId))
 
                 # Now delete the image
-                api.call('image.delete', int(imgId))
+                api.deleteImage(imgId)  # api.call('image.delete', int(imgId))
 
         except:
             logger.exception('Exception cloning image')
 
-        api.call('template.delete', int(templateId))
+        api.deleteTemplate(templateId)  # api.call('template.delete', int(templateId))
     except Exception as e:
         logger.error('Creating template on OpenNebula: {}'.format(e))
 
@@ -165,13 +158,9 @@ def deployFrom(api, templateId, name):
         name: Name (sanitized) of the machine
         comments: Comments for machine
         templateId: Id of the template to deploy from
-        clusterId: Id of the cluster to deploy to
-        displayType: 'vnc' or 'spice'. Display to use ad OpenNebula admin interface
-        memoryMB: Memory requested for machine, in MB
-        guaranteedMB: Minimum memory guaranteed for this machine
 
     Returns:
         Id of the machine being created form template
     '''
-    vmId = api.call('template.instantiate', int(templateId), name, False, '')
+    vmId = api.instantiateTemplate(templateId, name, False, '', False)  # api.call('template.instantiate', int(templateId), name, False, '')
     return six.text_type(vmId)

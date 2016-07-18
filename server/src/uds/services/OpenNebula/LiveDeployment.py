@@ -39,7 +39,7 @@ from . import on
 import pickle
 import logging
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-07-11'
 
 
 logger = logging.getLogger(__name__)
@@ -306,6 +306,7 @@ class LiveDeployment(UserDeployment):
 
             return State.RUNNING
         except Exception as e:
+            logger.exception('Got Exception')
             return self.__error(e)
 
     # Queue execution methods

@@ -32,11 +32,9 @@
 '''
 
 import logging
-import six
-import oca
 
 
-__updated__ = '2016-02-09'
+__updated__ = '2016-07-11'
 
 logger = logging.getLogger(__name__)
 
@@ -44,9 +42,4 @@ def enumerateDatastores(api, datastoreType=0):
     '''
     0 seems to be images datastore
     '''
-    datastores = oca.DatastorePool(api)
-    datastores.info()
-
-    for ds in datastores:
-        if ds.type == datastoreType:
-            yield (ds.id, ds.name)
+    return api.enumStorage(datastoreType)
