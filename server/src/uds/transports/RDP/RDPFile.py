@@ -89,7 +89,7 @@ class RDPFile(object):
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
         '''
-        params = ['/clipboard', '/t:UDS Connection', '/cert-ignore', '/sec:rdp']
+        params = ['/clipboard', '/t:UDS-Connection', '/cert-ignore', '/sec:rdp']
 
         if self.redirectSmartcards:
             params.append('/smartcard')
