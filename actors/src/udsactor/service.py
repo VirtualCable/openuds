@@ -245,8 +245,12 @@ class CommonService(object):
             self.ipc.sendInformationMessage(info)
         elif msg == ipc.REQ_TICKET:
             d = json.loads('data')
-            result = self.api.getTicket(d['ticketId'], d['secure'])
-            self.ipc.sendTicketMessage(result)
+            try:
+                result = self.api.getTicket(d['ticketId'], d['secure'])
+                self.ipc.sendTicketMessage(result)
+            except Exception:
+                logger.exception('Getting ticket')
+                self.ipc.sendTicketMessage({'error': 'invalid ticket'})
 
     def initIPC(self):
         # ******************************************
