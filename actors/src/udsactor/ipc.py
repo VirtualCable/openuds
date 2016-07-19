@@ -36,6 +36,7 @@ import sys
 import six
 import traceback
 import pickle
+import json
 
 from udsactor.utils import toUnicode
 from udsactor.log import logger
@@ -65,11 +66,14 @@ MSG_LOGOFF = 0xA1
 MSG_MESSAGE = 0xB2
 MSG_SCRIPT = 0xC3
 MSG_INFORMATION = 0xD4
+MSG_TICKET = 0xF6
 
 # Request messages
 REQ_INFORMATION = MSG_INFORMATION
 REQ_LOGIN = 0xE5
 REQ_LOGOUT = MSG_LOGOFF
+REQ_TICKET = MSG_TICKET
+VALID_REQUESTS = (REQ_INFORMATION, REQ_LOGIN, REQ_LOGOUT, REQ_TICKET)
 
 VALID_MESSAGES = (MSG_LOGOFF, MSG_MESSAGE, MSG_SCRIPT, MSG_INFORMATION)
 
@@ -81,6 +85,7 @@ REV_DICT = {
     MSG_MESSAGE: 'MSG_MESSAGE',
     MSG_SCRIPT: 'MSG_SCRIPT',
     MSG_INFORMATION: 'MSG_INFORMATION',
+    MSG_TICKET: 'MSG_TICKET',
     REQ_LOGIN: 'REQ_LOGIN',
     REQ_LOGOUT: 'REQ_LOGOUT'
 }
@@ -134,14 +139,14 @@ class ClientProcessor(threading.Thread):
                         break
                     buf = six.byte2int(b)  # Empty buffer, this is set as non-blocking
                     if state is None:
-                        if buf in (REQ_INFORMATION, REQ_LOGIN, REQ_LOGOUT):
+                        if buf in VALID_REQUESTS:
                             logger.debug('State set to {}'.format(buf))
                             state = buf
                             recv_msg = buf
                             continue  # Get next byte
                         else:
                             logger.debug('Got unexpected data {}'.format(buf))
-                    elif state in (REQ_INFORMATION, REQ_LOGIN, REQ_LOGOUT):
+                    elif state in VALID_REQUESTS:
                         logger.debug('First length byte is {}'.format(buf))
                         msg_len = buf
                         state = ST_SECOND_BYTE
@@ -252,6 +257,10 @@ class ServerIPC(threading.Thread):
     def sendInformationMessage(self, info):
         self.sendMessage(MSG_INFORMATION, pickle.dumps(info))
 
+    # This one is the only one dumped in json, be care with this!!
+    def sendTicketMessage(self, ticketData):
+        self.sendMessage(MSG_TICKET, json.dumps(ticketData))
+
     def cleanupFinishedThreads(self):
         '''
         Cleans up current threads list
@@ -330,6 +339,9 @@ class ClientIPC(threading.Thread):
 
     def sendLogout(self, username):
         self.sendRequestMessage(REQ_LOGOUT, username)
+
+    def requestTicket(self, ticketId, secure=True):
+        self.sendRequestMessage(REQ_TICKET, json.dumps({'ticketId': ticketId, 'secure': secure}))
 
     def messageReceived(self):
         '''

@@ -150,6 +150,8 @@ class MessagesProcessor(QtCore.QThread):
                     self.script.emit(QtCore.QString.fromUtf8(data))
                 elif msgId == ipc.MSG_INFORMATION:
                     self.information.emit(pickle.loads(data))
+                elif msgId == ipc.MSG_TICKET:
+                    pass  # Not processed because not useful here
             except Exception as e:
                 try:
                     logger.error('Got error on IPC thread {}'.format(utils.exceptionToMessage(e)))

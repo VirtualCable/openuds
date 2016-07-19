@@ -231,6 +231,11 @@ class Api(object):
         data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
         return self.postMessage('ip', data)
 
+    def getTicket(self, ticketId, secure=False):
+        url = self._getUrl('ticket/' + ticketId, self.masterKey) + "&secure={}".format('1' if secure else '0')
+        return self._request(url)['result']
+
+
     def log(self, logLevel, message):
         data = json.dumps({'message': message, 'level': logLevel})
         return self.postMessage('log', data, processData=False)
