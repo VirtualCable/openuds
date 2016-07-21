@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2016-07-15'
+__updated__ = '2016-07-21'
 
 
 class RDPFile(object):
@@ -58,6 +58,8 @@ class RDPFile(object):
     redirectSmartcards = False
     redirectAudio = True
     compression = True
+    multimedia = True
+    alsa = True
     displayConnectionBar = True
     showWallpaper = False
     multimon = False
@@ -94,13 +96,16 @@ class RDPFile(object):
             params.append('/smartcard')
 
         if self.redirectAudio:
-            # params.append('/sound:sys:alsa')
-            # params.append('/microphone:sys:alsa')
-            # params.append('/multimedia:sys:alsa')
-            # Let freerdp decide if pulse o alsa
-            params.append('/sound')
-            params.append('/microphone')
-            params.append('/multimedia')
+            if self.alsa:
+                params.append('/sound:sys:alsa')
+                params.append('/microphone:sys:alsa')
+                if self.multimedia:
+                    params.append('/multimedia:sys:alsa')
+            else:
+                params.append('/sound')
+                params.append('/microphone')
+                if self.multimedia:
+                    params.append('/multimedia')
 
         if self.redirectDrives is True:
             params.append('/drive:media,/media')

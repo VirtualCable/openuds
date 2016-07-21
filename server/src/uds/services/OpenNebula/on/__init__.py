@@ -41,7 +41,7 @@ import six
 import xmlrpclib
 from uds.core.util import xml2dict
 
-__updated__ = '2016-07-18'
+__updated__ = '2016-07-21'
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ class OpenNebulaClient(object):
         if self.cachedVersion is None:
             # Retrieve Version & keep it
             result = self.connection.one.system.version(self.sessionString)
-            self.cachedVersion = checkResult(result, parseResult=False).split('.')
+            self.cachedVersion = checkResult(result, parseResult=False).split('.')  # pylint: disable=maybe-no-member
         return self.cachedVersion
 
 
