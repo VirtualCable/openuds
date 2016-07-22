@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2016-07-18'
+__updated__ = '2016-07-22'
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +97,9 @@ def create(api, fromTemplateId, name, toDataStore):
                 # Now clone the image
                 imgName = sanitizeName(name + ' DSK ' + six.text_type(counter))
                 newId = api.cloneImage(imgId, imgName, toDataStore)  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
+                # Ensure image is non persistent
+                api.makePersistentImage(newId, False)
+                # Now Store id/name
                 if fromId is True:
                     node.data = six.text_type(newId)
                 else:
@@ -164,3 +167,33 @@ def deployFrom(api, templateId, name):
     '''
     vmId = api.instantiateTemplate(templateId, name, False, '', False)  # api.call('template.instantiate', int(templateId), name, False, '')
     return six.text_type(vmId)
+
+def checkPublished(api, templateId):
+    '''
+    checks if the template is fully published (images are ready...)
+    '''
+    try:
+        imgs = dict(((i[1], i[0]) for i in api.enumImages()))
+
+        info = api.templateInfo(templateId)[1]
+        template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
+        logger.debug('XML: {}'.format(template.toxml()))
+
+        for dsk in template.getElementsByTagName('DISK'):
+            imgIds = dsk.getElementsByTagName('IMAGE_ID')
+            if len(imgIds) == 0:
+                node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                imgId = imgs[node.data]
+            else:
+                node = imgIds[0].childNodes[0]
+                imgId = node.data
+
+            logger.debug('Found {} for checking'.format(imgId))
+
+            if api.imageInfo(imgId)[0]['IMAGE']['STATE'] == '4':
+                return False
+    except Exception:
+        logger.exception('Exception checking published')
+        raise
+
+    return True

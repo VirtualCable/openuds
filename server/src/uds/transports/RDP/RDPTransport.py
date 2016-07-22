@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2016-06-17'
+__updated__ = '2016-07-21'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -68,6 +68,8 @@ class RDPTransport(BaseRDPTransport):
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
+    multimedia = BaseRDPTransport.multimedia
+    alsa = BaseRDPTransport.alsa
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
@@ -91,6 +93,8 @@ class RDPTransport(BaseRDPTransport):
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
+        r.multimedia = self.multimedia.isTrue()
+        r.alsa = self.alsa.isTrue()
         r.enablecredsspsupport = not ci['sso']  # with SSO, credssspsuport must be disabled
         logger.debug('SSO: {}'.format(ci['sso']))
 

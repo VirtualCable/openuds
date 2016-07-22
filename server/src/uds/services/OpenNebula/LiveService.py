@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-07-22'
 
 logger = logging.getLogger(__name__)
 
@@ -152,6 +152,9 @@ class LiveService(Service):
 
     def makeTemplate(self, templateName):
         return self.parent().makeTemplate(self.template.value, templateName, self.datastore.value)
+
+    def checkTemplatePublished(self, templateId):
+        return self.parent().checkTemplatePublished(templateId)
 
     def deployFromTemplate(self, name, templateId):
         '''

@@ -38,7 +38,7 @@ from datetime import datetime
 import logging
 
 
-__updated__ = '2016-02-08'
+__updated__ = '2016-07-22'
 
 
 logger = logging.getLogger(__name__)
@@ -87,7 +87,7 @@ class LivePublication(Publication):
         '''
         self._name = self.service().sanitizeVmName('UDSP ' + self.dsName() + "-" + str(self.revision()))
         self._reason = ''  # No error, no reason for it
-        self._state = 'ok'
+        self._state = 'running'
 
         try:
             self._templateId = self.service().makeTemplate(self._name)
@@ -102,11 +102,17 @@ class LivePublication(Publication):
         '''
         Checks state of publication creation
         '''
+        if self._state == 'running':
+            if self.service().checkTemplatePublished(self._templateId) is False:
+                return
+            self._state = 'ok'
+
         if self._state == 'error':
             return State.ERROR
 
         if self._state == 'ok':
             return State.FINISHED
+
 
         self._state = 'ok'
         return State.FINISHED

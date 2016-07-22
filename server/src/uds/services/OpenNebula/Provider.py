@@ -50,7 +50,7 @@ import six
 # Python bindings for OpenNebula
 # import oca
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-07-22'
 
 logger = logging.getLogger(__name__)
 
@@ -165,6 +165,9 @@ class Provider(ServiceProvider):
 
     def makeTemplate(self, fromTemplateId, name, toDataStore):
         return on.template.create(self.api, fromTemplateId, name, toDataStore)
+
+    def checkTemplatePublished(self, templateId):
+        return on.template.checkPublished(self.api, templateId)
 
     def removeTemplate(self, templateId):
         return on.template.remove(self.api, templateId)
