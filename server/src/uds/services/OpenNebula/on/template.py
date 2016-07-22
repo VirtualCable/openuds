@@ -190,8 +190,10 @@ def checkPublished(api, templateId):
 
             logger.debug('Found {} for checking'.format(imgId))
 
-            if api.getImageInfo(imgId)[0]['IMAGE']['STATE'] == '4':
+            if api.imageInfo(imgId)[0]['IMAGE']['STATE'] == '4':
                 return False
     except Exception:
         logger.exception('Exception checking published')
         raise
+
+    return True

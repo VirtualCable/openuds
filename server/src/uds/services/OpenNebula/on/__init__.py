@@ -279,12 +279,11 @@ class OpenNebulaClient(object):
         Deletes an vm
         '''
         if self.version[0] == '4':
-            result = self.VMAction(vmId, 'delete')
+            return self.VMAction(vmId, 'delete')
         else:
             # Version 5
-            result = self.VMAction(vmId, 'terminate-hard')
+            return self.VMAction(vmId, 'terminate-hard')
 
-        return checkResult(result, parseResult=False)
 
     @ensureConnected
     def getVMState(self, vmId):
