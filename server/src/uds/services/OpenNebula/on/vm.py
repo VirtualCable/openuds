@@ -82,7 +82,8 @@ def startMachine(api, machineId):
         # vm.resume()
         api.VMAction(machineId, 'resume')
     except Exception as e:
-        logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
+        # logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
+        pass
 
 def stopMachine(api, machineId):
     '''
