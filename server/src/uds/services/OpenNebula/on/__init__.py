@@ -31,6 +31,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+# pylint: disable=maybe-no-member
+
 import sys
 import imp
 import re
@@ -41,17 +43,20 @@ import six
 import xmlrpclib
 from uds.core.util import xml2dict
 
-__updated__ = '2016-07-21'
+__updated__ = '2016-07-22'
 
 logger = logging.getLogger(__name__)
 
 
 module = sys.modules[__name__]
 VmState = imp.new_module('VmState')
+ImageState = imp.new_module('ImageState')
 
 for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED', 'DONE', 'FAILED', 'POWEROFF', 'UNDEPLOYED']):
     setattr(VmState, i[1], i[0])
 
+for i in enumerate(['INIT', 'READY', 'USED', 'DISABLED', 'LOCKED', 'ERROR', 'CLONE', 'DELETE', 'USED_PERS', 'LOCKED_USED', 'LOCKED_USED_PERS']):
+    setattr(ImageState, i[1], i[0])
 
 # Import submodules
 from .common import *
@@ -98,7 +103,7 @@ class OpenNebulaClient(object):
         if self.cachedVersion is None:
             # Retrieve Version & keep it
             result = self.connection.one.system.version(self.sessionString)
-            self.cachedVersion = checkResult(result, parseResult=False).split('.')  # pylint: disable=maybe-no-member
+            self.cachedVersion = checkResult(result, parseResult=False).split('.')
         return self.cachedVersion
 
 
@@ -216,12 +221,31 @@ class OpenNebulaClient(object):
         return checkResult(result, parseResult=False)
 
     @ensureConnected
+    def makePersistentImage(self, imageId, persistent=False):
+        '''
+        Clones the image.
+        '''
+        result = self.connection.one.image.persistent(self.sessionString, int(imageId), persistent)
+        return checkResult(result, parseResult=False)
+
+    @ensureConnected
     def deleteImage(self, imageId):
         '''
         Deletes an image
         '''
         result = self.connection.one.image.delete(self.sessionString, int(imageId))
         return checkResult(result, parseResult=False)
+
+    @ensureConnected
+    def imageInfo(self, imageInfo):
+        '''
+        Returns a list
+        first element is a dictionary (built from XML)
+        second is original XML
+        '''
+        result = self.connection.one.image.info(self.sessionString, int(imageInfo))
+        res = checkResult(result)
+        return (res, result[1])
 
     @ensureConnected
     def enumVMs(self):
