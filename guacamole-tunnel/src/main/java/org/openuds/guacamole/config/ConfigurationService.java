@@ -148,7 +148,8 @@ public class ConfigurationService {
 
         // Build base URI from only the scheme and host of the given URI
         try {
-            return new URI(uri.getScheme(), uri.getHost(), null, null);
+            return new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(),
+                    null, null, null);
         }
         catch (URISyntaxException e) {
             throw new GuacamoleServerException("Failed to derive base URI.", e);
