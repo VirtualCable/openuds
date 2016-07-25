@@ -28,7 +28,7 @@
 
 package org.openuds.guacamole;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.apache.guacamole.tunnel.TunnelRequestService;
 import org.openuds.guacamole.config.ConfigurationService;
@@ -38,10 +38,10 @@ import org.openuds.guacamole.connection.ConnectionService;
  * Guice module which binds classes required by the OpenUDS integration of
  * Apache Guacamole.
  */
-public class UDSModule extends AbstractModule {
+public class UDSModule extends ServletModule {
 
     @Override
-    protected void configure() {
+    protected void configureServlets() {
 
         // Serve servlets, etc. with Guice
         bind(GuiceContainer.class);

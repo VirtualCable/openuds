@@ -28,6 +28,7 @@
 
 package org.openuds.guacamole.config;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Properties;
+import javax.servlet.ServletContext;
 import org.apache.guacamole.GuacamoleException;
 import org.apache.guacamole.GuacamoleServerException;
 import org.slf4j.Logger;
@@ -161,13 +163,18 @@ public class ConfigurationService {
      * resulting errors will simply be logged. If configuration information
      * cannot be read, attempts to retrieve this information later through calls
      * to the getters of this service will fail with appropriate exceptions.
+     *
+     * @param context
+     *     The ServletContext associated with the servlet container which is
+     *     serving this web application.
      */
-    public ConfigurationService() {
+    @Inject
+    public ConfigurationService(ServletContext context) {
 
         // Read tunnel.properties
         Properties config = new Properties();
         try {
-            config.load(ConfigurationService.class.getResourceAsStream("/WEB-INF/tunnel.properties"));
+            config.load(context.getResourceAsStream("/WEB-INF/tunnel.properties"));
         }
         catch (IOException e) {
             logger.error("Unable to read tunnel.properties.", e);
