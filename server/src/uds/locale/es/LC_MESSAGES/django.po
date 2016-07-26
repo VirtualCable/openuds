@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-07 18:10+0200\n"
-"PO-Revision-Date: 2016-06-07 10:26+0000\n"
+"POT-Creation-Date: 2016-07-26 14:56+0200\n"
+"PO-Revision-Date: 2016-07-26 11:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -24,20 +24,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: REST/methods/actor.py:94 REST/methods/client.py:92
+#: REST/methods/actor.py:97 REST/methods/client.py:92
 #: REST/methods/client.py:109
 msgid "Correct"
 msgstr "Correcto"
 
-#: REST/methods/actor.py:104
+#: REST/methods/actor.py:107
 msgid "Invalid key"
 msgstr "Clave no válida"
 
-#: REST/methods/actor.py:166
+#: REST/methods/actor.py:172
 msgid "Unmanaged host"
 msgstr "Host no administrado"
 
-#: REST/methods/actor.py:198 web/errors.py:79
+#: REST/methods/actor.py:204 web/errors.py:79
 msgid "User service not found"
 msgstr "Servicio de usuario no encontrado"
 
@@ -1760,7 +1760,7 @@ msgstr "Gestión"
 msgid "All"
 msgstr "Todos"
 
-#: models/ServicesPoolGroup.py:85
+#: models/ServicesPoolGroup.py:90
 msgid "General"
 msgstr "General"
 
@@ -1777,27 +1777,27 @@ msgstr ""
 "máquinas y notifica los estados)"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:50
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
 msgid "On Logout"
 msgstr "Al salir"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
 msgid "What to do when user logs out from service"
 msgstr "Qué hacer cuando el usuario cierra la sesión del servicio"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:64
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:55
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:58
 msgid "Keep service assigned"
 msgstr "Mantener el servicio asignado"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:59
 msgid "Remove service"
 msgstr "Eliminar servicio"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:65
 msgid "Max.Idle time"
 msgstr "Tiempo máx de inactividad"
 
@@ -2008,11 +2008,11 @@ msgstr "Contraseña actual (plantilla) de la cuenta de usuario"
 msgid "Must provide a password for the account!!!"
 msgstr "¡Debe indicar una contraseña para la cuenta!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:43
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:46
 msgid "Windows Basic OS Manager"
 msgstr "OS Manager para Windows Básico"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:45
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:48
 msgid ""
 "Os Manager to control windows machines without domain. (Basically renames "
 "machine)"
@@ -2020,7 +2020,7 @@ msgstr ""
 "OS Manager para controlar máquinas Windows sin dominio. (Básicamente "
 "renombra las máquinas)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:70
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
@@ -2029,11 +2029,11 @@ msgstr ""
 "automáticamente para el usuario (< = 0 significa sin tiempo máx. de "
 "inactividad)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be numeric!!"
 msgstr "¡La longitud debe ser numérica!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:81
 msgid "Length must be betwen 1 and 6"
 msgstr "La longitud debe estar entre 1 y 6"
 
@@ -2716,7 +2716,7 @@ msgstr "Contraseña del usuario de OpenNebula"
 msgid "Timeout in seconds of connection to OpenNebula"
 msgstr "Tiempo de espera en segundos para conexión con OpenNebula"
 
-#: services/OpenNebula/Provider.py:157
+#: services/OpenNebula/Provider.py:158
 msgid "Opennebula test connection passed"
 msgstr "Prueba de conexión a OpenNebula superada"
 
@@ -2866,37 +2866,37 @@ msgstr "Servicio de máquinas IP estática"
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Este servicio proporciona acceso a las máquinas de POWERED-ON por IP"
 
-#: services/RDS_enterprise/RDSProvider.py:28
+#: services/RDS_enterprise/RDSProvider.py:31
 msgid "RDS Platform Provider (Experimental)"
 msgstr "Proveedor de plataforma RDS (Experimental)"
 
-#: services/RDS_enterprise/RDSProvider.py:30
+#: services/RDS_enterprise/RDSProvider.py:33
 msgid "Microsoft RDS based provider"
 msgstr "Proveedor de Microsoft basado en RDS "
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:37
 msgid "List of servers"
 msgstr "Lista de servidores"
 
-#: services/RDS_enterprise/RDSProvider.py:35
+#: services/RDS_enterprise/RDSProvider.py:38
 msgid "User list for mapping"
 msgstr "Lista de usuarios para el mapeo"
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "User's password"
 msgstr "Contraseña de usuario"
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "Default password for users in list mapping"
 msgstr "Contraseña por defecto para los usuarios en el mapeo de la lista"
 
-#: services/RDS_enterprise/RDSProvider.py:59
+#: services/RDS_enterprise/RDSProvider.py:62
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Error: Usuario {} en {} host está siendo utilizado y no se pueden eliminar "
 "ahora"
 
-#: services/RDS_enterprise/RDSProvider.py:89
+#: services/RDS_enterprise/RDSProvider.py:92
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -3726,12 +3726,15 @@ msgid "Or download another version"
 msgstr "O descargar otra versión"
 
 #: templates/uds/html5/download_client.html:15
+#| msgid ""
+#| "In case that your platform has been incorrectly detected, you can "
+#| "download manually the version required for your Operating System"
 msgid ""
 "If your platform couldn’t be detected correctly, you can manually download "
 "the version required for your Operating System."
 msgstr ""
-"Si su plataforma no se detecta correctamente, usted puede descargar "
-"manualmente la versión para tu sistema operativo."
+"Si su plataforma no se detecta correctamente, usted puede descargar manualmente "
+"la versión para tu sistema operativo."
 
 #: templates/uds/html5/download_client.html:19
 #: templates/uds/semantic/download_client.html:19
@@ -3749,6 +3752,9 @@ msgid "Mac OSX (>10.5) UDS plugin"
 msgstr "Plugin UDS Mac OSX (> 10.5) "
 
 #: templates/uds/html5/download_client.html:35
+#| msgid ""
+#| "If you already have UDS Plugin installed but this message persists to "
+#| "appear, you can disable automatic detection here"
 msgid ""
 "If you already have UDS Plugin installed and you can still see this message, "
 "you can disable automatic detection here."
@@ -3776,12 +3782,15 @@ msgstr ""
 "página no se volverá a activar si no tiene el plugin instalado."
 
 #: templates/uds/html5/download_client.html:45
+#| msgid ""
+#| "In this case, you will have to manually download the plugin by using the "
+#| "menu on upper right corner."
 msgid ""
 "Hence, you will have to manually download the plugin by using the menu on "
 "upper right corner."
 msgstr ""
-"Por lo tanto, usted tendrá que descargar manualmente el plugin mediante el "
-"menú en esquina superior derecha."
+"Por lo tanto, usted tendrá que descargar manualmente el plugin mediante el menú en "
+"esquina superior derecha."
 
 #: templates/uds/html5/download_client.html:47
 #: templates/uds/semantic/download_client.html:47
@@ -4230,7 +4239,39 @@ msgstr ""
 "Si está activada, la impresión se redireccionará al cliente (si el "
 "explorador cliente lo soporta)"
 
+#: transports/HTML5RDP/HTML5RDP.py:77
+msgid "Layout"
+msgstr "Diseño"
+
+#: transports/HTML5RDP/HTML5RDP.py:78
+msgid "Keyboards Layout of server"
+msgstr "Diseño de teclados de servidor"
+
 #: transports/HTML5RDP/HTML5RDP.py:81
+msgid "English (US) keyboard"
+msgstr "Teclado de inglés (Estados Unidos)"
+
+#: transports/HTML5RDP/HTML5RDP.py:82
+msgid "German keyboard (qwertz)"
+msgstr "Teclado alemán (qwertz)"
+
+#: transports/HTML5RDP/HTML5RDP.py:83
+msgid "French keyboard (azerty)"
+msgstr "Teclado francés (azerty)"
+
+#: transports/HTML5RDP/HTML5RDP.py:84
+msgid "Italian keyboard"
+msgstr "Teclado Italiano"
+
+#: transports/HTML5RDP/HTML5RDP.py:85
+msgid "Swedish keyboard"
+msgstr "Teclado sueco"
+
+#: transports/HTML5RDP/HTML5RDP.py:86
+msgid "Failsafe"
+msgstr "A prueba de fallos"
+
+#: transports/HTML5RDP/HTML5RDP.py:98
 msgid "The server must be http or https"
 msgstr "El servidor debe ser http o https"
 
@@ -4325,8 +4366,8 @@ msgstr ""
 "se está ejecutando antes de asignárselo al usuario. (utilice el formato "
 "HOST: PUERTO)"
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:88
-#: transports/RDS_enterprise/TRDSTransport.py:81
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:90
+#: transports/RDS_enterprise/TRDSTransport.py:83
 #: transports/RGS_enterprise/TRGSTransport.py:76
 #: transports/SPICE/TSPICETransport.py:73
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4442,6 +4483,27 @@ msgstr "Permitir Aero-"
 #: transports/RDP/BaseRDPTransport.py:72
 msgid "If checked, desktop composition will be allowed"
 msgstr "Si está marcada, se permitirá la composición de escritorio"
+
+#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Multimedia sync"
+msgstr "Sincronización multimedia"
+
+#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
+msgstr ""
+"Si está marcada. Cliente Linux usará el parámetro multimedia para xfreerdp"
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+msgid "Use Alsa"
+msgstr "Uso Alsa"
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+msgid "If checked, Linux client will try to use alsa, pulse if not"
+msgstr "Si, Linux cliente intentará usar alsa, pulso si no"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
@@ -4696,7 +4758,7 @@ msgstr "El Autenticador no proporciona información"
 msgid "UDS Plugin preferences"
 msgstr "Preferencias del Plugin UDS"
 
-#: web/views/index.py:178
+#: web/views/index.py:179
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."

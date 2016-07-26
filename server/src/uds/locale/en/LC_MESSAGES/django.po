@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-07 18:10+0200\n"
+"POT-Creation-Date: 2016-07-26 14:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: REST/methods/actor.py:94 REST/methods/client.py:92
+#: REST/methods/actor.py:97 REST/methods/client.py:92
 #: REST/methods/client.py:109
 msgid "Correct"
 msgstr ""
 
-#: REST/methods/actor.py:104
+#: REST/methods/actor.py:107
 msgid "Invalid key"
 msgstr ""
 
-#: REST/methods/actor.py:166
+#: REST/methods/actor.py:172
 msgid "Unmanaged host"
 msgstr ""
 
-#: REST/methods/actor.py:198 web/errors.py:79
+#: REST/methods/actor.py:204 web/errors.py:79
 msgid "User service not found"
 msgstr ""
 
@@ -1689,7 +1689,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: models/ServicesPoolGroup.py:85
+#: models/ServicesPoolGroup.py:90
 msgid "General"
 msgstr ""
 
@@ -1704,27 +1704,27 @@ msgid ""
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:50
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
 msgid "On Logout"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
 msgid "What to do when user logs out from service"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:64
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:55
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:58
 msgid "Keep service assigned"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:59
 msgid "Remove service"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:65
 msgid "Max.Idle time"
 msgstr ""
 
@@ -1913,27 +1913,27 @@ msgstr ""
 msgid "Must provide a password for the account!!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:43
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:46
 msgid "Windows Basic OS Manager"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:45
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:48
 msgid ""
 "Os Manager to control windows machines without domain. (Basically renames "
 "machine)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:70
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be numeric!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:81
 msgid "Length must be betwen 1 and 6"
 msgstr ""
 
@@ -2598,7 +2598,7 @@ msgstr ""
 msgid "Timeout in seconds of connection to OpenNebula"
 msgstr ""
 
-#: services/OpenNebula/Provider.py:157
+#: services/OpenNebula/Provider.py:158
 msgid "Opennebula test connection passed"
 msgstr ""
 
@@ -2746,35 +2746,35 @@ msgstr ""
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:28
+#: services/RDS_enterprise/RDSProvider.py:31
 msgid "RDS Platform Provider (Experimental)"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:30
+#: services/RDS_enterprise/RDSProvider.py:33
 msgid "Microsoft RDS based provider"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:37
 msgid "List of servers"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:35
+#: services/RDS_enterprise/RDSProvider.py:38
 msgid "User list for mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "User's password"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "Default password for users in list mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:59
+#: services/RDS_enterprise/RDSProvider.py:62
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:89
+#: services/RDS_enterprise/RDSProvider.py:92
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -4042,7 +4042,39 @@ msgid ""
 "supports it)"
 msgstr ""
 
+#: transports/HTML5RDP/HTML5RDP.py:77
+msgid "Layout"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:78
+msgid "Keyboards Layout of server"
+msgstr ""
+
 #: transports/HTML5RDP/HTML5RDP.py:81
+msgid "English (US) keyboard"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:82
+msgid "German keyboard (qwertz)"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:83
+msgid "French keyboard (azerty)"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:84
+msgid "Italian keyboard"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:85
+msgid "Swedish keyboard"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:86
+msgid "Failsafe"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:98
 msgid "The server must be http or https"
 msgstr ""
 
@@ -4132,8 +4164,8 @@ msgid ""
 "assigning it to user. (use HOST:PORT format)"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:88
-#: transports/RDS_enterprise/TRDSTransport.py:81
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:90
+#: transports/RDS_enterprise/TRDSTransport.py:83
 #: transports/RGS_enterprise/TRGSTransport.py:76
 #: transports/SPICE/TSPICETransport.py:73
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4235,6 +4267,26 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:72
 msgid "If checked, desktop composition will be allowed"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Multimedia sync"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+msgid "Use Alsa"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+msgid "If checked, Linux client will try to use alsa, pulse if not"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:55
@@ -4473,7 +4525,7 @@ msgstr ""
 msgid "UDS Plugin preferences"
 msgstr ""
 
-#: web/views/index.py:178
+#: web/views/index.py:179
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."

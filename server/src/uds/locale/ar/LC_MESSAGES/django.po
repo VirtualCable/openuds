@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-07 18:10+0200\n"
-"PO-Revision-Date: 2016-06-07 11:14+0000\n"
-"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
+"POT-Creation-Date: 2016-07-26 14:56+0200\n"
+"PO-Revision-Date: 2016-07-26 11:36+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
 "Language: ar\n"
@@ -19,20 +19,20 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: REST/methods/actor.py:94 REST/methods/client.py:92
+#: REST/methods/actor.py:97 REST/methods/client.py:92
 #: REST/methods/client.py:109
 msgid "Correct"
 msgstr "صحيح"
 
-#: REST/methods/actor.py:104
+#: REST/methods/actor.py:107
 msgid "Invalid key"
 msgstr "المفتاح غير صالح"
 
-#: REST/methods/actor.py:166
+#: REST/methods/actor.py:172
 msgid "Unmanaged host"
 msgstr "المضيف غير المدارة"
 
-#: REST/methods/actor.py:198 web/errors.py:79
+#: REST/methods/actor.py:204 web/errors.py:79
 msgid "User service not found"
 msgstr "لم يتم العثور على خدمة المستخدم"
 
@@ -188,8 +188,8 @@ msgid ""
 "Network range. Accepts most network definitions formats (range, subnet, "
 "host, etc..."
 msgstr ""
-"نطاق الشبكة. تقبل معظم تنسيقات تعريفات الشبكة (النطاق، شبكة فرعية، "
-"المضيف، إلخ..."
+"نطاق الشبكة. تقبل معظم تنسيقات تعريفات الشبكة (النطاق، شبكة فرعية، المضيف، "
+"إلخ..."
 
 #: REST/methods/osmanagers.py:55
 msgid "Current OS Managers"
@@ -443,8 +443,8 @@ msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
 msgstr ""
-"الحد الأقصى لعدد من الخدمات (المعينة ومخبأ L1) التي يمكن أن تنشأ عن "
-"هذه الخدمة"
+"الحد الأقصى لعدد من الخدمات (المعينة ومخبأ L1) التي يمكن أن تنشأ عن هذه "
+"الخدمة"
 
 #: REST/methods/services_pools.py:212
 msgid "Show transports"
@@ -475,8 +475,8 @@ msgid ""
 "If checked, the transport will be enabled for the selected networks.If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
-"إذا كانت محددة، سيتم تمكين النقل لشبكات مختارة. إذا كان "
-"دون رادع، سيتم تعطيل النقل لشبكات مختارة"
+"إذا كانت محددة، سيتم تمكين النقل لشبكات مختارة. إذا كان دون رادع، سيتم تعطيل "
+"النقل لشبكات مختارة"
 
 #: REST/methods/transports.py:79
 #: services/Nutanix_enterprise/NutanixService.py:51
@@ -499,61 +499,61 @@ msgstr "غير معروف"
 #: REST/methods/user_services.py:113
 #: templates/uds/admin/tmpl/services_pool.html:31
 msgid "Assigned services"
-msgstr ""
+msgstr "الخدمات المخصصة"
 
 #: REST/methods/user_services.py:117 REST/methods/user_services.py:185
 msgid "Creation date"
-msgstr ""
+msgstr "تاريخ الإنشاء"
 
 #: REST/methods/user_services.py:118 REST/methods/user_services.py:186
 #: REST/methods/user_services.py:328 REST/methods/user_services.py:357
 msgid "Revision"
-msgstr ""
+msgstr "مراجعة"
 
 #: REST/methods/user_services.py:120 REST/methods/user_services.py:188
 #: auths/IP/Authenticator.py:60
 msgid "IP"
-msgstr ""
+msgstr "الملكية الفكرية"
 
 #: REST/methods/user_services.py:121 REST/methods/user_services.py:189
 msgid "Friendly name"
-msgstr ""
+msgstr "اسم مألوف"
 
 #: REST/methods/user_services.py:123
 msgid "Status date"
-msgstr ""
+msgstr "تاريخ الحالة"
 
 #: REST/methods/user_services.py:124
 msgid "In Use"
-msgstr ""
+msgstr "في الاستخدام"
 
 #: REST/methods/user_services.py:125
 msgid "Src Host"
-msgstr ""
+msgstr "المضيف Src"
 
 #: REST/methods/user_services.py:126
 msgid "Src Ip"
-msgstr ""
+msgstr "Src الملكية الفكرية"
 
 #: REST/methods/user_services.py:127
 msgid "Owner"
-msgstr ""
+msgstr "مالك"
 
 #: REST/methods/user_services.py:128 REST/methods/user_services.py:192
 msgid "Actor version"
-msgstr ""
+msgstr "إصدار الفاعل"
 
 #: REST/methods/user_services.py:155
 msgid "Item already being removed"
-msgstr ""
+msgstr "البند إزالة مسبقاً"
 
 #: REST/methods/user_services.py:157
 msgid "Item is not removable"
-msgstr ""
+msgstr "البند غير قابل للإزالة"
 
 #: REST/methods/user_services.py:181
 msgid "Cached services"
-msgstr ""
+msgstr "خدمات التخزين المؤقت"
 
 #: REST/methods/user_services.py:190 REST/methods/user_services.py:227
 #: REST/methods/user_services.py:330 REST/methods/user_services.py:359
@@ -561,50 +561,50 @@ msgstr ""
 #: templates/uds/admin/tmpl/service-info.html:22
 #: templates/uds/admin/tmpl/user.html:45
 msgid "State"
-msgstr ""
+msgstr "الدولة"
 
 #: REST/methods/user_services.py:191
 msgid "Cache level"
-msgstr ""
+msgstr "مستوى التخزين المؤقت"
 
 #: REST/methods/user_services.py:220
 msgid "Assigned groups"
-msgstr ""
+msgstr "المجموعات المخصصة"
 
 #: REST/methods/user_services.py:226 templates/uds/admin/tmpl/group.html.py:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
-msgstr ""
+msgstr "تعليقات"
 
 #: REST/methods/user_services.py:255
 msgid "Assigned transports"
-msgstr ""
+msgstr "النقل المعينة"
 
 #: REST/methods/user_services.py:324
 #: templates/uds/admin/tmpl/services_pool.html:35
 msgid "Publications"
-msgstr ""
+msgstr "المنشورات"
 
 #: REST/methods/user_services.py:329 REST/methods/user_services.py:358
 msgid "Publish date"
-msgstr ""
+msgstr "تاريخ النشر"
 
 #: REST/methods/user_services.py:331 templates/uds/admin/tmpl/publish.html.py:5
 msgid "Reason"
-msgstr ""
+msgstr "السبب"
 
 #: REST/methods/user_services.py:353
 msgid "Changelog"
-msgstr ""
+msgstr "سجل التغيير"
 
 #: REST/methods/users_groups.py:88
 #, python-brace-format
 msgid "Users of {0}"
-msgstr ""
+msgstr "مستخدمين {0}"
 
 #: REST/methods/users_groups.py:90
 msgid "Current users"
-msgstr ""
+msgstr "المستخدمون الحاليون"
 
 #: REST/methods/users_groups.py:94
 #: auths/ActiveDirectory_enterprise/Authenticator.py:54
@@ -625,110 +625,111 @@ msgstr ""
 #: transports/RGS_enterprise/TRGSTransport.py:53
 #: transports/SPICE/BaseSPICETransport.py:72 web/forms/LoginForm.py:63
 msgid "Username"
-msgstr ""
+msgstr "اسم المستخدم"
 
 #: REST/methods/users_groups.py:97 REST/methods/users_groups.py:210
 msgid "state"
-msgstr ""
+msgstr "الدولة"
 
 #: REST/methods/users_groups.py:98 reports/lists/users.py:86
 #: reports/lists/users.py:162
 msgid "Last access"
-msgstr ""
+msgstr "آخر وصول"
 
 #: REST/methods/users_groups.py:148 REST/methods/users_groups.py:272
 msgid "User already exists (duplicate key error)"
-msgstr ""
+msgstr "المستخدم موجود بالفعل (خطأ مفتاح مكرر)"
 
 #: REST/methods/users_groups.py:202
 #, python-brace-format
 msgid "Groups of {0}"
-msgstr ""
+msgstr "مجموعات من {0}"
 
 #: REST/methods/users_groups.py:204
 msgid "Current groups"
-msgstr ""
+msgstr "المجموعات الحالية"
 
 #: REST/methods/users_groups.py:215
 msgid "UDS Group"
-msgstr ""
+msgstr "المجموعة المصغرة"
 
 #: REST/methods/users_groups.py:216
 msgid "Meta group"
-msgstr ""
+msgstr "الفريق الفوقية"
 
 #: REST/methods/users_groups.py:216
 msgid "UDS Meta Group"
-msgstr ""
+msgstr "مجموعة Meta المصغرة"
 
 #: REST/model.py:123
 msgid "Tags"
-msgstr ""
+msgstr "العلامات"
 
 #: REST/model.py:125
 msgid "Tags for this element"
-msgstr ""
+msgstr "العلامات لهذا العنصر"
 
 #: REST/model.py:133
 msgid "Name of this element"
-msgstr ""
+msgstr "اسم هذا العنصر"
 
 #: REST/model.py:140
 msgid "Comments for this element"
-msgstr ""
+msgstr "تعليقات لهذا العنصر"
 
 #: REST/model.py:149
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
+"تحديد أولوية هذا العنصر (انخفاض عدد الوسائل أولوية أعلى)"
 
 #: REST/model.py:159
 msgid "Label"
-msgstr ""
+msgstr "التسمية"
 
 #: REST/model.py:160
 msgid "Label for this element"
-msgstr ""
+msgstr "تسمية لهذا العنصر"
 
 #: REST/model.py:243
 msgid "Invalid Request"
-msgstr ""
+msgstr "طلب غير صالح"
 
 #: REST/model.py:250
 msgid "Method not found in {}: {}"
-msgstr ""
+msgstr "تعذر العثور على الأسلوب في {}: {}"
 
 #: REST/model.py:256
 msgid "Item not found"
-msgstr ""
+msgstr "تعذر العثور على عنصر"
 
 #: REST/model.py:261 web/errors.py:75
 msgid "Access denied"
-msgstr ""
+msgstr "تم رفض الوصول"
 
 #: REST/model.py:264
 msgid "Operation not supported"
-msgstr ""
+msgstr "العملية غير معتمدة"
 
 #: admin/views/__init__.py:64
 msgid "requested a template that do not exist"
-msgstr ""
+msgstr "طلب قالب غير موجودة"
 
 #: admin/views/reporting/usage.py:84 admin/views/reporting/users.py:87
 #: core/reports/tools/report.py:72 reports/lists/users.py:87
 #, python-format
 msgid "Page %(page_number)d of %(page_count)d"
-msgstr ""
+msgstr "صفحة %(page_number)d د د %(page_count)d"
 
 #: admin/views/reporting/usage.py:93 admin/views/reporting/users.py:97
 #: core/reports/tools/report.py:82 reports/lists/users.py:97
 #, python-format
 msgid "Printed in %(now:%Y, %b %d)s at %(now:%H:%M)s"
-msgstr ""
+msgstr "طبع في %(now:%Y, %b %d)s في الآن %(now:%H:%M)s"
 
 #: admin/views/reporting/users.py:112 reports/lists/users.py:137
 msgid "Users List for {}"
-msgstr ""
+msgstr "قائمة المستخدمين ل {}"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:35
 #: auths/EDirectory_enterprise/Authenticator.py:62
@@ -741,43 +742,45 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
 #: services/Xen/XenProvider.py:98
 msgid "Host"
-msgstr ""
+msgstr "المضيف"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:35
 msgid "Active Directory Server IP or Hostname"
-msgstr ""
+msgstr "ملقم Active directory IP أو اسم المضيف"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 #: auths/EDirectory_enterprise/Authenticator.py:64
 #: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:59
 #: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
 msgid "Use SSL"
-msgstr ""
+msgstr "استخدام SSL"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 msgid "If checked,  a ssl connection to Active Directory will be used"
-msgstr ""
+msgstr "إذا كانت محددة، سيتم استخدام اتصال ssl إلى Active Directory"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 msgid "Compatibility"
-msgstr ""
+msgstr "التوافق"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 msgid "Compatibility of AD connection (Usually windows 2000 and later)"
-msgstr ""
+msgstr "التوافق للاتصال الإعلانية (عادة windows 2000 والإصدارات الأحدث)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 #: auths/EDirectory_enterprise/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:59 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
 msgid "User"
-msgstr ""
+msgstr "المستخدم"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 msgid ""
 "Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
 "for this)"
 msgstr ""
+"اسم المستخدم امتيازات القراءة على قاعدة محددة (استخدام USER@DOMAIN. نموذج دوم "
+"لذلك)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
@@ -802,13 +805,13 @@ msgstr ""
 #: transports/RGS_enterprise/TRGSTransport.py:54
 #: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:64
 msgid "Password"
-msgstr ""
+msgstr "كلمة المرور"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/EDirectory_enterprise/Authenticator.py:66
 #: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:61
 msgid "Password of the ldap user"
-msgstr ""
+msgstr "كلمة مرور المستخدم ldap"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:41
 #: auths/EDirectory_enterprise/Authenticator.py:67
@@ -820,28 +823,28 @@ msgstr ""
 #: services/OpenStack/Provider.py:111
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 msgid "Timeout"
-msgstr ""
+msgstr "مهلة"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:41
 msgid "Timeout in seconds of connection to Active Directory"
-msgstr ""
+msgstr "المهلة بالثواني للاتصال بخدمة Active Directory"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:43
 msgid "Active Directory Authenticator"
-msgstr ""
+msgstr "مصدق الدليل النشط"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:45
 msgid "Authenticate against Active Directory"
-msgstr ""
+msgstr "المصادقة بالمقابلة مع خدمة Active Directory"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:73
 #: auths/ActiveDirectory_enterprise/Authenticator.py:465
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
-msgstr ""
+msgstr "يجب تحديد اسم المستخدم في النموذج USERNAME@DOMAIN. دوم"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:177
 msgid "Active directory connection error: "
-msgstr ""
+msgstr "خطأ في الاتصال بخدمة active directory: "
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:361
 #: auths/ActiveDirectory_enterprise/Authenticator.py:409
@@ -850,12 +853,12 @@ msgstr ""
 #: auths/RegexLdap/Authenticator.py:315 auths/RegexLdap/Authenticator.py:356
 #: auths/SimpleLDAP/Authenticator.py:281 auths/SimpleLDAP/Authenticator.py:324
 msgid "Username not found"
-msgstr ""
+msgstr "لم يتم العثور على اسم المستخدم"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:394
 #: auths/SimpleLDAP/Authenticator.py:314
 msgid "Group not found"
-msgstr ""
+msgstr "لم يتم العثور على المجموعة"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:429
 #: auths/ActiveDirectory_enterprise/Authenticator.py:447
@@ -863,37 +866,41 @@ msgstr ""
 #: auths/RegexLdap/Authenticator.py:378 auths/SimpleLDAP/Authenticator.py:341
 #: auths/SimpleLDAP/Authenticator.py:357
 msgid "Too many results, be more specific"
-msgstr ""
+msgstr "الكثير من النتائج، أن يكون أكثر تحديداً"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:474
 msgid "Domain seems to be incorrect, please check it"
-msgstr ""
+msgstr "المجال يبدو أن تكون غير صحيحة، الرجاء التحقق من ذلك"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:479
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr ""
+"الملقم لا يبدو Active Directory (أنه ليس لديها كائنات المستخدم)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:487
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr ""
+"الملقم لا يبدو Active Directory (أنه ليس لديها كائنات المجموعة)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:495
 msgid ""
 "Server does not seem an Active Directory (it does not have any user nor "
 "groups)"
 msgstr ""
+"الملقم لا يبدو Active Directory (لم يكن لديه أي مستخدم ولا "
+"مجموعات)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:500
 #: auths/EDirectory_enterprise/Authenticator.py:360
 #: auths/RegexLdap/Authenticator.py:437 auths/SimpleLDAP/Authenticator.py:435
 msgid "Connection params seem correct, test was succesfully executed"
-msgstr ""
+msgstr "يبدو params الاتصال الصحيح، واختبار تم تنفيذها بنجاح"
 
 #: auths/EDirectory_enterprise/Authenticator.py:62
 msgid "EDirectory Server IP or Hostname"
-msgstr ""
+msgstr "EDirectory Server IP أو اسم المضيف"
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
 #: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:58
@@ -903,49 +910,49 @@ msgstr ""
 #: services/OpenNebula/Provider.py:99 services/OpenStack/Provider.py:99
 #: services/Vmware_enterprise/ServiceProviderVC.py:30
 msgid "Port"
-msgstr ""
+msgstr "منفذ"
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
 #: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:58
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
-msgstr ""
+msgstr "منفذ Ldap (عادة 389 ل ssl غير) و 636 ل ssl"
 
 #: auths/EDirectory_enterprise/Authenticator.py:64
 #: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:59
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
-msgstr ""
+msgstr "إذا كانت محددة، يكون الاتصال ssl, باستخدام منفذ 636 بدلاً من 389"
 
 #: auths/EDirectory_enterprise/Authenticator.py:65
 msgid "Username with read privileges on the eDirectory"
-msgstr ""
+msgstr "اسم المستخدم امتيازات القراءة على eDirectory"
 
 #: auths/EDirectory_enterprise/Authenticator.py:67
 #: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:62
 msgid "Timeout in seconds of connection to LDAP"
-msgstr ""
+msgstr "المهلة بالثواني لاتصال LDAP"
 
 #: auths/EDirectory_enterprise/Authenticator.py:69
 msgid "eDirectory Authenticator"
-msgstr ""
+msgstr "eDirectory المصادق"
 
 #: auths/EDirectory_enterprise/Authenticator.py:71
 msgid "Authenticate against eDirectory"
-msgstr ""
+msgstr "مصادقة ضد eDirectory"
 
 #: auths/EDirectory_enterprise/Authenticator.py:125
 #: auths/RegexLdap/Authenticator.py:238 auths/SimpleLDAP/Authenticator.py:171
 msgid "Ldap connection error: "
-msgstr ""
+msgstr "خطأ اتصال Ldap: "
 
 #: auths/EDirectory_enterprise/Authenticator.py:325
 #: auths/RegexLdap/Authenticator.py:398 auths/SimpleLDAP/Authenticator.py:377
 msgid "Ldap search base is incorrect"
-msgstr ""
+msgstr "قاعدة البحث Ldap غير صحيح"
 
 #: auths/EDirectory_enterprise/Authenticator.py:330
 #: auths/RegexLdap/Authenticator.py:403 auths/SimpleLDAP/Authenticator.py:382
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
-msgstr ""
+msgstr "يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:338
 #: auths/SimpleLDAP/Authenticator.py:398
@@ -953,85 +960,90 @@ msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
 msgstr ""
+"يبدو أن Ldap المستخدم معرف السمة غير صحيحة (أي مستخدم موجود بذلك "
+"السمة)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:346
 msgid "Expected group attribute "
-msgstr ""
+msgstr "السمة مجموعة المتوقعة "
 
 #: auths/EDirectory_enterprise/Authenticator.py:355
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr ""
+"Attr معرف المستخدم أو فئة المستخدم Ldap خاطئ ربما (Ldap هو eDirectory)؟"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid "Accept proxy"
-msgstr ""
+msgstr "قبول الوكيل"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
 msgstr ""
+"إذا راجعت، الطلبات عن طريق الوكيل سوف تحصل على عنوان ip يتم إعادة توجيهها (رعاية مع "
+"يمكن أن يستغرق هذا bein التحقق، عناوين IP الداخلية من الإنترنت)"
 
 #: auths/IP/Authenticator.py:54 auths/IP/Authenticator.py:56
 msgid "IP Authenticator"
-msgstr ""
+msgstr "IP المصادق"
 
 #: auths/IP/Authenticator.py:61
 msgid "IP Range"
-msgstr ""
+msgstr "نطاق IP"
 
 #: auths/IP/Authenticator.py:103 auths/IP/Authenticator.py:106
 msgid "All seems to be fine."
-msgstr ""
+msgstr "كل ما يبدو أن يكون على ما يرام."
 
 #: auths/InternalDB/Authenticator.py:53
 msgid "Internal Database"
-msgstr ""
+msgstr "قاعدة البيانات الداخلية"
 
 #: auths/InternalDB/Authenticator.py:55
 msgid "Internal dabasase authenticator. Doesn't use external sources"
-msgstr ""
+msgstr "داباساسي الداخلية المصادق. لا تستخدم مصادر خارجية"
 
 #: auths/InternalDB/Authenticator.py:64
 msgid "Different user for each host"
-msgstr ""
+msgstr "مستخدم مختلف لكل مضيف"
 
 #: auths/InternalDB/Authenticator.py:64
 msgid "If checked, each host will have a different user name"
-msgstr ""
+msgstr "في حالة تحديد كل مضيف سوف يكون اسم مستخدم مختلف"
 
 #: auths/InternalDB/Authenticator.py:65
 msgid "Reverse DNS"
-msgstr ""
+msgstr "عكس DNS"
 
 #: auths/InternalDB/Authenticator.py:65
 msgid "If checked, the host will be reversed dns"
-msgstr ""
+msgstr "في حالة تحديد المضيف سوف تكون عكس dns"
 
 #: auths/InternalDB/Authenticator.py:130
 msgid "Internal structures seems ok"
-msgstr ""
+msgstr "هياكل داخلية يبدو موافق"
 
 #: auths/InternalDB/Authenticator.py:133
 msgid "All seems fine in the authenticator."
-msgstr ""
+msgstr "كل شيء يبدو بشكل جيد في المصادق."
 
 #: auths/RegexLdap/Authenticator.py:56
 msgid "Ldap Server Host"
-msgstr ""
+msgstr "المضيف ملقم Ldap"
 
 #: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:60
 msgid "Username with read privileges on the base selected"
-msgstr ""
+msgstr "اسم المستخدم امتيازات القراءة على قاعدة تحديد"
 
 #: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:63
 msgid "Base"
-msgstr ""
+msgstr "قاعدة"
 
 #: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:63
 msgid "Common search base (used for \"users\" and \"groups\")"
-msgstr ""
+msgstr "قاعدة البحث المشترك (المستخدم ل \"المستخدمين\" و \"مجموعات\")"
 
 #: auths/RegexLdap/Authenticator.py:63 auths/RegexLdap/Authenticator.py:64
 #: auths/RegexLdap/Authenticator.py:65 auths/RegexLdap/Authenticator.py:66
@@ -1040,188 +1052,199 @@ msgstr ""
 #: auths/SimpleLDAP/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:67
 #: auths/SimpleLDAP/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:69
 msgid "Ldap info"
-msgstr ""
+msgstr "معلومات Ldap"
 
 #: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:64
 msgid "User class"
-msgstr ""
+msgstr "فئة المستخدم"
 
 #: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:64
 msgid "Class for LDAP users (normally posixAccount)"
-msgstr ""
+msgstr "فئة المستخدمين LDAP (عادة بوسيكساككونت)"
 
 #: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:65
 msgid "User Id Attr"
-msgstr ""
+msgstr "Attr معرف المستخدم"
 
 #: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:65
 msgid "Attribute that contains the user id"
-msgstr ""
+msgstr "السمة يحتوي على معرف المستخدم"
 
 #: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
 msgid "User Name Attr"
-msgstr ""
+msgstr "Attr اسم المستخدم"
 
 #: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
 msgid "Attributes that contains the user name (list of comma separated values)"
-msgstr ""
+msgstr "السمات التي تحتوي على اسم المستخدم (قائمة قيم مفصولة بفاصلة)"
 
 #: auths/RegexLdap/Authenticator.py:67
 msgid "Group Name Attr"
-msgstr ""
+msgstr "Attr اسم المجموعة"
 
 #: auths/RegexLdap/Authenticator.py:67
 msgid "Attribute that contains the group name"
-msgstr ""
+msgstr "السمة التي تحتوي على اسم المجموعة"
 
 #: auths/RegexLdap/Authenticator.py:70
 msgid "Regex LDAP Authenticator"
-msgstr ""
+msgstr "المصادق Regex LDAP"
 
 #: auths/RegexLdap/Authenticator.py:72
 msgid "Regular Expressions LDAP authenticator"
-msgstr ""
+msgstr "المصادق LDAP التعبيرات العادية"
 
 #: auths/RegexLdap/Authenticator.py:412
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
+"Ldap المستخدم معرف attr من ربما الخطأ (لا يمكن العثور على أي مستخدم مع كل "
+"الشروط)"
 
 #: auths/RegexLdap/Authenticator.py:426 auths/SimpleLDAP/Authenticator.py:406
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
 msgstr ""
+"يبدو أن سمة معرف مجموعة Ldap غير صحيحة (أي جماعة وجدت قبل أن "
+"السمة)"
 
 #: auths/SAML_enterprise/SAML.py:82
 msgid "SAML Authenticator"
-msgstr ""
+msgstr "المصادق SAML"
 
 #: auths/SAML_enterprise/SAML.py:94
 msgid "SAML (v2.0) Authenticator"
-msgstr ""
+msgstr "SAML (v2.0) المصادق"
 
 #: auths/SAML_enterprise/SAML.py:122
 msgid "Private key"
-msgstr ""
+msgstr "المفتاح الخاص"
 
 #: auths/SAML_enterprise/SAML.py:123
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
 msgstr ""
+"استخدام المفتاح الخاص لتسجيل وانكريبتيون، كما تم إنشاؤه في الأساس 64 من "
+"بينسل"
 
 #: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
 msgid "Certificates"
-msgstr ""
+msgstr "شهادات"
 
 #: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:86
 msgid "Certificate"
-msgstr ""
+msgstr "شهادة"
 
 #: auths/SAML_enterprise/SAML.py:125
 msgid "Server certificate (public), , as generated in base 64 from openssl"
-msgstr ""
+msgstr "شهادة الملقم (العامة)،، كما تم إنشاؤه في قاعدة 64 من openssl"
 
 #: auths/SAML_enterprise/SAML.py:126
 msgid "IDP Metadata"
-msgstr ""
+msgstr "بيانات تعريف المشردين داخليا"
 
 #: auths/SAML_enterprise/SAML.py:127
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
+"يمكنك إدخال هنا URL أو بيانات التعريف المشردين داخليا أو بيانات التعريف نفسه (xml)"
 
 #: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
 msgid "Metadata"
-msgstr ""
+msgstr "بيانات التعريف"
 
 #: auths/SAML_enterprise/SAML.py:129
 msgid "Entity ID"
-msgstr ""
+msgstr "معرف الكيان"
 
 #: auths/SAML_enterprise/SAML.py:130
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
-msgstr ""
+msgstr "معرف sp. إذا ترك فارغاً، ستكون هذه المعطيات من محدد موقع معلومات الخادم"
 
 #: auths/SAML_enterprise/SAML.py:132
 msgid "User name attrs"
-msgstr ""
+msgstr "أتترس اسم المستخدم"
 
 #: auths/SAML_enterprise/SAML.py:133
 msgid "Fields from where to extract user name"
-msgstr ""
+msgstr "حقول من أين لاستخراج اسم المستخدم"
 
 #: auths/SAML_enterprise/SAML.py:133 auths/SAML_enterprise/SAML.py:136
 #: auths/SAML_enterprise/SAML.py:139
 msgid "Attributes"
-msgstr ""
+msgstr "سمات"
 
 #: auths/SAML_enterprise/SAML.py:135
 msgid "Group name attrs"
-msgstr ""
+msgstr "أتترس اسم المجموعة"
 
 #: auths/SAML_enterprise/SAML.py:136
 msgid "Fields from where to extract the groups"
-msgstr ""
+msgstr "حقول من أين لاستخراج المجموعات"
 
 #: auths/SAML_enterprise/SAML.py:138
 msgid "Real name attrs"
-msgstr ""
+msgstr "أتترس اسمه الحقيقي"
 
 #: auths/SAML_enterprise/SAML.py:139
 msgid "Fields from where to extract the real name"
-msgstr ""
+msgstr "حقول من أين لاستخراج الاسم الحقيقي"
 
 #: auths/SAML_enterprise/SAML.py:162
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
+"يجب أن تكون شهادة الملقم يم صالحة (بيم شهادات يبدأ مع--"
+"تبدأ شهادة--)"
 
 #: auths/SAML_enterprise/SAML.py:167
 msgid "Invalid server certificate. "
-msgstr ""
+msgstr "شهادة الملقم غير صالح. "
 
 #: auths/SAML_enterprise/SAML.py:170
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr ""
+"يجب أن يكون المفتاح الخاص يم صالحة (بيم المفاتيح الخاصة يبدأ مع---بدء "
+"RSA الخاص مفتاح--"
 
 #: auths/SAML_enterprise/SAML.py:202
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
-msgstr ""
+msgstr "لا يمكن إحضار url {0}: {1}"
 
 #: auths/SAML_enterprise/SAML.py:213
 msgid " (obtained from URL)"
-msgstr ""
+msgstr " (تم الحصول عليها من URL)"
 
 #: auths/SAML_enterprise/SAML.py:214
 msgid "XML does not seem valid for IDP Metadata "
-msgstr ""
+msgstr "XML لا تبدو صالحة للمشردين داخليا بيانات التعريف "
 
 #: auths/SAML_enterprise/SAML.py:235
 msgid "Can't access idp metadata"
-msgstr ""
+msgstr "لا يمكن الوصول إلى بيانات التعريف المشردين داخليا"
 
 #: auths/Sample/SampleAuth.py:74
 msgid "Sample Authenticator"
-msgstr ""
+msgstr "مصدق عينة"
 
 #: auths/Sample/SampleAuth.py:86
 msgid "Sample dummy authenticator"
-msgstr ""
+msgstr "نموذج الطباعة المصادق"
 
 #: auths/Sample/SampleAuth.py:104
 msgid "Fake User"
-msgstr ""
+msgstr "المستخدم وهمية"
 
 #: auths/Sample/SampleAuth.py:107
 msgid "Fake Group"
-msgstr ""
+msgstr "مجموعة وهمية"
 
 #: auths/Sample/SampleAuth.py:113
 #: templates/uds/admin/tmpl/authenticators.html:32
@@ -1230,197 +1253,202 @@ msgstr ""
 #: templates/uds/admin/tmpl/services_pool.html:33
 #: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
-msgstr ""
+msgstr "المجموعات"
 
 #: auths/Sample/SampleAuth.py:126
 msgid "We need more than two items!"
-msgstr ""
+msgstr "ونحن بحاجة إلى اثنين أو أكثر من العناصر!"
 
 #: auths/SimpleLDAP/Authenticator.py:57
 msgid "Ldap Server IP or Hostname"
-msgstr ""
+msgstr "ملقم Ldap IP أو اسم المضيف"
 
 #: auths/SimpleLDAP/Authenticator.py:60
 msgid "Ldap User"
-msgstr ""
+msgstr "Ldap المستخدم"
 
 #: auths/SimpleLDAP/Authenticator.py:67
 msgid "Group class"
-msgstr ""
+msgstr "فئة المجموعة"
 
 #: auths/SimpleLDAP/Authenticator.py:67
 msgid "Class for LDAP groups (normally poxisGroup)"
-msgstr ""
+msgstr "فئة لمجموعات LDAP (عادة بوكسيسجروب)"
 
 #: auths/SimpleLDAP/Authenticator.py:68
 msgid "Group Id Attr"
-msgstr ""
+msgstr "Attr معرف المجموعة"
 
 #: auths/SimpleLDAP/Authenticator.py:68
 msgid "Attribute that contains the group id"
-msgstr ""
+msgstr "السمة يحتوي على معرف المجموعة"
 
 #: auths/SimpleLDAP/Authenticator.py:69
 msgid "Group membership attr"
-msgstr ""
+msgstr "Attr عضوية المجموعة"
 
 #: auths/SimpleLDAP/Authenticator.py:69
 msgid "Attribute of the group that contains the users belonging to it"
-msgstr ""
+msgstr "سمة للمجموعة التي تحتوي على المستخدمين الذين ينتمون إليها"
 
 #: auths/SimpleLDAP/Authenticator.py:71
 msgid "SimpleLDAP Authenticator"
-msgstr ""
+msgstr "مصدق سيمبليلداب"
 
 #: auths/SimpleLDAP/Authenticator.py:73
 msgid "Simple LDAP authenticator"
-msgstr ""
+msgstr "بسيطة LDAP المصادق"
 
 #: auths/SimpleLDAP/Authenticator.py:390
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
-msgstr ""
+msgstr "يبدو أن فئة المجموعة Ldap غير صحيحة (العثور على لا مجموعة من تلك الفئة)"
 
 #: auths/SimpleLDAP/Authenticator.py:415
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
 msgstr ""
+"Ldap المستخدم المستخدم أو فئة معرف attr من ربما الخطأ (لا يمكن العثور على أي مستخدم مع "
+"كل الشروط)"
 
 #: auths/SimpleLDAP/Authenticator.py:424
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
 msgstr ""
+"Attr معرف فئة أو مجموعة مجموعة Ldap ربما خطأ (لا يمكن العثور على أي مجموعة "
+"مع كل الشروط)"
 
 #: auths/SimpleLDAP/Authenticator.py:431
 msgid "Can't locate any group with the membership attribute specified"
-msgstr ""
+msgstr "لا يمكن تحديد موقع أي مجموعة مع السمة العضوية المحددة"
 
 #: core/BaseModule.py:200
 msgid "No connection checking method is implemented."
-msgstr ""
+msgstr "وينفذ أي اتصال بالتحقق من الأسلوب."
 
 #: core/BaseModule.py:269
 msgid "No check method provided."
-msgstr ""
+msgstr "لا يوجد أسلوب الاختيار المقدمة."
 
 #: core/auths/BaseAuthenticator.py:103 core/auths/BaseAuthenticator.py:115
 msgid "Base Authenticator"
-msgstr ""
+msgstr "المصادق قاعدة"
 
 #: core/auths/BaseAuthenticator.py:132
 msgid "User name"
-msgstr ""
+msgstr "اسم المستخدم"
 
 #: core/auths/BaseAuthenticator.py:135 templates/uds/admin/tmpl/group.html:18
 msgid "Group name"
-msgstr ""
+msgstr "اسم المجموعة"
 
 #: core/auths/BaseAuthenticator.py:540
 msgid "Users can't be created inside this authenticator"
-msgstr ""
+msgstr "لا يمكن إنشاء المستخدمين داخل هذا مصدق"
 
 #: core/auths/auth.py:89
 msgid "System Administrator"
-msgstr ""
+msgstr "مسؤول النظام"
 
 #: core/auths/auth.py:124
 msgid "Forbidden"
-msgstr ""
+msgstr "ممنوع"
 
 #: core/managers/PublicationManager.py:205
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
+"سبق نشرها. انتظر منشور سابق الانتهاء والمحاولة مرة أخرى"
 
 #: core/managers/PublicationManager.py:208
 msgid "Service is in maintenance mode and new publications are not allowed"
-msgstr ""
+msgstr "الخدمة في وضع الصيانة وغير مسموح بالمنشورات الجديدة"
 
 #: core/managers/PublicationManager.py:241
 msgid "Can't cancel non running publication"
-msgstr ""
+msgstr "لا يمكن إلغاء المنشور غير قيد التشغيل"
 
 #: core/managers/PublicationManager.py:263
 msgid "Can't unpublish non usable publication"
-msgstr ""
+msgstr "لا يمكن إلغاء نشر المنشور غير صالحة للاستعمال"
 
 #: core/managers/PublicationManager.py:266
 msgid "Can't unpublish publications with services in process"
-msgstr ""
+msgstr "لا يمكن إلغاء نشر المنشورات مع الخدمات في عملية"
 
 #: core/managers/UserPrefsManager.py:293
 msgid "Screen Size"
-msgstr ""
+msgstr "حجم الشاشة"
 
 #: core/managers/UserPrefsManager.py:300
 msgid "Full Screen"
-msgstr ""
+msgstr "كامل الشاشة"
 
 #: core/managers/UserPrefsManager.py:302
 msgid "Screen colors"
-msgstr ""
+msgstr "ألوان الشاشة"
 
 #: core/managers/UserPrefsManager.py:304
 msgid "8 bits"
-msgstr ""
+msgstr "8 بت"
 
 #: core/managers/UserPrefsManager.py:305
 msgid "16 bits"
-msgstr ""
+msgstr "16 بت"
 
 #: core/managers/UserPrefsManager.py:306
 msgid "24 bits"
-msgstr ""
+msgstr "24 بت"
 
 #: core/managers/UserPrefsManager.py:307
 msgid "32 bits"
-msgstr ""
+msgstr "32 بت"
 
 #: core/managers/UserPrefsManager.py:311
 msgid "Plugin detection"
-msgstr ""
+msgstr "كشف البرنامج المساعد"
 
 #: core/managers/UserPrefsManager.py:313
 msgid "Detect plugin"
-msgstr ""
+msgstr "كشف البرنامج المساعد"
 
 #: core/managers/UserPrefsManager.py:314
 msgid "Bypass plugin detection"
-msgstr ""
+msgstr "تجاوز الكشف عن البرنامج المساعد"
 
 #: core/managers/UserServiceManager.py:217
 msgid "Can't remove a non active element"
-msgstr ""
+msgstr "لا يمكن إزالة عنصر غير نشط"
 
 #: core/managers/UserServiceManager.py:230
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
-msgstr ""
+msgstr "لا يمكن إزالة أو إلغاء قضية {0} لا تسمح به الدول"
 
 #: core/osmanagers/BaseOsManager.py:56
 msgid "Base OS Manager"
-msgstr ""
+msgstr "إدارة نظام التشغيل قاعدة"
 
 #: core/osmanagers/BaseOsManager.py:58
 msgid "Base Manager"
-msgstr ""
+msgstr "مدير قاعدة"
 
 #: core/reports/BaseReport.py:49
 msgid "Base Report"
-msgstr ""
+msgstr "تقرير قاعدة"
 
 #: core/reports/BaseReport.py:50
 msgid "Base report"
-msgstr ""
+msgstr "تقرير قاعدة"
 
 #: core/reports/tools/report.py:81
 msgid "Generated by UDS"
-msgstr ""
+msgstr "التي تم إنشاؤها بواسطة المصغرة"
 
 #: core/services/BaseService.py:89 core/services/BaseService.py:101
 msgid "Base Service"
-msgstr ""
+msgstr "خدمة قاعدة"
 
 #: core/services/BaseService.py:122 core/services/BaseService.py:131
 #: models/Permissions.py:79 models/Permissions.py:83
@@ -1428,280 +1456,282 @@ msgstr ""
 #: services/Sample/SampleService.py:98
 #: services/TestService_enterprise/TestService.py:29
 msgid "None"
-msgstr ""
+msgstr "لا شيء"
 
 #: core/services/ClusteredService.py:42 core/services/ClusteredService.py:44
 msgid "Base Clustered Service"
-msgstr ""
+msgstr "قاعدة خدمة متفاوت المسافات"
 
 #: core/ui/UserInterface.py:86
 msgid "Advanced"
-msgstr ""
+msgstr "متقدم"
 
 #: core/ui/UserInterface.py:88
 msgid "Credentials"
-msgstr ""
+msgstr "وثائق التفويض"
 
 #: core/ui/UserInterface.py:89
 msgid "Tunnel"
-msgstr ""
+msgstr "النفق"
 
 #: core/util/State.py:64 core/util/states/common.py:63
 msgid "Active"
-msgstr ""
+msgstr "النشطة"
 
 #: core/util/State.py:65 core/util/states/common.py:64
 msgid "Inactive"
-msgstr ""
+msgstr "غير نشط"
 
 #: core/util/State.py:66 core/util/states/common.py:65
 #: templates/uds/admin/tmpl/user.html:50
 msgid "Blocked"
-msgstr ""
+msgstr "حظر"
 
 #: core/util/State.py:67 core/util/states/common.py:66
 msgid "Waiting publication"
-msgstr ""
+msgstr "في انتظار النشر"
 
 #: core/util/State.py:68 core/util/states/common.py:67
 msgid "In preparation"
-msgstr ""
+msgstr "في إعداد"
 
 #: core/util/State.py:69 core/util/states/common.py:68
 msgid "Valid"
-msgstr ""
+msgstr "صالحة"
 
 #: core/util/State.py:70 core/util/states/common.py:69
 msgid "Waiting for removal"
-msgstr ""
+msgstr "في انتظار إزالة"
 
 #: core/util/State.py:71 core/util/states/common.py:70
 msgid "Removing"
-msgstr ""
+msgstr "إزالة"
 
 #: core/util/State.py:72 core/util/states/common.py:71
 msgid "Removed"
-msgstr ""
+msgstr "إزالة"
 
 #: core/util/State.py:73 core/util/states/common.py:72
 msgid "Canceled"
-msgstr ""
+msgstr "تم إلغاء"
 
 #: core/util/State.py:74 core/util/states/common.py:73
 msgid "Canceling"
-msgstr ""
+msgstr "إلغاء"
 
 #: core/util/State.py:75 core/util/states/common.py:74
 #: templates/uds/html5/error.html:4 templates/uds/html5/error.html.py:14
 #: templates/uds/semantic/error.html:4 templates/uds/semantic/error.html:14
 msgid "Error"
-msgstr ""
+msgstr "خطأ"
 
 #: core/util/State.py:76 core/util/states/common.py:75
 msgid "Running"
-msgstr ""
+msgstr "تشغيل"
 
 #: core/util/State.py:77 core/util/states/common.py:76
 msgid "Finished"
-msgstr ""
+msgstr "انتهى"
 
 #: core/util/State.py:78 core/util/states/common.py:77
 msgid "Waiting execution"
-msgstr ""
+msgstr "في انتظار التنفيذ"
 
 #: core/util/State.py:79 core/util/states/common.py:78
 msgid "Balancing"
-msgstr ""
+msgstr "موازنة"
 
 #: core/util/State.py:80 core/util/states/common.py:79
 #: templates/uds/semantic/index.html:124
 msgid "In maintenance"
-msgstr ""
+msgstr "في الصيانة"
 
 #: core/util/State.py:81 core/util/states/common.py:80
 msgid "Waiting OS"
-msgstr ""
+msgstr "في انتظار نظام التشغيل"
 
 #: core/util/stats/counters.py:205
 msgid "Assigned"
-msgstr ""
+msgstr "تعيين"
 
 #: core/util/stats/counters.py:206
 msgid "In use"
-msgstr ""
+msgstr "في الاستخدام"
 
 #: core/util/stats/counters.py:207
 msgid "Load"
-msgstr ""
+msgstr "تحميل"
 
 #: core/util/stats/counters.py:208
 msgid "Storage"
-msgstr ""
+msgstr "تخزين"
 
 #: core/util/validators.py:56
 msgid "Numeric"
-msgstr ""
+msgstr "الرقمية"
 
 #: core/util/validators.py:61
 #, python-brace-format
 msgid "{0} must be greater than or equal to {1}"
-msgstr ""
+msgstr "{0} يجب أن يكون أكبر من أو يساوي {1}"
 
 #: core/util/validators.py:64
 #, python-brace-format
 msgid "{0} must be lower than or equal to {1}"
-msgstr ""
+msgstr "{0} يجب أن يكون أقل من أو يساوي {1}"
 
 #: core/util/validators.py:69
 #, python-brace-format
 msgid "{0} contains invalid characters"
-msgstr ""
+msgstr "{0} يحتوي على أحرف غير صالحة"
 
 #: core/util/validators.py:116
 msgid ""
 "Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
 "XX:XX"
 msgstr ""
+"مجموعة ماك غير صالحة. يجب أن يكون نطاق Mac في تنسيق XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
+"XX:XX"
 
 #: dispatchers/wyse_enterprise/views.py:114
 msgid "There are no authenticators available for login"
-msgstr ""
+msgstr "لا تتوفر أي الأصالة لتسجيل الدخول"
 
 #: dispatchers/wyse_enterprise/views.py:128
 #, python-brace-format
 msgid "The authenticator {0} is not usable"
-msgstr ""
+msgstr "{0} مصدق غير قابلة للاستخدام"
 
 #: dispatchers/wyse_enterprise/views.py:135 web/views/login.py:115
 msgid "Invalid credentials"
-msgstr ""
+msgstr "بيانات اعتماد غير صالحة"
 
 #: dispatchers/wyse_enterprise/views.py:143
 #, python-brace-format
 msgid "The domain {0} does not exists"
-msgstr ""
+msgstr "{0} المجال غير موجود"
 
 #: dispatchers/wyse_enterprise/views.py:204
 msgid "No services available"
-msgstr ""
+msgstr "لا الخدمات المتاحة"
 
 #: dispatchers/wyse_enterprise/views.py:219
 #: dispatchers/wyse_enterprise/views.py:313
 msgid "Invalid session"
-msgstr ""
+msgstr "TranslateApiException: AppId is over the quota : ID=5217.V2_Json.Translate.449AF481"
 
 #: dispatchers/wyse_enterprise/views.py:223
 #: dispatchers/wyse_enterprise/views.py:317
 msgid "Invalid authorization"
-msgstr ""
+msgstr "إذن غير صالح"
 
 #: dispatchers/wyse_enterprise/views.py:234
 #: dispatchers/wyse_enterprise/views.py:323
 msgid "Invalid request"
-msgstr ""
+msgstr "طلب غير صالح"
 
 #: dispatchers/wyse_enterprise/views.py:237
 #: dispatchers/wyse_enterprise/views.py:326
 msgid "Invalid credentials used"
-msgstr ""
+msgstr "بيانات الاعتماد غير صحيحة المستخدمة"
 
 #: dispatchers/wyse_enterprise/views.py:275 web/errors.py:73
 msgid "Transport not found"
-msgstr ""
+msgstr "TranslateApiException: AppId is over the quota : ID=5217.V2_Json.Translate.449AF83F"
 
 #: dispatchers/wyse_enterprise/views.py:279
 #: dispatchers/wyse_enterprise/views.py:286
 #: dispatchers/wyse_enterprise/views.py:291
 msgid "Service not ready at this moment. Please, try again in a while."
-msgstr ""
+msgstr "الخدمة ليست على استعداد في هذه اللحظة. من فضلك، حاول مرة أخرى في حين."
 
 #: models/CalendarAction.py:58
 msgid "Publish"
-msgstr ""
+msgstr "نشر"
 
 #: models/CalendarAction.py:59
 msgid "Sets cache size"
-msgstr ""
+msgstr "حجم التخزين المؤقت لمجموعات"
 
 #: models/CalendarAction.py:59
 msgid "Cache size"
-msgstr ""
+msgstr "TranslateApiException: AppId is over the quota : ID=5217.V2_Json.Translate.449AFB88"
 
 #: models/CalendarAction.py:60
 msgid "Sets L2 cache size"
-msgstr ""
+msgstr "تعيين حجم ذاكرة التخزين المؤقت L2"
 
 #: models/CalendarAction.py:60
 msgid "Cache L2 size"
-msgstr ""
+msgstr "حجم ذاكرة التخزين المؤقت L2"
 
 #: models/CalendarAction.py:61
 msgid "Set initial services"
-msgstr ""
+msgstr "مجموعة الخدمات الأولية"
 
 #: models/CalendarAction.py:61
 msgid "Initial services"
-msgstr ""
+msgstr "الخدمات الأولية"
 
 #: models/CalendarAction.py:62
 msgid "Change maximum number of services"
-msgstr ""
+msgstr "تغيير الحد الأقصى لعدد من الخدمات"
 
 #: models/CalendarAction.py:62
 msgid "Maximum services"
-msgstr ""
+msgstr "الحد الأقصى من الخدمات"
 
 #: models/CalendarRule.py:56
 msgid "Yearly"
-msgstr ""
+msgstr "سنوياً"
 
 #: models/CalendarRule.py:57
 msgid "Monthly"
-msgstr ""
+msgstr "الشهري"
 
 #: models/CalendarRule.py:58
 msgid "Weekly"
-msgstr ""
+msgstr "التنزيلات"
 
 #: models/CalendarRule.py:59
 msgid "Daily"
-msgstr ""
+msgstr "TranslateApiException: AppId is over the quota : ID=5217.V2_Json.Translate.449AFFB2"
 
 #: models/CalendarRule.py:60
 msgid "Weekdays"
-msgstr ""
+msgstr "أيام الأسبوع"
 
 #: models/CalendarRule.py:78
 msgid "Minutes"
-msgstr ""
+msgstr "دقيقة"
 
 #: models/CalendarRule.py:79
 msgid "Hours"
-msgstr ""
+msgstr "ساعات"
 
 #: models/CalendarRule.py:80
 msgid "Days"
-msgstr ""
+msgstr "أيام"
 
 #: models/CalendarRule.py:81
 msgid "Weeks"
-msgstr ""
+msgstr "أسابيع"
 
 #: models/Permissions.py:80
 msgid "Read"
-msgstr ""
+msgstr "قراءة"
 
 #: models/Permissions.py:81
 msgid "Management"
-msgstr ""
+msgstr "إدارة"
 
 #: models/Permissions.py:82 templates/uds/admin/tmpl/group.html.py:39
 msgid "All"
-msgstr ""
+msgstr "جميع"
 
-#: models/ServicesPoolGroup.py:85
+#: models/ServicesPoolGroup.py:90
 msgid "General"
-msgstr ""
+msgstr "العام"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:51
 msgid "Linux OS Manager"
@@ -1714,27 +1744,27 @@ msgid ""
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:50
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
 msgid "On Logout"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
 msgid "What to do when user logs out from service"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:64
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:55
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:58
 msgid "Keep service assigned"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:59
 msgid "Remove service"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:65
 msgid "Max.Idle time"
 msgstr ""
 
@@ -1923,27 +1953,27 @@ msgstr ""
 msgid "Must provide a password for the account!!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:43
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:46
 msgid "Windows Basic OS Manager"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:45
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:48
 msgid ""
 "Os Manager to control windows machines without domain. (Basically renames "
 "machine)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:70
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be numeric!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:81
 msgid "Length must be betwen 1 and 6"
 msgstr ""
 
@@ -2133,7 +2163,7 @@ msgstr ""
 
 #: reports/stats/usage_by_pool.py:189
 msgid "Date"
-msgstr ""
+msgstr "تاريخ"
 
 #: reports/stats/usage_by_pool.py:189
 msgid "Seconds"
@@ -2608,7 +2638,7 @@ msgstr ""
 msgid "Timeout in seconds of connection to OpenNebula"
 msgstr ""
 
-#: services/OpenNebula/Provider.py:157
+#: services/OpenNebula/Provider.py:158
 msgid "Opennebula test connection passed"
 msgstr ""
 
@@ -2756,35 +2786,35 @@ msgstr ""
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:28
+#: services/RDS_enterprise/RDSProvider.py:31
 msgid "RDS Platform Provider (Experimental)"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:30
+#: services/RDS_enterprise/RDSProvider.py:33
 msgid "Microsoft RDS based provider"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:34
+#: services/RDS_enterprise/RDSProvider.py:37
 msgid "List of servers"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:35
+#: services/RDS_enterprise/RDSProvider.py:38
 msgid "User list for mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "User's password"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:36
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "Default password for users in list mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:59
+#: services/RDS_enterprise/RDSProvider.py:62
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:89
+#: services/RDS_enterprise/RDSProvider.py:92
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -3148,7 +3178,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/service-info.html:4
 #: templates/uds/admin/tmpl/services_pool.html:30
 msgid "Overview"
-msgstr ""
+msgstr "نظرة عامة"
 
 #: templates/uds/admin/snippets/navbar.html:23
 #: templates/uds/admin/tmpl/authenticators.html:4
@@ -3206,7 +3236,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/service-info.html:6
 #: templates/uds/admin/tmpl/services_pool.html:38
 msgid "Logs"
-msgstr ""
+msgstr "سجلات"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:7
 msgid "Name of this rule"
@@ -3278,12 +3308,12 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/comp/modal.html:19
 msgid "Close"
-msgstr ""
+msgstr "قم بإغلاق"
 
 #: templates/uds/admin/tmpl/comp/modal.html:26
 #: templates/uds/admin/tmpl/configuration.html:80
 msgid "Save"
-msgstr ""
+msgstr "حفظ"
 
 #: templates/uds/admin/tmpl/configuration.html:4
 msgid "UDS Configuration"
@@ -3294,14 +3324,14 @@ msgstr ""
 #: templates/uds/admin/tmpl/pool_add_action.html:27
 #: templates/uds/admin/tmpl/user.html:60 templates/uds/admin/tmpl/user.html:72
 msgid "Yes"
-msgstr ""
+msgstr "نعم"
 
 #: templates/uds/admin/tmpl/configuration.html:51
 #: templates/uds/admin/tmpl/fld/checkbox.html:7
 #: templates/uds/admin/tmpl/pool_add_action.html:28
 #: templates/uds/admin/tmpl/user.html:61 templates/uds/admin/tmpl/user.html:73
 msgid "No"
-msgstr ""
+msgstr "لا"
 
 #: templates/uds/admin/tmpl/dashboard.html:42
 msgid "View Authenticators"
@@ -3350,7 +3380,7 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/fld/editlist_popup.html:23
 msgid "Add"
-msgstr ""
+msgstr "إضافة"
 
 #: templates/uds/admin/tmpl/fld/taglist.html:8
 msgid "Add Tag..."
@@ -3521,7 +3551,7 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/services_pool.html:32
 msgid "Cache"
-msgstr ""
+msgstr "ذاكرة التخزين المؤقت"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
 #: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:30
@@ -3538,7 +3568,7 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/user.html:56
 msgid "Staff member"
-msgstr ""
+msgstr "موظف"
 
 #: templates/uds/admin/tmpl/user.html:68
 msgid "Admin"
@@ -3758,7 +3788,7 @@ msgstr ""
 
 #: templates/uds/html5/prefs.html:11 templates/uds/semantic/prefs.html.py:11
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء الأمر"
 
 #: templates/uds/html5/prefs.html:12 templates/uds/semantic/prefs.html.py:12
 msgid "Save Preferences"
@@ -3933,7 +3963,7 @@ msgstr ""
 
 #: templates/uds/semantic/tmpl/items.html:13
 msgid "Maintenance"
-msgstr ""
+msgstr "صيانة"
 
 #: templatetags/html5.py:229
 msgid "Debian based Linux"
@@ -4052,7 +4082,39 @@ msgid ""
 "supports it)"
 msgstr ""
 
+#: transports/HTML5RDP/HTML5RDP.py:77
+msgid "Layout"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:78
+msgid "Keyboards Layout of server"
+msgstr ""
+
 #: transports/HTML5RDP/HTML5RDP.py:81
+msgid "English (US) keyboard"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:82
+msgid "German keyboard (qwertz)"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:83
+msgid "French keyboard (azerty)"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:84
+msgid "Italian keyboard"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:85
+msgid "Swedish keyboard"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:86
+msgid "Failsafe"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:98
 msgid "The server must be http or https"
 msgstr ""
 
@@ -4142,8 +4204,8 @@ msgid ""
 "assigning it to user. (use HOST:PORT format)"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:88
-#: transports/RDS_enterprise/TRDSTransport.py:81
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:90
+#: transports/RDS_enterprise/TRDSTransport.py:83
 #: transports/RGS_enterprise/TRGSTransport.py:76
 #: transports/SPICE/TSPICETransport.py:73
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4245,6 +4307,26 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:72
 msgid "If checked, desktop composition will be allowed"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Multimedia sync"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+msgid "Use Alsa"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+msgid "If checked, Linux client will try to use alsa, pulse if not"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:55
@@ -4483,7 +4565,7 @@ msgstr ""
 msgid "UDS Plugin preferences"
 msgstr ""
 
-#: web/views/index.py:178
+#: web/views/index.py:179
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."

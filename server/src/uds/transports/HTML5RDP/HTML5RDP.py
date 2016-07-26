@@ -73,6 +73,22 @@ class HTML5RDPTransport(Transport):
     fixedDomain = gui.TextField(label=_('Domain'), order=6, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'), tab=gui.CREDENTIALS_TAB)
     enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=7, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
     enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=8, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
+    serverLayout = gui.ChoiceField(order=9,
+        label=_('Layout'),
+        tooltip=_('Keyboards Layout of server'),
+        required=True,
+        values=[ gui.choiceItem('-', 'default'),
+            gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
+            gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
+            gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
+            gui.choiceItem('it-it-qwerty', _('Italian keyboard')),
+            gui.choiceItem('sv-se-qwerty', _('Swedish keyboard')),
+            gui.choiceItem('failsafe', _('Failsafe')),
+        ],
+        defvalue='-',
+        tab=gui.PARAMETERS_TAB
+    )
+
 
     def initialize(self, values):
         if values is None:
@@ -148,7 +164,11 @@ class HTML5RDPTransport(Transport):
             'username': username,
             'password': password,
             'ignore-cert': 'true'
+
         }
+        if self.serverLayout.value != '-':
+            params['server-layout'] = self.serverLayout.value
+
 
         if self.enableAudio.isTrue() is False:
             params['disable-audio'] = 'true'
