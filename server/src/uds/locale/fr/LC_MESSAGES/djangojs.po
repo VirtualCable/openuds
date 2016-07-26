@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-21 10:40+0200\n"
+"POT-Creation-Date: 2016-07-26 13:26+0200\n"
 "PO-Revision-Date: 2016-04-20 13:25+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -680,12 +680,12 @@ msgid "Transport removal error"
 msgstr "Erreur de suppression de transport"
 
 #: static/tmp_js/gui-d-servicespools.js:153
-#: static/tmp_js/gui-d-servicespools.js:336
+#: static/tmp_js/gui-d-servicespools.js:360
 msgid "Yes"
 msgstr "Oui"
 
 #: static/tmp_js/gui-d-servicespools.js:155
-#: static/tmp_js/gui-d-servicespools.js:338
+#: static/tmp_js/gui-d-servicespools.js:362
 msgid "No"
 msgstr "Non"
 
@@ -693,69 +693,69 @@ msgstr "Non"
 msgid "error"
 msgstr "erreur"
 
-#: static/tmp_js/gui-d-servicespools.js:251
+#: static/tmp_js/gui-d-servicespools.js:264
 msgid "Remove Cache element"
 msgstr "Remove, élément de Cache"
 
-#: static/tmp_js/gui-d-servicespools.js:251
-#: static/tmp_js/gui-d-servicespools.js:355
+#: static/tmp_js/gui-d-servicespools.js:264
+#: static/tmp_js/gui-d-servicespools.js:381
 msgid "Deletion error"
 msgstr "Erreur de suppression"
 
-#: static/tmp_js/gui-d-servicespools.js:274
+#: static/tmp_js/gui-d-servicespools.js:286
 msgid "Add group"
 msgstr "Ajouter groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:297
+#: static/tmp_js/gui-d-servicespools.js:309
 msgid "You must provide authenticator and group"
 msgstr "Vous devez fournir authentificateur et groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:316
+#: static/tmp_js/gui-d-servicespools.js:328
 msgid "Remove group"
 msgstr "Supprimer le groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:316
+#: static/tmp_js/gui-d-servicespools.js:328
 msgid "Group removal error"
 msgstr "Erreur de suppression de groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:355
+#: static/tmp_js/gui-d-servicespools.js:381
 msgid "Remove Assigned service"
 msgstr "Supprimer le service affecté"
 
-#: static/tmp_js/gui-d-servicespools.js:403
+#: static/tmp_js/gui-d-servicespools.js:429
 msgid "Restrained"
 msgstr "Retenu"
 
-#: static/tmp_js/gui-d-servicespools.js:412
+#: static/tmp_js/gui-d-servicespools.js:438
 msgid "New service pool"
 msgstr "Nouvelle piscine service"
 
-#: static/tmp_js/gui-d-servicespools.js:412
+#: static/tmp_js/gui-d-servicespools.js:438
 msgid "creation error"
 msgstr "erreur de création"
 
-#: static/tmp_js/gui-d-servicespools.js:422
+#: static/tmp_js/gui-d-servicespools.js:448
 msgid "Publish on creation"
 msgstr "Publier sur création"
 
-#: static/tmp_js/gui-d-servicespools.js:423
+#: static/tmp_js/gui-d-servicespools.js:449
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr "Si sélectionné, lancera la publication immédiatement après création"
 
-#: static/tmp_js/gui-d-servicespools.js:435 static/tmp_js/gui.js:50
+#: static/tmp_js/gui-d-servicespools.js:461 static/tmp_js/gui.js:50
 msgid "Edit"
 msgstr "Edit"
 
-#: static/tmp_js/gui-d-servicespools.js:435
+#: static/tmp_js/gui-d-servicespools.js:461
 msgid "saving error"
 msgstr "erreur de sauvegarde"
 
-#: static/tmp_js/gui-d-servicespools.js:438 static/tmp_js/gui-methods.js:141
+#: static/tmp_js/gui-d-servicespools.js:464 static/tmp_js/gui-methods.js:141
 #: static/tmp_js/gui.js:54
 msgid "Delete"
 msgstr "Supprimer"
 
-#: static/tmp_js/gui-d-servicespools.js:438
+#: static/tmp_js/gui-d-servicespools.js:464
 msgid "deletion error"
 msgstr "erreur de suppression"
 
@@ -903,7 +903,7 @@ msgstr "Autorisations pour"
 msgid "Just a moment..."
 msgstr "Un instant..."
 
-#: static/tmp_js/gui-tools.js:145
+#: static/tmp_js/gui-tools.js:146
 msgid "Never"
 msgstr "Jamais"
 
@@ -1036,6 +1036,6 @@ msgstr "Entrez une valeur supérieure ou égale à {0}."
 msgid "Contacting service..."
 msgstr "Contacté le service..."
 
-#: static/tmp_js/uds-client.js:181
+#: static/tmp_js/uds-client.js:184
 msgid "Error accessing service: "
 msgstr "Erreur d'accès au service : "
