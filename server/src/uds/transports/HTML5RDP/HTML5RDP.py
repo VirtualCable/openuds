@@ -147,7 +147,8 @@ class HTML5RDPTransport(Transport):
             'hostname': ip,
             'username': username,
             'password': password,
-            'ignore-cert': 'true'
+            'ignore-cert': 'true',
+            'server-layout': 'failsafe'
         }
 
         if self.enableAudio.isTrue() is False:
