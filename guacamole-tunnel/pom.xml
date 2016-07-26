@@ -15,28 +15,35 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
-  <build>
-	<finalName>transport</finalName>
+    <build>
+        <finalName>transport</finalName>
         <plugins>
 
             <!-- Compile using Java 1.6 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
+                    <fork>true</fork>
                 </configuration>
             </plugin>
 	    
-	 <!-- Overlay guacamole-common-js (zip) -->
+             <!-- Overlay guacamole-common-js (zip) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <overlays>
                         <overlay>
-                            <groupId>org.glyptodon.guacamole</groupId>
+                            <groupId>org.apache.guacamole</groupId>
                             <artifactId>guacamole-common-js</artifactId>
                             <type>zip</type>
                         </overlay>
@@ -46,9 +53,8 @@
 
         </plugins>
 
-    </build>    
-    
-  <dependencies>
+    </build>
+    <dependencies>
 
         <!-- Servlet API -->
         <dependency>
@@ -58,20 +64,105 @@
             <version>2.5</version>
         </dependency>
 
+        <!-- SLF4J - logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jcl</artifactId>
+            <version>1.6.1</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Main Guacamole library -->
         <dependency>
-            <groupId>org.glyptodon.guacamole</groupId>
+            <groupId>org.apache.guacamole</groupId>
             <artifactId>guacamole-common</artifactId>
-            <version>0.9.9</version>
+            <version>0.9.9-incubating</version>
         </dependency>
 
         <!-- Guacamole JavaScript library -->
         <dependency>
-            <groupId>org.glyptodon.guacamole</groupId>
+            <groupId>org.apache.guacamole</groupId>
             <artifactId>guacamole-common-js</artifactId>
-            <version>0.9.9</version>
+            <version>0.9.9-incubating</version>
             <type>zip</type>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- JSR 356 WebSocket API -->
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jetty 8 servlet API (websocket)  -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-websocket</artifactId>
+            <version>8.1.1.v20120215</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jetty 9.0 servlet API (websocket)  -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-parent</artifactId>
+            <version>20</version>
+            <scope>provided</scope>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-api</artifactId>
+            <version>9.0.7.v20131107</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-servlet</artifactId>
+            <version>9.0.7.v20131107</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Tomcat servlet API (websocket)  -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <version>7.0.37</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-coyote</artifactId>
+            <version>7.0.37</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jersey - Guice extension -->
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-guice</artifactId>
+            <version>1.17.1</version>
+        </dependency>
+
+        <!-- Guice Servlet -->
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <!-- Guice - Dependency Injection -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
         </dependency>
 
     </dependencies>
