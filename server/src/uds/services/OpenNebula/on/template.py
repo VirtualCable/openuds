@@ -114,7 +114,11 @@ def create(api, fromTemplateId, name, toDataStore):
         return six.text_type(templateId)
     except Exception as e:
         logger.error('Creating template on OpenNebula: {}'.format(e))
-        raise
+        try:
+            api.deleteTemplate(templateId)  # Try to remove created template in case of fail
+        except Exception:
+            pass
+        raise e
 
 def remove(api, templateId):
     '''
