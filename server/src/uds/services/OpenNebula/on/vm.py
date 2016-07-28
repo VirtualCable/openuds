@@ -39,7 +39,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import VmState
 
-__updated__ = '2016-07-22'
+__updated__ = '2016-07-26'
 
 logger = logging.getLogger(__name__)
 
@@ -165,7 +165,12 @@ def getNetInfo(api, machineId, networkId=None):
 
     # Default, returns first MAC found (or raise an exception if there is no MAC)
     try:
-        return (node.getElementsByTagName('MAC')[0].childNodes[0].data, node.getElementsByTagName('IP')[0].childNodes[0].data)
+        try:
+            ip = node.getElementsByTagName('IP')[0].childNodes[0].data
+        except Exception:
+            ip = ''
+
+        return (node.getElementsByTagName('MAC')[0].childNodes[0].data, ip)
     except Exception:
         raise Exception('No network interface found on template. Please, add a network and republish.')
 

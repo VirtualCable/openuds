@@ -43,7 +43,7 @@ import six
 import xmlrpclib
 from uds.core.util import xml2dict
 
-__updated__ = '2016-07-22'
+__updated__ = '2016-07-26'
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +135,10 @@ class OpenNebulaClient(object):
         result = self.connection.one.templatepool.info(self.sessionString, -3, -1, -1)
         result = checkResult(result)
         for ds in asList(result['VMTEMPLATE_POOL']['VMTEMPLATE']):
-            yield(ds['ID'], ds['NAME'], ds['TEMPLATE']['MEMORY'])
+            try:
+                yield(ds['ID'], ds['NAME'], ds['TEMPLATE']['MEMORY'])
+            except Exception:  # Maybe no memory? (then template is not usable)
+                pass
 
     @ensureConnected
     def enumImages(self):

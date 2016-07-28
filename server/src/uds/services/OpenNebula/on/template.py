@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2016-07-22'
+__updated__ = '2016-07-27'
 
 logger = logging.getLogger(__name__)
 
@@ -70,51 +70,55 @@ def create(api, fromTemplateId, name, toDataStore):
         templateId = api.cloneTemplate(fromTemplateId, name)
 
         # Now copy cloned images if possible
-        try:
-            imgs = dict(((i[1], i[0]) for i in api.enumImages()))
+        imgs = dict(((i[1], i[0]) for i in api.enumImages()))
 
-            info = api.templateInfo(templateId)[1]
-            template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
-            logger.debug('XML: {}'.format(template.toxml()))
+        info = api.templateInfo(templateId)[1]
+        template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
+        logger.debug('XML: {}'.format(template.toxml()))
 
-            counter = 0
-            for dsk in template.getElementsByTagName('DISK'):
-                counter += 1
-                imgIds = dsk.getElementsByTagName('IMAGE_ID')
-                if len(imgIds) == 0:
-                    fromId = False
-                    node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
-                    imgName = node.data
-                    # Locate
-                    imgId = imgs[imgName]
-                else:
-                    fromId = True
-                    node = imgIds[0].childNodes[0]
-                    imgId = node.data
+        counter = 0
+        for dsk in template.getElementsByTagName('DISK'):
+            counter += 1
+            imgIds = dsk.getElementsByTagName('IMAGE_ID')
+            if len(imgIds) == 0:
+                fromId = False
+                node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                imgName = node.data
+                # Locate
+                imgId = imgs[imgName]
+            else:
+                fromId = True
+                node = imgIds[0].childNodes[0]
+                imgId = node.data
 
-                logger.debug('Found {} for cloning'.format(imgId))
+            logger.debug('Found {} for cloning'.format(imgId))
 
-                # Now clone the image
-                imgName = sanitizeName(name + ' DSK ' + six.text_type(counter))
-                newId = api.cloneImage(imgId, imgName, toDataStore)  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
-                # Ensure image is non persistent
-                api.makePersistentImage(newId, False)
-                # Now Store id/name
-                if fromId is True:
-                    node.data = six.text_type(newId)
-                else:
-                    node.data = imgName
+            # if api.imageInfo(imgId)[0]['IMAGE']['STATE'] != '1':
+            #    raise Exception('The base machines images are not in READY state')
 
-            # Now update the clone
-            # api.call('template.update', templateId, template.toxml())
-            api.updateTemplate(templateId, template.toxml())
-        except Exception:
-            logger.exception('Exception cloning image')
+            # Now clone the image
+            imgName = sanitizeName(name + ' DSK ' + six.text_type(counter))
+            newId = api.cloneImage(imgId, imgName, toDataStore)  # api.call('image.clone', int(imgId), imgName, int(toDataStore))
+            # Ensure image is non persistent
+            api.makePersistentImage(newId, False)
+            # Now Store id/name
+            if fromId is True:
+                node.data = six.text_type(newId)
+            else:
+                node.data = imgName
+
+        # Now update the clone
+        # api.call('template.update', templateId, template.toxml())
+        api.updateTemplate(templateId, template.toxml())
 
         return six.text_type(templateId)
     except Exception as e:
         logger.error('Creating template on OpenNebula: {}'.format(e))
-        raise
+        try:
+            api.deleteTemplate(templateId)  # Try to remove created template in case of fail
+        except Exception:
+            pass
+        raise e
 
 def remove(api, templateId):
     '''

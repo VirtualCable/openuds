@@ -2487,7 +2487,7 @@ msgstr "Concurrencia de creación"
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
 #: services/Xen/XenProvider.py:102
 msgid "Maximum number of concurrently creating VMs"
-msgstr "Número máximo de forma simultánea creación de VMs"
+msgstr "Número máximo de creación de VMs de forma simultánea "
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:43
@@ -2510,7 +2510,7 @@ msgstr "Número máximo de VMs que se pueden eliminar al mismo tiempo "
 
 #: services/Nutanix_enterprise/NutanixProvider.py:31
 msgid "Nutanix Acropolis Platform Provider"
-msgstr "Proveedor de plataforma Nutanix Acrópolis"
+msgstr "Proveedor de Plataforma Nutanix Acrópolis"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:33
 msgid "Nutanix based VM provider"
@@ -2613,7 +2613,7 @@ msgstr "USB"
 
 #: services/OVirt/OVirtLinkedService.py:170
 msgid "Enable usb redirection for SPICE"
-msgstr "Habilitar la redirección de usb para especia"
+msgstr "Habilitar la redirección de USB para SPICE"
 
 #: services/OVirt/OVirtLinkedService.py:183
 msgid "Display type (only for administration purposes)"
@@ -2864,11 +2864,11 @@ msgstr "Servicio de máquinas IP estática"
 
 #: services/PhysicalMachines/IPMachinesService.py:53
 msgid "This service provides access to POWERED-ON Machines by IP"
-msgstr "Este servicio proporciona acceso a las máquinas de POWERED-ON por IP"
+msgstr "Este servicio proporciona acceso a las máquinas POWERED-ON por IP"
 
 #: services/RDS_enterprise/RDSProvider.py:31
 msgid "RDS Platform Provider (Experimental)"
-msgstr "Proveedor de plataforma RDS (Experimental)"
+msgstr "Proveedor de Plataforma RDS (Experimental)"
 
 #: services/RDS_enterprise/RDSProvider.py:33
 msgid "Microsoft RDS based provider"
@@ -2904,11 +2904,11 @@ msgstr "No se ha comprobado nada, pero todo salió bien..."
 
 #: services/RDS_enterprise/RDSService.py:20
 msgid "RDS Platform RemoteAPP (Experimental)"
-msgstr "RemoteAPP de plataforma RDS (Experimental)"
+msgstr "Plataforma RDS RemoteAPP (Experimental)"
 
 #: services/RDS_enterprise/RDSService.py:22
 msgid "RDS Platform RemoteAPP based service"
-msgstr "Servicio de RDS plataforma RemoteAPP basados"
+msgstr "Servicio basado en Plataforma RDS RemoteAPP"
 
 #: services/RDS_enterprise/RDSService.py:45
 msgid "Application path"
@@ -3062,7 +3062,7 @@ msgstr "Publicación de UDS para {0} creado en {1}"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
 msgid "VMWare VCenter Server IP or Hostname"
-msgstr "VMWare VCenter Server IP o nombre de host"
+msgstr "IP de Servidor VMware vCenter o nombre de host"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:30
 msgid "VMWare VC Server Port (usually 443)"
@@ -3090,7 +3090,7 @@ msgstr ""
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:46
 msgid "VMWare VCenter Platform Provider"
-msgstr "Proveedor de plataformas de VMWare VCenter"
+msgstr "Proveedor de Plataforma VMware vCenter"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:48
 msgid "Provides connection to Virtual Center Services"
@@ -3106,7 +3106,7 @@ msgstr "Parámetros de conexión ok"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:32
 msgid "VMWare VCenter Platform Linked clone"
-msgstr "VMWare VCenter plataforma vinculados clon"
+msgstr "Plataforma VMware vCenter Linked Clone"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:34
 msgid ""
@@ -4087,11 +4087,12 @@ msgstr "Información del administrador"
 
 #: templates/uds/semantic/index.html:32
 msgid "Browser Info"
-msgstr "Información de navegador"
+msgstr "Información del navegador"
 
 #: templates/uds/semantic/index.html:124
 msgid "The service is currently in maintenance and cannot be accessed."
-msgstr "El servicio está actualmente en mantenimiento y no se puede acceder."
+msgstr ""
+"No se puede acceder al servicio porque actualmente está en mantenimiento."
 
 #: templates/uds/semantic/login.html:110
 msgid "Log In"
@@ -4241,31 +4242,31 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:77
 msgid "Layout"
-msgstr "Diseño"
+msgstr "Distribución"
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 msgid "Keyboards Layout of server"
-msgstr "Diseño de teclados de servidor"
+msgstr "Distribución de los teclados del servidor"
 
 #: transports/HTML5RDP/HTML5RDP.py:81
 msgid "English (US) keyboard"
-msgstr "Teclado de inglés (Estados Unidos)"
+msgstr "Teclado en inglés (Estados Unidos)"
 
 #: transports/HTML5RDP/HTML5RDP.py:82
 msgid "German keyboard (qwertz)"
-msgstr "Teclado alemán (qwertz)"
+msgstr "Teclado en alemán (qwertz)"
 
 #: transports/HTML5RDP/HTML5RDP.py:83
 msgid "French keyboard (azerty)"
-msgstr "Teclado francés (azerty)"
+msgstr "Teclado en francés (azerty)"
 
 #: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Italian keyboard"
-msgstr "Teclado Italiano"
+msgstr "Teclado en italiano"
 
 #: transports/HTML5RDP/HTML5RDP.py:85
 msgid "Swedish keyboard"
-msgstr "Teclado sueco"
+msgstr "Teclado en sueco"
 
 #: transports/HTML5RDP/HTML5RDP.py:86
 msgid "Failsafe"
@@ -4498,7 +4499,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "Use Alsa"
-msgstr "Uso Alsa"
+msgstr "Use ALSA"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
@@ -4527,7 +4528,7 @@ msgstr "Protocolo de Escritorio Remoto (RDP)"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 msgid "RDS Transport Experimental (direct)"
-msgstr "RDS transporte Experimental (directo)"
+msgstr "Transporte RDS Experimental (directo)"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
 msgid "RDS Transport for direct connection"
@@ -4535,7 +4536,7 @@ msgstr "Transporte RDS para conexión directa"
 
 #: transports/RDS_enterprise/TRDSTransport.py:63
 msgid "RDS Transport Experimental (tunneled)"
-msgstr "RDS transporte Experimental (tunelizado)"
+msgstr "Transporte RDS Experimental (tunelizado)"
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
 msgid "RDS Transport for tunneled connection"
@@ -4649,7 +4650,7 @@ msgstr "Transporte RGS para la conexión túnel"
 
 #: transports/SPICE/BaseSPICETransport.py:66
 msgid "Empty credentials"
-msgstr "Credenciales de vacías"
+msgstr "Credenciales vacías"
 
 #: transports/SPICE/BaseSPICETransport.py:87
 msgid ""
@@ -4666,7 +4667,7 @@ msgstr "Mostrar pantalla completa"
 
 #: transports/SPICE/BaseSPICETransport.py:93
 msgid "If checked, viewer will be shown on fullscreen mode-"
-msgstr "Si está marcada, visor aparecerá en modo de pantalla completa-"
+msgstr "Si está marcada, el visor aparecerá en modo de pantalla completa-"
 
 #: transports/SPICE/SPICETransport.py:52
 msgid "RHEV/oVirt SPICE Transport (direct)"

@@ -1961,13 +1961,12 @@ msgstr "Doit fournir un mot de passe pour le compte !"
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:155
 #, python-brace-format
 msgid "Check error: {0}"
-msgstr "Vérifiez l'erreur {0}"
+msgstr "Erreur de vérification {0}"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:148
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
-msgstr ""
-"Paramètres du serveur est introuvable (_ldap._tcp. {0} n'est pas résolu)"
+msgstr "Paramètres du serveur introuvables (_ldap._tcp. {0} n'est pas résolu)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:157
 msgid "Server check was successful"
