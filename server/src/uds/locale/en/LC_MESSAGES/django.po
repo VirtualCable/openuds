@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-26 13:26+0200\n"
+"POT-Creation-Date: 2016-07-28 13:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4271,7 +4271,8 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
-msgid "If checked, Linux client will try to use alsa, pulse if not"
+msgid ""
+"If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:55

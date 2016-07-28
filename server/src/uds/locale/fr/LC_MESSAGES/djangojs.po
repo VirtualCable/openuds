@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Abdel Baaddi <abaaddi@virtualcable.es>, 2016
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-26 13:26+0200\n"
-"PO-Revision-Date: 2016-04-20 13:25+0000\n"
+"POT-Creation-Date: 2016-07-28 13:32+0200\n"
+"PO-Revision-Date: 2016-07-26 11:44+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"

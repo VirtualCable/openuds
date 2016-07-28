@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Abdel Baaddi <abaaddi@virtualcable.es>, 2016
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-26 13:26+0200\n"
-"PO-Revision-Date: 2016-04-21 08:21+0000\n"
+"POT-Creation-Date: 2016-07-28 13:32+0200\n"
+"PO-Revision-Date: 2016-07-28 11:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -1960,13 +1961,12 @@ msgstr "Doit fournir un mot de passe pour le compte !"
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:155
 #, python-brace-format
 msgid "Check error: {0}"
-msgstr "Vérifiez l'erreur {0}"
+msgstr "Erreur de vérification {0}"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:148
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
-msgstr ""
-"Paramètres du serveur est introuvable (_ldap._tcp. {0} n'est pas résolu)"
+msgstr "Paramètres du serveur introuvables (_ldap._tcp. {0} n'est pas résolu)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:157
 msgid "Server check was successful"
@@ -2491,7 +2491,6 @@ msgstr "Simultanéité de la création"
 #: services/OpenStack/Provider.py:108
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
 #: services/Xen/XenProvider.py:102
-#| msgid "Maximum number of concurrently removing VMs"
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Nombre maximal de créer simultanément des VMs"
 
@@ -2515,7 +2514,6 @@ msgid "Maximum number of concurrently removing VMs"
 msgstr "Nombre maximal d'éliminer simultanément les VMs"
 
 #: services/Nutanix_enterprise/NutanixProvider.py:31
-#| msgid "Nutanix Acropolis Provider (Experimental)"
 msgid "Nutanix Acropolis Platform Provider"
 msgstr "Fournisseur de plates-formes Nutanix Acropolis"
 
@@ -2553,12 +2551,10 @@ msgid "Connection works fine"
 msgstr "Connexion fonctionne très bien"
 
 #: services/Nutanix_enterprise/NutanixService.py:21
-#| msgid "Nutanix Acropolis Server IP or Hostname"
 msgid "Nutanix Acropolis Service"
 msgstr "Nutanix Acropole Service"
 
 #: services/Nutanix_enterprise/NutanixService.py:23
-#| msgid "Nutanix KVM based service"
 msgid "Nutanix Acropolis based service"
 msgstr "Acropole de Nutanix de base du service"
 
@@ -2618,7 +2614,6 @@ msgid "Physical memory guaranteed to machines"
 msgstr "Mémoire physique garantie aux machines"
 
 #: services/OVirt/OVirtLinkedService.py:167
-#| msgid "UDS"
 msgid "USB"
 msgstr "USB"
 
@@ -2871,17 +2866,14 @@ msgid "List of IPS"
 msgstr "Liste des IPS"
 
 #: services/PhysicalMachines/IPMachinesService.py:51
-#| msgid "Base machine for this service"
 msgid "Static IP machines service"
 msgstr "Service de machines IP statique"
 
 #: services/PhysicalMachines/IPMachinesService.py:53
-#| msgid "This service provides access to POWERED-ON Machines by ip"
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Ce service donne accès aux Machines POWERED-ON par IP"
 
 #: services/RDS_enterprise/RDSProvider.py:31
-#| msgid "RDS Provider (Experimental)"
 msgid "RDS Platform Provider (Experimental)"
 msgstr "Fournisseur de plates-formes RDS (expérimental)"
 
@@ -2920,12 +2912,10 @@ msgid "Nothing tested, but all went fine.."
 msgstr "Rien à l'épreuve, mais tout s'est bien passé..."
 
 #: services/RDS_enterprise/RDSService.py:20
-#| msgid "RDS RemoteAPP (Experimental)"
 msgid "RDS Platform RemoteAPP (Experimental)"
 msgstr "RDS plate-forme RemoteAPP (expérimental)"
 
 #: services/RDS_enterprise/RDSService.py:22
-#| msgid "RDS RemoteAPP based service"
 msgid "RDS Platform RemoteAPP based service"
 msgstr "Service RDS plate-forme RemoteAPP basé"
 
@@ -3079,7 +3069,6 @@ msgid "UDS Publication for {0} created at {1}"
 msgstr "Publication UDS {0} créé à {1}"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
-#| msgid "VMWare VC Server IP or Hostname"
 msgid "VMWare VCenter Server IP or Hostname"
 msgstr "VMWare VCenter Server IP ou nom d’hôte"
 
@@ -3108,7 +3097,6 @@ msgstr ""
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:46
-#| msgid "Xenserver Platform Provider"
 msgid "VMWare VCenter Platform Provider"
 msgstr "Fournisseur de plates-formes VMWare VCenter"
 
@@ -3125,7 +3113,6 @@ msgid "Connection params ok"
 msgstr "Connexion params ok"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:32
-#| msgid "VMWare Linked clone base"
 msgid "VMWare VCenter Platform Linked clone"
 msgstr "VMWare VCenter plate-forme Linked clone"
 
@@ -3181,15 +3168,12 @@ msgid "Base machine for this service"
 msgstr "Machine de base pour ce service"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#| msgid ""
-#| "If more than 1 interface is found in machine, use one on this network as "
-#| "main"
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
 msgstr ""
-"Si plus d’une interface se trouve dans la machine, utiliser la première que l'on retrouve sur cette "
-"réseau principal"
+"Si plus d’une interface se trouve dans la machine, utiliser la première que "
+"l'on retrouve sur cette réseau principal"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid "Clones Folder"
@@ -3708,10 +3692,10 @@ msgid "UDS has been developed using these components:"
 msgstr "UDS a été développé à l'aide de ces composants :"
 
 #: templates/uds/html5/about.html:40
-#| msgid ""
-#| "If you found that we missed to mention any component, please let us know"
 msgid "If you find that we missed any component, please let us know"
-msgstr "Si vous trouvez que nous avons manqué de n’importe quel composant, svp faites-nous savoir"
+msgstr ""
+"Si vous trouvez que nous avons manqué de n’importe quel composant, svp "
+"faites-nous savoir"
 
 #: templates/uds/html5/about.html:41
 #: templates/uds/html5/service_not_ready.html:21
@@ -4075,7 +4059,6 @@ msgstr ""
 "veuillez nous le faire savoir"
 
 #: templates/uds/semantic/index.html:23
-#| msgid "Administrator info panel"
 msgid "Administrator info"
 msgstr "Infos de l’administrateur"
 
@@ -4084,27 +4067,22 @@ msgid "Browser Info"
 msgstr "Info navigateur"
 
 #: templates/uds/semantic/index.html:124
-#| msgid "This service is in maintenance mode."
 msgid "The service is currently in maintenance and cannot be accessed."
 msgstr "Le service est actuellement en maintenance et ne sont pas accessibles."
 
 #: templates/uds/semantic/login.html:110
-#| msgid "Log out"
 msgid "Log In"
 msgstr "Ouvrir une session"
 
 #: templates/uds/semantic/snippets/user-menu.html:10
-#| msgid "Linux UDS plugin"
 msgid "UDS Plugin"
 msgstr "Plugin de l’UDS"
 
 #: templates/uds/semantic/tmpl/items.html:12
-#| msgid "Session"
 msgid "Session in use"
 msgstr "Session en cours d’utilisation"
 
 #: templates/uds/semantic/tmpl/items.html:13
-#| msgid "In maintenance"
 msgid "Maintenance"
 msgstr "Entretien"
 
@@ -4492,7 +4470,8 @@ msgstr "Multimédia sync"
 #: transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
-msgstr "S’il est activé. Client Linux utilisera le paramètre multimédia pour xfreerdp"
+msgstr ""
+"S’il est activé. Client Linux utilisera le paramètre multimédia pour xfreerdp"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
@@ -4501,9 +4480,10 @@ msgstr "Utiliser Alsa"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
-#| msgid "If checked, this transport will allow the use of user printers"
-msgid "If checked, Linux client will try to use alsa, pulse if not"
-msgstr "Si cochée, Linux client essaiera d’utiliser alsa, si pas d’impulsion"
+msgid ""
+"If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
+msgstr ""
+"Si cochée, Linux client essaie d’utiliser ALSA, sinon impulsion sera utilisée"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
@@ -4526,7 +4506,6 @@ msgid "Remote Desktop Protocol"
 msgstr "Protocole Bureau distant"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
-#| msgid "RDS Transport (direct)"
 msgid "RDS Transport Experimental (direct)"
 msgstr "RDS Transport expérimental (direct)"
 
@@ -4535,7 +4514,6 @@ msgid "RDS Transport for direct connection"
 msgstr "Transports RDS pour une connexion directe"
 
 #: transports/RDS_enterprise/TRDSTransport.py:63
-#| msgid "RDS Transport (tunneled)"
 msgid "RDS Transport Experimental (tunneled)"
 msgstr "RDS Transport expérimental (par tunnel)"
 
@@ -4649,7 +4627,6 @@ msgid "RGS Transport for tunneled connection"
 msgstr "RGS Transport pour connexion par tunnel"
 
 #: transports/SPICE/BaseSPICETransport.py:66
-#| msgid "Empty creds"
 msgid "Empty credentials"
 msgstr "Informations d’identification de vides"
 
@@ -4663,7 +4640,6 @@ msgstr ""
 "fichier)."
 
 #: transports/SPICE/BaseSPICETransport.py:92
-#| msgid "Full Screen"
 msgid "Show fullscreen"
 msgstr "Afficher plein écran"
 
@@ -4765,8 +4741,9 @@ msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
 msgstr ""
-"Ce service est sur le point d’être remplacée par une nouvelle version. S’il vous plaît, fermez le "
-"session avant {} et enregistrer tous vos travaux pour éviter de perdre il."
+"Ce service est sur le point d’être remplacée par une nouvelle version. S’il "
+"vous plaît, fermez le session avant {} et enregistrer tous vos travaux pour "
+"éviter de perdre il."
 
 #: web/views/service.py:115
 msgid "Service not ready. Please, try again in a while."

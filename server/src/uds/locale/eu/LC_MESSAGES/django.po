@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-26 13:26+0200\n"
-"PO-Revision-Date: 2016-04-21 08:21+0000\n"
+"POT-Creation-Date: 2016-07-28 13:32+0200\n"
+"PO-Revision-Date: 2016-07-28 11:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -3885,10 +3885,8 @@ msgid ""
 msgstr ""
 
 #: templates/uds/semantic/index.html:23
-#, fuzzy
-#| msgid "Administrator info panel"
 msgid "Administrator info"
-msgstr "Administratzaile-informazioa panela"
+msgstr ""
 
 #: templates/uds/semantic/index.html:32
 msgid "Browser Info"
@@ -4275,7 +4273,8 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
-msgid "If checked, Linux client will try to use alsa, pulse if not"
+msgid ""
+"If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:55
