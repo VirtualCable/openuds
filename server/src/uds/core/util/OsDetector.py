@@ -44,8 +44,8 @@ WindowsPhone = 'Windows Phone'
 Windows = 'Windows'
 Macintosh = 'Mac'
 Android = 'Android'
-iPad = 'iPad'
-iPhone = 'iPhone'
+iPad = 'iPad'  #
+iPhone = 'iPhone'  # In fact, these are IOS both, but we can diferentiate it...
 Unknown = 'Unknown'
 
 knownOss = (WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone)  # Android is linux also, so it is cheched on first place

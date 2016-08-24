@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-08-24'
 
 
 # a few constants
@@ -848,6 +848,7 @@ class ModelHandler(BaseModelHandler):
             args = self.readFieldsFromParams(self.save_fields)
             logger.debug('Args: {}'.format(args))
             self.beforeSave(args)
+            logger.debug('Args after processing: {}'.format(args))
             # If tags is in save fields, treat it "specially"
             if 'tags' in self.save_fields:
                 tags = args['tags']
