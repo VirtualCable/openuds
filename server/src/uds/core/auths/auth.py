@@ -44,6 +44,7 @@ from django.utils.translation import ugettext as _
 from uds.core.util.Config import GlobalConfig
 from uds.core.util import log
 from uds.core.util.decorators import deprecated
+from uds.core.util import OsDetector
 from uds.core import auths
 from uds.core.util.stats import events
 from uds.core.managers.CryptoManager import CryptoManager
@@ -53,7 +54,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2016-04-15'
+__updated__ = '2016-08-24'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -281,7 +282,7 @@ def webLogin(request, response, user, password):
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)  # Stores "bytes"
     # Ensures that this user will have access through REST api if logged in through web interface
-    REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), user.is_admin, user.staff_member)
+    REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), request.os, user.is_admin, user.staff_member)
     return True
 
 

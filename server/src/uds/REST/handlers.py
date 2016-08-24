@@ -178,7 +178,7 @@ class Handler(object):
         return self._authToken
 
     @staticmethod
-    def storeSessionAuthdata(session, id_auth, username, locale, is_admin, staff_member):
+    def storeSessionAuthdata(session, id_auth, username, locale, platform, is_admin, staff_member):
         '''
         Stores the authentication data inside current session
         :param session: session handler (Djano user session object)
@@ -195,11 +195,12 @@ class Handler(object):
             'auth': id_auth,
             'username': username,
             'locale': locale,
+            'platform': platform,
             'is_admin': is_admin,
             'staff_member': staff_member
         }
 
-    def genAuthToken(self, id_auth, username, locale, is_admin, staf_member):
+    def genAuthToken(self, id_auth, username, locale, platform, is_admin, staf_member):
         '''
         Generates the authentication token from a session, that is basically
         the session key itself
@@ -211,7 +212,7 @@ class Handler(object):
         '''
         session = SessionStore()
         session.set_expiry(GlobalConfig.ADMIN_IDLE_TIME.getInt())
-        Handler.storeSessionAuthdata(session, id_auth, username, locale, is_admin, staf_member)
+        Handler.storeSessionAuthdata(session, id_auth, username, locale, platform, is_admin, staf_member)
         session.save()
         self._authToken = session.session_key
         self._session = session

@@ -34,6 +34,7 @@ from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.model import processUuid
+from uds.core.util import OsDetector
 from uds.models import Authenticator
 from uds.core.auths.auth import authenticate
 
@@ -64,6 +65,19 @@ class Login(Handler):
                 username:
                 password:
                 authId or auth or authSmallName: (must include at least one. If multiple are used, precedence is the list order)
+            optional:
+                platform: From what platform are we connecting. If not specified, will try to deduct it from user agent.
+                Valid values:
+                    Linux = 'Linux'
+                    WindowsPhone = 'Windows Phone'
+                    Windows = 'Windows'
+                    Macintosh = 'Mac'
+                    Android = 'Android'
+                    iPad = 'iPad'
+                    iPhone = 'iPhone'
+                Defaults to:
+                    Unknown = 'Unknown'
+
         Result:
             on success: { 'result': 'ok', 'auth': [auth_code] }
             on error: { 'result: 'error', 'error': [error string] }
@@ -78,12 +92,13 @@ class Login(Handler):
             authId = self._params.get('authId', None)
             authSmallName = self._params.get('authSmallName', None)
             authName = self._params.get('auth', None)
+            platform = self._params.get('platform', self._request.os)
 
             username, password = self._params['username'], self._params['password']
             locale = self._params.get('locale', 'en')
             if authName == 'admin' or authSmallName == 'admin':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
-                    self.genAuthToken(-1, username, locale, True, True)
+                    self.genAuthToken(-1, username, locale, platform, True, True)
                     return{'result': 'ok', 'token': self.getAuthToken()}
                 else:
                     raise Exception('Invalid credentials')
@@ -98,13 +113,13 @@ class Login(Handler):
                         auth = Authenticator.objects.get(small_name=authSmallName)
 
                     if password == '':
-                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential leaved empty
+                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Strange password if credential leaved empty
 
                     logger.debug('Auth obj: {0}'.format(auth))
                     user = authenticate(username, password, auth)
                     if user is None:  # invalid credentials
                         raise Exception()
-                    self.genAuthToken(auth.id, user.name, locale, user.is_admin, user.staff_member)
+                    self.genAuthToken(auth.id, user.name, locale, platform, user.is_admin, user.staff_member)
                     return{'result': 'ok', 'token': self.getAuthToken()}
                 except:
                     logger.exception('Credentials ')
