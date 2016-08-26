@@ -39,7 +39,7 @@ from uds.models import User
 import threading
 import logging
 
-__updated__ = '2016-04-25'
+__updated__ = '2016-08-26'
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,10 @@ def getRequest():
 
 
 class GlobalRequestMiddleware(object):
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
     def process_request(self, request):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
@@ -83,6 +87,13 @@ class GlobalRequestMiddleware(object):
         except Exception:
             logger.exception('Deleting stored request')
         return response
+
+    def __call__(self, request):
+        self.process_request(request)
+
+        response = self.get_response(request)
+
+        return self.process_response(request, response)
 
     @staticmethod
     def fillIps(request):

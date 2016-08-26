@@ -26,11 +26,11 @@ DATABASES = {
             # 'init_command': 'SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
             # 'init_command': 'SET storage_engine=MYISAM, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
         },
-        'NAME': 'dbuds',                      # Or path to database file if using sqlite3.
-        'USER': 'dbuds',                      # Not used with sqlite3.
-        'PASSWORD': 'PASSWOR',                  # Not used with sqlite3.
-        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
+        'NAME': 'dbuds',  # Or path to database file if using sqlite3.
+        'USER': 'dbuds',  # Not used with sqlite3.
+        'PASSWORD': 'PASSWOR',  # Not used with sqlite3.
+        'HOST': 'localhost',  # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '3306',  # Set to empty string for default. Not used with sqlite3.
 	    # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
     }
 }
@@ -165,7 +165,7 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -209,11 +209,11 @@ COMPRESS_PRECOMPILERS = (
 )
 if DEBUG:
     COMPRESS_DEBUG_TOGGLE = 'debug'
-#   
+#
 # Enable this if you need to allow round robin load balancing of web server
 # This is so because we need to share the files between servers
 # Another options is put /var/server/static on a shared nfs forder for all servers
-#   
+#
 # COMPRESS_STORAGE = 'uds.core.util.FileStorage.CompressorFileStorage'
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
@@ -259,7 +259,7 @@ LOGGING = {
             'level':'DEBUG',
             'class':'logging.NullHandler',
         },
-                 
+
         'file':{
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
@@ -281,7 +281,7 @@ LOGGING = {
             'backupCount': 3,
             'encoding': 'utf-8'
         },
-                 
+
         'servicesFile':{
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
@@ -314,7 +314,7 @@ LOGGING = {
             'backupCount': 3,
             'encoding': 'utf-8'
         },
-        
+
         'console':{
             'level':'DEBUG',
             'class':'logging.StreamHandler',
@@ -342,12 +342,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-                
+
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,
         },
-                
+
         'uds.services': {
             'handlers': ['servicesFile'],
             'level': LOGLEVEL,
@@ -365,6 +365,6 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         }
-        
+
     }
 }

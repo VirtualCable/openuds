@@ -38,5 +38,12 @@ class RequestDebug(object):
     This header tells to Internet Explorer to render page with latest
     possible version or to use chrome frame if it is installed.
     """
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         logger.info('Request lang: {0}'.format(request.LANGUAGE_CODE))
+
+        response = self.get_response(request)
+
+        return response

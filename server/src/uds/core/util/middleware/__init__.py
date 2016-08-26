@@ -38,7 +38,12 @@ class XUACompatibleMiddleware(object):
     This header tells to Internet Explorer to render page with latest
     possible version or to use chrome frame if it is installed.
     """
-    def process_response(self, request, response):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
         if response.get('content-type', '').startswith('text/html'):
             response['X-UA-Compatible'] = 'IE=edge'
         return response
+
