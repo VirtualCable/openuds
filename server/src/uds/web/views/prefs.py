@@ -30,9 +30,9 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
+__updated__ = '2016-08-26'
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.shortcuts import redirect
 from django.template import RequestContext
 
@@ -60,4 +60,4 @@ def prefs(request):
         UserPrefsManager.manager().processRequestForUserPreferences(request.user, request.POST)
         return redirect('uds.web.views.index')
     prefs_form = UserPrefsManager().manager().getHtmlForUserPreferences(request.user)
-    return render_to_response(theme.template('prefs.html'), {'prefs_form': prefs_form}, context_instance=RequestContext(request))
+    return render(request, theme.template('prefs.html'), {'prefs_form': prefs_form})

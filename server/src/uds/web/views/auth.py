@@ -35,7 +35,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanen
 from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
@@ -58,7 +58,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2015-11-06'
+__updated__ = '2016-08-26'
 
 
 @csrf_exempt
@@ -203,12 +203,11 @@ def ticketAuth(request, ticketId):
             else:
                 link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 
-            response = render_to_response(
+            response = render(request,
                 theme.template('simpleLauncher.html'),
                 {
                     'link': link
-                },
-                context_instance=RequestContext(request)
+                }
             )
         else:
             response = HttpResponsePermanentRedirect(reverse('uds.web.views.index'))
@@ -217,19 +216,17 @@ def ticketAuth(request, ticketId):
         getUDSCookie(request, response, True)
         return response
     except ServiceNotReadyError as e:
-        return render_to_response(
+        return render(request,
             theme.template('service_not_ready.html'),
             {
                 'fromLauncher': True,
                 'code': e.code
-            },
-            context_instance=RequestContext(request)
+            }
         )
 
     except TicketStore.InvalidTicket:
-        return render_to_response(
-            theme.template('simpleLauncherAlreadyLaunched.html'),
-            context_instance=RequestContext(request)
+        return render(
+            theme.template('simpleLauncherAlreadyLaunched.html')
         )
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')

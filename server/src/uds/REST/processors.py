@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 # from django.utils import simplejson as json
-#import ujson as json
+# import ujson as json
 import json
 from xml_marshaller import xml_marshaller
 import datetime
@@ -127,7 +127,7 @@ class MarshallerProcessor(ContentProcessor):
 
     def processParameters(self):
         try:
-            if len(self._request.body) == 0:
+            if self._request.META.get('CONTENT_LENGTH', '0') == '' or len(self._request.body) == 0:
                 return self.processGetParameters()
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body)

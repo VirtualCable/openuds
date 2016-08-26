@@ -13,7 +13,7 @@
             <!-- <span>Universal Desktop Services</span> -->
           </a>
 			</div>
-            
+
     <!-- Side bar -->
      <div class="collapse navbar-collapse navbar-ex1-collapse">
         <div class="side-nav">
@@ -39,10 +39,10 @@
               {% endif %}
             </ul>
           </div>
-        
+
           <ul class="nav navbar-nav navbar-right navbar-user">
           </ul>
-          <form id="form_language" action="{% url "django.views.i18n.set_language" %}" method="post">
+          <form id="form_language" action="{% url "set_language" %}" method="post">
           {% csrf_token %}
           <input id="id_language" type="hidden" name="language" value=""/>
           <ul class="nav navbar-nav navbar-right">
@@ -73,7 +73,7 @@
 
           </ul>
           </form>
-          
+
        </div>
-			
+
 		</nav>

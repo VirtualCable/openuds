@@ -31,8 +31,7 @@
 from __future__ import unicode_literals
 
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext
 
@@ -49,7 +48,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2016-02-19'
+__updated__ = '2016-08-26'
 
 
 def login(request, tag=None):
@@ -128,15 +127,14 @@ def login(request, tag=None):
     else:
         form = LoginForm(tag=tag)
 
-    response = render_to_response(
+    response = render(request,
         theme.template('login.html'),
         {
             'form': form,
             'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True),
             'version': VERSION
 
-        },
-        context_instance=RequestContext(request)
+        }
     )
 
     getUDSCookie(request, response)

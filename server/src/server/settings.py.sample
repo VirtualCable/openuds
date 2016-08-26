@@ -14,7 +14,6 @@ DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 BASE_DIR = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 # USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')  # For testing begind a reverse proxy
@@ -141,18 +140,29 @@ SECRET_KEY = 's5ky!7b5f#s35!e38xv%e-+iey6yi-#630x)tm1hf6_j8rie2*'
 # This is a very long string, an RSA KEY (this can be changed, but if u loose it, all encription will be lost)
 RSA_KEY = '-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQC0qe1GlriQbHFYdKYRPBFDSS8Ne/TEKI2mtPKJf36XZTy6rIyH\nvUpT1gMScVjHjOISLNJQqktyv0G+ZGzLDmfkCUBev6JBlFwNeX3Dv/97Q0BsEzJX\noYHiDANUkuB30ukmGvG0sg1v4ccl+xs2Su6pFSc5bGINBcQ5tO0ZI6Q1nQIDAQAB\nAoGBAKA7Octqb+T/mQOX6ZXNjY38wXOXJb44LXHWeGnEnvUNf/Aci0L0epCidfUM\nfG33oKX4BMwwTVxHDrsa/HaXn0FZtbQeBVywZqMqWpkfL/Ho8XJ8Rsq8OfElrwek\nOCPXgxMzQYxoNHw8V97k5qhfupQ+h878BseN367xSyQ8plahAkEAuPgAi6aobwZ5\nFZhx/+6rmQ8sM8FOuzzm6bclrvfuRAUFa9+kMM2K48NAneAtLPphofqI8wDPCYgQ\nTl7O96GXVQJBAPoKtWIMuBHJXKCdUNOISmeEvEzJMPKduvyqnUYv17tM0JTV0uzO\nuDpJoNIwVPq5c3LJaORKeCZnt3dBrdH1FSkCQQC3DK+1hIvhvB0uUvxWlIL7aTmM\nSny47Y9zsc04N6JzbCiuVdeueGs/9eXHl6f9gBgI7eCD48QAocfJVygphqA1AkEA\nrvzZjcIK+9+pJHqUO0XxlFrPkQloaRK77uHUaW9IEjui6dZu4+2T/q7SjubmQgWR\nZy7Pap03UuFZA2wCoqJbaQJAUG0FVrnyUORUnMQvdDjAWps2sXoPvA8sbQY1W8dh\nR2k4TCFl2wD7LutvsdgdkiH0gWdh5tc1c4dRmSX1eQ27nA==\n-----END RSA PRIVATE KEY-----'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-
-# Own context processors plus django's own
-TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + [
-    'uds.core.util.Config.context_processor',
-    'uds.core.util.html.context',
-    'django.core.context_processors.request',
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'uds.core.util.Config.context_processor',
+                'uds.core.util.html.context',
+                'django.core.context_processors.request',
+            ],
+            'debug': DEBUG,
+        },
+    },
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -176,13 +186,6 @@ ROOT_URLCONF = 'server.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'server.wsgi.application'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(BASE_DIR, 'templates'),
-)
 
 INSTALLED_APPS = (
     # 'django.contrib.contenttypes', # Not used

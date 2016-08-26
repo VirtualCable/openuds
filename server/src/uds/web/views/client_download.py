@@ -33,7 +33,7 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from django.utils.translation import ugettext_noop
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 
 from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
@@ -45,7 +45,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-05'
+__updated__ = '2016-08-26'
 
 
 UserPrefsManager.manager().registerPrefs(
@@ -65,9 +65,8 @@ def client_downloads(request, os=None):
         os = request.os['OS']
     logger.debug('User: {}'.format(request.user))
     os = os.lower()
-    return render_to_response(theme.template('download_client.html'),
-                              {'os': os, 'user': request.user},
-                              context_instance=RequestContext(request))
+    return render(request, theme.template('download_client.html'),
+                              {'os': os, 'user': request.user})
 
 
 @webLoginRequired(admin=False)

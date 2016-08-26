@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
@@ -42,7 +42,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-27'
+__updated__ = '2016-08-26'
 
 
 @webLoginRequired(admin=True)
@@ -53,6 +53,6 @@ def download(request, idDownload):
     if idDownload == '':
         files = [{'id': key, 'name': val['name'], 'comment': _(val['comment'])} for key, val in DownloadsManager.manager().getDownloadables().items()]
         logger.debug('Files: {0}'.format(files))
-        return render_to_response(theme.template('downloads.html'), {'files': files}, context_instance=RequestContext(request))
+        return render(request, theme.template('downloads.html'), {'files': files})
 
     return DownloadsManager.manager().send(request, idDownload)

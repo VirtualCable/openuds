@@ -917,7 +917,7 @@ class UserInterface(object):
         :py:meth:`serializeForm`, and stores
         the valid values form form fileds inside its corresponding field
         '''
-        if values == '':  # Has nothing
+        if values == b'':  # Has nothing
             return
 
         try:
