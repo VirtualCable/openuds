@@ -38,6 +38,7 @@ from __future__ import unicode_literals
 from uds.core.Environment import Environmentable
 from uds.core.Serializable import Serializable
 from uds.core.BaseModule import Module
+import time
 
 VERSION = '2.0.0-DEVEL'
-VERSION_STAMP = '20160501-DEVEL'
+VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))
