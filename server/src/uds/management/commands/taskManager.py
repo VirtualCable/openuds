@@ -94,18 +94,17 @@ class Command(BaseCommand):
     args = "None"
     help = "Executes the task manager as a daemon. No parameter show current status of task manager"
 
-    option_list = BaseCommand.option_list + (
-        make_option('--start',
+    def add_arguments(self, parser):
+        parser.add_argument('--start',
                     action='store_true',
                     dest='start',
                     default=False,
-                    help='Starts a new daemon'),
-        make_option('--stop',
+                    help='Starts a new daemon')
+        parser.add_argument('--stop',
                     action='store_true',
                     dest='stop',
                     default=False,
-                    help='Stop any running daemon'),
-    )
+                    help='Stop any running daemon')
 
     def handle(self, *args, **options):
         logger.info("Running task manager command")
