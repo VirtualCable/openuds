@@ -30,21 +30,8 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-NONE = ''
-RDP = 'rdp'
-RDS = 'rds'  # In fact, RDS (Remote Desktop Services) is RDP, but have "more info" for connection that RDP
-RGS = 'rgs'
-SPICE = 'spice'
-VNC = 'vnc'
-PCOIP = 'pcoip'
-REMOTEFX = 'remotefx'  # This in fact is RDP als
-HDX = 'hdx'
-ICA = 'ica'
-NX = 'nx'
-X11 = 'x11'
-X2GO = 'x2go'  # Based on NX
-OTHER = 'other'
-
-GENERIC = (RDP, RGS, VNC, NX, X11, X2GO, PCOIP, OTHER)
+from django.utils.translation import ugettext_noop as _
+from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
+from .X2GOTransport import X2GOTransport
+from .TX2GOTransport import TX2GOTransport

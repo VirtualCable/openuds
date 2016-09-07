@@ -30,21 +30,43 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-NONE = ''
-RDP = 'rdp'
-RDS = 'rds'  # In fact, RDS (Remote Desktop Services) is RDP, but have "more info" for connection that RDP
-RGS = 'rgs'
-SPICE = 'spice'
-VNC = 'vnc'
-PCOIP = 'pcoip'
-REMOTEFX = 'remotefx'  # This in fact is RDP als
-HDX = 'hdx'
-ICA = 'ica'
-NX = 'nx'
-X11 = 'x11'
-X2GO = 'x2go'  # Based on NX
-OTHER = 'other'
+from django.utils.translation import ugettext_noop as _
+from uds.core.ui.UserInterface import gui
+from uds.core.transports.BaseTransport import Transport
+from uds.core.transports import protocols
+from uds.core.util import OsDetector
+from uds.core.util import tools
+from uds.models import TicketStore
 
-GENERIC = (RDP, RGS, VNC, NX, X11, X2GO, PCOIP, OTHER)
+from .BaseX2GOTransport import BaseX2GOTransport
+
+import logging
+import random
+import string
+
+__updated__ = '2016-09-07'
+
+logger = logging.getLogger(__name__)
+
+
+class TX2GOTransport(BaseX2GOTransport):
+    '''
+    Provides access via SPICE to service.
+    This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
+    '''
+    typeName = _('X2Go Transport (tunneled)')
+    typeType = 'TX2GOTransport'
+    typeDescription = _('X2Go Transport for tunneled connection  (EXPERIMENTAL)')
+    protocol = protocols.SPICE
+
+    tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
+
+
+    def initialize(self, values):
+        if values is not None:
+            if values['tunnelServer'].count(':') != 1:
+                raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
+
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
+        pass

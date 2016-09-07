@@ -46,7 +46,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-05-27'
+__updated__ = '2016-09-07'
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,6 @@ class TSPICETransport(BaseSpiceTransport):
     typeName = _('RHEV/oVirt SPICE Transport (tunneled)')
     typeType = 'TSSPICETransport'
     typeDescription = _('SPICE Transport for tunneled connection  (EXPERIMENTAL)')
-    needsJava = True  # If this transport needs java for rendering
     protocol = protocols.SPICE
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)

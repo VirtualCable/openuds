@@ -2,7 +2,7 @@
 
 #
 # Copyright (c) 2012 Virtual Cable S.L.
-# All rights reserved.
+# All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -30,21 +30,31 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
 
-NONE = ''
-RDP = 'rdp'
-RDS = 'rds'  # In fact, RDS (Remote Desktop Services) is RDP, but have "more info" for connection that RDP
-RGS = 'rgs'
-SPICE = 'spice'
-VNC = 'vnc'
-PCOIP = 'pcoip'
-REMOTEFX = 'remotefx'  # This in fact is RDP als
-HDX = 'hdx'
-ICA = 'ica'
-NX = 'nx'
-X11 = 'x11'
-X2GO = 'x2go'  # Based on NX
-OTHER = 'other'
+from django.utils.translation import ugettext_noop as _
+from uds.core.util import OsDetector
+from uds.core.util import tools
+from .BaseX2GOTransport import BaseX2GOTransport
 
-GENERIC = (RDP, RGS, VNC, NX, X11, X2GO, PCOIP, OTHER)
+import logging
+
+__updated__ = '2016-09-07'
+
+logger = logging.getLogger(__name__)
+
+
+class X2GOTransport(BaseX2GOTransport):
+    '''
+    Provides access via SPICE to service.
+    This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
+    '''
+    typeName = _('X2Go Transport (direct)')
+    typeType = 'X2GOTransport'
+    typeDescription = _('X2Go Transport for direct connection (EXPERIMENTAL)')
+
+    # useEmptyCreds = BaseSpiceTransport.useEmptyCreds
+    # fixedName = BaseSpiceTransport.fixedName
+    # fixedPassword = BaseSpiceTransport.fixedPassword
+
+    def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
+        pass
