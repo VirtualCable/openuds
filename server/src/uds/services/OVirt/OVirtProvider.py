@@ -103,7 +103,7 @@ class Provider(ServiceProvider):
             gui.choiceItem('3', '3.x'),
             gui.choiceItem('4', '4.x'),
         ],
-        defvalue='4'  # Default value is the ID of the choicefield
+        defvalue='3'  # Default value is the ID of the choicefield
     )
 
     host = gui.TextField(length=64, label=_('Host'), order=2, tooltip=_('oVirt Server IP or Hostname'), required=True)
