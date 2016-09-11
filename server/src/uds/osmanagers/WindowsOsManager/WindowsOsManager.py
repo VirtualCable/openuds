@@ -239,7 +239,7 @@ class WindowsOsManager(osmanagers.OSManager):
         '''
         On production environments, will return no idle for non removable machines
         '''
-        if self._idle <= 0 or (settings.DEBUG is False and self._onLogout != 'remove'):
+        if self._idle <= 0:  # or (settings.DEBUG is False and self._onLogout != 'remove'):
             return None
 
         return self._idle
