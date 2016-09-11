@@ -33,8 +33,8 @@
 from __future__ import unicode_literals
 
 import sys
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+from PyQt4 import QtGui  # @UnresolvedImport
+from PyQt4 import QtCore  # @UnresolvedImport
 import pickle
 import time
 import datetime
