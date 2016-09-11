@@ -4,14 +4,14 @@ Created on Nov 14, 2012
 @author: dkmaster
 '''
 
-from ovirtsdk.xml import params
-from ovirtsdk.api import API
+import ovirtsdk4 as ovirt
+import ovirtsdk4.types
 
 import threading
 import logging
 import re
 
-__updated__ = '2016-06-04'
+__updated__ = '2016-09-11'
 
 logger = logging.getLogger(__name__)
 
@@ -60,13 +60,13 @@ class Client(object):
 
         if cached_api is not None:
             try:
-                cached_api.disconnect()
+                cached_api.close()
             except:
                 # Nothing happens, may it was already disconnected
                 pass
         try:
             cached_api_key = aKey
-            cached_api = API(url='https://' + self._host + '/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=False)
+            cached_api = ovirt.Connection(url='https://' + self._host + '/ovirt-engine/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
             return cached_api
         except:
             logger.exception('Exception connection ovirt at {0}'.format(self._host))
@@ -91,23 +91,12 @@ class Client(object):
         finally:
             lock.release()
 
-    def _isFullyFunctionalVersion(self, api):
-        '''
-        Same as isFullyFunctionalVersion, but without locking. For internal use only
-        '''
-        version = re.search('([0-9]+).([0-9]+).([0-9]+)?', api.get_product_info().full_version).groups()
-        if version[0] == '3' and version[1] == '5' and (version[2] is None or version[2] < '4'):  # 3.5 fails if disks are in request
-            return [False, 'Version 3.5 is not fully supported due a BUG in oVirt REST API (but partially supported. See UDS Documentation)']
-
-        return [True, 'Test successfully passed']
-
 
     def isFullyFunctionalVersion(self):
-        try:
-            lock.acquire(True)
-            return self._isFullyFunctionalVersion(self.__getApi())
-        finally:
-            lock.release()
+        '''
+        '4.0 version is always functional (right now...)
+        '''
+        return [True, 'Test successfully passed']
 
     def getVms(self, force=False):
         '''
@@ -135,14 +124,18 @@ class Client(object):
 
             api = self.__getApi()
 
-            vms = api.vms.list(query='name!=UDS*')
+            vms = api.system_service().vms_service().list()
 
             logger.debug('oVirt VMS: {}'.format(vms))
 
             res = []
 
             for vm in vms:
-                res.append({'name': vm.get_name(), 'id': vm.get_id(), 'cluster_id': vm.get_cluster().get_id(), 'usb': (vm.get_usb().get_enabled(), vm.get_usb().get_type()) })
+                try:
+                    pair = [vm.usb.enabled, vm.usb.type.value]
+                except:
+                    pair = [False, '']
+                res.append({'name': vm.name, 'id': vm.id, 'cluster_id': vm.cluster.id, 'usb': pair })
 
             self._cache.put(vmsKey, res, Client.CACHE_TIME_LOW)
 
@@ -178,20 +171,20 @@ class Client(object):
 
             api = self.__getApi()
 
-            clusters = api.clusters.list()
+            clusters = api.system_service().clusters_service().list()
 
             res = []
 
             for cluster in clusters:
-                dc = cluster.get_data_center()
+                dc = cluster.data_center
 
                 if dc is not None:
-                    dc = dc.get_id()
+                    dc = dc.id
 
-                val = {'name': cluster.get_name(), 'id': cluster.get_id(), 'datacenter_id': dc}
+                val = {'name': cluster.name, 'id': cluster.id, 'datacenter_id': dc}
 
                 # Updates cache info for every single cluster
-                clKey = self.__getKey('o-cluster' + cluster.get_id())
+                clKey = self.__getKey('o-cluster' + cluster.id)
                 self._cache.put(clKey, val)
 
                 if dc is not None:
@@ -231,14 +224,14 @@ class Client(object):
 
             api = self.__getApi()
 
-            c = api.clusters.get(id=clusterId)
+            c = api.system_service().clusters_service().service(clusterId).get()
 
-            dc = c.get_data_center()
+            dc = c.data_center
 
             if dc is not None:
-                dc = dc.get_id()
+                dc = dc.id
 
-            res = {'name': c.get_name(), 'id': c.get_id(), 'datacenter_id': dc}
+            res = {'name': c.name, 'id': c.id, 'datacenter_id': dc}
             self._cache.put(clKey, res, Client.CACHE_TIME_HIGH)
             return res
         finally:
@@ -281,20 +274,22 @@ class Client(object):
 
             api = self.__getApi()
 
-            d = api.datacenters.get(id=datacenterId)
+            datacenter_service = api.system_service().data_centers_service().service(datacenterId)
+            d = datacenter_service.get()
+
             storage = []
-            for dd in d.storagedomains.list():
+            for dd in datacenter_service.storage_domains_service().list():
                 try:
-                    active = dd.get_status().get_state()
+                    active = dd.status.value
                 except:
                     active = 'inactive'
 
-                storage.append({'id': dd.get_id(), 'name': dd.get_name(), 'type': dd.get_type(),
-                                'available': dd.get_available(), 'used': dd.get_used(),
+                storage.append({'id': dd.id, 'name': dd.name, 'type': dd.type.value,
+                                'available': dd.available, 'used': dd.used,
                                 'active': active == 'active'})
 
-            res = {'name': d.get_name(), 'id': d.get_id(), 'storage_type': d.get_storage_type(),
-                    'storage_format': d.get_storage_format(), 'description': d.get_description(),
+            res = {'name': d.name, 'id': d.id, 'storage_type': d.local and 'local' or 'shared',
+                    'storage_format': d.storage_format.value, 'description': d.description,
                     'storage': storage}
 
             self._cache.put(dcKey, res, Client.CACHE_TIME_HIGH)
@@ -333,13 +328,14 @@ class Client(object):
 
             api = self.__getApi()
 
-            dd = api.storagedomains.get(id=storageId)
+            dd = api.system_service().storage_domains_service().service(storageId).get()
 
             res = {
-                'id': dd.get_id(),
-                'name': dd.get_name(),
-                'type': dd.get_type(),
-                'available': dd.get_available(), 'used': dd.get_used()
+                'id': dd.id,
+                'name': dd.name,
+                'type': dd.type.value,
+                'available': dd.available,
+                'used': dd.used
             }
 
             self._cache.put(sdKey, res, Client.CACHE_TIME_LOW)
@@ -369,8 +365,13 @@ class Client(object):
 
             api = self.__getApi()
 
-            cluster = api.clusters.get(id=clusterId)
-            vm = api.vms.get(id=machineId)
+            # cluster = ov.clusters_service().service('00000002-0002-0002-0002-0000000002e4') # .get()
+            # vm = ov.vms_service().service('e7ff4e00-b175-4e80-9c1f-e50a5e76d347') # .get()
+
+            vms = api.system_service().vms_service().service(machineId)
+
+            cluster = api.system_service().clusters_service().service(clusterId).get()
+            vm = vms.get()
 
             if vm is None:
                 raise Exception('Machine not found')
@@ -378,42 +379,29 @@ class Client(object):
             if cluster is None:
                 raise Exception('Cluster not found')
 
-            if vm.get_status().get_state() != 'down':
+            if vm.status.value != 'down':
                 raise Exception('Machine must be in down state to publish it')
 
-            print(vm.disks.list())
-
-            # Create disks description to be created in specified storage domain, one for each disk
-            sd = params.StorageDomains(storage_domain=[params.StorageDomain(id=storageId)])
-
-            fix = not self._isFullyFunctionalVersion(api)[0]  # If we need a fix for "publish"
-
-            dsks = []
-            for dsk in vm.disks.list():
-                dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd, alias=dsk.get_alias()))
+            # sd = [ovirt.types.StorageDomain(id=storageId)]
+            # dsks = []
+            # for dsk in vms.disk_attachments_service().list():
+            #    dsks = None
+                # dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd, alias=dsk.get_alias()))
                 # dsks.append(dsk)
 
-            disks = params.Disks(disk=dsks)
+            tvm = ovirt.types.Vm(id=vm.id)
+            tcluster = ovirt.types.Cluster(id=cluster.id)
 
-            # Create display description
-            # display = params.Display(type_=displayType)
-
-            # TODO: Restore proper template creation mechanism
-            if fix is True:
-                vm = params.VM(id=vm.get_id())
-            else:
-                vm = params.VM(id=vm.get_id(), disks=disks)
-
-            template = params.Template(
+            template = ovirt.types.Template(
                 name=name,
-                vm=vm,
-                cluster=params.Cluster(id=cluster.get_id()),
+                vm=tvm,
+                cluster=tcluster,
                 description=comments
             )
 
             # display=display)
 
-            return api.templates.add(template).get_id()
+            return api.system_service().templates_service().add(template).id
         finally:
             lock.release()
 
@@ -434,12 +422,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            template = api.templates.get(id=templateId)
+            template = api.system_service().templates_service().service(templateId).get()
 
             if template is None:
                 return 'removed'
 
-            return template.get_status().get_state()
+            return template.status.value
 
         finally:
             lock.release()
@@ -469,20 +457,19 @@ class Client(object):
 
             logger.debug('Deploying machine {0}'.format(name))
 
-            cluster = params.Cluster(id=clusterId)
-            template = params.Template(id=templateId)
-            display = params.Display(type_=displayType)
+            cluster = ovirt.types.Cluster(id=clusterId)
+            template = ovirt.types.Template(id=templateId)
             if usbType in ('native', 'legacy'):
-                usb = params.Usb(enabled=True, type_=usbType)
+                usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE if usbType == 'native' else ovirt.types.UsbType.LEGACY)
             else:
-                usb = params.Usb(enabled=False)
+                usb = ovirt.types.Usb(enabled=False)
 
-            memoryPolicy = params.MemoryPolicy(guaranteed=guaranteedMB * 1024 * 1024)
-            par = params.VM(name=name, cluster=cluster, template=template, description=comments,
-                            type_='desktop', memory=memoryMB * 1024 * 1024, memory_policy=memoryPolicy,
+            memoryPolicy = ovirt.types.MemoryPolicy(guaranteed=guaranteedMB * 1024 * 1024)
+            par = ovirt.types.Vm(name=name, cluster=cluster, template=template, description=comments,
+                            type=ovirt.types.VmType.DESKTOP, memory=memoryMB * 1024 * 1024, memory_policy=memoryPolicy,
                             usb=usb)  # display=display,
 
-            return api.vms.add(par).get_id()
+            return api.system_service().vms_service().add(par).id
 
         finally:
             lock.release()
@@ -498,11 +485,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            template = api.templates.get(id=templateId)
-            if template is None:
-                raise Exception('Template does not exists')
-
-            template.delete()
+            api.system_service().templates_service().service(templateId).remove()
             # This returns nothing, if it fails it raises an exception
         finally:
             lock.release()
@@ -528,12 +511,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vm = api.system_service().vms_service().service(machineId).get()
 
-            if vm is None or vm.get_status() is None:
+            if vm is None or vm.status is None:
                 return 'unknown'
 
-            return vm.get_status().get_state()
+            return vm.status.value
 
         finally:
             lock.release()
@@ -554,12 +537,13 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
 
-            if vm is None:
+            vmService = api.system_service().vms_service().service(machineId)
+
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.start()
+            vmService.start()
 
         finally:
             lock.release()
@@ -578,12 +562,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.stop()
+            vmService.stop()
 
         finally:
             lock.release()
@@ -602,12 +586,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.suspend()
+            vmService.suspend()
 
         finally:
             lock.release()
@@ -626,12 +610,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.delete()
+            vmService.remove()
 
         finally:
             lock.release()
@@ -645,17 +629,15 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            nic = vm.nics.list()[0]  # If has no nic, will raise an exception (IndexError)
-
-            nic.get_mac().set_address(macAddres)
-
-            nic.update()  # Updates the nic
-
+            nic = vmService.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
+            nic.mac.address = macAddres
+            nicService = vmService.nics_service().service(nic.id)
+            nicService.update(nic)
         except IndexError:
             raise Exception('Machine do not have network interfaces!!')
 
@@ -670,23 +652,39 @@ class Client(object):
             lock.acquire(True)
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
+            vm = vmService.get()
 
             if vm is None:
                 raise Exception('Machine not found')
 
-            display = vm.get_display()
-            ticket = vm.ticket().get_ticket()
+            display = vm.display
+            ticket = vmService.ticket()
+
+            # Get host subject
+            cert_subject = ''
+            if display.certificate != None:
+                cert_subject = display.certificate.subject
+            else:
+                for i in api.system_service().hosts_service().list():
+                    for k in api.system_service().hosts_service().service(i.id).nics_service().list():
+                        if k.ip.address == display.address:
+                            cert_subject = i.certificate.subject
+                            break
+                    # If found
+                    if cert_subject != '':
+                        break
+
             return {
-                'type': display.get_type(),
-                'address': display.get_address(),
-                'port': display.get_port(),
-                'secure_port': display.get_secure_port(),
-                'monitors': display.get_monitors(),
-                'cert_subject': display.get_certificate().get_subject(),
+                'type': display.type.value,
+                'address': display.address,
+                'port': display.port,
+                'secure_port': display.secure_port,
+                'monitors': display.monitors,
+                'cert_subject': cert_subject,
                 'ticket': {
-                    'value': ticket.get_value(),
-                    'expiry': ticket.get_expiry()
+                    'value': ticket.value,
+                    'expiry': ticket.expiry
                 }
             }
 

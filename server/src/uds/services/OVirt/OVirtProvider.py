@@ -41,11 +41,11 @@ from uds.core.util import validators
 
 from .OVirtLinkedService import OVirtLinkedService
 
-from .client import oVirtClient
+from . import client
 
 import logging
 
-__updated__ = '2016-06-04'
+__updated__ = '2016-09-11'
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +93,20 @@ class Provider(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('oVirt Server IP or Hostname'), required=True)
+    ovirtVersion = gui.ChoiceField(order=1,
+        label=_('oVirt Version'),
+        tooltip=_('oVirt Server Version'),
+        # In this case, the choice can have none value selected by default
+        required=True,
+        rdonly=False,
+        values=[
+            gui.choiceItem('3', '3.x'),
+            gui.choiceItem('4', '4.x'),
+        ],
+        defvalue='4'  # Default value is the ID of the choicefield
+    )
+
+    host = gui.TextField(length=64, label=_('Host'), order=2, tooltip=_('oVirt Server IP or Hostname'), required=True)
     username = gui.TextField(length=32, label=_('Username'), order=3, tooltip=_('User with valid privileges on oVirt, (use "user@domain" form)'), required=True, defvalue='admin@internal')
     password = gui.PasswordField(lenth=32, label=_('Password'), order=4, tooltip=_('Password of the user of oVirt'), required=True)
 
@@ -116,7 +129,8 @@ class Provider(ServiceProvider):
         Returns the connection API object for oVirt (using ovirtsdk)
         '''
         if self._api is None:
-            self._api = oVirtClient.Client(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache)
+            APIClass = self._api = client.getClient(self.ovirtVersion.value)
+            self._api = APIClass(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache)
         return self._api
 
     # There is more fields type, but not here the best place to cover it
