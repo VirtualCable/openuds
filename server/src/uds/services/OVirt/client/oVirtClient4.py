@@ -4,7 +4,8 @@ Created on Nov 14, 2012
 @author: dkmaster
 '''
 
-import ovirtsdk4 as ovirt;
+import ovirtsdk4 as ovirt
+import ovirtsdk4.types
 
 import threading
 import logging
@@ -65,7 +66,7 @@ class Client(object):
                 pass
         try:
             cached_api_key = aKey
-            cached_api = ovirt.Connection(url='https://' + self._host + '/ovirt-engine/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=False)
+            cached_api = ovirt.Connection(url='https://' + self._host + '/ovirt-engine/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
             return cached_api
         except:
             logger.exception('Exception connection ovirt at {0}'.format(self._host))
@@ -459,13 +460,13 @@ class Client(object):
             cluster = ovirt.types.Cluster(id=clusterId)
             template = ovirt.types.Template(id=templateId)
             if usbType in ('native', 'legacy'):
-                usb = ovirt.types.Usb(enabled=True, type='native')
+                usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE if usbType == 'native' else ovirt.types.UsbType.LEGACY)
             else:
                 usb = ovirt.types.Usb(enabled=False)
 
             memoryPolicy = ovirt.types.MemoryPolicy(guaranteed=guaranteedMB * 1024 * 1024)
             par = ovirt.types.Vm(name=name, cluster=cluster, template=template, description=comments,
-                            type_=ovirt.types.VmType.DESKTOP, memory=memoryMB * 1024 * 1024, memory_policy=memoryPolicy,
+                            type=ovirt.types.VmType.DESKTOP, memory=memoryMB * 1024 * 1024, memory_policy=memoryPolicy,
                             usb=usb)  # display=display,
 
             return api.system_service().vms_service().add(par).id
@@ -510,12 +511,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vm = api.system_service().vms_service().service(machineId).get()
 
-            if vm is None or vm.get_status() is None:
+            if vm is None or vm.status is None:
                 return 'unknown'
 
-            return vm.get_status().get_state()
+            return vm.status.value
 
         finally:
             lock.release()
@@ -536,12 +537,13 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
 
-            if vm is None:
+            vmService = api.system_service().vms_service().service(machineId)
+
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.start()
+            vmService.start()
 
         finally:
             lock.release()
@@ -560,12 +562,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.stop()
+            vmService.stop()
 
         finally:
             lock.release()
@@ -584,12 +586,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.suspend()
+            vmService.suspend()
 
         finally:
             lock.release()
@@ -608,12 +610,12 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            vm.delete()
+            vmService.remove()
 
         finally:
             lock.release()
@@ -627,17 +629,15 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
 
-            if vm is None:
+            if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            nic = vm.nics.list()[0]  # If has no nic, will raise an exception (IndexError)
-
-            nic.get_mac().set_address(macAddres)
-
-            nic.update()  # Updates the nic
-
+            nic = vmService.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
+            nic.mac.address = macAddres
+            nicService = vmService.nics_service().service(nic.id)
+            nicService.update(nic)
         except IndexError:
             raise Exception('Machine do not have network interfaces!!')
 
@@ -652,23 +652,39 @@ class Client(object):
             lock.acquire(True)
             api = self.__getApi()
 
-            vm = api.vms.get(id=machineId)
+            vmService = api.system_service().vms_service().service(machineId)
+            vm = vmService.get()
 
             if vm is None:
                 raise Exception('Machine not found')
 
-            display = vm.get_display()
-            ticket = vm.ticket().get_ticket()
+            display = vm.display
+            ticket = vmService.ticket()
+
+            # Get host subject
+            cert_subject = ''
+            if display.certificate != None:
+                cert_subject = display.certificate.subject
+            else:
+                for i in api.system_service().hosts_service().list():
+                    for k in api.system_service().hosts_service().service(i.id).nics_service().list():
+                        if k.ip.address == display.address:
+                            cert_subject = i.certificate.subject
+                            break
+                    # If found
+                    if cert_subject != '':
+                        break
+
             return {
-                'type': display.get_type(),
-                'address': display.get_address(),
-                'port': display.get_port(),
-                'secure_port': display.get_secure_port(),
-                'monitors': display.get_monitors(),
-                'cert_subject': display.get_certificate().get_subject(),
+                'type': display.type.value,
+                'address': display.address,
+                'port': display.port,
+                'secure_port': display.secure_port,
+                'monitors': display.monitors,
+                'cert_subject': cert_subject,
                 'ticket': {
-                    'value': ticket.get_value(),
-                    'expiry': ticket.get_expiry()
+                    'value': ticket.value,
+                    'expiry': ticket.expiry
                 }
             }
 
