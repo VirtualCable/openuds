@@ -34,7 +34,7 @@ class WinDomainOsManager(WindowsOsManager):
     domain = gui.TextField(length=64, label=_('Domain'), order=1, tooltip=_('Domain to join machines to (use FQDN form, Netbios name not allowed)'), required=True)
     account = gui.TextField(length=64, label=_('Account'), order=2, tooltip=_('Account with rights to add machines to domain'), required=True)
     password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Password of the account'), required=True)
-    ou = gui.TextField(length=64, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'))
+    ou = gui.TextField(length=64, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=MyMachines,dc=mydomain,dc=local'))
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
@@ -63,10 +63,10 @@ class WinDomainOsManager(WindowsOsManager):
             self._password = ""
 
         # self._ou = self._ou.replace(' ', '')
-        # if self._domain != '' and self._ou != '':
-        #    lpath = 'dc=' + ',dc='.join(self._domain.split('.'))
-        #    if self._ou.lower().find(lpath) == -1:
-        #        self._ou += ',' + lpath
+        if self._domain != '' and self._ou != '':
+            lpath = 'dc=' + ',dc='.join(self._domain.split('.')).lower()
+            if self._ou.replace(' ', '').lower().find(lpath) == -1:
+                self._ou += ',' + lpath
 
     def __getLdapError(self, e):
         logger.debug('Ldap Error: {0} {1}'.format(e, e.message))
