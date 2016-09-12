@@ -62,11 +62,11 @@ class WinDomainOsManager(WindowsOsManager):
             self._account = ""
             self._password = ""
 
-        self._ou = self._ou.replace(' ', '')
-        if self._domain != '' and self._ou != '':
-            lpath = 'dc=' + ',dc='.join(self._domain.split('.'))
-            if self._ou.lower().find(lpath) == -1:
-                self._ou += ',' + lpath
+        # self._ou = self._ou.replace(' ', '')
+        # if self._domain != '' and self._ou != '':
+        #    lpath = 'dc=' + ',dc='.join(self._domain.split('.'))
+        #    if self._ou.lower().find(lpath) == -1:
+        #        self._ou += ',' + lpath
 
     def __getLdapError(self, e):
         logger.debug('Ldap Error: {0} {1}'.format(e, e.message))
