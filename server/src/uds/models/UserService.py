@@ -53,9 +53,11 @@ from uds.models.User import User
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
+import six
+import pickle
 import logging
 
-__updated__ = '2016-04-26'
+__updated__ = '2016-09-16'
 
 
 logger = logging.getLogger(__name__)
@@ -351,9 +353,44 @@ class UserService(UUIDModel):
         from uds.core.managers.UserServiceManager import UserServiceManager
         self.in_use = state
         self.in_use_date = getSqlDatetime()
+
+        # Start/stop accouting
+        if state is True:
+            self.startUsageAccounting()
+        else:
+            self.stopUsageAccounting()
+
         if state is False:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
             UserServiceManager.manager().checkForRemoval(self)
+
+    def startUsageAccounting(self):
+        # 1.- If do not have any accounter associated, do nothing
+        # 2.- If called but already accounting, do nothing
+        # 3.- If called and not accounting, start accounting
+        if self.deployed_service.account is None:
+            return
+
+        try:
+            accountStart = self.getProperty('usageAccountStart', None)
+            if accountStart is None:
+                self.setProperty('usageAccountStart', pickle.dumps(getSqlDatetime()))
+        except Exception:  # Invalid values, etc...
+            pass
+
+    def stopUsageAccounting(self):
+        # 1.- If do not have any accounter associated, do nothing
+        # 2.- If called but not accounting, do nothing
+        # 3.- If called and accounting, stop accounting
+        if self.deployed_service.account is None:
+            return
+
+        try:
+            accountStart = self.getProperty('usageAccountStart', None)
+            if accountStart is not None:
+                self.deployed_service.saveAccounting(self, pickle.loads(accountStart), getSqlDatetime())
+        except Exception:  # Invalid values, etc...
+            pass
 
     def isUsable(self):
         '''

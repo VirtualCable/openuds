@@ -39,7 +39,7 @@ from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
 from uds.core import Module
 
-__updated__ = '2016-05-24'
+__updated__ = '2016-09-16'
 
 STORAGE_KEY = 'osmk'
 

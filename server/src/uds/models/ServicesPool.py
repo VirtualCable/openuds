@@ -51,6 +51,7 @@ from uds.models.Group import Group
 from uds.models.Image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
 from uds.models.Calendar import Calendar
+from uds.models.Account import Account
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
@@ -61,7 +62,7 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2016-06-01'
+__updated__ = '2016-09-16'
 
 
 logger = logging.getLogger(__name__)
@@ -89,6 +90,9 @@ class DeployedService(UUIDModel, TaggingMixin):
     # Default fallback action for access
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
     actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
+
+    # Usage accounting
+    account = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools')
 
 
     initial_srvs = models.PositiveIntegerField(default=0)
@@ -384,6 +388,14 @@ class DeployedService(UUIDModel, TaggingMixin):
         self.validateGroups(user.getGroups())
         self.validatePublication()
         return True
+
+    # Stores usage accounting information
+    def saveAccounting(self, userService, start, end):
+        if self.account is None:
+            return
+
+        self.account.addUsageAccount(userService, start, end)
+
 
     @staticmethod
     def getDeployedServicesForGroups(groups):

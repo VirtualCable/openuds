@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-03-16'
+__updated__ = '2016-09-16'
 
 logger = logging.getLogger(__name__)
 
@@ -219,6 +219,7 @@ class UserServiceManager(object):
         ci = uService.getInstance()
         state = ci.destroy()
         uService.setState(State.REMOVING)
+        uService.setInUse(False)  # For accounting, ensure that it is not in use right now
         UserServiceOpChecker.makeUnique(uService, ci, state)
 
     def removeOrCancel(self, uService):

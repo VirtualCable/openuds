@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-30'
+__updated__ = '2016-09-16'
 
 
 @python_2_unicode_compatible
@@ -87,6 +87,10 @@ class User(UUIDModel):
         so we can, for example, add @domain in some cases.
         '''
         return self.getManager().getForAuth(self.name)
+
+    @property
+    def pretty_name(self):
+        return self.manager.name + '@' + self.name
 
     def getManager(self):
         '''

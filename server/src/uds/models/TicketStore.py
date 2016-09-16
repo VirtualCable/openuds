@@ -45,13 +45,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-06-17'
+__updated__ = '2016-09-16'
 
 
 class TicketStore(UUIDModel):
     '''
-    Image storing on DB model
-    This is intended for small images (i will limit them to 128x128), so storing at db is fine
+    Tickets storing on DB
     '''
     DEFAULT_VALIDITY = 60
     MAX_VALIDITY = 60 * 60 * 12
