@@ -392,9 +392,9 @@ class DeployedService(UUIDModel, TaggingMixin):
     # Stores usage accounting information
     def saveAccounting(self, userService, start, end):
         if self.account is None:
-            return
+            return None
 
-        self.account.addUsageAccount(userService, start, end)
+        return self.account.addUsageAccount(userService, start, end)
 
 
     @staticmethod

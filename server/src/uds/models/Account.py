@@ -52,9 +52,21 @@ class Account(UUIDModel):
     name = models.CharField(max_length=128, unique=False, db_index=True)
     comments = models.CharField(max_length=256)
 
-    def addUsageAccount(self, pool, start, end):
-        userName = pool.user.pretty_name if pool.user is not None else '?????'
-        self.usages.create(user_name=userName, pool_name=pool.name, start=start, end=end)
+    def addUsageAccount(self, service, start, end):
+        if service.user is not None:
+            userName = service.user.pretty_name
+            userUuid = service.user.uuid
+        else:
+            userName = '??????'
+            userUuid = '00000000-0000-0000-0000-000000000000'
+        return self.usages.create(
+            user_name=userName,
+            user_uuid=userUuid,
+            pool_name=service.deployed_service.name,
+            pool_uuid=service.deployed_service.uuid,
+            start=start,
+            end=end
+        )
 
     class Meta:
         '''

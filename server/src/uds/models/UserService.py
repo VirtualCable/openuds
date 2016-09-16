@@ -372,11 +372,11 @@ class UserService(UUIDModel):
             return
 
         try:
-            accountStart = self.getProperty('usageAccountStart', None)
-            if accountStart is None:
+            accountStart = self.getProperty('usageAccountStart', '')
+            if accountStart == '':
                 self.setProperty('usageAccountStart', pickle.dumps(getSqlDatetime()))
         except Exception:  # Invalid values, etc...
-            pass
+            logger.exception('Exception stopping account')
 
     def stopUsageAccounting(self):
         # 1.- If do not have any accounter associated, do nothing
@@ -386,11 +386,12 @@ class UserService(UUIDModel):
             return
 
         try:
-            accountStart = self.getProperty('usageAccountStart', None)
-            if accountStart is not None:
+            accountStart = self.getProperty('usageAccountStart', '')
+            if accountStart != '':
                 self.deployed_service.saveAccounting(self, pickle.loads(accountStart), getSqlDatetime())
+                self.setProperty('usageAccountStart', '')
         except Exception:  # Invalid values, etc...
-            pass
+            logger.exception('Exception stopping account')
 
     def isUsable(self):
         '''

@@ -37,7 +37,7 @@ from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Account import Account
-from django.db.models import signals
+from uds.models.Util import NEVER
 
 import logging
 
@@ -50,10 +50,12 @@ class AccountUsage(UUIDModel):
     This is intended for small images (i will limit them to 128x128), so storing at db is fine
 
     '''
-    user_name = models.CharField(max_length=128, db_index=True)
-    pool_name = models.CharField(max_length=128, db_index=True)
-    start = models.DateTimeField(auto_now_add=True)
-    end = models.DateTimeField(null=True, blank=True, default=None)
+    user_name = models.CharField(max_length=128, db_index=True, default='')
+    user_uuid = models.CharField(max_length=50, db_index=True, default='')
+    pool_name = models.CharField(max_length=128, db_index=True, default='')
+    pool_uuid = models.CharField(max_length=50, db_index=True, default='')
+    start = models.DateTimeField(default=NEVER)
+    end = models.DateTimeField(default=NEVER)
 
     account = models.ForeignKey(Account, related_name='usages')
 
@@ -61,8 +63,8 @@ class AccountUsage(UUIDModel):
         '''
         Meta class to declare the name of the table at database
         '''
-        db_table = 'uds_accounts'
+        db_table = 'uds_acc_usage'
         app_label = 'uds'
 
     def __unicode__(self):
-        return 'AccountUsage id {}, name {}'.format(self.id, self.name)
+        return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(self.id, self.pool_name, self.user_name, self.start, self.end)
