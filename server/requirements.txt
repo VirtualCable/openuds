@@ -1,3 +1,4 @@
+django
 ujson
 xml_marshaller
 six
@@ -12,3 +13,9 @@ python-ldap
 MySQL-python
 reportlab
 bitarray
+python-dateutil
+defusedxml
+requests
+xenapi
+geraldo
+pycha
