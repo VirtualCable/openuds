@@ -71,4 +71,5 @@ def rename(newName):
 
 # All names in lower case
 renamers['centos linux'] = rename
+renamers['centos'] = rename
 renamers['fedora'] = rename

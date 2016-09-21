@@ -57,7 +57,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2016-09-16'
+__updated__ = '2016-09-21'
 
 
 logger = logging.getLogger(__name__)
@@ -365,33 +365,23 @@ class UserService(UUIDModel):
             UserServiceManager.manager().checkForRemoval(self)
 
     def startUsageAccounting(self):
-        # 1.- If do not have any accounter associated, do nothing
+        # 1.- If do not have any account associated, do nothing
         # 2.- If called but already accounting, do nothing
         # 3.- If called and not accounting, start accounting
-        if self.deployed_service.account is None:
+        if self.deployed_service.account is None or hasattr(self, 'accounting'):
             return
 
-        try:
-            accountStart = self.getProperty('usageAccountStart', '')
-            if accountStart == '':
-                self.setProperty('usageAccountStart', pickle.dumps(getSqlDatetime()))
-        except Exception:  # Invalid values, etc...
-            logger.exception('Exception stopping account')
+        self.deployed_service.account.startUsageAccounting(self)
 
     def stopUsageAccounting(self):
         # 1.- If do not have any accounter associated, do nothing
         # 2.- If called but not accounting, do nothing
         # 3.- If called and accounting, stop accounting
-        if self.deployed_service.account is None:
+        if self.deployed_service.account is None or hasattr(self, 'accounting') is False:
             return
 
-        try:
-            accountStart = self.getProperty('usageAccountStart', '')
-            if accountStart != '':
-                self.deployed_service.saveAccounting(self, pickle.loads(accountStart), getSqlDatetime())
-                self.setProperty('usageAccountStart', '')
-        except Exception:  # Invalid values, etc...
-            logger.exception('Exception stopping account')
+        self.deployed_service.account.stopUsageAccounting(self)
+
 
     def isUsable(self):
         '''

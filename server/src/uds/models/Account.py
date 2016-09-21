@@ -31,11 +31,12 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-09-16'
+__updated__ = '2016-09-21'
 
 from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
+from uds.models.Util import getSqlDatetime
 from django.db.models import signals
 
 import logging
@@ -52,7 +53,10 @@ class Account(UUIDModel):
     name = models.CharField(max_length=128, unique=False, db_index=True)
     comments = models.CharField(max_length=256)
 
-    def addUsageAccount(self, service, start, end):
+    def startUsageAccounting(self, service):
+        if hasattr(service, 'accounting'):  # Already has an account
+            return
+        start = getSqlDatetime()
         if service.user is not None:
             userName = service.user.pretty_name
             userUuid = service.user.uuid
@@ -60,13 +64,23 @@ class Account(UUIDModel):
             userName = '??????'
             userUuid = '00000000-0000-0000-0000-000000000000'
         return self.usages.create(
+            user_service=service,
             user_name=userName,
             user_uuid=userUuid,
             pool_name=service.deployed_service.name,
             pool_uuid=service.deployed_service.uuid,
             start=start,
-            end=end
+            end=start
         )
+
+    def stopUsageAccounting(self, service):
+        if hasattr(service, 'accounting') is False:
+            return
+
+        tmp = service.accounting
+        tmp.user_service = None
+        tmp.end = getSqlDatetime()
+        tmp.save()
 
     class Meta:
         '''

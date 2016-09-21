@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #
 # Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
@@ -25,48 +26,29 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
 
+'''
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
 from __future__ import unicode_literals
 
-__updated__ = '2016-09-21'
+from django.db import transaction
 
-from django.db import models
-
-from uds.models.UUIDModel import UUIDModel
-from uds.models.Account import Account
-from uds.models.UserService import UserService
-from uds.models.Util import NEVER
-
+from uds.models import AccountUsage, getSqlDatetime
+from uds.core.jobs.Job import Job
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class AccountUsage(UUIDModel):
-    '''
-    AccountUsage storing on DB model
-    This is intended for small images (i will limit them to 128x128), so storing at db is fine
+class UsageAccounting(Job):
+    frecuency = 60
+    friendly_name = 'Usage Accounting update'
 
-    '''
-    user_name = models.CharField(max_length=128, db_index=True, default='')
-    user_uuid = models.CharField(max_length=50, db_index=True, default='')
-    pool_name = models.CharField(max_length=128, db_index=True, default='')
-    pool_uuid = models.CharField(max_length=50, db_index=True, default='')
-    start = models.DateTimeField(default=NEVER)
-    end = models.DateTimeField(default=NEVER)
-    user_service = models.OneToOneField(UserService, null=True, blank=True, related_name='accounting', on_delete=models.SET_NULL)
+    def __init__(self, environment):
+        super(UsageAccounting, self).__init__(environment)
 
-    account = models.ForeignKey(Account, related_name='usages')
-
-    class Meta:
-        '''
-        Meta class to declare the name of the table at database
-        '''
-        db_table = 'uds_acc_usage'
-        app_label = 'uds'
-
-    def __unicode__(self):
-        return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(self.id, self.pool_name, self.user_name, self.start, self.end)
+    def run(self):
+        with transaction.atomic():
+            AccountUsage.objects.select_for_update().filter(user_service__in_use=True).update(end=getSqlDatetime())
+            AccountUsage.objects.select_for_update().filter(user_service__in_use=False).update(user_service=None)  # Cleanup
