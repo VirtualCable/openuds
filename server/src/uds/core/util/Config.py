@@ -296,6 +296,9 @@ class GlobalConfig(object):
     # If there is a proxy in front of us
     BEHIND_PROXY = Config.section(SECURITY_SECTION).value('Behind a proxy', '0', type=Config.BOOLEAN_FIELD)
 
+    # If we use new logout mechanics
+    EXCLUSIVE_LOGOUT = Config.section(SECURITY_SECTION).value('Exclusive Logout', '0', type=Config.BOOLEAN_FIELD)
+
     # Clusters related vars
 
     # Maximum desired CPU Load. If cpu is over this value, a migration of a service is "desirable"

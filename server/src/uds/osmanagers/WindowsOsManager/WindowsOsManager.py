@@ -177,7 +177,7 @@ class WindowsOsManager(osmanagers.OSManager):
                 ret = "{0}\t{1}".format(ip, hostname)
         elif msg == "logoff" or msg == 'logout':
             self.loggedOut(userService, data, False)
-            if self._onLogout == 'remove':
+            if userService.in_use == False and self._onLogout == 'remove':
                 doRemove = True
         elif msg == "ip":
             # This ocurss on main loop inside machine, so userService is usable

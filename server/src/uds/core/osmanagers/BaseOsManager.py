@@ -37,9 +37,12 @@ from uds.core.services import types as serviceTypes
 from uds.core.util.State import State
 from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
+from uds.core.util.Config import GlobalConfig
 from uds.core import Module
 
-__updated__ = '2016-09-16'
+import six
+
+__updated__ = '2016-09-19'
 
 STORAGE_KEY = 'osmk'
 
@@ -202,6 +205,9 @@ class OSManager(Module):
 
         log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
 
+        counter = int(userService.getProperty('loginsCounter', '0')) + 1
+        userService.setProperty(six.text_type(counter))
+
         if save:
             userService.save()
 
@@ -212,6 +218,15 @@ class OSManager(Module):
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         '''
+        counter = int(userService.getProperty('loginsCounter', '0'))
+        if counter > 0:
+            counter -= 1
+        userService.setProperty(six.text_type(counter))
+
+        if GlobalConfig.EXCLUSIVE_LOGOUT.getBool(True) is True:
+            if counter > 0:
+                return
+
         uniqueId = userService.unique_id
         userService.setInUse(False)
         si = userService.getInstance()
