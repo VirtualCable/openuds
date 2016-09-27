@@ -112,7 +112,7 @@ class XenLinkedService(Service):
     memory = gui.NumericField(label=_("Memory (Mb)"), length=4, defvalue=512, rdonly=False, order=6,
                               tooltip=_('Memory assigned to machines'), required=True)
 
-    shadow = gui.NumericField(label=_("Shadow"), lengh=1, defvalue=4, rdonly=True, order=7,
+    shadow = gui.NumericField(label=_("Shadow"), lengh=1, defvalue=2, rdonly=True, order=7,
                               tooltip=_('Shadow memory multiplier (memory overcommit)'), required=True)
 
     baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=8, tooltip=('Base name for clones from this machine'), required=True)
