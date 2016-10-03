@@ -42,7 +42,7 @@ from uds.core import Module
 
 import six
 
-__updated__ = '2016-09-19'
+__updated__ = '2016-10-03'
 
 STORAGE_KEY = 'osmk'
 
@@ -206,7 +206,7 @@ class OSManager(Module):
         log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
 
         counter = int(userService.getProperty('loginsCounter', '0')) + 1
-        userService.setProperty(six.text_type(counter))
+        userService.setProperty('loginsCounter', six.text_type(counter))
 
         if save:
             userService.save()
@@ -221,7 +221,7 @@ class OSManager(Module):
         counter = int(userService.getProperty('loginsCounter', '0'))
         if counter > 0:
             counter -= 1
-        userService.setProperty(six.text_type(counter))
+        userService.setProperty('loginsCounter', six.text_type(counter))
 
         if GlobalConfig.EXCLUSIVE_LOGOUT.getBool(True) is True:
             if counter > 0:
