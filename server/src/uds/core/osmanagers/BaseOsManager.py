@@ -177,6 +177,11 @@ class OSManager(Module):
     def logKnownIp(self, userService, ip):
         userService.logIP(ip)
 
+
+    def toReady(self, userService):
+        userService.setProperty('loginsCounter', '0')
+
+
     def loggedIn(self, userService, userName=None, save=True):
         '''
         This method:
