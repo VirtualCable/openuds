@@ -165,7 +165,8 @@
               $select.val originalValues[sel.name]
 
               # Refresh selectpicker if item is such
-              $select.selectpicker "refresh"  if $select.hasClass("selectpicker")
+              if $select.hasClass("selectpicker")
+                $select.selectpicker "refresh"
 
               # Trigger change for the changed item
               $select.trigger "change"
