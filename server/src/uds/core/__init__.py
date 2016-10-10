@@ -39,5 +39,5 @@ from uds.core.Environment import Environmentable
 from uds.core.Serializable import Serializable
 from uds.core.BaseModule import Module
 
-VERSION = '2.0.0-DEVEL'
-VERSION_STAMP = '20160501-DEVEL'
+VERSION = '2.1.0-DEVEL'
+VERSION_STAMP = '20161001-DEVEL'
