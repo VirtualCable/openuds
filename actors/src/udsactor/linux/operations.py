@@ -232,7 +232,8 @@ def getIdleDuration():
     info = xss.XScreenSaverAllocInfo()
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), info)
 
-    if info.contents.state != 0:
+    # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
+    if info.contents.state != 0 and 'centos' not in platform.linux_distribution()[0].lower().strip():
         return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
 
     return info.contents.idle / 1000.0
