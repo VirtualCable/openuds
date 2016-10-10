@@ -194,9 +194,10 @@ try:
     # Fix result type to XScreenSaverInfo Structure
     xss.XScreenSaverQueryExtension.restype = ctypes.c_int
     xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
+    display = xlib.XOpenDisplay(None)
     info = xss.XScreenSaverAllocInfo()
 except Exception:  # Libraries not accesible, not found or whatever..
-    xlib = xss = info = None
+    xlib = xss = display = info = None
 
 
 def initIdleDuration(atLeastSeconds):
@@ -220,13 +221,11 @@ def getIdleDuration():
     if xlib is None or xss is None:
         return 0  # Libraries not available
 
-    # production code might want to not hardcode the offset 16...
-    display = xlib.XOpenDisplay(None)
-
     event_base = ctypes.c_int()
     error_base = ctypes.c_int()
 
     available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
+
     if available != 1:
         return 0  # No screen saver is available, no way of getting idle
 
