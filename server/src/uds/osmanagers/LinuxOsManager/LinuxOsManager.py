@@ -171,6 +171,7 @@ class LinuxOsManager(osmanagers.OSManager):
             state = State.USABLE
             self.notifyIp(userService.unique_id, userService, data)
         elif msg == "ready":
+            self.toReady(userService)
             state = State.USABLE
             notifyReady = True
             self.notifyIp(userService.unique_id, userService, data)
