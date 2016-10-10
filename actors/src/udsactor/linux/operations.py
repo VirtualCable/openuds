@@ -194,8 +194,9 @@ try:
     # Fix result type to XScreenSaverInfo Structure
     xss.XScreenSaverQueryExtension.restype = ctypes.c_int
     xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
+    info = xss.XScreenSaverAllocInfo()
 except Exception:  # Libraries not accesible, not found or whatever..
-    xlib = xss = None
+    xlib = xss = info = None
 
 
 def initIdleDuration(atLeastSeconds):
@@ -229,7 +230,6 @@ def getIdleDuration():
     if available != 1:
         return 0  # No screen saver is available, no way of getting idle
 
-    info = xss.XScreenSaverAllocInfo()
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), info)
 
     # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
