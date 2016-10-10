@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Transport, Network
 from uds.core.transports import factory
 from uds.core.util import permissions
+from uds.core.util import OsDetector
 
 from uds.REST.model import ModelHandler
 
@@ -48,14 +49,14 @@ logger = logging.getLogger(__name__)
 
 class Transports(ModelHandler):
     model = Transport
-    save_fields = ['name', 'comments', 'tags', 'priority', 'nets_positive']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'nets_positive', 'allowed_oss']
 
     table_title = _('Current Transports')
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
-        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
+        {'allowed_oss': {'title': _('Devices'), 'width': '8em'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -65,22 +66,32 @@ class Transports(ModelHandler):
     def getGui(self, type_):
         try:
             return self.addField(
-                self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority']), {
-                    'name': 'nets_positive',
-                    'value': True,
-                    'label': ugettext('Network access'),
-                    'tooltip': ugettext('If checked, the transport will be enabled for the selected networks.If unchecked, transport will be disabled for selected networks'),
-                    'type': 'checkbox',
-                    'order': 100,  # At end
-                }), {
-                    'name': 'networks',
+                    self.addField(
+                        self.addField(self.addDefaultFields(factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority']), {
+                            'name': 'nets_positive',
+                            'value': True,
+                            'label': ugettext('Network access'),
+                            'tooltip': ugettext('If checked, the transport will be enabled for the selected networks.If unchecked, transport will be disabled for selected networks'),
+                            'type': 'checkbox',
+                            'order': 100,  # At end
+                        }), {
+                        'name': 'networks',
+                        'value': [],
+                        'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
+                        'label': ugettext('Networks'),
+                        'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
+                        'type': 'multichoice',
+                        'order': 101
+                    }), {
+                    'name': 'allowed_oss',
                     'value': [],
-                    'values': sorted([{'id': x.id, 'text': x.name} for x in Network.objects.all()], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
-                    'label': ugettext('Networks'),
-                    'tooltip': ugettext('Networks associated with this transport. If No network selected, will mean "all networks"'),
+                    'values': sorted([{'id': x, 'text': x} for x in OsDetector.knownOss], key=lambda x: x['text'].lower()),  # TODO: We will fix this behavior after current admin client is fully removed
+                    'label': ugettext('Allowed Devices'),
+                    'tooltip': ugettext('If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'),
                     'type': 'multichoice',
-                    'order': 101
+                    'order': 102
                 })
+
         except Exception:
             self.invalidItemException()
 
@@ -94,11 +105,16 @@ class Transports(ModelHandler):
             'priority': item.priority,
             'nets_positive': item.nets_positive,
             'networks': [{'id': n.id} for n in item.networks.all()],
+            'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
             'deployed_count': item.deployedServices.count(),
             'type': type_.type(),
             'protocol': type_.protocol,
             'permission': permissions.getEffectivePermission(self._user, item)
         }
+
+    def beforeSave(self, fields):
+        fields['allowed_oss'] = ','.join(fields['allowed_oss'])
+
 
     def afterSave(self, item):
         try:
@@ -108,5 +124,13 @@ class Transports(ModelHandler):
             return
         if networks is None:
             return
-        logger.debug('Params: {0}'.format(networks))
+        logger.debug('Networks: {0}'.format(networks))
         item.networks = Network.objects.filter(id__in=networks)
+
+        # try:
+        #    oss = ','.join(self._params['allowed_oss'])
+        # except:
+        #    oss = ''
+        # logger.debug('Devices: {0}'.format(oss))
+        # item.allowed_oss = oss
+        # item.save()  # Store correctly the allowed_oss

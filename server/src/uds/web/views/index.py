@@ -105,7 +105,7 @@ def index(request):
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
-            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
+            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
                 if typeTrans.ownLink is True:
                     link = reverse('TransportOwnLink', args=('A' + svr.uuid, t.uuid))
                 else:
@@ -147,7 +147,7 @@ def index(request):
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
-            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']):
+            if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
                 if typeTrans.ownLink is True:
                     link = reverse('TransportOwnLink', args=('F' + svr.uuid, t.uuid))
                 else:

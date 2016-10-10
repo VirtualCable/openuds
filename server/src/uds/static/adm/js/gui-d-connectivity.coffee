@@ -1,4 +1,4 @@
-# jshint strict: true 
+# jshint strict: true
 gui.connectivity =
   transports: new GuiElement(api.transports, "trans")
   networks: new GuiElement(api.networks, "nets")
@@ -40,6 +40,14 @@ gui.connectivity.link = (event) ->
 
         # Load osmanager "info"
         gui.methods.typedShow gui.connectivity.transports, selected[0], '#transports-info-placeholder .well', gettext('Error accessing data')
+
+      onData: (data) ->
+        $.each data, (undefined_, value) ->
+          if value.allowed_oss != ''
+            value.allowed_oss = (v.id for v in value.allowed_oss).toString()
+          return
+
+        return
 
       buttons: [
         "new"
