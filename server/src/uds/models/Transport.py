@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-02-26'
+__updated__ = '2016-08-24'
 
 from django.db import models
 from django.db.models import signals
@@ -59,6 +59,9 @@ class Transport(ManagedObjectModel, TaggingMixin):
     # pylint: disable=model-missing-unicode
     priority = models.IntegerField(default=0, db_index=True)
     nets_positive = models.BooleanField(default=False)
+    # We store allowed oss as a comma-separated list
+    allowed_oss = models.CharField(max_length=255, default='')
+
 
     class Meta(ManagedObjectModel.Meta):
         '''
@@ -112,6 +115,12 @@ class Transport(ManagedObjectModel, TaggingMixin):
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() > 0
         else:
             return self.networks.filter(net_start__lte=ip, net_end__gte=ip).count() == 0
+
+    def validForOs(self, os):
+        logger.debug('Checkin if os "{}" is in "{}"'.format(os, self.allowed_oss))
+        if self.allowed_oss == '' or os in self.allowed_oss.split(','):
+            return True
+        return False
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
