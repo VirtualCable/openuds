@@ -194,8 +194,10 @@ try:
     # Fix result type to XScreenSaverInfo Structure
     xss.XScreenSaverQueryExtension.restype = ctypes.c_int
     xss.XScreenSaverAllocInfo.restype = ctypes.POINTER(XScreenSaverInfo)  # Result in a XScreenSaverInfo structure
+    display = xlib.XOpenDisplay(None)
+    info = xss.XScreenSaverAllocInfo()
 except Exception:  # Libraries not accesible, not found or whatever..
-    xlib = xss = None
+    xlib = xss = display = info = None
 
 
 def initIdleDuration(atLeastSeconds):
@@ -219,20 +221,18 @@ def getIdleDuration():
     if xlib is None or xss is None:
         return 0  # Libraries not available
 
-    # production code might want to not hardcode the offset 16...
-    display = xlib.XOpenDisplay(None)
-
     event_base = ctypes.c_int()
     error_base = ctypes.c_int()
 
     available = xss.XScreenSaverQueryExtension(display, ctypes.byref(event_base), ctypes.byref(error_base))
+
     if available != 1:
         return 0  # No screen saver is available, no way of getting idle
 
-    info = xss.XScreenSaverAllocInfo()
     xss.XScreenSaverQueryInfo(display, xlib.XDefaultRootWindow(display), info)
 
-    if info.contents.state != 0:
+    # Centos seems to set state to 1?? (weird, but it's happening don't know why... will try this way)
+    if info.contents.state != 0 and 'centos' not in platform.linux_distribution()[0].lower().strip():
         return 3600 * 100 * 1000  # If screen saver is active, return a high enough value
 
     return info.contents.idle / 1000.0
