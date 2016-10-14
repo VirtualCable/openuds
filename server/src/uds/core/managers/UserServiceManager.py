@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-03-16'
+__updated__ = '2016-10-13'
 
 logger = logging.getLogger(__name__)
 
@@ -402,7 +402,7 @@ class UserServiceManager(object):
             # In fact we ignore result right now
         except Exception as e:
             logger.info('Get uuid failed: {}. Check connection on destination machine: {}'.format(e, url))
-            return False
+            # return True
 
         return True
 
