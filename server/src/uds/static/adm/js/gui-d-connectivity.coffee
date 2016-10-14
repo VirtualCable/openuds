@@ -50,7 +50,7 @@ gui.connectivity.link = (event) ->
         return
 
       buttons: [
-        "new"
+        "new_grouped"
         "edit"
         "delete"
         "xls"

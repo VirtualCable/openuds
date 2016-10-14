@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports.BaseTransport import TUNNELED_GROUP
 from uds.core.transports import protocols
 from uds.models import TicketStore
 from uds.core.util import OsDetector
@@ -47,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-07-21'
+__updated__ = '2016-10-14'
 
 
 logger = logging.getLogger(__name__)
@@ -65,6 +66,7 @@ class TRDPTransport(BaseRDPTransport):
     typeDescription = _('RDP Transport with tunneled connection')
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.RDP
+    group = TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
     tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)

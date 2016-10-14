@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_noop as _
 
 from uds.core.util import OsDetector
 from uds.core import Module
@@ -40,10 +40,12 @@ from uds.core.transports import protocols
 
 import logging
 
-__updated__ = '2016-01-20'
+__updated__ = '2016-10-14'
 
 logger = logging.getLogger(__name__)
 
+DIRECT_GROUP = _('Direct')
+TUNNELED_GROUP = _('Tunneled')
 
 class Transport(Module):
     '''
@@ -73,6 +75,9 @@ class Transport(Module):
 
     # Protocol "type". This is not mandatory, but will help
     protocol = protocols.NONE
+
+    # For allowing grouping transport on dashboard "new" menu, and maybe other places
+    group = DIRECT_GROUP
 
     def __init__(self, environment, values):
         super(Transport, self).__init__(environment, values)

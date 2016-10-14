@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-18'
+__updated__ = '2016-10-14'
 
 
 # a few constants
@@ -189,6 +189,8 @@ class BaseModelHandler(Handler):
             'description': _(type_.description()),
             'icon': type_.icon().replace('\n', '')
         })
+        if hasattr(type_, 'group'):
+            res['group'] = _(type_.group)  # Add group info is it is contained
         return res
 
     def processTableFields(self, title, fields, row_style):  # pylint: disable=no-self-use
