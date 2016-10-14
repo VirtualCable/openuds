@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-10-13'
+__updated__ = '2016-10-14'
 
 logger = logging.getLogger(__name__)
 
@@ -392,7 +392,7 @@ class UserServiceManager(object):
         url += '/uuid'
 
         try:
-            r = requests.get(url, verify=False, timeout=2)
+            r = requests.get(url, verify=False, timeout=5)
             uuid = json.loads(r.content)
             if uuid != uService.uuid:
                 logger.info('The requested machine has uuid {} and the expected was {}'.format(uuid, uService.uuid))
