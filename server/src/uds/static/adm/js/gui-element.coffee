@@ -346,14 +346,20 @@
                       a.name.localeCompare b.name
                     )
 
-                    groups = {}
+                    groups = []
                     if grouped
+                      tmpGrp = {}
                       for val in ordered
-                        if not groups[val.group]?
-                          groups[val.group] = []
-                        groups[val.group].push val
+                        if not tmpGrp[val.group]?
+                          tmpGrp[val.group] = []
+                        tmpGrp[val.group].push val
 
-                      gui.doLog "********** GROUPSS", groups
+                      for k, v of tmpGrp
+                        groups.push
+                          name: k
+                          values: v
+
+                      gui.doLog "***********GROUPSSS", groups
 
                     btn =
                       type: "div"

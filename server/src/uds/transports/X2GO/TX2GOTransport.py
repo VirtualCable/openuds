@@ -60,7 +60,7 @@ class TX2GOTransport(BaseX2GOTransport):
     typeType = 'TX2GOTransport'
     typeDescription = _('X2Go Transport for tunneled connection  (EXPERIMENTAL)')
     protocol = protocols.SPICE
-    groups = TUNNELED_GROUP
+    group = TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
