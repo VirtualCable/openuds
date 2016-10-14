@@ -34,6 +34,7 @@
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports.BaseTransport import TUNNELED_GROUP
 from uds.core.transports import protocols
 from uds.core.util import OsDetector
 from uds.core.util import tools
@@ -45,7 +46,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-09-07'
+__updated__ = '2016-10-14'
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +60,7 @@ class TX2GOTransport(BaseX2GOTransport):
     typeType = 'TX2GOTransport'
     typeDescription = _('X2Go Transport for tunneled connection  (EXPERIMENTAL)')
     protocol = protocols.SPICE
+    group = TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 

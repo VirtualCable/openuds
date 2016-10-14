@@ -324,32 +324,53 @@
             btn = null
             switch value
 
-              when "new"
+              when "new", "new_grouped"
+                grouped = if value is "new_grouped" then true else false
                 if self.rest.permission() >= api.permissions.MANAGEMENT
                   if not api.tools.isEmpty(self.types)
                     menuId = gui.genRamdonId("dd-")
                     ordered = []
                     $.each self.types, (k, v) ->
-                      ordered.push
+                      val =
                         type: k
                         css: v.css
                         name: v.name
                         description: v.description
+                        group: if v.group? then v.group else null
+
+                      ordered.push val
 
                       return
 
                     ordered = ordered.sort((a, b) ->
                       a.name.localeCompare b.name
                     )
+
+                    groups = []
+                    if grouped
+                      tmpGrp = {}
+                      for val in ordered
+                        if not tmpGrp[val.group]?
+                          tmpGrp[val.group] = []
+                        tmpGrp[val.group].push val
+
+                      for k, v of tmpGrp
+                        groups.push
+                          name: k
+                          values: v
+
+                      gui.doLog "***********GROUPSSS", groups
+
                     btn =
                       type: "div"
-                      content: api.templates.evaluate("tmpl_comp_dropdown",
+                      content: api.templates.evaluate(
+                        if not grouped then "tmpl_comp_dropdown" else "tmpl_comp_dropdown_grouped",
                         label: gui.config.dataTableButtons["new"].text
                         css: gui.config.dataTableButtons["new"].css
                         id: menuId
                         tableId: tableId
                         columns: columns
-                        menu: ordered
+                        menu: if not grouped then ordered else groups
                       )
                   else
                     btn =

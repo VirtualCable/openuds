@@ -39,6 +39,8 @@ from django.http import HttpResponseRedirect
 
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
+from uds.core.transports.BaseTransport import TUNNELED_GROUP
+
 from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util import OsDetector
@@ -64,6 +66,7 @@ class HTML5RDPTransport(Transport):
     ownLink = True
     supportedOss = OsDetector.allOss
     protocol = protocols.RDP
+    group = TUNNELED_GROUP
 
     guacamoleServer = gui.TextField(label=_('Tunnel Server'), order=1, tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'), defvalue='https://', length=64, required=True, tab=gui.TUNNEL_TAB)
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=2, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)

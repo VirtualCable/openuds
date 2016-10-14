@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-08-24'
+__updated__ = '2016-10-14'
 
 
 # a few constants
@@ -189,6 +189,8 @@ class BaseModelHandler(Handler):
             'description': _(type_.description()),
             'icon': type_.icon().replace('\n', '')
         })
+        if hasattr(type_, 'group'):
+            res['group'] = _(type_.group)  # Add group info is it is contained
         return res
 
     def processTableFields(self, title, fields, row_style):  # pylint: disable=no-self-use
@@ -848,7 +850,6 @@ class ModelHandler(BaseModelHandler):
             args = self.readFieldsFromParams(self.save_fields)
             logger.debug('Args: {}'.format(args))
             self.beforeSave(args)
-            logger.debug('Args after processing: {}'.format(args))
             # If tags is in save fields, treat it "specially"
             if 'tags' in self.save_fields:
                 tags = args['tags']
