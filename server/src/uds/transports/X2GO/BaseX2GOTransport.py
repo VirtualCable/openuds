@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,16 +40,18 @@ from uds.core.util import OsDetector
 
 # This transport is specific for oVirt, so we need to point to it
 
-import logging
+import paramiko
+import six
 import os
+import logging
 
-__updated__ = '2016-09-07'
+__updated__ = '2016-10-19'
 
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
-
+SSH_KEY_LENGTH = 1024
 
 class BaseX2GOTransport(Transport):
     '''
@@ -78,12 +80,32 @@ class BaseX2GOTransport(Transport):
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=gui.CREDENTIALS_TAB
     )
+
     fullScreen = gui.CheckBoxField(
-        order=5,
+        order=10,
         label=_('Show fullscreen'),
         tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
+        tab=gui.PARAMETERS_TAB
+    )
+
+    desktopType = gui.ChoiceField(label=_('Desktop'), order=11, tooltip=_('Desktop session'),
+                              values=[
+                                  {'id': 'XFCE', 'text': 'Xfce'},
+                                  {'id': 'MATE', 'text': 'Mate'},
+                                  {'id': 'LXDE', 'text': 'Lxde'},
+                                  {'id': 'GNOME', 'text': 'Gnome (see docs)'},
+                                  {'id': 'KDE', 'text': 'Kde (see docs)'},
+                                  # {'id': 'UNITY', 'text': 'Unity (see docs)'},
+                                  {'id': 'gnome-session-cinnamon', 'text': 'Cinnamon 1.4 (see docs)'},
+                                  {'id': 'gnome-session-cinnamon2d', 'text': 'Cinnamon 2.2 (see docs)'},
+    ], tab=gui.PARAMETERS_TAB)
+
+    keyboardLayout = gui.TextField(label=_('Keyboard'), order=12, tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
+        default='',
         tab=gui.ADVANCED_TAB
     )
+
+
 
     def isAvailableFor(self, userService, ip):
         '''
@@ -115,6 +137,28 @@ class BaseX2GOTransport(Transport):
 
     def getConnectionInfo(self, service, user, password):
         return self.processUserPassword(service, user, password)
+
+    def genKeyPairForSsh(self):
+        '''
+        Generates a key pair for use with x2go
+        The private part is used by client
+        the public part must be "appended" to authorized_keys if it is not already added.
+        If .ssh folder does not exists, it must be created
+        if authorized_keys does not exists, it must be created
+        On key adition, we can look for every key that has a "UDS@X2GOCLIENT" as comment, so we can remove them before adding new ones
+
+        Windows (tested):
+            C:\Program Files (x86)\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
+        Linux (tested):
+            HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
+        '''
+        key = paramiko.RSAKey.generate(SSH_KEY_LENGTH)
+        privFile = six.StringIO()
+        key.write_private_key(privFile)
+        priv = privFile.getvalue()
+
+        pub = 'ssh-rsa {} UDS@X2GOCLIENT'.format(key.get_base64())
+        return (priv, pub)
 
     def getScript(self, script):
         with open(os.path.join(os.path.dirname(__file__), script)) as f:

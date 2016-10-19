@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2016 Virtual Cable S.L.
 # All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -38,7 +38,7 @@ from .BaseX2GOTransport import BaseX2GOTransport
 
 import logging
 
-__updated__ = '2016-09-07'
+__updated__ = '2016-10-19'
 
 logger = logging.getLogger(__name__)
 
@@ -52,9 +52,11 @@ class X2GOTransport(BaseX2GOTransport):
     typeType = 'X2GOTransport'
     typeDescription = _('X2Go Transport for direct connection (EXPERIMENTAL)')
 
-    # useEmptyCreds = BaseSpiceTransport.useEmptyCreds
-    # fixedName = BaseSpiceTransport.fixedName
-    # fixedPassword = BaseSpiceTransport.fixedPassword
+    useEmptyCreds = BaseX2GOTransport.useEmptyCreds
+    fixedName = BaseX2GOTransport.fixedName
+    fixedPassword = BaseX2GOTransport.fixedPassword
+    fullScreen = BaseX2GOTransport.fullScreen
+    desktopType = BaseX2GOTransport.desktopType
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         pass

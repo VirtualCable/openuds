@@ -16,6 +16,8 @@ if executable is None:
 </p>
 ''')
 
+rsaPubKey = '''{m.rsa_key}'''
+
 theFile = '''{m.r.as_file}'''
 
 filename = tools.saveTempFile(theFile)

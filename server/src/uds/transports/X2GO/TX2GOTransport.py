@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -46,7 +46,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-10-14'
+__updated__ = '2016-10-19'
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +63,12 @@ class TX2GOTransport(BaseX2GOTransport):
     group = TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
+
+    useEmptyCreds = BaseX2GOTransport.useEmptyCreds
+    fixedName = BaseX2GOTransport.fixedName
+    fixedPassword = BaseX2GOTransport.fixedPassword
+    fullScreen = BaseX2GOTransport.fullScreen
+    desktopType = BaseX2GOTransport.desktopType
 
 
     def initialize(self, values):

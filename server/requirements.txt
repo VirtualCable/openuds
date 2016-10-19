@@ -12,3 +12,4 @@ python-ldap
 MySQL-python
 reportlab
 bitarray
+paramiko
