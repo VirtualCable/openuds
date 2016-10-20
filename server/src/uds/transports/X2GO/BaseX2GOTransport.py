@@ -45,7 +45,7 @@ import six
 import os
 import logging
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-10-20'
 
 
 logger = logging.getLogger(__name__)
@@ -157,8 +157,11 @@ class BaseX2GOTransport(Transport):
         key.write_private_key(privFile)
         priv = privFile.getvalue()
 
-        pub = 'ssh-rsa {} UDS@X2GOCLIENT'.format(key.get_base64())
+        pub = key.get_base64()  # 'ssh-rsa {} UDS@X2GOCLIENT'.format(key.get_base64())
         return (priv, pub)
+
+    def getAuthorizeScript(self, user, pubKey):
+        return self.getScript('scripts/authorize.py'.format(user=user, key=pubKey))
 
     def getScript(self, script):
         with open(os.path.join(os.path.dirname(__file__), script)) as f:

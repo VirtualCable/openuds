@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+
+#
+# Copyright (c) 2016 Virtual Cable S.L.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+'''
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
+
+template = '''[General]
+UDS=@ByteArray()
+
+[20161019100758147]
+speed=4
+pack=16m-jpeg
+quality=8
+fstunnel=true
+export="/home/user:1;"
+iconvto=UTF-8
+iconvfrom=ISO8859-1
+useiconv=false
+fullscreen=false
+multidisp=false
+display=1
+maxdim=false
+rdpclient=rdesktop
+directrdpsettings=
+width=800
+height=600
+dpi=96
+setdpi=true
+xinerama=false
+clipboard=both
+usekbd=true
+type=auto
+sound=true
+soundsystem=pulse
+startsoundsystem=true
+soundtunnel=true
+defsndport=true
+sndport=4713
+print=true
+name=UDS/uds-test
+icon=:/img/icons/128x128/x2gosession.png
+host=172.27.0.208
+user=user
+key=/home/user/remotekey.txt
+rdpport=3389
+sshport=22
+autologin=false
+krblogin=false
+krbdelegation=false
+directrdp=false
+rootless=false
+published=false
+applications=WWWBROWSER, MAILCLIENT, OFFICE, TERMINAL
+command=XFCE
+rdpoptions=
+rdpserver=
+xdmcpserver=localhost
+usesshproxy=false
+sshproxytype=SSH
+sshproxyuser=
+sshproxykeyfile=
+sshproxyhost=
+sshproxyport=22
+sshproxysamepass=false
+sshproxysameuser=false
+sshproxyautologin=false
+sshproxykrblogin=false
+'''
