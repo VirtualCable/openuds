@@ -45,7 +45,7 @@ import six
 import os
 import logging
 
-__updated__ = '2016-10-20'
+__updated__ = '2016-10-23'
 
 
 logger = logging.getLogger(__name__)
@@ -148,7 +148,7 @@ class BaseX2GOTransport(Transport):
         On key adition, we can look for every key that has a "UDS@X2GOCLIENT" as comment, so we can remove them before adding new ones
 
         Windows (tested):
-            C:\Program Files (x86)\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
+            C:\Program Files (x86)\\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
         Linux (tested):
             HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
         '''

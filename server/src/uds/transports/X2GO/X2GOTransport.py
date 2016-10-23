@@ -38,7 +38,7 @@ from .BaseX2GOTransport import BaseX2GOTransport
 
 import logging
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-10-23'
 
 logger = logging.getLogger(__name__)
 
