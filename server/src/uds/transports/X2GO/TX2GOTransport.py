@@ -46,7 +46,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-10-23'
 
 logger = logging.getLogger(__name__)
 
@@ -64,9 +64,7 @@ class TX2GOTransport(BaseX2GOTransport):
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
-    useEmptyCreds = BaseX2GOTransport.useEmptyCreds
     fixedName = BaseX2GOTransport.fixedName
-    fixedPassword = BaseX2GOTransport.fixedPassword
     fullScreen = BaseX2GOTransport.fullScreen
     desktopType = BaseX2GOTransport.desktopType
 
@@ -77,4 +75,5 @@ class TX2GOTransport(BaseX2GOTransport):
                 raise Transport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        pass
+        self.getAndPushKey('user', userService)
+        return ''

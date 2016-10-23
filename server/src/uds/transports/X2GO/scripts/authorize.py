@@ -1,17 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-'''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
 from __future__ import unicode_literals
 
 import sys
 import os
 import errno
+import pwd
 
-USER = '{user}'
-KEY = '{key}'
+USER = '__USER__'
+KEY = '__KEY__'
 
 def logError(err):
     print(err)
@@ -24,14 +19,18 @@ def updateAuthorizedKeys(user, pubKey):
 
     # Create .ssh on user home
     home = os.path.expanduser('~{}'.format(user))
+    uid = pwd.getpwnam(user)
     if not os.path.exists(home):  # User not found, nothing done
         logError('Home folder for user {} not found'.format(user))
         return
+
+    uid = pwd.getpwnam(user).pw_uid
 
     sshFolder = '{}/.ssh'.format(home)
     if not os.path.exists(sshFolder):
         try:
             os.makedirs(sshFolder, 0700)
+            os.chown(sshFolder, uid, -1)
         except OSError as e:
             if e.errno != errno.EEXIST:
                 logError('Error creating .ssh folder for user {}: {}'.format(user, e))
@@ -53,6 +52,7 @@ def updateAuthorizedKeys(user, pubKey):
         f.write('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey))
 
     # Ensure access is correct
+    os.chown(authorizedKeys, uid, -1)
     os.chmod(authorizedKeys, 0600)
 
     # Done

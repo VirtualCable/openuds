@@ -52,11 +52,10 @@ class X2GOTransport(BaseX2GOTransport):
     typeType = 'X2GOTransport'
     typeDescription = _('X2Go Transport for direct connection (EXPERIMENTAL)')
 
-    useEmptyCreds = BaseX2GOTransport.useEmptyCreds
     fixedName = BaseX2GOTransport.fixedName
-    fixedPassword = BaseX2GOTransport.fixedPassword
     fullScreen = BaseX2GOTransport.fullScreen
     desktopType = BaseX2GOTransport.desktopType
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        pass
+        self.getAndPushKey('user', userService)
+        return ''

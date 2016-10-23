@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-10-14'
+__updated__ = '2016-10-23'
 
 logger = logging.getLogger(__name__)
 
@@ -410,6 +410,7 @@ class UserServiceManager(object):
         '''
         If allowed, send script to user service
         '''
+        # logger.debug('Senging script: {}'.format(script))
         url = uService.getCommsUrl()
         if url is None:
             logger.error('Can\'t connect with actor (no actor or legacy actor)')

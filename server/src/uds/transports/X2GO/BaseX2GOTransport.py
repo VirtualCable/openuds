@@ -33,6 +33,7 @@
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
+from uds.core.managers import userServiceManager
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
@@ -60,24 +61,12 @@ class BaseX2GOTransport(Transport):
     '''
     iconFile = 'x2go.png'
     protocol = protocols.X2GO
-    supportedOss = OsDetector.Linux
+    supportedOss = (OsDetector.Linux, OsDetector.Windows)
 
-    useEmptyCreds = gui.CheckBoxField(
-        order=1,
-        label=_('Empty credentials'),
-        tooltip=_('If checked, the credentials used to connect will be emtpy'),
-        tab=gui.CREDENTIALS_TAB
-    )
     fixedName = gui.TextField(
         order=2,
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
-        tab=gui.CREDENTIALS_TAB
-    )
-    fixedPassword = gui.PasswordField(
-        order=3,
-        label=_('Password'),
-        tooltip=_('If not empty, this password will be always used as credential'),
         tab=gui.CREDENTIALS_TAB
     )
 
@@ -105,8 +94,6 @@ class BaseX2GOTransport(Transport):
         tab=gui.ADVANCED_TAB
     )
 
-
-
     def isAvailableFor(self, userService, ip):
         '''
         Checks if the transport is available for the requested destination ip
@@ -125,15 +112,10 @@ class BaseX2GOTransport(Transport):
         if self.fixedName.value != '':
             username = self.fixedName.value
 
-        if self.fixedPassword.value != '':
-            password = self.fixedPassword.value
-        if self.useEmptyCreds.isTrue():
-            username, password = '', '', ''
-
         # Fix username/password acording to os manager
         username, password = service.processUserPassword(username, password)
 
-        return {'protocol': self.protocol, 'username': username, 'password': password}
+        return {'protocol': self.protocol, 'username': username, 'password': ''}
 
     def getConnectionInfo(self, service, user, password):
         return self.processUserPassword(service, user, password)
@@ -161,7 +143,13 @@ class BaseX2GOTransport(Transport):
         return (priv, pub)
 
     def getAuthorizeScript(self, user, pubKey):
-        return self.getScript('scripts/authorize.py'.format(user=user, key=pubKey))
+        return self.getScript('scripts/authorize.py').replace('__USER__', user).replace('__KEY__', pubKey)
+
+    def getAndPushKey(self, user, userService):
+        priv, pub = self.genKeyPairForSsh()
+        authScript = self.getAuthorizeScript(user, pub)
+        userServiceManager().sendScript(userService, authScript)
+        return priv, pub
 
     def getScript(self, script):
         with open(os.path.join(os.path.dirname(__file__), script)) as f:
