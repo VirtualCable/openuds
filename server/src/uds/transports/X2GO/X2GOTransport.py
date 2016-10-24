@@ -32,13 +32,15 @@
 '''
 
 from django.utils.translation import ugettext_noop as _
+from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.util import OsDetector
 from uds.core.util import tools
 from .BaseX2GOTransport import BaseX2GOTransport
+from . import x2gofile
 
 import logging
 
-__updated__ = '2016-10-23'
+__updated__ = '2016-10-24'
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +55,60 @@ class X2GOTransport(BaseX2GOTransport):
     typeDescription = _('X2Go Transport for direct connection (EXPERIMENTAL)')
 
     fixedName = BaseX2GOTransport.fixedName
-    fullScreen = BaseX2GOTransport.fullScreen
+    # fullScreen = BaseX2GOTransport.fullScreen
     desktopType = BaseX2GOTransport.desktopType
+    sound = BaseX2GOTransport.sound
+    exports = BaseX2GOTransport.exports
+
+    soundType = BaseX2GOTransport.soundType
+    keyboardLayout = BaseX2GOTransport.keyboardLayout
+    pack = BaseX2GOTransport.pack
+    quality = BaseX2GOTransport.quality
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        self.getAndPushKey('user', userService)
-        return ''
+        prefs = user.prefs('nx')
+
+        priv, pub = self.getAndPushKey('user', userService)
+
+        prefs = user.prefs('rdp')
+
+        ci = self.getConnectionInfo(userService, user, password)
+        username = ci['username']
+
+        width, height = CommonPrefs.getWidthHeight(prefs)
+        xf = x2gofile.getTemplate(
+            pack=self.pack.value,
+            quality=self.quality.value,
+            sound=self.sound.isTrue(),
+            soundSystem=self.sound.value,
+            windowManager=self.desktopType.value,
+            exports=self.exports.isTrue())
+
+        # data
+        data = {
+            'os': os['OS'],
+            'ip': ip,
+            'port': 22,
+            'username': username,
+            'key': priv,
+            'width': width,
+            'height': height,
+            'printers': True,
+            'drives': self.exports.isTrue(),
+            'fullScreen': width == -1 or height == -1,
+            'this_server': request.build_absolute_uri('/'),
+            'xf': xf
+        }
+
+        m = tools.DictAsObj(data)
+
+        os = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            # OsDetector.Macintosh: 'macosx'
+        }.get(m.os)
+
+        if os is None:
+            return super(X2GOTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+
+        return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)

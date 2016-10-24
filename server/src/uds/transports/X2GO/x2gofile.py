@@ -34,12 +34,12 @@
 template = '''[General]
 UDS=@ByteArray()
 
-[20161019100758147]
+[20160101100758147]
 speed=4
-pack=16m-jpeg
-quality=8
+pack={pack}
+quality={quality}
 fstunnel=true
-export="/home/user:1;"
+{export}
 iconvto=UTF-8
 iconvfrom=ISO8859-1
 useiconv=false
@@ -57,18 +57,18 @@ xinerama=false
 clipboard=both
 usekbd=true
 type=auto
-sound=true
-soundsystem=pulse
+sound={sound}
+soundsystem={soundSystem}
 startsoundsystem=true
 soundtunnel=true
 defsndport=true
 sndport=4713
 print=true
-name=UDS/uds-test
+name=UDS/connect
 icon=:/img/icons/128x128/x2gosession.png
-host=172.27.0.208
+host={{ip}}
 user=user
-key=/home/user/remotekey.txt
+key={{keyFile}}
 rdpport=3389
 sshport=22
 autologin=false
@@ -78,7 +78,7 @@ directrdp=false
 rootless=false
 published=false
 applications=WWWBROWSER, MAILCLIENT, OFFICE, TERMINAL
-command=XFCE
+command={windowManager}
 rdpoptions=
 rdpserver=
 xdmcpserver=localhost
@@ -93,3 +93,8 @@ sshproxysameuser=false
 sshproxyautologin=false
 sshproxykrblogin=false
 '''
+
+def getTemplate(pack, quality, sound, soundSystem, windowManager, exports):
+    trueFalse = lambda(x): 'true' if x else 'false'
+    export = 'export="{{export}}"' if exports else ''
+    return template.format(pack=pack, quality=quality, sound=trueFalse(sound), soundSystem=soundSystem, windowManager=windowManager, export=export)
