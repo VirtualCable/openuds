@@ -198,11 +198,15 @@ class HTTPServerThread(threading.Thread):
 
 
     def initiateServer(self, address):
-        self.server = socketserver.TCPServer(address, HTTPServerHandler)
+        self.address = (address[0], address[1])  # Copy address & keep it for future reference...
+
+        addr = ('0.0.0.0', address[1])  # Adapt to listen on 0.0.0.0
+
+        self.server = socketserver.TCPServer(addr, HTTPServerHandler)
         self.server.socket = ssl.wrap_socket(self.server.socket, certfile=self.certFile, server_side=True)
 
     def getServerUrl(self):
-        return 'https://{}:{}/{}'.format(self.server.server_address[0], self.server.server_address[1], HTTPServerHandler.uuid)
+        return 'https://{}:{}/{}'.format(self.address[0], self.address[1], HTTPServerHandler.uuid)
 
     def stop(self):
         logger.debug('Stopping REST Service')
@@ -211,11 +215,14 @@ class HTTPServerThread(threading.Thread):
     def restart(self, address=None):
 
         if address is None:
-            address = self.server.server_address
+            # address = self.server.server_address
+            address = self.address
 
-        self.stop()
+        self.address = (address[0], address[1])  # Copy address & keep it for future reference
 
-        self.initiateServer(address)
+        # Listening on 0.0.0.0, does not need to restart listener..
+        # self.stop()
+        # self.initiateServer(address)
 
     def run(self):
         self.server.serve_forever()

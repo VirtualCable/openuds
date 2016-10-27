@@ -210,9 +210,9 @@ class CommonService(object):
                     self.knownIps = dict(((v.mac, v.ip) for v in netInfo))
 
                     # And notify new listening address to broker
-                    # address = (self.knownIps[self.api.mac], random.randrange(43900, 44000))
+                    address = (self.knownIps[self.api.mac], random.randrange(43900, 44000))
                     # And new listening address
-                    # self.httpServer.restart(address)
+                    self.httpServer.restart(address)
                     # sends notification
                     self.api.notifyComm(self.httpServer.getServerUrl())
 
@@ -252,8 +252,7 @@ class CommonService(object):
         self.ipc.start()
 
         if self.api.mac in self.knownIps:
-            # address = (self.knownIps[self.api.mac], random.randrange(43900, 44000))
-            address = ('0.0.0.0', random.randrange(43900, 44000))
+            address = (self.knownIps[self.api.mac], random.randrange(43900, 44000))
             logger.info('Starting REST listener at {}'.format(address))
             self.httpServer = httpserver.HTTPServerThread(address, self)
             self.httpServer.start()
