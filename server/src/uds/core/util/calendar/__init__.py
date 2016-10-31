@@ -46,7 +46,7 @@ import six
 import bitarray
 import logging
 
-__updated__ = '2016-04-26'
+__updated__ = '2016-10-31'
 
 
 logger = logging.getLogger(__name__)
@@ -85,7 +85,11 @@ class CalendarChecker(object):
             ruleDurationMinutes = rule.duration_as_minutes
             ruleFrequencyMinutes = rule.frequency_as_minutes
 
-            ruleDurationMinutes = ruleDurationMinutes
+            # Skip "bogus" definitions
+            if ruleDurationMinutes == 0 or ruleFrequencyMinutes == 0:
+                continue
+
+            # ruleDurationMinutes = ruleDurationMinutes
             # Relative start, rrule can "spawn" the days, so we get the start at least the ruleDurationMinutes of rule to see if it "matches"
             # This means, we need the previous matching day to be "executed" so we can get the "actives" correctly
             diff = ruleFrequencyMinutes if ruleFrequencyMinutes > ruleDurationMinutes else ruleDurationMinutes
