@@ -196,6 +196,11 @@ class HTTPServerThread(threading.Thread):
 
         self.initiateServer(address)
 
+    def getPort(self):
+        return self.address[1]
+
+    def getIp(self):
+        return self.address[0]
 
     def initiateServer(self, address):
         self.address = (address[0], address[1])  # Copy address & keep it for future reference...
@@ -206,7 +211,7 @@ class HTTPServerThread(threading.Thread):
         self.server.socket = ssl.wrap_socket(self.server.socket, certfile=self.certFile, server_side=True)
 
     def getServerUrl(self):
-        return 'https://{}:{}/{}'.format(self.address[0], self.address[1], HTTPServerHandler.uuid)
+        return 'https://{}:{}/{}'.format(self.getIp(), self.getPort(), HTTPServerHandler.uuid)
 
     def stop(self):
         logger.debug('Stopping REST Service')
@@ -218,7 +223,7 @@ class HTTPServerThread(threading.Thread):
             # address = self.server.server_address
             address = self.address
 
-        self.address = (address[0], address[1])  # Copy address & keep it for future reference
+        self.address = (address[0], self.address[1])  # Copy address & keep it for future reference, port is never changed once assigned on init
 
         # Listening on 0.0.0.0, does not need to restart listener..
         # self.stop()

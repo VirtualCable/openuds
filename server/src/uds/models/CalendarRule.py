@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-04-05'
+__updated__ = '2016-10-31'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -113,6 +113,9 @@ class CalendarRule(UUIDModel):
         app_label = 'uds'
 
     def as_rrule(self):
+        if self.interval == 0:  # Fix 0 intervals
+            self.interval = 1
+
         if self.frequency == WEEKDAYS:
             dw = []
             l = self.interval

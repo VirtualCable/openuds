@@ -110,8 +110,8 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         logger.debug('Saving rule {0} / {1}'.format(parent, item))
         fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration', 'duration_unit'])
 
-        if int(fields['interval']) == 0:
-            self.invalidItemException('Element can\'t have a 0 interval')
+        if int(fields['interval']) < 1:
+            self.invalidItemException('Repeat must be greater than zero')
 
         # Convert timestamps to datetimes
         fields['start'] = datetime.datetime.fromtimestamp(fields['start'])

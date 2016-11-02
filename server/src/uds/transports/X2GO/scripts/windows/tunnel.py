@@ -21,18 +21,16 @@ if forwardThread.status == 2:
 
 tools.addTaskToWait(forwardThread)
 
-# The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
-theFile = '''{m.r.as_file}'''.format(
-    password=win32crypt.CryptProtectData(six.binary_type('{m.password}'.encode('UTF-16LE')), None, None, None, None, 0x01).encode('hex'),
-    address='127.0.0.1:{{}}'.format(port)
-)
-
+keyFile = tools.saveTempFile('''{m.key}''')
+theFile = '''{m.xf}'''.format(exports='c:\\', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)
-executable = tools.findApp('mstsc.exe')
-if executable is None:
-    raise Exception('Unable to find mstsc.exe')
 
-subprocess.Popen([executable, filename])
-tools.addFileToUnlink(filename)
+x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
+executable = tools.findApp('x2goclient.exe', [x2goPath])
+if executable is None:
+    raise Exception('''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
+<p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>''')
+
+subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu'])
 
 # QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

@@ -12,16 +12,20 @@ from uds import tools  # @UnresolvedImport
 
 import six
 
-# The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(exports='c:\\', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}')
+theFile = '''{m.xf}'''.format(exports='c:\\', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
 executable = tools.findApp('x2goclient.exe', [x2goPath])
+if executable is None:
+    raise Exception('''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
+<p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>''')
 
-# executable = tools.findApp('mstsc.exe')
-# subprocess.Popen([executable, filename])
+# C:\Program Files (x86)\\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
+
+subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu'])
 # tools.addFileToUnlink(filename)
+# tools.addFileToUnlink(keyFile)
 
-QtGui.QMessageBox.critical(parent, 'Notice', executable + ' -- ' + keyFile + ', ' + filename, QtGui.QMessageBox.Ok)  # @UndefinedVariable
+# QtGui.QMessageBox.critical(parent, 'Notice', executable + ' -- ' + keyFile + ', ' + filename, QtGui.QMessageBox.Ok)  # @UndefinedVariable
