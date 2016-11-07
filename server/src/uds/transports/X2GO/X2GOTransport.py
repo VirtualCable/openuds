@@ -59,6 +59,7 @@ class X2GOTransport(BaseX2GOTransport):
     desktopType = BaseX2GOTransport.desktopType
     sound = BaseX2GOTransport.sound
     exports = BaseX2GOTransport.exports
+    speed = BaseX2GOTransport.speed
 
     soundType = BaseX2GOTransport.soundType
     keyboardLayout = BaseX2GOTransport.keyboardLayout
@@ -76,6 +77,7 @@ class X2GOTransport(BaseX2GOTransport):
         width, height = CommonPrefs.getWidthHeight(prefs)
 
         xf = x2gofile.getTemplate(
+            speed=self.speed.value,
             pack=self.pack.value,
             quality=self.quality.value,
             sound=self.sound.isTrue(),

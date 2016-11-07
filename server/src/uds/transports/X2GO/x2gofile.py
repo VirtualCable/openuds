@@ -35,7 +35,7 @@ template = '''[General]
 UDS=@ByteArray()
 
 [20160101100758147]
-speed=4
+speed={speed}
 pack={pack}
 quality={quality}
 fstunnel=true
@@ -94,7 +94,7 @@ sshproxyautologin=false
 sshproxykrblogin=false
 '''
 
-def getTemplate(pack, quality, sound, soundSystem, windowManager, exports, width, height):
+def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports, width, height):
     trueFalse = lambda(x): 'true' if x else 'false'
     export = 'export="{export}"' if exports else ''
     if width == -1 or height == -1:
@@ -104,6 +104,7 @@ def getTemplate(pack, quality, sound, soundSystem, windowManager, exports, width
     else:
         fullscreen = 'false'
     return template.format(
+        speed=speed,
         pack=pack,
         quality=quality,
         sound=trueFalse(sound),

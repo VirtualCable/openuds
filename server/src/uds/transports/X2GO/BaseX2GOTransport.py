@@ -47,7 +47,7 @@ import six
 import os
 import logging
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-11-07'
 
 
 logger = logging.getLogger(__name__)
@@ -106,6 +106,18 @@ class BaseX2GOTransport(Transport):
         tab=gui.PARAMETERS_TAB
     )
 
+    speed = gui.ChoiceField(
+        label=_('Speed'),
+        order=14,
+        tooltip=_('Connection speed'),
+        defvalue='3',
+        values=[
+            {'id': '0', 'text': 'MODEM'},
+            {'id': '1', 'text': 'ISDN'},
+            {'id': '2', 'text': 'ADSL'},
+            {'id': '3', 'text': 'WAN'},
+            {'id': '4', 'text': 'LAN'},
+    ], tab=gui.PARAMETERS_TAB)
 
     soundType = gui.ChoiceField(label=_('Desktop'), order=30, tooltip=_('Desktop session'),
         defvalue='pulse',
@@ -133,12 +145,12 @@ class BaseX2GOTransport(Transport):
     # '32k-png', '64k-png', '256k-png', '2m-png', '16m-png-%'
     # '16m-rgb-%', '16m-rle-%'
     pack = gui.TextField(label=_('Pack'), order=32, tooltip=_('Pack format. Change with care!'),
-        defvalue='4k-jpeg',
+        defvalue='16m-jpeg',
         tab=gui.ADVANCED_TAB
     )
 
     quality = gui.NumericField(label=_('Quality'), order=33, tooltip=_('Quality value used on some pack formats.'),
-        length=1, defvalue='8', minValue=1, maxValue=9, required=True,
+        length=1, defvalue='6', minValue=1, maxValue=9, required=True,
         tab=gui.ADVANCED_TAB)
 
 

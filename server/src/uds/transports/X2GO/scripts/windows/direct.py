@@ -12,7 +12,7 @@ from uds import tools  # @UnresolvedImport
 import six
 
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(export='c:\\', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
+theFile = '''{m.xf}'''.format(export='c:\\:1;', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
