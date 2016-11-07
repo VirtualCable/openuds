@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-10-23'
+__updated__ = '2016-11-04'
 
 logger = logging.getLogger(__name__)
 

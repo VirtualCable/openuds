@@ -40,7 +40,7 @@ from . import x2gofile
 
 import logging
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-11-07'
 
 logger = logging.getLogger(__name__)
 
@@ -66,23 +66,25 @@ class X2GOTransport(BaseX2GOTransport):
     quality = BaseX2GOTransport.quality
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        prefs = user.prefs('nx')
-
         priv, pub = self.getAndPushKey('user', userService)
 
-        prefs = user.prefs('rdp')
+        prefs = user.prefs('nx')
 
         ci = self.getConnectionInfo(userService, user, password)
         username = ci['username']
 
         width, height = CommonPrefs.getWidthHeight(prefs)
+
         xf = x2gofile.getTemplate(
             pack=self.pack.value,
             quality=self.quality.value,
             sound=self.sound.isTrue(),
             soundSystem=self.sound.value,
             windowManager=self.desktopType.value,
-            exports=self.exports.isTrue())
+            exports=self.exports.isTrue(),
+            width=width,
+            height=height
+        )
 
         # data
         data = {

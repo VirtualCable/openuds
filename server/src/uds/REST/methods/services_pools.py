@@ -46,6 +46,7 @@ from uds.core.ui.UserInterface import gui
 from .user_services import AssignedService, CachedService, Groups, Transports, Publications, Changelog
 from .services_pool_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
+from uds.core.managers import userServiceManager
 
 import logging
 
@@ -74,10 +75,12 @@ class ServicesPools(ModelHandler):
     table_title = _('Service Pools')
     table_fields = [
         {'name': {'title': _('Name')}},
-        {'parent': {'title': _('Parent Service')}},
         {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
+        {'user_services_count': {'title': _('User services'), 'type': 'number'}},
+        {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
         {'pool_group_name': {'title': _('Pool Group')}},
+        {'parent': {'title': _('Parent Service')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
@@ -97,6 +100,13 @@ class ServicesPools(ModelHandler):
             poolGroupName = item.servicesPoolGroup.name
             if item.servicesPoolGroup.image is not None:
                 poolGroupThumb = item.servicesPoolGroup.image.thumb64
+
+        state = item.state
+        if item.isInMaintenance():
+            state = State.MAINTENANCE
+        elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
+            state = State.SLOWED_DOWN
+
         val = {
             'id': item.uuid,
             'name': item.name,
@@ -104,7 +114,7 @@ class ServicesPools(ModelHandler):
             'parent': item.service.name,
             'parent_type': item.service.data_type,
             'comments': item.comments,
-            'state': item.state if item.isInMaintenance() is False else State.MAINTENANCE,
+            'state': state,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
@@ -117,6 +127,7 @@ class ServicesPools(ModelHandler):
             'cache_l2_srvs': item.cache_l2_srvs,
             'max_srvs': item.max_srvs,
             'user_services_count': item.userServices.count(),
+            'user_services_in_preparation': item.userServices.filter(state=State.PREPARING).count(),
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
             'fallbackAccess': item.fallbackAccess,

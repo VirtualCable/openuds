@@ -43,14 +43,14 @@ fstunnel=true
 iconvto=UTF-8
 iconvfrom=ISO8859-1
 useiconv=false
-fullscreen=false
+fullscreen={fullscreen}
 multidisp=false
 display=1
 maxdim=false
 rdpclient=rdesktop
 directrdpsettings=
-width=800
-height=600
+width={width}
+height={height}
 dpi=96
 setdpi=true
 xinerama=false
@@ -94,7 +94,23 @@ sshproxyautologin=false
 sshproxykrblogin=false
 '''
 
-def getTemplate(pack, quality, sound, soundSystem, windowManager, exports):
+def getTemplate(pack, quality, sound, soundSystem, windowManager, exports, width, height):
     trueFalse = lambda(x): 'true' if x else 'false'
-    export = 'export="{{export}}"' if exports else ''
-    return template.format(pack=pack, quality=quality, sound=trueFalse(sound), soundSystem=soundSystem, windowManager=windowManager, export=export)
+    export = 'export="{export}"' if exports else ''
+    if width == -1 or height == -1:
+        width = 800
+        height = 600
+        fullscreen = 'true'
+    else:
+        fullscreen = 'false'
+    return template.format(
+        pack=pack,
+        quality=quality,
+        sound=trueFalse(sound),
+        soundSystem=soundSystem,
+        windowManager=windowManager,
+        export=export,
+        width=width,
+        height=height,
+        fullscreen=fullscreen
+    )

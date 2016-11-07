@@ -3,25 +3,27 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
+from PyQt4 import QtCore, QtGui
+import os
 import subprocess
 
 from uds import tools  # @UnresolvedImport
 
-executable = tools.findApp('remote-viewer')
+import six
 
-if executable is None:
-    raise Exception('''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
-<p>
-    Please, install appropriate package for your Linux system. (probably named something like <b>remote-viewer</b>)
-</p>
-''')
-
-rsaPubKey = '''{m.rsa_key}'''
-
-theFile = '''{m.r.as_file}'''
-
+keyFile = tools.saveTempFile('''{m.key}''')
+theFile = '''{m.xf}'''.format(export='/:1;', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
 filename = tools.saveTempFile(theFile)
 
-subprocess.Popen([executable, filename])
+# HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
 
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)
+executable = tools.findApp('x2goclient')
+if executable is None:
+    raise Exception('''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
+<p>Please, install the required packages for your platform</p>''')
+
+subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
+# tools.addFileToUnlink(filename)
+# tools.addFileToUnlink(keyFile)
+
+# QtGui.QMessageBox.critical(parent, 'Notice', executable + ' -- ' + keyFile + ', ' + filename, QtGui.QMessageBox.Ok)  # @UndefinedVariable

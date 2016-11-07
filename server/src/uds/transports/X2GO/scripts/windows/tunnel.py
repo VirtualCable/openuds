@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
 from PyQt4 import QtCore, QtGui
-import win32crypt  # @UnresolvedImport
 import os
 import subprocess
 from uds.forward import forward  # @UnresolvedImport
@@ -14,7 +13,7 @@ from uds import tools  # @UnresolvedImport
 
 import six
 
-forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389)
+forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 22)
 
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
@@ -22,7 +21,7 @@ if forwardThread.status == 2:
 tools.addTaskToWait(forwardThread)
 
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(exports='c:\\', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
+theFile = '''{m.xf}'''.format(export='c:\\', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
@@ -31,6 +30,6 @@ if executable is None:
     raise Exception('''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
 <p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>''')
 
-subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu'])
+subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
 
 # QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

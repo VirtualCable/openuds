@@ -48,6 +48,7 @@ class State(object):
     FINISHED = 'F'
     BALANCING = 'H'
     INACTIVE = 'I'
+    SLOWED_DOWN = 'J'  # Only used on admin dashboard, not internal real state
     CANCELING = 'K'
     LAUNCHING = 'L'
     REMOVING = 'M'
@@ -78,7 +79,8 @@ class State(object):
         FOR_EXECUTE: _('Waiting execution'),
         BALANCING: _('Balancing'),
         MAINTENANCE: _('In maintenance'),
-        WAITING_OS: _('Waiting OS')
+        WAITING_OS: _('Waiting OS'),
+        SLOWED_DOWN: _('Too many preparing services'),
     }
 
     # States that are merely for "information" to the user. They don't contain any usable instance

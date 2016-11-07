@@ -2,47 +2,35 @@
 # Saved as .py for easier editing
 from __future__ import unicode_literals
 
-# pylint: disable=import-error, no-name-in-module, undefined-variable
-import subprocess
+# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
-from uds import tools  # @UnresolvedImport
+from PyQt4 import QtCore, QtGui
+import os
+import subprocess
 from uds.forward import forward  # @UnresolvedImport
 
-executable = tools.findApp('remote-viewer')
+from uds import tools  # @UnresolvedImport
 
-if executable is None:
-    raise Exception('''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
-<p>
-    Please, install appropriate package for your system.
-</p>
-<p>
-    Please, install appropriate package for your Linux system. (probably named something like <b>virt-viewer</b>)
-</p>
-''')
+import six
 
+forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 22)
 
-if {m.port} != -1:  # @UndefinedVariable
-    forwardThread1, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.port})  # @UndefinedVariable
+if forwardThread.status == 2:
+    raise Exception('Unable to open tunnel')
 
-    if forwardThread1.status == 2:
-        raise Exception('Unable to open tunnel')
-else:
-    port = -1
+tools.addTaskToWait(forwardThread)
 
-if {m.secure_port} != -1:  # @UndefinedVariable
-    forwardThread2, secure_port = forwardThread1.clone('{m.ip}', {m.secure_port})  # @UndefinedVariable
-
-    if forwardThread2.status == 2:
-        raise Exception('Unable to open tunnel')
-else:
-    secure_port = -1
-
-theFile = '''{m.r.as_file}'''.format(
-    secure_port=secure_port,
-    port=port
-)
-
+keyFile = tools.saveTempFile('''{m.key}''')
+theFile = '''{m.xf}'''.format(export='/:1;', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)
 
+# HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
 
-subprocess.Popen([executable, filename])
+executable = tools.findApp('x2goclient')
+if executable is None:
+    raise Exception('''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
+<p>Please, install the required packages for your platform</p>''')
+
+subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
+
+# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

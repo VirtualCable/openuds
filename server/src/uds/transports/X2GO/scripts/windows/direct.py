@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
 from PyQt4 import QtCore, QtGui
-import win32crypt  # @UnresolvedImport
 import os
 import subprocess
 
@@ -13,7 +12,7 @@ from uds import tools  # @UnresolvedImport
 import six
 
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(exports='c:\\', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
+theFile = '''{m.xf}'''.format(export='c:\\', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
@@ -24,7 +23,7 @@ if executable is None:
 
 # C:\Program Files (x86)\\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
 
-subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu'])
+subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
 # tools.addFileToUnlink(filename)
 # tools.addFileToUnlink(keyFile)
 

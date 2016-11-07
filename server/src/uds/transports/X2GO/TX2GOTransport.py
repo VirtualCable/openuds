@@ -46,7 +46,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-11-02'
+__updated__ = '2016-11-07'
 
 logger = logging.getLogger(__name__)
 
@@ -81,23 +81,27 @@ class TX2GOTransport(BaseX2GOTransport):
                 raise BaseX2GOTransport.ValidationException(_('Must use HOST:PORT in Tunnel Server Field'))
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        prefs = user.prefs('nx')
-
         priv, pub = self.getAndPushKey('user', userService)
 
-        prefs = user.prefs('rdp')
+        prefs = user.prefs('nx')
 
         ci = self.getConnectionInfo(userService, user, password)
         username = ci['username']
 
         width, height = CommonPrefs.getWidthHeight(prefs)
+
+        logger.debug('')
+
         xf = x2gofile.getTemplate(
             pack=self.pack.value,
             quality=self.quality.value,
             sound=self.sound.isTrue(),
             soundSystem=self.sound.value,
             windowManager=self.desktopType.value,
-            exports=self.exports.isTrue())
+            exports=self.exports.isTrue(),
+            width=width,
+            height=height
+        )
 
         tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)

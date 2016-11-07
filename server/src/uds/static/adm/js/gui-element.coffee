@@ -209,6 +209,8 @@
                 column.render = renderTextTransform(opts.dict)  if opts.dict?
               when "callback"
                 column.render = renderCallBack(v)
+              when "number"
+                column.render = $.fn.dataTable.render.number(get_format("THOUSAND_SEPARATOR"), get_format("DECIMAL_SEPARATOR"))
               else
                 column.type = opts.type
           columns.push column
