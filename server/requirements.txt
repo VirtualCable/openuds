@@ -13,6 +13,7 @@ python-ldap
 MySQL-python
 reportlab
 bitarray
+paramiko
 python-dateutil
 defusedxml
 requests

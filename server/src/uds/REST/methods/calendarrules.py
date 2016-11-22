@@ -109,6 +109,10 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         # We need this fields for all
         logger.debug('Saving rule {0} / {1}'.format(parent, item))
         fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration', 'duration_unit'])
+
+        if int(fields['interval']) < 1:
+            self.invalidItemException('Repeat must be greater than zero')
+
         # Convert timestamps to datetimes
         fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
         if fields['end'] != None:

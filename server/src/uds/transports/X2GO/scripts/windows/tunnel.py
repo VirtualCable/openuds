@@ -21,15 +21,14 @@ if forwardThread.status == 2:
 tools.addTaskToWait(forwardThread)
 
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(export='/:1;', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
+theFile = '''{m.xf}'''.format(export='c:\\:1;', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)
 
-# HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
-
-executable = tools.findApp('x2goclient')
+x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
+executable = tools.findApp('x2goclient.exe', [x2goPath])
 if executable is None:
-    raise Exception('''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
-<p>Please, install the required packages for your platform</p>''')
+    raise Exception('''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
+<p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>''')
 
 subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
 

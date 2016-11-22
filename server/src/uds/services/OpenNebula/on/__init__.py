@@ -43,7 +43,7 @@ import six
 import xmlrpclib
 from uds.core.util import xml2dict
 
-__updated__ = '2016-07-26'
+__updated__ = '2016-11-10'
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +132,7 @@ class OpenNebulaClient(object):
         3.- When the next parameter is >= -1 this is the Range start ID. Can be -1. For smaller values this is the offset used for pagination.
         4.- For values >= -1 this is the Range end ID. Can be -1 to get until the last ID. For values < -1 this is the page size used for pagination.
         '''
-        result = self.connection.one.templatepool.info(self.sessionString, -3, -1, -1)
+        result = self.connection.one.templatepool.info(self.sessionString, -1, -1, -1)
         result = checkResult(result)
         for ds in asList(result['VMTEMPLATE_POOL']['VMTEMPLATE']):
             try:
@@ -149,7 +149,7 @@ class OpenNebulaClient(object):
         3.- When the next parameter is >= -1 this is the Range start ID. Can be -1. For smaller values this is the offset used for pagination.
         4.- For values >= -1 this is the Range end ID. Can be -1 to get until the last ID. For values < -1 this is the page size used for pagination.
         '''
-        result = self.connection.one.imagepool.info(self.sessionString, -3, -1, -1)
+        result = self.connection.one.imagepool.info(self.sessionString, -1, -1, -1)
         result = checkResult(result)
         for ds in asList(result['IMAGE_POOL']['IMAGE']):
             yield(ds['ID'], ds['NAME'])
@@ -260,7 +260,7 @@ class OpenNebulaClient(object):
         4.- For values >= -1 this is the Range end ID. Can be -1 to get until the last ID. For values < -1 this is the page size used for pagination.
         5.- VM state to filter by. (-2 = any state including DONE, -1 = any state EXCEPT DONE)
         '''
-        result = self.connection.one.vmpool.info(self.sessionString, -3, -1, -1, -1)
+        result = self.connection.one.vmpool.info(self.sessionString, -1, -1, -1, -1)
         result = checkResult(result)
         for ds in asList(result['VM_POOL']['VM']):
             yield(ds['ID'], ds['NAME'])

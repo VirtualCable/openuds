@@ -211,7 +211,7 @@ class CommonService(object):
                     self.knownIps = dict(((v.mac, v.ip) for v in netInfo))
 
                     # And notify new listening address to broker
-                    address = (self.knownIps[self.api.mac], random.randrange(43900, 44000))
+                    address = (self.knownIps[self.api.mac], self.httpServer.getPort())
                     # And new listening address
                     self.httpServer.restart(address)
                     # sends notification

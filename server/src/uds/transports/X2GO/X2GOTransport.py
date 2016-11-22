@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2016 Virtual Cable S.L.
 # All rights reservem.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,13 +32,15 @@
 '''
 
 from django.utils.translation import ugettext_noop as _
+from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.util import OsDetector
 from uds.core.util import tools
 from .BaseX2GOTransport import BaseX2GOTransport
+from . import x2gofile
 
 import logging
 
-__updated__ = '2016-09-07'
+__updated__ = '2016-11-07'
 
 logger = logging.getLogger(__name__)
 
@@ -48,13 +50,69 @@ class X2GOTransport(BaseX2GOTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('X2Go Transport (direct)')
+    typeName = _('X2Go Transport Experimental (direct)')
     typeType = 'X2GOTransport'
     typeDescription = _('X2Go Transport for direct connection (EXPERIMENTAL)')
 
-    # useEmptyCreds = BaseSpiceTransport.useEmptyCreds
-    # fixedName = BaseSpiceTransport.fixedName
-    # fixedPassword = BaseSpiceTransport.fixedPassword
+    fixedName = BaseX2GOTransport.fixedName
+    # fullScreen = BaseX2GOTransport.fullScreen
+    desktopType = BaseX2GOTransport.desktopType
+    sound = BaseX2GOTransport.sound
+    exports = BaseX2GOTransport.exports
+    speed = BaseX2GOTransport.speed
+
+    soundType = BaseX2GOTransport.soundType
+    keyboardLayout = BaseX2GOTransport.keyboardLayout
+    pack = BaseX2GOTransport.pack
+    quality = BaseX2GOTransport.quality
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        pass
+        priv, pub = self.getAndPushKey('user', userService)
+
+        prefs = user.prefs('nx')
+
+        ci = self.getConnectionInfo(userService, user, password)
+        username = ci['username']
+
+        width, height = CommonPrefs.getWidthHeight(prefs)
+
+        xf = x2gofile.getTemplate(
+            speed=self.speed.value,
+            pack=self.pack.value,
+            quality=self.quality.value,
+            sound=self.sound.isTrue(),
+            soundSystem=self.sound.value,
+            windowManager=self.desktopType.value,
+            exports=self.exports.isTrue(),
+            width=width,
+            height=height
+        )
+
+        # data
+        data = {
+            'os': os['OS'],
+            'ip': ip,
+            'port': 22,
+            'username': username,
+            'key': priv,
+            'width': width,
+            'height': height,
+            'printers': True,
+            'drives': self.exports.isTrue(),
+            'fullScreen': width == -1 or height == -1,
+            'this_server': request.build_absolute_uri('/'),
+            'xf': xf
+        }
+
+        m = tools.DictAsObj(data)
+
+        os = {
+            OsDetector.Windows: 'windows',
+            OsDetector.Linux: 'linux',
+            # OsDetector.Macintosh: 'macosx'
+        }.get(m.os)
+
+        if os is None:
+            return super(X2GOTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+
+        return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)
