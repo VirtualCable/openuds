@@ -38,7 +38,7 @@ from django.utils import formats
 
 from django.template import RequestContext
 
-from uds.core.auths.auth import webLoginRequired
+from uds.core.auths.auth import webLoginRequired, webLogout
 
 from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup
 from uds.core.util.Config import GlobalConfig
@@ -52,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-05-20'
+__updated__ = '2016-11-22'
 
 
 def about(request):
@@ -76,6 +76,9 @@ def index(request):
     Renders the main page.
     :param request: http request
     '''
+    if request.session.get('ticket') == '1':
+        return webLogout()
+
     # Session data
     os = request.os
 

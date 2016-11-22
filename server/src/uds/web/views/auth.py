@@ -58,7 +58,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2015-11-06'
+__updated__ = '2016-11-22'
 
 
 @csrf_exempt
@@ -186,6 +186,7 @@ def ticketAuth(request, ticketId):
         webLogin(request, None, usr, password)
 
         request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
+        request.session['ticket'] = '1'  # Store that user access is done using ticket
 
         logger.debug("Service & transport: {}, {}".format(servicePool, transport))
         for v in DeployedService.objects.all():
