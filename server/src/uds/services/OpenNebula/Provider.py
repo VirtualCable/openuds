@@ -50,7 +50,7 @@ import six
 # Python bindings for OpenNebula
 # import oca
 
-__updated__ = '2016-07-22'
+__updated__ = '2016-11-23'
 
 logger = logging.getLogger(__name__)
 
@@ -240,6 +240,23 @@ class Provider(ServiceProvider):
         Changes the mac address of first nic of the machine to the one specified
         '''
         return on.vm.getNetInfo(self.api, machineId, networkId)
+
+    def getConsoleConnection(self, machineId):
+        display = on.vm.getDisplayConnection(self.api, machineId)
+
+        return {
+            'type': display['type'],
+            'address': display['host'],
+            'port': display['port'],
+            'secure_port':-1,
+            'monitors': 1,
+            'cert_subject': '',
+            'ticket': {
+                'value': '',
+                'expiry': ''
+            }
+        }
+
 
     @staticmethod
     def test(env, data):
