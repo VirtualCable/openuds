@@ -50,7 +50,7 @@ import six
 # Python bindings for OpenNebula
 # import oca
 
-__updated__ = '2016-11-23'
+__updated__ = '2016-11-24'
 
 logger = logging.getLogger(__name__)
 
@@ -252,7 +252,7 @@ class Provider(ServiceProvider):
             'monitors': 1,
             'cert_subject': '',
             'ticket': {
-                'value': '',
+                'value': display['passwd'],
                 'expiry': ''
             }
         }
