@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-28 13:32+0200\n"
+"POT-Creation-Date: 2016-11-24 09:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -385,51 +385,51 @@ msgstr ""
 msgid "No changes has been made"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:46
+#: static/tmp_js/gui-d-connectivity.js:63
 msgid "New transport"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:46
+#: static/tmp_js/gui-d-connectivity.js:63
 msgid "Transport creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:47
+#: static/tmp_js/gui-d-connectivity.js:64
 msgid "Edit transport"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:47
+#: static/tmp_js/gui-d-connectivity.js:64
 msgid "Transport saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:48
+#: static/tmp_js/gui-d-connectivity.js:65
 msgid "Delete transport"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:48
+#: static/tmp_js/gui-d-connectivity.js:65
 msgid "Transport deletion error"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:55
+#: static/tmp_js/gui-d-connectivity.js:72
 msgid "New network"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:55
+#: static/tmp_js/gui-d-connectivity.js:72
 msgid "Network creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:56
+#: static/tmp_js/gui-d-connectivity.js:73
 msgid "Edit network"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:56
+#: static/tmp_js/gui-d-connectivity.js:73
 msgid "Network saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:57
+#: static/tmp_js/gui-d-connectivity.js:74
 msgid "Delete network"
 msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:57
+#: static/tmp_js/gui-d-connectivity.js:74
 msgid "Network deletion error"
 msgstr ""
 
@@ -784,27 +784,27 @@ msgstr ""
 msgid "Cache has been flushed"
 msgstr ""
 
-#: static/tmp_js/gui-element.js:252
+#: static/tmp_js/gui-element.js:255
 msgid "Refresh operation failed"
 msgstr ""
 
-#: static/tmp_js/gui-element.js:629
+#: static/tmp_js/gui-element.js:656
 msgid "Date"
 msgstr ""
 
-#: static/tmp_js/gui-element.js:637
+#: static/tmp_js/gui-element.js:664
 msgid "level"
 msgstr ""
 
-#: static/tmp_js/gui-element.js:644
+#: static/tmp_js/gui-element.js:671
 msgid "source"
 msgstr ""
 
-#: static/tmp_js/gui-element.js:650
+#: static/tmp_js/gui-element.js:677
 msgid "message"
 msgstr ""
 
-#: static/tmp_js/gui-element.js:655
+#: static/tmp_js/gui-element.js:682
 msgid "Logs"
 msgstr ""
 

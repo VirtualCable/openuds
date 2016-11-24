@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-28 13:32+0200\n"
+"POT-Creation-Date: 2016-11-24 09:38+0100\n"
 "PO-Revision-Date: 2016-04-20 13:25+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -386,51 +386,51 @@ msgstr "Configurazione salvata"
 msgid "No changes has been made"
 msgstr "Non è stata apportata"
 
-#: static/tmp_js/gui-d-connectivity.js:46
+#: static/tmp_js/gui-d-connectivity.js:63
 msgid "New transport"
 msgstr "Nuovo trasporto"
 
-#: static/tmp_js/gui-d-connectivity.js:46
+#: static/tmp_js/gui-d-connectivity.js:63
 msgid "Transport creation error"
 msgstr "Errore di creazione di trasporto"
 
-#: static/tmp_js/gui-d-connectivity.js:47
+#: static/tmp_js/gui-d-connectivity.js:64
 msgid "Edit transport"
 msgstr "Modifica trasporto"
 
-#: static/tmp_js/gui-d-connectivity.js:47
+#: static/tmp_js/gui-d-connectivity.js:64
 msgid "Transport saving error"
 msgstr "Trasporto errore di risparmio"
 
-#: static/tmp_js/gui-d-connectivity.js:48
+#: static/tmp_js/gui-d-connectivity.js:65
 msgid "Delete transport"
 msgstr "Eliminare il trasporto"
 
-#: static/tmp_js/gui-d-connectivity.js:48
+#: static/tmp_js/gui-d-connectivity.js:65
 msgid "Transport deletion error"
 msgstr "Errore di omissione di trasporto"
 
-#: static/tmp_js/gui-d-connectivity.js:55
+#: static/tmp_js/gui-d-connectivity.js:72
 msgid "New network"
 msgstr "Nuova rete"
 
-#: static/tmp_js/gui-d-connectivity.js:55
+#: static/tmp_js/gui-d-connectivity.js:72
 msgid "Network creation error"
 msgstr "Errore di creazione di rete"
 
-#: static/tmp_js/gui-d-connectivity.js:56
+#: static/tmp_js/gui-d-connectivity.js:73
 msgid "Edit network"
 msgstr "Modifica rete"
 
-#: static/tmp_js/gui-d-connectivity.js:56
+#: static/tmp_js/gui-d-connectivity.js:73
 msgid "Network saving error"
 msgstr "Rete risparmio errore"
 
-#: static/tmp_js/gui-d-connectivity.js:57
+#: static/tmp_js/gui-d-connectivity.js:74
 msgid "Delete network"
 msgstr "Eliminare la rete"
 
-#: static/tmp_js/gui-d-connectivity.js:57
+#: static/tmp_js/gui-d-connectivity.js:74
 msgid "Network deletion error"
 msgstr "Errore di omissione di rete"
 
@@ -785,27 +785,27 @@ msgstr "Cache"
 msgid "Cache has been flushed"
 msgstr "Cache è stata scaricata"
 
-#: static/tmp_js/gui-element.js:252
+#: static/tmp_js/gui-element.js:255
 msgid "Refresh operation failed"
 msgstr "Operazione non riuscita di aggiornamento"
 
-#: static/tmp_js/gui-element.js:629
+#: static/tmp_js/gui-element.js:656
 msgid "Date"
 msgstr "Data"
 
-#: static/tmp_js/gui-element.js:637
+#: static/tmp_js/gui-element.js:664
 msgid "level"
 msgstr "livello"
 
-#: static/tmp_js/gui-element.js:644
+#: static/tmp_js/gui-element.js:671
 msgid "source"
 msgstr "fonte"
 
-#: static/tmp_js/gui-element.js:650
+#: static/tmp_js/gui-element.js:677
 msgid "message"
 msgstr "Messaggio"
 
-#: static/tmp_js/gui-element.js:655
+#: static/tmp_js/gui-element.js:682
 msgid "Logs"
 msgstr "Registri"
 
