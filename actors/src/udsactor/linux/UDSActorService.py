@@ -44,9 +44,14 @@ from udsactor.linux.daemon import Daemon
 from udsactor.linux import renamer
 
 import sys
-import time
+import os
+import stat
+import subprocess
+
+POST_CMD = '/etc/udsactor/post'
+
 try:
-    from prctl import set_proctitle
+    from prctl import set_proctitle  # @UnresolvedImport
 except Exception:  # Platform may not include prctl, so in case it's not available, we let the "name" as is
     def set_proctitle(_):
         pass
@@ -105,6 +110,21 @@ class UDSActorSvc(Daemon, CommonService):
         if self.rebootRequested is True:
             logger.debug('Reboot has been requested, stopping service')
             return
+
+        # Execute script in /etc/udsactor/post after interacting with broker, if no reboot is requested ofc
+        # This will be executed only when machine gets "ready"
+        try:
+
+            if os.path.isfile(POST_CMD):
+                if (os.stat(POST_CMD).st_mode & stat.S_IXUSR) != 0:
+                    subprocess.call('/etc/udsactor/post')
+                else:
+                    logger.info('POST file exists but it it is not executable (needs execution permission by root)')
+            else:
+                logger.info('POST file not found & not executed')
+        except Exception as e:
+            # Ignore output of execution command
+            logger.error('Executing post command give')
 
         self.initIPC()
 
