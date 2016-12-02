@@ -42,16 +42,17 @@ import pickle
 logger = logging.getLogger(__name__)
 
 
-class IPMachinesService(services.Service):
+class IPSingleMachineService(services.Service):
 
     # Gui
-    ipList = gui.EditableList(label=_('List of IPS'))
+    ip = gui.TextField(length=64, label=_('Machine IP'), order=1, tooltip=_('Machine IP'), required=True)
+
 
     # Description of service
-    typeName = _('Static Multiple IP')
-    typeType = 'IPMachinesService'
-    typeDescription = _('This service provides access to POWERED-ON Machines by IP')
-    iconFile = 'machines.png'
+    typeName = _('Static Single IP')
+    typeType = 'IPSingleMachineService'
+    typeDescription = _('This service provides access to POWERED-ON Machine by IP')
+    iconFile = 'machine.png'
 
     # Characteristics of service
     maxDeployed = -1  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
@@ -64,47 +65,24 @@ class IPMachinesService(services.Service):
 
     servicesTypeProvided = (serviceTypes.VDI,)
 
-    def __init__(self, environment, parent, values=None):
-        super(IPMachinesService, self).__init__(environment, parent, values)
-        if values is None or values.get('ipList', None) is None:
-            self._ips = []
-        else:
-            self._ips = list('{}~{}'.format(ip, i) for i, ip in enumerate(values['ipList']))  # Allow duplicates right now
-            self._ips.sort()
-
-    def valuesDict(self):
-        ips = (i.split('~')[0] for i in self._ips)
-
-        return {'ipList': gui.convertToList(ips)}
-
-    def marshal(self):
-        self.storage.saveData('ips', pickle.dumps(self._ips))
-        return 'v1'
-
-    def unmarshal(self, vals):
-        if vals == 'v1':
-            self._ips = pickle.loads(str(self.storage.readData('ips')))
+    def initialize(self, values):
+        pass
 
     def getUnassignedMachine(self):
-        # Search first unassigned machine
+        ip = None
         try:
             self.storage.lock()
-            for ip in self._ips:
-                if self.storage.readData(ip) == None:
-                    self.storage.saveData(ip, ip)
-                    return ip
-            return None
+            counter = self.storage.getPickle('counter')
+            counter = counter + 1 if counter is not None else 1
+            self.storage.putPickle('counter', counter)
+            ip = '{}~{}'.format(self.ip.value, counter)
         except Exception:
+            ip = None
             logger.exception("Exception at getUnassignedMachine")
-            return None
         finally:
             self.storage.unlock()
 
+        return ip
+
     def unassignMachine(self, ip):
-        try:
-            self.storage.lock()
-            self.storage.remove(ip)
-        except Exception:
-            logger.exception("Exception at getUnassignedMachine")
-        finally:
-            self.storage.unlock()
+        pass
