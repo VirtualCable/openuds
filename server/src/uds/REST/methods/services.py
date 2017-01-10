@@ -188,7 +188,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
             {'comments': {'title': _('Comments')}},
             {'type_name': {'title': _('Type')}},
-            {'deployed_services_count': {'title': _('Deployed services'), 'type': 'numeric'}},
+            {'deployed_services_count': {'title': _('Services Pools'), 'type': 'numeric'}},
             {'user_services_count': {'title': _('User services'), 'type': 'numeric'}},
             {'tags': {'title': _('tags'), 'visible': False}},
         ]

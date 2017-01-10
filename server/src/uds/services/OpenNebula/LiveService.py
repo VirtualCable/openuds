@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-07-22'
+__updated__ = '2016-11-23'
 
 logger = logging.getLogger(__name__)
 
@@ -263,8 +263,5 @@ class LiveService(Service):
         '''
         return int(self.lenName.value)
 
-    def getDisplay(self):
-        '''
-        Returns the selected display type (for created machines, for administration
-        '''
-        return self.display.value
+    def getConsoleConnection(self, machineId):
+        return self.parent().getConsoleConnection(machineId)

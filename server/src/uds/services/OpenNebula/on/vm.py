@@ -39,7 +39,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import VmState
 
-__updated__ = '2016-07-26'
+__updated__ = '2016-11-24'
 
 logger = logging.getLogger(__name__)
 
@@ -173,6 +173,35 @@ def getNetInfo(api, machineId, networkId=None):
         return (node.getElementsByTagName('MAC')[0].childNodes[0].data, ip)
     except Exception:
         raise Exception('No network interface found on template. Please, add a network and republish.')
+
+def getDisplayConnection(api, machineId):
+    '''
+    If machine is not running or there is not a display, will return NONE
+    SPICE connections should check that 'type' is 'SPICE'
+    '''
+    md = minidom.parseString(api.VMInfo(machineId)[1])
+    try:
+        graphics = md.getElementsByTagName('GRAPHICS')[0]
+
+        type_ = graphics.getElementsByTagName('TYPE')[0].childNodes[0].data
+        port = graphics.getElementsByTagName('PORT')[0].childNodes[0].data
+        try:
+            passwd = graphics.getElementsByTagName('PASSWD').childNodes[0].data
+        except Exception:
+            passwd = ''
+
+        host = md.getElementsByTagName('HISTORY_RECORDS')[0].lastChild.getElementsByTagName('HOSTNAME')[0].childNodes[0].data
+        return {
+            'type': type_,
+            'host': host,
+            'port': int(port),
+            'passwd': passwd
+        }
+
+    except Exception:
+        return None  # No SPICE connection
+
+
 
 # Sample NIC Content (there will be as much as nics)
 #         <NIC>

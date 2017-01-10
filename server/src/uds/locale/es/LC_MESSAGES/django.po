@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-26 14:56+0200\n"
-"PO-Revision-Date: 2016-07-26 11:44+0000\n"
+"POT-Creation-Date: 2016-07-28 13:32+0200\n"
+"PO-Revision-Date: 2016-07-28 11:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -24,20 +24,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: REST/methods/actor.py:97 REST/methods/client.py:92
+#: REST/methods/actor.py:94 REST/methods/client.py:92
 #: REST/methods/client.py:109
 msgid "Correct"
 msgstr "Correcto"
 
-#: REST/methods/actor.py:107
+#: REST/methods/actor.py:104
 msgid "Invalid key"
 msgstr "Clave no válida"
 
-#: REST/methods/actor.py:172
+#: REST/methods/actor.py:166
 msgid "Unmanaged host"
 msgstr "Host no administrado"
 
-#: REST/methods/actor.py:204 web/errors.py:79
+#: REST/methods/actor.py:198 web/errors.py:79
 msgid "User service not found"
 msgstr "Servicio de usuario no encontrado"
 
@@ -1777,27 +1777,27 @@ msgstr ""
 "máquinas y notifica los estados)"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:50
 msgid "On Logout"
 msgstr "Al salir"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
 msgid "What to do when user logs out from service"
 msgstr "Qué hacer cuando el usuario cierra la sesión del servicio"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:64
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:58
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:55
 msgid "Keep service assigned"
 msgstr "Mantener el servicio asignado"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:59
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
 msgid "Remove service"
 msgstr "Eliminar servicio"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:65
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
 msgid "Max.Idle time"
 msgstr "Tiempo máx de inactividad"
 
@@ -2008,11 +2008,11 @@ msgstr "Contraseña actual (plantilla) de la cuenta de usuario"
 msgid "Must provide a password for the account!!!"
 msgstr "¡Debe indicar una contraseña para la cuenta!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:46
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:43
 msgid "Windows Basic OS Manager"
 msgstr "OS Manager para Windows Básico"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:48
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:45
 msgid ""
 "Os Manager to control windows machines without domain. (Basically renames "
 "machine)"
@@ -2020,7 +2020,7 @@ msgstr ""
 "OS Manager para controlar máquinas Windows sin dominio. (Básicamente "
 "renombra las máquinas)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:70
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
@@ -2029,11 +2029,11 @@ msgstr ""
 "automáticamente para el usuario (< = 0 significa sin tiempo máx. de "
 "inactividad)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
 msgid "Length must be numeric!!"
 msgstr "¡La longitud debe ser numérica!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:81
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
 msgid "Length must be betwen 1 and 6"
 msgstr "La longitud debe estar entre 1 y 6"
 
@@ -3166,8 +3166,8 @@ msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
 msgstr ""
-"Si más de una interfaz se encuentra en la máquina, utilice el primero "
-"encontrado en este red como principal"
+"Si la máquina tiene más de una interfaz, utilice la primera de esta red como "
+"la principal"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid "Clones Folder"
@@ -3691,7 +3691,7 @@ msgstr "UDS ha sido desarrollado utilizando estos componentes:"
 #: templates/uds/html5/about.html:40
 msgid "If you find that we missed any component, please let us know"
 msgstr ""
-"Si usted encuentra que perdimos cualquier componente, por favor háganoslo "
+"Si descubre que nos hemos olvidado algún componente, por favor háganoslo "
 "saber"
 
 #: templates/uds/html5/about.html:41
@@ -3726,15 +3726,13 @@ msgid "Or download another version"
 msgstr "O descargar otra versión"
 
 #: templates/uds/html5/download_client.html:15
-#| msgid ""
-#| "In case that your platform has been incorrectly detected, you can "
-#| "download manually the version required for your Operating System"
+#: templates/uds/semantic/download_client.html:15
 msgid ""
-"If your platform couldn’t be detected correctly, you can manually download "
-"the version required for your Operating System."
+"In case that your platform has been incorrectly detected, you can download "
+"manually the version required for your Operating System"
 msgstr ""
-"Si su plataforma no se detecta correctamente, usted puede descargar manualmente "
-"la versión para tu sistema operativo."
+"En caso que su plataforma no haya sido bien detectada, puede descargar "
+"manualmente la versión necesaria para su sistema operativo"
 
 #: templates/uds/html5/download_client.html:19
 #: templates/uds/semantic/download_client.html:19
@@ -3752,15 +3750,13 @@ msgid "Mac OSX (>10.5) UDS plugin"
 msgstr "Plugin UDS Mac OSX (> 10.5) "
 
 #: templates/uds/html5/download_client.html:35
-#| msgid ""
-#| "If you already have UDS Plugin installed but this message persists to "
-#| "appear, you can disable automatic detection here"
+#: templates/uds/semantic/download_client.html:35
 msgid ""
-"If you already have UDS Plugin installed and you can still see this message, "
-"you can disable automatic detection here."
+"If you already have UDS Plugin installed but this message persists to "
+"appear, you can disable automatic detection here"
 msgstr ""
-"Si ya tienes instalado el Plugin UDS y todavía se puede ver este mensaje, "
-"para deshabilitar la detección automática aquí."
+"Si ya tienes instalado el Plugin UDS pero este mensaje sigue apareciendo, "
+"puede desactivar la detección automática aquí"
 
 #: templates/uds/html5/download_client.html:39
 #: templates/uds/semantic/download_client.html:39
@@ -3782,15 +3778,13 @@ msgstr ""
 "página no se volverá a activar si no tiene el plugin instalado."
 
 #: templates/uds/html5/download_client.html:45
-#| msgid ""
-#| "In this case, you will have to manually download the plugin by using the "
-#| "menu on upper right corner."
+#: templates/uds/semantic/download_client.html:45
 msgid ""
-"Hence, you will have to manually download the plugin by using the menu on "
-"upper right corner."
+"In this case, you will have to manually download the plugin by using the "
+"menu on upper right corner."
 msgstr ""
-"Por lo tanto, usted tendrá que descargar manualmente el plugin mediante el menú en "
-"esquina superior derecha."
+"En este caso, tendrá que descargar el plugin manualmente  usando el menú de "
+"la esquina superior derecha."
 
 #: templates/uds/html5/download_client.html:47
 #: templates/uds/semantic/download_client.html:47
@@ -4056,30 +4050,6 @@ msgid ""
 "If you found that we missed to mention any component, please let us know"
 msgstr ""
 "Si ve que nos hemos dejado algún componente, háganoslo saber, por favor"
-
-#: templates/uds/semantic/download_client.html:15
-msgid ""
-"In case that your platform has been incorrectly detected, you can download "
-"manually the version required for your Operating System"
-msgstr ""
-"En caso que su plataforma no haya sido bien detectada, puede descargar "
-"manualmente la versión necesaria para su sistema operativo"
-
-#: templates/uds/semantic/download_client.html:35
-msgid ""
-"If you already have UDS Plugin installed but this message persists to "
-"appear, you can disable automatic detection here"
-msgstr ""
-"Si ya tienes instalado el Plugin UDS pero este mensaje sigue apareciendo, "
-"puede desactivar la detección automática aquí"
-
-#: templates/uds/semantic/download_client.html:45
-msgid ""
-"In this case, you will have to manually download the plugin by using the "
-"menu on upper right corner."
-msgstr ""
-"En este caso, tendrá que descargar el plugin manualmente  usando el menú de "
-"la esquina superior derecha."
 
 #: templates/uds/semantic/index.html:23
 msgid "Administrator info"
@@ -4494,7 +4464,7 @@ msgstr "Sincronización multimedia"
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
-"Si está marcada. Cliente Linux usará el parámetro multimedia para xfreerdp"
+"Si está marcada, el cliente Linux usará el parámetro multimedia para xfreerdp"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
@@ -4503,8 +4473,11 @@ msgstr "Use ALSA"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
-msgid "If checked, Linux client will try to use alsa, pulse if not"
-msgstr "Si, Linux cliente intentará usar alsa, pulso si no"
+msgid ""
+"If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
+msgstr ""
+"Si está marcado, el cliente Linux intentará usar ALSA, en caso contrario "
+"usará Pulse"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
@@ -4766,7 +4739,7 @@ msgid ""
 msgstr ""
 "Este servicio está a punto de ser reemplazado por una nueva versión. Por "
 "favor, cierre la sesión antes de {} y guarde todo su trabajo para evitar "
-"perderla."
+"perderlo."
 
 #: web/views/service.py:115
 msgid "Service not ready. Please, try again in a while."

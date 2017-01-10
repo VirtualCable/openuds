@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-26 14:56+0200\n"
-"PO-Revision-Date: 2016-07-26 11:43+0000\n"
+"POT-Creation-Date: 2016-07-28 13:32+0200\n"
+"PO-Revision-Date: 2016-07-28 11:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -19,20 +19,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: REST/methods/actor.py:97 REST/methods/client.py:92
+#: REST/methods/actor.py:94 REST/methods/client.py:92
 #: REST/methods/client.py:109
 msgid "Correct"
 msgstr "Korrigieren"
 
-#: REST/methods/actor.py:107
+#: REST/methods/actor.py:104
 msgid "Invalid key"
 msgstr "Ungültiger Schlüssel"
 
-#: REST/methods/actor.py:172
+#: REST/methods/actor.py:166
 msgid "Unmanaged host"
 msgstr "Nicht verwalteter host"
 
-#: REST/methods/actor.py:204 web/errors.py:79
+#: REST/methods/actor.py:198 web/errors.py:79
 msgid "User service not found"
 msgstr "Benutzer-Dienst nicht gefunden"
 
@@ -1776,27 +1776,27 @@ msgstr ""
 "benennt Maschine und Benachrichtigen Sie Zustand)"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:50
 msgid "On Logout"
 msgstr "Beim Abmelden"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
 msgid "What to do when user logs out from service"
 msgstr "Was tun, wenn der Benutzer abmeldet vom Dienst"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:64
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:58
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:55
 msgid "Keep service assigned"
 msgstr "Halten Sie Dienst zugewiesen"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:59
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
 msgid "Remove service"
 msgstr "Basisdienst"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:65
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
 msgid "Max.Idle time"
 msgstr "Max.Idle Zeit"
 
@@ -2006,11 +2006,11 @@ msgstr "Aktuelle (Vorlage) Kennwort des Benutzerkontos"
 msgid "Must provide a password for the account!!!"
 msgstr "Muss ein Kennwort für das Konto angeben!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:46
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:43
 msgid "Windows Basic OS Manager"
 msgstr "Grundlegende Windows-OS-Manager"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:48
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:45
 msgid ""
 "Os Manager to control windows machines without domain. (Basically renames "
 "machine)"
@@ -2018,7 +2018,7 @@ msgstr ""
 "OS-Manager, um Windows-Rechner ohne Domäne steuern. (Im Grunde benennt "
 "Maschine)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:70
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
@@ -2026,11 +2026,11 @@ msgstr ""
 "Maximale Leerlaufzeit (in Sekunden) vor der Sitzung ist Automaticatlly "
 "geschlossen der Benutzer (< = 0 bedeutet keine max. idle-Zeit)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
 msgid "Length must be numeric!!"
 msgstr "Länge muss numerisch sein!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:81
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
 msgid "Length must be betwen 1 and 6"
 msgstr "Die Länge muss zwischen 1 und 6 sein."
 
@@ -3718,15 +3718,13 @@ msgid "Or download another version"
 msgstr "Oder laden Sie eine andere version"
 
 #: templates/uds/html5/download_client.html:15
-#| msgid ""
-#| "In case that your platform has been incorrectly detected, you can "
-#| "download manually the version required for your Operating System"
+#: templates/uds/semantic/download_client.html:15
 msgid ""
-"If your platform couldn’t be detected correctly, you can manually download "
-"the version required for your Operating System."
+"In case that your platform has been incorrectly detected, you can download "
+"manually the version required for your Operating System"
 msgstr ""
-"Wenn Ihre Plattform konnte nicht korrekt erkannt werden, können Sie manuell herunterladen "
-"die Version für Ihr Betriebssystem erforderlich."
+"Im Fall, dass Ihre Plattform falsch erkannt wurde können Sie herunterladen "
+"manuell die Version für Ihr Betriebssystem erforderlich"
 
 #: templates/uds/html5/download_client.html:19
 #: templates/uds/semantic/download_client.html:19
@@ -3744,15 +3742,14 @@ msgid "Mac OSX (>10.5) UDS plugin"
 msgstr "Mac OSX (> 10.5) UDS-Plugin"
 
 #: templates/uds/html5/download_client.html:35
-#| msgid ""
-#| "If you already have UDS Plugin installed but this message persists to "
-#| "appear, you can disable automatic detection here"
+#: templates/uds/semantic/download_client.html:35
 msgid ""
-"If you already have UDS Plugin installed and you can still see this message, "
-"you can disable automatic detection here."
+"If you already have UDS Plugin installed but this message persists to "
+"appear, you can disable automatic detection here"
 msgstr ""
-"Wenn Sie bereits können UDS Plugin installiert und Sie immer noch diese Meldung sehen, "
-"Sie können hier automatische Erkennung deaktivieren."
+"Wenn Sie bereits UDS-Plugin installiert haben, aber diese Meldung weiterhin "
+"angezeigt wird angezeigt werden, können Sie die automatischen Erkennung hier "
+"deaktivieren"
 
 #: templates/uds/html5/download_client.html:39
 #: templates/uds/semantic/download_client.html:39
@@ -3774,15 +3771,13 @@ msgstr ""
 "Seite ausgelöst wird wieder im Fall müssen Sie nicht das Plugin installiert."
 
 #: templates/uds/html5/download_client.html:45
-#| msgid ""
-#| "In this case, you will have to manually download the plugin by using the "
-#| "menu on upper right corner."
+#: templates/uds/semantic/download_client.html:45
 msgid ""
-"Hence, you will have to manually download the plugin by using the menu on "
-"upper right corner."
+"In this case, you will have to manually download the plugin by using the "
+"menu on upper right corner."
 msgstr ""
-"Daher müssen Sie manuell das Plugin herunterladen mithilfe des Menüs auf "
-"rechten oberen Ecke."
+"In diesem Fall müssen Sie manuell das Plugin herunterladen mithilfe der Menü "
+"auf der rechten oberen Ecke."
 
 #: templates/uds/html5/download_client.html:47
 #: templates/uds/semantic/download_client.html:47
@@ -4050,31 +4045,6 @@ msgid ""
 msgstr ""
 "Wenn Sie festgestellt, dass wir verpasst zu erwähnen eine beliebige "
 "Komponente, informieren Sie uns bitte"
-
-#: templates/uds/semantic/download_client.html:15
-msgid ""
-"In case that your platform has been incorrectly detected, you can download "
-"manually the version required for your Operating System"
-msgstr ""
-"Im Fall, dass Ihre Plattform falsch erkannt wurde können Sie herunterladen "
-"manuell die Version für Ihr Betriebssystem erforderlich"
-
-#: templates/uds/semantic/download_client.html:35
-msgid ""
-"If you already have UDS Plugin installed but this message persists to "
-"appear, you can disable automatic detection here"
-msgstr ""
-"Wenn Sie bereits UDS-Plugin installiert haben, aber diese Meldung weiterhin "
-"angezeigt wird angezeigt werden, können Sie die automatischen Erkennung hier "
-"deaktivieren"
-
-#: templates/uds/semantic/download_client.html:45
-msgid ""
-"In this case, you will have to manually download the plugin by using the "
-"menu on upper right corner."
-msgstr ""
-"In diesem Fall müssen Sie manuell das Plugin herunterladen mithilfe der Menü "
-"auf der rechten oberen Ecke."
 
 #: templates/uds/semantic/index.html:23
 msgid "Administrator info"
@@ -4506,10 +4476,11 @@ msgstr "Alsa verwenden"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
-msgid "If checked, Linux client will try to use alsa, pulse if not"
+msgid ""
+"If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
-"Wenn diese Option aktiviert, werden die Linux-Client versuchen, nutzen Alsa, "
-"Puls, wenn nicht"
+"Wenn diese Option aktiviert, Linux-Client versucht, ALSA verwenden, sonst "
+"wird Puls verwendet werden"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"

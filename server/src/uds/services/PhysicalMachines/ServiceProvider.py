@@ -46,8 +46,8 @@ class PhysicalMachinesProvider(services.ServiceProvider):
     iconFile = 'provider.png'
 
     from .IPMachinesService import IPMachinesService
-    from .IPServerService import IPServerService
-    offers = [IPMachinesService, IPServerService]
+    from .IPSingleMachineService import IPSingleMachineService
+    offers = [IPMachinesService, IPSingleMachineService]
 
     def __unicode__(self):
         return "Physical Machines Provider"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-26 14:56+0200\n"
+"POT-Creation-Date: 2016-07-28 13:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: REST/methods/actor.py:97 REST/methods/client.py:92
+#: REST/methods/actor.py:94 REST/methods/client.py:92
 #: REST/methods/client.py:109
 msgid "Correct"
 msgstr ""
 
-#: REST/methods/actor.py:107
+#: REST/methods/actor.py:104
 msgid "Invalid key"
 msgstr ""
 
-#: REST/methods/actor.py:172
+#: REST/methods/actor.py:166
 msgid "Unmanaged host"
 msgstr ""
 
-#: REST/methods/actor.py:204 web/errors.py:79
+#: REST/methods/actor.py:198 web/errors.py:79
 msgid "User service not found"
 msgstr ""
 
@@ -1704,27 +1704,27 @@ msgid ""
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:50
 msgid "On Logout"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:53
 msgid "What to do when user logs out from service"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:64
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:58
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:55
 msgid "Keep service assigned"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:59
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:56
 msgid "Remove service"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:65
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
 msgid "Max.Idle time"
 msgstr ""
 
@@ -1913,27 +1913,27 @@ msgstr ""
 msgid "Must provide a password for the account!!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:46
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:43
 msgid "Windows Basic OS Manager"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:48
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:45
 msgid ""
 "Os Manager to control windows machines without domain. (Basically renames "
 "machine)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:70
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
 msgid "Length must be numeric!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:81
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
 msgid "Length must be betwen 1 and 6"
 msgstr ""
 
@@ -3581,9 +3581,10 @@ msgid "Or download another version"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:15
+#: templates/uds/semantic/download_client.html:15
 msgid ""
-"If your platform couldn’t be detected correctly, you can manually download "
-"the version required for your Operating System."
+"In case that your platform has been incorrectly detected, you can download "
+"manually the version required for your Operating System"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:19
@@ -3602,9 +3603,10 @@ msgid "Mac OSX (>10.5) UDS plugin"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:35
+#: templates/uds/semantic/download_client.html:35
 msgid ""
-"If you already have UDS Plugin installed and you can still see this message, "
-"you can disable automatic detection here."
+"If you already have UDS Plugin installed but this message persists to "
+"appear, you can disable automatic detection here"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:39
@@ -3625,9 +3627,10 @@ msgid ""
 msgstr ""
 
 #: templates/uds/html5/download_client.html:45
+#: templates/uds/semantic/download_client.html:45
 msgid ""
-"Hence, you will have to manually download the plugin by using the menu on "
-"upper right corner."
+"In this case, you will have to manually download the plugin by using the "
+"menu on upper right corner."
 msgstr ""
 
 #: templates/uds/html5/download_client.html:47
@@ -3877,24 +3880,6 @@ msgstr ""
 #: templates/uds/semantic/about.html:41
 msgid ""
 "If you found that we missed to mention any component, please let us know"
-msgstr ""
-
-#: templates/uds/semantic/download_client.html:15
-msgid ""
-"In case that your platform has been incorrectly detected, you can download "
-"manually the version required for your Operating System"
-msgstr ""
-
-#: templates/uds/semantic/download_client.html:35
-msgid ""
-"If you already have UDS Plugin installed but this message persists to "
-"appear, you can disable automatic detection here"
-msgstr ""
-
-#: templates/uds/semantic/download_client.html:45
-msgid ""
-"In this case, you will have to manually download the plugin by using the "
-"menu on upper right corner."
 msgstr ""
 
 #: templates/uds/semantic/index.html:23
