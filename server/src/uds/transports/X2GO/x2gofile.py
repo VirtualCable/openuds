@@ -67,7 +67,7 @@ print=true
 name=UDS/connect
 icon=:/img/icons/128x128/x2gosession.png
 host={{ip}}
-user=user
+user={user}
 key={{keyFile}}
 rdpport=3389
 sshport={{port}}
@@ -94,7 +94,7 @@ sshproxyautologin=false
 sshproxykrblogin=false
 '''
 
-def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports, width, height):
+def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports, width, height, user):
     trueFalse = lambda(x): 'true' if x else 'false'
     export = 'export="{export}"' if exports else ''
     if width == -1 or height == -1:
@@ -113,5 +113,6 @@ def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports
         export=export,
         width=width,
         height=height,
-        fullscreen=fullscreen
+        fullscreen=fullscreen,
+        user=user
     )
