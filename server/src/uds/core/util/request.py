@@ -39,7 +39,7 @@ from uds.models import User
 import threading
 import logging
 
-__updated__ = '2016-08-26'
+__updated__ = '2017-01-11'
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +126,7 @@ class GlobalRequestMiddleware(object):
         '''
         Ensures request user is the correct user
         '''
+        logger.debug('Getting User on Middleware')
         user = request.session.get(USER_KEY)
         if user is not None:
             try:
