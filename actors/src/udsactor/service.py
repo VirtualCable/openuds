@@ -85,8 +85,8 @@ class CommonService(object):
     def reboot(self):
         self.rebootRequested = True
 
-    def setReady(self):
-        self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
+    def setReady(self, hostName=None):
+        self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()], hostName)
 
     def interactWithBroker(self):
         '''
@@ -170,6 +170,9 @@ class CommonService(object):
                         logger.error('Got invalid parameters for domain message: {}'.format(params))
                         return False  # Stop running service
                     self.joinDomain(params[0], params[1], params[2], params[3], params[4])
+                    break
+                elif data[0] == 'notify':  # Broker is just requesting local information, no rename nor domain is requested
+                    self.notifyLocalInfo()
                     break
                 else:
                     logger.error('Unrecognized action sent from broker: {}'.format(data[0]))
@@ -310,6 +313,9 @@ class CommonService(object):
     # ****************************************
     # Methods that CAN BE overriden by actors
     # ****************************************
+    def notifyLocal(self):
+        self.setReady(operations.getComputerName())
+
     def doWait(self, miliseconds):
         '''
         Invoked to wait a bit

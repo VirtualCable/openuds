@@ -37,7 +37,7 @@ from uds.core import Module
 from uds.core.transports import protocols
 from . import types
 
-__updated__ = '2016-03-09'
+__updated__ = '2017-01-12'
 
 
 class Service(Module):
@@ -111,6 +111,9 @@ class Service(Module):
     # : for providing deployed services to users. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
     maxDeployed = UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
+
+    # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
+    cacheConstains = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
     # : service can "prepare" some user deployments to allow quicker user access

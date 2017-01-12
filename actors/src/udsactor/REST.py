@@ -76,7 +76,7 @@ class OsManagerError(RESTError):
 
 # Disable warnings log messages
 try:
-    import urllib3  # @UnusedImport
+    import urllib3  # @UnusedImport @UnresolvedImport
 except Exception:
     from requests.packages import urllib3  # @Reimport
 
@@ -84,7 +84,7 @@ try:
     urllib3.disable_warnings()  # @UndefinedVariable
     warnings.simplefilter("ignore")
 except Exception:
-    pass  # In fact, isn't too important, but wil log warns to logging file
+    pass  # In fact, isn't too important, but will log warns to logging file
 
 
 def ensureResultIsOk(result):
@@ -221,9 +221,13 @@ class Api(object):
         logger.debug('Requesting information'.format())
         return self.postMessage('information', '')
 
-    def setReady(self, ipsInfo):
+    def setReady(self, ipsInfo, hostName=None):
         logger.debug('Notifying readyness: {}'.format(ipsInfo))
-        data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
+        #    data = ','.join(['{}={}'.format(v[0], v[1]) for v in ipsInfo])
+        data = {
+            'ips': ipsInfo,
+            'hostname': hostName
+        }
         return self.postMessage('ready', data)
 
     def notifyIpChanges(self, ipsInfo):

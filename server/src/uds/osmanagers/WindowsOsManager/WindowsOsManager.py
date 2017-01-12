@@ -112,15 +112,13 @@ class WindowsOsManager(osmanagers.OSManager):
 
     def notifyIp(self, uid, service, data):
         si = service.getInstance()
-
         ip = ''
+
         # Notifies IP to deployed
-        pairs = data.split(',')
-        for p in pairs:
-            key, val = p.split('=')
-            if key.lower() == uid.lower():
-                si.setIp(val)
-                ip = val
+        for p in data['ips']:
+            if p[0].lower() == uid.lower():
+                si.setIp(p[1])
+                ip = p[1]
                 break
 
         self.logKnownIp(service, ip)
@@ -181,6 +179,11 @@ class WindowsOsManager(osmanagers.OSManager):
                 doRemove = True
         elif msg == "ip":
             # This ocurss on main loop inside machine, so userService is usable
+            if not isinstance(data, dict):  # Old actors, previous to 2.5
+                data = {
+                    'ips': [v.split('=') for v in data.split(',')],
+                    'hostname': userService.friendly_name
+                }
             state = State.USABLE
             self.notifyIp(userService.unique_id, userService, data)
         elif msg == "ready":
@@ -230,7 +233,7 @@ class WindowsOsManager(osmanagers.OSManager):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         '''
         if self._onLogout == 'remove':
-            userService.remove()
+            userService.release()
 
     def checkState(self, service):
         logger.debug('Checking state for service {0}'.format(service))

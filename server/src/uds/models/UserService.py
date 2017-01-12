@@ -57,7 +57,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2016-09-21'
+__updated__ = '2017-01-12'
 
 
 logger = logging.getLogger(__name__)
@@ -415,7 +415,7 @@ class UserService(UUIDModel):
 
     def release(self):
         '''
-        A much more convenient method that "remove"
+        A much more convenient method that "remove" for some situations..
         '''
         self.remove()
 

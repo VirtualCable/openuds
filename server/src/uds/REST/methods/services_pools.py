@@ -239,7 +239,7 @@ class ServicesPools(ModelHandler):
                 raise RequestError(ugettext('Base service does not exist anymore'))
 
             try:
-                serviceType = service.getType()
+                serviceType = service.getInstance()
 
                 if serviceType.publicationType is None:
                     self._params['publish_on_save'] = False
@@ -250,12 +250,22 @@ class ServicesPools(ModelHandler):
                 else:
                     del fields['osmanager_id']
 
+                if serviceType.cacheConstains is not None:
+                    for k, v in serviceType.cacheConstains.iteritems():
+                        fields[k] = v
+
+                if serviceType.maxDeployed != -1:
+                    fields['max_srvs'] = min((int(fields['max_srvs']), serviceType.maxDeployed))
+                    fields['initial_srvs'] = min(int(fields['initial_srvs']), serviceType.maxDeployed)
+                    fields['cache_l1_srvs'] = min(int(fields['cache_l1_srvs']), serviceType.maxDeployed)
+
                 if serviceType.usesCache is False:
                     for k in ('initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs'):
                         fields[k] = 0
 
             except Exception:
                 raise RequestError(ugettext('This service requires an OS Manager'))
+
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max((int(fields['initial_srvs']), int(fields['cache_l1_srvs']), int(fields['max_srvs'])))
@@ -288,7 +298,10 @@ class ServicesPools(ModelHandler):
 
     def afterSave(self, item):
         if self._params.get('publish_on_save', False) is True:
-            item.publish()
+            try:
+                item.publish()
+            except Exception:
+                pass
 
     def deleteItem(self, item):
         item.remove()  # This will mark it for deletion, but in fact will not delete it directly
