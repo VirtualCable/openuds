@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-11-23'
+__updated__ = '2017-01-17'
 
 logger = logging.getLogger(__name__)
 
@@ -92,14 +92,28 @@ class LiveService(Service):
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
-    template = gui.ChoiceField(label=_("Base Template"), order=1, tooltip=_('Service base template'), required=True)
-    datastore = gui.ChoiceField(label=_("Datastore"), order=2, tooltip=_('Service clones datastore'), required=True)
+    datastore = gui.ChoiceField(
+        label=_("Datastore"),
+        order=100,
+        tooltip=_('Service clones datastore'),
+        required=True
+    )
+
+    template = gui.ChoiceField(
+        label=_("Base Template"),
+        order=110,
+        tooltip=_('Service base template'),
+        tab=_('Machine'),
+        required=True
+    )
+
 
     baseName = gui.TextField(
         label=_('Machine Names'),
         rdonly=False,
-        order=6,
+        order=111,
         tooltip=('Base name for clones from this machine'),
+        tab=_('Machine'),
         required=True
     )
 
@@ -107,8 +121,9 @@ class LiveService(Service):
         length=1,
         label=_('Name Length'),
         defvalue=5,
-        order=7,
+        order=112,
         tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
+        tab=_('Machine'),
         required=True
     )
 

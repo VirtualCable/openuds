@@ -53,11 +53,11 @@ class XenLinkedService(Service):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('Xen Linked Clone (Experimental)')
+    typeName = _('Xen Linked Clone')
     # : Type used internally to identify this provider
     typeType = 'XenLinkedService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('Xen Services based on templates (experimental)')
+    typeDescription = _('Xen Services based on templates')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -99,26 +99,79 @@ class XenLinkedService(Service):
 
 
     # Now the form part
-    machine = gui.ChoiceField(label=_("Base Machine"), order=1, tooltip=_('Service base machine'), required=True)
+    datastore = gui.ChoiceField(
+        label=_("Storage SR"),
+        rdonly=False,
+        order=100,
+        tooltip=_('Storage where to publish and put incrementals'),
+        required=True
+    )
 
-    datastore = gui.ChoiceField(label=_("Storage SR"), rdonly=False, order=3,
-                                       tooltip=_('Storage where to publish and put incrementals'), required=True)
+    minSpaceGB = gui.NumericField(
+        length=3,
+        label=_('Reserved Space'),
+        defvalue='32',
+        order=101,
+        tooltip=_('Minimal free space in GB'),
+        required=True
+    )
 
-    network = gui.ChoiceField(label=_("Network"), rdonly=False, order=4,
-                                       tooltip=_('Network used for virtual machines'), required=True)
+    machine = gui.ChoiceField(
+        label=_("Base Machine"),
+        order=110,
+        tooltip=_('Service base machine'),
+        tab=_('Machine'),
+        required=True
+    )
 
-    minSpaceGB = gui.NumericField(length=3, label=_('Reserved Space'), defvalue='32', order=5, tooltip=_('Minimal free space in GB'), required=True)
+    network = gui.ChoiceField(
+        label=_("Network"),
+        rdonly=False,
+        order=111,
+        tooltip=_('Network used for virtual machines'),
+        tab=_('Machine'),
+        required=True
+    )
 
-    memory = gui.NumericField(label=_("Memory (Mb)"), length=4, defvalue=512, rdonly=False, order=6,
-                              tooltip=_('Memory assigned to machines'), required=True)
+    memory = gui.NumericField(
+        label=_("Memory (Mb)"),
+        length=4, defvalue=512,
+        rdonly=False,
+        order=112,
+        tooltip=_('Memory assigned to machines'),
+        tab=_('Machine'),
+        required=True
+    )
 
-    shadow = gui.NumericField(label=_("Shadow"), lengh=1, defvalue=4, rdonly=True, order=7,
-                              tooltip=_('Shadow memory multiplier (memory overcommit)'), required=True)
+    shadow = gui.NumericField(
+        label=_("Shadow"),
+        length=1,
+        defvalue=4,
+        rdonly=False,
+        order=113,
+        tooltip=_('Shadow memory multiplier (memory overcommit)'),
+        tab=_('Machine'),
+        required=True
+    )
 
-    baseName = gui.TextField(label=_('Machine Names'), rdonly=False, order=8, tooltip=('Base name for clones from this machine'), required=True)
+    baseName = gui.TextField(
+        label=_('Machine Names'),
+        rdonly=False,
+        order=114,
+        tooltip=('Base name for clones from this machine'),
+        tab=_('Machine'),
+        required=True
+    )
 
-    lenName = gui.NumericField(length=1, label=_('Name Length'), defvalue=5, order=9,
-                               tooltip=_('Length of numeric part for the names of this machines (beetwen 3 and 6'), required=True)
+    lenName = gui.NumericField(
+        length=1,
+        label=_('Name Length'),
+        defvalue=5,
+        order=115,
+        tooltip=_('Length of numeric part for the names of this machines (beetwen 3 and 6'),
+        tab=_('Machine'),
+        required=True
+    )
 
     def initialize(self, values):
         '''

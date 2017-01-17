@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 class WinDomainOsManager(WindowsOsManager):
     typeName = _('Windows Domain OS Manager')
     typeType = 'WinDomainManager'
-    typeDescription = _('Os Manager to control windows machines with domain. (Basically renames machine)')
+    typeDescription = _('Os Manager to control windows machines with domain.')
     iconFile = 'wosmanager.png'
 
     # Apart form data from windows os manager, we need also domain and credentials

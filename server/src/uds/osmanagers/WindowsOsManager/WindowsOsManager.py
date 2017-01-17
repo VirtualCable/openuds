@@ -42,7 +42,7 @@ def scrambleMsg(data):
 class WindowsOsManager(osmanagers.OSManager):
     typeName = _('Windows Basic OS Manager')
     typeType = 'WindowsManager'
-    typeDescription = _('Os Manager to control windows machines without domain. (Basically renames machine)')
+    typeDescription = _('Os Manager to control windows machines without domain.')
     iconFile = 'wosmanager.png'
     servicesType = (serviceTypes.VDI,)
 

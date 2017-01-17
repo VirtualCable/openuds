@@ -36,6 +36,7 @@ from uds.models import User, Service, UserService, DeployedService, getSqlDateti
 
 from uds.core.util.stats import counters
 from uds.core.util.Cache import Cache
+from uds.core.util.State import State
 from uds.REST import Handler, RequestError, ResponseError
 import pickle
 from datetime import timedelta
@@ -89,7 +90,7 @@ class System(Handler):
             if self._args[0] == 'overview':  # System overview
                 users = User.objects.count()
                 services = Service.objects.count()
-                user_services = UserService.objects.count()
+                user_services = UserService.objects.exclude(state__in=(State.REMOVED, State.ERROR)).count()
                 restrained_services_pools = len(DeployedService.getRestraineds())
                 return {
                     'users': users,
