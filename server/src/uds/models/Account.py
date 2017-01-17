@@ -31,11 +31,12 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-09-21'
+__updated__ = '2017-01-17'
 
 from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
+from uds.models.Tag import TaggingMixin
 from uds.models.Util import getSqlDatetime
 from django.db.models import signals
 
@@ -44,11 +45,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Account(UUIDModel):
+class Account(UUIDModel, TaggingMixin):
     '''
     Account storing on DB model
-    This is intended for small images (i will limit them to 128x128), so storing at db is fine
-
     '''
     name = models.CharField(max_length=128, unique=False, db_index=True)
     comments = models.CharField(max_length=256)

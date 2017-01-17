@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup
+from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
 from uds.models.CalendarAction import CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_PUBLISH
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
@@ -69,7 +69,21 @@ class ServicesPools(ModelHandler):
         'actions': ActionsCalendars
     }
 
-    save_fields = ['name', 'comments', 'tags', 'service_id', 'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports']
+    save_fields = [
+        'name',
+        'comments',
+        'tags',
+        'service_id',
+        'osmanager_id',
+        'image_id',
+        'account_id',
+        'servicesPoolGroup_id',
+        'initial_srvs',
+        'cache_l1_srvs',
+        'cache_l2_srvs',
+        'max_srvs',
+        'show_transports'
+    ]
     remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
@@ -116,10 +130,12 @@ class ServicesPools(ModelHandler):
             'comments': item.comments,
             'state': state,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
+            'account': item.account.name if item.account is not None else '',
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
             'servicesPoolGroup_id': poolGroupId,
+            'account_id': item.account.uuid if item.account is not None else None,
             'pool_group_name': poolGroupName,
             'pool_group_thumb': poolGroupThumb,
             'initial_srvs': item.initial_srvs,
@@ -166,12 +182,19 @@ class ServicesPools(ModelHandler):
             'rdonly': True,
             'order': 101,
         }, {
+            'name': 'account_id',
+            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]),
+            'label': ugettext('Account'),
+            'tooltip': ugettext('Account associated to this service pool'),
+            'type': gui.InputField.CHOICE_TYPE,
+            'order': 102,
+        }, {
             'name': 'image_id',
             'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
             'label': ugettext('Associated Image'),
             'tooltip': ugettext('Image assocciated with this service'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 102,
+            'order': 105,
             'tab': ugettext('Display'),
         }, {
             'name': 'servicesPoolGroup_id',
@@ -179,7 +202,7 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Pool group'),
             'tooltip': ugettext('Pool group for this pool (for pool clasify on display)'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 103,
+            'order': 106,
             'tab': ugettext('Display'),
         }, {
             'name': 'initial_srvs',
@@ -269,6 +292,18 @@ class ServicesPools(ModelHandler):
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max((int(fields['initial_srvs']), int(fields['cache_l1_srvs']), int(fields['max_srvs'])))
+
+
+            accountId = fields['account_id']
+            fields['account_id'] = None
+            logger.debug('Account id: {}'.format(accountId))
+
+            if accountId != '-1':
+                try:
+                    fields['account_id'] = Account.objects.get(uuid=processUuid(accountId)).id
+                except Exception:
+                    logger.exception('Getting account ID')
+
 
             imgId = fields['image_id']
             fields['image_id'] = None

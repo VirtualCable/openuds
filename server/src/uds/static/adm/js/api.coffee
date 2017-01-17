@@ -444,6 +444,7 @@ api.sPoolGroups = new BasicModelRest("gallery/servicespoolgroups")
 api.system = new BasicModelRest("system")
 api.reports = new BasicModelRest("reports") # Not fully used, but basic usage is common
 api.calendars = new BasicModelRest("calendars")
+api.accounts = new BasicModelRest("accounts")
 
 # In fact, reports do not have any type
 api.reports.types = (success_fnc, fail_fnc) ->

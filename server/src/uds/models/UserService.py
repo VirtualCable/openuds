@@ -57,7 +57,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-17'
 
 
 logger = logging.getLogger(__name__)
@@ -368,7 +368,7 @@ class UserService(UUIDModel):
         # 1.- If do not have any account associated, do nothing
         # 2.- If called but already accounting, do nothing
         # 3.- If called and not accounting, start accounting
-        if self.deployed_service.account is None or hasattr(self, 'accounting'):
+        if self.deployed_service.account is None or hasattr(self, 'accounting'):  # accounting comes from AccountUsage, and is a OneToOneRelation with UserService
             return
 
         self.deployed_service.account.startUsageAccounting(self)
