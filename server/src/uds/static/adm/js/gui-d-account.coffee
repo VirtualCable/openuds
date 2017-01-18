@@ -3,184 +3,44 @@ gui.accounts = new GuiElement(api.accounts, "accounts")
 gui.accounts.link = (event) ->
   "use strict"
 
-  # Button definition to trigger "Test" action
-  testButton = testButton:
-    text: gettext("Test")
-    css: "btn-info"
-
-
-  # Clears the log of the detail, in this case, the log of "users"
-  # Memory saver :-)
-  detailLogTable = null
-  clearDetailLog = ->
-    if detailLogTable?
-      $tbl = $(detailLogTable).dataTable()
+  useTable = undefined
+  clearUsage = ->
+    if useTable
+      $tbl = $(useTable).dataTable()
       $tbl.fnClearTable()
       $tbl.fnDestroy()
-      detailLogTable = null
-    $("#users-log-placeholder").empty()
-    return
-
-
-  # Clears the details
-  # Memory saver :-)
-  prevTables = []
-  clearDetails = ->
-    clearDetailLog()
-
-    $.each prevTables, (undefined_, tbl) ->
-      $tbl = $(tbl).dataTable()
-      $tbl.fnClearTable()
-      $tbl.fnDestroy()
-      return
-
-    $("#users-placeholder").empty()
-    $("#groups-placeholder").empty()
-    $("#logs-placeholder").empty()
+      useTable = undefined
+    $("#usage-placeholder").empty()
     $("#detail-placeholder").addClass "hidden"
-    prevTables = []
-    return
-
-
-  # Search button event generator for user/group
-  searchForm = (parentModalId, type, id, title, searchLabel, resultsLabel) ->
-    errorModal = gui.failRequestModalFnc(gettext("Search error"))
-    srcSelector = parentModalId + " input[name=\"name\"]"
-    $(parentModalId + " .button-search").on "click", ->
-      api.templates.get "search", (tmpl) -> # Get form template
-        modalId = gui.launchModal(title, api.templates.evaluate(tmpl,
-          search_label: searchLabel
-          results_label: resultsLabel
-        ),
-          actionButton: "<button type=\"button\" class=\"btn btn-success button-accept\">" + gettext("Accept") + "</button>"
-        )
-        $searchInput = $(modalId + " input[name=\"search\"]")
-        $select = $(modalId + " select[name=\"results\"]")
-        $searchButton = $(modalId + " .button-do-search")
-        $saveButton = $(modalId + " .button-accept")
-        $searchInput.val $(srcSelector).val()
-        $saveButton.on "click", ->
-          value = $select.val()
-          if value
-            $(srcSelector).val value
-            $(modalId).modal "hide"
-          return
-
-        $searchButton.on "click", ->
-          $searchButton.addClass "disabled"
-          term = $searchInput.val()
-          api.accounts.search id, type, term, ((data) ->
-            $searchButton.removeClass "disabled"
-            $select.empty()
-            gui.doLog data
-            $.each data, (undefined_, value) ->
-              $select.append "<option value=\"" + value.id + "\">" + value.id + " (" + value.name + ")</option>"
-              return
-
-            return
-          ), (jqXHR, textStatus, errorThrown) ->
-            $searchButton.removeClass "disabled"
-            errorModal jqXHR, textStatus, errorThrown
-            return
-
-          return
-
-        $(modalId + " form").submit (event) ->
-          event.preventDefault()
-          $searchButton.click()
-          return
-
-        $searchButton.click()  if $searchInput.val() isnt ""
-        return
-
-      return
-
     return
 
   api.templates.get "accounts", (tmpl) ->
     gui.clearWorkspace()
     gui.appendToWorkspace api.templates.evaluate(tmpl,
-      auths: "auths-placeholder"
-      auths_info: "auths-info-placeholder"
-      users: "users-placeholder"
-      users_log: "users-log-placeholder"
-      groups: "groups-placeholder"
-      logs: "logs-placeholder"
+      accounts: "accounts-placeholder"
+      usage: "usage-placeholder"
     )
     gui.setLinksEvents()
 
-    # Append tabs click events
-    $(".bottom_tabs").on "click", (event) ->
-      gui.doLog event.target
-      setTimeout (->
-        $($(event.target).attr("href") + " span.fa-refresh").click()
-        return
-      ), 10
-      return
-
-    tableId = gui.accounts.table(
+    gui.accounts.table
       icon: 'accounts'
-      container: "auths-placeholder"
-      rowSelect: "multi"
-      buttons: [
-        "new"
-        "edit"
-        "delete"
-        "xls"
-        "permissions"
-      ]
-
-      onFoundUuid: (item) ->
-        # Invoked if our table has found a "desirable" item (uuid)
-        if gui.lookup2Uuid?
-          type = gui.lookup2Uuid[0]
-          gui.lookupUuid = gui.lookup2Uuid.substr(1)
-          gui.lookup2Uuid = null
-          setTimeout( () ->
-            if type == 'g'
-              $('a[href="#groups-placeholder"]').tab('show')
-              $("#groups-placeholder span.fa-refresh").click()
-            else
-              $('a[href="#users-placeholder_tab"]').tab('show')
-              $("#users-placeholder_tab span.fa-refresh").click()
-          , 500)
+      container: "accounts-placeholder"
+      rowSelect: "single"
 
       onRefresh: (tbl) ->
-        gui.doLog 'Refresh called for accounts'
-        clearDetails()
-        return
-
-      onRowDeselect: (deselected, dtable) ->
-        clearDetails()
+        clearUsage()
         return
 
       onRowSelect: (selected) ->
-        clearDetails()
-
-        if selected.length > 1
-          return
-
-        # We can have lots of users, so memory can grow up rapidly if we do not keep thins clean
-        # To do so, we empty previous table contents before storing new table contents
-        # Anyway, TabletTools will keep "leaking" memory, but we can handle a little "leak" that will be fixed as soon as we change the section
+        clearUsage()
         $("#detail-placeholder").removeClass "hidden"
-        $('#detail-placeholder a[href="#auths-info-placeholder"]').tab('show')
-
-        gui.tools.blockUI()
-
-        # Load provider "info"
-        gui.methods.typedShow gui.accounts, selected[0], '#auths-info-placeholder .well', gettext('Error accessing data')
-
+        # gui.tools.blockUI()
         id = selected[0].id
-        type = gui.accounts.types[selected[0].type]
-        gui.doLog "Type", type
-        user = new GuiElement(api.accounts.detail(id, "users", { permission: selected[0].permission }), "users")
-        group = new GuiElement(api.accounts.detail(id, "groups", { permission: selected[0].permission }), "groups")
-        grpTable = group.table(
-          icon: 'groups'
-          container: "groups-placeholder"
-          doNotLoadData: true
-          rowSelect: "multi"
+        usage = new GuiElement(api.accounts.detail(id, "usage", { permission: selected[0].permission }), "rules")
+        usageTable = usage.table(
+          icon: 'calendars'
+          container: "usage-placeholder"
+          rowSelect: "single"
           buttons: [
             "new"
             "edit"
@@ -188,252 +48,23 @@ gui.accounts.link = (event) ->
             "xls"
           ]
           onLoad: (k) ->
-            gui.tools.unblockUI()
-            return
-
-          onEdit: (value, event, table, refreshFnc) ->
-            exec = (groups_all) ->
-              gui.tools.blockUI()
-              api.templates.get "group", (tmpl) -> # Get form template
-                group.rest.item value.id, (item) -> # Get item to edit
-                  # Creates modal
-                  modalId = gui.launchModal(gettext("Edit group") + " <b>" + item.name + "</b>", api.templates.evaluate(tmpl,
-                    id: item.id
-                    type: item.type
-                    meta_if_any: item.meta_if_any
-                    groupname: item.name
-                    groupname_label: type.groupNameLabel
-                    comments: item.comments
-                    state: item.state
-                    external: type.isExternal
-                    canSearchGroups: type.canSearchGroups
-                    groups: item.groups
-                    groups_all: groups_all
-                  ))
-                  gui.tools.applyCustoms modalId
-                  gui.tools.unblockUI()
-                  $(modalId + " .button-accept").click ->
-                    fields = gui.forms.read(modalId)
-                    gui.doLog "Fields", fields
-                    group.rest.save fields, ((data) -> # Success on put
-                      $(modalId).modal "hide"
-                      refreshFnc()
-                      gui.notify gettext("Group saved"), "success"
-                      return
-                    ), gui.failRequestModalFnc("Error saving group", true)
-                    return
-
-                  return
-
-                return
-
-              return
-
-            if value.type is "meta"
-
-              # Meta will get all groups
-              group.rest.overview (groups) ->
-                exec groups
-                return
-
-            else
-              exec()
-            return
-
-          onNew: (t, table, refreshFnc) ->
-            exec = (groups_all) ->
-              gui.tools.blockUI()
-              api.templates.get "group", (tmpl) -> # Get form template
-                # Creates modal
-                if t is "meta"
-                  title = gettext("New meta group")
-                else
-                  title = gettext("New group")
-                modalId = gui.launchModal(title, api.templates.evaluate(tmpl,
-                  type: t
-                  groupname_label: type.groupNameLabel
-                  external: type.isExternal
-                  canSearchGroups: type.canSearchGroups
-                  groups: []
-                  groups_all: groups_all
-                ))
-                gui.tools.unblockUI()
-                gui.tools.applyCustoms modalId
-                searchForm modalId, "group", id, gettext("Search groups"), gettext("Group"), gettext("Groups found") # Enable search button click, if it exist ofc
-                $(modalId + " .button-accept").click ->
-                  fields = gui.forms.read(modalId)
-                  gui.doLog "Fields", fields
-                  group.rest.create fields, ((data) -> # Success on put
-                    $(modalId).modal "hide"
-                    refreshFnc()
-                    gui.notify gettext("Group saved"), "success"
-                    return
-                  ), gui.failRequestModalFnc(gettext("Group saving error"), true)
-                  return
-
-                return
-
-              return
-
-            if t is "meta"
-              # Meta will get all groups
-              group.rest.overview (groups) ->
-                exec groups
-                return
-
-            else
-              exec()
-            return
-
-          onDelete: gui.methods.del(group, gettext("Delete group"), gettext("Group deletion error"))
+            # gui.tools.unblockUI()
+            return # null return
         )
-        tmpLogTable = null
+        return
 
-        # New button will only be shown on accounts that can create new users
-        usrButtons = [
-          "edit"
-          "delete"
-          "xls"
-        ]
-        usrButtons = ["new"].concat(usrButtons)  if type.canCreateUsers # New is first button
-        usrTable = user.table(
-          icon: 'users'
-          container: "users-placeholder"
-          doNotLoadData: true
-          rowSelect: "multi"
-          onRowSelect: (uselected) ->
-            gui.doLog 'User row selected ', uselected
-            gui.tools.blockUI()
-            uId = uselected[0].id
-            clearDetailLog()
-            tmpLogTable = user.logTable(uId,
-              container: "users-log-placeholder"
-              onLoad: ->
-                detailLogTable = tmpLogTable
-                gui.tools.unblockUI()
-                return
-            )
-            return
-
-          onRowDeselect: ->
-            clearDetailLog()
-            return
-
-          buttons: usrButtons
-          deferedRender: true # Use defered rendering for users, this table can be "huge"
-          scrollToTable: false
-          onLoad: (k) ->
-            gui.tools.unblockUI()
-            return
-
-          onRefresh: ->
-            gui.doLog "Refreshing"
-            clearDetailLog()
-            return
-
-          onEdit: (value, event, table, refreshFnc) ->
-            password = "#æð~¬ŋ@æß”¢€~½¬@#~þ¬@|" # Garbage for password (to detect change)
-            gui.tools.blockUI()
-            api.templates.get "user", (tmpl) -> # Get form template
-              group.rest.overview (groups) -> # Get groups
-                user.rest.item value.id, (item) -> # Get item to edit
-
-                  # Creates modal
-                  modalId = gui.launchModal(gettext("Edit user") + " <b>" + value.name + "</b>", api.templates.evaluate(tmpl,
-                    id: item.id
-                    username: item.name
-                    username_label: type.userNameLabel
-                    realname: item.real_name
-                    comments: item.comments
-                    state: item.state
-                    staff_member: item.staff_member
-                    is_admin: item.is_admin
-                    needs_password: type.needsPassword
-                    password: (if type.needsPassword then password else undefined)
-                    password_label: type.passwordLabel
-                    groups_all: groups
-                    groups: item.groups
-                    external: type.isExternal
-                    canSearchUsers: type.canSearchUsers
-                  ))
-                  gui.tools.applyCustoms modalId
-                  gui.tools.unblockUI()
-                  $(modalId + " .button-accept").click ->
-                    fields = gui.forms.read(modalId)
-
-                    # If needs password, and password has changed
-                    gui.doLog "passwords", type.needsPassword, password, fields.password
-                    delete fields.password  if fields.password is password  if type.needsPassword
-                    gui.doLog "Fields", fields
-                    user.rest.save fields, ((data) -> # Success on put
-                      $(modalId).modal "hide"
-                      refreshFnc()
-                      gui.notify gettext("User saved"), "success"
-                      return
-                    ), gui.failRequestModalFnc(gettext("User saving error"), true)
-                    return
-
-                  return
-
-                return
-
-              return
-
-            return
-
-          onNew: (undefined_, table, refreshFnc) ->
-            gui.tools.blockUI()
-            api.templates.get "user", (tmpl) -> # Get form template
-              group.rest.overview (groups) -> # Get groups
-                # Creates modal
-                modalId = gui.launchModal(gettext("New user"), api.templates.evaluate(tmpl,
-                  username_label: type.userNameLabel
-                  needs_password: type.needsPassword
-                  password_label: type.passwordLabel
-                  groups_all: groups
-                  groups: []
-                  external: type.isExternal
-                  canSearchUsers: type.canSearchUsers
-                ))
-                gui.tools.applyCustoms modalId
-                gui.tools.unblockUI()
-                searchForm modalId, "user", id, gettext("Search users"), gettext("User"), gettext("Users found") # Enable search button click, if it exist ofc
-                $(modalId + " .button-accept").click ->
-                  fields = gui.forms.read(modalId)
-
-                  # If needs password, and password has changed
-                  gui.doLog "Fields", fields
-                  user.rest.create fields, ((data) -> # Success on put
-                    $(modalId).modal "hide"
-                    refreshFnc()
-                    gui.notify gettext("User saved"), "success"
-                    return
-                  ), gui.failRequestModalFnc(gettext("User saving error"), true)
-                  return
-
-                return
-
-              return
-
-            return
-
-          onDelete: gui.methods.del(user, gettext("Delete user"), gettext("User deletion error"))
-        )
-        logTable = gui.accounts.logTable(id,
-          container: "logs-placeholder"
-          doNotLoadData: true
-        )
-
-        # So we can destroy the tables beforing adding new ones
-        prevTables.push grpTable
-        prevTables.push usrTable
-        prevTables.push logTable
-        false
-
-      onNew: gui.methods.typedNew(gui.accounts, gettext("New authenticator"), gettext("Authenticator creation error"), testButton)
-      onEdit: gui.methods.typedEdit(gui.accounts, gettext("Edit authenticator"), gettext("Authenticator saving error"), testButton)
-      onDelete: gui.methods.del(gui.accounts, gettext("Delete authenticator"), gettext("Authenticator deletion error"))
-    )
-    return
-
+      onRowDeselect: ->
+        clearUsage()
+        return
+      buttons: [
+        "new"
+        "edit"
+        "delete"
+        "xls"
+        "permissions"
+      ]
+      onNew: gui.methods.typedNew(gui.calendars, gettext("New calendar"), gettext("Calendar creation error"))
+      onEdit: gui.methods.typedEdit(gui.calendars, gettext("Edit calendar"), gettext("Calendar saving error"))
+      onDelete: gui.methods.del(gui.calendars, gettext("Delete calendar"), gettext("Calendar deletion error"))
   false
+false

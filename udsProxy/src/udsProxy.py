@@ -27,50 +27,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
-@itemor: Adolfo Gómez, dkmaster at dkmon dot com
-'''
-from __future__ import unicode_literals
+import SimpleHTTPServer
+import SocketServer
 
-from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models import Account
-from uds.core.util import permissions
+PORT = 9090
 
-from uds.REST.model import ModelHandler
+if __name__ == "__main__":
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    httpd = SocketServer.TCPServer(("", PORT), Handler)
 
-from .accountsusage import AccountsUsage
-
-import logging
-
-logger = logging.getLogger(__name__)
-
-# Enclosed methods under /item path
-
-
-class Accounts(ModelHandler):
-    '''
-    Processes REST requests about calendars
-    '''
-    model = Account
-    detail = {'usage': AccountsUsage }
-
-    save_fields = ['name', 'comments', 'tags']
-
-    table_title = _('Accounts')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'comments': {'title': _('Comments')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
-
-    def item_as_dict(self, calendar):
-        return {
-            'id': calendar.uuid,
-            'name': calendar.name,
-            'tags': [tag.tag for tag in calendar.tags.all()],
-            'comments': calendar.comments,
-            'permission': permissions.getEffectivePermission(self._user, calendar)
-        }
-
-    def getGui(self, type_):
-        return self.addDefaultFields([], ['name', 'comments', 'tags'])
+    print "Serving at port ", PORT
+    httpd.serve_forever()
