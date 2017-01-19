@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import Provider, Service, UserService
 from uds.core import services
+from uds.core.util.State import State
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
 
@@ -87,7 +88,7 @@ class Providers(ModelHandler):
             'name': provider.name,
             'tags': [tag.vtag for tag in provider.tags.all()],
             'services_count': provider.services.count(),
-            'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).count(),
+            'user_services_count': UserService.objects.filter(deployed_service__service__provider=provider).exclude(state__in=(State.REMOVED, State.ERROR)).count(),
             'maintenance_mode': provider.maintenance_mode,
             'offers': offers,
             'type': type_.type(),

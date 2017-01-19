@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2016-09-11'
+__updated__ = '2017-01-17'
 
 logger = logging.getLogger(__name__)
 
@@ -99,8 +99,9 @@ class OVirtLinkedService(Service):
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
-    machine = gui.ChoiceField(label=_("Base Machine"), order=1, tooltip=_('Service base machine'), required=True)
-    cluster = gui.ChoiceField(label=_("Cluster"), order=2,
+    cluster = gui.ChoiceField(
+        label=_("Cluster"),
+        order=100,
         fills={
             'callbackName': 'ovFillResourcesFromCluster',
             'function': oVirtHelpers.getResources,
@@ -112,7 +113,7 @@ class OVirtLinkedService(Service):
     datastore = gui.ChoiceField(
         label=_("Datastore Domain"),
         rdonly=False,
-        order=3,
+        order=101,
         tooltip=_('Datastore domain where to publish and put incrementals'),
         required=True
     )
@@ -121,8 +122,16 @@ class OVirtLinkedService(Service):
         length=3,
         label=_('Reserved Space'),
         defvalue='32',
-        order=4,
+        order=102,
         tooltip=_('Minimal free space in GB'),
+        required=True
+    )
+
+    machine = gui.ChoiceField(
+        label=_("Base Machine"),
+        order=110,
+        tooltip=_('Service base machine'),
+        tab=_('Machine'),
         required=True
     )
 
@@ -131,8 +140,9 @@ class OVirtLinkedService(Service):
         length=4,
         defvalue=512,
         rdonly=False,
-        order=5,
+        order=111,
         tooltip=_('Memory assigned to machines'),
+        tab=_('Machine'),
         required=True
     )
 
@@ -141,16 +151,44 @@ class OVirtLinkedService(Service):
         length=4,
         defvalue=256,
         rdonly=False,
-        order=6,
+        order=112,
         tooltip=_('Physical memory guaranteed to machines'),
+        tab=_('Machine'),
         required=True
     )
 
+    usb = gui.ChoiceField(
+        label=_('USB'),
+        rdonly=False,
+        order=113,
+        tooltip=_('Enable usb redirection for SPICE'),
+        values=[
+            gui.choiceItem('disabled', 'disabled'),
+            gui.choiceItem('native', 'native'),
+            gui.choiceItem('legacy', 'legacy (deprecated)')
+        ],
+        tab=_('Machine'),
+        defvalue='1'  # Default value is the ID of the choicefield
+    )
+
+    display = gui.ChoiceField(
+        label=_('Display'),
+        rdonly=False,
+        order=114,
+        tooltip=_('Display type (only for administration purposes)'),
+        values=[
+            gui.choiceItem('spice', 'Spice'),
+            gui.choiceItem('vnc', 'Vnc')
+        ],
+        tab=_('Machine'),
+        defvalue='1'  # Default value is the ID of the choicefield
+    )
     baseName = gui.TextField(
         label=_('Machine Names'),
         rdonly=False,
-        order=6,
+        order=115,
         tooltip=('Base name for clones from this machine'),
+        tab=_('Machine'),
         required=True
     )
 
@@ -158,34 +196,10 @@ class OVirtLinkedService(Service):
         length=1,
         label=_('Name Length'),
         defvalue=5,
-        order=7,
+        order=116,
         tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
+        tab=_('Machine'),
         required=True
-    )
-
-    usb = gui.ChoiceField(
-        label=_('USB'),
-        rdonly=False,
-        order=9,
-        tooltip=_('Enable usb redirection for SPICE'),
-        values=[
-            gui.choiceItem('disabled', 'disabled'),
-            gui.choiceItem('native', 'native'),
-            gui.choiceItem('legacy', 'legacy (deprecated)')
-        ],
-        defvalue='1'  # Default value is the ID of the choicefield
-    )
-
-    display = gui.ChoiceField(
-        label=_('Display'),
-        rdonly=False,
-        order=9,
-        tooltip=_('Display type (only for administration purposes)'),
-        values=[
-            gui.choiceItem('spice', 'Spice'),
-            gui.choiceItem('vnc', 'Vnc')
-        ],
-        defvalue='1'  # Default value is the ID of the choicefield
     )
 
     ov = gui.HiddenField(value=None)

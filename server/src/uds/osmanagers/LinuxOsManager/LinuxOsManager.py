@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 class LinuxOsManager(osmanagers.OSManager):
     typeName = _('Linux OS Manager')
     typeType = 'LinuxManager'
-    typeDescription = _('Os Manager to control linux virtual machines (basically renames machine and notify state)')
+    typeDescription = _('Os Manager to control linux virtual machines')
     iconFile = 'losmanager.png'
 
     servicesType = (serviceTypes.VDI,)

@@ -46,6 +46,7 @@ from uds.REST.model import DetailHandler
 from uds.REST import NotFound, ResponseError, RequestError
 from django.db import IntegrityError
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from uds.core.util.State import State
 
 import logging
 
@@ -92,7 +93,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'type': item.data_type,
             'type_name': _(itemType.name()),
             'deployed_services_count': item.deployedServices.count(),
-            'user_services_count': UserService.objects.filter(deployed_service__service=item).count(),
+            'user_services_count': UserService.objects.filter(deployed_service__service=item).exclude(state__in=(State.REMOVED, State.ERROR)).count(),
             'maintenance_mode': item.provider.maintenance_mode,
             'permission': perm
         }

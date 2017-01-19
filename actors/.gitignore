@@ -7,3 +7,4 @@ udsactor*.changes
 /udsactor_1.7.0.tar.xz
 /udsactor*.rpm
 /udsactor_2.1.0_amd64.buildinfo
+linux/debian/files

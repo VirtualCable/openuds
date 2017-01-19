@@ -51,6 +51,8 @@ from udsactor import VERSION
 
 trayIcon = None
 
+doLogoff = False
+
 
 def sigTerm(sigNo, stackFrame):
     if trayIcon:
@@ -150,8 +152,6 @@ class MessagesProcessor(QtCore.QThread):
                     self.script.emit(QtCore.QString.fromUtf8(data))
                 elif msgId == ipc.MSG_INFORMATION:
                     self.information.emit(pickle.loads(data))
-                elif msgId == ipc.MSG_TICKET:
-                    pass  # Not processed because not useful here
             except Exception as e:
                 try:
                     logger.error('Got error on IPC thread {}'.format(utils.exceptionToMessage(e)))
@@ -244,20 +244,18 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
         idleTime = operations.getIdleDuration()
         remainingTime = self.maxIdleTime - idleTime
 
-        if idleTime < 30:
+        if remainingTime > 120:  # Reset show Warning dialog if we have more than 5 minutes left
             self.showIdleWarn = True
-            return  # No notification if idle time is less than 30 seconds
 
         logger.debug('User has been idle for: {}'.format(idleTime))
 
-        if self.showIdleWarn is True and remainingTime < 300:  # With less than five minutes, and 30 seconds at least of idle, show message
+        if self.showIdleWarn is True and remainingTime < 120:  # With two minutes, show a warning message
             self.showIdleWarn = False
             self.msgDlg.displayMessage("You have been idle for too long. The session will end if you don't resume operations")
-            return
 
-        if self.showIdleWarn is False and remainingTime <= 0:
+        if remainingTime <= 0:
             logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
-            self.quit()
+            self.quit(logoff=True)
 
     def displayMessage(self, message):
         logger.debug('Displaying message')
@@ -294,10 +292,10 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
     def about(self):
         self.aboutDlg.exec_()
 
-    def cleanUp(self):
-        logger.debug('Cleaning up')
+    def quit(self, logoff=False):
+        global doLogoff
+        logger.debug('Quit invoked')
         if self.stopped is False:
-            logger.debug('Not stopped, proceding to cleanup')
             self.stopped = True
             try:
                 # If we close Client, send Logoff to Broker
@@ -308,21 +306,9 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
                 # May we have lost connection with server, simply exit in that case
                 pass
 
-            try:
-                operations.loggoff()  # Invoke log off
-            except Exception:
-                pass
+        doLogoff = logoff
 
-    def quit(self):
-        logger.debug('Quit invoked')
-        if self.stopped is False:
-            self.cleanUp()
-            self.app.quit()
-
-    def closeEvent(self, event):
-        event.accept()
-        self.quit()
-
+        self.app.quit()
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
@@ -340,8 +326,6 @@ if __name__ == '__main__':
         logger.error('UDS Service is not running, or it can\'t contact with UDS Server. User Tools stopped')
         sys.exit(1)
 
-    app.aboutToQuit.connect(trayIcon.cleanUp)
-
     # Sets a default idle duration, but will not be used unless idle is notified from server
     operations.initIdleDuration(3600 * 10)
 
@@ -354,5 +338,13 @@ if __name__ == '__main__':
 
     logger.debug('Exiting')
     trayIcon.quit()
+
+    if doLogoff:
+        try:
+            time.sleep(1)
+            operations.loggoff()  # Invoke log off
+        except Exception:
+            pass
+
 
     sys.exit(res)
