@@ -42,7 +42,6 @@ from uds.core.transports.BaseTransport import Transport
 from uds.core.transports.BaseTransport import TUNNELED_GROUP
 
 from uds.core.transports import protocols
-from uds.core.util import connection
 from uds.core.util import OsDetector
 from uds.models import TicketStore
 
@@ -110,7 +109,7 @@ class HTML5RDPTransport(Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for readyness
-            if connection.testServer(ip, '3389') is True:
+            if self.testServer(userService, ip, '3389') is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:

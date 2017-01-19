@@ -37,10 +37,12 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util import OsDetector
 from uds.core import Module
 from uds.core.transports import protocols
+from uds.core.util import connection
 
+import six
 import logging
 
-__updated__ = '2016-10-14'
+__updated__ = '2017-01-19'
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +107,12 @@ class Transport(Module):
         Invoked when Transport is deleted
         '''
         pass
+
+    def testServer(self, userService, ip, port):
+        # TODO: Add Proxy support here
+        # GET URL = proxy.../testService?ip=xxxxx&port=yyy&timeout=zzzz
+        return connection.testServer(ip, six.text_type(port))
+
 
     def isAvailableFor(self, userService, ip):
         '''

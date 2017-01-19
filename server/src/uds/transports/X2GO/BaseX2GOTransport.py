@@ -47,7 +47,7 @@ import six
 import os
 import logging
 
-__updated__ = '2016-11-07'
+__updated__ = '2017-01-19'
 
 
 logger = logging.getLogger(__name__)
@@ -164,7 +164,7 @@ class BaseX2GOTransport(Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if connection.testServer(ip, '22') is True:
+            if self.testServer(userService, ip, '22') is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:

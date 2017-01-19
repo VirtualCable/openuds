@@ -1,4 +1,5 @@
 bin
 pkg
 vars
-src/gopkg.in
+src/*
+!src/uds

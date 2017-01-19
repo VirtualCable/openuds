@@ -40,7 +40,6 @@ from uds.core.transports.BaseTransport import Transport
 from uds.core.transports.BaseTransport import TUNNELED_GROUP
 from uds.core.transports import protocols
 from uds.models import TicketStore
-from uds.core.util import connection
 from uds.core.util import OsDetector
 from uds.core.util.tools import DictAsObj
 from .NXFile import NXFile
@@ -171,7 +170,7 @@ class TSNXTransport(Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for readyness
-            if connection.testServer(ip, self._listenPort) is True:
+            if self.testServer(userService, ip, self._listenPort) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:

@@ -33,16 +33,14 @@
 
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
-from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
 from uds.core.transports.BaseTransport import Transport
 from uds.core.transports import protocols
-from uds.core.util import connection
 
 import logging
 import os
 
-__updated__ = '2016-07-28'
+__updated__ = '2017-01-19'
 
 
 logger = logging.getLogger(__name__)
@@ -82,7 +80,7 @@ class BaseRDPTransport(Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if connection.testServer(ip, '3389') is True:
+            if self.testServer(userService, ip, '3389') is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             else:

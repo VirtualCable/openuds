@@ -12,10 +12,15 @@ import (
 	ini "gopkg.in/ini.v1"
 )
 
-const configFilename = "/etc/UDSProxy.cfg"
+const configFilename = "/etc/udsproxy.cfg"
 
 var config struct {
-	Broker string `ini:"broker"` // Broker address
+	Server                string // Server Type, "http" or "https"
+	Port                  string // Server port
+	Broker                string // Broker address
+	UseSSL                bool   // If use https for connecting with broker: Warning, certificate must be valid on Broker
+	SSLCertificateFile    string // Certificate file
+	SSLCertificateKeyFile string // Certificate key
 }
 
 // Test service
@@ -72,13 +77,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Default config values
+	config.Port = "9090"
+
+	// Read config
 	cfg.MapTo(&config)
 
-	fmt.Println("Broker address: ", config.Broker)
+	fmt.Println("Broker address: ", config.Broker, ", Server type & port: ", config.Server, config.Port)
 	http.HandleFunc("/actor", actor) // set router
 	http.HandleFunc("/testService", testService)
-	err = http.ListenAndServe(":9090", nil) // set listen port
+	if config.Server == "https" {
+		err = http.ListenAndServeTLS(":"+config.Port, config.SSLCertificateFile, config.SSLCertificateKeyFile, nil) // set listen port
+	} else {
+		err = http.ListenAndServe(":"+config.Port, nil) // set listen port
+	}
+
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
+		return
 	}
+
 }
