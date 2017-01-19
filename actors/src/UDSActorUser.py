@@ -51,6 +51,8 @@ from udsactor import VERSION
 
 trayIcon = None
 
+doLogoff = False
+
 
 def sigTerm(sigNo, stackFrame):
     if trayIcon:
@@ -253,7 +255,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         if remainingTime <= 0:
             logger.info('User has been idle for too long, notifying Broker that service can be reclaimed')
-            self.quit()
+            self.quit(logoff=True)
 
     def displayMessage(self, message):
         logger.debug('Displaying message')
@@ -290,7 +292,8 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
     def about(self):
         self.aboutDlg.exec_()
 
-    def quit(self):
+    def quit(self, logoff=False):
+        global doLogoff
         logger.debug('Quit invoked')
         if self.stopped is False:
             self.stopped = True
@@ -303,10 +306,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
                 # May we have lost connection with server, simply exit in that case
                 pass
 
-        try:
-            operations.loggoff()  # Invoke log off
-        except Exception:
-            pass
+        doLogoff = logoff
 
         self.app.quit()
 
@@ -338,5 +338,13 @@ if __name__ == '__main__':
 
     logger.debug('Exiting')
     trayIcon.quit()
+
+    if doLogoff:
+        try:
+            time.sleep(1)
+            operations.loggoff()  # Invoke log off
+        except Exception:
+            pass
+
 
     sys.exit(res)

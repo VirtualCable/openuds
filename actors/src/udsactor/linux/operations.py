@@ -156,7 +156,7 @@ def loggoff():
         import threading
         threading._DummyThread._Thread__stop = lambda x: 42
 
-    # subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])
+    subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])
     # subprocess.call(['/sbin/shutdown', 'now', '-r'])
     # subprocess.call(['/usr/bin/systemctl', 'reboot', '-i'])
 
