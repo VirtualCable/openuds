@@ -98,7 +98,7 @@ class Client(Handler):
         logger.debug("Client args for GET: {0}".format(self._args))
 
         if len(self._args) == 0:  # Gets version
-            url = self._request.build_absolute_uri(reverse('ClientDownload'))
+            url = self._request.build_absolute_uri(reverse('uds.web.views.client_downloads'))
             return Client.result({
                 'availableVersion': CLIENT_VERSION,
                 'requiredVersion': REQUIRED_CLIENT_VERSION,

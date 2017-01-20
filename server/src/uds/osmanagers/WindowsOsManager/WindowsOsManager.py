@@ -149,6 +149,14 @@ class WindowsOsManager(osmanagers.OSManager):
         * msg = ready, data = None, Informs machine ready to be used
         '''
         logger.info("Invoked WindowsOsManager for {0} with params: {1},{2}".format(userService, msg, data))
+
+        if msg in ('ready', 'ip'):
+            if not isinstance(data, dict):  # Old actors, previous to 2.5, convert it information..
+                data = {
+                    'ips': [v.split('=') for v in data.split(',')],
+                    'hostname': userService.friendly_name
+                }
+
         # We get from storage the name for this userService. If no name, we try to assign a new one
         ret = "ok"
         notifyReady = False
@@ -179,11 +187,6 @@ class WindowsOsManager(osmanagers.OSManager):
                 doRemove = True
         elif msg == "ip":
             # This ocurss on main loop inside machine, so userService is usable
-            if not isinstance(data, dict):  # Old actors, previous to 2.5
-                data = {
-                    'ips': [v.split('=') for v in data.split(',')],
-                    'hostname': userService.friendly_name
-                }
             state = State.USABLE
             self.notifyIp(userService.unique_id, userService, data)
         elif msg == "ready":

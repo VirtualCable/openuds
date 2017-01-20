@@ -224,6 +224,7 @@ class Actor(Handler):
         try:
             res = service.getInstance().osmanager().process(service, message, data, options={'scramble': False})
         except Exception as e:
+            logger.exception("Exception processing from OS Manager")
             return Actor.result(six.text_type(e), ERR_OSMANAGER_ERROR)
 
         return Actor.result(res)

@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-01-20'
 
 logger = logging.getLogger(__name__)
 
@@ -360,7 +360,10 @@ class UserServiceManager(object):
         UserServiceOpChecker.makeUnique(uService, ui, state)
         return False
 
-    def notifyPreconnect(self, uService, userName, protocol, proxy=None):
+    def notifyPreconnect(self, uService, userName, protocol):
+
+        proxy = uService.deployed_service.proxy
+
         url = uService.getCommsUrl()
         if url is None:
             logger.debug('No notification is made because agent does not supports notifications')
@@ -371,25 +374,22 @@ class UserServiceManager(object):
         try:
             data = {'user': userName, 'protocol': protocol}
             if proxy is not None:
-                data = {
-                    'data': data,
-                    'url': url
-                }
-
-                url = proxy.url
-
-            r = requests.post(url,
-                              data=json.dumps(data),
-                              headers={'content-type': 'application/json'},
-                              verify=False,
-                              timeout=2)
+                proxy.doProxyRequest(url=url, data=data, timeout=2)
+            else:
+                r = requests.post(url,
+                                  data=json.dumps(data),
+                                  headers={'content-type': 'application/json'},
+                                  verify=False,
+                                  timeout=2)
             r = json.loads(r.content)
             logger.debug('Sent pre connection to client using {}: {}'.format(url, r))
             # In fact we ignore result right now
         except Exception as e:
             logger.info('preConnection failed: {}. Check connection on destination machine: {}'.format(e, url))
 
-    def checkUuid(self, uService, proxy=None):
+    def checkUuid(self, uService):
+
+        proxy = uService.deployed_service.proxy
 
         url = uService.getCommsUrl()
 
@@ -404,13 +404,7 @@ class UserServiceManager(object):
 
         try:
             if proxy is not None:
-                r = requests.post(
-                    proxy.url,
-                    data=json.dumps({'url': url}),
-                    headers={'content-type': 'application/json'},
-                    verify=False,
-                    timeout=5
-                )
+                proxy.doProxyRequest(url=url, data=None, timeout=5)
             else:
                 r = requests.get(
                     url,
@@ -431,10 +425,12 @@ class UserServiceManager(object):
 
         return True
 
-    def sendScript(self, uService, script, proxy=None):
+    def sendScript(self, uService, script):
         '''
         If allowed, send script to user service
         '''
+        proxy = uService.deployed_service.proxy
+
         # logger.debug('Senging script: {}'.format(script))
         url = uService.getCommsUrl()
         if url is None:
@@ -445,20 +441,15 @@ class UserServiceManager(object):
         try:
             data = {'script': script}
             if proxy is not None:
-                data = {
-                    'data': data,
-                    'url': url
-                }
-
-                url = proxy.url
-
-            r = requests.post(
-                url,
-                data=json.dumps(data),
-                headers={'content-type': 'application/json'},
-                verify=False,
-                timeout=5
-            )
+                proxy.doProxyRequest(url=url, data=data, timeout=5)
+            else:
+                r = requests.post(
+                    url,
+                    data=json.dumps(data),
+                    headers={'content-type': 'application/json'},
+                    verify=False,
+                    timeout=5
+                )
             r = json.loads(r.content)
             logger.debug('Sent script to client using {}: {}'.format(url, r))
             # In fact we ignore result right now

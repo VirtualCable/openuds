@@ -37,9 +37,9 @@ from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Tag import TaggingMixin
-from uds.models.Util import getSqlDatetime
-from django.db.models import signals
 
+import requests
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -62,6 +62,50 @@ class Proxy(UUIDModel, TaggingMixin):
         '''
         db_table = 'uds_proxies'
         app_label = 'uds'
+
+    @property
+    def url(self):
+        return 'http{}://{}:{}'.format('s' if self.ssl is True else '', self.host, self.port)
+
+    @property
+    def proxyRequestUrl(self):
+        return self.url + "/proxyRequest"
+
+    @property
+    def testServerUrl(self):
+        return self.url + "/testServer"
+
+    def doProxyRequest(self, url, data=None, timeout=5):
+        d = {
+            'url': url
+        }
+        if data is not None:
+            d['data'] = data
+
+        return requests.post(
+            self.proxyRequestUrl,
+            data=json.dumps(d),
+            headers={'content-type': 'application/json'},
+            verify=False,
+            timeout=timeout
+        )
+
+
+    def doTestServer(self, ip, port, timeout=5):
+        try:
+            url = self.testServerUrl + '?host={}&port={}&timeout={}'.format(ip, port, timeout)
+            r = requests.get(
+                url,
+                timeout=timeout + 1
+            )
+            if r.status_code == 302:  # Proxy returns "Found" for a success test
+                return True
+            # Else returns 404
+        except Exception:
+            logger.exception("Getting service state through proxy")
+
+        return False
+
 
     def __unicode__(self):
         return 'Proxy {} on {}:{} '.format(self.name, self.host, self.port)

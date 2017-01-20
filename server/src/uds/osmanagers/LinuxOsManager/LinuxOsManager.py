@@ -145,6 +145,12 @@ class LinuxOsManager(osmanagers.OSManager):
         notifyReady = False
         doRemove = False
         state = userService.os_state
+        if msg in ('ready', 'ip'):
+            if not isinstance(data, dict):  # Old actors, previous to 2.5, convert it information..
+                data = {
+                    'ips': [v.split('=') for v in data.split(',')],
+                    'hostname': userService.friendly_name
+                }
 
         # Old "info" state, will be removed in a near future
         if msg == "info":
@@ -166,11 +172,6 @@ class LinuxOsManager(osmanagers.OSManager):
                 doRemove = True
         elif msg == "ip":
             # This ocurss on main loop inside machine, so userService is usable
-            if not isinstance(data, dict):  # Old actors, previous to 2.5, convert it information..
-                data = {
-                    'ips': [v.split('=') for v in data.split(',')],
-                    'hostname': userService.friendly_name
-                }
             state = State.USABLE
             self.notifyIp(userService.unique_id, userService, data)
         elif msg == "ready":
