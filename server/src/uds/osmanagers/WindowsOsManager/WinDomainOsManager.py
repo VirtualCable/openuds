@@ -44,8 +44,8 @@ class WinDomainOsManager(WindowsOsManager):
         if values is not None:
             if values['domain'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide a domain!'))
-            if values['domain'].find('.') == -1:
-                raise osmanagers.OSManager.ValidationException(_('Must provide domain in FQDN'))
+            # if values['domain'].find('.') == -1:
+            #    raise osmanagers.OSManager.ValidationException(_('Must provide domain in FQDN'))
             if values['account'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide an account to add machines to domain!'))
             if values['account'].find('\\') != -1:
