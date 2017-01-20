@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
-from PyQt4 import QtCore, QtGui
 import win32crypt  # @UnresolvedImport
 import os
 import subprocess
@@ -19,5 +18,3 @@ filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
 subprocess.Popen([executable, filename])
 tools.addFileToUnlink(filename)
-
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

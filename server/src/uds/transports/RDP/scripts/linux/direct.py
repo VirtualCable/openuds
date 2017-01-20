@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-from PyQt4 import QtCore, QtGui
 import subprocess
 import re
 
@@ -50,7 +49,6 @@ if xfreerdp is not None:
             fnc, app = execNewXFreeRdp, xfreerdp
 
     except Exception as e:  # Valid version not found, pass to check rdesktop
-        # QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)  # @UndefinedVariable
         pass
 
 if app is None or fnc is None:

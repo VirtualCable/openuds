@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
-from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 import os
 import subprocess
 from uds.forward import forward  # @UnresolvedImport
@@ -31,5 +30,3 @@ if executable is None:
 <p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>''')
 
 subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
-
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

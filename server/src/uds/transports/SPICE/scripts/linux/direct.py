@@ -21,5 +21,3 @@ theFile = '''{m.r.as_file}'''
 filename = tools.saveTempFile(theFile)
 
 subprocess.Popen([executable, filename])
-
-# QtGui.QMessageBox.critical(parent, 'Notice', filename + ", " + executable, QtGui.QMessageBox.Ok)

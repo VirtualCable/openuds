@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
-from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 import os
 import subprocess
 
@@ -25,5 +24,3 @@ if executable is None:
 subprocess.Popen([executable, '--session-conf={{}}'.format(filename), '--session=UDS/connect', '--close-disconnect', '--hide', '--no-menu', '--add-to-known-hosts'])
 # tools.addFileToUnlink(filename)
 # tools.addFileToUnlink(keyFile)
-
-# QtGui.QMessageBox.critical(parent, 'Notice', executable + ' -- ' + keyFile + ', ' + filename, QtGui.QMessageBox.Ok)  # @UndefinedVariable

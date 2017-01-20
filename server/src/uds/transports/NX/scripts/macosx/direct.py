@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-from PyQt4 import QtCore, QtGui  # @UnusedImport
 import subprocess
 import os
 
