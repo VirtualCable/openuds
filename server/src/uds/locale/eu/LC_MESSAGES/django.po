@@ -4,12 +4,13 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
+# Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-24 09:38+0100\n"
-"PO-Revision-Date: 2016-07-28 11:21+0000\n"
+"POT-Creation-Date: 2017-01-20 05:34+0100\n"
+"PO-Revision-Date: 2017-01-20 04:01+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -26,7 +27,7 @@ msgstr "zuzena"
 
 #: REST/methods/actor.py:104
 msgid "Invalid key"
-msgstr ""
+msgstr "Teklatua"
 
 #: REST/methods/actor.py:166
 msgid "Unmanaged host"
@@ -34,7 +35,7 @@ msgstr ""
 
 #: REST/methods/actor.py:198 web/errors.py:79
 msgid "User service not found"
-msgstr "ez aurkitutako erabiltzaile-zerbitzua"
+msgstr "Ez da Erabiltzaile-zerbitzurik aurkitu"
 
 #: REST/methods/authenticators.py:57
 msgid "Current authenticators"
@@ -42,7 +43,7 @@ msgstr ""
 
 #: REST/methods/authenticators.py:59 REST/methods/calendars.py:60
 #: REST/methods/images.py:61 REST/methods/networks.py:60
-#: REST/methods/osmanagers.py:57 REST/methods/providers.py:65
+#: REST/methods/osmanagers.py:57 REST/methods/providers.py:66
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:77 REST/methods/transports.py:57
 #: REST/methods/user_services.py:225 REST/methods/user_services.py:260
@@ -51,28 +52,28 @@ msgstr ""
 #: templates/uds/admin/tmpl/calendar_rule.html:7
 #: templates/uds/admin/tmpl/user.html:29 templates/uds/admin/tmpl/user.html:32
 msgid "Name"
-msgstr ""
+msgstr "Izena"
 
 #: REST/methods/authenticators.py:60 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:66 REST/methods/services.py:189
+#: REST/methods/providers.py:67 REST/methods/services.py:190
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:262 REST/methods/users_groups.py:96
 #: REST/methods/users_groups.py:209 REST/model.py:139
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
-msgstr ""
+msgstr "Iruzkinak"
 
 #: REST/methods/authenticators.py:61 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
 #: REST/methods/user_services.py:259 REST/model.py:148
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
-msgstr ""
+msgstr "Lehentasuna"
 
-#: REST/methods/authenticators.py:62
-msgid "Tag"
+#: REST/methods/authenticators.py:62 REST/model.py:159
+msgid "Label"
 msgstr ""
 
 #: REST/methods/authenticators.py:63 reports/stats/login.py:108
@@ -82,93 +83,93 @@ msgstr ""
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/permissions.html:7
 msgid "Users"
-msgstr ""
+msgstr "Erabiltzaileak"
 
 #: REST/methods/authenticators.py:64 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:70 REST/methods/services.py:193
+#: REST/methods/providers.py:71 REST/methods/services.py:194
 #: REST/methods/services_pools.py:84 REST/methods/transports.py:60
 msgid "tags"
-msgstr ""
+msgstr "Etiketak"
 
 #: REST/methods/calendarrules.py:98
 #: templates/uds/admin/tmpl/calendar_rule.html:9
 msgid "Rule name"
-msgstr ""
+msgstr "Arau Izena"
 
 #: REST/methods/calendarrules.py:99
 #: templates/uds/admin/tmpl/calendar_rule.html:55
 msgid "Starts"
-msgstr ""
+msgstr "Hasiera"
 
 #: REST/methods/calendarrules.py:100
 #: templates/uds/admin/tmpl/calendar_rule.html:64
 msgid "Ends"
-msgstr ""
+msgstr "Amaiera"
 
 #: REST/methods/calendarrules.py:101
 #: templates/uds/admin/tmpl/calendar_rule.html:73
 msgid "Repeats"
-msgstr ""
+msgstr "Errepikapenak"
 
 #: REST/methods/calendarrules.py:102
 msgid "Every"
-msgstr ""
+msgstr "Bakoitza"
 
 #: REST/methods/calendarrules.py:103
 #: templates/uds/admin/tmpl/calendar_rule.html:34
 msgid "Duration"
-msgstr ""
+msgstr "Iraupena"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:154
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:155
 msgid "Element already exists (duplicate key error)"
-msgstr ""
+msgstr "Dagoeneko elementua existitzen da (Hutsa, gako bikoiztua)"
 
 #: REST/methods/calendarrules.py:154
 #, python-brace-format
 msgid "Rules of {0}"
-msgstr ""
+msgstr "{0} Arau"
 
 #: REST/methods/calendarrules.py:156
 msgid "Current rules"
-msgstr ""
+msgstr "Uneko arauak"
 
 #: REST/methods/calendars.py:58 templates/uds/admin/snippets/navbar.html:26
 #: templates/uds/admin/tmpl/calendars.html:4
 #: templates/uds/admin/tmpl/calendars.html:7
 msgid "Calendars"
-msgstr ""
+msgstr "Egutegiak"
 
 #: REST/methods/calendars.py:62
 msgid "Modified"
-msgstr ""
+msgstr "Aldaturik"
 
 #: REST/methods/images.py:58
 msgid "Image Gallery"
-msgstr ""
+msgstr "Irudi Galeria"
 
 #: REST/methods/images.py:60 REST/methods/images.py:79
 #: REST/methods/services_pool_groups.py:63
 #: templates/uds/admin/tmpl/new_image.html:10
 #: templates/uds/admin/tmpl/service-info.html:23
 msgid "Image"
-msgstr ""
+msgstr "Irudia"
 
 #: REST/methods/images.py:62
 msgid "Size"
-msgstr ""
+msgstr "Tamaina"
 
 #: REST/methods/images.py:80
 msgid "Image object"
-msgstr ""
+msgstr "Irudi Objecktua"
 
 #: REST/methods/networks.py:58
 msgid "Current Networks"
-msgstr ""
+msgstr "Uneko Sareak"
 
 #: REST/methods/networks.py:61
 msgid "Range"
-msgstr ""
+msgstr "Bitarte"
 
 #: REST/methods/networks.py:62 REST/methods/osmanagers.py:59
 msgid "Used by"
@@ -180,7 +181,7 @@ msgstr ""
 
 #: REST/methods/networks.py:81
 msgid "Network range"
-msgstr ""
+msgstr "Sare eremua"
 
 #: REST/methods/networks.py:82
 msgid ""
@@ -190,40 +191,41 @@ msgstr ""
 
 #: REST/methods/osmanagers.py:55
 msgid "Current OS Managers"
-msgstr ""
+msgstr "Uneko SE kudeatzaileak "
 
 #: REST/methods/osmanagers.py:81
 msgid "Can't delete an OS Manager with services pools associated"
 msgstr ""
+"Ezinezkoa da SE Zuzendaria ezabatzea pool-zerbitzuak erlazionaturik dituenean"
 
-#: REST/methods/providers.py:61
+#: REST/methods/providers.py:62
 msgid "Service providers"
-msgstr ""
+msgstr "Zerbitzu Hornitzaileak"
 
-#: REST/methods/providers.py:67
+#: REST/methods/providers.py:68
 msgid "Status"
-msgstr ""
+msgstr "Egoera"
 
-#: REST/methods/providers.py:68 templates/uds/admin/snippets/navbar.html:22
+#: REST/methods/providers.py:69 templates/uds/admin/snippets/navbar.html:22
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
 #: templates/uds/admin/tmpl/providers.html:31
 msgid "Services"
-msgstr ""
+msgstr "Zerbitzuak"
 
-#: REST/methods/providers.py:69
+#: REST/methods/providers.py:70
 msgid "User Services"
-msgstr ""
+msgstr "Erabiltzaile Zerbitzuak"
 
-#: REST/methods/providers.py:134 dispatchers/wyse_enterprise/views.py:258
+#: REST/methods/providers.py:135 dispatchers/wyse_enterprise/views.py:258
 #: dispatchers/wyse_enterprise/views.py:261 web/errors.py:74
 msgid "Service not found"
-msgstr ""
+msgstr "Ez da aurkitu Zerbitzurik"
 
 #: REST/methods/reports.py:55
 msgid "Available reports"
-msgstr ""
+msgstr "Txosten erabilgarriak"
 
 #: REST/methods/reports.py:57 REST/methods/users_groups.py:208
 #: REST/methods/users_groups.py:215
@@ -233,54 +235,54 @@ msgstr ""
 #: auths/SimpleLDAP/Authenticator.py:83
 #: templates/uds/admin/tmpl/pool_add_group.html:17
 msgid "Group"
-msgstr ""
+msgstr "Talde"
 
 #: REST/methods/reports.py:59
 msgid "Description"
-msgstr ""
+msgstr "Deskribapen"
 
 #: REST/methods/reports.py:60
 msgid "Generates"
-msgstr ""
+msgstr "Sortzen du"
 
-#: REST/methods/services.py:158
+#: REST/methods/services.py:159
 #, python-brace-format
 msgid "Input error: {0}"
-msgstr ""
+msgstr "Sarrera-erroreak:{0}"
 
-#: REST/methods/services.py:182
+#: REST/methods/services.py:183
 #, python-brace-format
 msgid "Services of {0}"
 msgstr ""
 
-#: REST/methods/services.py:184
+#: REST/methods/services.py:185
 msgid "Current services"
-msgstr ""
+msgstr "Uneko Zerbitzuak"
 
-#: REST/methods/services.py:188
+#: REST/methods/services.py:189
 msgid "Service name"
-msgstr ""
+msgstr "Zerbitzu izena"
 
-#: REST/methods/services.py:190 REST/methods/user_services.py:261
+#: REST/methods/services.py:191 REST/methods/user_services.py:261
 msgid "Type"
+msgstr "Mota"
+
+#: REST/methods/services.py:192 templates/uds/admin/tmpl/service-info.html:5
+msgid "Services Pools"
 msgstr ""
 
-#: REST/methods/services.py:191
-msgid "Deployed services"
-msgstr ""
-
-#: REST/methods/services.py:192 REST/methods/services_pools.py:79
+#: REST/methods/services.py:193 REST/methods/services_pools.py:79
 #: templates/uds/admin/tmpl/dashboard.html:88
 msgid "User services"
-msgstr ""
+msgstr "Erabiltzaile Zerbitzuak"
 
-#: REST/methods/services.py:246
+#: REST/methods/services.py:247
 msgid "With errors"
-msgstr ""
+msgstr "Erroreekin"
 
-#: REST/methods/services.py:246
+#: REST/methods/services.py:247
 msgid "Ok"
-msgstr ""
+msgstr "Ondo"
 
 #: REST/methods/services_pool_calendars.py:85
 msgid "Access restrictions by calendar"
@@ -291,41 +293,41 @@ msgstr ""
 #: templates/uds/admin/tmpl/pool_add_access.html:12
 #: templates/uds/admin/tmpl/pool_add_action.html:5
 msgid "Calendar"
-msgstr ""
+msgstr "Egutegia"
 
 #: REST/methods/services_pool_calendars.py:91
 msgid "Access"
-msgstr ""
+msgstr "Sarbidea"
 
 #: REST/methods/services_pool_calendars.py:152
 #: templates/uds/admin/tmpl/services_pool.html:36
 msgid "Scheduled actions"
-msgstr ""
+msgstr "Programatutako ekintzak"
 
 #: REST/methods/services_pool_calendars.py:157
 #: templates/uds/admin/tmpl/pool_add_action.html:35
 msgid "Action"
-msgstr ""
+msgstr "Ekintza"
 
 #: REST/methods/services_pool_calendars.py:158 core/ui/UserInterface.py:87
 msgid "Parameters"
-msgstr ""
+msgstr "Parametroak"
 
 #: REST/methods/services_pool_calendars.py:159
 msgid "Relative to"
-msgstr ""
+msgstr "Erlatiboa"
 
 #: REST/methods/services_pool_calendars.py:160
 msgid "Time offset"
-msgstr ""
+msgstr "Offset denbora"
 
 #: REST/methods/services_pool_calendars.py:161
 msgid "Next execution"
-msgstr ""
+msgstr "Hurrengo exekuzioa"
 
 #: REST/methods/services_pool_calendars.py:162
 msgid "Last execution"
-msgstr ""
+msgstr "Azken exekuzioa"
 
 #: REST/methods/services_pool_groups.py:60
 msgid "Services Pool Groups"
@@ -333,11 +335,11 @@ msgstr ""
 
 #: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:171
 msgid "Associated Image"
-msgstr ""
+msgstr "Erlazionaturiko irudia"
 
 #: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:172
 msgid "Image assocciated with this service"
-msgstr ""
+msgstr "Zerbitzu honekin erlazionatutako irudia"
 
 #: REST/methods/services_pools.py:75
 #: templates/uds/admin/snippets/navbar.html:27
@@ -348,11 +350,11 @@ msgstr ""
 
 #: REST/methods/services_pools.py:78 REST/methods/user_services.py:122
 msgid "status"
-msgstr ""
+msgstr "Egoera"
 
 #: REST/methods/services_pools.py:80
 msgid "In Preparation"
-msgstr ""
+msgstr "Prestatzen"
 
 #: REST/methods/services_pools.py:81
 msgid "Shows transports"
@@ -368,7 +370,7 @@ msgstr ""
 
 #: REST/methods/services_pools.py:96 REST/methods/services_pools.py:178
 msgid "Default"
-msgstr ""
+msgstr "Lehenetsia"
 
 #: REST/methods/services_pools.py:146
 msgid "Create at least one OS Manager before creating a new service pool"
@@ -380,7 +382,7 @@ msgstr ""
 
 #: REST/methods/services_pools.py:155
 msgid "Base service"
-msgstr ""
+msgstr "Oinarrizko Zerbitzua"
 
 #: REST/methods/services_pools.py:156
 msgid "Service used as base of this service pool"
@@ -388,20 +390,20 @@ msgstr ""
 
 #: REST/methods/services_pools.py:163
 msgid "OS Manager"
-msgstr ""
+msgstr "SE kudeatzailea"
 
 #: REST/methods/services_pools.py:164
 msgid "OS Manager used as base of this service pool"
 msgstr ""
 
 #: REST/methods/services_pools.py:175 REST/methods/services_pools.py:183
-#: services/OVirt/OVirtLinkedService.py:180
+#: services/OVirt/OVirtLinkedService.py:175
 msgid "Display"
-msgstr ""
+msgstr "Pantaila"
 
 #: REST/methods/services_pools.py:179
 msgid "Pool group"
-msgstr ""
+msgstr "Pool Talde"
 
 #: REST/methods/services_pools.py:180
 msgid "Pool group for this pool (for pool clasify on display)"
@@ -547,11 +549,11 @@ msgstr ""
 
 #: REST/methods/user_services.py:127
 msgid "Owner"
-msgstr ""
+msgstr "Jabea"
 
 #: REST/methods/user_services.py:128 REST/methods/user_services.py:192
 msgid "Actor version"
-msgstr ""
+msgstr "Aktore Bertsioa"
 
 #: REST/methods/user_services.py:155
 msgid "Item already being removed"
@@ -649,7 +651,7 @@ msgstr ""
 
 #: REST/methods/users_groups.py:148 REST/methods/users_groups.py:272
 msgid "User already exists (duplicate key error)"
-msgstr ""
+msgstr "Dagoeneko erabiltzailea existitzen da (Hutsa,gako bikoiztua)"
 
 #: REST/methods/users_groups.py:202
 #, python-brace-format
@@ -691,10 +693,6 @@ msgstr ""
 #: REST/model.py:149
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
-msgstr ""
-
-#: REST/model.py:159
-msgid "Label"
 msgstr ""
 
 #: REST/model.py:160
@@ -1115,7 +1113,7 @@ msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:122
 msgid "Private key"
-msgstr ""
+msgstr "Gako pribatua"
 
 #: auths/SAML_enterprise/SAML.py:123
 msgid ""
@@ -1132,7 +1130,9 @@ msgid "Certificate"
 msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:125
-msgid "Server certificate (public), , as generated in base 64 from openssl"
+msgid ""
+"Public key used for sign and encription (public part of previous private "
+"key), as generated in base 64 from openssl"
 msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:126
@@ -1241,7 +1241,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/services_pool.html:33
 #: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
-msgstr ""
+msgstr "Taldeak"
 
 #: auths/Sample/SampleAuth.py:126
 msgid "We need more than two items!"
@@ -1253,7 +1253,7 @@ msgstr ""
 
 #: auths/SimpleLDAP/Authenticator.py:60
 msgid "Ldap User"
-msgstr ""
+msgstr "LDAP Erabiltzailea"
 
 #: auths/SimpleLDAP/Authenticator.py:67
 msgid "Group class"
@@ -1321,11 +1321,11 @@ msgstr ""
 
 #: core/auths/BaseAuthenticator.py:132
 msgid "User name"
-msgstr ""
+msgstr "Erabiltzaile-izena"
 
 #: core/auths/BaseAuthenticator.py:135 templates/uds/admin/tmpl/group.html:18
 msgid "Group name"
-msgstr ""
+msgstr "Talde-Izena"
 
 #: core/auths/BaseAuthenticator.py:540
 msgid "Users can't be created inside this authenticator"
@@ -1337,7 +1337,7 @@ msgstr "Sistema-administratzaileak"
 
 #: core/auths/auth.py:124
 msgid "Forbidden"
-msgstr ""
+msgstr "Debekatuta"
 
 #: core/managers/PublicationManager.py:205
 msgid ""
@@ -1362,39 +1362,39 @@ msgstr ""
 
 #: core/managers/UserPrefsManager.py:293
 msgid "Screen Size"
-msgstr ""
+msgstr "Pantaila-neurria"
 
 #: core/managers/UserPrefsManager.py:300
 msgid "Full Screen"
-msgstr ""
+msgstr "Pantaila osoa"
 
 #: core/managers/UserPrefsManager.py:302
 msgid "Screen colors"
-msgstr ""
+msgstr "Pantalla koloreak"
 
 #: core/managers/UserPrefsManager.py:304
 msgid "8 bits"
-msgstr ""
+msgstr "8 bits"
 
 #: core/managers/UserPrefsManager.py:305
 msgid "16 bits"
-msgstr ""
+msgstr "16 bits"
 
 #: core/managers/UserPrefsManager.py:306
 msgid "24 bits"
-msgstr ""
+msgstr "24 bits"
 
 #: core/managers/UserPrefsManager.py:307
 msgid "32 bits"
-msgstr ""
+msgstr "32 bits"
 
 #: core/managers/UserPrefsManager.py:311
 msgid "Plugin detection"
-msgstr ""
+msgstr "Plugin detekzioa"
 
 #: core/managers/UserPrefsManager.py:313
 msgid "Detect plugin"
-msgstr ""
+msgstr "Plugin-a detektatu"
 
 #: core/managers/UserPrefsManager.py:314
 msgid "Bypass plugin detection"
@@ -1411,27 +1411,27 @@ msgstr ""
 
 #: core/osmanagers/BaseOsManager.py:59
 msgid "Base OS Manager"
-msgstr ""
+msgstr "SE-Base kudeatzailea"
 
 #: core/osmanagers/BaseOsManager.py:61
 msgid "Base Manager"
-msgstr ""
+msgstr "Base Kudeatzailea"
 
 #: core/reports/BaseReport.py:49
 msgid "Base Report"
-msgstr ""
+msgstr "Base Txostena"
 
 #: core/reports/BaseReport.py:50
 msgid "Base report"
-msgstr ""
+msgstr "Base Txostena"
 
 #: core/reports/tools/report.py:81
 msgid "Generated by UDS"
-msgstr ""
+msgstr "UDSk sortua"
 
 #: core/services/BaseService.py:89 core/services/BaseService.py:101
 msgid "Base Service"
-msgstr ""
+msgstr "Oinarrizko Zerbitzua"
 
 #: core/services/BaseService.py:122 core/services/BaseService.py:131
 #: models/Permissions.py:79 models/Permissions.py:83
@@ -1439,21 +1439,19 @@ msgstr ""
 #: services/Sample/SampleService.py:98
 #: services/TestService_enterprise/TestService.py:29
 msgid "None"
-msgstr ""
+msgstr "Bat ere"
 
 #: core/services/ClusteredService.py:42 core/services/ClusteredService.py:44
 msgid "Base Clustered Service"
 msgstr ""
 
 #: core/transports/BaseTransport.py:47
-#, fuzzy
-#| msgid "Correct"
 msgid "Direct"
-msgstr "zuzena"
+msgstr "Zuzenean"
 
 #: core/transports/BaseTransport.py:48
 msgid "Tunneled"
-msgstr ""
+msgstr "Tunela eginda"
 
 #: core/ui/UserInterface.py:86
 msgid "Advanced"
@@ -1465,11 +1463,11 @@ msgstr ""
 
 #: core/ui/UserInterface.py:89
 msgid "Tunnel"
-msgstr ""
+msgstr "Tunela"
 
 #: core/util/State.py:65 core/util/states/common.py:63
 msgid "Active"
-msgstr ""
+msgstr "Aktibo"
 
 #: core/util/State.py:66 core/util/states/common.py:64
 msgid "Inactive"
@@ -1482,7 +1480,7 @@ msgstr ""
 
 #: core/util/State.py:68 core/util/states/common.py:66
 msgid "Waiting publication"
-msgstr ""
+msgstr "Argitalpena itxaroten"
 
 #: core/util/State.py:69 core/util/states/common.py:67
 msgid "In preparation"
@@ -1498,19 +1496,19 @@ msgstr ""
 
 #: core/util/State.py:72 core/util/states/common.py:70
 msgid "Removing"
-msgstr ""
+msgstr "Kentzen"
 
 #: core/util/State.py:73 core/util/states/common.py:71
 msgid "Removed"
-msgstr ""
+msgstr "Kenduta"
 
 #: core/util/State.py:74 core/util/states/common.py:72
 msgid "Canceled"
-msgstr ""
+msgstr "Ezeztaturik"
 
 #: core/util/State.py:75 core/util/states/common.py:73
 msgid "Canceling"
-msgstr ""
+msgstr "Ezeztatzen"
 
 #: core/util/State.py:76 core/util/states/common.py:74
 #: templates/uds/html5/error.html:4 templates/uds/html5/error.html:14
@@ -1520,15 +1518,15 @@ msgstr ""
 
 #: core/util/State.py:77 core/util/states/common.py:75
 msgid "Running"
-msgstr ""
+msgstr "Exekutatzen"
 
 #: core/util/State.py:78 core/util/states/common.py:76
 msgid "Finished"
-msgstr ""
+msgstr "Amaiturik"
 
 #: core/util/State.py:79 core/util/states/common.py:77
 msgid "Waiting execution"
-msgstr ""
+msgstr "Exekutatzeko itxaroten"
 
 #: core/util/State.py:80 core/util/states/common.py:78
 msgid "Balancing"
@@ -1642,7 +1640,7 @@ msgstr ""
 
 #: models/CalendarAction.py:58
 msgid "Publish"
-msgstr ""
+msgstr "Argitaratu"
 
 #: models/CalendarAction.py:59
 msgid "Sets cache size"
@@ -1674,47 +1672,47 @@ msgstr ""
 
 #: models/CalendarAction.py:62
 msgid "Maximum services"
-msgstr ""
+msgstr "Gehinezko zerbitzuak"
 
 #: models/CalendarRule.py:56
 msgid "Yearly"
-msgstr ""
+msgstr "Urtero"
 
 #: models/CalendarRule.py:57
 msgid "Monthly"
-msgstr ""
+msgstr "Hilabetero"
 
 #: models/CalendarRule.py:58
 msgid "Weekly"
-msgstr ""
+msgstr "Astero"
 
 #: models/CalendarRule.py:59
 msgid "Daily"
-msgstr ""
+msgstr "Egunero"
 
 #: models/CalendarRule.py:60
 msgid "Weekdays"
-msgstr ""
+msgstr "Astegunak"
 
 #: models/CalendarRule.py:78
 msgid "Minutes"
-msgstr ""
+msgstr "Minutu"
 
 #: models/CalendarRule.py:79
 msgid "Hours"
-msgstr ""
+msgstr "Ordu"
 
 #: models/CalendarRule.py:80
 msgid "Days"
-msgstr ""
+msgstr "Egun"
 
 #: models/CalendarRule.py:81
 msgid "Weeks"
-msgstr ""
+msgstr "Aste"
 
 #: models/Permissions.py:80
 msgid "Read"
-msgstr ""
+msgstr "Irakurri"
 
 #: models/Permissions.py:81
 msgid "Management"
@@ -1722,7 +1720,7 @@ msgstr ""
 
 #: models/Permissions.py:82 templates/uds/admin/tmpl/group.html:39
 msgid "All"
-msgstr ""
+msgstr "Denak"
 
 #: models/ServicesPoolGroup.py:90
 msgid "General"
@@ -1730,12 +1728,10 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:51
 msgid "Linux OS Manager"
-msgstr ""
+msgstr "Linux SE kudeatzailea"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:53
-msgid ""
-"Os Manager to control linux virtual machines (basically renames machine and "
-"notify state)"
+msgid "Os Manager to control linux virtual machines"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
@@ -1756,7 +1752,7 @@ msgstr ""
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:65
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:56
 msgid "Remove service"
-msgstr ""
+msgstr "Zerbitzua kendu"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:70
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:62
@@ -1781,7 +1777,7 @@ msgstr ""
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:32
 msgid "Account"
-msgstr ""
+msgstr "Kontua"
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:53
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:32
@@ -1810,7 +1806,7 @@ msgstr ""
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
-msgstr ""
+msgstr "RDS SE kudeatzailea"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:33
 msgid "Os Manager to control RDS provided services"
@@ -1835,9 +1831,7 @@ msgid "Windows Domain OS Manager"
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:30
-msgid ""
-"Os Manager to control windows machines with domain. (Basically renames "
-"machine)"
+msgid "Os Manager to control windows machines with domain."
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
@@ -1860,11 +1854,11 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
 msgid "Password of the account"
-msgstr ""
+msgstr "Kontuaren pasahitza"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
 msgid "OU"
-msgstr ""
+msgstr "OU-a"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
 msgid ""
@@ -1953,9 +1947,7 @@ msgid "Windows Basic OS Manager"
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:45
-msgid ""
-"Os Manager to control windows machines without domain. (Basically renames "
-"machine)"
+msgid "Os Manager to control windows machines without domain."
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:67
@@ -1978,7 +1970,7 @@ msgstr ""
 
 #: reports/lists/base.py:42
 msgid "Lists"
-msgstr ""
+msgstr "Zerrendak"
 
 #: reports/lists/users.py:84 reports/lists/users.py:162
 msgid "User ID"
@@ -1986,7 +1978,7 @@ msgstr ""
 
 #: reports/lists/users.py:85 reports/lists/users.py:162
 msgid "Real Name"
-msgstr ""
+msgstr "Benetazko Izena"
 
 #: reports/lists/users.py:112 templates/uds/admin/tmpl/permissions_add.html:5
 #: templates/uds/admin/tmpl/pool_add_group.html:5
@@ -2001,7 +1993,7 @@ msgstr ""
 
 #: reports/lists/users.py:118
 msgid "Users list"
-msgstr ""
+msgstr "Erabiltzaile Zerrenda"
 
 #: reports/lists/users.py:119
 msgid "List users of platform"
@@ -2009,7 +2001,7 @@ msgstr ""
 
 #: reports/stats/base.py:46
 msgid "Statistics"
-msgstr ""
+msgstr "Estadistikak"
 
 #: reports/stats/login.py:78 reports/stats/login.py:104
 msgid "Users access by date"
@@ -2158,11 +2150,11 @@ msgstr ""
 
 #: reports/stats/usage_by_pool.py:189
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: reports/stats/usage_by_pool.py:189
 msgid "Seconds"
-msgstr ""
+msgstr "Segunduak"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
@@ -2190,109 +2182,111 @@ msgid "Number of desired machines to keep suspended waiting for use"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:100
-#: services/OVirt/OVirtLinkedService.py:102
+#: services/HyperV_enterprise/HyperVLinkedService.py:120
+#: services/Nutanix_enterprise/NutanixService.py:44
+#: services/OVirt/OVirtLinkedService.py:131
 #: services/Vmware_enterprise/VCLinkedCloneService.py:81
-#: services/Xen/XenLinkedService.py:102
+#: services/Xen/XenLinkedService.py:120
 msgid "Base Machine"
-msgstr ""
+msgstr "Base MAkina"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:100
+#: services/HyperV_enterprise/HyperVLinkedService.py:122
 #: services/Nutanix_enterprise/NutanixService.py:45
-#: services/OVirt/OVirtLinkedService.py:102
-#: services/Xen/XenLinkedService.py:102
+#: services/OVirt/OVirtLinkedService.py:133
+#: services/Xen/XenLinkedService.py:122
 msgid "Service base machine"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
-#: services/HyperV_enterprise/HyperVLinkedService.py:101
-#: services/OpenStack/LiveService.py:118 services/Xen/XenLinkedService.py:107
+#: services/HyperV_enterprise/HyperVLinkedService.py:128
+#: services/OpenStack/LiveService.py:118 services/Xen/XenLinkedService.py:128
 msgid "Network"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
-#: services/HyperV_enterprise/HyperVLinkedService.py:102
+#: services/HyperV_enterprise/HyperVLinkedService.py:131
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
-#: services/HyperV_enterprise/HyperVLinkedService.py:104
-#: services/OVirt/OVirtLinkedService.py:130
+#: services/HyperV_enterprise/HyperVLinkedService.py:137
+#: services/OVirt/OVirtLinkedService.py:139
 #: services/Vmware_enterprise/VCLinkedCloneService.py:82
-#: services/Xen/XenLinkedService.py:112
+#: services/Xen/XenLinkedService.py:137
 msgid "Memory (Mb)"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
-#: services/HyperV_enterprise/HyperVLinkedService.py:105
+#: services/HyperV_enterprise/HyperVLinkedService.py:142
 #: services/Vmware_enterprise/VCLinkedCloneService.py:83
 msgid "Memory for machines deployed from this service"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:100
-#: services/HyperV_enterprise/HyperVLinkedService.py:106
+#: services/HyperV_enterprise/HyperVLinkedService.py:101
 msgid "Datastore Drives"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
-#: services/HyperV_enterprise/HyperVLinkedService.py:107
+#: services/HyperV_enterprise/HyperVLinkedService.py:105
 msgid "Datastores where to put incrementals & publications"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:110
-#: services/OVirt/OVirtLinkedService.py:150
-#: services/OpenNebula/LiveService.py:99 services/OpenStack/LiveService.py:124
+#: services/HyperV_enterprise/HyperVLinkedService.py:148
+#: services/Nutanix_enterprise/NutanixService.py:57
+#: services/OVirt/OVirtLinkedService.py:187
+#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
-#: services/Xen/XenLinkedService.py:118
+#: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
-msgstr ""
+msgstr "Makina izenak"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:110
+#: services/HyperV_enterprise/HyperVLinkedService.py:151
 #: services/OpenStack/LiveService.py:127
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
 msgid "Base name for clones from this machine"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
-#: services/HyperV_enterprise/HyperVLinkedService.py:112
+#: services/HyperV_enterprise/HyperVLinkedService.py:158
 #: services/Nutanix_enterprise/NutanixService.py:66
-#: services/OVirt/OVirtLinkedService.py:159
-#: services/OpenNebula/LiveService.py:108 services/OpenStack/LiveService.py:134
+#: services/OVirt/OVirtLinkedService.py:197
+#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
 #: services/Vmware_enterprise/VCLinkedCloneService.py:92
-#: services/Xen/XenLinkedService.py:120
+#: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
-#: services/HyperV_enterprise/HyperVLinkedService.py:113
+#: services/HyperV_enterprise/HyperVLinkedService.py:161
 #: services/Nutanix_enterprise/NutanixService.py:69
-#: services/OVirt/OVirtLinkedService.py:162
-#: services/OpenNebula/LiveService.py:111 services/OpenStack/LiveService.py:137
+#: services/OVirt/OVirtLinkedService.py:200
+#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
 #: services/Vmware_enterprise/VCLinkedCloneService.py:93
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
-#: services/HyperV_enterprise/HyperVLinkedService.py:125
+#: services/HyperV_enterprise/HyperVLinkedService.py:176
 #: services/Nutanix_enterprise/NutanixService.py:87
-#: services/OVirt/OVirtLinkedService.py:204
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:155
+#: services/OVirt/OVirtLinkedService.py:218
+#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:155
 #: services/Vmware_enterprise/VCLinkedCloneService.py:114
-#: services/Xen/XenLinkedService.py:133
+#: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
-#: services/HyperV_enterprise/HyperVLinkedService.py:127
+#: services/HyperV_enterprise/HyperVLinkedService.py:178
 #: services/Nutanix_enterprise/NutanixService.py:89
-#: services/OVirt/OVirtLinkedService.py:206
-#: services/OpenNebula/LiveService.py:127 services/OpenStack/LiveService.py:157
+#: services/OVirt/OVirtLinkedService.py:220
+#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:157
 #: services/Vmware_enterprise/VCLinkedCloneService.py:116
-#: services/Xen/XenLinkedService.py:135
+#: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
 msgstr ""
 
@@ -2373,16 +2367,49 @@ msgstr ""
 msgid "HyperV Linked Clone (Experimental)"
 msgstr ""
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:108
-#: services/OVirt/OVirtLinkedService.py:122
-#: services/Xen/XenLinkedService.py:110
+#: services/HyperV_enterprise/HyperVLinkedService.py:111
+#: services/OVirt/OVirtLinkedService.py:123
+#: services/Xen/XenLinkedService.py:112
 msgid "Reserved Space"
 msgstr ""
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:108
-#: services/OVirt/OVirtLinkedService.py:125
-#: services/Xen/XenLinkedService.py:110
+#: services/HyperV_enterprise/HyperVLinkedService.py:114
+#: services/OVirt/OVirtLinkedService.py:126
+#: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
+msgstr ""
+
+#: services/HyperV_enterprise/HyperVLinkedService.py:123
+#: services/HyperV_enterprise/HyperVLinkedService.py:132
+#: services/HyperV_enterprise/HyperVLinkedService.py:143
+#: services/HyperV_enterprise/HyperVLinkedService.py:152
+#: services/HyperV_enterprise/HyperVLinkedService.py:162
+#: services/OVirt/OVirtLinkedService.py:134
+#: services/OVirt/OVirtLinkedService.py:145
+#: services/OVirt/OVirtLinkedService.py:156
+#: services/OVirt/OVirtLinkedService.py:170
+#: services/OVirt/OVirtLinkedService.py:183
+#: services/OVirt/OVirtLinkedService.py:191
+#: services/OVirt/OVirtLinkedService.py:201
+#: services/OpenNebula/LiveService.py:106
+#: services/OpenNebula/LiveService.py:116
+#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:116
+#: services/OpenStack/LiveService.py:118 services/OpenStack/LiveService.py:119
+#: services/OpenStack/LiveService.py:121 services/OpenStack/LiveService.py:129
+#: services/OpenStack/LiveService.py:139
+#: services/Vmware_enterprise/VCLinkedCloneService.py:77
+#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Vmware_enterprise/VCLinkedCloneService.py:87
+#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/Vmware_enterprise/VCLinkedCloneService.py:90
+#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Xen/XenLinkedService.py:123 services/Xen/XenLinkedService.py:132
+#: services/Xen/XenLinkedService.py:142 services/Xen/XenLinkedService.py:153
+#: services/Xen/XenLinkedService.py:162 services/Xen/XenLinkedService.py:172
+msgid "Machine"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVProvider.py:64
@@ -2470,24 +2497,15 @@ msgstr ""
 
 #: services/Nutanix_enterprise/NutanixService.py:21
 msgid "Nutanix Acropolis Service"
-msgstr ""
+msgstr "Nutanix Acropolis Zerbitzua"
 
 #: services/Nutanix_enterprise/NutanixService.py:23
 msgid "Nutanix Acropolis based service"
-msgstr ""
-
-#: services/Nutanix_enterprise/NutanixService.py:44
-msgid "Base Vm"
-msgstr ""
+msgstr "Nutanix Acropolis-en Oinarrituriko Zerbitzua"
 
 #: services/Nutanix_enterprise/NutanixService.py:52
 msgid ""
-"Networks for the machines (every machine will be attached to this networks, "
-"each one with its own interface)"
-msgstr ""
-
-#: services/Nutanix_enterprise/NutanixService.py:57
-msgid "Vm Names"
+"Networks for the machines (every machine will be attached to this network)"
 msgstr ""
 
 #: services/OVirt/OVirtLinkedService.py:56
@@ -2502,45 +2520,45 @@ msgstr ""
 msgid "Cluster"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:109
+#: services/OVirt/OVirtLinkedService.py:110
 msgid "Cluster to contain services"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:113
+#: services/OVirt/OVirtLinkedService.py:114
 msgid "Datastore Domain"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:116
+#: services/OVirt/OVirtLinkedService.py:117
 msgid "Datastore domain where to publish and put incrementals"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:135
-#: services/Xen/XenLinkedService.py:113
+#: services/OVirt/OVirtLinkedService.py:144
+#: services/Xen/XenLinkedService.py:141
 msgid "Memory assigned to machines"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:140
+#: services/OVirt/OVirtLinkedService.py:150
 msgid "Memory Guaranteed (Mb)"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:145
+#: services/OVirt/OVirtLinkedService.py:155
 msgid "Physical memory guaranteed to machines"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:167
+#: services/OVirt/OVirtLinkedService.py:161
 msgid "USB"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:170
+#: services/OVirt/OVirtLinkedService.py:164
 msgid "Enable usb redirection for SPICE"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:183
+#: services/OVirt/OVirtLinkedService.py:178
 msgid "Display type (only for administration purposes)"
 msgstr ""
 
-#: services/OVirt/OVirtLinkedService.py:208
-#: services/Xen/XenLinkedService.py:137
+#: services/OVirt/OVirtLinkedService.py:222
+#: services/Xen/XenLinkedService.py:190
 msgid "The minimum allowed memory is 256 Mb"
 msgstr ""
 
@@ -2589,20 +2607,20 @@ msgstr ""
 msgid "Number of desired machines to keep running waiting for an user"
 msgstr ""
 
-#: services/OpenNebula/LiveService.py:95
-msgid "Base Template"
-msgstr ""
-
-#: services/OpenNebula/LiveService.py:95
-msgid "Service base template"
-msgstr ""
-
 #: services/OpenNebula/LiveService.py:96
 msgid "Datastore"
 msgstr ""
 
-#: services/OpenNebula/LiveService.py:96
+#: services/OpenNebula/LiveService.py:98
 msgid "Service clones datastore"
+msgstr ""
+
+#: services/OpenNebula/LiveService.py:103
+msgid "Base Template"
+msgstr ""
+
+#: services/OpenNebula/LiveService.py:105
+msgid "Service base template"
 msgstr ""
 
 #: services/OpenNebula/Provider.py:79
@@ -2681,21 +2699,6 @@ msgstr ""
 
 #: services/OpenStack/LiveService.py:116
 msgid "Base volume for service (restricted by availability zone)"
-msgstr ""
-
-#: services/OpenStack/LiveService.py:116 services/OpenStack/LiveService.py:118
-#: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:121
-#: services/OpenStack/LiveService.py:129 services/OpenStack/LiveService.py:139
-#: services/Vmware_enterprise/VCLinkedCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
-#: services/Vmware_enterprise/VCLinkedCloneService.py:83
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#: services/Vmware_enterprise/VCLinkedCloneService.py:87
-#: services/Vmware_enterprise/VCLinkedCloneService.py:88
-#: services/Vmware_enterprise/VCLinkedCloneService.py:90
-#: services/Vmware_enterprise/VCLinkedCloneService.py:91
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
-msgid "Machine"
 msgstr ""
 
 #: services/OpenStack/LiveService.py:118
@@ -2781,15 +2784,27 @@ msgid "List of IPS"
 msgstr ""
 
 #: services/PhysicalMachines/IPMachinesService.py:51
-msgid "Static IP machines service"
+msgid "Static Multiple IP"
 msgstr ""
 
 #: services/PhysicalMachines/IPMachinesService.py:53
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr ""
 
+#: services/PhysicalMachines/IPSingleMachineService.py:48
+msgid "Machine IP"
+msgstr ""
+
+#: services/PhysicalMachines/IPSingleMachineService.py:52
+msgid "Static Single IP"
+msgstr ""
+
+#: services/PhysicalMachines/IPSingleMachineService.py:54
+msgid "This service provides access to POWERED-ON Machine by IP"
+msgstr ""
+
 #: services/RDS_enterprise/RDSProvider.py:31
-msgid "RDS Platform Provider (Experimental)"
+msgid "RDS Platform Provider"
 msgstr ""
 
 #: services/RDS_enterprise/RDSProvider.py:33
@@ -2801,29 +2816,41 @@ msgid "List of servers"
 msgstr ""
 
 #: services/RDS_enterprise/RDSProvider.py:38
-msgid "User list for mapping"
+msgid "User mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:39
+#: services/RDS_enterprise/RDSProvider.py:38
+msgid ""
+"If active, user mapping will be done. If not, credential from user will be "
+"redirected to RDS server."
+msgstr ""
+
+#: services/RDS_enterprise/RDSProvider.py:40
+msgid "User list for mapping. (Not used if User mapping is disabled)"
+msgstr ""
+
+#: services/RDS_enterprise/RDSProvider.py:41
 msgid "User's password"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:39
-msgid "Default password for users in list mapping"
+#: services/RDS_enterprise/RDSProvider.py:41
+msgid ""
+"Default password for users in list mapping. (Not used if User mapping is "
+"disabled)"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:62
+#: services/RDS_enterprise/RDSProvider.py:64
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:92
+#: services/RDS_enterprise/RDSProvider.py:94
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
 msgstr ""
 
 #: services/RDS_enterprise/RDSService.py:20
-msgid "RDS Platform RemoteAPP (Experimental)"
+msgid "RDS Platform RemoteAPP"
 msgstr ""
 
 #: services/RDS_enterprise/RDSService.py:22
@@ -3109,34 +3136,34 @@ msgid "Datastores where to put incrementals"
 msgstr ""
 
 #: services/Xen/XenLinkedService.py:56
-msgid "Xen Linked Clone (Experimental)"
+msgid "Xen Linked Clone"
 msgstr ""
 
 #: services/Xen/XenLinkedService.py:60
-msgid "Xen Services based on templates (experimental)"
+msgid "Xen Services based on templates"
 msgstr ""
 
-#: services/Xen/XenLinkedService.py:104
+#: services/Xen/XenLinkedService.py:103
 msgid "Storage SR"
 msgstr ""
 
-#: services/Xen/XenLinkedService.py:105
+#: services/Xen/XenLinkedService.py:106
 msgid "Storage where to publish and put incrementals"
 msgstr ""
 
-#: services/Xen/XenLinkedService.py:108
+#: services/Xen/XenLinkedService.py:131
 msgid "Network used for virtual machines"
 msgstr ""
 
-#: services/Xen/XenLinkedService.py:115
+#: services/Xen/XenLinkedService.py:147
 msgid "Shadow"
 msgstr ""
 
-#: services/Xen/XenLinkedService.py:116
+#: services/Xen/XenLinkedService.py:152
 msgid "Shadow memory multiplier (memory overcommit)"
 msgstr ""
 
-#: services/Xen/XenLinkedService.py:121
+#: services/Xen/XenLinkedService.py:171
 msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
 msgstr ""
 
@@ -3192,7 +3219,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/service-info.html:4
 #: templates/uds/admin/tmpl/services_pool.html:30
 msgid "Overview"
-msgstr ""
+msgstr "Orokorra"
 
 #: templates/uds/admin/snippets/navbar.html:23
 #: templates/uds/admin/tmpl/authenticators.html:4
@@ -3250,7 +3277,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/service-info.html:6
 #: templates/uds/admin/tmpl/services_pool.html:38
 msgid "Logs"
-msgstr ""
+msgstr "Agerraldiak"
 
 #: templates/uds/admin/tmpl/calendar_rule.html:7
 msgid "Name of this rule"
@@ -3322,12 +3349,12 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/comp/modal.html:19
 msgid "Close"
-msgstr ""
+msgstr "Itzi"
 
 #: templates/uds/admin/tmpl/comp/modal.html:26
 #: templates/uds/admin/tmpl/configuration.html:80
 msgid "Save"
-msgstr ""
+msgstr "Gorde"
 
 #: templates/uds/admin/tmpl/configuration.html:4
 msgid "UDS Configuration"
@@ -3338,14 +3365,14 @@ msgstr ""
 #: templates/uds/admin/tmpl/pool_add_action.html:27
 #: templates/uds/admin/tmpl/user.html:60 templates/uds/admin/tmpl/user.html:72
 msgid "Yes"
-msgstr ""
+msgstr "Bai"
 
 #: templates/uds/admin/tmpl/configuration.html:51
 #: templates/uds/admin/tmpl/fld/checkbox.html:7
 #: templates/uds/admin/tmpl/pool_add_action.html:28
 #: templates/uds/admin/tmpl/user.html:61 templates/uds/admin/tmpl/user.html:73
 msgid "No"
-msgstr ""
+msgstr "Ez"
 
 #: templates/uds/admin/tmpl/dashboard.html:42
 msgid "View Authenticators"
@@ -3394,7 +3421,7 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/fld/editlist_popup.html:23
 msgid "Add"
-msgstr ""
+msgstr "Gehitu"
 
 #: templates/uds/admin/tmpl/fld/taglist.html:8
 msgid "Add Tag..."
@@ -3559,13 +3586,9 @@ msgstr ""
 msgid "Thank you."
 msgstr ""
 
-#: templates/uds/admin/tmpl/service-info.html:5
-msgid "Services Pools"
-msgstr ""
-
 #: templates/uds/admin/tmpl/services_pool.html:32
 msgid "Cache"
-msgstr ""
+msgstr "Cache"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
 #: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:30
@@ -3582,7 +3605,7 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/user.html:56
 msgid "Staff member"
-msgstr ""
+msgstr "Langile Kidea"
 
 #: templates/uds/admin/tmpl/user.html:68
 msgid "Admin"
@@ -3805,7 +3828,7 @@ msgstr ""
 
 #: templates/uds/html5/prefs.html:11 templates/uds/semantic/prefs.html:11
 msgid "Cancel"
-msgstr ""
+msgstr "Ezeztatu"
 
 #: templates/uds/html5/prefs.html:12 templates/uds/semantic/prefs.html:12
 msgid "Save Preferences"
@@ -3962,7 +3985,7 @@ msgstr ""
 
 #: templates/uds/semantic/tmpl/items.html:13
 msgid "Maintenance"
-msgstr ""
+msgstr "Mantentze"
 
 #: templatetags/html5.py:229
 msgid "Debian based Linux"
@@ -4108,7 +4131,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:88
 msgid "Swedish keyboard"
-msgstr ""
+msgstr "Suediar Teklatua"
 
 #: transports/HTML5RDP/HTML5RDP.py:89
 msgid "Failsafe"
@@ -4223,14 +4246,6 @@ msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:53
 msgid "PCoIP Transport, Experimental"
-msgstr ""
-
-#: transports/PCoIP_enterprise/PCoIPTransport.py:59
-msgid "Connetion Manager"
-msgstr ""
-
-#: transports/PCoIP_enterprise/PCoIPTransport.py:59
-msgid "Hostname or address of connection manager"
 msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:62
@@ -4353,7 +4368,7 @@ msgid "Remote Desktop Protocol"
 msgstr ""
 
 #: transports/RDS_enterprise/RDSTransport.py:55
-msgid "RDS Transport Experimental (direct)"
+msgid "RDS Transport (direct)"
 msgstr ""
 
 #: transports/RDS_enterprise/RDSTransport.py:57
@@ -4361,7 +4376,7 @@ msgid "RDS Transport for direct connection"
 msgstr ""
 
 #: transports/RDS_enterprise/TRDSTransport.py:64
-msgid "RDS Transport Experimental (tunneled)"
+msgid "RDS Transport (tunneled)"
 msgstr ""
 
 #: transports/RDS_enterprise/TRDSTransport.py:66
@@ -4535,7 +4550,7 @@ msgstr ""
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Keyboard"
-msgstr ""
+msgstr "Teklatua"
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Keyboard layout (es, us, fr, ...). Empty value means autodetect."
@@ -4621,7 +4636,7 @@ msgstr ""
 
 #: web/errors.py:86
 msgid "Preparing service"
-msgstr ""
+msgstr "Zerbitzua prestatzen"
 
 #: web/errors.py:87
 msgid "Service access denied by calendars"
@@ -4648,3 +4663,4 @@ msgstr ""
 #: web/views/service.py:115
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
+"Mesedez, aldi batean proba ezazu, zerbitzua ez dago prest oraindik eta."

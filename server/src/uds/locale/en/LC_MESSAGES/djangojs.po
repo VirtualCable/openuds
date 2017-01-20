@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-24 09:38+0100\n"
+"POT-Creation-Date: 2017-01-20 05:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -578,7 +578,6 @@ msgid "Edit services provider"
 msgstr ""
 
 #: static/tmp_js/gui-d-services.js:244
-#: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Provider saving error"
 msgstr ""
 
@@ -757,15 +756,19 @@ msgid "deletion error"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "New services Services Pool Group"
+msgid "New Services Pool Group"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "Services Services Pool Group creation error"
+msgid "Services Pool Group creation error"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-msgid "Edit services Services Pool Group"
+msgid "Edit Services Pool Group"
+msgstr ""
+
+#: static/tmp_js/gui-d-servicespoolsgroup.js:22
+msgid "Services Pool Group saving error"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
@@ -773,7 +776,7 @@ msgid "Delete Services Pool Group"
 msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-msgid "Services Pool Group error"
+msgid "Services Pool Group removal error"
 msgstr ""
 
 #: static/tmp_js/gui-definition.js:12

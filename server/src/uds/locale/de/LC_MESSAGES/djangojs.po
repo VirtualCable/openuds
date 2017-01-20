@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-24 09:38+0100\n"
-"PO-Revision-Date: 2016-04-20 13:25+0000\n"
+"POT-Creation-Date: 2017-01-20 05:34+0100\n"
+"PO-Revision-Date: 2017-01-20 04:30+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -580,7 +580,6 @@ msgid "Edit services provider"
 msgstr "Dienstleister bearbeiten"
 
 #: static/tmp_js/gui-d-services.js:244
-#: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Provider saving error"
 msgstr "Speichern von Fehler-Dienstleister"
 
@@ -760,24 +759,28 @@ msgid "deletion error"
 msgstr "Fehler löschen"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "New services Services Pool Group"
-msgstr "Neue Dienstleistungen Dienstleistungsgruppe Pool"
+msgid "New Services Pool Group"
+msgstr "Neue Dienstleistungen-Teich-Gruppe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "Services Services Pool Group creation error"
-msgstr "Fehler beim Erstellen der Services-Services-Pool Group"
+msgid "Services Pool Group creation error"
+msgstr "Fehler beim Erstellen von Dienstleistungen-Teich-Gruppe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-msgid "Edit services Services Pool Group"
-msgstr "Bearbeiten von Services Services Pool Group"
+msgid "Edit Services Pool Group"
+msgstr "Bearbeiten-Dienstleistungen-Teich-Gruppe"
+
+#: static/tmp_js/gui-d-servicespoolsgroup.js:22
+msgid "Services Pool Group saving error"
+msgstr "Dienstleistungen-Teich-Gruppe Fehler beim Speichern"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Delete Services Pool Group"
 msgstr "Service-Pool-Gruppe löschen"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-msgid "Services Pool Group error"
-msgstr "Dienstleistungsgruppe Pool Fehler"
+msgid "Services Pool Group removal error"
+msgstr "Fehler beim Entfernen von Dienstleistungen-Teich-Gruppe"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache"

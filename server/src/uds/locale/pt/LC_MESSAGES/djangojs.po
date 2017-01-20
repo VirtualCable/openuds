@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-24 09:38+0100\n"
-"PO-Revision-Date: 2016-04-20 13:25+0000\n"
+"POT-Creation-Date: 2017-01-20 05:34+0100\n"
+"PO-Revision-Date: 2017-01-20 04:30+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -579,7 +579,6 @@ msgid "Edit services provider"
 msgstr "Editar Provedor de serviços"
 
 #: static/tmp_js/gui-d-services.js:244
-#: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Provider saving error"
 msgstr "Salvando o erro do prestador de serviços"
 
@@ -758,24 +757,28 @@ msgid "deletion error"
 msgstr "erro de exclusão"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "New services Services Pool Group"
-msgstr "Novos serviços de grupo de consórcio de serviços"
+msgid "New Services Pool Group"
+msgstr "Novo grupo de consórcio de serviços"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "Services Services Pool Group creation error"
-msgstr "Erro de criação do grupo de consórcio de serviços serviços"
+msgid "Services Pool Group creation error"
+msgstr "Erro de criação do grupo de consórcio de serviços"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-msgid "Edit services Services Pool Group"
-msgstr "Editar serviços de grupo de consórcio de serviços"
+msgid "Edit Services Pool Group"
+msgstr "Editar grupo de consórcio de serviços"
+
+#: static/tmp_js/gui-d-servicespoolsgroup.js:22
+msgid "Services Pool Group saving error"
+msgstr "Grupo de consórcio de serviços salvando o erro"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Delete Services Pool Group"
 msgstr "Excluir grupo de consórcio de serviços"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-msgid "Services Pool Group error"
-msgstr "Erro de grupo de consórcio de serviços"
+msgid "Services Pool Group removal error"
+msgstr "Erro de remoção do grupo de consórcio de serviços"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache"

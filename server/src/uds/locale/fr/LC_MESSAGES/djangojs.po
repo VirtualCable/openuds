@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-24 09:38+0100\n"
-"PO-Revision-Date: 2016-07-29 12:56+0000\n"
-"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
+"POT-Creation-Date: 2017-01-20 05:34+0100\n"
+"PO-Revision-Date: 2017-01-20 04:30+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
 "Language: fr\n"
@@ -581,7 +581,6 @@ msgid "Edit services provider"
 msgstr "Modifier le fournisseur de services"
 
 #: static/tmp_js/gui-d-services.js:244
-#: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Provider saving error"
 msgstr "Erreur de sauvegarde du fournisseur de services  "
 
@@ -760,24 +759,28 @@ msgid "deletion error"
 msgstr "erreur de suppression"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "New services Services Pool Group"
-msgstr "Nouveau groupe de pool de services"
+msgid "New Services Pool Group"
+msgstr "Nouveau groupe de Services piscine"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
-msgid "Services Services Pool Group creation error"
-msgstr "Erreur de création de groupe de pool de services"
+msgid "Services Pool Group creation error"
+msgstr "Erreur de création de services piscine groupe"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
-msgid "Edit services Services Pool Group"
-msgstr "Modifier groupe de pool de services"
+msgid "Edit Services Pool Group"
+msgstr "Modifier un groupe Services piscine"
+
+#: static/tmp_js/gui-d-servicespoolsgroup.js:22
+msgid "Services Pool Group saving error"
+msgstr "Services piscine groupe sauver erreur"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Delete Services Pool Group"
 msgstr "Supprimer groupe de pool de services"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
-msgid "Services Pool Group error"
-msgstr "Erreur de groupe de pool de services"
+msgid "Services Pool Group removal error"
+msgstr "Erreur de suppression de services piscine groupe"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache"

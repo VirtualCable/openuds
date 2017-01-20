@@ -20,9 +20,9 @@ gui.sPoolGroups.link = ->
         "edit"
         "delete"
       ]
-      onNew: gui.methods.typedNew(gui.sPoolGroups, gettext("New services Services Pool Group"), gettext("Services Services Pool Group creation error"))
-      onEdit: gui.methods.typedEdit(gui.sPoolGroups, gettext("Edit services Services Pool Group"), gettext("Services Provider saving error"))
-      onDelete: gui.methods.del(gui.sPoolGroups, gettext("Delete Services Pool Group"), gettext("Services Pool Group error"))
+      onNew: gui.methods.typedNew(gui.sPoolGroups, gettext("New Services Pool Group"), gettext("Services Pool Group creation error"))
+      onEdit: gui.methods.typedEdit(gui.sPoolGroups, gettext("Edit Services Pool Group"), gettext("Services Pool Group saving error"))
+      onDelete: gui.methods.del(gui.sPoolGroups, gettext("Delete Services Pool Group"), gettext("Services Pool Group removal error"))
     return
 
   return
