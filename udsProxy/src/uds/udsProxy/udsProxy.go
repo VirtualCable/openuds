@@ -111,13 +111,15 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{
 		Timeout: time.Duration(5) * time.Second,
 	}
+
 	resp, err := client.Do(req)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error in POST: %s", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() // Ensures closes response
 	w.WriteHeader(resp.StatusCode)
 	b, _ := ioutil.ReadAll(resp.Body)
 	w.Write(b)

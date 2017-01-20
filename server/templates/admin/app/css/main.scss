@@ -248,7 +248,7 @@ body {
 
           > li > a {
             color: inherit;
-            padding: $font-size-base/2;
+            padding: $font-size-base/2 $font-size-base/2 $font-size-base/2 32px;
 
             &:hover, &.active, &:focus {
               color: #fff;

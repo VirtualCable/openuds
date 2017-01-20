@@ -106,13 +106,16 @@ from .CalendarAction import CalendarAction
 from .Account import Account
 from .AccountUsage import AccountUsage
 
+# Proxies
+from .Proxy import Proxy
+
 # Tagging
 from .Tag import Tag
 
 # Utility
 from .DBFile import DBFile
 
-__updated__ = '2016-09-16'
+__updated__ = '2017-01-20'
 
 
 logger = logging.getLogger(__name__)
