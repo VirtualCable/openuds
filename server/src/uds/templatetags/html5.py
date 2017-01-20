@@ -211,11 +211,11 @@ def ifbrowser(parser, token):
 @register.filter(name='osName')
 def osName(os):
     if os == 'windows':
-        return 'Windows platform'
+        return 'Windows'
     elif os == 'linux':
-        return 'Linux platform'
+        return 'Linux'
     else:
-        return 'Mac OSX platform'
+        return 'Mac OS X'
 
 
 @register.filter(name='pluginDownloadUrl')
