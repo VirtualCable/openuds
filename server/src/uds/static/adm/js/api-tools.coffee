@@ -1,7 +1,7 @@
-# jshint strict: true 
+# jshint strict: true
 ((api, $, undefined_) ->
   "use strict"
-  api.tools = 
+  api.tools =
     base64: (s) ->
       window.btoa unescape(encodeURIComponent(s))
     input2timeStamp: (inputDate, inputTime) ->
@@ -36,7 +36,7 @@
     capitalize: (str) ->
       str = str.toLowerCase()
       return str.substr(0,1).toUpperCase() + str.substr(1)
-        
+
       return str
 
     isEmpty: (obj) ->
@@ -110,7 +110,7 @@ localizedStrftime = (locale) ->
 # - timezone [number] timezone offset in minutes from GMT
 _strftime = (fmt, d, locale, options) ->
   options = options or {}
-  
+
   # d and locale are optional so check if d is really the locale
   if d and not quacksLikeDate(d)
     locale = d
@@ -118,13 +118,13 @@ _strftime = (fmt, d, locale, options) ->
   d = d or new Date()
   locale = locale or DefaultLocale
   locale.formats = locale.formats or {}
-  
+
   # Hang on to this Unix timestamp because we might mess with it directly
   # below.
   timestamp = d.getTime()
   d = dateToUTC(d)  if options.utc or typeof options.timezone is "number"
   d = new Date(d.getTime() + (options.timezone * 60000))  if typeof options.timezone is "number"
-  
+
   # Most of the specifiers supported by C's strftime, and some from Ruby.
   # Some other syntax extensions from Ruby are supported: %-, %_, and %0
   # to pad with nothing, space, or zero (respectively).
@@ -133,20 +133,20 @@ _strftime = (fmt, d, locale, options) ->
     padding = null
     if c.length is 2
       mod = c[0]
-      
+
       # omit padding
       if mod is "-"
         padding = ""
-      
+
       # pad with space
       else if mod is "_"
         padding = " "
-      
+
       # pad with zero
       else if mod is "0"
         padding = "0"
       else
-        
+
         # unrecognized, return the format
         return _
       c = c[1]
@@ -256,17 +256,17 @@ quacksLikeDate = (x) ->
 
 # Default padding is '0' and default length is 2, both are optional.
 pad = (n, padding, length) ->
-  
+
   # pad(n, <length>)
   if typeof padding is "number"
     length = padding
     padding = "0"
-  
+
   # Defaults handle pad(n) and pad(n, <padding>)
   padding ?= "0"
   length ?= 2
   s = String(n)
-  
+
   # padding may be an empty string, don't loop forever if it is
   s = padding + s  while s.length < length  if padding
   s
@@ -295,7 +295,7 @@ ordinal = (n) ->
 # Pilfered & ported from Ruby's strftime implementation.
 weekNumber = (d, firstWeekday) ->
   firstWeekday = firstWeekday or "sunday"
-  
+
   # This works by shifting the weekday back by one day if we
   # are treating Monday as the first day of the week.
   wday = d.getDay()
