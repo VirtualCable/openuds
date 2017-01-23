@@ -173,4 +173,7 @@
       (data, type, full) ->
         levels[data] or "OTHER"
 
+    iconAndText: (icon, text) ->
+      '<span class="fa ' + icon + '"> </span> <span class="label-tbl-button">' + text + '</span>'
+
   return

@@ -3,9 +3,6 @@ gui.providers = new GuiElement(api.providers, "provi")
 gui.providers.link = (event) ->
   "use strict"
 
-  iconAndText = (icon, text) ->
-    '<span class="fa ' + icon + '"> </span> <span class="label-tbl-button">' + text + '</span>'
-
   # Button definition to trigger "Test" action
   testButton = testButton:
     text: gettext("Test")
@@ -112,7 +109,7 @@ gui.providers.link = (event) ->
             "new"
             "edit"
             {
-              text: iconAndText( 'fa-info', gettext('Information') )
+              text: gui.tools.iconAndText( 'fa-info', gettext('Information') )
               css: "disabled"
               disabled: true
               click: (vals, value, btn, tbl, refreshFnc) ->
@@ -204,7 +201,7 @@ gui.providers.link = (event) ->
         "edit"
         {
           permission: api.permissions.MANAGEMENT
-          text: iconAndText('fa-ambulance', gettext("Maintenance"))
+          text: gui.tools.iconAndText('fa-ambulance', gettext("Maintenance"))
           css: "disabled"
           disabled: true
           click: (vals, value, btn, tbl, refreshFnc) ->
@@ -230,14 +227,14 @@ gui.providers.link = (event) ->
           select: (vals, value, btn, tbl, refreshFnc) ->
             unless vals.length == 1
               $(btn).removeClass("btn-warning").removeClass("btn-info").addClass("disabled").prop('disabled', true)
-              $(btn).empty().append(iconAndText('fa-ambulance', gettext("Maintenance")))
+              $(btn).empty().append(gui.tools.iconAndText('fa-ambulance', gettext("Maintenance")))
               return
             val = vals[0]
             if val.maintenance_mode is false
-              content = iconAndText('fa-ambulance', gettext('Enter maintenance Mode'))
+              content = gui.tools.iconAndText('fa-ambulance', gettext('Enter maintenance Mode'))
               cls = 'btn-warning'
             else
-              content = iconAndText('fa-truck',gettext('Exit Maintenance Mode'))
+              content = gui.tools.iconAndText('fa-truck',gettext('Exit Maintenance Mode'))
               cls = 'btn-info'
 
             $(btn).removeClass("disabled").addClass(cls).prop('disabled', false)

@@ -174,8 +174,10 @@ gui.authenticators.link = (event) ->
         id = selected[0].id
         type = gui.authenticators.types[selected[0].type]
         gui.doLog "Type", type
-        user = new GuiElement(api.authenticators.detail(id, "users", { permission: selected[0].permission }), "users")
-        group = new GuiElement(api.authenticators.detail(id, "groups", { permission: selected[0].permission }), "groups")
+        userAPI = api.authenticators.detail(id, "users", { permission: selected[0].permission })
+        user = new GuiElement(userAPI, "users")
+        groupAPI = api.authenticators.detail(id, "groups", { permission: selected[0].permission })
+        group = new GuiElement(groupAPI, "groups")
         grpTable = group.table(
           icon: 'groups'
           container: "groups-placeholder"
@@ -292,6 +294,127 @@ gui.authenticators.link = (event) ->
         # New button will only be shown on authenticators that can create new users
         usrButtons = [
           "edit"
+          {
+            text: gui.tools.iconAndText( 'fa-info', gettext('Information') )
+            css: "disabled"
+            disabled: true
+
+            click: (vals, value, btn, tbl, refreshFnc) ->
+
+              if vals.length > 1
+                return
+
+              val = vals[0]
+              userAPI.invoke val.id + "/servicesPools", (pools) ->
+                userAPI.invoke val.id + "/userServices", (userServices) ->
+                  user.rest.item val.id, (item) ->
+                    group.rest.overview (groups) -> # Get groups
+                      gui.doLog "Pools", pools
+                      api.templates.get "user-info", (tmpl) ->
+                        content = api.templates.evaluate(tmpl,
+                          id: 'information',
+                          groups_all: groups
+                          groups: item.groups
+                          pools: pools,
+                          userServices: userServices,
+                          goClass: 'goLink'
+                        )
+                        modalId = gui.launchModal(gettext('User information'), content,
+                          actionButton: " "
+                        )
+
+                        $('#information-groups-table').DataTable(
+                          colReorder: true
+                          stateSave: true
+                          paging: true
+                          info: false
+                          autoWidth: false
+                          lengthChange: false
+                          pageLength: 10
+
+                          columnDefs: [
+                            { 'width': '100%', 'targets': 0 },
+                          ]
+
+                          ordering: true
+                          order: [[ 0, 'asc' ]]
+
+                          dom: '<>fr<"uds-table"t>ip'
+
+                          language: gui.config.dataTablesLanguage
+                        )
+
+
+                        $('#information-pools-table').DataTable(
+                          colReorder: true
+                          stateSave: true
+                          paging: true
+                          info: false
+                          autoWidth: false
+                          lengthChange: false
+                          pageLength: 10
+
+                          columnDefs: [
+                            { 'width': '50%', 'targets': 0 },
+                            { 'width': '120px', 'targets': 1 },
+                            { 'width': '40px', 'targets': 2 },
+                            { 'width': '160px', 'targets': 3 },
+                          ]
+
+                          ordering: true
+                          order: [[ 1, 'asc' ]]
+
+                          dom: '<>fr<"uds-table"t>ip'
+
+                          language: gui.config.dataTablesLanguage
+                        )
+
+                        $('#information-userservices-table').DataTable(
+                          colReorder: true
+                          stateSave: true
+                          paging: true
+                          info: false
+                          autoWidth: false
+                          lengthChange: false
+                          pageLength: 10
+
+                          columnDefs: [
+                            { 'width': '25%', 'targets': 0 },
+                            { 'width': '25%', 'targets': 1 },
+                            { 'width': '120px', 'targets': 2 },
+                            { 'width': '20%', 'targets': 3 },
+                            { 'width': '20%', 'targets': 4 },
+                          ]
+
+                          ordering: true
+                          order: [[ 1, 'asc' ]]
+
+                          dom: '<>fr<"uds-table"t>ip'
+
+                          language: gui.config.dataTablesLanguage
+                        )
+
+                        $('.goLink').on('click', (event) ->
+                          $this = $(this);
+                          event.preventDefault();
+                          gui.lookupUuid = $this.attr('href').substr(1)
+                          $(modalId).modal('hide')
+                          setTimeout( ->
+                            $(".lnk-deployed_services").click();
+                          , 500);
+                        )
+
+              return
+
+            select: (vals, value, btn, tbl, refreshFnc) ->
+              unless vals.length == 1
+                $(btn).addClass("disabled").prop('disabled', true)
+                return
+
+              $(btn).removeClass("disabled").prop('disabled', false)
+              return
+
+          }
           "delete"
           "xls"
         ]

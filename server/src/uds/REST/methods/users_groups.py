@@ -46,6 +46,8 @@ from uds.models import Authenticator, User, Group
 from uds.core.auths.User import User as aUser
 from uds.core.managers import cryptoManager
 from uds.REST import RequestError
+from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from .user_services import AssignedService
 
 from uds.REST.model import DetailHandler
 
@@ -55,8 +57,15 @@ logger = logging.getLogger(__name__)
 
 # Details of /auth
 
+def getPoolsForGroups(groups):
+    for g in groups:
+        for servicePool in g.deployedServices.all():
+            yield servicePool
+
 
 class Users(DetailHandler):
+
+    custom_methods = ['servicesPools', 'userServices']
 
     @staticmethod
     def uuid_to_id(iterator):
@@ -166,8 +175,39 @@ class Users(DetailHandler):
 
         return 'deleted'
 
+    def servicesPools(self, parent, item):
+        uuid = processUuid(item)
+        user = parent.users.get(uuid=processUuid(uuid))
+        res = []
+        for i in getPoolsForGroups(user.groups.all()):
+            res.append({
+                'id': i.uuid,
+                'name': i.name,
+                'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
+                'user_services_count': i.userServices.count(),
+                'state': _('With errors') if i.isRestrained() else _('Ok'),
+            })
+
+        return res
+
+    def userServices(self, parent, item):
+        uuid = processUuid(item)
+        user = parent.users.get(uuid=processUuid(uuid))
+        res = []
+        for i in user.userServices.all():
+            if i.state == State.USABLE:
+                v = AssignedService.itemToDict(i)
+                v['pool'] = i.deployed_service.name
+                v['pool_id'] = i.deployed_service.uuid
+                res.append(v)
+
+        return res
+
+
 
 class Groups(DetailHandler):
+
+    custom_methods = ['servicesPools']
 
     def getItems(self, parent, item):
         try:
@@ -287,3 +327,18 @@ class Groups(DetailHandler):
             self.invalidItemException()
 
         return 'deleted'
+
+    def servicesPools(self, parent, item):
+        uuid = processUuid(item)
+        group = parent.groups.get(uuid=processUuid(uuid))
+        res = []
+        for i in getPoolsForGroups((group,)):
+            res.append({
+                'id': i.uuid,
+                'name': i.name,
+                'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
+                'user_services_count': i.userServices.count(),
+                'state': _('With errors') if i.isRestrained() else _('Ok'),
+            })
+
+        return res
