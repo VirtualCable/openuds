@@ -57,8 +57,17 @@ logger = logging.getLogger(__name__)
 
 # Details of /auth
 
-def getPoolsForGroups(groups):
+def getGroupsFromMeta(groups):
     for g in groups:
+        if g.is_meta:
+            for x in g.groups.all():
+                yield x
+        else:
+            yield g
+
+
+def getPoolsForGroups(groups):
+    for g in getGroupsFromMeta(groups):
         for servicePool in g.deployedServices.all():
             yield servicePool
 
@@ -184,7 +193,7 @@ class Users(DetailHandler):
                 'id': i.uuid,
                 'name': i.name,
                 'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                'user_services_count': i.userServices.count(),
+                'user_services_count': i.userServices.exclude(state__in=(State.REMOVED, State.ERROR)).count(),
                 'state': _('With errors') if i.isRestrained() else _('Ok'),
             })
 
@@ -207,7 +216,7 @@ class Users(DetailHandler):
 
 class Groups(DetailHandler):
 
-    custom_methods = ['servicesPools']
+    custom_methods = ['servicesPools', 'users']
 
     def getItems(self, parent, item):
         try:
@@ -337,8 +346,26 @@ class Groups(DetailHandler):
                 'id': i.uuid,
                 'name': i.name,
                 'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                'user_services_count': i.userServices.count(),
+                'user_services_count': i.userServices.exclude(state__in=(State.REMOVED, State.ERROR)).count(),
                 'state': _('With errors') if i.isRestrained() else _('Ok'),
             })
+
+        return res
+
+    def users(self, parent, item):
+        uuid = processUuid(item)
+        group = parent.groups.get(uuid=processUuid(uuid))
+        groups = getGroupsFromMeta((group,))
+
+        res = []
+        for group in groups:
+            for i in group.users.all():
+                res.append({
+                    'id': i.uuid,
+                    'name': i.name,
+                    'real_name': i.real_name,
+                    'state': i.state,
+                    'last_access': i.last_access
+                })
 
         return res

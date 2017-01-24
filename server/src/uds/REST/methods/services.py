@@ -243,7 +243,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 'id': i.uuid,
                 'name': i.name,
                 'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                'user_services_count': i.userServices.count(),
+                'user_services_count': i.userServices.exclude(state__in=(State.REMOVED, State.ERROR)).count(),
                 'state': _('With errors') if i.isRestrained() else _('Ok'),
             })
 

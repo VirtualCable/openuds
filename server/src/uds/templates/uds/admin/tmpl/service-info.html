@@ -1,8 +1,8 @@
 {% load i18n html5 %}
 {% verbatim %}
 <ul class="nav nav-tabs">
-    <li class="active in"><a href="#{{ id }}-overview_tab" data-toggle="tab">{% endverbatim %}{% trans 'Overview' %}{% verbatim %}</a></li>
-    <li><a href="#{{ id }}-pools_tab" data-toggle="tab">{% endverbatim %}{% trans 'Services Pools' %}{% verbatim %}</a></li>
+    <!-- <li class="active in"><a href="#{{ id }}-overview_tab" data-toggle="tab">{% endverbatim %}{% trans 'Overview' %}{% verbatim %}</a></li> -->
+    <li class="active in"><a href="#{{ id }}-pools_tab" data-toggle="tab">{% endverbatim %}{% trans 'Services Pools' %}{% verbatim %}</a></li>
     <li><a href="#{{ id }}-logs_tab" data-toggle="tab">{% endverbatim %}{% trans 'Logs' %}{% verbatim %}</a></li>
 </ul>
 <div class="tab-content">
@@ -21,7 +21,7 @@
                     <th>{% endverbatim %}{% trans 'Pool' %}{% verbatim %}</th>
                     <th>{% endverbatim %}{% trans 'State' %}{% verbatim %}</th>
                     <th>{% endverbatim %}{% trans 'Image' %}{% verbatim %}</th>
-                    <th></th>
+                    <th>{% endverbatim %}{% trans 'User Services' %}{% verbatim %}</th>
                   </tr>
                 </thead>
                 <tbody>
