@@ -322,8 +322,9 @@ gui.servicesPools.link = (event) ->
                       $select = $(modalId + " #id_group_select")
                       $select.empty()
                       # Sorts groups, expression means that "if a > b returns 1, if b > a returns -1, else returns 0"
+                      maxCL = 32
                       $.each data, (undefined_, value) ->
-                        $select.append "<option value=\"" + value.id + "\">" + value.name + "</option>"
+                        $select.append "<option value=\"" + value.id + "\">" + value.name + " (" + value.comments.substr(0, maxCL - 1) + ((if value.comments.length > maxCL then "&hellip;" else "")) + ")</option>"
                         return
 
 

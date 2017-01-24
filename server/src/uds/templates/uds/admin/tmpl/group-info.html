@@ -1,0 +1,106 @@
+{% load i18n html5 %}
+{% verbatim %}
+<ul class="nav nav-tabs">
+    <li class="active in"><a href="#{{ id }}-pools_tab" data-toggle="tab">{% endverbatim %}{% trans 'Services Pools' %}{% verbatim %}</a></li>
+    <li><a href="#{{ id }}-users_tab" data-toggle="tab">{% endverbatim %}{% trans 'Users' %}{% verbatim %}</a></li>
+    {{# if meta }}
+    <li><a href="#{{ id }}-groups_tab" data-toggle="tab">{% endverbatim %}{% trans 'Groups' %}{% verbatim %}</a></li>
+    {{/ if }}
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="{{ id }}-pools_tab">
+        <div class="row">
+            <div class="col-xs-12">
+              <table id="{{ id }}-pools-table" style="width:100%;" class="display">
+                <thead>
+                  <tr>
+                    <th>{% endverbatim %}{% trans 'Pool' %}{% verbatim %}</th>
+                    <th>{% endverbatim %}{% trans 'State' %}{% verbatim %}</th>
+                    <th>{% endverbatim %}{% trans 'Image' %}{% verbatim %}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each pools }}
+                    <tr>
+                      <td>{{ name }}<span style="float: right;"><a href="#{{ id }}" class="{{ ../goClass }}"><i class="fa fa-external-link"> </i></a></span></td>
+                      <td>{{ state }}</td>
+                      <td><img src="data:image/png;base64,{{ thumb }}" style="width: 32px; height: auto;"/></td>
+                      <td>{{ user_services_count }}</td>
+                    </tr>
+                  {{/each }}
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="{{ id }}-users_tab">
+        <div class="row">
+            <div class="col-xs-12">
+              <table id="{{ id }}-users-table" style="width:100%;" class="display">
+                <thead>
+                  <tr>
+                    <th>{% endverbatim %}{% trans 'Name' %}{% verbatim %}</th>
+                    <th>{% endverbatim %}{% trans 'Real Name' %}{% verbatim %}</th>
+                    <th>{% endverbatim %}{% trans 'State' %}{% verbatim %}</th>
+                    <th>{% endverbatim %}{% trans 'Last Access' %}{% verbatim %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each users }}
+                    <tr>
+                      <td>{{ name }}</td>
+                      <td>{{ real_name }}</td>
+                      <td>
+                        {{# ifequals state 'A'}}{% endverbatim %}{% trans 'Enabled' %}{% verbatim %}{{/ ifequals }}
+                        {{# ifequals state 'I'}}{% endverbatim %}{% trans 'Disabled' %}{% verbatim %}{{/ ifequals }}
+                        {{# ifequals state 'B'}}{% endverbatim %}{% trans 'Blocked' %}{% verbatim %}{{/ ifequals }}
+                      </td>
+                      <td>{{{ last_access }}}</td>
+                    </tr>
+                  {{/each }}
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+    {{#if meta }}
+    <div class="tab-pane fade" id="{{ id }}-groups_tab">
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="id_matchifany" class="col-sm-2 control-label">{% endverbatim %}{% trans 'Match mode' %}{% verbatim %}</label>
+            <div class="col-sm-10">
+              {{# if meta_if_any}}
+              {% endverbatim %}{% trans 'Any' %}{% verbatim %}
+              {{ else }}
+              {% endverbatim %}{% trans 'All' %}{% verbatim %}
+              {{/if }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+              <table id="{{ id }}-groups-table" style="width:100%;" class="display">
+                <thead>
+                  <tr>
+                    <th>{% endverbatim %}{% trans 'Name' %}{% verbatim %}</th>
+                    <th>{% endverbatim %}{% trans 'Comment' %}{% verbatim %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each groups_all }}
+                    {{# ifbelongs id ../groups }}
+                    <tr>
+                      <td>{{ name }}</td>
+                      <td>{{ comments }}</td>
+                    </tr>
+                    {{/ ifbelongs}}
+                  {{/each }}
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+    {{/if }}
+</div>
+{% endverbatim %}
