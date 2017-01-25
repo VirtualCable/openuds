@@ -356,14 +356,38 @@ class Groups(DetailHandler):
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
 
+        def info(user):
+            return {
+                'id': user.uuid,
+                'name': user.name,
+                'real_name': user.real_name,
+                'state': user.state,
+                'last_access': user.last_access
+            }
+
         res = []
-        for i in group.users.all():
-            res.append({
-                'id': i.uuid,
-                'name': i.name,
-                'real_name': i.real_name,
-                'state': i.state,
-                'last_access': i.last_access
-            })
+        if group.is_meta:
+            # Get all users for everygroup and
+            groups = getGroupsFromMeta((group,))
+            tmpSet = None
+            for g in groups:
+                gSet = set((i for i in g.users.all()))
+                if tmpSet is None:
+                    tmpSet = gSet
+                else:
+                    if group.meta_if_any:
+                        tmpSet |= gSet
+                    else:
+                        tmpSet &= gSet
+
+                        if len(tmpSet) == 0 :
+                            break  # If already empty, stop
+            users = list(tmpSet)
+            tmpSet = None
+        else:
+            users = group.users.all()
+
+        for i in users:
+            res.append(info(i))
 
         return res
