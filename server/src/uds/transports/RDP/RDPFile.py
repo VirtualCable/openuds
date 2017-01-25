@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2016-07-21'
+__updated__ = '2017-01-25'
 
 
 class RDPFile(object):
@@ -64,6 +64,7 @@ class RDPFile(object):
     showWallpaper = False
     multimon = False
     desktopComposition = False
+    smoothFonts = True
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
@@ -241,7 +242,10 @@ class RDPFile(object):
         res += 'authentication level:i:0' + '\n'
         res += 'enablecredsspsupport:i:1' + '\n'
         res += 'prompt for credentials:i:0' + '\n'
-        res += 'negotiate security layer:i:1' + '\n'
+        res += 'negotiate security layer:i:1\n'
+        res += 'videoplaybackmode:i:1\n'
+        if self.smoothFonts is True:
+            res += 'allow font smoothing:i:1\n'
         if self.desktopComposition is True:
             res += 'allow desktop composition:i:1\n'
 

@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2016-07-28'
+__updated__ = '2017-01-25'
 
 
 logger = logging.getLogger(__name__)
@@ -69,9 +69,10 @@ class BaseRDPTransport(Transport):
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=19, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
     wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=20, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.PARAMETERS_TAB)
     multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=21, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'), tab=gui.PARAMETERS_TAB)
-    aero = gui.CheckBoxField(label=_('Allow Aero'), order=22, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
-    multimedia = gui.CheckBoxField(label=_('Multimedia sync'), order=23, tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'), tab='Linux Client')
-    alsa = gui.CheckBoxField(label=_('Use Alsa'), order=24, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
+    aero = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=22, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
+    smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=23, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
+    multimedia = gui.CheckBoxField(label=_('Multimedia sync'), order=25, tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'), tab='Linux Client')
+    alsa = gui.CheckBoxField(label=_('Use Alsa'), order=26, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
 
     def isAvailableFor(self, userService, ip):
         '''

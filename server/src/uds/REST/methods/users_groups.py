@@ -67,7 +67,7 @@ def getGroupsFromMeta(groups):
 
 
 def getPoolsForGroups(groups):
-    for g in getGroupsFromMeta(groups):
+    for g in groups:
         for servicePool in g.deployedServices.all():
             yield servicePool
 
@@ -355,17 +355,15 @@ class Groups(DetailHandler):
     def users(self, parent, item):
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
-        groups = getGroupsFromMeta((group,))
 
         res = []
-        for group in groups:
-            for i in group.users.all():
-                res.append({
-                    'id': i.uuid,
-                    'name': i.name,
-                    'real_name': i.real_name,
-                    'state': i.state,
-                    'last_access': i.last_access
-                })
+        for i in group.users.all():
+            res.append({
+                'id': i.uuid,
+                'name': i.name,
+                'real_name': i.real_name,
+                'state': i.state,
+                'last_access': i.last_access
+            })
 
         return res

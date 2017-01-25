@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2016-10-14'
+__updated__ = '2017-01-25'
 
 
 logger = logging.getLogger(__name__)
@@ -83,6 +83,7 @@ class TRDPTransport(BaseRDPTransport):
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
+    smooth = BaseRDPTransport.smooth
     multimedia = BaseRDPTransport.multimedia
     alsa = BaseRDPTransport.alsa
 
@@ -120,6 +121,7 @@ class TRDPTransport(BaseRDPTransport):
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
+        r.smoothFonts = self.smooth.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
 
