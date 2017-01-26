@@ -122,7 +122,7 @@ def getComputerName():
 def getNetworkInfo():
     for ifname in _getInterfaces():
         ip, mac = _getIpAndMac(ifname)
-        if mac != '00:00:00:00:00:00':  # Skips local interfaces
+        if mac != '00:00:00:00:00:00' and ip.startswith('169.254') is False:  # Skips local interfaces & interfaces with no dhcp IPs
             yield utils.Bunch(name=ifname, mac=mac, ip=ip)
 
 

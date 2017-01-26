@@ -5,15 +5,8 @@ Settings file for uds server (Django)
 from __future__ import unicode_literals
 
 import os
-import sys
 import django
 import django.conf.global_settings as DEFAULT_SETTINGS
-
-# Related to shell plus
-NOTEBOOK_ARGUMENTS = [
-    '--ip=172.27.0.1',
-    '--port=8888',
-]
 
 # calculated paths for django and the site
 # used as starting points for various other paths
@@ -21,12 +14,11 @@ DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 BASE_DIR = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
 
 DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 # USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')  # For testing begind a reverse proxy
 
-# This mark can be used by a setup script to easy locate DB Section of the settings file
-# DB_SECTION_START
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -35,20 +27,14 @@ DATABASES = {
             # 'init_command': 'SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
             # 'init_command': 'SET storage_engine=MYISAM, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
         },
-        'NAME': 'dbuds',  # Or path to database file if using sqlite3.
-        'USER': 'dbuds',  # Not used with sqlite3.
-        'PASSWORD': 'PASSWOR',  # Not used with sqlite3.
-        'HOST': 'localhost',  # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '3306',  # Set to empty string for default. Not used with sqlite3.
+        'NAME': 'dbuds',                      # Or path to database file if using sqlite3.
+        'USER': 'dbuds',                      # Not used with sqlite3.
+        'PASSWORD': 'PASSWOR',                  # Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
 	    # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
     }
 }
-# DB_SECTION_END
-if b'test' in sys.argv:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3'
-    }
-
 ALLOWED_HOSTS = '*'
 
 # Local time zone for this installation. Choices can be found here:
@@ -59,9 +45,7 @@ ALLOWED_HOSTS = '*'
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 
-# TIME_SECTION_START
 TIME_ZONE = 'Europe/Madrid'
-# TIME_SECTION_END
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -204,12 +188,18 @@ ROOT_URLCONF = 'server.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'server.wsgi.application'
 
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASE_DIR, 'templates'),
+)
+
 INSTALLED_APPS = (
     # 'django.contrib.contenttypes', # Not used
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
     'compressor',
     'uds',
 )
@@ -217,11 +207,8 @@ INSTALLED_APPS = (
 # Compressor settings (for css/js)
 COMPRESS_ENABLED = not DEBUG
 COMPRESS_OUTPUT_DIR = 'cache'
-COMPRESS_CACHE_BACKEND = 'default'  # 'memory'
-COMPRESS_STORAGE = 'uds.core.util.FileStorage.CompressorFileStorage'
 COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),  # Original, unchanged
-#    ('text/coffeescript', 'coffee --compile -p {infile} | babel --blacklist strict -o {outfile}'),  # Allows use of generators, etc.. on unsupported browers
+    ('text/coffeescript', 'coffee --compile --stdio'),
     ('text/less', 'lessc {infile} {outfile}'),
     ('text/x-sass', 'sass {infile} {outfile}'),
     ('text/x-scss', 'sass --scss {infile} {outfile}'),
@@ -230,11 +217,11 @@ COMPRESS_PRECOMPILERS = (
 )
 if DEBUG:
     COMPRESS_DEBUG_TOGGLE = 'debug'
-#
+#   
 # Enable this if you need to allow round robin load balancing of web server
 # This is so because we need to share the files between servers
 # Another options is put /var/server/static on a shared nfs forder for all servers
-#
+#   
 # COMPRESS_STORAGE = 'uds.core.util.FileStorage.CompressorFileStorage'
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
@@ -242,7 +229,6 @@ if DEBUG:
 LOGDIR = BASE_DIR + '/' + 'log'
 LOGFILE = 'uds.log'
 SERVICESFILE = 'services.log'
-WORKERSFILE = 'workers.log'
 AUTHFILE = 'auth.log'
 USEFILE = 'use.log'
 LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
@@ -255,9 +241,9 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        }
+     'require_debug_false': {
+         '()': 'django.utils.log.RequireDebugFalse',
+     }
     },
     'formatters': {
         'verbose': {
@@ -278,13 +264,13 @@ LOGGING = {
     },
     'handlers': {
         'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
+            'level':'DEBUG',
+            'class':'logging.NullHandler',
         },
-
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+                 
+        'file':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + LOGFILE,
             'mode': 'a',
@@ -293,20 +279,20 @@ LOGGING = {
             'encoding': 'utf-8'
         },
 
-        'database': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+        'database':{
+            'level':'ERROR',
+            'class':'logging.handlers.RotatingFileHandler',
             'formatter': 'simple',
-            'filename': LOGDIR + '/' + 'sql.log',
+            'filename': LOGDIR + '/' + 'db.log',
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
             'encoding': 'utf-8'
         },
-
-        'servicesFile': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+                 
+        'servicesFile':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + SERVICESFILE,
             'mode': 'a',
@@ -315,20 +301,9 @@ LOGGING = {
             'encoding': 'utf-8'
         },
 
-        'workersFile': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'simple',
-            'filename': LOGDIR + '/' + WORKERSFILE,
-            'mode': 'a',
-            'maxBytes': ROTATINGSIZE,
-            'backupCount': 3,
-            'encoding': 'utf-8'
-        },
-
-        'authFile': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+        'authFile':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
             'formatter': 'auth',
             'filename': LOGDIR + '/' + AUTHFILE,
             'mode': 'a',
@@ -337,9 +312,9 @@ LOGGING = {
             'encoding': 'utf-8'
         },
 
-        'useFile': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+        'useFile':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
             'formatter': 'use',
             'filename': LOGDIR + '/' + USEFILE,
             'mode': 'a',
@@ -347,10 +322,10 @@ LOGGING = {
             'backupCount': 3,
             'encoding': 'utf-8'
         },
-
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
+        
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
             'formatter': 'simple'
         },
         'mail_admins': {
@@ -361,9 +336,9 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['null'],
+            'handlers':['null'],
             'propagate': True,
-            'level': 'INFO',
+            'level':'INFO',
         },
         'django.request': {
             'handlers': ['file'],
@@ -372,26 +347,15 @@ LOGGING = {
         },
         'django.db.backends': {
             'handlers': ['database'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'propagate': False,
         },
-
+                
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,
         },
-
-        'uds.core.workers': {
-            'handlers': ['workersFile'],
-            'level': LOGLEVEL,
-            'propagate': False,
-        },
-        'uds.core.jobs': {
-            'handlers': ['workersFile'],
-            'level': LOGLEVEL,
-            'propagate': False,
-        },
-
+                
         'uds.services': {
             'handlers': ['servicesFile'],
             'level': LOGLEVEL,
@@ -399,16 +363,16 @@ LOGGING = {
         },
         # Custom Auth log
         'authLog': {
-            'handlers': ['authFile'],
+            'handlers' : ['authFile'],
             'level': 'INFO',
             'propagate': False,
         },
         # Custom Services use log
         'useLog': {
-            'handlers': ['useFile'],
+            'handlers' : ['useFile'],
             'level': 'INFO',
             'propagate': False,
         }
-
+        
     }
 }
