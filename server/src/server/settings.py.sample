@@ -218,8 +218,10 @@ if DEBUG:
 LOGDIR = BASE_DIR + '/' + 'log'
 LOGFILE = 'uds.log'
 SERVICESFILE = 'services.log'
+WORKERSFILE = 'workers.log'
 AUTHFILE = 'auth.log'
 USEFILE = 'use.log'
+TRACEFILE = 'trace.log'
 LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
 ROTATINGSIZE = 32 * 1024 * 1024  # 32 Megabytes before rotating files
 
@@ -230,16 +232,16 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'filters': {
-     'require_debug_false': {
-         '()': 'django.utils.log.RequireDebugFalse',
-     }
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        }
     },
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
         'simple': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+            'format': '%(levelname)s %(asctime)s %(module)s %(funcName)s %(lineno)d %(message)s'
         },
         'database': {
             'format': '%(levelname)s %(asctime)s Database %(message)s'
@@ -249,17 +251,20 @@ LOGGING = {
         },
         'use': {
             'format': '%(asctime)s %(message)s'
+        },
+        'trace': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
         }
     },
     'handlers': {
         'null': {
-            'level':'DEBUG',
-            'class':'logging.NullHandler',
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
         },
-                 
-        'file':{
-            'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + LOGFILE,
             'mode': 'a',
@@ -268,20 +273,20 @@ LOGGING = {
             'encoding': 'utf-8'
         },
 
-        'database':{
-            'level':'ERROR',
-            'class':'logging.handlers.RotatingFileHandler',
+        'database': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'simple',
-            'filename': LOGDIR + '/' + 'db.log',
+            'filename': LOGDIR + '/' + 'sql.log',
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
             'encoding': 'utf-8'
         },
-                 
-        'servicesFile':{
-            'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+
+        'servicesFile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + SERVICESFILE,
             'mode': 'a',
@@ -290,9 +295,20 @@ LOGGING = {
             'encoding': 'utf-8'
         },
 
-        'authFile':{
-            'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+        'workersFile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'simple',
+            'filename': LOGDIR + '/' + WORKERSFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8'
+        },
+
+        'authFile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'auth',
             'filename': LOGDIR + '/' + AUTHFILE,
             'mode': 'a',
@@ -301,9 +317,9 @@ LOGGING = {
             'encoding': 'utf-8'
         },
 
-        'useFile':{
-            'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+        'useFile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'use',
             'filename': LOGDIR + '/' + USEFILE,
             'mode': 'a',
@@ -311,10 +327,21 @@ LOGGING = {
             'backupCount': 3,
             'encoding': 'utf-8'
         },
-        
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
+
+        'traceFile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'trace',
+            'filename': LOGDIR + '/' + TRACEFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8'
+        },
+
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
         'mail_admins': {
@@ -325,9 +352,9 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers':['null'],
+            'handlers': ['null'],
             'propagate': True,
-            'level':'INFO',
+            'level': 'INFO',
         },
         'django.request': {
             'handlers': ['file'],
@@ -336,15 +363,26 @@ LOGGING = {
         },
         'django.db.backends': {
             'handlers': ['database'],
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'propagate': False,
         },
-                
+
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,
         },
-                
+
+        'uds.core.workers': {
+            'handlers': ['workersFile'],
+            'level': LOGLEVEL,
+            'propagate': False,
+        },
+        'uds.core.jobs': {
+            'handlers': ['workersFile'],
+            'level': LOGLEVEL,
+            'propagate': False,
+        },
+
         'uds.services': {
             'handlers': ['servicesFile'],
             'level': LOGLEVEL,
@@ -352,16 +390,22 @@ LOGGING = {
         },
         # Custom Auth log
         'authLog': {
-            'handlers' : ['authFile'],
+            'handlers': ['authFile'],
             'level': 'INFO',
             'propagate': False,
         },
         # Custom Services use log
         'useLog': {
-            'handlers' : ['useFile'],
+            'handlers': ['useFile'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Custom tracing
+        'traceLog': {
+            'handlers': ['traceFile'],
             'level': 'INFO',
             'propagate': False,
         }
-        
+
     }
 }

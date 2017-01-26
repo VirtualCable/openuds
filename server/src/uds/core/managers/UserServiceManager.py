@@ -51,9 +51,10 @@ import requests
 import json
 import logging
 
-__updated__ = '2016-11-04'
+__updated__ = '2017-01-26'
 
 logger = logging.getLogger(__name__)
+traceLogger = logging.getLogger('traceLog')
 
 
 class UserServiceManager(object):
@@ -498,11 +499,17 @@ class UserServiceManager(object):
         if trans.validForIp(srcIp) is False:
             raise InvalidServiceException()
 
+        if user is not None:
+            userName = user.name
+
+
         if doTest is False:
+            # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
             return (None, userService, None, trans, None)
 
-        serviceNotReadyCode = 0x0001
 
+        serviceNotReadyCode = 0x0001
+        ip = 'unknown'
         # Test if the service is ready
         if userService.isReady():
             serviceNotReadyCode = 0x0002
@@ -516,7 +523,7 @@ class UserServiceManager(object):
                 log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
                 logger.debug('Transport is not ready for user service {0}'.format(userService))
             else:
-                events.addEvent(userService.deployed_service, events.ET_ACCESS, username=user.name, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
+                events.addEvent(userService.deployed_service, events.ET_ACCESS, username=userName, srcip=srcIp, dstip=ip, uniqueid=userService.unique_id)
                 if ip is not None:
                     serviceNotReadyCode = 0x0003
                     itrans = trans.getInstance()
@@ -524,6 +531,7 @@ class UserServiceManager(object):
                         userService.setConnectionSource(srcIp, 'unknown')
                         log.doLog(userService, log.INFO, "User service ready", log.WEB)
                         self.notifyPreconnect(userService, itrans.processedUser(userService, user), itrans.protocol)
+                        traceLogger.info('READY on service "{}" for user "{}" with transport "{}" (ip:{})'.format(userService.name, userName, trans.name, ip))
                         return (ip, userService, iads, trans, itrans)
                     else:
                         log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
@@ -533,4 +541,5 @@ class UserServiceManager(object):
         else:
             log.doLog(userService, log.WARN, "User {0} from {1} tried to access, but service was not ready".format(user.name, srcIp), log.WEB)
 
+        traceLogger.error('ERROR {} on service "{}" for user "{}" with transport "{}" (ip:{})'.format(serviceNotReadyCode, userService.name, userName, trans.name, ip))
         raise ServiceNotReadyError(code=serviceNotReadyCode, service=userService, transport=trans)
