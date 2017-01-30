@@ -46,7 +46,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2016-04-04'
+__updated__ = '2017-01-30'
 
 
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
@@ -87,6 +87,10 @@ default_app_config = 'uds.UDSAppConfig'
 def extend_sqlite(connection=None, **kwargs):
     if connection.vendor == "sqlite":
         logger.debug('Connection vendor is sqlite, extending methods')
+        cursor = connection.cursor()
+        cursor.execute('PRAGMA synchronous=OFF')
+        cursor.execute('PRAGMA cache_size=8000')
+        cursor.execute('PRAGMA temp_store=MEMORY')
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
         connection.connection.create_function("CEIL", 1, math.ceil)
