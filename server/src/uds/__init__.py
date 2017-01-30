@@ -90,6 +90,7 @@ def extend_sqlite(connection=None, **kwargs):
         cursor = connection.cursor()
         cursor.execute('PRAGMA synchronous=OFF')
         cursor.execute('PRAGMA cache_size=8000')
+        cursor.execute('PRAGMA temp_store=MEMORY')
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
         connection.connection.create_function("CEIL", 1, math.ceil)
