@@ -58,7 +58,7 @@ class Accounts(ModelHandler):
 
     table_title = _('Accounts')
     table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+        {'name': {'title': _('Name'), 'visible': True}},
         {'comments': {'title': _('Comments')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]

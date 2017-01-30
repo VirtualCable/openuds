@@ -3,6 +3,8 @@ gui.accounts = new GuiElement(api.accounts, "accounts")
 gui.accounts.link = (event) ->
   "use strict"
 
+
+
   useTable = undefined
   clearUsage = ->
     if useTable
@@ -36,20 +38,26 @@ gui.accounts.link = (event) ->
         $("#detail-placeholder").removeClass "hidden"
         # gui.tools.blockUI()
         id = selected[0].id
-        usage = new GuiElement(api.accounts.detail(id, "usage", { permission: selected[0].permission }), "rules")
+        usage = new GuiElement(api.accounts.detail(id, "usage", { permission: selected[0].permission }), "Usage")
         usageTable = usage.table(
-          icon: 'calendars'
+          icon: 'accounts'
           container: "usage-placeholder"
           rowSelect: "single"
           buttons: [
-            "new"
-            "edit"
             "delete"
             "xls"
           ]
           onLoad: (k) ->
             # gui.tools.unblockUI()
             return # null return
+
+          onData: (data) ->
+            gui.doLog 'Accounts data received'
+            $.each data, (index, value) ->
+              value.running = if value.running then gettext('Yes') else gettext('No')
+              return
+            return
+
         )
         return
 
@@ -63,8 +71,8 @@ gui.accounts.link = (event) ->
         "xls"
         "permissions"
       ]
-      onNew: gui.methods.typedNew(gui.calendars, gettext("New calendar"), gettext("Calendar creation error"))
-      onEdit: gui.methods.typedEdit(gui.calendars, gettext("Edit calendar"), gettext("Calendar saving error"))
-      onDelete: gui.methods.del(gui.calendars, gettext("Delete calendar"), gettext("Calendar deletion error"))
+      onNew: gui.methods.typedNew(gui.accounts, gettext("New Account"), gettext("Account creation error"))
+      onEdit: gui.methods.typedEdit(gui.accounts, gettext("Edit Account"), gettext("Account saving error"))
+      onDelete: gui.methods.del(gui.accounts, gettext("Delete Account"), gettext("Account deletion error"))
   false
 false

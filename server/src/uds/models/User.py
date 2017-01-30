@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-09-16'
+__updated__ = '2017-01-30'
 
 
 @python_2_unicode_compatible
@@ -90,7 +90,7 @@ class User(UUIDModel):
 
     @property
     def pretty_name(self):
-        return self.manager.name + '@' + self.name
+        return self.name + '@' + self.manager.name
 
     def getManager(self):
         '''

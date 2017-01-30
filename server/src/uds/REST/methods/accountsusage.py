@@ -66,15 +66,14 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
         :param full: If full is requested, add "extra" fields to complete information
         '''
         retVal = {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
+            'uuid': item.uuid,
+            'pool_uuid': item.pool_uuid,
+            'pool_name': item.pool_name,
+            'user_uuid': item.user_uuid,
+            'user_name': item.user_name,
             'start': item.start,
             'end': item.end,
-            'frequency': item.frequency,
-            'interval': item.interval,
-            'duration': item.duration,
-            'duration_unit': item.duration_unit,
+            'running': item.user_service is not None,
             'permission': perm
         }
 
@@ -85,64 +84,35 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
             if item is None:
-                return [CalendarRules.usageToDict(k, perm) for k in parent.rules.all()]
+                return [AccountsUsage.usageToDict(k, perm) for k in parent.usages.all()]
             else:
-                k = parent.rules.get(uuid=processUuid(item))
-                return CalendarRules.usageToDict(k, perm)
+                k = parent.usages.get(uuid=processUuid(item))
+                return AccountsUsage.usageToDict(k, perm)
         except Exception:
             logger.exception('itemId {}'.format(item))
             self.invalidItemException()
 
     def getFields(self, parent):
         return [
-            {'name': {'title': _('Rule name')}},
+            {'pool_name': {'title': _('Pool name')}},
+            {'user_name': {'title': _('User name')}},
+            {'running': {'title': _('Running')}},
             {'start': {'title': _('Starts'), 'type': 'datetime'}},
-            {'end': {'title': _('Ends'), 'type': 'date'}},
-            {'frequency': {'title': _('Repeats'), 'type': 'dict', 'dict': dict((v[0], six.text_type(v[1])) for v in freqs) }},
-            {'interval': {'title': _('Every'), 'type': 'callback'}},
-            {'duration': {'title': _('Duration'), 'type': 'callback'}},
-            {'comments': {'title': _('Comments')}},
+            {'end': {'title': _('Ends'), 'type': 'datetime'}},
         ]
 
+    def getRowStyle(self, parent):
+        return {'field': 'running', 'prefix': 'row-running-'}
+
+
     def saveItem(self, parent, item):
-        # Extract item db fields
-        # We need this fields for all
-        logger.debug('Saving rule {0} / {1}'.format(parent, item))
-        fields = self.readFieldsFromParams(['name', 'comments', 'frequency', 'start', 'end', 'interval', 'duration', 'duration_unit'])
-
-        if int(fields['interval']) < 1:
-            self.invalidItemException('Repeat must be greater than zero')
-
-        # Convert timestamps to datetimes
-        fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
-        if fields['end'] != None:
-            fields['end'] = datetime.datetime.fromtimestamp(fields['end'])
-
-        calRule = None
-        try:
-            if item is None:  # Create new
-                calRule = parent.rules.create(**fields)
-            else:
-                calRule = parent.rules.get(uuid=processUuid(item))
-                calRule.__dict__.update(fields)
-                calRule.save()
-        except CalendarRule.DoesNotExist:
-            self.invalidItemException()
-        except IntegrityError:  # Duplicate key probably
-            raise RequestError(_('Element already exists (duplicate key error)'))
-        except Exception as e:
-            logger.exception('Saving calendar')
-            raise RequestError('incorrect invocation to PUT: {0}'.format(e))
-
-        return self.getItems(parent, calRule.uuid)
+        raise RequestError('Accounts usage cannot be edited')
 
     def deleteItem(self, parent, item):
-        logger.debug('Deleting rule {} from {}'.format(item, parent))
+        logger.debug('Deleting account usage {} from {}'.format(item, parent))
         try:
-            calRule = parent.rules.get(uuid=processUuid(item))
-            calRule.calendar.modified = getSqlDatetime()
-            calRule.calendar.save()
-            calRule.delete()
+            usage = parent.usages.get(uuid=processUuid(item))
+            usage.delete()
         except Exception:
             logger.exception('Exception')
             self.invalidItemException()
@@ -151,6 +121,6 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getTitle(self, parent):
         try:
-            return _('Rules of {0}').format(parent.name)
+            return _('Usages of {0}').format(parent.name)
         except Exception:
-            return _('Current rules')
+            return _('Current usages')

@@ -231,6 +231,11 @@
         exec: gui.sPoolGroups.link
         cleanup: true
       }
+      {
+        id: "lnk-accounts"
+        exec: gui.accounts.link
+        cleanup: true
+      }
     ]
     $.each sidebarLinks, (index, value) ->
       gui.doLog "Adding " + value.id
