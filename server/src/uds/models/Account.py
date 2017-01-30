@@ -31,14 +31,14 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2017-01-17'
+__updated__ = '2017-01-30'
 
 from django.db import models
 
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Tag import TaggingMixin
 from uds.models.Util import getSqlDatetime
-from django.db.models import signals
+from uds.models.Util import NEVER
 
 import logging
 
@@ -50,6 +50,7 @@ class Account(UUIDModel, TaggingMixin):
     Account storing on DB model
     '''
     name = models.CharField(max_length=128, unique=False, db_index=True)
+    time_mark = models.DateTimeField(default=NEVER)
     comments = models.CharField(max_length=256)
 
     def startUsageAccounting(self, service):

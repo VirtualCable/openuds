@@ -49,10 +49,12 @@ logger = logging.getLogger(__name__)
 
 class Accounts(ModelHandler):
     '''
-    Processes REST requests about calendars
+    Processes REST requests about accounts
     '''
     model = Account
     detail = {'usage': AccountsUsage }
+
+    custom_methods = [('clear', True)]
 
     save_fields = ['name', 'comments', 'tags']
 
@@ -60,17 +62,24 @@ class Accounts(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True}},
         {'comments': {'title': _('Comments')}},
+        {'time_mark': {'title': _('Time mark')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, calendar):
+    def item_as_dict(self, account):
         return {
-            'id': calendar.uuid,
-            'name': calendar.name,
-            'tags': [tag.tag for tag in calendar.tags.all()],
-            'comments': calendar.comments,
-            'permission': permissions.getEffectivePermission(self._user, calendar)
+            'id': account.uuid,
+            'name': account.name,
+            'tags': [tag.tag for tag in account.tags.all()],
+            'comments': account.comments,
+            'time_mark': account.time_mark,
+            'permission': permissions.getEffectivePermission(self._user, account)
         }
 
     def getGui(self, type_):
         return self.addDefaultFields([], ['name', 'comments', 'tags'])
+
+    def clear(self, item):
+        self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
+        return item.usages.filter(user_service=None).delete()
+
