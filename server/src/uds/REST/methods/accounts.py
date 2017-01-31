@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _, ugettext
 from uds.models import Account
 from uds.core.util import permissions
+import datetime
 
 from uds.REST.model import ModelHandler
 
@@ -54,7 +55,7 @@ class Accounts(ModelHandler):
     model = Account
     detail = {'usage': AccountsUsage }
 
-    custom_methods = [('clear', True)]
+    custom_methods = [('clear', True), ('timemark', True)]
 
     save_fields = ['name', 'comments', 'tags']
 
@@ -62,7 +63,7 @@ class Accounts(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True}},
         {'comments': {'title': _('Comments')}},
-        {'time_mark': {'title': _('Time mark')}},
+        {'time_mark': {'title': _('Time mark'), 'type': 'callback'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -78,6 +79,11 @@ class Accounts(ModelHandler):
 
     def getGui(self, type_):
         return self.addDefaultFields([], ['name', 'comments', 'tags'])
+
+    def timemark(self, item):
+        item.time_mark = datetime.datetime.now()
+        item.save()
+        return
 
     def clear(self, item):
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)

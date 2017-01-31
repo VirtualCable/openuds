@@ -31,7 +31,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-09-21'
+__updated__ = '2017-01-31'
 
 from django.db import models
 
@@ -39,6 +39,7 @@ from uds.models.UUIDModel import UUIDModel
 from uds.models.Account import Account
 from uds.models.UserService import UserService
 from uds.models.Util import NEVER
+from uds.core.util.tools import secondsToString
 
 import logging
 
@@ -67,6 +68,35 @@ class AccountUsage(UUIDModel):
         '''
         db_table = 'uds_acc_usage'
         app_label = 'uds'
+
+    @property
+    def elapsed_seconds(self):
+        if self.end == NEVER or self.start == NEVER:
+            return 0
+        return (self.end - self.start).total_seconds()
+
+    @property
+    def elapsed_seconds_timemark(self):
+        if self.end == NEVER or self.start == NEVER:
+            return 0
+
+        start = self.start
+        end = self.end
+        if start < self.account.time_mark:
+            start = self.account.time_mark
+        if end < start:
+            return 0
+
+        return (end - start).total_seconds()
+
+    @property
+    def elapsed(self):
+        return secondsToString(self.elapsed_seconds)
+
+    @property
+    def elapsed_timemark(self):
+        return secondsToString(self.elapsed_seconds_timemark)
+
 
     def __unicode__(self):
         return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(self.id, self.pool_name, self.user_name, self.start, self.end)

@@ -3,6 +3,15 @@ gui.accounts = new GuiElement(api.accounts, "accounts")
 gui.accounts.link = (event) ->
   "use strict"
 
+  dateRenderer = gui.tools.renderDate(api.tools.djangoFormat(get_format("SHORT_DATETIME_FORMAT")))
+  # Callback for custom fields
+  renderer = (fld, data, type, record) ->
+    # Display "custom" fields of rules table
+    if fld == "time_mark"
+      if data == 78793200
+        return gettext('No Time Mark')
+      return dateRenderer(data)
+    return fld
 
 
   useTable = undefined
@@ -27,6 +36,7 @@ gui.accounts.link = (event) ->
     gui.accounts.table
       icon: 'accounts'
       container: "accounts-placeholder"
+      callback: renderer
       rowSelect: "single"
 
       onRefresh: (tbl) ->
@@ -67,6 +77,30 @@ gui.accounts.link = (event) ->
       buttons: [
         "new"
         "edit"
+        {
+          text: gui.tools.iconAndText( 'fa-calendar', gettext('Set time mark') )
+          css: "disabled"
+          disabled: true
+          click: (vals, value, btn, tbl, refreshFnc) ->
+            val = vals[0]
+            gui.forms.confirmModal gettext("Time Mark"), gettext("Set timemark to current datetime?"),
+              onYes: ->
+                gui.accounts.rest.timemark vals[0].id + "/timemark", ->
+                  refreshFnc()
+                  return
+
+                return
+
+            return
+
+          select: (vals, value, btn, tbl, refreshFnc) ->
+            unless vals.length == 1
+              $(btn).addClass("disabled").prop('disabled', true)
+              return
+
+            $(btn).removeClass("disabled").prop('disabled', false)
+
+        }
         "delete"
         "xls"
         "permissions"

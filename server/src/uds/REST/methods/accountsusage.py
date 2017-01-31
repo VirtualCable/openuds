@@ -74,6 +74,8 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             'start': item.start,
             'end': item.end,
             'running': item.user_service is not None,
+            'elapsed': item.elapsed,
+            'elapsed_timemark': item.elapsed_timemark,
             'permission': perm
         }
 
@@ -99,6 +101,8 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             {'running': {'title': _('Running')}},
             {'start': {'title': _('Starts'), 'type': 'datetime'}},
             {'end': {'title': _('Ends'), 'type': 'datetime'}},
+            {'elapsed': {'title': _('Elapsed')}},
+            {'elapsed_timemark': {'title': _('Elapsed timemark')}},
         ]
 
     def getRowStyle(self, parent):

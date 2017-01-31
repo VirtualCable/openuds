@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils import formats
+from django.utils.translation import ugettext
 import django.template.defaultfilters as filters
 
 import datetime
@@ -40,7 +41,7 @@ import datetime
 import sys
 import os
 
-__updated__ = '2015-05-04'
+__updated__ = '2017-01-31'
 
 
 class DictAsObj(object):
@@ -77,3 +78,22 @@ def timestampAsStr(stamp, format_='SHORT_DATETIME_FORMAT'):
     '''
     format_ = formats.get_format(format_)
     return filters.date(datetime.datetime.fromtimestamp(stamp), format_)
+
+def secondsToString(seconds):
+    seconds = int(seconds)
+    minutes = seconds / 60
+    seconds %= 60
+    hours = minutes / 60
+    minutes %= 60
+    days = hours / 24
+    hours %= 24
+    res = []
+    if days > 0:
+        res.append(ugettext('{} days').format(days))
+    if hours > 0:
+        res.append(ugettext('{} hours').format(hours))
+    if minutes > 0:
+        res.append(ugettext('{} minutes').format(minutes))
+    res.append(ugettext('{} seconds').format(seconds))
+
+    return ', '.join(res)
