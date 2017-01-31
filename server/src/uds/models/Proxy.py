@@ -31,7 +31,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-01-31'
 
 from django.db import models
 
@@ -55,6 +55,7 @@ class Proxy(UUIDModel, TaggingMixin):
     host = models.CharField(max_length=256)
     port = models.PositiveIntegerField(default=9090)
     ssl = models.BooleanField(default=True)
+    check_cert = models.BooleanField(default=False)
 
     class Meta:
         '''
@@ -86,7 +87,7 @@ class Proxy(UUIDModel, TaggingMixin):
             self.proxyRequestUrl,
             data=json.dumps(d),
             headers={'content-type': 'application/json'},
-            verify=False,
+            verify=self.check_cert,
             timeout=timeout
         )
 
@@ -96,7 +97,8 @@ class Proxy(UUIDModel, TaggingMixin):
             url = self.testServerUrl + '?host={}&port={}&timeout={}'.format(ip, port, timeout)
             r = requests.get(
                 url,
-                timeout=timeout + 1
+                verify=self.check_cert,
+                timeout=timeout
             )
             if r.status_code == 302:  # Proxy returns "Found" for a success test
                 return True

@@ -452,6 +452,8 @@ api.accounts.timemark = (id, success_fnc, fail_fnc) ->
     success: success_fnc
     fail: fail_fnc
 
+api.proxies = new BasicModelRest("proxies")
+
 # In fact, reports do not have any type
 api.reports.types = (success_fnc, fail_fnc) ->
   success_fnc([])

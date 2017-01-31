@@ -185,13 +185,6 @@ class ServicesPools(ModelHandler):
             'rdonly': True,
             'order': 101,
         }, {
-            'name': 'account_id',
-            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]),
-            'label': ugettext('Account'),
-            'tooltip': ugettext('Account associated to this service pool'),
-            'type': gui.InputField.CHOICE_TYPE,
-            'order': 102,
-        }, {
             'name': 'image_id',
             'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
             'label': ugettext('Associated Image'),
@@ -249,15 +242,24 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Show transports'),
             'tooltip': ugettext('If active, alternative transports for user will be shown'),
             'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 120,
+            'tab': ugettext('Advanced'),
+            'order': 130,
+        }, {
+            'name': 'account_id',
+            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]),
+            'label': ugettext('Account'),
+            'tooltip': ugettext('Account associated to this service pool'),
+            'type': gui.InputField.CHOICE_TYPE,
+            'tab': ugettext('Advanced'),
+            'order': 131,
         }, {
             'name': 'proxy_id',
             'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Proxy.objects.all()]),
             'label': ugettext('Proxy'),
             'tooltip': ugettext('Proxy for services behind a firewall'),
             'type': gui.InputField.CHOICE_TYPE,
-            'tab': ugettext('Connectivity'),
-            'order': 130,
+            'tab': ugettext('Advanced'),
+            'order': 132,
         },
 
         ]:
