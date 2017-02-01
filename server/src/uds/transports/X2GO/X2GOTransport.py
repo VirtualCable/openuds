@@ -40,7 +40,7 @@ from . import x2gofile
 
 import logging
 
-__updated__ = '2017-01-09'
+__updated__ = '2017-01-30'
 
 logger = logging.getLogger(__name__)
 

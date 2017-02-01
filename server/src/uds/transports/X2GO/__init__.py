@@ -38,4 +38,4 @@ from .TX2GOTransport import TX2GOTransport
 
 
 # We will use same prefs as for NX, X2GO is based on it
-UserPrefsManager.manager().registerPrefs('nx', _('NX Protocol'), [CommonPrefs.screenSizePref])
+UserPrefsManager.manager().registerPrefs('nx', _('NX/X2GO'), [CommonPrefs.screenSizePref])
