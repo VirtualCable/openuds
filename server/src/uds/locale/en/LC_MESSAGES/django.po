@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-20 05:34+0100\n"
+"POT-Creation-Date: 2017-02-02 00:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,9 +44,11 @@ msgstr ""
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:77 REST/methods/transports.py:57
 #: REST/methods/user_services.py:225 REST/methods/user_services.py:260
-#: REST/methods/users_groups.py:95 REST/model.py:132
+#: REST/methods/users_groups.py:113 REST/model.py:132
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
+#: templates/uds/admin/tmpl/group-info.html:43
+#: templates/uds/admin/tmpl/group-info.html:86
 #: templates/uds/admin/tmpl/user.html:29 templates/uds/admin/tmpl/user.html:32
 msgid "Name"
 msgstr ""
@@ -55,8 +57,8 @@ msgstr ""
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
 #: REST/methods/providers.py:67 REST/methods/services.py:190
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
-#: REST/methods/user_services.py:262 REST/methods/users_groups.py:96
-#: REST/methods/users_groups.py:209 REST/model.py:139
+#: REST/methods/user_services.py:262 REST/methods/users_groups.py:114
+#: REST/methods/users_groups.py:258 REST/model.py:139
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -78,6 +80,7 @@ msgstr ""
 #: reports/stats/pool_performance.py:368
 #: templates/uds/admin/tmpl/authenticators.html:31
 #: templates/uds/admin/tmpl/dashboard.html:34
+#: templates/uds/admin/tmpl/group-info.html:5
 #: templates/uds/admin/tmpl/permissions.html:7
 msgid "Users"
 msgstr ""
@@ -147,8 +150,10 @@ msgstr ""
 
 #: REST/methods/images.py:60 REST/methods/images.py:79
 #: REST/methods/services_pool_groups.py:63
+#: templates/uds/admin/tmpl/group-info.html:19
 #: templates/uds/admin/tmpl/new_image.html:10
 #: templates/uds/admin/tmpl/service-info.html:23
+#: templates/uds/admin/tmpl/user-info.html:39
 msgid "Image"
 msgstr ""
 
@@ -210,7 +215,9 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
-#: REST/methods/providers.py:70
+#: REST/methods/providers.py:70 templates/uds/admin/tmpl/group-info.html:20
+#: templates/uds/admin/tmpl/service-info.html:24
+#: templates/uds/admin/tmpl/user-info.html:40
 msgid "User Services"
 msgstr ""
 
@@ -223,13 +230,14 @@ msgstr ""
 msgid "Available reports"
 msgstr ""
 
-#: REST/methods/reports.py:57 REST/methods/users_groups.py:208
-#: REST/methods/users_groups.py:215
+#: REST/methods/reports.py:57 REST/methods/users_groups.py:257
+#: REST/methods/users_groups.py:264
 #: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:81
 #: auths/RegexLdap/Authenticator.py:82 auths/SAML_enterprise/SAML.py:116
 #: auths/SimpleLDAP/Authenticator.py:83
 #: templates/uds/admin/tmpl/pool_add_group.html:17
+#: templates/uds/admin/tmpl/user-info.html:15
 msgid "Group"
 msgstr ""
 
@@ -263,7 +271,9 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: REST/methods/services.py:192 templates/uds/admin/tmpl/service-info.html:5
+#: REST/methods/services.py:192 templates/uds/admin/tmpl/group-info.html:4
+#: templates/uds/admin/tmpl/service-info.html:5
+#: templates/uds/admin/tmpl/user-info.html:5
 msgid "Services Pools"
 msgstr ""
 
@@ -272,11 +282,13 @@ msgstr ""
 msgid "User services"
 msgstr ""
 
-#: REST/methods/services.py:247
+#: REST/methods/services.py:247 REST/methods/users_groups.py:197
+#: REST/methods/users_groups.py:350
 msgid "With errors"
 msgstr ""
 
-#: REST/methods/services.py:247
+#: REST/methods/services.py:247 REST/methods/users_groups.py:197
+#: REST/methods/users_groups.py:350
 msgid "Ok"
 msgstr ""
 
@@ -519,7 +531,7 @@ msgid "Revision"
 msgstr ""
 
 #: REST/methods/user_services.py:120 REST/methods/user_services.py:188
-#: auths/IP/Authenticator.py:60
+#: auths/IP/Authenticator.py:60 templates/uds/admin/tmpl/user-info.html:66
 msgid "IP"
 msgstr ""
 
@@ -531,7 +543,7 @@ msgstr ""
 msgid "Status date"
 msgstr ""
 
-#: REST/methods/user_services.py:124
+#: REST/methods/user_services.py:124 templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr ""
 
@@ -565,8 +577,11 @@ msgstr ""
 
 #: REST/methods/user_services.py:190 REST/methods/user_services.py:227
 #: REST/methods/user_services.py:330 REST/methods/user_services.py:359
+#: templates/uds/admin/tmpl/group-info.html:18
+#: templates/uds/admin/tmpl/group-info.html:45
 #: templates/uds/admin/tmpl/group.html:54
 #: templates/uds/admin/tmpl/service-info.html:22
+#: templates/uds/admin/tmpl/user-info.html:38
 #: templates/uds/admin/tmpl/user.html:45
 msgid "State"
 msgstr ""
@@ -605,16 +620,16 @@ msgstr ""
 msgid "Changelog"
 msgstr ""
 
-#: REST/methods/users_groups.py:88
+#: REST/methods/users_groups.py:106
 #, python-brace-format
 msgid "Users of {0}"
 msgstr ""
 
-#: REST/methods/users_groups.py:90
+#: REST/methods/users_groups.py:108
 msgid "Current users"
 msgstr ""
 
-#: REST/methods/users_groups.py:94
+#: REST/methods/users_groups.py:112
 #: auths/ActiveDirectory_enterprise/Authenticator.py:54
 #: auths/EDirectory_enterprise/Authenticator.py:79
 #: auths/RegexLdap/Authenticator.py:80 auths/SimpleLDAP/Authenticator.py:81
@@ -636,37 +651,37 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: REST/methods/users_groups.py:97 REST/methods/users_groups.py:210
+#: REST/methods/users_groups.py:115 REST/methods/users_groups.py:259
 msgid "state"
 msgstr ""
 
-#: REST/methods/users_groups.py:98 reports/lists/users.py:86
+#: REST/methods/users_groups.py:116 reports/lists/users.py:86
 #: reports/lists/users.py:162
 msgid "Last access"
 msgstr ""
 
-#: REST/methods/users_groups.py:148 REST/methods/users_groups.py:272
+#: REST/methods/users_groups.py:166 REST/methods/users_groups.py:321
 msgid "User already exists (duplicate key error)"
 msgstr ""
 
-#: REST/methods/users_groups.py:202
+#: REST/methods/users_groups.py:251
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr ""
 
-#: REST/methods/users_groups.py:204
+#: REST/methods/users_groups.py:253
 msgid "Current groups"
 msgstr ""
 
-#: REST/methods/users_groups.py:215
+#: REST/methods/users_groups.py:264
 msgid "UDS Group"
 msgstr ""
 
-#: REST/methods/users_groups.py:216
+#: REST/methods/users_groups.py:265
 msgid "Meta group"
 msgstr ""
 
-#: REST/methods/users_groups.py:216
+#: REST/methods/users_groups.py:265
 msgid "UDS Meta Group"
 msgstr ""
 
@@ -1232,9 +1247,11 @@ msgstr ""
 
 #: auths/Sample/SampleAuth.py:113
 #: templates/uds/admin/tmpl/authenticators.html:32
+#: templates/uds/admin/tmpl/group-info.html:7
 #: templates/uds/admin/tmpl/group.html:65
 #: templates/uds/admin/tmpl/permissions.html:22
 #: templates/uds/admin/tmpl/services_pool.html:33
+#: templates/uds/admin/tmpl/user-info.html:4
 #: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
 msgstr ""
@@ -1396,11 +1413,11 @@ msgstr ""
 msgid "Bypass plugin detection"
 msgstr ""
 
-#: core/managers/UserServiceManager.py:217
+#: core/managers/UserServiceManager.py:218
 msgid "Can't remove a non active element"
 msgstr ""
 
-#: core/managers/UserServiceManager.py:230
+#: core/managers/UserServiceManager.py:231
 #, python-brace-format
 msgid "Can't remove nor cancel {0} cause its states don't allow it"
 msgstr ""
@@ -1470,6 +1487,7 @@ msgid "Inactive"
 msgstr ""
 
 #: core/util/State.py:67 core/util/states/common.py:65
+#: templates/uds/admin/tmpl/group-info.html:57
 #: templates/uds/admin/tmpl/user.html:50
 msgid "Blocked"
 msgstr ""
@@ -1714,7 +1732,8 @@ msgstr ""
 msgid "Management"
 msgstr ""
 
-#: models/Permissions.py:82 templates/uds/admin/tmpl/group.html:39
+#: models/Permissions.py:82 templates/uds/admin/tmpl/group-info.html:76
+#: templates/uds/admin/tmpl/group.html:39
 msgid "All"
 msgstr ""
 
@@ -1866,10 +1885,6 @@ msgstr ""
 msgid "Must provide a domain!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:48
-msgid "Must provide domain in FQDN"
-msgstr ""
-
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:50
 msgid "Must provide an account to add machines to domain!"
 msgstr ""
@@ -1973,6 +1988,7 @@ msgid "User ID"
 msgstr ""
 
 #: reports/lists/users.py:85 reports/lists/users.py:162
+#: templates/uds/admin/tmpl/group-info.html:44
 msgid "Real Name"
 msgstr ""
 
@@ -2068,7 +2084,9 @@ msgstr ""
 
 #: reports/stats/pool_performance.py:106 reports/stats/pool_performance.py:368
 #: reports/stats/usage_by_pool.py:98
+#: templates/uds/admin/tmpl/group-info.html:17
 #: templates/uds/admin/tmpl/service-info.html:21
+#: templates/uds/admin/tmpl/user-info.html:37
 msgid "Pool"
 msgstr ""
 
@@ -3359,6 +3377,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/configuration.html:51
 #: templates/uds/admin/tmpl/fld/checkbox.html:6
 #: templates/uds/admin/tmpl/pool_add_action.html:27
+#: templates/uds/admin/tmpl/user-info.html:75
 #: templates/uds/admin/tmpl/user.html:60 templates/uds/admin/tmpl/user.html:72
 msgid "Yes"
 msgstr ""
@@ -3366,6 +3385,7 @@ msgstr ""
 #: templates/uds/admin/tmpl/configuration.html:51
 #: templates/uds/admin/tmpl/fld/checkbox.html:7
 #: templates/uds/admin/tmpl/pool_add_action.html:28
+#: templates/uds/admin/tmpl/user-info.html:75
 #: templates/uds/admin/tmpl/user.html:61 templates/uds/admin/tmpl/user.html:73
 msgid "No"
 msgstr ""
@@ -3427,25 +3447,37 @@ msgstr ""
 msgid "UDS Image Gallery"
 msgstr ""
 
-#: templates/uds/admin/tmpl/group.html:24
-#: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
-msgid "Search"
+#: templates/uds/admin/tmpl/group-info.html:46
+msgid "Last Access"
 msgstr ""
 
-#: templates/uds/admin/tmpl/group.html:34
-msgid "Match mode"
-msgstr ""
-
-#: templates/uds/admin/tmpl/group.html:38
-msgid "Any"
-msgstr ""
-
+#: templates/uds/admin/tmpl/group-info.html:55
 #: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
 msgid "Enabled"
 msgstr ""
 
+#: templates/uds/admin/tmpl/group-info.html:56
 #: templates/uds/admin/tmpl/group.html:58 templates/uds/admin/tmpl/user.html:49
 msgid "Disabled"
+msgstr ""
+
+#: templates/uds/admin/tmpl/group-info.html:71
+#: templates/uds/admin/tmpl/group.html:34
+msgid "Match mode"
+msgstr ""
+
+#: templates/uds/admin/tmpl/group-info.html:74
+#: templates/uds/admin/tmpl/group.html:38
+msgid "Any"
+msgstr ""
+
+#: templates/uds/admin/tmpl/group-info.html:87
+msgid "Comment"
+msgstr ""
+
+#: templates/uds/admin/tmpl/group.html:24
+#: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
+msgid "Search"
 msgstr ""
 
 #: templates/uds/admin/tmpl/new_image.html:3
@@ -3599,6 +3631,22 @@ msgstr ""
 msgid "UDS Services Pool Groups"
 msgstr ""
 
+#: templates/uds/admin/tmpl/user-info.html:6
+msgid "Assigned Services"
+msgstr ""
+
+#: templates/uds/admin/tmpl/user-info.html:63
+msgid "Unique ID"
+msgstr ""
+
+#: templates/uds/admin/tmpl/user-info.html:64
+msgid "Friendly Name"
+msgstr ""
+
+#: templates/uds/admin/tmpl/user-info.html:67
+msgid "Service Pool"
+msgstr ""
+
 #: templates/uds/admin/tmpl/user.html:56
 msgid "Staff member"
 msgstr ""
@@ -3642,37 +3690,31 @@ msgid "Download UDS Plugin for"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:12
-#: templates/uds/semantic/download_client.html:12
 msgid ""
-"In order to be able to execute UDS services, you need to have UDS plugin "
-"installed."
+"In order to be able to execute UDS services, you need to download and "
+"install UDS Plugin."
 msgstr ""
 
 #: templates/uds/html5/download_client.html:14
-#: templates/uds/semantic/download_client.html:14
-msgid "Or download another version"
+msgid "Or download for other operating system"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:15
-#: templates/uds/semantic/download_client.html:15
 msgid ""
-"In case that your platform has been incorrectly detected, you can download "
-"manually the version required for your Operating System"
+"In case that your operating system has not been correctly detected, you can "
+"download manually from"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:19
-#: templates/uds/semantic/download_client.html:19
-msgid "Linux UDS plugin"
+msgid "Download Linux UDS plugin"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:24
-#: templates/uds/semantic/download_client.html:24
-msgid "Windows UDS plugin"
+msgid "Download Windows UDS plugin"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:29
-#: templates/uds/semantic/download_client.html:29
-msgid "Mac OSX (>10.5) UDS plugin"
+msgid "Download Mac OS X (>10.5) UDS plugin"
 msgstr ""
 
 #: templates/uds/html5/download_client.html:35
@@ -3955,6 +3997,34 @@ msgid ""
 "If you found that we missed to mention any component, please let us know"
 msgstr ""
 
+#: templates/uds/semantic/download_client.html:12
+msgid ""
+"In order to be able to execute UDS services, you need to have UDS plugin "
+"installed."
+msgstr ""
+
+#: templates/uds/semantic/download_client.html:14
+msgid "Or download another version"
+msgstr ""
+
+#: templates/uds/semantic/download_client.html:15
+msgid ""
+"In case that your platform has been incorrectly detected, you can download "
+"manually the version required for your Operating System"
+msgstr ""
+
+#: templates/uds/semantic/download_client.html:19
+msgid "Linux UDS plugin"
+msgstr ""
+
+#: templates/uds/semantic/download_client.html:24
+msgid "Windows UDS plugin"
+msgstr ""
+
+#: templates/uds/semantic/download_client.html:29
+msgid "Mac OSX (>10.5) UDS plugin"
+msgstr ""
+
 #: templates/uds/semantic/index.html:23
 msgid "Administrator info"
 msgstr ""
@@ -4167,7 +4237,6 @@ msgstr ""
 
 #: transports/NX/NXTransport.py:77 transports/NX/TSNXTransport.py:86
 #: transports/X2GO/BaseX2GOTransport.py:81
-#: transports/X2GO/BaseX2GOTransport.py:122
 msgid "Desktop session"
 msgstr ""
 
@@ -4225,15 +4294,15 @@ msgid ""
 "assigning it to user. (use HOST:PORT format)"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:92
-#: transports/RDS_enterprise/TRDSTransport.py:85
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:93
+#: transports/RDS_enterprise/TRDSTransport.py:86
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr ""
 
 #: transports/NX/__init__.py:46 transports/X2GO/__init__.py:41
-msgid "NX Protocol"
+msgid "NX/X2GO"
 msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:51
@@ -4315,7 +4384,7 @@ msgid ""
 msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:72
-msgid "Allow Aero"
+msgid "Allow Desk.Comp."
 msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:72
@@ -4324,21 +4393,31 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
-msgid "Multimedia sync"
+msgid "Font Smoothing"
 msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked, fonts smoothing will be allowed (windows clients only)"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+msgid "Multimedia sync"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "Use Alsa"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
@@ -4516,7 +4595,6 @@ msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
 msgstr ""
 
 #: transports/X2GO/BaseX2GOTransport.py:81
-#: transports/X2GO/BaseX2GOTransport.py:122
 msgid "Desktop"
 msgstr ""
 
@@ -4542,6 +4620,14 @@ msgstr ""
 
 #: transports/X2GO/BaseX2GOTransport.py:112
 msgid "Connection speed"
+msgstr ""
+
+#: transports/X2GO/BaseX2GOTransport.py:122
+msgid "Sound"
+msgstr ""
+
+#: transports/X2GO/BaseX2GOTransport.py:122
+msgid "Sound server"
 msgstr ""
 
 #: transports/X2GO/BaseX2GOTransport.py:130
@@ -4650,7 +4736,7 @@ msgstr ""
 msgid "UDS Plugin preferences"
 msgstr ""
 
-#: web/views/index.py:182
+#: web/views/index.py:184
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
