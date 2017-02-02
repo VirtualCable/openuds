@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-10-14'
+__updated__ = '2017-02-02'
 
 
 # a few constants
@@ -130,6 +130,7 @@ class BaseModelHandler(Handler):
                 'name': 'name',
                 'required': True,
                 'label': _('Name'),
+                'length': 128,
                 'tooltip': _('Name of this element'),
                 'order': 0 - 100,
             })
