@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-02-02'
 
 
 def about(request):
@@ -148,6 +148,8 @@ def index(request):
         trans = []
         for t in svr.transports.all().order_by('priority'):
             typeTrans = t.getType()
+            if typeTrans is None:  # This may happen if we "remove" a transport type but we have a transport of that kind on DB
+                continue
             if t.validForIp(request.ip) and typeTrans.supportsOs(os['OS']) and t.validForOs(os['OS']):
                 if typeTrans.ownLink is True:
                     link = reverse('TransportOwnLink', args=('F' + svr.uuid, t.uuid))

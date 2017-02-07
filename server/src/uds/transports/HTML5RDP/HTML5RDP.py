@@ -73,6 +73,9 @@ class HTML5RDPTransport(Transport):
     fixedPassword = gui.PasswordField(label=_('Password'), order=4, tooltip=_('If not empty, this password will be always used as credential'), tab=gui.CREDENTIALS_TAB)
     withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=5, tooltip=_('If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'), tab=gui.CREDENTIALS_TAB)
     fixedDomain = gui.TextField(label=_('Domain'), order=6, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'), tab=gui.CREDENTIALS_TAB)
+    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=20, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.PARAMETERS_TAB)
+    desktopComp = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=22, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
+    smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=23, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
     enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=7, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
     enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=8, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
     serverLayout = gui.ChoiceField(order=9,
@@ -177,6 +180,15 @@ class HTML5RDPTransport(Transport):
 
         if self.enablePrinting.isTrue() is True:
             params['enable-printing'] = 'true'
+
+        if self.wallpaper.isTrue() is True:
+            params['enable-wallpaper'] = 'true'
+
+        if self.desktopComp.isTrue() is True:
+            params['enable-desktop-composition'] = 'true'
+
+        if self.smooth.isTrue() is True:
+            params['enable-font-smoothing'] = 'true'
 
         logger.debug('RDP Params: {0}'.format(params))
 

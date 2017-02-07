@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-20 05:34+0100\n"
-"PO-Revision-Date: 2017-01-20 04:30+0000\n"
+"POT-Creation-Date: 2017-02-02 00:22+0100\n"
+"PO-Revision-Date: 2017-02-01 23:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -96,7 +96,7 @@ msgstr "Novembre"
 msgid "December"
 msgstr "Décembre"
 
-#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:13
+#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:10
 msgid "Test"
 msgstr "Test"
 
@@ -110,113 +110,127 @@ msgstr "Accepter"
 
 #: static/tmp_js/gui-d-authenticators.js:148
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
-#: static/tmp_js/gui-d-services.js:89 static/tmp_js/gui-d-services.js:131
+#: static/tmp_js/gui-d-services.js:86 static/tmp_js/gui-d-services.js:128
 #: static/tmp_js/gui-d-servicespools.js:220
 msgid "Error accessing data"
 msgstr "Erreur d'accès aux données"
 
-#: static/tmp_js/gui-d-authenticators.js:174
+#: static/tmp_js/gui-d-authenticators.js:165
+#: static/tmp_js/gui-d-authenticators.js:392
+#: static/tmp_js/gui-d-services.js:108
+msgid "Information"
+msgstr "Informations"
+
+#: static/tmp_js/gui-d-authenticators.js:193
+msgid "Group information"
+msgstr "Informations du groupe"
+
+#: static/tmp_js/gui-d-authenticators.js:309
 msgid "Edit group"
 msgstr "Modifier groupe"
 
-#: static/tmp_js/gui-d-authenticators.js:196
-#: static/tmp_js/gui-d-authenticators.js:239
+#: static/tmp_js/gui-d-authenticators.js:331
+#: static/tmp_js/gui-d-authenticators.js:374
 msgid "Group saved"
 msgstr "Groupe sauvé"
 
-#: static/tmp_js/gui-d-authenticators.js:217
+#: static/tmp_js/gui-d-authenticators.js:352
 msgid "New meta group"
 msgstr "Nouveau groupe de meta"
 
-#: static/tmp_js/gui-d-authenticators.js:219
+#: static/tmp_js/gui-d-authenticators.js:354
 msgid "New group"
 msgstr "Nouveau groupe"
 
-#: static/tmp_js/gui-d-authenticators.js:231
+#: static/tmp_js/gui-d-authenticators.js:366
 msgid "Search groups"
 msgstr "Groupes de recherche"
 
-#: static/tmp_js/gui-d-authenticators.js:231
+#: static/tmp_js/gui-d-authenticators.js:366
 #: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:85
 msgid "Group"
 msgstr "Groupe"
 
-#: static/tmp_js/gui-d-authenticators.js:231
+#: static/tmp_js/gui-d-authenticators.js:366
 msgid "Groups found"
 msgstr "Groupes trouvés"
 
-#: static/tmp_js/gui-d-authenticators.js:240
+#: static/tmp_js/gui-d-authenticators.js:375
 msgid "Group saving error"
 msgstr "Groupe économie erreur"
 
-#: static/tmp_js/gui-d-authenticators.js:252
+#: static/tmp_js/gui-d-authenticators.js:387
 msgid "Delete group"
 msgstr "Supprimer le groupe"
 
-#: static/tmp_js/gui-d-authenticators.js:252
+#: static/tmp_js/gui-d-authenticators.js:387
 msgid "Group deletion error"
 msgstr "Erreur de suppression de groupe"
 
-#: static/tmp_js/gui-d-authenticators.js:299
+#: static/tmp_js/gui-d-authenticators.js:416
+msgid "User information"
+msgstr "Informations utilisateur"
+
+#: static/tmp_js/gui-d-authenticators.js:565
 msgid "Edit user"
 msgstr "Modifier utilisateur"
 
-#: static/tmp_js/gui-d-authenticators.js:331
-#: static/tmp_js/gui-d-authenticators.js:362
+#: static/tmp_js/gui-d-authenticators.js:597
+#: static/tmp_js/gui-d-authenticators.js:628
 msgid "User saved"
 msgstr "Utilisateur enregistré"
 
-#: static/tmp_js/gui-d-authenticators.js:332
-#: static/tmp_js/gui-d-authenticators.js:363
+#: static/tmp_js/gui-d-authenticators.js:598
+#: static/tmp_js/gui-d-authenticators.js:629
 msgid "User saving error"
 msgstr "Utilisateur sauvegarde erreur"
 
-#: static/tmp_js/gui-d-authenticators.js:343
+#: static/tmp_js/gui-d-authenticators.js:609
 msgid "New user"
 msgstr "Nouvel utilisateur"
 
-#: static/tmp_js/gui-d-authenticators.js:354
+#: static/tmp_js/gui-d-authenticators.js:620
 msgid "Search users"
 msgstr "Utilisateurs de la recherche"
 
-#: static/tmp_js/gui-d-authenticators.js:354
+#: static/tmp_js/gui-d-authenticators.js:620
 #: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:82
 msgid "User"
 msgstr "Utilisateur"
 
-#: static/tmp_js/gui-d-authenticators.js:354
+#: static/tmp_js/gui-d-authenticators.js:620
 msgid "Users found"
 msgstr "Utilisateurs trouvés"
 
-#: static/tmp_js/gui-d-authenticators.js:368
+#: static/tmp_js/gui-d-authenticators.js:634
 msgid "Delete user"
 msgstr "Supprimer l'utilisateur"
 
-#: static/tmp_js/gui-d-authenticators.js:368
+#: static/tmp_js/gui-d-authenticators.js:634
 msgid "User deletion error"
 msgstr "Erreur de suppression d'utilisateur"
 
-#: static/tmp_js/gui-d-authenticators.js:379
+#: static/tmp_js/gui-d-authenticators.js:645
 msgid "New authenticator"
 msgstr "Nouvel authentificateur"
 
-#: static/tmp_js/gui-d-authenticators.js:379
+#: static/tmp_js/gui-d-authenticators.js:645
 msgid "Authenticator creation error"
 msgstr "Erreur de création d'authentificateur"
 
-#: static/tmp_js/gui-d-authenticators.js:380
+#: static/tmp_js/gui-d-authenticators.js:646
 msgid "Edit authenticator"
 msgstr "Modifier l'authentificateur"
 
-#: static/tmp_js/gui-d-authenticators.js:380
+#: static/tmp_js/gui-d-authenticators.js:646
 msgid "Authenticator saving error"
 msgstr "Authentificateur sauver erreur"
 
-#: static/tmp_js/gui-d-authenticators.js:381
+#: static/tmp_js/gui-d-authenticators.js:647
 msgid "Delete authenticator"
 msgstr "Supprimer l'authentificateur"
 
-#: static/tmp_js/gui-d-authenticators.js:381
+#: static/tmp_js/gui-d-authenticators.js:647
 msgid "Authenticator deletion error"
 msgstr "Erreur suppression authentificateur"
 
@@ -505,91 +519,87 @@ msgstr "Erreur de création du rapport"
 msgid "Error obtaining report description"
 msgstr "Pour obtenir description de rapport d'erreur"
 
-#: static/tmp_js/gui-d-services.js:66
+#: static/tmp_js/gui-d-services.js:63
 msgid "In Maintenance"
 msgstr "Dans l'entretien"
 
-#: static/tmp_js/gui-d-services.js:68
+#: static/tmp_js/gui-d-services.js:65
 msgid "Active"
 msgstr "Actif"
 
-#: static/tmp_js/gui-d-services.js:111
-msgid "Information"
-msgstr "Informations"
-
-#: static/tmp_js/gui-d-services.js:128
+#: static/tmp_js/gui-d-services.js:125
 msgid "Service information"
 msgstr "Service d'information"
 
-#: static/tmp_js/gui-d-services.js:186
+#: static/tmp_js/gui-d-services.js:183
 msgid "Edit service"
 msgstr "Modifier le service"
 
-#: static/tmp_js/gui-d-services.js:186
+#: static/tmp_js/gui-d-services.js:183
 msgid "Service creation error"
 msgstr "Erreur de création de service"
 
-#: static/tmp_js/gui-d-services.js:187
+#: static/tmp_js/gui-d-services.js:184
 msgid "New service"
 msgstr "Nouveau service"
 
-#: static/tmp_js/gui-d-services.js:187
+#: static/tmp_js/gui-d-services.js:184
 msgid "Service saving error"
 msgstr "Service enregistrement d'erreur"
 
-#: static/tmp_js/gui-d-services.js:188
+#: static/tmp_js/gui-d-services.js:185
 msgid "Delete service"
 msgstr "Supprimer le service"
 
-#: static/tmp_js/gui-d-services.js:188
+#: static/tmp_js/gui-d-services.js:185
 msgid "Service deletion error"
 msgstr "Erreur de suppression de service"
 
-#: static/tmp_js/gui-d-services.js:204 static/tmp_js/gui-d-services.js:227
+#: static/tmp_js/gui-d-services.js:201 static/tmp_js/gui-d-services.js:224
 msgid "Maintenance"
 msgstr "Entretien"
 
-#: static/tmp_js/gui-d-services.js:213
+#: static/tmp_js/gui-d-services.js:210
 msgid "Maintenance Mode"
 msgstr "Mode maintenance"
 
-#: static/tmp_js/gui-d-services.js:213
+#: static/tmp_js/gui-d-services.js:210
 msgid "Enter Maintenance Mode?"
 msgstr "Entrer en Mode de Maintenance ?"
 
-#: static/tmp_js/gui-d-services.js:213
+#: static/tmp_js/gui-d-services.js:210
 msgid "Exit Maintenance Mode?"
 msgstr "Quitter le Mode de Maintenance ?"
 
-#: static/tmp_js/gui-d-services.js:232
+#: static/tmp_js/gui-d-services.js:229
 msgid "Enter maintenance Mode"
 msgstr "Entrez maintenance Mode"
 
-#: static/tmp_js/gui-d-services.js:235
+#: static/tmp_js/gui-d-services.js:232
 msgid "Exit Maintenance Mode"
 msgstr "Quitter le Mode d'entretien"
 
-#: static/tmp_js/gui-d-services.js:243
+#: static/tmp_js/gui-d-services.js:240
 msgid "New services provider"
 msgstr "Nouveau fournisseur de services"
 
-#: static/tmp_js/gui-d-services.js:243
+#: static/tmp_js/gui-d-services.js:240
 msgid "Services provider creation error"
 msgstr "Erreur de création de fournisseur de services"
 
-#: static/tmp_js/gui-d-services.js:244
+#: static/tmp_js/gui-d-services.js:241
 msgid "Edit services provider"
 msgstr "Modifier le fournisseur de services"
 
-#: static/tmp_js/gui-d-services.js:244
+#: static/tmp_js/gui-d-services.js:241
 msgid "Services Provider saving error"
 msgstr "Fournisseur de services de sauvegarde erreur"
 
-#: static/tmp_js/gui-d-services.js:245
+#: static/tmp_js/gui-d-services.js:242
 msgid "Delete services provider"
 msgstr "Supprimer le fournisseur de services"
 
-#: static/tmp_js/gui-d-services.js:245
+#: static/tmp_js/gui-d-services.js:242
 msgid "Services Provider deletion error"
 msgstr "Erreur de suppression de fournisseur de services"
 
@@ -680,12 +690,12 @@ msgid "Transport removal error"
 msgstr "Erreur de suppression de transport"
 
 #: static/tmp_js/gui-d-servicespools.js:153
-#: static/tmp_js/gui-d-servicespools.js:360
+#: static/tmp_js/gui-d-servicespools.js:361
 msgid "Yes"
 msgstr "Oui"
 
 #: static/tmp_js/gui-d-servicespools.js:155
-#: static/tmp_js/gui-d-servicespools.js:362
+#: static/tmp_js/gui-d-servicespools.js:363
 msgid "No"
 msgstr "Non"
 
@@ -698,7 +708,7 @@ msgid "Remove Cache element"
 msgstr "Remove, élément de Cache"
 
 #: static/tmp_js/gui-d-servicespools.js:264
-#: static/tmp_js/gui-d-servicespools.js:381
+#: static/tmp_js/gui-d-servicespools.js:382
 msgid "Deletion error"
 msgstr "Erreur de suppression"
 
@@ -706,56 +716,56 @@ msgstr "Erreur de suppression"
 msgid "Add group"
 msgstr "Ajouter groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:309
+#: static/tmp_js/gui-d-servicespools.js:310
 msgid "You must provide authenticator and group"
 msgstr "Vous devez fournir authentificateur et groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:328
+#: static/tmp_js/gui-d-servicespools.js:329
 msgid "Remove group"
 msgstr "Supprimer le groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:328
+#: static/tmp_js/gui-d-servicespools.js:329
 msgid "Group removal error"
 msgstr "Erreur de suppression de groupe"
 
-#: static/tmp_js/gui-d-servicespools.js:381
+#: static/tmp_js/gui-d-servicespools.js:382
 msgid "Remove Assigned service"
 msgstr "Supprimer le service affecté"
 
-#: static/tmp_js/gui-d-servicespools.js:429
+#: static/tmp_js/gui-d-servicespools.js:430
 msgid "Restrained"
 msgstr "Retenu"
 
-#: static/tmp_js/gui-d-servicespools.js:438
+#: static/tmp_js/gui-d-servicespools.js:439
 msgid "New service pool"
 msgstr "Nouvelle piscine service"
 
-#: static/tmp_js/gui-d-servicespools.js:438
+#: static/tmp_js/gui-d-servicespools.js:439
 msgid "creation error"
 msgstr "erreur de création"
 
-#: static/tmp_js/gui-d-servicespools.js:448
+#: static/tmp_js/gui-d-servicespools.js:449
 msgid "Publish on creation"
 msgstr "Publier sur création"
 
-#: static/tmp_js/gui-d-servicespools.js:449
+#: static/tmp_js/gui-d-servicespools.js:450
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr "Si sélectionné, lancera la publication immédiatement après création"
 
-#: static/tmp_js/gui-d-servicespools.js:461 static/tmp_js/gui.js:50
+#: static/tmp_js/gui-d-servicespools.js:462 static/tmp_js/gui.js:50
 msgid "Edit"
 msgstr "Edit"
 
-#: static/tmp_js/gui-d-servicespools.js:461
+#: static/tmp_js/gui-d-servicespools.js:462
 msgid "saving error"
 msgstr "erreur de sauvegarde"
 
-#: static/tmp_js/gui-d-servicespools.js:464 static/tmp_js/gui-methods.js:141
+#: static/tmp_js/gui-d-servicespools.js:465 static/tmp_js/gui-methods.js:141
 #: static/tmp_js/gui.js:54
 msgid "Delete"
 msgstr "Supprimer"
 
-#: static/tmp_js/gui-d-servicespools.js:464
+#: static/tmp_js/gui-d-servicespools.js:465
 msgid "deletion error"
 msgstr "erreur de suppression"
 

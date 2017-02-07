@@ -46,7 +46,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-01-09'
+__updated__ = '2017-01-30'
 
 logger = logging.getLogger(__name__)
 

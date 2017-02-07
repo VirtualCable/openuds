@@ -47,7 +47,7 @@ import six
 import os
 import logging
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-01-30'
 
 
 logger = logging.getLogger(__name__)
@@ -119,7 +119,7 @@ class BaseX2GOTransport(Transport):
             {'id': '4', 'text': 'LAN'},
     ], tab=gui.PARAMETERS_TAB)
 
-    soundType = gui.ChoiceField(label=_('Desktop'), order=30, tooltip=_('Desktop session'),
+    soundType = gui.ChoiceField(label=_('Sound'), order=30, tooltip=_('Sound server'),
         defvalue='pulse',
         values=[
             {'id': 'pulse', 'text': 'Pulse'},

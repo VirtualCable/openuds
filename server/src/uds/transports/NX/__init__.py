@@ -43,7 +43,7 @@ Config.section('NX').value('downloadUrl', 'http://sourceforge.net/projects/openn
 Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()
 
 
-UserPrefsManager.manager().registerPrefs('nx', _('NX Protocol'), [CommonPrefs.screenSizePref])
+UserPrefsManager.manager().registerPrefs('nx', _('NX/X2GO'), [CommonPrefs.screenSizePref])
 
 # DownloadsManager.manager().registerDownloadable('udsactor-nx_1.0_all.deb',
 #                                                _('UDS Actor connector for NX <b>(requires nomachine packages)</b>'),
