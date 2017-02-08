@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 import subprocess
 import os
 import urllib
@@ -56,7 +56,7 @@ if executable is None:
 ''', QtGui.QMessageBox.Ok)
 
 
-forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389)
+forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389, {m.tunnelWait})  # @UndefinedVariable
 
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 import win32crypt  # @UnresolvedImport
 import os
 import subprocess
@@ -14,7 +14,7 @@ from uds import tools  # @UnresolvedImport
 
 import six
 
-forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389)
+forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389, {m.tunnelWait})  # @UndefinedVariable
 
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
