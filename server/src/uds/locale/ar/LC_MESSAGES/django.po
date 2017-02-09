@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:00+0100\n"
-"PO-Revision-Date: 2017-02-01 23:22+0000\n"
+"POT-Creation-Date: 2017-02-09 20:02+0100\n"
+"PO-Revision-Date: 2017-02-09 19:00+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -3308,10 +3308,8 @@ msgid "Authenticators"
 msgstr "المصادقون "
 
 #: templates/uds/admin/snippets/navbar.html:24
-#, fuzzy
-#| msgid "OS Manager"
 msgid "Os Managers"
-msgstr "إدارة نظام التشغيل"
+msgstr "مديرو نظام التشغيل"
 
 #: templates/uds/admin/snippets/navbar.html:25
 #: templates/uds/admin/tmpl/connectivity.html:4
@@ -3521,7 +3519,7 @@ msgstr "UDS معرض الصور"
 
 #: templates/uds/admin/tmpl/group-info.html:46
 msgid "Last Access"
-msgstr ""
+msgstr "آخر وصول"
 
 #: templates/uds/admin/tmpl/group-info.html:55
 #: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
@@ -3545,7 +3543,7 @@ msgstr "أي"
 
 #: templates/uds/admin/tmpl/group-info.html:87
 msgid "Comment"
-msgstr ""
+msgstr "التعليق"
 
 #: templates/uds/admin/tmpl/group.html:24
 #: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
@@ -3591,10 +3589,8 @@ msgid "Max file size for uploading is 256Kb"
 msgstr "الحد الأقصى لحجم الملف للتحميل هو 256KB"
 
 #: templates/uds/admin/tmpl/osmanagers.html:4
-#, fuzzy
-#| msgid "OS Manager"
 msgid "OS Managers"
-msgstr "إدارة نظام التشغيل"
+msgstr "مديرو نظام التشغيل"
 
 #: templates/uds/admin/tmpl/permissions.html:14
 msgid "Revoke user permission"
@@ -3712,19 +3708,19 @@ msgstr "تجمع مجموعة الخدمات UDS "
 
 #: templates/uds/admin/tmpl/user-info.html:6
 msgid "Assigned Services"
-msgstr ""
+msgstr "الخدمات المخصصة"
 
 #: templates/uds/admin/tmpl/user-info.html:63
 msgid "Unique ID"
-msgstr ""
+msgstr "معرف فريد"
 
 #: templates/uds/admin/tmpl/user-info.html:64
 msgid "Friendly Name"
-msgstr ""
+msgstr "اسم مألوف"
 
 #: templates/uds/admin/tmpl/user-info.html:67
 msgid "Service Pool"
-msgstr ""
+msgstr "تجمع خدمة"
 
 #: templates/uds/admin/tmpl/user.html:56
 msgid "Staff member"
@@ -3773,28 +3769,32 @@ msgid ""
 "In order to be able to execute UDS services, you need to download and "
 "install UDS Plugin."
 msgstr ""
+"ولكي تكون قادرة على تنفيذ خدمات المكاتب المصغرة، تحتاج إلى تحميل و "
+"قم بتثبيت \"البرنامج المساعد مصغراً\"."
 
 #: templates/uds/html5/download_client.html:14
 msgid "Or download for other operating system"
-msgstr ""
+msgstr "أو التحميل لنظام التشغيل الأخرى"
 
 #: templates/uds/html5/download_client.html:15
 msgid ""
 "In case that your operating system has not been correctly detected, you can "
 "download manually from"
 msgstr ""
+"في حالة أن نظام التشغيل الخاص بك لا تم الكشف عن بشكل صحيح، يمكنك "
+"تحميل يدوياً من"
 
 #: templates/uds/html5/download_client.html:19
 msgid "Download Linux UDS plugin"
-msgstr ""
+msgstr "تحميل البرنامج المساعد مصغراً لينكس"
 
 #: templates/uds/html5/download_client.html:24
 msgid "Download Windows UDS plugin"
-msgstr ""
+msgstr "تحميل البرنامج المساعد \"ويندوز المصغرة\""
 
 #: templates/uds/html5/download_client.html:29
 msgid "Download Mac OS X (>10.5) UDS plugin"
-msgstr ""
+msgstr "تحميل نظام التشغيل Mac OS X (> 10.5) مصغراً البرنامج المساعد"
 
 #: templates/uds/html5/download_client.html:35
 #: templates/uds/semantic/download_client.html:35
@@ -4267,7 +4267,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
 msgid "Allow Desk.Comp."
-msgstr ""
+msgstr "السماح Desk.Comp."
 
 #: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
 msgid "If checked, desktop composition will be allowed"
@@ -4276,12 +4276,12 @@ msgstr "إذا تم، سيكون يسمح تكوين سطح المكتب."
 #: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "Font Smoothing"
-msgstr ""
+msgstr "تجانس الخطوط"
 
 #: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
-msgstr ""
+msgstr "في حالة تحديد تجانس الخطوط سيتم السماح (عملاء windows فقط)"
 
 #: transports/HTML5RDP/HTML5RDP.py:80
 msgid "Enable Audio"
@@ -4439,7 +4439,7 @@ msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
 
 #: transports/NX/__init__.py:46 transports/X2GO/__init__.py:41
 msgid "NX/X2GO"
-msgstr ""
+msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:51
 msgid "PCoIP Transport (Experimental)"
@@ -4552,15 +4552,13 @@ msgstr "النقل RDP مع اتصال النفق"
 
 #: transports/RDP/TRDPTransport.py:74
 #: transports/RDS_enterprise/TRDSTransport.py:72
-#, fuzzy
-#| msgid "Tunnel host check"
 msgid "Tunnel wait time"
-msgstr "اختيار المضيف النفق"
+msgstr "وقت الانتظار النفق"
 
 #: transports/RDP/TRDPTransport.py:74
 #: transports/RDS_enterprise/TRDSTransport.py:72
 msgid "Maximum time to wait before closing the tunnel listener"
-msgstr ""
+msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق النفق المستمع"
 
 #: transports/RDP/__init__.py:40 transports/RDS_enterprise/__init__.py:40
 msgid "Remote Desktop Protocol"
@@ -4751,11 +4749,11 @@ msgstr "سرعة الاتصال"
 
 #: transports/X2GO/BaseX2GOTransport.py:122
 msgid "Sound"
-msgstr ""
+msgstr "الصوت"
 
 #: transports/X2GO/BaseX2GOTransport.py:122
 msgid "Sound server"
-msgstr ""
+msgstr "خادم الصوت"
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Keyboard"

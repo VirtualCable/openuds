@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:00+0100\n"
-"PO-Revision-Date: 2017-02-01 23:19+0000\n"
+"POT-Creation-Date: 2017-02-09 20:02+0100\n"
+"PO-Revision-Date: 2017-02-09 19:00+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -3380,7 +3380,6 @@ msgid "Authenticators"
 msgstr "Autenticadores"
 
 #: templates/uds/admin/snippets/navbar.html:24
-#| msgid "OS Manager"
 msgid "Os Managers"
 msgstr "Os administradores"
 
@@ -3664,7 +3663,6 @@ msgid "Max file size for uploading is 256Kb"
 msgstr "Tamaño máximo del archivo para cargar es de 256Kb"
 
 #: templates/uds/admin/tmpl/osmanagers.html:4
-#| msgid "OS Manager"
 msgid "OS Managers"
 msgstr "OS administradores"
 
@@ -4662,7 +4660,6 @@ msgstr "Transporte RDP con conexión de túnel"
 
 #: transports/RDP/TRDPTransport.py:74
 #: transports/RDS_enterprise/TRDSTransport.py:72
-#| msgid "Tunnel host check"
 msgid "Tunnel wait time"
 msgstr "Tiempo de espera de túnel"
 

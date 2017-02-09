@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:00+0100\n"
+"POT-Creation-Date: 2017-02-09 20:02+0100\n"
 "PO-Revision-Date: 2017-02-01 23:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -123,7 +123,7 @@ msgstr "معلومات"
 
 #: static/tmp_js/gui-d-authenticators.js:193
 msgid "Group information"
-msgstr ""
+msgstr "معلومات المجموعة"
 
 #: static/tmp_js/gui-d-authenticators.js:309
 msgid "Edit group"
@@ -169,7 +169,7 @@ msgstr "خطأ في حذف المجموعة"
 
 #: static/tmp_js/gui-d-authenticators.js:416
 msgid "User information"
-msgstr ""
+msgstr "معلومات المستخدم"
 
 #: static/tmp_js/gui-d-authenticators.js:565
 msgid "Edit user"

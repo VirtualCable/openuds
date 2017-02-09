@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:00+0100\n"
-"PO-Revision-Date: 2017-02-01 23:18+0000\n"
+"POT-Creation-Date: 2017-02-09 20:02+0100\n"
+"PO-Revision-Date: 2017-02-09 19:00+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -3246,10 +3246,8 @@ msgid "Authenticators"
 msgstr ""
 
 #: templates/uds/admin/snippets/navbar.html:24
-#, fuzzy
-#| msgid "OS Manager"
 msgid "Os Managers"
-msgstr "SE kudeatzailea"
+msgstr ""
 
 #: templates/uds/admin/snippets/navbar.html:25
 #: templates/uds/admin/tmpl/connectivity.html:4
@@ -3529,10 +3527,8 @@ msgid "Max file size for uploading is 256Kb"
 msgstr ""
 
 #: templates/uds/admin/tmpl/osmanagers.html:4
-#, fuzzy
-#| msgid "OS Manager"
 msgid "OS Managers"
-msgstr "SE kudeatzailea"
+msgstr ""
 
 #: templates/uds/admin/tmpl/permissions.html:14
 msgid "Revoke user permission"
