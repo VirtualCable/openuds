@@ -40,12 +40,12 @@
                         {% if show_prefs and user.id != rootid %}
                         <li><a href="{% url "uds.web.views.prefs" %}"><span class="fa fa-edit"></span> {% trans 'Preferences' %}</a></li>
                         {% endif %}
-                        <li><a href="{% url 'ClientDownload' %}"><span class="fa fa-download"></span> UDS Plugin</a></li>
+                        <li><a href="{% url 'ClientDownload' %}"><span class="fa fa-download"></span> {% trans 'UDS Plugin' %}</a></li>
                     {% if user.staff_member or user.is_admin %}
                         <li><a href="{% url "uds.web.views.download" idDownload='' %}"><span class="fa fa-download"></span> {% trans "Downloads" %}</a></li>
                         {% ifbrowser ie<8 %}
                         {% else %}
-                        <li><a href="{% url "uds.admin.views.index" %}"><span class="fa fa-dashboard"></span> Dashboard</a></li>
+                        <li><a href="{% url "uds.admin.views.index" %}"><span class="fa fa-dashboard"></span> {% trans "Dashboard" %}</a></li>
                         {% endifbrowser %}
                     {% endif %}
                         <li><a href="{% url 'uds.web.views.logout' %}"><span class="fa fa-power-off text-danger"></span> {% trans 'Logout' %}</a></li>

@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="row">
   <div class="col-xs-12">
-    <h1>Os Managers</h1>
+    <h1>{% endverbatim %}{% trans 'OS Managers' %}{% verbatim %}</h1>
     <!-- <ol class="breadcrumb">
       <li><a class="lnk-dashboard" href="#">Dashboard</a></li>
       <li>OS Managers</li>
@@ -14,9 +14,9 @@
     {% for message in messages %}
     <div class="alert alert-danger alert-dismissable">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-       {{ message }}  
+       {{ message }}
     </div>
-    {% endfor %}       
+    {% endfor %}
   </div>
 </div>
 {% endif %}
@@ -29,7 +29,7 @@
     <div class="col-xs-12">
         <ul class="bottom_tabs nav nav-tabs">
             <li class="active"><a href="#{{ osmanager_info }}" data-toggle="tab">{% endverbatim %}{% trans 'Overview' %}{% verbatim %}</a></li>
-        </ul>    
+        </ul>
         <div class="tab-content">
             <div class="tab-pane fade in active" id="{{ osmanager_info }}">
               <div class="row">
@@ -37,7 +37,7 @@
                   <div class="well">
                   </div>
                 </div>
-              </div>              
+              </div>
             </div>
         </div>
     </div>

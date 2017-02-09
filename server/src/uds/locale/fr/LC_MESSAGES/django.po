@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-02 00:22+0100\n"
+"POT-Creation-Date: 2017-02-09 20:00+0100\n"
 "PO-Revision-Date: 2017-02-01 23:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -61,7 +61,7 @@ msgstr "Nom"
 #: REST/methods/providers.py:67 REST/methods/services.py:190
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:262 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:258 REST/model.py:139
+#: REST/methods/users_groups.py:258 REST/model.py:140
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -69,12 +69,12 @@ msgstr "Commentaires"
 
 #: REST/methods/authenticators.py:61 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:259 REST/model.py:148
+#: REST/methods/user_services.py:259 REST/model.py:149
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Priorité"
 
-#: REST/methods/authenticators.py:62 REST/model.py:159
+#: REST/methods/authenticators.py:62 REST/model.py:160
 msgid "Label"
 msgstr "Étiquette"
 
@@ -712,42 +712,42 @@ msgstr "Tags"
 msgid "Tags for this element"
 msgstr "Tags pour cet élément"
 
-#: REST/model.py:133
+#: REST/model.py:134
 msgid "Name of this element"
 msgstr "Nom de cet élément"
 
-#: REST/model.py:140
+#: REST/model.py:141
 msgid "Comments for this element"
 msgstr "Commentaires pour cet élément"
 
-#: REST/model.py:149
+#: REST/model.py:150
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Sélectionne la priorité de cet élément (priorité supérieure de moyens nombre "
 "inférieur)"
 
-#: REST/model.py:160
+#: REST/model.py:161
 msgid "Label for this element"
 msgstr "Étiquette pour cet élément"
 
-#: REST/model.py:245
+#: REST/model.py:246
 msgid "Invalid Request"
 msgstr "Requête non valide"
 
-#: REST/model.py:252
+#: REST/model.py:253
 msgid "Method not found in {}: {}"
 msgstr "Méthode introuvable {}: {}"
 
-#: REST/model.py:258
+#: REST/model.py:259
 msgid "Item not found"
 msgstr "Élément introuvable"
 
-#: REST/model.py:263 web/errors.py:75
+#: REST/model.py:264 web/errors.py:75
 msgid "Access denied"
 msgstr "Accès refusé"
 
-#: REST/model.py:266
+#: REST/model.py:267
 msgid "Operation not supported"
 msgstr "Opération non prise en charge"
 
@@ -2907,11 +2907,11 @@ msgstr "Délai d'attente en secondes de connexion à OpenStack"
 msgid "OpenStack test connection passed"
 msgstr "OpenStack test de connexion passée"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:610
+#: services/OpenStack/openStack/UDSOpenStackClient.py:609
 msgid "Authentication error"
 msgstr "Erreur d'authentification"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:612
+#: services/OpenStack/openStack/UDSOpenStackClient.py:611
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3390,6 +3390,11 @@ msgstr "Vue d'ensemble"
 msgid "Authenticators"
 msgstr "Authentificateurs"
 
+#: templates/uds/admin/snippets/navbar.html:24
+#| msgid "OS Manager"
+msgid "Os Managers"
+msgstr "Gestionnaires de l’OS"
+
 #: templates/uds/admin/snippets/navbar.html:25
 #: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/connectivity.html:7
@@ -3667,6 +3672,11 @@ msgstr "Image sera redimensionnée à "
 msgid "Max file size for uploading is 256Kb"
 msgstr "Taille max. du fichier de téléchargement est de 256 Ko"
 
+#: templates/uds/admin/tmpl/osmanagers.html:4
+#| msgid "OS Manager"
+msgid "OS Managers"
+msgstr "Gestionnaires de l’OS"
+
 #: templates/uds/admin/tmpl/permissions.html:14
 msgid "Revoke user permission"
 msgstr "Révoquer l'autorisation de l'utilisateur"
@@ -3735,6 +3745,7 @@ msgstr ""
 "plaît, essaient à nouveau"
 
 #: templates/uds/admin/tmpl/request_failed.html:9
+#: templates/uds/html5/snippets/navbar.html:48
 #: templates/uds/semantic/snippets/user-menu.html:13
 msgid "Dashboard"
 msgstr "Tableau de bord"
@@ -4149,6 +4160,11 @@ msgstr "Sur"
 msgid "Preferences"
 msgstr "Préférences"
 
+#: templates/uds/html5/snippets/navbar.html:43
+#: templates/uds/semantic/snippets/user-menu.html:10
+msgid "UDS Plugin"
+msgstr "Plugin de l’UDS"
+
 #: templates/uds/html5/templates/base.html:61
 #: templates/uds/semantic/templates/base.html:33
 msgid ""
@@ -4228,10 +4244,6 @@ msgstr "Le service est actuellement en maintenance et ne sont pas accessibles."
 #: templates/uds/semantic/login.html:110
 msgid "Log In"
 msgstr "Ouvrir une session"
-
-#: templates/uds/semantic/snippets/user-menu.html:10
-msgid "UDS Plugin"
-msgstr "Plugin de l’UDS"
 
 #: templates/uds/semantic/tmpl/items.html:12
 msgid "Session in use"
@@ -4351,11 +4363,43 @@ msgstr ""
 "Si ce n'est vide, ce domaine sera toujours utilisé comme des titres de "
 "compétences (utilisé comme domaine\\User)"
 
-#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
+msgid "Show wallpaper"
+msgstr "Voir la papier peint"
+
+#: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
+msgid ""
+"If checked, the wallpaper and themes will be shown on machine (better user "
+"experience, more bandwidth)"
+msgstr ""
+"Si coché, le fond d'écran et thèmes seront montrés sur machine (meilleur "
+"utilisateur expérience, plus de bande passante)"
+
+#: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
+msgid "Allow Desk.Comp."
+msgstr "Laisser Desk.Comp."
+
+#: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
+msgid "If checked, desktop composition will be allowed"
+msgstr "S'il est activé, la composition du bureau sera autorisée"
+
+#: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Font Smoothing"
+msgstr "Lissage des polices"
+
+#: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked, fonts smoothing will be allowed (windows clients only)"
+msgstr ""
+"Si cochée, lissage de polices seront autorisés (seulement pour les clients "
+"windows)"
+
+#: transports/HTML5RDP/HTML5RDP.py:80
 msgid "Enable Audio"
 msgstr "Activez l'Audio"
 
-#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDP/HTML5RDP.py:80
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
@@ -4363,11 +4407,11 @@ msgstr ""
 "Si coché, le son sera redirigé vers le client (si navigateur client Il prend "
 "en charge)"
 
-#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDP/HTML5RDP.py:81
 msgid "Enable Printing"
 msgstr "Activer l'impression"
 
-#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDP/HTML5RDP.py:81
 msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
@@ -4375,39 +4419,39 @@ msgstr ""
 "S'il est activé, l'impression sera redirigée vers le client (si navigateur "
 "client Il prend en charge)"
 
-#: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDP/HTML5RDP.py:83
 msgid "Layout"
 msgstr "Mise en page"
 
-#: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Keyboards Layout of server"
 msgstr "Disposition des claviers du serveur"
 
-#: transports/HTML5RDP/HTML5RDP.py:84
+#: transports/HTML5RDP/HTML5RDP.py:87
 msgid "English (US) keyboard"
 msgstr "Clavier anglais (États-Unis)"
 
-#: transports/HTML5RDP/HTML5RDP.py:85
+#: transports/HTML5RDP/HTML5RDP.py:88
 msgid "German keyboard (qwertz)"
 msgstr "Clavier allemand (qwertz)"
 
-#: transports/HTML5RDP/HTML5RDP.py:86
+#: transports/HTML5RDP/HTML5RDP.py:89
 msgid "French keyboard (azerty)"
 msgstr "Clavier Français (azerty)"
 
-#: transports/HTML5RDP/HTML5RDP.py:87
+#: transports/HTML5RDP/HTML5RDP.py:90
 msgid "Italian keyboard"
 msgstr "Clavier italien"
 
-#: transports/HTML5RDP/HTML5RDP.py:88
+#: transports/HTML5RDP/HTML5RDP.py:91
 msgid "Swedish keyboard"
 msgstr "Clavier suédois"
 
-#: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDP/HTML5RDP.py:92
 msgid "Failsafe"
 msgstr "Failsafe"
 
-#: transports/HTML5RDP/HTML5RDP.py:101
+#: transports/HTML5RDP/HTML5RDP.py:104
 msgid "The server must be http or https"
 msgstr "Der Server muss http oder Https sein."
 
@@ -4486,14 +4530,12 @@ msgstr ""
 "Adresse IP ou nom d'hôte du serveur tunnel envoyée au périphérique client "
 "(adresse ip « publique ») et port. (utilisez le format de l'hôte : PORT)"
 
-#: transports/NX/TSNXTransport.py:72 transports/RDP/TRDPTransport.py:72
-#: transports/RDS_enterprise/TRDSTransport.py:70
+#: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
 msgid "Tunnel host check"
 msgstr "Tunnel hôte cocher"
 
-#: transports/NX/TSNXTransport.py:72 transports/RDP/TRDPTransport.py:72
-#: transports/RDS_enterprise/TRDSTransport.py:70
+#: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
 msgid ""
 "If not empty, this server will be used to check if service is running before "
@@ -4503,8 +4545,8 @@ msgstr ""
 "s'exécute avant assignant à l'utilisateur. (utilisez le format de l'hôte : "
 "PORT)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:93
-#: transports/RDS_enterprise/TRDSTransport.py:86
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:96
+#: transports/RDS_enterprise/TRDSTransport.py:89
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4579,18 +4621,6 @@ msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Si cochée, ce transport permettra l'utilisation de l'utilisateur ports série"
 
-#: transports/RDP/BaseRDPTransport.py:70
-msgid "Show wallpaper"
-msgstr "Voir la papier peint"
-
-#: transports/RDP/BaseRDPTransport.py:70
-msgid ""
-"If checked, the wallpaper and themes will be shown on machine (better user "
-"experience, more bandwidth)"
-msgstr ""
-"Si coché, le fond d'écran et thèmes seront montrés sur machine (meilleur "
-"utilisateur expérience, plus de bande passante)"
-
 #: transports/RDP/BaseRDPTransport.py:71
 msgid "Multiple monitors"
 msgstr "Plusieurs moniteurs"
@@ -4602,26 +4632,6 @@ msgid ""
 msgstr ""
 "S'il est activé, tous les moniteurs de client seront utilisés pour "
 "l'affichage (fonctionne uniquement sur clients Windows)"
-
-#: transports/RDP/BaseRDPTransport.py:72
-msgid "Allow Desk.Comp."
-msgstr "Laisser Desk.Comp."
-
-#: transports/RDP/BaseRDPTransport.py:72
-msgid "If checked, desktop composition will be allowed"
-msgstr "S'il est activé, la composition du bureau sera autorisée"
-
-#: transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
-msgid "Font Smoothing"
-msgstr "Lissage des polices"
-
-#: transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
-msgid "If checked, fonts smoothing will be allowed (windows clients only)"
-msgstr ""
-"Si cochée, lissage de polices seront autorisés (seulement pour les clients "
-"windows)"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
@@ -4661,6 +4671,17 @@ msgstr "Transport de RDP (tunnel)"
 #: transports/RDP/TRDPTransport.py:66
 msgid "RDP Transport with tunneled connection"
 msgstr "Transport de RDP avec connexion par tunnel"
+
+#: transports/RDP/TRDPTransport.py:74
+#: transports/RDS_enterprise/TRDSTransport.py:72
+#| msgid "Tunnel host check"
+msgid "Tunnel wait time"
+msgstr "Délai d’attente de tunnel"
+
+#: transports/RDP/TRDPTransport.py:74
+#: transports/RDS_enterprise/TRDSTransport.py:72
+msgid "Maximum time to wait before closing the tunnel listener"
+msgstr "Temps maximum d’attente avant la fermeture de l’auditeur de tunnel"
 
 #: transports/RDP/__init__.py:40 transports/RDS_enterprise/__init__.py:40
 msgid "Remote Desktop Protocol"
