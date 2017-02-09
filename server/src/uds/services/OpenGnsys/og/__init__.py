@@ -50,6 +50,8 @@ logger = logging.getLogger(__name__)
 # URLS
 LOGIN_URL = 'login'
 INFO_URL = 'info'
+OUS_URL = 'ous'
+OUS_LABS_URL = 'ous/{ou}'
 
 
 # Decorator
@@ -113,10 +115,8 @@ class OpenGnsysClient(object):
 
         auth = self._post(LOGIN_URL,
             data={
-                'authdata':{
-                    'username': self.username,
-                    'password': self.password
-                }
+                'username': self.username,
+                'password': self.password
             },
             errMsg='Loggin in'
         )
@@ -132,3 +132,10 @@ class OpenGnsysClient(object):
             self.cachedVersion = info['version']
 
         return self.cachedVersion
+
+    @ensureConnected
+    def getOus(self):
+        # Returns an array of elements with:
+        # 'id': OpenGnsys Id
+        # 'name': OU name
+        return self._get(OUS_URL, errMsg='Getting list of ous')
