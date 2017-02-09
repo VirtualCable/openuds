@@ -47,6 +47,10 @@ __updated__ = '2017-02-09'
 
 logger = logging.getLogger(__name__)
 
+# URLS
+LOGIN_URL = 'login'
+INFO_URL = 'info'
+
 
 # Decorator
 def ensureConnected(fnc):
@@ -60,7 +64,12 @@ def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
         if errMsg is None:
             errMsg = 'Invalid response'
-        errMsg = '{}: {}, ({})'.format(errMsg, response.code, response.content)
+
+        try:
+            err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
+        except Exception:
+            err = response.content
+        errMsg = '{}: {}, ({})'.format(errMsg, err, response.code)
         logger.error('{}: {}'.format(errMsg, response.content))
         raise Exception(errMsg)
 
@@ -102,15 +111,24 @@ class OpenGnsysClient(object):
         if self.auth is not None:
             return
 
-        auth = self._post('login', data={'username': self.username, 'password': self.password})
+        auth = self._post(LOGIN_URL,
+            data={
+                'authdata':{
+                    'username': self.username,
+                    'password': self.password
+                }
+            },
+            errMsg='Loggin in'
+        )
 
-        self.auth = auth['Authorization']
+        self.auth = auth['apikey']
 
 
     @property
-    @ensureConnected
     def version(self):
         if self.cachedVersion is None:
             # Retrieve Version & keep it
-            pass
+            info = self._get(INFO_URL, errMsg="Retrieving info")
+            self.cachedVersion = info['version']
 
+        return self.cachedVersion
