@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-02 00:22+0100\n"
-"PO-Revision-Date: 2017-02-01 23:22+0000\n"
+"POT-Creation-Date: 2017-02-09 20:02+0100\n"
+"PO-Revision-Date: 2017-02-09 19:00+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -61,7 +61,7 @@ msgstr "الاسم"
 #: REST/methods/providers.py:67 REST/methods/services.py:190
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:262 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:258 REST/model.py:139
+#: REST/methods/users_groups.py:258 REST/model.py:140
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -69,12 +69,12 @@ msgstr "تعليقات"
 
 #: REST/methods/authenticators.py:61 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:259 REST/model.py:148
+#: REST/methods/user_services.py:259 REST/model.py:149
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "الأولوية"
 
-#: REST/methods/authenticators.py:62 REST/model.py:159
+#: REST/methods/authenticators.py:62 REST/model.py:160
 msgid "Label"
 msgstr "التسمية"
 
@@ -706,40 +706,40 @@ msgstr "العلامات"
 msgid "Tags for this element"
 msgstr "العلامات لهذا العنصر"
 
-#: REST/model.py:133
+#: REST/model.py:134
 msgid "Name of this element"
 msgstr "اسم هذا العنصر"
 
-#: REST/model.py:140
+#: REST/model.py:141
 msgid "Comments for this element"
 msgstr "تعليقات لهذا العنصر"
 
-#: REST/model.py:149
+#: REST/model.py:150
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr "تحديد أولوية هذا العنصر (انخفاض عدد الوسائل أولوية عليا)"
 
-#: REST/model.py:160
+#: REST/model.py:161
 msgid "Label for this element"
 msgstr "تسمية لهذا العنصر"
 
-#: REST/model.py:245
+#: REST/model.py:246
 msgid "Invalid Request"
 msgstr "طلب غير صالح"
 
-#: REST/model.py:252
+#: REST/model.py:253
 msgid "Method not found in {}: {}"
 msgstr "تعذر العثور على الأسلوب في {}: {}"
 
-#: REST/model.py:258
+#: REST/model.py:259
 msgid "Item not found"
 msgstr "تعذر العثور على عنصر"
 
-#: REST/model.py:263 web/errors.py:75
+#: REST/model.py:264 web/errors.py:75
 msgid "Access denied"
 msgstr "تم رفض الوصول"
 
-#: REST/model.py:266
+#: REST/model.py:267
 msgid "Operation not supported"
 msgstr "العملية غير معتمدة"
 
@@ -2835,11 +2835,11 @@ msgstr "المهلة بالثواني لاتصال Openstack"
 msgid "OpenStack test connection passed"
 msgstr "مر اختبار الاتصال Openstack."
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:610
+#: services/OpenStack/openStack/UDSOpenStackClient.py:609
 msgid "Authentication error"
 msgstr "خطأ مصادقة"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:612
+#: services/OpenStack/openStack/UDSOpenStackClient.py:611
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3307,6 +3307,10 @@ msgstr "نظرة عامة"
 msgid "Authenticators"
 msgstr "المصادقون "
 
+#: templates/uds/admin/snippets/navbar.html:24
+msgid "Os Managers"
+msgstr "مديرو نظام التشغيل"
+
 #: templates/uds/admin/snippets/navbar.html:25
 #: templates/uds/admin/tmpl/connectivity.html:4
 #: templates/uds/admin/tmpl/connectivity.html:7
@@ -3515,7 +3519,7 @@ msgstr "UDS معرض الصور"
 
 #: templates/uds/admin/tmpl/group-info.html:46
 msgid "Last Access"
-msgstr ""
+msgstr "آخر وصول"
 
 #: templates/uds/admin/tmpl/group-info.html:55
 #: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
@@ -3539,7 +3543,7 @@ msgstr "أي"
 
 #: templates/uds/admin/tmpl/group-info.html:87
 msgid "Comment"
-msgstr ""
+msgstr "التعليق"
 
 #: templates/uds/admin/tmpl/group.html:24
 #: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
@@ -3583,6 +3587,10 @@ msgstr "سيتم تغيير حجم الصورة ل"
 #: templates/uds/admin/tmpl/new_image.html:25
 msgid "Max file size for uploading is 256Kb"
 msgstr "الحد الأقصى لحجم الملف للتحميل هو 256KB"
+
+#: templates/uds/admin/tmpl/osmanagers.html:4
+msgid "OS Managers"
+msgstr "مديرو نظام التشغيل"
 
 #: templates/uds/admin/tmpl/permissions.html:14
 msgid "Revoke user permission"
@@ -3650,6 +3658,7 @@ msgid "There was an error requesting data from server, please, try again"
 msgstr "كان هناك خطأ طلب البيانات من الخادم، من فضلك، حاول مرة أخرى"
 
 #: templates/uds/admin/tmpl/request_failed.html:9
+#: templates/uds/html5/snippets/navbar.html:48
 #: templates/uds/semantic/snippets/user-menu.html:13
 msgid "Dashboard"
 msgstr "لوحة القيادة"
@@ -3699,19 +3708,19 @@ msgstr "تجمع مجموعة الخدمات UDS "
 
 #: templates/uds/admin/tmpl/user-info.html:6
 msgid "Assigned Services"
-msgstr ""
+msgstr "الخدمات المخصصة"
 
 #: templates/uds/admin/tmpl/user-info.html:63
 msgid "Unique ID"
-msgstr ""
+msgstr "معرف فريد"
 
 #: templates/uds/admin/tmpl/user-info.html:64
 msgid "Friendly Name"
-msgstr ""
+msgstr "اسم مألوف"
 
 #: templates/uds/admin/tmpl/user-info.html:67
 msgid "Service Pool"
-msgstr ""
+msgstr "تجمع خدمة"
 
 #: templates/uds/admin/tmpl/user.html:56
 msgid "Staff member"
@@ -3760,28 +3769,32 @@ msgid ""
 "In order to be able to execute UDS services, you need to download and "
 "install UDS Plugin."
 msgstr ""
+"ولكي تكون قادرة على تنفيذ خدمات المكاتب المصغرة، تحتاج إلى تحميل و "
+"قم بتثبيت \"البرنامج المساعد مصغراً\"."
 
 #: templates/uds/html5/download_client.html:14
 msgid "Or download for other operating system"
-msgstr ""
+msgstr "أو التحميل لنظام التشغيل الأخرى"
 
 #: templates/uds/html5/download_client.html:15
 msgid ""
 "In case that your operating system has not been correctly detected, you can "
 "download manually from"
 msgstr ""
+"في حالة أن نظام التشغيل الخاص بك لا تم الكشف عن بشكل صحيح، يمكنك "
+"تحميل يدوياً من"
 
 #: templates/uds/html5/download_client.html:19
 msgid "Download Linux UDS plugin"
-msgstr ""
+msgstr "تحميل البرنامج المساعد مصغراً لينكس"
 
 #: templates/uds/html5/download_client.html:24
 msgid "Download Windows UDS plugin"
-msgstr ""
+msgstr "تحميل البرنامج المساعد \"ويندوز المصغرة\""
 
 #: templates/uds/html5/download_client.html:29
 msgid "Download Mac OS X (>10.5) UDS plugin"
-msgstr ""
+msgstr "تحميل نظام التشغيل Mac OS X (> 10.5) مصغراً البرنامج المساعد"
 
 #: templates/uds/html5/download_client.html:35
 #: templates/uds/semantic/download_client.html:35
@@ -4047,6 +4060,11 @@ msgstr "حول"
 msgid "Preferences"
 msgstr "التفضيلات"
 
+#: templates/uds/html5/snippets/navbar.html:43
+#: templates/uds/semantic/snippets/user-menu.html:10
+msgid "UDS Plugin"
+msgstr "مساعد UDS "
+
 #: templates/uds/html5/templates/base.html:61
 #: templates/uds/semantic/templates/base.html:33
 msgid ""
@@ -4122,10 +4140,6 @@ msgstr "الخدمة حاليا في صيانة ولا يمكن الوصول إ�
 #: templates/uds/semantic/login.html:110
 msgid "Log In"
 msgstr "تسجيل الدخول"
-
-#: templates/uds/semantic/snippets/user-menu.html:10
-msgid "UDS Plugin"
-msgstr "مساعد UDS "
 
 #: templates/uds/semantic/tmpl/items.html:12
 msgid "Session in use"
@@ -4239,61 +4253,91 @@ msgstr ""
 "إن لم يكن فارغا، وهذا مجال وسوف تستخدم دائما الاعتماد (كما تستخدم المجال \\ "
 "المستخدم)"
 
-#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
+msgid "Show wallpaper"
+msgstr "اظهر خلفية."
+
+#: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
+msgid ""
+"If checked, the wallpaper and themes will be shown on machine (better user "
+"experience, more bandwidth)"
+msgstr ""
+"إذا تم، سيكون ليتم عرض خلفية والمواضيع على الجهاز (تجربة أفضل للمستخدم، "
+"والمزيد من عرض النطاق الترددي)"
+
+#: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
+msgid "Allow Desk.Comp."
+msgstr "السماح Desk.Comp."
+
+#: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
+msgid "If checked, desktop composition will be allowed"
+msgstr "إذا تم، سيكون يسمح تكوين سطح المكتب."
+
+#: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Font Smoothing"
+msgstr "تجانس الخطوط"
+
+#: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked, fonts smoothing will be allowed (windows clients only)"
+msgstr "في حالة تحديد تجانس الخطوط سيتم السماح (عملاء windows فقط)"
+
+#: transports/HTML5RDP/HTML5RDP.py:80
 msgid "Enable Audio"
 msgstr "تمكين الصوت"
 
-#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDP/HTML5RDP.py:80
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
 "إذا تحققت، سيتم إعادة توجيه الصوت إلى العميل (إذا مستعرض العميل يعتمد عليه)"
 
-#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDP/HTML5RDP.py:81
 msgid "Enable Printing"
 msgstr "تمكين الطباعة"
 
-#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDP/HTML5RDP.py:81
 msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
 "إذا تحققت، سيتم إعادة توجيه الطباعة إلى العميل (إذا مستعرض العميل يعتمد عليه)"
 
-#: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDP/HTML5RDP.py:83
 msgid "Layout"
 msgstr "نسق"
 
-#: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Keyboards Layout of server"
 msgstr "لوحات مفاتيح الخادم."
 
-#: transports/HTML5RDP/HTML5RDP.py:84
+#: transports/HTML5RDP/HTML5RDP.py:87
 msgid "English (US) keyboard"
 msgstr "الإنجليزية (الولايات المتحدة) لوحة المفاتيح"
 
-#: transports/HTML5RDP/HTML5RDP.py:85
+#: transports/HTML5RDP/HTML5RDP.py:88
 msgid "German keyboard (qwertz)"
 msgstr "لوحة المفاتيح الألمانية (QWERTZ)"
 
-#: transports/HTML5RDP/HTML5RDP.py:86
+#: transports/HTML5RDP/HTML5RDP.py:89
 msgid "French keyboard (azerty)"
 msgstr "لوحة المفاتيح الفرنسية (AZERTY)"
 
-#: transports/HTML5RDP/HTML5RDP.py:87
+#: transports/HTML5RDP/HTML5RDP.py:90
 msgid "Italian keyboard"
 msgstr "لوحة المفاتيح الإيطالية"
 
-#: transports/HTML5RDP/HTML5RDP.py:88
+#: transports/HTML5RDP/HTML5RDP.py:91
 msgid "Swedish keyboard"
 msgstr "لوحة المفاتيح السويدية"
 
-#: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDP/HTML5RDP.py:92
 msgid "Failsafe"
 msgstr "فشل آمن"
 
-#: transports/HTML5RDP/HTML5RDP.py:101
+#: transports/HTML5RDP/HTML5RDP.py:104
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
@@ -4372,14 +4416,12 @@ msgstr ""
 "IP أو اسم المضيف لخادم نفق إرسالها إلى جهاز العميل (\"العام\" الملكية "
 "الفكرية) والميناء. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:72 transports/RDP/TRDPTransport.py:72
-#: transports/RDS_enterprise/TRDSTransport.py:70
+#: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
 msgid "Tunnel host check"
 msgstr "اختيار المضيف النفق"
 
-#: transports/NX/TSNXTransport.py:72 transports/RDP/TRDPTransport.py:72
-#: transports/RDS_enterprise/TRDSTransport.py:70
+#: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
 msgid ""
 "If not empty, this server will be used to check if service is running before "
@@ -4388,8 +4430,8 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:93
-#: transports/RDS_enterprise/TRDSTransport.py:86
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:96
+#: transports/RDS_enterprise/TRDSTransport.py:89
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4397,7 +4439,7 @@ msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
 
 #: transports/NX/__init__.py:46 transports/X2GO/__init__.py:41
 msgid "NX/X2GO"
-msgstr ""
+msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:51
 msgid "PCoIP Transport (Experimental)"
@@ -4458,18 +4500,6 @@ msgstr "السماح للمنافذ التسلسلية"
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام المنافذ التسلسلية المستخدم"
 
-#: transports/RDP/BaseRDPTransport.py:70
-msgid "Show wallpaper"
-msgstr "اظهر خلفية."
-
-#: transports/RDP/BaseRDPTransport.py:70
-msgid ""
-"If checked, the wallpaper and themes will be shown on machine (better user "
-"experience, more bandwidth)"
-msgstr ""
-"إذا تم، سيكون ليتم عرض خلفية والمواضيع على الجهاز (تجربة أفضل للمستخدم، "
-"والمزيد من عرض النطاق الترددي)"
-
 #: transports/RDP/BaseRDPTransport.py:71
 msgid "Multiple monitors"
 msgstr "أجهزة عرض متعددة"
@@ -4480,24 +4510,6 @@ msgid ""
 "windows clients)"
 msgstr ""
 "إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
-
-#: transports/RDP/BaseRDPTransport.py:72
-msgid "Allow Desk.Comp."
-msgstr ""
-
-#: transports/RDP/BaseRDPTransport.py:72
-msgid "If checked, desktop composition will be allowed"
-msgstr "إذا تم، سيكون يسمح تكوين سطح المكتب."
-
-#: transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
-msgid "Font Smoothing"
-msgstr ""
-
-#: transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
-msgid "If checked, fonts smoothing will be allowed (windows clients only)"
-msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
@@ -4537,6 +4549,16 @@ msgstr "RDP النقل (نفق)"
 #: transports/RDP/TRDPTransport.py:66
 msgid "RDP Transport with tunneled connection"
 msgstr "النقل RDP مع اتصال النفق"
+
+#: transports/RDP/TRDPTransport.py:74
+#: transports/RDS_enterprise/TRDSTransport.py:72
+msgid "Tunnel wait time"
+msgstr "وقت الانتظار النفق"
+
+#: transports/RDP/TRDPTransport.py:74
+#: transports/RDS_enterprise/TRDSTransport.py:72
+msgid "Maximum time to wait before closing the tunnel listener"
+msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق النفق المستمع"
 
 #: transports/RDP/__init__.py:40 transports/RDS_enterprise/__init__.py:40
 msgid "Remote Desktop Protocol"
@@ -4727,11 +4749,11 @@ msgstr "سرعة الاتصال"
 
 #: transports/X2GO/BaseX2GOTransport.py:122
 msgid "Sound"
-msgstr ""
+msgstr "الصوت"
 
 #: transports/X2GO/BaseX2GOTransport.py:122
 msgid "Sound server"
-msgstr ""
+msgstr "خادم الصوت"
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Keyboard"

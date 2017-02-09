@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-01-25'
+__updated__ = '2017-02-05'
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +69,10 @@ class TRDPTransport(BaseRDPTransport):
     group = TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
-    tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
+    # tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
+
+    tunnelWait = gui.NumericField(length=3, label=_('Tunnel wait time'), defvalue='10', minValue=1, maxValue=65536, order=2, tooltip=_('Maximum time to wait before closing the tunnel listener'), required=True, tab=gui.TUNNEL_TAB)
+
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName
@@ -133,6 +136,7 @@ class TRDPTransport(BaseRDPTransport):
             'tunPass': tunpass,
             'tunHost': sshHost,
             'tunPort': sshPort,
+            'tunWait': self.tunnelWait.num(),
             'username': username,
             'password': password,
             'hasCredentials': username != '' and password != '',

@@ -43,7 +43,7 @@ import hashlib
 import six
 
 
-__updated__ = '2016-03-08'
+__updated__ = '2017-02-09'
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,6 @@ VERIFY_SSL = False
 # Helpers
 def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
-        print "False"
         try:
             _x, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
             errMsg = errMsg + ': {message}'.format(**err)
