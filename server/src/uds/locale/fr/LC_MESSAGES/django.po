@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:02+0100\n"
-"PO-Revision-Date: 2017-02-09 19:00+0000\n"
+"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"PO-Revision-Date: 2017-02-13 16:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -4543,8 +4543,8 @@ msgstr ""
 "s'exécute avant assignant à l'utilisateur. (utilisez le format de l'hôte : "
 "PORT)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:96
-#: transports/RDS_enterprise/TRDSTransport.py:89
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:98
+#: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4653,6 +4653,30 @@ msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Si cochée, Linux client essaie d’utiliser ALSA, sinon impulsion sera utilisée"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "Printer string"
+msgstr "Chaîne de l’imprimante"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "If printer is checked, the printer string used with xfreerdp client"
+msgstr ""
+"Si l’imprimante est activée, la chaîne de l’imprimante utilisée avec "
+"xfreerdp client"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "Smartcard string"
+msgstr "Chaîne de carte à puce"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr ""
+"Si la carte à puce est cochée, la chaîne de carte à puce utilisée avec "
+"xfreerdp client"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"

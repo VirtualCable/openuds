@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:02+0100\n"
-"PO-Revision-Date: 2017-02-09 19:00+0000\n"
+"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"PO-Revision-Date: 2017-02-13 16:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -4490,8 +4490,8 @@ msgstr ""
 "ausgeführt wird, bevor Sie verwendet werden Benutzer zuweisen. (verwenden "
 "Sie HOST: PORT-Format)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:93
-#: transports/RDS_enterprise/TRDSTransport.py:86
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:98
+#: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4639,6 +4639,29 @@ msgid ""
 msgstr ""
 "Wenn diese Option aktiviert, Linux-Client versucht, ALSA verwenden, sonst "
 "wird Puls verwendet werden"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "Printer string"
+msgstr "Drucker-string"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "If printer is checked, the printer string used with xfreerdp client"
+msgstr ""
+"Wenn Drucker aktiviert ist, verwendet der Drucker-String mit Xfreerdp client"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "Smartcard string"
+msgstr "Smartcard-Zeichenfolge"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr ""
+"Wenn die Smartcard aktiviert ist, verwendet der Smartcard-String mit "
+"Xfreerdp client"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
