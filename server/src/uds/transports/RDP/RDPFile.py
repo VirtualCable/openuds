@@ -67,6 +67,7 @@ class RDPFile(object):
     smoothFonts = True
     printerString = None
     smartcardString = None
+    enablecredsspsupport = True
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
@@ -242,7 +243,6 @@ class RDPFile(object):
         res += 'disable themes:i:' + disableWallpaper + '\n'
         res += 'bitmapcachepersistenable:i:1' + '\n'
         res += 'authentication level:i:0' + '\n'
-        res += 'enablecredsspsupport:i:1' + '\n'
         res += 'prompt for credentials:i:0' + '\n'
         res += 'negotiate security layer:i:1\n'
         res += 'videoplaybackmode:i:1\n'

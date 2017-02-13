@@ -85,6 +85,7 @@ class RDPTransport(BaseRDPTransport):
         depth = CommonPrefs.getDepth(prefs)
 
         r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
+        r.enablecredsspsupport = ci.get('sso', True)
         r.address = '{}:{}'.format(ip, 3389)
         r.username = username
         r.password = password

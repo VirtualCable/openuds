@@ -42,7 +42,7 @@ from uds.core.util import connection
 import six
 import logging
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-02-13'
 
 logger = logging.getLogger(__name__)
 
@@ -109,8 +109,6 @@ class Transport(Module):
         pass
 
     def testServer(self, userService, ip, port, timeout=4):
-        # TODO: Add Proxy support here
-        # GET URL = proxy.../testService?ip=xxxxx&port=yyy&timeout=zzzz
         proxy = userService.deployed_service.proxy
         if proxy is not None:
             return proxy.doTestServer(ip, port, timeout)

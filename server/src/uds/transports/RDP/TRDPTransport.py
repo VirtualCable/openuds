@@ -115,6 +115,7 @@ class TRDPTransport(BaseRDPTransport):
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
 
         r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
+        r.enablecredsspsupport = ci.get('sso', True)
         r.address = '{address}'
         r.username = username
         r.password = password
