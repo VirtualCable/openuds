@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-02-05'
+__updated__ = '2017-02-13'
 
 
 logger = logging.getLogger(__name__)
@@ -89,6 +89,8 @@ class TRDPTransport(BaseRDPTransport):
     smooth = BaseRDPTransport.smooth
     multimedia = BaseRDPTransport.multimedia
     alsa = BaseRDPTransport.alsa
+    printerString = BaseRDPTransport.printerString
+    smartcardString = BaseRDPTransport.smartcardString
 
     def initialize(self, values):
         if values is not None:
@@ -127,6 +129,8 @@ class TRDPTransport(BaseRDPTransport):
         r.smoothFonts = self.smooth.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
+        r.smartcardString = self.smartcardString.value
+        r.printerString = self.printerString.value
 
         # data
         data = {

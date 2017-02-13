@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2017-01-25'
+__updated__ = '2017-02-13'
 
 
 logger = logging.getLogger(__name__)
@@ -73,6 +73,8 @@ class BaseRDPTransport(Transport):
     smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=23, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
     multimedia = gui.CheckBoxField(label=_('Multimedia sync'), order=25, tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'), tab='Linux Client')
     alsa = gui.CheckBoxField(label=_('Use Alsa'), order=26, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
+    printerString = gui.TextField(label=_('Printer string'), order=27, tooltip=_('If printer is checked, the printer string used with xfreerdp client'), tab='Linux Client')
+    smartcardString = gui.TextField(label=_('Smartcard string'), order=28, tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'), tab='Linux Client')
 
     def isAvailableFor(self, userService, ip):
         '''
