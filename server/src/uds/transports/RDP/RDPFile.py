@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-01-25'
+__updated__ = '2017-02-13'
 
 
 class RDPFile(object):
@@ -65,7 +65,8 @@ class RDPFile(object):
     multimon = False
     desktopComposition = False
     smoothFonts = True
-    enablecredsspsupport = True
+    printerString = None
+    smartcardString = None
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
@@ -94,8 +95,8 @@ class RDPFile(object):
         '''
         params = ['/clipboard', '/t:UDS-Connection', '/cert-ignore', '/sec:rdp']
 
-        if self.redirectSmartcards:
-            params.append('/smartcard')
+        if self.redirectSmartcards and self.smartcardString not in (None, ''):
+            params.append('/smartcard:{}'.format(self.smartcardString))
 
         if self.redirectAudio:
             if self.alsa:
@@ -116,8 +117,8 @@ class RDPFile(object):
         if self.redirectSerials is True:
             params.append('/serial:/dev/ttyS0')
 
-        if self.redirectPrinters:
-            params.append('/printer')
+        if self.redirectPrinters and self.printerString not in (None, ''):
+            params.append('/printer:{}'.format(self.printerString))
 
         if self.compression:
             params.append('/compression:on')

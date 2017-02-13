@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-01-25'
+__updated__ = '2017-02-13'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -71,6 +71,8 @@ class RDPTransport(BaseRDPTransport):
     smooth = BaseRDPTransport.smooth
     multimedia = BaseRDPTransport.multimedia
     alsa = BaseRDPTransport.alsa
+    printerString = BaseRDPTransport.printerString
+    smartcardString = BaseRDPTransport.smartcardString
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
@@ -97,8 +99,8 @@ class RDPTransport(BaseRDPTransport):
         r.smoothFonts = self.smooth.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
-        r.enablecredsspsupport = not ci['sso']  # with SSO, credssspsuport must be disabled
-        logger.debug('SSO: {}'.format(ci['sso']))
+        r.smartcardString = self.smartcardString.value
+        r.printerString = self.printerString.value
 
         # data
         data = {
