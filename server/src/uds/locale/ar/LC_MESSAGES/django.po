@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:02+0100\n"
-"PO-Revision-Date: 2017-02-09 19:00+0000\n"
+"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"PO-Revision-Date: 2017-02-13 16:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -3769,8 +3769,8 @@ msgid ""
 "In order to be able to execute UDS services, you need to download and "
 "install UDS Plugin."
 msgstr ""
-"ولكي تكون قادرة على تنفيذ خدمات المكاتب المصغرة، تحتاج إلى تحميل و "
-"قم بتثبيت \"البرنامج المساعد مصغراً\"."
+"ولكي تكون قادرة على تنفيذ خدمات المكاتب المصغرة، تحتاج إلى تحميل و قم بتثبيت "
+"\"البرنامج المساعد مصغراً\"."
 
 #: templates/uds/html5/download_client.html:14
 msgid "Or download for other operating system"
@@ -3781,8 +3781,8 @@ msgid ""
 "In case that your operating system has not been correctly detected, you can "
 "download manually from"
 msgstr ""
-"في حالة أن نظام التشغيل الخاص بك لا تم الكشف عن بشكل صحيح، يمكنك "
-"تحميل يدوياً من"
+"في حالة أن نظام التشغيل الخاص بك لا تم الكشف عن بشكل صحيح، يمكنك تحميل يدوياً "
+"من"
 
 #: templates/uds/html5/download_client.html:19
 msgid "Download Linux UDS plugin"
@@ -4430,8 +4430,8 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:96
-#: transports/RDS_enterprise/TRDSTransport.py:89
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:98
+#: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4533,6 +4533,28 @@ msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "Printer string"
+msgstr "سلسلة الطابعة"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "If printer is checked, the printer string used with xfreerdp client"
+msgstr "إذا كان يتم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل إكسفريردب"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "Smartcard string"
+msgstr "سلسلة البطاقة الذكية"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr ""
+"إذا كان يتم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع "
+"العميل إكسفريردب"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"

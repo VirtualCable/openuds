@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:02+0100\n"
-"PO-Revision-Date: 2017-02-09 19:00+0000\n"
+"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"PO-Revision-Date: 2017-02-13 16:05+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -4506,8 +4506,8 @@ msgstr ""
 "Se não for vazio, este servidor será usado para verificar se o serviço está "
 "sendo executado antes atribuí-la ao usuário. (usar formato HOST: PORT)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:96
-#: transports/RDS_enterprise/TRDSTransport.py:89
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:98
+#: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4612,6 +4612,30 @@ msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Se marcada, Linux cliente tentará usar ALSA, caso contrário será usado pulso"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "Printer string"
+msgstr "Sequência de impressora"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "If printer is checked, the printer string used with xfreerdp client"
+msgstr ""
+"Se a impressora estiver marcada, a sequência de impressora usada com cliente "
+"xfreerdp"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "Smartcard string"
+msgstr "Sequência de SmartCard"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr ""
+"Se smartcard é verificada, a cadeia de caracteres de smartcard usado com "
+"cliente xfreerdp"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"

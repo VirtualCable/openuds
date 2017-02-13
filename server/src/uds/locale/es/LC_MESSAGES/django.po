@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 20:02+0100\n"
-"PO-Revision-Date: 2017-02-09 19:00+0000\n"
+"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"PO-Revision-Date: 2017-02-13 16:07+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -3381,7 +3381,7 @@ msgstr "Autenticadores"
 
 #: templates/uds/admin/snippets/navbar.html:24
 msgid "Os Managers"
-msgstr "Os administradores"
+msgstr "Os Managers"
 
 #: templates/uds/admin/snippets/navbar.html:25
 #: templates/uds/admin/tmpl/connectivity.html:4
@@ -3664,7 +3664,7 @@ msgstr "Tamaño máximo del archivo para cargar es de 256Kb"
 
 #: templates/uds/admin/tmpl/osmanagers.html:4
 msgid "OS Managers"
-msgstr "OS administradores"
+msgstr "OS Managers"
 
 #: templates/uds/admin/tmpl/permissions.html:14
 msgid "Revoke user permission"
@@ -3798,7 +3798,7 @@ msgstr "Nombre descriptivo"
 
 #: templates/uds/admin/tmpl/user-info.html:67
 msgid "Service Pool"
-msgstr "Servicio piscina"
+msgstr "Service Pool"
 
 #: templates/uds/admin/tmpl/user.html:56
 msgid "Staff member"
@@ -3849,8 +3849,8 @@ msgid ""
 "In order to be able to execute UDS services, you need to download and "
 "install UDS Plugin."
 msgstr ""
-"Con el fin de ser capaces de ejecutar servicios UDS, necesitará descargar y "
-"instalar Plugin de UDS."
+"Para poder ejecutar servicios UDS, necesitará descargar y instalar Plugin de "
+"UDS."
 
 #: templates/uds/html5/download_client.html:14
 msgid "Or download for other operating system"
@@ -3861,8 +3861,8 @@ msgid ""
 "In case that your operating system has not been correctly detected, you can "
 "download manually from"
 msgstr ""
-"En caso de que el sistema operativo no se ha detectado correctamente, se "
-"puede descargar manual de"
+"En caso de que su sistema operativo no sea detectado correctamente, puede "
+"descargarlo manualmende desde"
 
 #: templates/uds/html5/download_client.html:19
 msgid "Download Linux UDS plugin"
@@ -3874,7 +3874,7 @@ msgstr "Descargar plugin Windows UDS"
 
 #: templates/uds/html5/download_client.html:29
 msgid "Download Mac OS X (>10.5) UDS plugin"
-msgstr "Descargar Mac OS X (&gt; 10.5) UDS plugin"
+msgstr "Descargar Plugin Mac OS X (&gt; 10.5) UDS"
 
 #: templates/uds/html5/download_client.html:35
 #: templates/uds/semantic/download_client.html:35
@@ -4361,7 +4361,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
 msgid "Allow Desk.Comp."
-msgstr "Permite Desk.Comp."
+msgstr "Permitir Comp.Escr."
 
 #: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
 msgid "If checked, desktop composition will be allowed"
@@ -4376,7 +4376,7 @@ msgstr "Suavizado de fuentes"
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
-"Si está marcada, suavizado de fuentes permitirá (sólo clientes windows)"
+"Si está marcada, se permitirá el suavizado de fuentes (sólo clientes windows)"
 
 #: transports/HTML5RDP/HTML5RDP.py:80
 msgid "Enable Audio"
@@ -4528,8 +4528,8 @@ msgstr ""
 "se está ejecutando antes de asignárselo al usuario. (utilice el formato "
 "HOST: PUERTO)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:96
-#: transports/RDS_enterprise/TRDSTransport.py:89
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:98
+#: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4641,6 +4641,30 @@ msgid ""
 msgstr ""
 "Si está marcado, el cliente Linux intentará usar ALSA, en caso contrario "
 "usará Pulse"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "Printer string"
+msgstr "Cadena de impresora"
+
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "If printer is checked, the printer string used with xfreerdp client"
+msgstr ""
+"Si la impresora está activada, la cadena de impresora utilizadada con el "
+"cliente xfreerdp"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "Smartcard string"
+msgstr "Cadena de tarjeta inteligente"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
+msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr ""
+"Si la smartcard está activada, la cadena de smartcard utilizada con el "
+"cliente xfreerdp"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
