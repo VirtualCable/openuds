@@ -167,6 +167,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         if ver >= 60 and store.useOldJoinSystem() is False:
             self.oneStepJoin(name, domain, ou, account, password)
         else:
+            logger.info('Using multiple step join because configuration requests to do so')
             self.multiStepJoin(name, domain, ou, account, password)
 
     def preConnect(self, user, protocol):
