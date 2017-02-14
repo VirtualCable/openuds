@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-02-13'
+__updated__ = '2017-02-14'
 
 
 logger = logging.getLogger(__name__)
@@ -137,7 +137,11 @@ class BaseRDPTransport(Transport):
 
     def getConnectionInfo(self, service, user, password):
         dct = self.processUserPassword(service, user, password)
-        dct['sso'] = service.getProperty('sso_available') == '1'
+        # We can use getConectionInfo with a Service Pool
+        try:
+            dct['sso'] = service.getProperty('sso_available') == '1'
+        except:  # If Service Pool
+            pass
         return dct
 
     def getScript(self, script):

@@ -58,7 +58,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-02-14'
 
 
 @csrf_exempt
@@ -226,7 +226,7 @@ def ticketAuth(request, ticketId):
         )
 
     except TicketStore.InvalidTicket:
-        return render(
+        return render(request,
             theme.template('simpleLauncherAlreadyLaunched.html')
         )
     except Authenticator.DoesNotExist:
