@@ -43,6 +43,7 @@ import servicemanager  # @UnresolvedImport, pylint: disable=import-error
 import os
 
 from udsactor import operations
+from udsactor import store
 from udsactor.service import CommonService
 from udsactor.service import initCfg
 
@@ -158,10 +159,12 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         ver = ver[0] * 10 + ver[1]
         logger.debug('Starting joining domain {} with name {} (detected operating version: {})'.format(
             domain, name, ver))
+        # If file c:\compat.bin exists, joind domain in two steps instead one
+
         # Accepts one step joinDomain, also remember XP is no more supported by
         # microsoft, but this also must works with it because will do a "multi
         # step" join
-        if ver >= 60:
+        if ver >= 60 and store.useOldJoinSystem() is False:
             self.oneStepJoin(name, domain, ou, account, password)
         else:
             self.multiStepJoin(name, domain, ou, account, password)
