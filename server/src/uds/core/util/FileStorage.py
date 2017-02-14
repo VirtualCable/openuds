@@ -167,8 +167,11 @@ class FileStorage(Storage):
             return False
 
     def url(self, name):
-        uuid = self._dbFileForReadWrite(name).uuid
-        return urlparse.urljoin(self._base_url, uuid)
+        try:
+            uuid = self._dbFileForReadWrite(name).uuid
+            return urlparse.urljoin(self._base_url, uuid)
+        except DBFile.DoesNotExist:
+            return None
 
 class CompressorFileStorage(FileStorage):
     def __init__(self, *args, **kwargs):
