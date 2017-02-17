@@ -118,7 +118,7 @@ class TaskManager(object):
             thread = DelayedTaskThread()
             thread.start()
             threads.append(thread)
-            time.sleep(.5)
+            time.sleep(0.5)
 
         signal.signal(signal.SIGTERM, TaskManager.sigTerm)
 
