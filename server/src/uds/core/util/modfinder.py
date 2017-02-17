@@ -58,7 +58,7 @@ def loadModulesUrls():
                     patterns += mod.urlpatterns
                 except:
                     logger.exception('Loading patterns')
-        except Exception, e:
+        except Exception as e:
             logger.exception('Processing dispatchers loading')
             pass
 

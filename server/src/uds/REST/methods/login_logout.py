@@ -34,13 +34,13 @@ from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.model import processUuid
-from uds.core.util import OsDetector
 from uds.models import Authenticator
 from uds.core.auths.auth import authenticate
 
 from uds.REST import RequestError
 from uds.REST import Handler
 
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -128,7 +128,7 @@ class Login(Handler):
             raise Exception('Invalid Credentials')
         except Exception as e:
             logger.exception('exception')
-            return {'result': 'error', 'error': unicode(e)}
+            return {'result': 'error', 'error': six.text_type(e)}
 
 
 class Logout(Handler):

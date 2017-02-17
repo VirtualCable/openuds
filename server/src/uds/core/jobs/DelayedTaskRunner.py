@@ -138,7 +138,7 @@ class DelayedTaskRunner(object):
             try:
                 self.__insert(instance, delay, tag)
                 break
-            except Exception, e:
+            except Exception as e:
                 logger.info('Exception inserting a delayed task {0}: {1}'.format(str(e.__class__), e))
                 try:
                     connection.close()

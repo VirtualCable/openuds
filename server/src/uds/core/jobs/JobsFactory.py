@@ -32,6 +32,7 @@
 '''
 from __future__ import unicode_literals
 
+import six
 import datetime
 import logging
 
@@ -70,7 +71,7 @@ class JobsFactory(object):
         try:
             logger.debug('Ensuring that jobs are registered inside database')
             workers.initialize()
-            for name, type_ in self._jobs.iteritems():
+            for name, type_ in six.iteritems(self._jobs):
                 try:
                     type_.setup()
                     # We use database server datetime

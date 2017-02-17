@@ -113,7 +113,7 @@ class Service(Module):
     maxDeployed = UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
 
     # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
-    cacheConstains = None
+    cacheConstrains = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
     # : service can "prepare" some user deployments to allow quicker user access

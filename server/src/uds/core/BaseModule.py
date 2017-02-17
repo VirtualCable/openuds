@@ -108,13 +108,13 @@ class Module(UserInterface, Environmentable, Serializable):
     iconFile = 'base.png'  # This is expected to be png, use this format always
 
     class ValidationException(Exception):
-        '''
+        """
         Exception used to indicate that the params assigned are invalid
-        '''
+        """
 
     @classmethod
     def name(cls):
-        '''
+        """
         Returns "translated" typeName, using ugettext for transforming
         cls.typeName
 
@@ -123,12 +123,12 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             Translated type name (using ugettext)
-        '''
+        """
         return _(cls.typeName)
 
     @classmethod
     def type(cls):
-        '''
+        """
         Returns typeType
 
         Args:
@@ -136,12 +136,12 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             the typeType of this class (or derived class)
-        '''
+        """
         return cls.typeType
 
     @classmethod
     def description(cls):
-        '''
+        """
         This method returns the "translated" description, that is, using
         ugettext for transforming cls.typeDescription.
 
@@ -151,12 +151,12 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Translated description (using ugettext)
 
-        '''
+        """
         return _(cls.typeDescription)
 
     @classmethod
     def icon(cls, inBase64=True):
-        '''
+        """
         Reads the file specified by iconFile at module folder, and returns it content.
         This is used to obtain an icon so administration can represent it.
 
@@ -168,7 +168,7 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Base 64 encoded or raw image, obtained from the specified file at
             'iconFile' class attribute
-        '''
+        """
         logger.debug('Loading icon for class {0} ({1})'.format(cls, cls.iconFile))
         file_ = open(os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile, 'rb')
         data = file_.read()
@@ -180,7 +180,7 @@ class Module(UserInterface, Environmentable, Serializable):
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test if the connection data is ok.
 
         Returns an array, first value indicates "Ok" if true, "Bad" or "Error"
@@ -196,7 +196,7 @@ class Module(UserInterface, Environmentable, Serializable):
             Array of two elements, first is True of False, depending on test
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
-        '''
+        """
         return [True, _("No connection checking method is implemented.")]
 
     def __init__(self, environment, values=None):
@@ -242,22 +242,22 @@ class Module(UserInterface, Environmentable, Serializable):
         return True
 
     def marshal(self):
-        '''
+        """
         By default and if not overriden by descendants, this method, overridden
         from Serializable, and returns the serialization of
         form field stored values.
-        '''
+        """
         return self.serializeForm()
 
     def unmarshal(self, str_):
-        '''
+        """
         By default and if not overriden by descendants, this method recovers
         data serialized using serializeForm
-        '''
+        """
         self.unserializeForm(str_)
 
     def check(self):
-        '''
+        """
         Method that will provide the "check" capability for the module.
 
         The return value that this method must provide is simply an string,
@@ -265,11 +265,11 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             Internacionalized (using ugettext) string of result of the check.
-        '''
+        """
         return _("No check method provided.")
 
     def destroy(self):
-        '''
+        """
         Invoked before deleting an module from database.
 
         Do whatever needed here, as deleting associated data if needed
@@ -277,5 +277,5 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             Nothing
-        '''
+        """
         pass

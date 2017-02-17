@@ -39,6 +39,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core import auths
 from uds.core.auths.Exceptions import AuthenticatorException
 
+import six
 import ldap
 import ldap.filter
 import re
@@ -234,7 +235,7 @@ class RegexLdap(auths.Authenticator):
                     password = self._password
 
                 l.simple_bind_s(who=username, cred=password)
-            except ldap.LDAPError, e:
+            except ldap.LDAPError as e:
                 str_ = _('Ldap connection error: ')
                 if type(e.message) == dict:
                     str_ += 'info' in e.message and e.message['info'] + ',' or ''
@@ -258,7 +259,7 @@ class RegexLdap(auths.Authenticator):
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
                                    filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
             usr = dict((k, '') for k in attrlist)
-            dct = {k.lower(): v for k, v in res[1].iteritems()}
+            dct = {k.lower(): v for k, v in six.iteritems(res[1])}
             usr.update(dct)
             usr.update({'dn': res[0], '_id': username})
             logger.debug('Usr: {0}'.format(usr))
@@ -363,7 +364,7 @@ class RegexLdap(auths.Authenticator):
             res = []
             for r in con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=%s*))' % (self._userClass, self._userIdAttr, pattern), sizelimit=LDAP_RESULT_LIMIT):
                 if r[0] is not None:  # Must have a dn, we do not accept references to other
-                    dct = {k.lower(): v for k, v in r[1].iteritems()}
+                    dct = {k.lower(): v for k, v in six.iteritems(r[1])}
                     logger.debug('R: {0}'.format(dct))
                     usrId = dct.get(self._userIdAttr.lower(), '')
                     usrId = type(usrId) == list and usrId[0] or usrId
@@ -382,14 +383,14 @@ class RegexLdap(auths.Authenticator):
         try:
             auth = RegexLdap(None, env, data)
             return auth.testConnection()
-        except Exception, e:
+        except Exception as e:
             logger.error("Exception found testing Simple LDAP auth {0}: {1}".format(e.__class__, e))
             return [False, "Error testing connection"]
 
     def testConnection(self):
         try:
             con = self.__connection()
-        except Exception, e:
+        except Exception as e:
             return [False, str(e)]
 
         try:
@@ -401,7 +402,7 @@ class RegexLdap(auths.Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._userClass, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user class seems to be incorrect (no user found by that class)')]
-        except Exception, e:
+        except Exception as e:
             # If found 1 or more, all right
             pass
 

@@ -50,6 +50,7 @@ from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from .user_services import AssignedService
 
 from uds.REST.model import DetailHandler
+import six
 
 import logging
 
@@ -165,9 +166,9 @@ class Users(DetailHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
-            raise RequestError(unicode(e))
+            raise RequestError(six.text_type(e))
         except ValidationError as e:
-            raise RequestError(unicode(e.message))
+            raise RequestError(six.text_type(e.message))
         except Exception:
             logger.exception('Saving user')
             self.invalidRequestException()
@@ -320,7 +321,7 @@ class Groups(DetailHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)'))
         except AuthenticatorException as e:
-            raise RequestError(unicode(e))
+            raise RequestError(six.text_type(e))
         except Exception:
             logger.exception('Saving group')
             self.invalidRequestException()

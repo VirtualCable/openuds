@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from uds.core.util.Config import Config as cfgConfig
 
 from uds.REST import Handler, AccessDenied
+import six
 
 import logging
 
@@ -67,7 +68,7 @@ class Config(Handler):
         return res
 
     def put(self):
-        for section, secDict in self._params.iteritems():
-            for key, vals in secDict.iteritems():
+        for section, secDict in six.iteritems(self._params):
+            for key, vals in six.iteritems(secDict):
                 cfgConfig.update(section, key, vals['value'])
         return 'done'

@@ -36,6 +36,7 @@ from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from uds.core.ui.UserInterface import gui
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +88,7 @@ class UserPrefsManager(object):
         for up in user.preferences.all().order_by('module'):
             data[self.__nameFor(up.module, up.name)] = up.value
         res = ''
-        for mod, v in sorted(self._prefs.iteritems()):
+        for mod, v in sorted(six.iteritems(self._prefs)):
             form = forms.Form()
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
@@ -102,7 +103,7 @@ class UserPrefsManager(object):
             for up in user.preferences.all():
                 data[self.__nameFor(up.module, up.name)] = up.value
         res = []
-        for mod, v in self._prefs.iteritems():
+        for mod, v in six.iteritems(self._prefs):
             grp = []
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())
@@ -118,7 +119,7 @@ class UserPrefsManager(object):
         # First, read fields form every single "section"
         logger.debug('Processing {0}'.format(self._prefs))
         prefs = []
-        for mod, v in self._prefs.iteritems():
+        for mod, v in six.iteritems(self._prefs):
             logger.debug(mod)
             form = forms.Form(data)
             for p in v['prefs']:
@@ -144,7 +145,7 @@ class UserPrefsManager(object):
         '''
         logger.debug('Processing data {0}'.format(data))
         prefs = []
-        for mod, v in self._prefs.iteritems():
+        for mod, v in six.iteritems(self._prefs):
             logger.debug(mod)
             for p in v['prefs']:
                 name = self.__nameFor(mod, p.getName())

@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 from django.db import transaction
 import uds.models.Cache
-from uds.models import getSqlDatetime
+from uds.models.Util import getSqlDatetime
 from datetime import datetime, timedelta
 import hashlib
 import logging

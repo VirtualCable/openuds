@@ -34,7 +34,6 @@ from __future__ import unicode_literals
 import datetime
 import cairo
 import pycha.line
-import StringIO
 import time
 import six
 
@@ -116,7 +115,7 @@ def make(obj, counterType, **kwargs):
     chart.addDataset(dataset)
     chart.render()
 
-    output = StringIO.StringIO()
+    output = six.StringIO()
 
     surface.write_to_png(output)
 

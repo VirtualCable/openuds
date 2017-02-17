@@ -40,8 +40,8 @@ from uds.core.ui.UserInterface import gui
 from uds.core.reports.tools import UDSImage, UDSGeraldoReport
 from uds.core.util.stats import events
 
-import StringIO
 import csv
+import six
 
 import cairo
 import pycha.line
@@ -335,7 +335,7 @@ class PoolPerformanceReport(StatsReport):
 
         logger.debug(queryset)
 
-        output = StringIO.StringIO()
+        output = six.StringIO()
 
         try:
             report = AccessReport(queryset=queryset)

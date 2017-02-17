@@ -36,6 +36,7 @@ from functools import wraps
 import base64
 import random
 import string
+import six
 
 import logging
 
@@ -69,7 +70,7 @@ def transformId(view_func):
 def scrambleId(request, id_):
     if request.session.get(SCRAMBLE_SES) is None:
         request.session[SCRAMBLE_SES] = ''.join(random.choice(string.letters) for _ in range(SCRAMBLE_LEN))
-    return base64.b64encode(unicode(id_) + request.session.get(SCRAMBLE_SES)).encode('hex')
+    return base64.b64encode(six.text_type(id_) + request.session.get(SCRAMBLE_SES)).encode('hex')
 
 
 def unscrambleId(request, id_):

@@ -39,7 +39,6 @@ from uds.core.ui.UserInterface import gui
 from uds.core.reports.tools import UDSImage, UDSGeraldoReport
 from uds.core.util.stats import events
 
-import StringIO
 import csv
 
 import cairo
@@ -56,6 +55,7 @@ from reportlab.lib.enums import TA_RIGHT, TA_CENTER
 from PIL import Image as PILImage
 
 import datetime
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -333,7 +333,7 @@ class StatsReportLogin(StatsReport):
 
         img3 = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
 
-        output = StringIO.StringIO()
+        output = six.StringIO()
 
         queryset = [
             {'image': img, 'image2': img2, 'image3': img3, 'data': reportData}

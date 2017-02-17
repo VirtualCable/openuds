@@ -29,7 +29,7 @@
 
 from __future__ import unicode_literals
 
-import Queue
+import six
 from threading import Thread
 
 import logging
@@ -53,7 +53,7 @@ class Worker(Thread):
         while self._stop is False:
             try:
                 func, args, kargs = self._tasks.get(block=True, timeout=1)
-            except Queue.Empty:
+            except six.moves.queue.Empty:
                 continue
 
             try:
@@ -66,7 +66,7 @@ class Worker(Thread):
 
 class ThreadPool:
     def __init__(self, num_threads, queueSize=DEFAULT_QUEUE_SIZE):
-        self._tasks = Queue.Queue(queueSize)
+        self._tasks = six.moves.queue.Queue(queueSize)
         self._numThreads = num_threads
         self._threads = []
 

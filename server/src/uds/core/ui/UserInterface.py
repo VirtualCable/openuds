@@ -107,7 +107,7 @@ class gui(object):
     @staticmethod
     def convertToList(vals):
         if vals is not None:
-            return [unicode(v) for v in vals]
+            return [six.text_type(v) for v in vals]
         return []
 
     @staticmethod
@@ -800,11 +800,11 @@ class UserInterface(object):
         # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
         # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
         self._gui = copy.deepcopy(self._gui)  # Ensure "gui" is our own instance, deep copied from base
-        for key, val in self._gui.iteritems():  # And refresh references to them
+        for key, val in six.iteritems(self._gui):  # And refresh references to them
             setattr(self, key, val)
 
         if values is not None:
-            for k, v in self._gui.iteritems():
+            for k, v in six.iteritems(self._gui):
                 if k in values:
                     v.value = values[k]
                 else:
@@ -859,7 +859,7 @@ class UserInterface(object):
 
         '''
         dic = {}
-        for k, v in self._gui.iteritems():
+        for k, v in six.iteritems(self._gui):
             if v.isType(gui.InputField.EDITABLE_LIST):
                 dic[k] = gui.convertToList(v.value)
             elif v.isType(gui.InputField.MULTI_CHOICE_TYPE):
@@ -889,7 +889,7 @@ class UserInterface(object):
         # logger.debug('Caller is : {}'.format(inspect.stack()))
 
         arr = []
-        for k, v in self._gui.iteritems():
+        for k, v in six.iteritems(self._gui):
             logger.debug('serializing Key: {0}/{1}'.format(k, v.value))
             if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
                 # logger.debug('Field {0} is not serializable'.format(k))
@@ -922,7 +922,7 @@ class UserInterface(object):
 
         try:
             # Set all values to defaults ones
-            for k in self._gui.iterkeys():
+            for k in six.iterkeys(self._gui):
                 if self._gui[k].isType(gui.InputField.HIDDEN_TYPE) and self._gui[k].isSerializable() is False:
                     # logger.debug('Field {0} is not unserializable'.format(k))
                     continue
@@ -967,7 +967,7 @@ class UserInterface(object):
 
         res = []
         # pylint: disable=protected-access,maybe-no-member
-        for key, val in theGui._gui.iteritems():
+        for key, val in six.iteritems(theGui._gui):
             logger.debug('{0} ### {1}'.format(key, val))
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
 

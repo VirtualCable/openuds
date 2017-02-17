@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 import re
+import six
 import logging
 from .tools import DictAsObj
 
@@ -109,7 +110,7 @@ def getOsFromUA(ua):
 
     match = None
 
-    for ruleKey, ruleValue in browserRules.iteritems():
+    for ruleKey, ruleValue in six.iteritems(browserRules):
         must, mustNot = ruleValue
 
         for mustRe in browsersREs[must]:

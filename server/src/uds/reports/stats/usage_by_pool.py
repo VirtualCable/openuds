@@ -39,13 +39,12 @@ from uds.core.reports.tools import UDSGeraldoReport
 from uds.core.util.stats import events
 
 
-import StringIO
+import six
 import csv
 
 
 from .base import StatsReport
 
-from uds.core.util import tools
 from uds.models import ServicePool
 from geraldo.generators.pdf import PDFGenerator
 from geraldo import ReportBand, ObjectValue, Label
@@ -161,7 +160,7 @@ class UsageByPool(StatsReport):
     def generate(self):
         items, poolName = self.getData()
 
-        output = StringIO.StringIO()
+        output = six.StringIO()
 
         report = UsersReport(queryset=items)
         report.title = _('Users usage list for {}').format(poolName)

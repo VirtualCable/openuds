@@ -40,6 +40,7 @@ from uds.core.ui.UserInterface import gui
 
 from uds.REST.model import ModelHandler, SaveException
 
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -70,7 +71,7 @@ class Networks(ModelHandler):
             fields['net_start'] = nr[0]
             fields['net_end'] = nr[1]
         except Exception as e:
-            raise SaveException(ugettext('Invalid network: ') + unicode(e))
+            raise SaveException(ugettext('Invalid network: ') + six.text_type(e))
         logger.debug('Processed {0}'.format(fields))
 
     def getGui(self, type_):

@@ -40,7 +40,7 @@ import re
 import logging
 import six
 
-import xmlrpclib
+import six
 from uds.core.util import xml2dict
 
 __updated__ = '2016-11-10'
@@ -111,7 +111,7 @@ class OpenNebulaClient(object):
         if self.connection is not None:
             return
 
-        self.connection = xmlrpclib.ServerProxy(self.endpoint)
+        self.connection = six.moves.xmlrpc_client.ServerProxy(self.endpoint)
 
     @ensureConnected
     def enumStorage(self, storageType=0):

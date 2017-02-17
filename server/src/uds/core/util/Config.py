@@ -35,6 +35,7 @@ from django.conf import settings
 from django.apps import apps
 import uds.models.Config
 from uds.core.managers.CryptoManager import CryptoManager
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -340,7 +341,7 @@ class GlobalConfig(object):
             try:
                 # Tries to initialize database data for global config so it is stored asap and get cached for use
                 GlobalConfig.initDone = True
-                for v in GlobalConfig.__dict__.itervalues():
+                for v in six.itervalues(GlobalConfig.__dict__):
                     if type(v) is Config._Value:
                         v.get()
 

@@ -48,6 +48,7 @@ from django.db import IntegrityError
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -67,7 +68,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'icon': info.icon().replace('\n', ''),
             'needs_publication': info.publicationType is not None,
             'max_deployed': info.maxDeployed,
-            'uses_cache': info.usesCache and info.cacheConstains == None,
+            'uses_cache': info.usesCache and info.cacheConstrains == None,
             'uses_cache_l2': info.usesCache_L2,
             'cache_tooltip': _(info.cacheTooltip),
             'cache_tooltip_l2': _(info.cacheTooltip_L2),
@@ -156,7 +157,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except coreService.ValidationException as e:
             if item is None:  # Only remove partially saved element if creating new (if editing, ignore this)
                 self._deleteIncompleteService(service)
-            raise RequestError(_('Input error: {0}'.format(unicode(e))))
+            raise RequestError(_('Input error: {0}'.format(six.text_type(e))))
         except Exception as e:
             self._deleteIncompleteService(service)
             logger.exception('Saving Service')
@@ -222,7 +223,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             return self.addDefaultFields(service.guiDescription(service), ['name', 'comments', 'tags'])
         except Exception as e:
             logger.exception('getGui')
-            raise ResponseError(unicode(e))
+            raise ResponseError(six.text_type(e))
 
     def getLogs(self, parent, item):
         try:

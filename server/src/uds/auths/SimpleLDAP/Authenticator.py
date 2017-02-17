@@ -167,7 +167,7 @@ class SimpleLDAPAuthenticator(Authenticator):
                     password = self._password
 
                 l.simple_bind_s(who=username, cred=password)
-            except ldap.LDAPError, e:
+            except ldap.LDAPError as e:
                 str_ = _('Ldap connection error: ')
                 if type(e.message) == dict:
                     str_ += 'info' in e.message and e.message['info'] + ',' or ''
@@ -361,14 +361,14 @@ class SimpleLDAPAuthenticator(Authenticator):
         try:
             auth = SimpleLDAPAuthenticator(None, env, data)
             return auth.testConnection()
-        except Exception, e:
+        except Exception as e:
             logger.error("Exception found testing Simple LDAP auth {0}: {1}".format(e.__class__, e))
             return [False, "Error testing connection"]
 
     def testConnection(self):
         try:
             con = self.__connection()
-        except Exception, e:
+        except Exception as e:
             return [False, str(e)]
 
         try:
@@ -380,7 +380,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._userClass, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user class seems to be incorrect (no user found by that class)')]
-        except Exception, e:
+        except Exception as e:
             # If found 1 or more, all right
             pass
 
@@ -388,7 +388,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._groupClass, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap group class seems to be incorrect (no group found by that class)')]
-        except Exception, e:
+        except Exception as e:
             # If found 1 or more, all right
             pass
 
@@ -396,7 +396,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(%s=*)' % self._userIdAttr, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user id attribute seems to be incorrect (no user found by that attribute)')]
-        except Exception, e:
+        except Exception as e:
             # If found 1 or more, all right
             pass
 
@@ -404,7 +404,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(%s=*)' % self._groupIdAttr, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap group id attribute seems to be incorrect (no group found by that attribute)')]
-        except Exception, e:
+        except Exception as e:
             # If found 1 or more, all right
             pass
 
@@ -413,7 +413,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._userClass, self._userIdAttr), sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)')]
-        except Exception, e:
+        except Exception as e:
             # If found 1 or more, all right
             pass
 
@@ -429,7 +429,7 @@ class SimpleLDAPAuthenticator(Authenticator):
                     break
             if ok is False:
                 raise Exception(_('Can\'t locate any group with the membership attribute specified'))
-        except Exception, e:
-            return [False, str(e)]
+        except Exception as e:
+            return [False, six.text_type(e)]
 
         return [True, _("Connection params seem correct, test was succesfully executed")]

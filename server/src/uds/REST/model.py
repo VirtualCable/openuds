@@ -44,7 +44,7 @@ from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.models import Tag
 
-
+import six
 import fnmatch
 import re
 import itertools
@@ -199,7 +199,7 @@ class BaseModelHandler(Handler):
         Returns a dict containing the table fields description
         '''
         return {
-            'title': unicode(title),
+            'title': six.text_type(title),
             'fields': fields,
             'row-style': row_style
         }
@@ -216,7 +216,7 @@ class BaseModelHandler(Handler):
                 args[key] = self._params[key]
                 del self._params[key]
         except KeyError as e:
-            raise RequestError('needed parameter not found in data {0}'.format(unicode(e)))
+            raise RequestError('needed parameter not found in data {0}'.format(six.text_type(e)))
 
         return args
 
@@ -230,7 +230,7 @@ class BaseModelHandler(Handler):
         if hasattr(item, 'getInstance'):
             i = item.getInstance()
             i.initGui()  # Defaults & stuff
-            for key, value in i.valuesDict().iteritems():
+            for key, value in six.iteritems(i.valuesDict()):
                 if type(value) in (unicode, str):
                     value = {"true": True, "false": False}.get(value, value)  # Translate "true" & "false" to True & False (booleans)
                 logger.debug('{0} = {1}'.format(key, value))
@@ -577,7 +577,7 @@ class ModelHandler(BaseModelHandler):
         Must be overriden by descendants.
         Expects the return of an item as a dictionary
         '''
-        pass
+        return None
 
     def item_as_dict_overview(self, item):
         '''
@@ -620,6 +620,7 @@ class ModelHandler(BaseModelHandler):
     # gui related
     def getGui(self, type_):
         self.invalidRequestException()
+        return None # Will never reach this because previous raises an exception
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception
@@ -880,7 +881,7 @@ class ModelHandler(BaseModelHandler):
         except IntegrityError:  # Duplicate key probably
             raise RequestError('Element already exists (duplicate key error)')
         except SaveException as e:
-            raise RequestError(unicode(e))
+            raise RequestError(six.text_type(e))
         except (RequestError, ResponseError):
             raise
         except Exception:

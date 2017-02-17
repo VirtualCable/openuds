@@ -48,6 +48,7 @@ from .services_pool_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
 from uds.core.managers import userServiceManager
 
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -288,8 +289,8 @@ class ServicesPools(ModelHandler):
                 else:
                     del fields['osmanager_id']
 
-                if serviceType.cacheConstains is not None:
-                    for k, v in serviceType.cacheConstains.iteritems():
+                if serviceType.cacheConstrains is not None:
+                    for k, v in six.iteritems(serviceType.cacheConstrains):
                         fields[k] = v
 
                 if serviceType.maxDeployed != -1:

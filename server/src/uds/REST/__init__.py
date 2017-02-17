@@ -140,7 +140,7 @@ class Dispatcher(View):
                 start = time.time()
                 response = processor.getResponse(response)
             logger.debug('Execution time for encoding: {0}'.format(time.time() - start))
-            for k, val in handler.headers().iteritems():
+            for k, val in six.iteritems(handler.headers()):
                 response[k] = val
             return response
         except RequestError as e:

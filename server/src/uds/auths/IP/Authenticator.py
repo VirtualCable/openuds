@@ -40,6 +40,7 @@ from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.util import net
 from uds.core.util.request import getRequest
 from uds.core.ui.UserInterface import gui
+import six
 
 import logging
 
@@ -80,7 +81,7 @@ class IPAuth(Authenticator):
                 if net.ipInNetwork(ip, g):
                     groupsManager.validate(g)
             except Exception as e:
-                logger.error('Invalid network for IP auth: {0}'.format(unicode(e)))
+                logger.error('Invalid network for IP auth: {0}'.format(six.text_type(e)))
 
     def authenticate(self, username, credentials, groupsManager):
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering

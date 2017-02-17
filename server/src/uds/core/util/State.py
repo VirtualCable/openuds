@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _, ugettext_lazy
+import six
 
 
 # States for different objects. Not all objects supports all States
@@ -158,6 +159,6 @@ class State(object):
         Returns a dictionary with current active locale translation of States to States String
         '''
         res = {}
-        for k, v in State.string.iteritems():
+        for k, v in six.iteritems(State.string):
             res[k] = ugettext_lazy(v)
         return res

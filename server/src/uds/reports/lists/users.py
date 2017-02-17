@@ -37,7 +37,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core.reports import stock
 from uds.models import Authenticator
 
-import StringIO
+import six
 import csv
 
 from .base import ListReport
@@ -131,7 +131,7 @@ class ListReportUsers(ListReport):
         auth = Authenticator.objects.get(uuid=self.authenticator.value)
         users = auth.users.order_by('name')
 
-        output = StringIO.StringIO()
+        output = six.StringIO()
 
         report = UsersReport(queryset=users)
         report.title = _('Users List for {}').format(auth.name)

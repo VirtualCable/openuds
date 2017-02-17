@@ -30,8 +30,8 @@ from __future__ import unicode_literals
 
 import six
 import XenAPI
-import xmlrpclib
 import ssl
+import six
 
 import logging
 
@@ -101,7 +101,7 @@ class XenPowerState(object):
 class XenServer(object):
     def __init__(self, host, port, username, password, useSSL=False, verifySSL=False):
         self._originalHost = self._host = host
-        self._port = unicode(port)
+        self._port = six.text_type(port)
         self._useSSL = useSSL and True or False
         self._verifySSL = verifySSL and True or False
         self._protocol = 'http' + (self._useSSL and 's' or '') + '://'
@@ -155,7 +155,7 @@ class XenServer(object):
             if self._useSSL and self._verifySSL is False:
                 context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)  # @UndefinedVariable
                 context.verify_mode = ssl.CERT_NONE
-                transport = xmlrpclib.SafeTransport(context=context)
+                transport = six.moves.xmlrpc_client.SafeTransport(context=context)
             else:
                 transport = None
 
@@ -163,7 +163,7 @@ class XenServer(object):
             self._session.xenapi.login_with_password(self._username, self._password)
             self._loggedIn = True
             self._apiVersion = self._session.API_version
-            self._poolName = unicode(self.getPoolName())
+            self._poolName = six.text_type(self.getPoolName())
         except XenAPI.Failure as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
             if switchToMaster and e.details[0] == 'HOST_IS_SLAVE':
                 logger.info('{0} is an Slave, connecting to master at {1} cause switchToMaster is True'.format(self._host, e.details[1]))
@@ -216,7 +216,7 @@ class XenServer(object):
                 status = 'failure'
         except Exception as e:
             logger.exception('Unexpected exception!')
-            result = unicode(e)
+            result = six.text_type(e)
             status = 'failure'
 
         # Removes <value></value> if present
@@ -227,9 +227,9 @@ class XenServer(object):
             try:
                 self.task.destroy(task)
             except Exception as e:
-                logger.info('Task {0} returned error {1}'.format(task, unicode(e)))
+                logger.info('Task {0} returned error {1}'.format(task, six.text_type(e)))
 
-        return {'result': result, 'progress': progress, 'status': unicode(status)}
+        return {'result': result, 'progress': progress, 'status': six.text_type(status)}
 
     def getSRs(self):
         for srId in self.SR.get_all():
@@ -293,7 +293,7 @@ class XenServer(object):
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
         except Exception as e:
-            raise XenException(unicode(e))
+            raise XenException(six.text_type(e))
 
     def getVMPowerState(self, vmId):
         try:
@@ -425,7 +425,7 @@ class XenServer(object):
             if memory is not None:
                 logger.debug('Setting up memory to {0} MB'.format(memory))
                 # Convert memory to MB
-                memory = unicode(int(memory) * 1024 * 1024)
+                memory = six.text_type(int(memory) * 1024 * 1024)
                 self.VM.set_memory_limits(vmId, memory, memory, memory, memory)
         except XenAPI.Failure as e:
             raise XenFailure(e.details)

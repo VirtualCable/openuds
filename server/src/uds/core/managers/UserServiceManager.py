@@ -167,7 +167,7 @@ class UserServiceManager(object):
         state = deployed.deployForUser(user)
         try:
             UserServiceOpChecker.makeUnique(assignable, deployed, state)
-        except Exception, e:
+        except Exception as e:
             logger.exception("Exception {0}".format(e))
         logger.debug("Assignable: {0}".format(assignable))
         return assignable

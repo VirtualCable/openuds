@@ -221,9 +221,9 @@ class UserServiceOpChecker(DelayedTask):
             logger.debug("uService instance class: {0}".format(ci.__class__))
             state = ci.checkState()
             UserServiceOpChecker.checkAndUpdateState(uService, ci, state)
-        except UserService.DoesNotExist, e:
+        except UserService.DoesNotExist as e:
             logger.error('User service not found (erased from database?) {0} : {1}'.format(e.__class__, e))
-        except Exception, e:
+        except Exception as e:
             # Exception caught, mark service as errored
             logger.exception("Error {0}, {1} :".format(e.__class__, e))
             if uService is not None:

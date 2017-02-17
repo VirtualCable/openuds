@@ -51,6 +51,7 @@ __updated__ = '2017-01-30'
 
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
 try:
+    # noinspection PyProtectedMember
     _create_unverified_https_context = ssl._create_unverified_context
     ssl._create_default_https_context = _create_unverified_https_context
 except AttributeError:

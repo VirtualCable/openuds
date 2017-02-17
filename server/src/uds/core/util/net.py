@@ -48,8 +48,8 @@ def ipToLong(ip):
     convert decimal dotted quad string to long integer
     '''
     try:
-        hexn = ''.join(["%02X" % long(i) for i in ip.split('.')])
-        return long(hexn, 16)
+        hexn = ''.join(["%02X" % int(i) for i in ip.split('.')])
+        return int(hexn, 16)
     except:
         return 0  # Invalid values will map to "0.0.0.0" --> 0
 

@@ -36,6 +36,7 @@ from uds.core.util.State import State
 from uds.models import Group as dbGroup
 from uds.core.auths.Group import Group
 
+import six
 import re
 import inspect
 import logging
@@ -84,7 +85,7 @@ class GroupsManager(object):
         '''
         name = groupName.lower()
         res = []
-        for gName, grp in self._groups.iteritems():
+        for gName, grp in six.iteritems(self._groups):
             if grp['pattern'] is True:
                 logger.debug('Group is a pattern: {}'.format(grp))
                 try:
@@ -104,7 +105,7 @@ class GroupsManager(object):
         Return all groups names managed by this groups manager. The names are returned
         as where inserted inside Database (most probably using administration interface)
         '''
-        for g in self._groups.itervalues():
+        for g in six.itervalues(self._groups):
             yield g['group'].dbGroup().name
 
     def getValidGroups(self):
@@ -112,7 +113,7 @@ class GroupsManager(object):
         returns the list of valid groups (:py:class:uds.core.auths.Group.Group)
         '''
         lst = ()
-        for g in self._groups.itervalues():
+        for g in six.itervalues(self._groups):
             if g['valid'] is True:
                 lst += (g['group'].dbGroup().id,)
                 yield g['group']
@@ -130,7 +131,7 @@ class GroupsManager(object):
         Checks if this groups manager has at least one group that has been
         validated (using :py:meth:.validate)
         '''
-        for g in self._groups.itervalues():
+        for g in six.itervalues(self._groups):
             if g['valid'] is True:
                 return True
         return False

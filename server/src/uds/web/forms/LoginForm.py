@@ -35,8 +35,9 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
 from django.utils.safestring import mark_safe
-from django.forms.forms import NON_FIELD_ERRORS
 from uds.models import Authenticator
+
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -57,7 +58,7 @@ class CustomSelect(forms.Select):
         for choice in self.choices:
             res += '<option value="{0}">{1}</option>'.format(choice[0], choice[1])
         res += '</select>'
-        return mark_safe('<div class="form-group"{0}><label>'.format(visible) + unicode(_('authenticator')) + '</label>' + res + '</div>')
+        return mark_safe('<div class="form-group"{0}><label>'.format(visible) + six.text_type(_('authenticator')) + '</label>' + res + '</div>')
 
 class LoginForm(forms.Form):
     user = forms.CharField(label=_('Username'), max_length=64, widget=forms.TextInput())

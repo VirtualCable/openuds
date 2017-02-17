@@ -45,8 +45,7 @@ from uds.core.util import log
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 from uds.core.util import permissions
-
-
+import six
 
 import logging
 
@@ -306,7 +305,7 @@ class Publications(DetailHandler):
             ds = DeployedServicePublication.objects.get(uuid=processUuid(uuid))
             ds.cancel()
         except Exception as e:
-            raise ResponseError(unicode(e))
+            raise ResponseError(six.text_type(e))
 
         return self.success()
 

@@ -174,7 +174,7 @@ class PublicationFinishChecker(DelayedTask):
                 logger.debug("publication instance class: {0}".format(pi.__class__))
                 state = pi.checkState()
                 PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
-        except Exception, e:
+        except Exception as e:
             logger.debug('Deployed service not found (erased from database) {0} : {1}'.format(e.__class__, e))
 
 
@@ -251,7 +251,7 @@ class PublicationManager(object):
             servicePoolPub.setState(State.CANCELING)
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pubInstance, state)
             return servicePoolPub
-        except Exception, e:
+        except Exception as e:
             raise PublishException(str(e))
 
     def unpublish(self, servicePoolPub):  # pylint: disable=no-self-use
@@ -269,5 +269,5 @@ class PublicationManager(object):
             state = pubInstance.destroy()
             servicePoolPub.setState(State.REMOVING)
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pubInstance, state)
-        except Exception, e:
+        except Exception as e:
             raise PublishException(str(e))

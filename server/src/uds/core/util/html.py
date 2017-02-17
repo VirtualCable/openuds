@@ -36,6 +36,7 @@ from django.utils.translation import get_language
 from uds.core.util import OsDetector
 from django.utils import formats
 
+import six
 import logging
 
 __updated__ = '2015-05-03'
@@ -109,7 +110,7 @@ def checkBrowser(request, browser):
     needs_version = 0
     needs = ''
 
-    for b, requires in _browsers.iteritems():
+    for b, requires in six.iteritems(_browsers):
         if browser.startswith(b):
             if request.os.Browser not in requires:
                 return False

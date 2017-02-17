@@ -142,7 +142,7 @@ def error(request, idError):
     '''
     idError = int(idError)
     code = idError >> 8
-    idError = idError & 0xFF
+    idError &= 0xFF
 
     errStr = errorString(idError)
     if code != 0:

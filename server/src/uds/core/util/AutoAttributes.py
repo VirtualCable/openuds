@@ -31,9 +31,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from __future__ import  unicode_literals
+
 from uds.core.Serializable import Serializable
 import pickle
-import timeit
+import six
+
 
 
 class Attribute(object):
@@ -88,12 +91,12 @@ class AutoAttributes(Serializable):
 
     def declare(self, **kwargs):
         d = {}
-        for key, typ in kwargs.iteritems():
+        for key, typ in six.iteritems(kwargs):
             d[key] = Attribute(typ)
         self.dict = d
 
     def marshal(self):
-        return '\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]).encode(AutoAttributes.ACODEC)
+        return '\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in six.iteritems(self.dict)]).encode(AutoAttributes.ACODEC)
 
     def unmarshal(self, data):
         if data == '':  # Can be empty
@@ -105,6 +108,6 @@ class AutoAttributes(Serializable):
 
     def __str__(self):
         str_ = '<AutoAttribute '
-        for k, v in self.dict.iteritems():
+        for k, v in six.iteitems(self.dict):
             str_ += "%s (%s) = %s" % (k, v.getType(), v.getStrValue())
         return str_ + '>'
