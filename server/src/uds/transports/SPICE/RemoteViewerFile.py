@@ -8,7 +8,7 @@ import six
 import os
 
 
-__updated__ = '2016-05-27'
+__updated__ = '2017-02-21'
 
 
 TEMPLATE = '''[virt-viewer]
@@ -29,7 +29,7 @@ ca={ca}
 toggle-fullscreen=shift+f11
 release-cursor=shift+f12
 secure-attention=ctrl+alt+end
-secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard
+{secure_channel}
 '''
 
 
@@ -81,6 +81,7 @@ class RemoteViewerFile(object):
             smartcard=smartcard,
             usb_auto_share=usb_auto_share,
             delete_file=delete_file,
-            host_subject=self.host_subject,
-            ca=ca
+            host_subject=self.host_subject if self.tls_port != -1 else '',
+            ca=ca if self.tls_port != -1 else '',
+            secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard' if self.tls_port != -1 else ''
         )
