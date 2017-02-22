@@ -114,7 +114,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
         operations.renameComputer(name)
         # Reboot just after renaming
-        logger.info('Rebooting computer got activate new name {}'.format(name))
+        logger.info('Rebooting computer to activate new name {}'.format(name))
         self.reboot()
 
     def oneStepJoin(self, name, domain, ou, account, password):
