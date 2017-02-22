@@ -36,6 +36,7 @@ from udsactor import operations
 from udsactor.service import CommonService
 from udsactor.service import initCfg
 from udsactor.service import IPC_PORT
+from udsactor.service import cfg
 
 from udsactor import ipc
 
@@ -73,7 +74,7 @@ class UDSActorSvc(Daemon, CommonService):
         hostName = operations.getComputerName()
 
         if hostName.lower() == name.lower():
-            logger.info('Computer name is now {}'.format(hostName))
+            logger.info('Computer name is already {}'.format(hostName))
             self.setReady()
             return
 
@@ -101,8 +102,12 @@ class UDSActorSvc(Daemon, CommonService):
         logger.fatal('Join domain is not supported on linux platforms right now')
 
     def run(self):
-        localCfg = initCfg()  # Gets a local copy of config to get "reboot"
-        self.rebootMachineAfterOp = localCfg.get('reboot', 'false') == 'true'
+        initCfg()  # Gets a local copy of config to get "reboot"
+
+        if cfg is not None:
+            self.rebootMachineAfterOp = cfg.get('reboot', False)
+        else:
+            self.rebootMachineAfterOp = False
 
         logger.debug('Running Daemon')
         set_proctitle('UDSActorDaemon')
