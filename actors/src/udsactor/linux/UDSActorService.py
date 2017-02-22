@@ -110,7 +110,7 @@ class UDSActorSvc(Daemon, CommonService):
         else:
             self.rebootMachineAfterOp = False
 
-        logger.info('Rebbot after is {}'.format(self.rebootMachineAfterOp))
+        logger.info('Reboot after is {}'.format(self.rebootMachineAfterOp))
 
         logger.debug('Running Daemon')
         set_proctitle('UDSActorDaemon')
