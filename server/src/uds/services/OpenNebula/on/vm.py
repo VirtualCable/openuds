@@ -39,7 +39,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import VmState
 
-__updated__ = '2017-01-26'
+__updated__ = '2017-02-22'
 
 logger = logging.getLogger(__name__)
 
@@ -187,7 +187,7 @@ def getDisplayConnection(api, machineId):
         type_ = graphics.getElementsByTagName('TYPE')[0].childNodes[0].data
         port = graphics.getElementsByTagName('PORT')[0].childNodes[0].data
         try:
-            passwd = graphics.getElementsByTagName('PASSWD').childNodes[0].data
+            passwd = graphics.getElementsByTagName('PASSWD')[0].childNodes[0].data
         except Exception:
             passwd = ''
 
