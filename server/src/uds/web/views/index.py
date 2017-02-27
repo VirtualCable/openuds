@@ -52,7 +52,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-02-02'
+__updated__ = '2017-02-27'
 
 
 def about(request):
@@ -77,7 +77,7 @@ def index(request):
     :param request: http request
     '''
     if request.session.get('ticket') == '1':
-        return webLogout()
+        return webLogout(request)
 
     # Session data
     os = request.os
