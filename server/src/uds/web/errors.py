@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 
 from django.http import HttpResponseRedirect
@@ -148,4 +148,4 @@ def error(request, idError):
     if code != 0:
         errStr += ' (code {0:04X})'.format(code)
 
-    return render_to_response(theme.template('error.html'), {'errorString': errStr}, context_instance=RequestContext(request))
+    return render(request, theme.template('error.html'), {'errorString': errStr})

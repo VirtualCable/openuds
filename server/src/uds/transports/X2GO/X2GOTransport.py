@@ -38,6 +38,7 @@ from uds.core.util import tools
 from .BaseX2GOTransport import BaseX2GOTransport
 from . import x2gofile
 
+import six
 import logging
 
 __updated__ = '2017-01-30'
@@ -113,6 +114,6 @@ class X2GOTransport(BaseX2GOTransport):
         }.get(m.os)
 
         if os is None:
-            return super(X2GOTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)

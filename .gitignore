@@ -7,6 +7,7 @@
 *_enterprise.*
 .settings/
 .ipynb_checkpoints
+.idea/
 
 # Debian buildings
 *.debhelper*

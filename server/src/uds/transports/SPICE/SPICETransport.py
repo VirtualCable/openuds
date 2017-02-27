@@ -83,6 +83,6 @@ class SPICETransport(BaseSpiceTransport):
         }.get(os.OS)
 
         if os is None:
-            return super(SPICETransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
+            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)

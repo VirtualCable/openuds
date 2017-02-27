@@ -225,8 +225,8 @@ class WindowsOsManager(osmanagers.OSManager):
                 'password': password,
                 'domain': domain
             }
-            ticket = TicketStore.create(creds, validator=None, validity=300, owner=SECURE_OWNER, secure=True)
-            return (ticket, '')
+            ticket = TicketStore.create(creds, validator=None, validity=300)  # , owner=SECURE_OWNER, secure=True)
+            return ticket, ''
         else:
             return osmanagers.OSManager.processUserPassword(self, service, username, password)
 
