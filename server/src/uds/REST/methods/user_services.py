@@ -356,5 +356,5 @@ class Changelog(DetailHandler):
         return [
             {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
             {'stamp': {'title': _('Publish date'), 'type': 'datetime'}},
-            {'log': {'title': _('State')}},
+            {'log': {'title': _('Comment')}},
         ]
