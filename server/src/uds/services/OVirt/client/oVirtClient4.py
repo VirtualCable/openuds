@@ -5,13 +5,12 @@ Created on Nov 14, 2012
 '''
 
 import ovirtsdk4 as ovirt
-import ovirtsdk4.types
 
 import threading
 import logging
-import re
+import six
 
-__updated__ = '2016-09-11'
+__updated__ = '2017-03-03'
 
 logger = logging.getLogger(__name__)
 
@@ -224,7 +223,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            c = api.system_service().clusters_service().service(clusterId).get()
+            c = api.system_service().clusters_service().service(six.binary_type(clusterId)).get()
 
             dc = c.data_center
 
@@ -274,7 +273,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            datacenter_service = api.system_service().data_centers_service().service(datacenterId)
+            datacenter_service = api.system_service().data_centers_service().service(six.binary_type(datacenterId))
             d = datacenter_service.get()
 
             storage = []
@@ -328,7 +327,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            dd = api.system_service().storage_domains_service().service(storageId).get()
+            dd = api.system_service().storage_domains_service().service(six.binary_type(storageId)).get()
 
             res = {
                 'id': dd.id,
@@ -368,9 +367,9 @@ class Client(object):
             # cluster = ov.clusters_service().service('00000002-0002-0002-0002-0000000002e4') # .get()
             # vm = ov.vms_service().service('e7ff4e00-b175-4e80-9c1f-e50a5e76d347') # .get()
 
-            vms = api.system_service().vms_service().service(machineId)
+            vms = api.system_service().vms_service().service(six.binary_type(machineId))
 
-            cluster = api.system_service().clusters_service().service(clusterId).get()
+            cluster = api.system_service().clusters_service().service(six.binary_type(clusterId)).get()
             vm = vms.get()
 
             if vm is None:
@@ -422,7 +421,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            template = api.system_service().templates_service().service(templateId).get()
+            template = api.system_service().templates_service().service(six.binary_type(templateId)).get()
 
             if template is None:
                 return 'removed'
@@ -457,8 +456,8 @@ class Client(object):
 
             logger.debug('Deploying machine {0}'.format(name))
 
-            cluster = ovirt.types.Cluster(id=clusterId)
-            template = ovirt.types.Template(id=templateId)
+            cluster = ovirt.types.Cluster(id=six.binary_type(clusterId))
+            template = ovirt.types.Template(id=six.binary_type(templateId))
             if usbType in ('native', 'legacy'):
                 usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE if usbType == 'native' else ovirt.types.UsbType.LEGACY)
             else:
@@ -485,7 +484,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            api.system_service().templates_service().service(templateId).remove()
+            api.system_service().templates_service().service(six.binary_type(templateId)).remove()
             # This returns nothing, if it fails it raises an exception
         finally:
             lock.release()
@@ -511,7 +510,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.system_service().vms_service().service(machineId).get()
+            vm = api.system_service().vms_service().service(six.binary_type(machineId)).get()
 
             if vm is None or vm.status is None:
                 return 'unknown'
@@ -538,7 +537,7 @@ class Client(object):
             api = self.__getApi()
 
 
-            vmService = api.system_service().vms_service().service(machineId)
+            vmService = api.system_service().vms_service().service(six.binary_type(machineId))
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -562,7 +561,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId)
+            vmService = api.system_service().vms_service().service(six.binary_type(machineId))
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -586,7 +585,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId)
+            vmService = api.system_service().vms_service().service(six.binary_type(machineId))
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -610,7 +609,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId)
+            vmService = api.system_service().vms_service().service(six.binary_type(machineId))
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -629,7 +628,7 @@ class Client(object):
 
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId)
+            vmService = api.system_service().vms_service().service(six.binary_type(machineId))
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -652,7 +651,7 @@ class Client(object):
             lock.acquire(True)
             api = self.__getApi()
 
-            vmService = api.system_service().vms_service().service(machineId)
+            vmService = api.system_service().vms_service().service(six.binary_type(machineId))
             vm = vmService.get()
 
             if vm is None:
