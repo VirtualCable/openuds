@@ -65,7 +65,7 @@ def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
         try:
             _x, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
-            errMsg = errMsg + ': {message}'.format(**err)
+            errMsg += ': {message}'.format(**err)
         except Exception:
             pass  # If error geting error message, simply ignore it (will be loged on service log anyway)
         if errMsg is None:

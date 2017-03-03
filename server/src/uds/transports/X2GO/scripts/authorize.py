@@ -29,7 +29,7 @@ def updateAuthorizedKeys(user, pubKey):
     sshFolder = '{}/.ssh'.format(home)
     if not os.path.exists(sshFolder):
         try:
-            os.makedirs(sshFolder, 0700)
+            os.makedirs(sshFolder, 0o0700)
             os.chown(sshFolder, uid, -1)
         except OSError as e:
             if e.errno != errno.EEXIST:
@@ -53,7 +53,7 @@ def updateAuthorizedKeys(user, pubKey):
 
     # Ensure access is correct
     os.chown(authorizedKeys, uid, -1)
-    os.chmod(authorizedKeys, 0600)
+    os.chmod(authorizedKeys, 0o0600)
 
     # Done
 

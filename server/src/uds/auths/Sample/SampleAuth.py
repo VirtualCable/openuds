@@ -305,4 +305,4 @@ class SampleAuth(auths.Authenticator):
         this this kind of things) modify the userName to a new one, the original plus '-1'
         '''
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
-        usrData['name'] = usrData['name'] + '-1'
+        usrData['name'] += '-1'

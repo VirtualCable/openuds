@@ -64,6 +64,7 @@ from . import template
 from . import vm
 from . import storage
 
+
 # Decorator
 def ensureConnected(fnc):
     def inner(*args, **kwargs):
@@ -71,19 +72,22 @@ def ensureConnected(fnc):
         return fnc(*args, **kwargs)
     return inner
 
+
 # Result checker
 def checkResult(lst, parseResult=True):
-    if lst[0] == False:
+    if not lst[0]:
         raise Exception('OpenNebula error {}: "{}"'.format(lst[2], lst[1]))
     if parseResult:
         return xml2dict.parse(lst[1])
     else:
         return lst[1]
 
+
 def asList(element):
     if isinstance(element, (tuple, list)):
         return element
-    return (element,)
+    return element,
+
 
 class OpenNebulaClient(object):
     def __init__(self, username, password, endpoint):

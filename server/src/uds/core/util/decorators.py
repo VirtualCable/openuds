@@ -46,11 +46,15 @@ logger = logging.getLogger(__name__)
 
 # Decorator that protects pages that needs at least a browser version
 # Default is to deny IE < 9
-def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)):
+def denyBrowsers(browsers=None, errorResponse=lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)):
     '''
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     '''
+
+    if browsers is None:
+        browsers = ['ie<9']
+
     def wrap(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):

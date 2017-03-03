@@ -1,4 +1,10 @@
-import sys
-reload(sys)
+import six
 
-sys.setdefaultencoding('utf-8')  # @UndefinedVariable
+if six.PY2:
+    import sys
+
+    # noinspection PyCompatibility
+    reload(sys)
+
+    # noinspection PyUnresolvedReferences
+    sys.setdefaultencoding('utf-8')  # @UndefinedVariable

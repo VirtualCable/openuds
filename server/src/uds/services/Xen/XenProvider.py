@@ -37,13 +37,14 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util.State import State
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
-from uds.core.util import validators
+# from uds.core.util import validators
 
 from xen_client import XenServer
-from xen_client import XenFailure, XenFault
+# from xen_client import XenFailure, XenFault
 
 from XenLinkedService import XenLinkedService
 
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -395,4 +396,4 @@ class Provider(ServiceProvider):
             xe.testConnection()
             return [True, _('Connection test successful')]
         except Exception as e:
-            return [False, _("Connection failed: {0}").format(unicode(e))]
+            return [False, _("Connection failed: {0}").format(six.text_type(e))]

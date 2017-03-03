@@ -34,9 +34,9 @@ from __future__ import unicode_literals
 
 from django.http import HttpResponse
 from uds.models import TicketStore
-from uds.core.util import net
 from uds.core.auths import auth
 
+import six
 import logging
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ CONTENT_TYPE = 'text/plain'
 
 
 def dict2resp(dct):
-    return '\r'.join((k + '\t' + v for k, v in dct.iteritems()))
+    return '\r'.join((k + '\t' + v for k, v in six.iteritems(dct)))
 
 
 @auth.trustedSourceRequired

@@ -150,7 +150,7 @@ class RegexLdap(auths.Authenticator):
         for line in field.splitlines():
             equalPos = line.find('=')
             if equalPos == -1:
-                line = line + '=(.*)'
+                line += '=(.*)'
                 equalPos = line.find('=')
             attr, pattern = (line[:equalPos], line[equalPos + 1:])
             attr = attr.lower()

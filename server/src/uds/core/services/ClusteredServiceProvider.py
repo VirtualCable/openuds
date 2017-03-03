@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from uds.core.services.BaseServiceProvider import ServiceProvider
 from uds.core.util.Config import GlobalConfig
 
+import six
 import logging
 
 __updated__ = '2016-02-26'
@@ -85,7 +86,7 @@ class ClusteredServiceProvider(ServiceProvider):
         maxCpuLoad = GlobalConfig.CLUSTER_MIGRATE_CPULOAD.getInt(True)
         minFreeMemPercent = GlobalConfig.CLUSTER_MIGRATE_MEMORYLOAD.getInt(True)
 
-        for nodeName, nodeStats in nodesStats.iteritems():
+        for nodeName, nodeStats in six.iteritems(nodesStats):
             if nodeStats['freeMemory'] is None or nodeStats['totalMemory'] is None or nodeStats['cpuLoad'] is None:
                 continue
             freeMemPercent = (nodeStats['freeMemory'] * 100) / nodeStats['totalMemory']
@@ -123,7 +124,7 @@ class ClusteredServiceProvider(ServiceProvider):
         maxCpuLoad = GlobalConfig.CLUSTER_ELEGIBLE_CPULOAD.getInt(True)
         minFreeMemPercent = GlobalConfig.CLUSTER_ELEGIBLE_MEMORYLOAD.getInt(True)
 
-        for nodeName, nodeStats in nodesStats.iteritems():
+        for nodeName, nodeStats in six.iteritems(nodesStats):
             if nodeStats['freeMemory'] is None or nodeStats['totalMemory'] is None or nodeStats['cpuLoad'] is None:
                 continue
             freeMemPercent = (nodeStats['freeMemory'] * 100) / nodeStats['totalMemory']
@@ -144,7 +145,7 @@ class ClusteredServiceProvider(ServiceProvider):
     def getClusterBestNodeForDeploy(self):
 
         nodesStats = self.clusterStats()
-        nodes = [name for name in nodesStats.iterkeys()]
+        nodes = [name for name in six.iteritems(nodesStats)]
 
         def getNodeStatsKey(name):
             ns = nodesStats[name]

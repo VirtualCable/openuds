@@ -197,7 +197,7 @@ class Authenticator(Module):
 
         user param is a database user object
         '''
-        if self.isExternalSource == True:
+        if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
             self.getGroups(user.name, groupsManager)
             user.groups = [g.dbGroup() for g in groupsManager.getValidGroups()]

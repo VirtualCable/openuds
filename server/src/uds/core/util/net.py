@@ -64,7 +64,7 @@ def longToIp(n):
         while d > 0:
             m, n = divmod(n, d)
             q.append(str(m))
-            d = d / 256
+            d /= 256
 
         return '.'.join(q)
     except:

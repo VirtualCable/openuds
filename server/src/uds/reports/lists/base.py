@@ -39,4 +39,7 @@ __updated__ = '2015-06-21'
 
 
 class ListReport(reports.Report):
+    def generate(self):
+        raise NotImplementedError('ListReport generate invoked and not implemented')
+
     group = _('Lists')  # So we can make submenus with reports

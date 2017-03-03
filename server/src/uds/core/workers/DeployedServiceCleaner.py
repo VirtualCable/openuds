@@ -83,7 +83,7 @@ class DeployedServiceRemover(Job):
             u.cancel()
         # Nice start of removal, maybe we need to do some limitation later, but there should not be too much services nor publications cancelable at once
         ds.state = State.REMOVING
-        ds.name = ds.name + ' (removed)'
+        ds.name += ' (removed)'
         ds.save()
 
     def continueRemovalOf(self, ds):

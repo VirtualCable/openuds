@@ -68,7 +68,6 @@ class NXPassword(object):
         for i in range(len(p)):
             sPass += '{}:'.format(ord(p[i]) + i + 1)
 
-        print sPass
         return sPass
 
     @staticmethod

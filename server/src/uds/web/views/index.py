@@ -75,7 +75,7 @@ def index(request):
     :param request: http request
     '''
     if request.session.get('ticket') == '1':
-        return webLogout()
+        return webLogout(request)
 
     # Session data
     os = request.os
@@ -222,7 +222,8 @@ def index(request):
 
     logger.debug('Groups: {}'.format(groups))
 
-    response = render(request,
+    response = render(
+        request,
         theme.template('index.html'),
         {
             'groups': groups,

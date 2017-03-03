@@ -71,8 +71,8 @@ class FileStorage(Storage):
 
         self.cache._cache.flush_all()  # On start, ensures that cache is empty to avoid surprises
 
+        # noinspection PyArgumentList
         Storage.__init__(self, *args, **kwargs)
-
 
     def get_valid_name(self, name):
         return name.replace('\\', os.path.sep)
