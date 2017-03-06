@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2017-03-02'
+__updated__ = '2017-03-03'
 
 logger = logging.getLogger(__name__)
 
@@ -113,7 +113,7 @@ def create(api, fromTemplateId, name, toDataStore):
 
         return six.text_type(templateId)
     except Exception as e:
-        logger.error('Creating template on OpenNebula: {}'.format(e))
+        logger.exception('Creating template on OpenNebula: {}'.format(e))
         try:
             api.deleteTemplate(templateId)  # Try to remove created template in case of fail
         except Exception:
