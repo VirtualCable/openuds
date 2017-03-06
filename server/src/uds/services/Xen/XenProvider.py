@@ -320,6 +320,18 @@ class Provider(ServiceProvider):
         '''
         return self.__getApi().stopVM(machineId, async)
 
+    def canSuspendVM(self, machineId):
+        '''
+        The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+            True if the machien can be suspended
+        '''
+        return self.__getApi().canSuspendVM(machineId)
+
     def suspendVM(self, machineId, async=True):
         '''
         Tries to start a machine. No check is done, it is simply requested to XenServer

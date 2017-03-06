@@ -42,7 +42,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opConfigure, opProvision = range(11)
+opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opConfigure, opProvision, opWaitSuspend = range(12)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
@@ -211,7 +211,7 @@ class XenLinkedDeployment(UserDeployment):
         if forLevel2 is False:
             self._queue = [opCreate, opConfigure, opProvision, opStart, opFinish]
         else:
-            self._queue = [opCreate, opConfigure, opProvision, opStart, opWait, opSuspend, opFinish]
+            self._queue = [opCreate, opConfigure, opProvision, opStart, opWait, opWaitSuspend, opSuspend, opFinish]
 
     def __getCurrentOp(self):
         if len(self._queue) == 0:
@@ -247,7 +247,7 @@ class XenLinkedDeployment(UserDeployment):
                 state = self.service().getVMPowerState(self._vmid)
                 if state in (XenPowerState.running, XenPowerState.paused, XenPowerState.suspended):
                     self.service().stopVM(self._vmid, False)  # In sync mode
-                # TODO Remove machine
+                    self.service().removeVM(self._vmid)
             except:
                 logger.debug('Can\t set machine state to stopped')
 
@@ -270,6 +270,7 @@ class XenLinkedDeployment(UserDeployment):
             opRetry: self.__retry,
             opStart: self.__startMachine,
             opStop: self.__stopMachine,
+            opWaitSuspend: self.__waitSuspend,
             opSuspend: self.__suspendMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
@@ -357,6 +358,12 @@ class XenLinkedDeployment(UserDeployment):
         else:
             self._task = ''
 
+    def __waitSuspend(self):
+        '''
+        Before suspending, wait for machine to have the SUSPEND feature
+        '''
+        self.task = ''
+
     def __suspendMachine(self):
         '''
         Suspends the machine
@@ -408,6 +415,12 @@ class XenLinkedDeployment(UserDeployment):
             return State.FINISHED
         return State.RUNNING
 
+    def __checkWaitSuspend(self):
+        if self.service().canSuspendVM(self._vmid) is True:
+            return State.FINISHED
+
+        return State.RUNNING
+
     def __checkSuspend(self):
         '''
         Check if the machine has suspended
@@ -452,6 +465,7 @@ class XenLinkedDeployment(UserDeployment):
             opWait: self.__wait,
             opStart: self.__checkStart,
             opStop: self.__checkStop,
+            opWaitSuspend: self.__checkWaitSuspend,
             opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
             opConfigure: self.__checkConfigure,
@@ -570,6 +584,7 @@ class XenLinkedDeployment(UserDeployment):
             opCreate: 'create',
             opStart: 'start',
             opStop: 'stop',
+            opWaitSuspend: 'wait-suspend',
             opSuspend: 'suspend',
             opRemove: 'remove',
             opWait: 'wait',

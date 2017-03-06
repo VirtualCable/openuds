@@ -51,6 +51,7 @@ class XenFailure(XenAPI.Failure, XenFault):
     exHandleInvalid = 'HANDLE_INVALID'
     exHostIsSlave = 'HOST_IS_SLAVE'
     exSRError = 'SR_BACKEND_FAILURE_44'
+    exHandleInvalid = 'HANDLE_INVALID'
 
     def __init__(self, details=None):
         details = [] if details is None else details
@@ -76,6 +77,7 @@ class XenFailure(XenAPI.Failure, XenFault):
                 XenFailure.exHandleInvalid: 'Invalid handler',
                 XenFailure.exHostIsSlave: 'The connected host is an slave, try to connect to {1}',
                 XenFailure.exSRError: 'Error on SR: {2}',
+                XenFailure.exHandleInvalid: 'Invalid reference to {1}',
             }
             err = errList.get(self.details[0], 'Error {0}')
 
@@ -315,6 +317,10 @@ class XenServer(object):
         vmState = self.getVMPowerState(vmId)
         if vmState == XenPowerState.running:
             return None  # Already powered on
+
+        if vmState == XenPowerState.suspended:
+            return self.resumeVM(vmId, async)
+
         if async:
             return self.Async.VM.start(vmId, False, False)
         return self.VM.start(vmId, False, False)
@@ -326,6 +332,11 @@ class XenServer(object):
         if async:
             return self.Async.VM.hard_shutdown(vmId)
         return self.VM.hard_shutdown(vmId)
+
+    def canSuspendVM(self, vmId):
+        operations = self.VM.get_allowed_operations(vmId)
+        logger.debug('Operations: {}'.format(operations))
+        return 'suspend' in operations
 
     def suspendVM(self, vmId, async=True):
         vmState = self.getVMPowerState(vmId)
