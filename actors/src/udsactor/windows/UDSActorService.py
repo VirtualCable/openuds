@@ -43,6 +43,7 @@ import servicemanager  # @UnresolvedImport, pylint: disable=import-error
 import os
 
 from udsactor import operations
+from udsactor import store
 from udsactor.service import CommonService
 from udsactor.service import initCfg
 
@@ -113,7 +114,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
 
         operations.renameComputer(name)
         # Reboot just after renaming
-        logger.info('Rebooting computer got activate new name {}'.format(name))
+        logger.info('Rebooting computer to activate new name {}'.format(name))
         self.reboot()
 
     def oneStepJoin(self, name, domain, ou, account, password):
@@ -158,12 +159,15 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         ver = ver[0] * 10 + ver[1]
         logger.debug('Starting joining domain {} with name {} (detected operating version: {})'.format(
             domain, name, ver))
+        # If file c:\compat.bin exists, joind domain in two steps instead one
+
         # Accepts one step joinDomain, also remember XP is no more supported by
         # microsoft, but this also must works with it because will do a "multi
         # step" join
-        if ver >= 60:
+        if ver >= 60 and store.useOldJoinSystem() is False:
             self.oneStepJoin(name, domain, ou, account, password)
         else:
+            logger.info('Using multiple step join because configuration requests to do so')
             self.multiStepJoin(name, domain, ou, account, password)
 
     def preConnect(self, user, protocol):

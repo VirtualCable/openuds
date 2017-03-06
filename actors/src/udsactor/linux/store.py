@@ -78,3 +78,6 @@ def writeConfig(data):
         cfg.write(f)
 
     os.chmod(CONFIGFILE, 0o0600)
+
+def useOldJoinSystem():
+    return False

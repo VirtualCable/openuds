@@ -82,7 +82,6 @@ def readConfig():
     except Exception:
         return None
 
-
 def writeConfig(data, fixPermissions=True):
     try:
         key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
@@ -93,3 +92,16 @@ def writeConfig(data, fixPermissions=True):
 
     wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(cPickle.dumps(data)))  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable
+
+def useOldJoinSystem():
+    try:
+        key = wreg.OpenKey(baseKey, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
+        try:
+            data, _ = wreg.QueryValueEx(key, 'join')  # @UndefinedVariable
+        except Exception:
+            data = ''
+        wreg.CloseKey(key)  # @UndefinedVariable
+    except:
+        data = ''
+
+    return data == 'old'

@@ -34,6 +34,6 @@ from __future__ import unicode_literals
 
 # Helper to acommodate all unique generators in one place
 
-from .UniqueGIDGenerator import UniqueGIDGenerator
-from .UniqueMacGenerator import UniqueMacGenerator
-from .UniqueNameGenerator import UniqueNameGenerator
+from .UniqueGIDGenerator import UniqueGIDGenerator  # @UnusedImport
+from .UniqueMacGenerator import UniqueMacGenerator  # @UnusedImport
+from .UniqueNameGenerator import UniqueNameGenerator  # @UnusedImport

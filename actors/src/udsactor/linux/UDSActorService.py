@@ -36,6 +36,7 @@ from udsactor import operations
 from udsactor.service import CommonService
 from udsactor.service import initCfg
 from udsactor.service import IPC_PORT
+
 from udsactor import ipc
 
 from udsactor.log import logger
@@ -58,6 +59,8 @@ except Exception:  # Platform may not include prctl, so in case it's not availab
 
 
 class UDSActorSvc(Daemon, CommonService):
+    rebootMachineAfterOp = False
+
     def __init__(self, args=None):
         Daemon.__init__(self, '/var/run/udsa.pid')
         CommonService.__init__(self)
@@ -67,6 +70,12 @@ class UDSActorSvc(Daemon, CommonService):
         Renames the computer, and optionally sets a password for an user
         before this
         '''
+        hostName = operations.getComputerName()
+
+        if hostName.lower() == name.lower():
+            logger.info('Computer name is already {}'.format(hostName))
+            self.setReady()
+            return
 
         # Check for password change request for an user
         if user is not None:
@@ -80,13 +89,28 @@ class UDSActorSvc(Daemon, CommonService):
                     'Could not change password for user {} (maybe invalid current password is configured at broker): {} '.format(user, unicode(e)))
 
         renamer.rename(name)
-        self.setReady()
+
+        if self.rebootMachineAfterOp is False:
+            self.setReady()
+        else:
+            logger.info('Rebooting computer to activate new name {}'.format(name))
+            self.reboot()
+
 
     def joinDomain(self, name, domain, ou, account, password):
         logger.fatal('Join domain is not supported on linux platforms right now')
 
     def run(self):
-        initCfg()
+        cfg = initCfg()  # Gets a local copy of config to get "reboot"
+
+        logger.debug('CFG: {}'.format(cfg))
+
+        if cfg is not None:
+            self.rebootMachineAfterOp = cfg.get('reboot', False)
+        else:
+            self.rebootMachineAfterOp = False
+
+        logger.info('Reboot after is {}'.format(self.rebootMachineAfterOp))
 
         logger.debug('Running Daemon')
         set_proctitle('UDSActorDaemon')

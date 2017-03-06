@@ -39,7 +39,7 @@ from . import on
 import pickle
 import logging
 
-__updated__ = '2016-07-11'
+__updated__ = '2017-02-28'
 
 
 logger = logging.getLogger(__name__)
@@ -224,7 +224,7 @@ class LiveDeployment(UserDeployment):
         state = self.service().getMachineState(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == on.VmState.UNKNOWN:
+        if state in [on.VmState.UNKNOWN, on.VmState.DONE]:
             return self.__error('Machine not found')
 
         ret = State.RUNNING
@@ -500,7 +500,7 @@ class LiveDeployment(UserDeployment):
         if op == opError:
             return self.__error('Machine is already in error state!')
 
-        if op == opFinish or op == opWait:
+        if op in [opFinish, opWait, opStart, opCreate]:
             self._queue = [opRemove, opFinish]
             return self.__executeQueue()
 

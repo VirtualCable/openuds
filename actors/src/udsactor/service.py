@@ -71,6 +71,8 @@ def initCfg():
             cfg = None
             break
 
+    return cfg
+
 
 class CommonService(object):
     def __init__(self):

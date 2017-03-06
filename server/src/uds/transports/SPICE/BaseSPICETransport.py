@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2016-05-27'
+__updated__ = '2017-02-21'
 
 
 logger = logging.getLogger(__name__)
@@ -85,7 +85,7 @@ class BaseSpiceTransport(Transport):
         multiline=4,
         label=_('Certificate'),
         tooltip=_('Server certificate (public), can be found on your ovirt engine, probably at /etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file).'),
-        required=True
+        required=False
     )
     fullScreen = gui.CheckBoxField(
         order=5,
