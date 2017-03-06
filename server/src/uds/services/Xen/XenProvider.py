@@ -49,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-25'
+__updated__ = '2017-03-06'
 
 
 CACHE_TIME_FOR_SERVER = 1800
@@ -157,7 +157,7 @@ class Provider(ServiceProvider):
             return (True, ts['result'])
 
         # Any other state, raises an exception
-        raise Exception(ts['status'])  # Should be 'cancelled', 'unknown', 'failure'
+        raise Exception(six.text_type(ts['result']))  # Should be error message
 
     def getMachines(self, force=False):
         '''
@@ -319,6 +319,18 @@ class Provider(ServiceProvider):
         Returns:
         '''
         return self.__getApi().stopVM(machineId, async)
+
+    def canSuspendVM(self, machineId):
+        '''
+        The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+            True if the machien can be suspended
+        '''
+        return self.__getApi().canSuspendVM(machineId)
 
     def suspendVM(self, machineId, async=True):
         '''
