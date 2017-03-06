@@ -4,12 +4,15 @@ import sys
 import os
 import errno
 import pwd
+import six
 
 USER = '__USER__'
 KEY = '__KEY__'
 
+
 def logError(err):
     print(err)
+
 
 def updateAuthorizedKeys(user, pubKey):
     # No X2Go server on windows
@@ -49,7 +52,7 @@ def updateAuthorizedKeys(user, pubKey):
             if 'UDS@X2GOCLIENT' not in line and len(line.strip()) > 0:
                 f.write(line)
         # Append pubkey
-        f.write('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey))
+        f.write(six.binary_type('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey)))
 
     # Ensure access is correct
     os.chown(authorizedKeys, uid, -1)

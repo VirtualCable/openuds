@@ -50,6 +50,7 @@ class UniqueMacGenerator(UniqueIDGenerator):
     def __toMac(self, seq):
         return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
 
+    # noinspection PyMethodOverriding
     def get(self, macRange):
         firstMac, lastMac = macRange.split('-')
         firstMac = self.__toInt(firstMac)

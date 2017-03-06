@@ -39,7 +39,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-02-09'
+__updated__ = '2017-03-03'
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +51,11 @@ class OGService(Service):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('OpenGnsys Live Images')
+    typeName = _('OpenGnsys Machine')
     # : Type used internally to identify this provider
-    typeType = 'openNebulaLiveService'
+    typeType = 'openGnsysMachine'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenGnsys live images based service')
+    typeDescription = _('OpenGnsys physical machines')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -91,14 +91,14 @@ class OGService(Service):
     servicesTypeProvided = (serviceTypes.VDI,)
 
     # Now the form part
-    datastore = gui.ChoiceField(
-        label=_("Datastore"),
+    ou = gui.ChoiceField(
+        label=_("OU"),
         order=100,
-        tooltip=_('Service clones datastore'),
+        tooltip=_('Organizational Unit'),
         required=True
     )
 
-    template = gui.ChoiceField(
+    lab = gui.ChoiceField(
         label=_("Base Template"),
         order=110,
         tooltip=_('Service base template'),

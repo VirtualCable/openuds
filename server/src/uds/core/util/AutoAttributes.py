@@ -38,11 +38,11 @@ import pickle
 import six
 
 
-
 class Attribute(object):
 
     def __init__(self, theType, value=None):
         self._type = theType
+        self._value = None
         self.setValue(value)
 
     def getType(self):
@@ -76,6 +76,7 @@ class AutoAttributes(Serializable):
     ACODEC = 'zip'
 
     def __init__(self, **kwargs):
+        self._dict = None
         self.declare(**kwargs)
 
     def __getattribute__(self, name):

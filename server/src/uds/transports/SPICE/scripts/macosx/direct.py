@@ -29,7 +29,4 @@ theFile = '''{m.r.as_file}'''
 
 filename = tools.saveTempFile(theFile)
 
-
-filename = tools.saveTempFile(theFile)
-
 subprocess.Popen([remoteViewer, filename])

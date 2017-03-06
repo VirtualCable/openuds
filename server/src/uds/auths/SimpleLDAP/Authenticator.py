@@ -169,11 +169,10 @@ class SimpleLDAPAuthenticator(Authenticator):
                 l.simple_bind_s(who=username, cred=password)
             except ldap.LDAPError as e:
                 str_ = _('Ldap connection error: ')
-                if type(e.message) == dict:
-                    str_ += 'info' in e.message and e.message['info'] + ',' or ''
-                    str_ += 'desc' in e.message and e.message['desc'] or ''
+                if isinstance(e.message, dict):
+                    str_ += ', '.join(e.message.get('info', ''), e.message.get('desc'))
                 else:
-                    str_ += str_(e)
+                    str_ += six.text_type(e)
                 raise Exception(str_)
             if cache is True:
                 self._connection = l

@@ -177,7 +177,7 @@ class UserPreference(object):
         '''
         raise NotImplementedError('Can\'t create an abstract preference!!!')
 
-    def guiField(self):
+    def guiField(self, value):
         '''
         '''
         raise NotImplementedError('Can\'t create an abstract preference!!!')

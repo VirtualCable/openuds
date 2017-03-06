@@ -89,7 +89,6 @@ def make(obj, counterType, **kwargs):
                 'tickCount': 4,
             }
         },
-        'legend': {'hide': True},
         'background': {
             'chartColor': '#ffeeff',
             'baseColor': '#ffffff',

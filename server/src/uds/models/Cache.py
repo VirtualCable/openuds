@@ -75,8 +75,7 @@ class Cache(models.Model):
                     v.delete()
 
     def __unicode__(self):
-        expired = getSqlDatetime() > self.created + timedelta(seconds=self.validity)
-        if expired:
+        if getSqlDatetime() > (self.created + timedelta(seconds=self.validity)):
             expired = "Expired"
         else:
             expired = "Active"

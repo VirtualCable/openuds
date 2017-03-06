@@ -39,7 +39,6 @@ class PhysicalMachinesProvider(services.ServiceProvider):
     # No extra data needed
 
     # What services do we offer?
-    offers = []
     typeName = 'Static IP Machines Provider'
     typeType = 'PhysicalMachinesServiceProvider'
     typeDescription = 'Provides connection to machines by IP'

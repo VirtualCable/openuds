@@ -50,6 +50,7 @@ __updated__ = '2015-06-21'
 availableReports = []
 
 
+# noinspection PyTypeChecker
 def __init__():
     '''
     This imports all packages that are descendant of this package, and, after that,

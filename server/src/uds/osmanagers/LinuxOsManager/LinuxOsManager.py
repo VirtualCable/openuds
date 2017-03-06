@@ -130,7 +130,7 @@ class LinuxOsManager(osmanagers.OSManager):
         except Exception:
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
-    def process(self, userService, msg, data, options):
+    def process(self, userService, msg, data, options=None):
         '''
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class), old method
