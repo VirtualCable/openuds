@@ -329,7 +329,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         state = self.service().getVMPowerState(self._vmid)
 
-        if state != XenPowerState.halted:
+        if state not in(XenPowerState.halted, XenPowerState.suspended):
             self.__pushFrontOp(opStop)
             self.__executeQueue()
         else:

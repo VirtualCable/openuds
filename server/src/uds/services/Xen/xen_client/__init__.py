@@ -50,6 +50,7 @@ class XenFailure(XenAPI.Failure, XenFault):
     exVmMissingPVDrivers = 'VM_MISSING_PV_DRIVERS'
     exHandleInvalid = 'HANDLE_INVALID'
     exHostIsSlave = 'HOST_IS_SLAVE'
+    exSRError = 'SR_BACKEND_FAILURE_44'
 
     def __init__(self, details=None):
         details = [] if details is None else details
@@ -73,7 +74,8 @@ class XenFailure(XenAPI.Failure, XenFault):
                 XenFailure.exBadVmPowerState: 'Machine state is invalid for requested operation (needs {2} and state is {3})',
                 XenFailure.exVmMissingPVDrivers: 'Machine needs Xen Server Tools to allow requested operation',
                 XenFailure.exHandleInvalid: 'Invalid handler',
-                XenFailure.exHostIsSlave: 'The connected host is an slave, try to connect to {1}'
+                XenFailure.exHostIsSlave: 'The connected host is an slave, try to connect to {1}',
+                XenFailure.exSRError: 'Error on SR: {2}',
             }
             err = errList.get(self.details[0], 'Error {0}')
 
@@ -216,11 +218,11 @@ class XenServer(object):
                 status = 'failure'
         except Exception as e:
             logger.exception('Unexpected exception!')
-            result = unicode(e)
+            result = six.text_type(e)
             status = 'failure'
 
         # Removes <value></value> if present
-        if result and type(result) is not XenFailure and result.startswith('<value>'):
+        if result and not isinstance(result, XenFailure) and result.startswith('<value>'):
             result = result[7:-8]
 
         if destroyTask:

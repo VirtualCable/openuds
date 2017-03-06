@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2017-03-03'
+__updated__ = '2017-03-06'
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,10 @@ def create(api, fromTemplateId, name, toDataStore):
             imgIds = dsk.getElementsByTagName('IMAGE_ID')
             if len(imgIds) == 0:
                 fromId = False
-                node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                try:
+                    node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                except IndexError:
+                    continue  # Skip this unknown node
                 imgName = node.data
                 # Locate
                 imgId = imgs[imgName]
