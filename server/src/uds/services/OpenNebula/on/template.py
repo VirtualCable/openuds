@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2017-03-06'
+__updated__ = '2017-03-07'
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +142,10 @@ def remove(api, templateId):
             for dsk in template.getElementsByTagName('DISK'):
                 imgIds = dsk.getElementsByTagName('IMAGE_ID')
                 if len(imgIds) == 0:
-                    node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                    try:
+                        node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                    except IndexError:
+                        continue
                     imgId = imgs[node.data]
                 else:
                     node = imgIds[0].childNodes[0]
@@ -189,7 +192,10 @@ def checkPublished(api, templateId):
         for dsk in template.getElementsByTagName('DISK'):
             imgIds = dsk.getElementsByTagName('IMAGE_ID')
             if len(imgIds) == 0:
-                node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                try:
+                    node = dsk.getElementsByTagName('IMAGE')[0].childNodes[0]
+                except IndexError:
+                    continue
                 imgId = imgs[node.data]
             else:
                 node = imgIds[0].childNodes[0]
