@@ -20,7 +20,7 @@ gui.calendars.link = ->
     'YEARLY': [gettext('year'), gettext('years'), gettext('Yearly')]
     'WEEKDAYS': ['', '', gettext('Weekdays')]
 
-  dunitDct = 
+  dunitDct =
     'MINUTES': gettext('Minutes')
     'HOURS': gettext('Hours')
     'DAYS': gettext('Days')
@@ -58,7 +58,7 @@ gui.calendars.link = ->
     else if fld == "duration"
         return data + " " + dunitDct[record.duration_unit]
     return fld
-    
+
   newEditFnc = (rules, forEdit) ->
     days = (w.substr(0, 3) for w in weekDays)
     sortFnc = (a, b) ->
@@ -197,7 +197,7 @@ gui.calendars.link = ->
         else
             now = Math.floor(new Date().getTime() / 1000)
             fillDateTime '#id-rule-start', now
-            
+
 
 
         #
@@ -240,8 +240,31 @@ gui.calendars.link = ->
             updateSummary modalId
         )
 
+        $form = $(modalId + " form")
+
+        $form.validate
+          debug: false
+          ignore: ':hidden:not("select"):not(".modal_field_data")'
+          errorClass: "text-danger"
+          validClass: "has-success"
+          focusInvalid: true
+          highlight: (element) ->
+            group = $(element).closest(".form-group")
+            group.addClass "has-error"
+            return
+
+          showErrors: (errorMap, errorList) ->
+            this.defaultShowErrors()
+
+          success: (element) ->
+            $(element).closest(".form-group").removeClass "has-error"
+            $(element).remove()
+            return
+
         # Save
         $(modalId + " .button-accept").click ->
+          return unless $form.valid()
+
           data = readFields modalId
 
           closeAndRefresh = () ->
@@ -290,7 +313,7 @@ gui.calendars.link = ->
           icon: 'calendars'
           callback: renderer
           container: "rules-placeholder"
-          rowSelect: "single"
+          rowSelect: "multi"
           buttons: [
             "new"
             "edit"

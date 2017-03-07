@@ -6,14 +6,14 @@
     <div class="form-group">
       <label for="id-rule-name" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Name of this rule'%}">{% trans 'Name' %}</label>
       <div class="col-sm-9">
-        <input id="id-rule-name" name="rule_name" type="text" class="form-control" placeholder="{% trans 'Rule name' %}" autofocus required>
+        <input id="id-rule-name" name="rule_name" type="text" class="form-control" placeholder="{% trans 'Rule name' %}" autofocus required="true">
       </div>
     </div>
 
     <div class="form-group">
       <label for="id-rule-comments" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Comments for this rule'%}">{% trans 'Comments' %}</label>
       <div class="col-sm-9">
-        <input id="id-rule-comments" name="rule_comments" type="text" class="form-control" placeholder="{% trans 'Rule comments' %}" autofocus required>
+        <input id="id-rule-comments" name="rule_comments" type="text" class="form-control" placeholder="{% trans 'Rule comments' %}" autofocus>
       </div>
     </div>
     </fieldset>
@@ -55,7 +55,7 @@
       <label for="id-rule-start" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'Starting date for repeating'%}">{% trans 'Starts' %}</label>
       <div class="col-sm-9">
         <div class="input-group date">
-          <input type="date" required placeholder="starting date for rule" id="id-rule-start" name="rule_start_date" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+          <input type="date" required placeholder="starting date for rule" id="id-rule-start" name="rule_start_date" class="form-control modal_field_data"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
       <label for="id-rule-end" class="col-sm-3 control-label" data-toggle="tooltip" data-title="{% trans 'End date'%}">{% trans 'Ends' %}</label>
       <div class="col-sm-9">
         <div class="input-group date">
-            <input type="date" required placeholder="Never" id="id-rule-end" name="rule_end_date" clear="true" class="form-control modal_field_data " aria-required="true"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            <input type="date" placeholder="Never" id="id-rule-end" name="rule_end_date" clear="true" class="form-control modal_field_data"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
         </div>
       </div>
     </div>
