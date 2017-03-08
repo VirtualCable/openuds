@@ -189,7 +189,8 @@ class UDSClient(QtGui.QMainWindow):
                 # * Script data
                 # We test that the Script has correct signature, and them execute it with the parameters
                 script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], res['params'].decode('base64').decode('bz2')
-
+                if tools.verifySignature(script, signature) is False:
+                    raise Exception('Invalid UDS code signature. Please, report to administrator')
 
             self.stopAnim()
 
@@ -198,6 +199,13 @@ class UDSClient(QtGui.QMainWindow):
 
             QtCore.QTimer.singleShot(3000, self.endScript)
             self.hide()
+
+            if self.serverVersion <= OLD_METHOD_VERSION:
+                errorString = '<p>The server <b>{}</b> runs an old version of UDS:</p>'.format(host)
+                errorString += '<p>To avoid security issues, you must approve old UDS Version access.</p>'
+
+                if QtGui.QMessageBox.warning(None, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                    raise Exception('Server not approved. Access denied.')
 
             six.exec_(script, globals(), {'parent': self, 'params':  params})
 
@@ -241,7 +249,7 @@ def done(data):
     QtGui.QMessageBox.critical(None, 'Notice', six.text_type(data.data), QtGui.QMessageBox.Ok)
     sys.exit(0)
 
-# Ask user to aprobe endpoint
+# Ask user to approve endpoint
 def approveHost(host, parentWindow=None):
     settings = QtCore.QSettings()
     settings.beginGroup('endpoints')
@@ -257,6 +265,7 @@ def approveHost(host, parentWindow=None):
 
     settings.endGroup()
     return approved
+
 
 if __name__ == "__main__":
     logger.debug('Initializing connector')
