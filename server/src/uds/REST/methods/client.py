@@ -138,11 +138,15 @@ class Client(Handler):
 
             userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
 
-            transportScript = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
+            transportScript, signature, params = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 
             logger.debug('Script:\n{}'.format(transportScript))
 
-            return Client.result(result=transportScript.encode('bz2').encode('base64'))
+            return Client.result(result={
+                'script': transportScript.encode('bz2').encode('base64'),
+                'signature': signature,
+                'params': params.encode('bz2').encode('base64'),
+            })
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
             TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds

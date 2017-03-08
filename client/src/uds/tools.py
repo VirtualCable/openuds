@@ -32,6 +32,12 @@
 '''
 from __future__ import unicode_literals
 
+# For signature checking
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA256
+from base64 import b64decode
+
 import tempfile
 import string
 import random
@@ -42,14 +48,31 @@ import six
 import sys
 import time
 
+
+
 from log import logger
 
 _unlinkFiles = []
 _tasksToWait = []
 _execBeforeExit = []
 
-
 sys_fs_enc = sys.getfilesystemencoding() or 'mbcs'
+
+# Public key for scripts
+PUBLIC_KEY = '''-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuNURlGjBpqbglkTTg2lh
+dU5qPbg9Q+RofoDDucGfrbY0pjB9ULgWXUetUWDZhFG241tNeKw+aYFTEorK5P+g
+ud7h9KfyJ6huhzln9eyDu3k+kjKUIB1PLtA3lZLZnBx7nmrHRody1u5lRaLVplsb
+FmcnptwYD+3jtJ2eK9ih935DYAkYS4vJFi2FO+npUQdYBZHPG/KwXLjP4oGOuZp0
+pCTLiCXWGjqh2GWsTECby2upGS/ZNZ1r4Ymp4V2A6DZnN0C0xenHIY34FWYahbXF
+ZGdr4DFBPdYde5Rb5aVKJQc/pWK0CV7LK6Krx0/PFc7OGg7ItdEuC7GSfPNV/ANt
+5BEQNF5w2nUUsyN8ziOrNih+z6fWQujAAUZfpCCeV9ekbwXGhbRtdNkbAryE5vH6
+eCE0iZ+cFsk72VScwLRiOhGNelMQ7mIMotNck3a0P15eaGJVE2JV0M/ag/Cnk0Lp
+wI1uJQRAVqz9ZAwvF2SxM45vnrBn6TqqxbKnHCeiwstLDYG4fIhBwFxP3iMH9EqV
+2+QXqdJW/wLenFjmXfxrjTRr+z9aYMIdtIkSpADIlbaJyTtuQpEdWnrlDS2b1IGd
+Okbm65EebVzOxfje+8dRq9Uqwip8f/qmzFsIIsx3wPSvkKawFwb0G5h2HX5oJrk0
+nVgtClKcDDlSaBsO875WDR0CAwEAAQ==
+-----END PUBLIC KEY-----'''
 
 def saveTempFile(content, filename=None):
     if filename is None:
@@ -160,3 +183,18 @@ def addExecBeforeExit(fnc):
 def execBeforeExit():
     for fnc in _execBeforeExit:
         fnc.__call__()
+
+def verifySignature(script, signature):
+    '''
+    Verifies with a public key from whom the data came that it was indeed
+    signed by their private key
+    param: public_key_loc Path to public key
+    param: signature String signature to be verified
+    return: Boolean. True if the signature is valid; False otherwise.
+    '''
+    rsakey = RSA.importKey(PUBLIC_KEY)
+    signer = PKCS1_v1_5.new(rsakey)
+    digest = SHA256.new(script)  # Script is "binary string" here
+    if signer.verify(digest, b64decode(signature)):
+        return True
+    return False
