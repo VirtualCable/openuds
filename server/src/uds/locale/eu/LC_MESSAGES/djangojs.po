@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"POT-Creation-Date: 2017-03-10 13:23+0100\n"
 "PO-Revision-Date: 2017-02-01 23:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -354,43 +354,43 @@ msgstr "Editatu Araua"
 msgid "Save"
 msgstr "Gorde"
 
-#: static/tmp_js/gui-d-calendar.js:277
+#: static/tmp_js/gui-d-calendar.js:300
 msgid "Error creating rule"
 msgstr "Araua sortzerakoan errorea"
 
-#: static/tmp_js/gui-d-calendar.js:280
+#: static/tmp_js/gui-d-calendar.js:303
 msgid "Error saving rule"
 msgstr "Araua gordetzerakoan errorea"
 
-#: static/tmp_js/gui-d-calendar.js:326
+#: static/tmp_js/gui-d-calendar.js:349
 msgid "Delete rule"
 msgstr "Araua ezabatu"
 
-#: static/tmp_js/gui-d-calendar.js:326
+#: static/tmp_js/gui-d-calendar.js:349
 msgid "Rule deletion error"
 msgstr "Araua ezabatzerakoan errorea"
 
-#: static/tmp_js/gui-d-calendar.js:333
+#: static/tmp_js/gui-d-calendar.js:356
 msgid "New calendar"
 msgstr "Egutegi berria"
 
-#: static/tmp_js/gui-d-calendar.js:333
+#: static/tmp_js/gui-d-calendar.js:356
 msgid "Calendar creation error"
 msgstr "Egutegia ezabatzerakoan errorea"
 
-#: static/tmp_js/gui-d-calendar.js:334
+#: static/tmp_js/gui-d-calendar.js:357
 msgid "Edit calendar"
 msgstr "Editatu egutegia"
 
-#: static/tmp_js/gui-d-calendar.js:334
+#: static/tmp_js/gui-d-calendar.js:357
 msgid "Calendar saving error"
 msgstr "Egutegia gordetzerakoan errorea"
 
-#: static/tmp_js/gui-d-calendar.js:335
+#: static/tmp_js/gui-d-calendar.js:358
 msgid "Delete calendar"
 msgstr "Egutegia  Ezabatu"
 
-#: static/tmp_js/gui-d-calendar.js:335
+#: static/tmp_js/gui-d-calendar.js:358
 msgid "Calendar deletion error"
 msgstr "Egutegia ezabatzerakoan errorea"
 

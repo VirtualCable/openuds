@@ -34,7 +34,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-04-05'
+__updated__ = '2017-03-10'
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
@@ -56,10 +56,10 @@ logger = logging.getLogger(__name__)
 # Each line describes:
 #
 CALENDAR_ACTION_PUBLISH = { 'id' : 'PUBLISH', 'description': _('Publish'), 'params': () }
-CALENDAR_ACTION_CACHE_L1 = { 'id': 'CACHEL1', 'description': _('Sets cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size'), 'default': '1' },) }
-CALENDAR_ACTION_CACHE_L2 = { 'id': 'CACHEL2', 'description': _('Sets L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1' },) }
+CALENDAR_ACTION_CACHE_L1 = { 'id': 'CACHEL1', 'description': _('Set cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache size'), 'default': '1' },) }
+CALENDAR_ACTION_CACHE_L2 = { 'id': 'CACHEL2', 'description': _('Set L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1' },) }
 CALENDAR_ACTION_INITIAL = { 'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services'), 'default': '1' },) }
-CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Change maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10' },) }
+CALENDAR_ACTION_MAX = { 'id': 'MAX', 'description': _('Set maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10' },) }
 
 CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
                                                         CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX)))
