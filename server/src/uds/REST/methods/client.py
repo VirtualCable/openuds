@@ -144,7 +144,7 @@ class Client(Handler):
 
             return Client.result(result={
                 'script': transportScript.encode('bz2').encode('base64'),
-                'signature': signature,
+                'signature': signature,  # It is already on base64
                 'params': params.encode('bz2').encode('base64'),
             })
         except ServiceNotReadyError as e:

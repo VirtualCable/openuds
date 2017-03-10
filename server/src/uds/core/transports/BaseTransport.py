@@ -42,7 +42,7 @@ from uds.core.util import connection
 import six
 import logging
 
-__updated__ = '2017-02-13'
+__updated__ = '2017-03-10'
 
 logger = logging.getLogger(__name__)
 
@@ -185,11 +185,23 @@ class Transport(Module):
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
         '''
-        return '''
-from __future__ import unicode_literals
-from PyQt4 import QtCore, QtGui
-QtGui.QMessageBox.critical(parent, 'Not supported', 'The transport {transport.name} is not supported on your platform.', QtGui.QMessageBox.Ok)
-'''.format(service=userService, transport=transport)
+        return "raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))", \
+            'EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'\
+            '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'\
+            '4xlkwMjAIytp8jaMHKkzvcihiIAMtaicP786FZCwGMmFTH4Z'\
+            'A9i7YWaSzT95h84kirAG67J0GWKiyATxs6mtxBNaLgqU4juA'\
+            'Qn98hYp5ffWa5FQDSAmheiDyQbCXMRwtWcxVHVQCAoZbsvCe'\
+            'njKc+FaeKNmXsYOgmcj+pz8IViNOyTbueP9u7lTzuBlIyV+7'\
+            'OlBPTqb5yA5wOBicKIpplPd8V71Oh3pdpRvdlvVbbwNfsCl5'\
+            'v6s1X20MxaQOSwM5z02eY1lJSbLIp8d9WRkfVty0HP/4Z8JZ'\
+            'kavkWNaGiKXEZXqojx/ZdzvTfvBkYrREQ8lMCIvtawBTysus'\
+            'IV4vHnDRdSmRxpYdj+1SNfzB0s1VuY6F7bSdBvgzja4P3Zbo'\
+            'Z63yNGuBhIsqUDA2ARmiMHRx9jr6eilFBKhoyWgNi9izTkar'\
+            '3iMYtXfvcFnmz4jvuJHUccbpUo4O31K2G7OaqlLylQ5dCu62'\
+            'JuVuquKKSfiwOIdYcdPJ6gvpgkQQDPqt7wN+duyZA0FI5F4h'\
+            'O6acQZmbjBCqZoo9Qsg7k9cTcalNkc5flEYAk1mULnddgDM6'\
+            'YGmoJgVnDr0=', {'transport':transport.name}
+
 
     def getLink(self, userService, transport, ip, os, user, password, request):
         '''

@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-02-13'
+__updated__ = '2017-03-10'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -123,28 +123,34 @@ class RDPTransport(BaseRDPTransport):
             'wallpaper': self.wallpaper.isTrue(),
             'multimon': self.multimon.isTrue(),
             'fullScreen': width == -1 or height == -1,
-            'this_server': request.build_absolute_uri('/'),
-            'r': r,
+            'this_server': request.build_absolute_uri('/')
         }
-
-        m = tools.DictAsObj(data)
-
-        if m.domain != '':
-            m.usernameWithDomain = '{}\\\\{}'.format(m.domain, m.username)
-        else:
-            m.usernameWithDomain = m.username
-
-        if m.os == OsDetector.Windows:
-            m.r.password = '{password}'
 
         os = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
 
-        }.get(m.os)
+        }.get(data['os'])
 
         if os is None:
             return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)
+        if data['domain'] != '':
+            data['usernameWithDomain'] = '{}\\\\{}'.format(data['domain'], data['username'])
+        else:
+            data['usernameWithDomain'] = data['username']
+
+        if os == 'windows':
+            sp = data
+        elif os == 'linux':
+            sp = {
+                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
+                'as_rdesktop_params': r.as_rdesktop_params,
+                'address': r.address,
+                'password': password,
+            }
+        else:  # Mac
+            sp = data
+
+        return self.getScript('scripts/{}/direct.py', sp)

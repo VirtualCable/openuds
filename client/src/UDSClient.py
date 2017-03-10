@@ -37,7 +37,7 @@ from PyQt4 import QtCore, QtGui
 import six
 
 from uds.rest import RestRequest
-from uds.forward import forward
+from uds.forward import forward  # @UnusedImport
 from uds.log import logger
 from uds import tools
 from uds import VERSION
@@ -207,7 +207,7 @@ class UDSClient(QtGui.QMainWindow):
                 if QtGui.QMessageBox.warning(None, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                     raise Exception('Server not approved. Access denied.')
 
-            six.exec_(script, globals(), {'parent': self, 'params':  params})
+            six.exec_(script, globals(), {'parent': self, 'sp':  params})
 
         except RetryException as e:
             self.ui.info.setText(six.text_type(e) + ', retrying access...')

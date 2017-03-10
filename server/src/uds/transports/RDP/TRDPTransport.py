@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-02-13'
+__updated__ = '2017-03-10'
 
 
 logger = logging.getLogger(__name__)
@@ -161,24 +161,36 @@ class TRDPTransport(BaseRDPTransport):
             'r': r,
         }
 
-        m = tools.DictAsObj(data)
-
-        if m.domain != '':
-            m.usernameWithDomain = '{}\\\\{}'.format(m.domain, m.username)
-        else:
-            m.usernameWithDomain = m.username
-
-        if m.os == OsDetector.Windows:
-            r.password = '{password}'
-
         os = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
 
-        }.get(m.os)
+        }.get(data['os'])
 
         if os is None:
             return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)
+        if data['domain'] != '':
+            data['usernameWithDomain'] = '{}\\\\{}'.format(data['domain'], data['username'])
+        else:
+            data['usernameWithDomain'] = data['username']
+
+        if os == 'windows':
+            sp = data
+        elif os == 'linux':
+            sp = {
+                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
+                'as_rdesktop_params': r.as_rdesktop_params,
+                'address': r.address,
+                'password': password,
+                'tunUser': tunuser,
+                'tunPass': tunpass,
+                'tunHost': sshHost,
+                'tunPort': sshPort,
+                'tunWait': self.tunnelWait.num(),
+            }
+        else:  # Mac
+            sp = data
+
+        return self.getScript('scripts/{}/tunnel.py', data)

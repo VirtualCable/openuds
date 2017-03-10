@@ -13,16 +13,16 @@ import six
 
 def execNewXFreeRdp(parent, xfreerdp):
     import subprocess  # @Reimport
-    params = [xfreerdp] + {m.r.as_new_xfreerdp_params} + ['/v:{m.r.address}']  # @UndefinedVariable
+    params = [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]  # @UndefinedVariable
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 def execRdesktop(parent, rdesktop):
     import subprocess  # @Reimport
-    params = [rdesktop] + {m.r.as_rdesktop_params} + ['{m.r.address}']  # @UndefinedVariable
+    params = [rdesktop] + sp['as_rdesktop_params'] + [sp['address']]  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
-    if '{m.password}' != '':
-        p.stdin.write('{m.password}')
+    if sp['password'] != '':  # @UndefinedVariable
+        p.stdin.write(sp['password'])  # @UndefinedVariable
     p.stdin.close()
     tools.addTaskToWait(p)
 

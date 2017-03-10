@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-02-14'
+__updated__ = '2017-03-10'
 
 
 logger = logging.getLogger(__name__)
@@ -144,7 +144,11 @@ class BaseRDPTransport(Transport):
             pass
         return dct
 
-    def getScript(self, script):
-        with open(os.path.join(os.path.dirname(__file__), script)) as f:
-            data = f.read()
-        return data
+    def getScript(self, script, params):
+        # Reads script
+        with open(os.path.join(os.path.dirname(__file__), script.format(params['os']))) as f:
+            script = f.read()
+        # Reads signature
+        with open(os.path.join(os.path.dirname(__file__), script + '.signature')) as f:
+            signature = f.read()
+        return script, signature, params
