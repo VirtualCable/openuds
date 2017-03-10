@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"POT-Creation-Date: 2017-03-10 13:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -351,43 +351,43 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:277
+#: static/tmp_js/gui-d-calendar.js:300
 msgid "Error creating rule"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:280
+#: static/tmp_js/gui-d-calendar.js:303
 msgid "Error saving rule"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:326
+#: static/tmp_js/gui-d-calendar.js:349
 msgid "Delete rule"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:326
+#: static/tmp_js/gui-d-calendar.js:349
 msgid "Rule deletion error"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:333
+#: static/tmp_js/gui-d-calendar.js:356
 msgid "New calendar"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:333
+#: static/tmp_js/gui-d-calendar.js:356
 msgid "Calendar creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:334
+#: static/tmp_js/gui-d-calendar.js:357
 msgid "Edit calendar"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:334
+#: static/tmp_js/gui-d-calendar.js:357
 msgid "Calendar saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:335
+#: static/tmp_js/gui-d-calendar.js:358
 msgid "Delete calendar"
 msgstr ""
 
-#: static/tmp_js/gui-d-calendar.js:335
+#: static/tmp_js/gui-d-calendar.js:358
 msgid "Calendar deletion error"
 msgstr ""
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-13 17:08+0100\n"
-"PO-Revision-Date: 2017-02-13 16:05+0000\n"
+"POT-Creation-Date: 2017-03-10 13:23+0100\n"
+"PO-Revision-Date: 2017-03-10 12:20+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -589,7 +589,7 @@ msgid "Cached services"
 msgstr "Servizi memorizzati nella cache"
 
 #: REST/methods/user_services.py:190 REST/methods/user_services.py:227
-#: REST/methods/user_services.py:330 REST/methods/user_services.py:359
+#: REST/methods/user_services.py:330
 #: templates/uds/admin/tmpl/group-info.html:18
 #: templates/uds/admin/tmpl/group-info.html:45
 #: templates/uds/admin/tmpl/group.html:54
@@ -633,6 +633,11 @@ msgstr "Motivo"
 msgid "Changelog"
 msgstr "Changelog"
 
+#: REST/methods/user_services.py:359
+#: templates/uds/admin/tmpl/group-info.html:87
+msgid "Comment"
+msgstr "Commento"
+
 #: REST/methods/users_groups.py:106
 #, python-brace-format
 msgid "Users of {0}"
@@ -652,7 +657,7 @@ msgstr "Utenti correnti"
 #: services/OVirt/OVirtProvider.py:110 services/OpenNebula/Provider.py:101
 #: services/OpenStack/Provider.py:105
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
-#: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
+#: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
 #: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
@@ -774,7 +779,7 @@ msgstr "Elenco utenti per {}"
 #: services/OVirt/OVirtProvider.py:109 services/OpenNebula/Provider.py:98
 #: services/OpenStack/Provider.py:98
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
-#: services/Xen/XenProvider.py:98
+#: services/Xen/XenProvider.py:99
 msgid "Host"
 msgstr "Host"
 
@@ -833,7 +838,7 @@ msgstr ""
 #: services/OVirt/OVirtProvider.py:111 services/OpenNebula/Provider.py:102
 #: services/OpenStack/Provider.py:106 services/Sample/SampleService.py:131
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
-#: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:83
+#: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
 #: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
@@ -1721,16 +1726,16 @@ msgid "Publish"
 msgstr "Pubblicare"
 
 #: models/CalendarAction.py:59
-msgid "Sets cache size"
-msgstr "Imposta la dimensione della cache"
+msgid "Set cache size"
+msgstr "Dimensione della cache impostata"
 
 #: models/CalendarAction.py:59
 msgid "Cache size"
 msgstr "Dimensione della cache"
 
 #: models/CalendarAction.py:60
-msgid "Sets L2 cache size"
-msgstr "Imposta la dimensione della cache L2"
+msgid "Set L2 cache size"
+msgstr "Impostare la dimensione della cache L2"
 
 #: models/CalendarAction.py:60
 msgid "Cache L2 size"
@@ -1745,8 +1750,8 @@ msgid "Initial services"
 msgstr "Servizi iniziali"
 
 #: models/CalendarAction.py:62
-msgid "Change maximum number of services"
-msgstr "Modificare il numero massimo di servizi"
+msgid "Set maximum number of services"
+msgstr "Numero massimo di servizi"
 
 #: models/CalendarAction.py:62
 msgid "Maximum services"
@@ -2433,13 +2438,13 @@ msgstr "Timeout in secondi di connessione per HyperV"
 #: services/Nutanix_enterprise/NutanixProvider.py:46
 #: services/OVirt/OVirtProvider.py:117
 #: services/Vmware_enterprise/ServiceProviderVC.py:39
-#: services/Xen/XenProvider.py:105
+#: services/Xen/XenProvider.py:106
 msgid "Macs range"
 msgstr "Gamma di Mac"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:95
 #: services/HyperV_enterprise/HyperVProvider.py:93
-#: services/Xen/XenProvider.py:106
+#: services/Xen/XenProvider.py:107
 msgid "Range of valid macs for created machines"
 msgstr "Gamma di Mac valido per macchine creati"
 
@@ -2449,7 +2454,7 @@ msgstr "Il server selezionato non è un cluster"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:299
 #: services/HyperV_enterprise/HyperVProvider.py:259
-#: services/Xen/XenProvider.py:396
+#: services/Xen/XenProvider.py:409
 msgid "Connection test successful"
 msgstr "Test di connessione riuscita"
 
@@ -2531,7 +2536,7 @@ msgstr "HyperV piattaforma servizio provider (sperimentale)"
 #: services/OpenStack/Provider.py:108
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:80
-#: services/Xen/XenProvider.py:102
+#: services/Xen/XenProvider.py:103
 msgid "Creation concurrency"
 msgstr "Concorrenza di creazione"
 
@@ -2540,7 +2545,7 @@ msgstr "Concorrenza di creazione"
 #: services/OVirt/OVirtProvider.py:113 services/OpenNebula/Provider.py:104
 #: services/OpenStack/Provider.py:108
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
-#: services/Xen/XenProvider.py:102
+#: services/Xen/XenProvider.py:103
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Numero massimo di creazione di macchine virtuali contemporaneamente"
 
@@ -2550,7 +2555,7 @@ msgstr "Numero massimo di creazione di macchine virtuali contemporaneamente"
 #: services/OpenStack/Provider.py:109
 #: services/Vmware_enterprise/ServiceProviderVC.py:36
 #: services/Vmware_enterprise/ServiceProviderVC.py:81
-#: services/Xen/XenProvider.py:103
+#: services/Xen/XenProvider.py:104
 msgid "Removal concurrency"
 msgstr "Concorrenza di rimozione"
 
@@ -2559,7 +2564,7 @@ msgstr "Concorrenza di rimozione"
 #: services/OVirt/OVirtProvider.py:114 services/OpenNebula/Provider.py:105
 #: services/OpenStack/Provider.py:109
 #: services/Vmware_enterprise/ServiceProviderVC.py:36
-#: services/Xen/XenProvider.py:103
+#: services/Xen/XenProvider.py:104
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Numero massimo di rimozione contemporaneamente VMs"
 
@@ -2926,11 +2931,11 @@ msgstr "Provider di Microsoft RDS basato"
 msgid "List of servers"
 msgstr "Lista dei server"
 
-#: services/RDS_enterprise/RDSProvider.py:38
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid "User mapping"
 msgstr "Mapping utente"
 
-#: services/RDS_enterprise/RDSProvider.py:38
+#: services/RDS_enterprise/RDSProvider.py:39
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -2938,17 +2943,17 @@ msgstr ""
 "Se attivo, sarà fatto mapping utente. In caso contrario, le credenziali "
 "dell'utente sarà Reindirizzamento server RDS."
 
-#: services/RDS_enterprise/RDSProvider.py:40
+#: services/RDS_enterprise/RDSProvider.py:41
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
 "Elenco di utente per la mappatura. (Non utilizzato se il mapping utente è "
 "disattivato)"
 
-#: services/RDS_enterprise/RDSProvider.py:41
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid "User's password"
 msgstr "Password utente"
 
-#: services/RDS_enterprise/RDSProvider.py:41
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -2956,12 +2961,12 @@ msgstr ""
 "Password predefinita per gli utenti nel mapping di elenco. (Non utilizzato "
 "se il mapping utente è disattivato)"
 
-#: services/RDS_enterprise/RDSProvider.py:64
+#: services/RDS_enterprise/RDSProvider.py:65
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 "Errore: Utente {} su {} host viene utilizzato e non può essere rimosso subito"
 
-#: services/RDS_enterprise/RDSProvider.py:94
+#: services/RDS_enterprise/RDSProvider.py:95
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -3293,31 +3298,31 @@ msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
 msgstr ""
 "Lunghezza della parte numerica per i nomi di questa macchine (tra 3 e 6"
 
-#: services/Xen/XenProvider.py:79
+#: services/Xen/XenProvider.py:80
 msgid "Xenserver Platform Provider"
 msgstr "Fornitore di piattaforma di XenServer"
 
-#: services/Xen/XenProvider.py:83
+#: services/Xen/XenProvider.py:84
 msgid "XenServer platform service provider"
 msgstr "Fornitore di servizi di piattaforma XenServer"
 
-#: services/Xen/XenProvider.py:98
+#: services/Xen/XenProvider.py:99
 msgid "XenServer Server IP or Hostname"
 msgstr "XenServer Server IP o l'Hostname"
 
-#: services/Xen/XenProvider.py:99
+#: services/Xen/XenProvider.py:100
 msgid "User with valid privileges on XenServer"
 msgstr "Utente con privilegi validi su XenServer"
 
-#: services/Xen/XenProvider.py:100
+#: services/Xen/XenProvider.py:101
 msgid "Password of the user of XenServer"
 msgstr "Password dell'utente di XenServer"
 
-#: services/Xen/XenProvider.py:107
+#: services/Xen/XenProvider.py:108
 msgid "Verify Certificate"
 msgstr "Verificare il certificato"
 
-#: services/Xen/XenProvider.py:108
+#: services/Xen/XenProvider.py:109
 msgid ""
 "If selected, certificate will be checked against system valid certificate "
 "providers"
@@ -3325,7 +3330,7 @@ msgstr ""
 "Se selezionato, certificato verrà controllato contro certificato valido "
 "sistema fornitori"
 
-#: services/Xen/XenProvider.py:398
+#: services/Xen/XenProvider.py:411
 #, python-brace-format
 msgid "Connection failed: {0}"
 msgstr "Connessione non riuscita: {0}"
@@ -3588,10 +3593,6 @@ msgstr "Modalità partita"
 #: templates/uds/admin/tmpl/group.html:38
 msgid "Any"
 msgstr "Qualsiasi"
-
-#: templates/uds/admin/tmpl/group-info.html:87
-msgid "Comment"
-msgstr "Commento"
 
 #: templates/uds/admin/tmpl/group.html:24
 #: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21

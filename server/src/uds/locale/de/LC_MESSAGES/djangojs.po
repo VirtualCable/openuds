@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-13 17:08+0100\n"
+"POT-Creation-Date: 2017-03-10 13:23+0100\n"
 "PO-Revision-Date: 2017-02-01 23:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -353,43 +353,43 @@ msgstr "Regel bearbeiten"
 msgid "Save"
 msgstr "Sie sparen"
 
-#: static/tmp_js/gui-d-calendar.js:277
+#: static/tmp_js/gui-d-calendar.js:300
 msgid "Error creating rule"
 msgstr "Erstellen von Fehler-Regel"
 
-#: static/tmp_js/gui-d-calendar.js:280
+#: static/tmp_js/gui-d-calendar.js:303
 msgid "Error saving rule"
 msgstr "Fehler beim Speichern der Regel"
 
-#: static/tmp_js/gui-d-calendar.js:326
+#: static/tmp_js/gui-d-calendar.js:349
 msgid "Delete rule"
 msgstr "Regel löschen"
 
-#: static/tmp_js/gui-d-calendar.js:326
+#: static/tmp_js/gui-d-calendar.js:349
 msgid "Rule deletion error"
 msgstr "Regelfehler löschen"
 
-#: static/tmp_js/gui-d-calendar.js:333
+#: static/tmp_js/gui-d-calendar.js:356
 msgid "New calendar"
 msgstr "Neuer Kalender"
 
-#: static/tmp_js/gui-d-calendar.js:333
+#: static/tmp_js/gui-d-calendar.js:356
 msgid "Calendar creation error"
 msgstr "Fehler beim Erstellen von Kalender"
 
-#: static/tmp_js/gui-d-calendar.js:334
+#: static/tmp_js/gui-d-calendar.js:357
 msgid "Edit calendar"
 msgstr "Kalender bearbeiten"
 
-#: static/tmp_js/gui-d-calendar.js:334
+#: static/tmp_js/gui-d-calendar.js:357
 msgid "Calendar saving error"
 msgstr "Kalender speichern Fehler"
 
-#: static/tmp_js/gui-d-calendar.js:335
+#: static/tmp_js/gui-d-calendar.js:358
 msgid "Delete calendar"
 msgstr "Kalender löschen"
 
-#: static/tmp_js/gui-d-calendar.js:335
+#: static/tmp_js/gui-d-calendar.js:358
 msgid "Calendar deletion error"
 msgstr "Kalender löschen Fehler"
 
