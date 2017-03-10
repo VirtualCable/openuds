@@ -31,18 +31,15 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
-from __future__ import  unicode_literals
-
 from uds.core.Serializable import Serializable
 import pickle
-import six
+import timeit
 
 
 class Attribute(object):
 
     def __init__(self, theType, value=None):
         self._type = theType
-        self._value = None
         self.setValue(value)
 
     def getType(self):
@@ -76,7 +73,6 @@ class AutoAttributes(Serializable):
     ACODEC = 'zip'
 
     def __init__(self, **kwargs):
-        self._dict = None
         self.declare(**kwargs)
 
     def __getattribute__(self, name):
@@ -92,12 +88,12 @@ class AutoAttributes(Serializable):
 
     def declare(self, **kwargs):
         d = {}
-        for key, typ in six.iteritems(kwargs):
+        for key, typ in kwargs.iteritems():
             d[key] = Attribute(typ)
         self.dict = d
 
     def marshal(self):
-        return '\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in six.iteritems(self.dict)]).encode(AutoAttributes.ACODEC)
+        return '\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]).encode(AutoAttributes.ACODEC)
 
     def unmarshal(self, data):
         if data == '':  # Can be empty
@@ -109,6 +105,6 @@ class AutoAttributes(Serializable):
 
     def __str__(self):
         str_ = '<AutoAttribute '
-        for k, v in six.iteitems(self.dict):
+        for k, v in self.dict.iteritems():
             str_ += "%s (%s) = %s" % (k, v.getType(), v.getStrValue())
         return str_ + '>'

@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-from PyQt4 import QtCore, QtGui
 import subprocess
 import re
 from uds.forward import forward  # @UnresolvedImport
@@ -61,7 +60,7 @@ if app is None or fnc is None:
 ''')
 else:
     # Open tunnel
-    forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389, {m.tunWait})  # @UndefinedVariable
+    forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, sp['tunWait'])  # @UndefinedVariable
 
     if forwardThread.status == 2:
         raise Exception('Unable to open tunnel')

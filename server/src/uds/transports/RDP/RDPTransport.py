@@ -103,54 +103,63 @@ class RDPTransport(BaseRDPTransport):
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
 
+        logger.debug('username: {}, pass: {pass}'.format(username, password))
+        return '', '', ''
+
         # data
-        data = {
-            'os': os['OS'],
-            'ip': ip,
-            'port': 3389,
-            'username': username,
-            'password': password,
-            'hasCredentials': username != '' and password != '',
-            'domain': domain,
-            'width': width,
-            'height': height,
-            'depth': depth,
-            'printers': self.allowPrinters.isTrue(),
-            'smartcards': self.allowSmartcards.isTrue(),
-            'drives': self.allowDrives.isTrue(),
-            'serials': self.allowSerials.isTrue(),
-            'compression': True,
-            'wallpaper': self.wallpaper.isTrue(),
-            'multimon': self.multimon.isTrue(),
-            'fullScreen': width == -1 or height == -1,
-            'this_server': request.build_absolute_uri('/')
-        }
+#         data = {
+#             'os': os['OS'],
+#             'ip': ip,
+#             'port': 3389,
+#             'username': username,
+#             'password': password,
+#             'hasCredentials': username != '' and password != '',
+#             'domain': domain,
+#             'width': width,
+#             'height': height,
+#             'depth': depth,
+#             'printers': self.allowPrinters.isTrue(),
+#             'smartcards': self.allowSmartcards.isTrue(),
+#             'drives': self.allowDrives.isTrue(),
+#             'serials': self.allowSerials.isTrue(),
+#             'compression': True,
+#             'wallpaper': self.wallpaper.isTrue(),
+#             'multimon': self.multimon.isTrue(),
+#             'fullScreen': width == -1 or height == -1,
+#             'this_server': request.build_absolute_uri('/')
+#         }
 
         os = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
 
-        }.get(data['os'])
+        }.get(os['OS'])
 
         if os is None:
             return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        if data['domain'] != '':
-            data['usernameWithDomain'] = '{}\\\\{}'.format(data['domain'], data['username'])
-        else:
-            data['usernameWithDomain'] = data['username']
+        sp = {
+            'password': password,
+        }
 
         if os == 'windows':
-            sp = data
+            if password != '':
+                r.password = '{password}'
+            sp.update({
+                'as_file': r.as_file,
+            })
         elif os == 'linux':
-            sp = {
+            sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 'as_rdesktop_params': r.as_rdesktop_params,
                 'address': r.address,
-                'password': password,
-            }
+            })
         else:  # Mac
-            sp = data
+            if domain != '':
+                sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)
+            else:
+                sp['usernameWithDomain'] = username
 
-        return self.getScript('scripts/{}/direct.py', sp)
+
+        return self.getScript('scripts/{}/direct.py', os, sp)

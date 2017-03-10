@@ -32,9 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-import sys
 from PyQt4 import QtCore, QtGui
-import six
 
 from uds.rest import RestRequest
 from uds.forward import forward  # @UnusedImport
@@ -43,6 +41,9 @@ from uds import tools
 from uds import VERSION
 
 import webbrowser
+import json
+import sys
+import six
 
 from UDSWindow import Ui_MainWindow
 
@@ -188,7 +189,7 @@ class UDSClient(QtGui.QMainWindow):
                 # * Signature
                 # * Script data
                 # We test that the Script has correct signature, and them execute it with the parameters
-                script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], res['params'].decode('base64').decode('bz2')
+                script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
                 if tools.verifySignature(script, signature) is False:
                     raise Exception('Invalid UDS code signature. Please, report to administrator')
 

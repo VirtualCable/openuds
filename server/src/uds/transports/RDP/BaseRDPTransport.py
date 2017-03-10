@@ -144,11 +144,12 @@ class BaseRDPTransport(Transport):
             pass
         return dct
 
-    def getScript(self, script, params):
+    def getScript(self, scriptName, osName, params):
         # Reads script
-        with open(os.path.join(os.path.dirname(__file__), script.format(params['os']))) as f:
+        scriptName = scriptName.format(osName)
+        with open(os.path.join(os.path.dirname(__file__), scriptName)) as f:
             script = f.read()
         # Reads signature
-        with open(os.path.join(os.path.dirname(__file__), script + '.signature')) as f:
+        with open(os.path.join(os.path.dirname(__file__), scriptName + '.signature')) as f:
             signature = f.read()
         return script, signature, params

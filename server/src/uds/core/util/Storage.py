@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.db import transaction
-from uds.models import Storage as dbStorage
+from uds.models.Storage import Storage as dbStorage
 import hashlib
 import logging
 import pickle

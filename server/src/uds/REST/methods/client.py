@@ -46,13 +46,14 @@ from uds.core.services.Exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION
 
 import six
+import json
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '2.0.0'
+REQUIRED_CLIENT_VERSION = '2.5.0'
 
 
 # Enclosed methods under /actor path
@@ -140,12 +141,14 @@ class Client(Handler):
 
             transportScript, signature, params = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 
-            logger.debug('Script:\n{}'.format(transportScript))
+            logger.debug('Script:************\n{}\n**********'.format(transportScript))
+            logger.debug('Signature: {}'.format(signature))
+            logger.debug('Data:#######\n{}\n###########'.format(params))
 
             return Client.result(result={
                 'script': transportScript.encode('bz2').encode('base64'),
                 'signature': signature,  # It is already on base64
-                'params': params.encode('bz2').encode('base64'),
+                'params': json.dumps(params).encode('bz2').encode('base64'),
             })
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable

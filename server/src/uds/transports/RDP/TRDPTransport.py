@@ -134,63 +134,71 @@ class TRDPTransport(BaseRDPTransport):
         r.printerString = self.printerString.value
 
         # data
-        data = {
-            'os': os['OS'],
-            'ip': ip,
-            'tunUser': tunuser,
-            'tunPass': tunpass,
-            'tunHost': sshHost,
-            'tunPort': sshPort,
-            'tunWait': self.tunnelWait.num(),
-            'username': username,
-            'password': password,
-            'hasCredentials': username != '' and password != '',
-            'domain': domain,
-            'width': width,
-            'height': height,
-            'depth': depth,
-            'printers': self.allowPrinters.isTrue(),
-            'smartcards': self.allowSmartcards.isTrue(),
-            'drives': self.allowDrives.isTrue(),
-            'serials': self.allowSerials.isTrue(),
-            'compression': True,
-            'wallpaper': self.wallpaper.isTrue(),
-            'multimon': self.multimon.isTrue(),
-            'fullScreen': width == -1 or height == -1,
-            'this_server': request.build_absolute_uri('/'),
-            'r': r,
-        }
+#         data = {
+#             'os': os['OS'],
+#             'ip': ip,
+#             'tunUser': tunuser,
+#             'tunPass': tunpass,
+#             'tunHost': sshHost,
+#             'tunPort': sshPort,
+#             'tunWait': self.tunnelWait.num(),
+#             'username': username,
+#             'password': password,
+#             'hasCredentials': username != '' and password != '',
+#             'domain': domain,
+#             'width': width,
+#             'height': height,
+#             'depth': depth,
+#             'printers': self.allowPrinters.isTrue(),
+#             'smartcards': self.allowSmartcards.isTrue(),
+#             'drives': self.allowDrives.isTrue(),
+#             'serials': self.allowSerials.isTrue(),
+#             'compression': True,
+#             'wallpaper': self.wallpaper.isTrue(),
+#             'multimon': self.multimon.isTrue(),
+#             'fullScreen': width == -1 or height == -1,
+#             'this_server': request.build_absolute_uri('/'),
+#             'r': r,
+#         }
 
         os = {
             OsDetector.Windows: 'windows',
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
 
-        }.get(data['os'])
+        }.get(os['OS'])
 
         if os is None:
             return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-        if data['domain'] != '':
-            data['usernameWithDomain'] = '{}\\\\{}'.format(data['domain'], data['username'])
-        else:
-            data['usernameWithDomain'] = data['username']
+
+        sp = {
+            'tunUser': tunuser,
+            'tunPass': tunpass,
+            'tunHost': sshHost,
+            'tunPort': sshPort,
+            'tunWait': self.tunnelWait.num(),
+            'ip': ip,
+            'password': password,
+        }
 
         if os == 'windows':
-            sp = data
+            if password != '':
+                r.password = '{password}'
+            sp.update({
+                'as_file': r.as_file,
+            })
         elif os == 'linux':
-            sp = {
+            sp.update({
                 'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 'as_rdesktop_params': r.as_rdesktop_params,
-                'address': r.address,
-                'password': password,
-                'tunUser': tunuser,
-                'tunPass': tunpass,
-                'tunHost': sshHost,
-                'tunPort': sshPort,
-                'tunWait': self.tunnelWait.num(),
-            }
+            })
         else:  # Mac
-            sp = data
+            sp.update({
+            })
+            if domain != '':
+                sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)
+            else:
+                sp['usernameWithDomain'] = username
 
-        return self.getScript('scripts/{}/tunnel.py', data)
+        return self.getScript('scripts/{}/tunnel.py', os, sp)
