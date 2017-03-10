@@ -50,6 +50,7 @@ import stat
 import subprocess
 
 POST_CMD = '/etc/udsactor/post'
+PRECONNECT_CMD = '/etc/udsactor/pre'
 
 try:
     from prctl import set_proctitle  # @UnresolvedImport
@@ -100,6 +101,26 @@ class UDSActorSvc(Daemon, CommonService):
     def joinDomain(self, name, domain, ou, account, password):
         logger.fatal('Join domain is not supported on linux platforms right now')
 
+    def preConnect(self, user, protocol):
+        '''
+        Invoked when received a PRE Connection request via REST
+        '''
+        # Execute script in /etc/udsactor/post after interacting with broker, if no reboot is requested ofc
+        # This will be executed only when machine gets "ready"
+        try:
+
+            if os.path.isfile(PRECONNECT_CMD):
+                if (os.stat(PRECONNECT_CMD).st_mode & stat.S_IXUSR) != 0:
+                    subprocess.call([PRECONNECT_CMD, user, protocol])
+                else:
+                    logger.info('PRECONNECT file exists but it it is not executable (needs execution permission by root)')
+            else:
+                logger.info('PRECONNECT file not found & not executed')
+        except Exception as e:
+            # Ignore output of execution command
+            logger.error('Executing preconnect command give')
+
+
     def run(self):
         cfg = initCfg()  # Gets a local copy of config to get "reboot"
 
@@ -141,7 +162,7 @@ class UDSActorSvc(Daemon, CommonService):
 
             if os.path.isfile(POST_CMD):
                 if (os.stat(POST_CMD).st_mode & stat.S_IXUSR) != 0:
-                    subprocess.call('/etc/udsactor/post')
+                    subprocess.call([POST_CMD, ])
                 else:
                     logger.info('POST file exists but it it is not executable (needs execution permission by root)')
             else:

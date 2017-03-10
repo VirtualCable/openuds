@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
+from PyQt4 import QtCore, QtGui
 import subprocess
 import re
 from uds.forward import forward  # @UnresolvedImport
@@ -50,6 +51,7 @@ if xfreerdp is not None:
             fnc, app = execNewXFreeRdp, xfreerdp
 
     except Exception as e:  # Valid version not found, pass to check rdesktop
+        # QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)  # @UndefinedVariable
         pass
 
 if app is None or fnc is None:
@@ -59,7 +61,7 @@ if app is None or fnc is None:
 ''')
 else:
     # Open tunnel
-    forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], '{m.ip}', 3389, {m.tunWait})  # @UndefinedVariable
+    forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389, {m.tunWait})  # @UndefinedVariable
 
     if forwardThread.status == 2:
         raise Exception('Unable to open tunnel')
