@@ -3,6 +3,7 @@
 {% block title %}{% trans 'Available services list' %}{% endblock %}
 
 {% block body %}
+        {% calendar_denied_msg as calendarCustomMessage %}
         {% if groups|length > 1 %}
         <ul class="nav nav-tabs nav-justified" id="services-tabs">
         {% for grp in groups %}
@@ -29,7 +30,7 @@
                              {% if ser.maintenance %}
                              data-content="{% trans "Under maintenance" %}"
                              {% elif ser.not_accesible %}
-                             data-content="{% trans "Access limited by calendar" %}"
+                             data-content="{{ calendarCustomMessage }}"
                              {% elif ser.to_be_replaced %}
                              data-content="{{ ser.to_be_replaced_text }}"
                              {% elif ser.in_use %}
@@ -102,7 +103,8 @@
                 <h4 class="modal-title">{% trans "Service access not allowed" %}</h4>
               </div>
               <div class="modal-body text-center">
-                <p>{% trans "This service is currently not accesible due to schedule restrictions" %}</p>
+                <p>{% trans "This service is currently not accesible due to schedule restrictions." %}</p>
+                <p><b>{{ calendarCustomMessage }}</b></p>
                 <p>{% trans "Please, retry access in a while." %}</p>
               </div>
               <div class="modal-footer">
