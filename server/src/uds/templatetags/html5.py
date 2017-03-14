@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django import template
 from django.utils.translation import ugettext as _
 from django.templatetags.static import static
+from django.utils.html import mark_safe
 
 from uds.core.util import html
 from uds.core.auths.auth import ROOT_ID
@@ -165,6 +166,13 @@ def root_id():
 def image_size():
     return Image.MAX_IMAGE_SIZE
 
+@register.assignment_tag
+def calendar_denied_msg():
+    text = GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip()
+    if text == '':
+        text = _("Access limited by calendar")
+
+    return text
 
 # Browser related
 class IfBrowser(template.Node):

@@ -254,7 +254,7 @@ class GlobalConfig(object):
     # Time betwen checks of unused services by os managers
     # Unused services will be invoked for every machine assigned but not in use AND that has been assigned at least this time
     # (only if os manager asks for this characteristic)
-    CHECK_UNUSED_TIME = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631', type=Config.TEXT_FIELD)  # Defaults to 10 minutes
+    CHECK_UNUSED_TIME = Config.section(GLOBAL_SECTION).value('checkUnusedTime', '631', type=Config.NUMERIC_FIELD)  # Defaults to 10 minutes
     # Default CSS Used
     CSS = Config.section(GLOBAL_SECTION).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.TEXT_FIELD)
     # Max logins before blocking an account
@@ -317,6 +317,9 @@ class GlobalConfig(object):
 
     # This is used so templates can change "styles" from admin interface
     UDS_THEME_VISUAL = Config.section(GLOBAL_SECTION).value('UDS Theme Enhaced', '1', type=Config.BOOLEAN_FIELD)
+
+    # Custom message for error when limiting by calendar
+    LIMITED_BY_CALENDAR_TEXT = Config.section(GLOBAL_SECTION).value('Calendar access denied text', '', type=Config.TEXT_FIELD)  # Defaults to Nothing
 
     initDone = False
 
