@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-03-10'
+__updated__ = '2017-03-15'
 
 
 logger = logging.getLogger(__name__)
@@ -117,12 +117,13 @@ class BaseRDPTransport(Transport):
         if self.withoutDomain.isTrue():
             domain = ''
 
-        if '.' in domain:  # Dotter domain form
-            username = username + '@' + domain
-            domain = ''
-        else:  # In case of a NETBIOS domain (not recomended), join it so processUserPassword can deal with it
-            username = domain + '\\' + username
-            domain = ''
+        if domain != '':  # If has domain
+            if '.' in domain:  # Dotter domain form
+                username = username + '@' + domain
+                domain = ''
+            else:  # In case of a NETBIOS domain (not recomended), join it so processUserPassword can deal with it
+                username = domain + '\\' + username
+                domain = ''
 
         # Temporal "fix" to check if we do something on processUserPassword
 

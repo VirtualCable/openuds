@@ -103,9 +103,6 @@ class RDPTransport(BaseRDPTransport):
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
 
-        logger.debug('username: {}, pass: {pass}'.format(username, password))
-        return '', '', ''
-
         # data
 #         data = {
 #             'os': os['OS'],

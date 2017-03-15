@@ -15,4 +15,4 @@ theFile = sp['as_file'].format(password=win32crypt.CryptProtectData(six.binary_t
 filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
 subprocess.Popen([executable, filename])
-# tools.addFileToUnlink(filename)
+tools.addFileToUnlink(filename)

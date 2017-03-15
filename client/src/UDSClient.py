@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 
 from uds.rest import RestRequest
 from uds.forward import forward  # @UnusedImport
