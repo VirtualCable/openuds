@@ -40,7 +40,8 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-02-13'
+
+__updated__ = '2017-03-15'
 
 
 class RDPFile(object):
@@ -462,3 +463,40 @@ class RDPFile(object):
             username=self.username,
             wallpaper=wallpaper
         )
+
+    @property
+    def as_cord_url(self):
+        url = 'rdp://'
+
+        if self.username != '':
+            url += six.moves.urllib.parse.quote(self.username)  # @UndefinedVariable
+            if self.password != '':
+                url += ':' + six.moves.urllib.parse.quote(self.password)  # @UndefinedVariable
+            url += '@'
+        url += self.address + '/'
+
+        if self.domain != '':
+            url += self.domain
+
+        url += '?screenDepth={}'.format(self.bpp)
+
+        if self.fullScreen:
+            url += '&fullscreen=true'
+        else:
+            url += 'screenWidth={}&screenHeight={}'.format(self.width, self.height)
+
+        url += '&forwardAudio=' + '01'[self.redirectAudio]
+
+        if self.redirectDrives:
+            url += '&forwardDisks=true'
+
+        if self.redirectPrinters:
+            url += '&forwardPrinters=true'
+
+        if self.smoothFonts:
+            url += '&fontSmoothing=true'
+
+        if self.showWallpaper:
+            url += '&drawDesktop=true'
+
+        return url

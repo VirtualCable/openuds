@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-03-10'
+__updated__ = '2017-03-15'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -141,6 +141,7 @@ class RDPTransport(BaseRDPTransport):
 
         sp = {
             'password': password,
+            'this_server': request.build_absolute_uri('/'),
         }
 
         if os == 'windows':
@@ -156,6 +157,11 @@ class RDPTransport(BaseRDPTransport):
                 'address': r.address,
             })
         else:  # Mac
+            sp.update({
+                'as_file': r.as_file,
+                'ip': ip,
+                'as_cord_url': r.as_cord_url,
+            })
             if domain != '':
                 sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)
             else:

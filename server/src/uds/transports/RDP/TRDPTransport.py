@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-03-10'
+__updated__ = '2017-03-15'
 
 
 logger = logging.getLogger(__name__)
@@ -180,6 +180,7 @@ class TRDPTransport(BaseRDPTransport):
             'tunWait': self.tunnelWait.num(),
             'ip': ip,
             'password': password,
+            'this_server': request.build_absolute_uri('/'),
         }
 
         if os == 'windows':
@@ -195,6 +196,9 @@ class TRDPTransport(BaseRDPTransport):
             })
         else:  # Mac
             sp.update({
+                'as_file': r.as_file,
+                'ip': ip,
+                'as_cord_url': r.as_cord_url,
             })
             if domain != '':
                 sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)

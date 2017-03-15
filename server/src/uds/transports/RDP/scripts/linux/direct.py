@@ -53,7 +53,7 @@ if xfreerdp is not None:
 
 if app is None or fnc is None:
     raise Exception('''<p>You need to have installed xfreerdp (>= 1.1) or rdesktop, and have them in your PATH in order to connect to this UDS service.</p>
-    <p>Please, install apropiate package for your system.</p>
+    <p>Please, install the proper package for your system.</p>
     <p>Also note that xfreerdp prior to version 1.1 will not be taken into consideration.</p>
 ''')
 else:
