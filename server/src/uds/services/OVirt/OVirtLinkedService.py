@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-01-17'
+__updated__ = '2017-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -165,7 +165,7 @@ class OVirtLinkedService(Service):
         values=[
             gui.choiceItem('disabled', 'disabled'),
             gui.choiceItem('native', 'native'),
-            gui.choiceItem('legacy', 'legacy (deprecated)')
+            # gui.choiceItem('legacy', 'legacy (deprecated)'),
         ],
         tab=_('Machine'),
         defvalue='1'  # Default value is the ID of the choicefield

@@ -10,7 +10,7 @@ import threading
 import logging
 import six
 
-__updated__ = '2017-03-03'
+__updated__ = '2017-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class Client(object):
                 pass
         try:
             cached_api_key = aKey
-            cached_api = ovirt.Connection(url='https://' + self._host + '/ovirt-engine/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True, debug=True)
+            cached_api = ovirt.Connection(url='https://' + self._host + '/ovirt-engine/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True)  # , debug=True, log=logger )
             return cached_api
         except:
             logger.exception('Exception connection ovirt at {0}'.format(self._host))
@@ -458,10 +458,10 @@ class Client(object):
 
             cluster = ovirt.types.Cluster(id=six.binary_type(clusterId))
             template = ovirt.types.Template(id=six.binary_type(templateId))
-            if usbType in ('native', 'legacy'):
-                usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE if usbType == 'native' else ovirt.types.UsbType.LEGACY)
-            else:
-                usb = ovirt.types.Usb(enabled=False)
+            # if usbType in ('native',): # Removed 'legacy', from 3.6 is not used anymore, and from 4.0 not available
+            #    usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
+            # else:
+            usb = ovirt.types.Usb(enabled=False)
 
             memoryPolicy = ovirt.types.MemoryPolicy(guaranteed=guaranteedMB * 1024 * 1024)
             par = ovirt.types.Vm(name=name, cluster=cluster, template=template, description=comments,

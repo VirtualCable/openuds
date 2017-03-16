@@ -37,7 +37,7 @@ from uds.core.util import log
 import pickle
 import logging
 
-__updated__ = '2016-02-26'
+__updated__ = '2017-03-16'
 
 
 logger = logging.getLogger(__name__)
@@ -273,7 +273,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if self._vmid != '':  # Powers off
             try:
                 state = self.service().getMachineState(self._vmid)
-                if state in ('up', 'suspended'):
+                if state in ('up', 'powering_up', 'suspended'):
                     self.service().stopMachine(self._vmid)
             except:
                 logger.debug('Can\t set machine state to stopped')
@@ -372,7 +372,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if state == 'unknown':
             raise Exception('Machine not found')
 
-        if state == 'up':  # Already started, return
+        if state in ('up',):  # Already started, return
             return
 
         if state != 'down' and state != 'suspended':
