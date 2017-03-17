@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-03-15'
+__updated__ = '2017-03-17'
 
 
 logger = logging.getLogger(__name__)
@@ -115,7 +115,7 @@ class TRDPTransport(BaseRDPTransport):
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
 
         r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
-        r.enablecredsspsupport = ci.get('sso', True)
+        r.enablecredsspsupport = ci.get('sso', False)
         r.address = '{address}'
         r.username = username
         r.password = password

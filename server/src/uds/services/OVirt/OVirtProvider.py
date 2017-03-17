@@ -45,7 +45,7 @@ from . import client
 
 import logging
 
-__updated__ = '2016-09-11'
+__updated__ = '2017-03-17'
 
 logger = logging.getLogger(__name__)
 
@@ -393,6 +393,9 @@ class Provider(ServiceProvider):
         Changes the mac address of first nic of the machine to the one specified
         '''
         return self.__getApi().updateMachineMac(machineId, macAddres)
+
+    def fixUsb(self, machineId):
+        self.__getApi().fixUsb(machineId)
 
     def getMacRange(self):
         return self.macsRange.value

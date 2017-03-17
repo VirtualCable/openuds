@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-03-15'
+__updated__ = '2017-03-17'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -85,7 +85,7 @@ class RDPTransport(BaseRDPTransport):
         depth = CommonPrefs.getDepth(prefs)
 
         r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
-        r.enablecredsspsupport = ci.get('sso', True)
+        r.enablecredsspsupport = ci.get('sso', False)
         r.address = '{}:{}'.format(ip, 3389)
         r.username = username
         r.password = password
