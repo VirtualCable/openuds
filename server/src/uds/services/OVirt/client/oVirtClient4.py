@@ -6,11 +6,12 @@ Created on Nov 14, 2012
 
 import ovirtsdk4 as ovirt
 
+import time
 import threading
 import logging
 import six
 
-__updated__ = '2017-03-16'
+__updated__ = '2017-03-17'
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,7 @@ class Client(object):
         try:
             cached_api_key = aKey
             cached_api = ovirt.Connection(url='https://' + self._host + '/ovirt-engine/api', username=self._username, password=self._password, timeout=self._timeout, insecure=True)  # , debug=True, log=logger )
+
             return cached_api
         except:
             logger.exception('Exception connection ovirt at {0}'.format(self._host))
@@ -79,6 +81,7 @@ class Client(object):
         self._password = password
         self._timeout = int(timeout)
         self._cache = cache
+        self._needsUsbFix = True
 
     def test(self):
         try:
@@ -458,10 +461,11 @@ class Client(object):
 
             cluster = ovirt.types.Cluster(id=six.binary_type(clusterId))
             template = ovirt.types.Template(id=six.binary_type(templateId))
-            # if usbType in ('native',): # Removed 'legacy', from 3.6 is not used anymore, and from 4.0 not available
-            #    usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
-            # else:
-            usb = ovirt.types.Usb(enabled=False)
+
+            if self._needsUsbFix is False and usbType in ('native',):  # Removed 'legacy', from 3.6 is not used anymore, and from 4.0 not available
+                usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
+            else:
+                usb = ovirt.types.Usb(enabled=False)
 
             memoryPolicy = ovirt.types.MemoryPolicy(guaranteed=guaranteedMB * 1024 * 1024)
             par = ovirt.types.Vm(name=name, cluster=cluster, template=template, description=comments,
@@ -642,6 +646,21 @@ class Client(object):
 
         finally:
             lock.release()
+
+    def fixUsb(self, machineId):
+        # Fix for usb support
+        if self._needsUsbFix:
+            try:
+                lock.acquire(True)
+
+                api = self.__getApi()
+                usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
+                vms = api.system_service().vms_service().service(six.binary_type(machineId))
+                vmu = ovirt.types.Vm(usb=usb)
+                vms.update(vmu)
+            finally:
+                lock.release()
+
 
     def getConsoleConnection(self, machineId):
         '''

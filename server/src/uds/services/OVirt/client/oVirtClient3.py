@@ -11,7 +11,7 @@ import threading
 import logging
 import re
 
-__updated__ = '2016-09-11'
+__updated__ = '2017-03-17'
 
 logger = logging.getLogger(__name__)
 
@@ -661,6 +661,9 @@ class Client(object):
 
         finally:
             lock.release()
+
+    def fixUsb(self, machineId):
+        return  # No need to fix usb on 3.x releases
 
     def getConsoleConnection(self, machineId):
         '''

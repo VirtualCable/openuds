@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-03-16'
+__updated__ = '2017-03-17'
 
 logger = logging.getLogger(__name__)
 
@@ -394,6 +394,10 @@ class OVirtLinkedService(Service):
         Changes the mac address of first nic of the machine to the one specified
         '''
         return self.parent().updateMachineMac(machineId, macAddres)
+
+    def fixUsb(self, machineId):
+        if self.usb.value in ('native',):
+            self.parent().fixUsb(machineId)
 
     def getMacRange(self):
         '''

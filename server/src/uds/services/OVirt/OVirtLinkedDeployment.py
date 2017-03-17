@@ -37,7 +37,7 @@ from uds.core.util import log
 import pickle
 import logging
 
-__updated__ = '2017-03-16'
+__updated__ = '2017-03-17'
 
 
 logger = logging.getLogger(__name__)
@@ -419,6 +419,8 @@ class OVirtLinkedDeployment(UserDeployment):
         Changes the mac of the first nic
         '''
         self.service().updateMachineMac(self._vmid, self.getUniqueId())
+        # Fix usb if needed
+        self.service().fixUsb(self._vmid)
 
     # Check methods
     def __checkCreate(self):
