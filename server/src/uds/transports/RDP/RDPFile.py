@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-02-13'
+__updated__ = '2017-03-17'
 
 
 class RDPFile(object):
@@ -242,7 +242,7 @@ class RDPFile(object):
         res += 'disable themes:i:' + disableWallpaper + '\n'
         res += 'bitmapcachepersistenable:i:1' + '\n'
         res += 'authentication level:i:0' + '\n'
-        res += 'enablecredsspsupport:i:1' + '\n'
+        res += 'enablecredsspsupport:i:0' + '\n'
         res += 'prompt for credentials:i:0' + '\n'
         res += 'negotiate security layer:i:1\n'
         res += 'videoplaybackmode:i:1\n'
