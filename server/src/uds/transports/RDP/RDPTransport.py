@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-02-13'
+__updated__ = '2017-03-20'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -69,6 +69,7 @@ class RDPTransport(BaseRDPTransport):
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
     smooth = BaseRDPTransport.smooth
+    credssp = BaseRDPTransport.credssp
     multimedia = BaseRDPTransport.multimedia
     alsa = BaseRDPTransport.alsa
     printerString = BaseRDPTransport.printerString
@@ -97,6 +98,7 @@ class RDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
         r.smoothFonts = self.smooth.isTrue()
+        r.enablecredsspsupport = self.credssp.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
         r.smartcardString = self.smartcardString.value

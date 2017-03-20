@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-03-17'
+__updated__ = '2017-03-20'
 
 
 class RDPFile(object):
@@ -67,6 +67,7 @@ class RDPFile(object):
     smoothFonts = True
     printerString = None
     smartcardString = None
+    enablecredsspsupport = False
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
@@ -242,7 +243,6 @@ class RDPFile(object):
         res += 'disable themes:i:' + disableWallpaper + '\n'
         res += 'bitmapcachepersistenable:i:1' + '\n'
         res += 'authentication level:i:0' + '\n'
-        res += 'enablecredsspsupport:i:0' + '\n'
         res += 'prompt for credentials:i:0' + '\n'
         res += 'negotiate security layer:i:1\n'
         res += 'videoplaybackmode:i:1\n'
@@ -253,6 +253,8 @@ class RDPFile(object):
 
         if self.redirectAudio is True:
             res += 'audiocapturemode:i:1\n'
+
+        res += 'enablecredsspsupport:i:{}\n'.format(0 if self.enablecredsspsupport is False else 1)
 
         return res
 
