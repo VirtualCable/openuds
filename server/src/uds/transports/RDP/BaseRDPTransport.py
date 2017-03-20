@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-03-15'
+__updated__ = '2017-03-20'
 
 
 logger = logging.getLogger(__name__)
@@ -69,6 +69,7 @@ class BaseRDPTransport(Transport):
     multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=21, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'), tab=gui.PARAMETERS_TAB)
     aero = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=22, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
     smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=23, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
+    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=24, tooltip=_('If checked, will enalbe Credentials Provider Support)'), tab=gui.PARAMETERS_TAB)
     multimedia = gui.CheckBoxField(label=_('Multimedia sync'), order=25, tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'), tab='Linux Client')
     alsa = gui.CheckBoxField(label=_('Use Alsa'), order=26, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
     printerString = gui.TextField(label=_('Printer string'), order=27, tooltip=_('If printer is checked, the printer string used with xfreerdp client'), tab='Linux Client')
@@ -137,13 +138,7 @@ class BaseRDPTransport(Transport):
         return {'protocol': self.protocol, 'username': username, 'password': password, 'domain': domain}
 
     def getConnectionInfo(self, service, user, password):
-        dct = self.processUserPassword(service, user, password)
-        # We can use getConectionInfo with a Service Pool
-        try:
-            dct['sso'] = service.getProperty('sso_available') == '1'
-        except:  # If Service Pool
-            pass
-        return dct
+        return self.processUserPassword(service, user, password)
 
     def getScript(self, scriptName, osName, params):
         # Reads script

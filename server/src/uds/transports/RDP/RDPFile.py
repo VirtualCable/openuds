@@ -40,8 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-
-__updated__ = '2017-03-15'
+__updated__ = '2017-03-20'
 
 
 class RDPFile(object):

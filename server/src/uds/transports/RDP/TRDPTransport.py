@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-03-17'
+__updated__ = '2017-03-20'
 
 
 logger = logging.getLogger(__name__)
@@ -87,6 +87,7 @@ class TRDPTransport(BaseRDPTransport):
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
     smooth = BaseRDPTransport.smooth
+    credssp = BaseRDPTransport.credssp
     multimedia = BaseRDPTransport.multimedia
     alsa = BaseRDPTransport.alsa
     printerString = BaseRDPTransport.printerString
@@ -115,7 +116,7 @@ class TRDPTransport(BaseRDPTransport):
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
 
         r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
-        r.enablecredsspsupport = ci.get('sso', False)
+        r.enablecredsspsupport = ci.get('sso', self.credssp.isTrue())
         r.address = '{address}'
         r.username = username
         r.password = password
