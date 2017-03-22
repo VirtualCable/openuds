@@ -129,8 +129,8 @@ class UniqueIDGenerator(object):
         finally:
             UniqueId.objects.unlock()  # @UndefinedVariable
 
-    def releaseOlderThan(self, stamp):
-        stamp = getSqlDatetime(True)
+    def releaseOlderThan(self, stamp=None):
+        stamp = getSqlDatetime(True) if stamp == None else stamp
         try:
             UniqueId.objects.lock()  # @UndefinedVariable
             UniqueId.objects.filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
