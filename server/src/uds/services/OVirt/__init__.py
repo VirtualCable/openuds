@@ -29,4 +29,10 @@
 
 
 from .OVirtProvider import Provider
+from .OVirtJobs import OVirtHouseKeeping, OVirtDeferredRemoval
 
+from uds.core import managers
+
+# Scheduled task to do clean processes
+for cls in (OVirtDeferredRemoval, OVirtHouseKeeping):
+    managers.taskManager().registerJob(cls)
