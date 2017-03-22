@@ -11,7 +11,7 @@ import threading
 import logging
 import six
 
-__updated__ = '2017-03-17'
+__updated__ = '2017-03-22'
 
 logger = logging.getLogger(__name__)
 
@@ -424,12 +424,15 @@ class Client(object):
 
             api = self.__getApi()
 
-            template = api.system_service().templates_service().service(six.binary_type(templateId)).get()
+            try:
+                template = api.system_service().templates_service().service(six.binary_type(templateId)).get()
 
-            if template is None:
+                if template is None:
+                    return 'removed'
+
+                return template.status.value
+            except Exception:  # Not found
                 return 'removed'
-
-            return template.status.value
 
         finally:
             lock.release()
@@ -514,12 +517,15 @@ class Client(object):
 
             api = self.__getApi()
 
-            vm = api.system_service().vms_service().service(six.binary_type(machineId)).get()
+            try:
+                vm = api.system_service().vms_service().service(six.binary_type(machineId)).get()
 
-            if vm is None or vm.status is None:
+                if vm is None or vm.status is None:
+                    return 'unknown'
+
+                return vm.status.value
+            except Exception:  # machine not found
                 return 'unknown'
-
-            return vm.status.value
 
         finally:
             lock.release()
