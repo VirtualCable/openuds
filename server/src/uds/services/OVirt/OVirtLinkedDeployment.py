@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2017 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -33,11 +33,12 @@
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
+from .OVirtJobs import OVirtDeferredRemoval
 
 import pickle
 import logging
 
-__updated__ = '2017-03-17'
+__updated__ = '2017-03-22'
 
 
 logger = logging.getLogger(__name__)
@@ -271,12 +272,7 @@ class OVirtLinkedDeployment(UserDeployment):
         self.doLog(log.ERROR, reason)
 
         if self._vmid != '':  # Powers off
-            try:
-                state = self.service().getMachineState(self._vmid)
-                if state in ('up', 'powering_up', 'suspended'):
-                    self.service().stopMachine(self._vmid)
-            except:
-                logger.debug('Can\t set machine state to stopped')
+            OVirtDeferredRemoval.remove(self.service().parent(), self._vmid)
 
         self._queue = [opError]
         self._reason = str(reason)
