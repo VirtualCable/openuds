@@ -5,7 +5,13 @@ Created on Nov 14, 2012
 '''
 
 import ovirtsdk4 as ovirt
-import oivrtsdk4.types as ovirtTypes  # @UnresolvedImport @UnusedImport
+
+# Sometimes, we import ovirtsdk4 but "types" does not get imported... event can't be found
+# With this seems to work propertly
+try:
+    from ovirtsdk4 import types as ovirtTypes  # @UnresolvedImport @UnusedImport
+except:
+    pass
 
 import threading
 import logging
