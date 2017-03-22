@@ -46,6 +46,7 @@ logger = logging.getLogger(__name__)
 opCreate, opStart, opStop, opSuspend, opRemove, opWait, opError, opFinish, opRetry, opChangeMac = range(10)
 
 NO_MORE_NAMES = 'NO-NAME-ERROR'
+UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 
 
 class OVirtLinkedDeployment(UserDeployment):
@@ -177,7 +178,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if state == 'unknown':
             return self.__error('Machine is not available anymore')
 
-        if state not in ('up', 'powering_up', 'restoring_state'):
+        if state not in UP_STATES:
             self._queue = [opStart, opFinish]
             return self.__executeQueue()
 
@@ -231,7 +232,7 @@ class OVirtLinkedDeployment(UserDeployment):
             return self.__error('Machine not found')
 
         ret = State.RUNNING
-        if type(chkState) is list:
+        if isinstance(chkState, (list, tuple)):
             for cks in chkState:
                 if state == cks:
                     ret = State.FINISHED
@@ -368,7 +369,7 @@ class OVirtLinkedDeployment(UserDeployment):
         if state == 'unknown':
             raise Exception('Machine not found')
 
-        if state in ('up',):  # Already started, return
+        if state in UP_STATES:  # Already started, return
             return
 
         if state != 'down' and state != 'suspended':
@@ -429,7 +430,7 @@ class OVirtLinkedDeployment(UserDeployment):
         '''
         Checks if machine has started
         '''
-        return self.__checkMachineState('up')
+        return self.__checkMachineState(UP_STATES)
 
     def __checkStop(self):
         '''
