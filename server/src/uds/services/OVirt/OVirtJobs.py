@@ -49,20 +49,11 @@ class OVirtHouseKeeping(jobs.Job):
     friendly_name = 'Ovirt house keeping'
 
     def run(self):
-        from .OVirtLinkedService import OVirtLinkedService
-        from django.db.models import Q
-        from datetime import datetime
-
-        releaseOlderThan = getSqlDatetime(True) - self.frecuency
-
-        for a in Service.objects.all():
-            if a.isOfType(OVirtLinkedService.typeType):
-                log.doLog(a, log.INFO, 'Cleaning contained macs & names older than {0}'.format(datetime.fromtimestamp(releaseOlderThan)), log.SERVICE)
-                a.getEnvironment().idGenerators('mac').releaseOlderThan(releaseOlderThan)
+        return
 
 
 class OVirtDeferredRemoval(jobs.Job):
-    frecuency = 60 * 60  # Once every minute
+    frecuency = 60 * 5  # Once every NN minutes
     friendly_name = 'Ovirt removal'
     counter = 0
 
@@ -77,8 +68,8 @@ class OVirtDeferredRemoval(jobs.Job):
                 state = providerInstance.getMachineState(vmId)
                 if state in ('up', 'powering_up', 'suspended'):
                     providerInstance.stopMachine(vmId)
+                elif state != 'unknown':  # Machine exists, remove it later
 
-                if state != 'unknown':  # Machine exists, remove it later
                     providerInstance.storage.saveData('tr' + vmId, vmId, attr1='tRm')
 
             except Exception as e:

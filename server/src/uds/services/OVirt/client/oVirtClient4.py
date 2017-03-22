@@ -5,8 +5,8 @@ Created on Nov 14, 2012
 '''
 
 import ovirtsdk4 as ovirt
+import oivrtsdk4.types as ovirtTypes  # @UnresolvedImport @UnusedImport
 
-import time
 import threading
 import logging
 import six
