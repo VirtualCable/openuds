@@ -43,7 +43,7 @@ import hashlib
 import six
 
 
-__updated__ = '2017-02-09'
+__updated__ = '2017-03-21'
 
 logger = logging.getLogger(__name__)
 
@@ -490,7 +490,7 @@ class Client(object):
             'server': {
                 'name': name,
                 'imageRef': '',
-                'os-availability-zone': availabilityZone,
+                # 'os-availability-zone': availabilityZone,
                 'availability_zone': availabilityZone,
                 'block_device_mapping_v2': [{
                     'boot_index': '0',
