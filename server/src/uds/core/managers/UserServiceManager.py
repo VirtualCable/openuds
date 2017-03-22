@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-01-26'
+__updated__ = '2017-03-22'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -472,17 +472,22 @@ class UserServiceManager(object):
             uService.remove()
 
     def notifyReadyFromOsManager(self, uService, data):
-        ui = uService.getInstance()
-        logger.debug('Notifying user service ready state')
-        state = ui.notifyReadyFromOsManager(data)
-        logger.debug('State: {0}'.format(state))
-        uService.updateData(ui)
-        if state == State.FINISHED:
-            logger.debug('Service is now ready')
-            uService.save()
-        elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
-            uService.setState(State.PREPARING)
-            UserServiceOpChecker.makeUnique(uService, ui, state)
+        try:
+            ui = uService.getInstance()
+            logger.debug('Notifying user service ready state')
+            state = ui.notifyReadyFromOsManager(data)
+            logger.debug('State: {0}'.format(state))
+            uService.updateData(ui)
+            if state == State.FINISHED:
+                logger.debug('Service is now ready')
+                uService.save()
+            elif uService.state in (State.USABLE, State.PREPARING):  # We don't want to get active deleting or deleted machines...
+                uService.setState(State.PREPARING)
+                UserServiceOpChecker.makeUnique(uService, ui, state)
+        except Exception as e:
+            logger.exception('Unhandled exception on notyfyReady: {}'.format(e))
+            UserService.setState(State.ERROR)
+            return
 
     def getService(self, user, srcIp, idService, idTransport, doTest=True):
         '''

@@ -38,7 +38,7 @@ from datetime import datetime
 import logging
 
 
-__updated__ = '2015-05-14'
+__updated__ = '2017-03-22'
 
 
 logger = logging.getLogger(__name__)
@@ -111,7 +111,18 @@ class OVirtPublication(Publication):
         if self._state == 'error':
             return State.ERROR
 
-        self._state = self.service().getTemplateState(self._templateId)
+        try:
+            self._state = self.service().getTemplateState(self._templateId)
+        except Exception as e:
+            self._state = 'error'
+            self._reason = str(e)
+            return State.ERROR
+
+
+        if self._state == 'removed':
+            self._state = 'error'
+            self._reason = 'Template has been removed!'
+            return State.ERROR
 
         # If publication os done (template is ready), and cancel was requested, do it just after template becomes ready
         if self._state == 'ok':
