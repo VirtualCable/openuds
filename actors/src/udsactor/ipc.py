@@ -36,6 +36,7 @@ import sys
 import six
 import traceback
 import pickle
+import errno
 import json
 
 from udsactor.utils import toUnicode
@@ -419,8 +420,10 @@ class ClientIPC(threading.Thread):
                 self.messageReceived()
 
             except socket.error as e:
+                if e.errno == errno.EINTR:
+                    continue  # Ignore interrupted system call
                 logger.error('Communication with server got an error: {}'.format(toUnicode(e.strerror)))
-                self.running = False
+                # self.running = False
                 return
             except Exception as e:
                 tb = traceback.format_exc()
