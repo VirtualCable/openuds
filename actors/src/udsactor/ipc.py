@@ -408,7 +408,7 @@ class ClientIPC(threading.Thread):
 
             except socket.error as e:
                 logger.error('Communication with server got an error: {}'.format(toUnicode(e.strerror)))
-                self.running = False
+                # self.running = False
                 return
             except Exception as e:
                 tb = traceback.format_exc()
