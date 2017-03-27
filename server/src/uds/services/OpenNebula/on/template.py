@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2017-03-07'
+__updated__ = '2017-03-27'
 
 logger = logging.getLogger(__name__)
 
@@ -203,8 +203,11 @@ def checkPublished(api, templateId):
 
             logger.debug('Found {} for checking'.format(imgId))
 
-            if api.imageInfo(imgId)[0]['IMAGE']['STATE'] == '4':
+            state = api.imageInfo(imgId)[0]['IMAGE']['STATE']
+            if state in ('0', '4'):
                 return False
+            elif state != '1':  # If error is not READY
+                raise Exception('Error publishing. Image is in an invalid state. (Check it and delete it if not needed anymore)')
     except Exception:
         logger.exception('Exception checking published')
         raise

@@ -34,11 +34,13 @@
 from django.utils.translation import ugettext as _
 from uds.core.services import Publication
 from uds.core.util.State import State
-from datetime import datetime
+
+import six
+
 import logging
 
 
-__updated__ = '2016-07-22'
+__updated__ = '2017-03-27'
 
 
 logger = logging.getLogger(__name__)
@@ -93,7 +95,7 @@ class LivePublication(Publication):
             self._templateId = self.service().makeTemplate(self._name)
         except Exception as e:
             self._state = 'error'
-            self._reason = str(e)
+            self._reason = six.text_type(e)
             return State.ERROR
 
         return State.RUNNING
@@ -103,9 +105,13 @@ class LivePublication(Publication):
         Checks state of publication creation
         '''
         if self._state == 'running':
-            if self.service().checkTemplatePublished(self._templateId) is False:
-                return
-            self._state = 'ok'
+            try:
+                if self.service().checkTemplatePublished(self._templateId) is False:
+                    return
+                self._state = 'ok'
+            except Exception as e:
+                self._state = 'error'
+                self._reason = six.text_type(e)
 
         if self._state == 'error':
             return State.ERROR

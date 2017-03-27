@@ -39,7 +39,7 @@ from . import on
 import pickle
 import logging
 
-__updated__ = '2017-02-28'
+__updated__ = '2017-03-27'
 
 
 logger = logging.getLogger(__name__)
@@ -229,7 +229,7 @@ class LiveDeployment(UserDeployment):
 
         ret = State.RUNNING
 
-        if type(chkState) is list:
+        if isinstance(chkState, (list, tuple)):
             if state in chkState:
                 ret = State.FINISHED
         else:

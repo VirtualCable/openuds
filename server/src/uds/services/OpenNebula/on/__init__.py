@@ -43,7 +43,7 @@ import six
 import xmlrpclib
 from uds.core.util import xml2dict
 
-__updated__ = '2016-11-10'
+__updated__ = '2017-03-27'
 
 logger = logging.getLogger(__name__)
 
@@ -295,6 +295,14 @@ class OpenNebulaClient(object):
         '''
         result = self.connection.one.vm.info(self.sessionString, int(vmId))
         return int(checkResult(result)['VM']['STATE'])
+
+    @ensureConnected
+    def getVMLCMState(self, vmId):
+        '''
+        Returns the VM State
+        '''
+        result = self.connection.one.vm.info(self.sessionString, int(vmId))
+        return int(checkResult(result)['VM']['LCM_STATE'])
 
     @ensureConnected
     def VMAction(self, vmId, action):
