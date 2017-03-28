@@ -43,7 +43,7 @@ import six
 import six
 from uds.core.util import xml2dict
 
-__updated__ = '2017-03-27'
+__updated__ = '2017-03-28'
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +115,7 @@ class OpenNebulaClient(object):
         if self.connection is not None:
             return
 
-        self.connection = six.moves.xmlrpc_client.ServerProxy(self.endpoint)
+        self.connection = six.moves.xmlrpc_client.ServerProxy(self.endpoint)  # @UndefinedVariable
 
     @ensureConnected
     def enumStorage(self, storageType=0):
@@ -301,12 +301,20 @@ class OpenNebulaClient(object):
         return int(checkResult(result)['VM']['STATE'])
 
     @ensureConnected
-    def getVMLCMState(self, vmId):
+    def getVMSubstate(self, vmId):
         '''
         Returns the VM State
         '''
         result = self.connection.one.vm.info(self.sessionString, int(vmId))
-        return int(checkResult(result)['VM']['LCM_STATE'])
+        r = checkResult(result)
+        try:
+            if int(r['VM']['STATE']) == VmState.ACTIVE:
+                return int(r['VM']['LCM_STATE'])
+            # Substate is not available if VM state is not active
+            return -1
+        except Exception:
+            logger.exception('getVMSubstate')
+            return -1
 
     @ensureConnected
     def VMAction(self, vmId, action):
