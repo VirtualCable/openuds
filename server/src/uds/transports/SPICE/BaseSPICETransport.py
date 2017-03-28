@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2017-02-21'
+__updated__ = '2017-03-28'
 
 
 logger = logging.getLogger(__name__)
@@ -99,8 +99,27 @@ class BaseSpiceTransport(Transport):
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
         '''
-        logger.debug('Checking availability for {0}'.format(ip))
-        return True  # Spice is available, no matter what IP machine has (even if it does not have one)
+        ready = self.cache.get(ip)
+        if ready is None:
+            userServiceInstance = userService.getInstance()
+            con = userServiceInstance.getConsoleConnection()
+
+            logger.debug('Connection data: {}'.format(con))
+
+            port, secure_port = con['port'], con['secure_port']
+            port = -1 if port is None else port
+            secure_port = -1 if secure_port is None else secure_port
+
+            # test ANY of the ports
+            port_to_test = port if port != -1 else secure_port
+            if port_to_test == -1:
+                logger.info('SPICE didn\'t find has any port: {}'.format(con))
+                return False
+
+            if connection.testServer(ip, port_to_test) is True:
+                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
+
+        return ready == 'Y'
 
     def processedUser(self, userService, userName):
         v = self.processUserPassword(userService, userName, '')
