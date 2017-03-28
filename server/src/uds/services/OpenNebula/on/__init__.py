@@ -40,10 +40,10 @@ import re
 import logging
 import six
 
-import xmlrpclib
+import six
 from uds.core.util import xml2dict
 
-__updated__ = '2017-03-27'
+__updated__ = '2017-03-28'
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,7 @@ from . import template
 from . import vm
 from . import storage
 
+
 # Decorator
 def ensureConnected(fnc):
     def inner(*args, **kwargs):
@@ -71,19 +72,22 @@ def ensureConnected(fnc):
         return fnc(*args, **kwargs)
     return inner
 
+
 # Result checker
 def checkResult(lst, parseResult=True):
-    if lst[0] == False:
+    if not lst[0]:
         raise Exception('OpenNebula error {}: "{}"'.format(lst[2], lst[1]))
     if parseResult:
         return xml2dict.parse(lst[1])
     else:
         return lst[1]
 
+
 def asList(element):
     if isinstance(element, (tuple, list)):
         return element
-    return (element,)
+    return element,
+
 
 class OpenNebulaClient(object):
     def __init__(self, username, password, endpoint):
@@ -111,7 +115,7 @@ class OpenNebulaClient(object):
         if self.connection is not None:
             return
 
-        self.connection = xmlrpclib.ServerProxy(self.endpoint)
+        self.connection = six.moves.xmlrpc_client.ServerProxy(self.endpoint)  # @UndefinedVariable
 
     @ensureConnected
     def enumStorage(self, storageType=0):
@@ -297,12 +301,20 @@ class OpenNebulaClient(object):
         return int(checkResult(result)['VM']['STATE'])
 
     @ensureConnected
-    def getVMLCMState(self, vmId):
+    def getVMSubstate(self, vmId):
         '''
         Returns the VM State
         '''
         result = self.connection.one.vm.info(self.sessionString, int(vmId))
-        return int(checkResult(result)['VM']['LCM_STATE'])
+        r = checkResult(result)
+        try:
+            if int(r['VM']['STATE']) == VmState.ACTIVE:
+                return int(r['VM']['LCM_STATE'])
+            # Substate is not available if VM state is not active
+            return -1
+        except Exception:
+            logger.exception('getVMSubstate')
+            return -1
 
     @ensureConnected
     def VMAction(self, vmId, action):
