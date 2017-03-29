@@ -121,6 +121,7 @@ class BaseSpiceTransport(Transport):
 
             if connection.testServer(con['address'], port_to_test) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
+                ready = 'Y'
 
         return ready == 'Y'
 
