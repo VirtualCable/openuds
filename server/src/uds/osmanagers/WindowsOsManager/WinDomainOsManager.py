@@ -62,9 +62,9 @@ class WinDomainOsManager(WindowsOsManager):
             self._account = ""
             self._password = ""
 
-        self._ou = self._ou.replace(' ', '')
+        # self._ou = self._ou.replace(' ', ''), do not remove spaces
         if self._domain != '' and self._ou != '':
-            lpath = 'dc=' + ',dc='.join(self._domain.split('.'))
+            lpath = 'dc=' + ',dc='.join((s.lower() for s in self._domain.split('.')))
             if self._ou.lower().find(lpath) == -1:
                 self._ou += ',' + lpath
 
