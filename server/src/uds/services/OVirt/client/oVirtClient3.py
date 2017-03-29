@@ -695,6 +695,9 @@ class Client(object):
         except Exception:
             return None
 
+        except Exception:
+            return None
+
         finally:
             lock.release()
 
