@@ -11,7 +11,7 @@ import threading
 import logging
 import re
 
-__updated__ = '2017-03-17'
+__updated__ = '2017-03-29'
 
 logger = logging.getLogger(__name__)
 
@@ -692,6 +692,8 @@ class Client(object):
                     'expiry': ticket.get_expiry()
                 }
             }
+        except Exception:
+            return None
 
         finally:
             lock.release()
