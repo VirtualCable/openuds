@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2017-03-28'
+__updated__ = '2017-03-29'
 
 
 logger = logging.getLogger(__name__)
@@ -119,7 +119,7 @@ class BaseSpiceTransport(Transport):
                 logger.info('SPICE didn\'t find has any port: {}'.format(con))
                 return False
 
-            if connection.testServer(ip, port_to_test) is True:
+            if connection.testServer(con['address'], port_to_test) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
 
         return ready == 'Y'

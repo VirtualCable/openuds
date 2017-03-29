@@ -17,7 +17,7 @@ import threading
 import logging
 import six
 
-__updated__ = '2017-03-22'
+__updated__ = '2017-03-29'
 
 logger = logging.getLogger(__name__)
 
@@ -717,6 +717,9 @@ class Client(object):
                     'expiry': ticket.expiry
                 }
             }
+
+        except Exception:
+            return None
 
         finally:
             lock.release()
