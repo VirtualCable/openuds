@@ -106,6 +106,9 @@ class BaseSpiceTransport(Transport):
 
             logger.debug('Connection data: {}'.format(con))
 
+            if con is None:
+                return False
+
             port, secure_port = con['port'], con['secure_port']
             port = -1 if port is None else port
             secure_port = -1 if secure_port is None else secure_port
