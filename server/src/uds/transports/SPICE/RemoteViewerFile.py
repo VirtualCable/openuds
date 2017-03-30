@@ -8,7 +8,7 @@ import six
 import os
 
 
-__updated__ = '2017-02-21'
+__updated__ = '2017-03-30'
 
 
 TEMPLATE = '''[virt-viewer]
@@ -62,7 +62,14 @@ class RemoteViewerFile(object):
     def as_file(self):
         return self.get()
 
-    def get(self):
+    @property
+    def as_file_ns(self):
+        return self.get(tls_port=-1)
+
+    def get(self, tls_port=None):
+        if tls_port is None:
+            tls_port = self.tls_port
+
         fullscreen = '01'[self.fullscreen]
         smartcard = '01'[self.smartcard]
         delete_file = '01'[self.delete_file]
@@ -82,6 +89,6 @@ class RemoteViewerFile(object):
             usb_auto_share=usb_auto_share,
             delete_file=delete_file,
             host_subject=self.host_subject if self.tls_port != -1 else '',
-            ca=ca if self.tls_port != -1 else '',
-            secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard' if self.tls_port != -1 else ''
+            ca=ca if tls_port != -1 else '',
+            secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard' if tls_port != -1 else ''
         )

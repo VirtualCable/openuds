@@ -21,6 +21,7 @@ if executable is None:
 ''')
 
 
+theFile = '''{m.r.as_file_ns}'''
 if {m.port} != -1:  # @UndefinedVariable
     forwardThread1, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.port})  # @UndefinedVariable
 
@@ -30,6 +31,7 @@ else:
     port = -1
 
 if {m.secure_port} != -1:  # @UndefinedVariable
+    theFile = '''{m.r.as_file}'''
     if port != -1:
         forwardThread2, secure_port = forwardThread1.clone('{m.ip}', {m.secure_port})  # @UndefinedVariable
     else:
@@ -40,7 +42,7 @@ if {m.secure_port} != -1:  # @UndefinedVariable
 else:
     secure_port = -1
 
-theFile = '''{m.r.as_file}'''.format(
+theFile = theFile.format(
     secure_port=secure_port,
     port=port
 )
