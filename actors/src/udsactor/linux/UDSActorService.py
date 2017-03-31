@@ -127,7 +127,7 @@ class UDSActorSvc(Daemon, CommonService):
         logger.debug('CFG: {}'.format(cfg))
 
         if cfg is not None:
-            self.rebootMachineAfterOp = cfg.get('reboot', False)
+            self.rebootMachineAfterOp = cfg.get('reboot', True)
         else:
             self.rebootMachineAfterOp = False
 
