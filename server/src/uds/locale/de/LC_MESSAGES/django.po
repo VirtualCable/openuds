@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-10 13:23+0100\n"
-"PO-Revision-Date: 2017-03-10 12:20+0000\n"
+"POT-Creation-Date: 2017-03-31 10:35+0200\n"
+"PO-Revision-Date: 2017-03-31 08:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -509,7 +509,7 @@ msgstr ""
 
 #: REST/methods/transports.py:81
 #: services/Nutanix_enterprise/NutanixService.py:51
-#: templates/uds/html5/index.html:124 templates/uds/semantic/index.html:29
+#: templates/uds/html5/index.html:126 templates/uds/semantic/index.html:29
 msgid "Networks"
 msgstr "Netzwerke"
 
@@ -2475,7 +2475,7 @@ msgstr "Verbindungstest erfolgreich"
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
 #: services/Nutanix_enterprise/NutanixProvider.py:172
-#: services/OVirt/OVirtProvider.py:441
+#: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:143
 msgid "Connection failed. Check connection params"
 msgstr "Verbindung ist fehlgeschlagen. Kontrollkästchen Verbindung params"
@@ -3768,7 +3768,7 @@ msgid "Cache"
 msgstr "Cache"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
-#: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:30
+#: templates/uds/html5/index.html:127 templates/uds/semantic/index.html:30
 msgid "Transports"
 msgstr "Transporte"
 
@@ -3836,7 +3836,7 @@ msgid "Download UDS plugin for"
 msgstr "Download UDS-Plugin für"
 
 #: templates/uds/html5/download_client.html:11
-#: templates/uds/semantic/download_client.html:11 templatetags/html5.py:223
+#: templates/uds/semantic/download_client.html:11 templatetags/html5.py:231
 msgid "Download UDS Plugin for"
 msgstr "Download UDS-Plugin für"
 
@@ -3942,57 +3942,54 @@ msgstr "Zurück zur Liste"
 msgid "Available services list"
 msgstr "Liste der verfügbaren Dienste"
 
-#: templates/uds/html5/index.html:31
+#: templates/uds/html5/index.html:32
 msgid "Under maintenance"
 msgstr "Wartungsvertrag"
 
-#: templates/uds/html5/index.html:33
-msgid "Access limited by calendar"
-msgstr "Zugang durch Kalender beschränkt"
-
-#: templates/uds/html5/index.html:37
+#: templates/uds/html5/index.html:38
 msgid "Currently in use"
 msgstr "Derzeit im Einsatz"
 
-#: templates/uds/html5/index.html:56 templates/uds/semantic/tmpl/items.html:24
+#: templates/uds/html5/index.html:57 templates/uds/semantic/tmpl/items.html:24
 #: templates/uds/semantic/tmpl/trans.html:8
 msgid "Connections"
 msgstr "Verbindungen"
 
-#: templates/uds/html5/index.html:85
+#: templates/uds/html5/index.html:86
 msgid "Service under maintenance"
 msgstr "Service Wartungsvertrag"
 
-#: templates/uds/html5/index.html:88
+#: templates/uds/html5/index.html:89
 msgid "This service is in maintenance mode."
 msgstr "Dieser Service ist im Wartungsmodus."
 
-#: templates/uds/html5/index.html:89 templates/uds/html5/index.html:107
+#: templates/uds/html5/index.html:90 templates/uds/html5/index.html:109
 msgid "Please, retry access in a while."
 msgstr "Bitte wiederholen Sie Zugang in eine Weile."
 
-#: templates/uds/html5/index.html:103
+#: templates/uds/html5/index.html:104
 msgid "Service access not allowed"
 msgstr "-Zugriff nicht erlaubt"
 
-#: templates/uds/html5/index.html:106
-msgid "This service is currently not accesible due to schedule restrictions"
+#: templates/uds/html5/index.html:107
+msgid "This service is currently not accesible due to schedule restrictions."
 msgstr ""
-"Dieser Service ist derzeit nicht zugänglich wegen Zeitplan Beschränkungen"
+"Dieser Service ist derzeit nicht erreichbar aufgrund von Einschränkungen der "
+"Zeitplan."
 
-#: templates/uds/html5/index.html:120
+#: templates/uds/html5/index.html:122
 msgid "Administrator info panel"
 msgstr "Administrator-Info-Tafel"
 
-#: templates/uds/html5/index.html:123 templates/uds/semantic/index.html:27
+#: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:27
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/html5/index.html:126 templates/uds/semantic/index.html:31
+#: templates/uds/html5/index.html:128 templates/uds/semantic/index.html:31
 msgid "User Agent"
 msgstr "User-Agent"
 
-#: templates/uds/html5/index.html:127
+#: templates/uds/html5/index.html:129
 msgid "OS"
 msgstr "OS"
 
@@ -4239,24 +4236,28 @@ msgstr "Sitzung im Einsatz"
 msgid "Maintenance"
 msgstr "Wartung"
 
-#: templatetags/html5.py:229
+#: templatetags/html5.py:173
+msgid "Access limited by calendar"
+msgstr "Zugang durch Kalender beschränkt"
+
+#: templatetags/html5.py:237
 msgid "Debian based Linux"
 msgstr "Debian basierten Linux"
 
-#: templatetags/html5.py:229 templatetags/html5.py:230
-#: templatetags/html5.py:231 templatetags/html5.py:232
+#: templatetags/html5.py:237 templatetags/html5.py:238
+#: templatetags/html5.py:239 templatetags/html5.py:240
 msgid "(requires Python-2.7)"
 msgstr "(erfordert Python 2.7)"
 
-#: templatetags/html5.py:230
+#: templatetags/html5.py:238
 msgid "Red Hat based Linux (RH, Fedora, Centos, ...)"
 msgstr "Red Hat Basis Linux (RH, Fedora, Centos,...)"
 
-#: templatetags/html5.py:231
+#: templatetags/html5.py:239
 msgid "Suse based Linux"
 msgstr "SUSE basierten Linux"
 
-#: templatetags/html5.py:232
+#: templatetags/html5.py:240
 msgid "Generic .tar.gz Linux"
 msgstr "Generische. tar.gz Linux"
 
@@ -4531,7 +4532,7 @@ msgstr ""
 "ausgeführt wird, bevor Sie verwendet werden Benutzer zuweisen. (verwenden "
 "Sie HOST: PORT-Format)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:98
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:99
 #: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
@@ -4625,23 +4626,33 @@ msgstr ""
 "(funktioniert nur auf verwendet Windows-Clients)"
 
 #: transports/RDP/BaseRDPTransport.py:74
+msgid "Credssp Support"
+msgstr "CredSSP Unterstützung"
+
+#: transports/RDP/BaseRDPTransport.py:74
+msgid "If checked, will enable Credentials Provider Support)"
+msgstr ""
+"Wenn diese Option aktiviert, werden Anmeldeinformationen Anbieter "
+"Unterstützung aktivieren)"
+
+#: transports/RDP/BaseRDPTransport.py:75
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "Multimedia sync"
 msgstr "Multimedia-sync"
 
-#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:75
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Wenn diese Option aktiviert. Linux-Client verwenden Multimedia-Parameter für "
 "Xfreerdp."
 
-#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "Use Alsa"
 msgstr "Alsa verwenden"
 
-#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
@@ -4649,23 +4660,23 @@ msgstr ""
 "Wenn diese Option aktiviert, Linux-Client versucht, ALSA verwenden, sonst "
 "wird Puls verwendet werden"
 
-#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:77
 #: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "Printer string"
 msgstr "Drucker-string"
 
-#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:77
 #: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Wenn Drucker aktiviert ist, verwendet der Drucker-String mit Xfreerdp client"
 
-#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid "Smartcard string"
 msgstr "Smartcard-Zeichenfolge"
 
-#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
@@ -4848,16 +4859,16 @@ msgid "If checked, viewer will be shown on fullscreen mode-"
 msgstr "Wenn diese Option aktiviert, erscheint Viewer auf Fullscreen Modus:"
 
 #: transports/SPICE/SPICETransport.py:52
-msgid "RHEV/oVirt SPICE Transport (direct)"
-msgstr "RHEV/oVirt SPICE Transport (direkt)"
+msgid "SPICE Transport (direct)"
+msgstr "Gewürz-Transport (direkt)"
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Transport for direct connection (EXPERIMENTAL)"
 msgstr "Gewürz-Transport für den direkten Anschluss (experimentell)"
 
 #: transports/SPICE/TSPICETransport.py:60
-msgid "RHEV/oVirt SPICE Transport (tunneled)"
-msgstr "RHEV/oVirt SPICE Transport (Tunneling)"
+msgid "SPICE Transport (tunneled)"
+msgstr "Gewürz-Transport (getunnelt)"
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
