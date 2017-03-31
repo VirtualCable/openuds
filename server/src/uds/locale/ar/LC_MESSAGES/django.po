@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-10 13:23+0100\n"
-"PO-Revision-Date: 2017-03-10 12:20+0000\n"
+"POT-Creation-Date: 2017-03-31 10:35+0200\n"
+"PO-Revision-Date: 2017-03-31 08:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -501,7 +501,7 @@ msgstr ""
 
 #: REST/methods/transports.py:81
 #: services/Nutanix_enterprise/NutanixService.py:51
-#: templates/uds/html5/index.html:124 templates/uds/semantic/index.html:29
+#: templates/uds/html5/index.html:126 templates/uds/semantic/index.html:29
 msgid "Networks"
 msgstr "الشبكات"
 
@@ -2423,7 +2423,7 @@ msgstr "اختبار اتصال ناجح"
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
 #: services/Nutanix_enterprise/NutanixProvider.py:172
-#: services/OVirt/OVirtProvider.py:441
+#: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:143
 msgid "Connection failed. Check connection params"
 msgstr "فشل الاتصال. تحقق اتصال params"
@@ -3695,7 +3695,7 @@ msgid "Cache"
 msgstr "ذاكرة التخزين المؤقت"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
-#: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:30
+#: templates/uds/html5/index.html:127 templates/uds/semantic/index.html:30
 msgid "Transports"
 msgstr "النقل"
 
@@ -3761,7 +3761,7 @@ msgid "Download UDS plugin for"
 msgstr "تحميل UDS المساعد ل"
 
 #: templates/uds/html5/download_client.html:11
-#: templates/uds/semantic/download_client.html:11 templatetags/html5.py:223
+#: templates/uds/semantic/download_client.html:11 templatetags/html5.py:231
 msgid "Download UDS Plugin for"
 msgstr "تحميل UDS المساعد ل"
 
@@ -3864,57 +3864,52 @@ msgstr "العودة إلى قائمة الخدمات"
 msgid "Available services list"
 msgstr "قائمة الخدمات المتاحة"
 
-#: templates/uds/html5/index.html:31
+#: templates/uds/html5/index.html:32
 msgid "Under maintenance"
 msgstr "تحت الصيانة"
 
-#: templates/uds/html5/index.html:33
-msgid "Access limited by calendar"
-msgstr "وصول محدود بسبب الجدول الزمني."
-
-#: templates/uds/html5/index.html:37
+#: templates/uds/html5/index.html:38
 msgid "Currently in use"
 msgstr "قيد الاستخدام حاليا"
 
-#: templates/uds/html5/index.html:56 templates/uds/semantic/tmpl/items.html:24
+#: templates/uds/html5/index.html:57 templates/uds/semantic/tmpl/items.html:24
 #: templates/uds/semantic/tmpl/trans.html:8
 msgid "Connections"
 msgstr "روابط"
 
-#: templates/uds/html5/index.html:85
+#: templates/uds/html5/index.html:86
 msgid "Service under maintenance"
 msgstr "خدمة تحت الصيانة"
 
-#: templates/uds/html5/index.html:88
+#: templates/uds/html5/index.html:89
 msgid "This service is in maintenance mode."
 msgstr "هذه الخدمة هي في وضع الصيانة."
 
-#: templates/uds/html5/index.html:89 templates/uds/html5/index.html:107
+#: templates/uds/html5/index.html:90 templates/uds/html5/index.html:109
 msgid "Please, retry access in a while."
 msgstr "من فضلك، حاول في حين."
 
-#: templates/uds/html5/index.html:103
+#: templates/uds/html5/index.html:104
 msgid "Service access not allowed"
 msgstr "وصول الخدمة غير مسموح به."
 
-#: templates/uds/html5/index.html:106
-msgid "This service is currently not accesible due to schedule restrictions"
-msgstr ""
-"هذه الخدمة حاليا لا يمكن الوصول إليها بسبب القيود المفروضة على الجدول الزمني."
+#: templates/uds/html5/index.html:107
+msgid "This service is currently not accesible due to schedule restrictions."
+msgstr "هذه الخدمة حاليا لا accesible بسبب قيود الجدول الزمني."
 
-#: templates/uds/html5/index.html:120
+#: templates/uds/html5/index.html:122
 msgid "Administrator info panel"
 msgstr "معلومات مدير الفريق."
 
-#: templates/uds/html5/index.html:123 templates/uds/semantic/index.html:27
+#: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:27
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/html5/index.html:126 templates/uds/semantic/index.html:31
+#: templates/uds/html5/index.html:128 templates/uds/semantic/index.html:31
 msgid "User Agent"
 msgstr "وكيل المستخدم."
 
-#: templates/uds/html5/index.html:127
+#: templates/uds/html5/index.html:129
 msgid "OS"
 msgstr "نظام التشغيل"
 
@@ -4150,24 +4145,28 @@ msgstr "دورة في طور الإستخدام."
 msgid "Maintenance"
 msgstr "صيانة"
 
-#: templatetags/html5.py:229
+#: templatetags/html5.py:173
+msgid "Access limited by calendar"
+msgstr "وصول محدود بسبب الجدول الزمني."
+
+#: templatetags/html5.py:237
 msgid "Debian based Linux"
 msgstr "Linux من أصل Debian "
 
-#: templatetags/html5.py:229 templatetags/html5.py:230
-#: templatetags/html5.py:231 templatetags/html5.py:232
+#: templatetags/html5.py:237 templatetags/html5.py:238
+#: templatetags/html5.py:239 templatetags/html5.py:240
 msgid "(requires Python-2.7)"
 msgstr "(يتطلب Python-2.7)"
 
-#: templatetags/html5.py:230
+#: templatetags/html5.py:238
 msgid "Red Hat based Linux (RH, Fedora, Centos, ...)"
 msgstr "Red Hat based Linux (RH, Fedora, Centos, ...)"
 
-#: templatetags/html5.py:231
+#: templatetags/html5.py:239
 msgid "Suse based Linux"
 msgstr "Suse based Linux"
 
-#: templatetags/html5.py:232
+#: templatetags/html5.py:240
 msgid "Generic .tar.gz Linux"
 msgstr "Generic .tar.gz Linux"
 
@@ -4431,7 +4430,7 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:98
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:99
 #: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
@@ -4513,44 +4512,52 @@ msgstr ""
 "إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
 
 #: transports/RDP/BaseRDPTransport.py:74
+msgid "Credssp Support"
+msgstr "دعم Credssp"
+
+#: transports/RDP/BaseRDPTransport.py:74
+msgid "If checked, will enable Credentials Provider Support)"
+msgstr "إذا راجعت، سيمكن دعم موفر بيانات الاعتماد)"
+
+#: transports/RDP/BaseRDPTransport.py:75
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "Multimedia sync"
 msgstr "تزامن الوسائط المتعددة"
 
-#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:75
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
 
-#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "Use Alsa"
 msgstr "استخدام ALSA"
 
-#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
-#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:77
 #: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "Printer string"
 msgstr "سلسلة الطابعة"
 
-#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:77
 #: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "إذا كان يتم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل إكسفريردب"
 
-#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid "Smartcard string"
 msgstr "سلسلة البطاقة الذكية"
 
-#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
@@ -4727,16 +4734,16 @@ msgid "If checked, viewer will be shown on fullscreen mode-"
 msgstr "إذا تم، ستظهر المشاهد على وضع ملء الشاشة"
 
 #: transports/SPICE/SPICETransport.py:52
-msgid "RHEV/oVirt SPICE Transport (direct)"
-msgstr "RHEV / oVirt SPICE النقل (مباشر)"
+msgid "SPICE Transport (direct)"
+msgstr "النقل التوابل (مباشر)"
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Transport for direct connection (EXPERIMENTAL)"
 msgstr "النقل SPICE للاتصال المباشر (تجريبية)"
 
 #: transports/SPICE/TSPICETransport.py:60
-msgid "RHEV/oVirt SPICE Transport (tunneled)"
-msgstr "RHEV / oVirt SPICE النقل (نفق)"
+msgid "SPICE Transport (tunneled)"
+msgstr "النقل التوابل (نفق)"
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
