@@ -55,7 +55,7 @@ class HangedCleaner(Job):
     def run(self):
         since_state = getSqlDatetime() - timedelta(seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt())
         # Filter for locating machine not ready
-        flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING)
+        flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING) | Q(state_date__lt=since_state, state=State.REMOVING)
 
         for ds in DeployedService.objects.exclude(osmanager=None, state__in=State.VALID_STATES, service__provider__maintenance_mode=True):
             logger.debug('Searching for hanged services for {0}'.format(ds))
@@ -63,4 +63,7 @@ class HangedCleaner(Job):
                 logger.debug('Found hanged service {0}'.format(us))
                 log.doLog(us, log.ERROR, 'User Service seems to be hanged. Removing it.', log.INTERNAL)
                 log.doLog(ds, log.ERROR, 'Removing user service {0} because it seems to be hanged'.format(us.friendly_name))
-                us.removeOrCancel()
+                if us.state in (State.REMOVING,):
+                    us.setState(State.ERROR)
+                else:
+                    us.removeOrCancel()
