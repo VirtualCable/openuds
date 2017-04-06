@@ -149,8 +149,6 @@ gui.servicesPools.link = (event) ->
   # Callback for custom fields
   renderer = (fld, data, type, record) ->
     # Display "custom" fields of rules table
-    console.log(fld)
-    console.log(data)
     if fld == "show_transports" or fld == "visible"
       if data
         return gettext('Yes')
