@@ -149,10 +149,10 @@ gui.servicesPools.link = (event) ->
   # Callback for custom fields
   renderer = (fld, data, type, record) ->
     # Display "custom" fields of rules table
-    if fld == "show_transports"
+    if fld == "show_transports" or fld == "visible"
       if data
         return gettext('Yes')
-      gettext('No')
+      return gettext('No')
     return fld
 
   api.templates.get "services_pool", (tmpl) ->
