@@ -63,7 +63,7 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2017-01-23'
+__updated__ = '2017-04-06'
 
 
 logger = logging.getLogger(__name__)
@@ -83,6 +83,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
+    visible = models.BooleanField(default=True)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
     servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
@@ -199,10 +200,13 @@ class DeployedService(UUIDModel, TaggingMixin):
     def isInMaintenance(self):
         return self.service is not None and self.service.isInMaintenance()
 
+    def isVisible(self):
+        return self.visible
+
     def toBeReplaced(self):
         # return datetime.now()
         activePub = self.activePublication()
-        if activePub is None or activePub.revision == self.current_pub_revision - 1:
+        if activePub is None or activePub.revision <= self.current_pub_revision - 1:
             return None
 
         # Return the date
@@ -414,10 +418,10 @@ class DeployedService(UUIDModel, TaggingMixin):
         from uds.core import services
         # Get services that HAS publications
         list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE,
-                                               state=states.servicePool.ACTIVE).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
+                                               state=states.servicePool.ACTIVE, visible=True).distinct().annotate(cuenta=models.Count('publications')).exclude(cuenta=0)
         # Now get deployed services that DO NOT NEED publication
         doNotNeedPublishing = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
-        list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE, service__data_type__in=doNotNeedPublishing, state=states.servicePool.ACTIVE)
+        list2 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE, service__data_type__in=doNotNeedPublishing, state=states.servicePool.ACTIVE, visible=True)
         # And generate a single list without duplicates
         return list(set([r for r in list1] + [r for r in list2]))
 

@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-03-22'
+__updated__ = '2017-04-06'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -236,7 +236,7 @@ class UserServiceManager(object):
             dsp.cachedDeployedService.filter(state__in=State.INFO_STATES).delete()
 
     def getExistingAssignationForUser(self, ds, user):
-        existing = ds.assignedUserServices().filter(user=user, state__in=State.VALID_STATES)
+        existing = ds.assignedUserServices().filter(user=user, state__in=State.VALID_STATES, deployed_service__visible=True)
         lenExisting = existing.count()
         if lenExisting > 0:  # Already has 1 assigned
             logger.debug('Found assigned service from {0} to user {1}'.format(ds, user.name))
@@ -512,6 +512,10 @@ class UserServiceManager(object):
 
         if userService.isInMaintenance() is True:
             raise ServiceInMaintenanceMode()
+
+        # If service is not visible, do not allow it to be used
+        if userService.deployed_service.isVisible() is False:
+            raise InvalidServiceException()
 
         if userService.deployed_service.isAccessAllowed() is False:
             raise ServiceAccessDeniedByCalendar()

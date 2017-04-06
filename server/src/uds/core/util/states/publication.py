@@ -33,4 +33,4 @@
 from __future__ import unicode_literals
 
 # pylint: disable=unused-import
-from .common import ERROR, USABLE  # @UnusedImport
+from .common import ERROR, USABLE, REMOVABLE, REMOVED, CANCELED, LAUNCHING, PREPARING  # @UnusedImport

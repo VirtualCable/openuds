@@ -84,7 +84,8 @@ class ServicesPools(ModelHandler):
         'cache_l1_srvs',
         'cache_l2_srvs',
         'max_srvs',
-        'show_transports'
+        'show_transports',
+        'visible'
     ]
     remove_fields = ['osmanager_id', 'service_id']
 
@@ -94,7 +95,7 @@ class ServicesPools(ModelHandler):
         {'state': {'title': _('status'), 'type': 'dict', 'dict': State.dictionary()}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
-        {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
+        {'visible': {'title': _('Visible'), 'type': 'callback'}},
         {'pool_group_name': {'title': _('Pool Group')}},
         {'parent': {'title': _('Parent Service')}},
         {'tags': {'title': _('tags'), 'visible': False}},
@@ -150,6 +151,7 @@ class ServicesPools(ModelHandler):
             'user_services_in_preparation': item.userServices.filter(state=State.PREPARING).count(),
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
+            'visible': item.visible,
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
             'info': Services.serviceInfo(item.service),
@@ -200,6 +202,14 @@ class ServicesPools(ModelHandler):
             'tooltip': ugettext('Pool group for this pool (for pool clasify on display)'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
             'order': 106,
+            'tab': ugettext('Display'),
+        }, {
+            'name': 'visible',
+            'value': True,
+            'label': ugettext('Visible'),
+            'tooltip': ugettext('If active, transport will be visible for users'),
+            'type': gui.InputField.CHECKBOX_TYPE,
+            'order': 107,
             'tab': ugettext('Display'),
         }, {
             'name': 'initial_srvs',
