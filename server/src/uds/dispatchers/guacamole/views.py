@@ -60,6 +60,7 @@ def guacamole(request, tunnelId):
 
         response = dict2resp(val)
     except Exception:
+        logger.error('Invalid guacamole ticket (F5 on client?): {}'.format(tunnelId))
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
 
     return HttpResponse(response, content_type=CONTENT_TYPE)
