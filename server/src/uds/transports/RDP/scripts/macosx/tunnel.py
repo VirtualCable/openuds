@@ -98,7 +98,7 @@ else:
             if '{m.password}' != '':
                 url += ':' + urllib.quote('{m.password}')
             url += '@'
-        url += '127.0.0.1:{}/'.format(port)
+        url += '127.0.0.1:{{}}/'.format(port)
         if domain != '':
             url += domain
 
