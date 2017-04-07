@@ -16,7 +16,7 @@ if not os.path.isfile(remoteViewer):
     Please, install appropriate package for your system.
 </p>
 <p>
-    <a href="http://www.spice-space.org/page/OSX_Client">Open download page</a>
+    <a href="http://people.freedesktop.org/~teuf/spice-gtk-osx/dmg/0.5.7/RemoteViewer-0.5.7-1.dmg">Open download page</a>
 </p>
 <p>
     Please, note that in order to UDS Connector to work correctly, you must copy the Remote Viewer app to your Applications Folder.<br/>
