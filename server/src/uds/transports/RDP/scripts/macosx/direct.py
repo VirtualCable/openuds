@@ -46,11 +46,6 @@ if executable is None:
 <p>In order to connect to UDS RDP Sessions, you need to have at least one of the following:<p>
 <ul>
     <li>
-        <p><b>Microsoft Remote Desktop Connection version 2.</b> (Recommended)</p>
-        <p>You can get it from <a href="http://www.microsoft.com/es-es/download/details.aspx?id=18140">this link</a></p>
-        <p>Remember that you need to use the One from the Microsoft site (the link provided), not the one from the AppStore</p>
-    </li>
-    <li>
         <p><b>CoRD</b> (A bit unstable from 10.7 onwards)</p>
         <p>You can get it from <a href="{m.this_server}static/other/CoRD.pkg">this link</a></p>
     </li>
