@@ -46,7 +46,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__updated__ = '2017-01-30'
+__updated__ = '2017-04-17'
 
 
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
@@ -92,6 +92,7 @@ def extend_sqlite(connection=None, **kwargs):
         cursor.execute('PRAGMA synchronous=OFF')
         cursor.execute('PRAGMA cache_size=8000')
         cursor.execute('PRAGMA temp_store=MEMORY')
+        cursor.execute('PRAGMA journal_mode=WAL')
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
         connection.connection.create_function("CEIL", 1, math.ceil)
