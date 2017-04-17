@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2016-05-18'
+__updated__ = '2017-04-17'
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ class JobThread(threading.Thread):
                     connection.close()
                 except Exception as e:
                     logger.error('On job executor, closing db connection: {}'.format(e))
-                logger.info('Database access failed... Retrying')
+                # logger.info('Database access failed... Retrying')
                 time.sleep(1)
 
         # Ensures DB connection is released after job is done
@@ -159,13 +159,13 @@ class Scheduler(object):
         except IndexError:
             # Do nothing, there is no jobs for execution
             return
-        except DatabaseError:
+        except DatabaseError as e:
             # Whis will happen whenever a connection error or a deadlock error happens
             # This in fact means that we have to retry operation, and retry will happen on main loop
             # Look at this http://dev.mysql.com/doc/refman/5.0/en/innodb-deadlocks.html
             # I have got some deadlock errors, but looking at that url, i found that it is not so abnormal
             # logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
-            raise DatabaseError('Database access problems. Retrying connection')
+            raise DatabaseError('Database access problems. Retrying connection ({})'.format(e))
 
     @staticmethod
     def releaseOwnShedules():
@@ -192,7 +192,10 @@ class Scheduler(object):
                 time.sleep(self.granularity)
                 self.executeOneJob()
             except Exception as e:
-                logger.error('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
+                # This can happen often on sqlite, and this is not problem at all as we recover it.
+                # The log is removed so we do not get increased workers.log file size with no information at all
+                if not isinstance(e, DatabaseError):
+                    logger.error('Unexpected exception at run loop {0}: {1}'.format(e.__class__, e))
                 try:
                     connection.close()
                 except Exception:
