@@ -46,23 +46,6 @@ GuacUI.createChildElement = function(parent, tagname, classname) {
 };
 
 /**
- * Creates a new row within the given table having a single header cell
- * with the given title, and a single value cell. The value cell is returned.
- */
-GuacUI.createTabulatedContainer = function(table, title) {
-
-    // Create elements
-    var row    = GuacUI.createChildElement(table, "tr");
-    var header = GuacUI.createChildElement(row, "th");
-    var cell   = GuacUI.createChildElement(row, "td");
-
-    // Set title, return cell
-    header.textContent = title;
-    return cell;
-
-};
-
-/**
  * Adds the given CSS class to the given element.
  */
 GuacUI.addClass = function(element, classname) {
@@ -104,55 +87,6 @@ GuacUI.removeClass = function(element, classname) {
         );
 
     } // end if no classlist support
-
-};
-
-/**
- * Opens the connection group having the given ID in a new tab/window.
- * 
- * @param {String} id The ID of the connection group to open.
- * @param {String} parameters Any parameters that should be added to the URL,
- *                            for sake of authentication.
- */
-GuacUI.openConnectionGroup = function(id, parameters) {
-    GuacUI.openObject("g/" + id, parameters);
-};
-
-/**
- * Opens the connection having the given ID in a new tab/window.
- * 
- * @param {String} id The ID of the connection to open.
- * @param {String} parameters Any parameters that should be added to the URL,
- *                            for sake of authentication.
- */
-GuacUI.openConnection = function(id, parameters) {
-    GuacUI.openObject("c/" + id, parameters);
-};
-
-/**
- * Opens the object having the given ID in a new tab/window. The ID must
- * include the relevant prefix.
- * 
- * @param {String} id The ID of the object to open, including prefix.
- * @param {String} parameters Any parameters that should be added to the URL,
- *                            for sake of authentication.
- */
-GuacUI.openObject = function(id, parameters) {
-
-    // Get URL
-    var url = "client.xhtml?id=" + encodeURIComponent(id);
-
-    // Add parameters, if given
-    if (parameters)
-        url += "&" + parameters;
-
-    // Attempt to focus existing window
-    var current = window.open(null, id);
-
-    // If window did not already exist, set up as
-    // Guacamole client
-    if (!current.GuacUI)
-        window.open(url, id);
 
 };
 
