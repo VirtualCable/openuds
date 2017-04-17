@@ -23,7 +23,7 @@
 /**
  * Global storage for Guacamole pages. 
  */
-GuacamoleSessionStorage = (opener && opener.GuacamoleSessionStorage) || new (function() {
+GuacamoleSessionStorage = (window.opener && opener.GuacamoleSessionStorage) || new (function() {
 
     /**
      * The contents of storage, as a JSON string containing name/value pairs as
@@ -71,7 +71,7 @@ GuacamoleSessionStorage = (opener && opener.GuacamoleSessionStorage) || new (fun
 
         // Attempt to read JSON from localStorage, default to local variable
         var json = stored_json;
-        if (localStorage) {
+        if (window.localStorage) {
             try {
                 json = localStorage.getItem("GUACAMOLE_STATE") || "{}";
             }
@@ -96,7 +96,7 @@ GuacamoleSessionStorage = (opener && opener.GuacamoleSessionStorage) || new (fun
 
         // Attempt to read JSON from localStorage, default to local variable
         var json = stored_json;
-        if (localStorage) {
+        if (window.localStorage) {
             try {
                 json = localStorage.getItem("GUACAMOLE_STATE") || "{}";
             }
@@ -114,7 +114,7 @@ GuacamoleSessionStorage = (opener && opener.GuacamoleSessionStorage) || new (fun
 
         // Attempt to set JSON within localStorage, default to local variable
         stored_json = JSON.stringify(obj);
-        if (localStorage) {
+        if (window.localStorage) {
             try {
                 localStorage.setItem("GUACAMOLE_STATE", stored_json);
             }
