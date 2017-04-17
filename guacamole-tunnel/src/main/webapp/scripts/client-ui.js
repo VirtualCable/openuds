@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Glyptodon LLC
+ * Copyright (C) 2017 Glyptodon, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -743,48 +743,6 @@ GuacUI.Client.Pinch = function(element) {
         }
 
     }, false);
-
-};
-
-/**
- * Flattens the attached Guacamole.Client, storing the result within the
- * connection history.
- */
-GuacUI.Client.updateThumbnail = function() {
-
-    var guac = GuacUI.Client.attachedClient;
-    if (!guac)
-        return;
-
-    // Do not create empty thumbnails
-    if (guac.getDisplay().getWidth() <= 0 || guac.getDisplay().getHeight() <= 0)
-        return;
-
-    // Get screenshot
-    var canvas = guac.getDisplay().flatten();
-
-    // Calculate scale of thumbnail (max 320x240, max zoom 100%)
-    var scale = Math.min(
-        320 / canvas.width,
-        240 / canvas.height,
-        1
-    );
-
-    // Create thumbnail canvas
-    var thumbnail = document.createElement("canvas");
-    thumbnail.width  = canvas.width*scale;
-    thumbnail.height = canvas.height*scale;
-
-    // Scale screenshot to thumbnail
-    var context = thumbnail.getContext("2d");
-    context.drawImage(canvas,
-        0, 0, canvas.width, canvas.height,
-        0, 0, thumbnail.width, thumbnail.height
-    );
-
-    // Save thumbnail to history
-    var id = decodeURIComponent(window.location.search.substring(4));
-    GuacamoleHistory.update(id, thumbnail.toDataURL());
 
 };
 
@@ -1588,15 +1546,11 @@ GuacUI.Client.attach = function(guac) {
     }, false);
 
     /*
-     * Disconnect and update thumbnail on close
+     * Disconnect on close
      */
     window.onunload = function() {
-
-        GuacUI.Client.updateThumbnail();
-
         if (GuacUI.Client.attachedClient)
             GuacUI.Client.attachedClient.disconnect();
-
     };
 
     /*
