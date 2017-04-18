@@ -178,6 +178,10 @@ class Users(DetailHandler):
         try:
             user = parent.users.get(uuid=processUuid(item))
 
+            for us in user.userServices.all():
+                us.user = None
+                us.removeOrCancel()
+
             user.delete()
         except Exception:
             self.invalidItemException()

@@ -84,12 +84,22 @@ class AssignedService(DetailHandler):
         if is_cache:
             val['cache_level'] = item.cache_level
         else:
-            val.update({
-                'owner': item.user.manager.name + "-" + item.user.name,
-                'owner_info': {
+            if item.user is None:
+                owner = ''
+                owner_info = {
+                   'auth_id': '',
+                   'user_id': ''
+                }
+            else:
+                owner = item.user.manager.name + "-" + item.user.name
+                owner_info = {
                    'auth_id': item.user.manager.uuid,
                    'user_id': item.user.uuid
-                },
+                }
+
+            val.update({
+                'owner': owner,
+                'owner_info': owner_info,
                 'in_use': item.in_use,
                 'in_use_date': item.in_use_date,
                 'source_host': item.src_hostname,
