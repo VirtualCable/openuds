@@ -23,7 +23,7 @@
 /**
  * Global storage for Guacamole pages. 
  */
-GuacamoleSessionStorage = (window.opener && opener.GuacamoleSessionStorage) || new (function() {
+GuacamoleSessionStorage = new (function() {
 
     /**
      * The contents of storage, as a JSON string containing name/value pairs as
