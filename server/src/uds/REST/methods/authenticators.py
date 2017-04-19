@@ -135,3 +135,13 @@ class Authenticators(ModelHandler):
             return self.success()
         else:
             return res[1]
+
+    def deleteItem(self, auth):
+        # For every user, remove assigned services (mark them for removal)
+
+        for user in auth.users.all():
+            for userService in user.userServices.all():
+                userService.user = None
+                userService.removeOrCancel()
+
+        auth.delete()
