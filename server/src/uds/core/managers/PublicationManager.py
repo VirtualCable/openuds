@@ -68,8 +68,9 @@ class PublicationOldMachinesCleaner(DelayedTask):
             servicePoolPub.deployed_service.userServices.filter(in_use=True).update(in_use=False, state_date=now)
             servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
         except Exception:
-            logger.exception('Trace (treated exception, not fault)')
-            # Removed provider, no problem at all, no update is done
+            pass
+            # logger.exception('Trace (treated exception, not fault)')
+            # Removed publication, no problem at all, no update is done
 
 
 class PublicationLauncher(DelayedTask):
