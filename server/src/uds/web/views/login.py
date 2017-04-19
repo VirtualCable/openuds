@@ -44,14 +44,16 @@ from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
 from uds.core.ui import theme
 from uds.core import VERSION
+from django.views.decorators.csrf import csrf_exempt
 
 import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2016-02-19'
+__updated__ = '2017-04-19'
 
-
+# Allow cross-domain login
+# @csrf_exempt
 def login(request, tag=None):
     '''
     View responsible of logging in an user
