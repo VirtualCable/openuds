@@ -123,6 +123,11 @@ def login(request, tag=None):
                     webLogin(request, response, user, form.cleaned_data['password'])
                     # Add the "java supported" flag to session
                     request.session['OS'] = os
+                    if form.cleaned_data['logouturl'] != '':
+                        logger.debug('The logoout url will be {}'.format(form.cleaned_data['logouturl']))
+                        request.session['logouturl'] = form.cleaned_data['logouturl']
+                    else:
+                        logger.debug('EL LOGOUT ESTA VACIOOOOOOOOO')
                     authLogLogin(request, authenticator, user.name)
                     return response
         else:
@@ -162,4 +167,7 @@ def customAuth(request, idAuth):
 @webLoginRequired(admin=False)
 def logout(request):
     authLogLogout(request)
-    return webLogout(request, request.user.logout())
+    logoutUrl = request.user.logout()
+    if logoutUrl is None:
+        logoutUrl = request.session.get('logouturl', None)
+    return webLogout(request, logoutUrl)
