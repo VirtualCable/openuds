@@ -41,7 +41,7 @@ from uds.models.Util import getSqlDatetime
 import logging
 
 
-__updated__ = '2015-05-04'
+__updated__ = '2017-05-03'
 
 
 logger = logging.getLogger(__name__)
@@ -137,4 +137,4 @@ class StatsCounters(models.Model):
         return StatsCounters.objects.raw(query)
 
     def __unicode__(self):
-        return u"Log of {0}({1}): {2} - {3} - {4}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)
+        return u"Counter of {0}({1}): {2} - {3} - {4}".format(self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value)
