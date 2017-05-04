@@ -64,7 +64,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-05-17'
+__updated__ = '2017-05-04'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -162,8 +162,8 @@ class PoolPerformanceReport(StatsReport):
         order=4,
         label=_('Number of intervals'),
         length=3,
-        minValue=2,
-        maxValue=24,
+        minValue=0,
+        maxValue=32,
         tooltip=_('Number of sampling points used in charts'),
         defvalue='8'
     )
@@ -181,7 +181,16 @@ class PoolPerformanceReport(StatsReport):
     def getRangeData(self):
         start = self.startDate.stamp()
         end = self.endDate.stamp()
+
+        if self.samplingPoints.num() < 2:
+            self.samplingPoints.value = (self.endDate.date() - self.startDate.date()).days
+        if self.samplingPoints.num() < 2:
+            self.samplingPoints.value = 2
+        if self.samplingPoints.num() > 32:
+            self.samplingPoints.value = 32
+
         samplingPoints = self.samplingPoints.num()
+
         pools = [(v.id, v.name) for v in ServicePool.objects.filter(uuid__in=self.pools.value)]
         if len(pools) == 0:
             raise Exception(_('Select at least a service pool for the report'))
