@@ -59,6 +59,7 @@ class SPICETransport(BaseSpiceTransport):
     serverCertificate = BaseSpiceTransport.serverCertificate
     fullScreen = BaseSpiceTransport.fullScreen
     enableUsbShare = BaseSpiceTransport.enableUsbShare
+    smartCardRedirect = BaseSpiceTransport.smartCardRedirect
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         userServiceInstance = userService.getInstance()
@@ -73,6 +74,7 @@ class SPICETransport(BaseSpiceTransport):
 
         r = RemoteViewerFile(con['address'], port, secure_port, con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=self.fullScreen.isTrue())
         r.usb_auto_share = self.enableUsbShare.isTrue()
+        r.smartcard = self.smartCardRedirect.isTrue()
 
         m = tools.DictAsObj({
             'r': r

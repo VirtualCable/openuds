@@ -95,11 +95,19 @@ class BaseSpiceTransport(Transport):
     )
     enableUsbShare = gui.CheckBoxField(
         order=6,
+        label=_('Smartcard Redirect'),
+        tooltip=_('If checked, SPICE protocol will allow smartcard redirection.'),
+        defvalue=gui.FALSE,
+        tab=gui.ADVANCED_TAB
+    )
+    smartCardRedirect = gui.CheckBoxField(
+        order=7,
         label=_('USB Auto Sharing'),
         tooltip=_('If checked, viewer will allow usb auto sharing.'),
         defvalue=gui.TRUE,
         tab=gui.ADVANCED_TAB
     )
+
 
     def isAvailableFor(self, userService, ip):
         '''
