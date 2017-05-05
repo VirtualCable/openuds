@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2017-03-29'
+__updated__ = '2017-05-05'
 
 
 logger = logging.getLogger(__name__)
@@ -91,6 +91,13 @@ class BaseSpiceTransport(Transport):
         order=5,
         label=_('Show fullscreen'),
         tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
+        tab=gui.ADVANCED_TAB
+    )
+    enableUsbShare = gui.CheckBoxField(
+        order=6,
+        label=_('USB Auto Sharing'),
+        tooltip=_('If checked, viewer will allow usb auto sharing.'),
+        defvalue=gui.TRUE,
         tab=gui.ADVANCED_TAB
     )
 
