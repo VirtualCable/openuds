@@ -124,8 +124,6 @@ def login(request, tag=None):
                     if form.cleaned_data['logouturl'] != '':
                         logger.debug('The logoout url will be {}'.format(form.cleaned_data['logouturl']))
                         request.session['logouturl'] = form.cleaned_data['logouturl']
-                    else:
-                        logger.debug('EL LOGOUT ESTA VACIOOOOOOOOO')
                     authLogLogin(request, authenticator, user.name)
                     return response
         else:
