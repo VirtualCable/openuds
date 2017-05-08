@@ -39,7 +39,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-03-03'
+__updated__ = '2017-04-21'
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class OGService(Service):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
-    typeName = _('OpenGnsys Machine')
+    typeName = _('OpenGnsys Machines Service')
     # : Type used internally to identify this provider
     typeType = 'openGnsysMachine'
     # : Description shown at administration interface for this provider
@@ -98,33 +98,35 @@ class OGService(Service):
         required=True
     )
 
+    # Required, this is the base image
+    image = gui.ChoiceField(
+        label=_("OS Image"),
+        order=101,
+        tooltip=_('OpenGnsys Operanting System Image'),
+        required=True
+    )
+
+    # Lab is not required, but maybe used as filter
     lab = gui.ChoiceField(
-        label=_("Base Template"),
+        label=_("lab"),
+        order=102,
+        tooltip=_('Laboratory'),
+        required=False
+    )
+
+    minSpaceGB = gui.NumericField(
+        length=3,
+        label=_("Max. reservation time"),
         order=110,
-        tooltip=_('Service base template'),
-        tab=_('Machine'),
-        required=True
+        tooltip=_('Security parameter for OpenGnsys to kepp reservations at most this hours'),
+        defvalue='24',
+        tab=_('Advanced'),
+        required=False
     )
 
 
-    baseName = gui.TextField(
-        label=_('Machine Names'),
-        rdonly=False,
-        order=111,
-        tooltip=('Base name for clones from this machine'),
-        tab=_('Machine'),
-        required=True
-    )
+    # Note: CHECK HOW TO INCLUDE A CALENDAR HERE (probably using callbacks...)
 
-    lenName = gui.NumericField(
-        length=1,
-        label=_('Name Length'),
-        defvalue=5,
-        order=112,
-        tooltip=_('Size of numeric part for the names of these machines (between 3 and 6)'),
-        tab=_('Machine'),
-        required=True
-    )
 
     def initialize(self, values):
         '''
@@ -144,22 +146,6 @@ class OGService(Service):
         '''
         Loads required values inside
         '''
-
-        templates = self.parent().getTemplates()
-        vals = []
-        for t in templates:
-            vals.append(gui.choiceItem(t[0], t[1]))
-
-        # This is not the same case, values is not the "value" of the field, but
-        # the list of values shown because this is a "ChoiceField"
-        self.template.setValues(vals)
-
-        datastores = self.parent().getDatastores()
-        vals = []
-        for d in datastores:
-            vals.append(gui.choiceItem(d[0], d[1]))
-
-        self.datastore.setValues(vals)
 
     def sanitizeVmName(self, name):
         return self.parent().sanitizeVmName(name)

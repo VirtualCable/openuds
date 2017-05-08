@@ -43,7 +43,10 @@ import six
 import requests
 import  json
 
-__updated__ = '2017-02-09'
+# API URL 1: https://www.informatica.us.es/~ramon/opengnsys/?url=opengnsys-api.yml
+# API URL 2: http://opengnsys.es/wiki/ApiRest
+
+__updated__ = '2017-04-21'
 
 logger = logging.getLogger(__name__)
 
@@ -67,13 +70,16 @@ def ensureResponseIsValid(response, errMsg=None):
         if errMsg is None:
             errMsg = 'Invalid response'
 
-        try:
-            err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
-        except Exception:
-            err = response.content
-        errMsg = '{}: {}, ({})'.format(errMsg, err, response.code)
-        logger.error('{}: {}'.format(errMsg, response.content))
-        raise Exception(errMsg)
+        # If response.code is not 200, the response is an error and should have a message
+        # FIX THIS
+        if response.code != 200:
+            try:
+                err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
+            except Exception:
+                err = response.content
+            errMsg = '{}: {}, ({})'.format(errMsg, err, response.code)
+            logger.error('{}: {}'.format(errMsg, response.content))
+            raise Exception(errMsg)
 
     return json.loads(response.content)
 
@@ -109,6 +115,12 @@ class OpenGnsysClient(object):
             errMsg=errMsg
         )
 
+    def _delete(self, path, errMsg=None):
+        return ensureResponseIsValid(
+            requests.delete(self._ogUrl(path), headers=self.headers, verify=self.verifyCert),
+            errMsg=errMsg
+        )
+
     def connect(self):
         if self.auth is not None:
             return
@@ -139,3 +151,39 @@ class OpenGnsysClient(object):
         # 'id': OpenGnsys Id
         # 'name': OU name
         return self._get(OUS_URL, errMsg='Getting list of ous')
+
+    @ensureConnected
+    def getLabs(self, ou):
+        # Returns a list of available labs on an ou
+        # /ous/{ouid}/labs
+        # Take into accout that we must exclude the ones with "inremotepc" set to false.
+        pass
+
+    @ensureConnected
+    def getImages(self, ou):
+        # Returns a list of available labs on an ou
+        # /ous/{ouid}/images
+        # Take into accout that we must exclude the ones with "inremotepc" set to false.
+        pass
+
+    @ensureConnected
+    def reserve(self):
+        # This method is inteded to "get" a machine from OpenGnsys
+        # invokes /ous/{ouid}}/images/{imageid}/reserve
+        # el lab goes on query itself (?laid=....)
+        # On response, also remember to store "labid"
+        pass
+
+    @ensureConnected
+    def unreserve(self, machine):
+        # This method releases the previous reservation
+        # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
+        pass
+
+    @ensureConnected
+    def status(self, machine):
+        # This method gets the status of the machine
+        # /ous/{uoid}/labs/{labid}/clients/{clientid}/status
+        # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
+        # Look at api at informatica.us..
+        pass

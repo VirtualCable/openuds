@@ -56,6 +56,7 @@ class Authenticators(ModelHandler):
 
     table_title = _('Current authenticators')
     table_fields = [
+        {'numeric_id': {'title': _('Id'), 'visible': True}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
@@ -88,6 +89,7 @@ class Authenticators(ModelHandler):
     def item_as_dict(self, auth):
         type_ = auth.getType()
         return {
+            'numeric_id': auth.id,
             'id': auth.uuid,
             'name': auth.name,
             'tags': [tag.tag for tag in auth.tags.all()],

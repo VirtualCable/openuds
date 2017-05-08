@@ -37,7 +37,7 @@ from django.utils.translation import ugettext, ugettext_noop as _
 from .base import StatsReport
 
 
-__updated__ = '2015-06-10'
+__updated__ = '2017-05-03'
 
 
 class StatsReportUsage(object):  # Disabled from being used

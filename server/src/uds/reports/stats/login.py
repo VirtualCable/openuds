@@ -60,7 +60,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-05-17'
+__updated__ = '2017-05-04'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -148,7 +148,7 @@ class StatsReportLogin(StatsReport):
         order=3,
         label=_('Number of intervals'),
         length=3,
-        minValue=16,
+        minValue=0,
         maxValue=128,
         tooltip=_('Number of sampling points used in charts'),
         defvalue='64'
@@ -163,6 +163,13 @@ class StatsReportLogin(StatsReport):
     def getRangeData(self):
         start = self.startDate.stamp()
         end = self.endDate.stamp()
+        if self.samplingPoints.num() < 8:
+            self.samplingPoints.value = (self.endDate.date() - self.startDate.date()).days
+        if self.samplingPoints.num() < 2:
+            self.samplingPoints.value = 2
+        if self.samplingPoints.num() > 128:
+            self.samplingPoints.value = 128
+
         samplingPoints = self.samplingPoints.num()
 
         # x axis label format

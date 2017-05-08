@@ -39,7 +39,7 @@ from .RemoteViewerFile import RemoteViewerFile
 
 import logging
 
-__updated__ = '2017-03-31'
+__updated__ = '2017-05-05'
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,8 @@ class SPICETransport(BaseSpiceTransport):
     # fixedPassword = BaseSpiceTransport.fixedPassword
     serverCertificate = BaseSpiceTransport.serverCertificate
     fullScreen = BaseSpiceTransport.fullScreen
+    enableUsbShare = BaseSpiceTransport.enableUsbShare
+    smartCardRedirect = BaseSpiceTransport.smartCardRedirect
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         userServiceInstance = userService.getInstance()
@@ -71,6 +73,8 @@ class SPICETransport(BaseSpiceTransport):
         secure_port = -1 if secure_port is None else secure_port
 
         r = RemoteViewerFile(con['address'], port, secure_port, con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=self.fullScreen.isTrue())
+        r.usb_auto_share = self.enableUsbShare.isTrue()
+        r.smartcard = self.smartCardRedirect.isTrue()
 
         m = tools.DictAsObj({
             'r': r

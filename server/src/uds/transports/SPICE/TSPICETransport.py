@@ -47,7 +47,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-03-31'
+__updated__ = '2017-05-05'
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +67,8 @@ class TSPICETransport(BaseSpiceTransport):
 
     serverCertificate = BaseSpiceTransport.serverCertificate
     fullScreen = BaseSpiceTransport.fullScreen
+    enableUsbShare = BaseSpiceTransport.enableUsbShare
+    smartCardRedirect = BaseSpiceTransport.smartCardRedirect
 
     def initialize(self, values):
         if values is not None:
@@ -89,6 +91,8 @@ class TSPICETransport(BaseSpiceTransport):
         sshHost, sshPort = self.tunnelServer.value.split(':')
 
         r = RemoteViewerFile('127.0.0.1', '{port}', '{secure_port}', con['ticket']['value'], self.serverCertificate.value, con['cert_subject'], fullscreen=self.fullScreen.isTrue())
+        r.usb_auto_share = self.enableUsbShare.isTrue()
+        r.smartcard = self.smartCardRedirect.isTrue()
 
         m = tools.DictAsObj({
             'r': r,

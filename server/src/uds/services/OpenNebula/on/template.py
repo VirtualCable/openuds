@@ -38,7 +38,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import sanitizeName
 
-__updated__ = '2017-03-27'
+__updated__ = '2017-05-05'
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,10 @@ def create(api, fromTemplateId, name, toDataStore):
                     continue  # Skip this unknown node
                 imgName = node.data
                 # Locate
-                imgId = imgs[imgName]
+                try:
+                    imgId = imgs[imgName.strip()]
+                except KeyError:
+                    raise Exception('Image "{}" could not be found!. Check the opennebula template'.format(imgName.strip()))
             else:
                 fromId = True
                 node = imgIds[0].childNodes[0]

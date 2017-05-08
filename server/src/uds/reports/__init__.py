@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-06-21'
+__updated__ = '2017-05-03'
 
 
 availableReports = []
@@ -61,6 +61,7 @@ def __init__():
     from uds.core import reports
 
     def addReportCls(cls):
+        logger.debug('Adding report {}'.format(cls))
         availableReports.append(cls)
 
     def recursiveAdd(p):
