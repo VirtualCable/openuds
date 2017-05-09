@@ -39,7 +39,7 @@ from .RemoteViewerFile import RemoteViewerFile
 
 import logging
 
-__updated__ = '2017-05-05'
+__updated__ = '2017-05-09'
 
 logger = logging.getLogger(__name__)
 

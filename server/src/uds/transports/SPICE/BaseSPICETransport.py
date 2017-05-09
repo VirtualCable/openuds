@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2017-05-05'
+__updated__ = '2017-05-09'
 
 
 logger = logging.getLogger(__name__)
@@ -93,14 +93,14 @@ class BaseSpiceTransport(Transport):
         tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
         tab=gui.ADVANCED_TAB
     )
-    enableUsbShare = gui.CheckBoxField(
+    smartCardRedirect = gui.CheckBoxField(
         order=6,
         label=_('Smartcard Redirect'),
         tooltip=_('If checked, SPICE protocol will allow smartcard redirection.'),
         defvalue=gui.FALSE,
         tab=gui.ADVANCED_TAB
     )
-    smartCardRedirect = gui.CheckBoxField(
+    enableUsbShare = gui.CheckBoxField(
         order=7,
         label=_('USB Auto Sharing'),
         tooltip=_('If checked, viewer will allow usb auto sharing.'),
