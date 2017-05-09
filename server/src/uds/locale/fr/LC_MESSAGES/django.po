@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-31 10:35+0200\n"
-"PO-Revision-Date: 2017-03-31 08:34+0000\n"
+"POT-Creation-Date: 2017-05-09 10:17+0200\n"
+"PO-Revision-Date: 2017-05-09 07:50+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -41,12 +41,16 @@ msgstr "Service utilisateur introuvable"
 msgid "Current authenticators"
 msgstr "Authentificateurs actuels"
 
-#: REST/methods/authenticators.py:59 REST/methods/calendars.py:60
+#: REST/methods/authenticators.py:59
+msgid "Id"
+msgstr "ID"
+
+#: REST/methods/authenticators.py:60 REST/methods/calendars.py:60
 #: REST/methods/images.py:61 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:66
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:77 REST/methods/transports.py:57
-#: REST/methods/user_services.py:225 REST/methods/user_services.py:260
+#: REST/methods/user_services.py:235 REST/methods/user_services.py:270
 #: REST/methods/users_groups.py:113 REST/model.py:132
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
@@ -56,31 +60,31 @@ msgstr "Authentificateurs actuels"
 msgid "Name"
 msgstr "Nom"
 
-#: REST/methods/authenticators.py:60 REST/methods/calendarrules.py:104
+#: REST/methods/authenticators.py:61 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
 #: REST/methods/providers.py:67 REST/methods/services.py:190
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
-#: REST/methods/user_services.py:262 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:258 REST/model.py:140
+#: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
+#: REST/methods/users_groups.py:262 REST/model.py:140
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Commentaires"
 
-#: REST/methods/authenticators.py:61 REST/methods/services_pool_calendars.py:89
+#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:259 REST/model.py:149
+#: REST/methods/user_services.py:269 REST/model.py:149
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Priorité"
 
-#: REST/methods/authenticators.py:62 REST/model.py:160
+#: REST/methods/authenticators.py:63 REST/model.py:160
 msgid "Label"
 msgstr "Étiquette"
 
-#: REST/methods/authenticators.py:63 reports/stats/login.py:108
-#: reports/stats/login.py:374 reports/stats/pool_performance.py:110
-#: reports/stats/pool_performance.py:368
+#: REST/methods/authenticators.py:64 reports/stats/login.py:108
+#: reports/stats/login.py:381 reports/stats/pool_performance.py:110
+#: reports/stats/pool_performance.py:377
 #: templates/uds/admin/tmpl/authenticators.html:31
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/group-info.html:5
@@ -88,7 +92,7 @@ msgstr "Étiquette"
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: REST/methods/authenticators.py:64 REST/methods/calendars.py:63
+#: REST/methods/authenticators.py:65 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
 #: REST/methods/providers.py:71 REST/methods/services.py:194
 #: REST/methods/services_pools.py:84 REST/methods/transports.py:60
@@ -212,7 +216,8 @@ msgstr "Fournisseurs de services"
 msgid "Status"
 msgstr "Statut"
 
-#: REST/methods/providers.py:69 templates/uds/admin/snippets/navbar.html:22
+#: REST/methods/providers.py:69 reports/stats/pools_usage.py:107
+#: reports/stats/pools_usage.py:283 templates/uds/admin/snippets/navbar.html:22
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
@@ -235,8 +240,8 @@ msgstr "Service introuvable"
 msgid "Available reports"
 msgstr "Rapports disponibles"
 
-#: REST/methods/reports.py:57 REST/methods/users_groups.py:257
-#: REST/methods/users_groups.py:264
+#: REST/methods/reports.py:57 REST/methods/users_groups.py:261
+#: REST/methods/users_groups.py:268
 #: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:81
 #: auths/RegexLdap/Authenticator.py:82 auths/SAML_enterprise/SAML.py:116
@@ -272,7 +277,7 @@ msgstr "Services actuels"
 msgid "Service name"
 msgstr "Nom du service"
 
-#: REST/methods/services.py:191 REST/methods/user_services.py:261
+#: REST/methods/services.py:191 REST/methods/user_services.py:271
 msgid "Type"
 msgstr "Type"
 
@@ -287,13 +292,13 @@ msgstr "Piscines services"
 msgid "User services"
 msgstr "Services aux utilisateurs"
 
-#: REST/methods/services.py:247 REST/methods/users_groups.py:197
-#: REST/methods/users_groups.py:350
+#: REST/methods/services.py:247 REST/methods/users_groups.py:201
+#: REST/methods/users_groups.py:354
 msgid "With errors"
 msgstr "Avec Erreurs"
 
-#: REST/methods/services.py:247 REST/methods/users_groups.py:197
-#: REST/methods/users_groups.py:350
+#: REST/methods/services.py:247 REST/methods/users_groups.py:201
+#: REST/methods/users_groups.py:354
 msgid "Ok"
 msgstr "Bien"
 
@@ -361,7 +366,7 @@ msgstr "Image associée à ce service"
 msgid "Service Pools"
 msgstr "Service pool"
 
-#: REST/methods/services_pools.py:78 REST/methods/user_services.py:122
+#: REST/methods/services_pools.py:78 REST/methods/user_services.py:132
 msgid "status"
 msgstr "statut"
 
@@ -535,67 +540,67 @@ msgstr ""
 msgid "unknown"
 msgstr "inconnu"
 
-#: REST/methods/user_services.py:113
+#: REST/methods/user_services.py:123
 #: templates/uds/admin/tmpl/services_pool.html:31
 msgid "Assigned services"
 msgstr "Services attribuées"
 
-#: REST/methods/user_services.py:117 REST/methods/user_services.py:185
+#: REST/methods/user_services.py:127 REST/methods/user_services.py:195
 msgid "Creation date"
 msgstr "Date de création"
 
-#: REST/methods/user_services.py:118 REST/methods/user_services.py:186
-#: REST/methods/user_services.py:328 REST/methods/user_services.py:357
+#: REST/methods/user_services.py:128 REST/methods/user_services.py:196
+#: REST/methods/user_services.py:338 REST/methods/user_services.py:367
 msgid "Revision"
 msgstr "Révision"
 
-#: REST/methods/user_services.py:120 REST/methods/user_services.py:188
+#: REST/methods/user_services.py:130 REST/methods/user_services.py:198
 #: auths/IP/Authenticator.py:60 templates/uds/admin/tmpl/user-info.html:66
 msgid "IP"
 msgstr "IP "
 
-#: REST/methods/user_services.py:121 REST/methods/user_services.py:189
+#: REST/methods/user_services.py:131 REST/methods/user_services.py:199
 msgid "Friendly name"
 msgstr "Nom convivial"
 
-#: REST/methods/user_services.py:123
+#: REST/methods/user_services.py:133
 msgid "Status date"
 msgstr "Date d'État"
 
-#: REST/methods/user_services.py:124 templates/uds/admin/tmpl/user-info.html:65
+#: REST/methods/user_services.py:134 templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr "En utilisation"
 
-#: REST/methods/user_services.py:125
+#: REST/methods/user_services.py:135
 msgid "Src Host"
 msgstr "Hôte de la SRC"
 
-#: REST/methods/user_services.py:126
+#: REST/methods/user_services.py:136
 msgid "Src Ip"
 msgstr "SRC Ip"
 
-#: REST/methods/user_services.py:127
+#: REST/methods/user_services.py:137
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: REST/methods/user_services.py:128 REST/methods/user_services.py:192
+#: REST/methods/user_services.py:138 REST/methods/user_services.py:202
 msgid "Actor version"
 msgstr "Version de l'acteur"
 
-#: REST/methods/user_services.py:155
+#: REST/methods/user_services.py:165
 msgid "Item already being removed"
 msgstr "Élément déjà retiré"
 
-#: REST/methods/user_services.py:157
+#: REST/methods/user_services.py:167
 msgid "Item is not removable"
 msgstr "Point n'est pas amovible"
 
-#: REST/methods/user_services.py:181
+#: REST/methods/user_services.py:191
 msgid "Cached services"
 msgstr "Services de mise en cache"
 
-#: REST/methods/user_services.py:190 REST/methods/user_services.py:227
-#: REST/methods/user_services.py:330
+#: REST/methods/user_services.py:200 REST/methods/user_services.py:237
+#: REST/methods/user_services.py:340
 #: templates/uds/admin/tmpl/group-info.html:18
 #: templates/uds/admin/tmpl/group-info.html:45
 #: templates/uds/admin/tmpl/group.html:54
@@ -605,41 +610,41 @@ msgstr "Services de mise en cache"
 msgid "State"
 msgstr "État"
 
-#: REST/methods/user_services.py:191
+#: REST/methods/user_services.py:201
 msgid "Cache level"
 msgstr "Niveau de cache"
 
-#: REST/methods/user_services.py:220
+#: REST/methods/user_services.py:230
 msgid "Assigned groups"
 msgstr "Groupes assignés"
 
-#: REST/methods/user_services.py:226 templates/uds/admin/tmpl/group.html:46
+#: REST/methods/user_services.py:236 templates/uds/admin/tmpl/group.html:46
 #: templates/uds/admin/tmpl/user.html:37
 msgid "comments"
 msgstr "Commentaires"
 
-#: REST/methods/user_services.py:255
+#: REST/methods/user_services.py:265
 msgid "Assigned transports"
 msgstr "Transports assignés"
 
-#: REST/methods/user_services.py:324
+#: REST/methods/user_services.py:334
 #: templates/uds/admin/tmpl/services_pool.html:35
 msgid "Publications"
 msgstr "Publications"
 
-#: REST/methods/user_services.py:329 REST/methods/user_services.py:358
+#: REST/methods/user_services.py:339 REST/methods/user_services.py:368
 msgid "Publish date"
 msgstr "La date de publication"
 
-#: REST/methods/user_services.py:331 templates/uds/admin/tmpl/publish.html:5
+#: REST/methods/user_services.py:341 templates/uds/admin/tmpl/publish.html:5
 msgid "Reason"
 msgstr "Raison"
 
-#: REST/methods/user_services.py:353
+#: REST/methods/user_services.py:363
 msgid "Changelog"
 msgstr "Changelog"
 
-#: REST/methods/user_services.py:359
+#: REST/methods/user_services.py:369
 #: templates/uds/admin/tmpl/group-info.html:87
 msgid "Comment"
 msgstr "Commentaire"
@@ -675,7 +680,7 @@ msgstr "Utilisateurs actuels"
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: REST/methods/users_groups.py:115 REST/methods/users_groups.py:259
+#: REST/methods/users_groups.py:115 REST/methods/users_groups.py:263
 msgid "state"
 msgstr "État"
 
@@ -684,28 +689,28 @@ msgstr "État"
 msgid "Last access"
 msgstr "Dernier accès"
 
-#: REST/methods/users_groups.py:166 REST/methods/users_groups.py:321
+#: REST/methods/users_groups.py:166 REST/methods/users_groups.py:325
 msgid "User already exists (duplicate key error)"
 msgstr "L'utilisateur existe déjà (erreur de clé en double)"
 
-#: REST/methods/users_groups.py:251
+#: REST/methods/users_groups.py:255
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Groupes de {0}"
 
-#: REST/methods/users_groups.py:253
+#: REST/methods/users_groups.py:257
 msgid "Current groups"
 msgstr "Groupes actuels"
 
-#: REST/methods/users_groups.py:264
+#: REST/methods/users_groups.py:268
 msgid "UDS Group"
 msgstr "Groupe de l'UDS"
 
-#: REST/methods/users_groups.py:265
+#: REST/methods/users_groups.py:269
 msgid "Meta group"
 msgstr "Groupe Meta"
 
-#: REST/methods/users_groups.py:265
+#: REST/methods/users_groups.py:269
 msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
@@ -818,6 +823,8 @@ msgstr ""
 #: auths/EDirectory_enterprise/Authenticator.py:65
 #: auths/RegexLdap/Authenticator.py:59 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
+#: reports/stats/usage_summary_pool.py:73
+#: reports/stats/usage_summary_pool.py:207
 msgid "User"
 msgstr "Utilisateur"
 
@@ -1429,28 +1436,28 @@ msgstr "Administrateur système"
 msgid "Forbidden"
 msgstr "Interdit"
 
-#: core/managers/PublicationManager.py:205
+#: core/managers/PublicationManager.py:206
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Déjà la publication. Attendez une publication antérieure de terminer et "
 "réessayez"
 
-#: core/managers/PublicationManager.py:208
+#: core/managers/PublicationManager.py:209
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr ""
 "Le service est en mode maintenance et nouvelles publications ne sont pas "
 "autorisées"
 
-#: core/managers/PublicationManager.py:241
+#: core/managers/PublicationManager.py:242
 msgid "Can't cancel non running publication"
 msgstr "Ne peut annuler la publication non courante"
 
-#: core/managers/PublicationManager.py:263
+#: core/managers/PublicationManager.py:264
 msgid "Can't unpublish non usable publication"
 msgstr "Ne peut annuler la publication publication non utilisable"
 
-#: core/managers/PublicationManager.py:266
+#: core/managers/PublicationManager.py:267
 msgid "Can't unpublish publications with services in process"
 msgstr ""
 "Ne peut annuler la publication des publications avec services de processus"
@@ -1694,7 +1701,7 @@ msgstr "Il n'existe aucun authentificateurs pour connexion"
 msgid "The authenticator {0} is not usable"
 msgstr "L'authentificateur {0} n'est pas utilisable"
 
-#: dispatchers/wyse_enterprise/views.py:135 web/views/login.py:115
+#: dispatchers/wyse_enterprise/views.py:135 web/views/login.py:117
 msgid "Invalid credentials"
 msgstr "Informations d'identification non valides"
 
@@ -1799,7 +1806,8 @@ msgstr "Lundi au vendredi"
 msgid "Minutes"
 msgstr "Minutes"
 
-#: models/CalendarRule.py:79
+#: models/CalendarRule.py:79 reports/stats/usage_summary_pool.py:75
+#: reports/stats/usage_summary_pool.py:207
 msgid "Hours"
 msgstr "Heures"
 
@@ -2143,36 +2151,36 @@ msgstr "Accès des utilisateurs par jour de semaine"
 msgid "Users access by hour"
 msgstr "Accès des utilisateurs par heure"
 
-#: reports/stats/login.py:106 reports/stats/login.py:374
-#: reports/stats/pool_performance.py:108 reports/stats/pool_performance.py:368
+#: reports/stats/login.py:106 reports/stats/login.py:381
+#: reports/stats/pool_performance.py:108 reports/stats/pool_performance.py:377
 msgid "Date range"
 msgstr "Plage de dates"
 
-#: reports/stats/login.py:126 reports/stats/login.py:358
+#: reports/stats/login.py:126 reports/stats/login.py:365
 msgid "Users access report by date"
 msgstr "Les utilisateurs accéder le rapport par date"
 
-#: reports/stats/login.py:127 reports/stats/login.py:359
+#: reports/stats/login.py:127 reports/stats/login.py:366
 msgid "Report of user access to platform by date"
 msgstr "Rapport de l'utilisateur d'accéder à la plate-forme par date"
 
 #: reports/stats/login.py:133 reports/stats/pool_performance.py:147
-#: reports/stats/usage_by_pool.py:105
+#: reports/stats/usage_by_pool.py:105 reports/stats/usage_summary_pool.py:108
 msgid "Starting date"
 msgstr "Date de départ"
 
 #: reports/stats/login.py:134 reports/stats/pool_performance.py:148
-#: reports/stats/usage_by_pool.py:106
+#: reports/stats/usage_by_pool.py:106 reports/stats/usage_summary_pool.py:109
 msgid "starting date for report"
 msgstr "date de début de rapport"
 
 #: reports/stats/login.py:141 reports/stats/pool_performance.py:155
-#: reports/stats/usage_by_pool.py:113
+#: reports/stats/usage_by_pool.py:113 reports/stats/usage_summary_pool.py:116
 msgid "Finish date"
 msgstr "Date de fin"
 
 #: reports/stats/login.py:142 reports/stats/pool_performance.py:156
-#: reports/stats/usage_by_pool.py:114
+#: reports/stats/usage_by_pool.py:114 reports/stats/usage_summary_pool.py:117
 msgid "finish date for report"
 msgstr "la date pour le rapport de fin"
 
@@ -2184,9 +2192,9 @@ msgstr "Nombre d'intervalles"
 msgid "Number of sampling points used in charts"
 msgstr "Nombre de points de prélèvement utilisées dans les graphiques"
 
-#: reports/stats/login.py:231 reports/stats/login.py:274
-#: reports/stats/login.py:288 reports/stats/login.py:313
-#: reports/stats/login.py:346
+#: reports/stats/login.py:238 reports/stats/login.py:281
+#: reports/stats/login.py:295 reports/stats/login.py:320
+#: reports/stats/login.py:353
 msgid "Users access to UDS"
 msgstr "Accès des utilisateurs à l'UDS"
 
@@ -2198,15 +2206,16 @@ msgstr "Utilisateurs distincts de piscine"
 msgid "Accesses by pool"
 msgstr "Accès piscine"
 
-#: reports/stats/pool_performance.py:106 reports/stats/pool_performance.py:368
-#: reports/stats/usage_by_pool.py:98
+#: reports/stats/pool_performance.py:106 reports/stats/pool_performance.py:377
+#: reports/stats/pools_usage.py:103 reports/stats/pools_usage.py:283
+#: reports/stats/usage_by_pool.py:98 reports/stats/usage_summary_pool.py:101
 #: templates/uds/admin/tmpl/group-info.html:17
 #: templates/uds/admin/tmpl/service-info.html:21
 #: templates/uds/admin/tmpl/user-info.html:37
 msgid "Pool"
 msgstr "Piscine"
 
-#: reports/stats/pool_performance.py:112 reports/stats/pool_performance.py:368
+#: reports/stats/pool_performance.py:112 reports/stats/pool_performance.py:377
 msgid "Accesses"
 msgstr "Accès"
 
@@ -2218,33 +2227,73 @@ msgstr "Performance de piscines par date"
 msgid "Pools performance report by date"
 msgstr "Rapport sur le rendement pools par date"
 
-#: reports/stats/pool_performance.py:140
+#: reports/stats/pool_performance.py:140 reports/stats/pools_usage.py:141
 msgid "Pools"
 msgstr "Piscines"
 
-#: reports/stats/pool_performance.py:141
+#: reports/stats/pool_performance.py:141 reports/stats/pools_usage.py:142
 msgid "Pools for report"
 msgstr "Piscines pour rapport"
 
-#: reports/stats/pool_performance.py:187
+#: reports/stats/pool_performance.py:196
 msgid "Select at least a service pool for the report"
 msgstr "Sélectionnez au moins un pool de service pour le rapport"
 
-#: reports/stats/pool_performance.py:292
+#: reports/stats/pool_performance.py:301
 msgid "Users by pool"
 msgstr "Utilisateurs de piscine"
 
-#: reports/stats/pool_performance.py:304
+#: reports/stats/pool_performance.py:313
 msgid "Users for {}"
 msgstr "Utilisateurs pour {}"
 
-#: reports/stats/pool_performance.py:321
+#: reports/stats/pool_performance.py:330
 msgid "Accesses for {}"
 msgstr "Accès pour {}"
 
-#: reports/stats/pool_performance.py:342
+#: reports/stats/pool_performance.py:351
 msgid "UDS Pools Performance Report"
 msgstr "Rapport sur le rendement Pools UDS"
+
+#: reports/stats/pools_usage.py:87
+msgid "Services Asignation"
+msgstr "Services Asignation"
+
+#: reports/stats/pools_usage.py:101
+msgid "Service asignation by hour"
+msgstr "Service asignation par heure"
+
+#: reports/stats/pools_usage.py:105 reports/stats/pools_usage.py:283
+msgid "Hour"
+msgstr "Heure"
+
+#: reports/stats/pools_usage.py:127
+msgid "Pools usage on a day"
+msgstr "Utilisation des piscines sur une journée"
+
+#: reports/stats/pools_usage.py:128
+msgid "Pools usage counters for an specific day"
+msgstr "Compteurs d’utilisation piscines pour une journée spécifique"
+
+#: reports/stats/pools_usage.py:133 reports/stats/usage_by_pool.py:189
+msgid "Date"
+msgstr "Date"
+
+#: reports/stats/pools_usage.py:134
+msgid "Date for report"
+msgstr "Date de rapport"
+
+#: reports/stats/pools_usage.py:232
+msgid "Services by hour"
+msgstr "Services par heure"
+
+#: reports/stats/pools_usage.py:244
+msgid "Services for {}"
+msgstr "Services pour {}"
+
+#: reports/stats/pools_usage.py:265
+msgid "Services usage report"
+msgstr "Rapport d’utilisation des services"
 
 #: reports/stats/usage.py:45
 msgid "Usage stats"
@@ -2270,21 +2319,35 @@ msgstr "Utilisation des piscines par les utilisateurs"
 msgid "Pools usage by user report"
 msgstr "Utilisation des piscines par le rapport de l'utilisateur"
 
-#: reports/stats/usage_by_pool.py:99
+#: reports/stats/usage_by_pool.py:99 reports/stats/usage_summary_pool.py:102
 msgid "Pool for report"
 msgstr "Piscine pour rapport"
 
-#: reports/stats/usage_by_pool.py:167
+#: reports/stats/usage_by_pool.py:167 reports/stats/usage_summary_pool.py:185
 msgid "Users usage list for {}"
 msgstr "Liste d'utilisation aux utilisateurs pour {}"
 
 #: reports/stats/usage_by_pool.py:189
-msgid "Date"
-msgstr "Date"
-
-#: reports/stats/usage_by_pool.py:189
 msgid "Seconds"
 msgstr "Secondes"
+
+#: reports/stats/usage_summary_pool.py:74
+#: reports/stats/usage_summary_pool.py:207
+msgid "Sessions"
+msgstr "Sessions"
+
+#: reports/stats/usage_summary_pool.py:76
+#: reports/stats/usage_summary_pool.py:207
+msgid "Average"
+msgstr "Moyenne"
+
+#: reports/stats/usage_summary_pool.py:94
+msgid "Summary of pools usage"
+msgstr "Résumé de l’utilisation des piscines"
+
+#: reports/stats/usage_summary_pool.py:95
+msgid "Generates a report with the summary of a pool usage"
+msgstr "Génère un rapport avec l’aperçu de l’utilisation d’une piscine"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:51
 msgid "HyperV Cluster Linked Clone (Experimental)"
@@ -2687,6 +2750,7 @@ msgid "Physical memory guaranteed to machines"
 msgstr "Mémoire physique garantie aux machines"
 
 #: services/OVirt/OVirtLinkedService.py:161
+#: transports/SPICE/BaseSPICETransport.py:105
 msgid "USB"
 msgstr "USB"
 
@@ -3701,10 +3765,6 @@ msgid "Read only"
 msgstr "Lecture seule"
 
 #: templates/uds/admin/tmpl/permissions_add.html:29
-msgid "Management Access"
-msgstr "Gestion des accès"
-
-#: templates/uds/admin/tmpl/permissions_add.html:30
 msgid "Full Access"
 msgstr "Accès complet"
 
@@ -4547,7 +4607,7 @@ msgstr ""
 #: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:99
 #: transports/RDS_enterprise/TRDSTransport.py:91
 #: transports/RGS_enterprise/TRGSTransport.py:78
-#: transports/SPICE/TSPICETransport.py:75 transports/X2GO/TX2GOTransport.py:82
+#: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Devez utiliser HOST : PORT dans le champ serveur Tunnel"
 
@@ -4862,6 +4922,26 @@ msgstr "Afficher plein écran"
 #: transports/X2GO/BaseX2GOTransport.py:77
 msgid "If checked, viewer will be shown on fullscreen mode-"
 msgstr "Si cochée, spectateur sera montré sur fullscreen mode-"
+
+#: transports/SPICE/BaseSPICETransport.py:98
+msgid "Smartcard Redirect"
+msgstr "Redirection de la carte à puce"
+
+#: transports/SPICE/BaseSPICETransport.py:99
+msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgstr "Si cochée, SPICE protocole autorisera la redirection de carte à puce."
+
+#: transports/SPICE/BaseSPICETransport.py:106
+msgid "If checked, USB redirection will be allowed."
+msgstr "S’il est activé, redirection USB est autorisée."
+
+#: transports/SPICE/BaseSPICETransport.py:112
+msgid "New USB Auto Sharing"
+msgstr "Nouvelle clé USB Auto partage"
+
+#: transports/SPICE/BaseSPICETransport.py:113
+msgid "Auto-redirect USB devices when plugged in."
+msgstr "Redirection automatique des périphériques USB lorsqu’il est branché."
 
 #: transports/SPICE/SPICETransport.py:52
 msgid "SPICE Transport (direct)"

@@ -57,7 +57,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-05-04'
+__updated__ = '2017-05-09'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1800, 1000
@@ -204,9 +204,9 @@ class UsageSummaryByPoolCSV(UsageSummaryByPool):
 
         reportData, poolName = self.getData()
 
-        writer.writerow([ugettext('Date'), ugettext('User'), ugettext('Seconds')])
+        writer.writerow([ugettext('User'), ugettext('Sessions'), ugettext('Hours'), ugettext('Average')])
 
         for v in reportData:
-            writer.writerow([v['date'], v['name'], v['time']])
+            writer.writerow([v['user'], v['sessions'], v['hours'], v['average']])
 
         return output.getvalue()
