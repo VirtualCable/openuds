@@ -4,14 +4,14 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
-# Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016
+# Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-31 10:35+0200\n"
-"PO-Revision-Date: 2017-02-01 23:19+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2017-05-09 10:17+0200\n"
+"PO-Revision-Date: 2017-05-08 20:24+0000\n"
+"Last-Translator: Lanmedia Comunicaciones <jetxaniz@lanmedia.es>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
 "Language: eu\n"
@@ -123,7 +123,7 @@ msgstr "Informazioa"
 
 #: static/tmp_js/gui-d-authenticators.js:193
 msgid "Group information"
-msgstr ""
+msgstr "Taldearen informazioa"
 
 #: static/tmp_js/gui-d-authenticators.js:309
 msgid "Edit group"
@@ -169,7 +169,7 @@ msgstr "Taldea ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-authenticators.js:416
 msgid "User information"
-msgstr ""
+msgstr "Erabiltzailearen informazioa"
 
 #: static/tmp_js/gui-d-authenticators.js:565
 msgid "Edit user"
@@ -647,7 +647,7 @@ msgstr "Sarbide-egutegia gehitu"
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:73
 msgid "Default fallback access"
-msgstr ""
+msgstr "Lehenetsi sarbide balantze"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:17
 #: static/tmp_js/gui-d-servicespools-publications.js:41
@@ -733,7 +733,7 @@ msgstr "Kendu Esleitutako zerbitzua"
 
 #: static/tmp_js/gui-d-servicespools.js:430
 msgid "Restrained"
-msgstr ""
+msgstr "Restrained"
 
 #: static/tmp_js/gui-d-servicespools.js:439
 msgid "New service pool"
@@ -770,19 +770,19 @@ msgstr "Ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "New Services Pool Group"
-msgstr ""
+msgstr "Pool-zerbitzu talde berria"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "Services Pool Group creation error"
-msgstr ""
+msgstr "Pool-Zerbitzua sortzerakoan errorea"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Edit Services Pool Group"
-msgstr ""
+msgstr "Pool-Zerbitzu taldea editatu"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Pool Group saving error"
-msgstr ""
+msgstr "Pool-zerbitzua gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Delete Services Pool Group"
@@ -790,7 +790,7 @@ msgstr "Pool-Zerbitzu Taldea Ezabatu"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Services Pool Group removal error"
-msgstr ""
+msgstr "Pool-zerbitzu taldea ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache"
@@ -798,7 +798,7 @@ msgstr "Cache"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache has been flushed"
-msgstr ""
+msgstr "Cachea utzitua izan da"
 
 #: static/tmp_js/gui-element.js:252
 msgid "Refresh operation failed"
