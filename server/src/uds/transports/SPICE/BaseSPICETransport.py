@@ -100,11 +100,18 @@ class BaseSpiceTransport(Transport):
         defvalue=gui.FALSE,
         tab=gui.ADVANCED_TAB
     )
-    enableUsbShare = gui.CheckBoxField(
+    usbShare = gui.CheckBoxField(
         order=7,
-        label=_('USB Auto Sharing'),
-        tooltip=_('If checked, viewer will allow usb auto sharing.'),
-        defvalue=gui.TRUE,
+        label=_('USB'),
+        tooltip=_('If checked, USB redirection will be allowed.'),
+        defvalue=gui.FALSE,
+        tab=gui.ADVANCED_TAB
+    )
+    autoNewUsbShare = gui.CheckBoxField(
+        order=7,
+        label=_('New USB Auto Sharing'),
+        tooltip=_('Auto-redirect USB devices when plugged in.'),
+        defvalue=gui.FALSE,
         tab=gui.ADVANCED_TAB
     )
 
