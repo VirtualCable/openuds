@@ -8,7 +8,7 @@ import six
 import os
 
 
-__updated__ = '2017-05-05'
+__updated__ = '2017-05-09'
 
 
 TEMPLATE = '''[virt-viewer]
@@ -22,7 +22,7 @@ title={title}:%d - Press SHIFT+F12 to Release Cursor
 enable-smartcard={smartcard}
 enable-usb-autoshare={usb_auto_share}
 delete-this-file={delete_file}
-usb-filter=-1,-1,-1,-1,{usb_auto_share}
+usb-filter=-1,-1,-1,-1,{new_usb_auto_share}
 tls-ciphers=DEFAULT
 host-subject={host_subject}
 ca={ca}
@@ -46,6 +46,7 @@ class RemoteViewerFile(object):
 
     smartcard = False
     usb_auto_share = True
+    new_usb_auto_share = False
 
     delete_file = True
 
@@ -74,6 +75,7 @@ class RemoteViewerFile(object):
         smartcard = '01'[self.smartcard]
         delete_file = '01'[self.delete_file]
         usb_auto_share = '01'[self.usb_auto_share]
+        new_usb_auto_share = '01'[self.new_usb_auto_share]
 
         ca = self.ca.strip().replace('\n', '\\\\n')  # So we get '\\n' and script works fine after replacement
 
@@ -87,6 +89,7 @@ class RemoteViewerFile(object):
             title=self.title,
             smartcard=smartcard,
             usb_auto_share=usb_auto_share,
+            new_usb_auto_share=new_usb_auto_share,
             delete_file=delete_file,
             host_subject=self.host_subject if self.tls_port != -1 else '',
             ca=ca if tls_port != -1 else '',
