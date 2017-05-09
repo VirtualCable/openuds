@@ -42,7 +42,7 @@ from uds.core.ui import gui
 import six
 import logging
 
-__updated__ = '2016-04-21'
+__updated__ = '2017-05-09'
 
 logger = logging.getLogger(__name__)
 
@@ -191,8 +191,8 @@ class LiveService(Service):
 
     def makeTemplate(self, templateName, description=None):
         # First, ensures that volume has not any running instances
-        if self.api.getVolume(self.volume.value)['status'] != 'available':
-            raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
+        # if self.api.getVolume(self.volume.value)['status'] != 'available':
+        #    raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
 
         description = 'UDS Template snapshot' if description is None else description
         return self.api.createVolumeSnapshot(self.volume.value, templateName, description)
