@@ -52,7 +52,6 @@ from uds.models.Image import Image
 from uds.models.ServicesPoolGroup import ServicesPoolGroup
 from uds.models.Calendar import Calendar
 from uds.models.Account import Account
-from uds.models.Proxy import Proxy
 
 from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
@@ -63,7 +62,7 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2017-04-06'
+__updated__ = '2017-05-10'
 
 
 logger = logging.getLogger(__name__)
@@ -95,9 +94,6 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     # Usage accounting
     account = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools')
-
-    # Proxy for this pool
-    proxy = models.ForeignKey(Proxy, null=True, blank=True, related_name='servicesPools')
 
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
@@ -471,6 +467,9 @@ class DeployedService(UUIDModel, TaggingMixin):
         If it don't has an user associated, the user deployed service is wrong.
         '''
         return self.userServices.filter(cache_level=0, user=None)
+
+    def testServer(self, host, port, timeout=4):
+        return self.service.testServer(host, port, timeout)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

@@ -42,13 +42,16 @@ from uds.core.util import log
 from uds.core.util import unique
 from uds.models.ManagedObjectModel import ManagedObjectModel
 from uds.models.Tag import TaggingMixin
+from uds.models.Proxy import Proxy
+from uds.core.util import connection
 
 from uds.models.Provider import Provider
 
 import logging
+import six
 
 
-__updated__ = '2016-03-09'
+__updated__ = '2017-05-10'
 
 
 logger = logging.getLogger(__name__)
@@ -62,6 +65,10 @@ class Service(ManagedObjectModel, TaggingMixin):
     '''
     # pylint: disable=model-missing-unicode
     provider = models.ForeignKey(Provider, related_name='services')
+
+    # Proxy for this service
+    proxy = models.ForeignKey(Proxy, null=True, blank=True, related_name='services')
+
 
     class Meta(ManagedObjectModel.Meta):
         '''
@@ -132,6 +139,11 @@ class Service(ManagedObjectModel, TaggingMixin):
 
     def isInMaintenance(self):
         return self.provider is not None and self.provider.isInMaintenance()
+
+    def testServer(self, host, port, timeout=4):
+        if self.proxy is not None:
+            return self.proxy.doTestServer(host, port, timeout)
+        return connection.testServer(host, six.text_type(port), timeout)
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)

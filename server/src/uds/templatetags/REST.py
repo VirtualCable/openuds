@@ -68,7 +68,7 @@ def js_template_path(context, path):
 @register.simple_tag(name='js_template', takes_context=True)
 def js_template(context, template_name, template_id=None):
     template_id = (template_id or 'tmpl_' + template_name).replace('/', '_')
-    tmpl = template.loader.get_template(context['template_path'] + '/' + template_name + '.html').render(context)
+    tmpl = template.loader.get_template(context['template_path'] + '/' + template_name + '.html').render(context.flatten())
     # Clean tmpl
     if not settings.DEBUG:
         tmpl = re.sub(r'\s+', ' ', tmpl)
@@ -78,7 +78,7 @@ def js_template(context, template_name, template_id=None):
 @register.simple_tag(name='js_template_jade', takes_context=True)
 def js_template_jade(context, template_name, template_id=None):
     template_id = (template_id or 'tmpl_' + template_name).replace('/', '_')
-    tmpl = template.loader.get_template(context['template_path'] + '/' + template_name + '.jade').render(context)
+    tmpl = template.loader.get_template(context['template_path'] + '/' + template_name + '.jade').render(context.flatten())
     # Clean tmpl
     if not settings.DEBUG:
         tmpl = re.sub('\s+', ' ', tmpl)

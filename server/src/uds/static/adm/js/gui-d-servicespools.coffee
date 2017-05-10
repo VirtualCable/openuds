@@ -479,7 +479,7 @@ gui.servicesPools.link = (event) ->
             style_grp = "display:inline-block; background: url(data:image/png;base64," + value.pool_group_thumb + "); background-size: 16px 16px; background-repeat: no-repeat; width: 16px; height: 16px; vertical-align: middle;"
             value.parent = gui.fastLink(value.parent, "#{value.provider_id},#{value.service_id}", 'gui.servicesPools.fastLink', 'goServiceLink')
             value.pool_group_name = "<span style='#{style_grp}'></span> #{value.pool_group_name}"
-            if value.pool_group_id?
+            if value.servicesPoolGroup_id?
                value.pool_group_name = gui.fastLink(value.pool_group_name, value.pool_group_id, 'gui.servicesPools.fastLink', 'goPoolGroupLink')
             if value.restrained
               value.name = "<span class=\"fa fa-exclamation text-danger\"></span> " + value.name

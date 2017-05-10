@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account, Proxy
+from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
 from uds.models.CalendarAction import CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_PUBLISH
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
@@ -78,7 +78,6 @@ class ServicesPools(ModelHandler):
         'osmanager_id',
         'image_id',
         'account_id',
-        'proxy_id',
         'servicesPoolGroup_id',
         'initial_srvs',
         'cache_l1_srvs',
@@ -134,13 +133,11 @@ class ServicesPools(ModelHandler):
             'state': state,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'account': item.account.name if item.account is not None else '',
-            'proxy': item.proxy.name if item.proxy is not None else '',
             'service_id': item.service.uuid,
             'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
             'servicesPoolGroup_id': poolGroupId,
             'account_id': item.account.uuid if item.account is not None else None,
-            'proxy_id': item.proxy.uuid if item.proxy is not None else None,
             'pool_group_name': poolGroupName,
             'pool_group_thumb': poolGroupThumb,
             'initial_srvs': item.initial_srvs,
@@ -263,14 +260,6 @@ class ServicesPools(ModelHandler):
             'type': gui.InputField.CHOICE_TYPE,
             'tab': ugettext('Advanced'),
             'order': 131,
-        }, {
-            'name': 'proxy_id',
-            'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Proxy.objects.all()]),
-            'label': ugettext('Proxy'),
-            'tooltip': ugettext('Proxy for services behind a firewall'),
-            'type': gui.InputField.CHOICE_TYPE,
-            'tab': ugettext('Advanced'),
-            'order': 132,
         },
 
         ]:
@@ -330,18 +319,6 @@ class ServicesPools(ModelHandler):
                     fields['account_id'] = Account.objects.get(uuid=processUuid(accountId)).id
                 except Exception:
                     logger.exception('Getting account ID')
-
-            # *** PROXY ***
-            proxyId = fields['proxy_id']
-            fields['proxy_id'] = None
-            logger.debug('Proxy id: {}'.format(proxyId))
-
-            if proxyId != '-1':
-                try:
-                    fields['proxy_id'] = Proxy.objects.get(uuid=processUuid(proxyId)).id
-                except Exception:
-                    logger.exception('Getting proxy ID')
-
 
             # **** IMAGE ***
             imgId = fields['image_id']

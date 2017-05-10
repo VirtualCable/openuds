@@ -1,5 +1,18 @@
 # jshint strict: true
 gui.providers = new GuiElement(api.providers, "provi")
+
+gui.providers.fastLink = (event, obj) ->
+  gui.doLog 'FastLink clicked', obj
+  event.preventDefault()
+  event.stopPropagation()
+  $obj = $(obj);
+  if $obj.hasClass('goProxyGroupLink')
+    gui.lookupUuid = $obj.attr('href').substr(1)
+    setTimeout( ->
+      $(".lnk-proxies").click();
+    , 50
+    )
+
 gui.providers.link = (event) ->
   "use strict"
 
@@ -187,6 +200,17 @@ gui.providers.link = (event) ->
           onLoad: (k) ->
             gui.tools.unblockUI()
             return
+          onData: (data) ->
+            $.each data, (index, value) ->
+              try
+                if value.proxy_id != '-1'
+                   value.proxy = gui.fastLink(value.proxy, value.proxy_id, 'gui.providers.fastLink', 'goProxyGroupLink')
+              catch e
+                value.name = "<span class=\"fa fa-asterisk text-alert\"></span> " + value.name
+              return
+
+            return
+
         )
         logTable = gui.providers.logTable(id,
           container: "logs-placeholder"
