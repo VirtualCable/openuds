@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from uds.core import reports
 from django.utils.translation import ugettext_noop as _
 
-__updated__ = '2015-06-21'
+__updated__ = '2017-05-10'
 
 
 class ListReport(reports.Report):

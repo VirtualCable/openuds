@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-05-03'
+__updated__ = '2017-05-10'
 
 
 availableReports = []
@@ -65,8 +65,10 @@ def __init__():
         availableReports.append(cls)
 
     def recursiveAdd(p):
-        if p.generate != reports.Report.generate:
+        if p.uuid != None:
             addReportCls(p)
+        else:
+            logger.debug('Report class {} not added because it lacks of uuid (it is probably a base class)'.format(p))
 
         for c in p.__subclasses__():
             recursiveAdd(c)
