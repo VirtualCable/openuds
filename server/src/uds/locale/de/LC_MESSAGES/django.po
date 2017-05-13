@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 10:17+0200\n"
+"POT-Creation-Date: 2017-05-13 18:25+0200\n"
 "PO-Revision-Date: 2017-05-09 07:50+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -2735,7 +2735,6 @@ msgid "Physical memory guaranteed to machines"
 msgstr "Arbeitsspeicher garantiert Maschinen"
 
 #: services/OVirt/OVirtLinkedService.py:161
-#: transports/SPICE/BaseSPICETransport.py:105
 msgid "USB"
 msgstr "USB"
 
@@ -4891,9 +4890,9 @@ msgstr ""
 "Datei)."
 
 #: transports/SPICE/BaseSPICETransport.py:92
-#: transports/X2GO/BaseX2GOTransport.py:76
-msgid "Show fullscreen"
-msgstr "Vollbild anzeigen"
+#| msgid "Full Screen"
+msgid "Fullscreen Mode"
+msgstr "Vollbild-Modus"
 
 #: transports/SPICE/BaseSPICETransport.py:93
 #: transports/X2GO/BaseX2GOTransport.py:77
@@ -4909,6 +4908,11 @@ msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgstr ""
 "Wenn diese Option aktiviert, wird SPICE Protokoll Smartcard-Umleitung "
 "ermöglichen."
+
+#: transports/SPICE/BaseSPICETransport.py:105
+#| msgid "Enabled"
+msgid "Enable USB"
+msgstr "USB aktivieren"
 
 #: transports/SPICE/BaseSPICETransport.py:106
 msgid "If checked, USB redirection will be allowed."
@@ -4937,6 +4941,10 @@ msgstr "Gewürz-Transport (getunnelt)"
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
 msgstr "Gewürz-Transport für getunnelte Verbindung (experimentell)"
+
+#: transports/X2GO/BaseX2GOTransport.py:76
+msgid "Show fullscreen"
+msgstr "Vollbild anzeigen"
 
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop"

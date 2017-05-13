@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 10:17+0200\n"
+"POT-Creation-Date: 2017-05-13 18:25+0200\n"
 "PO-Revision-Date: 2017-05-09 07:50+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -2681,7 +2681,6 @@ msgid "Physical memory guaranteed to machines"
 msgstr "الذاكرة الفعلية مضمونة للآلات"
 
 #: services/OVirt/OVirtLinkedService.py:161
-#: transports/SPICE/BaseSPICETransport.py:105
 msgid "USB"
 msgstr "USB"
 
@@ -4784,9 +4783,9 @@ msgstr ""
 "pki/ovirt-engine/certs/ca.der (استخدام محتويات هذا الملف)."
 
 #: transports/SPICE/BaseSPICETransport.py:92
-#: transports/X2GO/BaseX2GOTransport.py:76
-msgid "Show fullscreen"
-msgstr "عرض ملء الشاشة"
+#| msgid "Full Screen"
+msgid "Fullscreen Mode"
+msgstr "وضع ملء الشاشة"
 
 #: transports/SPICE/BaseSPICETransport.py:93
 #: transports/X2GO/BaseX2GOTransport.py:77
@@ -4800,6 +4799,11 @@ msgstr "إعادة توجيه البطاقة الذكية"
 #: transports/SPICE/BaseSPICETransport.py:99
 msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgstr "إذا راجعت، سيسمح البروتوكول التوابل توجيه البطاقة الذكية."
+
+#: transports/SPICE/BaseSPICETransport.py:105
+#| msgid "Enabled"
+msgid "Enable USB"
+msgstr "تمكين USB"
 
 #: transports/SPICE/BaseSPICETransport.py:106
 msgid "If checked, USB redirection will be allowed."
@@ -4828,6 +4832,10 @@ msgstr "النقل التوابل (نفق)"
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
 msgstr "النقل SPICE للاتصال النفق (تجريبية)"
+
+#: transports/X2GO/BaseX2GOTransport.py:76
+msgid "Show fullscreen"
+msgstr "عرض ملء الشاشة"
 
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop"

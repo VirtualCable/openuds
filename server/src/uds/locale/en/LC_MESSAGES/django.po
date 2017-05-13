@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 10:17+0200\n"
+"POT-Creation-Date: 2017-05-13 18:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2628,7 +2628,6 @@ msgid "Physical memory guaranteed to machines"
 msgstr ""
 
 #: services/OVirt/OVirtLinkedService.py:161
-#: transports/SPICE/BaseSPICETransport.py:105
 msgid "USB"
 msgstr ""
 
@@ -4676,8 +4675,7 @@ msgid ""
 msgstr ""
 
 #: transports/SPICE/BaseSPICETransport.py:92
-#: transports/X2GO/BaseX2GOTransport.py:76
-msgid "Show fullscreen"
+msgid "Fullscreen Mode"
 msgstr ""
 
 #: transports/SPICE/BaseSPICETransport.py:93
@@ -4691,6 +4689,10 @@ msgstr ""
 
 #: transports/SPICE/BaseSPICETransport.py:99
 msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgstr ""
+
+#: transports/SPICE/BaseSPICETransport.py:105
+msgid "Enable USB"
 msgstr ""
 
 #: transports/SPICE/BaseSPICETransport.py:106
@@ -4719,6 +4721,10 @@ msgstr ""
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
+msgstr ""
+
+#: transports/X2GO/BaseX2GOTransport.py:76
+msgid "Show fullscreen"
 msgstr ""
 
 #: transports/X2GO/BaseX2GOTransport.py:81
