@@ -8,7 +8,7 @@ import six
 import os
 
 
-__updated__ = '2017-05-09'
+__updated__ = '2017-05-13'
 
 
 TEMPLATE = '''[virt-viewer]
@@ -21,6 +21,7 @@ fullscreen={fullscreen}
 title={title}:%d - Press SHIFT+F12 to Release Cursor
 enable-smartcard={smartcard}
 enable-usb-autoshare={usb_auto_share}
+enable-usbredir={usb_auto_share}
 delete-this-file={delete_file}
 usb-filter=-1,-1,-1,-1,{new_usb_auto_share}
 tls-ciphers=DEFAULT
