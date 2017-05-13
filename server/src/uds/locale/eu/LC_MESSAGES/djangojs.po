@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 10:17+0200\n"
-"PO-Revision-Date: 2017-05-08 20:24+0000\n"
+"POT-Creation-Date: 2017-05-13 18:26+0200\n"
+"PO-Revision-Date: 2017-05-10 08:47+0000\n"
 "Last-Translator: Lanmedia Comunicaciones <jetxaniz@lanmedia.es>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -127,7 +127,7 @@ msgstr "Taldearen informazioa"
 
 #: static/tmp_js/gui-d-authenticators.js:309
 msgid "Edit group"
-msgstr "Editatu taldea"
+msgstr "Taldea edidatu"
 
 #: static/tmp_js/gui-d-authenticators.js:331
 #: static/tmp_js/gui-d-authenticators.js:374
@@ -149,7 +149,7 @@ msgstr "Bilatu Taldeak"
 #: static/tmp_js/gui-d-authenticators.js:366
 #: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:85
 msgid "Group"
-msgstr "Talde"
+msgstr "Taldea"
 
 #: static/tmp_js/gui-d-authenticators.js:366
 msgid "Groups found"
