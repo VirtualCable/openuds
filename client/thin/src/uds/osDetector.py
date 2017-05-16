@@ -1,1 +1,1 @@
-../../../src/uds/osDetector.py
+../../../full/src/uds/osDetector.py

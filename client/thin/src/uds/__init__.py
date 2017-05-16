@@ -1,1 +1,1 @@
-../../../src/uds/__init__.py
+../../../full/src/uds/__init__.py
