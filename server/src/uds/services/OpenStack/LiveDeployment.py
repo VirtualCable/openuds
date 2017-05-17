@@ -39,7 +39,7 @@ from . import openStack
 import pickle
 import logging
 
-__updated__ = '2016-03-09'
+__updated__ = '2017-05-17'
 
 
 logger = logging.getLogger(__name__)
@@ -235,7 +235,7 @@ class LiveDeployment(UserDeployment):
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
         if openStack.statusIsLost(status):
-            return self.__error('Machine not available')
+            return self.__error('Machine not available. ({})'.format(status))
 
         ret = State.RUNNING
 
@@ -357,7 +357,7 @@ class LiveDeployment(UserDeployment):
         status = self.service().getMachineState(self._vmid)
 
         if openStack.statusIsLost(status):
-            raise Exception('Machine not found')
+            raise Exception('Machine not found. (Status {})'.format(status))
 
         self.service().removeMachine(self._vmid)
 
