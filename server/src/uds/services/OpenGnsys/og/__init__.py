@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2017 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,10 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
 
-# pylint: disable=maybe-no-member
+from . import urls
+from . import fake
 
 import sys
 import imp
@@ -46,15 +48,14 @@ import  json
 # API URL 1: https://www.informatica.us.es/~ramon/opengnsys/?url=opengnsys-api.yml
 # API URL 2: http://opengnsys.es/wiki/ApiRest
 
-__updated__ = '2017-04-21'
+__updated__ = '2017-05-17'
 
 logger = logging.getLogger(__name__)
 
 # URLS
-LOGIN_URL = 'login'
-INFO_URL = 'info'
-OUS_URL = 'ous'
-OUS_LABS_URL = 'ous/{ou}'
+
+# Fake part
+FAKE = True
 
 
 # Decorator
@@ -104,16 +105,23 @@ class OpenGnsysClient(object):
         return self.endpoint + '/' + path
 
     def _post(self, path, data, errMsg=None):
-        return ensureResponseIsValid(
-            requests.post(self._ogUrl(path), data=json.dumps(data), headers=self.headers, verify=self.verifyCert),
-            errMsg=errMsg
-        )
+        if not FAKE:
+            return ensureResponseIsValid(
+                requests.post(self._ogUrl(path), data=json.dumps(data), headers=self.headers, verify=self.verifyCert),
+                errMsg=errMsg
+            )
+        # FAKE Connection :)
+        return fake.post(path, data)
 
     def _get(self, path, errMsg=None):
-        return ensureResponseIsValid(
-            requests.get(self._ogUrl(path), headers=self.headers, verify=self.verifyCert),
-            errMsg=errMsg
-        )
+        if not FAKE:
+            return ensureResponseIsValid(
+                requests.get(self._ogUrl(path), headers=self.headers, verify=self.verifyCert),
+                errMsg=errMsg
+            )
+        # FAKE Connection :)
+        return fake.get(path)
+
 
     def _delete(self, path, errMsg=None):
         return ensureResponseIsValid(
@@ -125,7 +133,7 @@ class OpenGnsysClient(object):
         if self.auth is not None:
             return
 
-        auth = self._post(LOGIN_URL,
+        auth = self._post(urls.LOGIN,
             data={
                 'username': self.username,
                 'password': self.password
@@ -138,9 +146,10 @@ class OpenGnsysClient(object):
 
     @property
     def version(self):
+        logger.debug('Getting version')
         if self.cachedVersion is None:
             # Retrieve Version & keep it
-            info = self._get(INFO_URL, errMsg="Retrieving info")
+            info = self._get(urls.INFO, errMsg="Retrieving info")
             self.cachedVersion = info['version']
 
         return self.cachedVersion
@@ -150,29 +159,32 @@ class OpenGnsysClient(object):
         # Returns an array of elements with:
         # 'id': OpenGnsys Id
         # 'name': OU name
-        return self._get(OUS_URL, errMsg='Getting list of ous')
+        # OpenGnsys already returns it in this format :)
+        return self._get(urls.OUS, errMsg='Getting list of ous')
 
     @ensureConnected
     def getLabs(self, ou):
         # Returns a list of available labs on an ou
         # /ous/{ouid}/labs
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
-        pass
+        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.LABS.format(ou=ou)) if l.get('inremotepc', False) is True]
+
 
     @ensureConnected
     def getImages(self, ou):
         # Returns a list of available labs on an ou
         # /ous/{ouid}/images
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
-        pass
+        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.IMAGES.format(ou=ou)) if l.get('inremotepc', False) is True]
 
     @ensureConnected
-    def reserve(self):
+    def reserve(self, ou, image):
         # This method is inteded to "get" a machine from OpenGnsys
+        # The method used is POST
         # invokes /ous/{ouid}}/images/{imageid}/reserve
-        # el lab goes on query itself (?laid=....)
-        # On response, also remember to store "labid"
-        pass
+        # also remember to store "labid"
+        # Labid can be "0" that means "all laboratories"
+        return self._get(urls.RESERVE.format(ou=ou, image=image))
 
     @ensureConnected
     def unreserve(self, machine):

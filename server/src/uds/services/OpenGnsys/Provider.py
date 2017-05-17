@@ -48,7 +48,7 @@ import logging
 import six
 
 
-__updated__ = '2017-02-09'
+__updated__ = '2017-05-17'
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +127,7 @@ class OGProvider(ServiceProvider):
     @property
     def api(self):
         if self._api is None:
-            self._api = og.OpenGnsysClient(self.username.value, self.password.value, self.endpoint, self.che)
+            self._api = og.OpenGnsysClient(self.username.value, self.password.value, self.endpoint, self.checkCert.isTrue())
 
         logger.debug('Api: {}'.format(self._api))
         return self._api
@@ -143,98 +143,14 @@ class OGProvider(ServiceProvider):
 
             True if all went fine, false if id didn't
         '''
-
         try:
-            if self.api.version[0] < '4':
-                return [False, 'OpenGnsys version is not supported (required version 4.1 or newer)']
+            if self.api.version[0:5] < '1.1.0':
+                return [False, 'OpenGnsys version is not supported (required version 1.1.0 or newer and found {})'.format(self.api.version)]
         except Exception as e:
+            logger.exception('Error')
             return [False, '{}'.format(e)]
 
-        return [True, _('Opennebula test connection passed')]
-
-    def getDatastores(self, datastoreType=0):
-        return og.storage.enumerateDatastores(self.api, datastoreType)
-
-    def getTemplates(self, force=False):
-        return og.template.getTemplates(self.api, force)
-
-    def makeTemplate(self, fromTemplateId, name, toDataStore):
-        return og.template.create(self.api, fromTemplateId, name, toDataStore)
-
-    def checkTemplatePublished(self, templateId):
-        return og.template.checkPublished(self.api, templateId)
-
-    def removeTemplate(self, templateId):
-        return og.template.remove(self.api, templateId)
-
-    def deployFromTemplate(self, name, templateId):
-        return og.template.deployFrom(self.api, templateId, name)
-
-    def getMachineState(self, machineId):
-        '''
-        Returns the state of the machine
-        This method do not uses cache at all (it always tries to get machine state from OpenGnsys server)
-
-        Args:
-            machineId: Id of the machine to get state
-
-        Returns:
-            one of the og.VmState Values
-        '''
-        return og.vm.getMachineState(self.api, machineId)
-
-
-    def startMachine(self, machineId):
-        '''
-        Tries to start a machine. No check is done, it is simply requested to OpenGnsys.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        og.vm.startMachine(self.api, machineId)
-
-    def stopMachine(self, machineId):
-        '''
-        Tries to start a machine. No check is done, it is simply requested to OpenGnsys
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        og.vm.stopMachine(self.api, machineId)
-
-    def suspendMachine(self, machineId):
-        '''
-        Tries to start a machine. No check is done, it is simply requested to OpenGnsys
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        og.vm.suspendMachine(self.api, machineId)
-
-    def removeMachine(self, machineId):
-        '''
-        Tries to delete a machine. No check is done, it is simply requested to OpenGnsys
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        og.vm.removeMachine(self.api, machineId)
-
-    def getNetInfo(self, machineId, networkId=None):
-        '''
-        Changes the mac address of first nic of the machine to the one specified
-        '''
-        return og.vm.getNetInfo(self.api, machineId, networkId)
+        return [True, _('OpenGnsys test connection passed')]
 
     @staticmethod
     def test(env, data):

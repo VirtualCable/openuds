@@ -4,7 +4,7 @@
 $ = jQuery
 api = @api
 
-api.debug = off
+api.debug = on
 
 api.permissions = {
   NONE: 0

@@ -146,8 +146,9 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func actor(w http.ResponseWriter, r *http.Request) {
-	// Get Request as received and forward it to UDS, withouch changing anything...
+	// Get Request as received and forward it to UDS, without changing anything...
 	// We will net params, body, etc...
+	// Currently not implemented/finished
 
 	r.ParseForm()       // parse arguments, you have to call this by yourself
 	fmt.Println(r.Form) // print form information in server side

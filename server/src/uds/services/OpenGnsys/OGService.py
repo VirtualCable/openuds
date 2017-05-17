@@ -34,12 +34,13 @@ from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
 from .OGDeployment import OGDeployment
+from . import helpers
 
 from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-04-21'
+__updated__ = '2017-05-17'
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +77,7 @@ class OGService(Service):
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
-    needsManager = True
+    needsManager = False
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
     mustAssignManually = False
@@ -94,27 +95,32 @@ class OGService(Service):
     ou = gui.ChoiceField(
         label=_("OU"),
         order=100,
+        fills={
+            'callbackName' : 'osFillData',
+            'function' : helpers.getResources,
+            'parameters' : ['ov', 'ev', 'ou']
+            },
         tooltip=_('Organizational Unit'),
-        required=True
-    )
-
-    # Required, this is the base image
-    image = gui.ChoiceField(
-        label=_("OS Image"),
-        order=101,
-        tooltip=_('OpenGnsys Operanting System Image'),
         required=True
     )
 
     # Lab is not required, but maybe used as filter
     lab = gui.ChoiceField(
         label=_("lab"),
-        order=102,
+        order=101,
         tooltip=_('Laboratory'),
         required=False
     )
 
-    minSpaceGB = gui.NumericField(
+    # Required, this is the base image
+    image = gui.ChoiceField(
+        label=_("OS Image"),
+        order=102,
+        tooltip=_('OpenGnsys Operanting System Image'),
+        required=True
+    )
+
+    maxReservationTime = gui.NumericField(
         length=3,
         label=_("Max. reservation time"),
         order=110,
@@ -124,9 +130,8 @@ class OGService(Service):
         required=False
     )
 
-
-    # Note: CHECK HOW TO INCLUDE A CALENDAR HERE (probably using callbacks...)
-
+    ov = gui.HiddenField(value=None)
+    ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values):
         '''
@@ -136,132 +141,14 @@ class OGService(Service):
         initialized by __init__ method of base class, before invoking this.
         '''
         if values is not None:
-            length = int(self.lenName.value)
-            if len(self.baseName.value) + length > 15:
-                raise Service.ValidationException(_('The length of basename plus length must not be greater than 15'))
-            if self.baseName.value.isdigit():
-                raise Service.ValidationException(_('The machine name can\'t be only numbers'))
+            pass
 
     def initGui(self):
         '''
         Loads required values inside
         '''
+        ous = [gui.choiceItem(r['id'], r['name']) for r in self.parent().api.getOus()]
+        self.ou.setValues(ous)
 
-    def sanitizeVmName(self, name):
-        return self.parent().sanitizeVmName(name)
-
-    def makeTemplate(self, templateName):
-        return self.parent().makeTemplate(self.template.value, templateName, self.datastore.value)
-
-    def checkTemplatePublished(self, templateId):
-        return self.parent().checkTemplatePublished(templateId)
-
-    def deployFromTemplate(self, name, templateId):
-        '''
-        Deploys a virtual machine on selected cluster from selected template
-
-        Args:
-            name: Name (sanitized) of the machine
-            comments: Comments for machine
-            templateId: Id of the template to deploy from
-            displayType: 'vnc' or 'spice'. Display to use ad OpenGnsys admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
-
-        Returns:
-            Id of the machine being created form template
-        '''
-        logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
-        # self.datastoreHasSpace()
-        return self.parent().deployFromTemplate(name, templateId)
-
-    def removeTemplate(self, templateId):
-        '''
-        invokes removeTemplate from parent provider
-        '''
-        return self.parent().removeTemplate(templateId)
-
-    def getMachineState(self, machineId):
-        '''
-        Invokes getMachineState from parent provider
-        (returns if machine is "active" or "inactive"
-
-        Args:
-            machineId: If of the machine to get state
-
-        Returns:
-            one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
-        '''
-        return self.parent().getMachineState(machineId)
-
-    def startMachine(self, machineId):
-        '''
-        Tries to start a machine. No check is done, it is simply requested to OpenGnsys.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        return self.parent().startMachine(machineId)
-
-    def stopMachine(self, machineId):
-        '''
-        Tries to start a machine. No check is done, it is simply requested to OpenGnsys
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        return self.parent().stopMachine(machineId)
-
-    def suspendMachine(self, machineId):
-        '''
-        Tries to start a machine. No check is done, it is simply requested to OpenGnsys
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        return self.parent().suspendMachine(machineId)
-
-    def removeMachine(self, machineId):
-        '''
-        Tries to delete a machine. No check is done, it is simply requested to OpenGnsys
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        '''
-        return self.parent().removeMachine(machineId)
-
-    def getNetInfo(self, machineId, networkId=None):
-        '''
-        Changes the mac address of first nic of the machine to the one specified
-        '''
-        return self.parent().getNetInfo(machineId, networkId=None)
-
-    def getBaseName(self):
-        '''
-        Returns the base name
-        '''
-        return self.baseName.value
-
-    def getLenName(self):
-        '''
-        Returns the length of numbers part
-        '''
-        return int(self.lenName.value)
-
-    def getConsoleConnection(self, machineId):
-        return self.parent().getConsoleConnection(machineId)
+        self.ov.setDefValue(self.parent().serialize())
+        self.ev.setDefValue(self.parent().env.key)
