@@ -34,13 +34,14 @@ from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
 from .OGDeployment import OGDeployment
+from .OGPublication import OGPublication
 from . import helpers
 
 from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-05-17'
+__updated__ = '2017-05-18'
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class OGService(Service):
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publicationType = None
+    publicationType = OGPublication
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = OGDeployment
 
@@ -152,3 +153,12 @@ class OGService(Service):
 
         self.ov.setDefValue(self.parent().serialize())
         self.ev.setDefValue(self.parent().env.key)
+
+    def status(self, machineId):
+        return self.parent().status(machineId)
+
+    def reserve(self):
+        return self.parent().reserve(self.ou.value, self.image.value, self.lab.value, self.maxReservationTime.num())
+
+    def unreserve(self, machineId):
+        return self.parent().unreserve(machineId)

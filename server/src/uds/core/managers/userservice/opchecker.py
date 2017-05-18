@@ -40,7 +40,7 @@ from uds.models import UserService
 
 import logging
 
-__updated__ = '2015-11-10'
+__updated__ = '2017-05-18'
 
 logger = logging.getLogger(__name__)
 
@@ -62,8 +62,16 @@ class StateUpdater(object):
     def save(self, newState=None):
         if newState is not None:
             self.userService.setState(newState)
+
         self.userService.updateData(self.userServiceInstance)
         self.userService.save()
+
+    def logIp(self):
+        ip = self.userServiceInstance.getIp()
+
+        if ip is not None and ip != '':
+            self.userService.logIP(ip)
+
 
     def checkLater(self):
         UserServiceOpChecker.checkLater(self.userService, self.userServiceInstance)
@@ -121,6 +129,8 @@ class UpdateFromPreparing(StateUpdater):
             if rs != State.FINISHED:
                 self.checkLater()
                 state = self.userService.state  # No not alter current state if after notifying os manager the user service keeps working
+            else:
+                self.logIp()
 
         return state
 

@@ -45,10 +45,7 @@ import six
 import requests
 import  json
 
-# API URL 1: https://www.informatica.us.es/~ramon/opengnsys/?url=opengnsys-api.yml
-# API URL 2: http://opengnsys.es/wiki/ApiRest
-
-__updated__ = '2017-05-17'
+__updated__ = '2017-05-18'
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +53,7 @@ logger = logging.getLogger(__name__)
 
 # Fake part
 FAKE = True
+CACHE_VALIDITY = 180
 
 
 # Decorator
@@ -85,11 +83,12 @@ def ensureResponseIsValid(response, errMsg=None):
     return json.loads(response.content)
 
 class OpenGnsysClient(object):
-    def __init__(self, username, password, endpoint, verifyCert=False):
+    def __init__(self, username, password, endpoint, cache, verifyCert=False):
         self.username = username
         self.password = password
         self.endpoint = endpoint
         self.auth = None
+        self.cache = cache
         self.verifyCert = verifyCert
         self.cachedVersion = None
 
@@ -111,7 +110,7 @@ class OpenGnsysClient(object):
                 errMsg=errMsg
             )
         # FAKE Connection :)
-        return fake.post(path, data)
+        return fake.post(path, data, errMsg)
 
     def _get(self, path, errMsg=None):
         if not FAKE:
@@ -120,16 +119,23 @@ class OpenGnsysClient(object):
                 errMsg=errMsg
             )
         # FAKE Connection :)
-        return fake.get(path)
+        return fake.get(path, errMsg)
 
 
     def _delete(self, path, errMsg=None):
-        return ensureResponseIsValid(
-            requests.delete(self._ogUrl(path), headers=self.headers, verify=self.verifyCert),
-            errMsg=errMsg
-        )
+        if not FAKE:
+            return ensureResponseIsValid(
+                requests.delete(self._ogUrl(path), headers=self.headers, verify=self.verifyCert),
+                errMsg=errMsg
+            )
+        return fake.delete(path, errMsg)
 
     def connect(self):
+        if self.auth is not None:
+            return
+
+        cacheKey = 'auth{}{}'.format(self.endpoint, self.username)
+        self.auth = self.cache.get(cacheKey)
         if self.auth is not None:
             return
 
@@ -142,6 +148,7 @@ class OpenGnsysClient(object):
         )
 
         self.auth = auth['apikey']
+        self.cache.put(cacheKey, self.auth, CACHE_VALIDITY)
 
 
     @property
@@ -167,7 +174,8 @@ class OpenGnsysClient(object):
         # Returns a list of available labs on an ou
         # /ous/{ouid}/labs
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
-        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.LABS.format(ou=ou)) if l.get('inremotepc', False) is True]
+        errMsg = 'Getting list of labs from ou {}'.format(ou)
+        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.LABS.format(ou=ou), errMsg=errMsg) if l.get('inremotepc', False) is True]
 
 
     @ensureConnected
@@ -175,27 +183,46 @@ class OpenGnsysClient(object):
         # Returns a list of available labs on an ou
         # /ous/{ouid}/images
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
-        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.IMAGES.format(ou=ou)) if l.get('inremotepc', False) is True]
+        errMsg = 'Getting list of images from ou {}'.format(ou)
+        return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.IMAGES.format(ou=ou), errMsg=errMsg) if l.get('inremotepc', False) is True]
 
     @ensureConnected
-    def reserve(self, ou, image):
+    def reserve(self, ou, image, lab=0, maxtime=24):
         # This method is inteded to "get" a machine from OpenGnsys
         # The method used is POST
         # invokes /ous/{ouid}}/images/{imageid}/reserve
         # also remember to store "labid"
         # Labid can be "0" that means "all laboratories"
-        return self._get(urls.RESERVE.format(ou=ou, image=image))
+        errMsg = 'Reserving image {} in ou {}'.format(ou, image)
+        data = {
+            'labid': lab,
+            'maxtime': maxtime
+        }
+        res = self._post(urls.RESERVE.format(ou=ou, image=image), data, errMsg=errMsg)
+        return {
+            'ou': ou,
+            'image': image,
+            'lab': lab,
+            'client': res['id'],
+            'id': '.'.join((six.text_type(ou), six.text_type(lab), six.text_type(res['id']))),
+            'name': res['name'],
+            'ip': res['ip'],
+            'mac': ':'.join(re.findall('..', res['mac']))
+        }
 
     @ensureConnected
-    def unreserve(self, machine):
+    def unreserve(self, id):
         # This method releases the previous reservation
         # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
-        pass
+        ou, lab, client = id.split('.')
+        errMsg = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
+        return self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg)
 
     @ensureConnected
-    def status(self, machine):
+    def status(self, id):
         # This method gets the status of the machine
         # /ous/{uoid}/labs/{labid}/clients/{clientid}/status
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
         # Look at api at informatica.us..
-        pass
+        ou, lab, client = id.split('.')
+        return self._get(urls.STATUS.format(ou=ou, lab=lab, client=client))

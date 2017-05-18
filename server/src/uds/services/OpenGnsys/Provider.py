@@ -48,7 +48,7 @@ import logging
 import six
 
 
-__updated__ = '2017-05-17'
+__updated__ = '2017-05-18'
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +127,7 @@ class OGProvider(ServiceProvider):
     @property
     def api(self):
         if self._api is None:
-            self._api = og.OpenGnsysClient(self.username.value, self.password.value, self.endpoint, self.checkCert.isTrue())
+            self._api = og.OpenGnsysClient(self.username.value, self.password.value, self.endpoint, self.cache, self.checkCert.isTrue())
 
         logger.debug('Api: {}'.format(self._api))
         return self._api
@@ -170,3 +170,12 @@ class OGProvider(ServiceProvider):
 
         '''
         return OGProvider(env, data).testConnection()
+
+    def reserve(self, ou, image, lab=0, maxtime=0):
+        return self.api.reserve(ou, image, lab, maxtime)
+
+    def unreserve(self, machineId):
+        return self.api.unreserve(machineId)
+
+    def status(self, machineId):
+        return self.api.status(machineId)

@@ -32,9 +32,14 @@
 '''
 from __future__ import unicode_literals
 
+# API URL 1: https://www.informatica.us.es/~ramon/opengnsys/?url=opengnsys-api.yml
+# API URL 2: http://opengnsys.es/wiki/ApiRest
+
 LOGIN = '/login'
 INFO = '/info'
 OUS = '/ous'
 LABS = '/ous/{ou}/labs'
 IMAGES = '/ous/{ou}/images'
 RESERVE = '/ous/{ou}/images/{image}/reserve'
+UNRESERVE = '/ous/{ou}/labs/{lab}/clients/{client}/unreserve'
+STATUS = '/ous/{ou}/labs/{lab}/clients/{client}/status'

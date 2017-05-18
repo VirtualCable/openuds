@@ -4,7 +4,7 @@
 $ = jQuery
 api = @api
 
-api.debug = on
+api.debug = off
 
 api.permissions = {
   NONE: 0
@@ -16,6 +16,7 @@ api.permissions = {
 api.doLog = (args...) ->
   if api.debug
     try
+      args.push "API"
       console.log.apply window, args
   return
 

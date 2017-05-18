@@ -30,7 +30,7 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-02-28'
+__updated__ = '2017-05-18'
 
 from django.http import HttpResponse, HttpResponseForbidden
 from django.template import RequestContext, loader
@@ -58,7 +58,7 @@ def tmpl(request, template):
     try:
         t = loader.get_template('uds/admin/tmpl/' + template + ".html")
         c = RequestContext(request)
-        resp = t.render(c)
+        resp = t.render(c.flatten())
     except Exception as e:
         logger.debug('Exception getting template: {0}'.format(e))
         resp = _('requested a template that do not exist')

@@ -32,6 +32,14 @@
 '''
 from __future__ import unicode_literals
 from . import urls
+import copy
+import random
+import six
+import logging
+
+__updated__ = '2017-05-18'
+
+logger = logging.getLogger(__name__)
 
 AUTH = {
     "userid": 1001,
@@ -150,17 +158,46 @@ RESERVE = {
   }
 }
 
+UNRESERVE = ''
 
+STATUS_OFF = {
+  "id": 4,
+  "ip": "10.1.14.31",
+  "status": "off",
+  "loggedin": False
+}
+
+# A couple of status for testing
+STATUS_READY_LINUX = {
+  "id": 4,
+  "ip": "10.1.14.31",
+  "status": "linux",
+  "loggedin": False
+}
+
+STATUS_READY_WINDOWS = {
+  "id": 4,
+  "ip": "10.1.14.31",
+  "status": "windows",
+  "loggedin": False
+}
 
 # FAKE post
-def post(path, data):
+def post(path, data, errMsg):
+    logger.info('FAKE POST request to {} with {} data. ({})'.format(path, data, errMsg))
     if path == urls.LOGIN:
         return AUTH
+    elif path == urls.RESERVE.format(ou=1, image=1) or path == urls.RESERVE.format(ou=1, image=2):
+        res = copy.deepcopy(RESERVE)
+        res['name'] += six.text_type(random.randint(5000, 100000))
+        res['mac'] = ''.join(random.choice('0123456789ABCDEF') for __ in range(12))
+        return res
 
-    raise Exception('Unknown FAKE URL on POST')
+    raise Exception('Unknown FAKE URL on POST: {}'.format(path))
 
 # FAKE get
-def get(path):
+def get(path, errMsg):
+    logger.info('FAKE GET request to {}. ({})'.format(path, errMsg))
     if path == urls.INFO:
         return INFO
     elif path == urls.OUS:
@@ -173,5 +210,17 @@ def get(path):
         return IMAGES
     elif path == urls.IMAGES.format(ou=2):
         return []
+    elif path[-6:] == 'status':
+        rnd = random.randint(0, 100)
+        logger.debug('Random generated: {}'.format(rnd))
+        if rnd < 95:
+            return STATUS_READY_LINUX
+        return STATUS_OFF
 
-    raise Exception('Unknown FAKE URL on GET')
+    raise Exception('Unknown FAKE URL on GET: {}'.format(path))
+
+def delete(path, errMsg):
+    logger.info('FAKE DELETE request to {}. ({})'.format(path, errMsg))
+    # Right now, only "unreserve" uses delete, so simply return
+    return UNRESERVE
+    # raise Exception('Unknown FAKE URL on DELETE: {}'.format(path))

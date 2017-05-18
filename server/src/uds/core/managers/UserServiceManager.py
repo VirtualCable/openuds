@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-04-06'
+__updated__ = '2017-05-18'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -212,16 +212,18 @@ class UserServiceManager(object):
         Removes a uService element
         @return: the uService removed (marked for removal)
         '''
-        uService = UserService.objects.get(id=uService.id)
-        logger.debug('Removing uService {0}'.format(uService))
-        if uService.isUsable() is False and State.isRemovable(uService.state) is False:
-            raise OperationException(_('Can\'t remove a non active element'))
+        with transaction.atomic():
+            uService = UserService.objects.get(id=uService.id)
+            logger.debug('Removing uService {0}'.format(uService))
+            if uService.isUsable() is False and State.isRemovable(uService.state) is False:
+                raise OperationException(_('Can\'t remove a non active element'))
 
-        ci = uService.getInstance()
-        state = ci.destroy()
-        uService.setState(State.REMOVING)
-        uService.setInUse(False)  # For accounting, ensure that it is not in use right now
-        UserServiceOpChecker.makeUnique(uService, ci, state)
+            ci = uService.getInstance()
+            state = ci.destroy()
+            uService.setState(State.REMOVING)
+            logger.debug("**** The state now is {}".format(uService.state))
+            uService.setInUse(False)  # For accounting, ensure that it is not in use right now
+            UserServiceOpChecker.makeUnique(uService, ci, state)
 
     def removeOrCancel(self, uService):
         if uService.isUsable() or State.isRemovable(uService.state):
@@ -465,11 +467,13 @@ class UserServiceManager(object):
         This checks that the service can continue existing or not
         '''
         # uService = UserService.objects.get(id=uService.id)
-        if uService.publication is None:
-            return
-        if uService.publication.id != uService.deployed_service.activePublication().id:
-            logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
-            uService.remove()
+        with transaction.atomic():
+            uService = UserService.objects.get(id=uService.id)
+            if uService.publication is None:
+                return
+            if uService.publication.id != uService.deployed_service.activePublication().id:
+                logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
+                uService.remove()
 
     def notifyReadyFromOsManager(self, uService, data):
         try:

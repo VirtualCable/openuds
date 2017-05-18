@@ -30,23 +30,25 @@
 '''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from __future__ import unicode_literals
+
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
+from uds.models.Util import getSqlDatetime
 
 from . import og
+import six
 
 import pickle
 import logging
 
-__updated__ = '2017-02-09'
+__updated__ = '2017-05-18'
 
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(8)
-
-NO_MORE_NAMES = 'NO-NAME-ERROR'
+opCreate, opError, opFinish, opRemove, opRetry = range(5)
 
 
 class OGDeployment(UserDeployment):
@@ -62,13 +64,14 @@ class OGDeployment(UserDeployment):
     '''
 
     # : Recheck every six seconds by default (for task methods)
-    suggestedTime = 6
+    suggestedTime = 20
 
     def initialize(self):
         self._name = ''
         self._ip = ''
         self._mac = ''
-        self._vmid = ''
+        self._machineId = ''
+        self._stamp = 0
         self._reason = ''
         self._queue = []
 
@@ -77,7 +80,7 @@ class OGDeployment(UserDeployment):
         '''
         Does nothing right here, we will use envoronment storage in this sample
         '''
-        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, pickle.dumps(self._queue)])
+        return '\1'.join(['v1', self._name, self._ip, self._mac, self._machineId, self._reason, six.text_type(self._stamp), pickle.dumps(self._queue)])
 
     def unmarshal(self, str_):
         '''
@@ -85,116 +88,36 @@ class OGDeployment(UserDeployment):
         '''
         vals = str_.split('\1')
         if vals[0] == 'v1':
-            self._name, self._ip, self._mac, self._vmid, self._reason, queue = vals[1:]
+            self._name, self._ip, self._mac, self._machineId, self._reason, stamp, queue = vals[1:]
+            self._stamp = int(stamp)
             self._queue = pickle.loads(queue)
 
     def getName(self):
-        '''
-        We override this to return a name to display. Default inplementation
-        (in base class), returns getUniqueIde() value
-        This name will help user to identify elements, and is only used
-        at administration interface.
-
-        We will use here the environment name provided generator to generate
-        a name for this element.
-
-        The namaGenerator need two params, the base name and a length for a
-        numeric incremental part for generating unique names. This are unique for
-        all UDS names generations, that is, UDS will not generate this name again
-        until this name is freed, or object is removed, what makes its environment
-        to also get removed, that makes all uniques ids (names and macs right now)
-        to also get released.
-
-        Every time get method of a generator gets called, the generator creates
-        a new unique name, so we keep the first generated name cached and don't
-        generate more names. (Generator are simple utility classes)
-        '''
-        if self._name == '':
-            try:
-                self._name = self.nameGenerator().get(self.service().getBaseName(), self.service().getLenName())
-            except KeyError:
-                return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip):
-        '''
-        In our case, there is no OS manager associated with this, so this method
-        will never get called, but we put here as sample.
-
-        Whenever an os manager actor notifies the broker the state of the service
-        (mainly machines), the implementation of that os manager can (an probably will)
-        need to notify the IP of the deployed service. Remember that UDS treats with
-        IP services, so will probable needed in every service that you will create.
-        :note: This IP is the IP of the "consumed service", so the transport can
-               access it.
-        '''
-        logger.debug('Setting IP to {}'.format(ip))
-        self._ip = ip
-
     def getUniqueId(self):
-        '''
-        Return and unique identifier for this service.
-        In our case, we will generate a mac name, that can be also as sample
-        of 'mac' generator use, and probably will get used something like this
-        at some services.
-
-        The get method of a mac generator takes one param, that is the mac range
-        to use to get an unused mac.
-        '''
         return self._mac.upper()
 
     def getIp(self):
-        '''
-        We need to implement this method, so we can return the IP for transports
-        use. If no IP is known for this service, this must return None
-
-        If our sample do not returns an IP, IP transport will never work with
-        this service. Remember in real cases to return a valid IP address if
-        the service is accesible and you alredy know that (for example, because
-        the IP has been assigend via setIp by an os manager) or because
-        you get it for some other method.
-
-        Storage returns None if key is not stored.
-
-        :note: Keeping the IP address is responsibility of the User Deployment.
-               Every time the core needs to provide the service to the user, or
-               show the IP to the administrator, this method will get called
-
-        '''
         return self._ip
 
     def setReady(self):
         '''
-        The method is invoked whenever a machine is provided to an user, right
-        before presenting it (via transport rendering) to the user.
+        Right now, this does nothing on OG.
+        The machine has been already been started.
+        The problem is that currently there is no way that a machine is in FACT started.
+        OpenGnsys will try it best by sending an WOL
         '''
-        if self.cache.get('ready') == '1':
-            return State.FINISHED
+        # if self.cache.get('ready') == '1':
+        #    return State.FINISHED
 
-        state = self.service().getMachineState(self._vmid)
+        # status = self.service().status(self._machineId)
+        # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
+        # if status['status'] != 'off':
+        #     self.cache.put('ready', '1')
+        #     return State.FINISHED
 
-        if state == on.VmState.UNKNOWN:
-            return self.__error('Machine is not available anymore')
-
-        self.service().startMachine(self._vmid)
-
-        self.cache.put('ready', '1')
-        return State.FINISHED
-
-    def getConsoleConnection(self):
-        return self.service().getConsoleConnection(self._vmid)
-
-    def desktopLogin(self, username, password, domain=''):
-        return self.service().desktopLogin(self._vmId, username, password, domain)
-
-    def notifyReadyFromOsManager(self, data):
-        # Here we will check for suspending the VM (when full ready)
-        logger.debug('Checking if cache 2 for {0}'.format(self._name))
-        if self.__getCurrentOp() == opWait:
-            logger.debug('Machine is ready. Moving to level 2')
-            self.__popCurrentOp()  # Remove current state
-            return self.__executeQueue()
-        # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
+        # Return back machine to preparing?...
         return State.FINISHED
 
     def deployForUser(self, user):
@@ -209,34 +132,27 @@ class OGDeployment(UserDeployment):
         '''
         Deploys an service instance for cache
         '''
-        self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
+        self.__initQueueForDeploy()  # No Level2 Cache possible
         return self.__executeQueue()
 
-    def __initQueueForDeploy(self, forLevel2=False):
+    def __initQueueForDeploy(self):
 
-        if forLevel2 is False:
-            self._queue = [opCreate, opStart, opFinish]
-        else:
-            self._queue = [opCreate, opStart, opWait, opSuspend, opFinish]
+        self._queue = [opCreate, opFinish]
 
-    def __checkMachineState(self, chkState):
-        logger.debug('Checking that state of machine {} ({}) is {}'.format(self._vmid, self._name, chkState))
-        state = self.service().getMachineState(self._vmid)
+    def __checkMachineReady(self):
+        logger.debug('Checking that state of machine {} ({}) is ready'.format(self._machineId, self._name))
 
-        # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == on.VmState.UNKNOWN:
-            return self.__error('Machine not found')
+        try:
+            status = self.service().status(self._machineId)
+        except Exception as e:
+            logger.exception('Exception at checkMachineReady')
+            return self.__error('Error checking machine: {}'.format(e))
 
-        ret = State.RUNNING
+        # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
+        if status['status'] != 'off':
+            return State.FINISHED
 
-        if type(chkState) is list:
-            if state in chkState:
-                ret = State.FINISHED
-        else:
-            if state == chkState:
-                ret = State.FINISHED
-
-        return ret
+        return State.RUNNING
 
     def __getCurrentOp(self):
         if len(self._queue) == 0:
@@ -267,11 +183,7 @@ class OGDeployment(UserDeployment):
         logger.debug('Setting error state, reason: {0}'.format(reason))
         self.doLog(log.ERROR, reason)
 
-        if self._vmid != '':  # Powers off & delete it
-            try:
-                self.service().removeMachine(self._vmid)
-            except:
-                logger.debug('Can\t set machine state to stopped')
+        # TODO: Unreserve machine?? Maybe it just better to keep it assigned so UDS don't get it again in a while...
 
         self._queue = [opError]
         self._reason = str(reason)
@@ -290,9 +202,6 @@ class OGDeployment(UserDeployment):
         fncs = {
             opCreate: self.__create,
             opRetry: self.__retry,
-            opStart: self.__startMachine,
-            opSuspend: self.__suspendMachine,
-            opWait: self.__wait,
             opRemove: self.__remove,
         }
 
@@ -320,71 +229,36 @@ class OGDeployment(UserDeployment):
         '''
         return State.FINISHED
 
-    def __wait(self):
-        '''
-        Executes opWait, it simply waits something "external" to end
-        '''
-        return State.RUNNING
-
     def __create(self):
         '''
         Deploys a machine from template for user/cache
         '''
-        templateId = self.publication().getTemplateId()
-        name = self.getName()
-        if name == NO_MORE_NAMES:
-            raise Exception('No more names available for this service. (Increase digits for this service to fix)')
+        try:
+            r = self.service().reserve()
+        except Exception as e:
+            logger.exception('Creating machine')
+            return self.__error('Error creating reservation: {}'.format(e))
 
-        name = self.service().sanitizeVmName(name)  # OpenNebula don't let us to create machines with more than 15 chars!!!
-
-        self._vmid = self.service().deployFromTemplate(name, templateId)
-        if self._vmid is None:
-            raise Exception('Can\'t create machine')
-
-        # Get IP & MAC (early stage)
-        self._mac, self._ip = self.service().getNetInfo(self._vmid)
+        self._machineId = r['id']
+        self._name = r['name']
+        self._mac = r['mac']
+        self._ip = r['ip']
+        self._stamp = getSqlDatetime(unix=True)
+        # Store actor version
+        self.dbservice().setProperty('actor_version', '1.0-OpenGnsys')
 
     def __remove(self):
         '''
         Removes a machine from system
         '''
-        state = self.service().getMachineState(self._vmid)
-
-        if state == on.VmState.UNKNOWN:
-            raise Exception('Machine not found')
-
-        self.service().removeMachine(self._vmid)
-
-    def __startMachine(self):
-        '''
-        Powers on the machine
-        '''
-        self.service().startMachine(self._vmid)
-
-    def __suspendMachine(self):
-        '''
-        Suspends the machine
-        '''
-        self.service().suspendMachine(self._vmid)
+        self.service().unreserve(self._machineId)
 
     # Check methods
     def __checkCreate(self):
         '''
         Checks the state of a deploy for an user or cache
         '''
-        return self.__checkMachineState(on.VmState.ACTIVE)
-
-    def __checkStart(self):
-        '''
-        Checks if machine has started
-        '''
-        return self.__checkMachineState(on.VmState.ACTIVE)
-
-    def __checkSuspend(self):
-        '''
-        Check if the machine has suspended
-        '''
-        return self.__checkMachineState(on.VmState.SUSPENDED)
+        return self.__checkMachineReady()
 
     def __checkRemoved(self):
         '''
@@ -408,9 +282,6 @@ class OGDeployment(UserDeployment):
         fncs = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
-            opWait: self.__wait,
-            opStart: self.__checkStart,
-            opSuspend: self.__checkSuspend,
             opRemove: self.__checkRemoved,
         }
 
@@ -437,47 +308,6 @@ class OGDeployment(UserDeployment):
         self.__debug('finish')
         pass
 
-    def assignToUser(self, user):
-        '''
-        This method is invoked whenever a cache item gets assigned to an user.
-        This gives the User Deployment an oportunity to do whatever actions
-        are required so the service puts at a correct state for using by a service.
-        '''
-        pass
-
-    def moveToCache(self, newLevel):
-        '''
-        Moves machines between cache levels
-        '''
-        if opRemove in self._queue:
-            return State.RUNNING
-
-        if newLevel == self.L1_CACHE:
-            self._queue = [opStart, opFinish]
-        else:
-            self._queue = [opStart, opSuspend, opFinish]
-
-        return self.__executeQueue()
-
-    def userLoggedIn(self, user):
-        '''
-        This method must be available so os managers can invoke it whenever
-        an user get logged into a service.
-
-        The user provided is just an string, that is provided by actor.
-        '''
-        # We store the value at storage, but never get used, just an example
-        pass
-
-    def userLoggedOut(self, user):
-        '''
-        This method must be available so os managers can invoke it whenever
-        an user get logged out if a service.
-
-        The user provided is just an string, that is provided by actor.
-        '''
-        pass
-
     def reasonOfError(self):
         '''
         Returns the reason of the error.
@@ -495,18 +325,8 @@ class OGDeployment(UserDeployment):
         self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
-        op = self.__getCurrentOp()
-
-        if op == opError:
-            return self.__error('Machine is already in error state!')
-
-        if op == opFinish or op == opWait:
-            self._queue = [opRemove, opFinish]
-            return self.__executeQueue()
-
-        self._queue = [op, opRemove, opFinish]
-        # Do not execute anything.here, just continue normally
-        return State.RUNNING
+        self._queue = [opRemove, opFinish]
+        return self.__executeQueue()
 
     def cancel(self):
         '''
@@ -524,10 +344,7 @@ class OGDeployment(UserDeployment):
     def __op2str(op):
         return {
             opCreate: 'create',
-            opStart: 'start',
-            opSuspend: 'suspend',
             opRemove: 'remove',
-            opWait: 'wait',
             opError: 'error',
             opFinish: 'finish',
             opRetry: 'retry',
@@ -537,5 +354,5 @@ class OGDeployment(UserDeployment):
         logger.debug('_name {0}: {1}'.format(txt, self._name))
         logger.debug('_ip {0}: {1}'.format(txt, self._ip))
         logger.debug('_mac {0}: {1}'.format(txt, self._mac))
-        logger.debug('_vmid {0}: {1}'.format(txt, self._vmid))
-        logger.debug('Queue at {0}: {1}'.format(txt, [LiveDeployment.__op2str(op) for op in self._queue]))
+        logger.debug('_machineId {0}: {1}'.format(txt, self._machineId))
+        logger.debug('Queue at {0}: {1}'.format(txt, [OGDeployment.__op2str(op) for op in self._queue]))

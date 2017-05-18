@@ -57,7 +57,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2017-05-10'
+__updated__ = '2017-05-18'
 
 
 logger = logging.getLogger(__name__)
@@ -319,6 +319,7 @@ class UserService(UUIDModel):
             save: Defaults to true. If false, record will not be saved to db, just modified
 
         '''
+        logger.debug(' *** Setting state to {} from {} for {}--{}'.format(state, self.state, self.id, self.friendly_name))
         if state != self.state:
             self.state_date = getSqlDatetime()
             self.state = state
