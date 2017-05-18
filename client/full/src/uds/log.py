@@ -33,10 +33,17 @@ from __future__ import unicode_literals
 
 import logging
 import os
+import sys
 import tempfile
 
+if sys.platform.startswith('linux'):
+    from os.path import expanduser
+    logFile = expanduser('~/udsclient.log')
+else:
+    logFile = os.path.join(tempfile.gettempdir(), b'udsclient.log')
+
 logging.basicConfig(
-    filename=os.path.join(tempfile.gettempdir(), b'udsclient.log'),
+    filename=logFile,
     filemode='a',
     format='%(levelname)s %(asctime)s %(message)s',
     level=logging.DEBUG

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=`cat ../../VERSION`
+VERSION=`cat ../../../VERSION`
 RELEASE=1
 # Debian based
 dpkg-buildpackage -b
