@@ -51,7 +51,7 @@ if executable is None:
 ''', QtGui.QMessageBox.Ok)
 
 
-forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389, {m.tunWait})  # @UndefinedVariable
+forwardThread, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', 3389, waitTime={m.tunWait})  # @UndefinedVariable
 
 if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
