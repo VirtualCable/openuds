@@ -36,32 +36,32 @@ import requests
 from . import VERSION
 
 import json
-import osDetector
 import six
 import urllib
 
+from .log import logger
 
 class RestRequest(object):
 
-    restApiUrl = ''  #
+    restApiUrl = ''
 
-    def __init__(self, url, params=None):  # parent not used
+    def __init__(self, restURL):  # parent not used
         super(RestRequest, self).__init__()
-        # private
+        self.restApiUrl = restURL
+
+    def get(self, url, params=None):
+        url = self.restApiUrl + url
         if params is not None:
             url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())
 
-        self.url = RestRequest.restApiUrl + url
-
-        # connect asynchronous result, when a request finishes
-
-    def get(self):
-
         try:
-            r = requests.get(self.url)
+            logger.debug('Requesting {}'.format(url))
+            r = requests.get(url, headers={'Content-type': 'application/json'})
             if r.ok:
+                logger.debug('Request was OK. {}'.format(r.text))
                 data = json.loads(r.text)
             else:
+                logger.error('Error requesting {}: {}, {}'.format(url, r.code. r.text))
                 raise Exception('Error {}: {}'.format(r.code, r.text))
         except Exception as e:
             data = {

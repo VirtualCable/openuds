@@ -34,10 +34,7 @@ from __future__ import unicode_literals
 try:
     import gtkui as theUI
 except Exception:
-    try:
-        import browserui as theUI
-    except Exception:
-        import consoleui as theUI
+    import consoleui as theUI
 
 def message(title, message):
     theUI.message(title, message)

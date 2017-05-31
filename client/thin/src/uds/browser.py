@@ -30,5 +30,29 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
+import random
+import os
+import tempfile
+import string
+import webbrowser
 
-raise Exception('not available')
+TEMPLATE = '''<html>
+  <head>
+    <title>{title}</title>
+  </head>
+  <body>
+    <h1>{title}</h1>
+    <p>{message}<P>
+  </body>
+</html>
+'''
+
+def _htmlFilename():
+    return os.path.join(tempfile.gettempdir(), ''.join([random.choice(string.ascii_lowercase) for i in range(22)]) + '.html')
+
+def message(title, message):
+    filename = _htmlFilename()
+    with open(filename, 'w') as f:
+        f.write(TEMPLATE.format(title=title, message=message))
+
+    webbrowser.open('file://' + filename, new=0, autoraise=False)

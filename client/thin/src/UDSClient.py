@@ -32,10 +32,12 @@
 from __future__ import unicode_literals
 
 from uds import ui
+from uds import browser
 from uds.rest import RestRequest
 from uds.forward import forward
 from uds import VERSION
 from uds.log import logger  # @UnresolvedImport
+from uds import tools
 
 import six
 import sys
@@ -105,5 +107,22 @@ if __name__ == "__main__":
         ui.message('UDS Client', 'UDS Client Version {}'.format(VERSION))
         sys.exit(1)
 
-    RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
-    logger.debug('Setting request URL to {}'.format(RestRequest.restApiUrl))
+    rest = RestRequest('{}://{}/rest/client'.format(['http', 'https'][ssl], host))
+    logger.debug('Setting request URL to {}'.format(rest.restApiUrl))
+
+    # Main requests part
+    # First, get version
+    try:
+        res = rest.get('')['result']
+        if res['requiredVersion'] > VERSION:
+            ui.message("New UDS Client available", "A new uds version is needed in order to access this version of UDS. A browser will be openend for this download.")
+            webbrowser.open(res['downloadUrl'])
+            sys.exit(1)
+
+        # Now get ticket
+        res = rest.get('/{}/{}'.format(ticket, scrambler), params={'hostname': tools.getHostName(), 'version': VERSION})
+
+    except KeyError as e:
+        logger.error('Got an exception access RESULT: {}'.format(e))
+    except Exception as e:
+        logger.error('Got an unexpected exception: {}'.format(e))
