@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2017 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -281,7 +281,7 @@ if __name__ == "__main__":
 
     # Setup REST api endpoint
     RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
-    logger.debug('Setting requert URL to {}'.format(RestRequest.restApiUrl))
+    logger.debug('Setting request URL to {}'.format(RestRequest.restApiUrl))
     # RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
 
     try:

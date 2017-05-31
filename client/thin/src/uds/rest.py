@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2015 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,22 +32,41 @@
 '''
 from __future__ import unicode_literals
 
-import logging
-import os
-import sys
-import tempfile
+import requests
+from . import VERSION
 
-if sys.platform.startswith('linux'):
-    from os.path import expanduser
-    logFile = expanduser('~/udsclient.log')
-else:
-    logFile = os.path.join(tempfile.gettempdir(), b'udsclient.log')
+import json
+import osDetector
+import six
+import urllib
 
-logging.basicConfig(
-    filename=logFile,
-    filemode='a',
-    format='%(levelname)s %(asctime)s %(message)s',
-    level=logging.DEBUG
-)
 
-logger = logging.getLogger('udsclient')
+class RestRequest(object):
+
+    restApiUrl = ''  #
+
+    def __init__(self, url, params=None):  # parent not used
+        super(RestRequest, self).__init__()
+        # private
+        if params is not None:
+            url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())
+
+        self.url = RestRequest.restApiUrl + url
+
+        # connect asynchronous result, when a request finishes
+
+    def get(self):
+
+        try:
+            r = requests.get(self.url)
+            if r.ok:
+                data = json.loads(r.text)
+            else:
+                raise Exception('Error {}: {}'.format(r.code, r.text))
+        except Exception as e:
+            data = {
+                'result': None,
+                'error': six.text_type(e)
+            }
+
+        return data
