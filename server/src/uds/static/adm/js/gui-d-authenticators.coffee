@@ -74,7 +74,10 @@ gui.authenticators.link = (event) ->
             $select.empty()
             gui.doLog data
             $.each data, (undefined_, value) ->
-              $select.append "<option value=\"" + value.id + "\">" + value.id + " (" + value.name + ")</option>"
+              $select.append($('<option>',
+                value: value.id
+                text: value.id + "   (" + value.name + ")"
+              ))
               return
 
             return

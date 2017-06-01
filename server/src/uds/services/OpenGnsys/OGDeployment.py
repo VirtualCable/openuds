@@ -43,7 +43,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2017-05-18'
+__updated__ = '2017-05-19'
 
 
 logger = logging.getLogger(__name__)
@@ -149,7 +149,7 @@ class OGDeployment(UserDeployment):
             return self.__error('Error checking machine: {}'.format(e))
 
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
-        if status['status'] != 'off':
+        if status['status'] in ("linux", "windows", "macos"):
             return State.FINISHED
 
         return State.RUNNING

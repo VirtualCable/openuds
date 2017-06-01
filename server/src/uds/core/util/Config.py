@@ -322,6 +322,9 @@ class GlobalConfig(object):
     # Custom message for error when limiting by calendar
     LIMITED_BY_CALENDAR_TEXT = Config.section(GLOBAL_SECTION).value('Calendar access denied text', '', type=Config.TEXT_FIELD)  # Defaults to Nothing
 
+    # This is used so templates can change "styles" from admin interface
+    LOWERCASE_USERNAME = Config.section(SECURITY_SECTION).value('Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD)
+
     initDone = False
 
     @staticmethod

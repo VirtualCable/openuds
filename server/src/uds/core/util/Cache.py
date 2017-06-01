@@ -102,14 +102,17 @@ class Cache(object):
         try:
             uds.models.Cache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable
         except Exception:
-            # Already exists, modify it
-            c = uds.models.Cache.objects.get(pk=key)  # @UndefinedVariable
-            c.owner = self._owner
-            c.key = key
-            c.value = value
-            c.created = datetime.now()
-            c.validity = validity
-            c.save()
+            try:
+                # Already exists, modify it
+                c = uds.models.Cache.objects.get(pk=key)  # @UndefinedVariable
+                c.owner = self._owner
+                c.key = key
+                c.value = value
+                c.created = datetime.now()
+                c.validity = validity
+                c.save()
+            except transaction.TransactionManagementError:
+                logger.debug('Transaction in course, cannot store value')
 
     def refresh(self, skey):
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))

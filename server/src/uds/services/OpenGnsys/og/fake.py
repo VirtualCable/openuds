@@ -37,7 +37,7 @@ import random
 import six
 import logging
 
-__updated__ = '2017-05-18'
+__updated__ = '2017-05-19'
 
 logger = logging.getLogger(__name__)
 
@@ -212,8 +212,7 @@ def get(path, errMsg):
         return []
     elif path[-6:] == 'status':
         rnd = random.randint(0, 100)
-        logger.debug('Random generated: {}'.format(rnd))
-        if rnd < 95:
+        if rnd < 25:
             return STATUS_READY_LINUX
         return STATUS_OFF
 

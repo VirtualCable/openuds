@@ -26,24 +26,33 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
+import random
+import os
+import tempfile
+import string
+import webbrowser
 
-import sys
+TEMPLATE = '''<html>
+  <head>
+    <title>{title}</title>
+  </head>
+  <body>
+    <h1>{title}</h1>
+    <p>{message}<P>
+  </body>
+</html>
+'''
 
+def _htmlFilename():
+    return os.path.join(tempfile.gettempdir(), ''.join([random.choice(string.ascii_lowercase) for i in range(22)]) + '.html')
 
-LINUX = 'Linux'
-WINDOWS = 'Windows'
-MAC_OS_X = 'Mac os x'
+def message(title, message):
+    filename = _htmlFilename()
+    with open(filename, 'w') as f:
+        f.write(TEMPLATE.format(title=title, message=message))
 
-
-def getOs():
-    if sys.platform.startswith('linux'):
-        return LINUX
-    elif sys.platform.startswith('win'):
-        return WINDOWS
-    elif sys.platform.startswith('darwin'):
-        return MAC_OS_X
+    webbrowser.open('file://' + filename, new=0, autoraise=False)

@@ -23,7 +23,7 @@ BASE_DIR = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1]) 
 DEBUG = True
 
 # USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')  # For testing behind a reverse proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # For testing begind a reverse proxy
 
 DATABASES = {
     'default': {
@@ -245,6 +245,9 @@ USEFILE = 'use.log'
 TRACEFILE = 'trace.log'
 LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
 ROTATINGSIZE = 32 * 1024 * 1024  # 32 Megabytes before rotating files
+
+# Tests runner is default tests runner
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 LOGGING = {
     'version': 1,

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2015 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,18 +32,51 @@
 '''
 from __future__ import unicode_literals
 
-import sys
+import requests
+from . import VERSION
+
+import json
+import six
+import urllib
 
 
-LINUX = 'Linux'
-WINDOWS = 'Windows'
-MAC_OS_X = 'Mac os x'
+from .log import logger
+
+class RetryException(Exception):
+    pass
 
 
-def getOs():
-    if sys.platform.startswith('linux'):
-        return LINUX
-    elif sys.platform.startswith('win'):
-        return WINDOWS
-    elif sys.platform.startswith('darwin'):
-        return MAC_OS_X
+class RestRequest(object):
+
+    restApiUrl = ''
+
+    def __init__(self, restURL):  # parent not used
+        super(RestRequest, self).__init__()
+        self.restApiUrl = restURL
+
+    def get(self, url, params=None):
+        url = self.restApiUrl + url
+        if params is not None:
+            url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())
+
+        logger.debug('Requesting {}'.format(url))
+        try:
+            r = requests.get(url, headers={'Content-type': 'application/json'})
+        except requests.exceptions.ConnectionError as e:
+            raise Exception('Error connecting to UDS Server at {}'.format(self.restApiUrl[0:-11]))
+
+        if r.ok:
+            logger.debug('Request was OK. {}'.format(r.text))
+            data = json.loads(r.text)
+            if not 'error' in data:
+                return data['result']
+            # Has error
+            if data.get('retryable', '0') == '1':
+                raise RetryException(data['error'])
+
+            raise Exception(data['error'])
+        else:
+            logger.error('Error requesting {}: {}, {}'.format(url, r.code. r.text))
+            raise Exception('Error {}: {}'.format(r.code, r.text))
+
+        return data

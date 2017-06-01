@@ -1,3 +1,5 @@
 base
 #add your own dependancies to this file, base should always be included.
 python
+pygtk
+freerdp

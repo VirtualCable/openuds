@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-from django.db import models
+from django.db import models, transaction
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -62,7 +62,7 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2017-05-10'
+__updated__ = '2017-05-19'
 
 
 logger = logging.getLogger(__name__)
@@ -335,6 +335,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         Args:
             activePub: Active publication used as "current" publication to make checks
         '''
+        logger.debug('Marking old user services as removable...')
         now = getSqlDatetime()
         if activePub is None:
             logger.error('No active publication, don\'t know what to erase!!! (ds = {0})'.format(self))
@@ -342,8 +343,9 @@ class DeployedService(UUIDModel, TaggingMixin):
         for ap in self.publications.exclude(id=activePub.id):
             for u in ap.userServices.filter(state=states.userService.PREPARING):
                 u.cancel()
-            ap.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(state=states.userService.REMOVABLE, state_date=now)
-            ap.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
+            with transaction.atomic():
+                ap.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(state=states.userService.REMOVABLE, state_date=now)
+                ap.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
 
     def validateGroups(self, grps):
         '''

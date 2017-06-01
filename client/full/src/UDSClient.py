@@ -32,10 +32,12 @@
 '''
 from __future__ import unicode_literals
 
-from PyQt4 import QtCore, QtGui  # @UnresolvedImport
+import sys
+from PyQt4 import QtCore, QtGui
+import six
 
 from uds.rest import RestRequest
-from uds.forward import forward  # @UnusedImport
+from uds.forward import forward
 from uds.log import logger
 from uds import tools
 from uds import VERSION
@@ -308,7 +310,7 @@ if __name__ == "__main__":
 
     # Setup REST api endpoint
     RestRequest.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
-    logger.debug('Setting requert URL to {}'.format(RestRequest.restApiUrl))
+    logger.debug('Setting request URL to {}'.format(RestRequest.restApiUrl))
     # RestRequest.restApiUrl = 'https://172.27.0.1/rest/client'
 
     try:

@@ -68,7 +68,7 @@
           <select multiple name="groups" class="selectpicker show-menu-arrow show-tick modal_field_data" data-style="btn-default" data-width="100%" id="id_state">
             {{# each groups_all }}
             {{# ifequals type 'group' }}
-                <option value="{{ id }}"{{# ifbelongs id ../groups }} selected{{/ ifbelongs}}>{{ name }}</option>
+                <option value="{{ id }}"{{# ifbelongs id ../groups }} selected{{/ ifbelongs}}>{{ name }} ({{ comments }})</option>
             {{/ ifequals }}
             {{/ each }}
           </select>

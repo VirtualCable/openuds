@@ -26,24 +26,16 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
-
 import sys
+from uds.log import logger
 
+def message(title, message):
+    sys.stderr.write("** {} **\n {}\n".format(title, message))
 
-LINUX = 'Linux'
-WINDOWS = 'Windows'
-MAC_OS_X = 'Mac os x'
-
-
-def getOs():
-    if sys.platform.startswith('linux'):
-        return LINUX
-    elif sys.platform.startswith('win'):
-        return WINDOWS
-    elif sys.platform.startswith('darwin'):
-        return MAC_OS_X
+def question(title, message):
+    sys.stderr.write("** {} **\n{}\nReturned YES\n".format(title, message))
+    return True

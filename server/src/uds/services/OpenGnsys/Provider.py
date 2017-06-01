@@ -48,7 +48,7 @@ import logging
 import six
 
 
-__updated__ = '2017-05-18'
+__updated__ = '2017-05-23'
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +98,7 @@ class OGProvider(ServiceProvider):
     checkCert = gui.CheckBoxField(label=_('Check Cert.'), order=3, tooltip=_('If checked, ssl certificate of OpenGnsys server must be valid, not self signed)'))
     username = gui.TextField(length=32, label=_('Username'), order=4, tooltip=_('User with valid privileges on OpenGnsys'), required=True)
     password = gui.PasswordField(lenth=32, label=_('Password'), order=5, tooltip=_('Password of the user of OpenGnsys'), required=True)
+    udsServerAccessUrl = gui.TextField(length=32, label=_('UDS Server URL'), order=6, tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'), required=False, tab=gui.PARAMETERS_TAB)
 
     maxPreparingServices = gui.NumericField(length=3, label=_('Creation concurrency'), defvalue='10', minValue=1, maxValue=65536, order=50, tooltip=_('Maximum number of concurrently creating VMs'), required=True, tab=gui.ADVANCED_TAB)
     maxRemovingServices = gui.NumericField(length=3, label=_('Removal concurrency'), defvalue='5', minValue=1, maxValue=65536, order=51, tooltip=_('Maximum number of concurrently removing VMs'), required=True, tab=gui.ADVANCED_TAB)
@@ -122,7 +123,6 @@ class OGProvider(ServiceProvider):
     @property
     def endpoint(self):
         return 'https://{}:{}/rest'.format(self.host.value, self.port.value)
-
 
     @property
     def api(self):

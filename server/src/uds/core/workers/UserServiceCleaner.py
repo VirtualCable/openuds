@@ -65,7 +65,8 @@ class UserServiceInfoItemsCleaner(Job):
 
 
 class UserServiceRemover(Job):
-    frecuency = GlobalConfig.REMOVAL_CHECK.getInt()  # Request run cache "info" cleaner every configued seconds. If config value is changed, it will be used at next reload
+    frecuency = 31
+    frecuency_cfg = GlobalConfig.REMOVAL_CHECK  # Request run cache "info" cleaner every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'User Service Cleaner'
 
     removeAtOnce = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()  # Same, it will work at reload
@@ -74,10 +75,12 @@ class UserServiceRemover(Job):
         super(UserServiceRemover, self).__init__(environment)
 
     def run(self):
-        removeFrom = getSqlDatetime() - timedelta(seconds=10)  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
-        removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom,
-                                                deployed_service__service__provider__maintenance_mode=False)[0:UserServiceRemover.removeAtOnce]
+        with transaction.atomic():
+            removeFrom = getSqlDatetime() - timedelta(seconds=10)  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
+            removables = UserService.objects.filter(state=State.REMOVABLE, state_date__lt=removeFrom,
+                                                    deployed_service__service__provider__maintenance_mode=False)[0:UserServiceRemover.removeAtOnce]
         for us in removables:
+            logger.debug('Checking removal of {}'.format(us))
             try:
                 if managers.userServiceManager().canRemoveServiceFromDeployedService(us.deployed_service) is True:
                     managers.userServiceManager().remove(us)

@@ -26,24 +26,19 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from __future__ import unicode_literals
 
-import sys
+try:
+    import gtkui as theUI
+except Exception:
+    import consoleui as theUI
 
+def message(title, message):
+    theUI.message(title, message)
 
-LINUX = 'Linux'
-WINDOWS = 'Windows'
-MAC_OS_X = 'Mac os x'
+def question(title, message):
+    return theUI.question(title, message)
 
-
-def getOs():
-    if sys.platform.startswith('linux'):
-        return LINUX
-    elif sys.platform.startswith('win'):
-        return WINDOWS
-    elif sys.platform.startswith('darwin'):
-        return MAC_OS_X
