@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-13 18:26+0200\n"
+"POT-Creation-Date: 2017-06-01 10:25+0200\n"
 "PO-Revision-Date: 2017-02-01 23:19+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
@@ -106,129 +106,129 @@ msgstr "Erro de pesquisa"
 msgid "Accept"
 msgstr "Aceitar"
 
-#: static/tmp_js/gui-d-authenticators.js:148
+#: static/tmp_js/gui-d-authenticators.js:151
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
 #: static/tmp_js/gui-d-services.js:86 static/tmp_js/gui-d-services.js:128
 #: static/tmp_js/gui-d-servicespools.js:220
 msgid "Error accessing data"
 msgstr "Erro ao acessar dados"
 
-#: static/tmp_js/gui-d-authenticators.js:165
-#: static/tmp_js/gui-d-authenticators.js:392
+#: static/tmp_js/gui-d-authenticators.js:168
+#: static/tmp_js/gui-d-authenticators.js:395
 #: static/tmp_js/gui-d-services.js:108
 msgid "Information"
 msgstr "Informações"
 
-#: static/tmp_js/gui-d-authenticators.js:193
+#: static/tmp_js/gui-d-authenticators.js:196
 msgid "Group information"
 msgstr "Informações do grupo"
 
-#: static/tmp_js/gui-d-authenticators.js:309
+#: static/tmp_js/gui-d-authenticators.js:312
 msgid "Edit group"
 msgstr "Editar grupo"
 
-#: static/tmp_js/gui-d-authenticators.js:331
-#: static/tmp_js/gui-d-authenticators.js:374
+#: static/tmp_js/gui-d-authenticators.js:334
+#: static/tmp_js/gui-d-authenticators.js:377
 msgid "Group saved"
 msgstr "Grupo salvou"
 
-#: static/tmp_js/gui-d-authenticators.js:352
+#: static/tmp_js/gui-d-authenticators.js:355
 msgid "New meta group"
 msgstr "Novo grupo meta"
 
-#: static/tmp_js/gui-d-authenticators.js:354
+#: static/tmp_js/gui-d-authenticators.js:357
 msgid "New group"
 msgstr "Novo grupo"
 
-#: static/tmp_js/gui-d-authenticators.js:366
+#: static/tmp_js/gui-d-authenticators.js:369
 msgid "Search groups"
 msgstr "Grupos de pesquisa"
 
-#: static/tmp_js/gui-d-authenticators.js:366
+#: static/tmp_js/gui-d-authenticators.js:369
 #: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:85
 msgid "Group"
 msgstr "Grupo"
 
-#: static/tmp_js/gui-d-authenticators.js:366
+#: static/tmp_js/gui-d-authenticators.js:369
 msgid "Groups found"
 msgstr "Grupos encontrados"
 
-#: static/tmp_js/gui-d-authenticators.js:375
+#: static/tmp_js/gui-d-authenticators.js:378
 msgid "Group saving error"
 msgstr "Grupo salvando o erro"
 
-#: static/tmp_js/gui-d-authenticators.js:387
+#: static/tmp_js/gui-d-authenticators.js:390
 msgid "Delete group"
 msgstr "Apagar grupo"
 
-#: static/tmp_js/gui-d-authenticators.js:387
+#: static/tmp_js/gui-d-authenticators.js:390
 msgid "Group deletion error"
 msgstr "Erro de exclusão do grupo"
 
-#: static/tmp_js/gui-d-authenticators.js:416
+#: static/tmp_js/gui-d-authenticators.js:419
 msgid "User information"
 msgstr "Informações do usuário"
 
-#: static/tmp_js/gui-d-authenticators.js:565
+#: static/tmp_js/gui-d-authenticators.js:568
 msgid "Edit user"
 msgstr "Editar usuário"
 
-#: static/tmp_js/gui-d-authenticators.js:597
-#: static/tmp_js/gui-d-authenticators.js:628
+#: static/tmp_js/gui-d-authenticators.js:600
+#: static/tmp_js/gui-d-authenticators.js:631
 msgid "User saved"
 msgstr "Usuário salvado"
 
-#: static/tmp_js/gui-d-authenticators.js:598
-#: static/tmp_js/gui-d-authenticators.js:629
+#: static/tmp_js/gui-d-authenticators.js:601
+#: static/tmp_js/gui-d-authenticators.js:632
 msgid "User saving error"
 msgstr "Usuário salvar o erro"
 
-#: static/tmp_js/gui-d-authenticators.js:609
+#: static/tmp_js/gui-d-authenticators.js:612
 msgid "New user"
 msgstr "Novo usuário"
 
-#: static/tmp_js/gui-d-authenticators.js:620
+#: static/tmp_js/gui-d-authenticators.js:623
 msgid "Search users"
 msgstr "Pesquisar usuários"
 
-#: static/tmp_js/gui-d-authenticators.js:620
+#: static/tmp_js/gui-d-authenticators.js:623
 #: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:82
 msgid "User"
 msgstr "Usuário"
 
-#: static/tmp_js/gui-d-authenticators.js:620
+#: static/tmp_js/gui-d-authenticators.js:623
 msgid "Users found"
 msgstr "Usuários encontrados"
 
-#: static/tmp_js/gui-d-authenticators.js:634
+#: static/tmp_js/gui-d-authenticators.js:637
 msgid "Delete user"
 msgstr "Excluir usuário"
 
-#: static/tmp_js/gui-d-authenticators.js:634
+#: static/tmp_js/gui-d-authenticators.js:637
 msgid "User deletion error"
 msgstr "Erro de exclusão de usuário"
 
-#: static/tmp_js/gui-d-authenticators.js:645
+#: static/tmp_js/gui-d-authenticators.js:648
 msgid "New authenticator"
 msgstr "Novo autenticador"
 
-#: static/tmp_js/gui-d-authenticators.js:645
+#: static/tmp_js/gui-d-authenticators.js:648
 msgid "Authenticator creation error"
 msgstr "Erro de criação do autenticador"
 
-#: static/tmp_js/gui-d-authenticators.js:646
+#: static/tmp_js/gui-d-authenticators.js:649
 msgid "Edit authenticator"
 msgstr "Editar autenticador"
 
-#: static/tmp_js/gui-d-authenticators.js:646
+#: static/tmp_js/gui-d-authenticators.js:649
 msgid "Authenticator saving error"
 msgstr "Autenticador salvando o erro"
 
-#: static/tmp_js/gui-d-authenticators.js:647
+#: static/tmp_js/gui-d-authenticators.js:650
 msgid "Delete authenticator"
 msgstr "Excluir o autenticador"
 
-#: static/tmp_js/gui-d-authenticators.js:647
+#: static/tmp_js/gui-d-authenticators.js:650
 msgid "Authenticator deletion error"
 msgstr "Erro de exclusão do autenticador"
 
@@ -1047,6 +1047,6 @@ msgstr "Por favor, insira um valor maior ou igual a {0}."
 msgid "Contacting service..."
 msgstr "Entrar em contato com o serviço..."
 
-#: static/tmp_js/uds-client.js:184
+#: static/tmp_js/uds-client.js:187
 msgid "Error accessing service: "
 msgstr "Erro ao acessar o serviço: "

@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-13 18:25+0200\n"
-"PO-Revision-Date: 2017-05-09 08:15+0000\n"
+"POT-Creation-Date: 2017-06-01 10:25+0200\n"
+"PO-Revision-Date: 2017-05-16 09:46+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -895,7 +895,7 @@ msgid "Authenticate against Active Directory"
 msgstr "Autenticar contra Active Directory"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:73
-#: auths/ActiveDirectory_enterprise/Authenticator.py:465
+#: auths/ActiveDirectory_enterprise/Authenticator.py:468
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr ""
 "Debe especificar el nombre de usuario con este formato: "
@@ -905,8 +905,8 @@ msgstr ""
 msgid "Active directory connection error: "
 msgstr "Error de conexión de Active Directory: "
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:361
-#: auths/ActiveDirectory_enterprise/Authenticator.py:409
+#: auths/ActiveDirectory_enterprise/Authenticator.py:363
+#: auths/ActiveDirectory_enterprise/Authenticator.py:411
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
 #: auths/RegexLdap/Authenticator.py:315 auths/RegexLdap/Authenticator.py:356
@@ -914,41 +914,41 @@ msgstr "Error de conexión de Active Directory: "
 msgid "Username not found"
 msgstr "Nombre de usuario no encontrado"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:394
+#: auths/ActiveDirectory_enterprise/Authenticator.py:396
 #: auths/SimpleLDAP/Authenticator.py:314
 msgid "Group not found"
 msgstr "Grupo no encontrado"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:429
-#: auths/ActiveDirectory_enterprise/Authenticator.py:447
+#: auths/ActiveDirectory_enterprise/Authenticator.py:431
+#: auths/ActiveDirectory_enterprise/Authenticator.py:450
 #: auths/EDirectory_enterprise/Authenticator.py:305
 #: auths/RegexLdap/Authenticator.py:378 auths/SimpleLDAP/Authenticator.py:341
 #: auths/SimpleLDAP/Authenticator.py:357
 msgid "Too many results, be more specific"
 msgstr "Demasiados resultados, sea más específico"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:474
+#: auths/ActiveDirectory_enterprise/Authenticator.py:477
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Dominio parece incorrecto, por favor compruébelo"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:479
+#: auths/ActiveDirectory_enterprise/Authenticator.py:482
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de usuario)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:487
+#: auths/ActiveDirectory_enterprise/Authenticator.py:490
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de grupo)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:495
+#: auths/ActiveDirectory_enterprise/Authenticator.py:498
 msgid ""
 "Server does not seem an Active Directory (it does not have any user nor "
 "groups)"
 msgstr ""
 "Servidor no parece un Active Directory (no tiene ni usuarios ni grupos)"
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:500
+#: auths/ActiveDirectory_enterprise/Authenticator.py:503
 #: auths/EDirectory_enterprise/Authenticator.py:360
 #: auths/RegexLdap/Authenticator.py:437 auths/SimpleLDAP/Authenticator.py:435
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1695,7 +1695,7 @@ msgstr "No hay ningún autenticador disponibles para iniciar sesión"
 msgid "The authenticator {0} is not usable"
 msgstr "El autenticador {0} no se puede usar"
 
-#: dispatchers/wyse_enterprise/views.py:135 web/views/login.py:117
+#: dispatchers/wyse_enterprise/views.py:135 web/views/login.py:119
 msgid "Invalid credentials"
 msgstr "Credenciales no válidas"
 
@@ -4428,12 +4428,12 @@ msgid "If checked, desktop composition will be allowed"
 msgstr "Si está marcada, se permitirá la composición de escritorio"
 
 #: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "Font Smoothing"
 msgstr "Suavizado de fuentes"
 
 #: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Si está marcada, se permitirá el suavizado de fuentes (sólo clientes windows)"
@@ -4589,7 +4589,7 @@ msgstr ""
 "HOST: PUERTO)"
 
 #: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:99
-#: transports/RDS_enterprise/TRDSTransport.py:91
+#: transports/RDS_enterprise/TRDSTransport.py:92
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4679,31 +4679,35 @@ msgstr ""
 "(sólo funciona en clientes Windows)"
 
 #: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "Credssp Support"
 msgstr "Soporte CredSSP"
 
 #: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Si está marcada, permitirá el soporte de proveedor de credenciales)"
 
 #: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "Multimedia sync"
 msgstr "Sincronización multimedia"
 
 #: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Si está marcada, el cliente Linux usará el parámetro multimedia para xfreerdp"
 
 #: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid "Use Alsa"
 msgstr "Use ALSA"
 
 #: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
@@ -4711,24 +4715,24 @@ msgstr ""
 "usará Pulse"
 
 #: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid "Printer string"
 msgstr "Cadena de impresora"
 
 #: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si la impresora está activada, la cadena de impresora utilizadada con el "
 "cliente xfreerdp"
 
 #: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:79
 msgid "Smartcard string"
 msgstr "Cadena de tarjeta inteligente"
 
 #: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:79
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si la smartcard está activada, la cadena de smartcard utilizada con el "
@@ -4900,7 +4904,6 @@ msgstr ""
 "este archivo)."
 
 #: transports/SPICE/BaseSPICETransport.py:92
-#| msgid "Full Screen"
 msgid "Fullscreen Mode"
 msgstr "Modo de pantalla completa"
 
@@ -4919,7 +4922,6 @@ msgstr ""
 "Si está marcada, protocolo SPICE permite redirección de tarjeta inteligente."
 
 #: transports/SPICE/BaseSPICETransport.py:105
-#| msgid "Enabled"
 msgid "Enable USB"
 msgstr "Habilitar USB"
 
