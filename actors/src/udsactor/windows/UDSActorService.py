@@ -40,6 +40,7 @@ import win32event  # @UnresolvedImport, pylint: disable=import-error
 import win32com.client  # @UnresolvedImport,  @UnusedImport, pylint: disable=import-error
 import pythoncom  # @UnresolvedImport, pylint: disable=import-error
 import servicemanager  # @UnresolvedImport, pylint: disable=import-error
+import subprocess
 import os
 
 from udsactor import operations
@@ -55,6 +56,8 @@ from .SENS import SENSGUID_EVENTCLASS_LOGON
 from .SENS import SENSGUID_PUBLISHER
 from .SENS import PROGID_EventSubscription
 from .SENS import PROGID_EventSystem
+
+POST_CMD = 'c:\\windows\post-uds.bat'
 
 
 class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
@@ -295,6 +298,17 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         event_system.Store(PROGID_EventSubscription, event_subscription)
 
         logger.debug('Registered SENS, running main loop')
+
+        # Execute script in c:\\windows\\post-uds.bat after interacting with broker, if no reboot is requested ofc
+        # This will be executed only when machine gets "ready"
+        try:
+            if os.path.isfile(POST_CMD):
+                subprocess.call([POST_CMD, ])
+            else:
+                logger.info('POST file not found & not executed')
+        except Exception as e:
+            # Ignore output of execution command
+            logger.error('Executing post command give')
 
         # *********************
         # * Main Service loop *
