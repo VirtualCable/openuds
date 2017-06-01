@@ -33,7 +33,7 @@ from __future__ import unicode_literals
 
 from uds import ui
 from uds import browser
-from uds.rest import RestRequest
+from uds.rest import RestRequest, RetryException
 from uds.forward import forward
 from uds import VERSION
 from uds.log import logger  # @UnresolvedImport
@@ -78,6 +78,16 @@ def approveHost(host):
     return approved
 
 
+def getWithRetry(rest, url):
+    while True:
+        try:
+            res = rest.get(url)
+            return res
+        except RetryException as e:
+            if ui.question('Service not available', '{}\nPlease, wait a minute and press "OK" to retry, or CANCEL to abort') is True:
+                continue
+            raise Exception('Cancelled by user')
+
 
 if __name__ == "__main__":
     logger.debug('Initializing connector')
@@ -113,16 +123,18 @@ if __name__ == "__main__":
     # Main requests part
     # First, get version
     try:
-        res = rest.get('')['result']
+        res = getWithRetry(rest, '')
+
         if res['requiredVersion'] > VERSION:
             ui.message("New UDS Client available", "A new uds version is needed in order to access this version of UDS. A browser will be openend for this download.")
             webbrowser.open(res['downloadUrl'])
             sys.exit(1)
 
         # Now get ticket
-        res = rest.get('/{}/{}'.format(ticket, scrambler), params={'hostname': tools.getHostName(), 'version': VERSION})
+        res = getWithRetry(rest, '/{}/{}'.format(ticket, scrambler), params={'hostname': tools.getHostName(), 'version': VERSION})
 
-    except KeyError as e:
-        logger.error('Got an exception access RESULT: {}'.format(e))
     except Exception as e:
-        logger.error('Got an unexpected exception: {}'.format(e))
+        error = 'ERROR: {}'.format(e)
+        logger.error(error)
+        ui.message('Error', error)
+        sys.exit(2)

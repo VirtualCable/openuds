@@ -50,7 +50,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2017-04-19'
+__updated__ = '2017-06-01'
 
 # Allow cross-domain login
 # @csrf_exempt
@@ -93,6 +93,8 @@ def login(request, tag=None):
             except Exception:
                 authenticator = Authenticator()
             userName = form.cleaned_data['user']
+            if GlobalConfig.LOWERCASE_USERNAME.getBool(True) is True:
+                userName = userName.lower()
 
             cache = Cache('auth')
             cacheKey = str(authenticator.id) + userName

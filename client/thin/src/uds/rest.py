@@ -39,7 +39,12 @@ import json
 import six
 import urllib
 
+
 from .log import logger
+
+class RetryException(Exception):
+    pass
+
 
 class RestRequest(object):
 
@@ -54,19 +59,24 @@ class RestRequest(object):
         if params is not None:
             url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())
 
+        logger.debug('Requesting {}'.format(url))
         try:
-            logger.debug('Requesting {}'.format(url))
             r = requests.get(url, headers={'Content-type': 'application/json'})
-            if r.ok:
-                logger.debug('Request was OK. {}'.format(r.text))
-                data = json.loads(r.text)
-            else:
-                logger.error('Error requesting {}: {}, {}'.format(url, r.code. r.text))
-                raise Exception('Error {}: {}'.format(r.code, r.text))
-        except Exception as e:
-            data = {
-                'result': None,
-                'error': six.text_type(e)
-            }
+        except requests.exceptions.ConnectionError as e:
+            raise Exception('Error connecting to UDS Server at {}'.format(self.restApiUrl[0:-11]))
+
+        if r.ok:
+            logger.debug('Request was OK. {}'.format(r.text))
+            data = json.loads(r.text)
+            if not 'error' in data:
+                return data['result']
+            # Has error
+            if data.get('retryable', '0') == '1':
+                raise RetryException(data['error'])
+
+            raise Exception(data['error'])
+        else:
+            logger.error('Error requesting {}: {}, {}'.format(url, r.code. r.text))
+            raise Exception('Error {}: {}'.format(r.code, r.text))
 
         return data
