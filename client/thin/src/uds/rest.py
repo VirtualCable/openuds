@@ -50,9 +50,12 @@ class RestRequest(object):
 
     restApiUrl = ''
 
-    def __init__(self, restURL):  # parent not used
+    def __init__(self, host, ssl=True):  # parent not used
         super(RestRequest, self).__init__()
-        self.restApiUrl = restURL
+
+        self.host = host
+        self.ssl = ssl
+        self.restApiUrl = RestRequest('{}://{}/rest/client'.format(['http', 'https'][ssl], host))
 
     def get(self, url, params=None):
         url = self.restApiUrl + url

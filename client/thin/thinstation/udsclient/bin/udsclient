@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd /lib/UDSClient
+exec python UDSClient.pyc $@

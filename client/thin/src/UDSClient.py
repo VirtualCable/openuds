@@ -117,7 +117,7 @@ if __name__ == "__main__":
         ui.message('UDS Client', 'UDS Client Version {}'.format(VERSION))
         sys.exit(1)
 
-    rest = RestRequest('{}://{}/rest/client'.format(['http', 'https'][ssl], host))
+    rest = RestRequest(host, ssl)
     logger.debug('Setting request URL to {}'.format(rest.restApiUrl))
 
     # Main requests part
