@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-03-20'
+__updated__ = '2017-06-05'
 
 
 class RDPFile(object):
@@ -68,6 +68,7 @@ class RDPFile(object):
     printerString = None
     smartcardString = None
     enablecredsspsupport = False
+    linuxCustomParameters = None
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
         self.width = six.text_type(width)
@@ -144,6 +145,9 @@ class RDPFile(object):
             params.append('/p:{}'.format(self.password))
         if self.domain != '':
             params.append('/d:{}'.format(self.domain))
+
+        if self.linuxCustomParameters is not None and self.linuxCustomParameters.strip() != '':
+            params.append(self.linuxCustomParameters.strip())
 
         return params
 

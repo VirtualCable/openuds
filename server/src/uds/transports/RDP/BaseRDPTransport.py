@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2017-03-31'
+__updated__ = '2017-06-05'
 
 
 logger = logging.getLogger(__name__)
@@ -76,6 +76,7 @@ class BaseRDPTransport(Transport):
     alsa = gui.CheckBoxField(label=_('Use Alsa'), order=26, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
     printerString = gui.TextField(label=_('Printer string'), order=27, tooltip=_('If printer is checked, the printer string used with xfreerdp client'), tab='Linux Client')
     smartcardString = gui.TextField(label=_('Smartcard string'), order=28, tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'), tab='Linux Client')
+    customParameters = gui.TextField(label=_('Custom parameters'), order=29, tooltip=_('If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'), tab='Linux Client')
 
     def isAvailableFor(self, userService, ip):
         '''

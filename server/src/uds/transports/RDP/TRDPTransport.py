@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-03-20'
+__updated__ = '2017-06-05'
 
 
 logger = logging.getLogger(__name__)
@@ -92,6 +92,7 @@ class TRDPTransport(BaseRDPTransport):
     alsa = BaseRDPTransport.alsa
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
+    customParameters = BaseRDPTransport.customParameters
 
     def initialize(self, values):
         if values is not None:
@@ -133,6 +134,7 @@ class TRDPTransport(BaseRDPTransport):
         r.alsa = self.alsa.isTrue()
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
+        r.linuxCustomParameters = self.customParameters.value
 
         # data
         data = {

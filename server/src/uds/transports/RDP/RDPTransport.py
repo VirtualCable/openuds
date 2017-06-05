@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-03-20'
+__updated__ = '2017-06-05'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -74,6 +74,7 @@ class RDPTransport(BaseRDPTransport):
     alsa = BaseRDPTransport.alsa
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
+    customParameters = BaseRDPTransport.customParameters
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
@@ -103,6 +104,7 @@ class RDPTransport(BaseRDPTransport):
         r.alsa = self.alsa.isTrue()
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
+        r.linuxCustomParameters = self.customParameters.value
 
         # data
         data = {
