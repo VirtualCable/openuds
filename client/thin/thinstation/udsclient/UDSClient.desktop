@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=UDSClient
+Comment=UDS Helper
+Keywords=uds;client;vdi;
+Exec=/bin/udsclient %u
+Icon=help-browser
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Utility;
+MimeType=x-scheme-handler/uds;x-scheme-handler/udss;

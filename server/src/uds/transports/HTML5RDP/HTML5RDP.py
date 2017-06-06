@@ -76,9 +76,10 @@ class HTML5RDPTransport(Transport):
     wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=20, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.PARAMETERS_TAB)
     desktopComp = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=22, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
     smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=23, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
-    enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=7, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
-    enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=8, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
-    serverLayout = gui.ChoiceField(order=9,
+    enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=24, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
+    enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=25, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
+    # enableFileShare = gui.CheckBoxField(label=_('Enable File Sharing'), order=8, tooltip=_('If checked, the user will be able to upload/download files (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
+    serverLayout = gui.ChoiceField(order=26,
         label=_('Layout'),
         tooltip=_('Keyboards Layout of server'),
         required=True,
@@ -91,6 +92,19 @@ class HTML5RDPTransport(Transport):
             gui.choiceItem('failsafe', _('Failsafe')),
         ],
         defvalue='-',
+        tab=gui.PARAMETERS_TAB
+    )
+    security = gui.ChoiceField(order=27,
+        label=_('Security'),
+        tooltip=_('Connection security mode for Guacamole RDP connection'),
+        required=True,
+        values=[
+            gui.choiceItem('any', _('Any (Allow the server to choose the type of auth)')),
+            gui.choiceItem('rdp', _('RDP (Standard RDP encryption. Should be supported by all servers)')),
+            gui.choiceItem('nla', _('NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)')),
+            gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
+        ],
+        defvalue='any',
         tab=gui.PARAMETERS_TAB
     )
 
@@ -168,9 +182,15 @@ class HTML5RDPTransport(Transport):
             'hostname': ip,
             'username': username,
             'password': password,
-            'ignore-cert': 'true'
-
+            'ignore-cert': 'true',
+            'security': self.security.value,
+            'drive-path': '/share/{}'.format(user.uuid),
+            'create-drive-path': 'true'
         }
+
+        # if self.enableFileSharing.isTrue():
+        #    params['enable-drive'] = self.serverLayout.value
+
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
 
