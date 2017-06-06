@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-01 10:25+0200\n"
-"PO-Revision-Date: 2017-05-13 16:26+0000\n"
+"POT-Creation-Date: 2017-06-06 13:14+0200\n"
+"PO-Revision-Date: 2017-06-06 11:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -4432,39 +4432,69 @@ msgstr ""
 "Se selezionata, la stampa verrà reindirizzata al client (se browser client "
 "lo supporta)"
 
-#: transports/HTML5RDP/HTML5RDP.py:83
+#: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Layout"
 msgstr "Layout"
 
-#: transports/HTML5RDP/HTML5RDP.py:84
+#: transports/HTML5RDP/HTML5RDP.py:85
 msgid "Keyboards Layout of server"
 msgstr "Layout di tastiera del server"
 
-#: transports/HTML5RDP/HTML5RDP.py:87
+#: transports/HTML5RDP/HTML5RDP.py:88
 msgid "English (US) keyboard"
 msgstr "Tastiera inglese (Stati Uniti)"
 
-#: transports/HTML5RDP/HTML5RDP.py:88
+#: transports/HTML5RDP/HTML5RDP.py:89
 msgid "German keyboard (qwertz)"
 msgstr "Tastiera tedesca (qwertz)"
 
-#: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDP/HTML5RDP.py:90
 msgid "French keyboard (azerty)"
 msgstr "Tastiera francese (azerty)"
 
-#: transports/HTML5RDP/HTML5RDP.py:90
+#: transports/HTML5RDP/HTML5RDP.py:91
 msgid "Italian keyboard"
 msgstr "Tastiera italiana"
 
-#: transports/HTML5RDP/HTML5RDP.py:91
+#: transports/HTML5RDP/HTML5RDP.py:92
 msgid "Swedish keyboard"
 msgstr "Tastiera svedese"
 
-#: transports/HTML5RDP/HTML5RDP.py:92
+#: transports/HTML5RDP/HTML5RDP.py:93
 msgid "Failsafe"
 msgstr "Failsafe"
 
+#: transports/HTML5RDP/HTML5RDP.py:99
+msgid "Security"
+msgstr "Sicurezza"
+
+#: transports/HTML5RDP/HTML5RDP.py:100
+msgid "Connection security mode for Guacamole RDP connection"
+msgstr "Modalità di protezione di connessione per la connessione RDP Guacamole"
+
+#: transports/HTML5RDP/HTML5RDP.py:103
+msgid "Any (Allow the server to choose the type of auth)"
+msgstr ""
+"Qualsiasi (consentire al server di scegliere il tipo di autenticazione)"
+
 #: transports/HTML5RDP/HTML5RDP.py:104
+msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
+msgstr ""
+"RDP (crittografia Standard RDP. Dovrebbe essere supportato da tutti i server)"
+
+#: transports/HTML5RDP/HTML5RDP.py:105
+msgid ""
+"NLA (Network Layer authentication. Requires VALID username&password, or "
+"connection will fail)"
+msgstr ""
+"NLA (autenticazione di livello di rete. Richiede nome utente valido & "
+"password, o connessione avrà esito negativo)"
+
+#: transports/HTML5RDP/HTML5RDP.py:106
+msgid "TLS (Transport Security Layer encryption)"
+msgstr "TLS (Transport Layer Security cifratura)"
+
+#: transports/HTML5RDP/HTML5RDP.py:118
 msgid "The server must be http or https"
 msgstr "Il server deve essere http o https"
 
@@ -4558,8 +4588,8 @@ msgstr ""
 "in esecuzione prima di assegnandolo all'utente. (utilizzare il formato HOST: "
 "PORT)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:99
-#: transports/RDS_enterprise/TRDSTransport.py:92
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:100
+#: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4705,6 +4735,20 @@ msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Se è selezionata la smartcard, la stringa di smart card utilizzata con "
 "xfreerdp client"
+
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
+msgid "Custom parameters"
+msgstr "Parametri personalizzati"
+
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
+msgid ""
+"If not empty, extra parameter to include for Linux Client (for example /usb:"
+"id,dev:054c:0268, or aything compatible with your xfreerdp client)"
+msgstr ""
+"Se parametro non vuoto, extra per includere per Linux Client (ad esempio/USB:"
+"ID, dev:054 c: 0268, o aything compatibile con il tuo client di xfreerdp)"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"

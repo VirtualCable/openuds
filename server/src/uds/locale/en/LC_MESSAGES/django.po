@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-01 10:25+0200\n"
+"POT-Creation-Date: 2017-06-06 13:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4269,39 +4269,65 @@ msgid ""
 "supports it)"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:83
+#: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Layout"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:84
+#: transports/HTML5RDP/HTML5RDP.py:85
 msgid "Keyboards Layout of server"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:87
+#: transports/HTML5RDP/HTML5RDP.py:88
 msgid "English (US) keyboard"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:88
+#: transports/HTML5RDP/HTML5RDP.py:89
 msgid "German keyboard (qwertz)"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDP/HTML5RDP.py:90
 msgid "French keyboard (azerty)"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:90
+#: transports/HTML5RDP/HTML5RDP.py:91
 msgid "Italian keyboard"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:91
+#: transports/HTML5RDP/HTML5RDP.py:92
 msgid "Swedish keyboard"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:92
+#: transports/HTML5RDP/HTML5RDP.py:93
 msgid "Failsafe"
 msgstr ""
 
+#: transports/HTML5RDP/HTML5RDP.py:99
+msgid "Security"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:100
+msgid "Connection security mode for Guacamole RDP connection"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:103
+msgid "Any (Allow the server to choose the type of auth)"
+msgstr ""
+
 #: transports/HTML5RDP/HTML5RDP.py:104
+msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:105
+msgid ""
+"NLA (Network Layer authentication. Requires VALID username&password, or "
+"connection will fail)"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:106
+msgid "TLS (Transport Security Layer encryption)"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:118
 msgid "The server must be http or https"
 msgstr ""
 
@@ -4390,8 +4416,8 @@ msgid ""
 "assigning it to user. (use HOST:PORT format)"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:99
-#: transports/RDS_enterprise/TRDSTransport.py:92
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:100
+#: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4520,6 +4546,18 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:79
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
+msgid "Custom parameters"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
+msgid ""
+"If not empty, extra parameter to include for Linux Client (for example /usb:"
+"id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:55
