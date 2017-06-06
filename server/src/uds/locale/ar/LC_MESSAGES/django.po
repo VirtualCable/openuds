@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-01 10:25+0200\n"
-"PO-Revision-Date: 2017-05-13 16:26+0000\n"
+"POT-Creation-Date: 2017-06-06 13:14+0200\n"
+"PO-Revision-Date: 2017-06-06 11:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -4364,39 +4364,69 @@ msgid ""
 msgstr ""
 "إذا تحققت، سيتم إعادة توجيه الطباعة إلى العميل (إذا مستعرض العميل يعتمد عليه)"
 
-#: transports/HTML5RDP/HTML5RDP.py:83
+#: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Layout"
 msgstr "نسق"
 
-#: transports/HTML5RDP/HTML5RDP.py:84
+#: transports/HTML5RDP/HTML5RDP.py:85
 msgid "Keyboards Layout of server"
 msgstr "لوحات مفاتيح الخادم."
 
-#: transports/HTML5RDP/HTML5RDP.py:87
+#: transports/HTML5RDP/HTML5RDP.py:88
 msgid "English (US) keyboard"
 msgstr "الإنجليزية (الولايات المتحدة) لوحة المفاتيح"
 
-#: transports/HTML5RDP/HTML5RDP.py:88
+#: transports/HTML5RDP/HTML5RDP.py:89
 msgid "German keyboard (qwertz)"
 msgstr "لوحة المفاتيح الألمانية (QWERTZ)"
 
-#: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDP/HTML5RDP.py:90
 msgid "French keyboard (azerty)"
 msgstr "لوحة المفاتيح الفرنسية (AZERTY)"
 
-#: transports/HTML5RDP/HTML5RDP.py:90
+#: transports/HTML5RDP/HTML5RDP.py:91
 msgid "Italian keyboard"
 msgstr "لوحة المفاتيح الإيطالية"
 
-#: transports/HTML5RDP/HTML5RDP.py:91
+#: transports/HTML5RDP/HTML5RDP.py:92
 msgid "Swedish keyboard"
 msgstr "لوحة المفاتيح السويدية"
 
-#: transports/HTML5RDP/HTML5RDP.py:92
+#: transports/HTML5RDP/HTML5RDP.py:93
 msgid "Failsafe"
 msgstr "فشل آمن"
 
+#: transports/HTML5RDP/HTML5RDP.py:99
+msgid "Security"
+msgstr "الأمن"
+
+#: transports/HTML5RDP/HTML5RDP.py:100
+msgid "Connection security mode for Guacamole RDP connection"
+msgstr "وضع أمن الاتصال لاتصال RDP حبوبا"
+
+#: transports/HTML5RDP/HTML5RDP.py:103
+msgid "Any (Allow the server to choose the type of auth)"
+msgstr "أي (السماح للملقم باختيار نوع المصادقة)"
+
 #: transports/HTML5RDP/HTML5RDP.py:104
+msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
+msgstr ""
+"برنامج التعمير والتنمية (التشفير \"القياسي برنامج التعمير والتنمية\". ينبغي "
+"أن تدعم كافة الملقمات)"
+
+#: transports/HTML5RDP/HTML5RDP.py:105
+msgid ""
+"NLA (Network Layer authentication. Requires VALID username&password, or "
+"connection will fail)"
+msgstr ""
+"جيش التحرير الوطني (مصادقة \"طبقة شبكة الاتصال\". يتطلب اسم مستخدم صالح & "
+"كلمة المرور، أو سيفشل الاتصال)"
+
+#: transports/HTML5RDP/HTML5RDP.py:106
+msgid "TLS (Transport Security Layer encryption)"
+msgstr "TLS (تشفير طبقة النقل الأمن)"
+
+#: transports/HTML5RDP/HTML5RDP.py:118
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
@@ -4489,8 +4519,8 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:99
-#: transports/RDS_enterprise/TRDSTransport.py:92
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:100
+#: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4626,6 +4656,20 @@ msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "إذا كان يتم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع "
 "العميل إكسفريردب"
+
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
+msgid "Custom parameters"
+msgstr "معلمات مخصصة"
+
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
+msgid ""
+"If not empty, extra parameter to include for Linux Client (for example /usb:"
+"id,dev:054c:0268, or aything compatible with your xfreerdp client)"
+msgstr ""
+"إذا كانت المعلمة لا فارغة، إضافية تشمل لينكس العميل (على سبيل المثال/usb:"
+"معرف، dev:054 ج: 0268، أو أيثينج متوافق مع العميل الخاص بك إكسفريردب)"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
