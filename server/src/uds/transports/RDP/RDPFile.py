@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-06-05'
+__updated__ = '2017-06-07'
 
 
 class RDPFile(object):
@@ -249,6 +249,8 @@ class RDPFile(object):
         res += 'authentication level:i:0' + '\n'
         res += 'prompt for credentials:i:0' + '\n'
         res += 'negotiate security layer:i:1\n'
+        res += 'bandwidthautodetect:i:1\n'
+        res += 'connection type:i:7\n'
         res += 'videoplaybackmode:i:1\n'
         if self.smoothFonts is True:
             res += 'allow font smoothing:i:1\n'

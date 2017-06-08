@@ -1,12 +1,25 @@
 # jshint strict: true
 gui.providers = new GuiElement(api.providers, "provi")
 
+# To allow fast admin navigation
 gui.providers.fastLink = (event, obj) ->
   gui.doLog 'FastLink clicked', obj
   event.preventDefault()
   event.stopPropagation()
   $obj = $(obj);
-  if $obj.hasClass('goProxyGroupLink')
+  if $obj.hasClass('goAuthLink')
+    vals = $obj.attr('href').substr(1).split(',')
+    gui.lookupUuid = vals[0]
+    gui.lookup2Uuid = vals[1]
+    setTimeout( ->
+      $(".lnk-authenticators").click();
+    , 50)
+  else if $obj.hasClass('goPoolLink')
+    gui.lookupUuid = $obj.attr('href').substr(1)
+    setTimeout( ->
+      $(".lnk-deployed_services").click();
+    , 500);
+  else   if $obj.hasClass('goProxyGroupLink')
     gui.lookupUuid = $obj.attr('href').substr(1)
     setTimeout( ->
       $(".lnk-proxies").click();
@@ -218,6 +231,31 @@ gui.providers.link = (event) ->
         )
         prevTables.push servicesTable
         prevTables.push logTable
+
+        usageAPI = api.providers.detail(id, "usage", { permission: selected[0].permission })
+        usage = new GuiElement(usageAPI, "usage-" + selected[0].type)
+        usageTable = usage.table(
+          icon: 'usage'
+          container: "usage-placeholder"
+          doNotLoadData: true
+          rowSelect: "multi"
+
+          onData: (data) ->
+            $.each data, (index, value) ->
+              value.owner = gui.fastLink(value.owner, "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.providers.fastLink', 'goAuthLink')
+              value.pool = gui.fastLink(value.pool, value.pool_id, 'gui.providers.fastLink', 'goPoolLink')
+
+          buttons: [
+            "delete"
+            "xls"
+          ]
+          onDelete: gui.methods.del(usage, gettext("Delete user service"), gettext("User service deletion error"),)
+          scrollToTable: false
+          onLoad: (k) ->
+            gui.tools.unblockUI()
+            return
+        )
+
         return
 
       buttons: [

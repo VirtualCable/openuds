@@ -90,7 +90,7 @@ class AssignedService(DetailHandler):
                    'user_id': ''
                 }
             else:
-                owner = item.user.manager.name + "-" + item.user.name
+                owner = item.user.pretty_name
                 owner_info = {
                    'auth_id': item.user.manager.uuid,
                    'user_id': item.user.uuid
