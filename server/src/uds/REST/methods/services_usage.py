@@ -70,7 +70,7 @@ class ServicesUsage(DetailHandler):
                'user_id': ''
             }
         else:
-            owner = item.user.fullUsername
+            owner = item.user.pretty_name
             owner_info = {
                'auth_id': item.user.manager.uuid,
                'user_id': item.user.uuid

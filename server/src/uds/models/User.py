@@ -88,6 +88,10 @@ class User(UUIDModel):
         '''
         return self.getManager().getForAuth(self.name)
 
+    @property
+    def pretty_name(self):
+        return self.name + '@' + self.manager.name
+
     def getManager(self):
         '''
         Returns the authenticator object that owns this user.
@@ -167,10 +171,6 @@ class User(UUIDModel):
             if gn == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g
-
-    @property
-    def fullUsername(self):
-        return self.manager.name + "\\" + self.name
 
     def __str__(self):
         return u"User {0}(id:{1}) from auth {2}".format(self.name, self.id, self.manager.name)
