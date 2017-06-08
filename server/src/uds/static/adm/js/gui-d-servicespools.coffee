@@ -360,7 +360,7 @@ gui.servicesPools.link = (event) ->
 
             onData: (data) ->
               $.each data, (undefined_, value) ->
-                value.group_name = gui.fastLink("#{value.auth_name}\\#{value.name}", "#{value.auth_id},g#{value.id}", 'gui.servicesPools.fastLink', 'goAuthLink')
+                value.group_name = gui.fastLink("#{value.name}<span class='text-danger'>@</span>#{value.auth_name}", "#{value.auth_id},g#{value.id}", 'gui.servicesPools.fastLink', 'goAuthLink')
                 return
 
               return
@@ -407,7 +407,7 @@ gui.servicesPools.link = (event) ->
                 value.in_use = gettext('Yes')
               else
                 value.in_use = gettext('No')
-              value.owner = gui.fastLink(value.owner, "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.servicesPools.fastLink', 'goAuthLink')
+              value.owner = gui.fastLink(value.owner.replace /@/, '<span class="text-danger">@</span>', "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.servicesPools.fastLink', 'goAuthLink')
 
             return
 

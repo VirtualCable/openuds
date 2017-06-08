@@ -242,7 +242,7 @@ gui.providers.link = (event) ->
 
           onData: (data) ->
             $.each data, (index, value) ->
-              value.owner = gui.fastLink(value.owner, "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.providers.fastLink', 'goAuthLink')
+              value.owner = gui.fastLink(value.owner.replace /@/, '<span class="text-danger">@</span>', "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.providers.fastLink', 'goAuthLink')
               value.pool = gui.fastLink(value.pool, value.pool_id, 'gui.providers.fastLink', 'goPoolLink')
 
           buttons: [
