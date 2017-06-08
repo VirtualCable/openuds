@@ -40,6 +40,7 @@ from uds.core.util import permissions
 from uds.core.util.model import processUuid
 
 from .services import Services as DetailServices
+from .services_usage import ServicesUsage
 
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
@@ -54,7 +55,11 @@ class Providers(ModelHandler):
     Providers REST handler
     '''
     model = Provider
-    detail = {'services': DetailServices}
+    detail = {
+        'services': DetailServices,
+        'usage': ServicesUsage
+    }
+
     custom_methods = [('allservices', False), ('service', False), ('maintenance', True)]
 
     save_fields = ['name', 'comments', 'tags']

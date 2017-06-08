@@ -28,6 +28,7 @@ gui.providers.link = (event) ->
       providers: "providers-placeholder"
       provider_info: "provider-info-placeholder"
       services: "services-placeholder"
+      usage: "usage-placeholder"
       logs: "logs-placeholder"
     )
     gui.setLinksEvents()
@@ -194,6 +195,26 @@ gui.providers.link = (event) ->
         )
         prevTables.push servicesTable
         prevTables.push logTable
+
+        usageAPI = api.providers.detail(id, "usage", { permission: selected[0].permission })
+        usage = new GuiElement(usageAPI, "usage-" + selected[0].type)
+        usageTable = usage.table(
+          icon: 'usage'
+          container: "usage-placeholder"
+          doNotLoadData: true
+          rowSelect: "multi"
+
+          buttons: [
+            "delete"
+            "xls"
+          ]
+          onDelete: gui.methods.del(usage, gettext("Delete user service"), gettext("User service deletion error"),)
+          scrollToTable: false
+          onLoad: (k) ->
+            gui.tools.unblockUI()
+            return
+        )
+
         return
 
       buttons: [

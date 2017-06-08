@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-30'
+__updated__ = '2017-06-08'
 
 
 @python_2_unicode_compatible
@@ -167,6 +167,10 @@ class User(UUIDModel):
             if gn == g.groups.count():  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
                 # This group matches
                 yield g
+
+    @property
+    def fullUsername(self):
+        return self.manager.name + "\\" + self.name
 
     def __str__(self):
         return u"User {0}(id:{1}) from auth {2}".format(self.name, self.id, self.manager.name)
