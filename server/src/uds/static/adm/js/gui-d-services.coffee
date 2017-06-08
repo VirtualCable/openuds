@@ -1,5 +1,25 @@
 # jshint strict: true
 gui.providers = new GuiElement(api.providers, "provi")
+
+# To allow fast admin navigation
+gui.providers.fastLink = (event, obj) ->
+  gui.doLog 'FastLink clicked', obj
+  event.preventDefault()
+  event.stopPropagation()
+  $obj = $(obj);
+  if $obj.hasClass('goAuthLink')
+    vals = $obj.attr('href').substr(1).split(',')
+    gui.lookupUuid = vals[0]
+    gui.lookup2Uuid = vals[1]
+    setTimeout( ->
+      $(".lnk-authenticators").click();
+    , 50)
+  else if $obj.hasClass('goPoolLink')
+    gui.lookupUuid = $obj.attr('href').substr(1)
+    setTimeout( ->
+      $(".lnk-deployed_services").click();
+    , 500);
+
 gui.providers.link = (event) ->
   "use strict"
 
@@ -203,6 +223,11 @@ gui.providers.link = (event) ->
           container: "usage-placeholder"
           doNotLoadData: true
           rowSelect: "multi"
+
+          onData: (data) ->
+            $.each data, (index, value) ->
+              value.owner = gui.fastLink(value.owner, "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.providers.fastLink', 'goAuthLink')
+              value.pool = gui.fastLink(value.pool, value.pool_id, 'gui.providers.fastLink', 'goPoolLink')
 
           buttons: [
             "delete"
