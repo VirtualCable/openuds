@@ -216,29 +216,30 @@ gui.providers.link = (event) ->
         prevTables.push servicesTable
         prevTables.push logTable
 
-        usageAPI = api.providers.detail(id, "usage", { permission: selected[0].permission })
-        usage = new GuiElement(usageAPI, "usage-" + selected[0].type)
-        usageTable = usage.table(
-          icon: 'usage'
-          container: "usage-placeholder"
-          doNotLoadData: true
-          rowSelect: "multi"
-
-          onData: (data) ->
-            $.each data, (index, value) ->
-              value.owner = gui.fastLink(value.owner.replace /@/, '<span class="text-danger">@</span>', "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.providers.fastLink', 'goAuthLink')
-              value.pool = gui.fastLink(value.pool, value.pool_id, 'gui.providers.fastLink', 'goPoolLink')
-
-          buttons: [
-            "delete"
-            "xls"
-          ]
-          onDelete: gui.methods.del(usage, gettext("Delete user service"), gettext("User service deletion error"),)
-          scrollToTable: false
-          onLoad: (k) ->
-            gui.tools.unblockUI()
-            return
-        )
+        # usageAPI = api.providers.detail(id, "usage", { permission: selected[0].permission })
+        # usage = new GuiElement(usageAPI, "usage-" + selected[0].type)
+        # usageTable = usage.table(
+        #   icon: 'usage'
+        #   container: "usage-placeholder"
+        #   doNotLoadData: true
+        #   rowSelect: "multi"
+        #
+        #   onData: (data) ->
+        #     $.each data, (index, value) ->
+        #       value.owner = gui.fastLink(value.owner.replace /@/, '<span class="text-danger">@</span>', "#{value.owner_info.auth_id},u#{value.owner_info.user_id}", 'gui.providers.fastLink', 'goAuthLink')
+        #       value.pool = gui.fastLink(value.pool, value.pool_id, 'gui.providers.fastLink', 'goPoolLink')
+        #
+        #   buttons: [
+        #     "delete"
+        #     "xls"
+        #   ]
+        #   onDelete: gui.methods.del(usage, gettext("Delete user service"), gettext("User service deletion error"),)
+        #   scrollToTable: false
+        #   onLoad: (k) ->
+        #     gui.tools.unblockUI()
+        #     return
+        # )
+        # prevTables.push usageTable
 
         return
 
