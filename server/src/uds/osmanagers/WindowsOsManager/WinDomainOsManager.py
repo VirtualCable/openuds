@@ -53,7 +53,7 @@ class WinDomainOsManager(WindowsOsManager):
             if values['password'] == '':
                 raise osmanagers.OSManager.ValidationException(_('Must provide a password for the account!'))
             self._domain = values['domain']
-            self._ou = values['ou']
+            self._ou = values['ou'].strip()
             self._account = values['account']
             self._password = values['password']
         else:
@@ -121,6 +121,10 @@ class WinDomainOsManager(WindowsOsManager):
         '''
         super(WinDomainOsManager, self).release(service)
 
+        if not '.' in self._domain:
+            logger.info('Releasing from a not FQDN domain is not supported')
+            return
+
         try:
             l = self.__connectLdap()
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
@@ -130,14 +134,19 @@ class WinDomainOsManager(WindowsOsManager):
             logger.exception('Ldap Exception caught')
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
 
-        # _filter = '(&(objectClass=computer)(sAMAccountName=%s$))' % service.friendly_name
 
         try:
-            #  res = l.search_ext_s(base = self._ou, scope = ldap.SCOPE_SUBTREE,
-            #                       filterstr = _filter)[0]
-            l.delete('cn={0},{1}'.format(service.friendly_name, self._ou))
+            if self._ou:
+                ou = self._ou
+            else:
+                ou = ','.join(['DC=' + i for i in self._domain.split('.')])
+            fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(service.friendly_name)
+            res = l.search_ext_s(base=ou, scope=ldap.SCOPE_SUBTREE, filterstr=fltr)[0]
+            l.delete_s(res[0])  # Remove by DN, SYNC
+        except IndexError:
+            logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, ou))
         except Exception:
-            logger.exception('Not found: ')
+            logger.exception('Deleting from AD: ')
 
     def check(self):
         try:

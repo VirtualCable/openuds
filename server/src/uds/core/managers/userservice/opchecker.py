@@ -40,7 +40,7 @@ from uds.models import UserService
 
 import logging
 
-__updated__ = '2015-11-10'
+__updated__ = '2017-06-15'
 
 logger = logging.getLogger(__name__)
 
@@ -138,10 +138,18 @@ class UpdateFromPreparing(StateUpdater):
 
 class UpdateFromRemoving(StateUpdater):
     def finish(self):
+        osManager = self.userServiceInstance.osmanager()
+        if osManager is not None:
+            osManager.release(self.userService)
+
         self.save(State.REMOVED)
 
 class UpdateFromCanceling(StateUpdater):
     def finish(self):
+        osManager = self.userServiceInstance.osmanager()
+        if osManager is not None:
+            osManager.release(self.userService)
+
         self.save(State.CANCELED)
 
 class UpdateFromOther(StateUpdater):
