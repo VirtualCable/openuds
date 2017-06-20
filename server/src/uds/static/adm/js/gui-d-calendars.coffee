@@ -14,7 +14,7 @@ gui.calendars.link = ->
     return
 
   freqDct =
-    'DAILY': [gettext('day'), gettext('days'), gettext('Dayly')]
+    'DAILY': [gettext('day'), gettext('days'), gettext('Daily')]
     'WEEKLY': [gettext('week'), gettext('weeks'), gettext('Weekly')]
     'MONTHLY': [gettext('month'), gettext('months'), gettext('Monthly')]
     'YEARLY': [gettext('year'), gettext('years'), gettext('Yearly')]
@@ -44,7 +44,6 @@ gui.calendars.link = ->
     if res.length == 0
         return gettext("(no days)")
     return res.join(', ')
-
 
   renderer = (fld, data, type, record) ->
     # Display "custom" fields of rules table

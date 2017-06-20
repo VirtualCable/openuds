@@ -255,6 +255,7 @@ gui.providers.link = (event) ->
             gui.tools.unblockUI()
             return
         )
+        prevTables.push usageTable
 
         return
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2017 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -40,7 +40,7 @@ from uds.models import UserService
 
 import logging
 
-__updated__ = '2017-05-18'
+__updated__ = '2017-06-15'
 
 logger = logging.getLogger(__name__)
 
@@ -148,10 +148,18 @@ class UpdateFromPreparing(StateUpdater):
 
 class UpdateFromRemoving(StateUpdater):
     def finish(self):
+        osManager = self.userServiceInstance.osmanager()
+        if osManager is not None:
+            osManager.release(self.userService)
+
         self.save(State.REMOVED)
 
 class UpdateFromCanceling(StateUpdater):
     def finish(self):
+        osManager = self.userServiceInstance.osmanager()
+        if osManager is not None:
+            osManager.release(self.userService)
+
         self.save(State.CANCELED)
 
 class UpdateFromOther(StateUpdater):
