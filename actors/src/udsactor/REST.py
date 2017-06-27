@@ -148,6 +148,8 @@ class Api(object):
                     logger.debug('Requesting with old')
                     r = requests.get(url)  # Always ignore certs??
             else:
+                if data == '':
+                    data = '{"dummy": true}'  # Ensures no proxy rewrites POST as GET because body is empty...
                 if self.newerRequestLib:
                     r = requests.post(url, data=data, headers={'content-type': 'application/json'}, verify=VERIFY_CERT)
                 else:
