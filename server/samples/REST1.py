@@ -112,8 +112,8 @@ def request_service_info(provider_id, service_id):
 
     resp, content = h.request(rest_url + 'providers/{0}/services/{1}'.format(provider_id, service_id), headers=headers)
     if resp['status'] != '200':  # error due to incorrect parameters, bad request, etc...
-        print "Error requesting pools"
-        return {}
+        print "Error requesting pools: response: {}, content: {}".format(resp, content)
+        return None
 
     return json.loads(content)
 
@@ -125,14 +125,17 @@ if __name__ == '__main__':
         print res
         for r in res:
             res2 = request_service_info(r['provider_id'], r['service_id'])
-            print "Base Service info por pool {0}: {1}".format(r['name'], res2)
+            if res2 is not None:
+                print "Base Service info por pool {0}: {1}".format(r['name'], res2['type'])
+            else:
+                print "Base service {} is not accesible".format(r['name'])
         print "First logout"
         print logout()  # This will success
         print "Second logout"
         print logout()  # This will fail (already logged out)
         # Also new requests will fail
         print request_pools()
-        # Untin we do log in again
+        # Until we do log in again
         login()
         print request_pools()
 
