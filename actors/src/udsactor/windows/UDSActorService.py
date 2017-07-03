@@ -57,7 +57,7 @@ from .SENS import SENSGUID_PUBLISHER
 from .SENS import PROGID_EventSubscription
 from .SENS import PROGID_EventSystem
 
-POST_CMD = 'c:\\windows\post-uds.bat'
+POST_CMD = 'c:\\windows\\post-uds.bat'
 
 
 class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
