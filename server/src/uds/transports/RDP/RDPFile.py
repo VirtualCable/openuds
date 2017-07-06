@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-06-07'
+__updated__ = '2017-07-06'
 
 
 class RDPFile(object):
@@ -227,7 +227,6 @@ class RDPFile(object):
         res += 'compression:i:' + compression + '\n'
         res += 'keyboardhook:i:2' + '\n'
         res += 'audiomode:i:' + audioMode + '\n'
-        res += 'redirectdrives:i:' + drives + '\n'
         res += 'redirectprinters:i:' + printers + '\n'
         res += 'redirectcomports:i:' + serials + '\n'
         res += 'redirectsmartcards:i:' + scards + '\n'
@@ -260,7 +259,14 @@ class RDPFile(object):
         if self.redirectAudio is True:
             res += 'audiocapturemode:i:1\n'
 
+        if self.redirectDrives is True:
+            res += 'drivestoredirect:s:*\n'
+            res += 'devicestoredirect:s:*\n'
+
         res += 'enablecredsspsupport:i:{}\n'.format(0 if self.enablecredsspsupport is False else 1)
+
+        # DirectX?
+        res += 'redirectdirectx:i:1\n'
 
         return res
 
