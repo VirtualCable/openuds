@@ -86,6 +86,20 @@ class CommonService(object):
     def reboot(self):
         self.rebootRequested = True
 
+    def execute(self, cmd, section):
+        import os
+        import subprocess
+        import stat
+
+        if os.path.isfile(cmd):
+            if (os.stat(cmd).st_mode & stat.S_IXUSR) != 0:
+                subprocess.call([cmd, ])
+            else:
+                logger.info('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
+        else:
+            logger.info('{} file not found & not executed'.format(section))
+
+
     def setReady(self):
         self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
 
@@ -137,6 +151,13 @@ class CommonService(object):
                     logger.info('Trying to inititialize connection with broker (last error: {})'.format(exceptionToMessage(e)))
                 # Wait a bit before next check
                 self.doWait(5000)
+
+        # Now try to run the "runonce" element
+        runOnce = store.runApplication()
+        if runOnce is not None:
+            self.execute(runOnce, 'RunOnce')
+            operations.reboot()
+            return False
 
         # Broker connection is initialized, now get information about what to
         # do
