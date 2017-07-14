@@ -94,10 +94,13 @@ class CommonService(object):
         if os.path.isfile(cmd):
             if (os.stat(cmd).st_mode & stat.S_IXUSR) != 0:
                 subprocess.call([cmd, ])
+                return True
             else:
                 logger.info('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
         else:
             logger.info('{} file not found & not executed'.format(section))
+
+        return False
 
 
     def setReady(self):
@@ -155,9 +158,9 @@ class CommonService(object):
         # Now try to run the "runonce" element
         runOnce = store.runApplication()
         if runOnce is not None:
-            self.execute(runOnce, 'RunOnce')
-            operations.reboot()
-            return False
+            if self.execute(runOnce, 'RunOnce') is True:
+                # operations.reboot()
+                return False
 
         # Broker connection is initialized, now get information about what to
         # do

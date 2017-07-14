@@ -138,6 +138,10 @@ class WindowsOsManager(osmanagers.OSManager):
             logger.exception('WindowsOs Manager message log: ')
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
 
+    # default "ready received" does nothing
+    def readyReceived(self, userService, data):
+        pass
+
     def process(self, userService, msg, data, options):
         '''
         We understand this messages:
@@ -185,6 +189,7 @@ class WindowsOsManager(osmanagers.OSManager):
             state = State.USABLE
             notifyReady = True
             self.notifyIp(userService.unique_id, userService, data)
+            self.readyReceived(userService, data)
 
         userService.setOsState(state)
 
