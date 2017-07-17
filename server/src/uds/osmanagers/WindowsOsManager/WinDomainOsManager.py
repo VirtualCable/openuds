@@ -119,8 +119,9 @@ class WinDomainOsManager(WindowsOsManager):
 
     def __getGroup(self, l):
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
+        group = self._group.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
 
-        res = l.search_ext_s(base=base, scope=ldap.SCOPE_SUBTREE, filterstr="(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(self._group), attrlist=[b'dn'])
+        res = l.search_ext_s(base=base, scope=ldap.SCOPE_SUBTREE, filterstr="(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(group), attrlist=[b'dn'])
         if res[0] is None:
             return None
 
@@ -275,6 +276,8 @@ class WinDomainOsManager(WindowsOsManager):
 
         if data[0] == 'v2':
             self._group = data[6]
+        else:
+            self._group = ''
 
         super(WinDomainOsManager, self).unmarshal(data[5].decode('hex'))
 
