@@ -31,10 +31,11 @@ class WinDomainOsManager(WindowsOsManager):
     iconFile = 'wosmanager.png'
 
     # Apart form data from windows os manager, we need also domain and credentials
-    domain = gui.TextField(length=64, label=_('Domain'), order=1, tooltip=_('Domain to join machines to (use FQDN form, Netbios name not allowed)'), required=True)
+    domain = gui.TextField(length=64, label=_('Domain'), order=1, tooltip=_('Domain to join machines to (use FQDN form, Netbios name not supported for most operations)'), required=True)
     account = gui.TextField(length=64, label=_('Account'), order=2, tooltip=_('Account with rights to add machines to domain'), required=True)
     password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Password of the account'), required=True)
     ou = gui.TextField(length=64, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'))
+    grp = gui.TextField(length=64, label=_('Group'), order=5, tooltip=_('Group to which add machines on creation. If empty, no group will be used. (experimental)'))
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
@@ -56,6 +57,7 @@ class WinDomainOsManager(WindowsOsManager):
             self._ou = values['ou'].strip()
             self._account = values['account']
             self._password = values['password']
+            self._group = values['grp'].strip()
         else:
             self._domain = ""
             self._ou = ""
@@ -115,6 +117,57 @@ class WinDomainOsManager(WindowsOsManager):
 
         raise ldap.LDAPError(_str)
 
+    def __getGroup(self, l):
+        base = ','.join(['DC=' + i for i in self._domain.split('.')])
+        group = self._group.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+
+        res = l.search_ext_s(base=base, scope=ldap.SCOPE_SUBTREE, filterstr="(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(group), attrlist=[b'dn'])
+        if res[0] is None:
+            return None
+
+        return res[0][0]  # Returns the DN
+
+    def __getMachine(self, l, machineName):
+        if self._ou:
+            ou = self._ou
+        else:
+            ou = ','.join(['DC=' + i for i in self._domain.split('.')])
+
+        fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(machineName)
+        res = l.search_ext_s(base=ou, scope=ldap.SCOPE_SUBTREE, filterstr=fltr, attrlist=[b'dn'])
+        if res[0] is None:
+            return None
+
+        return res[0][0]  # Returns the DN
+
+    def readyReceived(self, userService, data):
+        # No group to add
+        if self._group == '':
+            return
+
+        if not '.' in self._domain:
+            logger.info('Adding to a group for a non FQDN domain is not supported')
+            return
+
+        try:
+            l = self.__connectLdap()
+        except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
+            logger.warn('Could not find _ldap._tcp.' + self._domain)
+            log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
+        except ldap.LDAPError:
+            logger.exception('Ldap Exception caught')
+            log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
+
+        try:
+            machine = self.__getMachine(l, userService.friendly_name)
+            group = self.__getGroup(l)
+            l.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))
+        except ldap.ALREADY_EXISTS:
+            # Already added this machine to this group, pass
+            pass
+        except Exception:
+            logger.error('Got exception trying to add machine to group')
+
     def release(self, service):
         '''
         service is a db user service object
@@ -134,15 +187,11 @@ class WinDomainOsManager(WindowsOsManager):
             logger.exception('Ldap Exception caught')
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
 
-
         try:
-            if self._ou:
-                ou = self._ou
-            else:
-                ou = ','.join(['DC=' + i for i in self._domain.split('.')])
-            fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(service.friendly_name)
-            res = l.search_ext_s(base=ou, scope=ldap.SCOPE_SUBTREE, filterstr=fltr)[0]
-            l.delete_s(res[0])  # Remove by DN, SYNC
+            res = self.__getMachine(l, service.friendly_name)
+            if res is None:
+                raise Exception('Machine {} not found on AD (permissions?)'.format(service.friendly_name))
+            l.delete_s(res)  # Remove by DN, SYNC
         except IndexError:
             logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, ou))
         except Exception:
@@ -158,10 +207,17 @@ class WinDomainOsManager(WindowsOsManager):
         except Exception as e:
             logger.exception('Exception ')
             return [False, str(e)]
+
         try:
             l.search_st(self._ou, ldap.SCOPE_BASE)
         except ldap.LDAPError as e:
             return _('Check error: {0}').format(self.__getLdapError(e))
+
+        # Group
+        if self._group != '':
+            if self.__getGroup(l) is None:
+                return _('Check Error: group "{}" not found (using "cn" to locate it)').format(self._group)
+
 
         return _('Server check was successful')
 
@@ -208,16 +264,22 @@ class WinDomainOsManager(WindowsOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v1', self._domain, self._ou, self._account, CryptoManager.manager().encrypt(self._password), base.encode('hex')])
+        return '\t'.join(['v2', self._domain, self._ou, self._account, CryptoManager.manager().encrypt(self._password), base.encode('hex'), self._group])
 
     def unmarshal(self, s):
         data = s.split('\t')
-        if data[0] == 'v1':
+        if data[0] in ('v1', 'v2'):
             self._domain = data[1]
             self._ou = data[2]
             self._account = data[3]
             self._password = CryptoManager.manager().decrypt(data[4])
-            super(WinDomainOsManager, self).unmarshal(data[5].decode('hex'))
+
+        if data[0] == 'v2':
+            self._group = data[6]
+        else:
+            self._group = ''
+
+        super(WinDomainOsManager, self).unmarshal(data[5].decode('hex'))
 
     def valuesDict(self):
         dct = super(WinDomainOsManager, self).valuesDict()
@@ -225,4 +287,5 @@ class WinDomainOsManager(WindowsOsManager):
         dct['ou'] = self._ou
         dct['account'] = self._account
         dct['password'] = self._password
+        dct['grp'] = self._group
         return dct

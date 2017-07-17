@@ -105,3 +105,19 @@ def useOldJoinSystem():
         data = ''
 
     return data == 'old'
+
+# Gives the oportunity to run an application ONE TIME (because, the registry key "run" will be deleted after read)
+def runApplication():
+    try:
+        key = wreg.OpenKey(baseKey, 'Software\\UDSEnterpriseActor', 0, wreg.KEY_ALL_ACCESS)  # @UndefinedVariable
+        try:
+            data, _ = wreg.QueryValueEx(key, 'run')  # @UndefinedVariable
+            wreg.DeleteValue(key, 'run')  # @UndefinedVariable
+        except Exception:
+            data = None
+        wreg.CloseKey(key)  # @UndefinedVariable
+    except:
+        data = None
+
+    return data
+

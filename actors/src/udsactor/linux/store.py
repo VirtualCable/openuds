@@ -81,3 +81,8 @@ def writeConfig(data):
 
 def useOldJoinSystem():
     return False
+
+# Right now, we do not really need an application to be run on "startup" as could ocur with windows
+def runApplication():
+    return None
+

@@ -114,6 +114,7 @@ class WindowsOsManager(osmanagers.OSManager):
         si = service.getInstance()
         ip = ''
 
+        ip = ''
         # Notifies IP to deployed
         for p in data['ips']:
             if p[0].lower() == uid.lower():
@@ -138,6 +139,10 @@ class WindowsOsManager(osmanagers.OSManager):
         except Exception:
             logger.exception('WindowsOs Manager message log: ')
             log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
+
+    # default "ready received" does nothing
+    def readyReceived(self, userService, data):
+        pass
 
     def process(self, userService, msg, data, options=None):
         '''
@@ -194,6 +199,7 @@ class WindowsOsManager(osmanagers.OSManager):
             state = State.USABLE
             notifyReady = True
             self.notifyIp(userService.unique_id, userService, data)
+            self.readyReceived(userService, data)
 
         userService.setOsState(state)
 

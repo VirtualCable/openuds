@@ -78,7 +78,7 @@ class HTML5RDPTransport(Transport):
     smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=23, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
     enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=24, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
     enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=25, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
-    # enableFileShare = gui.CheckBoxField(label=_('Enable File Sharing'), order=8, tooltip=_('If checked, the user will be able to upload/download files (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
+    # enableFileSharing = gui.CheckBoxField(label=_('Enable File Sharing'), order=8, tooltip=_('If checked, the user will be able to upload/download files (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
     serverLayout = gui.ChoiceField(order=26,
         label=_('Layout'),
         tooltip=_('Keyboards Layout of server'),
@@ -189,7 +189,7 @@ class HTML5RDPTransport(Transport):
         }
 
         # if self.enableFileSharing.isTrue():
-        #    params['enable-drive'] = self.serverLayout.value
+        #    params['enable-drive'] = 'true'
 
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
