@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2017 Virtual Cable S.L.
+# Copyright (c) 2014-2017 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -43,8 +43,13 @@ from uds import tools
 from uds import VERSION
 
 import webbrowser
+import json
+import sys
+import six
 
 from UDSWindow import Ui_MainWindow
+
+OLD_METHOD_VERSION = '2.1.0'
 
 class RetryException(Exception):
     pass
@@ -57,6 +62,7 @@ class UDSClient(QtGui.QMainWindow):
     animTimer = None
     anim = 0
     animInverted = False
+    serverVersion = 'X.Y.Z'  # Will be overwriten on getVersion
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -146,6 +152,8 @@ class UDSClient(QtGui.QMainWindow):
                 webbrowser.open(data['result']['downloadUrl'])
                 self.closeWindow()
                 return
+
+            self.serverVersion = data['result']['requiredVersion']
             self.getTransportData()
 
         except RetryException as e:
@@ -172,7 +180,20 @@ class UDSClient(QtGui.QMainWindow):
         try:
             self.processError(data)
 
-            script = data['result'].decode('base64').decode('bz2')
+            params = None
+
+            if self.serverVersion <= OLD_METHOD_VERSION:
+                script = data['result'].decode('base64').decode('bz2')
+            else:
+                res = data['result']
+                # We have three elements on result:
+                # * Script
+                # * Signature
+                # * Script data
+                # We test that the Script has correct signature, and them execute it with the parameters
+                script, signature, params = res['script'].decode('base64').decode('bz2'), res['signature'], json.loads(res['params'].decode('base64').decode('bz2'))
+                if tools.verifySignature(script, signature) is False:
+                    raise Exception('Invalid UDS code signature. Please, report to administrator')
 
             self.stopAnim()
 
@@ -182,7 +203,14 @@ class UDSClient(QtGui.QMainWindow):
             QtCore.QTimer.singleShot(3000, self.endScript)
             self.hide()
 
-            six.exec_(script, globals(), {'parent': self})
+            # if self.serverVersion <= OLD_METHOD_VERSION:
+            #    errorString = '<p>The server <b>{}</b> runs an old version of UDS:</p>'.format(host)
+            #    errorString += '<p>To avoid security issues, you must approve old UDS Version access.</p>'
+
+            #    if QtGui.QMessageBox.warning(None, 'ACCESS Warning', errorString, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+            #        raise Exception('Server not approved. Access denied.')
+
+            six.exec_(script, globals(), {'parent': self, 'sp':  params})
 
         except RetryException as e:
             self.ui.info.setText(six.text_type(e) + ', retrying access...')
@@ -224,7 +252,7 @@ def done(data):
     QtGui.QMessageBox.critical(None, 'Notice', six.text_type(data.data), QtGui.QMessageBox.Ok)
     sys.exit(0)
 
-# Ask user to aprobe endpoint
+# Ask user to approve endpoint
 def approveHost(host, parentWindow=None):
     settings = QtCore.QSettings()
     settings.beginGroup('endpoints')
@@ -240,6 +268,7 @@ def approveHost(host, parentWindow=None):
 
     settings.endGroup()
     return approved
+
 
 if __name__ == "__main__":
     logger.debug('Initializing connector')
