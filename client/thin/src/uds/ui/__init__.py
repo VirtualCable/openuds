@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 try:
     import gtkui as theUI
 except Exception:
-    import consoleui as theUI
+    import consoleui as theUI  # @Reimport
 
 def message(title, message):
     theUI.message(title, message)

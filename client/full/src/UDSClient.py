@@ -49,7 +49,8 @@ import six
 
 from UDSWindow import Ui_MainWindow
 
-OLD_METHOD_VERSION = '2.1.0'
+# Server before this version uses "unsigned" scripts
+OLD_METHOD_VERSION = '2.4.0'
 
 class RetryException(Exception):
     pass
@@ -268,7 +269,6 @@ def approveHost(host, parentWindow=None):
 
     settings.endGroup()
     return approved
-
 
 if __name__ == "__main__":
     logger.debug('Initializing connector')

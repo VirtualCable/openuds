@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-06-05'
+__updated__ = '2017-08-02'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -134,10 +134,11 @@ class RDPTransport(BaseRDPTransport):
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
 
-        }.get(os['OS'])
+        }.get(m.os)
 
         if os is None:
-            return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            logger.ERROR('Os not detected for RDP Transport: {}'.format(request.META.get('HTTP_USER_AGENT', 'Unknown')))
+            return super(RDPTransport, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         sp = {
             'password': password,
