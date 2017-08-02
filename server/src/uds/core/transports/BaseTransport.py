@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 
 import logging
 
-__updated__ = '2016-10-14'
+__updated__ = '2017-08-02'
 
 logger = logging.getLogger(__name__)
 
@@ -178,8 +178,7 @@ class Transport(Module):
         '''
         return '''
 from __future__ import unicode_literals
-from PyQt4 import QtCore, QtGui
-QtGui.QMessageBox.critical(parent, 'Not supported', 'The transport {transport.name} is not supported on your platform.', QtGui.QMessageBox.Ok)
+raise Exception('The transport {transport.name} is not supported on your platform.')
 '''.format(service=userService, transport=transport)
 
     def getLink(self, userService, transport, ip, os, user, password, request):
