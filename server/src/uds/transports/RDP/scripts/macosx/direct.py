@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-from PyQt4 import QtCore, QtGui
 import subprocess
 import os
 import urllib
@@ -41,8 +40,7 @@ def onExit():
     )
 
 if executable is None:
-    QtGui.QMessageBox.critical(parent, 'Notice',  # @UndefinedVariable
-                               '''<p><b>Microsoft Remote Desktop Connection not found</b></p>
+    raise Exception('''<p><b>Microsoft Remote Desktop Connection not found</b></p>
 <p>In order to connect to UDS RDP Sessions, you need to have at least one of the following:<p>
 <ul>
     <li>
@@ -52,7 +50,7 @@ if executable is None:
 </ul>
 <p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
 
-''', QtGui.QMessageBox.Ok)
+''')
 elif executable == msrdc:
     try:
         if {m.hasCredentials}:  # @UndefinedVariable
@@ -73,7 +71,7 @@ elif executable == msrdc:
 
         tools.addFileToUnlink(filename)
     except Exception as e:
-        QtGui.QMessageBox.critical(parent, 'Notice', six.text_type(e), QtGui.QMessageBox.Ok)  # @UndefinedVariable
+        raise
 else:  # CoRD
     url = 'rdp://'
 

@@ -74,14 +74,13 @@ def approveHost(host):
         except Exception:
             logger.warn('Got exception writing to {}'.format(hostsFile))
 
-
     return approved
 
 
-def getWithRetry(rest, url):
+def getWithRetry(rest, url, params=None):
     while True:
         try:
-            res = rest.get(url)
+            res = rest.get(url, params)
             return res
         except RetryException as e:
             if ui.question('Service not available', '{}\nPlease, wait a minute and press "OK" to retry, or CANCEL to abort') is True:
@@ -125,16 +124,38 @@ if __name__ == "__main__":
     try:
         res = getWithRetry(rest, '')
 
+        logger.debug('Got information {}'.format(res))
+
         if res['requiredVersion'] > VERSION:
-            ui.message("New UDS Client available", "A new uds version is needed in order to access this version of UDS. A browser will be openend for this download.")
+            ui.message("New UDS Client available", "A new uds version is needed in order to access this version of UDS. A browser will be opened for this download.")
             webbrowser.open(res['downloadUrl'])
             sys.exit(1)
 
-        # Now get ticket
         res = getWithRetry(rest, '/{}/{}'.format(ticket, scrambler), params={'hostname': tools.getHostName(), 'version': VERSION})
 
+        script = res.decode('base64').decode('bz2')
+
+        logger.debug('Script: {}'.format(script))
+
+        six.exec_(script, globals(), {'parent': None})
     except Exception as e:
         error = 'ERROR: {}'.format(e)
         logger.error(error)
         ui.message('Error', error)
         sys.exit(2)
+
+    # Finalize
+    try:
+        tools.waitForTasks()
+    except Exception:
+        pass
+
+    try:
+        tools.unlinkFiles()
+    except Exception:
+        pass
+
+    try:
+        tools.execBeforeExit()
+    except Exception:
+        pass
