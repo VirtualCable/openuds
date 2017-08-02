@@ -37,7 +37,7 @@ from . import VERSION
 
 import json
 import six
-import urllib
+import osDetector
 
 
 from .log import logger
@@ -55,16 +55,17 @@ class RestRequest(object):
 
         self.host = host
         self.ssl = ssl
-        self.restApiUrl = RestRequest('{}://{}/rest/client'.format(['http', 'https'][ssl], host))
+        self.restApiUrl = '{}://{}/rest/client'.format(['http', 'https'][ssl], host)
 
     def get(self, url, params=None):
         url = self.restApiUrl + url
         if params is not None:
-            url += '?' + '&'.join('{}={}'.format(k, urllib.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())
+            url += '?' + '&'.join('{}={}'.format(k, six.moves.urllib.parse.quote(six.text_type(v).encode('utf8'))) for k, v in params.iteritems())  # @UndefinedVariable
 
         logger.debug('Requesting {}'.format(url))
+
         try:
-            r = requests.get(url, headers={'Content-type': 'application/json'})
+            r = requests.get(url, headers={'Content-type': 'application/json', 'User-Agent': osDetector.getOs() + " - UDS Connector " + VERSION })
         except requests.exceptions.ConnectionError as e:
             raise Exception('Error connecting to UDS Server at {}'.format(self.restApiUrl[0:-11]))
 
