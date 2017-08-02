@@ -133,11 +133,29 @@ if __name__ == "__main__":
 
         res = getWithRetry(rest, '/{}/{}'.format(ticket, scrambler), params={'hostname': tools.getHostName(), 'version': VERSION})
 
-        logger.debug('Got ticket {}'.format(res))
+        script = res.decode('base64').decode('bz2')
 
+        logger.debug('Script: {}'.format(script))
+
+        six.exec_(script, globals(), {'parent': None})
     except Exception as e:
         error = 'ERROR: {}'.format(e)
         logger.error(error)
         ui.message('Error', error)
         sys.exit(2)
 
+    # Finalize
+    try:
+        tools.waitForTasks()
+    except Exception:
+        pass
+
+    try:
+        tools.unlinkFiles()
+    except Exception:
+        pass
+
+    try:
+        tools.execBeforeExit()
+    except Exception:
+        pass

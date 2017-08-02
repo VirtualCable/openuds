@@ -31,11 +31,19 @@
 '''
 from __future__ import unicode_literals
 import sys
+import time
 from uds.log import logger
+
+counter = 0
 
 def message(title, message):
     sys.stderr.write("** {} **\n {}\n".format(title, message))
 
 def question(title, message):
-    sys.stderr.write("** {} **\n{}\nReturned YES\n".format(title, message))
+    global counter
+    if counter > 100:  # 5 minutes
+        return False
+    counter += 1
+    sys.stderr.write("** {} **\n{}\nReturning YES in 3 seconds. (counter is {})\n".format(title, message, counter))
+    time.sleep(3)  # Wait 3 seconds before returning
     return True
