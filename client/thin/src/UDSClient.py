@@ -32,7 +32,6 @@
 from __future__ import unicode_literals
 
 from uds import ui
-from uds import browser
 from uds.rest import RestRequest, RetryException
 from uds.forward import forward
 from uds import VERSION
@@ -41,7 +40,6 @@ from uds import tools
 
 import six
 import sys
-import webbrowser
 import pickle
 
 
@@ -83,7 +81,7 @@ def getWithRetry(rest, url, params=None):
             res = rest.get(url, params)
             return res
         except RetryException as e:
-            if ui.question('Service not available', '{}\nPlease, wait a minute and press "OK" to retry, or CANCEL to abort') is True:
+            if ui.question('Service not available', 'Error {}.\nPlease, wait a minute and press "OK" to retry, or "CANCEL" to abort'.format(e)) is True:
                 continue
             raise Exception('Cancelled by user')
 
@@ -127,8 +125,7 @@ if __name__ == "__main__":
         logger.debug('Got information {}'.format(res))
 
         if res['requiredVersion'] > VERSION:
-            ui.message("New UDS Client available", "A new uds version is needed in order to access this version of UDS. A browser will be opened for this download.")
-            webbrowser.open(res['downloadUrl'])
+            ui.message("New UDS Client available", "A new uds version is needed in order to access this version of UDS.\nPlease, download and install it")
             sys.exit(1)
 
         res = getWithRetry(rest, '/{}/{}'.format(ticket, scrambler), params={'hostname': tools.getHostName(), 'version': VERSION})
