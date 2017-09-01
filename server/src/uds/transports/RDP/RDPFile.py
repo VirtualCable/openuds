@@ -40,7 +40,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-07-26'
+__updated__ = '2017-09-01'
 
 
 class RDPFile(object):
@@ -68,6 +68,7 @@ class RDPFile(object):
     printerString = None
     smartcardString = None
     enablecredsspsupport = False
+    enableClipboard = False
     linuxCustomParameters = None
 
     def __init__(self, fullScreen, width, height, bpp, target=OsDetector.Windows):
@@ -95,7 +96,10 @@ class RDPFile(object):
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
         '''
-        params = ['/clipboard', '/t:UDS-Connection', '/cert-ignore']  # , '/sec:rdp']
+        params = ['/t:UDS-Connection', '/cert-ignore']  # , '/sec:rdp']
+
+        if self.enableClipboard:
+            params.append('/clipboard')
 
         if self.redirectSmartcards and self.smartcardString not in (None, ''):
             params.append('/smartcard:{}'.format(self.smartcardString))
@@ -158,7 +162,10 @@ class RDPFile(object):
         Note that server is not added
         '''
 
-        params = ['-TUDS Connection', '-P', '-rclipboard:PRIMARYCLIPBOARD']
+        params = ['-TUDS Connection', '-P']
+
+        if self.enableClipboard:
+            params.append('-rclipboard:PRIMARYCLIPBOARD')
 
         if self.redirectSmartcards:
             params.append('-rsdcard')
@@ -215,6 +222,7 @@ class RDPFile(object):
         bar = self.displayConnectionBar and "1" or "0"
         disableWallpaper = self.showWallpaper and "0" or "1"
         useMultimon = self.multimon and "1" or "0"
+        enableClipboard = self.enableClipboard and "1" or "0"
 
         res = ''
         res += 'screen mode id:i:' + screenMode + '\n'
@@ -230,7 +238,7 @@ class RDPFile(object):
         res += 'redirectprinters:i:' + printers + '\n'
         res += 'redirectcomports:i:' + serials + '\n'
         res += 'redirectsmartcards:i:' + scards + '\n'
-        res += 'redirectclipboard:i:1' + '\n'
+        res += 'redirectclipboard:i:' + enableClipboard + '\n'
         res += 'displayconnectionbar:i:' + bar + '\n'
         if len(self.username) != 0:
             res += 'username:s:' + self.username + '\n'
