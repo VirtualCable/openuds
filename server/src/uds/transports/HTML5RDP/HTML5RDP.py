@@ -105,7 +105,7 @@ class HTML5RDPTransport(Transport):
             gui.choiceItem('nla', _('NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)')),
             gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
         ],
-        defvalue='any',
+        defvalue='rdp',
         tab=gui.PARAMETERS_TAB
     )
 
@@ -116,6 +116,8 @@ class HTML5RDPTransport(Transport):
         self.guacamoleServer.value = self.guacamoleServer.value.strip()
         if self.guacamoleServer.value[0:4] != 'http':
             raise Transport.ValidationException(_('The server must be http or https'))
+        if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
+            raise Transport.ValidationException(_('Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'))
 
     # Same check as normal RDP transport
     def isAvailableFor(self, userService, ip):
