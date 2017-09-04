@@ -153,10 +153,10 @@ class WinDomainOsManager(WindowsOsManager):
             l = self.__connectLdap()
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
             logger.warn('Could not find _ldap._tcp.' + self._domain)
-            log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
+            log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
         except ldap.LDAPError:
             logger.exception('Ldap Exception caught')
-            log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
+            log.doLog(userService, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
 
         try:
             machine = self.__getMachine(l, userService.friendly_name)
@@ -165,8 +165,10 @@ class WinDomainOsManager(WindowsOsManager):
         except ldap.ALREADY_EXISTS:
             # Already added this machine to this group, pass
             pass
-        except Exception:
-            logger.error('Got exception trying to add machine to group')
+        except Exception as e:
+            log.doLog(userService, log.WARN, "Could not add machine {} to group {}: {}".format(userService.friendly_name, self._group, e), log.OSMANAGER)
+            logger.error('Got exception trying to add machine to group: {}'.format(e))
+            # logger.exception('Ldap Exception caught')
 
     def release(self, service):
         '''
