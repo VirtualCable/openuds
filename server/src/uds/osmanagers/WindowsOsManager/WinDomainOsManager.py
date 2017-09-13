@@ -18,6 +18,7 @@ from WindowsOsManager import WindowsOsManager
 from uds.core.util import log
 import dns.resolver
 import ldap
+import six
 
 import logging
 
@@ -35,7 +36,8 @@ class WinDomainOsManager(WindowsOsManager):
     account = gui.TextField(length=64, label=_('Account'), order=2, tooltip=_('Account with rights to add machines to domain'), required=True)
     password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Password of the account'), required=True)
     ou = gui.TextField(length=64, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'))
-    grp = gui.TextField(length=64, label=_('Group'), order=5, tooltip=_('Group to which add machines on creation. If empty, no group will be used. (experimental)'))
+    grp = gui.TextField(length=64, label=_('Machine Group'), order=7, tooltip=_('Group to which add machines on creation. If empty, no group will be used. (experimental)'), tab=_('Advanced'))
+    serverHint = gui.TextField(length=64, label=_('Server Hint'), order=8, tooltip=_('In case of several AD servers, which one is prefered for first access'), tab=_('Advanced'))
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle
@@ -58,11 +60,14 @@ class WinDomainOsManager(WindowsOsManager):
             self._account = values['account']
             self._password = values['password']
             self._group = values['grp'].strip()
+            self._serverHint = values['serverHint'].strip()
         else:
             self._domain = ""
             self._ou = ""
             self._account = ""
             self._password = ""
+            self._group = ""
+            self._serverHint = ""
 
         # self._ou = self._ou.replace(' ', ''), do not remove spaces
         if self._domain != '' and self._ou != '':
@@ -80,21 +85,29 @@ class WinDomainOsManager(WindowsOsManager):
             _str += str(e)
         return _str
 
-    def __connectLdap(self):
+    def __getServerList(self):
+        if self._serverHint != '':
+            yield (self._serverHint, 389)
+
+        for server in reversed(sorted(dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'), key=lambda i: i.priority * 10000 + i.weight)):
+            yield (six.text_type(server.target)[:-1], server.port)
+
+    def __connectLdap(self, servers=None):
         '''
         Tries to connect to LDAP
         Raises an exception if not found:
             dns.resolver.NXDOMAIN
             ldap.LDAPError
         '''
-        servers = reversed(sorted(dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'), key=lambda i: i.priority * 10000 + i.weight))
+        if servers is None:
+            servers = self.__getServerList()
 
         for server in servers:
 
             _str = ''
 
             try:
-                uri = "%s://%s:%d" % ('ldap', str(server.target)[:-1], server.port)
+                uri = "%s://%s:%d" % ('ldap', server[0], server[1])
                 logger.debug('URI: {0}'.format(uri))
 
                 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # Disable certificate check
@@ -149,24 +162,36 @@ class WinDomainOsManager(WindowsOsManager):
             logger.info('Adding to a group for a non FQDN domain is not supported')
             return
 
-        try:
-            l = self.__connectLdap()
-        except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
-            logger.warn('Could not find _ldap._tcp.' + self._domain)
-            log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
-        except ldap.LDAPError:
-            logger.exception('Ldap Exception caught')
-            log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
+        # The machine is on a AD for sure, and maybe they are not already sync
+        servers = list(self.__getServerList())
 
-        try:
-            machine = self.__getMachine(l, userService.friendly_name)
-            group = self.__getGroup(l)
-            l.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))
-        except ldap.ALREADY_EXISTS:
-            # Already added this machine to this group, pass
-            pass
-        except Exception:
-            logger.error('Got exception trying to add machine to group')
+        error = None
+        for s in servers:
+            try:
+                l = self.__connectLdap(servers=(s,))
+
+                machine = self.__getMachine(l, userService.friendly_name)
+                group = self.__getGroup(l)
+                l.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))
+                error = None
+                break
+            except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
+                logger.warn('Could not find _ldap._tcp.' + self._domain)
+                log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
+            except ldap.ALREADY_EXISTS:
+                # Already added this machine to this group, pass
+                error = None
+                break
+            except ldap.LDAPError:
+                logger.exception('Ldap Exception caught')
+                error = "Could not remove machine from domain (invalid credentials for {0})".format(self._account)
+            except Exception as e:
+                error = "Could not add machine {} to group {}: {}".format(userService.friendly_name, self._group, e)
+                # logger.exception('Ldap Exception caught')
+
+        if error is not None:
+            log.doLog(userService, log.WARN, error, log.OSMANAGER)
+            logger.error(error)
 
     def release(self, service):
         '''
@@ -264,20 +289,25 @@ class WinDomainOsManager(WindowsOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v2', self._domain, self._ou, self._account, CryptoManager.manager().encrypt(self._password), base.encode('hex'), self._group])
+        return '\t'.join(['v3', self._domain, self._ou, self._account, CryptoManager.manager().encrypt(self._password), base.encode('hex'), self._group, self._serverHint])
 
     def unmarshal(self, s):
         data = s.split('\t')
-        if data[0] in ('v1', 'v2'):
+        if data[0] in ('v1', 'v2', 'v3'):
             self._domain = data[1]
             self._ou = data[2]
             self._account = data[3]
             self._password = CryptoManager.manager().decrypt(data[4])
 
-        if data[0] == 'v2':
+        if data[0] in ('v2', 'v3'):
             self._group = data[6]
         else:
             self._group = ''
+
+        if data[0] == 'v3':
+            self._serverHint = data[7]
+        else:
+            self._serverHint = ''
 
         super(WinDomainOsManager, self).unmarshal(data[5].decode('hex'))
 
@@ -288,4 +318,5 @@ class WinDomainOsManager(WindowsOsManager):
         dct['account'] = self._account
         dct['password'] = self._password
         dct['grp'] = self._group
+        dct['serverHint'] = self._serverHint
         return dct

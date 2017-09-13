@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-09-01'
+__updated__ = '2017-09-13'
 
 
 logger = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ class BaseRDPTransport(Transport):
     allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=22, tooltip=_('If checked, this transport will allow the use of user drives'), tab=gui.PARAMETERS_TAB)
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=23, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
     allowClipboard = gui.CheckBoxField(label=_('Enable clipboard'), order=24, tooltip=_('If checked, copy-paste functions will be allowed'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
-    wallpaper = gui.CheckBoxField(label=_('Show wallpaper'), order=25, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.PARAMETERS_TAB)
+    wallpaper = gui.CheckBoxField(label=_('Wallpaper/theme'), order=25, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.PARAMETERS_TAB)
     multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=26, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'), tab=gui.PARAMETERS_TAB)
     aero = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=27, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.PARAMETERS_TAB)
     smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=28, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.PARAMETERS_TAB)
