@@ -86,6 +86,9 @@ class WinDomainOsManager(WindowsOsManager):
         return _str
 
     def __getServerList(self):
+        if self._serverHint != '':
+            yield (self._serverHint, 389)
+
         for server in reversed(sorted(dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'), key=lambda i: i.priority * 10000 + i.weight)):
             yield (six.text_type(server.target)[:-1], server.port)
 
@@ -161,8 +164,6 @@ class WinDomainOsManager(WindowsOsManager):
 
         # The machine is on a AD for sure, and maybe they are not already sync
         servers = list(self.__getServerList())
-        if self._serverHint != '':
-            servers.insert(0, (self._serverHint, 389))
 
         error = None
         for s in servers:
