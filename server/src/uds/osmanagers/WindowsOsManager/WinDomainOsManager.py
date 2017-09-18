@@ -102,8 +102,8 @@ class WinDomainOsManager(WindowsOsManager):
         if servers is None:
             servers = self.__getServerList()
 
+        _str = "No servers found"
         for server in servers:
-
             _str = ''
 
             try:
@@ -208,9 +208,14 @@ class WinDomainOsManager(WindowsOsManager):
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
             logger.warn('Could not find _ldap._tcp.' + self._domain)
             log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
+            return
         except ldap.LDAPError:
             logger.exception('Ldap Exception caught')
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
+            return
+        except Exception:
+            logger.exception('Exception caught')
+            return
 
         try:
             res = self.__getMachine(l, service.friendly_name)
