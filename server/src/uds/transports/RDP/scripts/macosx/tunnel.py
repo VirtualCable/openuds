@@ -47,6 +47,7 @@ if executable is None:
 <p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
 '''.format(sp['this_server']))  # @UndefinedVariable
 
+''')
 
 
 forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, sp['tunWait'])  # @UndefinedVariable
@@ -56,6 +57,12 @@ if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
 
 else:
+    theFile = '''{m.r.as_file}'''.format(
+        address='127.0.0.1:{{}}'.format(port)
+    )
+    filename = tools.saveTempFile(theFile)
+    tools.addFileToUnlink(filename)
+
     if executable == msrdc:
         try:
             filename = tools.saveTempFile(sp['as_file'].format(address=address))  # @UndefinedVariable
