@@ -1,0 +1,128 @@
+# -*- coding: utf-8 -*-
+
+#
+# Copyright (c) 2012 Virtual Cable S.L.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+'''
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+'''
+from __future__ import unicode_literals
+from uds.core.services import Publication
+from uds.core.util.State import State
+from uds.models.Util import getSqlDatetime
+
+import logging
+
+
+__updated__ = '2017-05-18'
+
+
+logger = logging.getLogger(__name__)
+
+
+class OGPublication(Publication):
+    '''
+    This class provides the publication of a oVirtLinkedService
+    '''
+    _name = ''
+
+    suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
+
+    def initialize(self):
+        '''
+        This method will be invoked by default __init__ of base class, so it gives
+        us the oportunity to initialize whataver we need here.
+
+        In our case, we setup a few attributes..
+        '''
+
+        # We do not check anything at marshal method, so we ensure that
+        # default values are correctly handled by marshal.
+        self._name = ''
+
+    def marshal(self):
+        '''
+        returns data from an instance of Sample Publication serialized
+        '''
+        return '\t'.join(['v1', self._name])
+
+    def unmarshal(self, data):
+        '''
+        deserializes the data and loads it inside instance.
+        '''
+        logger.debug('Data: {0}'.format(data))
+        vals = data.split('\t')
+        if vals[0] == 'v1':
+            self._name = vals[1]
+
+    def publish(self):
+        '''
+        Realizes the publication of the service
+        '''
+        self._name = 'Publication {}'.format(getSqlDatetime())
+        return State.FINISHED
+
+    def checkState(self):
+        '''
+        Checks state of publication creation
+        '''
+        return State.FINISHED
+
+    def finish(self):
+        '''
+        In our case, finish does nothing
+        '''
+        pass
+
+    def reasonOfError(self):
+        '''
+        If a publication produces an error, here we must notify the reason why
+        it happened. This will be called just after publish or checkState
+        if they return State.ERROR
+
+        Returns an string, in our case, set at checkState
+        '''
+        return 'No error possible :)'
+
+    def destroy(self):
+        '''
+        This is called once a publication is no more needed.
+
+        This method do whatever needed to clean up things, such as
+        removing created "external" data (environment gets cleaned by core),
+        etc..
+
+        The retunred value is the same as when publishing, State.RUNNING,
+        State.FINISHED or State.ERROR.
+        '''
+        return State.FINISHED
+
+    def cancel(self):
+        '''
+        Do same thing as destroy
+        '''
+        return self.destroy()

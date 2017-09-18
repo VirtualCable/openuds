@@ -95,19 +95,19 @@ else:
         if domain != '':
             url += domain
 
-        url += '?screenDepth={m.r.bpp}'
+        url += '?screenDepth###{m.r.bpp}'
 
         if {m.r.fullScreen}:  # @UndefinedVariable
-            url += '&fullscreen=true'
+            url += '&fullscreen###true'
         else:
-            url += 'screenWidth={m.r.width}&screenHeight={m.r.height}'
+            url += 'screenWidth###{m.r.width}&screenHeight###{m.r.height}'
 
-        url += '&forwardAudio=' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
+        # url += '&forwardAudio###' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
 
         if {m.r.redirectDrives}:  # @UndefinedVariable
-            url += '&forwardDisks=true'
+            url += '&forwardDisks###true'
 
         if {m.r.redirectPrinters}:  # @UndefinedVariable
-            url += '&forwardPrinters=true'
+            url += '&forwardPrinters###true'
 
         tools.addTaskToWait(subprocess.Popen(['open', url]))
