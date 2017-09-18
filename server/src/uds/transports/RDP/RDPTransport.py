@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-09-01'
+__updated__ = '2017-09-18'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -136,7 +136,7 @@ class RDPTransport(BaseRDPTransport):
             OsDetector.Linux: 'linux',
             OsDetector.Macintosh: 'macosx'
 
-        }.get(m.os)
+        }.get(os['OS'])
 
         if os is None:
             logger.ERROR('Os not detected for RDP Transport: {}'.format(request.META.get('HTTP_USER_AGENT', 'Unknown')))

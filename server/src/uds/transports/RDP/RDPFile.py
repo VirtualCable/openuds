@@ -39,8 +39,9 @@ from __future__ import unicode_literals
 from uds.core.util import OsDetector
 import six
 import os
+import urllib
 
-__updated__ = '2017-09-01'
+__updated__ = '2017-09-18'
 
 
 class RDPFile(object):
@@ -209,6 +210,38 @@ class RDPFile(object):
             params.append('-d{}'.format(self.domain))
 
         return params
+
+    @property
+    def as_cord_url(self):
+        url = 'rdp://'
+
+        if self.username != '':
+            url += urllib.quote(self.username)
+            if self.password != '':
+                url += ':' + urllib.quote(self.password)
+            url += '@'
+        url += self.address + '/'
+
+        if self.domain != '':
+            url += self.domain
+
+        url += '?screenDepth###{}'.format(self.bpp)
+
+        if self.fullScreen:  # @UndefinedVariable
+            url += '&fullscreen###true'
+        else:
+            url += '&screenWidth###{}&screenHeight###{}'.format(self.width, self.height)
+
+        # url += '&forwardAudio###' + '01'[{m.r.redirectAudio}]  # @UndefinedVariable
+
+        if self.redirectDrives:  # @UndefinedVariable
+            url += '&forwardDisks###true'
+
+        if self.redirectPrinters:  # @UndefinedVariable
+            url += '&forwardPrinters###true'
+
+        return url
+
 
     def getGeneric(self):
         password = "{password}"

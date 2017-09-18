@@ -47,9 +47,6 @@ if executable is None:
 <p>If both apps are installed, Remote Desktop Connection will be used as first option</p>
 '''.format(sp['this_server']))  # @UndefinedVariable
 
-''')
-
-
 forwardThread, port = forward(sp['tunHost'], sp['tunPort'], sp['tunUser'], sp['tunPass'], sp['ip'], 3389, sp['tunWait'])  # @UndefinedVariable
 address = '127.0.0.1:{}'.format(port)
 
