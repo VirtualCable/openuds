@@ -223,7 +223,7 @@ class WinDomainOsManager(WindowsOsManager):
                 raise Exception('Machine {} not found on AD (permissions?)'.format(service.friendly_name))
             l.delete_s(res)  # Remove by DN, SYNC
         except IndexError:
-            logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, ou))
+            logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, self._ou))
         except Exception:
             logger.exception('Deleting from AD: ')
 
