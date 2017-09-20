@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2016 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -43,8 +43,9 @@ import ldap
 import ldap.filter
 import re
 import logging
+import six
 
-__updated__ = '2016-04-18'
+__updated__ = '2017-09-20'
 
 logger = logging.getLogger(__name__)
 
@@ -61,11 +62,13 @@ class RegexLdap(auths.Authenticator):
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=6, tooltip=_('Timeout in seconds of connection to LDAP'), required=True, minValue=1)
 
     ldapBase = gui.TextField(length=64, label=_('Base'), order=7, tooltip=_('Common search base (used for "users" and "groups")'), required=True, tab=_('Ldap info'))
-    userClass = gui.TextField(length=64, label=_('User class'), defvalue='posixAccount', order=8, tooltip=_('Class for LDAP users (normally posixAccount)'), required=True, tab=_('Ldap info'))
+    userClass = gui.TextField(length=64, label=_('User class'), defvalue='posixAccount', order=8, tooltip=_('lass for LDAP users (normally posixAccount)'), required=True, tab=_('Ldap info'))
     userIdAttr = gui.TextField(length=64, label=_('User Id Attr'), defvalue='uid', order=9, tooltip=_('Attribute that contains the user id'), required=True, tab=_('Ldap info'))
     userNameAttr = gui.TextField(length=640, label=_('User Name Attr'), multiline=2, defvalue='uid', order=10, tooltip=_('Attributes that contains the user name (list of comma separated values)'), required=True, tab=_('Ldap info'))
     groupNameAttr = gui.TextField(length=640, label=_('Group Name Attr'), multiline=2, defvalue='cn', order=11, tooltip=_('Attribute that contains the group name'), required=True, tab=_('Ldap info'))
     # regex = gui.TextField(length=64, label = _('Regular Exp. for groups'), defvalue = '^(.*)', order = 12, tooltip = _('Regular Expression to extract the group name'), required = True)
+
+    altClass = gui.TextField(length=64, label=_('Alt. class'), defvalue='', order=20, tooltip=_('Class for LDAP objects that will be also checked for groups retrieval (normally empty)'), required=True, tab=_('Advanced'))
 
     typeName = _('Regex LDAP Authenticator')
     typeType = 'RegexLdapAuthenticator'
@@ -102,7 +105,7 @@ class RegexLdap(auths.Authenticator):
             self._groupNameAttr = values['groupNameAttr']
             # self._regex = values['regex']
             self._userNameAttr = values['userNameAttr']
-
+            self._altClass = values['altClass']
         else:
             self._host = None
             self._port = None
@@ -116,6 +119,8 @@ class RegexLdap(auths.Authenticator):
             self._groupNameAttr = None
             # self._regex = None
             self._userNameAttr = None
+            self._altClass = None
+
         self._connection = None
 
     def __validateField(self, field, fieldLabel):
@@ -181,32 +186,43 @@ class RegexLdap(auths.Authenticator):
             'username': self._username, 'password': self._password, 'timeout': self._timeout,
             'ldapBase': self._ldapBase, 'userClass': self._userClass,
             'userIdAttr': self._userIdAttr, 'groupNameAttr': self._groupNameAttr,
-            'userNameAttr': self._userNameAttr
+            'userNameAttr': self._userNameAttr, 'altClass': self._altClass,
         }
 
     def __str__(self):
-        return "Ldap Auth: {0}:{1}@{2}:{3}, base = {4}, userClass = {5}, userIdAttr = {6}, groupNameAttr = {7}, userName attr = {8}".format(
+        return "Ldap Auth: {}:{}@{}:{}, base = {}, userClass = {}, userIdAttr = {}, groupNameAttr = {}, userName attr = {}, altClass={}".format(
                self._username, self._password, self._host, self._port, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr,
-               self._userNameAttr)
+               self._userNameAttr, self._altClass)
 
     def marshal(self):
         return '\t'.join([
-            'v2',
-            self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
-            self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, self._userNameAttr
+            'v3',
+            self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password,
+            self._timeout, self._ldapBase, self._userClass, self._userIdAttr,
+            self._groupNameAttr, self._userNameAttr, self._altClass
         ])
 
     def unmarshal(self, val):
         data = val.split('\t')
         if data[0] == 'v1':
             logger.debug("Data: {0}".format(data[1:]))
-            self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, _regex, self._userNameAttr = data[1:]
+            self._host, self._port, self._ssl, self._username, self._password, \
+                self._timeout, self._ldapBase, self._userClass, self._userIdAttr, \
+                self._groupNameAttr, _regex, self._userNameAttr = data[1:]
             self._ssl = gui.strToBool(self._ssl)
             self._groupNameAttr = self._groupNameAttr + '=' + _regex
             self._userNameAttr = '\n'.join(self._userNameAttr.split(','))
         elif data[0] == 'v2':
             logger.debug("Data v2: {0}".format(data[1:]))
-            self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._userIdAttr, self._groupNameAttr, self._userNameAttr = data[1:]
+            self._host, self._port, self._ssl, self._username, self._password, \
+                self._timeout, self._ldapBase, self._userClass, self._userIdAttr, \
+                self._groupNameAttr, self._userNameAttr = data[1:]
+            self._ssl = gui.strToBool(self._ssl)
+        elif data[0] == 'v3':
+            logger.debug("Data v3: {0}".format(data[1:]))
+            self._host, self._port, self._ssl, self._username, self._password, \
+                self._timeout, self._ldapBase, self._userClass, self._userIdAttr, \
+                self._groupNameAttr, self._userNameAttr, self._altClass = data[1:]
             self._ssl = gui.strToBool(self._ssl)
 
     def __connection(self, username=None, password=None):
@@ -250,17 +266,52 @@ class RegexLdap(auths.Authenticator):
 
     def __getUser(self, username):
         try:
+
             con = self.__connection()
-            filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
+            filter_ = b'(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
             attrlist = [self._userIdAttr.encode('utf-8')] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
 
-            logger.debug('Getuser filter_: {0}, attr list: {1}'.format(filter_, attrlist))
+            logger.debug('Getuser filter_: {}, attr list: {}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
                                    filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
+
             usr = dict((k, '') for k in attrlist)
             dct = {k.lower(): v for k, v in res[1].iteritems()}
             usr.update(dct)
             usr.update({'dn': res[0], '_id': username})
+
+            # If altClass
+            if self._altClass is not None and self._altClass != '':
+                logger.debug('Has alt class {}'.format(self._altClass))
+                filter_ = b'(&(objectClass=%s)(%s=%s))' % (self._altClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
+                logger.debug('Get Alternate list filter: {}, attrlist: {}'.format(filter_, attrlist))
+                # Get alternate class objects
+                res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
+                                       filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)
+
+                for r in res:
+                    if r[0] is None:
+                        continue
+                    logger.debug('*** Item: {}'.format(r))
+
+                    for k, v in six.iteritems(r[1]):
+                        kl = k.lower()
+                        # If already exists the field
+                        if kl in usr:
+                            # Convert existint to list, so we can add a new value
+                            if not isinstance(usr[kl], (list, tuple)):
+                                usr[kl] = [usr[kl]]
+
+                            # Convert values to list, if not list
+                            if not isinstance(v, (list, tuple)):
+                                v = [v]
+
+                            # Now append to existing values
+                            for x in v:
+                                usr[kl].append(x)
+                        else:
+                            usr[kl] = v
+
             logger.debug('Usr: {0}'.format(usr))
             return usr
         except Exception:
