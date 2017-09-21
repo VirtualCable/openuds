@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017
 msgid ""
@@ -11,14 +11,12 @@ msgstr ""
 "POT-Creation-Date: 2017-06-06 13:14+0200\n"
 "PO-Revision-Date: 2017-06-06 11:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
-"ar/)\n"
-"Language: ar\n"
+"Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: REST/methods/actor.py:94 REST/methods/client.py:92
 #: REST/methods/client.py:109
@@ -67,11 +65,13 @@ msgstr "الاسم"
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:140
 #: templates/uds/admin/tmpl/calendar_rule.html:14
-#: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
+#: templates/uds/admin/tmpl/group.html:49
+#: templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "تعليقات"
 
-#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
+#: REST/methods/authenticators.py:62
+#: REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
 #: REST/methods/user_services.py:269 REST/model.py:149
 #: templates/uds/admin/tmpl/pool_add_access.html:5
@@ -196,9 +196,7 @@ msgstr "نطاق الشبكة"
 msgid ""
 "Network range. Accepts most network definitions formats (range, subnet, "
 "host, etc..."
-msgstr ""
-"نطاق الشبكة. تقبل معظم تنسيقات تعريفات الشبكة (النطاق، شبكة فرعية، المضيف، "
-"إلخ..."
+msgstr "نطاق الشبكة. تقبل معظم تنسيقات تعريفات الشبكة (النطاق، شبكة فرعية، المضيف، إلخ..."
 
 #: REST/methods/osmanagers.py:55
 msgid "Current OS Managers"
@@ -217,7 +215,8 @@ msgid "Status"
 msgstr "مركز"
 
 #: REST/methods/providers.py:69 reports/stats/pools_usage.py:107
-#: reports/stats/pools_usage.py:283 templates/uds/admin/snippets/navbar.html:22
+#: reports/stats/pools_usage.py:283
+#: templates/uds/admin/snippets/navbar.html:22
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
@@ -464,9 +463,7 @@ msgstr "الحد الأقصى لعدد الخدمات المتوفرة"
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
-msgstr ""
-"الحد الأقصى لعدد من الخدمات (المعينة ومخبأة في L1) التي يمكن أن تنشأ عن هذه "
-"الخدمة"
+msgstr "الحد الأقصى لعدد من الخدمات (المعينة ومخبأة في L1) التي يمكن أن تنشأ عن هذه الخدمة"
 
 #: REST/methods/services_pools.py:223
 msgid "Show transports"
@@ -500,9 +497,7 @@ msgstr "الوصول إلى شبكة الاتصال"
 msgid ""
 "If checked, the transport will be enabled for the selected networks.If "
 "unchecked, transport will be disabled for selected networks"
-msgstr ""
-"إذا كانت محددة، سيتم تمكين النقل لشبكات مختارة. إذا كان غير محدد، سيتم تعطيل "
-"النقل لشبكات مختارة"
+msgstr "إذا كانت محددة، سيتم تمكين النقل لشبكات مختارة. إذا كان غير محدد، سيتم تعطيل النقل لشبكات مختارة"
 
 #: REST/methods/transports.py:81
 #: services/Nutanix_enterprise/NutanixService.py:51
@@ -514,9 +509,7 @@ msgstr "الشبكات"
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
-msgstr ""
-"الشبكات المرتبطة بهذا النقل. في حالة عدم وجود شبكة اتصال محددة، سوف يعني "
-"\"جميع الشبكات\""
+msgstr "الشبكات المرتبطة بهذا النقل. في حالة عدم وجود شبكة اتصال محددة، سوف يعني \"جميع الشبكات\""
 
 #: REST/methods/transports.py:89
 msgid "Allowed Devices"
@@ -524,11 +517,9 @@ msgstr "أجهزة مسموحة "
 
 #: REST/methods/transports.py:90
 msgid ""
-"If empty, any kind of device compatible with this transport will be allowed. "
-"Else, only devices compatible with selected values will be allowed"
-msgstr ""
-"إذا كان فارغا، لن يسمح لأي نوع من الأجهزة المتوافقة مع هذا النقل. خلاف ذلك،  "
-"يسمح لأجهزة متوافقة فقط مع القيم المحددة"
+"If empty, any kind of device compatible with this transport will be allowed."
+" Else, only devices compatible with selected values will be allowed"
+msgstr "إذا كان فارغا، لن يسمح لأي نوع من الأجهزة المتوافقة مع هذا النقل. خلاف ذلك،  يسمح لأجهزة متوافقة فقط مع القيم المحددة"
 
 #: REST/methods/user_services.py:80 REST/methods/user_services.py:81
 msgid "unknown"
@@ -561,7 +552,8 @@ msgstr "اسم مألوف"
 msgid "Status date"
 msgstr "تاريخ الحالة"
 
-#: REST/methods/user_services.py:134 templates/uds/admin/tmpl/user-info.html:65
+#: REST/methods/user_services.py:134
+#: templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr "في الاستخدام"
 
@@ -820,11 +812,9 @@ msgstr "المستخدم"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 msgid ""
-"Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
-"for this)"
-msgstr ""
-"اسم المستخدم امتيازات القراءة على قاعدة محددة (استخدام USER@DOMAIN. نموذج "
-"دوم لذلك)"
+"Username with read privileges on the base selected (use USER@DOMAIN.DOM form"
+" for this)"
+msgstr "اسم المستخدم امتيازات القراءة على قاعدة محددة (استخدام USER@DOMAIN. نموذج دوم لذلك)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
@@ -992,16 +982,14 @@ msgstr "قاعدة البحث Ldap غير صحيح"
 #: auths/EDirectory_enterprise/Authenticator.py:330
 #: auths/RegexLdap/Authenticator.py:403 auths/SimpleLDAP/Authenticator.py:382
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
-msgstr ""
-"يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
+msgstr "يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:338
 #: auths/SimpleLDAP/Authenticator.py:398
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
-msgstr ""
-"يبدو أن Ldap المستخدم معرف السمة غير صحيحة (أي مستخدم موجود بذلك السمة)"
+msgstr "يبدو أن Ldap المستخدم معرف السمة غير صحيحة (أي مستخدم موجود بذلك السمة)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:346
 msgid "Expected group attribute "
@@ -1010,8 +998,7 @@ msgstr "مجموعة السمة المتوقعة "
 #: auths/EDirectory_enterprise/Authenticator.py:355
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
-msgstr ""
-"Attr معرف المستخدم أو فئة المستخدم Ldap خاطئ ربما (Ldap هو eDirectory)؟"
+msgstr "Attr معرف المستخدم أو فئة المستخدم Ldap خاطئ ربما (Ldap هو eDirectory)؟"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid "Accept proxy"
@@ -1019,11 +1006,9 @@ msgstr "قبول الوكيل"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid ""
-"If checked, requests via proxy will get FORWARDED ip address (take care with "
-"this bein checked, can take internal IP addresses from internet)"
-msgstr ""
-"إذا راجعت، الطلبات عن طريق الوكيل سوف تحصل على عنوان ip يتم إعادة توجيهها "
-"(يمكن أن يستغرق هذا التحقق عناوين IP داخلية من الإنترنت)"
+"If checked, requests via proxy will get FORWARDED ip address (take care with"
+" this bein checked, can take internal IP addresses from internet)"
+msgstr "إذا راجعت، الطلبات عن طريق الوكيل سوف تحصل على عنوان ip يتم إعادة توجيهها (يمكن أن يستغرق هذا التحقق عناوين IP داخلية من الإنترنت)"
 
 #: auths/IP/Authenticator.py:54 auths/IP/Authenticator.py:56
 msgid "IP Authenticator"
@@ -1115,7 +1100,8 @@ msgid "User Name Attr"
 msgstr "User Name Attr"
 
 #: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
-msgid "Attributes that contains the user name (list of comma separated values)"
+msgid ""
+"Attributes that contains the user name (list of comma separated values)"
 msgstr "السمات التي تحتوي على اسم المستخدم (قائمة قيم مفصولة بفاصلة)"
 
 #: auths/RegexLdap/Authenticator.py:67
@@ -1138,8 +1124,7 @@ msgstr " التعبيرات العادية لمصادق LDAP"
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
-msgstr ""
-"ربما Ldap user id attr خاطئ (لا يمكن العثور على أي مستخدم مع كل الشروط)"
+msgstr "ربما Ldap user id attr خاطئ (لا يمكن العثور على أي مستخدم مع كل الشروط)"
 
 #: auths/RegexLdap/Authenticator.py:426 auths/SimpleLDAP/Authenticator.py:406
 msgid ""
@@ -1163,9 +1148,7 @@ msgstr "المفتاح الخاص"
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
-msgstr ""
-"استخدام المفتاح الخاص للتسجيل ولهذه السمة، كما تم إنشاؤه في الأساس 64 من "
-"OpenSSL"
+msgstr "استخدام المفتاح الخاص للتسجيل ولهذه السمة، كما تم إنشاؤه في الأساس 64 من OpenSSL"
 
 #: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
 msgid "Certificates"
@@ -1179,9 +1162,7 @@ msgstr "شهادة"
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
-msgstr ""
-"المفتاح العمومي يستخدم للإمضاء والتشفير (الجزء العلني من المفتاح الخاص "
-"السابق)، كما ولد في base64 من OpenSSL"
+msgstr "المفتاح العمومي يستخدم للإمضاء والتشفير (الجزء العلني من المفتاح الخاص السابق)، كما ولد في base64 من OpenSSL"
 
 #: auths/SAML_enterprise/SAML.py:126
 msgid "IDP Metadata"
@@ -1190,8 +1171,7 @@ msgstr "IDP Metadata"
 #: auths/SAML_enterprise/SAML.py:127
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
-msgstr ""
-"يمكنك إدخال URL أو بيانات IDP Metadata هنا داخليا أو بيان التعريف نفسه (xml)"
+msgstr "يمكنك إدخال URL أو بيانات IDP Metadata هنا داخليا أو بيان التعريف نفسه (xml)"
 
 #: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
 msgid "Metadata"
@@ -1202,7 +1182,8 @@ msgid "Entity ID"
 msgstr "معرف الكيان"
 
 #: auths/SAML_enterprise/SAML.py:130
-msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
+msgid ""
+"ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP ID. إذا ترك فارغاً، ستكون هذه المعطيات من محدد موقع معلومات الخادم"
 
 #: auths/SAML_enterprise/SAML.py:132
@@ -1236,11 +1217,9 @@ msgstr "حقول منها يستخرج الاسم الحقيقي"
 
 #: auths/SAML_enterprise/SAML.py:162
 msgid ""
-"Server certificate should be a valid PEM (PEM certificates starts with -----"
-"BEGIN CERTIFICATE-----)"
-msgstr ""
-"يجب أن تكون شهادة الملقم PEM صالحة (PEM شهادات تبدأ ب-----BEGIN "
-"CERTIFICATE-----)"
+"Server certificate should be a valid PEM (PEM certificates starts with "
+"-----BEGIN CERTIFICATE-----)"
+msgstr "يجب أن تكون شهادة الملقم PEM صالحة (PEM شهادات تبدأ ب-----BEGIN CERTIFICATE-----)"
 
 #: auths/SAML_enterprise/SAML.py:167
 msgid "Invalid server certificate. "
@@ -1250,9 +1229,7 @@ msgstr "شهادة الملقم غير صالحة. "
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
-msgstr ""
-"يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN "
-"RSA PRIVATE KEY-----"
+msgstr "يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN RSA PRIVATE KEY-----"
 
 #: auths/SAML_enterprise/SAML.py:202
 #, python-brace-format
@@ -1294,7 +1271,8 @@ msgstr "مجموعة وهمية"
 #: templates/uds/admin/tmpl/permissions.html:22
 #: templates/uds/admin/tmpl/services_pool.html:33
 #: templates/uds/admin/tmpl/user-info.html:4
-#: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
+#: templates/uds/admin/tmpl/user.html:90
+#: templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
 msgstr "المجموعات"
 
@@ -1350,17 +1328,13 @@ msgstr "يبدو أن فئة المجموعة Ldap غير صحيحة (العثو
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
-msgstr ""
-"ربما فئة المستخدم Ldap أو فئة id attr  خاطئة (لا يمكن العثور على أي مستخدم "
-"مع هذه الشروط)"
+msgstr "ربما فئة المستخدم Ldap أو فئة id attr  خاطئة (لا يمكن العثور على أي مستخدم مع هذه الشروط)"
 
 #: auths/SimpleLDAP/Authenticator.py:424
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
-msgstr ""
-"ربما فئة المجموعة Ldap أو فئة id attr  خاطئة (لا يمكن العثور على أي مجموعة "
-"مع هذه الشروط)"
+msgstr "ربما فئة المجموعة Ldap أو فئة id attr  خاطئة (لا يمكن العثور على أي مجموعة مع هذه الشروط)"
 
 #: auths/SimpleLDAP/Authenticator.py:431
 msgid "Can't locate any group with the membership attribute specified"
@@ -1642,11 +1616,9 @@ msgstr "{0} يحتوي على أحرف غير صالحة"
 
 #: core/util/validators.py:116
 msgid ""
-"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
-"XX:XX"
-msgstr ""
-"مجموعة ماك غير صالحة. يجب أن يكون نطاق Mac في تنسيق XX:XX:XX:XX:XX:XX-XX:XX:"
-"XX:XX:XX:XX"
+"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-"
+"XX:XX:XX:XX:XX:XX"
+msgstr "مجموعة ماك غير صالحة. يجب أن يكون نطاق Mac في تنسيق XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:XX:XX"
 
 #: dispatchers/wyse_enterprise/views.py:114
 msgid "There are no authenticators available for login"
@@ -1827,9 +1799,7 @@ msgstr "الوقت الأقصى للخمول"
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max idle time)."
-msgstr ""
-"الوقت الأقصى للخمول (بالثواني) قبل جلسة مغلقة تلقائيا للمستخدم (<= 0 يعني "
-"عدم وجود حد أقصى للخمول)."
+msgstr "الوقت الأقصى للخمول (بالثواني) قبل جلسة مغلقة تلقائيا للمستخدم (<= 0 يعني عدم وجود حد أقصى للخمول)."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:47
 msgid "Linux Random Password OS Manager"
@@ -1837,8 +1807,7 @@ msgstr "كلمة سر عشوائية لمدير التشغيل لينكس"
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:49
 msgid "Os Manager to control linux machines, with user password set randomly."
-msgstr ""
-"مدير التشغيل للسيطرة على آلات لينكس، مع كلمة المرور للمستخدم تحدد عشوائيا."
+msgstr "مدير التشغيل للسيطرة على آلات لينكس، مع كلمة المرور للمستخدم تحدد عشوائيا."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:53
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
@@ -1858,22 +1827,20 @@ msgstr "يجب تقديم حساب المستخدم !!!"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
 msgid ""
-"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>"
-msgstr ""
-"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>"
+"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python "
+"2.7)</b>"
+msgstr "UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
 msgid ""
 "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
 "2.7)</b>"
-msgstr ""
-"UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
-"2.7)</b>"
+msgstr "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:59
-msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
-msgstr ""
+msgid ""
 "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
+msgstr "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
 msgid "RDS OS Manager"
@@ -1891,9 +1858,7 @@ msgstr "الوقت الأقصى للجلسة "
 msgid ""
 "Maximum duration in hours for a session (0 means no limit). After this "
 "period, session will be released."
-msgstr ""
-"المدة القصوى بالساعات لدورة (0 يعني عدم وجود حد). بعد هذه الفترة، سيتم إنهاء "
-"الدورة."
+msgstr "المدة القصوى بالساعات لدورة (0 يعني عدم وجود حد). بعد هذه الفترة، سيتم إنهاء الدورة."
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:49
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012)"
@@ -1937,9 +1902,7 @@ msgstr "OU"
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
-msgstr ""
-"الوحدة التنظيمية حيث تضاف الآلات في مجال (التحقق من ذلك قبل استخدامه) i.e.: "
-"ou=My Machines,dc=mydomain,dc=local"
+msgstr "الوحدة التنظيمية حيث تضاف الآلات في مجال (التحقق من ذلك قبل استخدامه) i.e.: ou=My Machines,dc=mydomain,dc=local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
 msgid "Must provide a domain!"
@@ -2003,9 +1966,7 @@ msgstr "مدير نظام التشغيل ويندوز بكلمة عشوائية 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:28
 msgid ""
 "Os Manager to control windows machines, with user password set randomly."
-msgstr ""
-"مدير  نظام التشغيل للسيطرة على أجهزة ويندوز، مع كلمة المرور للمستخدم تحدد "
-"عشوائيا."
+msgstr "مدير  نظام التشغيل للسيطرة على أجهزة ويندوز، مع كلمة المرور للمستخدم تحدد عشوائيا."
 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
 msgid "Current (template) password of the user account"
@@ -2027,9 +1988,7 @@ msgstr "مدير نظام التشغيل للسيطرة على أجهزة وين
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
-msgstr ""
-"وقت الخمول الأقصى (بالثواني) قبل أن يتم إغلاق الجلسة تلقائيا للمستخدم (<= 0 "
-"يعني عدم وجود حد أقصى)"
+msgstr "وقت الخمول الأقصى (بالثواني) قبل أن يتم إغلاق الجلسة تلقائيا للمستخدم (<= 0 يعني عدم وجود حد أقصى)"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:76
 msgid "Length must be numeric!!"
@@ -2295,7 +2254,8 @@ msgstr "HyperV استنساخ العنقودية المرتبطة (تجريبي)
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:59
-msgid "Hyper Services based on templates and differential disks (experimental)"
+msgid ""
+"Hyper Services based on templates and differential disks (experimental)"
 msgstr "الخدمات فرط استنادا إلى قوالب والأقراص التفاضلية (تجريبي)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
@@ -2308,7 +2268,8 @@ msgstr "عدد من الآلات المطلوبة للحفاظ على التوا
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:82
-#: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
+#: services/OVirt/OVirtLinkedService.py:83
+#: services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCLinkedCloneService.py:42
 #: services/Xen/XenLinkedService.py:83
 msgid "Number of desired machines to keep suspended waiting for use"
@@ -2340,10 +2301,9 @@ msgstr "شبكة الاتصال"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:131
 msgid ""
-"If more than 1 interface is found in machine, use one on this network as main"
-msgstr ""
-"إذا تم العثور على أكثر من 1 واجهة في الجهاز، واستخدام واحد على هذه الشبكة "
-"والرئيسية"
+"If more than 1 interface is found in machine, use one on this network as "
+"main"
+msgstr "إذا تم العثور على أكثر من 1 واجهة في الجهاز، واستخدام واحد على هذه الشبكة والرئيسية"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:137
@@ -2373,7 +2333,8 @@ msgstr "مخازن البيانات لوضع تدريجيات والمطبوعا
 #: services/HyperV_enterprise/HyperVLinkedService.py:148
 #: services/Nutanix_enterprise/NutanixService.py:57
 #: services/OVirt/OVirtLinkedService.py:187
-#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
+#: services/OpenNebula/LiveService.py:112
+#: services/OpenStack/LiveService.py:124
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
 #: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
@@ -2390,7 +2351,8 @@ msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 #: services/HyperV_enterprise/HyperVLinkedService.py:158
 #: services/Nutanix_enterprise/NutanixService.py:66
 #: services/OVirt/OVirtLinkedService.py:197
-#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
+#: services/OpenNebula/LiveService.py:122
+#: services/OpenStack/LiveService.py:134
 #: services/Vmware_enterprise/VCLinkedCloneService.py:92
 #: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
@@ -2400,7 +2362,8 @@ msgstr "طول الاسم "
 #: services/HyperV_enterprise/HyperVLinkedService.py:161
 #: services/Nutanix_enterprise/NutanixService.py:69
 #: services/OVirt/OVirtLinkedService.py:200
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
+#: services/OpenNebula/LiveService.py:125
+#: services/OpenStack/LiveService.py:137
 #: services/Vmware_enterprise/VCLinkedCloneService.py:93
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr "حجم جزء رقمية عن أسماء هذه الآلات (بين 3 و 6)"
@@ -2409,7 +2372,8 @@ msgstr "حجم جزء رقمية عن أسماء هذه الآلات (بين 3 �
 #: services/HyperV_enterprise/HyperVLinkedService.py:176
 #: services/Nutanix_enterprise/NutanixService.py:87
 #: services/OVirt/OVirtLinkedService.py:218
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:155
+#: services/OpenNebula/LiveService.py:140
+#: services/OpenStack/LiveService.py:155
 #: services/Vmware_enterprise/VCLinkedCloneService.py:114
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
@@ -2419,7 +2383,8 @@ msgstr "لا يجب أن يكون طول اسم بالإضافة إلى طول �
 #: services/HyperV_enterprise/HyperVLinkedService.py:178
 #: services/Nutanix_enterprise/NutanixService.py:89
 #: services/OVirt/OVirtLinkedService.py:220
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:157
+#: services/OpenNebula/LiveService.py:142
+#: services/OpenStack/LiveService.py:157
 #: services/Vmware_enterprise/VCLinkedCloneService.py:116
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
@@ -2528,10 +2493,10 @@ msgstr "مساحة حرة الحد الأدنى GB"
 #: services/OVirt/OVirtLinkedService.py:201
 #: services/OpenNebula/LiveService.py:106
 #: services/OpenNebula/LiveService.py:116
-#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:116
-#: services/OpenStack/LiveService.py:118 services/OpenStack/LiveService.py:119
-#: services/OpenStack/LiveService.py:121 services/OpenStack/LiveService.py:129
-#: services/OpenStack/LiveService.py:139
+#: services/OpenNebula/LiveService.py:126
+#: services/OpenStack/LiveService.py:116 services/OpenStack/LiveService.py:118
+#: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:121
+#: services/OpenStack/LiveService.py:129 services/OpenStack/LiveService.py:139
 #: services/Vmware_enterprise/VCLinkedCloneService.py:77
 #: services/Vmware_enterprise/VCLinkedCloneService.py:81
 #: services/Vmware_enterprise/VCLinkedCloneService.py:83
@@ -2719,8 +2684,7 @@ msgstr "IP خادم oVirt أو اسم المضيف"
 
 #: services/OVirt/OVirtProvider.py:110
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
-msgstr ""
-"المستخدم مع امتياز صالح على oVirt، (استخدام \"المستخدم @ نطاق\" النموذج)"
+msgstr "المستخدم مع امتياز صالح على oVirt، (استخدام \"المستخدم @ نطاق\" النموذج)"
 
 #: services/OVirt/OVirtProvider.py:111
 msgid "Password of the user of oVirt"
@@ -2777,11 +2741,9 @@ msgstr "ميناء OpenNebula (الافتراضي هو 2633 للاتصال غي�
 
 #: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
 msgid ""
-"If checked, the connection will be forced to be ssl (will not work if server "
-"is not providing ssl)"
-msgstr ""
-"إذا تحققت، سوف يضطر إلى أن يصبح الاتصال SSL (لن تعمل إذا كان الخادم لا تقدم "
-"خدمة تصميم المواقع)"
+"If checked, the connection will be forced to be ssl (will not work if server"
+" is not providing ssl)"
+msgstr "إذا تحققت، سوف يضطر إلى أن يصبح الاتصال SSL (لن تعمل إذا كان الخادم لا تقدم خدمة تصميم المواقع)"
 
 #: services/OpenNebula/Provider.py:101
 msgid "User with valid privileges on OpenNebula"
@@ -2911,9 +2873,7 @@ msgstr "خطأ مصادقة"
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
-msgstr ""
-"أOpenstack لا يدعم API هوية 3.2 أو أحدث. هذا الخادم OpenStack غير متوافق مع "
-"UDS."
+msgstr "أOpenstack لا يدعم API هوية 3.2 أو أحدث. هذا الخادم OpenStack غير متوافق مع UDS."
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -2963,9 +2923,7 @@ msgstr "وصل المستخدمين"
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
-msgstr ""
-"إذا كان نشيطا، سيتم  وصل المستخدمين. إن لم يكن، سيتم إعادة توجيه الاعتماد من "
-"المستخدم إلى خادم RDS."
+msgstr "إذا كان نشيطا، سيتم  وصل المستخدمين. إن لم يكن، سيتم إعادة توجيه الاعتماد من المستخدم إلى خادم RDS."
 
 #: services/RDS_enterprise/RDSProvider.py:41
 msgid "User list for mapping. (Not used if User mapping is disabled)"
@@ -2979,12 +2937,11 @@ msgstr "كلمة مرور المستخدم"
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
-msgstr ""
-"كلمة المرور الافتراضية للمستخدمين في قائمة وصل المستخدمين. (لا تستخدم إذا تم "
-"تعطيل وصل المستخدمين)"
+msgstr "كلمة المرور الافتراضية للمستخدمين في قائمة وصل المستخدمين. (لا تستخدم إذا تم تعطيل وصل المستخدمين)"
 
 #: services/RDS_enterprise/RDSProvider.py:65
-msgid "Error: User {} on host {} is being used and cannot be removed right now"
+msgid ""
+"Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "الخطأ: العضو {} على المضيف {} يستخدم ولا يمكن إزالتها في الوقت الحالي"
 
 #: services/RDS_enterprise/RDSProvider.py:95
@@ -3174,9 +3131,7 @@ msgstr "المهلة بالثواني لاتصال VC"
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
-msgstr ""
-"مجموعة MAC الصالحة للآلات التي تم إنشاؤها. يجب أن يكون داخل 00: 50: 56: 00: "
-"00: 00-00: 50: 56: 3F: FF: FF"
+msgstr "مجموعة MAC الصالحة للآلات التي تم إنشاؤها. يجب أن يكون داخل 00: 50: 56: 00: 00: 00-00: 50: 56: 3F: FF: FF"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:46
 msgid "VMWare VCenter Platform Provider"
@@ -3255,9 +3210,7 @@ msgstr "الشبكة الرئيسية"
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
-msgstr ""
-"إذا تم العثور على أكثر من واجهة في الجهاز، واستخدام وجدت لأول مرة على هذه "
-"الشبكة والرئيسية"
+msgstr "إذا تم العثور على أكثر من واجهة في الجهاز، واستخدام وجدت لأول مرة على هذه الشبكة والرئيسية"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid "Pub. Network"
@@ -3590,12 +3543,14 @@ msgid "Last Access"
 msgstr "آخر وصول"
 
 #: templates/uds/admin/tmpl/group-info.html:55
-#: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
+#: templates/uds/admin/tmpl/group.html:57
+#: templates/uds/admin/tmpl/user.html:48
 msgid "Enabled"
 msgstr "تمكين"
 
 #: templates/uds/admin/tmpl/group-info.html:56
-#: templates/uds/admin/tmpl/group.html:58 templates/uds/admin/tmpl/user.html:49
+#: templates/uds/admin/tmpl/group.html:58
+#: templates/uds/admin/tmpl/user.html:49
 msgid "Disabled"
 msgstr "تعطيل"
 
@@ -3610,7 +3565,8 @@ msgid "Any"
 msgstr "أي"
 
 #: templates/uds/admin/tmpl/group.html:24
-#: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
+#: templates/uds/admin/tmpl/search.html:9
+#: templates/uds/admin/tmpl/user.html:21
 msgid "Search"
 msgstr "بحث"
 
@@ -3790,7 +3746,8 @@ msgstr "موظف"
 msgid "Admin"
 msgstr "مشرف"
 
-#: templates/uds/admin/tmpl/user.html:92 templates/uds/admin/tmpl/user.html:106
+#: templates/uds/admin/tmpl/user.html:92
+#: templates/uds/admin/tmpl/user.html:106
 #, python-brace-format
 msgid "{0} of {1} selected"
 msgstr "{0} من {1} المختارة"
@@ -3828,9 +3785,7 @@ msgstr "تحميل UDS المساعد ل"
 msgid ""
 "In order to be able to execute UDS services, you need to download and "
 "install UDS Plugin."
-msgstr ""
-"ولكي تكون قادرة على تنفيذ خدمات المكاتب المصغرة، تحتاج إلى تحميل و قم بتثبيت "
-"\"البرنامج المساعد مصغراً\"."
+msgstr "ولكي تكون قادرة على تنفيذ خدمات المكاتب المصغرة، تحتاج إلى تحميل و قم بتثبيت \"البرنامج المساعد مصغراً\"."
 
 #: templates/uds/html5/download_client.html:14
 msgid "Or download for other operating system"
@@ -3840,9 +3795,7 @@ msgstr "أو التحميل لنظام التشغيل الأخرى"
 msgid ""
 "In case that your operating system has not been correctly detected, you can "
 "download manually from"
-msgstr ""
-"في حالة أن نظام التشغيل الخاص بك لا تم الكشف عن بشكل صحيح، يمكنك تحميل يدوياً "
-"من"
+msgstr "في حالة أن نظام التشغيل الخاص بك لا تم الكشف عن بشكل صحيح، يمكنك تحميل يدوياً من"
 
 #: templates/uds/html5/download_client.html:19
 msgid "Download Linux UDS plugin"
@@ -3861,9 +3814,7 @@ msgstr "تحميل نظام التشغيل Mac OS X (> 10.5) مصغراً الب
 msgid ""
 "If you already have UDS Plugin installed but this message persists to "
 "appear, you can disable automatic detection here"
-msgstr ""
-"إذا كان لديك بالفعل UDS المساعد تثبيت ولكن استمرت هذه الرسالة في الظهور، "
-"يمكنك تعطيل الكشف التلقائي هنا"
+msgstr "إذا كان لديك بالفعل UDS المساعد تثبيت ولكن استمرت هذه الرسالة في الظهور، يمكنك تعطيل الكشف التلقائي هنا"
 
 #: templates/uds/html5/download_client.html:39
 #: templates/uds/semantic/download_client.html:39
@@ -3880,18 +3831,14 @@ msgstr "تحذير: تم تعطيل الكشف التلقائي المساعد"
 msgid ""
 "Please, note that disabling automatic detection will not trigger this page "
 "again in case you don't have the plugin installed."
-msgstr ""
-"من فضلك، لاحظ أن تعطيل الكشف التلقائي لن تؤدي هذه الصفحة مرة أخرى في حال لم "
-"يكن لديك البرنامج المساعد مثبتة."
+msgstr "من فضلك، لاحظ أن تعطيل الكشف التلقائي لن تؤدي هذه الصفحة مرة أخرى في حال لم يكن لديك البرنامج المساعد مثبتة."
 
 #: templates/uds/html5/download_client.html:45
 #: templates/uds/semantic/download_client.html:45
 msgid ""
 "In this case, you will have to manually download the plugin by using the "
 "menu on upper right corner."
-msgstr ""
-"في هذه الحالة، سيكون عليك لتحميل البرنامج المساعد يدويا باستخدام القائمة على "
-"الزاوية اليمنى العليا."
+msgstr "في هذه الحالة، سيكون عليك لتحميل البرنامج المساعد يدويا باستخدام القائمة على الزاوية اليمنى العليا."
 
 #: templates/uds/html5/download_client.html:47
 #: templates/uds/semantic/download_client.html:47
@@ -4032,8 +3979,7 @@ msgstr "الخدمة ليست جاهزة في هذه اللحظة. من فضلك
 msgid ""
 "The service you have requested was not ready, and it is being created right "
 "now. It will be availabe shortly"
-msgstr ""
-"كانت الخدمة التي طلبتها غير جاهزة، ويجري إنشاؤها الآن. وسوف تكون متاحة قريبا."
+msgstr "كانت الخدمة التي طلبتها غير جاهزة، ويجري إنشاؤها الآن. وسوف تكون متاحة قريبا."
 
 #: templates/uds/html5/service_not_ready.html:23
 #: templates/uds/semantic/service_not_ready.html:23
@@ -4076,8 +4022,7 @@ msgstr "لإعادة إطلاق الخدمة، تحتاج إلى القيام ب
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS plugin installed"
-msgstr ""
-"إذا لم تطلق الخدمة تلقائيا، ربما لم يكن لديك تركيب البرنامج المساعد UDS ."
+msgstr "إذا لم تطلق الخدمة تلقائيا، ربما لم يكن لديك تركيب البرنامج المساعد UDS ."
 
 #: templates/uds/html5/simpleLauncher.html:17
 #: templates/uds/semantic/simpleLauncher.html:17
@@ -4124,12 +4069,9 @@ msgstr "مساعد UDS "
 #: templates/uds/semantic/templates/base.html:33
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
-"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
-"must also disable \"Compatibility View Mode\" for this site)"
-msgstr ""
-"يدعم متصفحك جزئيا فقط. من فضلك، قم بالترقية إلى مستعرض HTML5 حديث مثل "
-"فايرفوكس، كروم، أوبرا، ... (يجب أن يكون IE 10 أو أفضل، ويجب أيضا تعطيل "
-"\"طريقة عرض التوافق\" لهذا الموقع)."
+"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and"
+" must also disable \"Compatibility View Mode\" for this site)"
+msgstr "يدعم متصفحك جزئيا فقط. من فضلك، قم بالترقية إلى مستعرض HTML5 حديث مثل فايرفوكس، كروم، أوبرا، ... (يجب أن يكون IE 10 أو أفضل، ويجب أيضا تعطيل \"طريقة عرض التوافق\" لهذا الموقع)."
 
 #: templates/uds/html5/templates/base.html:109
 msgid "We use cookies to track usage and preferences"
@@ -4152,9 +4094,7 @@ msgstr "إذا وجدت أنه فاتنا أن نذكر أي مكون، اسمح
 msgid ""
 "In order to be able to execute UDS services, you need to have UDS plugin "
 "installed."
-msgstr ""
-"من أجل أن تكون قادرة على تنفيذ خدمات UDS، تحتاج إلى أن يكون UDS تركيب "
-"البرنامج المساعد."
+msgstr "من أجل أن تكون قادرة على تنفيذ خدمات UDS، تحتاج إلى أن يكون UDS تركيب البرنامج المساعد."
 
 #: templates/uds/semantic/download_client.html:14
 msgid "Or download another version"
@@ -4164,9 +4104,7 @@ msgstr "أو تحميل نسخة أخرى"
 msgid ""
 "In case that your platform has been incorrectly detected, you can download "
 "manually the version required for your Operating System"
-msgstr ""
-"في حالة أن النظام الأساسي الخاص بك تم الكشف بشكل غير صحيح، يمكنك يدويا تحميل "
-"الإصدار المطلوب لنظام التشغيل الخاص بك"
+msgstr "في حالة أن النظام الأساسي الخاص بك تم الكشف بشكل غير صحيح، يمكنك يدويا تحميل الإصدار المطلوب لنظام التشغيل الخاص بك"
 
 #: templates/uds/semantic/download_client.html:19
 msgid "Linux UDS plugin"
@@ -4245,9 +4183,7 @@ msgstr "نفق خادم."
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
-msgstr ""
-"مضيف خادم نفق (تستخدم http / https و المنفذ إذا لزم الأمر)، ويمكن الوصول "
-"إليها من المستخدمين."
+msgstr "مضيف خادم نفق (تستخدم http / https و المنفذ إذا لزم الأمر)، ويمكن الوصول إليها من المستخدمين."
 
 #: transports/HTML5RDP/HTML5RDP.py:72 transports/NX/NXTransport.py:65
 #: transports/NX/TSNXTransport.py:74 transports/RDP/BaseRDPTransport.py:61
@@ -4297,20 +4233,16 @@ msgstr "دون المجال"
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
-msgstr ""
-"إذا تم، سيكون دائما يتم تفريغ جزء المجال (للاتصال xrdp لهو مطلوب سبيل "
-"المثال)."
+msgstr "إذا تم، سيكون دائما يتم تفريغ جزء المجال (للاتصال xrdp لهو مطلوب سبيل المثال)."
 
 #: transports/HTML5RDP/HTML5RDP.py:76 transports/RDP/BaseRDPTransport.py:65
 #: transports/RDS_enterprise/BaseRDSTransport.py:68
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
 msgid ""
-"If not empty, this domain will be always used as credential (used as DOMAIN"
-"\\user)"
-msgstr ""
-"إن لم يكن فارغا، وهذا مجال وسوف تستخدم دائما الاعتماد (كما تستخدم المجال \\ "
-"المستخدم)"
+"If not empty, this domain will be always used as credential (used as "
+"DOMAIN\\user)"
+msgstr "إن لم يكن فارغا، وهذا مجال وسوف تستخدم دائما الاعتماد (كما تستخدم المجال \\ المستخدم)"
 
 #: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
 msgid "Show wallpaper"
@@ -4320,9 +4252,7 @@ msgstr "اظهر خلفية."
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
-msgstr ""
-"إذا تم، سيكون ليتم عرض خلفية والمواضيع على الجهاز (تجربة أفضل للمستخدم، "
-"والمزيد من عرض النطاق الترددي)"
+msgstr "إذا تم، سيكون ليتم عرض خلفية والمواضيع على الجهاز (تجربة أفضل للمستخدم، والمزيد من عرض النطاق الترددي)"
 
 #: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
 msgid "Allow Desk.Comp."
@@ -4350,8 +4280,7 @@ msgstr "تمكين الصوت"
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
-msgstr ""
-"إذا تحققت، سيتم إعادة توجيه الصوت إلى العميل (إذا مستعرض العميل يعتمد عليه)"
+msgstr "إذا تحققت، سيتم إعادة توجيه الصوت إلى العميل (إذا مستعرض العميل يعتمد عليه)"
 
 #: transports/HTML5RDP/HTML5RDP.py:81
 msgid "Enable Printing"
@@ -4361,8 +4290,7 @@ msgstr "تمكين الطباعة"
 msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
-msgstr ""
-"إذا تحققت، سيتم إعادة توجيه الطباعة إلى العميل (إذا مستعرض العميل يعتمد عليه)"
+msgstr "إذا تحققت، سيتم إعادة توجيه الطباعة إلى العميل (إذا مستعرض العميل يعتمد عليه)"
 
 #: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Layout"
@@ -4410,17 +4338,13 @@ msgstr "أي (السماح للملقم باختيار نوع المصادقة)"
 
 #: transports/HTML5RDP/HTML5RDP.py:104
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
-msgstr ""
-"برنامج التعمير والتنمية (التشفير \"القياسي برنامج التعمير والتنمية\". ينبغي "
-"أن تدعم كافة الملقمات)"
+msgstr "برنامج التعمير والتنمية (التشفير \"القياسي برنامج التعمير والتنمية\". ينبغي أن تدعم كافة الملقمات)"
 
 #: transports/HTML5RDP/HTML5RDP.py:105
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
-msgstr ""
-"جيش التحرير الوطني (مصادقة \"طبقة شبكة الاتصال\". يتطلب اسم مستخدم صالح & "
-"كلمة المرور، أو سيفشل الاتصال)"
+msgstr "جيش التحرير الوطني (مصادقة \"طبقة شبكة الاتصال\". يتطلب اسم مستخدم صالح & كلمة المرور، أو سيفشل الاتصال)"
 
 #: transports/HTML5RDP/HTML5RDP.py:106
 msgid "TLS (Transport Security Layer encryption)"
@@ -4501,9 +4425,7 @@ msgstr "ملقم نفق"
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
-msgstr ""
-"IP أو اسم المضيف لخادم نفق إرسالها إلى جهاز العميل (\"العام\" الملكية "
-"الفكرية) والميناء. (استخدام HOST: تنسيق PORT)."
+msgstr "IP أو اسم المضيف لخادم نفق إرسالها إلى جهاز العميل (\"العام\" الملكية الفكرية) والميناء. (استخدام HOST: تنسيق PORT)."
 
 #: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
@@ -4513,11 +4435,9 @@ msgstr "اختيار المضيف النفق"
 #: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
 msgid ""
-"If not empty, this server will be used to check if service is running before "
-"assigning it to user. (use HOST:PORT format)"
-msgstr ""
-"إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
-"قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
+"If not empty, this server will be used to check if service is running before"
+" assigning it to user. (use HOST:PORT format)"
+msgstr "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
 #: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:100
 #: transports/RDS_enterprise/TRDSTransport.py:93
@@ -4546,8 +4466,7 @@ msgstr "إن لم يكن فارغا، سوف يكون هذا النطاق تست
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
-msgstr ""
-"إذا تم، سيكون دائما يتم تفريغ جزء المجال (للاتصال xrdp لهو مطلوب سبيل المثال)"
+msgstr "إذا تم، سيكون دائما يتم تفريغ جزء المجال (للاتصال xrdp لهو مطلوب سبيل المثال)"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:69
@@ -4597,8 +4516,7 @@ msgstr "أجهزة عرض متعددة"
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
-msgstr ""
-"إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
+msgstr "إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
@@ -4620,8 +4538,7 @@ msgstr "تزامن الوسائط المتعددة"
 #: transports/RDP/BaseRDPTransport.py:75
 #: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
-msgstr ""
-"إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
+msgstr "إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
 
 #: transports/RDP/BaseRDPTransport.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
@@ -4632,8 +4549,7 @@ msgstr "استخدام ALSA"
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
-msgstr ""
-"إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
+msgstr "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
 #: transports/RDP/BaseRDPTransport.py:77
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
@@ -4652,10 +4568,9 @@ msgstr "سلسلة البطاقة الذكية"
 
 #: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:79
-msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
-msgstr ""
-"إذا كان يتم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع "
-"العميل إكسفريردب"
+msgid ""
+"If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr "إذا كان يتم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع العميل إكسفريردب"
 
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:80
@@ -4665,11 +4580,9 @@ msgstr "معلمات مخصصة"
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:80
 msgid ""
-"If not empty, extra parameter to include for Linux Client (for example /usb:"
-"id,dev:054c:0268, or aything compatible with your xfreerdp client)"
-msgstr ""
-"إذا كانت المعلمة لا فارغة، إضافية تشمل لينكس العميل (على سبيل المثال/usb:"
-"معرف، dev:054 ج: 0268، أو أيثينج متوافق مع العميل الخاص بك إكسفريردب)"
+"If not empty, extra parameter to include for Linux Client (for example "
+"/usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)"
+msgstr "إذا كانت المعلمة لا فارغة، إضافية تشمل لينكس العميل (على سبيل المثال/usb:معرف، dev:054 ج: 0268، أو أيثينج متوافق مع العميل الخاص بك إكسفريردب)"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
@@ -4755,8 +4668,7 @@ msgstr "الحد الأدنى من الجودة قابل للتعديل"
 msgid ""
 "The lowest image quality applied to images to maintain the minimum update "
 "rate."
-msgstr ""
-"أقل جودة الصورة تطبيقها على الصور للحفاظ على الحد الأدنى لمعدل التحديث."
+msgstr "أقل جودة الصورة تطبيقها على الصور للحفاظ على الحد الأدنى لمعدل التحديث."
 
 #: transports/RGS_enterprise/RGSTransport.py:54
 #: transports/RGS_enterprise/TRGSTransport.py:64
@@ -4824,11 +4736,9 @@ msgstr "أوراق إعتماد فارغة"
 
 #: transports/SPICE/BaseSPICETransport.py:87
 msgid ""
-"Server certificate (public), can be found on your ovirt engine, probably at /"
-"etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
-msgstr ""
-"شهادة الخادم (العامة)، يمكن العثور على محرك ovirt الخاص بك، وربما في /etc/"
-"pki/ovirt-engine/certs/ca.der (استخدام محتويات هذا الملف)."
+"Server certificate (public), can be found on your ovirt engine, probably at "
+"/etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
+msgstr "شهادة الخادم (العامة)، يمكن العثور على محرك ovirt الخاص بك، وربما في /etc/pki/ovirt-engine/certs/ca.der (استخدام محتويات هذا الملف)."
 
 #: transports/SPICE/BaseSPICETransport.py:92
 msgid "Fullscreen Mode"
@@ -4967,8 +4877,7 @@ msgstr "خطأ غير معروف"
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
-msgstr ""
-"الخدمة غير صالحة. الخدمة غير متوفرة في هذه اللحظة. من فضلك، حاول في وقت لاحق"
+msgstr "الخدمة غير صالحة. الخدمة غير متوفرة في هذه اللحظة. من فضلك، حاول في وقت لاحق"
 
 #: web/errors.py:77
 msgid "Maximum services limit reached. Please, contact administrator"
@@ -4994,9 +4903,7 @@ msgstr "تلقى طلب غير صالح."
 msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
-msgstr ""
-"متصفحك غير مدعوم. من فضلك، الترقية إلى مستعرض HTML5 الحديثة مثل فايرفوكس أو "
-"كروم."
+msgstr "متصفحك غير مدعوم. من فضلك، الترقية إلى مستعرض HTML5 الحديثة مثل فايرفوكس أو كروم."
 
 #: web/errors.py:84
 msgid "The requested service is in maintenance mode"
@@ -5032,9 +4939,7 @@ msgstr "تفضيلات البرنامج المساعد UDS"
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
-msgstr ""
-"هذه الخدمة هي على وشك أن تحل محلها الإصدار الجديد. من فضلك، إغلاق جلسة قبل "
-"{} وحفظ كل ما تبذلونه من العمل لتجنب فقدان ذلك."
+msgstr "هذه الخدمة هي على وشك أن تحل محلها الإصدار الجديد. من فضلك، إغلاق جلسة قبل {} وحفظ كل ما تبذلونه من العمل لتجنب فقدان ذلك."
 
 #: web/views/service.py:115
 msgid "Service not ready. Please, try again in a while."

@@ -1,27 +1,26 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012-2014
 # Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017
 # blafuente <blafuente@virtualcable.es>, 2014
 # blafuente <blafuente@virtualcable.es>, 2014-2016
-# JaviBas <jgonzalez@virtualcable.es>, 2014
-# JaviBas <jgonzalez@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-06 13:14+0200\n"
-"PO-Revision-Date: 2017-06-06 11:14+0000\n"
+"PO-Revision-Date: 2017-09-20 01:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
-"es/)\n"
-"Language: es\n"
+"Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: REST/methods/actor.py:94 REST/methods/client.py:92
@@ -71,11 +70,13 @@ msgstr "Nombre"
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:140
 #: templates/uds/admin/tmpl/calendar_rule.html:14
-#: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
+#: templates/uds/admin/tmpl/group.html:49
+#: templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Comentarios"
 
-#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
+#: REST/methods/authenticators.py:62
+#: REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
 #: REST/methods/user_services.py:269 REST/model.py:149
 #: templates/uds/admin/tmpl/pool_add_access.html:5
@@ -200,9 +201,7 @@ msgstr "Rango de red"
 msgid ""
 "Network range. Accepts most network definitions formats (range, subnet, "
 "host, etc..."
-msgstr ""
-"Rango de la red. Acepta la mayoría de formatos de definiciones de red "
-"(rango, subred, host, etc..."
+msgstr "Rango de la red. Acepta la mayoría de formatos de definiciones de red (rango, subred, host, etc..."
 
 #: REST/methods/osmanagers.py:55
 msgid "Current OS Managers"
@@ -221,7 +220,8 @@ msgid "Status"
 msgstr "Estado"
 
 #: REST/methods/providers.py:69 reports/stats/pools_usage.py:107
-#: reports/stats/pools_usage.py:283 templates/uds/admin/snippets/navbar.html:22
+#: reports/stats/pools_usage.py:283
+#: templates/uds/admin/snippets/navbar.html:22
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
@@ -450,9 +450,7 @@ msgstr "Servicios para mantener en la caché"
 
 #: REST/methods/services_pools.py:198
 msgid "Services kept in cache for improved user service assignation"
-msgstr ""
-"Servicios guardado en caché para mejorar la asignación de servicio de "
-"usuario "
+msgstr "Servicios guardado en caché para mejorar la asignación de servicio de usuario "
 
 #: REST/methods/services_pools.py:206
 msgid "Services to keep in L2 cache"
@@ -460,9 +458,7 @@ msgstr "Servicios para mantener en la caché L2"
 
 #: REST/methods/services_pools.py:207
 msgid "Services kept in cache of level2 for improved service generation"
-msgstr ""
-"Servicios guardados en la caché de nivel 2 para mejorar la generación de "
-"servicios "
+msgstr "Servicios guardados en la caché de nivel 2 para mejorar la generación de servicios "
 
 #: REST/methods/services_pools.py:215
 msgid "Maximum number of services to provide"
@@ -472,9 +468,7 @@ msgstr "Número máximo de servicios a proveer"
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
-msgstr ""
-"Número máximo de servicios (asignados y caché L1) que pueden crearse para "
-"este servicio"
+msgstr "Número máximo de servicios (asignados y caché L1) que pueden crearse para este servicio"
 
 #: REST/methods/services_pools.py:223
 msgid "Show transports"
@@ -508,10 +502,7 @@ msgstr "Acceso de red"
 msgid ""
 "If checked, the transport will be enabled for the selected networks.If "
 "unchecked, transport will be disabled for selected networks"
-msgstr ""
-"Si está seleccionada, se habilitará el transporte para las redes "
-"seleccionadas. Si no esá seleccionada, el transporte estará desactivado para "
-"las redes seleccionadas"
+msgstr "Si está seleccionada, se habilitará el transporte para las redes seleccionadas. Si no esá seleccionada, el transporte estará desactivado para las redes seleccionadas"
 
 #: REST/methods/transports.py:81
 #: services/Nutanix_enterprise/NutanixService.py:51
@@ -523,9 +514,7 @@ msgstr "Redes"
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
-msgstr ""
-"Redes asociadas a este transporte. Si no hay red seleccionada, significará "
-"\"todas las redes\""
+msgstr "Redes asociadas a este transporte. Si no hay red seleccionada, significará \"todas las redes\""
 
 #: REST/methods/transports.py:89
 msgid "Allowed Devices"
@@ -533,12 +522,9 @@ msgstr "Dispositivos permitidos"
 
 #: REST/methods/transports.py:90
 msgid ""
-"If empty, any kind of device compatible with this transport will be allowed. "
-"Else, only devices compatible with selected values will be allowed"
-msgstr ""
-"Si está vacío, se permitirá cualquier tipo de dispositivo compatible con "
-"este transporte. Otra cosa, se permitirá sólo dispositivos compatibles con "
-"los valores seleccionados"
+"If empty, any kind of device compatible with this transport will be allowed."
+" Else, only devices compatible with selected values will be allowed"
+msgstr "Si está vacío, se permitirá cualquier tipo de dispositivo compatible con este transporte. Otra cosa, se permitirá sólo dispositivos compatibles con los valores seleccionados"
 
 #: REST/methods/user_services.py:80 REST/methods/user_services.py:81
 msgid "unknown"
@@ -571,7 +557,8 @@ msgstr "Nombre descriptivo"
 msgid "Status date"
 msgstr "Fecha de estado"
 
-#: REST/methods/user_services.py:134 templates/uds/admin/tmpl/user-info.html:65
+#: REST/methods/user_services.py:134
+#: templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr "En uso"
 
@@ -737,8 +724,7 @@ msgstr "Comentarios para este elemento"
 #: REST/model.py:150
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
-msgstr ""
-"Selecciona la prioridad de este elemento (a menor número, mayor prioridad)"
+msgstr "Selecciona la prioridad de este elemento (a menor número, mayor prioridad)"
 
 #: REST/model.py:161
 msgid "Label for this element"
@@ -818,9 +804,7 @@ msgstr "Compatibilidad"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 msgid "Compatibility of AD connection (Usually windows 2000 and later)"
-msgstr ""
-"Compatibilidad de conexión AD (normalmente windows 2000 y versiones "
-"posteriores)"
+msgstr "Compatibilidad de conexión AD (normalmente windows 2000 y versiones posteriores)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 #: auths/EDirectory_enterprise/Authenticator.py:65
@@ -833,11 +817,9 @@ msgstr "Usuario"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 msgid ""
-"Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
-"for this)"
-msgstr ""
-"Nombre de usuario con privilegios de lectura en la base seleccionada (use el "
-"formato USUARIO@DOMINIO.DOM)"
+"Username with read privileges on the base selected (use USER@DOMAIN.DOM form"
+" for this)"
+msgstr "Nombre de usuario con privilegios de lectura en la base seleccionada (use el formato USUARIO@DOMINIO.DOM)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
@@ -897,9 +879,7 @@ msgstr "Autenticar contra Active Directory"
 #: auths/ActiveDirectory_enterprise/Authenticator.py:73
 #: auths/ActiveDirectory_enterprise/Authenticator.py:468
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
-msgstr ""
-"Debe especificar el nombre de usuario con este formato: "
-"NOMBREDEUSUARIO@DOMAIN.DOM"
+msgstr "Debe especificar el nombre de usuario con este formato: NOMBREDEUSUARIO@DOMAIN.DOM"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:177
 msgid "Active directory connection error: "
@@ -945,16 +925,13 @@ msgstr "Servidor no parece un Active Directory (no tiene objetos de grupo)"
 msgid ""
 "Server does not seem an Active Directory (it does not have any user nor "
 "groups)"
-msgstr ""
-"Servidor no parece un Active Directory (no tiene ni usuarios ni grupos)"
+msgstr "Servidor no parece un Active Directory (no tiene ni usuarios ni grupos)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:503
 #: auths/EDirectory_enterprise/Authenticator.py:360
 #: auths/RegexLdap/Authenticator.py:437 auths/SimpleLDAP/Authenticator.py:435
 msgid "Connection params seem correct, test was succesfully executed"
-msgstr ""
-"Los parámetros de conexión parecen correctos, la prueba fue ejecutada con "
-"éxito"
+msgstr "Los parámetros de conexión parecen correctos, la prueba fue ejecutada con éxito"
 
 #: auths/EDirectory_enterprise/Authenticator.py:62
 msgid "EDirectory Server IP or Hostname"
@@ -978,9 +955,7 @@ msgstr "Puerto LDAP (generalmente 389 para los que no son SSL y 636 para ssl)"
 #: auths/EDirectory_enterprise/Authenticator.py:64
 #: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:59
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
-msgstr ""
-"Si está seleccionada, la conexión será ssl, usando el puerto 636 en lugar de "
-"389"
+msgstr "Si está seleccionada, la conexión será ssl, usando el puerto 636 en lugar de 389"
 
 #: auths/EDirectory_enterprise/Authenticator.py:65
 msgid "Username with read privileges on the eDirectory"
@@ -1012,18 +987,14 @@ msgstr "La base de búsqueda LDAP es incorrecta"
 #: auths/EDirectory_enterprise/Authenticator.py:330
 #: auths/RegexLdap/Authenticator.py:403 auths/SimpleLDAP/Authenticator.py:382
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
-msgstr ""
-"La clase de usuario de LDAP parece ser incorrecta (ningún usuario encontrado "
-"por esa clase)"
+msgstr "La clase de usuario de LDAP parece ser incorrecta (ningún usuario encontrado por esa clase)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:338
 #: auths/SimpleLDAP/Authenticator.py:398
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
-msgstr ""
-"El atributo de id de usuario Ldap parece ser incorrecto (ningún usuario "
-"encontrado por ese atributo)"
+msgstr "El atributo de id de usuario Ldap parece ser incorrecto (ningún usuario encontrado por ese atributo)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:346
 msgid "Expected group attribute "
@@ -1032,9 +1003,7 @@ msgstr "Atributo de grupo previsto"
 #: auths/EDirectory_enterprise/Authenticator.py:355
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
-msgstr ""
-"La clase de usuario LDAP o el atributo id de usuario son probablemente "
-"incorrectos (¿Ldap es un eDirectory?)"
+msgstr "La clase de usuario LDAP o el atributo id de usuario son probablemente incorrectos (¿Ldap es un eDirectory?)"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid "Accept proxy"
@@ -1042,12 +1011,9 @@ msgstr "Aceptar proxy"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid ""
-"If checked, requests via proxy will get FORWARDED ip address (take care with "
-"this bein checked, can take internal IP addresses from internet)"
-msgstr ""
-"Si está seleccionada, las solicitudes a través de proxy tendrán dirección IP "
-"REENVIADO (tenga cuidado si lo selecciona, puede coger direcciones IP "
-"internas de internet)"
+"If checked, requests via proxy will get FORWARDED ip address (take care with"
+" this bein checked, can take internal IP addresses from internet)"
+msgstr "Si está seleccionada, las solicitudes a través de proxy tendrán dirección IP REENVIADO (tenga cuidado si lo selecciona, puede coger direcciones IP internas de internet)"
 
 #: auths/IP/Authenticator.py:54 auths/IP/Authenticator.py:56
 msgid "IP Authenticator"
@@ -1139,10 +1105,9 @@ msgid "User Name Attr"
 msgstr "Atr. de nombre de usuario"
 
 #: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
-msgid "Attributes that contains the user name (list of comma separated values)"
-msgstr ""
-"Atributos que contienen el nombre de usuario (lista de valores separados por "
-"comas)"
+msgid ""
+"Attributes that contains the user name (list of comma separated values)"
+msgstr "Atributos que contienen el nombre de usuario (lista de valores separados por comas)"
 
 #: auths/RegexLdap/Authenticator.py:67
 msgid "Group Name Attr"
@@ -1164,17 +1129,13 @@ msgstr "Expresiones regulares autenticador LDAP "
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
-msgstr ""
-"El atributo del id de usuario LDAP es probablemente incorrecto (no se puede "
-"encontrar ningún usuario con ambas condiciones)"
+msgstr "El atributo del id de usuario LDAP es probablemente incorrecto (no se puede encontrar ningún usuario con ambas condiciones)"
 
 #: auths/RegexLdap/Authenticator.py:426 auths/SimpleLDAP/Authenticator.py:406
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
-msgstr ""
-"El atributo de id de grupo LDAP parece ser incorrecto (ningún grupo "
-"encontrado por ese atributo)"
+msgstr "El atributo de id de grupo LDAP parece ser incorrecto (ningún grupo encontrado por ese atributo)"
 
 #: auths/SAML_enterprise/SAML.py:82
 msgid "SAML Authenticator"
@@ -1192,9 +1153,7 @@ msgstr "Clave privada"
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
-msgstr ""
-"Clave privada utilizada para firmar y encriptar, la generada en la base 64 "
-"de OpenSSL"
+msgstr "Clave privada utilizada para firmar y encriptar, la generada en la base 64 de OpenSSL"
 
 #: auths/SAML_enterprise/SAML.py:123 auths/SAML_enterprise/SAML.py:125
 msgid "Certificates"
@@ -1208,9 +1167,7 @@ msgstr "Certificado"
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
-msgstr ""
-"Clave pública utilizada para firma y encriptación (parte pública de la clave "
-"privada anterior), como se genera en base 64 usando openssl"
+msgstr "Clave pública utilizada para firma y encriptación (parte pública de la clave privada anterior), como se genera en base 64 usando openssl"
 
 #: auths/SAML_enterprise/SAML.py:126
 msgid "IDP Metadata"
@@ -1219,9 +1176,7 @@ msgstr "Metadatos IDP "
 #: auths/SAML_enterprise/SAML.py:127
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
-msgstr ""
-"Puede introducir aquí la URL o los metadatos IDP o simplemente los metadatos "
-"(xml)"
+msgstr "Puede introducir aquí la URL o los metadatos IDP o simplemente los metadatos (xml)"
 
 #: auths/SAML_enterprise/SAML.py:128 auths/SAML_enterprise/SAML.py:130
 msgid "Metadata"
@@ -1232,10 +1187,9 @@ msgid "Entity ID"
 msgstr "ID de la entidad"
 
 #: auths/SAML_enterprise/SAML.py:130
-msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
-msgstr ""
-"ID del SP. Si se deja en blanco, se generará automáticamente desde la "
-"dirección URL del servidor"
+msgid ""
+"ID of the SP. If left blank, this will be autogenerated from server URL"
+msgstr "ID del SP. Si se deja en blanco, se generará automáticamente desde la dirección URL del servidor"
 
 #: auths/SAML_enterprise/SAML.py:132
 msgid "User name attrs"
@@ -1268,11 +1222,9 @@ msgstr "Campos de los que se extrae el nombre real"
 
 #: auths/SAML_enterprise/SAML.py:162
 msgid ""
-"Server certificate should be a valid PEM (PEM certificates starts with -----"
-"BEGIN CERTIFICATE-----)"
-msgstr ""
-"El certificado del servidor debe ser un PEM válido (Los certificados PEM "
-"empiezan con---EMPEZAR CERTIFICADO---)"
+"Server certificate should be a valid PEM (PEM certificates starts with "
+"-----BEGIN CERTIFICATE-----)"
+msgstr "El certificado del servidor debe ser un PEM válido (Los certificados PEM empiezan con---EMPEZAR CERTIFICADO---)"
 
 #: auths/SAML_enterprise/SAML.py:167
 msgid "Invalid server certificate. "
@@ -1282,9 +1234,7 @@ msgstr "Certificado de servidor no válido. "
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
-msgstr ""
-"La clave privada debe ser un PEM válido (Las claves privadas PEM empiezan "
-"con---EMPEZAR CLAVE PRIVADA RSA---"
+msgstr "La clave privada debe ser un PEM válido (Las claves privadas PEM empiezan con---EMPEZAR CLAVE PRIVADA RSA---"
 
 #: auths/SAML_enterprise/SAML.py:202
 #, python-brace-format
@@ -1326,7 +1276,8 @@ msgstr "Grupo falso"
 #: templates/uds/admin/tmpl/permissions.html:22
 #: templates/uds/admin/tmpl/services_pool.html:33
 #: templates/uds/admin/tmpl/user-info.html:4
-#: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
+#: templates/uds/admin/tmpl/user.html:90
+#: templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
 msgstr "Grupos"
 
@@ -1376,31 +1327,23 @@ msgstr "Autenticador LDAP Simple"
 
 #: auths/SimpleLDAP/Authenticator.py:390
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
-msgstr ""
-"La clase de grupo LDAP parece ser incorrecta (ningún grupo encontrado por "
-"esa clase)"
+msgstr "La clase de grupo LDAP parece ser incorrecta (ningún grupo encontrado por esa clase)"
 
 #: auths/SimpleLDAP/Authenticator.py:415
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
-msgstr ""
-"El atributo de ID de usuario o la clase de usuario LDAP son probablemente "
-"incorrectos (no se encuentra ningún usuario con ambas condiciones)"
+msgstr "El atributo de ID de usuario o la clase de usuario LDAP son probablemente incorrectos (no se encuentra ningún usuario con ambas condiciones)"
 
 #: auths/SimpleLDAP/Authenticator.py:424
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
-msgstr ""
-"El atributo de ID de grupo o la clase de grupo LDAP son probablemente "
-"incorrectos (no se encuentra ningún grupo con ambas condiciones)"
+msgstr "El atributo de ID de grupo o la clase de grupo LDAP son probablemente incorrectos (no se encuentra ningún grupo con ambas condiciones)"
 
 #: auths/SimpleLDAP/Authenticator.py:431
 msgid "Can't locate any group with the membership attribute specified"
-msgstr ""
-"No se puede localizar ningún grupo con el atributo de pertenencia "
-"especificado"
+msgstr "No se puede localizar ningún grupo con el atributo de pertenencia especificado"
 
 #: core/BaseModule.py:200
 msgid "No connection checking method is implemented."
@@ -1437,14 +1380,11 @@ msgstr "Prohibido"
 #: core/managers/PublicationManager.py:206
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
-msgstr ""
-"Ya hay una publicación en curso. Espere a que termine e inténtelo de nuevo."
+msgstr "Ya hay una publicación en curso. Espere a que termine e inténtelo de nuevo."
 
 #: core/managers/PublicationManager.py:209
 msgid "Service is in maintenance mode and new publications are not allowed"
-msgstr ""
-"El servicio está en modo de mantenimiento y no se permiten nuevas "
-"publicaciones"
+msgstr "El servicio está en modo de mantenimiento y no se permiten nuevas publicaciones"
 
 #: core/managers/PublicationManager.py:242
 msgid "Can't cancel non running publication"
@@ -1681,10 +1621,9 @@ msgstr "{0} contiene caracteres no válidos"
 
 #: core/util/validators.py:116
 msgid ""
-"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
-"XX:XX"
-msgstr ""
-"Rango mac no válido. El rango mac debe estar en formato XX-XX:XX:XX:XX:XX:XX"
+"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-"
+"XX:XX:XX:XX:XX:XX"
+msgstr "Rango mac no válido. El rango mac debe estar en formato XX-XX:XX:XX:XX:XX:XX"
 
 #: dispatchers/wyse_enterprise/views.py:114
 msgid "There are no authenticators available for login"
@@ -1736,9 +1675,7 @@ msgstr "Transporte no encontrado"
 #: dispatchers/wyse_enterprise/views.py:286
 #: dispatchers/wyse_enterprise/views.py:291
 msgid "Service not ready at this moment. Please, try again in a while."
-msgstr ""
-"El servicio no está disponible en este momento. Por favor, inténtelo de "
-"nuevo pasados unos instantes."
+msgstr "El servicio no está disponible en este momento. Por favor, inténtelo de nuevo pasados unos instantes."
 
 #: models/CalendarAction.py:58
 msgid "Publish"
@@ -1867,10 +1804,7 @@ msgstr "Tiempo máx de inactividad"
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max idle time)."
-msgstr ""
-"Tiempo máximo de inactividad (en segundos) antes de que se cierre la sesión "
-"automáticamente para el usuario (< = 0 significa sin tiempo máx. de "
-"inactividad)."
+msgstr "Tiempo máximo de inactividad (en segundos) antes de que se cierre la sesión automáticamente para el usuario (< = 0 significa sin tiempo máx. de inactividad)."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:47
 msgid "Linux Random Password OS Manager"
@@ -1878,9 +1812,7 @@ msgstr "Contraseña aleatoria para Linux OS Manager "
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:49
 msgid "Os Manager to control linux machines, with user password set randomly."
-msgstr ""
-"Os Manager para controlar máquinas Linux, con contraseña de usuario "
-"establecida aleatoriamente."
+msgstr "Os Manager para controlar máquinas Linux, con contraseña de usuario establecida aleatoriamente."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:53
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
@@ -1900,20 +1832,19 @@ msgstr "¡Debe indicar una cuenta de usuario!"
 
 #: osmanagers/LinuxOsManager/__init__.py:49
 msgid ""
-"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>"
-msgstr ""
-"Actor UDS para Debian, Ubuntu... Máquinas Linux <b>(Requiere python 2.7)</b>"
+"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python "
+"2.7)</b>"
+msgstr "Actor UDS para Debian, Ubuntu... Máquinas Linux <b>(Requiere python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:54
 msgid ""
 "UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python "
 "2.7)</b>"
-msgstr ""
-"Actor UDS para CentOS, Fedora, RH... máquinas Linux <b>(Requiere python "
-"2.7)</b>"
+msgstr "Actor UDS para CentOS, Fedora, RH... máquinas Linux <b>(Requiere python 2.7)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:59
-msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
+msgid ""
+"UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
 msgstr "Actor UDS para openSUSE... Máquinas Linux <b>(Requiere python 2.7)</b>"
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
@@ -1932,9 +1863,7 @@ msgstr "Max. tiempo de sesión"
 msgid ""
 "Maximum duration in hours for a session (0 means no limit). After this "
 "period, session will be released."
-msgstr ""
-"Duración máxima en horas para una sesión (0 significa sin límite). Después "
-"de esto período, la sesión será liberada."
+msgstr "Duración máxima en horas para una sesión (0 significa sin límite). Después de esto período, la sesión será liberada."
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:49
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012)"
@@ -1960,9 +1889,7 @@ msgstr "Dominio"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
 msgid "Domain to join machines to (use FQDN form, Netbios name not allowed)"
-msgstr ""
-"Dominio para unir las máquinas a (usar formato FQDN, nombre Netbios no "
-"permitido)"
+msgstr "Dominio para unir las máquinas a (usar formato FQDN, nombre Netbios no permitido)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 msgid "Account with rights to add machines to domain"
@@ -1980,9 +1907,7 @@ msgstr "OU"
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
-msgstr ""
-"Unidad organizativa donde agregar máquinas en dominio (comprobar antes de "
-"usarlo). por ej: ou = mis máquinas, dc = midominio, dc = local"
+msgstr "Unidad organizativa donde agregar máquinas en dominio (comprobar antes de usarlo). por ej: ou = mis máquinas, dc = midominio, dc = local"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
 msgid "Must provide a domain!"
@@ -2009,9 +1934,7 @@ msgstr "Compruebe el error: {0}"
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:148
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
-msgstr ""
-"No se encontraron los parámetros del servidor (_ldap._tcp. {0} no puede ser "
-"resuelto)"
+msgstr "No se encontraron los parámetros del servidor (_ldap._tcp. {0} no puede ser resuelto)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:157
 msgid "Server check was successful"
@@ -2035,9 +1958,7 @@ msgstr "¡No se encontró la ruta ou {0}!"
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:184
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
-msgstr ""
-"No se pudieron verificar los parámetros (_ldap._tcp. {0} no pueden ser "
-"resueltos)"
+msgstr "No se pudieron verificar los parámetros (_ldap._tcp. {0} no pueden ser resueltos)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:189
 msgid "All parameters seem to work fine."
@@ -2050,9 +1971,7 @@ msgstr "Contraseña Aleatoria para Windows OS Manager"
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:28
 msgid ""
 "Os Manager to control windows machines, with user password set randomly."
-msgstr ""
-"OS Manager para controlar máquinas Windows con contraseñas de usuario "
-"aleatorias"
+msgstr "OS Manager para controlar máquinas Windows con contraseñas de usuario aleatorias"
 
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
 msgid "Current (template) password of the user account"
@@ -2074,10 +1993,7 @@ msgstr "Os Manager para controlar las máquinas windows sin dominio."
 msgid ""
 "Maximum idle time (in seconds) before session is automaticatlly closed to "
 "the user (<= 0 means no max. idle time)"
-msgstr ""
-"Tiempo máximo de inactividad (en segundos) antes de que la sesión se cierre "
-"automáticamente para el usuario (< = 0 significa sin tiempo máx. de "
-"inactividad)"
+msgstr "Tiempo máximo de inactividad (en segundos) antes de que la sesión se cierre automáticamente para el usuario (< = 0 significa sin tiempo máx. de inactividad)"
 
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:76
 msgid "Length must be numeric!!"
@@ -2343,9 +2259,9 @@ msgstr "Cluster HyperV Linked Clone (Experimental)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:59
-msgid "Hyper Services based on templates and differential disks (experimental)"
-msgstr ""
-"Servicios HyperV basados en plantillas y discos diferenciales (experimental)"
+msgid ""
+"Hyper Services based on templates and differential disks (experimental)"
+msgstr "Servicios HyperV basados en plantillas y discos diferenciales (experimental)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
 #: services/HyperV_enterprise/HyperVLinkedService.py:76
@@ -2353,17 +2269,16 @@ msgstr ""
 #: services/TestService_enterprise/TestService.py:27
 #: services/Xen/XenLinkedService.py:77
 msgid "Number of desired machines to keep running waiting for a user"
-msgstr ""
-"Número de máquinas que desea mantener en ejecución esperando a un usuario"
+msgstr "Número de máquinas que desea mantener en ejecución esperando a un usuario"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:82
-#: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
+#: services/OVirt/OVirtLinkedService.py:83
+#: services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCLinkedCloneService.py:42
 #: services/Xen/XenLinkedService.py:83
 msgid "Number of desired machines to keep suspended waiting for use"
-msgstr ""
-"Número de maquinas que desea mantener suspendidas esperando a ser utilizadas"
+msgstr "Número de maquinas que desea mantener suspendidas esperando a ser utilizadas"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:120
@@ -2391,10 +2306,9 @@ msgstr "Red"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:131
 msgid ""
-"If more than 1 interface is found in machine, use one on this network as main"
-msgstr ""
-"Si en la máquina hay más de 1 interfaz, utilice una de esta red como la "
-"principal"
+"If more than 1 interface is found in machine, use one on this network as "
+"main"
+msgstr "Si en la máquina hay más de 1 interfaz, utilice una de esta red como la principal"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:137
@@ -2418,15 +2332,14 @@ msgstr "Unidades de almacenamiento de datos"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
 #: services/HyperV_enterprise/HyperVLinkedService.py:105
 msgid "Datastores where to put incrementals & publications"
-msgstr ""
-"Almacenamientos de datos en los que poner los incrementales y las "
-"publicaciones"
+msgstr "Almacenamientos de datos en los que poner los incrementales y las publicaciones"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:148
 #: services/Nutanix_enterprise/NutanixService.py:57
 #: services/OVirt/OVirtLinkedService.py:187
-#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
+#: services/OpenNebula/LiveService.py:112
+#: services/OpenStack/LiveService.py:124
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
 #: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
@@ -2443,7 +2356,8 @@ msgstr "Nombre base para clones de esta máquina"
 #: services/HyperV_enterprise/HyperVLinkedService.py:158
 #: services/Nutanix_enterprise/NutanixService.py:66
 #: services/OVirt/OVirtLinkedService.py:197
-#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
+#: services/OpenNebula/LiveService.py:122
+#: services/OpenStack/LiveService.py:134
 #: services/Vmware_enterprise/VCLinkedCloneService.py:92
 #: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
@@ -2453,17 +2367,18 @@ msgstr "Longitud del nombre"
 #: services/HyperV_enterprise/HyperVLinkedService.py:161
 #: services/Nutanix_enterprise/NutanixService.py:69
 #: services/OVirt/OVirtLinkedService.py:200
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
+#: services/OpenNebula/LiveService.py:125
+#: services/OpenStack/LiveService.py:137
 #: services/Vmware_enterprise/VCLinkedCloneService.py:93
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
-msgstr ""
-"Tamaño de la parte numérica para los nombres de estas máquinas (entre 3 y 6)"
+msgstr "Tamaño de la parte numérica para los nombres de estas máquinas (entre 3 y 6)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:176
 #: services/Nutanix_enterprise/NutanixService.py:87
 #: services/OVirt/OVirtLinkedService.py:218
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:155
+#: services/OpenNebula/LiveService.py:140
+#: services/OpenStack/LiveService.py:155
 #: services/Vmware_enterprise/VCLinkedCloneService.py:114
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
@@ -2473,12 +2388,12 @@ msgstr "La longitud de \"basename\" más la longitud no debe ser superior a 15"
 #: services/HyperV_enterprise/HyperVLinkedService.py:178
 #: services/Nutanix_enterprise/NutanixService.py:89
 #: services/OVirt/OVirtLinkedService.py:220
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:157
+#: services/OpenNebula/LiveService.py:142
+#: services/OpenStack/LiveService.py:157
 #: services/Vmware_enterprise/VCLinkedCloneService.py:116
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
-msgstr ""
-"El nombre de la máquina no puede estar compuesto únicamente por números"
+msgstr "El nombre de la máquina no puede estar compuesto únicamente por números"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:64
 msgid "HyperV Cluster Provider"
@@ -2491,8 +2406,7 @@ msgstr "Proveedor de Servicios de Cluster HyperV"
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
 msgid "HyperV Server IP or Hostname (must enable first WSMAN access)"
-msgstr ""
-"Servidor IP HyperV  o nombre de host (debe habilitar primero el acceso WSMAN)"
+msgstr "Servidor IP HyperV  o nombre de host (debe habilitar primero el acceso WSMAN)"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
@@ -2584,10 +2498,10 @@ msgstr "Espacio libre mínimo en GB"
 #: services/OVirt/OVirtLinkedService.py:201
 #: services/OpenNebula/LiveService.py:106
 #: services/OpenNebula/LiveService.py:116
-#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:116
-#: services/OpenStack/LiveService.py:118 services/OpenStack/LiveService.py:119
-#: services/OpenStack/LiveService.py:121 services/OpenStack/LiveService.py:129
-#: services/OpenStack/LiveService.py:139
+#: services/OpenNebula/LiveService.py:126
+#: services/OpenStack/LiveService.py:116 services/OpenStack/LiveService.py:118
+#: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:121
+#: services/OpenStack/LiveService.py:129 services/OpenStack/LiveService.py:139
 #: services/Vmware_enterprise/VCLinkedCloneService.py:77
 #: services/Vmware_enterprise/VCLinkedCloneService.py:81
 #: services/Vmware_enterprise/VCLinkedCloneService.py:83
@@ -2721,8 +2635,7 @@ msgstr "Dominio de almacenamiento de datos"
 
 #: services/OVirt/OVirtLinkedService.py:117
 msgid "Datastore domain where to publish and put incrementals"
-msgstr ""
-"Dominio de almacenamiento de datos para publicar y poner los incrementos "
+msgstr "Dominio de almacenamiento de datos para publicar y poner los incrementos "
 
 #: services/OVirt/OVirtLinkedService.py:144
 #: services/Xen/XenLinkedService.py:141
@@ -2776,8 +2689,7 @@ msgstr "IP del servidor o nombre del servidor oVirt "
 
 #: services/OVirt/OVirtProvider.py:110
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
-msgstr ""
-"Usuario con privilegios válidos en oVirt (use el formato \"usuario@dominio\")"
+msgstr "Usuario con privilegios válidos en oVirt (use el formato \"usuario@dominio\")"
 
 #: services/OVirt/OVirtProvider.py:111
 msgid "Password of the user of oVirt"
@@ -2798,9 +2710,7 @@ msgstr "Servicio basado en imágenes para OpenNebula"
 #: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:40
 msgid "Number of desired machines to keep running waiting for an user"
-msgstr ""
-"Número de máquinas que desea mantener en funcionamiento esperando a un "
-"usuario"
+msgstr "Número de máquinas que desea mantener en funcionamiento esperando a un usuario"
 
 #: services/OpenNebula/LiveService.py:96
 msgid "Datastore"
@@ -2836,11 +2746,9 @@ msgstr "Puerto OpenNebula (el predeterminado es 2633 para conexión sin ssl)"
 
 #: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
 msgid ""
-"If checked, the connection will be forced to be ssl (will not work if server "
-"is not providing ssl)"
-msgstr ""
-"Si está marcada, la conexión será obligatoriamente ssl (no funcionará si el "
-"servidor no proporciona ssl)"
+"If checked, the connection will be forced to be ssl (will not work if server"
+" is not providing ssl)"
+msgstr "Si está marcada, la conexión será obligatoriamente ssl (no funcionará si el servidor no proporciona ssl)"
 
 #: services/OpenNebula/Provider.py:101
 msgid "User with valid privileges on OpenNebula"
@@ -2970,9 +2878,7 @@ msgstr "Error de autenticación"
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
-msgstr ""
-"OpenStack no admite API de identidad 3.2 o posterior. Este servidor "
-"OpenStack no es compatible con UDS."
+msgstr "OpenStack no admite API de identidad 3.2 o posterior. Este servidor OpenStack no es compatible con UDS."
 
 #: services/PhysicalMachines/IPMachineDeployed.py:58
 msgid "IP "
@@ -3022,15 +2928,11 @@ msgstr "Mapeo de usuario"
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
-msgstr ""
-"Si está activo, se hará asignación de usuario. Si no, la credenciál del "
-"usuario en UDS  será redirigida al servidor RDS."
+msgstr "Si está activo, se hará asignación de usuario. Si no, la credenciál del usuario en UDS  será redirigida al servidor RDS."
 
 #: services/RDS_enterprise/RDSProvider.py:41
 msgid "User list for mapping. (Not used if User mapping is disabled)"
-msgstr ""
-"Lista de usuarios para el mapeo. (No se usa si el mapeo de usuario está "
-"deshabilitado)"
+msgstr "Lista de usuarios para el mapeo. (No se usa si el mapeo de usuario está deshabilitado)"
 
 #: services/RDS_enterprise/RDSProvider.py:42
 msgid "User's password"
@@ -3040,15 +2942,12 @@ msgstr "Contraseña de usuario"
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
-msgstr ""
-"Contraseña predeterminada para los usuarios en el mapeo de la lista. (No "
-"usada si el mapeo de usuario está deshabilitado)"
+msgstr "Contraseña predeterminada para los usuarios en el mapeo de la lista. (No usada si el mapeo de usuario está deshabilitado)"
 
 #: services/RDS_enterprise/RDSProvider.py:65
-msgid "Error: User {} on host {} is being used and cannot be removed right now"
-msgstr ""
-"Error: Usuario {} en {} host está siendo utilizado y no se pueden eliminar "
-"ahora"
+msgid ""
+"Error: User {} on host {} is being used and cannot be removed right now"
+msgstr "Error: Usuario {} en {} host está siendo utilizado y no se pueden eliminar ahora"
 
 #: services/RDS_enterprise/RDSProvider.py:95
 #: services/Sample/SampleProvider.py:178
@@ -3070,8 +2969,7 @@ msgstr "Ruta de la aplicación"
 
 #: services/RDS_enterprise/RDSService.py:46
 msgid "Full path of the application this service will represent"
-msgstr ""
-"Ruta de acceso completa de la aplicación que representará este servicio"
+msgstr "Ruta de acceso completa de la aplicación que representará este servicio"
 
 #: services/RDS_enterprise/RDSService.py:54
 msgid "Max. Allowd services"
@@ -3238,9 +3136,7 @@ msgstr "Tiempo de espera en segundos de conexión a VC"
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
-msgstr ""
-"Rango de macs válidos para máquinas creadas. Debe estar dentro de "
-"00:50:56:00:00:00-00:50:56:3F:FF:FF"
+msgstr "Rango de macs válidos para máquinas creadas. Debe estar dentro de 00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
 #: services/Vmware_enterprise/ServiceProviderVC.py:46
 msgid "VMWare VCenter Platform Provider"
@@ -3265,9 +3161,7 @@ msgstr "Plataforma VMware vCenter Linked Clone"
 #: services/Vmware_enterprise/VCLinkedCloneService.py:34
 msgid ""
 "This service provides access to Linked Clones machines on a Virtual Center"
-msgstr ""
-"Este servicio proporciona acceso a máquinas de Linked Clones en un Centro "
-"Virtual"
+msgstr "Este servicio proporciona acceso a máquinas de Linked Clones en un Centro Virtual"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
 msgid "Datacenter"
@@ -3299,9 +3193,7 @@ msgstr "Eliminar duplicados encontrados"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid "If active, found duplicates clones for this service will be removed"
-msgstr ""
-"Si está activo, los clones duplicados para este servicio encontrados serán "
-"eliminados"
+msgstr "Si está activo, los clones duplicados para este servicio encontrados serán eliminados"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:69
 msgid "Resource Pool"
@@ -3323,9 +3215,7 @@ msgstr "Red principal"
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
-msgstr ""
-"Si la máquina tiene más de una interfaz, utilice la primera de esta red como "
-"la principal"
+msgstr "Si la máquina tiene más de una interfaz, utilice la primera de esta red como la principal"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid "Pub. Network"
@@ -3381,9 +3271,7 @@ msgstr "Multiplicador de memoria \"shadow\"  (sobrecarga de memoria)"
 
 #: services/Xen/XenLinkedService.py:171
 msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
-msgstr ""
-"Longitud de la parte numérica para los nombres de estas máquinas (entre 3 y "
-"6)"
+msgstr "Longitud de la parte numérica para los nombres de estas máquinas (entre 3 y 6)"
 
 #: services/Xen/XenProvider.py:80
 msgid "Xenserver Platform Provider"
@@ -3413,9 +3301,7 @@ msgstr "Verificar certificado"
 msgid ""
 "If selected, certificate will be checked against system valid certificate "
 "providers"
-msgstr ""
-"Si se selecciona, el certificado será comprobado con el sistema de "
-"proveedores de certificados válidos "
+msgstr "Si se selecciona, el certificado será comprobado con el sistema de proveedores de certificados válidos "
 
 #: services/Xen/XenProvider.py:411
 #, python-brace-format
@@ -3662,12 +3548,14 @@ msgid "Last Access"
 msgstr "Último acceso"
 
 #: templates/uds/admin/tmpl/group-info.html:55
-#: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
+#: templates/uds/admin/tmpl/group.html:57
+#: templates/uds/admin/tmpl/user.html:48
 msgid "Enabled"
 msgstr "Habilitado"
 
 #: templates/uds/admin/tmpl/group-info.html:56
-#: templates/uds/admin/tmpl/group.html:58 templates/uds/admin/tmpl/user.html:49
+#: templates/uds/admin/tmpl/group.html:58
+#: templates/uds/admin/tmpl/user.html:49
 msgid "Disabled"
 msgstr "Deshabilidato"
 
@@ -3682,7 +3570,8 @@ msgid "Any"
 msgstr "Cualquier"
 
 #: templates/uds/admin/tmpl/group.html:24
-#: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
+#: templates/uds/admin/tmpl/search.html:9
+#: templates/uds/admin/tmpl/user.html:21
 msgid "Search"
 msgstr "Búsqueda "
 
@@ -3693,9 +3582,7 @@ msgstr "Seleccione imagen para cargar"
 #: templates/uds/admin/tmpl/new_image.html:6
 #: templates/uds/admin/tmpl/new_image.html:10
 msgid "Name of the image. If left empty, will get the filename as name"
-msgstr ""
-"Nombre de la imagen. Si se deja vacío, recibirá el mismo nombre que el "
-"archivo "
+msgstr "Nombre de la imagen. Si se deja vacío, recibirá el mismo nombre que el archivo "
 
 #: templates/uds/admin/tmpl/new_image.html:6
 #: templates/uds/admin/tmpl/new_image.html:7
@@ -3789,8 +3676,7 @@ msgstr "Error en la solicitud"
 
 #: templates/uds/admin/tmpl/request_failed.html:7
 msgid "There was an error requesting data from server, please, try again"
-msgstr ""
-"Hubo un error al solicitar los datos del servidor, por favor, pruebe otra vez"
+msgstr "Hubo un error al solicitar los datos del servidor, por favor, pruebe otra vez"
 
 #: templates/uds/admin/tmpl/request_failed.html:9
 #: templates/uds/html5/snippets/navbar.html:48
@@ -3812,16 +3698,13 @@ msgstr "Está accediendo a la administración de UDS como miembro del personal."
 
 #: templates/uds/admin/tmpl/restricted.html:33
 msgid "This means that you have restricted access to assigned elements."
-msgstr ""
-"Esto significa que usted tienen acceso restringido a los elementos asignados."
+msgstr "Esto significa que usted tienen acceso restringido a los elementos asignados."
 
 #: templates/uds/admin/tmpl/restricted.html:34
 msgid ""
 "In order to increase your privileges, please contact your local UDS "
 "administrator."
-msgstr ""
-"Para aumentar sus privilegios, por favor póngase en contacto con su "
-"administrador local de UDS."
+msgstr "Para aumentar sus privilegios, por favor póngase en contacto con su administrador local de UDS."
 
 #: templates/uds/admin/tmpl/restricted.html:36
 msgid "Thank you."
@@ -3868,7 +3751,8 @@ msgstr "Miembro del personal"
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/uds/admin/tmpl/user.html:92 templates/uds/admin/tmpl/user.html:106
+#: templates/uds/admin/tmpl/user.html:92
+#: templates/uds/admin/tmpl/user.html:106
 #, python-brace-format
 msgid "{0} of {1} selected"
 msgstr "{0} de {1} seleccionado"
@@ -3883,9 +3767,7 @@ msgstr "UDS ha sido desarrollado utilizando estos componentes:"
 
 #: templates/uds/html5/about.html:40
 msgid "If you find that we missed any component, please let us know"
-msgstr ""
-"Si descubre que nos hemos olvidado algún componente, por favor háganoslo "
-"saber"
+msgstr "Si descubre que nos hemos olvidado algún componente, por favor háganoslo saber"
 
 #: templates/uds/html5/about.html:41
 #: templates/uds/html5/service_not_ready.html:21
@@ -3908,9 +3790,7 @@ msgstr "Descargar Plugin UDS para"
 msgid ""
 "In order to be able to execute UDS services, you need to download and "
 "install UDS Plugin."
-msgstr ""
-"Para poder ejecutar servicios UDS, necesitará descargar y instalar Plugin de "
-"UDS."
+msgstr "Para poder ejecutar servicios UDS, necesitará descargar y instalar Plugin de UDS."
 
 #: templates/uds/html5/download_client.html:14
 msgid "Or download for other operating system"
@@ -3920,9 +3800,7 @@ msgstr "O descargar para otros sistemas operativos"
 msgid ""
 "In case that your operating system has not been correctly detected, you can "
 "download manually from"
-msgstr ""
-"En caso de que su sistema operativo no sea detectado correctamente, puede "
-"descargarlo manualmende desde"
+msgstr "En caso de que su sistema operativo no sea detectado correctamente, puede descargarlo manualmende desde"
 
 #: templates/uds/html5/download_client.html:19
 msgid "Download Linux UDS plugin"
@@ -3941,9 +3819,7 @@ msgstr "Descargar Plugin Mac OS X (&gt; 10.5) UDS"
 msgid ""
 "If you already have UDS Plugin installed but this message persists to "
 "appear, you can disable automatic detection here"
-msgstr ""
-"Si ya tienes instalado el Plugin UDS pero este mensaje sigue apareciendo, "
-"puede desactivar la detección automática aquí"
+msgstr "Si ya tienes instalado el Plugin UDS pero este mensaje sigue apareciendo, puede desactivar la detección automática aquí"
 
 #: templates/uds/html5/download_client.html:39
 #: templates/uds/semantic/download_client.html:39
@@ -3960,18 +3836,14 @@ msgstr "ADVERTENCIA: La detección automática del plugin está desactivada"
 msgid ""
 "Please, note that disabling automatic detection will not trigger this page "
 "again in case you don't have the plugin installed."
-msgstr ""
-"Por favor, tenga en cuenta que al desactivar la detección automática esta "
-"página no se volverá a activar si no tiene el plugin instalado."
+msgstr "Por favor, tenga en cuenta que al desactivar la detección automática esta página no se volverá a activar si no tiene el plugin instalado."
 
 #: templates/uds/html5/download_client.html:45
 #: templates/uds/semantic/download_client.html:45
 msgid ""
 "In this case, you will have to manually download the plugin by using the "
 "menu on upper right corner."
-msgstr ""
-"En este caso, tendrá que descargar el plugin manualmente  usando el menú de "
-"la esquina superior derecha."
+msgstr "En este caso, tendrá que descargar el plugin manualmente  usando el menú de la esquina superior derecha."
 
 #: templates/uds/html5/download_client.html:47
 #: templates/uds/semantic/download_client.html:47
@@ -3989,9 +3861,7 @@ msgstr "Descargas"
 #: templates/uds/semantic/downloads.html:10
 msgid ""
 "This page contains a list of downloadables provided by different modules"
-msgstr ""
-"Esta página contiene una lista de descargas proporcionadas por diferentes "
-"módulos"
+msgstr "Esta página contiene una lista de descargas proporcionadas por diferentes módulos"
 
 #: templates/uds/html5/error.html:12 templates/uds/semantic/error.html:12
 msgid "An error occurred"
@@ -4036,9 +3906,7 @@ msgstr "Acceso a los servicios no permitido"
 
 #: templates/uds/html5/index.html:107
 msgid "This service is currently not accesible due to schedule restrictions."
-msgstr ""
-"Actualmente, este servicio no es accesible debido a las restricciones de "
-"horario."
+msgstr "Actualmente, este servicio no es accesible debido a las restricciones de horario."
 
 #: templates/uds/html5/index.html:122
 msgid "Administrator info panel"
@@ -4109,18 +3977,14 @@ msgstr "El servicio no está preparado"
 msgid ""
 "The service is not ready at this moment. Please, try it again after a few "
 "seconds."
-msgstr ""
-"El servicio no está preparado en este momento. Por favor, inténtalo de nuevo "
-"después de unos segundos."
+msgstr "El servicio no está preparado en este momento. Por favor, inténtalo de nuevo después de unos segundos."
 
 #: templates/uds/html5/service_not_ready.html:18
 #: templates/uds/semantic/service_not_ready.html:18
 msgid ""
 "The service you have requested was not ready, and it is being created right "
 "now. It will be availabe shortly"
-msgstr ""
-"El servicio que usted ha solicitado no estaba listo y está siendo creado "
-"justo ahora. Estará disponible en unos momentos"
+msgstr "El servicio que usted ha solicitado no estaba listo y está siendo creado justo ahora. Estará disponible en unos momentos"
 
 #: templates/uds/html5/service_not_ready.html:23
 #: templates/uds/semantic/service_not_ready.html:23
@@ -4151,8 +4015,7 @@ msgstr "El servicio que ha solicitado se está activando"
 #: templates/uds/semantic/simpleLauncher.html:12
 #: templates/uds/semantic/simpleLauncherAlreadyLaunched.html:11
 msgid "Please, note that reloading this page will not work."
-msgstr ""
-"Por favor, tenga en cuenta que volver a cargar esta página no funcionará."
+msgstr "Por favor, tenga en cuenta que volver a cargar esta página no funcionará."
 
 #: templates/uds/html5/simpleLauncher.html:13
 #: templates/uds/semantic/simpleLauncher.html:13
@@ -4164,9 +4027,7 @@ msgstr "Para reanudar el servicio, deberás hacerlo desde el origen."
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS plugin installed"
-msgstr ""
-"Si el servicio no se activa automáticamente, probablemente no tiene el "
-"Instalado el plugin UDS"
+msgstr "Si el servicio no se activa automáticamente, probablemente no tiene el Instalado el plugin UDS"
 
 #: templates/uds/html5/simpleLauncher.html:17
 #: templates/uds/semantic/simpleLauncher.html:17
@@ -4213,13 +4074,9 @@ msgstr "Plugin UDS"
 #: templates/uds/semantic/templates/base.html:33
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
-"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
-"must also disable \"Compatibility View Mode\" for this site)"
-msgstr ""
-"Su navegador es compatible sólo parcialmente. Por favor, actualice a un "
-"navegador a uno HTML5 moderno como Firefox, Chrome, Opera... (Si usa IE "
-"tiene que ser 10 o superior y debe desactivar el \"Modo de vista de "
-"compatibilidad\" para este sitio)"
+"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and"
+" must also disable \"Compatibility View Mode\" for this site)"
+msgstr "Su navegador es compatible sólo parcialmente. Por favor, actualice a un navegador a uno HTML5 moderno como Firefox, Chrome, Opera... (Si usa IE tiene que ser 10 o superior y debe desactivar el \"Modo de vista de compatibilidad\" para este sitio)"
 
 #: templates/uds/html5/templates/base.html:109
 msgid "We use cookies to track usage and preferences"
@@ -4236,16 +4093,13 @@ msgstr "Política de privacidad"
 #: templates/uds/semantic/about.html:41
 msgid ""
 "If you found that we missed to mention any component, please let us know"
-msgstr ""
-"Si ve que nos hemos dejado algún componente, háganoslo saber, por favor"
+msgstr "Si ve que nos hemos dejado algún componente, háganoslo saber, por favor"
 
 #: templates/uds/semantic/download_client.html:12
 msgid ""
 "In order to be able to execute UDS services, you need to have UDS plugin "
 "installed."
-msgstr ""
-"Para poder ejecutar servicios de UDS, necesitas tener el plugin UDS "
-"instalado."
+msgstr "Para poder ejecutar servicios de UDS, necesitas tener el plugin UDS instalado."
 
 #: templates/uds/semantic/download_client.html:14
 msgid "Or download another version"
@@ -4255,9 +4109,7 @@ msgstr "O descargar otra versión"
 msgid ""
 "In case that your platform has been incorrectly detected, you can download "
 "manually the version required for your Operating System"
-msgstr ""
-"En caso que su plataforma no haya sido bien detectada, puede descargar "
-"manualmente la versión necesaria para su sistema operativo"
+msgstr "En caso que su plataforma no haya sido bien detectada, puede descargar manualmente la versión necesaria para su sistema operativo"
 
 #: templates/uds/semantic/download_client.html:19
 msgid "Linux UDS plugin"
@@ -4281,8 +4133,7 @@ msgstr "Información del navegador"
 
 #: templates/uds/semantic/index.html:124
 msgid "The service is currently in maintenance and cannot be accessed."
-msgstr ""
-"No se puede acceder al servicio porque actualmente está en mantenimiento."
+msgstr "No se puede acceder al servicio porque actualmente está en mantenimiento."
 
 #: templates/uds/semantic/login.html:110
 msgid "Log In"
@@ -4337,9 +4188,7 @@ msgstr "Servidor de túnel"
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
-msgstr ""
-"Host del servidor túnel (use http/https & puerto si es necesario) como "
-"accesible para los usuarios"
+msgstr "Host del servidor túnel (use http/https & puerto si es necesario) como accesible para los usuarios"
 
 #: transports/HTML5RDP/HTML5RDP.py:72 transports/NX/NXTransport.py:65
 #: transports/NX/TSNXTransport.py:74 transports/RDP/BaseRDPTransport.py:61
@@ -4356,9 +4205,7 @@ msgstr "Credenciales vacías"
 #: transports/RGS_enterprise/TRGSTransport.py:54
 #: transports/SPICE/BaseSPICETransport.py:67
 msgid "If checked, the credentials used to connect will be emtpy"
-msgstr ""
-"Si está seleccionado, las credenciales utilizadas para conectar estarán "
-"vacías"
+msgstr "Si está seleccionado, las credenciales utilizadas para conectar estarán vacías"
 
 #: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:66
 #: transports/NX/TSNXTransport.py:75
@@ -4369,8 +4216,7 @@ msgstr ""
 #: transports/SPICE/BaseSPICETransport.py:73
 #: transports/X2GO/BaseX2GOTransport.py:70
 msgid "If not empty, this username will be always used as credential"
-msgstr ""
-"Si no está vacío, este nombre de usuario se utilizará siempre como credencial"
+msgstr "Si no está vacío, este nombre de usuario se utilizará siempre como credencial"
 
 #: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:67
 #: transports/NX/TSNXTransport.py:76
@@ -4392,20 +4238,16 @@ msgstr "Sin dominio"
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
-msgstr ""
-"Si está marcada, la parte del dominio siempre estará vacía (se necesita, por "
-"ejemplo, para conectar a xrdp)"
+msgstr "Si está marcada, la parte del dominio siempre estará vacía (se necesita, por ejemplo, para conectar a xrdp)"
 
 #: transports/HTML5RDP/HTML5RDP.py:76 transports/RDP/BaseRDPTransport.py:65
 #: transports/RDS_enterprise/BaseRDSTransport.py:68
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
 msgid ""
-"If not empty, this domain will be always used as credential (used as DOMAIN"
-"\\user)"
-msgstr ""
-"Si no está vacío, este dominio se utilizará siempre como parte de las "
-"credenciales (como DOMINIO\\usuario)"
+"If not empty, this domain will be always used as credential (used as "
+"DOMAIN\\user)"
+msgstr "Si no está vacío, este dominio se utilizará siempre como parte de las credenciales (como DOMINIO\\usuario)"
 
 #: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
 msgid "Show wallpaper"
@@ -4415,9 +4257,7 @@ msgstr "Mostrar fondo de pantalla "
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
-msgstr ""
-"Si está marcada, el fondo de pantalla y los temas aparecerán en la máquina "
-"(mayor ancho de banda, mejor experiencia de usuario)"
+msgstr "Si está marcada, el fondo de pantalla y los temas aparecerán en la máquina (mayor ancho de banda, mejor experiencia de usuario)"
 
 #: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
 msgid "Allow Desk.Comp."
@@ -4435,8 +4275,7 @@ msgstr "Suavizado de fuentes"
 #: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
-msgstr ""
-"Si está marcada, se permitirá el suavizado de fuentes (sólo clientes windows)"
+msgstr "Si está marcada, se permitirá el suavizado de fuentes (sólo clientes windows)"
 
 #: transports/HTML5RDP/HTML5RDP.py:80
 msgid "Enable Audio"
@@ -4446,9 +4285,7 @@ msgstr "Activar el sonido"
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
-msgstr ""
-"Si está activado, el audio se redirigirá al cliente (si el explorador "
-"cliente lo soporta)"
+msgstr "Si está activado, el audio se redirigirá al cliente (si el explorador cliente lo soporta)"
 
 #: transports/HTML5RDP/HTML5RDP.py:81
 msgid "Enable Printing"
@@ -4458,9 +4295,7 @@ msgstr "Habilitar la impresión"
 msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
-msgstr ""
-"Si está activada, la impresión se redireccionará al cliente (si el "
-"explorador cliente lo soporta)"
+msgstr "Si está activada, la impresión se redireccionará al cliente (si el explorador cliente lo soporta)"
 
 #: transports/HTML5RDP/HTML5RDP.py:84
 msgid "Layout"
@@ -4514,9 +4349,7 @@ msgstr "RDP (cifrado RDP estándar. Soportado por todos los servidores)"
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
-msgstr ""
-"NLA (autenticación de capa de red. Requiere nombre de usuario VÁLIDO y "
-"contraseña, o la conexión fallará)"
+msgstr "NLA (autenticación de capa de red. Requiere nombre de usuario VÁLIDO y contraseña, o la conexión fallará)"
 
 #: transports/HTML5RDP/HTML5RDP.py:106
 msgid "TLS (Transport Security Layer encryption)"
@@ -4597,9 +4430,7 @@ msgstr "Servidor de túnel"
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
-msgstr ""
-"IP o nombre de host del servidor túnel enviada al dispositivo cliente (ip "
-"\"pública\") y puerto. (utilice el formato HOST: Puerto)"
+msgstr "IP o nombre de host del servidor túnel enviada al dispositivo cliente (ip \"pública\") y puerto. (utilice el formato HOST: Puerto)"
 
 #: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
@@ -4609,12 +4440,9 @@ msgstr "Verificación de host del túnel"
 #: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
 msgid ""
-"If not empty, this server will be used to check if service is running before "
-"assigning it to user. (use HOST:PORT format)"
-msgstr ""
-"Si no está vacío, este servidor se utilizará para comprobar si el servicio "
-"se está ejecutando antes de asignárselo al usuario. (utilice el formato "
-"HOST: PUERTO)"
+"If not empty, this server will be used to check if service is running before"
+" assigning it to user. (use HOST:PORT format)"
+msgstr "Si no está vacío, este servidor se utilizará para comprobar si el servicio se está ejecutando antes de asignárselo al usuario. (utilice el formato HOST: PUERTO)"
 
 #: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:100
 #: transports/RDS_enterprise/TRDSTransport.py:93
@@ -4637,17 +4465,13 @@ msgstr "Transporte PCoIP, Experimental"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:62
 msgid "If not empty, this domain will be always used as credential domain"
-msgstr ""
-"Si no está vacía, este dominio se utilizará siempre como dominio de "
-"credencial"
+msgstr "Si no está vacía, este dominio se utilizará siempre como dominio de credencial"
 
 #: transports/RDP/BaseRDPTransport.py:64
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
-msgstr ""
-"Si está marcada, la parte del dominio se vaciará siempre (por ejemplo, para "
-"conectar con xrdp es necesario)"
+msgstr "Si está marcada, la parte del dominio se vaciará siempre (por ejemplo, para conectar con xrdp es necesario)"
 
 #: transports/RDP/BaseRDPTransport.py:66
 #: transports/RDS_enterprise/BaseRDSTransport.py:69
@@ -4667,9 +4491,7 @@ msgstr "Permitir impresoras"
 #: transports/RDP/BaseRDPTransport.py:67
 #: transports/RDS_enterprise/BaseRDSTransport.py:70
 msgid "If checked, this transport will allow the use of user printers"
-msgstr ""
-"Si está seleccionado, este transporte permitirá el uso de impresoras de "
-"usuario"
+msgstr "Si está seleccionado, este transporte permitirá el uso de impresoras de usuario"
 
 #: transports/RDP/BaseRDPTransport.py:68
 #: transports/RDS_enterprise/BaseRDSTransport.py:71
@@ -4679,8 +4501,7 @@ msgstr "Permitir Drives"
 #: transports/RDP/BaseRDPTransport.py:68
 #: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "If checked, this transport will allow the use of user drives"
-msgstr ""
-"Si está seleccionado, este transporte permitirá el uso de drivers de usuario"
+msgstr "Si está seleccionado, este transporte permitirá el uso de drivers de usuario"
 
 #: transports/RDP/BaseRDPTransport.py:69
 #: transports/RDS_enterprise/BaseRDSTransport.py:72
@@ -4690,9 +4511,7 @@ msgstr "Permitir Series"
 #: transports/RDP/BaseRDPTransport.py:69
 #: transports/RDS_enterprise/BaseRDSTransport.py:72
 msgid "If checked, this transport will allow the use of user serial ports"
-msgstr ""
-"Si está seleccionado, este transporte permitirá el uso de series de puertos "
-"de usuario"
+msgstr "Si está seleccionado, este transporte permitirá el uso de series de puertos de usuario"
 
 #: transports/RDP/BaseRDPTransport.py:71
 msgid "Multiple monitors"
@@ -4702,9 +4521,7 @@ msgstr "Varios monitores"
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
-msgstr ""
-"Si está marcada, todos los monitores cliente se utilizarán para visualizar "
-"(sólo funciona en clientes Windows)"
+msgstr "Si está marcada, todos los monitores cliente se utilizarán para visualizar (sólo funciona en clientes Windows)"
 
 #: transports/RDP/BaseRDPTransport.py:74
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
@@ -4726,8 +4543,7 @@ msgstr "Sincronización multimedia"
 #: transports/RDP/BaseRDPTransport.py:75
 #: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
-msgstr ""
-"Si está marcada, el cliente Linux usará el parámetro multimedia para xfreerdp"
+msgstr "Si está marcada, el cliente Linux usará el parámetro multimedia para xfreerdp"
 
 #: transports/RDP/BaseRDPTransport.py:76
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
@@ -4738,9 +4554,7 @@ msgstr "Use ALSA"
 #: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
-msgstr ""
-"Si está marcado, el cliente Linux intentará usar ALSA, en caso contrario "
-"usará Pulse"
+msgstr "Si está marcado, el cliente Linux intentará usar ALSA, en caso contrario usará Pulse"
 
 #: transports/RDP/BaseRDPTransport.py:77
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
@@ -4750,9 +4564,7 @@ msgstr "Cadena de impresora"
 #: transports/RDP/BaseRDPTransport.py:77
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid "If printer is checked, the printer string used with xfreerdp client"
-msgstr ""
-"Si la impresora está activada, la cadena de impresora utilizadada con el "
-"cliente xfreerdp"
+msgstr "Si la impresora está activada, la cadena de impresora utilizadada con el cliente xfreerdp"
 
 #: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:79
@@ -4761,10 +4573,9 @@ msgstr "Cadena de tarjeta inteligente"
 
 #: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:79
-msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
-msgstr ""
-"Si la smartcard está activada, la cadena de smartcard utilizada con el "
-"cliente xfreerdp"
+msgid ""
+"If smartcard is checked, the smartcard string used with xfreerdp client"
+msgstr "Si la smartcard está activada, la cadena de smartcard utilizada con el cliente xfreerdp"
 
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:80
@@ -4774,11 +4585,9 @@ msgstr "Parámetros personalizados"
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:80
 msgid ""
-"If not empty, extra parameter to include for Linux Client (for example /usb:"
-"id,dev:054c:0268, or aything compatible with your xfreerdp client)"
-msgstr ""
-"Si no vacía, parámetros extra para el cliente Linux (por ejemplo /usb:id, "
-"dev:054c:0268, o cualquier cosa compatible con su cliente xfreerdp)"
+"If not empty, extra parameter to include for Linux Client (for example "
+"/usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)"
+msgstr "Si no vacía, parámetros extra para el cliente Linux (por ejemplo /usb:id, dev:054c:0268, o cualquier cosa compatible con su cliente xfreerdp)"
 
 #: transports/RDP/RDPTransport.py:55
 msgid "RDP Transport (direct)"
@@ -4852,8 +4661,7 @@ msgstr "Calidad ajustable"
 #: transports/RGS_enterprise/RGSTransport.py:51
 #: transports/RGS_enterprise/TRGSTransport.py:61
 msgid "If checked, the image quality will be adjustable with bandwidth"
-msgstr ""
-"Si está seleccionada, la calidad de imagen se ajustará al ancho de banda"
+msgstr "Si está seleccionada, la calidad de imagen se ajustará al ancho de banda"
 
 #: transports/RGS_enterprise/RGSTransport.py:52
 #: transports/RGS_enterprise/TRGSTransport.py:62
@@ -4865,9 +4673,7 @@ msgstr "Calidad ajustable mín."
 msgid ""
 "The lowest image quality applied to images to maintain the minimum update "
 "rate."
-msgstr ""
-"La menor calidad de imagen aplicada a las imágenes para mantener la tasa de "
-"actualización mínima."
+msgstr "La menor calidad de imagen aplicada a las imágenes para mantener la tasa de actualización mínima."
 
 #: transports/RGS_enterprise/RGSTransport.py:54
 #: transports/RGS_enterprise/TRGSTransport.py:64
@@ -4877,8 +4683,7 @@ msgstr "Número de fotogramas por segundo ajustable"
 #: transports/RGS_enterprise/RGSTransport.py:55
 #: transports/RGS_enterprise/TRGSTransport.py:65
 msgid "Update rate threshold to begin adjusting image quality"
-msgstr ""
-"Actualizar rango de umbral para comenzar a ajustar la calidad de la imagen"
+msgstr "Actualizar rango de umbral para comenzar a ajustar la calidad de la imagen"
 
 #: transports/RGS_enterprise/RGSTransport.py:56
 #: transports/RGS_enterprise/TRGSTransport.py:66
@@ -4890,9 +4695,7 @@ msgstr "Igualar Resolución Local "
 msgid ""
 "Change the Sender's resolution to match the Receiver's resolution when "
 "connecting"
-msgstr ""
-"Cambiar la resolución del remitente hasta que sea la misma que la resolución "
-"del receptor cuando estén conectando"
+msgstr "Cambiar la resolución del remitente hasta que sea la misma que la resolución del receptor cuando estén conectando"
 
 #: transports/RGS_enterprise/RGSTransport.py:58
 #: transports/RGS_enterprise/TRGSTransport.py:68
@@ -4938,12 +4741,9 @@ msgstr "Credenciales vacías"
 
 #: transports/SPICE/BaseSPICETransport.py:87
 msgid ""
-"Server certificate (public), can be found on your ovirt engine, probably at /"
-"etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
-msgstr ""
-"Certificado del servidor (público), puede encontrarse en su motor oVirt, "
-"probablemente en /etc/PKI/ovirt-Engine/certs/CA.der (usar el contenido de "
-"este archivo)."
+"Server certificate (public), can be found on your ovirt engine, probably at "
+"/etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
+msgstr "Certificado del servidor (público), puede encontrarse en su motor oVirt, probablemente en /etc/PKI/ovirt-Engine/certs/CA.der (usar el contenido de este archivo)."
 
 #: transports/SPICE/BaseSPICETransport.py:92
 msgid "Fullscreen Mode"
@@ -4960,8 +4760,7 @@ msgstr "Redirección de tarjeta inteligente"
 
 #: transports/SPICE/BaseSPICETransport.py:99
 msgid "If checked, SPICE protocol will allow smartcard redirection."
-msgstr ""
-"Si está marcada, protocolo SPICE permite redirección de tarjeta inteligente."
+msgstr "Si está marcada, protocolo SPICE permite redirección de tarjeta inteligente."
 
 #: transports/SPICE/BaseSPICETransport.py:105
 msgid "Enable USB"
@@ -5041,9 +4840,7 @@ msgstr "Teclado"
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Keyboard layout (es, us, fr, ...). Empty value means autodetect."
-msgstr ""
-"Distribución del teclado (es, fr,...). Un valor vacío significa detectar "
-"automáticamente."
+msgstr "Distribución del teclado (es, fr,...). Un valor vacío significa detectar automáticamente."
 
 #: transports/X2GO/BaseX2GOTransport.py:147
 msgid "Pack"
@@ -5085,15 +4882,11 @@ msgstr "Error desconocido"
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
-msgstr ""
-"Servicio inválido. El servicio no está disponible en estos momentos. Por "
-"favor, inténtelo de nuevo pasados unos instantes."
+msgstr "Servicio inválido. El servicio no está disponible en estos momentos. Por favor, inténtelo de nuevo pasados unos instantes."
 
 #: web/errors.py:77
 msgid "Maximum services limit reached. Please, contact administrator"
-msgstr ""
-"Número máximo de servicios alcanzado. Por favor, contacte con su "
-"administrador."
+msgstr "Número máximo de servicios alcanzado. Por favor, contacte con su administrador."
 
 #: web/errors.py:78
 msgid "You need to enable cookies to let this application work"
@@ -5115,9 +4908,7 @@ msgstr "Solicitud recibida no válida"
 msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
-msgstr ""
-"Su navegador no es compatible. Por favor, actualice a un navegador HTML5 más "
-"moderno como Firefox o Chrome"
+msgstr "Su navegador no es compatible. Por favor, actualice a un navegador HTML5 más moderno como Firefox o Chrome"
 
 #: web/errors.py:84
 msgid "The requested service is in maintenance mode"
@@ -5127,9 +4918,7 @@ msgstr "El servicio solicitado está en modo de mantenimiento"
 msgid ""
 "The service is not ready.\n"
 "Please, try again in a few moments."
-msgstr ""
-"El servicio no está listo.\n"
-"Por favor, inténtalo de nuevo en unos momentos."
+msgstr "El servicio no está listo.\nPor favor, inténtalo de nuevo en unos momentos."
 
 #: web/errors.py:86
 msgid "Preparing service"
@@ -5155,10 +4944,7 @@ msgstr "Preferencias del Plugin UDS"
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
-msgstr ""
-"Este servicio está a punto de ser reemplazado por una nueva versión. Por "
-"favor, cierre la sesión antes de {} y guarde todo su trabajo para evitar "
-"perderlo."
+msgstr "Este servicio está a punto de ser reemplazado por una nueva versión. Por favor, cierre la sesión antes de {} y guarde todo su trabajo para evitar perderlo."
 
 #: web/views/service.py:115
 msgid "Service not ready. Please, try again in a while."
