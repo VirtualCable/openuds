@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017
@@ -12,12 +12,11 @@ msgstr ""
 "POT-Creation-Date: 2017-06-06 13:14+0200\n"
 "PO-Revision-Date: 2017-06-06 11:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
-"eu/)\n"
-"Language: eu\n"
+"Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/eu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: REST/methods/actor.py:94 REST/methods/client.py:92
@@ -67,11 +66,13 @@ msgstr "Izena"
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:140
 #: templates/uds/admin/tmpl/calendar_rule.html:14
-#: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
+#: templates/uds/admin/tmpl/group.html:49
+#: templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
 msgstr "Iruzkinak"
 
-#: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
+#: REST/methods/authenticators.py:62
+#: REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
 #: REST/methods/user_services.py:269 REST/model.py:149
 #: templates/uds/admin/tmpl/pool_add_access.html:5
@@ -196,9 +197,7 @@ msgstr "Sare eremua"
 msgid ""
 "Network range. Accepts most network definitions formats (range, subnet, "
 "host, etc..."
-msgstr ""
-"Sare bitartea. Sare definizio formatu gehienak onartzen dira (bitartea, "
-"ostalaria, etb"
+msgstr "Sare bitartea. Sare definizio formatu gehienak onartzen dira (bitartea, ostalaria, etb"
 
 #: REST/methods/osmanagers.py:55
 msgid "Current OS Managers"
@@ -206,9 +205,7 @@ msgstr "Momentuko SE kudeatzaileak "
 
 #: REST/methods/osmanagers.py:81
 msgid "Can't delete an OS Manager with services pools associated"
-msgstr ""
-"Ezinezkoa da SE kudeazailea ezabatzea pool-zerbitzuak erlazionaturik "
-"dituenean"
+msgstr "Ezinezkoa da SE kudeazailea ezabatzea pool-zerbitzuak erlazionaturik dituenean"
 
 #: REST/methods/providers.py:62
 msgid "Service providers"
@@ -219,7 +216,8 @@ msgid "Status"
 msgstr "Egoera"
 
 #: REST/methods/providers.py:69 reports/stats/pools_usage.py:107
-#: reports/stats/pools_usage.py:283 templates/uds/admin/snippets/navbar.html:22
+#: reports/stats/pools_usage.py:283
+#: templates/uds/admin/snippets/navbar.html:22
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
 #: templates/uds/admin/tmpl/providers.html:7
@@ -500,9 +498,7 @@ msgstr "Sare sarrera"
 msgid ""
 "If checked, the transport will be enabled for the selected networks.If "
 "unchecked, transport will be disabled for selected networks"
-msgstr ""
-"Aktibo izan ezkero, autaturiko sareetan garraioak gaituko dira. Ostean, "
-"autaturiko sareetan garraioak desgaituko dira"
+msgstr "Aktibo izan ezkero, autaturiko sareetan garraioak gaituko dira. Ostean, autaturiko sareetan garraioak desgaituko dira"
 
 #: REST/methods/transports.py:81
 #: services/Nutanix_enterprise/NutanixService.py:51
@@ -514,9 +510,7 @@ msgstr "Sareak"
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
-msgstr ""
-"Garraio honekin loturiko sareak. Sarerik ez bada aukeratzen, denak lotuko "
-"dira"
+msgstr "Garraio honekin loturiko sareak. Sarerik ez bada aukeratzen, denak lotuko dira"
 
 #: REST/methods/transports.py:89
 msgid "Allowed Devices"
@@ -524,8 +518,8 @@ msgstr "Baimendutako gailuak"
 
 #: REST/methods/transports.py:90
 msgid ""
-"If empty, any kind of device compatible with this transport will be allowed. "
-"Else, only devices compatible with selected values will be allowed"
+"If empty, any kind of device compatible with this transport will be allowed."
+" Else, only devices compatible with selected values will be allowed"
 msgstr ""
 
 #: REST/methods/user_services.py:80 REST/methods/user_services.py:81
@@ -559,7 +553,8 @@ msgstr "Izen adiskidetsua"
 msgid "Status date"
 msgstr "Egoera data"
 
-#: REST/methods/user_services.py:134 templates/uds/admin/tmpl/user-info.html:65
+#: REST/methods/user_services.py:134
+#: templates/uds/admin/tmpl/user-info.html:65
 msgid "In Use"
 msgstr "Erabiltzen"
 
@@ -797,8 +792,7 @@ msgstr "SSL erabili"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 msgid "If checked,  a ssl connection to Active Directory will be used"
-msgstr ""
-"Aktibo izanez gero, ssl bidez ezarriko da konexioa \"Active Directory\"-ra"
+msgstr "Aktibo izanez gero, ssl bidez ezarriko da konexioa \"Active Directory\"-ra"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:37
 msgid "Compatibility"
@@ -819,11 +813,9 @@ msgstr "Erabiltzailea"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 msgid ""
-"Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
-"for this)"
-msgstr ""
-"Aukeratutako oinarrian irakurtzeko pribilegioa daukan erabiltzailea (erabil "
-"USER@DOMAIN.DOM)"
+"Username with read privileges on the base selected (use USER@DOMAIN.DOM form"
+" for this)"
+msgstr "Aukeratutako oinarrian irakurtzeko pribilegioa daukan erabiltzailea (erabil USER@DOMAIN.DOM)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
@@ -918,24 +910,18 @@ msgstr "Domeinua txarto omen dago, egiazta ezazu."
 #: auths/ActiveDirectory_enterprise/Authenticator.py:482
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
-msgstr ""
-"Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile "
-"objeturik)"
+msgstr "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile objeturik)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:490
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
-msgstr ""
-"Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du talde "
-"objeturik)"
+msgstr "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du talde objeturik)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:498
 msgid ""
 "Server does not seem an Active Directory (it does not have any user nor "
 "groups)"
-msgstr ""
-"Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile "
-"ez talderik)"
+msgstr "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile ez talderik)"
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:503
 #: auths/EDirectory_enterprise/Authenticator.py:360
@@ -997,9 +983,7 @@ msgstr "LDAP bilaketa oinarria txarto dago"
 #: auths/EDirectory_enterprise/Authenticator.py:330
 #: auths/RegexLdap/Authenticator.py:403 auths/SimpleLDAP/Authenticator.py:382
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
-msgstr ""
-"LDAP erabiltzaile mota txarto dagoela dirudi (ez da aurkitu mota horretako "
-"erabiltzailerik)"
+msgstr "LDAP erabiltzaile mota txarto dagoela dirudi (ez da aurkitu mota horretako erabiltzailerik)"
 
 #: auths/EDirectory_enterprise/Authenticator.py:338
 #: auths/SimpleLDAP/Authenticator.py:398
@@ -1023,8 +1007,8 @@ msgstr "Proxy-a onartu"
 
 #: auths/IP/Authenticator.py:52 auths/InternalDB/Authenticator.py:66
 msgid ""
-"If checked, requests via proxy will get FORWARDED ip address (take care with "
-"this bein checked, can take internal IP addresses from internet)"
+"If checked, requests via proxy will get FORWARDED ip address (take care with"
+" this bein checked, can take internal IP addresses from internet)"
 msgstr ""
 
 #: auths/IP/Authenticator.py:54 auths/IP/Authenticator.py:56
@@ -1117,9 +1101,9 @@ msgid "User Name Attr"
 msgstr "Erabiltzailea-izen atributua"
 
 #: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
-msgid "Attributes that contains the user name (list of comma separated values)"
-msgstr ""
-"Erabiltzaile izena daukan atributua (komaz banandutako balio zerrenda) "
+msgid ""
+"Attributes that contains the user name (list of comma separated values)"
+msgstr "Erabiltzaile izena daukan atributua (komaz banandutako balio zerrenda) "
 
 #: auths/RegexLdap/Authenticator.py:67
 msgid "Group Name Attr"
@@ -1141,17 +1125,13 @@ msgstr "LDAP autentifikatzailearen adierazpen erregularrak"
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
-msgstr ""
-"LDAP erabiltzairen ID atributua txarto dagoela dirudi (ez da aurkitu "
-"balditza biak betetzen dituen erabiltzailerik)"
+msgstr "LDAP erabiltzairen ID atributua txarto dagoela dirudi (ez da aurkitu balditza biak betetzen dituen erabiltzailerik)"
 
 #: auths/RegexLdap/Authenticator.py:426 auths/SimpleLDAP/Authenticator.py:406
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
-msgstr ""
-"LDAP taldearen ID atributua txarto dagoela dirudi (ez da talderik aurkitu "
-"atributu horrekin )"
+msgstr "LDAP taldearen ID atributua txarto dagoela dirudi (ez da talderik aurkitu atributu horrekin )"
 
 #: auths/SAML_enterprise/SAML.py:82
 msgid "SAML Authenticator"
@@ -1203,7 +1183,8 @@ msgid "Entity ID"
 msgstr "Erakunde IDa"
 
 #: auths/SAML_enterprise/SAML.py:130
-msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
+msgid ""
+"ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:132
@@ -1237,8 +1218,8 @@ msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:162
 msgid ""
-"Server certificate should be a valid PEM (PEM certificates starts with -----"
-"BEGIN CERTIFICATE-----)"
+"Server certificate should be a valid PEM (PEM certificates starts with "
+"-----BEGIN CERTIFICATE-----)"
 msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:167
@@ -1291,7 +1272,8 @@ msgstr "Talde faltsua"
 #: templates/uds/admin/tmpl/permissions.html:22
 #: templates/uds/admin/tmpl/services_pool.html:33
 #: templates/uds/admin/tmpl/user-info.html:4
-#: templates/uds/admin/tmpl/user.html:90 templates/uds/admin/tmpl/user.html:104
+#: templates/uds/admin/tmpl/user.html:90
+#: templates/uds/admin/tmpl/user.html:104
 msgid "Groups"
 msgstr "Taldeak"
 
@@ -1635,8 +1617,8 @@ msgstr ""
 
 #: core/util/validators.py:116
 msgid ""
-"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-XX:XX:XX:XX:"
-"XX:XX"
+"Invalid mac range. Mac range must be in format XX:XX:XX:XX:XX:XX-"
+"XX:XX:XX:XX:XX:XX"
 msgstr ""
 
 #: dispatchers/wyse_enterprise/views.py:114
@@ -1846,7 +1828,8 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:49
 msgid ""
-"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>"
+"UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python "
+"2.7)</b>"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:54
@@ -1856,7 +1839,8 @@ msgid ""
 msgstr ""
 
 #: osmanagers/LinuxOsManager/__init__.py:59
-msgid "UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
+msgid ""
+"UDS Actor for openSUSE, ... Linux machines <b>(Requires python 2.7)</b>"
 msgstr ""
 
 #: osmanagers/RDSOsManager_enterprise/RDSOsManager.py:31
@@ -2271,7 +2255,8 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
 #: services/HyperV_enterprise/HyperVLinkedService.py:59
-msgid "Hyper Services based on templates and differential disks (experimental)"
+msgid ""
+"Hyper Services based on templates and differential disks (experimental)"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
@@ -2284,7 +2269,8 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:82
-#: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
+#: services/OVirt/OVirtLinkedService.py:83
+#: services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCLinkedCloneService.py:42
 #: services/Xen/XenLinkedService.py:83
 msgid "Number of desired machines to keep suspended waiting for use"
@@ -2316,7 +2302,8 @@ msgstr "Sarea"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
 #: services/HyperV_enterprise/HyperVLinkedService.py:131
 msgid ""
-"If more than 1 interface is found in machine, use one on this network as main"
+"If more than 1 interface is found in machine, use one on this network as "
+"main"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
@@ -2347,7 +2334,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:148
 #: services/Nutanix_enterprise/NutanixService.py:57
 #: services/OVirt/OVirtLinkedService.py:187
-#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
+#: services/OpenNebula/LiveService.py:112
+#: services/OpenStack/LiveService.py:124
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
 #: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
@@ -2364,7 +2352,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:158
 #: services/Nutanix_enterprise/NutanixService.py:66
 #: services/OVirt/OVirtLinkedService.py:197
-#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
+#: services/OpenNebula/LiveService.py:122
+#: services/OpenStack/LiveService.py:134
 #: services/Vmware_enterprise/VCLinkedCloneService.py:92
 #: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
@@ -2374,7 +2363,8 @@ msgstr "Izen luzeera"
 #: services/HyperV_enterprise/HyperVLinkedService.py:161
 #: services/Nutanix_enterprise/NutanixService.py:69
 #: services/OVirt/OVirtLinkedService.py:200
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
+#: services/OpenNebula/LiveService.py:125
+#: services/OpenStack/LiveService.py:137
 #: services/Vmware_enterprise/VCLinkedCloneService.py:93
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr ""
@@ -2383,7 +2373,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:176
 #: services/Nutanix_enterprise/NutanixService.py:87
 #: services/OVirt/OVirtLinkedService.py:218
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:155
+#: services/OpenNebula/LiveService.py:140
+#: services/OpenStack/LiveService.py:155
 #: services/Vmware_enterprise/VCLinkedCloneService.py:114
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
@@ -2393,7 +2384,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVLinkedService.py:178
 #: services/Nutanix_enterprise/NutanixService.py:89
 #: services/OVirt/OVirtLinkedService.py:220
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:157
+#: services/OpenNebula/LiveService.py:142
+#: services/OpenStack/LiveService.py:157
 #: services/Vmware_enterprise/VCLinkedCloneService.py:116
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
@@ -2502,10 +2494,10 @@ msgstr ""
 #: services/OVirt/OVirtLinkedService.py:201
 #: services/OpenNebula/LiveService.py:106
 #: services/OpenNebula/LiveService.py:116
-#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:116
-#: services/OpenStack/LiveService.py:118 services/OpenStack/LiveService.py:119
-#: services/OpenStack/LiveService.py:121 services/OpenStack/LiveService.py:129
-#: services/OpenStack/LiveService.py:139
+#: services/OpenNebula/LiveService.py:126
+#: services/OpenStack/LiveService.py:116 services/OpenStack/LiveService.py:118
+#: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:121
+#: services/OpenStack/LiveService.py:129 services/OpenStack/LiveService.py:139
 #: services/Vmware_enterprise/VCLinkedCloneService.py:77
 #: services/Vmware_enterprise/VCLinkedCloneService.py:81
 #: services/Vmware_enterprise/VCLinkedCloneService.py:83
@@ -2750,8 +2742,8 @@ msgstr ""
 
 #: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
 msgid ""
-"If checked, the connection will be forced to be ssl (will not work if server "
-"is not providing ssl)"
+"If checked, the connection will be forced to be ssl (will not work if server"
+" is not providing ssl)"
 msgstr ""
 
 #: services/OpenNebula/Provider.py:101
@@ -2949,7 +2941,8 @@ msgid ""
 msgstr ""
 
 #: services/RDS_enterprise/RDSProvider.py:65
-msgid "Error: User {} on host {} is being used and cannot be removed right now"
+msgid ""
+"Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 
 #: services/RDS_enterprise/RDSProvider.py:95
@@ -3551,12 +3544,14 @@ msgid "Last Access"
 msgstr ""
 
 #: templates/uds/admin/tmpl/group-info.html:55
-#: templates/uds/admin/tmpl/group.html:57 templates/uds/admin/tmpl/user.html:48
+#: templates/uds/admin/tmpl/group.html:57
+#: templates/uds/admin/tmpl/user.html:48
 msgid "Enabled"
 msgstr ""
 
 #: templates/uds/admin/tmpl/group-info.html:56
-#: templates/uds/admin/tmpl/group.html:58 templates/uds/admin/tmpl/user.html:49
+#: templates/uds/admin/tmpl/group.html:58
+#: templates/uds/admin/tmpl/user.html:49
 msgid "Disabled"
 msgstr ""
 
@@ -3571,7 +3566,8 @@ msgid "Any"
 msgstr "Edozein"
 
 #: templates/uds/admin/tmpl/group.html:24
-#: templates/uds/admin/tmpl/search.html:9 templates/uds/admin/tmpl/user.html:21
+#: templates/uds/admin/tmpl/search.html:9
+#: templates/uds/admin/tmpl/user.html:21
 msgid "Search"
 msgstr "Bilatu"
 
@@ -3751,7 +3747,8 @@ msgstr "Langile Kidea"
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/uds/admin/tmpl/user.html:92 templates/uds/admin/tmpl/user.html:106
+#: templates/uds/admin/tmpl/user.html:92
+#: templates/uds/admin/tmpl/user.html:106
 #, python-brace-format
 msgid "{0} of {1} selected"
 msgstr ""
@@ -4073,8 +4070,8 @@ msgstr ""
 #: templates/uds/semantic/templates/base.html:33
 msgid ""
 "Your browser is supported only partially. Please, upgrade it to a modern "
-"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and "
-"must also disable \"Compatibility View Mode\" for this site)"
+"html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and"
+" must also disable \"Compatibility View Mode\" for this site)"
 msgstr ""
 
 #: templates/uds/html5/templates/base.html:109
@@ -4244,8 +4241,8 @@ msgstr ""
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
 msgid ""
-"If not empty, this domain will be always used as credential (used as DOMAIN"
-"\\user)"
+"If not empty, this domain will be always used as credential (used as "
+"DOMAIN\\user)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
@@ -4439,8 +4436,8 @@ msgstr ""
 #: transports/NX/TSNXTransport.py:72
 #: transports/RGS_enterprise/TRGSTransport.py:52
 msgid ""
-"If not empty, this server will be used to check if service is running before "
-"assigning it to user. (use HOST:PORT format)"
+"If not empty, this server will be used to check if service is running before"
+" assigning it to user. (use HOST:PORT format)"
 msgstr ""
 
 #: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:100
@@ -4572,7 +4569,8 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:78
 #: transports/RDS_enterprise/BaseRDSTransport.py:79
-msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
+msgid ""
+"If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:79
@@ -4583,8 +4581,8 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:79
 #: transports/RDS_enterprise/BaseRDSTransport.py:80
 msgid ""
-"If not empty, extra parameter to include for Linux Client (for example /usb:"
-"id,dev:054c:0268, or aything compatible with your xfreerdp client)"
+"If not empty, extra parameter to include for Linux Client (for example "
+"/usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:55
@@ -4739,8 +4737,8 @@ msgstr "Egiaztagiri gabe"
 
 #: transports/SPICE/BaseSPICETransport.py:87
 msgid ""
-"Server certificate (public), can be found on your ovirt engine, probably at /"
-"etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
+"Server certificate (public), can be found on your ovirt engine, probably at "
+"/etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
 msgstr ""
 
 #: transports/SPICE/BaseSPICETransport.py:92
@@ -4946,5 +4944,4 @@ msgstr ""
 
 #: web/views/service.py:115
 msgid "Service not ready. Please, try again in a while."
-msgstr ""
-"Mesedez, aldi batean proba ezazu, zerbitzua ez dago prest oraindik eta."
+msgstr "Mesedez, aldi batean proba ezazu, zerbitzua ez dago prest oraindik eta."

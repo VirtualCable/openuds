@@ -8,1044 +8,1044 @@ msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-06 13:15+0200\n"
-"PO-Revision-Date: 2017-09-20 01:16+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/pt/)\n"
+"PO-Revision-Date: 2017-09-21 10:54+0000\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
+"Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/ca/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt\n"
+"Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: static/tmp_js/api-tools.js:322
 msgid "Sunday"
-msgstr "Domingo"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Monday"
-msgstr "Segunda-feira"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Tuesday"
-msgstr "Terça-feira"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Wednesday"
-msgstr "Quarta-feira"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Thursday"
-msgstr "Quinta-feira"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Friday"
-msgstr "Sexta-feira"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Saturday"
-msgstr "Sábado"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "January"
-msgstr "Janeiro de"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "February"
-msgstr "Fevereiro"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "March"
-msgstr "Março de"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "April"
-msgstr "Abril"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "May"
-msgstr "Maio"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "June"
-msgstr "Junho de"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "July"
-msgstr "Julho"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "August"
-msgstr "Agosto"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "September"
-msgstr "Setembro"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "October"
-msgstr "Outubro"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "November"
-msgstr "Novembro"
+msgstr ""
 
 #: static/tmp_js/api-tools.js:324
 msgid "December"
-msgstr "Dezembro de"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:10
 msgid "Test"
-msgstr "Teste"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:42
 msgid "Search error"
-msgstr "Erro de pesquisa"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:318
 msgid "Accept"
-msgstr "Aceitar"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:151
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
 #: static/tmp_js/gui-d-services.js:86 static/tmp_js/gui-d-services.js:128
 #: static/tmp_js/gui-d-servicespools.js:220
 msgid "Error accessing data"
-msgstr "Erro ao acessar dados"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:168
 #: static/tmp_js/gui-d-authenticators.js:395
 #: static/tmp_js/gui-d-services.js:108
 msgid "Information"
-msgstr "Informações"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:196
 msgid "Group information"
-msgstr "Informações do grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:312
 msgid "Edit group"
-msgstr "Editar grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:334
 #: static/tmp_js/gui-d-authenticators.js:377
 msgid "Group saved"
-msgstr "Grupo salvou"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:355
 msgid "New meta group"
-msgstr "Novo grupo meta"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:357
 msgid "New group"
-msgstr "Novo grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:369
 msgid "Search groups"
-msgstr "Grupos de pesquisa"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:369
 #: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:85
 msgid "Group"
-msgstr "Grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:369
 msgid "Groups found"
-msgstr "Grupos encontrados"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:378
 msgid "Group saving error"
-msgstr "Grupo salvando o erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:390
 msgid "Delete group"
-msgstr "Apagar grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:390
 msgid "Group deletion error"
-msgstr "Erro de exclusão do grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:419
 msgid "User information"
-msgstr "Informações do usuário"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:568
 msgid "Edit user"
-msgstr "Editar usuário"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:600
 #: static/tmp_js/gui-d-authenticators.js:631
 msgid "User saved"
-msgstr "Usuário salvado"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:601
 #: static/tmp_js/gui-d-authenticators.js:632
 msgid "User saving error"
-msgstr "Usuário salvar o erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:612
 msgid "New user"
-msgstr "Novo usuário"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:623
 msgid "Search users"
-msgstr "Pesquisar usuários"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:623
 #: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:82
 msgid "User"
-msgstr "Usuário"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:623
 msgid "Users found"
-msgstr "Usuários encontrados"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:637
 msgid "Delete user"
-msgstr "Excluir usuário"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:637
 msgid "User deletion error"
-msgstr "Erro de exclusão de usuário"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:648
 msgid "New authenticator"
-msgstr "Novo autenticador"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:648
 msgid "Authenticator creation error"
-msgstr "Erro de criação do autenticador"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:649
 msgid "Edit authenticator"
-msgstr "Editar autenticador"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:649
 msgid "Authenticator saving error"
-msgstr "Autenticador salvando o erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:650
 msgid "Delete authenticator"
-msgstr "Excluir o autenticador"
+msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:650
 msgid "Authenticator deletion error"
-msgstr "Erro de exclusão do autenticador"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "day"
-msgstr "dia"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "days"
-msgstr "dias"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "Dayly"
-msgstr "Dayly"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "week"
-msgstr "semana"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "weeks"
-msgstr "semanas"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "Weekly"
-msgstr "Semanal"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "month"
-msgstr "mês"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "months"
-msgstr "meses"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "Monthly"
-msgstr "Mensal"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "year"
-msgstr "ano"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "years"
-msgstr "anos"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "Yearly"
-msgstr "Anual"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:27
 msgid "Weekdays"
-msgstr "Durante a semana"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:30
 msgid "Minutes"
-msgstr "Minutos"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:31
 msgid "Hours"
-msgstr "Horas"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:32
 msgid "Days"
-msgstr "Dias"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:33
 msgid "Weeks"
-msgstr "Semanas"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:35
 msgid "Sun"
-msgstr "Sol"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:51
 msgid "(no days)"
-msgstr "(não há dias)"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:151
 msgid "This rule will be valid every "
-msgstr "Esta regra será válida cada "
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:153
 msgid "of any week"
-msgstr "de qualquer semana"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:161
 msgid "from"
-msgstr "De"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:163
 msgid "onwards"
-msgstr "em diante"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:165
 msgid "until "
-msgstr "até "
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:167
 msgid "starting at"
-msgstr "começando em"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:170
 msgid "and will remain valid for "
-msgstr "e permanecerá válido para "
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:172
 msgid "with no duration"
-msgstr "com nenhuma duração"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:208
 msgid "New rule"
-msgstr "Nova regra"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:208
 msgid "Edit rule"
-msgstr "Editar regra"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:209
 msgid "Save"
-msgstr "Salvar"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:300
 msgid "Error creating rule"
-msgstr "Regra de criação de erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:303
 msgid "Error saving rule"
-msgstr "Erro ao salvar regra"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:349
 msgid "Delete rule"
-msgstr "Excluir a regra"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:349
 msgid "Rule deletion error"
-msgstr "Erro de exclusão de regra"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:356
 msgid "New calendar"
-msgstr "Novo calendário"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:356
 msgid "Calendar creation error"
-msgstr "Erro de criação do calendário"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:357
 msgid "Edit calendar"
-msgstr "Editar o calendário"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:357
 msgid "Calendar saving error"
-msgstr "Calendário salvando o erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:358
 msgid "Delete calendar"
-msgstr "Excluir calendário"
+msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:358
 msgid "Calendar deletion error"
-msgstr "Erro de exclusão de calendário"
+msgstr ""
 
 #: static/tmp_js/gui-d-config.js:56
 msgid "Configuration saved"
-msgstr "Configuração salvada"
+msgstr ""
 
 #: static/tmp_js/gui-d-config.js:60
 msgid "No changes has been made"
-msgstr "Nenhuma alteração foi feita"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:46
+#: static/tmp_js/gui-d-connectivity.js:63
 msgid "New transport"
-msgstr "Novo transporte"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:46
+#: static/tmp_js/gui-d-connectivity.js:63
 msgid "Transport creation error"
-msgstr "Erro de criação de transporte"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:47
+#: static/tmp_js/gui-d-connectivity.js:64
 msgid "Edit transport"
-msgstr "Editar transportes"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:47
+#: static/tmp_js/gui-d-connectivity.js:64
 msgid "Transport saving error"
-msgstr "Transporte salvando o erro"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:48
+#: static/tmp_js/gui-d-connectivity.js:65
 msgid "Delete transport"
-msgstr "Excluir o transporte"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:48
+#: static/tmp_js/gui-d-connectivity.js:65
 msgid "Transport deletion error"
-msgstr "Erro de exclusão de transportes"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:55
+#: static/tmp_js/gui-d-connectivity.js:72
 msgid "New network"
-msgstr "Nova rede"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:55
+#: static/tmp_js/gui-d-connectivity.js:72
 msgid "Network creation error"
-msgstr "Erro de criação de rede"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:56
+#: static/tmp_js/gui-d-connectivity.js:73
 msgid "Edit network"
-msgstr "Editar rede"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:56
+#: static/tmp_js/gui-d-connectivity.js:73
 msgid "Network saving error"
-msgstr "Salvando o erro de rede"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:57
+#: static/tmp_js/gui-d-connectivity.js:74
 msgid "Delete network"
-msgstr "Excluir rede"
+msgstr ""
 
-#: static/tmp_js/gui-d-connectivity.js:57
+#: static/tmp_js/gui-d-connectivity.js:74
 msgid "Network deletion error"
-msgstr "Erro de exclusão de rede"
+msgstr ""
 
 #: static/tmp_js/gui-d-dashboard.js:40
 msgid "Staff member"
-msgstr "Membro da equipe"
+msgstr ""
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "New image"
-msgstr "Nova imagem"
+msgstr ""
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "Edit image"
-msgstr "Editar imagem"
+msgstr ""
 
 #: static/tmp_js/gui-d-gallery.js:18
 msgid "Upload"
-msgstr "Fazer upload"
+msgstr ""
 
 #: static/tmp_js/gui-d-gallery.js:26
 msgid "You must select an image"
-msgstr "Você deve selecionar uma imagem"
+msgstr ""
 
 #: static/tmp_js/gui-d-gallery.js:34
 msgid "Image is too big (max. upload size is 256Kb)"
-msgstr "Imagem é muito grande (tamanho de carregamento máximo é de 256Kb)"
+msgstr ""
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Delete Image"
-msgstr "Excluir imagem"
+msgstr ""
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Image deletion error"
-msgstr "Erro de exclusão de imagem"
+msgstr ""
 
 #: static/tmp_js/gui-d-osmanagers.js:42
 msgid "New OSManager"
-msgstr "Nova OSManager"
+msgstr ""
 
 #: static/tmp_js/gui-d-osmanagers.js:42
 msgid "OSManager creation error"
-msgstr "Erro de criação de OSManager"
+msgstr ""
 
 #: static/tmp_js/gui-d-osmanagers.js:43
 msgid "Edit OSManager"
-msgstr "Editar OSManager"
+msgstr ""
 
 #: static/tmp_js/gui-d-osmanagers.js:43
 msgid "OSManager saving error"
-msgstr "OSManager salvar o erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-osmanagers.js:44
 msgid "Delete OSManager"
-msgstr "Excluir OSManager"
+msgstr ""
 
 #: static/tmp_js/gui-d-osmanagers.js:44
 msgid "OSManager deletion error"
-msgstr "OSManager erro de exclusão"
+msgstr ""
 
 #: static/tmp_js/gui-d-reports.js:21 static/tmp_js/gui-d-reports.js:38
 msgid "Generate report"
-msgstr "Gerar relatório"
+msgstr ""
 
 #: static/tmp_js/gui-d-reports.js:59
 msgid "Error creating report"
-msgstr "Erro ao criar o relatório"
+msgstr ""
 
 #: static/tmp_js/gui-d-reports.js:62
 msgid "Error obtaining report description"
-msgstr "Descrição de relatório de obtenção do erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:63
 msgid "In Maintenance"
-msgstr "Em manutenção"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:65
 msgid "Active"
-msgstr "Ativo"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:125
 msgid "Service information"
-msgstr "Informação de serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:183
 msgid "Edit service"
-msgstr "Editar serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:183
 msgid "Service creation error"
-msgstr "Erro de criação do serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:184
 msgid "New service"
-msgstr "Novo serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:184
 msgid "Service saving error"
-msgstr "Salvando o erro de serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:185
 msgid "Delete service"
-msgstr "Excluir o serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:185
 msgid "Service deletion error"
-msgstr "Erro de exclusão do serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:201 static/tmp_js/gui-d-services.js:224
 msgid "Maintenance"
-msgstr "Manutenção"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:210
 msgid "Maintenance Mode"
-msgstr "Modo de manutenção"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:210
 msgid "Enter Maintenance Mode?"
-msgstr "Entrar no modo de manutenção?"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:210
 msgid "Exit Maintenance Mode?"
-msgstr "Sair do modo de manutenção?"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:229
 msgid "Enter maintenance Mode"
-msgstr "Digite o modo de manutenção"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:232
 msgid "Exit Maintenance Mode"
-msgstr "Sair do modo de manutenção"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:240
 msgid "New services provider"
-msgstr "Novo provedor de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:240
 msgid "Services provider creation error"
-msgstr "Erro de criação do provedor de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:241
 msgid "Edit services provider"
-msgstr "Editar Provedor de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:241
 msgid "Services Provider saving error"
-msgstr "Salvando o erro do prestador de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:242
 msgid "Delete services provider"
-msgstr "Exclua o provedor de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-services.js:242
 msgid "Services Provider deletion error"
-msgstr "Erro de exclusão do provedor de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:54
 msgid "Launch Now"
-msgstr "Lançamento agora"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Execute action"
-msgstr "Executar a ação"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Launch action execution right now?"
-msgstr "Iniciar a execução de ação agora?"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:108
 msgid "Beginning"
-msgstr "Início"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:108
 msgid "Ending"
-msgstr "Final"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:117
 msgid "Add scheduled action"
-msgstr "Adicionar ação programada"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:179
 #: static/tmp_js/gui-d-servicespools-calendars.js:95
 msgid "Edit access calendar"
-msgstr "Editar o calendário de acesso"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:216
 #: static/tmp_js/gui-d-servicespools-calendars.js:122
 msgid "Remove access calendar"
-msgstr "Remover acesso calendário"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-actions.js:216
 #: static/tmp_js/gui-d-servicespools-calendars.js:122
 msgid "Access calendar removal error"
-msgstr "Erro de remoção de calendário de acesso"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:44
 msgid "Add access calendar"
-msgstr "Adicionar calendário de acesso"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:73
 msgid "Default fallback access"
-msgstr "Acesso de retorno padrão"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-publications.js:17
 #: static/tmp_js/gui-d-servicespools-publications.js:41
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
 #: static/tmp_js/gui-d-servicespools-publications.js:56
 #: static/tmp_js/gui-d-servicespools-publications.js:57
 msgid "Publish"
-msgstr "Publicar"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
 msgid "Cancel publication?"
-msgstr "Cancelar a publicação?"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-publications.js:39
 msgid "Force Cancel"
-msgstr "Força cancelar"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-publications.js:67
 msgid "Failed creating publication"
-msgstr "Não conseguiu criar publicação"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-transports.js:29
 msgid "Add transport"
-msgstr "Adicionar transporte"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-transports.js:36
 msgid "You must provide a transport"
-msgstr "Você deve fornecer um transporte"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-transports.js:50
 msgid "Remove transport"
-msgstr "Remover o transporte"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools-transports.js:50
 msgid "Transport removal error"
-msgstr "Erro de remoção de transporte"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:153
 #: static/tmp_js/gui-d-servicespools.js:361
 msgid "Yes"
-msgstr "Sim"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:155
 #: static/tmp_js/gui-d-servicespools.js:363
 msgid "No"
-msgstr "Não"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:215
 msgid "error"
-msgstr "erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:264
 msgid "Remove Cache element"
-msgstr "Remover o elemento de Cache"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:264
 #: static/tmp_js/gui-d-servicespools.js:382
 msgid "Deletion error"
-msgstr "Erro de exclusão"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:286
 msgid "Add group"
-msgstr "Adicionar grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:310
 msgid "You must provide authenticator and group"
-msgstr "Você deve fornecer o autenticador e grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:329
 msgid "Remove group"
-msgstr "Remover grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:329
 msgid "Group removal error"
-msgstr "Erro de remoção do grupo"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:382
 msgid "Remove Assigned service"
-msgstr "Remover o serviço atribuído"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:430
 msgid "Restrained"
-msgstr "Contido"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:439
 msgid "New service pool"
-msgstr "Novo pool de serviço"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:439
 msgid "creation error"
-msgstr "erro de criação"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:449
 msgid "Publish on creation"
-msgstr "Publicar na criação"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:450
 msgid "If selected, will initiate the publication inmediatly after creation"
-msgstr "Se selecionado, irá iniciar a publicação imediatamente após a criação"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:462 static/tmp_js/gui.js:50
 msgid "Edit"
-msgstr "Editar"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:462
 msgid "saving error"
-msgstr "salvando o erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:465 static/tmp_js/gui-methods.js:141
 #: static/tmp_js/gui.js:54
 msgid "Delete"
-msgstr "Excluir"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespools.js:465
 msgid "deletion error"
-msgstr "erro de exclusão"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "New Services Pool Group"
-msgstr "Novo grupo de consórcio de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "Services Pool Group creation error"
-msgstr "Erro de criação do grupo de consórcio de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Edit Services Pool Group"
-msgstr "Editar grupo de consórcio de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Pool Group saving error"
-msgstr "Grupo de consórcio de serviços salvando o erro"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Delete Services Pool Group"
-msgstr "Excluir grupo de consórcio de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Services Pool Group removal error"
-msgstr "Erro de remoção do grupo de consórcio de serviços"
+msgstr ""
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache"
-msgstr "Cache"
+msgstr ""
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache has been flushed"
-msgstr "Cache foi liberado"
+msgstr ""
 
-#: static/tmp_js/gui-element.js:252
+#: static/tmp_js/gui-element.js:255
 msgid "Refresh operation failed"
-msgstr "Falha na operação de atualizar"
+msgstr ""
 
-#: static/tmp_js/gui-element.js:629
+#: static/tmp_js/gui-element.js:656
 msgid "Date"
-msgstr "Data"
+msgstr ""
 
-#: static/tmp_js/gui-element.js:637
+#: static/tmp_js/gui-element.js:664
 msgid "level"
-msgstr "nível"
+msgstr ""
 
-#: static/tmp_js/gui-element.js:644
+#: static/tmp_js/gui-element.js:671
 msgid "source"
-msgstr "fonte"
+msgstr ""
 
-#: static/tmp_js/gui-element.js:650
+#: static/tmp_js/gui-element.js:677
 msgid "message"
-msgstr "Mensagem"
+msgstr ""
 
-#: static/tmp_js/gui-element.js:655
+#: static/tmp_js/gui-element.js:682
 msgid "Logs"
-msgstr "Logs"
+msgstr ""
 
 #: static/tmp_js/gui-form.js:95
 msgid "Main"
-msgstr "Main"
+msgstr ""
 
 #: static/tmp_js/gui-form.js:301
 msgid "yes"
-msgstr "Sim"
+msgstr ""
 
 #: static/tmp_js/gui-form.js:302
 msgid "no"
-msgstr "Não"
+msgstr ""
 
 #: static/tmp_js/gui-form.js:319
 msgid "Close"
-msgstr "Fechar"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:17
 msgid "Test passed successfully"
-msgstr "Teste passado com sucesso"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:20
 msgid "Test failed:"
-msgstr "Teste falhou:"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:24
 msgid "Test error"
-msgstr "Erro de teste"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:56
 msgid "Edition successfully done"
-msgstr "Edição com sucesso"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:78
 msgid "Overview"
-msgstr "Visão geral"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:101
 msgid "of type"
-msgstr "do tipo"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:119
 msgid "Creation successfully done"
-msgstr "Criação feita com sucesso"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:139
 msgid "Are you sure do you want to delete "
-msgstr "Você tem certeza que quer excluir "
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:139
 msgid "items:"
-msgstr "itens:"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:148
 msgid "Error deleting"
-msgstr "Erro de exclusão"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:150
 msgid "Successfully deleted"
-msgstr "Excluído com êxito"
+msgstr ""
 
 #: static/tmp_js/gui-methods.js:155
 msgid "Deletion results"
-msgstr "Resultados de exclusão"
+msgstr ""
 
 #: static/tmp_js/gui-permissions.js:42
 msgid "Add"
-msgstr "Adicionar"
+msgstr ""
 
 #: static/tmp_js/gui-permissions.js:67
 msgid "You must provide authenticator and"
-msgstr "Você deve fornecer o autenticador e"
+msgstr ""
 
 #: static/tmp_js/gui-permissions.js:88
 msgid "Confirm revocation of following permissions: <br/>"
-msgstr "Confirmar a revogação de permissões a seguir: <br/>"
+msgstr ""
 
 #: static/tmp_js/gui-permissions.js:98
 msgid "Remove "
-msgstr "Remover "
+msgstr ""
 
 #: static/tmp_js/gui-permissions.js:99
 msgid "Revoke"
-msgstr "Revogar"
+msgstr ""
 
 #: static/tmp_js/gui-permissions.js:131
 msgid "Permissions for"
-msgstr "Permissões para"
+msgstr ""
 
 #: static/tmp_js/gui-tools.js:14
 msgid "Just a moment..."
-msgstr "Só um momento..."
+msgstr ""
 
 #: static/tmp_js/gui-tools.js:146
 msgid "Never"
-msgstr "Nunca"
+msgstr ""
 
 #: static/tmp_js/gui.js:21
 msgid "_MENU_ records per page"
-msgstr "Registros _MENU_ por página"
+msgstr ""
 
 #: static/tmp_js/gui.js:22
 msgid "Empty"
-msgstr "Vazio"
+msgstr ""
 
 #: static/tmp_js/gui.js:23 static/tmp_js/gui.js:25
 msgid "No records"
-msgstr "Não há registros"
+msgstr ""
 
 #: static/tmp_js/gui.js:24
 msgid "Records _START_ to _END_ of _TOTAL_"
-msgstr "Registros _START_ para _END_ de _TOTAL_"
+msgstr ""
 
 #: static/tmp_js/gui.js:26
 msgid "(filtered from _MAX_ total records)"
-msgstr "(filtrada de registros total de _MAX_)"
+msgstr ""
 
 #: static/tmp_js/gui.js:27
 msgid "Please wait, processing"
-msgstr "Aguarde, processamento"
+msgstr ""
 
 #: static/tmp_js/gui.js:28
 msgid "Filter"
-msgstr "Filtro"
+msgstr ""
 
 #: static/tmp_js/gui.js:38
 #, javascript-format
 msgid "Selected %d rows"
-msgstr "%d selecionado linhas"
+msgstr ""
 
 #: static/tmp_js/gui.js:39
 msgid "Click on a row to select it"
-msgstr "Clique em uma linha para selecioná-lo"
+msgstr ""
 
 #: static/tmp_js/gui.js:40
 msgid "Selected one row"
-msgstr "Selecionada uma linha"
+msgstr ""
 
 #: static/tmp_js/gui.js:46
 msgid "New"
-msgstr "Novo"
+msgstr ""
 
 #: static/tmp_js/gui.js:58
 msgid "Permissions"
-msgstr "Permissões"
+msgstr ""
 
 #: static/tmp_js/gui.js:62
 msgid "Xls"
-msgstr "Xls"
+msgstr ""
 
 #: static/tmp_js/gui.js:124
 msgid "Message"
-msgstr "Mensagem"
+msgstr ""
 
 #: static/tmp_js/gui.js:132
 msgid "Connection failed"
-msgstr "Conexão falhado"
+msgstr ""
 
 #: static/tmp_js/gui.js:229
 msgid "This field is required."
-msgstr "Este campo é obrigatório."
+msgstr ""
 
 #: static/tmp_js/gui.js:230
 msgid "Please fix this field."
-msgstr "Por favor corrigi este campo."
+msgstr ""
 
 #: static/tmp_js/gui.js:231
 msgid "Please enter a valid email address."
-msgstr "Por favor insira um endereço de email válido."
+msgstr ""
 
 #: static/tmp_js/gui.js:232
 msgid "Please enter a valid URL."
-msgstr "Por favor introduza um URL válido."
+msgstr ""
 
 #: static/tmp_js/gui.js:233
 msgid "Please enter a valid date."
-msgstr "Por favor introduza uma data válida."
+msgstr ""
 
 #: static/tmp_js/gui.js:234
 msgid "Please enter a valid date (ISO)."
-msgstr "Por favor introduza uma data válida (ISO)."
+msgstr ""
 
 #: static/tmp_js/gui.js:235
 msgid "Please enter a valid number."
-msgstr "Por favor, insira um número válido."
+msgstr ""
 
 #: static/tmp_js/gui.js:236
 msgid "Please enter only digits."
-msgstr "Por favor, digite somente dígitos."
+msgstr ""
 
 #: static/tmp_js/gui.js:237
 msgid "Please enter a valid credit card number."
-msgstr "Por favor, insira um número válido de cartão de crédito."
+msgstr ""
 
 #: static/tmp_js/gui.js:238
 msgid "Please enter the same value again."
-msgstr "Digite novamente o mesmo valor."
+msgstr ""
 
 #: static/tmp_js/gui.js:239
 msgid "Please enter no more than {0} characters."
-msgstr "Não mais de {0} caracteres digite."
+msgstr ""
 
 #: static/tmp_js/gui.js:240
 msgid "Please enter at least {0} characters."
-msgstr "Por favor, insira pelo menos {0} caracteres."
+msgstr ""
 
 #: static/tmp_js/gui.js:241
 msgid "Please enter a value between {0} and {1} characters long."
-msgstr "Por favor, insira um valor entre {0} e {1} caracteres longo."
+msgstr ""
 
 #: static/tmp_js/gui.js:242
 msgid "Please enter a value between {0} and {1}."
-msgstr "Por favor, insira um valor entre {0} e {1}."
+msgstr ""
 
 #: static/tmp_js/gui.js:243
 msgid "Please enter a value less than or equal to {0}."
-msgstr "Por favor digite um valor menor ou igual a {0}."
+msgstr ""
 
 #: static/tmp_js/gui.js:244
 msgid "Please enter a value greater than or equal to {0}."
-msgstr "Por favor, insira um valor maior ou igual a {0}."
+msgstr ""
 
 #: static/tmp_js/uds-client.js:43
 msgid "Contacting service..."
-msgstr "Entrar em contato com o serviço..."
+msgstr ""
 
 #: static/tmp_js/uds-client.js:187
 msgid "Error accessing service: "
-msgstr "Erro ao acessar o serviço: "
+msgstr ""

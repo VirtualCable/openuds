@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-06 13:14+0200\n"
+"POT-Creation-Date: 2017-09-21 15:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,7 @@ msgstr ""
 
 #: REST/methods/authenticators.py:60 REST/methods/calendars.py:60
 #: REST/methods/images.py:61 REST/methods/networks.py:60
-#: REST/methods/osmanagers.py:57 REST/methods/providers.py:66
+#: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:77 REST/methods/transports.py:57
 #: REST/methods/user_services.py:235 REST/methods/user_services.py:270
@@ -59,7 +59,7 @@ msgstr ""
 
 #: REST/methods/authenticators.py:61 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:67 REST/methods/services.py:190
+#: REST/methods/providers.py:72 REST/methods/services.py:190
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:140
@@ -91,7 +91,7 @@ msgstr ""
 
 #: REST/methods/authenticators.py:65 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:71 REST/methods/services.py:194
+#: REST/methods/providers.py:76 REST/methods/services.py:194
 #: REST/methods/services_pools.py:84 REST/methods/transports.py:60
 msgid "tags"
 msgstr ""
@@ -203,15 +203,15 @@ msgstr ""
 msgid "Can't delete an OS Manager with services pools associated"
 msgstr ""
 
-#: REST/methods/providers.py:62
+#: REST/methods/providers.py:67
 msgid "Service providers"
 msgstr ""
 
-#: REST/methods/providers.py:68
+#: REST/methods/providers.py:73
 msgid "Status"
 msgstr ""
 
-#: REST/methods/providers.py:69 reports/stats/pools_usage.py:107
+#: REST/methods/providers.py:74 reports/stats/pools_usage.py:107
 #: reports/stats/pools_usage.py:283 templates/uds/admin/snippets/navbar.html:22
 #: templates/uds/admin/tmpl/dashboard.html:61
 #: templates/uds/admin/tmpl/providers.html:4
@@ -220,13 +220,13 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
-#: REST/methods/providers.py:70 templates/uds/admin/tmpl/group-info.html:20
+#: REST/methods/providers.py:75 templates/uds/admin/tmpl/group-info.html:20
 #: templates/uds/admin/tmpl/service-info.html:24
 #: templates/uds/admin/tmpl/user-info.html:40
 msgid "User Services"
 msgstr ""
 
-#: REST/methods/providers.py:135 dispatchers/wyse_enterprise/views.py:258
+#: REST/methods/providers.py:140 dispatchers/wyse_enterprise/views.py:258
 #: dispatchers/wyse_enterprise/views.py:261 web/errors.py:74
 msgid "Service not found"
 msgstr ""
@@ -309,6 +309,7 @@ msgid "Calendar"
 msgstr ""
 
 #: REST/methods/services_pool_calendars.py:91
+#: REST/methods/services_usage.py:118
 msgid "Access"
 msgstr ""
 
@@ -477,6 +478,60 @@ msgstr ""
 msgid "This service requires an OS Manager"
 msgstr ""
 
+#: REST/methods/services_usage.py:92 REST/methods/user_services.py:80
+#: REST/methods/user_services.py:81
+msgid "unknown"
+msgstr ""
+
+#: REST/methods/services_usage.py:113
+msgid "Services Usage"
+msgstr ""
+
+#: REST/methods/services_usage.py:119 REST/methods/user_services.py:137
+msgid "Owner"
+msgstr ""
+
+#: REST/methods/services_usage.py:120
+msgid "Service"
+msgstr ""
+
+#: REST/methods/services_usage.py:121 reports/stats/pool_performance.py:106
+#: reports/stats/pool_performance.py:377 reports/stats/pools_usage.py:103
+#: reports/stats/pools_usage.py:283 reports/stats/usage_by_pool.py:98
+#: reports/stats/usage_summary_pool.py:101
+#: templates/uds/admin/tmpl/group-info.html:17
+#: templates/uds/admin/tmpl/service-info.html:21
+#: templates/uds/admin/tmpl/user-info.html:37
+msgid "Pool"
+msgstr ""
+
+#: REST/methods/services_usage.py:123 REST/methods/user_services.py:130
+#: REST/methods/user_services.py:198 auths/IP/Authenticator.py:60
+#: templates/uds/admin/tmpl/user-info.html:66
+msgid "IP"
+msgstr ""
+
+#: REST/methods/services_usage.py:124 REST/methods/user_services.py:131
+#: REST/methods/user_services.py:199
+msgid "Friendly name"
+msgstr ""
+
+#: REST/methods/services_usage.py:125 REST/methods/user_services.py:136
+msgid "Src Ip"
+msgstr ""
+
+#: REST/methods/services_usage.py:126 REST/methods/user_services.py:135
+msgid "Src Host"
+msgstr ""
+
+#: REST/methods/services_usage.py:148 REST/methods/user_services.py:165
+msgid "Item already being removed"
+msgstr ""
+
+#: REST/methods/services_usage.py:150 REST/methods/user_services.py:167
+msgid "Item is not removable"
+msgstr ""
+
 #: REST/methods/transports.py:54
 msgid "Current Transports"
 msgstr ""
@@ -517,10 +572,6 @@ msgid ""
 "Else, only devices compatible with selected values will be allowed"
 msgstr ""
 
-#: REST/methods/user_services.py:80 REST/methods/user_services.py:81
-msgid "unknown"
-msgstr ""
-
 #: REST/methods/user_services.py:123
 #: templates/uds/admin/tmpl/services_pool.html:31
 msgid "Assigned services"
@@ -535,15 +586,6 @@ msgstr ""
 msgid "Revision"
 msgstr ""
 
-#: REST/methods/user_services.py:130 REST/methods/user_services.py:198
-#: auths/IP/Authenticator.py:60 templates/uds/admin/tmpl/user-info.html:66
-msgid "IP"
-msgstr ""
-
-#: REST/methods/user_services.py:131 REST/methods/user_services.py:199
-msgid "Friendly name"
-msgstr ""
-
 #: REST/methods/user_services.py:133
 msgid "Status date"
 msgstr ""
@@ -552,28 +594,8 @@ msgstr ""
 msgid "In Use"
 msgstr ""
 
-#: REST/methods/user_services.py:135
-msgid "Src Host"
-msgstr ""
-
-#: REST/methods/user_services.py:136
-msgid "Src Ip"
-msgstr ""
-
-#: REST/methods/user_services.py:137
-msgid "Owner"
-msgstr ""
-
 #: REST/methods/user_services.py:138 REST/methods/user_services.py:202
 msgid "Actor version"
-msgstr ""
-
-#: REST/methods/user_services.py:165
-msgid "Item already being removed"
-msgstr ""
-
-#: REST/methods/user_services.py:167
-msgid "Item is not removable"
 msgstr ""
 
 #: REST/methods/user_services.py:191
@@ -817,7 +839,7 @@ msgstr ""
 #: auths/RegexLdap/Authenticator.py:60 auths/RegexLdap/Authenticator.py:84
 #: auths/SimpleLDAP/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:85
 #: core/auths/BaseAuthenticator.py:140
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:86
@@ -1479,6 +1501,8 @@ msgid "Tunneled"
 msgstr ""
 
 #: core/ui/UserInterface.py:86
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 msgid "Advanced"
 msgstr ""
 
@@ -1802,7 +1826,7 @@ msgid "Os Manager to control linux machines, with user password set randomly."
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:53
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:32
 msgid "Account"
 msgstr ""
@@ -1854,16 +1878,17 @@ msgstr ""
 msgid "RDS UDS Actor (for remote apps on Windows Server 2012)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:28
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:29
 msgid "Windows Domain OS Manager"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:30
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:31
 msgid "Os Manager to control windows machines with domain."
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 #: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:76
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
 #: transports/PCoIP_enterprise/PCoIPTransport.py:62
 #: transports/RDP/BaseRDPTransport.py:65
 #: transports/RDS_enterprise/BaseRDSTransport.py:68
@@ -1872,80 +1897,104 @@ msgstr ""
 msgid "Domain"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:34
-msgid "Domain to join machines to (use FQDN form, Netbios name not allowed)"
-msgstr ""
-
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
-msgid "Account with rights to add machines to domain"
+msgid ""
+"Domain to join machines to (use FQDN form, Netbios name not supported for "
+"most operations)"
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
+msgid "Account with rights to add machines to domain"
+msgstr ""
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
 msgid "Password of the account"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:38
 msgid "OU"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:38
 msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:46
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
+msgid "Machine Group"
+msgstr ""
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
+msgid ""
+"Group to which add machines on creation. If empty, no group will be used. "
+"(experimental)"
+msgstr ""
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
+msgid "Server Hint"
+msgstr ""
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
+msgid "In case of several AD servers, which one is prefered for first access"
+msgstr ""
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:49
 msgid "Must provide a domain!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:50
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:53
 msgid "Must provide an account to add machines to domain!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:52
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:55
 msgid "DOM\\USER form is not allowed!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:54
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:57
 msgid "Must provide a password for the account!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:146
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:155
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:234
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:244
 #, python-brace-format
 msgid "Check error: {0}"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:148
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:236
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:157
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:249
+msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
+msgstr ""
+
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:252
 msgid "Server check was successful"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:168
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:263
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:180
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:275
 #, python-brace-format
 msgid "The default path {0} for computers was not found!!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:182
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:277
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:184
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:279
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:189
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:284
 msgid "All parameters seem to work fine."
 msgstr ""
 
@@ -2093,15 +2142,6 @@ msgstr ""
 
 #: reports/stats/pool_performance.py:89
 msgid "Accesses by pool"
-msgstr ""
-
-#: reports/stats/pool_performance.py:106 reports/stats/pool_performance.py:377
-#: reports/stats/pools_usage.py:103 reports/stats/pools_usage.py:283
-#: reports/stats/usage_by_pool.py:98 reports/stats/usage_summary_pool.py:101
-#: templates/uds/admin/tmpl/group-info.html:17
-#: templates/uds/admin/tmpl/service-info.html:21
-#: templates/uds/admin/tmpl/user-info.html:37
-msgid "Pool"
 msgstr ""
 
 #: reports/stats/pool_performance.py:112 reports/stats/pool_performance.py:377
@@ -2857,7 +2897,7 @@ msgid ""
 "is not compatible with UDS."
 msgstr ""
 
-#: services/PhysicalMachines/IPMachineDeployed.py:58
+#: services/PhysicalMachines/IPMachineDeployed.py:59
 msgid "IP "
 msgstr ""
 
@@ -3359,7 +3399,7 @@ msgid "Logout"
 msgstr ""
 
 #: templates/uds/admin/tmpl/authenticators.html:33
-#: templates/uds/admin/tmpl/providers.html:32
+#: templates/uds/admin/tmpl/providers.html:33
 #: templates/uds/admin/tmpl/service-info.html:6
 #: templates/uds/admin/tmpl/services_pool.html:38
 msgid "Logs"
@@ -3633,6 +3673,10 @@ msgstr ""
 
 #: templates/uds/admin/tmpl/pool_add_transport.html:5
 msgid "Transport"
+msgstr ""
+
+#: templates/uds/admin/tmpl/providers.html:32
+msgid "Usage"
 msgstr ""
 
 #: templates/uds/admin/tmpl/publish.html:5
@@ -4153,25 +4197,31 @@ msgid "RDP Transport using HTML5 client"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:71
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:73
 msgid "Tunnel Server"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:71
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:73
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:72 transports/NX/NXTransport.py:65
-#: transports/NX/TSNXTransport.py:74 transports/RDP/BaseRDPTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:72
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:61
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 #: transports/RGS_enterprise/RGSTransport.py:44
 #: transports/RGS_enterprise/TRGSTransport.py:54
 msgid "Empty creds"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:72 transports/NX/NXTransport.py:65
-#: transports/NX/TSNXTransport.py:74 transports/RDP/BaseRDPTransport.py:61
+#: transports/HTML5RDP/HTML5RDP.py:72
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:74
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:61
 #: transports/RDS_enterprise/BaseRDSTransport.py:66
 #: transports/RGS_enterprise/RGSTransport.py:44
 #: transports/RGS_enterprise/TRGSTransport.py:54
@@ -4200,19 +4250,24 @@ msgstr ""
 msgid "If not empty, this password will be always used as credential"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:75 transports/RDP/BaseRDPTransport.py:64
+#: transports/HTML5RDP/HTML5RDP.py:75
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
+#: transports/RDP/BaseRDPTransport.py:64
 #: transports/RDS_enterprise/BaseRDSTransport.py:67
 msgid "Without Domain"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:75
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:75
 #: transports/RDS_enterprise/BaseRDSTransport.py:67
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:76 transports/RDP/BaseRDPTransport.py:65
+#: transports/HTML5RDP/HTML5RDP.py:76
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:76
+#: transports/RDP/BaseRDPTransport.py:65
 #: transports/RDS_enterprise/BaseRDSTransport.py:68
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
@@ -4221,114 +4276,165 @@ msgid ""
 "\\user)"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
+#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
+#: transports/RDP/BaseRDPTransport.py:70
 msgid "Show wallpaper"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:77 transports/RDP/BaseRDPTransport.py:70
+#: transports/HTML5RDP/HTML5RDP.py:77
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:77
+#: transports/RDP/BaseRDPTransport.py:70
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
+#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
+#: transports/RDP/BaseRDPTransport.py:72
 msgid "Allow Desk.Comp."
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:78 transports/RDP/BaseRDPTransport.py:72
+#: transports/HTML5RDP/HTML5RDP.py:78
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:78
+#: transports/RDP/BaseRDPTransport.py:72
 msgid "If checked, desktop composition will be allowed"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
+#: transports/HTML5RDP/HTML5RDP.py:79
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
+#: transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "Font Smoothing"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:79 transports/RDP/BaseRDPTransport.py:73
+#: transports/HTML5RDP/HTML5RDP.py:79
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:79
+#: transports/RDP/BaseRDPTransport.py:73
 #: transports/RDS_enterprise/BaseRDSTransport.py:74
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
 msgid "Enable Audio"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:80
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:80
 msgid ""
 "If checked, the audio will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
 msgid "Enable Printing"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:81
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:81
 msgid ""
 "If checked, the printing will be redirected to client (if client browser "
 "supports it)"
 msgstr ""
 
+#: transports/HTML5RDP/HTML5RDP.py:82
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
+msgid "Enable File Sharing"
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:82
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:82
+msgid ""
+"If checked, the user will be able to upload/download files (if client "
+"browser supports it)"
+msgstr ""
+
 #: transports/HTML5RDP/HTML5RDP.py:84
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:84
 msgid "Layout"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:85
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:85
 msgid "Keyboards Layout of server"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:88
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:88
 msgid "English (US) keyboard"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:89
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:89
 msgid "German keyboard (qwertz)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:90
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:90
 msgid "French keyboard (azerty)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:91
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:91
 msgid "Italian keyboard"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:92
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:92
 msgid "Swedish keyboard"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:93
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:93
 msgid "Failsafe"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:99
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:99
 msgid "Security"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:100
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:100
 msgid "Connection security mode for Guacamole RDP connection"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:103
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:103
 msgid "Any (Allow the server to choose the type of auth)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:104
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:104
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:105
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:105
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:106
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:106
 msgid "TLS (Transport Security Layer encryption)"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:118
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:118
 msgid "The server must be http or https"
+msgstr ""
+
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:61
+msgid "HTML5 RDS Transport"
+msgstr ""
+
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:63
+msgid "RDS Transport using HTML5 client"
 msgstr ""
 
 #: transports/NX/NXTransport.py:58

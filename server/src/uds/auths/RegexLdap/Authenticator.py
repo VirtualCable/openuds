@@ -69,7 +69,7 @@ class RegexLdap(auths.Authenticator):
     groupNameAttr = gui.TextField(length=640, label=_('Group Name Attr'), multiline=2, defvalue='cn', order=11, tooltip=_('Attribute that contains the group name'), required=True, tab=_('Ldap info'))
     # regex = gui.TextField(length=64, label = _('Regular Exp. for groups'), defvalue = '^(.*)', order = 12, tooltip = _('Regular Expression to extract the group name'), required = True)
 
-    altClass = gui.TextField(length=64, label=_('Alt. class'), defvalue='', order=20, tooltip=_('Class for LDAP objects that will be also checked for groups retrieval (normally empty)'), required=True, tab=_('Advanced'))
+    altClass = gui.TextField(length=64, label=_('Alt. class'), defvalue='', order=20, tooltip=_('Class for LDAP objects that will be also checked for groups retrieval (normally empty)'), required=False, tab=_('Advanced'))
 
     typeName = _('Regex LDAP Authenticator')
     typeType = 'RegexLdapAuthenticator'
