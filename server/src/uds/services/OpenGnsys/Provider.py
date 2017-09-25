@@ -48,7 +48,7 @@ import logging
 import six
 
 
-__updated__ = '2017-05-23'
+__updated__ = '2017-09-25'
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +122,7 @@ class OGProvider(ServiceProvider):
 
     @property
     def endpoint(self):
-        return 'https://{}:{}/rest'.format(self.host.value, self.port.value)
+        return 'https://{}:{}/opengnsys/rest'.format(self.host.value, self.port.value)
 
     @property
     def api(self):
