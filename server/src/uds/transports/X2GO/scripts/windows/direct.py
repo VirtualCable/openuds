@@ -6,13 +6,16 @@ from __future__ import unicode_literals
 from PyQt4 import QtCore, QtGui  # @UnresolvedImport
 import os
 import subprocess
+from os.path import expanduser
 
 from uds import tools  # @UnresolvedImport
 
 import six
 
+home = expanduser('~').replace('\\', '\\\\') + '#1;'
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(export='c:\\:1;', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
+# On windows, the separator beween active and not is "#"
+theFile = '''{m.xf}'''.format(export='c:\\\\#1;', keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
