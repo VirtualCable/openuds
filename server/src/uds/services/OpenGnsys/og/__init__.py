@@ -193,7 +193,7 @@ class OpenGnsysClient(object):
         errMsg = 'Reserving image {} in ou {}'.format(ou, image)
         data = {
             'labid': lab,
-            'maxtime': maxtimer['id']
+            'maxtime': maxtime['id']
         }
         res = self._post(urls.RESERVE.format(ou=ou, image=image), data, errMsg=errMsg)
         return {
