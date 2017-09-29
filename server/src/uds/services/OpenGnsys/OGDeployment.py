@@ -246,8 +246,10 @@ class OGDeployment(UserDeployment):
         self._mac = r['mac']
         self._ip = r['ip']
         self._stamp = getSqlDatetime(unix=True)
-        # Store actor version
+
+        # Store actor version & Known ip
         self.dbservice().setProperty('actor_version', '1.0-OpenGnsys')
+        self.dbservice().logIP(self._ip)
 
     def __remove(self):
         '''
