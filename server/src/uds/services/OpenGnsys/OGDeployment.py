@@ -67,7 +67,7 @@ class OGDeployment(UserDeployment):
     suggestedTime = 20
 
     def initialize(self):
-        self._name = ''
+        self._name = 'unknown'
         self._ip = ''
         self._mac = ''
         self._machineId = ''
@@ -238,7 +238,7 @@ class OGDeployment(UserDeployment):
             r = self.service().reserve()
             self.service().notifyEvents(r['id'], self._uuid)
         except Exception as e:
-            logger.exception('Creating machine')
+            # logger.exception('Creating machine')
             return self.__error('Error creating reservation: {}'.format(e))
 
         self._machineId = r['id']
