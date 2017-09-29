@@ -161,10 +161,10 @@ class OGService(Service):
         return self.parent().reserve(self.ou.value, self.image.value, self.lab.value, self.maxReservationTime.num())
 
     def unreserve(self, machineId):
-        return self.parent().unreserve(self.ou.value, self.lab.value, machineId)
+        return self.parent().unreserve(machineId)
 
     def notifyEvents(self, machineId, serviceUUID):
-        return self.parent().notifyEvents(self.ou.value, self.lab.value, machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
+        return self.parent().notifyEvents(machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
 
     def _notifyURL(self, uuid, message):
         return '{accessURL}rest/actor/{uuid}/{message}'.format(
