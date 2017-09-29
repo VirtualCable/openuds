@@ -201,7 +201,7 @@ class OpenGnsysClient(object):
             'image': image,
             'lab': lab,
             'client': res['id'],
-            'id': '.'.join((six.text_type(ou), six.text_type(res['lab'][0]), six.text_type(res['id']))),
+            'id': '.'.join((six.text_type(ou), six.text_type(res['lab']['id']), six.text_type(res['id']))),
             'name': res['name'],
             'ip': res['ip'],
             'mac': ':'.join(re.findall('..', res['mac']))
