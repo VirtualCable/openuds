@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 # URLS
 
 # Fake part
-FAKE = True
+FAKE = False
 CACHE_VALIDITY = 180
 
 
@@ -69,16 +69,13 @@ def ensureResponseIsValid(response, errMsg=None):
         if errMsg is None:
             errMsg = 'Invalid response'
 
-        # If response.code is not 200, the response is an error and should have a message
-        # FIX THIS
-        if response.code != 200:
-            try:
-                err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
-            except Exception:
-                err = response.content
-            errMsg = '{}: {}, ({})'.format(errMsg, err, response.code)
-            logger.error('{}: {}'.format(errMsg, response.content))
-            raise Exception(errMsg)
+        try:
+            err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
+        except Exception:
+            err = response.content
+        errMsg = '{}: {}, ({})'.format(errMsg, err, response.code)
+        logger.error('{}: {}'.format(errMsg, response.content))
+        raise Exception(errMsg)
 
     return json.loads(response.content)
 
@@ -196,7 +193,7 @@ class OpenGnsysClient(object):
         errMsg = 'Reserving image {} in ou {}'.format(ou, image)
         data = {
             'labid': lab,
-            'maxtime': maxtime
+            'maxtime': maxtimer['id']
         }
         res = self._post(urls.RESERVE.format(ou=ou, image=image), data, errMsg=errMsg)
         return {

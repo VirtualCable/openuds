@@ -126,7 +126,7 @@ class OGProvider(ServiceProvider):
                 if self.udsServerAccessUrl.value.strip() == '':
                     self.udsServerAccessUrl.value = request.build_absolute_uri('/')
 
-                if self.udsServerAccessUrl.value != '/':
+                if self.udsServerAccessUrl.value[-1] != '/':
                     self.udsServerAccessUrl.value += '/'
             except Exception:
                 pass
