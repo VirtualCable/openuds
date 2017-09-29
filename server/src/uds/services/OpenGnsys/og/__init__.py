@@ -73,7 +73,7 @@ def ensureResponseIsValid(response, errMsg=None):
             err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
         except Exception:
             err = response.content
-        errMsg = '{}: {}, ({})'.format(errMsg, err, response.code)
+        errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
         logger.error('{}: {}'.format(errMsg, response.content))
         raise Exception(errMsg)
 
