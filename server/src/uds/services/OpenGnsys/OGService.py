@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-05-18'
+__updated__ = '2017-09-29'
 
 logger = logging.getLogger(__name__)
 
@@ -161,4 +161,20 @@ class OGService(Service):
         return self.parent().reserve(self.ou.value, self.image.value, self.lab.value, self.maxReservationTime.num())
 
     def unreserve(self, machineId):
-        return self.parent().unreserve(machineId)
+        return self.parent().unreserve(self.ou.value, self.lab.value, machineId)
+
+    def notifyEvents(self, machineId, serviceUUID):
+        return self.parent().notifyEvents(self, self.ou.value, self.lab.value, machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
+
+    def _notifyURL(self, uuid, message):
+        return '{accessURL}rest/actor/{uuid}/{message}'.format(
+            accessURL=self.parent().getUDSServerAccessUrl(),
+            uuid=uuid,
+            message=message
+        )
+
+    def getLoginNotifyURL(self, serviceUUID):
+        return self._notifyURL(serviceUUID, 'login')
+
+    def getLogoutNotifyURL(self, serviceUUID):
+        return self._notifyURL(serviceUUID, 'logout')

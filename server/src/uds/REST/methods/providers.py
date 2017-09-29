@@ -158,7 +158,10 @@ class Providers(ModelHandler):
         self.ensureAccess(spType, permissions.PERMISSION_MANAGEMENT, root=True)
 
         logger.debug('spType: {}'.format(spType))
-        res = spType.test(Environment.getTempEnv(), self._params)
+
+        dct = self._params.copy()
+        dct['_request'] = self._request
+        res = spType.test(Environment.getTempEnv(), dct)
         if res[0]:
             return 'ok'
         else:

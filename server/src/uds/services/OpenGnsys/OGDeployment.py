@@ -43,7 +43,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2017-05-19'
+__updated__ = '2017-09-29'
 
 
 logger = logging.getLogger(__name__)
@@ -74,6 +74,7 @@ class OGDeployment(UserDeployment):
         self._stamp = 0
         self._reason = ''
         self._queue = []
+        self._uuid = self.dbservice().uuid
 
     # Serializable needed methods
     def marshal(self):
@@ -235,6 +236,7 @@ class OGDeployment(UserDeployment):
         '''
         try:
             r = self.service().reserve()
+            self.service().notifyEvents(r['id'], self._uuid)
         except Exception as e:
             logger.exception('Creating machine')
             return self.__error('Error creating reservation: {}'.format(e))
