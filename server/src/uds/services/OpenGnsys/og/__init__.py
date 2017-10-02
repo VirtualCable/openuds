@@ -45,7 +45,7 @@ import six
 import requests
 import  json
 
-__updated__ = '2017-09-29'
+__updated__ = '2017-10-02'
 
 logger = logging.getLogger(__name__)
 
@@ -69,16 +69,13 @@ def ensureResponseIsValid(response, errMsg=None):
         if errMsg is None:
             errMsg = 'Invalid response'
 
-        # If response.code is not 200, the response is an error and should have a message
-        # FIX THIS
-        if response.code != 200:
-            try:
-                err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
-            except Exception:
-                err = response.content
-            errMsg = '{}: {}, ({})'.format(errMsg, err, response.code)
-            logger.error('{}: {}'.format(errMsg, response.content))
-            raise Exception(errMsg)
+        try:
+            err = response.json()['message']  # Extract any key, in case of error is expected to have only one top key so this will work
+        except Exception:
+            err = response.content
+        errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
+        logger.error('{}: {}'.format(errMsg, response.content))
+        raise Exception(errMsg)
 
     return json.loads(response.content)
 
@@ -193,7 +190,7 @@ class OpenGnsysClient(object):
         # invokes /ous/{ouid}}/images/{imageid}/reserve
         # also remember to store "labid"
         # Labid can be "0" that means "all laboratories"
-        errMsg = 'Reserving image {} in ou {}'.format(ou, image)
+        errMsg = 'Reserving image {} in ou {}'.format(image, ou)
         data = {
             'labid': lab,
             'maxtime': maxtime
@@ -204,22 +201,23 @@ class OpenGnsysClient(object):
             'image': image,
             'lab': lab,
             'client': res['id'],
-            'id': '.'.join((six.text_type(ou), six.text_type(lab), six.text_type(res['id']))),
+            'id': '.'.join((six.text_type(ou), six.text_type(res['lab']['id']), six.text_type(res['id']))),
             'name': res['name'],
             'ip': res['ip'],
             'mac': ':'.join(re.findall('..', res['mac']))
         }
 
     @ensureConnected
-    def unreserve(self, ou, lab, client):
+    def unreserve(self, machineId):
         # This method releases the previous reservation
         # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
-        ou, lab, client = id.split('.')
+        ou, lab, client = machineId.split('.')
         errMsg = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
         return self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg)
 
     @ensureConnected
-    def notifyURLs(self, ou, lab, client, loginURL, logoutURL):
+    def notifyURLs(self, machineId, loginURL, logoutURL):
+        ou, lab, client = machineId.split('.')
         errMsg = 'Notifying login/logout urls'
         data = {
           'urlLogin': loginURL,

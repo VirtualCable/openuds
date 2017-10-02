@@ -126,7 +126,7 @@ class OGProvider(ServiceProvider):
                 if self.udsServerAccessUrl.value.strip() == '':
                     self.udsServerAccessUrl.value = request.build_absolute_uri('/')
 
-                if self.udsServerAccessUrl.value != '/':
+                if self.udsServerAccessUrl.value[-1] != '/':
                     self.udsServerAccessUrl.value += '/'
             except Exception:
                 pass
@@ -188,11 +188,11 @@ class OGProvider(ServiceProvider):
     def reserve(self, ou, image, lab=0, maxtime=0):
         return self.api.reserve(ou, image, lab, maxtime)
 
-    def unreserve(self, ou, lab, machineId):
-        return self.api.unreserve(ou, lab, machineId)
+    def unreserve(self, machineId):
+        return self.api.unreserve(machineId)
 
-    def notifyEvents(self, ou, lab, machineId, loginURL, logoutURL):
-        return self.api.notifyURLs(ou, lab, machineId, loginURL, logoutURL)
+    def notifyEvents(self, machineId, loginURL, logoutURL):
+        return self.api.notifyURLs(machineId, loginURL, logoutURL)
 
     def status(self, machineId):
         return self.api.status(machineId)

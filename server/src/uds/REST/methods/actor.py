@@ -39,6 +39,7 @@ from uds.core.util.State import State
 from uds.core.util.model import processUuid
 from uds.core.util import log
 from uds.core.managers import cryptoManager
+from uds.core.osmanagers import OSManager
 from uds.models import TicketStore
 from uds.REST import Handler
 from uds.REST import RequestError
@@ -150,6 +151,10 @@ class Actor(Handler):
         if len(self._args) < 1:
             raise RequestError('Invalid request')
 
+        if self._args[0] == 'PostThoughGet':
+            self._args = self._args[1:]  # Remove first argument
+            return self.post()
+
         if self._args[0] == 'ticket':
             return self.getTicket()
 
@@ -221,8 +226,20 @@ class Actor(Handler):
             logger.debug(self._params)
             data = '\t'.join((self._params.get('message'), six.text_type(self._params.get('level', 10000))))
 
+        osmanager = service.getInstance().osmanager()
+
         try:
-            res = service.getInstance().osmanager().process(service, message, data, options={'scramble': False})
+            if osmanager is None:
+                if message in ('login', 'logout'):
+                    osm = OSManager(None, None)  # Dummy os manager, just for using "logging" capability
+                    if message == 'login':
+                        osm.loggedIn(service)
+                    else:
+                        osm.loggedOut(service)
+                    return 'ok'
+                raise Exception('Unknown message {} for an user service without os manager'.format(message))
+            else:
+                res = osmanager.process(service, message, data, options={'scramble': False})
         except Exception as e:
             logger.exception("Exception processing from OS Manager")
             return Actor.result(six.text_type(e), ERR_OSMANAGER_ERROR)
