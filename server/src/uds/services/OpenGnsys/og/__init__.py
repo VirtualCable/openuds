@@ -45,14 +45,14 @@ import six
 import requests
 import  json
 
-__updated__ = '2017-09-29'
+__updated__ = '2017-10-02'
 
 logger = logging.getLogger(__name__)
 
 # URLS
 
 # Fake part
-FAKE = False
+FAKE = True
 CACHE_VALIDITY = 180
 
 

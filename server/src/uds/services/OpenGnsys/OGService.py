@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-09-29'
+__updated__ = '2017-10-02'
 
 logger = logging.getLogger(__name__)
 
@@ -167,7 +167,8 @@ class OGService(Service):
         return self.parent().notifyEvents(machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
 
     def _notifyURL(self, uuid, message):
-        return '{accessURL}rest/actor/{uuid}/{message}'.format(
+        # The URL is "GET messages URL".
+        return '{accessURL}rest/actor/PostThoughGet/{uuid}/{message}'.format(
             accessURL=self.parent().getUDSServerAccessUrl(),
             uuid=uuid,
             message=message

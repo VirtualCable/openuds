@@ -42,7 +42,7 @@ from uds.core import Module
 
 import six
 
-__updated__ = '2016-10-03'
+__updated__ = '2017-10-02'
 
 STORAGE_KEY = 'osmk'
 
@@ -204,6 +204,9 @@ class OSManager(Module):
         knownUserIP = userService.src_ip + ':' + userService.src_hostname
         knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
 
+        if userName is None:
+            userName = 'unknown'
+
         addEvent(userService.deployed_service, ET_LOGIN, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
 
         log.doLog(userService, log.INFO, "User {0} has logged in".format(userName), log.OSMANAGER)
@@ -246,6 +249,9 @@ class OSManager(Module):
 
         knownUserIP = userService.src_ip + ':' + userService.src_hostname
         knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
+
+        if userName is None:
+            userName = 'unknown'
 
         addEvent(userService.deployed_service, ET_LOGOUT, fld1=userName, fld2=knownUserIP, fld3=serviceIp, fld4=fullUserName)
 
