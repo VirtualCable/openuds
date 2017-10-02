@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import os
 import subprocess
 from uds.forward import forward  # @UnresolvedImport
+from os.path import expanduser
 
 from uds import tools  # @UnresolvedImport
 
@@ -19,8 +20,9 @@ if forwardThread.status == 2:
 
 tools.addTaskToWait(forwardThread)
 
+home = expanduser('~') + ':1;'
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(export='/:1;', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
+theFile = '''{m.xf}'''.format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)
 
 # HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session

@@ -48,7 +48,7 @@ import logging
 import six
 
 
-__updated__ = '2017-05-23'
+__updated__ = '2017-09-29'
 
 logger = logging.getLogger(__name__)
 
@@ -120,9 +120,20 @@ class OGProvider(ServiceProvider):
             self.timeout.value = validators.validateTimeout(self.timeout.value, returnAsInteger=False)
             logger.debug('Endpoint: {}'.format(self.endpoint))
 
+            try:
+                request = values['_request']
+
+                if self.udsServerAccessUrl.value.strip() == '':
+                    self.udsServerAccessUrl.value = request.build_absolute_uri('/')
+
+                if self.udsServerAccessUrl.value != '/':
+                    self.udsServerAccessUrl.value += '/'
+            except Exception:
+                pass
+
     @property
     def endpoint(self):
-        return 'https://{}:{}/rest'.format(self.host.value, self.port.value)
+        return 'https://{}:{}/opengnsys/rest'.format(self.host.value, self.port.value)
 
     @property
     def api(self):
@@ -166,16 +177,22 @@ class OGProvider(ServiceProvider):
         Returns:
             Array of two elements, first is True of False, depending on test
             (True is all right, false is error),
-            second is an String with error, preferably internacionalizated..
+            second is an String with error, preferably i18n..
 
         '''
         return OGProvider(env, data).testConnection()
 
+    def getUDSServerAccessUrl(self):
+        return self.udsServerAccessUrl.value
+
     def reserve(self, ou, image, lab=0, maxtime=0):
         return self.api.reserve(ou, image, lab, maxtime)
 
-    def unreserve(self, machineId):
-        return self.api.unreserve(machineId)
+    def unreserve(self, ou, lab, machineId):
+        return self.api.unreserve(ou, lab, machineId)
+
+    def notifyEvents(self, ou, lab, machineId, loginURL, logoutURL):
+        return self.api.notifyURLs(ou, lab, machineId, loginURL, logoutURL)
 
     def status(self, machineId):
         return self.api.status(machineId)

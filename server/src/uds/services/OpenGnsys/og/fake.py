@@ -37,7 +37,7 @@ import random
 import six
 import logging
 
-__updated__ = '2017-05-19'
+__updated__ = '2017-09-29'
 
 logger = logging.getLogger(__name__)
 
@@ -215,6 +215,8 @@ def get(path, errMsg):
         if rnd < 25:
             return STATUS_READY_LINUX
         return STATUS_OFF
+    elif path[-6:] == 'events':
+        return ''
 
     raise Exception('Unknown FAKE URL on GET: {}'.format(path))
 

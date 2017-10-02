@@ -57,7 +57,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2017-05-19'
+__updated__ = '2017-09-29'
 
 
 logger = logging.getLogger(__name__)

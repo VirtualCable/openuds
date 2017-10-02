@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import os
 import subprocess
 from uds.forward import forward  # @UnresolvedImport
+from os.path import expanduser
 
 from uds import tools  # @UnresolvedImport
 
@@ -19,8 +20,9 @@ if forwardThread.status == 2:
 
 tools.addTaskToWait(forwardThread)
 
+home = expanduser('~').replace('\\', '\\\\') + '#1;'
 keyFile = tools.saveTempFile('''{m.key}''')
-theFile = '''{m.xf}'''.format(export='c:\\:1;', keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
+theFile = '''{m.xf}'''.format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'

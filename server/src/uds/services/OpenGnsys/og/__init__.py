@@ -45,7 +45,7 @@ import six
 import requests
 import  json
 
-__updated__ = '2017-05-18'
+__updated__ = '2017-09-29'
 
 logger = logging.getLogger(__name__)
 
@@ -211,12 +211,23 @@ class OpenGnsysClient(object):
         }
 
     @ensureConnected
-    def unreserve(self, id):
+    def unreserve(self, ou, lab, client):
         # This method releases the previous reservation
         # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
         ou, lab, client = id.split('.')
         errMsg = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
         return self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg)
+
+    @ensureConnected
+    def notifyURLs(self, ou, lab, client, loginURL, logoutURL):
+        errMsg = 'Notifying login/logout urls'
+        data = {
+          'urlLogin': loginURL,
+          'urlLogout': logoutURL
+        }
+
+        return self._post(urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
+
 
     @ensureConnected
     def status(self, id):
