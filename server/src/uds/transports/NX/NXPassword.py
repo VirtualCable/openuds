@@ -114,4 +114,4 @@ class NXPassword(object):
 
         pw += chr(ord(NXPassword._getRandomValidCharFromList()) + 2)
 
-        return pw.replace('&', '&amp;').replace('<', '&lt;').replace('"', '&quot;').replace('\'', '&apos;').replace('$', '\\$')
+        return pw.replace('&', '&amp;').replace('<', '&lt;').replace('"', '&quot;').replace('\'', '&apos;')  # .replace('$', '\\$')
