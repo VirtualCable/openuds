@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
-from PyQt4 import QtCore, QtGui  # @UnusedImport
 import subprocess
 
 from uds import tools  # @UnresolvedImport

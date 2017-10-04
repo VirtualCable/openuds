@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-03-22'
+__updated__ = '2017-10-03'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -539,8 +539,9 @@ class UserServiceManager(object):
                         traceLogger.info('READY on service "{}" for user "{}" with transport "{}" (ip:{})'.format(userService.name, userName, trans.name, ip))
                         return (ip, userService, iads, trans, itrans)
                     else:
-                        log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                        logger.debug('Transport is not ready for user service {0}'.format(userService))
+                        message = itrans.getCustomAvailableErrorMsg(userService, ip)
+                        log.doLog(userService, log.WARN, message, log.TRANSPORT)
+                        logger.debug('Transport is not ready for user service {}:  {}'.format(userService, message))
                 else:
                     logger.debug('Ip not available from user service {0}'.format(userService))
         else:
