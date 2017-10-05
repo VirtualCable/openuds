@@ -48,7 +48,7 @@ import logging
 import six
 
 
-__updated__ = '2017-09-29'
+__updated__ = '2017-10-05'
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ class OGProvider(ServiceProvider):
     # "random"
     host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenGnsys Host'), required=True)
     port = gui.NumericField(length=5, label=_('Port'), defvalue='443', order=2, tooltip=_('OpenGnsys Port (default is 443, and only ssl connection is allowed)'), required=True)
-    checkCert = gui.CheckBoxField(label=_('Check Cert.'), order=3, tooltip=_('If checked, ssl certificate of OpenGnsys server must be valid, not self signed)'))
+    checkCert = gui.CheckBoxField(label=_('Check Cert.'), order=3, tooltip=_('If checked, ssl certificate of OpenGnsys server must be valid (not self signed)'))
     username = gui.TextField(length=32, label=_('Username'), order=4, tooltip=_('User with valid privileges on OpenGnsys'), required=True)
     password = gui.PasswordField(lenth=32, label=_('Password'), order=5, tooltip=_('Password of the user of OpenGnsys'), required=True)
     udsServerAccessUrl = gui.TextField(length=32, label=_('UDS Server URL'), order=6, tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'), required=False, tab=gui.PARAMETERS_TAB)

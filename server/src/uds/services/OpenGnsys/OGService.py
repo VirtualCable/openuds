@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-10-02'
+__updated__ = '2017-10-05'
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +117,7 @@ class OGService(Service):
     image = gui.ChoiceField(
         label=_("OS Image"),
         order=102,
-        tooltip=_('OpenGnsys Operanting System Image'),
+        tooltip=_('OpenGnsys Operating System Image'),
         required=True
     )
 
@@ -125,7 +125,7 @@ class OGService(Service):
         length=3,
         label=_("Max. reservation time"),
         order=110,
-        tooltip=_('Security parameter for OpenGnsys to kepp reservations at most this hours'),
+        tooltip=_('Security parameter for OpenGnsys to keep reservations at most this hours'),
         defvalue='24',
         tab=_('Advanced'),
         required=False

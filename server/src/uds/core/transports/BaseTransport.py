@@ -42,7 +42,7 @@ from uds.core.util import connection
 import six
 import logging
 
-__updated__ = '2017-05-10'
+__updated__ = '2017-10-03'
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +121,13 @@ class Transport(Module):
         Override this in yours transports
         '''
         return False
+
+    def getCustomAvailableErrorMsg(self, userService, ip):
+        '''
+        Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
+        Override this in yours transports if needed
+        '''
+        return "Not accessible (using service ip {0})".format(ip)
 
     @classmethod
     def supportsProtocol(cls, protocol):

@@ -46,7 +46,7 @@ import re
 import logging
 import six
 
-__updated__ = '2017-09-20'
+__updated__ = '2017-10-05'
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ class RegexLdap(auths.Authenticator):
     timeout = gui.NumericField(length=3, label=_('Timeout'), defvalue='10', order=6, tooltip=_('Timeout in seconds of connection to LDAP'), required=True, minValue=1)
 
     ldapBase = gui.TextField(length=64, label=_('Base'), order=7, tooltip=_('Common search base (used for "users" and "groups")'), required=True, tab=_('Ldap info'))
-    userClass = gui.TextField(length=64, label=_('User class'), defvalue='posixAccount', order=8, tooltip=_('lass for LDAP users (normally posixAccount)'), required=True, tab=_('Ldap info'))
+    userClass = gui.TextField(length=64, label=_('User class'), defvalue='posixAccount', order=8, tooltip=_('Class for LDAP users (normally posixAccount)'), required=True, tab=_('Ldap info'))
     userIdAttr = gui.TextField(length=64, label=_('User Id Attr'), defvalue='uid', order=9, tooltip=_('Attribute that contains the user id'), required=True, tab=_('Ldap info'))
     userNameAttr = gui.TextField(length=640, label=_('User Name Attr'), multiline=2, defvalue='uid', order=10, tooltip=_('Attributes that contains the user name (list of comma separated values)'), required=True, tab=_('Ldap info'))
     groupNameAttr = gui.TextField(length=640, label=_('Group Name Attr'), multiline=2, defvalue='cn', order=11, tooltip=_('Attribute that contains the group name'), required=True, tab=_('Ldap info'))

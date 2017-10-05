@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-05-19'
+__updated__ = '2017-10-03'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -408,15 +408,7 @@ class UserServiceManager(object):
         url += '/uuid'
 
         try:
-            if proxy is not None:
-                proxy.doProxyRequest(url=url, data=None, timeout=5)
-            else:
-                r = requests.get(
-                    url,
-                    verify=False,
-                    timeout=5,
-                    headers={'content-type': 'application/json'}
-                )
+            r = requests.get(url, verify=False, timeout=5)
             uuid = json.loads(r.content)
             if uuid != uService.uuid:
                 logger.info('The requested machine has uuid {} and the expected was {}'.format(uuid, uService.uuid))
@@ -584,8 +576,9 @@ class UserServiceManager(object):
                         traceLogger.info('READY on service "{}" for user "{}" with transport "{}" (ip:{})'.format(userService.name, userName, trans.name, ip))
                         return (ip, userService, iads, trans, itrans)
                     else:
-                        log.doLog(userService, log.WARN, "User service is not accessible (ip {0})".format(ip), log.TRANSPORT)
-                        logger.debug('Transport is not ready for user service {0}'.format(userService))
+                        message = itrans.getCustomAvailableErrorMsg(userService, ip)
+                        log.doLog(userService, log.WARN, message, log.TRANSPORT)
+                        logger.debug('Transport is not ready for user service {}:  {}'.format(userService, message))
                 else:
                     logger.debug('Ip not available from user service {0}'.format(userService))
         else:
