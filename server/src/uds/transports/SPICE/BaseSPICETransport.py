@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2017-10-03'
+__updated__ = '2017-10-05'
 
 
 logger = logging.getLogger(__name__)
@@ -141,7 +141,9 @@ class BaseSpiceTransport(Transport):
                 logger.info('SPICE didn\'t find has any port: {}'.format(con))
                 return False
 
-            self.cache.put('Could not reach server "{}" on port "{}" from broker'.format(con['address'], port_to_test))
+            self.cache.put('cachedMsg',
+                           'Could not reach server "{}" on port "{}" from broker (prob. causes are name resolution & firewall rules)'.format(con['address'], port_to_test),
+                           120)
 
             if connection.testServer(con['address'], port_to_test) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
@@ -150,10 +152,10 @@ class BaseSpiceTransport(Transport):
         return ready == 'Y'
 
     def getCustomAvailableErrorMsg(self, userService, ip):
-        userServiceInstance = userService.getInstance()
-        con = userServiceInstance.getConsoleConnection()
-        return
-
+        msg = self.cache.get('cachedMsg')
+        if msg is None:
+            return Transport.getCustomAvailableErrorMsg(self, userService, ip)
+        return msg
 
     def processedUser(self, userService, userName):
         v = self.processUserPassword(userService, userName, '')
