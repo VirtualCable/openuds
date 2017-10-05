@@ -1,1051 +1,1063 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
+# Adolfo Gómez <dkmaster@dkmon.com>, 2017
+# albert clar <albert.clar@uib.cat>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-06 13:15+0200\n"
-"PO-Revision-Date: 2017-09-21 10:54+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>\n"
-"Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/ca/)\n"
+"POT-Creation-Date: 2017-10-05 10:55+0200\n"
+"PO-Revision-Date: 2017-10-05 08:08+0000\n"
+"Last-Translator: albert clar <albert.clar@uib.cat>\n"
+"Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
+"ca/)\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: static/tmp_js/api-tools.js:322
 msgid "Sunday"
-msgstr ""
+msgstr " Diumenge"
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Monday"
-msgstr ""
+msgstr "Dilluns"
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Tuesday"
-msgstr ""
+msgstr " Dimarts"
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Wednesday"
-msgstr ""
+msgstr "Dimecres"
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Thursday"
-msgstr ""
+msgstr "Dijous"
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Friday"
-msgstr ""
+msgstr "Divendres"
 
 #: static/tmp_js/api-tools.js:322 static/tmp_js/gui-d-calendar.js:35
 msgid "Saturday"
-msgstr ""
+msgstr "Dissabte"
 
 #: static/tmp_js/api-tools.js:324
 msgid "January"
-msgstr ""
+msgstr "Gener"
 
 #: static/tmp_js/api-tools.js:324
 msgid "February"
-msgstr ""
+msgstr "Febrer"
 
 #: static/tmp_js/api-tools.js:324
 msgid "March"
-msgstr ""
+msgstr "Març"
 
 #: static/tmp_js/api-tools.js:324
 msgid "April"
-msgstr ""
+msgstr "Abril"
 
 #: static/tmp_js/api-tools.js:324
 msgid "May"
-msgstr ""
+msgstr "Maig"
 
 #: static/tmp_js/api-tools.js:324
 msgid "June"
-msgstr ""
+msgstr "Juny"
 
 #: static/tmp_js/api-tools.js:324
 msgid "July"
-msgstr ""
+msgstr "Juliol"
 
 #: static/tmp_js/api-tools.js:324
 msgid "August"
-msgstr ""
+msgstr "Agost"
 
 #: static/tmp_js/api-tools.js:324
 msgid "September"
-msgstr ""
+msgstr "Setembre"
 
 #: static/tmp_js/api-tools.js:324
 msgid "October"
-msgstr ""
+msgstr "Octubre"
 
 #: static/tmp_js/api-tools.js:324
 msgid "November"
-msgstr ""
+msgstr "Novembre"
 
 #: static/tmp_js/api-tools.js:324
 msgid "December"
-msgstr ""
+msgstr "Desembre"
 
-#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:10
+#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:31
 msgid "Test"
-msgstr ""
+msgstr "Prova"
 
 #: static/tmp_js/gui-d-authenticators.js:42
 msgid "Search error"
-msgstr ""
+msgstr "Error de cerca"
 
 #: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:318
 msgid "Accept"
-msgstr ""
+msgstr "Acceptar"
 
 #: static/tmp_js/gui-d-authenticators.js:151
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
-#: static/tmp_js/gui-d-services.js:86 static/tmp_js/gui-d-services.js:128
+#: static/tmp_js/gui-d-services.js:108 static/tmp_js/gui-d-services.js:150
 #: static/tmp_js/gui-d-servicespools.js:220
 msgid "Error accessing data"
-msgstr ""
+msgstr "Error accedint a dades"
 
 #: static/tmp_js/gui-d-authenticators.js:168
 #: static/tmp_js/gui-d-authenticators.js:395
-#: static/tmp_js/gui-d-services.js:108
+#: static/tmp_js/gui-d-services.js:130
 msgid "Information"
-msgstr ""
+msgstr "Informació"
 
 #: static/tmp_js/gui-d-authenticators.js:196
 msgid "Group information"
-msgstr ""
+msgstr "Informació del grup"
 
 #: static/tmp_js/gui-d-authenticators.js:312
 msgid "Edit group"
-msgstr ""
+msgstr "Editar grup"
 
 #: static/tmp_js/gui-d-authenticators.js:334
 #: static/tmp_js/gui-d-authenticators.js:377
 msgid "Group saved"
-msgstr ""
+msgstr "Grup desat"
 
 #: static/tmp_js/gui-d-authenticators.js:355
 msgid "New meta group"
-msgstr ""
+msgstr "Nou meta grup"
 
 #: static/tmp_js/gui-d-authenticators.js:357
 msgid "New group"
-msgstr ""
+msgstr "Nou grup"
 
 #: static/tmp_js/gui-d-authenticators.js:369
 msgid "Search groups"
-msgstr ""
+msgstr "Cercar grups"
 
 #: static/tmp_js/gui-d-authenticators.js:369
 #: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:85
 msgid "Group"
-msgstr ""
+msgstr "Grup"
 
 #: static/tmp_js/gui-d-authenticators.js:369
 msgid "Groups found"
-msgstr ""
+msgstr "Grups trobats"
 
 #: static/tmp_js/gui-d-authenticators.js:378
 msgid "Group saving error"
-msgstr ""
+msgstr "Error desant grup"
 
 #: static/tmp_js/gui-d-authenticators.js:390
 msgid "Delete group"
-msgstr ""
+msgstr "Esborrar grup"
 
 #: static/tmp_js/gui-d-authenticators.js:390
 msgid "Group deletion error"
-msgstr ""
+msgstr "Error esborrant grup"
 
 #: static/tmp_js/gui-d-authenticators.js:419
 msgid "User information"
-msgstr ""
+msgstr "Informació de l'usuari"
 
 #: static/tmp_js/gui-d-authenticators.js:568
 msgid "Edit user"
-msgstr ""
+msgstr "Editar usuari"
 
 #: static/tmp_js/gui-d-authenticators.js:600
 #: static/tmp_js/gui-d-authenticators.js:631
 msgid "User saved"
-msgstr ""
+msgstr "Usuari desat"
 
 #: static/tmp_js/gui-d-authenticators.js:601
 #: static/tmp_js/gui-d-authenticators.js:632
 msgid "User saving error"
-msgstr ""
+msgstr "Error desant usuari"
 
 #: static/tmp_js/gui-d-authenticators.js:612
 msgid "New user"
-msgstr ""
+msgstr "Nou usuari"
 
 #: static/tmp_js/gui-d-authenticators.js:623
 msgid "Search users"
-msgstr ""
+msgstr "Cercar usuaris"
 
 #: static/tmp_js/gui-d-authenticators.js:623
 #: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:82
 msgid "User"
-msgstr ""
+msgstr "Usuari"
 
 #: static/tmp_js/gui-d-authenticators.js:623
 msgid "Users found"
-msgstr ""
+msgstr "Usuaris trobats"
 
 #: static/tmp_js/gui-d-authenticators.js:637
 msgid "Delete user"
-msgstr ""
+msgstr "Esborrar usuari"
 
 #: static/tmp_js/gui-d-authenticators.js:637
 msgid "User deletion error"
-msgstr ""
+msgstr "Error esborrant usuari"
 
 #: static/tmp_js/gui-d-authenticators.js:648
 msgid "New authenticator"
-msgstr ""
+msgstr "Nou autenticador"
 
 #: static/tmp_js/gui-d-authenticators.js:648
 msgid "Authenticator creation error"
-msgstr ""
+msgstr "Error creant autenticador"
 
 #: static/tmp_js/gui-d-authenticators.js:649
 msgid "Edit authenticator"
-msgstr ""
+msgstr "Editar autenticador"
 
 #: static/tmp_js/gui-d-authenticators.js:649
 msgid "Authenticator saving error"
-msgstr ""
+msgstr "Error desant autenticador"
 
 #: static/tmp_js/gui-d-authenticators.js:650
 msgid "Delete authenticator"
-msgstr ""
+msgstr "Esborrar autenticador"
 
 #: static/tmp_js/gui-d-authenticators.js:650
 msgid "Authenticator deletion error"
-msgstr ""
+msgstr "Error esborrant autenticador"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "day"
-msgstr ""
+msgstr "dia"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "days"
-msgstr ""
+msgstr "dies"
 
 #: static/tmp_js/gui-d-calendar.js:23
-msgid "Dayly"
-msgstr ""
+msgid "Daily"
+msgstr "Diàriament"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "week"
-msgstr ""
+msgstr "setmana"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "weeks"
-msgstr ""
+msgstr "setmanes"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "Weekly"
-msgstr ""
+msgstr "Setmanalment"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "month"
-msgstr ""
+msgstr "mes"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "months"
-msgstr ""
+msgstr "mesos"
 
 #: static/tmp_js/gui-d-calendar.js:25
 msgid "Monthly"
-msgstr ""
+msgstr "Mensualment"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "year"
-msgstr ""
+msgstr "any"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "years"
-msgstr ""
+msgstr "anys"
 
 #: static/tmp_js/gui-d-calendar.js:26
 msgid "Yearly"
-msgstr ""
+msgstr "Anualment"
 
 #: static/tmp_js/gui-d-calendar.js:27
 msgid "Weekdays"
-msgstr ""
+msgstr "Dies de la setmana"
 
 #: static/tmp_js/gui-d-calendar.js:30
 msgid "Minutes"
-msgstr ""
+msgstr "Minuts"
 
 #: static/tmp_js/gui-d-calendar.js:31
 msgid "Hours"
-msgstr ""
+msgstr "Hores"
 
 #: static/tmp_js/gui-d-calendar.js:32
 msgid "Days"
-msgstr ""
+msgstr "Dies"
 
 #: static/tmp_js/gui-d-calendar.js:33
 msgid "Weeks"
-msgstr ""
+msgstr "Setmanes"
 
 #: static/tmp_js/gui-d-calendar.js:35
 msgid "Sun"
-msgstr ""
+msgstr "Sol"
 
 #: static/tmp_js/gui-d-calendar.js:51
 msgid "(no days)"
-msgstr ""
+msgstr "(sense dies)"
 
 #: static/tmp_js/gui-d-calendar.js:151
 msgid "This rule will be valid every "
-msgstr ""
+msgstr "Aquest regla serà vàlida cada"
 
 #: static/tmp_js/gui-d-calendar.js:153
 msgid "of any week"
-msgstr ""
+msgstr "de qualsevol setmana"
 
 #: static/tmp_js/gui-d-calendar.js:161
 msgid "from"
-msgstr ""
+msgstr "de"
 
 #: static/tmp_js/gui-d-calendar.js:163
 msgid "onwards"
-msgstr ""
+msgstr "endavant"
 
 #: static/tmp_js/gui-d-calendar.js:165
 msgid "until "
-msgstr ""
+msgstr "fins a"
 
 #: static/tmp_js/gui-d-calendar.js:167
 msgid "starting at"
-msgstr ""
+msgstr "començant a"
 
 #: static/tmp_js/gui-d-calendar.js:170
 msgid "and will remain valid for "
-msgstr ""
+msgstr "i continuarà essent vàlid fins a"
 
 #: static/tmp_js/gui-d-calendar.js:172
 msgid "with no duration"
-msgstr ""
+msgstr "sense durada"
 
 #: static/tmp_js/gui-d-calendar.js:208
 msgid "New rule"
-msgstr ""
+msgstr "Nova regla"
 
 #: static/tmp_js/gui-d-calendar.js:208
 msgid "Edit rule"
-msgstr ""
+msgstr "Editar regla"
 
 #: static/tmp_js/gui-d-calendar.js:209
 msgid "Save"
-msgstr ""
+msgstr "Desar"
 
 #: static/tmp_js/gui-d-calendar.js:300
 msgid "Error creating rule"
-msgstr ""
+msgstr "Error creant regla"
 
 #: static/tmp_js/gui-d-calendar.js:303
 msgid "Error saving rule"
-msgstr ""
+msgstr "Error desant regla"
 
 #: static/tmp_js/gui-d-calendar.js:349
 msgid "Delete rule"
-msgstr ""
+msgstr "Esborrar regla"
 
 #: static/tmp_js/gui-d-calendar.js:349
 msgid "Rule deletion error"
-msgstr ""
+msgstr "Error esborrant regla"
 
 #: static/tmp_js/gui-d-calendar.js:356
 msgid "New calendar"
-msgstr ""
+msgstr "Nou calendari"
 
 #: static/tmp_js/gui-d-calendar.js:356
 msgid "Calendar creation error"
-msgstr ""
+msgstr "Error creant calendari"
 
 #: static/tmp_js/gui-d-calendar.js:357
 msgid "Edit calendar"
-msgstr ""
+msgstr "Editar calendari"
 
 #: static/tmp_js/gui-d-calendar.js:357
 msgid "Calendar saving error"
-msgstr ""
+msgstr "Error desant calendari"
 
 #: static/tmp_js/gui-d-calendar.js:358
 msgid "Delete calendar"
-msgstr ""
+msgstr "Esborrar calendari"
 
 #: static/tmp_js/gui-d-calendar.js:358
 msgid "Calendar deletion error"
-msgstr ""
+msgstr "Error esborrant calendari"
 
 #: static/tmp_js/gui-d-config.js:56
 msgid "Configuration saved"
-msgstr ""
+msgstr "Configuració desada"
 
 #: static/tmp_js/gui-d-config.js:60
 msgid "No changes has been made"
-msgstr ""
+msgstr "No s'ha fet cap canvi"
 
 #: static/tmp_js/gui-d-connectivity.js:63
 msgid "New transport"
-msgstr ""
+msgstr "Nou transport"
 
 #: static/tmp_js/gui-d-connectivity.js:63
 msgid "Transport creation error"
-msgstr ""
+msgstr "Error creant transport"
 
 #: static/tmp_js/gui-d-connectivity.js:64
 msgid "Edit transport"
-msgstr ""
+msgstr "Editar transport"
 
 #: static/tmp_js/gui-d-connectivity.js:64
 msgid "Transport saving error"
-msgstr ""
+msgstr "Error desant transport"
 
 #: static/tmp_js/gui-d-connectivity.js:65
 msgid "Delete transport"
-msgstr ""
+msgstr "Esborrar transport"
 
 #: static/tmp_js/gui-d-connectivity.js:65
 msgid "Transport deletion error"
-msgstr ""
+msgstr "Error esborrant transport"
 
 #: static/tmp_js/gui-d-connectivity.js:72
 msgid "New network"
-msgstr ""
+msgstr "Nova xarxa"
 
 #: static/tmp_js/gui-d-connectivity.js:72
 msgid "Network creation error"
-msgstr ""
+msgstr "Error creant xarxa"
 
 #: static/tmp_js/gui-d-connectivity.js:73
 msgid "Edit network"
-msgstr ""
+msgstr "Editar xarxa"
 
 #: static/tmp_js/gui-d-connectivity.js:73
 msgid "Network saving error"
-msgstr ""
+msgstr "Error desant xarxa"
 
 #: static/tmp_js/gui-d-connectivity.js:74
 msgid "Delete network"
-msgstr ""
+msgstr "Esborrar xarxa"
 
 #: static/tmp_js/gui-d-connectivity.js:74
 msgid "Network deletion error"
-msgstr ""
+msgstr "Error esborrant xarxa"
 
 #: static/tmp_js/gui-d-dashboard.js:40
 msgid "Staff member"
-msgstr ""
+msgstr "Membre del personal"
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "New image"
-msgstr ""
+msgstr "Nova imatge"
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "Edit image"
-msgstr ""
+msgstr "Editar imatge"
 
 #: static/tmp_js/gui-d-gallery.js:18
 msgid "Upload"
-msgstr ""
+msgstr "Pujar"
 
 #: static/tmp_js/gui-d-gallery.js:26
 msgid "You must select an image"
-msgstr ""
+msgstr "Heu de seleccionar una imatge"
 
 #: static/tmp_js/gui-d-gallery.js:34
 msgid "Image is too big (max. upload size is 256Kb)"
-msgstr ""
+msgstr "La imatge és massa grossa (la mida màx. de pujada són 256Kb)"
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Delete Image"
-msgstr ""
+msgstr "Esborrar imatge"
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Image deletion error"
-msgstr ""
+msgstr "Error esborrant imatge"
 
 #: static/tmp_js/gui-d-osmanagers.js:42
 msgid "New OSManager"
-msgstr ""
+msgstr "Nou Gestor de SO"
 
 #: static/tmp_js/gui-d-osmanagers.js:42
 msgid "OSManager creation error"
-msgstr ""
+msgstr "Error creant Gestor de SO"
 
 #: static/tmp_js/gui-d-osmanagers.js:43
 msgid "Edit OSManager"
-msgstr ""
+msgstr "Editar Gestor de SO"
 
 #: static/tmp_js/gui-d-osmanagers.js:43
 msgid "OSManager saving error"
-msgstr ""
+msgstr "Error desant Gestor de SO"
 
 #: static/tmp_js/gui-d-osmanagers.js:44
 msgid "Delete OSManager"
-msgstr ""
+msgstr "Esborrar Gestor de SO"
 
 #: static/tmp_js/gui-d-osmanagers.js:44
 msgid "OSManager deletion error"
-msgstr ""
+msgstr "Error esborrant Gestor de SO"
 
 #: static/tmp_js/gui-d-reports.js:21 static/tmp_js/gui-d-reports.js:38
 msgid "Generate report"
-msgstr ""
+msgstr "Generar informe"
 
 #: static/tmp_js/gui-d-reports.js:59
 msgid "Error creating report"
-msgstr ""
+msgstr "Error creant l'informe"
 
 #: static/tmp_js/gui-d-reports.js:62
 msgid "Error obtaining report description"
-msgstr ""
+msgstr "Error en l'obtenció de descripció de l'informe"
 
-#: static/tmp_js/gui-d-services.js:63
+#: static/tmp_js/gui-d-services.js:85
 msgid "In Maintenance"
-msgstr ""
+msgstr "En manteniment"
 
-#: static/tmp_js/gui-d-services.js:65
+#: static/tmp_js/gui-d-services.js:87
 msgid "Active"
-msgstr ""
+msgstr "Actiu"
 
-#: static/tmp_js/gui-d-services.js:125
+#: static/tmp_js/gui-d-services.js:147
 msgid "Service information"
-msgstr ""
+msgstr "Informació sobre el servei"
 
-#: static/tmp_js/gui-d-services.js:183
+#: static/tmp_js/gui-d-services.js:205
 msgid "Edit service"
-msgstr ""
+msgstr "Editar servei"
 
-#: static/tmp_js/gui-d-services.js:183
+#: static/tmp_js/gui-d-services.js:205
 msgid "Service creation error"
-msgstr ""
+msgstr "Error creant servei"
 
-#: static/tmp_js/gui-d-services.js:184
+#: static/tmp_js/gui-d-services.js:206
 msgid "New service"
-msgstr ""
+msgstr "Nou servei"
 
-#: static/tmp_js/gui-d-services.js:184
+#: static/tmp_js/gui-d-services.js:206
 msgid "Service saving error"
-msgstr ""
+msgstr "Error desant servei"
 
-#: static/tmp_js/gui-d-services.js:185
+#: static/tmp_js/gui-d-services.js:207
 msgid "Delete service"
-msgstr ""
+msgstr "Esborrar servei"
 
-#: static/tmp_js/gui-d-services.js:185
+#: static/tmp_js/gui-d-services.js:207
 msgid "Service deletion error"
-msgstr ""
+msgstr "Error esborrant servei"
 
-#: static/tmp_js/gui-d-services.js:201 static/tmp_js/gui-d-services.js:224
+#: static/tmp_js/gui-d-services.js:235
+msgid "Delete user service"
+msgstr "Esborrar servei d'usuari"
+
+#: static/tmp_js/gui-d-services.js:235
+msgid "User service deletion error"
+msgstr "Error esborrant servei d'usuari"
+
+#: static/tmp_js/gui-d-services.js:246 static/tmp_js/gui-d-services.js:269
 msgid "Maintenance"
-msgstr ""
+msgstr "Manteniment"
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Maintenance Mode"
-msgstr ""
+msgstr "En mode manteniment"
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Enter Maintenance Mode?"
-msgstr ""
+msgstr "Entrar en mode manteniment?"
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Exit Maintenance Mode?"
-msgstr ""
+msgstr "Sortir de mode manteniment?"
 
-#: static/tmp_js/gui-d-services.js:229
+#: static/tmp_js/gui-d-services.js:274
 msgid "Enter maintenance Mode"
-msgstr ""
+msgstr "Entrar en mode manteniment"
 
-#: static/tmp_js/gui-d-services.js:232
+#: static/tmp_js/gui-d-services.js:277
 msgid "Exit Maintenance Mode"
-msgstr ""
+msgstr "Sortir de mode manteniment"
 
-#: static/tmp_js/gui-d-services.js:240
+#: static/tmp_js/gui-d-services.js:285
 msgid "New services provider"
-msgstr ""
+msgstr "Nou proveïdor de serveis"
 
-#: static/tmp_js/gui-d-services.js:240
+#: static/tmp_js/gui-d-services.js:285
 msgid "Services provider creation error"
-msgstr ""
+msgstr "Error creant proveïdor de serveis"
 
-#: static/tmp_js/gui-d-services.js:241
+#: static/tmp_js/gui-d-services.js:286
 msgid "Edit services provider"
-msgstr ""
+msgstr "Editar proveïdor de serveis"
 
-#: static/tmp_js/gui-d-services.js:241
+#: static/tmp_js/gui-d-services.js:286
 msgid "Services Provider saving error"
-msgstr ""
+msgstr "Error desant proveïdor de serveis"
 
-#: static/tmp_js/gui-d-services.js:242
+#: static/tmp_js/gui-d-services.js:287
 msgid "Delete services provider"
-msgstr ""
+msgstr "Esborrar proveïdor de serveis"
 
-#: static/tmp_js/gui-d-services.js:242
+#: static/tmp_js/gui-d-services.js:287
 msgid "Services Provider deletion error"
-msgstr ""
+msgstr "Error esborrant proveïdor de serveis"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:54
 msgid "Launch Now"
-msgstr ""
+msgstr "Llançar ara"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Execute action"
-msgstr ""
+msgstr "Executar l'acció"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Launch action execution right now?"
-msgstr ""
+msgstr "Començar l'execució de l'acció ara mateix?"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:108
 msgid "Beginning"
-msgstr ""
+msgstr "Inici"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:108
 msgid "Ending"
-msgstr ""
+msgstr "Final"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:117
 msgid "Add scheduled action"
-msgstr ""
+msgstr "Afegir acció programada"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:179
 #: static/tmp_js/gui-d-servicespools-calendars.js:95
 msgid "Edit access calendar"
-msgstr ""
+msgstr "Editar calendari d'accés"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:216
 #: static/tmp_js/gui-d-servicespools-calendars.js:122
 msgid "Remove access calendar"
-msgstr ""
+msgstr "Esborrar calendari d'accés"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:216
 #: static/tmp_js/gui-d-servicespools-calendars.js:122
 msgid "Access calendar removal error"
-msgstr ""
+msgstr "Error esborrant calendari d'accés"
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:44
 msgid "Add access calendar"
-msgstr ""
+msgstr "Afegir calendari d'accés"
 
 #: static/tmp_js/gui-d-servicespools-calendars.js:73
 msgid "Default fallback access"
-msgstr ""
+msgstr "Accés predeterminat"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:17
 #: static/tmp_js/gui-d-servicespools-publications.js:41
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel·lar"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
 #: static/tmp_js/gui-d-servicespools-publications.js:56
 #: static/tmp_js/gui-d-servicespools-publications.js:57
 msgid "Publish"
-msgstr ""
+msgstr "Publicar"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
 msgid "Cancel publication?"
-msgstr ""
+msgstr "Cancel·lar la publicació?"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:39
 msgid "Force Cancel"
-msgstr ""
+msgstr "Forçar el cancel·lament"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:67
 msgid "Failed creating publication"
-msgstr ""
+msgstr "No s'ha pogut crear la publicació"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:29
 msgid "Add transport"
-msgstr ""
+msgstr "Afegir transport"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:36
 msgid "You must provide a transport"
-msgstr ""
+msgstr "Cal proporcionar un transport"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:50
 msgid "Remove transport"
-msgstr ""
+msgstr "Eliminar transport"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:50
 msgid "Transport removal error"
-msgstr ""
+msgstr "Error eliminant transport"
 
 #: static/tmp_js/gui-d-servicespools.js:153
 #: static/tmp_js/gui-d-servicespools.js:361
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
 
 #: static/tmp_js/gui-d-servicespools.js:155
 #: static/tmp_js/gui-d-servicespools.js:363
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: static/tmp_js/gui-d-servicespools.js:215
 msgid "error"
-msgstr ""
+msgstr "error"
 
 #: static/tmp_js/gui-d-servicespools.js:264
 msgid "Remove Cache element"
-msgstr ""
+msgstr "Eliminar element de memòria cau"
 
 #: static/tmp_js/gui-d-servicespools.js:264
 #: static/tmp_js/gui-d-servicespools.js:382
 msgid "Deletion error"
-msgstr ""
+msgstr "Error esborrant"
 
 #: static/tmp_js/gui-d-servicespools.js:286
 msgid "Add group"
-msgstr ""
+msgstr "Afegir grup"
 
 #: static/tmp_js/gui-d-servicespools.js:310
 msgid "You must provide authenticator and group"
-msgstr ""
+msgstr "Cal proporcionar autenticador i grup"
 
 #: static/tmp_js/gui-d-servicespools.js:329
 msgid "Remove group"
-msgstr ""
+msgstr "Eliminar grup"
 
 #: static/tmp_js/gui-d-servicespools.js:329
 msgid "Group removal error"
-msgstr ""
+msgstr "Error esborrant grup"
 
 #: static/tmp_js/gui-d-servicespools.js:382
 msgid "Remove Assigned service"
-msgstr ""
+msgstr "Eliminar servei assignat"
 
 #: static/tmp_js/gui-d-servicespools.js:430
 msgid "Restrained"
-msgstr ""
+msgstr "Restringit"
 
 #: static/tmp_js/gui-d-servicespools.js:439
 msgid "New service pool"
-msgstr ""
+msgstr "Nou pool de serveis"
 
 #: static/tmp_js/gui-d-servicespools.js:439
 msgid "creation error"
-msgstr ""
+msgstr "error de creació"
 
 #: static/tmp_js/gui-d-servicespools.js:449
 msgid "Publish on creation"
-msgstr ""
+msgstr "Publicar al moment de la creació"
 
 #: static/tmp_js/gui-d-servicespools.js:450
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr ""
+"Si està seleccionat, s'iniciarà la publicació just després de la creació"
 
 #: static/tmp_js/gui-d-servicespools.js:462 static/tmp_js/gui.js:50
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: static/tmp_js/gui-d-servicespools.js:462
 msgid "saving error"
-msgstr ""
+msgstr "Error desant"
 
 #: static/tmp_js/gui-d-servicespools.js:465 static/tmp_js/gui-methods.js:141
 #: static/tmp_js/gui.js:54
 msgid "Delete"
-msgstr ""
+msgstr "Esborrar"
 
 #: static/tmp_js/gui-d-servicespools.js:465
 msgid "deletion error"
-msgstr ""
+msgstr "Error esborrant"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "New Services Pool Group"
-msgstr ""
+msgstr "Nou Grup de Pool de Serveis"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:21
 msgid "Services Pool Group creation error"
-msgstr ""
+msgstr "Error creant Grup de Pool de Serveis"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Edit Services Pool Group"
-msgstr ""
+msgstr "Editar Grup de Pool de Serveis"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:22
 msgid "Services Pool Group saving error"
-msgstr ""
+msgstr "Error desant Grup de Pool de Serveis"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Delete Services Pool Group"
-msgstr ""
+msgstr "Esborrar Grup de Pool de Serveis"
 
 #: static/tmp_js/gui-d-servicespoolsgroup.js:23
 msgid "Services Pool Group removal error"
-msgstr ""
+msgstr "Error eliminant Grup de Pool de Serveis"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache"
-msgstr ""
+msgstr "Memòria cau"
 
 #: static/tmp_js/gui-definition.js:12
 msgid "Cache has been flushed"
-msgstr ""
+msgstr "Memòria cau alliberada"
 
 #: static/tmp_js/gui-element.js:255
 msgid "Refresh operation failed"
-msgstr ""
+msgstr "L'operació de refresc ha fallat"
 
 #: static/tmp_js/gui-element.js:656
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: static/tmp_js/gui-element.js:664
 msgid "level"
-msgstr ""
+msgstr "nivell"
 
 #: static/tmp_js/gui-element.js:671
 msgid "source"
-msgstr ""
+msgstr "font"
 
 #: static/tmp_js/gui-element.js:677
 msgid "message"
-msgstr ""
+msgstr "missatge"
 
 #: static/tmp_js/gui-element.js:682
 msgid "Logs"
-msgstr ""
+msgstr "Logs"
 
 #: static/tmp_js/gui-form.js:95
 msgid "Main"
-msgstr ""
+msgstr "Principal"
 
 #: static/tmp_js/gui-form.js:301
 msgid "yes"
-msgstr ""
+msgstr "sí"
 
 #: static/tmp_js/gui-form.js:302
 msgid "no"
-msgstr ""
+msgstr "no"
 
 #: static/tmp_js/gui-form.js:319
 msgid "Close"
-msgstr ""
+msgstr "Tancar"
 
 #: static/tmp_js/gui-methods.js:17
 msgid "Test passed successfully"
-msgstr ""
+msgstr "Prova superada amb èxit"
 
 #: static/tmp_js/gui-methods.js:20
 msgid "Test failed:"
-msgstr ""
+msgstr "La prova ha fallat:"
 
 #: static/tmp_js/gui-methods.js:24
 msgid "Test error"
-msgstr ""
+msgstr "Error a la prova"
 
 #: static/tmp_js/gui-methods.js:56
 msgid "Edition successfully done"
-msgstr ""
+msgstr "Edició realitzada amb èxit"
 
 #: static/tmp_js/gui-methods.js:78
 msgid "Overview"
-msgstr ""
+msgstr "Resum"
 
 #: static/tmp_js/gui-methods.js:101
 msgid "of type"
-msgstr ""
+msgstr "de tipus"
 
 #: static/tmp_js/gui-methods.js:119
 msgid "Creation successfully done"
-msgstr ""
+msgstr "Creació realitzada amb èxit"
 
 #: static/tmp_js/gui-methods.js:139
 msgid "Are you sure do you want to delete "
-msgstr ""
+msgstr "Estau segur que voleu esborrar"
 
 #: static/tmp_js/gui-methods.js:139
 msgid "items:"
-msgstr ""
+msgstr "articles:"
 
 #: static/tmp_js/gui-methods.js:148
 msgid "Error deleting"
-msgstr ""
+msgstr "Error esborrant"
 
 #: static/tmp_js/gui-methods.js:150
 msgid "Successfully deleted"
-msgstr ""
+msgstr "Esborrat correctament"
 
 #: static/tmp_js/gui-methods.js:155
 msgid "Deletion results"
-msgstr ""
+msgstr "Resultats de l'eliminación"
 
 #: static/tmp_js/gui-permissions.js:42
 msgid "Add"
-msgstr ""
+msgstr "Afegir"
 
 #: static/tmp_js/gui-permissions.js:67
 msgid "You must provide authenticator and"
-msgstr ""
+msgstr "Cal proporcionar autenticador i"
 
 #: static/tmp_js/gui-permissions.js:88
 msgid "Confirm revocation of following permissions: <br/>"
-msgstr ""
+msgstr "Confirmar la revocació dels següents permisos : <br/>"
 
 #: static/tmp_js/gui-permissions.js:98
 msgid "Remove "
-msgstr ""
+msgstr "Eliminar"
 
 #: static/tmp_js/gui-permissions.js:99
 msgid "Revoke"
-msgstr ""
+msgstr "Revocar"
 
 #: static/tmp_js/gui-permissions.js:131
 msgid "Permissions for"
-msgstr ""
+msgstr "Permisos per a"
 
 #: static/tmp_js/gui-tools.js:14
 msgid "Just a moment..."
-msgstr ""
+msgstr "Un moment..."
 
 #: static/tmp_js/gui-tools.js:146
 msgid "Never"
-msgstr ""
+msgstr "Mai"
 
 #: static/tmp_js/gui.js:21
 msgid "_MENU_ records per page"
-msgstr ""
+msgstr "_MENU_ registres per pàgina"
 
 #: static/tmp_js/gui.js:22
 msgid "Empty"
-msgstr ""
+msgstr "Buit"
 
 #: static/tmp_js/gui.js:23 static/tmp_js/gui.js:25
 msgid "No records"
-msgstr ""
+msgstr "Sense registres"
 
 #: static/tmp_js/gui.js:24
 msgid "Records _START_ to _END_ of _TOTAL_"
-msgstr ""
+msgstr "Registres _START_ a _END_ de _TOTAL_"
 
 #: static/tmp_js/gui.js:26
 msgid "(filtered from _MAX_ total records)"
-msgstr ""
+msgstr "(filtrat des de _MAX_ total registres)"
 
 #: static/tmp_js/gui.js:27
 msgid "Please wait, processing"
-msgstr ""
+msgstr "Per favor espereu, processant"
 
 #: static/tmp_js/gui.js:28
 msgid "Filter"
-msgstr ""
+msgstr "Filtre"
 
 #: static/tmp_js/gui.js:38
 #, javascript-format
 msgid "Selected %d rows"
-msgstr ""
+msgstr "Seleccionades %d files"
 
 #: static/tmp_js/gui.js:39
 msgid "Click on a row to select it"
-msgstr ""
+msgstr "Feu clic a una fila per a selecionar-la"
 
 #: static/tmp_js/gui.js:40
 msgid "Selected one row"
-msgstr ""
+msgstr "Una fila seleccionada"
 
 #: static/tmp_js/gui.js:46
 msgid "New"
-msgstr ""
+msgstr "Nou"
 
 #: static/tmp_js/gui.js:58
 msgid "Permissions"
-msgstr ""
+msgstr "Permisos"
 
 #: static/tmp_js/gui.js:62
 msgid "Xls"
-msgstr ""
+msgstr "Xls"
 
 #: static/tmp_js/gui.js:124
 msgid "Message"
-msgstr ""
+msgstr "Missatge"
 
 #: static/tmp_js/gui.js:132
 msgid "Connection failed"
-msgstr ""
+msgstr "Connexió fallida"
 
 #: static/tmp_js/gui.js:229
 msgid "This field is required."
-msgstr ""
+msgstr "Aquest camp és obligatori."
 
 #: static/tmp_js/gui.js:230
 msgid "Please fix this field."
-msgstr ""
+msgstr "Si us plau, corregiu aquest camp."
 
 #: static/tmp_js/gui.js:231
 msgid "Please enter a valid email address."
-msgstr ""
+msgstr "Si us plau, introdueixi una adreça de correu electrònic vàlida."
 
 #: static/tmp_js/gui.js:232
 msgid "Please enter a valid URL."
-msgstr ""
+msgstr "Si us plau, introdueixi una URL vàlida."
 
 #: static/tmp_js/gui.js:233
 msgid "Please enter a valid date."
-msgstr ""
+msgstr "Si us plau, introdueixi una data vàlida."
 
 #: static/tmp_js/gui.js:234
 msgid "Please enter a valid date (ISO)."
-msgstr ""
+msgstr "Si us plau, introduïu una data vàlida (ISO)."
 
 #: static/tmp_js/gui.js:235
 msgid "Please enter a valid number."
-msgstr ""
+msgstr "Si us plau, introduïu un número vàlid."
 
 #: static/tmp_js/gui.js:236
 msgid "Please enter only digits."
-msgstr ""
+msgstr "Si us plau, introduïu només dígits."
 
 #: static/tmp_js/gui.js:237
 msgid "Please enter a valid credit card number."
-msgstr ""
+msgstr "Si us plau, introduïu un número de tarja de crèdit vàlid."
 
 #: static/tmp_js/gui.js:238
 msgid "Please enter the same value again."
-msgstr ""
+msgstr "Si us plau, introduïu el mateix valor un altre cop."
 
 #: static/tmp_js/gui.js:239
 msgid "Please enter no more than {0} characters."
-msgstr ""
+msgstr "Si us plau, no introduïu més de {0} caràcters."
 
 #: static/tmp_js/gui.js:240
 msgid "Please enter at least {0} characters."
-msgstr ""
+msgstr "Si us plau, introduïu al menys {0} caràcters."
 
 #: static/tmp_js/gui.js:241
 msgid "Please enter a value between {0} and {1} characters long."
-msgstr ""
+msgstr "Si us plau, introduïu un valor entre {0} i {1} caràcters."
 
 #: static/tmp_js/gui.js:242
 msgid "Please enter a value between {0} and {1}."
-msgstr ""
+msgstr "Si us plau, introduïu un valor entre {0} i {1} ."
 
 #: static/tmp_js/gui.js:243
 msgid "Please enter a value less than or equal to {0}."
-msgstr ""
+msgstr "Si us plau, introduïu un valor menor o igual a {0}. "
 
 #: static/tmp_js/gui.js:244
 msgid "Please enter a value greater than or equal to {0}."
-msgstr ""
+msgstr "Si us plau, introduïu un valor major o igual a {0}."
 
 #: static/tmp_js/uds-client.js:43
 msgid "Contacting service..."
-msgstr ""
+msgstr "Contactant amb el servei..."
 
 #: static/tmp_js/uds-client.js:187
 msgid "Error accessing service: "
-msgstr ""
+msgstr "Error accedint al servei:"

@@ -1,20 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-06 13:15+0200\n"
-"PO-Revision-Date: 2017-09-20 01:16+0000\n"
+"POT-Creation-Date: 2017-10-05 10:55+0200\n"
+"PO-Revision-Date: 2017-10-04 11:09+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
-"Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/pt/)\n"
+"Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
+"pt/)\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: static/tmp_js/api-tools.js:322
@@ -93,7 +94,7 @@ msgstr "Novembro"
 msgid "December"
 msgstr "Dezembro de"
 
-#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:10
+#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:31
 msgid "Test"
 msgstr "Teste"
 
@@ -107,14 +108,14 @@ msgstr "Aceitar"
 
 #: static/tmp_js/gui-d-authenticators.js:151
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
-#: static/tmp_js/gui-d-services.js:86 static/tmp_js/gui-d-services.js:128
+#: static/tmp_js/gui-d-services.js:108 static/tmp_js/gui-d-services.js:150
 #: static/tmp_js/gui-d-servicespools.js:220
 msgid "Error accessing data"
 msgstr "Erro ao acessar dados"
 
 #: static/tmp_js/gui-d-authenticators.js:168
 #: static/tmp_js/gui-d-authenticators.js:395
-#: static/tmp_js/gui-d-services.js:108
+#: static/tmp_js/gui-d-services.js:130
 msgid "Information"
 msgstr "Informações"
 
@@ -240,8 +241,8 @@ msgid "days"
 msgstr "dias"
 
 #: static/tmp_js/gui-d-calendar.js:23
-msgid "Dayly"
-msgstr "Dayly"
+msgid "Daily"
+msgstr "Diário"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "week"
@@ -515,87 +516,95 @@ msgstr "Erro ao criar o relatório"
 msgid "Error obtaining report description"
 msgstr "Descrição de relatório de obtenção do erro"
 
-#: static/tmp_js/gui-d-services.js:63
+#: static/tmp_js/gui-d-services.js:85
 msgid "In Maintenance"
 msgstr "Em manutenção"
 
-#: static/tmp_js/gui-d-services.js:65
+#: static/tmp_js/gui-d-services.js:87
 msgid "Active"
 msgstr "Ativo"
 
-#: static/tmp_js/gui-d-services.js:125
+#: static/tmp_js/gui-d-services.js:147
 msgid "Service information"
 msgstr "Informação de serviço"
 
-#: static/tmp_js/gui-d-services.js:183
+#: static/tmp_js/gui-d-services.js:205
 msgid "Edit service"
 msgstr "Editar serviço"
 
-#: static/tmp_js/gui-d-services.js:183
+#: static/tmp_js/gui-d-services.js:205
 msgid "Service creation error"
 msgstr "Erro de criação do serviço"
 
-#: static/tmp_js/gui-d-services.js:184
+#: static/tmp_js/gui-d-services.js:206
 msgid "New service"
 msgstr "Novo serviço"
 
-#: static/tmp_js/gui-d-services.js:184
+#: static/tmp_js/gui-d-services.js:206
 msgid "Service saving error"
 msgstr "Salvando o erro de serviço"
 
-#: static/tmp_js/gui-d-services.js:185
+#: static/tmp_js/gui-d-services.js:207
 msgid "Delete service"
 msgstr "Excluir o serviço"
 
-#: static/tmp_js/gui-d-services.js:185
+#: static/tmp_js/gui-d-services.js:207
 msgid "Service deletion error"
 msgstr "Erro de exclusão do serviço"
 
-#: static/tmp_js/gui-d-services.js:201 static/tmp_js/gui-d-services.js:224
+#: static/tmp_js/gui-d-services.js:235
+msgid "Delete user service"
+msgstr "Excluir usuário serviço"
+
+#: static/tmp_js/gui-d-services.js:235
+msgid "User service deletion error"
+msgstr "Erro de exclusão de serviço do usuário"
+
+#: static/tmp_js/gui-d-services.js:246 static/tmp_js/gui-d-services.js:269
 msgid "Maintenance"
 msgstr "Manutenção"
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Maintenance Mode"
 msgstr "Modo de manutenção"
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Enter Maintenance Mode?"
 msgstr "Entrar no modo de manutenção?"
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Exit Maintenance Mode?"
 msgstr "Sair do modo de manutenção?"
 
-#: static/tmp_js/gui-d-services.js:229
+#: static/tmp_js/gui-d-services.js:274
 msgid "Enter maintenance Mode"
 msgstr "Digite o modo de manutenção"
 
-#: static/tmp_js/gui-d-services.js:232
+#: static/tmp_js/gui-d-services.js:277
 msgid "Exit Maintenance Mode"
 msgstr "Sair do modo de manutenção"
 
-#: static/tmp_js/gui-d-services.js:240
+#: static/tmp_js/gui-d-services.js:285
 msgid "New services provider"
 msgstr "Novo provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:240
+#: static/tmp_js/gui-d-services.js:285
 msgid "Services provider creation error"
 msgstr "Erro de criação do provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:241
+#: static/tmp_js/gui-d-services.js:286
 msgid "Edit services provider"
 msgstr "Editar Provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:241
+#: static/tmp_js/gui-d-services.js:286
 msgid "Services Provider saving error"
 msgstr "Salvando o erro do prestador de serviços"
 
-#: static/tmp_js/gui-d-services.js:242
+#: static/tmp_js/gui-d-services.js:287
 msgid "Delete services provider"
 msgstr "Exclua o provedor de serviços"
 
-#: static/tmp_js/gui-d-services.js:242
+#: static/tmp_js/gui-d-services.js:287
 msgid "Services Provider deletion error"
 msgstr "Erro de exclusão do provedor de serviços"
 

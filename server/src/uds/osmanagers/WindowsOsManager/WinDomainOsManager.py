@@ -37,7 +37,7 @@ class WinDomainOsManager(WindowsOsManager):
     password = gui.PasswordField(length=64, label=_('Password'), order=3, tooltip=_('Password of the account'), required=True)
     ou = gui.TextField(length=64, label=_('OU'), order=4, tooltip=_('Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'))
     grp = gui.TextField(length=64, label=_('Machine Group'), order=7, tooltip=_('Group to which add machines on creation. If empty, no group will be used. (experimental)'), tab=_('Advanced'))
-    serverHint = gui.TextField(length=64, label=_('Server Hint'), order=8, tooltip=_('In case of several AD servers, which one is prefered for first access'), tab=_('Advanced'))
+    serverHint = gui.TextField(length=64, label=_('Server Hint'), order=8, tooltip=_('In case of several AD servers, which one is preferred'), tab=_('Advanced'))
     # Inherits base "onLogout"
     onLogout = WindowsOsManager.onLogout
     idle = WindowsOsManager.idle

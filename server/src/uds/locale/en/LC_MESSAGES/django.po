@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-21 15:47+0200\n"
+"POT-Creation-Date: 2017-10-05 10:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: REST/methods/actor.py:94 REST/methods/client.py:92
+#: REST/methods/actor.py:95 REST/methods/client.py:92
 #: REST/methods/client.py:109
 msgid "Correct"
 msgstr ""
 
-#: REST/methods/actor.py:104
+#: REST/methods/actor.py:105
 msgid "Invalid key"
 msgstr ""
 
-#: REST/methods/actor.py:166
+#: REST/methods/actor.py:171
 msgid "Unmanaged host"
 msgstr ""
 
-#: REST/methods/actor.py:198 web/errors.py:79
+#: REST/methods/actor.py:203 web/errors.py:79
 msgid "User service not found"
 msgstr ""
 
@@ -82,6 +82,7 @@ msgstr ""
 #: REST/methods/authenticators.py:64 reports/stats/login.py:108
 #: reports/stats/login.py:381 reports/stats/pool_performance.py:110
 #: reports/stats/pool_performance.py:377
+#: services/RDS_enterprise/RDSProvider.py:45
 #: templates/uds/admin/tmpl/authenticators.html:31
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/group-info.html:5
@@ -239,7 +240,7 @@ msgstr ""
 #: REST/methods/users_groups.py:268
 #: auths/ActiveDirectory_enterprise/Authenticator.py:56
 #: auths/EDirectory_enterprise/Authenticator.py:81
-#: auths/RegexLdap/Authenticator.py:82 auths/SAML_enterprise/SAML.py:116
+#: auths/RegexLdap/Authenticator.py:85 auths/SAML_enterprise/SAML.py:116
 #: auths/SimpleLDAP/Authenticator.py:83
 #: templates/uds/admin/tmpl/pool_add_group.html:17
 #: templates/uds/admin/tmpl/user-info.html:15
@@ -664,12 +665,13 @@ msgstr ""
 #: REST/methods/users_groups.py:112
 #: auths/ActiveDirectory_enterprise/Authenticator.py:54
 #: auths/EDirectory_enterprise/Authenticator.py:79
-#: auths/RegexLdap/Authenticator.py:80 auths/SimpleLDAP/Authenticator.py:81
+#: auths/RegexLdap/Authenticator.py:83 auths/SimpleLDAP/Authenticator.py:81
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
 #: services/Nutanix_enterprise/NutanixProvider.py:39
-#: services/OVirt/OVirtProvider.py:110 services/OpenNebula/Provider.py:101
-#: services/OpenStack/Provider.py:105
+#: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
+#: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:105
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
@@ -784,12 +786,13 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:35
 #: auths/EDirectory_enterprise/Authenticator.py:62
-#: auths/RegexLdap/Authenticator.py:56 auths/SimpleLDAP/Authenticator.py:57
+#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:57
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
 #: services/Nutanix_enterprise/NutanixProvider.py:37
-#: services/OVirt/OVirtProvider.py:109 services/OpenNebula/Provider.py:98
-#: services/OpenStack/Provider.py:98
+#: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
+#: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:98
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:26
 #: services/Vmware_enterprise/ServiceProviderVC.py:29
 #: services/Xen/XenProvider.py:99
 msgid "Host"
@@ -801,7 +804,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:36
 #: auths/EDirectory_enterprise/Authenticator.py:64
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:59
+#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:59
 #: services/OpenNebula/Provider.py:100 services/OpenStack/Provider.py:100
 msgid "Use SSL"
 msgstr ""
@@ -820,7 +823,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:39
 #: auths/EDirectory_enterprise/Authenticator.py:65
-#: auths/RegexLdap/Authenticator.py:59 auths/SAML_enterprise/SAML.py:113
+#: auths/RegexLdap/Authenticator.py:60 auths/SAML_enterprise/SAML.py:113
 #: reports/stats/usage_by_pool.py:73 reports/stats/usage_by_pool.py:189
 #: reports/stats/usage_summary_pool.py:73
 #: reports/stats/usage_summary_pool.py:207
@@ -836,7 +839,7 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/ActiveDirectory_enterprise/Authenticator.py:58
 #: auths/EDirectory_enterprise/Authenticator.py:66
-#: auths/RegexLdap/Authenticator.py:60 auths/RegexLdap/Authenticator.py:84
+#: auths/RegexLdap/Authenticator.py:61 auths/RegexLdap/Authenticator.py:87
 #: auths/SimpleLDAP/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:85
 #: core/auths/BaseAuthenticator.py:140
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:37
@@ -844,8 +847,10 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:86
 #: services/Nutanix_enterprise/NutanixProvider.py:40
-#: services/OVirt/OVirtProvider.py:111 services/OpenNebula/Provider.py:102
-#: services/OpenStack/Provider.py:106 services/Sample/SampleService.py:131
+#: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
+#: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:106
+#: services/Sample/SampleService.py:131
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 #: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
@@ -860,18 +865,19 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:40
 #: auths/EDirectory_enterprise/Authenticator.py:66
-#: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:61
+#: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:61
 msgid "Password of the ldap user"
 msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:41
 #: auths/EDirectory_enterprise/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:91
 #: services/Nutanix_enterprise/NutanixProvider.py:44
-#: services/OVirt/OVirtProvider.py:116 services/OpenNebula/Provider.py:107
-#: services/OpenStack/Provider.py:111
+#: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
+#: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:111
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:36
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 msgid "Timeout"
 msgstr ""
@@ -889,7 +895,7 @@ msgid "Authenticate against Active Directory"
 msgstr ""
 
 #: auths/ActiveDirectory_enterprise/Authenticator.py:73
-#: auths/ActiveDirectory_enterprise/Authenticator.py:468
+#: auths/ActiveDirectory_enterprise/Authenticator.py:469
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr ""
 
@@ -897,51 +903,45 @@ msgstr ""
 msgid "Active directory connection error: "
 msgstr ""
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:363
-#: auths/ActiveDirectory_enterprise/Authenticator.py:411
+#: auths/ActiveDirectory_enterprise/Authenticator.py:364
+#: auths/ActiveDirectory_enterprise/Authenticator.py:412
 #: auths/EDirectory_enterprise/Authenticator.py:245
 #: auths/EDirectory_enterprise/Authenticator.py:288
-#: auths/RegexLdap/Authenticator.py:315 auths/RegexLdap/Authenticator.py:356
+#: auths/RegexLdap/Authenticator.py:366 auths/RegexLdap/Authenticator.py:407
 #: auths/SimpleLDAP/Authenticator.py:281 auths/SimpleLDAP/Authenticator.py:324
 msgid "Username not found"
 msgstr ""
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:396
+#: auths/ActiveDirectory_enterprise/Authenticator.py:397
 #: auths/SimpleLDAP/Authenticator.py:314
 msgid "Group not found"
 msgstr ""
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:431
-#: auths/ActiveDirectory_enterprise/Authenticator.py:450
+#: auths/ActiveDirectory_enterprise/Authenticator.py:432
+#: auths/ActiveDirectory_enterprise/Authenticator.py:451
 #: auths/EDirectory_enterprise/Authenticator.py:305
-#: auths/RegexLdap/Authenticator.py:378 auths/SimpleLDAP/Authenticator.py:341
+#: auths/RegexLdap/Authenticator.py:429 auths/SimpleLDAP/Authenticator.py:341
 #: auths/SimpleLDAP/Authenticator.py:357
 msgid "Too many results, be more specific"
 msgstr ""
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:477
+#: auths/ActiveDirectory_enterprise/Authenticator.py:478
 msgid "Domain seems to be incorrect, please check it"
 msgstr ""
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:482
+#: auths/ActiveDirectory_enterprise/Authenticator.py:483
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr ""
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:490
+#: auths/ActiveDirectory_enterprise/Authenticator.py:491
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr ""
 
-#: auths/ActiveDirectory_enterprise/Authenticator.py:498
-msgid ""
-"Server does not seem an Active Directory (it does not have any user nor "
-"groups)"
-msgstr ""
-
-#: auths/ActiveDirectory_enterprise/Authenticator.py:503
+#: auths/ActiveDirectory_enterprise/Authenticator.py:496
 #: auths/EDirectory_enterprise/Authenticator.py:360
-#: auths/RegexLdap/Authenticator.py:437 auths/SimpleLDAP/Authenticator.py:435
+#: auths/RegexLdap/Authenticator.py:488 auths/SimpleLDAP/Authenticator.py:435
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr ""
 
@@ -950,22 +950,24 @@ msgid "EDirectory Server IP or Hostname"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
-#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
 #: services/Nutanix_enterprise/NutanixProvider.py:38
-#: services/OpenNebula/Provider.py:99 services/OpenStack/Provider.py:99
+#: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
+#: services/OpenStack/Provider.py:99
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
 #: services/Vmware_enterprise/ServiceProviderVC.py:30
 msgid "Port"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:63
-#: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:58
+#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:64
-#: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:59
+#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:59
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr ""
 
@@ -974,7 +976,7 @@ msgid "Username with read privileges on the eDirectory"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:67
-#: auths/RegexLdap/Authenticator.py:61 auths/SimpleLDAP/Authenticator.py:62
+#: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
 msgid "Timeout in seconds of connection to LDAP"
 msgstr ""
 
@@ -987,17 +989,17 @@ msgid "Authenticate against eDirectory"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:125
-#: auths/RegexLdap/Authenticator.py:238 auths/SimpleLDAP/Authenticator.py:171
+#: auths/RegexLdap/Authenticator.py:254 auths/SimpleLDAP/Authenticator.py:171
 msgid "Ldap connection error: "
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:325
-#: auths/RegexLdap/Authenticator.py:398 auths/SimpleLDAP/Authenticator.py:377
+#: auths/RegexLdap/Authenticator.py:449 auths/SimpleLDAP/Authenticator.py:377
 msgid "Ldap search base is incorrect"
 msgstr ""
 
 #: auths/EDirectory_enterprise/Authenticator.py:330
-#: auths/RegexLdap/Authenticator.py:403 auths/SimpleLDAP/Authenticator.py:382
+#: auths/RegexLdap/Authenticator.py:454 auths/SimpleLDAP/Authenticator.py:382
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 
@@ -1071,78 +1073,95 @@ msgstr ""
 msgid "All seems fine in the authenticator."
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:56
+#: auths/RegexLdap/Authenticator.py:57
 msgid "Ldap Server Host"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:59 auths/SimpleLDAP/Authenticator.py:60
+#: auths/RegexLdap/Authenticator.py:60 auths/SimpleLDAP/Authenticator.py:60
 msgid "Username with read privileges on the base selected"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:63
 msgid "Base"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:63 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:63
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:63 auths/RegexLdap/Authenticator.py:64
-#: auths/RegexLdap/Authenticator.py:65 auths/RegexLdap/Authenticator.py:66
-#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:63
+#: auths/RegexLdap/Authenticator.py:64 auths/RegexLdap/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:66 auths/RegexLdap/Authenticator.py:67
+#: auths/RegexLdap/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:63
 #: auths/SimpleLDAP/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:65
 #: auths/SimpleLDAP/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:67
 #: auths/SimpleLDAP/Authenticator.py:68 auths/SimpleLDAP/Authenticator.py:69
 msgid "Ldap info"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:64
 msgid "User class"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:64 auths/SimpleLDAP/Authenticator.py:64
+#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:64
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:65
 msgid "User Id Attr"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:65 auths/SimpleLDAP/Authenticator.py:65
+#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:65
 msgid "Attribute that contains the user id"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:66
 msgid "User Name Attr"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:66 auths/SimpleLDAP/Authenticator.py:66
+#: auths/RegexLdap/Authenticator.py:67 auths/SimpleLDAP/Authenticator.py:66
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:67
+#: auths/RegexLdap/Authenticator.py:68
 msgid "Group Name Attr"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:67
+#: auths/RegexLdap/Authenticator.py:68
 msgid "Attribute that contains the group name"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:70
+#: auths/RegexLdap/Authenticator.py:71
+msgid "Alt. class"
+msgstr ""
+
+#: auths/RegexLdap/Authenticator.py:71
+msgid ""
+"Class for LDAP objects that will be also checked for groups retrieval "
+"(normally empty)"
+msgstr ""
+
+#: auths/RegexLdap/Authenticator.py:71 core/ui/UserInterface.py:86
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
+#: services/OpenGnsys/OGService.py:130
+msgid "Advanced"
+msgstr ""
+
+#: auths/RegexLdap/Authenticator.py:73
 msgid "Regex LDAP Authenticator"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:72
+#: auths/RegexLdap/Authenticator.py:75
 msgid "Regular Expressions LDAP authenticator"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:412
+#: auths/RegexLdap/Authenticator.py:463
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
 
-#: auths/RegexLdap/Authenticator.py:426 auths/SimpleLDAP/Authenticator.py:406
+#: auths/RegexLdap/Authenticator.py:477 auths/SimpleLDAP/Authenticator.py:406
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1498,12 +1517,6 @@ msgstr ""
 
 #: core/transports/BaseTransport.py:48
 msgid "Tunneled"
-msgstr ""
-
-#: core/ui/UserInterface.py:86
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
-msgid "Advanced"
 msgstr ""
 
 #: core/ui/UserInterface.py:88
@@ -1912,6 +1925,7 @@ msgid "Password of the account"
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:38
+#: services/OpenGnsys/OGService.py:97
 msgid "OU"
 msgstr ""
 
@@ -1936,7 +1950,7 @@ msgid "Server Hint"
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
-msgid "In case of several AD servers, which one is prefered for first access"
+msgid "In case of several AD servers, which one is preferred"
 msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:49
@@ -2361,6 +2375,7 @@ msgstr ""
 #: services/Nutanix_enterprise/NutanixService.py:57
 #: services/OVirt/OVirtLinkedService.py:187
 #: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
+#: services/VCloud_enterprise/VCloudCloneService.py:76
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
 #: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
@@ -2369,6 +2384,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:151
 #: services/OpenStack/LiveService.py:127
+#: services/VCloud_enterprise/VCloudCloneService.py:76
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
 msgid "Base name for clones from this machine"
 msgstr ""
@@ -2378,6 +2394,7 @@ msgstr ""
 #: services/Nutanix_enterprise/NutanixService.py:66
 #: services/OVirt/OVirtLinkedService.py:197
 #: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
+#: services/VCloud_enterprise/VCloudCloneService.py:77
 #: services/Vmware_enterprise/VCLinkedCloneService.py:92
 #: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
@@ -2388,6 +2405,7 @@ msgstr ""
 #: services/Nutanix_enterprise/NutanixService.py:69
 #: services/OVirt/OVirtLinkedService.py:200
 #: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
+#: services/VCloud_enterprise/VCloudCloneService.py:78
 #: services/Vmware_enterprise/VCLinkedCloneService.py:93
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr ""
@@ -2474,7 +2492,7 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVProvider.py:260
 #: services/Nutanix_enterprise/NutanixProvider.py:172
 #: services/OVirt/OVirtProvider.py:444
-#: services/Vmware_enterprise/ServiceProviderVC.py:143
+#: services/Vmware_enterprise/ServiceProviderVC.py:142
 msgid "Connection failed. Check connection params"
 msgstr ""
 
@@ -2544,18 +2562,20 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/OVirt/OVirtProvider.py:113 services/OpenNebula/Provider.py:104
-#: services/OpenStack/Provider.py:108
+#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:33
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:80
+#: services/Vmware_enterprise/ServiceProviderVC.py:79
 #: services/Xen/XenProvider.py:103
 msgid "Creation concurrency"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVProvider.py:88
 #: services/Nutanix_enterprise/NutanixProvider.py:42
-#: services/OVirt/OVirtProvider.py:113 services/OpenNebula/Provider.py:104
-#: services/OpenStack/Provider.py:108
+#: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
+#: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:33
 #: services/Vmware_enterprise/ServiceProviderVC.py:35
 #: services/Xen/XenProvider.py:103
 msgid "Maximum number of concurrently creating VMs"
@@ -2563,18 +2583,20 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:43
-#: services/OVirt/OVirtProvider.py:114 services/OpenNebula/Provider.py:105
-#: services/OpenStack/Provider.py:109
+#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:36
-#: services/Vmware_enterprise/ServiceProviderVC.py:81
+#: services/Vmware_enterprise/ServiceProviderVC.py:80
 #: services/Xen/XenProvider.py:104
 msgid "Removal concurrency"
 msgstr ""
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
 #: services/Nutanix_enterprise/NutanixProvider.py:43
-#: services/OVirt/OVirtProvider.py:114 services/OpenNebula/Provider.py:105
-#: services/OpenStack/Provider.py:109
+#: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
+#: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:36
 #: services/Xen/XenProvider.py:104
 msgid "Maximum number of concurrently removing VMs"
@@ -2716,17 +2738,109 @@ msgstr ""
 msgid "Timeout in seconds of connection to oVirt"
 msgstr ""
 
+#: services/OpenGnsys/OGService.py:56
+msgid "OpenGnsys Machines Service"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:60
+msgid "OpenGnsys physical machines"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:77 services/OpenNebula/LiveService.py:76
+#: services/OpenStack/LiveService.py:78
+#: services/Vmware_enterprise/VCLinkedCloneService.py:40
+msgid "Number of desired machines to keep running waiting for an user"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:104
+msgid "Organizational Unit"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:110
+msgid "lab"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:112
+msgid "Laboratory"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:118
+msgid "OS Image"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:120
+msgid "OpenGnsys Operating System Image"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:126
+msgid "Max. reservation time"
+msgstr ""
+
+#: services/OpenGnsys/OGService.py:128
+msgid ""
+"Security parameter for OpenGnsys to keep reservations at most this hours"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:77
+msgid "OpenGnsys Platform Provider"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:81
+msgid "OpenGnsys platform service provider (experimental)"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:96
+msgid "OpenGnsys Host"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:97
+msgid "OpenGnsys Port (default is 443, and only ssl connection is allowed)"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:98
+msgid "Check Cert."
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:98
+msgid ""
+"If checked, ssl certificate of OpenGnsys server must be valid (not self "
+"signed)"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:99
+msgid "User with valid privileges on OpenGnsys"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:100
+msgid "Password of the user of OpenGnsys"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:101
+msgid "UDS Server URL"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:101
+msgid "URL used by OpenGnsys to access UDS. If empty, UDS will guess it."
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:106
+msgid "Timeout in seconds of connection to OpenGnsys"
+msgstr ""
+
+#: services/OpenGnsys/Provider.py:164
+msgid "OpenGnsys test connection passed"
+msgstr ""
+
+#: services/OpenGnsys/helpers.py:31
+msgid "All Labs"
+msgstr ""
+
 #: services/OpenNebula/LiveService.py:55
 msgid "OpenNebula Live Images"
 msgstr ""
 
 #: services/OpenNebula/LiveService.py:59
 msgid "OpenNebula live images based service"
-msgstr ""
-
-#: services/OpenNebula/LiveService.py:76 services/OpenStack/LiveService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:40
-msgid "Number of desired machines to keep running waiting for an user"
 msgstr ""
 
 #: services/OpenNebula/LiveService.py:96
@@ -2925,47 +3039,55 @@ msgstr ""
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:31
+#: services/RDS_enterprise/RDSProvider.py:35
 msgid "RDS Platform Provider"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:33
+#: services/RDS_enterprise/RDSProvider.py:37
 msgid "Microsoft RDS based provider"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:37
+#: services/RDS_enterprise/RDSProvider.py:41
 msgid "List of servers"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:39
+#: services/RDS_enterprise/RDSProvider.py:43
 msgid "User mapping"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:39
+#: services/RDS_enterprise/RDSProvider.py:43
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:41
+#: services/RDS_enterprise/RDSProvider.py:45
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:46
 msgid "User's password"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:42
+#: services/RDS_enterprise/RDSProvider.py:46
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:65
+#: services/RDS_enterprise/RDSProvider.py:49
+msgid "Server Checking"
+msgstr ""
+
+#: services/RDS_enterprise/RDSProvider.py:50
+msgid "If checked, the server will be checked before assigning or using it."
+msgstr ""
+
+#: services/RDS_enterprise/RDSProvider.py:75
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr ""
 
-#: services/RDS_enterprise/RDSProvider.py:95
+#: services/RDS_enterprise/RDSProvider.py:105
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -2988,14 +3110,22 @@ msgid "Full path of the application this service will represent"
 msgstr ""
 
 #: services/RDS_enterprise/RDSService.py:54
+msgid "Application parameters"
+msgstr ""
+
+#: services/RDS_enterprise/RDSService.py:55
+msgid "Applications parameters, as will be passed in command line"
+msgstr ""
+
+#: services/RDS_enterprise/RDSService.py:63
 msgid "Max. Allowd services"
 msgstr ""
 
-#: services/RDS_enterprise/RDSService.py:59
+#: services/RDS_enterprise/RDSService.py:68
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr ""
 
-#: services/RDS_enterprise/RDSService.py:76
+#: services/RDS_enterprise/RDSService.py:85
 msgid "A valid application path is required"
 msgstr ""
 
@@ -3111,6 +3241,115 @@ msgstr ""
 msgid "Test service for cache L1 only"
 msgstr ""
 
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:26
+msgid "vCloud Server IP or Hostname"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
+msgid "vCloud Server Port (usually 443)"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
+msgid "Organization"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
+msgid "Organization to use on vCloud"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
+msgid "User with valid privileges on vCloud"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
+msgid "Password of the user of vCloud"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:36
+msgid "Timeout in seconds of connection to vCloud"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:42
+msgid "VCloud Director Platform Provider"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:44
+msgid "Provides connection to vCloud Director platform"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:80
+msgid "Connection parameters seems correct"
+msgstr ""
+
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:190
+msgid "vCloud Provider: "
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:31
+msgid "VCloud Platform vApp"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:33
+msgid "This service provides access to vApp based VDI"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:39
+msgid "Number of desired vApps to keep running waiting for an user"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:41
+msgid "Number of desired vApps to keep suspended waiting for use"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:53
+msgid "vDatacenter"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:54
+msgid "Virtual Datacenter"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:57
+#: services/Vmware_enterprise/VCLinkedCloneService.py:67
+msgid "Remove found duplicates"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:57
+msgid "If active, found duplicates vApps for this service will be removed"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:59
+msgid "Catalog"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:59
+msgid "vApps source catalog"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:68
+msgid "vApp Template"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:69
+msgid "vApp template for the service"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:71
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+msgid "Main Network"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:72
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+msgid ""
+"If more than one interface is found in machine, use the first found on this "
+"network as main"
+msgstr ""
+
+#: services/VCloud_enterprise/VCloudCloneService.py:90
+msgid "Only vApp Templates with 1 VM are allowed"
+msgstr ""
+
 #: services/Vmware_enterprise/Helpers.py:72
 msgid "Local"
 msgstr ""
@@ -3154,19 +3393,19 @@ msgid ""
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 msgstr ""
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:46
+#: services/Vmware_enterprise/ServiceProviderVC.py:45
 msgid "VMWare VCenter Platform Provider"
 msgstr ""
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:48
+#: services/Vmware_enterprise/ServiceProviderVC.py:47
 msgid "Provides connection to Virtual Center Services"
 msgstr ""
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:134
+#: services/Vmware_enterprise/ServiceProviderVC.py:133
 msgid "VmwareVC Provider: "
 msgstr ""
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:141
+#: services/Vmware_enterprise/ServiceProviderVC.py:140
 msgid "Connection params ok"
 msgstr ""
 
@@ -3204,10 +3443,6 @@ msgid "Datastores where to put publications"
 msgstr ""
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:67
-msgid "Remove found duplicates"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:67
 msgid "If active, found duplicates clones for this service will be removed"
 msgstr ""
 
@@ -3221,16 +3456,6 @@ msgstr ""
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:81
 msgid "Base machine for this service"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
-msgid "Main Network"
-msgstr ""
-
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
-msgid ""
-"If more than one interface is found in machine, use the first found on this "
-"network as main"
 msgstr ""
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:86
@@ -4278,13 +4503,12 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
-#: transports/RDP/BaseRDPTransport.py:70
 msgid "Show wallpaper"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
-#: transports/RDP/BaseRDPTransport.py:70
+#: transports/RDP/BaseRDPTransport.py:71
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -4292,27 +4516,27 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:73
 msgid "Allow Desk.Comp."
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:73
 msgid "If checked, desktop composition will be allowed"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "Font Smoothing"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDP/BaseRDPTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:75
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 
@@ -4429,6 +4653,13 @@ msgstr ""
 msgid "The server must be http or https"
 msgstr ""
 
+#: transports/HTML5RDP/HTML5RDP.py:120
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:120
+msgid ""
+"Empty credentials (on Credentials tab) is only allowed with Security level "
+"(on Parameters tab) set to \"RDP\""
+msgstr ""
+
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
 msgid "HTML5 RDS Transport"
 msgstr ""
@@ -4522,8 +4753,8 @@ msgid ""
 "assigning it to user. (use HOST:PORT format)"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:100
-#: transports/RDS_enterprise/TRDSTransport.py:93
+#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:101
+#: transports/RDS_enterprise/TRDSTransport.py:94
 #: transports/RGS_enterprise/TRGSTransport.py:78
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -4591,76 +4822,90 @@ msgstr ""
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:71
-msgid "Multiple monitors"
+#: transports/RDP/BaseRDPTransport.py:70
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Enable clipboard"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:70
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked, copy-paste functions will be allowed"
 msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:71
+msgid "Wallpaper/theme"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:72
+msgid "Multiple monitors"
+msgstr ""
+
+#: transports/RDP/BaseRDPTransport.py:72
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid "Credssp Support"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:75
+#: transports/RDS_enterprise/BaseRDSTransport.py:74
+#: transports/RDS_enterprise/BaseRDSTransport.py:77
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "Multimedia sync"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:76
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid "Use Alsa"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
+#: transports/RDP/BaseRDPTransport.py:77
+#: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:78
+#: transports/RDS_enterprise/BaseRDSTransport.py:79
 msgid "Printer string"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:78
+#: transports/RDS_enterprise/BaseRDSTransport.py:79
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:79
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
 msgid "Smartcard string"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:79
+#: transports/RDP/BaseRDPTransport.py:79
+#: transports/RDS_enterprise/BaseRDSTransport.py:80
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:80
+#: transports/RDP/BaseRDPTransport.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid "Custom parameters"
 msgstr ""
 
-#: transports/RDP/BaseRDPTransport.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:80
+#: transports/RDP/BaseRDPTransport.py:80
+#: transports/RDS_enterprise/BaseRDSTransport.py:81
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-06 13:15+0200\n"
+"POT-Creation-Date: 2017-10-05 10:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,7 +93,7 @@ msgstr ""
 msgid "December"
 msgstr ""
 
-#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:10
+#: static/tmp_js/gui-d-authenticators.js:10 static/tmp_js/gui-d-services.js:31
 msgid "Test"
 msgstr ""
 
@@ -107,14 +107,14 @@ msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:151
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
-#: static/tmp_js/gui-d-services.js:86 static/tmp_js/gui-d-services.js:128
+#: static/tmp_js/gui-d-services.js:108 static/tmp_js/gui-d-services.js:150
 #: static/tmp_js/gui-d-servicespools.js:220
 msgid "Error accessing data"
 msgstr ""
 
 #: static/tmp_js/gui-d-authenticators.js:168
 #: static/tmp_js/gui-d-authenticators.js:395
-#: static/tmp_js/gui-d-services.js:108
+#: static/tmp_js/gui-d-services.js:130
 msgid "Information"
 msgstr ""
 
@@ -240,7 +240,7 @@ msgid "days"
 msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:23
-msgid "Dayly"
+msgid "Daily"
 msgstr ""
 
 #: static/tmp_js/gui-d-calendar.js:24
@@ -515,87 +515,95 @@ msgstr ""
 msgid "Error obtaining report description"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:63
+#: static/tmp_js/gui-d-services.js:85
 msgid "In Maintenance"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:65
+#: static/tmp_js/gui-d-services.js:87
 msgid "Active"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:125
+#: static/tmp_js/gui-d-services.js:147
 msgid "Service information"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:183
+#: static/tmp_js/gui-d-services.js:205
 msgid "Edit service"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:183
+#: static/tmp_js/gui-d-services.js:205
 msgid "Service creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:184
+#: static/tmp_js/gui-d-services.js:206
 msgid "New service"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:184
+#: static/tmp_js/gui-d-services.js:206
 msgid "Service saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:185
+#: static/tmp_js/gui-d-services.js:207
 msgid "Delete service"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:185
+#: static/tmp_js/gui-d-services.js:207
 msgid "Service deletion error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:201 static/tmp_js/gui-d-services.js:224
+#: static/tmp_js/gui-d-services.js:235
+msgid "Delete user service"
+msgstr ""
+
+#: static/tmp_js/gui-d-services.js:235
+msgid "User service deletion error"
+msgstr ""
+
+#: static/tmp_js/gui-d-services.js:246 static/tmp_js/gui-d-services.js:269
 msgid "Maintenance"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Maintenance Mode"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Enter Maintenance Mode?"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:210
+#: static/tmp_js/gui-d-services.js:255
 msgid "Exit Maintenance Mode?"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:229
+#: static/tmp_js/gui-d-services.js:274
 msgid "Enter maintenance Mode"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:232
+#: static/tmp_js/gui-d-services.js:277
 msgid "Exit Maintenance Mode"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:240
+#: static/tmp_js/gui-d-services.js:285
 msgid "New services provider"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:240
+#: static/tmp_js/gui-d-services.js:285
 msgid "Services provider creation error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:241
+#: static/tmp_js/gui-d-services.js:286
 msgid "Edit services provider"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:241
+#: static/tmp_js/gui-d-services.js:286
 msgid "Services Provider saving error"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:242
+#: static/tmp_js/gui-d-services.js:287
 msgid "Delete services provider"
 msgstr ""
 
-#: static/tmp_js/gui-d-services.js:242
+#: static/tmp_js/gui-d-services.js:287
 msgid "Services Provider deletion error"
 msgstr ""
 
