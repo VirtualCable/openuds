@@ -47,7 +47,7 @@ import six
 import os
 import logging
 
-__updated__ = '2017-01-30'
+__updated__ = '2017-10-09'
 
 
 logger = logging.getLogger(__name__)
@@ -88,6 +88,7 @@ class BaseX2GOTransport(Transport):
                                   # {'id': 'UNITY', 'text': 'Unity (see docs)'},
                                   {'id': 'gnome-session-cinnamon', 'text': 'Cinnamon 1.4 (see docs)'},
                                   {'id': 'gnome-session-cinnamon2d', 'text': 'Cinnamon 2.2 (see docs)'},
+                                  {'id': '/usr/bin/udsvapp', 'text': 'UDS vAPP'},
     ], tab=gui.PARAMETERS_TAB)
 
     sound = gui.CheckBoxField(
