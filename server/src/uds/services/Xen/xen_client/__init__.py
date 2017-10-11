@@ -74,7 +74,6 @@ class XenFailure(XenAPI.Failure, XenFault):
             errList = {
                 XenFailure.exBadVmPowerState: 'Machine state is invalid for requested operation (needs {2} and state is {3})',
                 XenFailure.exVmMissingPVDrivers: 'Machine needs Xen Server Tools to allow requested operation',
-                XenFailure.exHandleInvalid: 'Invalid handler',
                 XenFailure.exHostIsSlave: 'The connected host is an slave, try to connect to {1}',
                 XenFailure.exSRError: 'Error on SR: {2}',
                 XenFailure.exHandleInvalid: 'Invalid reference to {1}',

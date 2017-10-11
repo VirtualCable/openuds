@@ -115,12 +115,11 @@ class AccessCalendars(DetailHandler):
         CalendarAccess.objects.get(uuid=processUuid(self._args[0])).delete()
 
 
-
 class ActionsCalendars(DetailHandler):
-    '''
+    """
     Processes the transports detail requests of a Service Pool
-    '''
-    custom_methods = ('execute')
+    """
+    custom_methods = ('execute',)
 
     @staticmethod
     def as_dict(item):
@@ -146,7 +145,6 @@ class ActionsCalendars(DetailHandler):
                 return ActionsCalendars.as_dict(i)
         except Exception:
             self.invalidItemException()
-
 
     def getTitle(self, parent):
         return _('Scheduled actions')

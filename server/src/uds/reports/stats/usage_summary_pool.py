@@ -38,15 +38,12 @@ from uds.core.ui.UserInterface import gui
 from uds.core.reports.tools import UDSGeraldoReport
 from uds.core.util.stats import events
 
-
-import StringIO
+import six
 import csv
 import six
 
-
 from .base import StatsReport
 
-from uds.core.util import tools
 from uds.models import ServicePool
 from geraldo.generators.pdf import PDFGenerator
 from geraldo import ReportBand, ObjectValue, Label
@@ -77,7 +74,6 @@ class UsersSumaryReport(UDSGeraldoReport):
     ]
 
     header_height = 2.5 * cm
-
 
     class band_detail(ReportBand):
         height = 0.5 * cm
@@ -175,11 +171,10 @@ class UsageSummaryByPool(StatsReport):
     def getData(self):
         return self.getPoolData(ServicePool.objects.get(uuid=self.pool.value))
 
-
     def generate(self):
         items, poolName = self.getData()
 
-        output = StringIO.StringIO()
+        output = six.StringIO()
 
         report = UsersSumaryReport(queryset=items)
         report.title = _('Users usage list for {}').format(poolName)
@@ -199,7 +194,7 @@ class UsageSummaryByPoolCSV(UsageSummaryByPool):
     endDate = UsageSummaryByPool.endDate
 
     def generate(self):
-        output = StringIO.StringIO()
+        output = six.StringIO()
         writer = csv.writer(output)
 
         reportData, poolName = self.getData()

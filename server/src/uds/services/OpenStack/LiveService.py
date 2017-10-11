@@ -323,7 +323,7 @@ class LiveService(Service):
         '''
         net = self.api.getServer(machineId)['addresses']
         vals = six.next(six.itervalues(net))[0]  # Returns "any" mac address of any interface. We just need only one interface info
-        return (vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr'])
+        return vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr']
 
     def getBaseName(self):
         '''

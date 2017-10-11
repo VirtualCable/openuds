@@ -187,7 +187,7 @@ class OVirtLinkedService(Service):
         label=_('Machine Names'),
         rdonly=False,
         order=115,
-        tooltip=('Base name for clones from this machine'),
+        tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
         required=True
     )

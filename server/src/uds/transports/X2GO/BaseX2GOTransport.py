@@ -210,7 +210,7 @@ class BaseX2GOTransport(Transport):
         priv = privFile.getvalue()
 
         pub = key.get_base64()  # 'ssh-rsa {} UDS@X2GOCLIENT'.format(key.get_base64())
-        return (priv, pub)
+        return priv, pub
 
     def getAuthorizeScript(self, user, pubKey):
         return self.getScript('scripts/authorize.py').replace('__USER__', user).replace('__KEY__', pubKey)

@@ -200,7 +200,7 @@ class StatsReportLogin(StatsReport):
                 }
             )
 
-        return (xLabelFormat, data, reportData)
+        return xLabelFormat, data, reportData
 
     def getWeekHourlyData(self):
         start = self.startDate.stamp()
@@ -213,7 +213,7 @@ class StatsReportLogin(StatsReport):
             dataWeek[s.weekday()] += 1
             dataHour[s.hour] += 1
 
-        return (dataWeek, dataHour)
+        return dataWeek, dataHour
 
     def generate(self):
         # Sample query:

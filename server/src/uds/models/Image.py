@@ -139,7 +139,7 @@ class Image(UUIDModel):
         '''
         Returns the image size
         '''
-        return (self.width, self.height)
+        return self.width, self.height
 
     def updateThumbnail(self):
         thumb = self.image

@@ -107,12 +107,11 @@ class LiveService(Service):
         required=True
     )
 
-
     baseName = gui.TextField(
         label=_('Machine Names'),
         rdonly=False,
         order=111,
-        tooltip=('Base name for clones from this machine'),
+        tooltip='Base name for clones from this machine',
         tab=_('Machine'),
         required=True
     )

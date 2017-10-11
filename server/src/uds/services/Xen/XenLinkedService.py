@@ -158,7 +158,7 @@ class XenLinkedService(Service):
         label=_('Machine Names'),
         rdonly=False,
         order=114,
-        tooltip=('Base name for clones from this machine'),
+        tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
         required=True
     )

@@ -167,7 +167,7 @@ class OpenNebulaClient(object):
         '''
         result = self.connection.one.template.info(self.sessionString, int(templateId), extraInfo)
         res = checkResult(result)
-        return (res, result[1])
+        return res, result[1]
 
     @ensureConnected
     def instantiateTemplate(self, templateId, vmName, createHold=False, templateToMerge='', privatePersistent=False):
@@ -252,7 +252,7 @@ class OpenNebulaClient(object):
         '''
         result = self.connection.one.image.info(self.sessionString, int(imageInfo))
         res = checkResult(result)
-        return (res, result[1])
+        return res, result[1]
 
     @ensureConnected
     def enumVMs(self):
@@ -278,7 +278,7 @@ class OpenNebulaClient(object):
         '''
         result = self.connection.one.vm.info(self.sessionString, int(vmId))
         res = checkResult(result)
-        return (res, result[1])
+        return res, result[1]
 
     @ensureConnected
     def deleteVM(self, vmId):

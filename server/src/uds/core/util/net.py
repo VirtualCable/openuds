@@ -116,7 +116,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
     strNets = strNets.replace(' ', '')
 
     if strNets == '*':
-        return (0, 4294967295)
+        return 0, 4294967295
 
     try:
         # Test patterns
@@ -129,7 +129,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
             val = toNum(*m.groups())
             bits = maskFromBits(bits)
             noBits = ~bits & 0xffffffff
-            return (val & bits, val | noBits)
+            return val & bits, val | noBits
 
         m = reMask.match(strNets)
         if m is not None:
@@ -137,7 +137,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
             val = toNum(*(m.groups()[0:4]))
             bits = toNum(*(m.groups()[4:8]))
             noBits = ~bits & 0xffffffff
-            return (val & bits, val | noBits)
+            return val & bits, val | noBits
 
         m = reRange.match(strNets)
         if m is not None:
@@ -146,13 +146,13 @@ def networksFromString(strNets, allowMultipleNetworks=True):
             val2 = toNum(*(m.groups()[4:8]))
             if val2 < val:
                 raise Exception()
-            return (val, val2)
+            return val, val2
 
         m = reHost.match(strNets)
         if m is not None:
             check(*m.groups())
             val = toNum(*m.groups())
-            return (val, val)
+            return val, val
 
         for v in ((re1Asterisk, 3), (re2Asterisk, 2), (re3Asterisk, 1)):
             m = v[0].match(strNets)
@@ -161,7 +161,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
                 val = toNum(*(m.groups()[0:v[1] + 1]))
                 bits = maskFromBits(v[1] * 8)
                 noBits = ~bits & 0xffffffff
-                return (val & bits, val | noBits)
+                return val & bits, val | noBits
 
         # No pattern recognized, invalid network
         raise Exception()

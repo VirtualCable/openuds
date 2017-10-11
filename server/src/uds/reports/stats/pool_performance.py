@@ -56,7 +56,7 @@ from geraldo.generators.pdf import PDFGenerator
 from geraldo import ReportBand, ObjectValue, BAND_WIDTH, Label, SubReport, SystemField, Line
 from reportlab.lib.units import cm, mm
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER
-from reportlab.lib import colors
+# from reportlab.lib import colors
 from PIL import Image as PILImage
 
 import datetime
@@ -246,7 +246,7 @@ class PoolPerformanceReport(StatsReport):
                 'dataAccesses': dataAccesses,
             })
 
-        return (xLabelFormat, poolsData, reportData)
+        return xLabelFormat, poolsData, reportData
 
     def generate(self):
         # Generate the sampling intervals and get dataUsers from db

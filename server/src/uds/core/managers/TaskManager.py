@@ -128,7 +128,7 @@ class TaskManager(object):
         # Remote.on()
 
         # gc.set_debug(gc.DEBUG_LEAK)
-        while(TaskManager.keepRunning):
+        while TaskManager.keepRunning:
             time.sleep(1)
 
         for thread in threads:
