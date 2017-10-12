@@ -782,7 +782,7 @@ class UserInterfaceType(type):
 
 @six.add_metaclass(UserInterfaceType)
 class UserInterface(object):
-    '''
+    """
     This class provides the management for gui descriptions (user forms)
 
     Once a class is derived from this one, that class can contain Field
@@ -791,7 +791,7 @@ class UserInterface(object):
 
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
-    '''
+    """
     # __metaclass__ = UserInterfaceType
 
     def __init__(self, values=None):

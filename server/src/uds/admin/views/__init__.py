@@ -30,7 +30,6 @@
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2017-05-18'
 
 from django.http import HttpResponse, HttpResponseForbidden
 from django.template import RequestContext, loader
@@ -44,6 +43,8 @@ from uds.core.util.decorators import denyBrowsers
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2017-05-18'
 
 
 @denyBrowsers(browsers=['ie<9'])

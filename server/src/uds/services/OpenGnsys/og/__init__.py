@@ -226,12 +226,11 @@ class OpenGnsysClient(object):
 
         return self._post(urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
 
-
     @ensureConnected
-    def status(self, id):
+    def status(self, id_):
         # This method gets the status of the machine
         # /ous/{uoid}/labs/{labid}/clients/{clientid}/status
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
         # Look at api at informatica.us..
-        ou, lab, client = id.split('.')
+        ou, lab, client = id_.split('.')
         return self._get(urls.STATUS.format(ou=ou, lab=lab, client=client))

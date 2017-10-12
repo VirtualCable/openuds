@@ -176,6 +176,6 @@ def ipInNetwork(ip, network):
         network = networksFromString(network)
 
     for net in network:
-        if ip >= net[0] and ip <= net[1]:
+        if net[0] <= ip <= net[1]:
             return True
     return False

@@ -18,9 +18,11 @@ def unmarshalRDP(str_):
         allowDrives = gui.strToBool(data[4])
         allowSerials = gui.strToBool(data[5])
 
-        if data[0] == 'v1':
-            wallpaper = False
-            i = 0
+        i = 0
+        wallpaper = False
+        # if data[0] == 'v1':
+        #    wallpaper = False
+        #    i = 0
 
         if data[0] in ('v2', 'v3'):
             wallpaper = gui.strToBool(data[6])
@@ -91,10 +93,11 @@ def unmarshalTRDP(str_):
         'tunnelCheckServer': tunnelCheckServer
     }
 
+
 def transformTransports(apps, schema_editor):
-    '''
+    """
     Move serialization to a better model (it's time, the mode is there since 1.1 :) )
-    '''
+    """
     model = apps.get_model("uds", 'Transport')
     for t in model.objects.all():
         if t.data_type == RDPTransport.typeType:

@@ -61,9 +61,9 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
     @staticmethod
     def usageToDict(item, perm):
         '''
-        Convert a calRule db item to a dict for a rest response
-        :param item: Service item (db)
-        :param full: If full is requested, add "extra" fields to complete information
+        Convert an account usage to a dictionary
+        :param item: Account usage item (db)
+        :param perm: permission
         '''
         retVal = {
             'uuid': item.uuid,

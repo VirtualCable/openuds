@@ -5,9 +5,9 @@ from django.db import models, migrations
 
 
 def add_parent_uuids(apps, schema_editor):
-    '''
+    """
     Adds uuids values to migrated models
-    '''
+    """
     model = apps.get_model("uds", 'User')
     for m in model.objects.all():
         parent = int(m.parent)
@@ -23,9 +23,9 @@ def add_parent_uuids(apps, schema_editor):
 
 
 def remove_parent_uuids(apps, schema_editor):
-    '''
+    """
     Dummy function. uuid field will be dropped on reverse migration
-    '''
+    """
     model = apps.get_model("uds", 'User')
     for m in model.objects.all():
         parent = m.parent

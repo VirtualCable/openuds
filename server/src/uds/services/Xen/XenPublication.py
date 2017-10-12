@@ -117,7 +117,7 @@ class XenPublication(Publication):
 
         try:
             state = self.service().checkTaskFinished(self._task)
-            if state[0] == True:  # Finished
+            if state[0]:  # Finished
                 self._state = 'finished'
                 self._templateId = state[1]
                 if self._destroyAfter == 't':

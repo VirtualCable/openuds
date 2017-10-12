@@ -51,7 +51,6 @@ class XenFailure(XenAPI.Failure, XenFault):
     exHandleInvalid = 'HANDLE_INVALID'
     exHostIsSlave = 'HOST_IS_SLAVE'
     exSRError = 'SR_BACKEND_FAILURE_44'
-    exHandleInvalid = 'HANDLE_INVALID'
 
     def __init__(self, details=None):
         details = [] if details is None else details

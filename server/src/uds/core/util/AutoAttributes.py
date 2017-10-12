@@ -41,6 +41,7 @@ class Attribute(object):
 
     def __init__(self, theType, value=None):
         self._type = theType
+        self._value = None
         self.setValue(value)
 
     def getType(self):

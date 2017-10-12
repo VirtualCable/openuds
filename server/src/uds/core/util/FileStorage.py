@@ -161,7 +161,7 @@ class FileStorage(Storage):
     def exists(self, name):
         logger.debug('Called exists for {}'.format(name))
         try:
-            self._dbFileForReadOnly(name).uuid
+            _ = self._dbFileForReadOnly(name).uuid # Tries to access uuid
             return True
         except DBFile.DoesNotExist:
             return False

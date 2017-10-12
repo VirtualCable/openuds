@@ -174,7 +174,7 @@ class Authenticator(Module):
         This will get invoked when all initialization stuff is done
 
         Args:
-            Values: If values is not none, this object is being initialized
+            values: If values is not none, this object is being initialized
             from administration interface, and not unmarshal will be done.
             If it's None, this is initialized internally, and unmarshal will
             be called after this.
