@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 # Make sure that all services are "available" at service startup
 
@@ -57,7 +57,6 @@ try:
 except AttributeError:
     # Legacy Python that doesn't verify HTTPS certificates by default
     pass
-
 
 
 class UDSAppConfig(AppConfig):

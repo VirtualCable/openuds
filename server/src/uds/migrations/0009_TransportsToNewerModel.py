@@ -91,10 +91,11 @@ def unmarshalTRDP(str_):
         'tunnelCheckServer': tunnelCheckServer
     }
 
+
 def transformTransports(apps, schema_editor):
-    '''
+    """
     Move serialization to a better model (it's time, the mode is there since 1.1 :) )
-    '''
+    """
     model = apps.get_model("uds", 'Transport')
     for t in model.objects.all():
         if t.data_type == RDPTransport.typeType:

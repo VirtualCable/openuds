@@ -113,7 +113,6 @@ class CalendarChecker(object):
 
         return data
 
-
     def _updateEvents(self, checkFrom, startEvent=True):
 
         next_event = None
@@ -182,7 +181,6 @@ class CalendarChecker(object):
             CalendarChecker.hits += 1
 
         return next_event
-
 
     def debug(self):
 

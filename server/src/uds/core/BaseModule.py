@@ -173,7 +173,7 @@ class Module(UserInterface, Environmentable, Serializable):
         file_ = open(os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile, 'rb')
         data = file_.read()
         file_.close()
-        if inBase64 == True:
+        if inBase64:
             return base64.encodestring(data)
         else:
             return data

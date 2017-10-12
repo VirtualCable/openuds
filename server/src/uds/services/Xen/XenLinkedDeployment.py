@@ -393,7 +393,7 @@ class XenLinkedDeployment(UserDeployment):
         Checks the state of a deploy for an user or cache
         '''
         state = self.service().checkTaskFinished(self._task)
-        if state[0] == True:  # Finished
+        if state[0]:  # Finished
             self._vmid = state[1]
             return State.FINISHED
 
@@ -403,7 +403,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Checks if machine has started
         '''
-        if self.service().checkTaskFinished(self._task)[0] == True:
+        if self.service().checkTaskFinished(self._task)[0]:
             return State.FINISHED
         return State.RUNNING
 
@@ -411,7 +411,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Checks if machine has stoped
         '''
-        if self.service().checkTaskFinished(self._task)[0] == True:
+        if self.service().checkTaskFinished(self._task)[0]:
             return State.FINISHED
         return State.RUNNING
 
@@ -425,7 +425,7 @@ class XenLinkedDeployment(UserDeployment):
         '''
         Check if the machine has suspended
         '''
-        if self.service().checkTaskFinished(self._task)[0] == True:
+        if self.service().checkTaskFinished(self._task)[0]:
             return State.FINISHED
         return State.RUNNING
 

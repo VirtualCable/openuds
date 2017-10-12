@@ -70,7 +70,7 @@ class IPMachinesService(services.Service):
             self._ips = []
         else:
             self._ips = list('{}~{}'.format(ip, i) for i, ip in enumerate(values['ipList']))  # Allow duplicates right now
-            self._ips.sort()
+            # self._ips.sort()
 
     def valuesDict(self):
         ips = (i.split('~')[0] for i in self._ips)
