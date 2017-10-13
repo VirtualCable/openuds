@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -52,17 +52,17 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Provider(ManagedObjectModel, TaggingMixin):
-    '''
+    """
     A Provider represents the Service provider itself, (i.e. a KVM Server or a Terminal Server)
-    '''
+    """
 
     # pylint: disable=model-missing-unicode
     maintenance_mode = models.BooleanField(default=False, db_index=True)
 
     class Meta(ManagedObjectModel.Meta):
-        '''
+        """
         Meta class to declare default order
-        '''
+        """
         ordering = ('name',)
         app_label = 'uds'
 
@@ -86,14 +86,14 @@ class Provider(ManagedObjectModel, TaggingMixin):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Provider class "Destroy" before deleting it from database.
 
         The main purpuse of this hook is to call the "destroy" method of the object to delete and
         to clear related data of the object (environment data such as own storage, cache, etc...
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         from uds.core.util.permissions import clean
 
         toDelete = kwargs['instance']

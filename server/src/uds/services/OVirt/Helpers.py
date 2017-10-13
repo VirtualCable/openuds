@@ -1,8 +1,8 @@
-'''
+"""
 Created on Nov 15, 2012
 
 @author: dkmaster
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -18,9 +18,9 @@ class oVirtHelpers(object):
 
     @staticmethod
     def getResources(parameters):
-        '''
+        """
         This helper is designed as a callback for machine selector, so we can provide valid clusters and datastores domains based on it
-        '''
+        """
         from OVirtProvider import Provider
         from uds.core.Environment import Environment
         logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))

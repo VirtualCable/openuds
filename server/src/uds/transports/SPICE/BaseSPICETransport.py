@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
@@ -53,10 +53,10 @@ READY_CACHE_TIMEOUT = 30
 
 
 class BaseSpiceTransport(Transport):
-    '''
+    """
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    '''
+    """
     iconFile = 'spice.png'
     protocol = protocols.SPICE
     allowedProviders = oVirtProvider.offers
@@ -115,11 +115,10 @@ class BaseSpiceTransport(Transport):
         tab=gui.ADVANCED_TAB
     )
 
-
     def isAvailableFor(self, userService, ip):
-        '''
+        """
         Checks if the transport is available for the requested destination ip
-        '''
+        """
         ready = self.cache.get(ip)
         if ready is None:
             userServiceInstance = userService.getInstance()

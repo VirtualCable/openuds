@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.db import transaction
@@ -48,12 +48,12 @@ logger = logging.getLogger(__name__)
 
 
 class ServiceCacheUpdater(Job):
-    '''
+    """
     Cache updater is responsible of keeping up to date the cache for different deployed services configurations requested
     We only process items that are "cacheables", to speed up process we will use the fact that initialServices = preparedServices = maxServices = 0
     if cache is not needed.
     This is included as a scheduled task that will run every X seconds, and scheduler will keep it so it will be only executed by one backend at a time
-    '''
+    """
     frecuency = 19
     frecuency_cfg = GlobalConfig.CACHE_CHECK_DELAY  # Request run cache manager every configured seconds (defaults to 20 seconds).
 
@@ -149,13 +149,13 @@ class ServiceCacheUpdater(Job):
         return servicesPools
 
     def growL1Cache(self, sp, cacheL1, cacheL2, assigned):
-        '''
+        """
         This method tries to enlarge L1 cache.
 
         If for some reason the number of deployed services (Counting all, ACTIVE
         and PREPARING, assigned, L1 and L2) is over max allowed service deployments,
         this method will not grow the L1 cache
-        '''
+        """
         logger.debug("Growing L1 cache creating a new service for {0}".format(sp))
         # First, we try to assign from L2 cache
         if cacheL2 > 0:
@@ -182,13 +182,13 @@ class ServiceCacheUpdater(Job):
             logger.exception('Exception')
 
     def growL2Cache(self, sp, cacheL1, cacheL2, assigned):
-        '''
+        """
         Tries to grow L2 cache of service.
 
         If for some reason the number of deployed services (Counting all, ACTIVE
         and PREPARING, assigned, L1 and L2) is over max allowed service deployments,
         this method will not grow the L1 cache
-        '''
+        """
         logger.debug("Growing L2 cache creating a new service for {0}".format(sp))
         try:
             UserServiceManager.manager().createCacheFor(sp.activePublication(), services.UserDeployment.L2_CACHE)

@@ -27,17 +27,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
+
+from django.utils.translation import ugettext_noop as _
 
 from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
-from uds.core.managers.DownloadsManager import DownloadsManager
 from uds.core.util.Config import Config
 from .NXTransport import NXTransport
 from .TSNXTransport import TSNXTransport
-from django.utils.translation import ugettext_noop as _
-import os.path
 
 Config.section('NX').value('downloadUrl', 'http://sourceforge.net/projects/opennx/files/opennx/CI-win32/OpenNX-0.16.0.725-Setup.exe/download').get()
 Config.section('NX').value('downloadUrlMACOS', 'http://opennx.net/download.html').get()

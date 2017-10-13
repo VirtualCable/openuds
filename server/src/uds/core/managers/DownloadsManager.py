@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 import os
@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 
 class DownloadsManager(object):
-    '''
+    """
     Manager so connectors can register their own downloadables
     For registering, use at __init__.py of the conecto something like this:
         from uds.core.managers.DownloadsManager import DownloadsManager
@@ -56,7 +56,7 @@ class DownloadsManager(object):
                                                         _('comments for test'),
                                                         os.path.join(os.path.dirname(sys.modules[__package__].__file__), 'files/test.exe'),
                                                         'application/x-msdos-program')
-    '''
+    """
     _manager = None
 
     def __init__(self):
@@ -69,12 +69,12 @@ class DownloadsManager(object):
         return DownloadsManager._manager
 
     def registerDownloadable(self, name, comment, path, mime='application/octet-stream'):
-        '''
+        """
         Registers a downloadable file.
         @param name: name shown
         @param path: path to file
         @params zip: If download as zip
-        '''
+        """
         _id = cryptoManager().uuid(name)
         self._downloadables[_id] = {'name': name, 'comment': comment, 'path': path, 'mime': mime}
 

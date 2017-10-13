@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 __updated__ = '2016-08-26'
@@ -49,10 +49,10 @@ logger = logging.getLogger(__name__)
 
 @webLoginRequired(admin=False)
 def prefs(request):
-    '''
+    """
     Preferences form
     :param request:
-    '''
+    """
     # Redirects to index if no preferences change allowed
     if GlobalConfig.PREFERENCES_ALLOWED.getBool(True) is False:
         return redirect('uds.web.views.index')

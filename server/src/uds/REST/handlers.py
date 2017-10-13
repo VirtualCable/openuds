@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 # pylint: disable=too-many-public-methods
 
 from __future__ import unicode_literals
@@ -48,51 +48,51 @@ AUTH_TOKEN_HEADER = 'HTTP_X_AUTH_TOKEN'
 
 
 class HandlerError(Exception):
-    '''
+    """
     Generic error for a REST handler
-    '''
+    """
     pass
 
 
 class NotFound(HandlerError):
-    '''
+    """
     Item not found error
-    '''
+    """
     pass
 
 
 class AccessDenied(HandlerError):
-    '''
+    """
     Access denied error
-    '''
+    """
     pass
 
 
 class RequestError(HandlerError):
-    '''
+    """
     Request is invalid error
-    '''
+    """
     pass
 
 
 class ResponseError(HandlerError):
-    '''
+    """
     Generic response error
-    '''
+    """
     pass
 
 
 class NotSupportedError(HandlerError):
-    '''
+    """
     Some elements do not support some operations (as searching over an authenticator that does not supports it)
-    '''
+    """
     pass
 
 
 class Handler(object):
-    '''
+    """
     REST requests handler base class
-    '''
+    """
     raw = False  # If true, Handler will return directly an HttpResponse Object
     name = None  # If name is not used, name will be the class name in lower case
     path = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
@@ -140,31 +140,31 @@ class Handler(object):
             self._user = self.getUser()
 
     def headers(self):
-        '''
+        """
         Returns the headers of the REST request (all)
-        '''
+        """
         return self._headers
 
     def header(self, headerName):
-        '''
+        """
         Get's an specific header name from REST request
         :param headerName: name of header to get
-        '''
+        """
         return self._headers.get(headerName)
 
     def addHeader(self, header, value):
-        '''
+        """
         Inserts a new header inside the headers list
         :param header: name of header to insert
         :param value: value of header
-        '''
+        """
         self._headers[header] = value
 
     def removeHeader(self, header):
-        '''
+        """
         Removes an specific header from the headers list
         :param header: Name of header to remove
-        '''
+        """
         try:
             del self._headers[header]
         except Exception:
@@ -172,14 +172,14 @@ class Handler(object):
 
     # Auth related
     def getAuthToken(self):
-        '''
+        """
         Returns the authentication token for this REST request
-        '''
+        """
         return self._authToken
 
     @staticmethod
     def storeSessionAuthdata(session, id_auth, username, locale, platform, is_admin, staff_member):
-        '''
+        """
         Stores the authentication data inside current session
         :param session: session handler (Djano user session object)
         :param id_auth: Authenticator id (DB object id)
@@ -187,7 +187,7 @@ class Handler(object):
         :param locale: Assigned locale
         :param is_admin: If user is considered admin or not
         :param staff_member: If is considered as staff member
-        '''
+        """
         if is_admin:
             staff_member = True  # Make admins also staff members :-)
 
@@ -201,7 +201,7 @@ class Handler(object):
         }
 
     def genAuthToken(self, id_auth, username, locale, platform, is_admin, staf_member):
-        '''
+        """
         Generates the authentication token from a session, that is basically
         the session key itself
         :param id_auth: Authenticator id (DB object id)
@@ -209,7 +209,7 @@ class Handler(object):
         :param locale: Assigned locale
         :param is_admin: If user is considered admin or not
         :param staf_member: If user is considered staff member or not
-        '''
+        """
         session = SessionStore()
         session.set_expiry(GlobalConfig.ADMIN_IDLE_TIME.getInt())
         Handler.storeSessionAuthdata(session, id_auth, username, locale, platform, is_admin, staf_member)
@@ -219,9 +219,9 @@ class Handler(object):
         return self._authToken
 
     def cleanAuthToken(self):
-        '''
+        """
         Cleans up the authentication token
-        '''
+        """
         self._authToken = None
         if self._session:
             self._session.delete()
@@ -229,18 +229,18 @@ class Handler(object):
 
     # Session related (from auth token)
     def getValue(self, key):
-        '''
+        """
         Get REST session related value for a key
-        '''
+        """
         try:
             return self._session['REST'].get(key)
         except Exception:
             return None  # _session['REST'] does not exists?
 
     def setValue(self, key, value):
-        '''
+        """
         Set a session key value
-        '''
+        """
         try:
             self._session['REST'][key] = value
             self._session.accessed = True
@@ -249,21 +249,21 @@ class Handler(object):
             logger.exception('Got an exception setting session value {} to {}'.format(key, value))
 
     def is_admin(self):
-        '''
+        """
         True if user of this REST request is administrator
-        '''
+        """
         return self.getValue('is_admin') and True or False
 
     def is_staff_member(self):
-        '''
+        """
         True if user of this REST request is member of staff
-        '''
+        """
         return self.getValue('staff_member') and True or False
 
     def getUser(self):
-        '''
+        """
         If user is staff member, returns his Associated user on auth
-        '''
+        """
         logger.debug('REST : {}'.format(self._session))
         authId = self.getValue('auth')
         username = self.getValue('username')

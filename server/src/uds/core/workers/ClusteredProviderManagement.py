@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.jobs.Job import Job
@@ -112,10 +112,10 @@ class ClusterMigrationTask(DelayedTask):
 
     @staticmethod
     def checkAndUpdateState(userService, userServiceInstance, state):
-        '''
+        """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
-        '''
+        """
         try:
             if State.isFinished(state):
                 checkLater = False
@@ -140,11 +140,11 @@ class ClusterMigrationTask(DelayedTask):
 
     @staticmethod
     def checkLater(userService, userServiceInstance):
-        '''
+        """
         Inserts a task in the delayedTaskRunner so we can check the state of this migration
         @param userService: Database object for DeployedServicePublication
         @param userServiceInstance: Instance of Publication manager for the object
-        '''
+        """
         from uds.core.jobs.DelayedTaskRunner import DelayedTaskRunner
         # Do not add task if already exists one that updates this service
         if DelayedTaskRunner.runner().checkExists(MIGRATETASK_TAG + str(userService.id)):
@@ -186,6 +186,7 @@ class ClusterBalancingTask(DelayedTask):
 
     @staticmethod
     def migrate(serviceId, toNode):
+        service = None
         try:
             with transaction.atomic():
                 service = UserService.objects.select_for_update().get(pk=serviceId)
@@ -202,11 +203,11 @@ class ClusterBalancingTask(DelayedTask):
             logger.exception('Initializing migration')
             if service is not None:
                 log.doLog(service, log.ERROR, 'At migration init: {0}'.format(e), log.INTERNAL)
-            try:
-                service.setState(State.ERROR)
-                service.save()
-            except:
-                logger.exception('Setting error state at migration init')
+                try:
+                    service.setState(State.ERROR)
+                    service.save()
+                except:
+                    logger.exception('Setting error state at migration init')
 
     def run(self):
         try:
@@ -249,9 +250,9 @@ class ClusterBalancingJob(Job):
         super(ClusterBalancingJob, self).__init__(environment)
 
     def run(self):
-        '''
+        """
         Checks which clusters support "balancing" and created a parallel thread for each
-        '''
+        """
         logger.debug('Started balancing clusters task')
         for p in getClusteredProvidersFromDB():
             logger.debug('Checking balancing on {0}'.format(p.name))

@@ -25,35 +25,31 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.views.decorators.csrf import csrf_exempt
+import logging
+
 from django.core.urlresolvers import reverse
-from django.views.decorators.cache import never_cache
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.shortcuts import render
-from django.template import RequestContext
-
-from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
-from uds.models import Authenticator, DeployedService
-from uds.core.managers import userServiceManager
-from uds.core.util import html
-from uds.core.util import OsDetector
-from uds.core.util.State import State
-from uds.core.ui import theme
-
-from uds.models import TicketStore
-
-from uds.core.auths.Exceptions import InvalidUserException
-from uds.core.services.Exceptions import InvalidServiceException, ServiceNotReadyError
+from django.utils.translation import ugettext as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 
 import uds.web.errors as errors
-
-import logging
+from uds.core.auths.Exceptions import InvalidUserException
+from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
+from uds.core.managers import userServiceManager
+from uds.core.services.Exceptions import InvalidServiceException, ServiceNotReadyError
+from uds.core.ui import theme
+from uds.core.util import OsDetector
+from uds.core.util import html
+from uds.core.util.State import State
+from uds.models import Authenticator, DeployedService
+from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
@@ -63,13 +59,13 @@ __updated__ = '2017-02-14'
 
 @csrf_exempt
 def authCallback(request, authName):
-    '''
+    """
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
 
     This will invoke authCallback of the requested idAuth and, if this represents
     an authenticator that has an authCallback
-    '''
+    """
     from uds.core import auths
     try:
         authenticator = Authenticator.objects.get(name=authName)
@@ -111,12 +107,12 @@ def authCallback(request, authName):
 
 @csrf_exempt
 def authInfo(request, authName):
-    '''
+    """
     This url is provided so authenticators can provide info (such as SAML metadata)
 
     This will invoke getInfo on requested authName. The search of the authenticator is done
     by name, so it's easier to access from external sources
-    '''
+    """
     from uds.core import auths
     try:
         authenticator = Authenticator.objects.get(name=authName)
@@ -142,9 +138,9 @@ def authInfo(request, authName):
 
 @never_cache
 def ticketAuth(request, ticketId):
-    '''
+    """
     Used to authenticate an user via a ticket
-    '''
+    """
     try:
         data = TicketStore.get(ticketId, invalidate=True)
 
@@ -204,7 +200,8 @@ def ticketAuth(request, ticketId):
             else:
                 link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)
 
-            response = render(request,
+            response = render(
+                request,
                 theme.template('simpleLauncher.html'),
                 {
                     'link': link
@@ -217,7 +214,8 @@ def ticketAuth(request, ticketId):
         getUDSCookie(request, response, True)
         return response
     except ServiceNotReadyError as e:
-        return render(request,
+        return render(
+            request,
             theme.template('service_not_ready.html'),
             {
                 'fromLauncher': True,
@@ -226,7 +224,8 @@ def ticketAuth(request, ticketId):
         )
 
     except TicketStore.InvalidTicket:
-        return render(request,
+        return render(
+            request,
             theme.template('simpleLauncherAlreadyLaunched.html')
         )
     except Authenticator.DoesNotExist:

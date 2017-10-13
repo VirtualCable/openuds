@@ -27,44 +27,35 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
+
+import logging
 
 from django.utils.translation import ugettext as _
 
-
-from uds.models.CalendarRule import freqs, CalendarRule
-from uds.models.Util import getSqlDatetime
-
-from uds.core.util import log
+from uds.REST import RequestError
+from uds.REST.model import DetailHandler
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
-from uds.core.Environment import Environment
-from uds.REST.model import DetailHandler
-from uds.REST import NotFound, ResponseError, RequestError
-from django.db import IntegrityError
-
-import six
-import logging
-import datetime
 
 logger = logging.getLogger(__name__)
 
 
 class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
-    '''
+    """
     Detail handler for Services, whose parent is a Provider
-    '''
+    """
 
     @staticmethod
     def usageToDict(item, perm):
-        '''
+        """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)
         :param perm: permission
-        '''
+        """
         retVal = {
             'uuid': item.uuid,
             'pool_uuid': item.pool_uuid,
@@ -107,7 +98,6 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getRowStyle(self, parent):
         return {'field': 'running', 'prefix': 'row-running-'}
-
 
     def saveItem(self, parent, item):
         raise RequestError('Accounts usage cannot be edited')

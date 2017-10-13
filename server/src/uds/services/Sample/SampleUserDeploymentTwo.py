@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
@@ -38,7 +38,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class SampleUserDeploymentTwo(UserDeployment):
-    '''
+    """
     This class generates the user consumable elements of the service tree.
 
     This is almost the same as SampleUserDeploymentOne, but differs that this one
@@ -63,16 +63,16 @@ class SampleUserDeploymentTwo(UserDeployment):
     Also Remember, if you don't include this class as the deployedType of the
     SampleServiceTwo, or whenever you try to access a service of SampleServiceTwo,
     you will get an exception that says that you haven't included the deployedType.
-    '''
+    """
 
     # : Recheck every five seconds by default (for task methods)
     suggestedTime = 2
 
     def initialize(self):
-        '''
+        """
         Initialize default attributes values here. We can do whatever we like,
         but for this sample this is just right...
-        '''
+        """
         self._name = ''
         self._ip = ''
         self._mac = ''
@@ -81,7 +81,7 @@ class SampleUserDeploymentTwo(UserDeployment):
 
     # Serializable needed methods
     def marshal(self):
-        '''
+        """
         Marshal own data, in this sample we will marshal internal needed
         attributes.
 
@@ -93,15 +93,15 @@ class SampleUserDeploymentTwo(UserDeployment):
         :note: It's a good idea when providing marshalers, to store a 'version'
                beside the values, so we can, at a later stage, treat with old
                data for current modules.
-        '''
+        """
         data = '\t'.join(['v1', self._name, self._ip, self._mac, self._error,
                           str(self._count)])
         return data.encode('zip')
 
     def unmarshal(self, str_):
-        '''
+        """
         We unmarshal the content.
-        '''
+        """
         data = str_.decode('zip').split('\t')
         # Data Version check
         # If we include some new data at some point in a future, we can
@@ -111,7 +111,7 @@ class SampleUserDeploymentTwo(UserDeployment):
             self._count = int(count)
 
     def getName(self):
-        '''
+        """
         We override this to return a name to display. Default implementation
         (in base class), returns getUniqueIde() value
         This name will help user to identify elements, and is only used
@@ -130,7 +130,7 @@ class SampleUserDeploymentTwo(UserDeployment):
         Every time get method of a generator gets called, the generator creates
         a new unique name, so we keep the first generated name cached and don't
         generate more names. (Generator are simple utility classes)
-        '''
+        """
         if self._name == '':
             self._name = self.nameGenerator().get(self.publication().getBaseName(),
                                                    3)
@@ -138,7 +138,7 @@ class SampleUserDeploymentTwo(UserDeployment):
         return self._name
 
     def setIp(self, ip):
-        '''
+        """
         In our case, there is no OS manager associated with this, so this method
         will never get called, but we put here as sample.
 
@@ -148,11 +148,11 @@ class SampleUserDeploymentTwo(UserDeployment):
         IP services, so will probable needed in every service that you will create.
         :note: This IP is the IP of the "consumed service", so the transport can
                access it.
-        '''
+        """
         self._ip = ip
 
     def getUniqueId(self):
-        '''
+        """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
         of 'mac' generator use, and probably will get used something like this
@@ -174,13 +174,13 @@ class SampleUserDeploymentTwo(UserDeployment):
         example, be used by os managers to identify this element).
 
         :note: Normally, getting out of macs in the mac pool is a bad thing... :-)
-        '''
+        """
         if self._mac == '':
             self._mac = self.macGenerator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
         return self._mac
 
     def getIp(self):
-        '''
+        """
         We need to implement this method, so we can return the IP for transports
         use. If no IP is known for this service, this must return None
 
@@ -196,13 +196,13 @@ class SampleUserDeploymentTwo(UserDeployment):
                Every time the core needs to provide the service to the user, or
                show the IP to the administrator, this method will get called
 
-        '''
+        """
         if self._ip == '':
             return '192.168.0.34'  # Sample IP for testing purposes only
         return self._ip
 
     def setReady(self):
-        '''
+        """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
 
@@ -229,13 +229,13 @@ class SampleUserDeploymentTwo(UserDeployment):
         has finished.
 
         I hope this sample is enough to explain the use of this method..
-        '''
+        """
 
         # In our case, the service is always ready
         return State.FINISHED
 
     def deployForUser(self, user):
-        '''
+        """
         Deploys an service instance for an user.
 
         This is a task method. As that, the excepted return values are
@@ -259,7 +259,7 @@ class SampleUserDeploymentTwo(UserDeployment):
         store an error string so administration interface can show it.
 
         We do not use user for anything, as in most cases will be.
-        '''
+        """
         import random
 
         self._count = 0
@@ -274,7 +274,7 @@ class SampleUserDeploymentTwo(UserDeployment):
         return State.RUNNING
 
     def deployForCache(self, cacheLevel):
-        '''
+        """
         Deploys a user deployment as cache.
 
         This is a task method. As that, the expected return values are
@@ -288,12 +288,12 @@ class SampleUserDeploymentTwo(UserDeployment):
         :note: deployForCache is invoked whenever a new cache element is needed
                for an specific user deployment. It will also indicate for what
                cache level (L1, L2) is the deployment
-        '''
+        """
         self._count = 0
         return State.RUNNING
 
     def moveToCache(self, newLevel):
-        '''
+        """
         This method is invoked whenever the core needs to move from the current
         cache level to a new cache level an user deployment.
 
@@ -319,11 +319,11 @@ class SampleUserDeploymentTwo(UserDeployment):
 
         In a real scenario, we will, for example, suspend or resume virtual machine
         and, return State.RUNNING and at checkState check if this task is completed.
-        '''
+        """
         pass
 
     def checkState(self):
-        '''
+        """
         Our deployForUser method will initiate the consumable service deployment,
         but will not finish it.
 
@@ -345,7 +345,7 @@ class SampleUserDeploymentTwo(UserDeployment):
         destroying, and cancel will simply invoke destroy. Cache deployment is
         exactly as user deployment, except that the core will not assign it to
         anyone, and cache moving operations is
-        '''
+        """
         import random
 
         self._count += 1
@@ -364,7 +364,7 @@ class SampleUserDeploymentTwo(UserDeployment):
         return State.RUNNING
 
     def finish(self):
-        '''
+        """
         Invoked when the core notices that the deployment of a service has finished.
         (No matter whether it is for cache or for an user)
 
@@ -373,12 +373,12 @@ class SampleUserDeploymentTwo(UserDeployment):
         :note: You can also make these operations at checkState, this is really
         not needed, but can be provided (default implementation of base class does
         nothing)
-        '''
+        """
         # We set count to 0, not needed but for sample purposes
         self._count = 0
 
     def assignToUser(self, user):
-        '''
+        """
         This method is invoked whenever a cache item gets assigned to an user.
         This is not a task method right now, simply a notification. This means
         that L1 cache items must be directly usable (except for the readyness part)
@@ -393,11 +393,11 @@ class SampleUserDeploymentTwo(UserDeployment):
         here you can do whatever you need.
 
         user is a Database user object.
-        '''
+        """
         logger.debug('Assigned to user {0}'.format(user))
 
     def userLoggedIn(self, user):
-        '''
+        """
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
 
@@ -409,12 +409,12 @@ class SampleUserDeploymentTwo(UserDeployment):
         os manager)
 
         The user provided is just an string, that is provided by actors.
-        '''
+        """
         # We store the value at storage, but never get used, just an example
         self.storage.saveData('user', user)
 
     def userLoggedOut(self, user):
-        '''
+        """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.
 
@@ -426,12 +426,12 @@ class SampleUserDeploymentTwo(UserDeployment):
         os manager)
 
         The user provided is just an string, that is provided by actor.
-        '''
+        """
         # We do nothing more that remove the user
         self.storage.remove('user')
 
     def reasonOfError(self):
-        '''
+        """
         Returns the reason of the error.
 
         Remember that the class is responsible of returning this whenever asked
@@ -442,22 +442,22 @@ class SampleUserDeploymentTwo(UserDeployment):
                user language whenever it is possible. (This one will get invoked
                directly from admin interface and, as so, will have translation
                environment correctly set up.
-        '''
+        """
         return self._error
 
     def destroy(self):
-        '''
+        """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
 
         Invoked for destroying a deployed service
         Do whatever needed here, as deleting associated data if needed (i.e. a copy of the machine, snapshots, etc...)
         @return: State.FINISHED if no more checks/steps for deployment are needed, State.RUNNING if more steps are needed (steps checked using checkState)
-        '''
+        """
         return State.FINISHED
 
     def cancel(self):
-        '''
+        """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
 
@@ -465,5 +465,5 @@ class SampleUserDeploymentTwo(UserDeployment):
         of the deployed service (indirectly).
         When administrator requests it, the cancel is "delayed" and not
         invoked directly.
-        '''
+        """
         return State.FINISHED

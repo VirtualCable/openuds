@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 import re
@@ -91,9 +91,9 @@ browserRules = {
 
 
 def getOsFromUA(ua):
-    '''
+    """
     Basic OS Client detector (very basic indeed :-))
-    '''
+    """
     if ua is None:
         ua = Unknown
 
@@ -110,6 +110,7 @@ def getOsFromUA(ua):
 
     match = None
 
+    ruleKey, ruleValue = None, None
     for ruleKey, ruleValue in six.iteritems(browserRules):
         must, mustNot = ruleValue
 

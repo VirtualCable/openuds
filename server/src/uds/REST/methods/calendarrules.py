@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -54,17 +54,17 @@ logger = logging.getLogger(__name__)
 
 
 class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
-    '''
+    """
     Detail handler for Services, whose parent is a Provider
-    '''
+    """
 
     @staticmethod
     def ruleToDict(item, perm):
-        '''
+        """
         Convert a calRule db item to a dict for a rest response
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
-        '''
+        """
         retVal = {
             'id': item.uuid,
             'name': item.name,
@@ -115,7 +115,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
 
         # Convert timestamps to datetimes
         fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
-        if fields['end'] != None:
+        if fields['end'] is not None:
             fields['end'] = datetime.datetime.fromtimestamp(fields['end'])
 
         calRule = None

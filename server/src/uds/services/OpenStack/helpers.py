@@ -5,9 +5,9 @@
 # All rights reserved.
 #
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext as _
 import logging
@@ -16,9 +16,9 @@ from uds.core.ui import gui
 logger = logging.getLogger(__name__)
 
 def getResources(parameters):
-    '''
+    """
     This helper is designed as a callback for Project Selector
-    '''
+    """
     from .Provider import Provider
     from uds.core.Environment import Environment
     logger.debug('Parameters received by getResources Helper: {0}'.format(parameters))
@@ -45,9 +45,9 @@ def getResources(parameters):
     return data
 
 def getVolumes(parameters):
-    '''
+    """
     This helper is designed as a callback for Zone Selector
-    '''
+    """
     from .Provider import Provider
     from uds.core.Environment import Environment
     logger.debug('Parameters received by getVolumes Helper: {0}'.format(parameters))

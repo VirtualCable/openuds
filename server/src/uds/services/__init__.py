@@ -27,7 +27,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Service modules for uds are contained inside this package.
 To create a new service module, you will need to follow this steps:
     1.- Create the service module, probably based on an existing one
@@ -39,7 +39,7 @@ To create a new service module, you will need to follow this steps:
 The registration of modules is done locating subclases of :py:class:`uds.core.auths.Authentication`
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 # pylint: disable=maybe-no-member
 import logging
@@ -48,10 +48,10 @@ logger = logging.getLogger(__name__)
 
 
 def __init__():
-    '''
+    """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
-    '''
+    """
     import os.path
     import pkgutil
     import sys

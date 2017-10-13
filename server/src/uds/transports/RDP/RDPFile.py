@@ -28,12 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 Created on Jul 29, 2011
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
@@ -93,10 +93,10 @@ class RDPFile(object):
 
     @property
     def as_new_xfreerdp_params(self):
-        '''
+        """
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
-        '''
+        """
         params = ['/t:UDS-Connection', '/cert-ignore']  # , '/sec:rdp']
 
         if self.enableClipboard:
@@ -158,10 +158,10 @@ class RDPFile(object):
 
     @property
     def as_rdesktop_params(self):
-        '''
+        """
         Parameters for rdestop with self rdp description
         Note that server is not added
-        '''
+        """
 
         params = ['-TUDS Connection', '-P']
 

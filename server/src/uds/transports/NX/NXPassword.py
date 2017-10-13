@@ -28,12 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 Created on Apr 20, 2015
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 
-'''
+"""
 from __future__ import unicode_literals
 
 import six

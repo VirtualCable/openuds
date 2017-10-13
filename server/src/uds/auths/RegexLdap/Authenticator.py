@@ -28,10 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 # from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -125,9 +125,9 @@ class RegexLdap(auths.Authenticator):
         self._connection = None
 
     def __validateField(self, field, fieldLabel):
-        '''
+        """
         Validates the multi line fields refering to attributes
-        '''
+        """
         for line in field.splitlines():
             if line.find('=') != -1:
                 _, pattern = line.split('=')[0:2]
@@ -254,7 +254,7 @@ class RegexLdap(auths.Authenticator):
             except ldap.LDAPError as e:
                 str_ = _('Ldap connection error: ')
                 if isinstance(e.message, dict):
-                    str_ += ', '.join(e.message.get('info', ''), e.message.get('desc'))
+                    str_ += ', '.join((e.message.get('info', ''), e.message.get('desc')))
                 else:
                     str_ += six.text_type(e)
                 raise Exception(str_)
@@ -326,7 +326,7 @@ class RegexLdap(auths.Authenticator):
         # return ' '.join([ (type(usr.get(id_, '')) is list and ' '.join(( str(k) for k in usr.get(id_, ''))) or str(usr.get(id_, ''))) for id_ in self._userNameAttr.split(',') ]).strip()
 
     def authenticate(self, username, credentials, groupsManager):
-        '''
+        """
         Must authenticate the user.
         We can have to different situations here:
            1.- The authenticator is external source, what means that users may be unknown to system before callig this
@@ -334,7 +334,7 @@ class RegexLdap(auths.Authenticator):
         We receive the username, the credentials used (normally password, but can be a public key or something related to pk) and a group manager.
         The group manager is responsible for letting know the authenticator which groups we currently has active.
         @see: uds.core.auths.GroupsManager
-        '''
+        """
         try:
             # Locate the user at LDAP
             usr = self.__getUser(username)
@@ -353,14 +353,14 @@ class RegexLdap(auths.Authenticator):
             return False
 
     def createUser(self, usrData):
-        '''
+        """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         External sources already has the user  cause they are managed externally, so, it can at most test if the users exists on external source
         before accepting it.
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
         @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, real_name, comments, state & password
         @return:  Raises an exception (AuthException) it things didn't went fine
-        '''
+        """
         res = self.__getUser(usrData['name'])
         if res is None:
             raise AuthenticatorException(_('Username not found'))
@@ -368,40 +368,40 @@ class RegexLdap(auths.Authenticator):
         usrData['real_name'] = self.__getUserRealName(res)
 
     def getRealName(self, username):
-        '''
+        """
         Tries to get the real name of an user
-        '''
+        """
         res = self.__getUser(username)
         if res is None:
             return username
         return self.__getUserRealName(res)
 
     def modifyUser(self, usrData):
-        '''
+        """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         Modify user has no reason on external sources, so it will never be used (probably)
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
         @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
         @return:  Raises an exception it things doesn't go fine
-        '''
+        """
         return self.createUser(usrData)
 
     def createGroup(self, groupData):
-        '''
+        """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         External sources already has its own groups and, at most, it can check if it exists on external source before accepting it
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
         @params groupData: a dict that has, at least, name, comments and active
         @return:  Raises an exception it things doesn't go fine
-        '''
+        """
         pass
 
     def getGroups(self, username, groupsManager):
-        '''
+        """
         Looks for the real groups to which the specified user belongs
         Updates groups manager with valid groups
         Remember to override it in derived authentication if needed (external auths will need this, for internal authenticators this is never used)
-        '''
+        """
         user = self.__getUser(username)
         if user is None:
             raise AuthenticatorException(_('Username not found'))

@@ -353,7 +353,7 @@ class XenServer(object):
         return self.VM.resume(vmId, False, False)
 
     def cloneVM(self, vmId, targetName, targetSR=None):
-        '''
+        """
         If targetSR is NONE:
             Clones the specified VM, making a new VM.
             Clone automatically exploits the capabilities of the underlying storage repository
@@ -364,7 +364,7 @@ class XenServer(object):
             Instead, copy guarantees that the disk images of the newly created VM will be
             'full disks' - i.e. not part of a CoW chain.
         This function can only be called when the VM is in the Halted State.
-        '''
+        """
         logger.debug('Cloning VM {0} to {1} on sr {2}'.format(vmId, targetName, targetSR))
         operations = self.VM.get_allowed_operations(vmId)
         logger.debug('Allowed operations: {0}'.format(operations))
@@ -404,13 +404,13 @@ class XenServer(object):
             self.VDI.destroy(vdi)
 
     def configureVM(self, vmId, **kwargs):
-        '''
+        """
         Optional args:
             mac = { 'network': netId, 'mac': mac }
             memory = MEM in MB, minimal is 128
 
         Mac address should be in the range 02:xx:xx:xx:xx (recommended, but not a "have to")
-        '''
+        """
         mac = kwargs.get('mac', None)
         memory = kwargs.get('memory', None)
 
@@ -484,7 +484,7 @@ class XenServer(object):
         self.removeVM(templateId)
 
     def cloneTemplate(self, templateId, targetName):
-        '''
+        """
         After cloning template, we must deploy the VM so it's a full usable VM
-        '''
+        """
         return self.cloneVM(templateId, targetName)

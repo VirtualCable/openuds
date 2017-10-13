@@ -27,29 +27,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
+import datetime
+import logging
+
+import six
 from django.utils.translation import ugettext as _
 
+from uds.REST import Handler
+from uds.REST import RequestError
+from uds.core.managers import cryptoManager
+from uds.core.osmanagers import OSManager
 from uds.core.util import Config
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
-from uds.core.util import log
-from uds.core.managers import cryptoManager
-from uds.core.osmanagers import OSManager
 from uds.models import TicketStore
-from uds.REST import Handler
-from uds.REST import RequestError
 from uds.models import UserService
-
-
-import datetime
-import six
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -70,21 +67,22 @@ ERR_OSMANAGER_ERROR = 4
 OWNER = 'ACTOR'
 SECURE_OWNER = 'SACTOR'
 
+
 # Enclosed methods under /actor path
 class Actor(Handler):
-    '''
+    """
     Processes actor requests
-    '''
+    """
     authenticated = False  # Actor requests are not authenticated
 
     @staticmethod
     def result(result=None, error=None):
-        '''
+        """
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
         :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
         :return: A dictionary, suitable for response to Caller
-        '''
+        """
         result = result if result is not None else ''
         res = {'result': result, 'date': datetime.datetime.now()}
         if error is not None:
@@ -92,15 +90,15 @@ class Actor(Handler):
         return res
 
     def test(self):
-        '''
+        """
         Executes and returns the test
-        '''
+        """
         return Actor.result(_('Correct'))
 
     def validateRequestKey(self):
-        '''
+        """
         Validates a request key (in "key" parameter)
-        '''
+        """
         # Ensures that key is first parameter
         # Here, path will be .../actor/ACTION/KEY (probably /rest/actor/KEY/...)
         logger.debug('{} == {}'.format(self._params.get('key'), actorKey.get(True)))
@@ -109,9 +107,9 @@ class Actor(Handler):
         return None
 
     def getUserServiceByIds(self):
-        '''
+        """
         This will get the client from the IDs passed from parameters
-        '''
+        """
         logger.debug('Getting User services from ids: {}'.format(self._params.get('id')))
 
         try:
@@ -126,10 +124,10 @@ class Actor(Handler):
         return services[0]
 
     def getTicket(self):
-        '''
+        """
         Processes get requests in order to obtain a ticket content
         GET /rest/actor/ticket/[ticketId]?key=masterKey&[secure=true|1|false|0]
-        '''
+        """
         logger.debug("Ticket args for GET: {0}".format(self._args))
 
         secure = self._params.get('secure') in ('1', 'true')
@@ -143,9 +141,9 @@ class Actor(Handler):
             return Actor.result({})
 
     def get(self):
-        '''
+        """
         Processes get requests
-        '''
+        """
         logger.debug("Actor args for GET: {0}".format(self._args))
 
         if len(self._args) < 1:
@@ -190,9 +188,9 @@ class Actor(Handler):
 
     # Must be invoked as '/rest/actor/UUID/[message], with message data in post body
     def post(self):
-        '''
+        """
         Processes post requests
-        '''
+        """
         if len(self._args) != 2:
             raise RequestError('Invalid request')
 

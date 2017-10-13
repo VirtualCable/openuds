@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext_lazy as _
 from uds.core import services
@@ -71,12 +71,12 @@ class IPServerService(services.Service):
 
 
     def initialize(self, values):
-        '''
+        """
         We check here form values to see if they are valid.
 
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
-        '''
+        """
         if values is not None:
             if self.remoteHost.value == '':
                 raise services.Service.ValidationException('No remote host found')

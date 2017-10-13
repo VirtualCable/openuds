@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -50,9 +50,9 @@ PUBTAG = 'pm-'
 
 
 class PublicationOldMachinesCleaner(DelayedTask):
-    '''
+    """
     This delayed task is for removing a pending "removable" publication
-    '''
+    """
     def __init__(self, publicationId):
         super(PublicationOldMachinesCleaner, self).__init__()
         self._id = publicationId
@@ -74,15 +74,16 @@ class PublicationOldMachinesCleaner(DelayedTask):
 
 
 class PublicationLauncher(DelayedTask):
-    '''
+    """
     This delayed task if for launching a new publication
-    '''
+    """
     def __init__(self, publish):
         super(PublicationLauncher, self).__init__()
         self._publishId = publish.id
 
     def run(self):
         logger.debug('Publishing')
+        servicePoolPub = None
         try:
             with transaction.atomic():
                 servicePoolPub = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
@@ -99,15 +100,18 @@ class PublicationLauncher(DelayedTask):
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
         except Exception:
             logger.exception("Exception launching publication")
-            servicePoolPub.state = State.ERROR
-            servicePoolPub.save()
+            try:
+                servicePoolPub.state = State.ERROR
+                servicePoolPub.save()
+            except Exception:
+                logger.error('Error saving ERROR state for pool {}'.format(servicePoolPub))
 
 
 # Delayed Task that checks if a publication is done
 class PublicationFinishChecker(DelayedTask):
-    '''
+    """
     This delayed task is responsible of checking if a publication is finished
-    '''
+    """
     def __init__(self, servicePoolPub):
         super(PublicationFinishChecker, self).__init__()
         self._publishId = servicePoolPub.id
@@ -115,10 +119,10 @@ class PublicationFinishChecker(DelayedTask):
 
     @staticmethod
     def checkAndUpdateState(servicePoolPub, pi, state):
-        '''
+        """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
-        '''
+        """
         try:
             prevState = servicePoolPub.state
             checkLater = False
@@ -157,11 +161,11 @@ class PublicationFinishChecker(DelayedTask):
 
     @staticmethod
     def checkLater(servicePoolPub, pi):
-        '''
+        """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
         @param dps: Database object for DeployedServicePublication
         @param pi: Instance of Publication manager for the object
-        '''
+        """
         DelayedTaskRunner.runner().insert(PublicationFinishChecker(servicePoolPub), pi.suggestedTime, PUBTAG + str(servicePoolPub.id))
 
     def run(self):
@@ -180,9 +184,9 @@ class PublicationFinishChecker(DelayedTask):
 
 
 class PublicationManager(object):
-    '''
+    """
     Manager responsible of controlling publications
-    '''
+    """
     _manager = None
 
     def __init__(self):
@@ -190,27 +194,28 @@ class PublicationManager(object):
 
     @staticmethod
     def manager():
-        '''
+        """
         Returns the singleton to this manager
-        '''
+        """
         if PublicationManager._manager is None:
             PublicationManager._manager = PublicationManager()
         return PublicationManager._manager
 
     def publish(self, servicePool, changeLog=None):  # pylint: disable=no-self-use
-        '''
+        """
         Initiates the publication of a service pool, or raises an exception if this cannot be done
         :param servicePool: Service pool object (db object)
-        '''
+        :param changeLog: if not Noe, store change log string on "change log" table
+        """
         if servicePool.publications.filter(state__in=State.PUBLISH_STATES).count() > 0:
             raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))
 
         if servicePool.isInMaintenance():
             raise PublishException(_('Service is in maintenance mode and new publications are not allowed'))
 
+        dsp = None
         try:
             now = getSqlDatetime()
-            dsp = None
             dsp = servicePool.publications.create(state=State.LAUNCHING, state_date=now, publish_date=now, revision=servicePool.current_pub_revision)
             if changeLog:
                 servicePool.changelog.create(revision=servicePool.current_pub_revision, log=changeLog, stamp=now)
@@ -225,11 +230,11 @@ class PublicationManager(object):
             raise PublishException(str(e))
 
     def cancel(self, servicePoolPub):  # pylint: disable=no-self-use
-        '''
+        """
         Invoked to cancel a publication.
         Double invokation (i.e. invokation over a "cancelling" item) will lead to a "forced" cancellation (unclean)
         :param servicePoolPub: Service pool publication (db object for a publication)
-        '''
+        """
         servicePoolPub = DeployedServicePublication.objects.get(pk=servicePoolPub.id)
         if servicePoolPub.state not in State.PUBLISH_STATES:
             if servicePoolPub.state == State.CANCELING:  # Double cancel
@@ -256,10 +261,10 @@ class PublicationManager(object):
             raise PublishException(str(e))
 
     def unpublish(self, servicePoolPub):  # pylint: disable=no-self-use
-        '''
+        """
         Unpublishes an active (usable) or removable publication
         :param servicePoolPub: Publication to unpublish
-        '''
+        """
         if State.isUsable(servicePoolPub.state) is False and State.isRemovable(servicePoolPub.state) is False:
             raise PublishException(_('Can\'t unpublish non usable publication')
                                    )

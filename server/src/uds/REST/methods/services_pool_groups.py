@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -48,9 +48,9 @@ logger = logging.getLogger(__name__)
 
 
 class ServicesPoolGroups(ModelHandler):
-    '''
+    """
     Handles the gallery REST interface
-    '''
+    """
     # needs_admin = True
 
     path = 'gallery'

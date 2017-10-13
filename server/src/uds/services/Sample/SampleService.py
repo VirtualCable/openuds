@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import Service
@@ -44,7 +44,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ServiceOne(Service):
-    '''
+    """
     Basic service, the first part (variables) include the description of the service.
 
     Remember to fill all variables needed, but at least you must define:
@@ -64,7 +64,7 @@ class ServiceOne(Service):
     and how this is done. Look at description of class variables for more
     information.
 
-    '''
+    """
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -143,12 +143,12 @@ class ServiceOne(Service):
              )
 
     def initialize(self, values):
-        '''
+        """
         We check here form values to see if they are valid.
 
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
-        '''
+        """
 
         # We don't need to check anything, bat because this is a sample, we do
         # As in provider, we receive values only at new Service creation,
@@ -169,30 +169,30 @@ class ServiceOne(Service):
     # for example, services derived from this provider
 
     def getColour(self):
-        '''
+        """
         Simply returns colour, for deployed user services.
 
         Remember that choiceField.value returns the id part of the ChoiceItem
-        '''
+        """
         return self.colour.value
 
     def getPassw(self):
-        '''
+        """
         Simply returns passwd, for deloyed user services
-        '''
+        """
         return self.passw.value
 
     def getBaseName(self):
-        '''
-        '''
+        """
+        """
         return self.baseName.value
 
 
 
 class ServiceTwo(Service):
-    '''
+    """
     Just a second service, no comments here (almost same that ServiceOne
-    '''
+    """
     typeName = _('Sample Service Two')
     typeType = 'SampleService2'
     typeDescription = _('Sample (and dummy) service ONE+ONE')
@@ -220,17 +220,17 @@ class ServiceTwo(Service):
     names = gui.EditableList(label=_('List of names'))
 
     def __init__(self, environment, parent, values=None):
-        '''
+        """
         We here can get a HUGE list from client.
         Right now, this is treated same as other fields, in a near
         future we will se how to handle this better
-        '''
+        """
         super(ServiceTwo, self).__init__(environment, parent, values)
 
         # No checks here
 
     def getNames(self):
-        '''
+        """
         For using at deployed services, really nothing
-        '''
+        """
         return self.names.value

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 import logging
 import six
@@ -49,8 +49,9 @@ def getTemplates(api, force=False):
         if t[1][:4] != 'UDSP':  # 0 = id, 1 = name
             yield t
 
+
 def create(api, fromTemplateId, name, toDataStore):
-    '''
+    """
     Publish the machine (makes a template from it so we can create COWs) and returns the template id of
     the creating machine
 
@@ -63,7 +64,8 @@ def create(api, fromTemplateId, name, toDataStore):
 
     Note:
         Maybe we need to also clone the hard disk?
-    '''
+    """
+    templateId = None
     try:
         # First, we clone the themplate itself
         # templateId = api.call('template.clone', int(fromTemplateId), name)
@@ -126,12 +128,13 @@ def create(api, fromTemplateId, name, toDataStore):
             pass
         raise e
 
+
 def remove(api, templateId):
-    '''
+    """
     Removes a template from ovirt server
 
     Returns nothing, and raises an Exception if it fails
-    '''
+    """
     try:
         # First, remove Images (wont be possible if there is any images already in use, but will try)
         # Now copy cloned images if possible
@@ -167,7 +170,7 @@ def remove(api, templateId):
         logger.error('Removing template on OpenNebula: {}'.format(e))
 
 def deployFrom(api, templateId, name):
-    '''
+    """
     Deploys a virtual machine on selected cluster from selected template
 
     Args:
@@ -177,14 +180,14 @@ def deployFrom(api, templateId, name):
 
     Returns:
         Id of the machine being created form template
-    '''
+    """
     vmId = api.instantiateTemplate(templateId, name, False, '', False)  # api.call('template.instantiate', int(templateId), name, False, '')
     return six.text_type(vmId)
 
 def checkPublished(api, templateId):
-    '''
+    """
     checks if the template is fully published (images are ready...)
-    '''
+    """
     try:
         imgs = dict(((i[1], i[0]) for i in api.enumImages()))
 

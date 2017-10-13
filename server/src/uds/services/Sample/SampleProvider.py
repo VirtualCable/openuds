@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.services import ServiceProvider
@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 
 class Provider(ServiceProvider):
-    '''
+    """
     This class represents the sample services provider
 
     In this class we provide:
@@ -59,7 +59,7 @@ class Provider(ServiceProvider):
     For this class to get visible at administration client as a provider type,
     we MUST register it at package __init__.
 
-    '''
+    """
     # : What kind of services we offer, this are classes inherited from Service
     offers = [ServiceOne, ServiceTwo]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -122,14 +122,14 @@ class Provider(ServiceProvider):
 
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values=None):
-        '''
+        """
         We will use the "autosave" feature for form fields, that is more than
         enought for most providers. (We simply need to store data provided by user
         and, maybe, initialize some kind of connection with this values).
 
         Normally provider values are rally used at sevice level, cause we never
         instantiate nothing except a service from a provider.
-        '''
+        """
 
         # If you say meth is alive, you are wrong!!! (i guess..)
         # values are only passed from administration client. Internals
@@ -144,7 +144,7 @@ class Provider(ServiceProvider):
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Create your test method here so the admin can push the "check" button
         and this gets executed.
         Args:
@@ -163,7 +163,7 @@ class Provider(ServiceProvider):
         Note also that this is an static method, that will be invoked using
         the admin user provided data via administration client, and a temporary
         environment that will be erased after invoking this method
-        '''
+        """
         try:
             # We instantiate the provider, but this may fail...
             instance = Provider(env, data)
@@ -183,14 +183,14 @@ class Provider(ServiceProvider):
     # From now onwards, we implement our own methods, that will be used by,
     # for example, services derived from this provider
     def host(self):
-        '''
+        """
         Sample method, in fact in this we just return
         the value of host field, that is an string
-        '''
+        """
         return self.remoteHost.value
 
     def methYears(self):
-        '''
+        """
         Another sample return, it will in fact return the Methuselah years
-        '''
+        """
         return self.methAge.value()

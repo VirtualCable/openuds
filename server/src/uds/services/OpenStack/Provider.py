@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -55,7 +55,7 @@ INTERFACE_VALUES = [
 ]
 
 class Provider(ServiceProvider):
-    '''
+    """
     This class represents the sample services provider
 
     In this class we provide:
@@ -70,7 +70,7 @@ class Provider(ServiceProvider):
     For this class to get visible at administration client as a provider type,
     we MUST register it at package __init__.
 
-    '''
+    """
     # : What kind of services we offer, this are classes inherited from Service
     offers = [LiveService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -118,9 +118,9 @@ class Provider(ServiceProvider):
     _api = None
 
     def initialize(self, values=None):
-        '''
+        """
         We will use the "autosave" feature for form fields
-        '''
+        """
         # Just reset _api connection variable
 
         if values is not None:
@@ -138,13 +138,13 @@ class Provider(ServiceProvider):
         return openStack.sanitizeName(name)
 
     def testConnection(self):
-        '''
+        """
         Test that conection to OpenStack server is fine
 
         Returns
 
             True if all went fine, false if id didn't
-        '''
+        """
 
         try:
             if self.api().testConnection() is False:
@@ -156,7 +156,7 @@ class Provider(ServiceProvider):
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test ovirt Connectivity
 
         Args:
@@ -170,5 +170,5 @@ class Provider(ServiceProvider):
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
 
-        '''
+        """
         return Provider(env, data).testConnection()

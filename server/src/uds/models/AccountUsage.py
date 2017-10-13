@@ -25,13 +25,11 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
-
-__updated__ = '2017-01-31'
 
 from django.db import models
 
@@ -45,13 +43,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2017-01-31'
+
 
 class AccountUsage(UUIDModel):
-    '''
+    """
     AccountUsage storing on DB model
     This is intended for small images (i will limit them to 128x128), so storing at db is fine
 
-    '''
+    """
     user_name = models.CharField(max_length=128, db_index=True, default='')
     user_uuid = models.CharField(max_length=50, db_index=True, default='')
     pool_name = models.CharField(max_length=128, db_index=True, default='')
@@ -63,9 +63,9 @@ class AccountUsage(UUIDModel):
     account = models.ForeignKey(Account, related_name='usages')
 
     class Meta:
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds_acc_usage'
         app_label = 'uds'
 
@@ -96,7 +96,6 @@ class AccountUsage(UUIDModel):
     @property
     def elapsed_timemark(self):
         return secondsToString(self.elapsed_seconds_timemark)
-
 
     def __unicode__(self):
         return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(self.id, self.pool_name, self.user_name, self.start, self.end)

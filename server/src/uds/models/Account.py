@@ -25,13 +25,11 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
-
-__updated__ = '2017-01-30'
 
 from django.db import models
 
@@ -44,11 +42,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2017-01-30'
+
 
 class Account(UUIDModel, TaggingMixin):
-    '''
+    """
     Account storing on DB model
-    '''
+    """
     name = models.CharField(max_length=128, unique=False, db_index=True)
     time_mark = models.DateTimeField(default=NEVER)
     comments = models.CharField(max_length=256)
@@ -83,9 +83,9 @@ class Account(UUIDModel, TaggingMixin):
         tmp.save()
 
     class Meta:
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds_accounts'
         app_label = 'uds'
 

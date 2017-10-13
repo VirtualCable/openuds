@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 UDS authentication related interfaces and classes
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.auths.BaseAuthenticator import Authenticator
@@ -44,8 +44,8 @@ __updated__ = '2014-11-11'
 
 
 def factory():
-    '''
+    """
     Returns factory for register/access to authenticators
-    '''
+    """
     from uds.core.auths.AuthsFactory import AuthsFactory
     return AuthsFactory.factory()

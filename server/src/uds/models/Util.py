@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -50,18 +50,18 @@ NEVER_UNIX = int(mktime(NEVER.timetuple()))
 
 
 class UnsavedForeignKey(models.ForeignKey):
-    '''
+    """
     From 1.8 of django, we need to point to "saved" objects.
     If dont, will raise an InvalidValue exception.
 
     We need to trick in some cases, because for example, root user is not in DB
-    '''
+    """
     # Allows pointing to an unsaved object
     allow_unsaved_instance_assignment = True
 
 
 def getSqlDatetime(unix=False):
-    '''
+    """
     Returns the current date/time of the database server.
 
     We use this time as method of keeping all operations betwen different servers in sync.
@@ -69,7 +69,7 @@ def getSqlDatetime(unix=False):
     We support get database datetime for:
       * mysql
       * sqlite
-    '''
+    """
 
     if connection.vendor == 'mysql':
         cursor = connection.cursor()
@@ -85,10 +85,10 @@ def getSqlDatetime(unix=False):
 
 
 def optimizeTable(dbTable):
-    '''
+    """
     Executes table optimization
     Supported only on mysql right now
-    '''
+    """
     cursor = connection.cursor()
 
     if connection.vendor == 'mysql':

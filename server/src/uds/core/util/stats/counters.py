@@ -27,9 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.models import NEVER
@@ -55,7 +55,7 @@ __typeTitles = None
 
 
 def addCounter(obj, counterType, counterValue, stamp=None):
-    '''
+    """
     Adds a counter stat to specified object
 
     Although any counter type can be added to any object, there is a relation that must be observed
@@ -63,7 +63,7 @@ def addCounter(obj, counterType, counterValue, stamp=None):
 
 
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
-    '''
+    """
     if type(obj) not in __caWrite.get(counterType, ()):
         logger.error('Type {0} does not accepts counter of type {1}'.format(type(obj), counterValue))
         return False
@@ -72,7 +72,7 @@ def addCounter(obj, counterType, counterValue, stamp=None):
 
 
 def getCounters(obj, counterType, **kwargs):
-    '''
+    """
     Get counters
 
     Args:
@@ -86,7 +86,7 @@ def getCounters(obj, counterType, **kwargs):
 
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
-    '''
+    """
 
     since = kwargs.get('since', NEVER)
     to = kwargs.get('to', datetime.datetime.now())
@@ -121,11 +121,11 @@ def getCounterTitle(counterType):
 
 # Data initialization
 def _initializeData():
-    '''
+    """
     Initializes dictionaries.
 
     Hides data from global var space
-    '''
+    """
     from uds.models import Provider, Service, DeployedService
 
     global __caWrite

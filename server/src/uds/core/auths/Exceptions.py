@@ -27,43 +27,43 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 __updated__ = '2014-02-19'
 
 
 class AuthenticatorException(Exception):
-    '''
+    """
     Generic authentication exception
-    '''
+    """
     pass
 
 
 class InvalidUserException(AuthenticatorException):
-    '''
+    """
     Invalid user specified. The user cant access the requested service
-    '''
+    """
     pass
 
 
 class InvalidAuthenticatorException(AuthenticatorException):
-    '''
+    """
     Invalida authenticator has been specified
-    '''
+    """
     pass
 
 
 class Redirect(Exception):
-    '''
+    """
     This exception indicates that a redirect is required.
     Used in authUrlCallback to indicate that redirect is needed
-    '''
+    """
 
 
 class Logout(Exception):
-    '''
+    """
     This exceptions redirects logouts an user and redirects to an url
-    '''
+    """

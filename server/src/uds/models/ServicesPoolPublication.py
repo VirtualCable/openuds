@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -61,9 +61,9 @@ class DeployedServicePublicationChangelog(models.Model):
     log = models.TextField(default='')
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         db_table = 'uds__deployed_service_pub_cl'
         app_label = 'uds'
 
@@ -73,9 +73,9 @@ class DeployedServicePublicationChangelog(models.Model):
 
 @python_2_unicode_compatible
 class DeployedServicePublication(UUIDModel):
-    '''
+    """
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
-    '''
+    """
     # pylint: disable=model-missing-unicode
     deployed_service = models.ForeignKey(DeployedService, on_delete=models.CASCADE, related_name='publications')
     publish_date = models.DateTimeField(db_index=True)
@@ -93,21 +93,21 @@ class DeployedServicePublication(UUIDModel):
     revision = models.PositiveIntegerField(default=1)
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         db_table = 'uds__deployed_service_pub'
         ordering = ('publish_date',)
         app_label = 'uds'
 
     def getEnvironment(self):
-        '''
+        """
         Returns an environment valid for the record this object represents
-        '''
+        """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
     def getInstance(self):
-        '''
+        """
         Instantiates the object this record contains.
 
         Every single record of Provider model, represents an object.
@@ -120,7 +120,7 @@ class DeployedServicePublication(UUIDModel):
             The instance Instance of the class this provider represents
 
         Raises:
-        '''
+        """
         serviceInstance = self.deployed_service.service.getInstance()
         osManagerInstance = self.deployed_service.osmanager
         if osManagerInstance is not None:
@@ -141,18 +141,18 @@ class DeployedServicePublication(UUIDModel):
         return dpl
 
     def updateData(self, dsp):
-        '''
+        """
         Updates the data field with the serialized uds.core.services.Publication
 
         Args:
             dsp: uds.core.services.Publication to serialize
 
         :note: This method do not saves the updated record, just updates the field
-        '''
+        """
         self.data = dsp.serialize()
 
     def setState(self, state):
-        '''
+        """
         Updates the state of this object and, optionally, saves it
 
         Args:
@@ -160,36 +160,36 @@ class DeployedServicePublication(UUIDModel):
 
             save: Defaults to true. If false, record will not be saved to db, just modified
 
-        '''
+        """
         self.state_date = getSqlDatetime()
         self.state = state
 
     def unpublish(self):
-        '''
+        """
         Tries to remove the publication
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
-        '''
+        """
         from uds.core.managers.PublicationManager import PublicationManager
         PublicationManager.manager().unpublish(self)
 
     def cancel(self):
-        '''
+        """
         Invoques the cancelation of this publication
-        '''
+        """
         from uds.core.managers.PublicationManager import PublicationManager
         PublicationManager.manager().cancel(self)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         The main purpuse of this hook is to call the "destroy" method of the object to delete and
         to clear related data of the object (environment data such as own storage, cache, etc...
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         toDelete = kwargs['instance']
         toDelete.getEnvironment().clearRelatedData()
 

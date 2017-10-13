@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
@@ -47,9 +47,9 @@ logger = logging.getLogger(__name__)
 
 
 class OGService(Service):
-    '''
+    """
     OpenGnsys Service
-    '''
+    """
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -135,19 +135,19 @@ class OGService(Service):
     ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values):
-        '''
+        """
         We check here form values to see if they are valid.
 
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
-        '''
+        """
         if values is not None:
             pass
 
     def initGui(self):
-        '''
+        """
         Loads required values inside
-        '''
+        """
         ous = [gui.choiceItem(r['id'], r['name']) for r in self.parent().api.getOus()]
         self.ou.setValues(ous)
 

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 class DelayedTask(models.Model):
-    '''
+    """
     A delayed task is a kind of scheduled task. It's a task that has more than is executed at a delay
     specified at record. This is, for example, for publications, service preparations, etc...
 
@@ -51,7 +51,7 @@ class DelayedTask(models.Model):
     specified delay is reached, the task is executed and the record is removed from the table.
 
     This table contains uds.core.util.jobs.DelayedTask references
-    '''
+    """
     type = models.CharField(max_length=128)
     tag = models.CharField(max_length=64, db_index=True)  # A tag for letting us locate delayed publications...
     instance = models.TextField()
@@ -60,9 +60,9 @@ class DelayedTask(models.Model):
     execution_time = models.DateTimeField(db_index=True)
 
     class Meta:
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         app_label = 'uds'
 
     def __unicode__(self):

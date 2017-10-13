@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -51,9 +51,9 @@ logger = logging.getLogger(__name__)
 
 
 class Providers(ModelHandler):
-    '''
+    """
     Providers REST handler
-    '''
+    """
     model = Provider
     detail = {
         'services': DetailServices,
@@ -117,9 +117,9 @@ class Providers(ModelHandler):
             raise NotFound('type not found')
 
     def allservices(self):
-        '''
+        """
         Custom method that returns "all existing services", no mater who's his daddy :)
-        '''
+        """
         for s in Service.objects.all():
             try:
                 perm = permissions.getEffectivePermission(self._user, s)
@@ -129,9 +129,9 @@ class Providers(ModelHandler):
                 logger.exception('Passed service cause type is unknown')
 
     def service(self):
-        '''
+        """
         Custom method that returns a service by its uuid, no matter who's his daddy
-        '''
+        """
         try:
             service = Service.objects.get(uuid=self._args[1])
             perm = self.ensureAccess(service, permissions.PERMISSION_READ)  # Ensures that we can read this item
@@ -140,10 +140,10 @@ class Providers(ModelHandler):
             raise RequestError(ugettext('Service not found'))
 
     def maintenance(self, item):
-        '''
+        """
         Custom method that swaps maintenance mode state for a provider
         :param item:
-        '''
+        """
         self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()

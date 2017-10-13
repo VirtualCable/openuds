@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -47,9 +47,9 @@ VALID_PARAMS = ('authId', 'authSmallName', 'auth', 'username', 'realname', 'pass
 
 # Enclosed methods under /actor path
 class Reports(model.BaseModelHandler):
-    '''
+    """
     Processes actor requests
-    '''
+    """
     needs_admin = True  # By default, staff is lower level needed
 
     table_title = _('Available reports')
@@ -95,9 +95,9 @@ class Reports(model.BaseModelHandler):
         return self.invalidRequestException()
 
     def put(self):
-        '''
+        """
         Processes a PUT request
-        '''
+        """
         logger.debug('method PUT for {0}, {1}, {2}'.format(self.__class__.__name__, self._args, self._params))
 
         if len(self._args) != 1:

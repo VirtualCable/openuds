@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -46,10 +46,10 @@ logger = logging.getLogger(__name__)
 
 
 class UniqueId(models.Model):
-    '''
+    """
     Unique ID Database. Used to store unique names, unique macs, etc...
     Managed via uds.core.util.UniqueIDGenerator.UniqueIDGenerator
-    '''
+    """
     owner = models.CharField(max_length=128, db_index=True, default='')
     basename = models.CharField(max_length=32, db_index=True)
     seq = models.BigIntegerField(db_index=True)
@@ -59,9 +59,9 @@ class UniqueId(models.Model):
     objects = LockingManager()
 
     class Meta:
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         unique_together = (('basename', 'seq'),)
         ordering = ('-seq',)
         app_label = 'uds'

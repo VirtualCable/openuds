@@ -40,7 +40,6 @@ from .auth import authCallback, authInfo, ticketAuth
 from .download import download
 from .client_download import client_downloads, plugin_detection
 from .js import jsCatalog
-from ..errors import error
 from .images import image
 from .file_storage import file_storage
 

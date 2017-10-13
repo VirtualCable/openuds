@@ -27,9 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.models import NEVER
@@ -64,7 +64,7 @@ __transDict = None
 
 
 def addEvent(obj, eventType, **kwargs):
-    '''
+    """
     Adds a event stat to specified object
 
     Although any counter type can be added to any object, there is a relation that must be observed
@@ -72,13 +72,13 @@ def addEvent(obj, eventType, **kwargs):
 
 
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
-    '''
+    """
 
     return statsManager().addEvent(__transDict[type(obj)], obj.id, eventType, **kwargs)
 
 
 def getEvents(obj, eventType, **kwargs):
-    '''
+    """
     Get events
 
     Args:
@@ -92,7 +92,7 @@ def getEvents(obj, eventType, **kwargs):
 
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
-    '''
+    """
 
     since = kwargs.get('since', NEVER)
     to = kwargs.get('to', datetime.datetime.now())
@@ -109,11 +109,11 @@ def getEvents(obj, eventType, **kwargs):
 
 # Data initialization
 def _initializeData():
-    '''
+    """
     Initializes dictionaries.
 
     Hides data from global var space
-    '''
+    """
     from uds.models import Provider, Service, DeployedService, Authenticator
 
     global __transDict

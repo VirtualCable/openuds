@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
@@ -47,13 +47,13 @@ logger = logging.getLogger(__name__)
 
 
 class StatsManager(object):
-    '''
+    """
     Manager for statistics, so we can provide usefull info about platform usage
 
     Right now, we are going to provide an interface to "counter stats", that is, statistics
     that has counters (such as how many users is at a time active at platform, how many services
     are assigned, are in use, in cache, etc...
-    '''
+    """
     _manager = None
 
     def __init__(self):
@@ -76,7 +76,7 @@ class StatsManager(object):
 
     # Counter stats
     def addCounter(self, owner_type, owner_id, counterType, counterValue, stamp=None):
-        '''
+        """
         Adds a new counter stats to database.
 
         Args:
@@ -91,7 +91,7 @@ class StatsManager(object):
         Returns:
 
             Nothing
-        '''
+        """
         if stamp is None:
             stamp = getSqlDatetime()
 
@@ -106,7 +106,7 @@ class StatsManager(object):
         return False
 
     def getCounters(self, ownerType, counterType, ownerIds, since, to, limit, use_max=False):
-        '''
+        """
         Retrieves counters from item
 
         Args:
@@ -120,7 +120,7 @@ class StatsManager(object):
         Returns:
 
             Iterator, containing (date, counter) each element
-        '''
+        """
         # To Unix epoch
         since = int(time.mktime(since.timetuple()))
         to = int(time.mktime(to.timetuple()))
@@ -128,9 +128,9 @@ class StatsManager(object):
         return StatsCounters.get_grouped(ownerType, counterType, owner_id=ownerIds, since=since, to=to, limit=limit, use_max=use_max)
 
     def cleanupCounters(self):
-        '''
+        """
         Removes all counters previous to configured max keep time for stat information from database.
-        '''
+        """
         self.__doCleanup(StatsCounters)
 
     def getEventFldFor(self, fld):
@@ -146,7 +146,7 @@ class StatsManager(object):
 
     # Event stats
     def addEvent(self, owner_type, owner_id, eventType, **kwargs):
-        '''
+        """
         Adds a new event stat to database.
 
         stamp=None, fld1=None, fld2=None, fld3=None
@@ -161,7 +161,7 @@ class StatsManager(object):
             Nothing
 
 
-        '''
+        """
         logger.debug('Adding event stat')
         stamp = kwargs.get('stamp')
         if stamp is None:
@@ -187,7 +187,7 @@ class StatsManager(object):
         return False
 
     def getEvents(self, ownerType, eventType, **kwargs):
-        '''
+        """
         Retrieves counters from item
 
         Args:
@@ -200,12 +200,12 @@ class StatsManager(object):
         Returns:
 
             Iterator, containing (date, counter) each element
-        '''
+        """
         return StatsEvents.get_stats(ownerType, eventType, **kwargs)
 
     def cleanupEvents(self):
-        '''
+        """
         Removes all events previous to configured max keep time for stat information from database.
-        '''
+        """
 
         self.__doCleanup(StatsEvents)

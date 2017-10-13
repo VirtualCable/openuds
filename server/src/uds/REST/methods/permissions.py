@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -50,9 +50,9 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /permissions path
 class Permissions(Handler):
-    '''
+    """
     Processes permissions requests
-    '''
+    """
     needs_admin = True
 
     @staticmethod
@@ -98,9 +98,9 @@ class Permissions(Handler):
         return sorted(res, key=lambda v: v['auth_name'] + v['entity_name'])
 
     def get(self):
-        '''
+        """
         Processes get requests
-        '''
+        """
         logger.debug("Permissions args for GET: {0}".format(self._args))
 
         if len(self._args) != 2:
@@ -114,9 +114,9 @@ class Permissions(Handler):
         return Permissions.permsToDict(perms)
 
     def put(self):
-        '''
+        """
         Processes post requests
-        '''
+        """
         logger.debug('Put args: {}'.format(self._args))
 
         la = len(self._args)

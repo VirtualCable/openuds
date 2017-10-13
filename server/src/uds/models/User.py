@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -53,9 +53,9 @@ __updated__ = '2017-06-08'
 
 @python_2_unicode_compatible
 class User(UUIDModel):
-    '''
+    """
     This class represents a single user, associated with one authenticator
-    '''
+    """
     # pylint: disable=model-missing-unicode, maybe-no-member
     manager = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
     name = models.CharField(max_length=128, db_index=True)
@@ -70,22 +70,22 @@ class User(UUIDModel):
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         unique_together = (("manager", "name"),)
         ordering = ('name',)
         app_label = 'uds'
 
     def getUsernameForAuth(self):
-        '''
+        """
         Return the username transformed for authentication.
         This transformation is used for transports only, not for transforming
         anything at login time. Transports that will need the username, will invoke
         this method.
         The manager (an instance of uds.core.auths.Authenticator), can transform the database stored username
         so we can, for example, add @domain in some cases.
-        '''
+        """
         return self.getManager().getForAuth(self.name)
 
     @property
@@ -93,21 +93,21 @@ class User(UUIDModel):
         return self.name + '@' + self.manager.name
 
     def getManager(self):
-        '''
+        """
         Returns the authenticator object that owns this user.
 
         :note: The returned value is an instance of the authenticator class used to manage this user, not a db record.
-        '''
+        """
         return self.manager.getInstance()
 
     def isStaff(self):
-        '''
+        """
         Return true if this user is admin or staff member
-        '''
+        """
         return self.staff_member or self.is_admin
 
     def prefs(self, modName):
-        '''
+        """
         Returns the preferences for this user for the provided module name.
 
         Usually preferences will be associated with transports, but can be preferences registered by ANY module.
@@ -122,28 +122,28 @@ class User(UUIDModel):
 
             If the module exists, the preferences will always contain something, but may be the values are the default ones.
 
-        '''
+        """
         from uds.core.managers.UserPrefsManager import UserPrefsManager
         return UserPrefsManager.manager().getPreferencesForUser(modName, self)
 
     def updateLastAccess(self):
-        '''
+        """
         Updates the last access for this user with the current time of the sql server
-        '''
+        """
         self.last_access = getSqlDatetime()
         self.save()
 
     def logout(self):
-        '''
+        """
         Invoked to log out this user
         Returns the url where to redirect user, or None if default url will be used
-        '''
+        """
         return self.getManager().logout(self.name)
 
     def getGroups(self):
-        '''
+        """
         returns the groups (and metagroups) this user belongs to
-        '''
+        """
         if self.parent is not None and self.parent != '':
             try:
                 usr = User.objects.get(uuid=self.parent)
@@ -177,14 +177,14 @@ class User(UUIDModel):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         In this case, this method ensures that the user has no userServices assigned and, if it has,
         mark those services for removal
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         toDelete = kwargs['instance']
 
         # first, we invoke removeUser. If this raises an exception, user will not

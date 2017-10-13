@@ -27,32 +27,30 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Provides useful functions for authenticating, used by web interface.
 
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
-from functools import wraps
-from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.utils.translation import get_language
-from django.utils.decorators import available_attrs
-
-from django.utils.translation import ugettext as _
-from uds.core.util.Config import GlobalConfig
-from uds.core.util import log
-from uds.core.util.decorators import deprecated
-from uds.core.util import OsDetector
-from uds.core import auths
-from uds.core.util.stats import events
-from uds.core.managers.CryptoManager import CryptoManager
-from uds.core.util.State import State
-from uds.models import User
-
 import logging
-import six
+from functools import wraps
+
+from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.utils.decorators import available_attrs
+from django.utils.translation import get_language
+from django.utils.translation import ugettext as _
+
+from uds.core import auths
+from uds.core.managers.CryptoManager import CryptoManager
+from uds.core.util import log
+from uds.core.util.Config import GlobalConfig
+from uds.core.util.State import State
+from uds.core.util.decorators import deprecated
+from uds.core.util.stats import events
+from uds.models import User
 
 __updated__ = '2016-08-24'
 
@@ -65,9 +63,9 @@ ROOT_ID = -20091204  # Any negative number will do the trick
 
 
 def getUDSCookie(request, response=None, force=False):
-    '''
+    """
     Generates a random cookie for uds, used, for example, to encript things
-    '''
+    """
     if 'uds' not in request.COOKIES:
         import random
         import string
@@ -103,16 +101,16 @@ def getIp(request):
 
 # Decorator to make easier protect pages that needs to be logged in
 def webLoginRequired(admin=False):
-    '''
+    """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
-    '''
+    """
     def decorator(view_func):
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
-            '''
+            """
             Wrapped function for decorator
-            '''
+            """
             if request.user is None:
                 url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
                 if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is True:
@@ -131,15 +129,15 @@ def webLoginRequired(admin=False):
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
 def trustedSourceRequired(view_func):
-    '''
+    """
     Decorator to set protection to access page
     look for sample at uds.dispatchers.pam
-    '''
+    """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        '''
+        """
         Wrapped function for decorator
-        '''
+        """
         from uds.core.util import net
         if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
             return HttpResponseForbidden()
@@ -148,11 +146,11 @@ def trustedSourceRequired(view_func):
 
 
 def __registerUser(authenticator, authInstance, username):
-    '''
+    """
     Check if this user already exists on database with this authenticator, if don't, create it with defaults
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
     authenticate will return false, if external and return true, will create a reference in database
-    '''
+    """
     from uds.core.util.request import getRequest
 
     username = authInstance.transformUsername(username)
@@ -173,7 +171,7 @@ def __registerUser(authenticator, authInstance, username):
 
 
 def authenticate(username, password, authenticator, useInternalAuthenticate=False):
-    '''
+    """
     Given an username, password and authenticator, try to authenticate user
     @param username: username to authenticate
     @param password: password to authenticate this user
@@ -181,7 +179,7 @@ def authenticate(username, password, authenticator, useInternalAuthenticate=Fals
     @param useInternalAuthenticate: If True, tries to authenticate user using "internalAuthenticate". If false, it uses "authenticate".
                                     This is so because in some situations we may want to use a "trusted" method (internalAuthenticate is never invoked directly from web)
     @return: None if authentication fails, User object (database object) if authentication is o.k.
-    '''
+    """
     logger.debug('Authenticating user {0} with authenticator {1}'.format(username, authenticator))
 
     # If global root auth is enabled && user/password is correct,
@@ -208,7 +206,7 @@ def authenticate(username, password, authenticator, useInternalAuthenticate=Fals
 
 
 def authenticateViaCallback(authenticator, params):
-    '''
+    """
     Given an username, this method will get invoked whenever the url for a callback
     for an authenticator is requested.
 
@@ -225,7 +223,7 @@ def authenticateViaCallback(authenticator, params):
        * Update user group membership using Authenticator getGroups, so, in your
          callbacks, remember to store (using provided environment storage, for example)
          the groups of this user so your getGroups will work correctly.
-    '''
+    """
     gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
 
@@ -242,17 +240,17 @@ def authenticateViaCallback(authenticator, params):
 
 
 def authCallbackUrl(authenticator):
-    '''
+    """
     Helper method, so we can get the auth call back url for an authenticator
-    '''
+    """
     from django.core.urlresolvers import reverse
     return reverse('uds.web.views.authCallback', kwargs={'authName': authenticator.name})
 
 
 def authInfoUrl(authenticator):
-    '''
+    """
     Helper method, so we can get the info url for an authenticator
-    '''
+    """
     from django.core.urlresolvers import reverse
     if isinstance(authenticator, unicode) or isinstance(authenticator, str):
         name = authenticator
@@ -263,10 +261,10 @@ def authInfoUrl(authenticator):
 
 
 def webLogin(request, response, user, password):
-    '''
+    """
     Helper function to, once the user is authenticated, store the information at the user session.
     @return: Always returns True
-    '''
+    """
     from uds import REST
 
     if user.id != ROOT_ID:  # If not ROOT user (this user is not inside any authenticator)
@@ -287,21 +285,21 @@ def webLogin(request, response, user, password):
 
 
 def webPassword(request):
-    '''
+    """
     The password is stored at session using a simple scramble algorithm that keeps the password splited at
     session (db) and client browser cookies. This method uses this two values to recompose the user password
     so we can provide it to remote sessions.
     @param request: DJango Request
     @return: Unscrambled user password
-    '''
+    """
     return CryptoManager.manager().xor(request.session.get(PASS_KEY, ''), getUDSCookie(request)).decode('utf-8')  # recover as original unicode string
 
 
 def webLogout(request, exit_url=None):
-    '''
+    """
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
-    '''
+    """
     # Invoke exit for authenticator
 
     if request.user is not None and request.user.id != ROOT_ID:
@@ -318,9 +316,9 @@ def webLogout(request, exit_url=None):
 
 
 def authLogLogin(request, authenticator, userName, logStr=''):
-    '''
+    """
     Logs authentication
-    '''
+    """
     if logStr == '':
         logStr = 'Logged in'
 
@@ -332,7 +330,7 @@ def authLogLogin(request, authenticator, userName, logStr=''):
     try:
         user = authenticator.users.get(name=userName)
         log.doLog(user, level,
-                  '{0} from {1} where os is {3}'.format(logStr, request.ip, request.os['OS']), log.WEB
+                  '{} from {1} where os is {2}'.format(logStr, request.ip, request.os['OS']), log.WEB
                   )
     except Exception:
         pass

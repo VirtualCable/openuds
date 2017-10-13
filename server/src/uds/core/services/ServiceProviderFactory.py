@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 import logging
@@ -40,39 +40,39 @@ logger = logging.getLogger(__name__)
 
 
 class ServiceProviderFactory(object):
-    '''
+    """
     This class holds the register of all known service provider modules
     inside UDS.
 
     It provides a way to register and recover providers providers.
-    '''
+    """
     _factory = None
 
     def __init__(self):
-        '''
+        """
         Initializes internal dictionary for service providers registration
-        '''
+        """
         self._providers = {}
 
     @staticmethod
     def factory():
-        '''
+        """
         Returns the factory that keeps the register of service providers.
-        '''
+        """
         if ServiceProviderFactory._factory is None:
             ServiceProviderFactory._factory = ServiceProviderFactory()
         return ServiceProviderFactory._factory
 
     def providers(self):
-        '''
+        """
         Returns the list of service providers already registered.
-        '''
+        """
         return self._providers
 
     def insert(self, type_):
-        '''
+        """
         Inserts type_ as a service provider
-        '''
+        """
         # Before inserting type, we will make a couple of sanity checks
         # We could also check if it provides at least a service, but
         # for debugging purposes, it's better to not check that
@@ -100,17 +100,17 @@ class ServiceProviderFactory(object):
         self._providers[typeName] = type_
 
     def lookup(self, typeName):
-        '''
+        """
         Tries to locate a server provider and by its name, and, if
         not found, returns None
-        '''
+        """
         return self._providers.get(typeName.lower(), None)
 
     def servicesThatDoNotNeedPublication(self):
-        '''
+        """
         Returns a list of all service providers registered that do not need
         to be published
-        '''
+        """
         res = []
         for p in self._providers.values():
             for s in p.offers:

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.jobs.DelayedTask import DelayedTask
@@ -171,9 +171,9 @@ class UpdateFromOther(StateUpdater):
 
 
 class UserServiceOpChecker(DelayedTask):
-    '''
+    """
     This is the delayed task responsible of executing the service tasks and the service state transitions
-    '''
+    """
     def __init__(self, service):
         super(UserServiceOpChecker, self).__init__()
         self._svrId = service.id
@@ -181,18 +181,18 @@ class UserServiceOpChecker(DelayedTask):
 
     @staticmethod
     def makeUnique(userService, userServiceInstance, state):
-        '''
+        """
         This method ensures that there will be only one delayedtask related to the userService indicated
-        '''
+        """
         DelayedTaskRunner.runner().remove(USERSERVICE_TAG + userService.uuid)
         UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
 
     @staticmethod
     def checkAndUpdateState(userService, userServiceInstance, state):
-        '''
+        """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
-        '''
+        """
         try:
             # Fills up basic data
             userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
@@ -216,11 +216,11 @@ class UserServiceOpChecker(DelayedTask):
 
     @staticmethod
     def checkLater(userService, ci):
-        '''
+        """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
         @param dps: Database object for DeployedServicePublication
         @param pi: Instance of Publication manager for the object
-        '''
+        """
         # Do not add task if already exists one that updates this service
         if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + userService.uuid):
             return

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.services.BaseDeployed import UserDeployment
@@ -44,13 +44,13 @@ class ClusteredUserDeployment(UserDeployment):
         return State.FINISHED
 
     def ensureExistsOnNode(self, node):
-        '''
+        """
         Ensure that this method is reentrant, because it can be asked for existence in parallel
-        '''
+        """
         return True
 
     def __str__(self):
-        '''
+        """
         Mainly used for debugging purposses
-        '''
+        """
         return "Base Deployed Service"

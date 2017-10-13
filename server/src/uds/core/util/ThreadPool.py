@@ -71,9 +71,9 @@ class ThreadPool:
         self._threads = []
 
     def add_task(self, func, *args, **kargs):
-        '''
+        """
         Add a task to the queue
-        '''
+        """
         if len(self._threads) == 0:
             for _ in range(self._numThreads):
                 self._threads.append(Worker(self._tasks))
@@ -81,9 +81,9 @@ class ThreadPool:
         self._tasks.put((func, args, kargs))
 
     def wait_completion(self):
-        '''
+        """
         Wait for completion of all the tasks in the queue
-        '''
+        """
         self._tasks.join()
 
         # Now we will close all running tasks

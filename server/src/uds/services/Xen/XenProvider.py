@@ -26,11 +26,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Created on Apr 8, 2014
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -56,7 +56,7 @@ CACHE_TIME_FOR_SERVER = 1800
 
 
 class Provider(ServiceProvider):
-    '''
+    """
     This class represents the sample services provider
 
     In this class we provide:
@@ -71,7 +71,7 @@ class Provider(ServiceProvider):
     For this class to get visible at administration client as a provider type,
     we MUST register it at package __init__.
 
-    '''
+    """
     # : What kind of services we offer, this are classes inherited from Service
     offers = [XenLinkedService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -113,9 +113,9 @@ class Provider(ServiceProvider):
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
     def __getApi(self, force=False):
-        '''
+        """
         Returns the connection API object for XenServer (using XenServersdk)
-        '''
+        """
         logger.debug('API verifySSL: {} {}'.format(self.verifySSL.value, self.verifySSL.isTrue()))
         if self._api is None or force:
             self._api = XenServer(self.host.value, '443', self.username.value, self.password.value, True, self.verifySSL.isTrue())
@@ -123,30 +123,30 @@ class Provider(ServiceProvider):
 
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values=None):
-        '''
+        """
         We will use the "autosave" feature for form fields
-        '''
+        """
 
         # Just reset _api connection variable
         self._api = None
 
     def testConnection(self):
-        '''
+        """
         Test that conection to XenServer server is fine
 
         Returns
 
             True if all went fine, false if id didn't
-        '''
+        """
         self.__getApi().test()
 
     def checkTaskFinished(self, task):
-        '''
+        """
         Checks a task state.
         Returns None if task is Finished
         Returns a number indicating % of completion if running
         Raises an exception with status else ('cancelled', 'unknown', 'failure')
-        '''
+        """
         if task is None or task == '':
             return True, ''
         ts = self.__getApi().getTaskInfo(task)
@@ -160,7 +160,7 @@ class Provider(ServiceProvider):
         raise Exception(six.text_type(ts['result']))  # Should be error message
 
     def getMachines(self, force=False):
-        '''
+        """
         Obtains the list of machines inside XenServer.
         Machines starting with UDS are filtered out
 
@@ -173,7 +173,7 @@ class Provider(ServiceProvider):
                 'name'
                 'id'
                 'cluster_id'
-        '''
+        """
 
         for m in self.__getApi().getVMs():
             if m['name'][:3] == 'UDS':
@@ -181,7 +181,7 @@ class Provider(ServiceProvider):
             yield m
 
     def getStorages(self, force=False):
-        '''
+        """
         Obtains the list of storages inside XenServer.
 
         Args:
@@ -194,11 +194,11 @@ class Provider(ServiceProvider):
                 'id'
                 'size'
                 'used'
-        '''
+        """
         return self.__getApi().getSRs()
 
     def getStorageInfo(self, storageId, force=False):
-        '''
+        """
         Obtains the storage info
 
         Args:
@@ -216,7 +216,7 @@ class Provider(ServiceProvider):
                'used' -> Space used, in bytes
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
-        '''
+        """
         return self.__getApi().getSRInfo(storageId)
 
     def getNetworks(self, force=False):
@@ -228,7 +228,7 @@ class Provider(ServiceProvider):
         return task
 
     def convertToTemplate(self, machineId, shadowMultiplier=4):
-        '''
+        """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
 
@@ -241,11 +241,11 @@ class Provider(ServiceProvider):
 
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
-        '''
+        """
         self.__getApi().convertToTemplate(machineId, shadowMultiplier)
 
     def getMachineState(self, machineId):
-        '''
+        """
         Returns the state of the machine
         This method do not uses cache at all (it always tries to get machine state from XenServer server)
 
@@ -259,21 +259,19 @@ class Provider(ServiceProvider):
              wait_for_launch, reboot_in_progress, saving_state, restoring_state,
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
-        '''
+        """
         return self.__getApi().getMachineState(machineId)
 
-        return State.INACTIVE
-
     def removeTemplate(self, templateId):
-        '''
+        """
         Removes a template from XenServer server
 
         Returns nothing, and raises an Exception if it fails
-        '''
+        """
         return self.__getApi().removeTemplate(templateId)
 
     def startDeployFromTemplate(self, name, comments, templateId):
-        '''
+        """
         Deploys a virtual machine on selected cluster from selected template
 
         Args:
@@ -287,17 +285,17 @@ class Provider(ServiceProvider):
 
         Returns:
             Id of the machine being created form template
-        '''
+        """
         return self.__getApi().cloneTemplate(templateId, name)
 
     def getVMPowerState(self, machineId):
-        '''
+        """
         Returns current machine power state
-        '''
+        """
         return self.__getApi().getVMPowerState(machineId)
 
     def startVM(self, machineId, async=True):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to XenServer.
 
         This start also "resume" suspended/paused machines
@@ -306,22 +304,22 @@ class Provider(ServiceProvider):
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().startVM(machineId, async)
 
     def stopVM(self, machineId, async=True):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().stopVM(machineId, async)
 
     def canSuspendVM(self, machineId):
-        '''
+        """
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
 
         Args:
@@ -329,40 +327,40 @@ class Provider(ServiceProvider):
 
         Returns:
             True if the machien can be suspended
-        '''
+        """
         return self.__getApi().canSuspendVM(machineId)
 
     def suspendVM(self, machineId, async=True):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().suspendVM(machineId, async)
 
     def resumeVM(self, machineId, async=True):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().resumeVM(machineId, async)
 
     def removeVM(self, machineId):
-        '''
+        """
         Tries to delete a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().removeVM(machineId)
 
     def configureVM(self, machineId, netId, mac, memory):
@@ -376,7 +374,7 @@ class Provider(ServiceProvider):
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test XenServer Connectivity
 
         Args:
@@ -390,7 +388,7 @@ class Provider(ServiceProvider):
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
 
-        '''
+        """
         # try:
         #    # We instantiate the provider, but this may fail...
         #    instance = Provider(env, data)

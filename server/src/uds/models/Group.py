@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -55,9 +55,9 @@ __updated__ = '2015-09-07'
 
 @python_2_unicode_compatible
 class Group(UUIDModel):
-    '''
+    """
     This class represents a group, associated with one authenticator
-    '''
+    """
     # pylint: disable=model-missing-unicode
     manager = UnsavedForeignKey(Authenticator, on_delete=models.CASCADE, related_name='groups')
     name = models.CharField(max_length=128, db_index=True)
@@ -70,19 +70,19 @@ class Group(UUIDModel):
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         unique_together = (("manager", "name"),)
         ordering = ('name',)
         app_label = 'uds'
 
     def getManager(self):
-        '''
+        """
         Returns the authenticator object that owns this user.
 
         :note: The returned value is an instance of the authenticator class used to manage this user, not a db record.
-        '''
+        """
         return self.manager.getInstance()
 
     def __str__(self):
@@ -93,13 +93,13 @@ class Group(UUIDModel):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         In this case, this is a dummy method, waiting for something useful to do :-)
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         toDelete = kwargs['instance']
         # Todelete is a group
 

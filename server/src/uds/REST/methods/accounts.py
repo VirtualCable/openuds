@@ -27,21 +27,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _, ugettext
-from uds.models import Account
-from uds.core.util import permissions
 import datetime
+import logging
+
+from django.utils.translation import ugettext_lazy as _
 
 from uds.REST.model import ModelHandler
-
+from uds.core.util import permissions
+from uds.models import Account
 from .accountsusage import AccountsUsage
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -49,11 +48,11 @@ logger = logging.getLogger(__name__)
 
 
 class Accounts(ModelHandler):
-    '''
+    """
     Processes REST requests about accounts
-    '''
+    """
     model = Account
-    detail = {'usage': AccountsUsage }
+    detail = {'usage': AccountsUsage}
 
     custom_methods = [('clear', True), ('timemark', True)]
 

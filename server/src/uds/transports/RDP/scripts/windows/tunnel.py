@@ -21,11 +21,11 @@ if forwardThread.status == 2:
 
 tools.addTaskToWait(forwardThread)
 
+thePass = six.binary_type('{m.password}'.encode('UTF-16LE'))
 try:
-    thePass = six.binary_type('{m.password}'.encode('UTF-16LE'))
     password = win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01).encode('hex')
 except Exception:
-    logger.info('Cannot encrypt for user, trying for machine')
+    # Cannot encrypt for user, trying for machine
     password = win32crypt.CryptProtectData(thePass, None, None, None, None, 0x05).encode('hex')
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc

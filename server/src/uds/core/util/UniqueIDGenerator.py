@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.models.UniqueId import UniqueId
@@ -54,10 +54,10 @@ class UniqueIDGenerator(object):
         return UniqueId.objects.filter(basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd)  # @UndefinedVariable
 
     def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
-        '''
+        """
         Tries to generate a new unique id in the range provided. This unique id
         is global to "unique ids' database
-        '''
+        """
         # First look for a name in the range defined
         stamp = getSqlDatetime(True)
         # logger.debug(UniqueId)
@@ -130,7 +130,7 @@ class UniqueIDGenerator(object):
             UniqueId.objects.unlock()  # @UndefinedVariable
 
     def releaseOlderThan(self, stamp=None):
-        stamp = getSqlDatetime(True) if stamp == None else stamp
+        stamp = getSqlDatetime(True) if stamp is None else stamp
         try:
             UniqueId.objects.lock()  # @UndefinedVariable
             UniqueId.objects.filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable

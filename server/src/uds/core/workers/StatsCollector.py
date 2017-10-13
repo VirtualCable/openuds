@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.models import DeployedService
@@ -43,9 +43,9 @@ logger = logging.getLogger(__name__)
 
 
 class DeployedServiceStatsCollector(Job):
-    '''
+    """
     This Job is responsible for collecting stats for every deployed service every ten minutes
-    '''
+    """
 
     frecuency = 599  # Once every ten minutes, 601 is prime, 599 also is prime
     friendly_name = 'Deployed Service Stats'
@@ -70,12 +70,12 @@ class DeployedServiceStatsCollector(Job):
 
 
 class StatsCleaner(Job):
-    '''
+    """
     This Job is responsible of housekeeping of stats tables.
     This is done by:
         * Deleting all records
         * Optimize table
-    '''
+    """
 
     frecuency = 3600 * 24 * 15  # Ejecuted just once every 15 days
     friendly_name = 'Statistic housekeeping'

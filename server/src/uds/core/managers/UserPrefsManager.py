@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django import forms
@@ -57,15 +57,15 @@ class UserPrefsManager(object):
         return module + "_" + name
 
     def registerPrefs(self, modName, friendlyModName, prefs):
-        '''
+        """
         Register an array of preferences for a module
-        '''
+        """
         self._prefs[modName] = {'friendlyName': friendlyModName, 'prefs': prefs}
 
     def getPreferencesForUser(self, modName, user):
-        '''
+        """
         Gets the preferences for an specified module for the user
-        '''
+        """
         logger.debug('Self prefs: {}'.format(self._prefs))
         prefs = {}
         for up in user.preferences.filter(module=modName):
@@ -113,9 +113,9 @@ class UserPrefsManager(object):
         return res
 
     def processRequestForUserPreferences(self, user, data):
-        '''
+        """
         Returns a list of errors in case of error, else return None
-        '''
+        """
         # First, read fields form every single "section"
         logger.debug('Processing {0}'.format(self._prefs))
         prefs = []
@@ -141,8 +141,8 @@ class UserPrefsManager(object):
         return None
 
     def processGuiForUserPreferences(self, user, data):
-        '''
-        '''
+        """
+        """
         logger.debug('Processing data {0}'.format(data))
         prefs = []
         for mod, v in six.iteritems(self._prefs):
@@ -172,14 +172,14 @@ class UserPreference(object):
         return self._defValue
 
     def formField(self, value):
-        '''
+        """
         Returns a form field to add to the preferences form
-        '''
+        """
         raise NotImplementedError('Can\'t create an abstract preference!!!')
 
     def guiField(self, value):
-        '''
-        '''
+        """
+        """
         raise NotImplementedError('Can\'t create an abstract preference!!!')
 
 
@@ -260,9 +260,9 @@ class CommonPrefs(object):
 
     @staticmethod
     def getWidthHeight(prefsDict):
-        '''
+        """
         Get width based on screenSizePref value
-        '''
+        """
         try:
             return {
                 CommonPrefs.SZ_640x480: (640, 480),
@@ -277,9 +277,9 @@ class CommonPrefs(object):
 
     @staticmethod
     def getDepth(prefsDict):
-        '''
+        """
         Get depth based on depthPref value
-        '''
+        """
         try:
             return {
                 CommonPrefs.DEPTH_8: 8,

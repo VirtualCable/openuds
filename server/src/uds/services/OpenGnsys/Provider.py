@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -53,7 +53,7 @@ __updated__ = '2017-10-05'
 logger = logging.getLogger(__name__)
 
 class OGProvider(ServiceProvider):
-    '''
+    """
     This class represents the sample services provider
 
     In this class we provide:
@@ -68,7 +68,7 @@ class OGProvider(ServiceProvider):
     For this class to get visible at administration client as a provider type,
     we MUST register it at package __init__.
 
-    '''
+    """
     # : What kind of services we offer, this are classes inherited from Service
     offers = [OGService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -109,9 +109,9 @@ class OGProvider(ServiceProvider):
     _api = None
 
     def initialize(self, values=None):
-        '''
+        """
         We will use the "autosave" feature for form fields
-        '''
+        """
 
         # Just reset _api connection variable
         self._api = None
@@ -147,13 +147,13 @@ class OGProvider(ServiceProvider):
         self._api = None
 
     def testConnection(self):
-        '''
+        """
         Test that conection to OpenGnsys server is fine
 
         Returns
 
             True if all went fine, false if id didn't
-        '''
+        """
         try:
             if self.api.version[0:5] < '1.1.0':
                 return [False, 'OpenGnsys version is not supported (required version 1.1.0 or newer and found {})'.format(self.api.version)]
@@ -165,7 +165,7 @@ class OGProvider(ServiceProvider):
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test ovirt Connectivity
 
         Args:
@@ -179,7 +179,7 @@ class OGProvider(ServiceProvider):
             (True is all right, false is error),
             second is an String with error, preferably i18n..
 
-        '''
+        """
         return OGProvider(env, data).testConnection()
 
     def getUDSServerAccessUrl(self):

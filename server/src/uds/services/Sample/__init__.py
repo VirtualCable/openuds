@@ -27,7 +27,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Sample Service module.
 
 This package simply shows how a new service can be implemented.
@@ -38,7 +38,7 @@ class that is responsible of providing the module with the system.
 
 For this, we must simply import the class at __init__, UDS will take care
 of the rest
-'''
+"""
 
 from .SampleProvider import Provider
 

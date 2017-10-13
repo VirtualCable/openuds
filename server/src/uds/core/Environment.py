@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util.Cache import Cache
@@ -41,12 +41,12 @@ GLOBAL_ENV = 'global'
 
 
 class Environment(object):
-    '''
+    """
     Class to manipulate the associated environment with "environmentable" classes (mainly modules).
     It purpose is to provide an "object owned" environment, so every db record can contain associated values
     not stored with main module data.
     The environment is composed of a "cache" and a "storage". First are volatile data, while second are persistent data.
-    '''
+    """
 
     def __init__(self, uniqueKey, idGenerators=None):
         """
@@ -152,9 +152,9 @@ class Environment(object):
 
 
 class Environmentable(object):
-    '''
+    """
     This is a base class provided for all objects that have an environment associated. These are mainly modules
-    '''
+    """
 
     def __init__(self, environment):
         """

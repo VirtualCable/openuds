@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django import template
@@ -47,9 +47,9 @@ register = template.Library()
 
 @register.simple_tag(name='auth_token', takes_context=True)
 def auth_token(context):
-    '''
+    """
     Returns the authentication token
-    '''
+    """
     request = context['request']
     return request.session.session_key
 

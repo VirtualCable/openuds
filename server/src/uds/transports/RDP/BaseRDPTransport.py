@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
@@ -49,10 +49,10 @@ READY_CACHE_TIMEOUT = 30
 
 
 class BaseRDPTransport(Transport):
-    '''
+    """
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    '''
+    """
     iconFile = 'rdp.png'
     protocol = protocols.RDP
 
@@ -78,10 +78,10 @@ class BaseRDPTransport(Transport):
     customParameters = gui.TextField(label=_('Custom parameters'), order=44, tooltip=_('If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'), tab='Linux Client')
 
     def isAvailableFor(self, userService, ip):
-        '''
+        """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
-        '''
+        """
         logger.debug('Checking availability for {0}'.format(ip))
         ready = self.cache.get(ip)
         if ready is None:

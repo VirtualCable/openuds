@@ -30,8 +30,8 @@
 
 from __future__ import unicode_literals
 
-from . import oVirtClient3;
-from . import oVirtClient4;
+from . import oVirtClient3
+from . import oVirtClient4
 
 import logging
 
@@ -39,10 +39,10 @@ __updated__ = '2016-09-11'
 
 logger = logging.getLogger(__name__)
 
+
 def getClient(forVersion):
     logger.debug('For Version: {}'.format(forVersion))
     if forVersion == '3':
-        return oVirtClient3.Client;
+        return oVirtClient3.Client
     else:
-        return oVirtClient4.Client;
-
+        return oVirtClient4.Client

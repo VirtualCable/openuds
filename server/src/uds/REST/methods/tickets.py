@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.REST import Handler
@@ -53,7 +53,7 @@ VALID_PARAMS = ('authId', 'authTag', 'authSmallName', 'auth', 'username', 'realn
 
 # Enclosed methods under /actor path
 class Tickets(Handler):
-    '''
+    """
     Processes tickets access requests.
     Tickets are element used to "register" & "allow access" to users.
 
@@ -71,32 +71,32 @@ class Tickets(Handler):
        force:  If "1" or "true" will ensure that:
                  - Groups exists on authenticator
                  - servicePool has these groups in it's allowed list
-    '''
+    """
     needs_admin = True  # By default, staff is lower level needed
 
     @staticmethod
     def result(result='', error=None):
-        '''
+        """
         Returns a result for a Ticket request
-        '''
+        """
         res = {'result': result, 'date': datetime.datetime.now()}
         if error is not None:
             res['error'] = error
         return res
 
     def get(self):
-        '''
+        """
         Processes get requests, currently none
-        '''
+        """
         logger.debug("Ticket args for GET: {0}".format(self._args))
 
         raise RequestError('Invalid request')
 
     # Must be invoked as '/rest/ticket/create, with "username", ("authId" or ("authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(self):
-        '''
+        """
         Processes put requests, currently only under "create"
-        '''
+        """
         logger.debug(self._args)
 
         # Parameters can only be theese

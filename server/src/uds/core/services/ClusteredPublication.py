@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 from uds.core.services.BasePublication import Publication
 
@@ -39,14 +39,14 @@ __updated__ = '2014-11-11'
 class ClusteredPublication(Publication):
 
     def __str__(self):
-        '''
+        """
         String method, mainly used for debugging purposes
-        '''
+        """
         return "Base Clustered Publication"
 
     # These methods must be overriden
     def getNode(self):
-        '''
+        """
         Returns on wich node this publication has been deployed
-        '''
+        """
         raise Exception('getNode method of ClusteredPublication must be overriden!')

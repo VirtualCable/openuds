@@ -28,12 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 Created on Jul 29, 2011
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 
-'''
+"""
 from __future__ import unicode_literals
 
 from .NXPassword import NXPassword

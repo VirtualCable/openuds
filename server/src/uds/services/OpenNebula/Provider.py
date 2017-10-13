@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -55,7 +55,7 @@ __updated__ = '2017-03-28'
 logger = logging.getLogger(__name__)
 
 class Provider(ServiceProvider):
-    '''
+    """
     This class represents the sample services provider
 
     In this class we provide:
@@ -70,7 +70,7 @@ class Provider(ServiceProvider):
     For this class to get visible at administration client as a provider type,
     we MUST register it at package __init__.
 
-    '''
+    """
     # : What kind of services we offer, this are classes inherited from Service
     offers = [LiveService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -110,9 +110,9 @@ class Provider(ServiceProvider):
     _api = None
 
     def initialize(self, values=None):
-        '''
+        """
         We will use the "autosave" feature for form fields
-        '''
+        """
 
         # Just reset _api connection variable
         self._api = None
@@ -141,13 +141,13 @@ class Provider(ServiceProvider):
         return on.sanitizeName(name)
 
     def testConnection(self):
-        '''
+        """
         Test that conection to OpenNebula server is fine
 
         Returns
 
             True if all went fine, false if id didn't
-        '''
+        """
 
         try:
             if self.api.version[0] < '4':
@@ -176,7 +176,7 @@ class Provider(ServiceProvider):
         return on.template.deployFrom(self.api, templateId, name)
 
     def getMachineState(self, machineId):
-        '''
+        """
         Returns the state of the machine
         This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
 
@@ -185,18 +185,18 @@ class Provider(ServiceProvider):
 
         Returns:
             one of the on.VmState Values
-        '''
+        """
         return on.vm.getMachineState(self.api, machineId)
 
     def getMachineSubState(self, machineId):
-        '''
+        """
         Returns the  LCM_STATE of a machine (must be ready)
-        '''
+        """
         return on.vm.getMachineSubstate(self.api, machineId)
 
 
     def startMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
         This start also "resume" suspended/paused machines
@@ -205,46 +205,46 @@ class Provider(ServiceProvider):
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         on.vm.startMachine(self.api, machineId)
 
     def stopMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         on.vm.stopMachine(self.api, machineId)
 
     def suspendMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         on.vm.suspendMachine(self.api, machineId)
 
     def removeMachine(self, machineId):
-        '''
+        """
         Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         on.vm.removeMachine(self.api, machineId)
 
     def getNetInfo(self, machineId, networkId=None):
-        '''
+        """
         Changes the mac address of first nic of the machine to the one specified
-        '''
+        """
         return on.vm.getNetInfo(self.api, machineId, networkId)
 
     def getConsoleConnection(self, machineId):
@@ -266,7 +266,7 @@ class Provider(ServiceProvider):
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test ovirt Connectivity
 
         Args:
@@ -280,5 +280,5 @@ class Provider(ServiceProvider):
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
 
-        '''
+        """
         return Provider(env, data).testConnection()

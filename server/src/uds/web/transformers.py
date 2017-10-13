@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from functools import wraps
@@ -48,11 +48,11 @@ SCRAMBLE_LEN = 10
 
 # Decorator to make easier protect pages
 def transformId(view_func):
-    '''
+    """
     Decorator to untransform id used in a function. Its generates a hash of it
     To use this decorator, the view must receive 'response' and 'id' and (optionaly) 'id2', 'id3'
     example: def view(response, id)
-    '''
+    """
 
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -44,19 +44,19 @@ logger = logging.getLogger(__name__)
 
 
 class Tag(UUIDModel):
-    '''
+    """
     Log model associated with an object.
 
     This log is mainly used to keep track of log relative to objects
     (such as when a user access a machine, or information related to user logins/logout, errors, ...)
-    '''
+    """
 
     tag = models.CharField(max_length=32, db_index=True, unique=True)
 
     class Meta:
-        '''
+        """
         Meta class to declare db table
-        '''
+        """
         db_table = 'uds_tag'
         app_label = 'uds'
 

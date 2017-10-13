@@ -5,9 +5,9 @@
 # All rights reserved.
 #
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -93,12 +93,12 @@ class WinDomainOsManager(WindowsOsManager):
             yield (six.text_type(server.target)[:-1], server.port)
 
     def __connectLdap(self, servers=None):
-        '''
+        """
         Tries to connect to LDAP
         Raises an exception if not found:
             dns.resolver.NXDOMAIN
             ldap.LDAPError
-        '''
+        """
         if servers is None:
             servers = self.__getServerList()
 
@@ -194,9 +194,9 @@ class WinDomainOsManager(WindowsOsManager):
             logger.error(error)
 
     def release(self, service):
-        '''
+        """
         service is a db user service object
-        '''
+        """
         super(WinDomainOsManager, self).release(service)
 
         if not '.' in self._domain:

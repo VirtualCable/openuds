@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 __updated__ = '2016-03-16'
@@ -41,72 +41,72 @@ class ServiceException(Exception):
 
 
 class UnsupportedException(ServiceException):
-    '''
+    """
     Reflects that we request an operation that is not supported, i.e. Cancel a publication with snapshots
-    '''
+    """
     pass
 
 
 class OperationException(ServiceException):
-    '''
+    """
     Reflects that the operation requested can't be acomplished, i.e. remove an snapshot without snapshot reference, cancel non running operation, etc...
-    '''
+    """
     pass
 
 
 class PublishException(ServiceException):
-    '''
+    """
     Reflects thate the publication can't be done for causes we don't know in advance
-    '''
+    """
     pass
 
 
 class DeploymentException(ServiceException):
-    '''
+    """
     Reflects that a deployment of a service (at cache, or assigned to user) can't be done for causes we don't know in advance
-    '''
+    """
     pass
 
 
 class CancelException(ServiceException):
-    '''
+    """
     Reflects that a "cancel" operation can't be done for some reason
-    '''
+    """
 
 
 class InvalidServiceException(ServiceException):
-    '''
+    """
     Invalid service specified. The service is not ready
-    '''
+    """
     pass
 
 
 class MaxServicesReachedError(ServiceException):
-    '''
+    """
     Number of maximum services has been reached, and no more services
     can be created for users.
-    '''
+    """
     pass
 
 
 class ServiceInMaintenanceMode(ServiceException):
-    '''
+    """
     The service is in maintenance mode and can't be accesed right now
-    '''
+    """
     pass
 
 class ServiceAccessDeniedByCalendar(ServiceException):
-    '''
+    """
     This service can't be accessed right now, probably due to date-time restrictions
-    '''
+    """
     pass
 
 
 class ServiceNotReadyError(ServiceException):
-    '''
+    """
     The service is not ready
     Can include an optional code error
-    '''
+    """
     def __init__(self, *args, **kwargs):
         super(ServiceNotReadyError, self).__init__(*args, **kwargs)
         self.code = kwargs.get('code', 0x0000)

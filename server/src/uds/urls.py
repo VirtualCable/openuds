@@ -26,14 +26,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.conf.urls import include, url
 from uds.core.util.modfinder import loadModulesUrls
 from uds import REST
-import uds.web.views;
+import uds.web.views
 
 js_info_dict = {
     'domain': 'djangojs',

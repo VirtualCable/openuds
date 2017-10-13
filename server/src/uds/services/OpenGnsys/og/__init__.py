@@ -27,23 +27,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from . import urls
 from . import fake
 
-import sys
-import imp
 import re
 
 import logging
 import six
 
 import requests
-import  json
+import json
 
 __updated__ = '2017-10-02'
 
@@ -63,6 +61,7 @@ def ensureConnected(fnc):
         return fnc(*args, **kwargs)
     return inner
 
+
 # Result checker
 def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
@@ -78,6 +77,7 @@ def ensureResponseIsValid(response, errMsg=None):
         raise Exception(errMsg)
 
     return json.loads(response.content)
+
 
 class OpenGnsysClient(object):
     def __init__(self, username, password, endpoint, cache, verifyCert=False):
@@ -118,7 +118,6 @@ class OpenGnsysClient(object):
         # FAKE Connection :)
         return fake.get(path, errMsg)
 
-
     def _delete(self, path, errMsg=None):
         if not FAKE:
             return ensureResponseIsValid(
@@ -136,7 +135,8 @@ class OpenGnsysClient(object):
         if self.auth is not None:
             return
 
-        auth = self._post(urls.LOGIN,
+        auth = self._post(
+            urls.LOGIN,
             data={
                 'username': self.username,
                 'password': self.password
@@ -146,7 +146,6 @@ class OpenGnsysClient(object):
 
         self.auth = auth['apikey']
         self.cache.put(cacheKey, self.auth, CACHE_VALIDITY)
-
 
     @property
     def version(self):
@@ -173,7 +172,6 @@ class OpenGnsysClient(object):
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
         errMsg = 'Getting list of labs from ou {}'.format(ou)
         return [{'id': l['id'], 'name': l['name']} for l in self._get(urls.LABS.format(ou=ou), errMsg=errMsg) if l.get('inremotepc', False) is True]
-
 
     @ensureConnected
     def getImages(self, ou):

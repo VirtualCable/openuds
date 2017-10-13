@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.models import DeployedService, getSqlDatetime
@@ -45,10 +45,10 @@ MAX_STUCK_TIME = 3600 * 24 * 2  # At most 2 days "Stuck", not configurable (ther
 
 
 class StuckCleaner(Job):
-    '''
+    """
     Kaputen Cleaner is very similar to Hanged Cleaner, at start, almost a copy
     We keep it in a new place to "control" more specific thins
-    '''
+    """
     frecuency = 3600 * 24  # Executes Once a day
     friendly_name = 'Stuck States cleaner'
 

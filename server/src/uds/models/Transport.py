@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -51,11 +51,11 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Transport(ManagedObjectModel, TaggingMixin):
-    '''
+    """
     A Transport represents a way of connecting the user with the service.
 
     Sample of transports are RDP, Spice, Web file uploader, etc...
-    '''
+    """
     # pylint: disable=model-missing-unicode
     priority = models.IntegerField(default=0, db_index=True)
     nets_positive = models.BooleanField(default=False)
@@ -64,14 +64,14 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
 
     class Meta(ManagedObjectModel.Meta):
-        '''
+        """
         Meta class to declare default order
-        '''
+        """
         ordering = ('name',)
         app_label = 'uds'
 
     def getType(self):
-        '''
+        """
         Get the type of the object this record represents.
 
         The type is Python type, it obtains this type from ServiceProviderFactory and associated record field.
@@ -80,13 +80,13 @@ class Transport(ManagedObjectModel, TaggingMixin):
             The python type for this record object
 
         :note: We only need to get info from this, not access specific data (class specific info)
-        '''
+        """
         from uds.core import transports
 
         return transports.factory().lookup(self.data_type)
 
     def validForIp(self, ip):
-        '''
+        """
         Checks if this transport is valid for the specified IP.
 
         Args:
@@ -107,7 +107,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         Raises:
 
         :note: Ip addresses has been only tested with IPv4 addresses
-        '''
+        """
         if self.networks.count() == 0:
             return True
         ip = net.ipToLong(ip)
@@ -127,14 +127,14 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         The main purpuse of this hook is to call the "destroy" method of the object to delete and
         to clear related data of the object (environment data such as own storage, cache, etc...
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 

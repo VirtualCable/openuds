@@ -31,18 +31,17 @@
 """
 from __future__ import unicode_literals
 
-from django import http
-from django.views.generic.base import View
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _, activate
-from django.conf import settings
-from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError, NotSupportedError
-
-import time
 import logging
+import time
 
 import six
+from django import http
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import View
+
+from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError, \
+    NotSupportedError
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +108,8 @@ class Dispatcher(View):
         http_method = request.method.lower()
 
         args = path
+
+        handler = None
 
         try:
             handler = cls(request, full_path, http_method, processor.processParameters(), *args, **kwargs)

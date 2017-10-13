@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -45,9 +45,9 @@ logger = logging.getLogger(__name__)
 
 
 class UserPreference(models.Model):
-    '''
+    """
     This class represents a single user preference for an user and a module
-    '''
+    """
     module = models.CharField(max_length=32, db_index=True)
     name = models.CharField(max_length=32, db_index=True)
     value = models.CharField(max_length=128, db_index=True)

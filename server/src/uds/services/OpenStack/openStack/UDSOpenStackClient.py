@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 # pylint: disable=maybe-no-member,protected-access
 from django.utils.translation import ugettext as _
 
@@ -399,10 +399,10 @@ class Client(object):
 
     @authProjectRequired
     def getSnapshot(self, snapshotId):
-        '''
+        """
         States are:
             creating, available, deleting, error,  error_deleting
-        '''
+        """
         r = requests.get(self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
                          headers=self._requestHeaders(),
                          verify=VERIFY_SSL,

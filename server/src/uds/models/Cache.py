@@ -27,13 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
-
-__updated__ = '2014-10-28'
 
 from django.db import models
 
@@ -44,11 +42,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2014-10-28'
+
 
 class Cache(models.Model):
-    '''
+    """
     General caching model. This model is managed via uds.core.util.Cache.Cache class
-    '''
+    """
     owner = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, primary_key=True)
     value = models.TextField(default='')
@@ -56,17 +56,17 @@ class Cache(models.Model):
     validity = models.IntegerField(default=60)  # Validity of this entry, in seconds
 
     class Meta:
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds_utility_cache'
         app_label = 'uds'
 
     @staticmethod
     def cleanUp():
-        '''
+        """
         Purges the cache items that are no longer vaild.
-        '''
+        """
         from django.db import transaction
         now = getSqlDatetime()
         with transaction.atomic():

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -43,10 +43,10 @@ logger = logging.getLogger(__name__)
 
 
 class Config(models.Model):
-    '''
+    """
     General configuration values model. Used to store global and specific modules configuration values.
     This model is managed via uds.core.util.Config.Config class
-    '''
+    """
     section = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, db_index=True)
     value = models.TextField(default='')
@@ -55,9 +55,9 @@ class Config(models.Model):
     field_type = models.IntegerField(default=-1)
 
     class Meta:
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         db_table = 'uds_configuration'
         unique_together = (('section', 'key'),)
         app_label = 'uds'

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 # pylint: disable=too-many-public-methods
 
@@ -50,17 +50,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ServicesUsage(DetailHandler):
-    '''
+    """
     Rest handler for Assigned Services, wich parent is Service
-    '''
+    """
 
     @staticmethod
     def itemToDict(item):
-        '''
+        """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
         :param is_cache: If item is from cache or not
-        '''
+        """
         props = item.getProperties()
 
         if item.user is None:
@@ -130,6 +130,7 @@ class ServicesUsage(DetailHandler):
         return {'field': 'state', 'prefix': 'row-state-'}
 
     def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
+        service = None
         try:
             service = UserService.objects.get(uuid=processUuid(item))
             if service.deployed_service.service.provider.id != parent.id:

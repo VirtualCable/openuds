@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.BaseModule import Module
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 def validateNumeric(numericStr, minValue=None, maxValue=None, returnAsInteger=True, fieldName=None):
-    '''
+    """
     Validates that a numeric value is valid
     :param numericStr: Numeric value to check (as string)
     :param minValue: If not None, min value that must be the numeric or exception is thrown
@@ -51,7 +51,7 @@ def validateNumeric(numericStr, minValue=None, maxValue=None, returnAsInteger=Tr
     :param returnAsInteger: if True, returs value as integer (default), else returns as string
     :param fieldName: If present, the name of the field for "Raising" exceptions, defaults to "Numeric value"
     :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
-    '''
+    """
     numericStr = numericStr.replace(' ', '')
     fieldName = fieldName if fieldName is not None else _('Numeric')
 
@@ -75,31 +75,31 @@ def validateNumeric(numericStr, minValue=None, maxValue=None, returnAsInteger=Tr
 
 
 def validatePort(portStr, returnAsInteger=True):
-    '''
+    """
     Validates that a port number is valid
     :param portStr: port to validate, as string
     :param returnAsInteger: if True, returns value as integer, if not, as string
     :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
-    '''
+    """
     return validateNumeric(portStr, minValue=0, maxValue=65535, returnAsInteger=returnAsInteger, fieldName='Port')
 
 
 def validateTimeout(timeOutStr, returnAsInteger=True):
-    '''
+    """
     Validates that a timeout value is valid
     :param timeOutStr: timeout to validate
     :param returnAsInteger: if True, returns value as integer, if not, as string
     :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
-    '''
+    """
     return validateNumeric(timeOutStr, minValue=0, returnAsInteger=returnAsInteger, fieldName='Timeout')
 
 
 def validateMacRange(macRange):
-    '''
+    """
     Corrects mac range (uppercase, without spaces), and checks that is range is valid
     :param macRange: Range to fix
     :return: Raises Module.Validation exception if is invalid, else return the value "fixed"
-    '''
+    """
     # Removes white spaces and all to uppercase
     macRange = macRange.upper().replace(' ', '')
 

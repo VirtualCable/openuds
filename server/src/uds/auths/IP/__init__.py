@@ -28,10 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from uds.core.util.Config import Config
 from Authenticator import IPAuth
 

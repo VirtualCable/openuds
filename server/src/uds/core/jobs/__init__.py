@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 UDS jobs related modules
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.jobs.Job import Job
@@ -41,8 +41,8 @@ __updated__ = '2014-11-11'
 
 
 def factory():
-    '''
+    """
     Returns a singleton to a jobs factory
-    '''
+    """
     from uds.core.jobs.JobsFactory import JobsFactory
     return JobsFactory.factory()

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.services import Service, types as serviceTypes
@@ -45,11 +45,11 @@ logger = logging.getLogger(__name__)
 
 
 class XenLinkedService(Service):
-    '''
+    """
     Xen Linked clones service. This is based on creating a template from selected vm, and then use it to
 
 
-    '''
+    """
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -174,12 +174,12 @@ class XenLinkedService(Service):
     )
 
     def initialize(self, values):
-        '''
+        """
         We check here form values to see if they are valid.
 
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
-        '''
+        """
         if values is not None:
             length = int(self.lenName.value)
             if len(self.baseName.value) + length > 15:
@@ -190,9 +190,9 @@ class XenLinkedService(Service):
                 raise Service.ValidationException(_('The minimum allowed memory is 256 Mb'))
 
     def initGui(self):
-        '''
+        """
         Loads required values inside
-        '''
+        """
 
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
@@ -232,14 +232,14 @@ class XenLinkedService(Service):
             raise Exception('Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(self.minSpaceGB.num(), availableGB))
 
     def sanitizeVmName(self, name):
-        '''
+        """
         Xen Seems to allow all kind of names
-        '''
+        """
         return name
 
 
     def startDeployTemplate(self, name, comments):
-        '''
+        """
         Invokes makeTemplate from parent provider, completing params
 
         Args:
@@ -250,7 +250,7 @@ class XenLinkedService(Service):
             template Id of the template created
 
         Raises an exception if operation fails.
-        '''
+        """
 
         logger.debug('Starting deploy of template from machine {0} on datastore {1}'.format(self.machine.value, self.datastore.value))
 
@@ -259,12 +259,12 @@ class XenLinkedService(Service):
         return self.parent().cloneForTemplate(name, comments, self.machine.value, self.datastore.value)
 
     def convertToTemplate(self, machineId):
-        '''
-        '''
+        """
+        """
         self.parent().convertToTemplate(machineId, self.shadow.value)
 
     def startDeployFromTemplate(self, name, comments, templateId):
-        '''
+        """
         Deploys a virtual machine on selected cluster from selected template
 
         Args:
@@ -277,20 +277,20 @@ class XenLinkedService(Service):
 
         Returns:
             Id of the machine being created form template
-        '''
+        """
         logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
         self.datastoreHasSpace()
 
         return self.parent().startDeployFromTemplate(name, comments, templateId)
 
     def removeTemplate(self, templateId):
-        '''
+        """
         invokes removeTemplate from parent provider
-        '''
+        """
         return self.parent().removeTemplate(templateId)
 
     def getVMPowerState(self, machineId):
-        '''
+        """
         Invokes getMachineState from parent provider
 
         Args:
@@ -298,11 +298,11 @@ class XenLinkedService(Service):
 
         Returns:
             one of this values:
-        '''
+        """
         return self.parent().getVMPowerState(machineId)
 
     def startVM(self, machineId, async=True):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
         This start also "resume" suspended/paused machines
@@ -311,22 +311,22 @@ class XenLinkedService(Service):
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().startVM(machineId, async)
 
     def stopVM(self, machineId, async=True):
-        '''
+        """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().stopVM(machineId, async)
 
     def canSuspendVM(self, machineId):
-        '''
+        """
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
 
         Args:
@@ -334,41 +334,41 @@ class XenLinkedService(Service):
 
         Returns:
             True if the machien can be suspended
-        '''
+        """
         return self.parent().canSuspendVM(machineId)
 
     def suspendVM(self, machineId, async=True):
-        '''
+        """
         Tries to suspend a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().suspendVM(machineId, async)
 
     def resumeVM(self, machineId, async=True):
-        '''
+        """
         Tries to resume a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().suspendVM(machineId, async)
 
 
     def removeVM(self, machineId):
-        '''
+        """
         Tries to delete a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().removeVM(machineId)
 
     def configureVM(self, machineId, mac):
@@ -378,26 +378,26 @@ class XenLinkedService(Service):
         return self.parent().provisionVM(machineId, async)
 
     def getMacRange(self):
-        '''
+        """
         Returns de selected mac range
-        '''
+        """
         return self.parent().getMacRange()
 
     def getBaseName(self):
-        '''
+        """
         Returns the base name
-        '''
+        """
         return self.baseName.value
 
     def getLenName(self):
-        '''
+        """
         Returns the length of numbers part
-        '''
+        """
         return int(self.lenName.value)
 
     def getDisplay(self):
-        '''
+        """
         Returns the selected display type (for created machines, for administration
-        '''
+        """
         return self.display.value
 

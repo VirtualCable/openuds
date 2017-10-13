@@ -5,9 +5,9 @@
 # All rights reserved.
 #
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 import logging
@@ -29,10 +29,10 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 
 def __init__():
-    '''
+    """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
-    '''
+    """
     import os.path
     import pkgutil
     import sys

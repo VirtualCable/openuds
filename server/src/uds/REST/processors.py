@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 # from django.utils import simplejson as json
@@ -52,9 +52,9 @@ class ParametersException(Exception):
 
 
 class ContentProcessor(object):
-    '''
+    """
     Process contents (request/response) so Handlers can manage them
-    '''
+    """
     mime_type = None
     extensions = None
 
@@ -62,39 +62,39 @@ class ContentProcessor(object):
         self._request = request
 
     def processGetParameters(self):
-        '''
+        """
         returns parameters based on request method
         GET parameters are understood
-        '''
+        """
         if self._request.method != 'GET':
             return {}
 
         return self._request.GET.copy()
 
     def processParameters(self):
-        '''
+        """
         Returns the parameter from the request
-        '''
+        """
         return ''
 
     def getResponse(self, obj):
-        '''
+        """
         Converts an obj to a response of specific type (json, XML, ...)
         This is done using "render" method of specific type
-        '''
+        """
         return http.HttpResponse(content=self.render(obj), content_type=self.mime_type + "; charset=utf-8")
 
     def render(self, obj):
-        '''
+        """
         Renders an obj to the spefific type
-        '''
+        """
         return six.text_type(obj)
 
     @staticmethod
     def procesForRender(obj):
-        '''
+        """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
-        '''
+        """
         if obj is None:
             return None
         elif isinstance(obj, (bool, int, float, six.text_type)):
@@ -119,10 +119,10 @@ class ContentProcessor(object):
 
 
 class MarshallerProcessor(ContentProcessor):
-    '''
+    """
     If we have a simple marshaller for processing contents
     this class will allow us to set up a new one simply setting "marshaller"
-    '''
+    """
     marshaller = None
 
     def processParameters(self):
@@ -146,9 +146,9 @@ class MarshallerProcessor(ContentProcessor):
 # Json Processor
 # ---------------
 class JsonProcessor(MarshallerProcessor):
-    '''
+    """
     Provides JSON content processor
-    '''
+    """
     mime_type = 'application/json'
     extensions = ['json']
     marshaller = json
@@ -158,9 +158,9 @@ class JsonProcessor(MarshallerProcessor):
 # XML Processor
 # ---------------
 class XMLProcessor(MarshallerProcessor):
-    '''
+    """
     Provides XML content processor
-    '''
+    """
     mime_type = 'application/xml'
     extensions = ['xml']
     marshaller = xml_marshaller

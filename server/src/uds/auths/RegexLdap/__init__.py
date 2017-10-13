@@ -28,10 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from Authenticator import RegexLdap
 
 __updated__ = '2014-02-19'

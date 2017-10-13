@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.db import transaction
@@ -51,9 +51,9 @@ class SchedulerHousekeeping(Job):
         super(SchedulerHousekeeping, self).__init__(environment)
 
     def run(self):
-        '''
+        """
         Look for "hanged" scheduler tasks and reset them
-        '''
+        """
         since = getSqlDatetime() - timedelta(minutes=15)
         with transaction.atomic():
             Scheduler.objects.select_for_update().filter(last_execution__lt=since, state=State.RUNNING).update(owner_server='', state=State.FOR_EXECUTE)

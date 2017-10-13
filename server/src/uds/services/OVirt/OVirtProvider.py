@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Created on Jun 22, 2012
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -53,7 +53,7 @@ CACHE_TIME_FOR_SERVER = 1800
 
 
 class Provider(ServiceProvider):
-    '''
+    """
     This class represents the sample services provider
 
     In this class we provide:
@@ -68,7 +68,7 @@ class Provider(ServiceProvider):
     For this class to get visible at administration client as a provider type,
     we MUST register it at package __init__.
 
-    '''
+    """
     # : What kind of services we offer, this are classes inherited from Service
     offers = [OVirtLinkedService]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -125,9 +125,9 @@ class Provider(ServiceProvider):
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
     def __getApi(self):
-        '''
+        """
         Returns the connection API object for oVirt (using ovirtsdk)
-        '''
+        """
         if self._api is None:
             APIClass = self._api = client.getClient(self.ovirtVersion.value)
             self._api = APIClass(self.host.value, self.username.value, self.password.value, self.timeout.value, self.cache)
@@ -135,9 +135,9 @@ class Provider(ServiceProvider):
 
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values=None):
-        '''
+        """
         We will use the "autosave" feature for form fields
-        '''
+        """
 
         # Just reset _api connection variable
         self._api = None
@@ -148,24 +148,24 @@ class Provider(ServiceProvider):
             logger.debug(self.host.value)
 
     def testConnection(self):
-        '''
+        """
         Test that conection to oVirt server is fine
 
         Returns
 
             True if all went fine, false if id didn't
-        '''
+        """
 
         return self.__getApi().test()
 
     def testValidVersion(self):
-        '''
+        """
         Checks that this version of ovirt if "fully functional" and does not needs "patchs'
-        '''
+        """
         return self.__getApi().isFullyFunctionalVersion()
 
     def getMachines(self, force=False):
-        '''
+        """
         Obtains the list of machines inside oVirt.
         Machines starting with UDS are filtered out
 
@@ -178,12 +178,12 @@ class Provider(ServiceProvider):
                 'name'
                 'id'
                 'cluster_id'
-        '''
+        """
 
         return self.__getApi().getVms(force)
 
     def getClusters(self, force=False):
-        '''
+        """
         Obtains the list of clusters inside oVirt.
 
         Args:
@@ -196,12 +196,12 @@ class Provider(ServiceProvider):
                 'name'
                 'id'
                 'datacenter_id'
-        '''
+        """
 
         return self.__getApi().getClusters(force)
 
     def getClusterInfo(self, clusterId, force=False):
-        '''
+        """
         Obtains the cluster info
 
         Args:
@@ -215,11 +215,11 @@ class Provider(ServiceProvider):
                 'name'
                 'id'
                 'datacenter_id'
-        '''
+        """
         return self.__getApi().getClusterInfo(clusterId, force)
 
     def getDatacenterInfo(self, datacenterId, force=False):
-        '''
+        """
         Obtains the datacenter info
 
         Args:
@@ -243,11 +243,11 @@ class Provider(ServiceProvider):
                    'used' -> Space used, in bytes
                    'active' -> True or False
 
-        '''
+        """
         return self.__getApi().getDatacenterInfo(datacenterId, force)
 
     def getStorageInfo(self, storageId, force=False):
-        '''
+        """
         Obtains the storage info
 
         Args:
@@ -265,11 +265,11 @@ class Provider(ServiceProvider):
                'used' -> Space used, in bytes
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
-        '''
+        """
         return self.__getApi().getStorageInfo(storageId, force)
 
     def makeTemplate(self, name, comments, machineId, clusterId, storageId, displayType):
-        '''
+        """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
 
@@ -282,11 +282,11 @@ class Provider(ServiceProvider):
 
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
-        '''
+        """
         return self.__getApi().makeTemplate(name, comments, machineId, clusterId, storageId, displayType)
 
     def getTemplateState(self, templateId):
-        '''
+        """
         Returns current template state.
 
         Returned values could be:
@@ -295,11 +295,11 @@ class Provider(ServiceProvider):
             removed
 
         (don't know if ovirt returns something more right now, will test what happens when template can't be published)
-        '''
+        """
         return self.__getApi().getTemplateState(templateId)
 
     def getMachineState(self, machineId):
-        '''
+        """
         Returns the state of the machine
         This method do not uses cache at all (it always tries to get machine state from oVirt server)
 
@@ -313,19 +313,19 @@ class Provider(ServiceProvider):
              wait_for_launch, reboot_in_progress, saving_state, restoring_state,
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
-        '''
+        """
         return self.__getApi().getMachineState(machineId)
 
     def removeTemplate(self, templateId):
-        '''
+        """
         Removes a template from ovirt server
 
         Returns nothing, and raises an Exception if it fails
-        '''
+        """
         return self.__getApi().removeTemplate(templateId)
 
     def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB):
-        '''
+        """
         Deploys a virtual machine on selected cluster from selected template
 
         Args:
@@ -339,11 +339,11 @@ class Provider(ServiceProvider):
 
         Returns:
             Id of the machine being created form template
-        '''
+        """
         return self.__getApi().deployFromTemplate(name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB)
 
     def startMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
         This start also "resume" suspended/paused machines
@@ -352,46 +352,46 @@ class Provider(ServiceProvider):
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().startMachine(machineId)
 
     def stopMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().stopMachine(machineId)
 
     def suspendMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().suspendMachine(machineId)
 
     def removeMachine(self, machineId):
-        '''
+        """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().removeMachine(machineId)
 
     def updateMachineMac(self, machineId, macAddres):
-        '''
+        """
         Changes the mac address of first nic of the machine to the one specified
-        '''
+        """
         return self.__getApi().updateMachineMac(machineId, macAddres)
 
     def fixUsb(self, machineId):
@@ -404,13 +404,13 @@ class Provider(ServiceProvider):
         return self.__getApi().getConsoleConnection(machineId)
 
     def desktopLogin(self, machineId, username, password, domain):
-        '''
-        '''
+        """
+        """
         return self.__getApi().desktopLogin(machineId, username, password, domain)
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test ovirt Connectivity
 
         Args:
@@ -424,7 +424,7 @@ class Provider(ServiceProvider):
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
 
-        '''
+        """
         # try:
         #    # We instantiate the provider, but this may fail...
         #    instance = Provider(env, data)

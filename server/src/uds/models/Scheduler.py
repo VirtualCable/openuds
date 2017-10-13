@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 class Scheduler(models.Model):
-    '''
+    """
     Class that contains scheduled tasks.
 
     The scheduled task are keep at database so:
@@ -62,7 +62,7 @@ class Scheduler(models.Model):
 
     In order for a task to work, it must first register itself for "names" that that class handles using the
     JobsFactory
-    '''
+    """
 
     DAY = 60 * 60 * 24
     HOUR = 60 * 60
@@ -76,25 +76,25 @@ class Scheduler(models.Model):
     state = models.CharField(max_length=1, default=State.FOR_EXECUTE, db_index=True)
 
     class Meta:
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         app_label = 'uds'
 
 
     def getEnvironment(self):
-        '''
+        """
         Returns an environment valid for the record this object represents
-        '''
+        """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
     def getInstance(self):
-        '''
+        """
         Returns an instance of the class that this record of the Scheduler represents. This clas is derived
         of uds.core.jobs.Job.Job
-        '''
+        """
         jobInstance = JobsFactory.factory().lookup(self.name)
-        if jobInstance != None:
+        if jobInstance is not None:
             env = self.getEnvironment()
             return jobInstance(env)
         else:
@@ -102,9 +102,9 @@ class Scheduler(models.Model):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to remove environment for sheduled task
-        '''
+        """
         toDelete = kwargs['instance']
         logger.debug('Deleting sheduled task {0}'.format(toDelete))
         toDelete.getEnvironment().clearRelatedData()

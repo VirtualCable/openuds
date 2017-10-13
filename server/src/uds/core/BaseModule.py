@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 class Module(UserInterface, Environmentable, Serializable):
-    '''
+    """
     Base class for all modules used by UDS.
     This base module provides all the needed methods that modules must implement
 
@@ -93,7 +93,7 @@ class Module(UserInterface, Environmentable, Serializable):
 
     Environmentable is a base class that provides utility method to access a separate Environment for every single
     module.
-    '''
+    """
     # : Which coded to use to encode module by default.
     # : This overrides the Environmentable and Serializable Attribute, but in all cases we are using 'base64'
     CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
@@ -200,7 +200,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return [True, _("No connection checking method is implemented.")]
 
     def __init__(self, environment, values=None):
-        '''
+        """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(environment, values)".
 
@@ -221,7 +221,7 @@ class Module(UserInterface, Environmentable, Serializable):
         If you override marshal, unmarshal and inherited UserInterface method
         valuesDict, you must also take account of values (dict) provided at the
         __init__ method of your class.
-        '''
+        """
         #
         UserInterface.__init__(self, values)
         Environmentable.__init__(self, environment)
@@ -231,14 +231,14 @@ class Module(UserInterface, Environmentable, Serializable):
         return "Base Module"
 
     def isDirty(self):
-        '''
+        """
         This method informs the core if the module has changed serializable data,
         and that must be re-serialized
 
         Default implemetation is that on every method call, module will be dirty
 
         Note: The implementation of this is a work in progress, so right now the module will be serialized out on every access
-        '''
+        """
         return True
 
     def marshal(self):

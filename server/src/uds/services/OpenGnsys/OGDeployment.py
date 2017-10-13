@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.services import UserDeployment
@@ -52,7 +52,7 @@ opCreate, opError, opFinish, opRemove, opRetry = range(5)
 
 
 class OGDeployment(UserDeployment):
-    '''
+    """
     This class generates the user consumable elements of the service tree.
 
     After creating at administration interface an Deployed Service, UDS will
@@ -61,7 +61,7 @@ class OGDeployment(UserDeployment):
 
     The logic for managing ovirt deployments (user machines in this case) is here.
 
-    '''
+    """
 
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 20
@@ -78,15 +78,15 @@ class OGDeployment(UserDeployment):
 
     # Serializable needed methods
     def marshal(self):
-        '''
+        """
         Does nothing right here, we will use envoronment storage in this sample
-        '''
+        """
         return '\1'.join(['v1', self._name, self._ip, self._mac, self._machineId, self._reason, six.text_type(self._stamp), pickle.dumps(self._queue)])
 
     def unmarshal(self, str_):
-        '''
+        """
         Does nothing here also, all data are keeped at environment storage
-        '''
+        """
         vals = str_.split('\1')
         if vals[0] == 'v1':
             self._name, self._ip, self._mac, self._machineId, self._reason, stamp, queue = vals[1:]
@@ -103,12 +103,12 @@ class OGDeployment(UserDeployment):
         return self._ip
 
     def setReady(self):
-        '''
+        """
         Right now, this does nothing on OG.
         The machine has been already been started.
         The problem is that currently there is no way that a machine is in FACT started.
         OpenGnsys will try it best by sending an WOL
-        '''
+        """
         # if self.cache.get('ready') == '1':
         #    return State.FINISHED
 
@@ -122,17 +122,17 @@ class OGDeployment(UserDeployment):
         return State.FINISHED
 
     def deployForUser(self, user):
-        '''
+        """
         Deploys an service instance for an user.
-        '''
+        """
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy(False)
+        self.__initQueueForDeploy()
         return self.__executeQueue()
 
     def deployForCache(self, cacheLevel):
-        '''
+        """
         Deploys an service instance for cache
-        '''
+        """
         self.__initQueueForDeploy()  # No Level2 Cache possible
         return self.__executeQueue()
 
@@ -175,12 +175,12 @@ class OGDeployment(UserDeployment):
         self._queue.append(op)
 
     def __error(self, reason):
-        '''
+        """
         Internal method to set object as error state
 
         Returns:
             State.ERROR, so we can do "return self.__error(reason)"
-        '''
+        """
         logger.debug('Setting error state, reason: {0}'.format(reason))
         self.doLog(log.ERROR, reason)
 
@@ -221,19 +221,19 @@ class OGDeployment(UserDeployment):
 
     # Queue execution methods
     def __retry(self):
-        '''
+        """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
         checkState method will "pop" first item when a check operation returns State.FINISHED
 
         At executeQueue this return value will be ignored, and it will only be used at checkState
-        '''
+        """
         return State.FINISHED
 
     def __create(self):
-        '''
+        """
         Deploys a machine from template for user/cache
-        '''
+        """
         try:
             r = self.service().reserve()
             self.service().notifyEvents(r['id'], self._uuid)
@@ -252,28 +252,28 @@ class OGDeployment(UserDeployment):
         self.dbservice().logIP(self._ip)
 
     def __remove(self):
-        '''
+        """
         Removes a machine from system
-        '''
+        """
         self.service().unreserve(self._machineId)
 
     # Check methods
     def __checkCreate(self):
-        '''
+        """
         Checks the state of a deploy for an user or cache
-        '''
+        """
         return self.__checkMachineReady()
 
     def __checkRemoved(self):
-        '''
+        """
         Checks if a machine has been removed
-        '''
+        """
         return State.FINISHED  # No check at all, always true
 
     def checkState(self):
-        '''
+        """
         Check what operation is going on, and acts acordly to it
-        '''
+        """
         self.__debug('checkState')
         op = self.__getCurrentOp()
 
@@ -305,27 +305,27 @@ class OGDeployment(UserDeployment):
             return self.__error(e)
 
     def finish(self):
-        '''
+        """
         Invoked when the core notices that the deployment of a service has finished.
         (No matter wether it is for cache or for an user)
-        '''
+        """
         self.__debug('finish')
         pass
 
     def reasonOfError(self):
-        '''
+        """
         Returns the reason of the error.
 
         Remember that the class is responsible of returning this whenever asked
         for it, and it will be asked everytime it's needed to be shown to the
         user (when the administation asks for it).
-        '''
+        """
         return self._reason
 
     def destroy(self):
-        '''
+        """
         Invoked for destroying a deployed service
-        '''
+        """
         self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
@@ -333,7 +333,7 @@ class OGDeployment(UserDeployment):
         return self.__executeQueue()
 
     def cancel(self):
-        '''
+        """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
 
@@ -341,7 +341,7 @@ class OGDeployment(UserDeployment):
         of the deployed service (indirectly).
         When administrator requests it, the cancel is "delayed" and not
         invoked directly.
-        '''
+        """
         return self.destroy()
 
     @staticmethod

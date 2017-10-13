@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext as _
 from uds.core.services import Publication
@@ -41,9 +41,9 @@ logger = logging.getLogger(__name__)
 
 
 class XenPublication(Publication):
-    '''
+    """
     This class provides the publication of a oVirtLinkedService
-    '''
+    """
     _name = ''
     _reason = ''
     _destroyAfter = 'f'
@@ -55,12 +55,12 @@ class XenPublication(Publication):
     suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
 
     def initialize(self):
-        '''
+        """
         This method will be invoked by default __init__ of base class, so it gives
         us the oportunity to initialize whataver we need here.
 
         In our case, we setup a few attributes..
-        '''
+        """
 
         # We do not check anything at marshal method, so we ensure that
         # default values are correctly handled by marshal.
@@ -72,24 +72,24 @@ class XenPublication(Publication):
         self._task = ''
 
     def marshal(self):
-        '''
+        """
         returns data from an instance of Sample Publication serialized
-        '''
+        """
         return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task])
 
     def unmarshal(self, data):
-        '''
+        """
         deserializes the data and loads it inside instance.
-        '''
+        """
         logger.debug('Data: {0}'.format(data))
         vals = data.split('\t')
         if vals[0] == 'v1':
             self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task = vals[1:]
 
     def publish(self):
-        '''
+        """
         Realizes the publication of the service
-        '''
+        """
         self._name = self.service().sanitizeVmName('UDS Pub ' + self.dsName() + "-" + str(self.revision()))
         comments = _('UDS pub for {0} at {1}').format(self.dsName(), str(datetime.now()).split('.')[0])
         self._reason = ''  # No error, no reason for it
@@ -106,9 +106,9 @@ class XenPublication(Publication):
         return State.RUNNING
 
     def checkState(self):
-        '''
+        """
         Checks state of publication creation
-        '''
+        """
         if self._state == 'finished':
             return State.FINISHED
 
@@ -134,23 +134,23 @@ class XenPublication(Publication):
         return State.RUNNING
 
     def finish(self):
-        '''
+        """
         In our case, finish does nothing
-        '''
+        """
         pass
 
     def reasonOfError(self):
-        '''
+        """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or checkState
         if they return State.ERROR
 
         Returns an string, in our case, set at checkState
-        '''
+        """
         return self._reason
 
     def destroy(self):
-        '''
+        """
         This is called once a publication is no more needed.
 
         This method do whatever needed to clean up things, such as
@@ -159,7 +159,7 @@ class XenPublication(Publication):
 
         The retunred value is the same as when publishing, State.RUNNING,
         State.FINISHED or State.ERROR.
-        '''
+        """
         # We do not do anything else to destroy this instance of publication
         if self._state == 'ok':
             self._destroyAfter = 't'
@@ -175,9 +175,9 @@ class XenPublication(Publication):
         return State.FINISHED
 
     def cancel(self):
-        '''
+        """
         Do same thing as destroy
-        '''
+        """
         return self.destroy()
 
     # Here ends the publication needed methods.
@@ -185,7 +185,7 @@ class XenPublication(Publication):
     # and will be used by user deployments that uses this kind of publication
 
     def getTemplateId(self):
-        '''
+        """
         Returns the template id associated with the publication
-        '''
+        """
         return self._templateId

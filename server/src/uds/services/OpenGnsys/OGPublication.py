@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 from uds.core.services import Publication
 from uds.core.util.State import State
@@ -45,71 +45,71 @@ logger = logging.getLogger(__name__)
 
 
 class OGPublication(Publication):
-    '''
+    """
     This class provides the publication of a oVirtLinkedService
-    '''
+    """
     _name = ''
 
     suggestedTime = 5  # : Suggested recheck time if publication is unfinished in seconds
 
     def initialize(self):
-        '''
+        """
         This method will be invoked by default __init__ of base class, so it gives
         us the oportunity to initialize whataver we need here.
 
         In our case, we setup a few attributes..
-        '''
+        """
 
         # We do not check anything at marshal method, so we ensure that
         # default values are correctly handled by marshal.
         self._name = ''
 
     def marshal(self):
-        '''
+        """
         returns data from an instance of Sample Publication serialized
-        '''
+        """
         return '\t'.join(['v1', self._name])
 
     def unmarshal(self, data):
-        '''
+        """
         deserializes the data and loads it inside instance.
-        '''
+        """
         logger.debug('Data: {0}'.format(data))
         vals = data.split('\t')
         if vals[0] == 'v1':
             self._name = vals[1]
 
     def publish(self):
-        '''
+        """
         Realizes the publication of the service
-        '''
+        """
         self._name = 'Publication {}'.format(getSqlDatetime())
         return State.FINISHED
 
     def checkState(self):
-        '''
+        """
         Checks state of publication creation
-        '''
+        """
         return State.FINISHED
 
     def finish(self):
-        '''
+        """
         In our case, finish does nothing
-        '''
+        """
         pass
 
     def reasonOfError(self):
-        '''
+        """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or checkState
         if they return State.ERROR
 
         Returns an string, in our case, set at checkState
-        '''
+        """
         return 'No error possible :)'
 
     def destroy(self):
-        '''
+        """
         This is called once a publication is no more needed.
 
         This method do whatever needed to clean up things, such as
@@ -118,11 +118,11 @@ class OGPublication(Publication):
 
         The retunred value is the same as when publishing, State.RUNNING,
         State.FINISHED or State.ERROR.
-        '''
+        """
         return State.FINISHED
 
     def cancel(self):
-        '''
+        """
         Do same thing as destroy
-        '''
+        """
         return self.destroy()

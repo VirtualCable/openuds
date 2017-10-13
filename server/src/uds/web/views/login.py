@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -53,11 +53,11 @@ __updated__ = '2017-06-01'
 # Allow cross-domain login
 # @csrf_exempt
 def login(request, tag=None):
-    '''
+    """
     View responsible of logging in an user
     :param request:  http request
     :param tag: tag of login auth
-    '''
+    """
     # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
 
     host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations
 from uds.core.ui.UserInterface import gui
 from uds.transports.RDP.RDPTransport import RDPTransport
 from uds.transports.RDP.TRDPTransport import TRDPTransport
@@ -36,19 +36,20 @@ def unmarshalRDP(str_):
             withoutDomain = gui.strToBool(data[9 + i])
         else:
             withoutDomain = False
-
-    return {
-        'useEmptyCreds': useEmptyCreds,
-        'allowSmartcards': allowSmartcards,
-        'allowPrinters': allowPrinters,
-        'allowDrives': allowDrives,
-        'allowSerials': allowSerials,
-        'wallpaper': wallpaper,
-        'fixedName': fixedName,
-        'fixedPassword': fixedPassword,
-        'fixedDomain': fixedDomain,
-        'withoutDomain': withoutDomain
-    }
+        return {
+            'useEmptyCreds': useEmptyCreds,
+            'allowSmartcards': allowSmartcards,
+            'allowPrinters': allowPrinters,
+            'allowDrives': allowDrives,
+            'allowSerials': allowSerials,
+            'wallpaper': wallpaper,
+            'fixedName': fixedName,
+            'fixedPassword': fixedPassword,
+            'fixedDomain': fixedDomain,
+            'withoutDomain': withoutDomain
+        }
+    # If data not recognized
+    raise Exception('Unknown data version {}'.format(data[0]))
 
 
 def unmarshalTRDP(str_):

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 from django.db import models
@@ -45,10 +45,10 @@ logger = logging.getLogger(__name__)
 
 
 class Storage(models.Model):
-    '''
+    """
     General storage model. Used to store specific instances (transport, service, servicemanager, ...) persistent information
     not intended to be serialized/deserialized everytime one object instance is loaded/saved.
-    '''
+    """
     owner = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, primary_key=True)
     data = models.TextField(default='')
@@ -57,9 +57,9 @@ class Storage(models.Model):
     objects = LockingManager()
 
     class Meta:
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         app_label = 'uds'
 
     def __unicode__(self):

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -52,9 +52,9 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Permissions(UUIDModel):
-    '''
+    """
     An OS Manager represents a manager for responding requests for agents inside services.
-    '''
+    """
     # pylint: disable=model-missing-unicode
     # Allowed permissions
     PERMISSION_NONE = 0
@@ -84,9 +84,9 @@ class Permissions(UUIDModel):
 
     @staticmethod
     def addPermission(**kwargs):
-        '''
+        """
         Adds a permission to an object and an user or group
-        '''
+        """
         user = kwargs.get('user', None)
         group = kwargs.get('group', None)
 
@@ -121,7 +121,7 @@ class Permissions(UUIDModel):
 
     @staticmethod
     def getPermissions(**kwargs):
-        '''
+        """
         Retrieves the permission for a given object
         It's mandatory to include at least object_type param
 
@@ -129,7 +129,7 @@ class Permissions(UUIDModel):
         @param object_id: Optional
         @param user: Optional, User (db object)
         @param groups: Optional List of db groups
-        '''
+        """
         object_type = kwargs.get('object_type', None)
         if object_type is None:
             raise Exception('Needs at least the object_type field')
@@ -157,9 +157,9 @@ class Permissions(UUIDModel):
 
     @staticmethod
     def enumeratePermissions(object_type, object_id):
-        '''
+        """
         Get users permissions over object
-        '''
+        """
         return Permissions.objects.filter(object_type=object_type, object_id=object_id)
 
     @staticmethod

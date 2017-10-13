@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 # pylint: disable=model-missing-unicode, too-many-public-methods
 
@@ -50,18 +50,18 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class UserServiceProperty(models.Model):
-    '''
+    """
     Properties for User Service.
     The value field is a Text field, so we can put whatever we want in it
-    '''
+    """
     name = models.CharField(max_length=128, db_index=True)
     value = models.TextField(default='')
     user_service = models.ForeignKey(UserService, on_delete=models.CASCADE, related_name='properties')
 
     class Meta:
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         db_table = 'uds__user_service_property'
         unique_together = (('name', 'user_service'),)
         app_label = 'uds'

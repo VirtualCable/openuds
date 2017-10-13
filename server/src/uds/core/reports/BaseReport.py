@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_noop as _
@@ -55,23 +55,23 @@ class Report(UserInterface):
 
     @classmethod
     def translated_name(cls):
-        '''
+        """
         Helper to return translated report name
-        '''
+        """
         return ugettext(cls.name)
 
     @classmethod
     def translated_description(cls):
-        '''
+        """
         Helper to return translated report description
-        '''
+        """
         return ugettext(cls.description)
 
     @classmethod
     def translated_group(cls):
-        '''
+        """
         Helper to return translated report description
-        '''
+        """
         return ugettext(cls.group)
 
     @classmethod
@@ -81,7 +81,7 @@ class Report(UserInterface):
         return cls.uuid
 
     def __init__(self, values=None):
-        '''
+        """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(values)".
 
@@ -94,36 +94,36 @@ class Report(UserInterface):
         If you override marshal, unmarshal and inherited UserInterface method
         valuesDict, you must also take account of values (dict) provided at the
         __init__ method of your class.
-        '''
+        """
         #
         UserInterface.__init__(self, values)
         self.initialize(values)
 
     def initialize(self, values):
-        '''
+        """
         Invoked just right after initializing report, so we avoid rewriting __init__
         if values is None, we are initializing an "new" element, if values is a dict, is the values
         that self has received on constructuon
 
         This can be or can be not overriden
-        '''
+        """
         pass
 
     def generate(self):
-        '''
+        """
         Generates the reports
 
         An string representing the report is to be expected to be returned
 
         this MUST be overriden
-        '''
+        """
         raise NotImplementedError()
 
     def generateEncoded(self):
-        '''
+        """
         Generated base 64 encoded report.
         Basically calls generate and encodes resuslt as base64
-        '''
+        """
         data = self.generate()
         if self.encoded:
             return data.encode('base64').replace('\n', '')

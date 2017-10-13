@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -48,9 +48,9 @@ __updated__ = '2015-04-28'
 
 @python_2_unicode_compatible
 class UUIDModel(models.Model):
-    '''
+    """
     Base abstract model for models that require an uuid
-    '''
+    """
     # pylint: disable=model-missing-unicode
     uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
 

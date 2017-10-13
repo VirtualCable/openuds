@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 import logging
 import six
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 def getMachineState(api, machineId):
-    '''
+    """
     Returns the state of the machine
     This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
 
@@ -54,7 +54,7 @@ def getMachineState(api, machineId):
 
     Returns:
         one of the on.VmState Values
-    '''
+    """
     try:
         # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
         # vm.info()
@@ -67,9 +67,9 @@ def getMachineState(api, machineId):
 
 
 def getMachineSubstate(api, machineId):
-    '''
+    """
     Returns the lcm_state
-    '''
+    """
     try:
         return api.getVMSubState(machineId)
     except Exception as e:
@@ -79,7 +79,7 @@ def getMachineSubstate(api, machineId):
 
 
 def startMachine(api, machineId):
-    '''
+    """
     Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
     This start also "resume" suspended/paused machines
@@ -88,7 +88,7 @@ def startMachine(api, machineId):
         machineId: Id of the machine
 
     Returns:
-    '''
+    """
     try:
         # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
         # vm.resume()
@@ -98,14 +98,14 @@ def startMachine(api, machineId):
         pass
 
 def stopMachine(api, machineId):
-    '''
+    """
     Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
         machineId: Id of the machine
 
     Returns:
-    '''
+    """
     try:
         # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
         # vm.poweroff_hard()
@@ -115,25 +115,25 @@ def stopMachine(api, machineId):
 
 
 def suspendMachine(api, machineId):
-    '''
+    """
     Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
         machineId: Id of the machine
 
     Returns:
-    '''
+    """
     startMachine(api, machineId)
 
 def removeMachine(api, machineId):
-    '''
+    """
     Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
         machineId: Id of the machine
 
     Returns:
-    '''
+    """
     try:
         # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
         # vm.delete()
@@ -144,7 +144,7 @@ def removeMachine(api, machineId):
 
 
 def enumerateMachines(api):
-    '''
+    """
     Obtains the list of machines inside OpenNebula.
     Machines starting with UDS are filtered out
 
@@ -157,14 +157,14 @@ def enumerateMachines(api):
             'name'
             'id'
             'cluster_id'
-    '''
+    """
     return api.enumVMs()
 
 
 def getNetInfo(api, machineId, networkId=None):
-    '''
+    """
     Changes the mac address of first nic of the machine to the one specified
-    '''
+    """
     # md = minidom.parseString(api.call('vm.info', int(machineId)))
     md = minidom.parseString(api.VMInfo(machineId)[1])
     node = md
@@ -193,10 +193,10 @@ def getNetInfo(api, machineId, networkId=None):
 
 
 def getDisplayConnection(api, machineId):
-    '''
+    """
     If machine is not running or there is not a display, will return NONE
     SPICE connections should check that 'type' is 'SPICE'
-    '''
+    """
     md = minidom.parseString(api.VMInfo(machineId)[1])
     try:
         graphics = md.getElementsByTagName('GRAPHICS')[0]

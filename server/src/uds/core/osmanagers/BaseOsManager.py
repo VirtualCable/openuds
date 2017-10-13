@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -48,13 +48,13 @@ STORAGE_KEY = 'osmk'
 
 
 class OSManager(Module):
-    '''
+    """
     An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
     The Service (i.e. virtual machine) communicates with the OSManager via a published web method, that must include the unique ID.
     In order to make easier to agents identify themselfs, the Unique ID can be a list with various Ids (i.e. the macs of the virtual machine).
     Server will iterate thought them and look for an identifier associated with the service. This list is a comma separated values (i.e. AA:BB:CC:DD:EE:FF,00:11:22:...)
     Remember also that we inherit the test and check methods from BaseModule
-    '''
+    """
     # Service informational related data
     typeName = _('Base OS Manager')
     typeType = 'BaseOSManager'
@@ -74,7 +74,7 @@ class OSManager(Module):
         self.initialize(values)
 
     def initialize(self, values):
-        '''
+        """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
         and invoke base methods.
@@ -87,29 +87,29 @@ class OSManager(Module):
             be called after this.
 
         Default implementation does nothing
-        '''
+        """
         pass
 
     def release(self, service):
-        '''
+        """
         Called by a service that is in Usable state before destroying it so osmanager can release data associated with it
         Only invoked for services that reach the state "removed"
         @return nothing
-        '''
+        """
         pass
 
     # These methods must be overriden
     def process(self, userService, message, data, options=None):
-        '''
+        """
         This method must be overriden so your so manager can manage requests and responses from agent.
         @param userService: Service that sends the request (virtual machine or whatever)
         @param message: message to process (os manager dependent)
         @param data: Data for this message
-        '''
+        """
         pass
 
     def checkState(self, service):
-        '''
+        """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
           * After service creation has finished, with the service wanting to see if it has to wait for os manager process finalization
@@ -119,40 +119,40 @@ class OSManager(Module):
           The state will be updated by actors inside oss, so no more direct checking is needed
           @return: RUNNING, FINISHED
           We do not expect any exception from this method
-        '''
+        """
         return State.FINISHED
 
     def processUnused(self, userService):
-        '''
+        """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
-        '''
+        """
         pass
 
     def maxIdle(self):
-        '''
+        """
         If os manager request "max idle", this method will return a value different to None so actors will get informed on Connection
         @return Must return None (default if not override), or a "max idle" in seconds
-        '''
+        """
         return None
 
     def maxSession(self):
-        '''
+        """
         If os manager requests "max session duration", this methos will return a value distinct of None so actors will get informed on Connection
         @return Must return None (default if not override), or a "max session duration" in seconds
-        '''
+        """
         return None
 
     @classmethod
     def transformsUserOrPasswordForService(cls):
-        '''
+        """
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from DeployedService
-        '''
+        """
         return cls.processUserPassword != OSManager.processUserPassword
 
     def processUserPassword(self, service, username, password):
-        '''
+        """
         This will be invoked prior to passsing username/password to Transport.
 
         This method allows us to "change" username and/or password "on the fly".
@@ -165,30 +165,28 @@ class OSManager(Module):
             simply do not implement it)
 
         Note: This method is, right now, invoked by Transports directly. So if you implement a Transport, remember to invoke this
-        '''
+        """
         return [username, password]
 
     def destroy(self):
-        '''
+        """
         Invoked when OS Manager is deleted
-        '''
+        """
         pass
 
     def logKnownIp(self, userService, ip):
         userService.logIP(ip)
 
-
     def toReady(self, userService):
         userService.setProperty('loginsCounter', '0')
 
-
     def loggedIn(self, userService, userName=None, save=True):
-        '''
+        """
         This method:
           - Add log in event to stats
           - Sets service in use
           - Invokes userLoggedIn for user service instance
-        '''
+        """
         uniqueId = userService.unique_id
         userService.setInUse(True)
         si = userService.getInstance()
@@ -220,12 +218,12 @@ class OSManager(Module):
             userService.save()
 
     def loggedOut(self, userService, userName=None, save=True):
-        '''
+        """
         This method:
           - Add log in event to stats
           - Sets service in use
           - Invokes userLoggedIn for user service instance
-        '''
+        """
         counter = int(userService.getProperty('loginsCounter', '0'))
         if counter > 0:
             counter -= 1

@@ -27,26 +27,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
-import sys
-import imp
-import re
-
-import logging
-import six
-
-from defusedxml import minidom
-
-
-__updated__ = '2016-03-07'
-
-logger = logging.getLogger(__name__)
-
+from .UDSOpenStackClient import Client
 # Import submodules
 from .common import *
 
-from .UDSOpenStackClient import Client
+__updated__ = '2017-10-07'
 
+logger = logging.getLogger(__name__)

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 import logging
@@ -40,10 +40,10 @@ logger = logging.getLogger(__name__)
 
 
 class User(object):
-    '''
+    """
     An user represents a database user, associated with its authenticator (instance)
     and its groups.
-    '''
+    """
 
     def __init__(self, dbUser):
         self._manager = dbUser.getManager()
@@ -52,11 +52,11 @@ class User(object):
         self._groups = None
 
     def _groupsManager(self):
-        '''
+        """
         If the groups manager for this user already exists, it returns this.
         If it does not exists, it creates one default from authenticator and
         returns it.
-        '''
+        """
         from GroupsManager import GroupsManager
 
         if self._grpsManager is None:
@@ -64,13 +64,13 @@ class User(object):
         return self._grpsManager
 
     def groups(self):
-        '''
+        """
         Returns the valid groups for this user.
         To do this, it will validate groups through authenticator instance using
         :py:meth:`uds.core.auths.Authenticator.getGroups` method.
 
         :note: Once obtained valid groups, it caches them until object removal.
-        '''
+        """
         from uds.models import User as DbUser
         from uds.core.auths.Group import Group
 
@@ -93,13 +93,13 @@ class User(object):
         return self._groups
 
     def manager(self):
-        '''
+        """
         Returns the authenticator instance
-        '''
+        """
         return self._manager
 
     def dbUser(self):
-        '''
+        """
         Returns the database user
-        '''
+        """
         return self._dbUser

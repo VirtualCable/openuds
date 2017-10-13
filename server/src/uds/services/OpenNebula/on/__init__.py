@@ -33,15 +33,14 @@
 
 # pylint: disable=maybe-no-member
 
-import sys
-import imp
-import re
-
-import logging
 import six
 
-import six
 from uds.core.util import xml2dict
+from . import storage
+from . import template
+from . import vm
+# Import submodules
+from .common import *
 
 __updated__ = '2017-03-28'
 
@@ -56,12 +55,6 @@ for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED',
 
 for i in enumerate(['INIT', 'READY', 'USED', 'DISABLED', 'LOCKED', 'ERROR', 'CLONE', 'DELETE', 'USED_PERS', 'LOCKED_USED', 'LOCKED_USED_PERS']):
     setattr(ImageState, i[1], i[0])
-
-# Import submodules
-from .common import *
-from . import template
-from . import vm
-from . import storage
 
 
 # Decorator
@@ -288,7 +281,6 @@ class OpenNebulaClient(object):
         else:
             # Version 5
             return self.VMAction(vmId, 'terminate-hard')
-
 
     @ensureConnected
     def getVMState(self, vmId):

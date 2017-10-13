@@ -26,11 +26,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 Base module for all authenticators
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core import Module
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 class Authenticator(Module):
-    '''
+    """
     This class represents the base interface to implement authenticators.
 
     An authenticator is responsible for managing user and groups of a kind
@@ -93,7 +93,7 @@ class Authenticator(Module):
            to mark them in your own authenticators as "_" using
            ugettext_noop. We have aliased it here to "_" so it's
            easier to understand.
-    '''
+    """
 
     # : Name of type, used at administration interface to identify this
     # : authenticator (i.e. LDAP, SAML, ...)
@@ -156,18 +156,18 @@ class Authenticator(Module):
     groupType = Group
 
     def __init__(self, dbAuth, environment, values):
-        '''
+        """
         Instantiathes the authenticator.
         @param dbAuth: Database object for the authenticator
         @param environment: Environment for the authenticator
         @param values: Values passed to element
-        '''
+        """
         self._dbAuth = dbAuth
         super(Authenticator, self).__init__(environment, values)
         self.initialize(values)
 
     def initialize(self, values):
-        '''
+        """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
         and invoke base methods.
@@ -180,61 +180,61 @@ class Authenticator(Module):
             be called after this.
 
         Default implementation does nothing
-        '''
+        """
         pass
 
     def dbAuthenticator(self):
-        '''
+        """
         Helper method to access the Authenticator database object
-        '''
+        """
         return self._dbAuth
 
     def recreateGroups(self, user):
-        '''
+        """
         Helper method, not needed to be overriden.
         It simply checks if the source is external and if so, recreates
         the user groups for storing them at database.
 
         user param is a database user object
-        '''
+        """
         if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
             self.getGroups(user.name, groupsManager)
             user.groups = [g.dbGroup() for g in groupsManager.getValidGroups()]
 
     def callbackUrl(self):
-        '''
+        """
         Helper method to return callback url for self (authenticator).
 
         This method will allow us to know where to do redirection in case
         we need to use callback for authentication
-        '''
+        """
         from auth import authCallbackUrl
         return authCallbackUrl(self.dbAuthenticator())
 
     def infoUrl(self):
-        '''
+        """
         Helper method to return info url for this authenticator
-        '''
+        """
         from auth import authInfoUrl
         return authInfoUrl(self.dbAuthenticator())
 
     @classmethod
     def isCustom(cls):
-        '''
+        """
         Helper to query if a class is custom (implements getHtml method)
-        '''
+        """
         return cls.getHtml != Authenticator.getHtml
 
     @classmethod
     def canCheckUserPassword(cls):
-        '''
+        """
         Helper method to query if a class can do a login using credentials
-        '''
+        """
         return cls.authenticate != Authenticator.authenticate
 
     def searchUsers(self, pattern):
-        '''
+        """
         If you provide this method, the user will be allowed to search users,
         that is, the search button at administration interface, at user form,
         will be enabled.
@@ -250,11 +250,11 @@ class Authenticator(Module):
 
         Returns
             a list of found users for the pattern specified
-        '''
+        """
         return []
 
     def searchGroups(self, pattern):
-        '''
+        """
         Returns an array of groups that match the supplied pattern
         If none found, returns empty array. Items returned are BaseGroups (or derived)
         If you override this method, the admin interface will allow the use of
@@ -265,11 +265,11 @@ class Authenticator(Module):
 
         Default implementation returns empty array, but is never used because if
         not overriden, search of groups will not be allowed.
-        '''
+        """
         return []
 
     def authenticate(self, username, credentials, groupsManager):
-        '''
+        """
         This method must be overriden, and is responsible for authenticating
         users.
 
@@ -306,11 +306,11 @@ class Authenticator(Module):
 
                This is done in this way, because UDS has only a subset of groups for this user, and
                we let the authenticator decide inside wich groups of UDS this users is included.
-        '''
+        """
         return False
 
     def transformUsername(self, username):
-        '''
+        """
         On login, this method get called so we can "transform" provided user name.
 
         Args:
@@ -321,11 +321,11 @@ class Authenticator(Module):
 
         :note: You don't need to implement this method if your authenticator (as most authenticators does), does not
                transforms username.
-        '''
+        """
         return username
 
     def internalAuthenticate(self, username, credentials, groupsManager):
-        '''
+        """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
         the username/credentials in an alternative way.
 
@@ -357,11 +357,11 @@ class Authenticator(Module):
 
                This is done in this way, because UDS has only a subset of groups for this user, and
                we let the authenticator decide inside wich groups of UDS this users is included.
-        '''
+        """
         return self.authenticate(username, credentials, groupsManager)
 
     def logout(self, username):
-        '''
+        """
         Invoked whenever an user logs out.
 
         Notice that authenticators that provides getHtml method are considered "custom", and
@@ -385,11 +385,11 @@ class Authenticator(Module):
                Also, notice that this method will only be invoked "implicity", this means that will be
                invoked if user requests "log out", but maybe it will never be invoked.
 
-        '''
+        """
         return None
 
     def getForAuth(self, username):
-        '''
+        """
         Process the username for this authenticator and returns it.
         This transformation is used for transports only, not for transforming
         anything at login time. Transports that will need the username, will invoke
@@ -399,11 +399,11 @@ class Authenticator(Module):
 
         Right now, all authenticators keep this value "as is", i mean, it simply
         returns the unprocessed username
-        '''
+        """
         return username
 
     def getGroups(self, username, groupsManager):
-        '''
+        """
         Looks for the real groups to which the specified user belongs.
 
         You MUST override this method, UDS will call it whenever it needs to refresh an user group membership.
@@ -411,11 +411,11 @@ class Authenticator(Module):
         The expected behavior of this method is to mark valid groups in the :py:class:`uds.core.auths.GroupsManager` provided, normally
         calling its :py:meth:`uds.core.auths.GroupsManager.validate` method with groups names provided by the authenticator itself
         (for example, LDAP, AD, ...)
-        '''
+        """
         pass
 
     def getHtml(self, request):
-        '''
+        """
         If you override this method, and returns something different of None,
         UDS will consider your authenticator as "Owner draw", that is, that it
         will not use the standard form for user authentication.
@@ -449,11 +449,11 @@ class Authenticator(Module):
 
         With this, and :py:meth:.authCallback method, we can add SSO engines
         to UDS with no much problems.
-        '''
+        """
         return None
 
     def authCallback(self, parameters, gm):
-        '''
+        """
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.
 
@@ -485,29 +485,29 @@ class Authenticator(Module):
         :note: Keeping user information about group membership inside storage is highly recommended.
                There will be calls to getGroups one an again, and also to getRealName, not just
                at login, but at future (from admin interface, at user editing for example)
-        '''
+        """
         return None
 
     def getInfo(self, parameters):
-        '''
+        """
         This method is invoked whenever the authinfo url is invoked, with the name of the authenticator
         If this is implemented, information returned by this will be shown via web.
 
         :note: You can return here a single element or a list (or tuple), where first element will be content itself,
                and second will be the content type (i.e. "text/plain").
-        '''
+        """
         return None
 
     def getRealName(self, username):
-        '''
+        """
         Tries to get the real name of an user
 
         Default implementation returns just the same user name that is passed in.
-        '''
+        """
         return username
 
     def createUser(self, usrData):
-        '''
+        """
         This method is used when creating an user to allow the authenticator:
 
             * Check that the name inside usrData is fine
@@ -536,11 +536,11 @@ class Authenticator(Module):
                Default implementation simply raises "AuthenticatorException" and
                says that user can't be created manually
 
-        '''
+        """
         raise InvalidUserException(_('Users can\'t be created inside this authenticator'))
 
     def modifyUser(self, usrData):
-        '''
+        """
         This method is used when modifying an user to allow the authenticator:
 
             * Check that the name inside usrData is fine
@@ -563,11 +563,11 @@ class Authenticator(Module):
 
         :note: By default, this will do nothing, as we can only modify "accesory" internal
                data of users.
-        '''
+        """
         pass
 
     def createGroup(self, groupData):
-        '''
+        """
         This method is used when creating a new group to allow the authenticator:
 
             * Check that the name inside groupData is fine
@@ -590,11 +590,11 @@ class Authenticator(Module):
 
             Take care with whatever you modify here, you can even modify provided
             name (group name) to a new one!
-        '''
+        """
         pass
 
     def modifyGroup(self, groupData):
-        '''
+        """
         This method is used when modifying group to allow the authenticator:
 
             * Check that the name inside groupData is fine
@@ -616,11 +616,11 @@ class Authenticator(Module):
             raises an exception.
 
         Note: 'name' output parameter will be ignored
-        '''
+        """
         pass
 
     def removeUser(self, username):
-        '''
+        """
         Remove user is used whenever from the administration interface, or from other
         internal workers, an user needs to be removed.
 
@@ -631,13 +631,13 @@ class Authenticator(Module):
         at your authenticators.
 
         If this method raises an exception, the user will not be removed from UDS
-        '''
+        """
         pass
 
     # We don't have a "modify" group option. Once u have created it, the only way of changing it if removing it an recreating it with another name
 
     def removeGroup(self, groupname):
-        '''
+        """
         Remove user is used whenever from the administration interface, or from other
         internal workers, an group needs to be removed.
 
@@ -648,5 +648,5 @@ class Authenticator(Module):
         at your authenticators.
 
         If this method raises an exception, the group will not be removed from UDS
-        '''
+        """
         pass

@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.http import HttpResponse
@@ -58,9 +58,9 @@ UserPrefsManager.manager().registerPrefs(
 
 
 def client_downloads(request, os=None):
-    '''
+    """
     Download page for UDS plugins
-    '''
+    """
     if os not in desktopOss:
         os = request.os['OS']
     logger.debug('User: {}'.format(request.user))

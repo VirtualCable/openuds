@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util.State import State
@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 
 class GroupsManager(object):
-    '''
+    """
     Manages registered groups for an specific authenticator.
 
     Most authenticators (except internal database one, that is an special case)
@@ -64,14 +64,14 @@ class GroupsManager(object):
     valid.
 
     Managed groups names are compared using case insensitive comparison.
-    '''
+    """
 
     def __init__(self, dbAuthenticator):
-        '''
+        """
         Initializes the groups manager.
         The dbAuthenticator is the database record of the authenticator
         to which this groupsManager will be associated
-        '''
+        """
         self._dbAuthenticator = dbAuthenticator
         self._groups = {}  # We just get active groups, inactive aren't visible to this class
         for g in dbAuthenticator.groups.filter(state=State.ACTIVE, is_meta=False):
@@ -80,9 +80,9 @@ class GroupsManager(object):
             self._groups[name] = {'name': g.name, 'group': Group(g), 'valid': False, 'pattern': isPattern}
 
     def checkAllGroups(self, groupName):
-        '''
+        """
         Returns true if this groups manager contains the specified group name (string)
-        '''
+        """
         name = groupName.lower()
         res = []
         for gName, grp in six.iteritems(self._groups):
@@ -101,17 +101,17 @@ class GroupsManager(object):
         return res
 
     def getGroupsNames(self):
-        '''
+        """
         Return all groups names managed by this groups manager. The names are returned
         as where inserted inside Database (most probably using administration interface)
-        '''
+        """
         for g in six.itervalues(self._groups):
             yield g['group'].dbGroup().name
 
     def getValidGroups(self):
-        '''
+        """
         returns the list of valid groups (:py:class:uds.core.auths.Group.Group)
-        '''
+        """
         lst = ()
         for g in six.itervalues(self._groups):
             if g['valid'] is True:
@@ -127,27 +127,27 @@ class GroupsManager(object):
                 yield Group(g)
 
     def hasValidGroups(self):
-        '''
+        """
         Checks if this groups manager has at least one group that has been
         validated (using :py:meth:.validate)
-        '''
+        """
         for g in six.itervalues(self._groups):
             if g['valid'] is True:
                 return True
         return False
 
     def getGroup(self, groupName):
-        '''
+        """
         If this groups manager contains that group manager, it returns the
         :py:class:uds.core.auths.Group.Group  representing that group name.
-        '''
+        """
         if groupName.lower() in self._groups:
             return self._groups[groupName.lower()]['group']
         else:
             return None
 
     def validate(self, groupName):
-        '''
+        """
         Validates that the group groupName passed in is valid for this group manager.
 
         It check that the group specified is known by this group manager.
@@ -157,7 +157,7 @@ class GroupsManager(object):
 
         Returns nothing, it changes the groups this groups contains attributes,
         so they reflect the known groups that are considered valid.
-        '''
+        """
         if type(groupName) is tuple or type(groupName) is list or inspect.isgenerator(groupName):
             for n in groupName:
                 self.validate(n)
@@ -166,10 +166,10 @@ class GroupsManager(object):
                 grp['valid'] = True
 
     def isValid(self, groupName):
-        '''
+        """
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.
-        '''
+        """
         for grp in self.checkAllGroup(groupName):
             if grp['valid']:
                 return True

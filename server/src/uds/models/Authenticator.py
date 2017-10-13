@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -50,26 +50,27 @@ logger = logging.getLogger(__name__)
 
 __updated__ = '2016-02-26'
 
+
 @python_2_unicode_compatible
 class Authenticator(ManagedObjectModel, TaggingMixin):
-    '''
+    """
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...
-    '''
+    """
     # pylint: disable=model-missing-unicode
 
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
 
     class Meta(ManagedObjectModel.Meta):
-        '''
+        """
         Meta class to declare default order
-        '''
+        """
         ordering = ('name',)
         app_label = 'uds'
 
     def getInstance(self, values=None):
-        '''
+        """
         Instantiates the object this record contains.
 
         Every single record of Provider model, represents an object.
@@ -82,7 +83,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             The instance Instance of the class this provider represents
 
         Raises:
-        '''
+        """
         from uds.core.auths import Authenticator as fakeAuth
         if self.id is None:
             return fakeAuth(self, None, values)
@@ -94,7 +95,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return auth
 
     def getType(self):
-        '''
+        """
         Get the type of the object this record represents.
 
         The type is Python type, it obtains this type from ServiceProviderFactory and associated record field.
@@ -103,12 +104,12 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             The python type for this record object
 
         :note: We only need to get info from this, not access specific data (class specific info)
-        '''
+        """
         from uds.core import auths
         return auths.factory().lookup(self.data_type)
 
     def getOrCreateUser(self, username, realName=None):
-        '''
+        """
         Used to get or create a new user at database associated with this authenticator.
 
         This user has all parameter default, that are:
@@ -136,7 +137,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
 
 
-        '''
+        """
         if realName is None:
             realName = username
         user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
@@ -147,7 +148,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return user
 
     def isValidUser(self, username, falseIfNotExists=True):
-        '''
+        """
         Checks the validity of an user
 
         Args:
@@ -161,7 +162,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             True if it exists and is active, falseIfNotExists (param) if it doesn't exists
 
         This is done so we can check non existing or non blocked users (state != Active, or do not exists)
-        '''
+        """
         try:
             u = self.users.get(name=username)
             return State.isActive(u.state)
@@ -170,21 +171,21 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     @staticmethod
     def all():
-        '''
+        """
         Returns all authenticators ordered by priority
-        '''
+        """
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         The main purpuse of this hook is to call the "destroy" method of the object to delete and
         to clear related data of the object (environment data such as own storage, cache, etc...
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 

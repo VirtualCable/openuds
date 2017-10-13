@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.db.models import Q
@@ -49,12 +49,12 @@ logger = logging.getLogger(__name__)
 
 
 class JobThread(threading.Thread):
-    '''
+    """
     Class responsible of executing one job.
     This class:
       Ensures that the job is executed in a controlled way (any exception will be catch & processed)
       Ensures that the scheduler db entry is released after run
-    '''
+    """
     def __init__(self, jobInstance, dbJob):
         super(JobThread, self).__init__()
         self._jobInstance = jobInstance
@@ -69,9 +69,9 @@ class JobThread(threading.Thread):
             self.jobDone()
 
     def jobDone(self):
-        '''
+        """
         Invoked whenever a job is is finished (with or without exception)
-        '''
+        """
         done = False
         while done is False:
             try:
@@ -90,9 +90,9 @@ class JobThread(threading.Thread):
         connection.close()
 
     def __updateDb(self):
-        '''
+        """
         Atomically updates the scheduler db to "release" this job
-        '''
+        """
         with transaction.atomic():
             job = dbScheduler.objects.select_for_update().get(id=self._dbJobId)  # @UndefinedVariable
             job.state = State.FOR_EXECUTE
@@ -103,9 +103,9 @@ class JobThread(threading.Thread):
 
 
 class Scheduler(object):
-    '''
+    """
     Class responsible of maintain/execute scheduled jobs
-    '''
+    """
     granularity = 2  # We check for cron jobs every THIS seconds
 
     # to keep singleton Scheduler
@@ -118,23 +118,23 @@ class Scheduler(object):
 
     @staticmethod
     def scheduler():
-        '''
+        """
         Returns a singleton to the Scheduler
-        '''
+        """
         if Scheduler._scheduler is None:
             Scheduler._scheduler = Scheduler()
         return Scheduler._scheduler
 
     def notifyTermination(self):
-        '''
+        """
         Invoked to signal that termination of scheduler task(s) is requested
-        '''
+        """
         self._keepRunning = False
 
     def executeOneJob(self):
-        '''
+        """
         Looks for the best waiting job and executes it
-        '''
+        """
         jobInstance = None
         try:
             now = getSqlDatetime()  # Datetimes are based on database server times
@@ -169,9 +169,9 @@ class Scheduler(object):
 
     @staticmethod
     def releaseOwnShedules():
-        '''
+        """
         Releases all scheduleds being executed by this server
-        '''
+        """
         logger.debug('Releasing all owned scheduled tasks')
         with transaction.atomic():
             dbScheduler.objects.select_for_update().filter(owner_server=platform.node()).update(owner_server='')  # @UndefinedVariable
@@ -179,10 +179,10 @@ class Scheduler(object):
             dbScheduler.objects.select_for_update().filter(owner_server='').update(state=State.FOR_EXECUTE)  # @UndefinedVariable
 
     def run(self):
-        '''
+        """
         Loop that executes scheduled tasks
         Can be executed more than once, in differents threads
-        '''
+        """
         # We ensure that the jobs are also in database so we can
         logger.debug('Run Scheduler thread')
         JobsFactory.factory().ensureJobsInDatabase()

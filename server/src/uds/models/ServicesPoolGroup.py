@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -52,9 +52,9 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class ServicesPoolGroup(UUIDModel):
-    '''
+    """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
-    '''
+    """
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='', db_index=True, unique=True)
     comments = models.CharField(max_length=256, default='')
@@ -62,9 +62,9 @@ class ServicesPoolGroup(UUIDModel):
     image = models.ForeignKey(Image, null=True, blank=True, related_name='servicesPoolsGroup', on_delete=models.SET_NULL)
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds__pools_groups'
         app_label = 'uds'
 

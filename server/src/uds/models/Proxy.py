@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -46,9 +46,9 @@ logger = logging.getLogger(__name__)
 
 
 class Proxy(UUIDModel, TaggingMixin):
-    '''
+    """
     Proxy DB model
-    '''
+    """
     name = models.CharField(max_length=128, unique=False, db_index=True)
     comments = models.CharField(max_length=256)
 
@@ -58,9 +58,9 @@ class Proxy(UUIDModel, TaggingMixin):
     check_cert = models.BooleanField(default=False)
 
     class Meta:
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds_proxies'
         app_label = 'uds'
 

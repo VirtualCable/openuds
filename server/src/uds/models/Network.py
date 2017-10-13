@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -51,9 +51,9 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Network(UUIDModel, TaggingMixin):
-    '''
+    """
     This model is used for keeping information of networks associated with transports (right now, just transports..)
-    '''
+    """
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=64, unique=True)
     net_start = models.BigIntegerField(db_index=True)
@@ -62,55 +62,55 @@ class Network(UUIDModel, TaggingMixin):
     transports = models.ManyToManyField(Transport, related_name='networks', db_table='uds_net_trans')
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare default order
-        '''
+        """
         ordering = ('name',)
         app_label = 'uds'
 
     @staticmethod
     def networksFor(ip):
-        '''
+        """
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
-        '''
+        """
         ip = net.ipToLong(ip)
         return Network.objects.filter(net_start__lte=ip, net_end__gte=ip)
 
     @staticmethod
     def create(name, netRange):
-        '''
+        """
         Creates an network record, with the specified net start and net end (dotted quad)
 
         Args:
             netStart: Network start
 
             netEnd: Network end
-        '''
+        """
         nr = net.networksFromString(netRange, False)
         return Network.objects.create(name=name, net_start=nr[0], net_end=nr[1], net_string=netRange)
 
     @property
     def netStart(self):
-        '''
+        """
         Property to access the quad dotted format of the stored network start
 
         Returns:
             string representing the dotted quad of this network start
-        '''
+        """
         return net.longToIp(self.net_start)
 
     @property
     def netEnd(self):
-        '''
+        """
         Property to access the quad dotted format of the stored network end
 
         Returns:
             string representing the dotted quad of this network end
-        '''
+        """
         return net.longToIp(self.net_end)
 
     def update(self, name, netRange):
-        '''
+        """
         Updated this network with provided values
 
         Args:
@@ -119,7 +119,7 @@ class Network(UUIDModel, TaggingMixin):
             netStart: new Network start (quad dotted)
 
             netEnd: new Network end (quad dotted)
-        '''
+        """
         self.name = name
         nr = net.networksFromString(netRange, False)
         self.net_start = nr[0]

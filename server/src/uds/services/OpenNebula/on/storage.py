@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 import logging
 
@@ -39,7 +39,7 @@ __updated__ = '2016-07-11'
 logger = logging.getLogger(__name__)
 
 def enumerateDatastores(api, datastoreType=0):
-    '''
+    """
     0 seems to be images datastore
-    '''
+    """
     return api.enumStorage(datastoreType)

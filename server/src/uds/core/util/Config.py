@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.conf import settings
@@ -52,9 +52,9 @@ getLater = []
 configParams = {}
 
 class Config(object):
-    '''
+    """
     Keeps persistence configuration data
-    '''
+    """
 
     # Fields types, so inputs get more "beautiful"
     TEXT_FIELD = 0
@@ -216,9 +216,9 @@ class Config(object):
 
 
 class GlobalConfig(object):
-    '''
+    """
     Simple helper to keep track of global configuration
-    '''
+    """
     SESSION_EXPIRE_TIME = Config.section(GLOBAL_SECTION).value('sessionExpireTime', '24', type=Config.NUMERIC_FIELD)  # Max session duration (in use) after a new publishment has been made
     # Delay between cache checks. reducing this number will increase cache generation speed but also will load service providers
     CACHE_CHECK_DELAY = Config.section(GLOBAL_SECTION).value('cacheCheckDelay', '19', type=Config.NUMERIC_FIELD)

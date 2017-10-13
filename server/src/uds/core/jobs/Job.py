@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core import Environmentable
@@ -48,16 +48,16 @@ class Job(Environmentable):
     friendly_name = 'Unknown'
 
     def __init__(self, environment):
-        '''
+        """
         Remember to invoke parent init in derived clases using super(myClass,self).__init__(environmnet) if u want to use env(), cache() and storage() methods
-        '''
+        """
         Environmentable.__init__(self, environment)
 
     @classmethod
     def setup(cls):
-        '''
+        """
         Sets ups frequency from configuration values
-        '''
+        """
         if cls.frecuency_cfg is not None:
             try:
                 cls.frecuency = cls.frecuency_cfg.getInt(force=True)
@@ -72,8 +72,8 @@ class Job(Environmentable):
             logger.exception('Job {0} raised an exception:'.format(self.__class__))
 
     def run(self):
-        '''
+        """
         You must provide your own "run" method to do whatever you need
-        '''
+        """
         logging.debug("Base run of job called for class")
         pass

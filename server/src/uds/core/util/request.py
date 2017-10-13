@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
@@ -97,11 +97,11 @@ class GlobalRequestMiddleware(object):
 
     @staticmethod
     def fillIps(request):
-        '''
+        """
         Obtains the IP of a Django Request, even behind a proxy
 
         Returns the obtained IP, that always will be a valid ip address.
-        '''
+        """
         behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
         try:
             request.ip = request.META['REMOTE_ADDR']
@@ -123,9 +123,9 @@ class GlobalRequestMiddleware(object):
 
     @staticmethod
     def getUser(request):
-        '''
+        """
         Ensures request user is the correct user
-        '''
+        """
         logger.debug('Getting User on Middleware')
         user = request.session.get(USER_KEY)
         if user is not None:

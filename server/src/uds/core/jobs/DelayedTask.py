@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.Environment import Environmentable
@@ -41,14 +41,14 @@ logger = logging.getLogger(__name__)
 
 
 class DelayedTask(Environmentable):
-    '''
+    """
     This class represents a single delayed task object.
     This is an object that represents an execution to be done "later"
-    '''
+    """
     def __init__(self):
-        '''
+        """
         Remember to invoke parent init in derived clases using super(myClass,self).__init__() to let this initialize its own variables
-        '''
+        """
         Environmentable.__init__(self, None)
 
     def execute(self):
@@ -58,15 +58,15 @@ class DelayedTask(Environmentable):
             logger.error('Job {0} raised an exception: {1}'.format(self.__class__, e))
 
     def run(self):
-        '''
+        """
         You must provide your own "run" method to do whatever you need
-        '''
+        """
         logging.debug("Base run of job called for class")
 
     def register(self, suggestedTime, tag='', check=True):
-        '''
+        """
         Utility method that allows to register a Delayedtask
-        '''
+        """
         from DelayedTaskRunner import DelayedTaskRunner
 
         if check is True and DelayedTaskRunner.runner().checkExists(tag):

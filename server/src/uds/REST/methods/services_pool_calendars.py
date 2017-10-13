@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 # pylint: disable=too-many-public-methods
 
@@ -57,9 +57,9 @@ DENY = 'DENY'
 
 
 class AccessCalendars(DetailHandler):
-    '''
+    """
     Processes the transports detail requests of a Service Pool
-    '''
+    """
     @staticmethod
     def as_dict(item):
         return {

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
@@ -46,9 +46,9 @@ logger = logging.getLogger(__name__)
 
 
 class LiveService(Service):
-    '''
+    """
     Opennebula Live Service
-    '''
+    """
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -127,12 +127,12 @@ class LiveService(Service):
     )
 
     def initialize(self, values):
-        '''
+        """
         We check here form values to see if they are valid.
 
         Note that we check them throught FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
-        '''
+        """
         if values is not None:
             length = int(self.lenName.value)
             if len(self.baseName.value) + length > 15:
@@ -141,9 +141,9 @@ class LiveService(Service):
                 raise Service.ValidationException(_('The machine name can\'t be only numbers'))
 
     def initGui(self):
-        '''
+        """
         Loads required values inside
-        '''
+        """
 
         templates = self.parent().getTemplates()
         vals = []
@@ -171,7 +171,7 @@ class LiveService(Service):
         return self.parent().checkTemplatePublished(templateId)
 
     def deployFromTemplate(self, name, templateId):
-        '''
+        """
         Deploys a virtual machine on selected cluster from selected template
 
         Args:
@@ -184,19 +184,19 @@ class LiveService(Service):
 
         Returns:
             Id of the machine being created form template
-        '''
+        """
         logger.debug('Deploying from template {0} machine {1}'.format(templateId, name))
         # self.datastoreHasSpace()
         return self.parent().deployFromTemplate(name, templateId)
 
     def removeTemplate(self, templateId):
-        '''
+        """
         invokes removeTemplate from parent provider
-        '''
+        """
         return self.parent().removeTemplate(templateId)
 
     def getMachineState(self, machineId):
-        '''
+        """
         Invokes getMachineState from parent provider
         (returns if machine is "active" or "inactive"
 
@@ -210,18 +210,18 @@ class LiveService(Service):
              wait_for_launch, reboot_in_progress, saving_state, restoring_state,
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
-        '''
+        """
         return self.parent().getMachineState(machineId)
 
     def getMachineSubState(self, machineId):
-        '''
+        """
         On OpenNebula, the machine can be "active" but not "running".
         Any active machine will have a LCM_STATE, that is what we get here
-        '''
+        """
         return self.parent().getMachineSubState(machineId)
 
     def startMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
         This start also "resume" suspended/paused machines
@@ -230,58 +230,58 @@ class LiveService(Service):
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().startMachine(machineId)
 
     def stopMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().stopMachine(machineId)
 
     def suspendMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().suspendMachine(machineId)
 
     def removeMachine(self, machineId):
-        '''
+        """
         Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().removeMachine(machineId)
 
     def getNetInfo(self, machineId, networkId=None):
-        '''
+        """
         Changes the mac address of first nic of the machine to the one specified
-        '''
+        """
         return self.parent().getNetInfo(machineId, networkId=None)
 
     def getBaseName(self):
-        '''
+        """
         Returns the base name
-        '''
+        """
         return self.baseName.value
 
     def getLenName(self):
-        '''
+        """
         Returns the length of numbers part
-        '''
+        """
         return int(self.lenName.value)
 
     def getConsoleConnection(self, machineId):

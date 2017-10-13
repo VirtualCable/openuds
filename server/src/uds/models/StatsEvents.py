@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -47,9 +47,9 @@ logger = logging.getLogger(__name__)
 
 
 class StatsEvents(models.Model):
-    '''
+    """
     Counter statistocs mpdes the counter statistics
-    '''
+    """
 
     owner_id = models.IntegerField(db_index=True, default=0)
     owner_type = models.SmallIntegerField(db_index=True, default=0)
@@ -63,19 +63,19 @@ class StatsEvents(models.Model):
     fld4 = models.CharField(max_length=128, default='')
 
     class Meta:
-        '''
+        """
         Meta class to declare db table
-        '''
+        """
         db_table = 'uds_stats_e'
         app_label = 'uds'
 
     @staticmethod
     def get_stats(owner_type, event_type, **kwargs):
-        '''
+        """
         Returns the average stats grouped by interval for owner_type and owner_id (optional)
 
         Note: if someone cant get this more optimized, please, contribute it!
-        '''
+        """
         if isinstance(event_type, (list, tuple)):
             fltr = StatsEvents.objects.filter(event_type__in=event_type)
         else:

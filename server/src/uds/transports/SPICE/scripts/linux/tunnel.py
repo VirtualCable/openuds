@@ -22,6 +22,7 @@ if executable is None:
 
 
 theFile = '''{m.r.as_file_ns}'''
+forwardThread1 = None
 if {m.port} != -1:  # @UndefinedVariable
     forwardThread1, port = forward('{m.tunHost}', '{m.tunPort}', '{m.tunUser}', '{m.tunPass}', '{m.ip}', {m.port})  # @UndefinedVariable
 

@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.models import UserService
@@ -65,9 +65,9 @@ transDict = {
 
 
 class LogManager(object):
-    '''
+    """
     Manager for logging (at database) events
-    '''
+    """
     _manager = None
 
     def __init__(self):
@@ -75,14 +75,14 @@ class LogManager(object):
 
     @staticmethod
     def manager():
-        if LogManager._manager == None:
+        if LogManager._manager is None:
             LogManager._manager = LogManager()
         return LogManager._manager
 
     def __log(self, owner_type, owner_id, level, message, source, avoidDuplicates):
-        '''
+        """
         Logs a message associated to owner
-        '''
+        """
         from uds.models import getSqlDatetime
         from uds.models import Log
 
@@ -109,28 +109,28 @@ class LogManager(object):
             pass
 
     def __getLogs(self, owner_type, owner_id, limit):
-        '''
+        """
         Get all logs associated with an user service, ordered by date
-        '''
+        """
         from uds.models import Log
 
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         return [{'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data} for x in reversed(qs.order_by('-created', '-id')[:limit])]
 
     def __clearLogs(self, owner_type, owner_id):
-        '''
+        """
         Clears all logs related to user service
-        '''
+        """
         from uds.models import Log
 
         Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
     def doLog(self, wichObject, level, message, source, avoidDuplicates=True):
-        '''
+        """
         Do the logging for the requested object.
 
         If the object provided do not accepts associated loggin, it simply ignores the request
-        '''
+        """
         if type(level) is not int:
             level = log.logLevelFromStr(level)
 
@@ -141,9 +141,9 @@ class LogManager(object):
             logger.debug('Requested doLog for a type of object not covered: {0}'.format(wichObject))
 
     def getLogs(self, wichObject, limit):
-        '''
+        """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
-        '''
+        """
 
         owner_type = transDict.get(type(wichObject), None)
 
@@ -154,11 +154,11 @@ class LogManager(object):
             return []
 
     def clearLogs(self, wichObject):
-        '''
+        """
         Clears all logs related to wichObject
 
         Used mainly at object database removal (parent object)
-        '''
+        """
 
         owner_type = transDict.get(type(wichObject), None)
         if owner_type is not None:

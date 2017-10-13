@@ -1,8 +1,8 @@
-'''
+"""
 From django locking manager snippet at http://djangosnippets.org/snippets/833/
 Author:
     miohtama
-'''
+"""
 
 from django.db import models, connection
 import logging

@@ -28,9 +28,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 import logging
@@ -41,27 +41,27 @@ logger = logging.getLogger(__name__)
 
 
 class Group(object):
-    '''
+    """
     A group is simply a database group associated with its authenticator instance
 
     It's only constructor expect a database group as parameter.
-    '''
+    """
 
     def __init__(self, dbGroup):
-        '''
+        """
         Initializes internal data
-        '''
+        """
         self._manager = dbGroup.getManager()
         self._dbGroup = dbGroup
 
     def manager(self):
-        '''
+        """
         Returns the database authenticator associated with this group
-        '''
+        """
         return self._manager
 
     def dbGroup(self):
-        '''
+        """
         Returns the database group associated with this
-        '''
+        """
         return self._dbGroup

@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -51,11 +51,11 @@ logger = logging.getLogger(__name__)
 
 
 class Image(UUIDModel):
-    '''
+    """
     Image storing on DB model
     This is intended for small images (i will limit them to 128x128), so storing at db is fine
 
-    '''
+    """
     MAX_IMAGE_SIZE = (128, 128)
     THUMBNAIL_SIZE = (48, 48)
 
@@ -67,9 +67,9 @@ class Image(UUIDModel):
     height = models.IntegerField(default=0)
 
     class Meta:
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds_images'
         app_label = 'uds'
 
@@ -97,37 +97,37 @@ class Image(UUIDModel):
 
     @property
     def data64(self):
-        '''
+        """
         Returns the value of the image (data) as a base 64 encoded string
-        '''
+        """
         return Image.encode64(self.data)
 
     @data64.setter
     def data64(self, value):
-        '''
+        """
         Sets the value of image (data) from a base 64 encoded string
-        '''
+        """
         self.data = Image.decode64(value)
 
     @property
     def thumb64(self):
-        '''
+        """
         Returns the value of the image (data) as a base 64 encoded string
-        '''
+        """
         return Image.encode64(self.thumb)
 
     @thumb64.setter
     def thumb64(self, value):
-        '''
+        """
         Sets the value of image (data) from a base 64 encoded string
-        '''
+        """
         self.thumb = Image.decode64(value)
 
     @property
     def image(self):
-        '''
+        """
         Returns an image (PIL Image)
-        '''
+        """
         try:
             data = io.BytesIO(self.data)
             return PILImage.open(data)
@@ -136,9 +136,9 @@ class Image(UUIDModel):
 
     @property
     def size(self):
-        '''
+        """
         Returns the image size
-        '''
+        """
         return self.width, self.height
 
     def updateThumbnail(self):
@@ -158,9 +158,9 @@ class Image(UUIDModel):
         self._processImageStore()
 
     def storeImageFromBase64(self, data64):
-        '''
+        """
         Stores an image, passed as base64 string, resizing it as necessary
-        '''
+        """
         self.data64 = data64
         self._processImageStore()
 
@@ -179,13 +179,13 @@ class Image(UUIDModel):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         In this case, this is a dummy method, waiting for something useful to do :-)
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         toDelete = kwargs['instance']
 
         logger.debug('Deleted image {0}'.format(toDelete))

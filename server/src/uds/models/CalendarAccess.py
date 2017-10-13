@@ -28,9 +28,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -54,9 +54,9 @@ class CalendarAccess(UUIDModel):
     priority = models.IntegerField(default=0, db_index=True)
 
     class Meta:
-        '''
+        """
         Meta class to declare db table
-        '''
+        """
         db_table = 'uds_cal_access'
         ordering = ('priority',)
         app_label = 'uds'

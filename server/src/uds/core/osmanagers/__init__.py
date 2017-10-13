@@ -27,11 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 UDS os managers related interfaces and classes
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 from BaseOsManager import OSManager
 
@@ -39,8 +39,8 @@ __updated__ = '2014-03-22'
 
 
 def factory():
-    '''
+    """
     Returns factory for register/access to authenticators
-    '''
+    """
     from OSManagersFactory import OSManagersFactory
     return OSManagersFactory.factory()

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext_lazy as _
 from uds.core import services
@@ -86,10 +86,10 @@ class IPServerDeployed(AutoAttributes, services.UserDeployment):
         pass
 
     def reasonOfError(self):
-        '''
+        """
         If a publication produces an error, here we must notify the reason why it happened. This will be called just after
         publish or checkPublishingState if they return State.ERROR
-        '''
+        """
         return self._reason
 
     def cancel(self):

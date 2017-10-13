@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -49,20 +49,20 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class OSManager(ManagedObjectModel, TaggingMixin):
-    '''
+    """
     An OS Manager represents a manager for responding requests for agents inside services.
-    '''
+    """
     # pylint: disable=model-missing-unicode
 
     class Meta(ManagedObjectModel.Meta):
-        '''
+        """
         Meta class to declare default order
-        '''
+        """
         ordering = ('name',)
         app_label = 'uds'
 
     def getType(self):
-        '''
+        """
         Get the type of the object this record represents.
 
         The type is Python type, it obtains this type from ServiceProviderFactory and associated record field.
@@ -71,13 +71,13 @@ class OSManager(ManagedObjectModel, TaggingMixin):
             The python type for this record object
 
         :note: We only need to get info from this, not access specific data (class specific info)
-        '''
+        """
         # We only need to get info from this, not access specific data (class specific info)
         from uds.core import osmanagers
         return osmanagers.factory().lookup(self.data_type)
 
     def remove(self):
-        '''
+        """
         Removes this OS Manager only if there is no associated deployed service using it.
 
         Returns:
@@ -86,7 +86,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
             False if the object can't be removed because it is being used by some DeployedService
 
         Raises:
-        '''
+        """
         if self.deployedServices.all().count() > 0:
             return False
         self.delete()
@@ -97,14 +97,14 @@ class OSManager(ManagedObjectModel, TaggingMixin):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         The main purpuse of this hook is to call the "destroy" method of the object to delete and
         to clear related data of the object (environment data such as own storage, cache, etc...
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         toDelete = kwargs['instance']
         if toDelete.deployedServices.count() > 0:
             raise IntegrityError('Can\'t remove os managers with assigned deployed services')

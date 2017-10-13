@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.db import connection
@@ -66,14 +66,14 @@ class TaskManager(object):
 
     @staticmethod
     def sigTerm(sigNum, frame):
-        '''
+        """
         This method will ensure that we finish correctly current running task before exiting.
         If we need to stop cause something went wrong (that should not happen), we must send sigterm, wait a while (10-20 secs) and after that send sigkill
         kill task
         sleep 10
         kill -9 task
         Take a look at killTaskManager.sh :-)
-        '''
+        """
         logger.info("Caught term signal, finishing task manager")
         TaskManager.keepRunning = False
 

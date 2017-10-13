@@ -35,10 +35,10 @@ logger = logging.getLogger(__name__)
 
 
 def __init__():
-    '''
+    """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
-    '''
+    """
     import os.path
     import pkgutil
     import sys

@@ -25,22 +25,20 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
+import logging
 
-from django.http import HttpResponse, HttpResponseForbidden
-from django.template import RequestContext, loader
-
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.template import RequestContext, loader
 from django.utils.translation import ugettext as _
 
 from uds.core.auths.auth import webLoginRequired
 from uds.core.util.decorators import denyBrowsers
-
-import logging
 
 logger = logging.getLogger(__name__)
 

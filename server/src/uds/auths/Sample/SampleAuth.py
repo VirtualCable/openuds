@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import auths
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class SampleAuth(auths.Authenticator):
-    '''
+    """
     This class represents a sample authenticator.
 
     As this, it will provide:
@@ -64,7 +64,7 @@ class SampleAuth(auths.Authenticator):
     :note: At class level, the translations must be simply marked as so
     using ugettext_noop. This is done in this way because we will translate
     the string when it is sent to the administration client.
-    '''
+    """
 
     # : Name of type, used at administration interface to identify this
     # : authenticator (i.e. LDAP, SAML, ...)
@@ -113,10 +113,10 @@ class SampleAuth(auths.Authenticator):
     groups = gui.EditableList(label=_('Groups'), values=['Gods', 'Daemons', 'Mortals'])
 
     def initialize(self, values):
-        '''
+        """
         Simply check if we have
         at least one group in the list
-        '''
+        """
 
         # To avoid problems, we only check data if values are passed
         # If values are not passed in, form data will only be available after
@@ -126,7 +126,7 @@ class SampleAuth(auths.Authenticator):
             raise auths.Authenticator.ValidationException(_('We need more than two items!'))
 
     def searchUsers(self, pattern):
-        '''
+        """
         Here we will receive a pattern for searching users.
 
         This method is invoked from interface, so an administrator can search users.
@@ -134,17 +134,17 @@ class SampleAuth(auths.Authenticator):
         If we do not provide this method, the authenticator will not provide search
         facility for users. In our case, we will simply return a list of users
         (array of dictionaries with ids and names) with the pattern plus 1..10
-        '''
+        """
         return [{'id': '{0}-{1}'.format(pattern, a), 'name': '{0} number {1}'.format(pattern, a)} for a in range(1, 10)]
 
     def searchGroups(self, pattern):
-        '''
+        """
         Here we we will receive a patter for searching groups.
 
         In this sample, we will try to locate elements that where entered at
         sample authenticator form (when created), and return the ones that
         contains the pattern indicated.
-        '''
+        """
         pattern = pattern.lower()
         res = []
         for g in self.groups.value:
@@ -153,7 +153,7 @@ class SampleAuth(auths.Authenticator):
         return res
 
     def authenticate(self, username, credentials, groupsManager):
-        '''
+        """
         This method is invoked by UDS whenever it needs an user to be authenticated.
         It is used from web interface, but also from administration interface to
         check credentials and access of user.
@@ -193,7 +193,7 @@ class SampleAuth(auths.Authenticator):
         indicate the group membership of this user inside UDS.
 
         :note: groupsManager is an in/out parameter
-        '''
+        """
         if username != credentials:  # All users with same username and password are allowed
             return False
 
@@ -208,7 +208,7 @@ class SampleAuth(auths.Authenticator):
         return True
 
     def getGroups(self, username, groupsManager):
-        '''
+        """
         As with authenticator part related to groupsManager, this
         method will fill the groups to which the specified username belongs to.
 
@@ -217,20 +217,20 @@ class SampleAuth(auths.Authenticator):
         them simply call to :py:meth:uds.core.auths.GroupsManager.GroupsManager.validate
 
         In our case, we simply repeat the process that we also do at authenticate
-        '''
+        """
         for g in groupsManager.getGroupsNames():
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
     def getHtml(self, request):
-        '''
+        """
         If we override this method from the base one, we are telling UDS
         that we want to draw our own authenticator.
 
         This way, we can do whataver we want here (for example redirect to a site
         for a single sign on) generation our ouwn html (and javascript ofc).
 
-        '''
+        """
         # Here there is a sample, commented out
         # In this sample, we will make a list of valid users, and when clicked,
         # it will fill up original form with username and same password, and submit it.
@@ -250,7 +250,7 @@ class SampleAuth(auths.Authenticator):
         return res
 
     def authCallback(self, parameters, gm):
-        '''
+        """
         We provide this as a sample of callback for an user.
         We will accept all petitions that has "user" parameter
 
@@ -262,13 +262,13 @@ class SampleAuth(auths.Authenticator):
             * Own authentications via redirections (as most SSO will do)
 
         Here, we will receive the parameters for this
-        '''
+        """
         user = parameters.get('user', None)
 
         return user
 
     def createUser(self, usrData):
-        '''
+        """
         This method provides a "check oportunity" to authenticators for users created
         manually at administration interface.
 
@@ -282,13 +282,13 @@ class SampleAuth(auths.Authenticator):
         modify it unles you know what you are doing.
 
         Here, we will set the state to "Inactive" and realName to the same as username, but twice :-)
-        '''
+        """
         from uds.core.util.State import State
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
 
     def modifyUser(self, usrData):
-        '''
+        """
         This method provides a "check opportunity" to authenticator for users modified
         at administration interface.
 
@@ -303,6 +303,6 @@ class SampleAuth(auths.Authenticator):
 
         Here, we will simply update the realName of the user, and (we have to take care
         this this kind of things) modify the userName to a new one, the original plus '-1'
-        '''
+        """
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['name'] += '-1'

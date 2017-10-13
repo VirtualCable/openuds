@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -49,9 +49,9 @@ __updated__ = '2016-09-16'
 
 
 class TicketStore(UUIDModel):
-    '''
+    """
     Tickets storing on DB
-    '''
+    """
     DEFAULT_VALIDITY = 60
     MAX_VALIDITY = 60 * 60 * 12
     # Cleanup will purge all elements that have been created MAX_VALIDITY ago
@@ -67,9 +67,9 @@ class TicketStore(UUIDModel):
         pass
 
     class Meta:
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds_tickets'
         app_label = 'uds'
 
@@ -84,9 +84,9 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def create(data, validator=None, validity=DEFAULT_VALIDITY, owner=None, secure=False):
-        '''
+        """
         validity is in seconds
-        '''
+        """
         if validator is not None:
             validator = pickle.dumps(validator)
         data = pickle.dumps(data)
@@ -97,10 +97,10 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def store(uuid, data, validator=None, validity=DEFAULT_VALIDITY, owner=owner, secure=False):
-        '''
+        """
         Stores an ticketstore. If one with this uuid already exists, replaces it. Else, creates a new one
         validity is in seconds
-        '''
+        """
         if validator is not None:
             validator = pickle.dumps(validator)
 

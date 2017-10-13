@@ -5,9 +5,9 @@
 # All rights reserved.
 #
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -29,9 +29,9 @@ logger = logging.getLogger(__name__)
 
 
 def scrambleMsg(data):
-    '''
+    """
     Simple scrambler so password are not seen at source page
-    '''
+    """
     if isinstance(data, six.text_type):
         data = data.encode('utf8')
     res = []
@@ -99,9 +99,9 @@ class WindowsOsManager(osmanagers.OSManager):
         pass
 
     def getName(self, service):
-        '''
+        """
         gets name from deployed
-        '''
+        """
         return service.getName()
 
     def infoVal(self, service):
@@ -145,14 +145,14 @@ class WindowsOsManager(osmanagers.OSManager):
         pass
 
     def process(self, userService, msg, data, options=None):
-        '''
+        """
         We understand this messages:
         * msg = info, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class) (old method)
         * msg = information, data = None. Get information about name of machine (or domain, in derived WinDomainOsManager class) (new method)
         * msg = logon, data = Username, Informs that the username has logged in inside the machine
         * msg = logoff, data = Username, Informs that the username has logged out of the machine
         * msg = ready, data = None, Informs machine ready to be used
-        '''
+        """
         logger.info("Invoked WindowsOsManager for {0} with params: {1},{2}".format(userService, msg, data))
 
         if msg in ('ready', 'ip'):
@@ -237,10 +237,10 @@ class WindowsOsManager(osmanagers.OSManager):
             return osmanagers.OSManager.processUserPassword(self, service, username, password)
 
     def processUnused(self, userService):
-        '''
+        """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
-        '''
+        """
         if self._onLogout == 'remove':
             userService.release()
 
@@ -249,18 +249,18 @@ class WindowsOsManager(osmanagers.OSManager):
         return State.RUNNING
 
     def maxIdle(self):
-        '''
+        """
         On production environments, will return no idle for non removable machines
-        '''
+        """
         if self._idle <= 0:  # or (settings.DEBUG is False and self._onLogout != 'remove'):
             return None
 
         return self._idle
 
     def marshal(self):
-        '''
+        """
         Serializes the os manager data so we can store it in database
-        '''
+        """
         return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)])
 
     def unmarshal(self, s):

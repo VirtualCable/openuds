@@ -1,8 +1,8 @@
-'''
+"""
 Created on Nov 14, 2012
 
 @author: dkmaster
-'''
+"""
 
 import ovirtsdk4 as ovirt
 
@@ -28,7 +28,7 @@ cached_api_key = None
 
 
 class Client(object):
-    '''
+    """
     Module to manage oVirt connections using ovirtsdk.
 
     Due to the fact that we can't create two proxy connections at same time, we serialize all access to ovirt platform.
@@ -36,29 +36,29 @@ class Client(object):
 
     This can waste a lot of time, so use of cache here is more than important to achieve aceptable performance.
 
-    '''
+    """
 
     CACHE_TIME_LOW = 60 * 5  # Cache time for requests are 5 minutes by default
     CACHE_TIME_HIGH = 60 * 30  # Cache time for requests that are less probable to change (as cluster perteinance of a machine)
 
     def __getKey(self, prefix=''):
-        '''
+        """
         Creates a key for the cache, using the prefix indicated as part of it
 
         Returns:
             The cache key, taking into consideration the prefix
-        '''
+        """
         return prefix + self._host + self._username + self._password + str(self._timeout)
 
     def __getApi(self):
-        '''
+        """
         Gets the api connection.
 
         Again, due to the fact that ovirtsdk don't allow (at this moment, but it's on the "TODO" list) concurrent access to
         more than one server, we keep only one opened connection.
 
         Must be accesed "locked", so we can safely alter cached_api and cached_api_key
-        '''
+        """
         global cached_api, cached_api_key
         aKey = self.__getKey('o-host')
         # if cached_api_key == aKey:
@@ -79,7 +79,6 @@ class Client(object):
             logger.exception('Exception connection ovirt at {0}'.format(self._host))
             cached_api_key = None
             raise Exception("Can't connet to server at {0}".format(self._host))
-            return None
 
     def __init__(self, host, username, password, timeout, cache):
         self._host = host
@@ -101,13 +100,13 @@ class Client(object):
 
 
     def isFullyFunctionalVersion(self):
-        '''
+        """
         '4.0 version is always functional (right now...)
-        '''
+        """
         return [True, 'Test successfully passed']
 
     def getVms(self, force=False):
-        '''
+        """
         Obtains the list of machines inside ovirt that do aren't part of uds
 
         Args:
@@ -120,7 +119,7 @@ class Client(object):
                 'id'
                 'cluster_id'
 
-        '''
+        """
         vmsKey = self.__getKey('o-vms')
         val = self._cache.get(vmsKey)
 
@@ -153,7 +152,7 @@ class Client(object):
             lock.release()
 
     def getClusters(self, force=False):
-        '''
+        """
         Obtains the list of clusters inside ovirt
 
         Args:
@@ -167,7 +166,7 @@ class Client(object):
                 'id'
                 'datacenter_id'
 
-        '''
+        """
         clsKey = self.__getKey('o-clusters')
         val = self._cache.get(clsKey)
 
@@ -206,7 +205,7 @@ class Client(object):
             lock.release()
 
     def getClusterInfo(self, clusterId, force=False):
-        '''
+        """
         Obtains the cluster info
 
         Args:
@@ -220,7 +219,7 @@ class Client(object):
                 'name'
                 'id'
                 'datacenter_id'
-        '''
+        """
         clKey = self.__getKey('o-cluster' + clusterId)
         val = self._cache.get(clKey)
 
@@ -246,7 +245,7 @@ class Client(object):
             lock.release()
 
     def getDatacenterInfo(self, datacenterId, force=False):
-        '''
+        """
         Obtains the datacenter info
 
         Args:
@@ -270,7 +269,7 @@ class Client(object):
                    'used' -> Space used, in bytes
                    'active' -> True or False
 
-        '''
+        """
         dcKey = self.__getKey('o-dc' + datacenterId)
         val = self._cache.get(dcKey)
 
@@ -306,7 +305,7 @@ class Client(object):
             lock.release()
 
     def getStorageInfo(self, storageId, force=False):
-        '''
+        """
         Obtains the datacenter info
 
         Args:
@@ -324,7 +323,7 @@ class Client(object):
                'used' -> Space used, in bytes
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
-        '''
+        """
         sdKey = self.__getKey('o-sd' + storageId)
         val = self._cache.get(sdKey)
 
@@ -352,7 +351,7 @@ class Client(object):
             lock.release()
 
     def makeTemplate(self, name, comments, machineId, clusterId, storageId, displayType):
-        '''
+        """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
 
@@ -365,7 +364,7 @@ class Client(object):
 
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
-        '''
+        """
         logger.debug("n: {0}, c: {1}, vm: {2}, cl: {3}, st: {4}, dt: {5}".format(name, comments, machineId, clusterId, storageId, displayType))
 
         try:
@@ -414,7 +413,7 @@ class Client(object):
             lock.release()
 
     def getTemplateState(self, templateId):
-        '''
+        """
         Returns current template state.
         This method do not uses cache at all (it always tries to get template state from oVirt server)
 
@@ -424,7 +423,7 @@ class Client(object):
             removed
 
         (don't know if ovirt returns something more right now, will test what happens when template can't be published)
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -444,7 +443,7 @@ class Client(object):
             lock.release()
 
     def deployFromTemplate(self, name, comments, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB):
-        '''
+        """
         Deploys a virtual machine on selected cluster from selected template
 
         Args:
@@ -458,7 +457,7 @@ class Client(object):
 
         Returns:
             Id of the machine being created form template
-        '''
+        """
         logger.debug('Deploying machine with name "{0}" from template {1} at cluster {2} with display {3} and usb {4}, memory {5} and guaranteed {6}'.format(
             name, templateId, clusterId, displayType, usbType, memoryMB, guaranteedMB))
         try:
@@ -487,11 +486,11 @@ class Client(object):
             lock.release()
 
     def removeTemplate(self, templateId):
-        '''
+        """
         Removes a template from ovirt server
 
         Returns nothing, and raises an Exception if it fails
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -503,7 +502,7 @@ class Client(object):
             lock.release()
 
     def getMachineState(self, machineId):
-        '''
+        """
         Returns current state of a machine (running, suspended, ...).
         This method do not uses cache at all (it always tries to get machine state from oVirt server)
 
@@ -517,7 +516,7 @@ class Client(object):
              wait_for_launch, reboot_in_progress, saving_state, restoring_state,
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -537,7 +536,7 @@ class Client(object):
             lock.release()
 
     def startMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
         This start also "resume" suspended/paused machines
@@ -546,7 +545,7 @@ class Client(object):
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -564,14 +563,14 @@ class Client(object):
             lock.release()
 
     def stopMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -588,14 +587,14 @@ class Client(object):
             lock.release()
 
     def suspendMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -612,14 +611,14 @@ class Client(object):
             lock.release()
 
     def removeMachine(self, machineId):
-        '''
+        """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -636,9 +635,9 @@ class Client(object):
             lock.release()
 
     def updateMachineMac(self, machineId, macAddres):
-        '''
+        """
         Changes the mac address of first nic of the machine to the one specified
-        '''
+        """
         try:
             lock.acquire(True)
 
@@ -675,9 +674,9 @@ class Client(object):
 
 
     def getConsoleConnection(self, machineId):
-        '''
+        """
         Gets the connetion info for the specified machine
-        '''
+        """
         try:
             lock.acquire(True)
             api = self.__getApi()
@@ -693,7 +692,7 @@ class Client(object):
 
             # Get host subject
             cert_subject = ''
-            if display.certificate != None:
+            if display.certificate is not None:
                 cert_subject = display.certificate.subject
             else:
                 for i in api.system_service().hosts_service().list():

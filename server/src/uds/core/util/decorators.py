@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util.html import checkBrowser
@@ -47,10 +47,10 @@ logger = logging.getLogger(__name__)
 # Decorator that protects pages that needs at least a browser version
 # Default is to deny IE < 9
 def denyBrowsers(browsers=None, errorResponse=lambda request: errors.errorView(request, errors.BROWSER_NOT_SUPPORTED)):
-    '''
+    """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
-    '''
+    """
 
     if browsers is None:
         browsers = ['ie<9']
@@ -58,9 +58,9 @@ def denyBrowsers(browsers=None, errorResponse=lambda request: errors.errorView(r
     def wrap(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            '''
+            """
             Wrapped function for decorator
-            '''
+            """
             for b in browsers:
                 if checkBrowser(request, b):
                     return errorResponse(request)
@@ -71,9 +71,9 @@ def denyBrowsers(browsers=None, errorResponse=lambda request: errors.errorView(r
 
 
 def deprecated(func):
-    '''This is a decorator which can be used to mark functions
+    """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
-    when the function is used.'''
+    when the function is used."""
     import inspect
 
     @wraps(func)

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util.Cache import Cache as uCache
@@ -48,7 +48,7 @@ class Cache(Handler):
     needs_admin = True
 
     def get(self):
-        '''
+        """
         This login uses parameters to generate auth token
         The alternative is to use the template tag inside "REST" that is called auth_token, that extracts an auth token from an user session
         We can use any of this forms due to the fact that the auth token is in fact a session key
@@ -62,7 +62,7 @@ class Cache(Handler):
         Result:
             on success: { 'result': 'ok', 'auth': [auth_code] }
             on error: { 'result: 'error', 'error': [error string] }
-        '''
+        """
 
         logger.debug('Params: {0}'.format(self._params))
         if len(self._args) == 0:

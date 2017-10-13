@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core import Module
@@ -43,7 +43,7 @@ __updated__ = '2016-04-25'
 
 
 class ServiceProvider(Module):
-    '''
+    """
     Base Service Provider Class.
 
     All classes that will represent a service provider will need to be derived
@@ -74,7 +74,7 @@ class ServiceProvider(Module):
     default implementation marshals and unmashals them, so if your case is that you
     only need data that is keeped at form fields, marshal and unmarshal and in fact
     not needed.
-    '''
+    """
 
     # : Services that we offers. Here is a list of service types (python types) that
     # : this class will provide. This types are the python clases, derived from
@@ -120,24 +120,23 @@ class ServiceProvider(Module):
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
     ignoreLimits = None
 
-
     @classmethod
     def getServicesTypes(cls):
-        '''
+        """
         Returns what type of services this provider offers
-        '''
+        """
         return cls.offers
 
     @classmethod
     def getServiceByType(cls, typeName):
-        '''
+        """
         Tries to locate a child service which type corresponds with the
         one provided.
         Returns None if can't find one.
 
         :note: The type that this method looks for is not the class, but
                the typeType that Service has.
-        '''
+        """
         res = None
         for _type in cls.offers:
             if _type.type() == typeName:
@@ -146,18 +145,18 @@ class ServiceProvider(Module):
         return res
 
     def __init__(self, environment, values=None):
-        '''
+        """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         if you override this method. Better is to provide an "__initialize__" method, that will be invoked
         by __init__
         Values parameter is provided (are not None) when creating or modifying the service provider, so params check should ocur here and, if not
         valid, raise an "ValidationException" message
-        '''
+        """
         super(ServiceProvider, self).__init__(environment, values)
         self.initialize(values)
 
     def initialize(self, values):
-        '''
+        """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
         and invoke base methods.
@@ -170,7 +169,7 @@ class ServiceProvider(Module):
             be called after this.
 
         Default implementation does nothing
-        '''
+        """
         pass
 
     def getMaxPreparingServices(self):
@@ -198,8 +197,8 @@ class ServiceProvider(Module):
         return val is True or val == gui.TRUE
 
     def __str__(self):
-        '''
+        """
         Basic implementation, mostly used for debuging and testing, never used
         at user or admin interfaces.
-        '''
+        """
         return "Base Service Provider"

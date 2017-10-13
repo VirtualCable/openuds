@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.shortcuts import render
@@ -47,9 +47,9 @@ __updated__ = '2016-08-26'
 
 @webLoginRequired(admin=True)
 def download(request, idDownload):
-    '''
+    """
     Downloadables management
-    '''
+    """
     if idDownload == '':
         files = [{'id': key, 'name': val['name'], 'comment': _(val['comment'])} for key, val in DownloadsManager.manager().getDownloadables().items()]
         logger.debug('Files: {0}'.format(files))

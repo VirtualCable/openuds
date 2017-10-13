@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.views.decorators.cache import cache_page
@@ -44,13 +44,13 @@ logger = logging.getLogger(__name__)
 # The value returned by get_version() must change when translations change.
 @cache_page(86400, key_prefix='js18n' + __updated__)
 def jsCatalog(request, lang, domain='djangojs', packages=None):
-    '''
+    """
     Returns the js translation catalog
     :param request:
     :param lang:
     :param domain:
     :param packages:
-    '''
+    """
     if lang != '':
         request.GET = {'language': lang}  # Fake args for catalog :-)
     return javascript_catalog(request, domain, packages)

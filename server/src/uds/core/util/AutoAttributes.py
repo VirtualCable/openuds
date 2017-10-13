@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from uds.core.Serializable import Serializable
 import pickle
@@ -61,13 +61,13 @@ class Attribute(object):
 
 
 class AutoAttributes(Serializable):
-    '''
+    """
     Easy creation of attributes to marshal & unmarshal at modules
     usage as base class (First class so yours inherits this "marshal" and "unmarshal"
     initialize at init with super(myclass,self).__init__(attr1=type, attr2=type, ...)
     or with declare(attr1=type,attr2=type,..)
     Access attrs as "self._attr1, self._attr2"
-    '''
+    """
 
     # : This codec is not intended to override Serializable codec
     # : Serializable codec is for encoding marshaled data,
@@ -75,6 +75,7 @@ class AutoAttributes(Serializable):
     ACODEC = 'zip'
 
     def __init__(self, **kwargs):
+        self.dict = None
         self.declare(**kwargs)
 
     def __getattribute__(self, name):
