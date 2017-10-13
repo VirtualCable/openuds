@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2016-04-15'
+__updated__ = '2017-10-13'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -331,7 +331,7 @@ def authLogLogin(request, authenticator, userName, logStr=''):
     try:
         user = authenticator.users.get(name=userName)
         log.doLog(user, level,
-                  '{0} from {1} where os is {3}'.format(logStr, request.ip, request.os['OS']), log.WEB
+                  '{} from {} where OS is {}'.format(logStr, request.ip, request.os['OS']), log.WEB
                   )
     except Exception:
         pass
