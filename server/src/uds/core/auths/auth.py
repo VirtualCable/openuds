@@ -52,7 +52,7 @@ from uds.core.util.decorators import deprecated
 from uds.core.util.stats import events
 from uds.models import User
 
-__updated__ = '2016-08-24'
+__updated__ = '2017-10-10'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -330,7 +330,7 @@ def authLogLogin(request, authenticator, userName, logStr=''):
     try:
         user = authenticator.users.get(name=userName)
         log.doLog(user, level,
-                  '{} from {1} where os is {2}'.format(logStr, request.ip, request.os['OS']), log.WEB
+                  '{} from {} where OS is {}'.format(logStr, request.ip, request.os['OS']), log.WEB
                   )
     except Exception:
         pass
