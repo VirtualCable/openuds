@@ -44,7 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2017-10-05'
+__updated__ = '2017-10-13'
 
 
 logger = logging.getLogger(__name__)
@@ -170,7 +170,7 @@ class BaseSpiceTransport(Transport):
         if self.fixedPassword.value != '':
             password = self.fixedPassword.value
         if self.useEmptyCreds.isTrue():
-            username, password = '', '', ''
+            username, password = '', ''
 
         # Fix username/password acording to os manager
         username, password = service.processUserPassword(username, password)
