@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-10-03'
+__updated__ = '2017-10-16'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -455,7 +455,7 @@ class UserServiceManager(object):
                 UserServiceOpChecker.makeUnique(uService, ui, state)
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: {}'.format(e))
-            UserService.setState(State.ERROR)
+            uService.setState(State.ERROR)
             return
 
     def getService(self, user, srcIp, idService, idTransport, doTest=True):
