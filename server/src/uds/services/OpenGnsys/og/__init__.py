@@ -45,14 +45,14 @@ import six
 import requests
 import  json
 
-__updated__ = '2017-10-02'
+__updated__ = '2017-10-16'
 
 logger = logging.getLogger(__name__)
 
 # URLS
 
 # Fake part
-FAKE = True
+FAKE = False
 CACHE_VALIDITY = 180
 
 
@@ -216,12 +216,13 @@ class OpenGnsysClient(object):
         return self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg)
 
     @ensureConnected
-    def notifyURLs(self, machineId, loginURL, logoutURL):
+    def notifyURLs(self, machineId, loginURL, logoutURL, deadLine):
         ou, lab, client = machineId.split('.')
         errMsg = 'Notifying login/logout urls'
         data = {
           'urlLogin': loginURL,
-          'urlLogout': logoutURL
+          'urlLogout': logoutURL,
+          'deadLine': deadLine
         }
 
         return self._post(urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)

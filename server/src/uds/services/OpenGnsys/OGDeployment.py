@@ -43,7 +43,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2017-09-29'
+__updated__ = '2017-10-16'
 
 
 logger = logging.getLogger(__name__)
@@ -236,7 +236,8 @@ class OGDeployment(UserDeployment):
         '''
         try:
             r = self.service().reserve()
-            self.service().notifyEvents(r['id'], self._uuid)
+            deadLine = self.dbservice().deployed_service.getDeadline()
+            self.service().notifyEvents(r['id'], self._uuid, deadLine)
         except Exception as e:
             # logger.exception('Creating machine')
             return self.__error('Error creating reservation: {}'.format(e))
