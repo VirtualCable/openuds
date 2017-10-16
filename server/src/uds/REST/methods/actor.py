@@ -226,6 +226,8 @@ class Actor(Handler):
                         osm.loggedIn(service)
                     else:
                         osm.loggedOut(service)
+                        # Mark for removal...
+                        service.release()  # Release for removal
                     return 'ok'
                 raise Exception('Unknown message {} for an user service without os manager'.format(message))
             else:
