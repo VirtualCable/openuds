@@ -34,8 +34,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-04-05'
-
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
 from django.utils.encoding import python_2_unicode_compatible
@@ -45,6 +43,8 @@ from uds.models.Tag import TaggingMixin
 import logging
 
 logger = logging.getLogger(__name__)
+
+__updated__ = '2016-04-05'
 
 
 @python_2_unicode_compatible

@@ -122,17 +122,26 @@ class BaseX2GOTransport(Transport):
             {'id': '2', 'text': 'ADSL'},
             {'id': '3', 'text': 'WAN'},
             {'id': '4', 'text': 'LAN'},
-    ], tab=gui.PARAMETERS_TAB)
+        ],
+        tab=gui.PARAMETERS_TAB
+    )
 
-    soundType = gui.ChoiceField(label=_('Sound'), order=30, tooltip=_('Sound server'),
+    soundType = gui.ChoiceField(
+        label=_('Sound'),
+        order=30,
+        tooltip=_('Sound server'),
         defvalue='pulse',
         values=[
             {'id': 'pulse', 'text': 'Pulse'},
             {'id': 'esd', 'text': 'ESD'},
-        ], tab=gui.ADVANCED_TAB
+        ],
+        tab=gui.ADVANCED_TAB
     )
 
-    keyboardLayout = gui.TextField(label=_('Keyboard'), order=31, tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
+    keyboardLayout = gui.TextField(
+        label=_('Keyboard'),
+        order=31,
+        tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
         defvalue='',
         tab=gui.ADVANCED_TAB
     )
@@ -149,16 +158,25 @@ class BaseX2GOTransport(Transport):
     # '8-png-%', '64-png', '256-png', '512-png', '4k-png'
     # '32k-png', '64k-png', '256k-png', '2m-png', '16m-png-%'
     # '16m-rgb-%', '16m-rle-%'
-    pack = gui.TextField(label=_('Pack'), order=32, tooltip=_('Pack format. Change with care!'),
+    pack = gui.TextField(
+        label=_('Pack'),
+        order=32,
+        tooltip=_('Pack format. Change with care!'),
         defvalue='16m-jpeg',
         tab=gui.ADVANCED_TAB
     )
 
-    quality = gui.NumericField(label=_('Quality'), order=33, tooltip=_('Quality value used on some pack formats.'),
-        length=1, defvalue='6', minValue=1, maxValue=9, required=True,
-        tab=gui.ADVANCED_TAB)
-
-
+    quality = gui.NumericField(
+        label=_('Quality'),
+        order=33,
+        tooltip=_('Quality value used on some pack formats.'),
+        length=1,
+        defvalue='6',
+        minValue=1,
+        maxValue=9,
+        required=True,
+        tab=gui.ADVANCED_TAB
+    )
 
     def isAvailableFor(self, userService, ip):
         """

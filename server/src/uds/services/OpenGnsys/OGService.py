@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-10-05'
+__updated__ = '2017-10-16'
 
 logger = logging.getLogger(__name__)
 
@@ -165,6 +165,9 @@ class OGService(Service):
 
     def notifyEvents(self, machineId, serviceUUID):
         return self.parent().notifyEvents(machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
+
+    def notifyDeadline(self, machineId, deadLine):
+        return self.parent().notifyDeadline(machineId, deadLine)
 
     def _notifyURL(self, uuid, message):
         # The URL is "GET messages URL".

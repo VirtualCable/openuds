@@ -41,16 +41,14 @@ import logging
 import six
 
 import requests
-import json
-
-__updated__ = '2017-10-02'
+import  json
 
 logger = logging.getLogger(__name__)
 
 # URLS
 
 # Fake part
-FAKE = True
+FAKE = False
 CACHE_VALIDITY = 180
 
 
@@ -117,6 +115,7 @@ class OpenGnsysClient(object):
             )
         # FAKE Connection :)
         return fake.get(path, errMsg)
+
 
     def _delete(self, path, errMsg=None):
         if not FAKE:
@@ -223,6 +222,17 @@ class OpenGnsysClient(object):
         }
 
         return self._post(urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
+
+    @ensureConnected
+    def notifyDeadline(self, machineId, deadLine):
+        ou, lab, client = machineId.split('.')
+        errMsg = 'Notifying deadline'
+        data = {
+          'deadLine': deadLine
+        }
+
+        return self._post(urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
+
 
     @ensureConnected
     def status(self, id_):

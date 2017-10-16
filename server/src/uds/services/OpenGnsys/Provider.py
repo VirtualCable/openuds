@@ -48,7 +48,7 @@ import logging
 import six
 
 
-__updated__ = '2017-10-05'
+__updated__ = '2017-10-16'
 
 logger = logging.getLogger(__name__)
 
@@ -193,6 +193,9 @@ class OGProvider(ServiceProvider):
 
     def notifyEvents(self, machineId, loginURL, logoutURL):
         return self.api.notifyURLs(machineId, loginURL, logoutURL)
+
+    def notifyDeadline(self, machineId, deadLine):
+        return self.api.notifyDeadline(machineId, deadLine)
 
     def status(self, machineId):
         return self.api.status(machineId)

@@ -34,8 +34,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-04-05'
-
 from django.db import models
 from uds.core.util import states
 from uds.models.UUIDModel import UUIDModel
@@ -46,6 +44,7 @@ from uds.models.ServicesPool import ServicePool
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class CalendarAccess(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)

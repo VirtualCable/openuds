@@ -43,7 +43,7 @@ import six
 import pickle
 import logging
 
-__updated__ = '2017-09-29'
+__updated__ = '2017-10-16'
 
 
 logger = logging.getLogger(__name__)
@@ -104,21 +104,13 @@ class OGDeployment(UserDeployment):
 
     def setReady(self):
         """
-        Right now, this does nothing on OG.
+        Notifies the current "deadline" to the user, before accessing by UDS
         The machine has been already been started.
         The problem is that currently there is no way that a machine is in FACT started.
         OpenGnsys will try it best by sending an WOL
         """
-        # if self.cache.get('ready') == '1':
-        #    return State.FINISHED
+        self.service().notifyDeadline(self._machineId, self.dbservice().deployed_service.getDeadline())
 
-        # status = self.service().status(self._machineId)
-        # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
-        # if status['status'] != 'off':
-        #     self.cache.put('ready', '1')
-        #     return State.FINISHED
-
-        # Return back machine to preparing?...
         return State.FINISHED
 
     def deployForUser(self, user):

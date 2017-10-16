@@ -12,6 +12,6 @@ For South support, customize the SOUTH_MIGRATION_MODULES setting like so:
 try:
     from django.db import migrations  # noqa
 except ImportError:
-    migrations = None # Avoid pep error
+    migrations = None  # Avoid pep error
     from django.core.exceptions import ImproperlyConfigured
     raise ImproperlyConfigured(SOUTH_ERROR_MESSAGE)

@@ -207,7 +207,7 @@ class Transport(Module):
             '3iMYtXfvcFnmz4jvuJHUccbpUo4O31K2G7OaqlLylQ5dCu62'\
             'JuVuquKKSfiwOIdYcdPJ6gvpgkQQDPqt7wN+duyZA0FI5F4h'\
             'O6acQZmbjBCqZoo9Qsg7k9cTcalNkc5flEYAk1mULnddgDM6'\
-            'YGmoJgVnDr0=', {'transport':transport.name}
+            'YGmoJgVnDr0=', {'transport': transport.name}
 
     def getLink(self, userService, transport, ip, os, user, password, request):
         """
