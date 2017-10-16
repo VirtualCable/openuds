@@ -109,7 +109,7 @@ class OGDeployment(UserDeployment):
         The problem is that currently there is no way that a machine is in FACT started.
         OpenGnsys will try it best by sending an WOL
         '''
-        self.service().notifyDeadline(self.dbservice().deployed_service.getDeadline())
+        self.service().notifyDeadline(self._machineId, self.dbservice().deployed_service.getDeadline())
 
         return State.FINISHED
 
@@ -118,7 +118,7 @@ class OGDeployment(UserDeployment):
         Deploys an service instance for an user.
         '''
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy(False)
+        self.__initQueueForDeploy()
         return self.__executeQueue()
 
     def deployForCache(self, cacheLevel):
