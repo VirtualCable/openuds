@@ -60,7 +60,7 @@ class Login(Handler):
         This login uses parameters to generate auth token
         The alternative is to use the template tag inside "REST" that is called auth_token, that extracts an auth token from an user session
         We can use any of this forms due to the fact that the auth token is in fact a session key
-        Parameters:
+        Post arguments:
             mandatory:
                 username:
                 password:

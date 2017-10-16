@@ -34,36 +34,22 @@ from __future__ import unicode_literals
 
 from uds.core.util.Cache import Cache as uCache
 from django.core.cache import cache as djCache
-from uds.REST import Handler, RequestError, NotFound
+from uds.REST import Handler, RequestError
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /auth path
 
-
+# Enclosed methods under /cache path
 class Cache(Handler):
     authenticated = True
     needs_admin = True
 
     def get(self):
         """
-        This login uses parameters to generate auth token
-        The alternative is to use the template tag inside "REST" that is called auth_token, that extracts an auth token from an user session
-        We can use any of this forms due to the fact that the auth token is in fact a session key
-        Parameters:
-            mandatory:
-                username:
-                password:
-                auth:
-            optional:
-                locale: (defaults to "en")
-        Result:
-            on success: { 'result': 'ok', 'auth': [auth_code] }
-            on error: { 'result: 'error', 'error': [error string] }
+        Processes get method. Basically, clears & purges the cache, no matter what params
         """
-
         logger.debug('Params: {0}'.format(self._params))
         if len(self._args) == 0:
             return {}

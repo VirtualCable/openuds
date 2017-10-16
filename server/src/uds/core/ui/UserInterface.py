@@ -768,7 +768,7 @@ class UserInterfaceType(type):
     Metaclass definition for moving the user interface descriptions to a usable
     better place
     """
-    def __new__(cls, classname, bases, classDict):
+    def __new__(mcs, classname, bases, classDict):
         newClassDict = {}
         _gui = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
@@ -777,7 +777,7 @@ class UserInterfaceType(type):
                 _gui[attrName] = attr
             newClassDict[attrName] = attr
         newClassDict['_gui'] = _gui
-        return type.__new__(cls, classname, bases, newClassDict)
+        return type.__new__(mcs, classname, bases, newClassDict)
 
 
 @six.add_metaclass(UserInterfaceType)
@@ -956,8 +956,9 @@ class UserInterface(object):
         represent it at user interface and manage it.
 
         Args:
-            object: If not none, object that will get its "initGui" invoked
+            :param obj: If not none, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
+            :return:
         """
         logger.debug('Active language for theGui translation: {0}'.format(get_language()))
         theGui = cls

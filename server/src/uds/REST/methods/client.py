@@ -69,6 +69,8 @@ class Client(Handler):
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
         :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
+        :param errorCode: Code of the error to return, if error is not None
+        :param retryable: If True, this operation can (and must) be retryed
         :return: A dictionary, suitable for response to Caller
         """
         result = result if result is not None else ''

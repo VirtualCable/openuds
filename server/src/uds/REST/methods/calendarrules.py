@@ -62,8 +62,8 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
     def ruleToDict(item, perm):
         """
         Convert a calRule db item to a dict for a rest response
-        :param item: Service item (db)
-        :param full: If full is requested, add "extra" fields to complete information
+        :param item: Rule item (db)
+        :param perm: Permission of the object
         """
         retVal = {
             'id': item.uuid,
