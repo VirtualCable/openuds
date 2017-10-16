@@ -163,8 +163,11 @@ class OGService(Service):
     def unreserve(self, machineId):
         return self.parent().unreserve(machineId)
 
-    def notifyEvents(self, machineId, serviceUUID, deadLine):
-        return self.parent().notifyEvents(machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID), deadLine)
+    def notifyEvents(self, machineId, serviceUUID):
+        return self.parent().notifyEvents(machineId, self.getLoginNotifyURL(serviceUUID), self.getLogoutNotifyURL(serviceUUID))
+
+    def notifyDeadline(self, machineId, deadLine):
+        return self.parent().notifyDeadline(machineId, deadLine)
 
     def _notifyURL(self, uuid, message):
         # The URL is "GET messages URL".

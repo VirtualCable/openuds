@@ -191,8 +191,11 @@ class OGProvider(ServiceProvider):
     def unreserve(self, machineId):
         return self.api.unreserve(machineId)
 
-    def notifyEvents(self, machineId, loginURL, logoutURL, deadLine):
-        return self.api.notifyURLs(machineId, loginURL, logoutURL, deadLine)
+    def notifyEvents(self, machineId, loginURL, logoutURL):
+        return self.api.notifyURLs(machineId, loginURL, logoutURL)
+
+    def notifyDeadline(self, machineId, deadLine):
+        return self.api.notifyDeadline(machineId, deadLine)
 
     def status(self, machineId):
         return self.api.status(machineId)

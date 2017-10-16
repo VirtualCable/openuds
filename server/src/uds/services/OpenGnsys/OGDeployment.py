@@ -104,21 +104,13 @@ class OGDeployment(UserDeployment):
 
     def setReady(self):
         '''
-        Right now, this does nothing on OG.
+        Notifies the current "deadline" to the user, before accessing by UDS
         The machine has been already been started.
         The problem is that currently there is no way that a machine is in FACT started.
         OpenGnsys will try it best by sending an WOL
         '''
-        # if self.cache.get('ready') == '1':
-        #    return State.FINISHED
+        self.service().notifyDeadline(self.dbservice().deployed_service.getDeadline())
 
-        # status = self.service().status(self._machineId)
-        # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
-        # if status['status'] != 'off':
-        #     self.cache.put('ready', '1')
-        #     return State.FINISHED
-
-        # Return back machine to preparing?...
         return State.FINISHED
 
     def deployForUser(self, user):
@@ -236,8 +228,7 @@ class OGDeployment(UserDeployment):
         '''
         try:
             r = self.service().reserve()
-            deadLine = self.dbservice().deployed_service.getDeadline()
-            self.service().notifyEvents(r['id'], self._uuid, deadLine)
+            self.service().notifyEvents(r['id'], self._uuid)
         except Exception as e:
             # logger.exception('Creating machine')
             return self.__error('Error creating reservation: {}'.format(e))

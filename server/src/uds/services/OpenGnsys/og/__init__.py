@@ -45,8 +45,6 @@ import six
 import requests
 import  json
 
-__updated__ = '2017-10-16'
-
 logger = logging.getLogger(__name__)
 
 # URLS
@@ -216,16 +214,25 @@ class OpenGnsysClient(object):
         return self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg)
 
     @ensureConnected
-    def notifyURLs(self, machineId, loginURL, logoutURL, deadLine):
+    def notifyURLs(self, machineId, loginURL, logoutURL):
         ou, lab, client = machineId.split('.')
         errMsg = 'Notifying login/logout urls'
         data = {
           'urlLogin': loginURL,
-          'urlLogout': logoutURL,
-          'deadLine': deadLine
+          'urlLogout': logoutURL
         }
 
         return self._post(urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
+
+    @ensureConnected
+    def notifyDeadline(self, machineId, deadLine):
+        ou, lab, client = machineId.split('.')
+        errMsg = 'Notifying deadline'
+        data = {
+          'deadLine': deadLine
+        }
+
+        return self._post(urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
 
 
     @ensureConnected
