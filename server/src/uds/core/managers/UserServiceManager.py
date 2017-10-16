@@ -488,7 +488,7 @@ class UserServiceManager(object):
                 UserServiceOpChecker.makeUnique(uService, ui, state)
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: {}'.format(e))
-            UserService.setState(State.ERROR)
+            uService.setState(State.ERROR)
             return
 
     def getService(self, user, srcIp, idService, idTransport, doTest=True):
@@ -544,11 +544,9 @@ class UserServiceManager(object):
         if user is not None:
             userName = user.name
 
-
         if doTest is False:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
             return None, userService, None, trans, None
-
 
         serviceNotReadyCode = 0x0001
         ip = 'unknown'
