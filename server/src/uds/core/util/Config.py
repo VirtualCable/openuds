@@ -51,6 +51,7 @@ getLater = []
 # For custom params (for choices mainly)
 configParams = {}
 
+
 class Config(object):
     """
     Keeps persistence configuration data
@@ -339,7 +340,6 @@ class GlobalConfig(object):
             pass
 
         GlobalConfig.UDS_THEME.setParams(themes)
-
 
     @staticmethod
     def initialize():

@@ -258,7 +258,7 @@ class UserDeployment(Environmentable, Serializable):
 
         Args:
 
-            Data: Data sent by os manager.
+            data: Data sent by os manager.
             Data is os manager dependant, so check if this data is known by you
             (normally, it will be None, but is os manager dependad as i say)
 

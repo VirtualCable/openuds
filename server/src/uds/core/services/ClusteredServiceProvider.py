@@ -202,6 +202,7 @@ class ClusteredServiceProvider(ServiceProvider):
         from uds.core.util.ThreadPool import ThreadPool
 
         node = None
+        
         def isInNode(n):
             if serviceInstance.ensureExistsOnNode(n) is True:
                 node = n

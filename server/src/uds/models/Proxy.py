@@ -91,7 +91,6 @@ class Proxy(UUIDModel, TaggingMixin):
             timeout=timeout
         )
 
-
     def doTestServer(self, ip, port, timeout=5):
         try:
             url = self.testServerUrl + '?host={}&port={}&timeout={}'.format(ip, port, timeout)
@@ -107,7 +106,6 @@ class Proxy(UUIDModel, TaggingMixin):
             logger.exception("Getting service state through proxy")
 
         return False
-
 
     def __unicode__(self):
         return 'Proxy {} on {}:{} '.format(self.name, self.host, self.port)

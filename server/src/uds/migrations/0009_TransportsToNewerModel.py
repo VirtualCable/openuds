@@ -55,11 +55,14 @@ def unmarshalRDP(str_):
 def unmarshalTRDP(str_):
     data = str_.split('\t')
     if data[0] in ('v1', 'v2', 'v3'):
+        i = 0
         useEmptyCreds = gui.strToBool(data[1])
         allowSmartcards = gui.strToBool(data[2])
         allowPrinters = gui.strToBool(data[3])
         allowDrives = gui.strToBool(data[4])
         allowSerials = gui.strToBool(data[5])
+        wallpaper = False
+
         if data[0] == 'v1':
             wallpaper = False
             i = 0
@@ -79,20 +82,20 @@ def unmarshalTRDP(str_):
         else:
             withoutDomain = False
 
-    return {
-        'useEmptyCreds': useEmptyCreds,
-        'allowSmartcards': allowSmartcards,
-        'allowPrinters': allowPrinters,
-        'allowDrives': allowDrives,
-        'allowSerials': allowSerials,
-        'wallpaper': wallpaper,
-        'fixedName': fixedName,
-        'fixedPassword': fixedPassword,
-        'fixedDomain': fixedDomain,
-        'withoutDomain': withoutDomain,
-        'tunnelServer': tunnelServer,
-        'tunnelCheckServer': tunnelCheckServer
-    }
+        return {
+            'useEmptyCreds': useEmptyCreds,
+            'allowSmartcards': allowSmartcards,
+            'allowPrinters': allowPrinters,
+            'allowDrives': allowDrives,
+            'allowSerials': allowSerials,
+            'wallpaper': wallpaper,
+            'fixedName': fixedName,
+            'fixedPassword': fixedPassword,
+            'fixedDomain': fixedDomain,
+            'withoutDomain': withoutDomain,
+            'tunnelServer': tunnelServer,
+            'tunnelCheckServer': tunnelCheckServer
+        }
 
 
 def transformTransports(apps, schema_editor):

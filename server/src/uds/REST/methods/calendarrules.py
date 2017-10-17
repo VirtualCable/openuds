@@ -98,7 +98,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             {'name': {'title': _('Rule name')}},
             {'start': {'title': _('Starts'), 'type': 'datetime'}},
             {'end': {'title': _('Ends'), 'type': 'date'}},
-            {'frequency': {'title': _('Repeats'), 'type': 'dict', 'dict': dict((v[0], six.text_type(v[1])) for v in freqs) }},
+            {'frequency': {'title': _('Repeats'), 'type': 'dict', 'dict': dict((v[0], six.text_type(v[1])) for v in freqs)}},
             {'interval': {'title': _('Every'), 'type': 'callback'}},
             {'duration': {'title': _('Duration'), 'type': 'callback'}},
             {'comments': {'title': _('Comments')}},

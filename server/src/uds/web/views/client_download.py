@@ -65,8 +65,11 @@ def client_downloads(request, os=None):
         os = request.os['OS']
     logger.debug('User: {}'.format(request.user))
     os = os.lower()
-    return render(request, theme.template('download_client.html'),
-                              {'os': os, 'user': request.user})
+    return render(
+        request,
+        theme.template('download_client.html'),
+        {'os': os, 'user': request.user}
+    )
 
 
 @webLoginRequired(admin=False)

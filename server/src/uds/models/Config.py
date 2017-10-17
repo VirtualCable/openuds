@@ -33,8 +33,6 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-06-20'
-
 from django.db import models
 
 import logging

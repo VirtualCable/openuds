@@ -39,19 +39,25 @@ __updated__ = '2016-03-07'
 
 logger = logging.getLogger(__name__)
 
-(ACTIVE, BUILDING, DELETED, ERROR,
-HARD_REBOOT, MIGRATING, PASSWORD,
-PAUSED, REBOOT, REBUILD, RESCUED,
-RESIZED, REVERT_RESIZE, SOFT_DELETED,
-STOPPED, SUSPENDED, UNKNOWN, VERIFY_RESIZE) = ('ACTIVE', 'BUILDING', 'DELETED', 'ERROR',
-                                              'HARD_REBOOT', 'MIGRATING', 'PASSWORD',
-                                              'PAUSED', 'REBOOT', 'REBUILD', 'RESCUED',
-                                              'RESIZED', 'REVERT_RESIZE', 'SOFT_DELETED',
-                                              'STOPPED', 'SUSPENDED', 'UNKNOWN', 'VERIFY_RESIZE')
+(
+    ACTIVE, BUILDING, DELETED, ERROR,
+    HARD_REBOOT, MIGRATING, PASSWORD,
+    PAUSED, REBOOT, REBUILD, RESCUED,
+    RESIZED, REVERT_RESIZE, SOFT_DELETED,
+    STOPPED, SUSPENDED, UNKNOWN, VERIFY_RESIZE
+) = (
+    'ACTIVE', 'BUILDING', 'DELETED', 'ERROR',
+    'HARD_REBOOT', 'MIGRATING', 'PASSWORD',
+    'PAUSED', 'REBOOT', 'REBUILD', 'RESCUED',
+    'RESIZED', 'REVERT_RESIZE', 'SOFT_DELETED',
+    'STOPPED', 'SUSPENDED', 'UNKNOWN', 'VERIFY_RESIZE'
+)
+
 
 # Helpers to check statuses
 def statusIsLost(status):
     return status in [DELETED, ERROR, UNKNOWN, SOFT_DELETED]
+
 
 def sanitizeName(name):
     """

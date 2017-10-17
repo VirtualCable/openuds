@@ -289,8 +289,8 @@ class Authenticator(Module):
 
         Args:
             username: User name to authenticate
-            credentilas: Credentials for this user, (password, pki, or whatever needs to be used). (string)
-            groupManager: Group manager to modify with groups to which this users belongs to.
+            credentials: Credentials for this user, (password, pki, or whatever needs to be used). (string)
+            groupsManager: Group manager to modify with groups to which this users belongs to.
 
         Returns:
             True if authentication success, False if don't.

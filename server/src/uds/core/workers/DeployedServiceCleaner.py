@@ -145,7 +145,6 @@ class DeployedServiceRemover(Job):
                     except Exception as e2:
                         logger.error('Could not delete {}'.format(e2))
 
-
         rems = DeployedService.objects.filter(state=State.REMOVING)[:10]
         if len(rems) > 0:
             logger.debug('Found a deployed service in removing state, continuing removal of {0}'.format(rems))

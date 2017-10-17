@@ -254,6 +254,7 @@ class WinDomainOsManager(WindowsOsManager):
     @staticmethod
     def test(env, data):
         logger.debug('Test invoked')
+        wd = None
         try:
             wd = WinDomainOsManager(env, data)
             logger.debug(wd)
@@ -272,9 +273,9 @@ class WinDomainOsManager(WindowsOsManager):
 
         except ldap.LDAPError:
             if wd._ou == '':
-                return [False, _('The default path {0} for computers was not found!!!').format(ou)]
+                return [False, _('The default path {0} for computers was not found!!!').format(wd._ou)]
             else:
-                return [False, _('The ou path {0} was not found!!!').format(ou)]
+                return [False, _('The ou path {0} was not found!!!').format(wd._ou)]
         except dns.resolver.NXDOMAIN:
             return [True, _('Could not check parameters (_ldap._tcp.{0} can\'r be resolved)').format(wd._domain)]
         except Exception as e:

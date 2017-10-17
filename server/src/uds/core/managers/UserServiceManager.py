@@ -379,7 +379,7 @@ class UserServiceManager(object):
         try:
             data = {'user': userName, 'protocol': protocol}
             if proxy is not None:
-                proxy.doProxyRequest(url=url, data=data, timeout=2)
+                r = proxy.doProxyRequest(url=url, data=data, timeout=2)
             else:
                 r = requests.post(url,
                                   data=json.dumps(data),
@@ -402,13 +402,19 @@ class UserServiceManager(object):
             logger.debug('No uuid to retrieve because agent does not supports notifications')
             return True  # UUid is valid because it is not supported checking it
 
-        if uService.getProperty('actor_version', '') < '2.0.0':  # Just for 2.0 or newer, previous actors will not support this method
+        version = uService.getProperty('actor_version', '')
+        # Just for 2.0 or newer, previous actors will not support this method.
+        # Also externally supported agents will not support this method (as OpenGnsys)
+        if '-' in version or version < '2.0.0':
             return True
 
         url += '/uuid'
 
         try:
-            r = requests.get(url, verify=False, timeout=5)
+            if proxy is not None:
+                r = proxy.doProxyRequest(url=url, timeout=5)
+            else:
+                r = requests.get(url, verify=False, timeout=5)
             uuid = json.loads(r.content)
             if uuid != uService.uuid:
                 logger.info('The requested machine has uuid {} and the expected was {}'.format(uuid, uService.uuid))
@@ -438,7 +444,7 @@ class UserServiceManager(object):
         try:
             data = {'script': script}
             if proxy is not None:
-                proxy.doProxyRequest(url=url, data=data, timeout=5)
+                r = proxy.doProxyRequest(url=url, data=data, timeout=5)
             else:
                 r = requests.post(
                     url,
@@ -543,6 +549,8 @@ class UserServiceManager(object):
 
         if user is not None:
             userName = user.name
+        else:
+            userName = 'unknown'
 
         if doTest is False:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))

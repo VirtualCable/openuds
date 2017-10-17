@@ -121,6 +121,7 @@ class Users(DetailHandler):
         return {'field': 'state', 'prefix': 'row-state-'}
 
     def getLogs(self, parent, item):
+        user = None
         try:
             user = parent.users.get(uuid=processUuid(item))
         except Exception:
@@ -136,6 +137,7 @@ class Users(DetailHandler):
             self._params['password'] = cryptoManager().hash(self._params['password'])
 
         fields = self.readFieldsFromParams(valid_fields)
+        user = None
         try:
             auth = parent.getInstance()
             if item is None:  # Create new
@@ -284,6 +286,7 @@ class Groups(DetailHandler):
                 self.invalidRequestException()
 
     def saveItem(self, parent, item):
+        group = None  # Avoid warning on reference before assignment
         try:
             is_meta = self._params['type'] == 'meta'
             meta_if_any = self._params.get('meta_if_any', False)

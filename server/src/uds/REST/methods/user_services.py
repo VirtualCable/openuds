@@ -149,6 +149,7 @@ class AssignedService(DetailHandler):
             self.invalidItemException()
 
     def deleteItem(self, parent, item):  # This is also used by CachedService, so we use "userServices" directly and is valid for both
+        service = None
         try:
             service = parent.userServices.get(uuid=processUuid(item))
         except Exception:

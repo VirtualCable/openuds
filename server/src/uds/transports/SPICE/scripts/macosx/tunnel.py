@@ -32,6 +32,7 @@ if {m.port} != -1:  # @UndefinedVariable
     if forwardThread1.status == 2:
         raise Exception('Unable to open tunnel')
 else:
+    forwardThread1 = None
     port = -1
 
 if {m.secure_port} != -1:  # @UndefinedVariable
