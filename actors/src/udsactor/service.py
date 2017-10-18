@@ -92,8 +92,10 @@ class CommonService(object):
         import stat
 
         if os.path.isfile(cmd):
+            logger.debug('File "{}" was found!!'.format(cmd))
             if (os.stat(cmd).st_mode & stat.S_IXUSR) != 0:
-                subprocess.call([cmd, ])
+                res = subprocess.call([cmd, ])
+                logger.debug('Result of executing cmd was {}'.format(res))
                 return True
             else:
                 logger.info('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
@@ -158,6 +160,7 @@ class CommonService(object):
         # Now try to run the "runonce" element
         runOnce = store.runApplication()
         if runOnce is not None:
+            logger.debug('Executing {}'.format(runOnce))
             if self.execute(runOnce, 'RunOnce') is True:
                 # operations.reboot()
                 return False
