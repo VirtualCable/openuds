@@ -86,16 +86,24 @@ class CommonService(object):
     def reboot(self):
         self.rebootRequested = True
 
-    def execute(self, cmd, section):
+    def execute(self, cmdLine, section):
         import os
         import subprocess
         import stat
 
+        cmd = cmdLine.split(' ')
+
         if os.path.isfile(cmd):
-            logger.debug('File "{}" was found!!'.format(cmd))
+            logger.info('File "{}" was found!!'.format(cmd))
             if (os.stat(cmd).st_mode & stat.S_IXUSR) != 0:
-                res = subprocess.call([cmd, ])
-                logger.debug('Result of executing cmd was {}'.format(res))
+                try:
+                    # cmd = ["c:\\sysprep\\sysprep.exe", "/generalize", "/oobe", "/reboot", "/quiet", "/unattend:c:\\sysprep\\unattend.xml"]
+                    res = subprocess.check_call(cmd)
+                    # res = subprocess.check_call([cmd, ], shell=True)
+                except Exception as e:
+                    logger.info('Got exception: {} - {}'.format(e, cmd))
+                    return False
+                logger.info('Result of executing cmd was {}'.format(res))
                 return True
             else:
                 logger.info('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
@@ -158,9 +166,10 @@ class CommonService(object):
                 self.doWait(5000)
 
         # Now try to run the "runonce" element
+        logger.info('Running runOnce app')
         runOnce = store.runApplication()
         if runOnce is not None:
-            logger.debug('Executing {}'.format(runOnce))
+            logger.info('Executing {}'.format(runOnce))
             if self.execute(runOnce, 'RunOnce') is True:
                 # operations.reboot()
                 return False
