@@ -44,6 +44,10 @@ from .utils import exceptionToMessage
 import socket
 import time
 import random
+import os
+import subprocess
+import shlex
+import stat
 
 IPC_PORT = 39188
 
@@ -87,15 +91,11 @@ class CommonService(object):
         self.rebootRequested = True
 
     def execute(self, cmdLine, section):
-        import os
-        import subprocess
-        import stat
+        cmd = shlex.split(cmdLine)
 
-        cmd = cmdLine.split(' ')
-
-        if os.path.isfile(cmd):
+        if os.path.isfile(cmd[0]):
             logger.info('File "{}" was found!!'.format(cmd))
-            if (os.stat(cmd).st_mode & stat.S_IXUSR) != 0:
+            if (os.stat(cmd[0]).st_mode & stat.S_IXUSR) != 0:
                 try:
                     # cmd = ["c:\\sysprep\\sysprep.exe", "/generalize", "/oobe", "/reboot", "/quiet", "/unattend:c:\\sysprep\\unattend.xml"]
                     res = subprocess.check_call(cmd)
