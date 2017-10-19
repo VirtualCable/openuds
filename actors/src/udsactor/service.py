@@ -91,7 +91,7 @@ class CommonService(object):
         self.rebootRequested = True
 
     def execute(self, cmdLine, section):
-        cmd = shlex.split(cmdLine)
+        cmd = shlex.split(cmdLine, posix=False)
 
         if os.path.isfile(cmd[0]):
             if (os.stat(cmd[0]).st_mode & stat.S_IXUSR) != 0:
@@ -100,7 +100,7 @@ class CommonService(object):
                 except Exception as e:
                     logger.error('Got exception executing: {} - {}'.format(cmdLine, e))
                     return False
-                logger.debug('Result of executing cmd was {}'.format(res))
+                logger.info('Result of executing cmd was {}'.format(res))
                 return True
             else:
                 logger.error('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
