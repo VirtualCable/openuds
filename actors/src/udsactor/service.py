@@ -94,21 +94,18 @@ class CommonService(object):
         cmd = shlex.split(cmdLine)
 
         if os.path.isfile(cmd[0]):
-            logger.info('File "{}" was found!!'.format(cmd))
             if (os.stat(cmd[0]).st_mode & stat.S_IXUSR) != 0:
                 try:
-                    # cmd = ["c:\\sysprep\\sysprep.exe", "/generalize", "/oobe", "/reboot", "/quiet", "/unattend:c:\\sysprep\\unattend.xml"]
                     res = subprocess.check_call(cmd)
-                    # res = subprocess.check_call([cmd, ], shell=True)
                 except Exception as e:
-                    logger.info('Got exception: {} - {}'.format(e, cmd))
+                    logger.error('Got exception executing: {} - {}'.format(cmdLine, e))
                     return False
-                logger.info('Result of executing cmd was {}'.format(res))
+                logger.debug('Result of executing cmd was {}'.format(res))
                 return True
             else:
-                logger.info('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
+                logger.error('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
         else:
-            logger.info('{} file not found & not executed'.format(section))
+            logger.error('{} file not found & not executed'.format(section))
 
         return False
 
@@ -166,10 +163,9 @@ class CommonService(object):
                 self.doWait(5000)
 
         # Now try to run the "runonce" element
-        logger.info('Running runOnce app')
         runOnce = store.runApplication()
         if runOnce is not None:
-            logger.info('Executing {}'.format(runOnce))
+            logger.info('Executing runOnce app: {}'.format(runOnce))
             if self.execute(runOnce, 'RunOnce') is True:
                 # operations.reboot()
                 return False

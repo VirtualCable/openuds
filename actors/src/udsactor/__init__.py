@@ -34,14 +34,14 @@ from __future__ import unicode_literals
 # On centos, old six release does not includes byte2int, nor six.PY2
 import six
 
-VERSION = '2.1.0'
+VERSION = '2.2.0'
 
 __title__ = 'udsactor'
 __version__ = VERSION
-__build__ = 0x010750
+__build__ = 0x010755
 __author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
 __license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014-2016 VirtualCable S.L.U."
+__copyright__ = "Copyright 2014-2017 VirtualCable S.L.U."
 
 
 if not hasattr(six, 'byte2int'):
