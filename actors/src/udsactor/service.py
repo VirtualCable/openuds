@@ -44,7 +44,10 @@ from .utils import exceptionToMessage
 import socket
 import time
 import random
-import json
+import os
+import subprocess
+import shlex
+import stat
 
 IPC_PORT = 39188
 
@@ -87,19 +90,22 @@ class CommonService(object):
     def reboot(self):
         self.rebootRequested = True
 
-    def execute(self, cmd, section):
-        import os
-        import subprocess
-        import stat
+    def execute(self, cmdLine, section):
+        cmd = shlex.split(cmdLine, posix=False)
 
-        if os.path.isfile(cmd):
-            if (os.stat(cmd).st_mode & stat.S_IXUSR) != 0:
-                subprocess.call([cmd, ])
+        if os.path.isfile(cmd[0]):
+            if (os.stat(cmd[0]).st_mode & stat.S_IXUSR) != 0:
+                try:
+                    res = subprocess.check_call(cmd)
+                except Exception as e:
+                    logger.error('Got exception executing: {} - {}'.format(cmdLine, e))
+                    return False
+                logger.info('Result of executing cmd was {}'.format(res))
                 return True
             else:
-                logger.info('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
+                logger.error('{} file exists but it it is not executable (needs execution permission by admin/root)'.format(section))
         else:
-            logger.info('{} file not found & not executed'.format(section))
+            logger.error('{} file not found & not executed'.format(section))
 
         return False
 
@@ -196,9 +202,6 @@ class CommonService(object):
                         logger.error('Got invalid parameters for domain message: {}'.format(params))
                         return False  # Stop running service
                     self.joinDomain(params[0], params[1], params[2], params[3], params[4])
-                    break
-                elif data[0] == 'notify':  # Broker is just requesting local information, no rename nor domain is requested
-                    self.notifyLocalInfo()
                     break
                 else:
                     logger.error('Unrecognized action sent from broker: {}'.format(data[0]))

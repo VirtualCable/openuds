@@ -38,10 +38,10 @@ VERSION = '2.5.0'
 
 __title__ = 'udsactor'
 __version__ = VERSION
-__build__ = 0x010750
+__build__ = 0x010756
 __author__ = 'Adolfo Gómez <dkmaster@dkmon.com>'
 __license__ = "BSD 3-clause"
-__copyright__ = "Copyright 2014-2016 VirtualCable S.L.U."
+__copyright__ = "Copyright 2014-2017 VirtualCable S.L.U."
 
 
 if not hasattr(six, 'byte2int'):
