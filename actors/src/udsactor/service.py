@@ -109,7 +109,6 @@ class CommonService(object):
 
         return False
 
-
     def setReady(self):
         self.api.setReady([(v.mac, v.ip) for v in operations.getNetworkInfo()])
 

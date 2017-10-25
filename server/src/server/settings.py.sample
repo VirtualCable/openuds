@@ -164,6 +164,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'uds.core.util.request.GlobalRequestMiddleware',
     'uds.core.util.middleware.XUACompatibleMiddleware',
+    'uds.core.util.middleware.RedirectMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
