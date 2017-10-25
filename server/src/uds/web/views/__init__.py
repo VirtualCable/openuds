@@ -41,8 +41,9 @@ from .download import download
 from .client_download import client_downloads, plugin_detection
 from .js import jsCatalog
 from .images import image
+from ..errors import error
 from .file_storage import file_storage
 
-__updated__ = '2016-04-05'
+__updated__ = '2017-10-20'
 
 logger = logging.getLogger(__name__)

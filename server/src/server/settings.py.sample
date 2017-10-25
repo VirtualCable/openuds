@@ -9,18 +9,13 @@ import sys
 import django
 import django.conf.global_settings as DEFAULT_SETTINGS
 
-# Related to shell plus
-NOTEBOOK_ARGUMENTS = [
-    '--ip=172.27.0.1',
-    '--port=8888',
-]
-
 # calculated paths for django and the site
 # used as starting points for various other paths
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 BASE_DIR = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])  # If used 'relpath' instead of abspath, returns path of "enterprise" instead of "openuds"
 
 DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 # USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # For testing begind a reverse proxy
@@ -30,19 +25,17 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'OPTIONS': {
             'init_command': 'SET default_storage_engine=INNODB; SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;',
+            # 'init_command': 'SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
             # 'init_command': 'SET storage_engine=MYISAM, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
         },
-        # 'STORAGE_ENGINE': 'INNODB',
-        'NAME': 'DBUDS',  # Or path to database file if using sqlit00e3.
-        # 'NAME': 'dbuds2_test',  # For creating tests
-        'USER': 'DBUDS',  # Not used with sqlite3.
-        'PASSWORD': 'PASSWR',  # Not used with sqlite3.
-        'HOST': 'SERVER',  # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '3306',  # Set to empty string for default. Not used with sqlite3.
-        'CONN_MAX_AGE': 60,  # Disable DB Pooling on development enviromnet
+        'NAME': 'dbuds',                      # Or path to database file if using sqlite3.
+        'USER': 'dbuds',                      # Not used with sqlite3.
+        'PASSWORD': 'PASSWOR',                  # Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
+	    # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
     }
 }
-
 ALLOWED_HOSTS = '*'
 
 # Local time zone for this installation. Choices can be found here:
@@ -152,6 +145,12 @@ SECRET_KEY = 's5ky!7b5f#s35!e38xv%e-+iey6yi-#630x)kk3kk5_j8rie2*'
 # This is a very long string, an RSA KEY (this can be changed, but if u loose it, all encription will be lost)
 RSA_KEY = '-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQC0qe1GlriQbHFYdKYRPBFDSS8Ne/TEKI2mtPKJf36XZTy6rIyH\nvUpT1gMScVjHjOISLNJQqktyv0G+ZGzLDmfkCUBev6JBlFwNeX3Dv/97Q0BsEzJX\noYHiDANUkuB30ukmGvG0sg1v4ccl+xs2Su6pFSc5bGINBcQ5tO0ZI6Q1nQIDAQAB\nAoGBAKA7Octqb+T/mQOX6ZXNjY38wXOXJb44LXHWeGnEnvUNf/Aci0L0epCidfUM\nfG33oKX4BMwwTVxHDrsa/HaXn0FZtbQeBVywZqMqWpkfL/Ho8XJ8Rsq8OfElrwek\nOCPXgxMzQYxoNHw8V97k5qhfupQ+h878BseN367xSyQ8plahAkEAuPgAi6aobwZ5\nFZhx/+6rmQ8sM8FOuzzm6bclrvfuRAUFa9+kMM2K48NAneAtLPphofqI8wDPCYgQ\nTl7O96GXVQJBAPoKtWIMuBHJXKCdUNOISmeEvEzJMPKduvyqnUYv17tM0JTV0uzO\nuDpJoNIwVPq5c3LJaORKeCZnt3dBrdH1FSkCQQC3DK+1hIvhvB0uUvxWlIL7aTmM\nSny47Y9zsc04N6JzbCiuVdeueGs/9eXHl6f9gBgI7eCD48QAocfJVygphqA1AkEA\nrvzZjcIK+9+pJHqUO0XxlFrPkQloaRK77uHUaW9IEjui6dZu4+2T/q7SjubmQgWR\nZy7Pap03UuFZA2wCoqJbaQJAUG0FVrnyUORUnMQvdDjAWps2sXoPvA8sbQY1W8dh\nR2k4TCFl2wD7LutvsdgdkiH0gWdh5tc1c4dRmSX1eQ27nA==\n-----END RSA PRIVATE KEY-----'
 
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
+)
 
 TEMPLATES = [
     {
@@ -188,8 +187,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'uds.core.util.request.GlobalRequestMiddleware',
     'uds.core.util.middleware.XUACompatibleMiddleware',
-    'uds.plugins.enterprise.middleware.Middleware',
-]
+)
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -207,7 +205,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
     'compressor',
     'uds',
 )
@@ -215,11 +212,8 @@ INSTALLED_APPS = (
 # Compressor settings (for css/js)
 COMPRESS_ENABLED = not DEBUG
 COMPRESS_OUTPUT_DIR = 'cache'
-COMPRESS_CACHE_BACKEND = 'default'  # 'memory'
-COMPRESS_STORAGE = 'uds.core.util.FileStorage.CompressorFileStorage'
 COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),  # Original, unchanged
-#    ('text/coffeescript', 'coffee --compile -p {infile} | babel --blacklist strict -o {outfile}'),  # Allows use of generators, etc.. on unsupported browers
+    ('text/coffeescript', 'coffee --compile --stdio'),
     ('text/less', 'lessc {infile} {outfile}'),
     ('text/x-sass', 'sass {infile} {outfile}'),
     ('text/x-scss', 'sass --scss {infile} {outfile}'),
@@ -228,11 +222,11 @@ COMPRESS_PRECOMPILERS = (
 )
 if DEBUG:
     COMPRESS_DEBUG_TOGGLE = 'debug'
-#
+#   
 # Enable this if you need to allow round robin load balancing of web server
 # This is so because we need to share the files between servers
 # Another options is put /var/server/static on a shared nfs forder for all servers
-#
+#   
 # COMPRESS_STORAGE = 'uds.core.util.FileStorage.CompressorFileStorage'
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for

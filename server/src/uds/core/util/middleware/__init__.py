@@ -27,6 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import unicode_literals
+from uds.core.util.Config import GlobalConfig
+from django.http import HttpResponseRedirect
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,4 +48,19 @@ class XUACompatibleMiddleware(object):
         if response.get('content-type', '').startswith('text/html'):
             response['X-UA-Compatible'] = 'IE=edge'
         return response
+
+class RedirectMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False:
+            if request.method == 'POST':
+                url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
+            else:
+                url = request.build_absolute_uri(request.get_full_path())
+            url = url.replace('http://', 'https://')
+
+            return HttpResponseRedirect(url)
+	return self.get_response(request)
 
