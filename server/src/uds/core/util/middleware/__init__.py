@@ -47,11 +47,12 @@ class XUACompatibleMiddleware(object):
 
 class RedirectMiddleware(object):
     def process_request(self, request):
-        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False:
+        full_path = request.get_full_path()
+        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False and full_path[:6] != '/rest/':
             if request.method == 'POST':
                 url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
             else:
-                url = request.build_absolute_uri(request.get_full_path())
+                url = request.build_absolute_uri(full_path)
             url = url.replace('http://', 'https://')
 
             return HttpResponseRedirect(url)
