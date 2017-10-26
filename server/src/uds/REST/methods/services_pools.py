@@ -70,22 +70,7 @@ class ServicesPools(ModelHandler):
         'actions': ActionsCalendars
     }
 
-    save_fields = [
-        'name',
-        'comments',
-        'tags',
-        'service_id',
-        'osmanager_id',
-        'image_id',
-        'account_id',
-        'servicesPoolGroup_id',
-        'initial_srvs',
-        'cache_l1_srvs',
-        'cache_l2_srvs',
-        'max_srvs',
-        'show_transports',
-        'visible'
-    ]
+    save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id', 'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports', 'allow_users_remove']
     remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
@@ -126,6 +111,7 @@ class ServicesPools(ModelHandler):
         val = {
             'id': item.uuid,
             'name': item.name,
+            'short_name': item.short_name,
             'tags': [tag.tag for tag in item.tags.all()],
             'parent': item.service.name,
             'parent_type': item.service.data_type,
@@ -149,6 +135,7 @@ class ServicesPools(ModelHandler):
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
             'visible': item.visible,
+            'allow_users_remove': item.allow_users_remove,
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
             'info': Services.serviceInfo(item.service),
@@ -166,7 +153,7 @@ class ServicesPools(ModelHandler):
         if Service.objects.count() < 1:
             raise ResponseError(ugettext('Create at least a service before creating a new service pool'))
 
-        g = self.addDefaultFields([], ['name', 'comments', 'tags'])
+        g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
         for f in [{
             'name': 'service_id',
@@ -260,7 +247,15 @@ class ServicesPools(ModelHandler):
             'type': gui.InputField.CHOICE_TYPE,
             'tab': ugettext('Advanced'),
             'order': 131,
-        },
+        },{
+            'name': 'allow_users_remove',
+            'value': False,
+            'label': ugettext('Allow removal by users'),
+            'tooltip': ugettext('If active, the user will be allowed to remove the service "manually". Be care with this, because the user will have the "poser" to delete it\'s own service'),
+            'type': gui.InputField.CHECKBOX_TYPE,
+            'tab': ugettext('Advanced'),
+            'order': 131,
+        }
 
         ]:
             self.addField(g, f)

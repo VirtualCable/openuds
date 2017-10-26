@@ -69,6 +69,9 @@ urlpatterns = [
     # Client access enabler
     url(r'^enable/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.clientEnabler, name='ClientAccessEnabler'),
 
+    # Releaser
+    url(r'^release/(?P<idService>.+)$', uds.web.views.release, name='Releaser'),
+
     # Custom authentication callback
     url(r'^auth/(?P<authName>.+)', uds.web.views.authCallback, name='uds.web.views.authCallback'),
     url(r'^authinfo/(?P<authName>.+)', uds.web.views.authInfo, name='uds.web.views.authInfo'),

@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-02-27'
+__updated__ = '2017-10-25'
 
 
 def about(request):
@@ -129,11 +129,13 @@ def index(request):
         services.append({
             'id': 'A' + svr.uuid,
             'name': svr.name,
+            'visual_name': svr.visual_name,
             'description': svr.deployed_service.comments,
             'group': group,
             'transports': trans,
             'imageId': imageId,
             'show_transports': svr.deployed_service.show_transports,
+            'allow_users_remove': svr.deployed_service.allow_users_remove,
             'maintenance': svr.deployed_service.isInMaintenance(),
             'not_accesible': not svr.deployed_service.isAccessAllowed(),
             'in_use': svr.in_use,
@@ -186,11 +188,13 @@ def index(request):
         services.append({
             'id': 'F' + svr.uuid,
             'name': svr.name,
+            'visual_name': svr.visual_name,
             'description': svr.comments,
             'group': group,
             'transports': trans,
             'imageId': imageId,
             'show_transports': svr.show_transports,
+            'allow_users_remove': svr.allow_users_remove,
             'maintenance': svr.isInMaintenance(),
             'not_accesible': not svr.isAccessAllowed(),
             'in_use': in_use,

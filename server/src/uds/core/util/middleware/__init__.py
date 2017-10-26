@@ -50,17 +50,33 @@ class XUACompatibleMiddleware(object):
         return response
 
 class RedirectMiddleware(object):
+    NO_REDIRECT = [
+        'rest',
+        'pam',
+        'guacamole',
+    ]
+
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False:
+        full_path = request.get_full_path()
+        redirect = True
+        for nr in RedirectMiddleware.NO_REDIRECT:
+            if full_path.startswith('/' + nr):
+                redirect = False
+                break
+
+        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False and redirect:
             if request.method == 'POST':
                 url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
             else:
-                url = request.build_absolute_uri(request.get_full_path())
+                url = request.build_absolute_uri(full_path)
             url = url.replace('http://', 'https://')
 
             return HttpResponseRedirect(url)
 	return self.get_response(request)
 
+    @staticmethod
+    def registerException(path):
+        RedirectMiddleware.NO_REDIRECT.append(path)

@@ -51,7 +51,6 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-10-16'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -497,13 +496,12 @@ class UserServiceManager(object):
             uService.setState(State.ERROR)
             return
 
-    def getService(self, user, srcIp, idService, idTransport, doTest=True):
-        """
-        Get service info from
-        """
+    def locateUserService(self, user, idService, create=False):
         kind, idService = idService[0], idService[1:]
 
         logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
+        userService = None
+
         if kind == 'A':  # This is an assigned service
             logger.debug('Getting A service {}'.format(idService))
             userService = UserService.objects.get(uuid=idService)
@@ -513,17 +511,24 @@ class UserServiceManager(object):
             # We first do a sanity check for this, if the user has access to this service
             # If it fails, will raise an exception
             ds.validateUser(user)
+
             # Now we have to locate an instance of the service, so we can assign it to user.
-            userService = self.getAssignationForUser(ds, user)
+            if create:  # getAssignation, if no assignation is found, tries to create one
+                userService = self.getAssignationForUser(ds, user)
+            else:  # Sometimes maybe we only need to locate the existint user service
+                userService = self.getExistingAssignationForUser(ds, user)
 
         logger.debug('Found service: {0}'.format(userService))
+        return userService
+
+    def getService(self, user, srcIp, idService, idTransport, doTest=True):
+        """
+        Get service info from
+        """
+        userService = self.locateUserService(user, idService, create=True)
 
         if userService.isInMaintenance() is True:
             raise ServiceInMaintenanceMode()
-
-        # If service is not visible, do not allow it to be used
-        if userService.deployed_service.isVisible() is False:
-            raise InvalidServiceException()
 
         if userService.deployed_service.isAccessAllowed() is False:
             raise ServiceAccessDeniedByCalendar()

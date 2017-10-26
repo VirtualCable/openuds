@@ -62,7 +62,6 @@ from datetime import datetime, timedelta
 import logging
 import pickle
 
-__updated__ = '2017-05-19'
 
 
 logger = logging.getLogger(__name__)
@@ -74,6 +73,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     """
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='')
+    short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
     service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices')
     osmanager = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices')
@@ -83,6 +83,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
     visible = models.BooleanField(default=True)
+    allow_users_remove = models.BooleanField(default=False)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
     servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)

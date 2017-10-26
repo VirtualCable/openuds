@@ -39,11 +39,18 @@
                              data-href="{{ trans.link }}"
                              data-href-alt="{% url 'uds.web.views.client_downloads' %}">
                              <div class="service-image">
-                                <img class="se-agranda" src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
+                                <img {% if ser.name != ser.visual_name %}class="with-tooltip" data-content="{{ser.name|capfirst}}"{% endif %} class="se-agranda" src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
                             </div>
-                            <span {% if ser.name|length > 16 %}class="with-tooltip" data-content="{{ser.name|capfirst}}"{% endif %}{% if ser.show_transports and numTransports > 1 %} style="width: 80%;"{% endif %}>{{ ser.name|capfirst|truncatechars:16 }}</span>
-                            {% if ser.show_transports and numTransports > 1 %}
-                            <span class="gear"><span class="fa fa-gear fa-spin"> </span></span>
+                            <span {% if ser.show_transports and numTransports > 1 %} style="width: 130px;"{% endif %}>{{ ser.visual_name|capfirst|truncatechars:16 }}</span>
+                            {% if ser.show_transports and numTransports > 1 or ser.allow_users_remove %}
+                            <span class="gear">
+                              {% if ser.show_transports and numTransports > 1 %}
+                              <span class="connection fa fa-gear"> </span>
+                              {% endif %}
+                              {% if ser.allow_users_remove %}
+                              <span data-href="{% url 'Releaser' idService=ser.id %}" class="release fa fa-trash"> </span>
+                              {% endif %}
+                            </span>
                             {% endif %}
                         </div>
 
@@ -61,7 +68,6 @@
                                         <li><a class="uds-service-transport" data-href-alt="{% url 'uds.web.views.client_downloads' %}" href="{{ trans.link }}"><img class="transport" src="{% url "uds.web.views.transportIcon" idTrans=trans.id %}" alt="{{ trans.name }}" />{{ trans.name }}</a></li>
                                     {% endfor %}
                                 </ul>
-
                               </div>
                             </div><!-- /.modal-content -->
                           </div><!-- /.modal-dialog -->
@@ -159,7 +165,7 @@
 
             div.service-container {
                 display: inline-block;
-                width: 140px;
+                width: 162px;
                 height: 162px;
                 margin: 0px 8px 24px 8px;
             }
@@ -167,7 +173,7 @@
             div.service {
                 /*background-color: #FAFAFA;*/
                 /*background-image: url("{% get_static_prefix %}/img/uds-small-back.png");*/
-                padding: 6px;
+                padding: 6px 6px 6px 16px;
                 /*border: 1px solid #BABABA;
                 border-radius: 2px;*/
                 display: block;
@@ -263,11 +269,20 @@
 
             div.service > span.gear {
                 text-align: right;
-                padding-right: 12px;
+                padding-right: 8px;
             }
 
-            span.gear > span.fa {
+            div.service > span.trash {
+                text-align: right;
+                padding-right: 24px;
+            }
+
+            span.gear > span.connection {
                 cursor: zoom-in;
+            }
+
+            span.gear > span.release {
+                cursor: cell;
             }
         </style>
 {% endblock %}
@@ -345,10 +360,20 @@
                 return false;
             })
 
-            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.fa').on("click", function (event) {
+            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.connection').on("click", function (event) {
                 event.stopPropagation();
                 event.preventDefault();
                 $(this).parent().parent().next().modal();
+                return false;
+            });
+
+            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.release').on("click", function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+                if ( confirm("{%trans 'Are you sure that you want to release this service. Its current content will be lost!' %}") ) {
+                  window.location.href = $(this).attr('data-href');
+                }
+
                 return false;
             });
 

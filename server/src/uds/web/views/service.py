@@ -54,8 +54,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-08-26'
-
 
 @webLoginRequired(admin=False)
 def transportOwnLink(request, idService, idTransport):
@@ -107,7 +105,6 @@ def serviceImage(request, idImage):
 @webLoginRequired(admin=False)
 @never_cache
 def clientEnabler(request, idService, idTransport):
-
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: {}, idTransport: {}'.format(idService, idTransport))
     url = ''
@@ -151,3 +148,22 @@ def clientEnabler(request, idService, idTransport):
         }),
         content_type='application/json'
     )
+
+@webLoginRequired(admin=False)
+@never_cache
+def release(request, idService):
+    logger.debug('ID Service: {}'.format(idService))
+    userService = userServiceManager().locateUserService(request.user, idService, create=False)
+    logger.debug('UserSrvice: >{}<'.format(userService))
+    if userService is not None and userService.deployed_service.allow_users_remove:
+        log.doLog(
+            userService.deployed_service,
+            log.INFO,
+            "Removing User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
+            log.WEB
+        )
+        userService.release()
+
+
+    return HttpResponseRedirect(reverse('Index'))
+
