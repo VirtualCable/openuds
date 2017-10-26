@@ -32,13 +32,15 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from uds.core.util import log
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
 from uds.core.managers import userServiceManager, cryptoManager
-from uds.models import TicketStore
+from uds.models import TicketStore, UserService
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.ui import theme
 from uds.core.util.model import processUuid
@@ -54,7 +56,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-03-16'
+__updated__ = '2017-10-26'
 
 
 @webLoginRequired(admin=False)
@@ -108,7 +110,6 @@ def serviceImage(request, idImage):
 @webLoginRequired(admin=False)
 @never_cache
 def clientEnabler(request, idService, idTransport):
-
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: {}, idTransport: {}'.format(idService, idTransport))
     url = ''
@@ -152,3 +153,22 @@ def clientEnabler(request, idService, idTransport):
         }),
         content_type='application/json'
     )
+
+@webLoginRequired(admin=False)
+@never_cache
+def release(request, idService):
+    logger.debug('ID Service: {}'.format(idService))
+    userService = userServiceManager().locateUserService(request.user, idService, create=False)
+    logger.debug('UserSrvice: >{}<'.format(userService))
+    if userService is not None and userService.deployed_service.allow_users_remove:
+        log.doLog(
+            userService.deployed_service,
+            log.INFO,
+            "Removing User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
+            log.WEB
+        )
+        userService.release()
+
+
+    return HttpResponseRedirect(reverse('Index'))
+

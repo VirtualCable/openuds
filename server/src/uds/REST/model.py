@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-02-02'
+__updated__ = '2017-10-25'
 
 
 # a few constants
@@ -123,7 +123,7 @@ class BaseModelHandler(Handler):
                 'label': _('Tags'),
                 'type': 'taglist',
                 'tooltip': _('Tags for this element'),
-                'order': 0 - 101,
+                'order': 0 - 105,
             })
         if 'name' in flds:
             self.addField(gui, {
@@ -134,13 +134,23 @@ class BaseModelHandler(Handler):
                 'tooltip': _('Name of this element'),
                 'order': 0 - 100,
             })
+        if 'short_name' in flds:
+            self.addField(gui, {
+                'name': 'short_name',
+                'type': 'text',
+                'label': _('Short name'),
+                'tooltip': _('Short name for user service visualization'),
+                'required': False,
+                'length': 16,
+                'order': 0 - 95,
+            })
         if 'comments' in flds:
             self.addField(gui, {
                 'name': 'comments',
                 'label': _('Comments'),
                 'tooltip': _('Comments for this element'),
                 'length': 256,
-                'order': 0 - 99,
+                'order': 0 - 90,
             })
         if 'priority' in flds:
             self.addField(gui, {
@@ -151,7 +161,7 @@ class BaseModelHandler(Handler):
                 'required': True,
                 'value': 1,
                 'length': 4,
-                'order': 0 - 97,
+                'order': 0 - 85,
             })
         if 'small_name' in flds:
             self.addField(gui, {
@@ -161,7 +171,7 @@ class BaseModelHandler(Handler):
                 'tooltip': _('Label for this element'),
                 'required': True,
                 'length': 128,
-                'order': 0 - 96,
+                'order': 0 - 80,
             })
 
         return gui

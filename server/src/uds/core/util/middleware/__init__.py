@@ -46,9 +46,21 @@ class XUACompatibleMiddleware(object):
         return response
 
 class RedirectMiddleware(object):
+    NO_REDIRECT = [
+        'rest',
+        'pam',
+        'guacamole',
+    ]
+
     def process_request(self, request):
         full_path = request.get_full_path()
-        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False and full_path[:6] != '/rest/':
+        redirect = True
+        for nr in RedirectMiddleware.NO_REDIRECT:
+            if full_path.startswith('/' + nr):
+                redirect = False
+                break
+
+        if GlobalConfig.REDIRECT_TO_HTTPS.getBool() and request.is_secure() is False and redirect:
             if request.method == 'POST':
                 url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
             else:
@@ -56,3 +68,7 @@ class RedirectMiddleware(object):
             url = url.replace('http://', 'https://')
 
             return HttpResponseRedirect(url)
+
+    @staticmethod
+    def registerException(path):
+        RedirectMiddleware.NO_REDIRECT.append(path)

@@ -69,6 +69,9 @@ urlpatterns = patterns(
     # Client access enabler
     url(r'^enable/(?P<idService>.+)/(?P<idTransport>.+)$', 'web.views.clientEnabler', name='ClientAccessEnabler'),
 
+    # Releaser
+    url(r'^release/(?P<idService>.+)$', 'web.views.release', name='Releaser'),
+
     # Custom authentication callback
     (r'^auth/(?P<authName>.+)', 'web.views.authCallback'),
     (r'^authinfo/(?P<authName>.+)', 'web.views.authInfo'),

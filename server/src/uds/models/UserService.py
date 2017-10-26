@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2017-09-29'
+__updated__ = '2017-10-26'
 
 
 logger = logging.getLogger(__name__)
@@ -394,7 +394,7 @@ class UserService(UUIDModel):
 
     def release(self):
         '''
-        A much more convenient method that "remove"
+        A much more convenient method name that "remove" (i think :) )
         '''
         self.remove()
 

@@ -60,8 +60,9 @@ from uds.core.util.calendar import CalendarChecker
 from datetime import datetime, timedelta
 import logging
 import pickle
+import six
 
-__updated__ = '2017-01-23'
+__updated__ = '2017-10-25'
 
 
 logger = logging.getLogger(__name__)
@@ -73,6 +74,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     '''
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='')
+    short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
     service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices')
     osmanager = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices')
@@ -81,6 +83,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
+    allow_users_remove = models.BooleanField(default=False)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
     servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
@@ -163,6 +166,13 @@ class DeployedService(UUIDModel, TaggingMixin):
     @property
     def is_meta(self):
         return self.meta_pools.count() == 0
+
+    @property
+    def visual_name(self):
+        logger.debug("SHORT: {} {} {}".format(self.short_name, self.short_name is not None, self.name))
+        if self.short_name is not None and six.text_type(self.short_name).strip() != '':
+            return six.text_type(self.short_name)
+        return six.text_type(self.name)
 
     def isRestrained(self):
         '''
