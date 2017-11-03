@@ -140,7 +140,7 @@ class Auths(Handler):
         for a in Authenticator.objects.all():
             if a.getType().isCustom() is False:
                 yield {
-                    'authId': a.id,
+                    'authId': a.uuid,
                     'authSmallName': str(a.small_name),
                     'auth': a.name,
                 }
