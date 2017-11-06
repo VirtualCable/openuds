@@ -65,6 +65,7 @@ def login():
 
     return 0
 
+
 def logout():
     global headers
     h = Http()

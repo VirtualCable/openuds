@@ -46,7 +46,7 @@ import six
 import bitarray
 import logging
 
-__updated__ = '2016-10-31'
+__updated__ = '2017-11-06'
 
 
 logger = logging.getLogger(__name__)
@@ -185,5 +185,4 @@ class CalendarChecker(object):
 
 
     def debug(self):
-
         return "Calendar checker for {}".format(self.calendar)

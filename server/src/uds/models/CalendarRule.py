@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2016-10-31'
+__updated__ = '2017-11-06'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -153,9 +153,10 @@ class CalendarRule(UUIDModel):
     def save(self, *args, **kwargs):
         logger.debug('Saving...')
         self.calendar.modified = getSqlDatetime()
-        self.calendar.save()
 
-        return UUIDModel.save(self, *args, **kwargs)
+        res = UUIDModel.save(self, *args, **kwargs)
+        self.calendar.save()
+        return res
 
     def __str__(self):
         return 'Rule {0}: {1}-{2}, {3}, Interval: {4}, duration: {5}'.format(self.name, self.start, self.end, self.frequency, self.interval, self.duration)
