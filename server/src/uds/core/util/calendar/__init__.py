@@ -43,7 +43,7 @@ import six
 from uds.core.util.Cache import Cache
 from uds.models.Util import getSqlDatetime
 
-__updated__ = '2016-10-31'
+__updated__ = '2017-11-06'
 
 
 logger = logging.getLogger(__name__)
@@ -180,5 +180,4 @@ class CalendarChecker(object):
         return next_event
 
     def debug(self):
-
         return "Calendar checker for {}".format(self.calendar)

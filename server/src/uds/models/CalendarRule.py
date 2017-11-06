@@ -151,9 +151,10 @@ class CalendarRule(UUIDModel):
     def save(self, *args, **kwargs):
         logger.debug('Saving...')
         self.calendar.modified = getSqlDatetime()
-        self.calendar.save()
 
-        return UUIDModel.save(self, *args, **kwargs)
+        res = UUIDModel.save(self, *args, **kwargs)
+        self.calendar.save()
+        return res
 
     def __str__(self):
         return 'Rule {0}: {1}-{2}, {3}, Interval: {4}, duration: {5}'.format(self.name, self.start, self.end, self.frequency, self.interval, self.duration)

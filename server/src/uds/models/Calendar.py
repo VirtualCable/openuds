@@ -44,8 +44,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-05'
-
 
 @python_2_unicode_compatible
 class Calendar(UUIDModel, TaggingMixin):
@@ -60,6 +58,18 @@ class Calendar(UUIDModel, TaggingMixin):
         """
         db_table = 'uds_calendar'
         app_label = 'uds'
+
+    def save(self, *args, **kwargs):
+        logger.debug('Saving calendar')
+
+        res = UUIDModel.save(self, *args, **kwargs)
+
+        try:
+            for v in self.calendaraction_set.all(): v.save()
+        except Exception:
+            pass
+
+        return res
 
     def __str__(self):
         return 'Calendar "{}" modified on {} with {} rules'.format(self.name, self.modified, self.rules.count())

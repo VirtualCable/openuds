@@ -3,8 +3,8 @@ bin
 udsactor*.deb
 udsactor*.build
 udsactor*.changes
-/udsactor_1.7.0.dsc
-/udsactor_1.7.0.tar.xz
+/udsactor_*.dsc
+/udsactor_*.tar.xz
+/udsactor_*_amd64.buildinfo
 /udsactor*.rpm
-/udsactor_2.1.0_amd64.buildinfo
 linux/debian/files

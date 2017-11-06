@@ -1,3 +1,9 @@
+udsactor (2.2.0) stable; urgency=medium
+
+  * Upgraded to 2.2.0 release
+
+ -- Adolfo Gómez García <agomez@virtualcable.es>  Thu, 19 Oct 2017 16:44:12 +0200
+
 udsactor (2.1.0) stable; urgency=medium
 
   * Fixes for 2.1.0 release
