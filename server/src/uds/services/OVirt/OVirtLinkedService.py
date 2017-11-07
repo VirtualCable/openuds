@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-03-17'
+__updated__ = '2017-11-07'
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +122,7 @@ class OVirtLinkedService(Service):
         length=3,
         label=_('Reserved Space'),
         defvalue='32',
+        minValue=0,
         order=102,
         tooltip=_('Minimal free space in GB'),
         required=True
@@ -139,6 +140,7 @@ class OVirtLinkedService(Service):
         label=_("Memory (Mb)"),
         length=4,
         defvalue=512,
+        minValue=0,
         rdonly=False,
         order=111,
         tooltip=_('Memory assigned to machines'),
@@ -150,6 +152,7 @@ class OVirtLinkedService(Service):
         label=_("Memory Guaranteed (Mb)"),
         length=4,
         defvalue=256,
+        minValue=0,
         rdonly=False,
         order=112,
         tooltip=_('Physical memory guaranteed to machines'),
