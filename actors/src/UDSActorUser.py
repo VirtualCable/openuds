@@ -295,7 +295,7 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
     def quit(self, logoff=False):
         global doLogoff
         logger.debug('Quit invoked')
-        if self.stopped is False:
+        if not self.stopped:
             self.stopped = True
             try:
                 # If we close Client, send Logoff to Broker
@@ -327,7 +327,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Sets a default idle duration, but will not be used unless idle is notified from server
-    operations.initIdleDuration(3600 * 10)
+    operations.initIdleDuration(3600 * 16)
 
     trayIcon.show()
 
