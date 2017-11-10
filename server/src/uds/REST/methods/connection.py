@@ -36,11 +36,13 @@ from django.utils.translation import ugettext as _
 
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.models import UserService, DeployedService, Transport
+from uds.models import UserService, DeployedService, Transport, ServicesPoolGroup
 from uds.core.util.model import processUuid
-from uds.core.managers.UserServiceManager import UserServiceManager
+from uds.core.managers import userServiceManager
+# from uds.core.managers.UserServiceManager import UserServiceManager
 from uds.core.util import log
 from uds.core.util.stats import events
+from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
 
 import datetime
@@ -90,32 +92,50 @@ class Connection(Handler):
                 if t.validForIp(self._request.ip) and t.getType().providesConnetionInfo():
                     trans.append({'id': t.uuid, 'name': t.name})
 
+            servicePool = svr.deployed_service
+
             services.append({'id': 'A' + svr.uuid,
-                             'name': svr['name'],
+                             'name': servicePool.name,
+                             'description': servicePool.comments,
+                             'visual_name': servicePool.visual_name,
+                             'group': servicePool.servicesPoolGroup if servicePool.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict,
+                             'thumb': servicePool.image.thumb64 if servicePool.image is not None else DEFAULT_THUMB_BASE64,
+                             'show_transports': servicePool.show_transports,
+                             'allow_users_remove': servicePool.allow_users_remove,
+                             'maintenance': servicePool.isInMaintenance(),
+                             'not_accesible': not servicePool.isAccessAllowed(),
+                             'to_be_replaced': False,  # Manually assigned will not be autoremoved never
                              'transports': trans,
-                             'maintenance': svr.isInMaintenance(),
                              'in_use': svr.in_use})
 
         logger.debug(services)
 
         # Now generic user service
-        for svr in availServices:
+        for servicePool in availServices:
             trans = []
-            for t in svr.transports.all().order_by('priority'):
+            for t in servicePool.transports.all().order_by('priority'):
                 if t.validForIp(self._request.ip) and t.getType().providesConnetionInfo():
                     trans.append({'id': t.uuid, 'name': t.name})
 
             # Locate if user service has any already assigned user service for this
-            ads = UserServiceManager.manager().getExistingAssignationForUser(svr, self._user)
+            ads = userServiceManager().getExistingAssignationForUser(servicePool, self._user)
             if ads is None:
                 in_use = False
             else:
                 in_use = ads.in_use
 
-            services.append({'id': 'F' + svr.uuid,
-                             'name': svr.name,
+            services.append({'id': 'F' + servicePool.uuid,
+                             'name': servicePool.name,
+                             'description': servicePool.comments,
+                             'visual_name': servicePool.visual_name,
+                             'group': servicePool.servicesPoolGroup if servicePool.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict,
+                             'thumb': servicePool.image.thumb64 if servicePool.image is not None else DEFAULT_THUMB_BASE64,
+                             'show_transports': servicePool.show_transports,
+                             'allow_users_remove': servicePool.allow_users_remove,
+                             'maintenance': servicePool.isInMaintenance(),
+                             'not_accesible': not servicePool.isAccessAllowed(),
+                             'to_be_replaced': servicePool.toBeReplaced(),
                              'transports': trans,
-                             'maintenance': svr.isInMaintenance(),
                              'in_use': in_use})
 
         logger.debug('Services: {0}'.format(services))
@@ -125,70 +145,18 @@ class Connection(Handler):
         return Connection.result(result=services)
 
     def connection(self, doNotCheck=False):
-        kind, idService = self._args[0][0], self._args[0][1:]
+        idService = self._args[0]
         idTransport = self._args[1]
-
-        logger.debug('Type: {}, Service: {}, Transport: {}'.format(kind, idService, idTransport))
-
-        try:
-            logger.debug('Kind of service: {0}, idService: {1}'.format(kind, idService))
-            if kind == 'A':  # This is an assigned service
-                ads = UserService.objects.get(uuid=processUuid(idService))
-            else:
-                ds = DeployedService.objects.get(uuid=processUuid(idService))
-                # We first do a sanity check for this, if the user has access to this service
-                # If it fails, will raise an exception
-                ds.validateUser(self._user)
-                # Now we have to locate an instance of the service, so we can assign it to user.
-                ads = UserServiceManager.manager().getAssignationForUser(ds, self._user)
-
-            if ads.isInMaintenance() is True:
-                return Connection.result(error='Service in maintenance')
-
-            logger.debug('Found service: {0}'.format(ads))
-            trans = Transport.objects.get(uuid=processUuid(idTransport))
-
-            if trans.validForIp(self._request.ip) is False:
-                return Connection.result(error='Access denied')
-
-            # Test if the service is ready
-            if doNotCheck or ads.isReady():
-                log.doLog(ads, log.INFO, "User {0} from {1} has initiated access".format(self._user.name, self._request.ip), log.WEB)
-                # If ready, show transport for this service, if also ready ofc
-                iads = ads.getInstance()
-                ip = iads.getIp()
-                logger.debug('IP: {}'.format(ip))
-                events.addEvent(ads.deployed_service, events.ET_ACCESS, username=self._user.name, srcip=self._request.ip, dstip=ip, uniqueid=ads.unique_id)
-                if ip is not None:
-                    itrans = trans.getInstance()
-                    if itrans.providesConnetionInfo() and (doNotCheck or itrans.isAvailableFor(ads, ip)):
-                        ads.setConnectionSource(self._request.ip, 'unknown')
-                        log.doLog(ads, log.INFO, "User service ready, rendering transport", log.WEB)
-
-                        ci = {
-                            'username': '',
-                            'password': '',
-                            'domain': '',
-                            'protocol': 'unknown',
-                            'ip': ip
-                        }
-                        ci.update(itrans.getConnectionInfo(ads, self._user, 'UNKNOWN'))
-
-                        UserServiceManager.manager().notifyPreconnect(ads, itrans.processedUser(ads, self._user), itrans.protocol)
-
-                        return Connection.result(result=ci)
-                    else:
-                        log.doLog(ads, log.WARN, "User service is not accessible by REST (ip {0})".format(ip), log.TRANSPORT)
-                        logger.debug('Transport {} is not accesible for user service {} from {}'.format(trans, ads, self._request.ip))
-                        logger.debug("{}, {}".format(itrans.providesConnetionInfo(), itrans.isAvailableFor(ads, ip)))
-                else:
-                    logger.debug('Ip not available from user service {0}'.format(ads))
-            else:
-                log.doLog(ads, log.WARN, "User {0} from {1} tried to access, but service was not ready".format(self._user.name, self._request.ip), log.WEB)
-            # Not ready, show message and return to this page in a while
-            return Connection.result(error='Service not ready')
-        except Exception as e:
-            return Connection.result(error=six.text_type(e))
+        ip, userService, iads, trans, itrans = userServiceManager().getService(self._user, self._request.ip, idService, idTransport, not doNotCheck)
+        ci = {
+            'username': '',
+            'password': '',
+            'domain': '',
+            'protocol': 'unknown',
+            'ip': ip
+        }
+        ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
+        return Connection.result(result=ci)
 
     def get(self):
         '''

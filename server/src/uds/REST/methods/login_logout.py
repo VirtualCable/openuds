@@ -36,6 +36,7 @@ from uds.core.util.Config import GlobalConfig
 from uds.core.util.model import processUuid
 from uds.models import Authenticator
 from uds.core.auths.auth import authenticate
+from uds.core import VERSION as UDS_VERSION
 
 from uds.REST import RequestError
 from uds.REST import Handler
@@ -105,7 +106,7 @@ class Login(Handler):
                     if user is None:  # invalid credentials
                         raise Exception()
                     self.genAuthToken(auth.id, user.name, locale, user.is_admin, user.staff_member)
-                    return{'result': 'ok', 'token': self.getAuthToken()}
+                    return{'result': 'ok', 'token': self.getAuthToken(), 'version': UDS_VERSION }
                 except:
                     logger.exception('Credentials ')
                     raise Exception('Invalid Credentials (invalid authenticator)')
