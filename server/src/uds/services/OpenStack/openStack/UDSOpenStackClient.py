@@ -43,7 +43,7 @@ import hashlib
 import six
 
 
-__updated__ = '2017-03-21'
+__updated__ = '2017-11-13'
 
 logger = logging.getLogger(__name__)
 
@@ -595,6 +595,7 @@ class Client(object):
         # We need api version 3.2 or greater
         try:
             r = requests.get(self._authUrl,
+                             verify=VERIFY_SSL,
                              headers=self._requestHeaders())
         except Exception:
             raise Exception('Connection error')
