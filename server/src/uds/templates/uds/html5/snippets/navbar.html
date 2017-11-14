@@ -22,6 +22,7 @@
                 {% csrf_token %}
                 <input id="id_language" type="hidden" name="language" value=""/>
                 <ul class="nav navbar-nav navbar-right">
+                  <li><a href="{% url 'uds.web.views.client_downloads' %}"><span class="fa fa-download"></span> {% trans 'UDS Plugin' %}</a></li>
                   <li><a href="{% url 'uds.web.views.about' %}">{% trans 'About' %}</a></li>
                   <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-comments-o"></i> {% trans LANGUAGE_INFO.name|capfirst %}<b class="caret"></b></a>

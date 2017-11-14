@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
@@ -48,19 +48,16 @@ import logging
 import random
 import string
 
-__updated__ = '2017-09-01'
-
-
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
 
 class TRDPTransport(BaseRDPTransport):
-    """
+    '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    """
+    '''
     typeName = _('RDP Transport (tunneled)')
     typeType = 'TSRDPTransport'
     typeDescription = _('RDP Transport with tunneled connection')
@@ -72,7 +69,6 @@ class TRDPTransport(BaseRDPTransport):
     # tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
     tunnelWait = gui.NumericField(length=3, label=_('Tunnel wait time'), defvalue='10', minValue=1, maxValue=65536, order=2, tooltip=_('Maximum time to wait before closing the tunnel listener'), required=True, tab=gui.TUNNEL_TAB)
-
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName
@@ -188,26 +184,6 @@ class TRDPTransport(BaseRDPTransport):
             'this_server': request.build_absolute_uri('/'),
         }
 
-        if os == 'windows':
-            if password != '':
-                r.password = '{password}'
-            sp.update({
-                'as_file': r.as_file,
-            })
-        elif os == 'linux':
-            sp.update({
-                'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                'as_rdesktop_params': r.as_rdesktop_params,
-            })
-        else:  # Mac
-            sp.update({
-                'as_file': r.as_file,
-                'ip': ip,
-                'as_cord_url': r.as_cord_url,
-            })
-            if domain != '':
-                sp['usernameWithDomain'] = '{}\\\\{}'.format(domain, username)
-            else:
-                sp['usernameWithDomain'] = username
+        m = tools.DictAsObj(data)
 
         return self.getScript('scripts/{}/tunnel.py', os, sp)

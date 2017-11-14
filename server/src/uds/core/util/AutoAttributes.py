@@ -27,11 +27,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 from uds.core.Serializable import Serializable
+from uds.core.util import encoders
 import pickle
 import timeit
 import six
@@ -61,18 +62,13 @@ class Attribute(object):
 
 
 class AutoAttributes(Serializable):
-    """
+    '''
     Easy creation of attributes to marshal & unmarshal at modules
     usage as base class (First class so yours inherits this "marshal" and "unmarshal"
     initialize at init with super(myclass,self).__init__(attr1=type, attr2=type, ...)
     or with declare(attr1=type,attr2=type,..)
     Access attrs as "self._attr1, self._attr2"
-    """
-
-    # : This codec is not intended to override Serializable codec
-    # : Serializable codec is for encoding marshaled data,
-    # : while this codec is for encoding pickled data from autoattributes
-    ACODEC = 'zip'
+    '''
 
     def __init__(self, **kwargs):
         self.dict = None
@@ -96,13 +92,17 @@ class AutoAttributes(Serializable):
         self.dict = d
 
     def marshal(self):
-        return '\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in six.iteritems(self.dict)]).encode(AutoAttributes.ACODEC)
+        return encoders.encode_bz2('\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]))
 
     def unmarshal(self, data):
         if data == '':  # Can be empty
             return
         # We keep original data (maybe incomplete)
-        for pair in data.decode(AutoAttributes.ACODEC).split('\2'):
+        try:
+            data = encoders.decode_bz2(data)
+        except Exception:  # With old zip encoding
+            data = encoders.decode_zip(data)
+        for pair in data.split('\2'):
             k, v = pair.split('\1')
             self.dict[k] = pickle.loads(str(v))
 

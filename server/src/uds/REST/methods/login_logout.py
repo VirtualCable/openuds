@@ -27,21 +27,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.model import processUuid
 from uds.models import Authenticator
 from uds.core.auths.auth import authenticate
+from uds.core import VERSION as UDS_VERSION
 
 from uds.REST import RequestError
 from uds.REST import Handler
 
-import six
 import logging
+import random
+import string
 
 logger = logging.getLogger(__name__)
 
@@ -49,18 +51,18 @@ logger = logging.getLogger(__name__)
 
 
 class Login(Handler):
-    """
+    '''
     Responsible of user authentication
-    """
+    '''
     path = 'auth'
     authenticated = False  # Public method
 
     def post(self):
-        """
+        '''
         This login uses parameters to generate auth token
         The alternative is to use the template tag inside "REST" that is called auth_token, that extracts an auth token from an user session
         We can use any of this forms due to the fact that the auth token is in fact a session key
-        Post arguments:
+        Parameters:
             mandatory:
                 username:
                 password:
@@ -84,11 +86,12 @@ class Login(Handler):
 
         Locale comes on "Header", as any HTTP Request (Accept-Language header)
         Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
-        """
+        '''
         try:
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
 
+            scrambler = ''.join(random.choice(string.letters + string.digits) for _ in range(32))  # @UndefinedVariable
             authId = self._params.get('authId', None)
             authSmallName = self._params.get('authSmallName', None)
             authName = self._params.get('auth', None)
@@ -98,7 +101,7 @@ class Login(Handler):
             locale = self._params.get('locale', 'en')
             if authName == 'admin' or authSmallName == 'admin':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
-                    self.genAuthToken(-1, username, locale, platform, True, True)
+                    self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
                     return{'result': 'ok', 'token': self.getAuthToken()}
                 else:
                     raise Exception('Invalid credentials')
@@ -113,26 +116,28 @@ class Login(Handler):
                         auth = Authenticator.objects.get(small_name=authSmallName)
 
                     if password == '':
-                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Strange password if credential leaved empty
+                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty
 
                     logger.debug('Auth obj: {0}'.format(auth))
                     user = authenticate(username, password, auth)
                     if user is None:  # invalid credentials
                         raise Exception()
-                    self.genAuthToken(auth.id, user.name, locale, platform, user.is_admin, user.staff_member)
-                    return{'result': 'ok', 'token': self.getAuthToken()}
+                    self.genAuthToken(auth.id, user.name, password, locale, platform, user.is_admin, user.staff_member, scrambler)
+                    return{'result': 'ok', 'token': self.getAuthToken(), 'version': UDS_VERSION, 'scrambler': scrambler }
                 except:
                     logger.exception('Credentials ')
                     raise Exception('Invalid Credentials (invalid authenticator)')
+
+            raise Exception('Invalid Credentials')
         except Exception as e:
             logger.exception('exception')
-            return {'result': 'error', 'error': six.text_type(e)}
+            return {'result': 'error', 'error': unicode(e)}
 
 
 class Logout(Handler):
-    """
+    '''
     Responsible of user de-authentication
-    """
+    '''
     path = 'auth'
     authenticated = True  # By default, all handlers needs authentication
 

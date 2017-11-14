@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 from uds.core.ui.UserInterface import gui
+from uds.core.util import encoders
 from uds.transports.RDP.RDPTransport import RDPTransport
 from uds.transports.RDP.TRDPTransport import TRDPTransport
 
@@ -98,6 +99,7 @@ def unmarshalTRDP(str_):
         }
 
 
+
 def transformTransports(apps, schema_editor):
     """
     Move serialization to a better model (it's time, the mode is there since 1.1 :) )
@@ -105,13 +107,13 @@ def transformTransports(apps, schema_editor):
     model = apps.get_model("uds", 'Transport')
     for t in model.objects.all():
         if t.data_type == RDPTransport.typeType:
-            values = unmarshalRDP(t.data.decode(RDPTransport.CODEC))
+            values = unmarshalRDP(encoders.decode_base64(t.data))
             rdp = RDPTransport(Environment.getTempEnv(), values)
             t.data = rdp.serialize()
             t.save()
 
         if t.data_type == TRDPTransport.typeType:
-            values = unmarshalTRDP(t.data.decode(TRDPTransport.CODEC))
+            values = unmarshalTRDP(encoders.decode_base64(t.data))
             rdp = TRDPTransport(Environment.getTempEnv(), values)
             t.data = rdp.serialize()
             t.save()

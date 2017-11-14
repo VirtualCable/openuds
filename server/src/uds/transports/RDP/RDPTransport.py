@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
@@ -44,14 +44,12 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-09-18'
-
 
 class RDPTransport(BaseRDPTransport):
-    """
+    '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    """
+    '''
     typeName = _('RDP Transport (direct)')
     typeType = 'RDPTransport'
     typeDescription = _('RDP Transport for direct connection')
@@ -102,6 +100,7 @@ class RDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
         r.smoothFonts = self.smooth.isTrue()
+        r.enablecredsspsupport = self.credssp.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
         r.smartcardString = self.smartcardString.value
@@ -139,7 +138,7 @@ class RDPTransport(BaseRDPTransport):
         }.get(os['OS'])
 
         if os is None:
-            logger.ERROR('Os not detected for RDP Transport: {}'.format(request.META.get('HTTP_USER_AGENT', 'Unknown')))
+            logger.error('Os not detected for RDP Transport: {}'.format(request.META.get('HTTP_USER_AGENT', 'Unknown')))
             return super(RDPTransport, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         sp = {

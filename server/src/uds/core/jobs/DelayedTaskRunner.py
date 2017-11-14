@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from django.db import transaction, connection
@@ -37,6 +37,7 @@ from django.db.models import Q
 from uds.models import DelayedTask as dbDelayedTask
 from uds.models import getSqlDatetime
 from uds.core.Environment import Environment
+from uds.core.util import encoders
 from socket import gethostname
 from pickle import loads, dumps
 from datetime import timedelta
@@ -50,9 +51,9 @@ logger = logging.getLogger(__name__)
 
 
 class DelayedTaskThread(threading.Thread):
-    """
+    '''
     Class responsible of executing a delayed task in its own thread
-    """
+    '''
     def __init__(self, taskInstance):
         super(DelayedTaskThread, self).__init__()
         self._taskInstance = taskInstance
@@ -65,10 +66,9 @@ class DelayedTaskThread(threading.Thread):
 
 
 class DelayedTaskRunner(object):
-    """
+    '''
     Delayed task runner class
-    """
-    CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
+    '''
     # How often tasks r checked
     granularity = 2
 
@@ -81,19 +81,19 @@ class DelayedTaskRunner(object):
         self._keepRunning = True
 
     def notifyTermination(self):
-        """
+        '''
         Invoke this whenever you want to terminate the delayed task runner thread
         It will mark the thread to "stop" ASAP
-        """
+        '''
         self._keepRunning = False
 
     @staticmethod
     def runner():
-        """
+        '''
         Static method that returns an instance (singleton instance) to a Delayed Runner.
         There is only one instance of DelayedTaksRunner, but its "run" method is executed on
         many thread (depending on configuration). They all share common Instance data
-        """
+        '''
         if DelayedTaskRunner._runner is None:
             DelayedTaskRunner._runner = DelayedTaskRunner()
         return DelayedTaskRunner._runner
@@ -106,7 +106,7 @@ class DelayedTaskRunner(object):
         try:
             with transaction.atomic():  # Encloses
                 task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
-                taskInstanceDump = task.instance.decode(self.CODEC)
+                taskInstanceDump = encoders.decode_base64(task.instance)
                 task.delete()
             taskInstance = loads(taskInstanceDump)
         except Exception:
@@ -123,7 +123,7 @@ class DelayedTaskRunner(object):
         now = getSqlDatetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
-        instanceDump = dumps(instance).encode(self.CODEC)
+        instanceDump = encoders.encode_base64(dumps(instance))
         typeName = str(cls.__module__ + '.' + cls.__name__)
 
         logger.debug('Inserting delayed task {0} with {1} bytes ({2})'.format(typeName, len(instanceDump), exec_time))

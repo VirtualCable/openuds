@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -44,6 +44,7 @@ from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.Config import GlobalConfig
 from uds.core.services.Exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION
+from uds.core.util import encoders
 
 import six
 import json
@@ -58,21 +59,21 @@ REQUIRED_CLIENT_VERSION = '2.5.0'
 
 # Enclosed methods under /actor path
 class Client(Handler):
-    """
+    '''
     Processes actor requests
-    """
+    '''
     authenticated = False  # Client requests are not authenticated
 
     @staticmethod
     def result(result=None, error=None, errorCode=0, retryable=False):
-        """
+        '''
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
         :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
         :param errorCode: Code of the error to return, if error is not None
         :param retryable: If True, this operation can (and must) be retryed
         :return: A dictionary, suitable for response to Caller
-        """
+        '''
         result = result if result is not None else ''
         res = {'result': result}
         if error is not None:
@@ -89,15 +90,15 @@ class Client(Handler):
         return res
 
     def test(self):
-        """
+        '''
         Executes and returns the test
-        """
+        '''
         return Client.result(_('Correct'))
 
     def get(self):
-        """
+        '''
         Processes get requests
-        """
+        '''
         logger.debug("Client args for GET: {0}".format(self._args))
 
         if len(self._args) == 0:  # Gets version
@@ -141,14 +142,13 @@ class Client(Handler):
 
             userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
 
-            transportScript, signature, params = transportInstance.getUDSTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
+            transportScript, signature, params = transportInstance.getEncodedTransportScript(userService, transport, ip, self._request.os, self._request.user, password, self._request)
 
-            logger.debug('Script:************\n{}\n**********'.format(transportScript))
             logger.debug('Signature: {}'.format(signature))
             logger.debug('Data:#######\n{}\n###########'.format(params))
 
             return Client.result(result={
-                'script': transportScript.encode('bz2').encode('base64'),
+                'script': transportScript,
                 'signature': signature,  # It is already on base64
                 'params': json.dumps(params).encode('bz2').encode('base64'),
             })

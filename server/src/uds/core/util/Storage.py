@@ -27,13 +27,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from django.db import transaction
 from uds.models.Storage import Storage as dbStorage
+from uds.core.util import encoders
 import hashlib
 import logging
 import pickle
@@ -42,7 +43,6 @@ logger = logging.getLogger(__name__)
 
 
 class Storage(object):
-    CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
 
     def __init__(self, owner):
         self._owner = owner.encode('utf-8')
@@ -57,7 +57,7 @@ class Storage(object):
         key = self.__getKey(skey)
         if isinstance(data, unicode):
             data = data.encode('utf-8')
-        data = data.encode(Storage.CODEC)
+        data = encoders.encode_base64(data)
         attr1 = '' if attr1 is None else attr1
         try:
             dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
@@ -79,7 +79,7 @@ class Storage(object):
             key = self.__getKey(skey)
             logger.debug('Accesing to {0} {1}'.format(skey, key))
             c = dbStorage.objects.get(pk=key)  # @UndefinedVariable
-            val = c.data.decode(Storage.CODEC)
+            val = encoders.decode_base64(c.data)
 
             if fromPickle:
                 return val
@@ -103,7 +103,7 @@ class Storage(object):
 
     def getPickleByAttr1(self, attr1):
         try:
-            return pickle.loads(dbStorage.objects.get(owner=self._owner, attr1=attr1).data.decode(Storage.CODEC))  # @UndefinedVariable
+            return pickle.loads(encoders.decode_base64(dbStorage.objects.get(owner=self._owner, attr1=attr1).data))  # @UndefinedVariable
         except Exception:
             return None
 
@@ -115,15 +115,15 @@ class Storage(object):
             pass
 
     def lock(self):
-        """
+        '''
         Use with care. If locked, it must be unlocked before returning
-        """
+        '''
         dbStorage.objects.lock()  # @UndefinedVariable
 
     def unlock(self):
-        """
+        '''
         Must be used to unlock table
-        """
+        '''
         dbStorage.objects.unlock()  # @UndefinedVariable
 
     def locateByAttr1(self, attr1):
@@ -133,7 +133,7 @@ class Storage(object):
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         for v in query:
-            yield v.data.decode(Storage.CODEC)
+            yield encoders.decode_base64(v.data)
 
     def filter(self, attr1):
         if attr1 is None:
@@ -142,7 +142,7 @@ class Storage(object):
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         for v in query:  # @UndefinedVariable
-            yield (v.key, v.data.decode(Storage.CODEC), v.attr1)
+            yield (v.key, encoders.decode_base64(v.data), v.attr1)
 
     def filterPickle(self, attr1=None):
         for v in self.filter(attr1):

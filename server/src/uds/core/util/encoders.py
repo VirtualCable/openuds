@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2017 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,39 +28,52 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
 from __future__ import unicode_literals
-
-from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-from uds.models.UUIDModel import UUIDModel
-from uds.core.util import encoders
-
-import logging
 import six
+import codecs
 
-logger = logging.getLogger(__name__)
+
+def __toBinary(data):
+    if isinstance(data, six.text_type):
+        return data.encode('utf8')
+    return data
 
 
-@python_2_unicode_compatible
-class DBFile(UUIDModel):
-    owner = models.CharField(max_length=32, default='')  # Not indexed, used for cleanups only
-    name = models.CharField(max_length=255, primary_key=True)
-    content = models.TextField(blank=True)
-    size = models.IntegerField(default=0)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+def __encode(data, encoder, asText):
+    res = codecs.encode(__toBinary(data), encoder)
+    if asText:
+        return res.decode('utf8')
+    return res
 
-    @property
-    def data(self):
-        return encoders.decode_zip(encoders.decode_base64(self.content))
 
-    @data.setter
-    def data(self, value):
-        self.size = len(value)
-        self.content = encoders.encode_base64(encoders.encode_zip(self.content))
+def __decode(data, encoder, asText):
+    res = codecs.decode(__toBinary(data), encoder)
+    if asText:
+        return res.decode('utf8')
+    return res
 
-    def __str__(self):
-        return 'File: {} {} {} {}'.format(self.name, self.size, self.created, self.modified)
+
+def encode_bz2(text):
+    return __encode(text, 'bz2', False)
+
+
+def decode_bz2(data, asText=False):
+    return __decode(data, 'bz2', asText)
+
+
+def encode_base64(text, asText=False):
+    return __encode(text, 'base64', asText)
+
+
+def decode_base64(data, asText=False):
+    return __decode(data, 'base64', asText)
+
+
+def encode_zip(text):
+    return __encode(text, 'zip', False)
+
+
+def decode_zip(data, asText=False):
+    return __decode(data, 'zip', asText)

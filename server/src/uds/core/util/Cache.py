@@ -27,13 +27,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 from django.db import transaction
 import uds.models.Cache
-from uds.models.Util import getSqlDatetime
+from uds.models import getSqlDatetime
+from uds.core.util import encoders
 from datetime import datetime, timedelta
 import hashlib
 import logging
@@ -47,7 +48,6 @@ class Cache(object):
     misses = 0
 
     DEFAULT_VALIDITY = 60
-    CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
 
     def __init__(self, owner):
         self._owner = owner.encode('utf-8')
@@ -67,7 +67,7 @@ class Cache(object):
             expired = now > c.created + timedelta(seconds=c.validity)
             if expired:
                 return defValue
-            val = pickle.loads(c.value.decode(Cache.CODEC))
+            val = pickle.loads(encoders.decode_base64(c.value))
             Cache.hits += 1
             return val
         except uds.models.Cache.DoesNotExist:  # @UndefinedVariable
@@ -76,10 +76,10 @@ class Cache(object):
             return defValue
 
     def remove(self, skey):
-        """
+        '''
         Removes an stored cached item
         If cached item does not exists, nothing happens (no exception thrown)
-        """
+        '''
         # logger.debug('Removing key "%s" for uService "%s"' % (skey, self._owner))
         try:
             key = self.__getKey(skey)
@@ -97,7 +97,7 @@ class Cache(object):
         if validity is None:
             validity = Cache.DEFAULT_VALIDITY
         key = self.__getKey(skey)
-        value = pickle.dumps(value).encode(Cache.CODEC)
+        value = encoders.encode_base64(pickle.dumps(value))
         now = getSqlDatetime()
         try:
             uds.models.Cache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable

@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-10-25'
+__updated__ = '2017-11-10'
 
 
 def about(request):
@@ -118,29 +118,32 @@ def index(request):
                         'link': link
                     }
                 )
-        if svr.deployed_service.image is not None:
-            imageId = svr.deployed_service.image.uuid
+
+        servicePool = svr.deployed_service
+
+        if servicePool.image is not None:
+            imageId = servicePool.image.uuid
         else:
             imageId = 'x'  # Invalid
 
         # Extract app group
-        group = svr.deployed_service.servicesPoolGroup if svr.deployed_service.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
+        group = servicePool.servicesPoolGroup if servicePool.servicesPoolGroup is not None else ServicesPoolGroup.default().as_dict
 
         services.append({
             'id': 'A' + svr.uuid,
-            'name': svr.name,
-            'visual_name': svr.visual_name,
-            'description': svr.deployed_service.comments,
+            'name': servicePool.name,
+            'visual_name': servicePool.visual_name,
+            'description': servicePool.comments,
             'group': group,
             'transports': trans,
             'imageId': imageId,
-            'show_transports': svr.deployed_service.show_transports,
-            'allow_users_remove': svr.deployed_service.allow_users_remove,
-            'maintenance': svr.deployed_service.isInMaintenance(),
-            'not_accesible': not svr.deployed_service.isAccessAllowed(),
+            'show_transports': servicePool.show_transports,
+            'allow_users_remove': servicePool.allow_users_remove,
+            'maintenance': servicePool.isInMaintenance(),
+            'not_accesible': not servicePool.isAccessAllowed(),
             'in_use': svr.in_use,
             'to_be_replaced': False,  # Manually assigned will not be autoremoved never
-            'comments': svr.comments,
+            'comments': servicePool.comments,
         })
 
     logger.debug(services)

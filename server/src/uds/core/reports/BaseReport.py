@@ -35,13 +35,15 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext, ugettext_noop as _
 
 from uds.core.ui.UserInterface import UserInterface
+from uds.core.util import encoders
 
 import datetime
+import six
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-06-21'
+__updated__ = '2017-11-14'
 
 
 class Report(UserInterface):
@@ -126,7 +128,7 @@ class Report(UserInterface):
         """
         data = self.generate()
         if self.encoded:
-            return data.encode('base64').replace('\n', '')
+            return encoders.encode_base64(data, asText=True).replace('\n', '')
         else:
             return data
 
