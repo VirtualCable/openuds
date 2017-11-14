@@ -37,15 +37,17 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util import OsDetector
 from uds.core import Module
 from uds.core.transports import protocols
+from uds.core.util import encoders
 
 import logging
 
-__updated__ = '2017-10-03'
+__updated__ = '2017-11-14'
 
 logger = logging.getLogger(__name__)
 
 DIRECT_GROUP = _('Direct')
 TUNNELED_GROUP = _('Tunneled')
+
 
 class Transport(Module):
     '''
@@ -187,6 +189,14 @@ class Transport(Module):
 from __future__ import unicode_literals
 raise Exception('The transport {transport.name} is not supported on your platform.')
 '''.format(service=userService, transport=transport)
+
+    def getEncodedTransportScript(self, userService, transport, ip, os, user, password, request):
+        """
+        Encodes the script so the client can understand it
+        """
+        script = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
+        logger.debug('Transport script: {}'.format(script))
+        return encoders.encode_base64((script), asText=True).replace('\n', '')
 
     def getLink(self, userService, transport, ip, os, user, password, request):
         '''

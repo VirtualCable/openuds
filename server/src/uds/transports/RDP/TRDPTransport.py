@@ -48,8 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-09-01'
-
+__updated__ = '2017-11-14'
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +71,6 @@ class TRDPTransport(BaseRDPTransport):
     # tunnelCheckServer = gui.TextField(label=_('Tunnel host check'), order=2, tooltip=_('If not empty, this server will be used to check if service is running before assigning it to user. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)
 
     tunnelWait = gui.NumericField(length=3, label=_('Tunnel wait time'), defvalue='10', minValue=1, maxValue=65536, order=2, tooltip=_('Maximum time to wait before closing the tunnel listener'), required=True, tab=gui.TUNNEL_TAB)
-
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName
@@ -184,6 +182,7 @@ class TRDPTransport(BaseRDPTransport):
         }.get(m.os)
 
         if os is None:
+            logger.error('Os not detected for RDP Transport: {}'.format(request.META.get('HTTP_USER_AGENT', 'Unknown')))
             return super(TRDPTransport, self).getUDSTransportScript(self, userService, transport, ip, os, user, password, request)
 
         return self.getScript('scripts/{}/tunnel.py'.format(os)).format(m=m)

@@ -36,14 +36,13 @@ from django.utils.translation import ugettext as _
 
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.models import UserService, DeployedService, Transport, ServicesPoolGroup
-from uds.core.util.model import processUuid
+from uds.models import UserService, DeployedService, ServicesPoolGroup
 from uds.core.managers import userServiceManager
-# from uds.core.managers.UserServiceManager import UserServiceManager
-from uds.core.util import log
-from uds.core.util.stats import events
+from uds.core.managers import cryptoManager
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
-
+from uds.core.util.Config import GlobalConfig
+from uds.core.services.Exceptions import ServiceNotReadyError
+from uds.web import errors
 
 import datetime
 import six
@@ -63,7 +62,7 @@ class Connection(Handler):
     needs_staff = False
 
     @staticmethod
-    def result(result=None, error=None):
+    def result(result=None, error=None, errorCode=0, retryable=False):
         '''
         Helper method to create a "result" set for connection response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -73,7 +72,14 @@ class Connection(Handler):
         result = result if result is not None else ''
         res = {'result': result, 'date': datetime.datetime.now()}
         if error is not None:
+            if isinstance(error, int):
+                error = errors.errorString(error)
+            if errorCode != 0:
+                error += ' (code {0:04X})'.format(errorCode)
             res['error'] = error
+
+        res['retryable'] = retryable and '1' or '0'
+
         return res
 
     def serviceList(self):
@@ -147,16 +153,49 @@ class Connection(Handler):
     def connection(self, doNotCheck=False):
         idService = self._args[0]
         idTransport = self._args[1]
-        ip, userService, iads, trans, itrans = userServiceManager().getService(self._user, self._request.ip, idService, idTransport, not doNotCheck)
-        ci = {
-            'username': '',
-            'password': '',
-            'domain': '',
-            'protocol': 'unknown',
-            'ip': ip
-        }
-        ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
-        return Connection.result(result=ci)
+        try:
+            ip, userService, iads, trans, itrans = userServiceManager().getService(self._user, self._request.ip, idService, idTransport, not doNotCheck)
+            ci = {
+                'username': '',
+                'password': '',
+                'domain': '',
+                'protocol': 'unknown',
+                'ip': ip
+            }
+            ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
+            return Connection.result(result=ci)
+        except ServiceNotReadyError as e:
+            # Refresh ticket and make this retrayable
+            return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+        except Exception as e:
+            logger.exception("Exception")
+            return Connection.result(error=six.text_type(e))
+
+    def script(self):
+        idService = self._args[0]
+        idTransport = self._args[1]
+        scrambler = self._args[2]
+        hostname = self._args[3]
+
+        try:
+            res = userServiceManager().getService(self._user, self._request.ip, idService, idTransport)
+            logger.debug('Res: {}'.format(res))
+            ip, userService, userServiceInstance, transport, transportInstance = res
+            password = cryptoManager().xor(self.getValue('password'), scrambler).decode('utf-8')
+
+            userService.setConnectionSource(self._request.ip, hostname)  # Store where we are accessing from so we can notify Service
+
+            transportScript = transportInstance.getEncodedTransportScript(userService, transport, ip, self._request.os, self._user, password, self._request)
+
+            return Connection.result(result=transportScript)
+        except ServiceNotReadyError as e:
+            # Refresh ticket and make this retrayable
+            return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+        except Exception as e:
+            logger.exception("Exception")
+            return Connection.result(error=six.text_type(e))
+
+        return password
 
     def get(self):
         '''
@@ -175,7 +214,13 @@ class Connection(Handler):
             # Return connection & validate access for service/transport
             return self.connection()
 
-        if len(self._args) == 3 and self._args[2] == 'skipChecking':
-            return self.connection(True)
+        if len(self._args) == 3:
+            # /connection/idService/idTransport/skipChecking
+            if self._args[2] == 'skipChecking':
+                return self.connection(True)
+
+        if len(self._args) == 4:
+        # /connection/idService/idTransport/scrambler/hostname
+            return self.script()
 
         raise RequestError('Invalid Request')

@@ -42,6 +42,8 @@ from uds.REST import RequestError
 from uds.REST import Handler
 
 import logging
+import random
+import string
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +78,7 @@ class Login(Handler):
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
 
+            scrambler = ''.join(random.choice(string.letters + string.digits) for _ in range(32))  # @UndefinedVariable
             authId = self._params.get('authId', None)
             authSmallName = self._params.get('authSmallName', None)
             authName = self._params.get('auth', None)
@@ -84,7 +87,7 @@ class Login(Handler):
             locale = self._params.get('locale', 'en')
             if authName == 'admin' or authSmallName == 'admin':
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and GlobalConfig.SUPER_USER_PASS.get(True) == password:
-                    self.genAuthToken(-1, username, locale, True, True)
+                    self.genAuthToken(-1, username, password, locale, True, True, scrambler)
                     return{'result': 'ok', 'token': self.getAuthToken()}
                 else:
                     raise Exception('Invalid credentials')
@@ -99,14 +102,14 @@ class Login(Handler):
                         auth = Authenticator.objects.get(small_name=authSmallName)
 
                     if password == '':
-                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential leaved empty
+                        password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # Extrange password if credential left empty
 
                     logger.debug('Auth obj: {0}'.format(auth))
                     user = authenticate(username, password, auth)
                     if user is None:  # invalid credentials
                         raise Exception()
-                    self.genAuthToken(auth.id, user.name, locale, user.is_admin, user.staff_member)
-                    return{'result': 'ok', 'token': self.getAuthToken(), 'version': UDS_VERSION }
+                    self.genAuthToken(auth.id, user.name, password, locale, user.is_admin, user.staff_member, scrambler)
+                    return{'result': 'ok', 'token': self.getAuthToken(), 'version': UDS_VERSION, 'scrambler': scrambler }
                 except:
                     logger.exception('Credentials ')
                     raise Exception('Invalid Credentials (invalid authenticator)')

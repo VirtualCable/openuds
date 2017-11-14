@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2017-10-13'
+__updated__ = '2017-11-14'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -106,7 +106,9 @@ def webLoginRequired(admin=False):
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     '''
+
     def decorator(view_func):
+
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
             '''
@@ -124,7 +126,9 @@ def webLoginRequired(admin=False):
                     return HttpResponseForbidden(_('Forbidden'))
 
             return view_func(request, *args, **kwargs)
+
         return _wrapped_view
+
     return decorator
 
 
@@ -134,6 +138,7 @@ def trustedSourceRequired(view_func):
     Decorator to set protection to access page
     look for sample at uds.dispatchers.pam
     '''
+
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         '''
@@ -143,6 +148,7 @@ def trustedSourceRequired(view_func):
         if net.ipInNetwork(request.ip, GlobalConfig.TRUSTED_SOURCES.get(True)) is False:
             return HttpResponseForbidden()
         return view_func(request, *args, **kwargs)
+
     return _wrapped_view
 
 
@@ -281,7 +287,7 @@ def webLogin(request, response, user, password):
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)  # Stores "bytes"
     # Ensures that this user will have access through REST api if logged in through web interface
-    REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, get_language(), user.is_admin, user.staff_member)
+    REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, password, get_language(), user.is_admin, user.staff_member, cookie)
     return True
 
 

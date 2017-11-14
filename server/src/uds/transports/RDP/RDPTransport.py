@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-09-01'
+__updated__ = '2017-11-14'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -150,7 +150,7 @@ class RDPTransport(BaseRDPTransport):
         }.get(m.os)
 
         if os is None:
-            logger.ERROR('Os not detected for RDP Transport: {}'.format(request.META.get('HTTP_USER_AGENT', 'Unknown')))
+            logger.error('Os not detected for RDP Transport: {}'.format(request.META.get('HTTP_USER_AGENT', 'Unknown')))
             return super(RDPTransport, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         return self.getScript('scripts/{}/direct.py'.format(os)).format(m=m)

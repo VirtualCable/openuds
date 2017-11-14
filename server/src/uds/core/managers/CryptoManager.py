@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from uds.core.util import encoders
 from Crypto.PublicKey import RSA
 from OpenSSL import crypto
 from Crypto.Random import atfork
@@ -40,7 +41,6 @@ import hashlib
 import array
 import uuid
 import datetime
-import codecs
 import random
 import string
 
@@ -57,8 +57,6 @@ logger = logging.getLogger(__name__)
 
 
 class CryptoManager(object):
-    CODEC = 'base64'
-
     instance = None
 
     def __init__(self):
@@ -77,7 +75,7 @@ class CryptoManager(object):
             value = value.encode('utf-8')
 
         atfork()
-        return six.text_type(codecs.encode(self._rsa.encrypt(value, six.b(''))[0], CryptoManager.CODEC))
+        return encoders.encode_base64((self._rsa.encrypt(value, six.b(''))[0]), asText=True)
 
     def decrypt(self, value):
         if isinstance(value, six.text_type):
@@ -85,7 +83,7 @@ class CryptoManager(object):
         # import inspect
         try:
             atfork()
-            return six.text_type(self._rsa.decrypt(value.decode(CryptoManager.CODEC)).decode('utf-8'))
+            return six.text_type(self._rsa.decrypt(encoders.decode_base64(value)).decode('utf-8'))
         except Exception:
             logger.exception('Decripting: {0}'.format(value))
             # logger.error(inspect.stack())

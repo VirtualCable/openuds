@@ -36,7 +36,7 @@ from django.utils.translation import ugettext as _
 from uds.core.ui.UserInterface import UserInterface
 from uds.core import Environmentable
 from uds.core import Serializable
-import base64
+from uds.core.util import encoders
 import os.path
 import sys
 import logging
@@ -95,9 +95,6 @@ class Module(UserInterface, Environmentable, Serializable):
     module.
     '''
     # : Which coded to use to encode module by default.
-    # : This overrides the Environmentable and Serializable Attribute, but in all cases we are using 'base64'
-    CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
-
     # : Basic name used to provide the administrator an "huma readable" form for the module
     typeName = 'Base Module'
     # : Internal type name, used by system to locate this module
@@ -174,7 +171,7 @@ class Module(UserInterface, Environmentable, Serializable):
         data = file_.read()
         file_.close()
         if inBase64 == True:
-            return base64.encodestring(data)
+            return encoders.encode_base64(data)
         else:
             return data
 

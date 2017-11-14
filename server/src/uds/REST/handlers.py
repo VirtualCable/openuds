@@ -39,6 +39,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from uds.core.util.Config import GlobalConfig
 from uds.core.auths.auth import getRootUser
 from uds.models import Authenticator
+from uds.core.managers import cryptoManager
 
 import logging
 
@@ -178,7 +179,7 @@ class Handler(object):
         return self._authToken
 
     @staticmethod
-    def storeSessionAuthdata(session, id_auth, username, locale, is_admin, staff_member):
+    def storeSessionAuthdata(session, id_auth, username, password, locale, is_admin, staff_member, scrambler):
         '''
         Stores the authentication data inside current session
         :param session: session handler (Djano user session object)
@@ -194,12 +195,13 @@ class Handler(object):
         session['REST'] = {
             'auth': id_auth,
             'username': username,
+            'password': cryptoManager().xor(password, scrambler),  # Stores "bytes"
             'locale': locale,
             'is_admin': is_admin,
             'staff_member': staff_member
         }
 
-    def genAuthToken(self, id_auth, username, locale, is_admin, staf_member):
+    def genAuthToken(self, id_auth, username, password, locale, is_admin, staf_member, scrambler):
         '''
         Generates the authentication token from a session, that is basically
         the session key itself
@@ -211,7 +213,7 @@ class Handler(object):
         '''
         session = SessionStore()
         session.set_expiry(GlobalConfig.ADMIN_IDLE_TIME.getInt())
-        Handler.storeSessionAuthdata(session, id_auth, username, locale, is_admin, staf_member)
+        Handler.storeSessionAuthdata(session, id_auth, username, password, locale, is_admin, staf_member, scrambler)
         session.save()
         self._authToken = session.session_key
         self._session = session

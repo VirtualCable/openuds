@@ -32,6 +32,8 @@
 '''
 from __future__ import unicode_literals
 
+from uds.core.util import encoders
+
 
 class Serializable(object):
     '''
@@ -42,8 +44,6 @@ class Serializable(object):
     - Initialize the object with default values
     - Read values from seralized data
     '''
-    # Codify codec constant
-    CODEC = 'base64'  # Can be zip, hez, bzip, base64, uuencoded
 
     def __init__(self):
         pass
@@ -79,17 +79,11 @@ class Serializable(object):
     def serialize(self):
         '''
         Serializes and "obfuscates' the data.
-
-        The codec used to encode the string is obtained from the instance CODEC, so derived classes can
-        overwrite this attribute to set another codec
         '''
-        return self.marshal().encode(self.CODEC)
+        return encoders.encode_base64(self.marshal())
 
     def unserialize(self, str_):
         '''
         des-obfuscates the data and then de-serializes it via unmarshal method
-
-        The codec used to decode the string is obtained from the instance CODEC, so derived classes can
-        overwrite this attribute to set another codec
         '''
-        return self.unmarshal(str_.decode(self.CODEC))
+        return self.unmarshal(encoders.decode_base64(str_))

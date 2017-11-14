@@ -32,6 +32,7 @@
 '''
 
 from uds.core.Serializable import Serializable
+from uds.core.util import encoders
 import pickle
 import timeit
 
@@ -67,11 +68,6 @@ class AutoAttributes(Serializable):
     Access attrs as "self._attr1, self._attr2"
     '''
 
-    # : This codec is not intended to override Serializable codec
-    # : Serializable codec is for encoding marshaled data,
-    # : while this codec is for encoding pickled data from autoattributes
-    ACODEC = 'zip'
-
     def __init__(self, **kwargs):
         self.declare(**kwargs)
 
@@ -93,13 +89,17 @@ class AutoAttributes(Serializable):
         self.dict = d
 
     def marshal(self):
-        return '\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]).encode(AutoAttributes.ACODEC)
+        return encoders.encode_bz2('\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]))
 
     def unmarshal(self, data):
         if data == '':  # Can be empty
             return
         # We keep original data (maybe incomplete)
-        for pair in data.decode(AutoAttributes.ACODEC).split('\2'):
+        try:
+            data = encoders.decode_bz2(data)
+        except Exception:  # With old zip encoding
+            data = encoders.decode_zip(data)
+        for pair in data.split('\2'):
             k, v = pair.split('\1')
             self.dict[k] = pickle.loads(str(v))
 
