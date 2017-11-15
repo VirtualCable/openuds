@@ -50,6 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 class FileStorage(Storage):
+
     def __init__(self, *args, **kwargs):
         self._base_url = getattr(settings, 'FILE_STORAGE', '/files')
         if self._base_url[-1] != '/':
@@ -60,6 +61,7 @@ class FileStorage(Storage):
         try:
             cache = caches[cacheName]
         except:
+            logger.info('No cache for FileStorage configured.')
             cache = None
 
         self.cache = cache
@@ -119,7 +121,6 @@ class FileStorage(Storage):
             return
         self.cache.delete(self._getKey(name))
 
-
     def _open(self, name, mode='rb'):
         f = six.BytesIO(self._dbFileForReadOnly(name).data)
         f.name = name
@@ -173,7 +174,9 @@ class FileStorage(Storage):
         except DBFile.DoesNotExist:
             return None
 
+
 class CompressorFileStorage(FileStorage):
+
     def __init__(self, *args, **kwargs):
         FileStorage.__init__(self, *args, **dict(kwargs, owner='compressor'))
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2011-2017 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,21 +28,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-"""
+'''
 Created on Jul 29, 2011
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 
-"""
+'''
 from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
 import six
 import os
-import urllib
-
-__updated__ = '2017-09-18'
-
 
 class RDPFile(object):
     fullScreen = False
@@ -93,10 +89,10 @@ class RDPFile(object):
 
     @property
     def as_new_xfreerdp_params(self):
-        """
+        '''
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
-        """
+        '''
         params = ['/t:UDS-Connection', '/cert-ignore']  # , '/sec:rdp']
 
         if self.enableClipboard:
@@ -144,12 +140,23 @@ class RDPFile(object):
             params.append('/h:{}'.format(self.height))
 
         params.append('/bpp:{}'.format(self.bpp))
+
+        # RDP Security is A MUST if no username nor password is provided
+        # NLA requires USERNAME&PASSWORD previously
+        forceRDPSecurity = False
         if self.username != '':
             params.append('/u:{}'.format(self.username))
+        else:
+            forceRDPSecurity = True
         if self.password != '':
             params.append('/p:{}'.format(self.password))
+        else:
+            forceRDPSecurity = True
         if self.domain != '':
             params.append('/d:{}'.format(self.domain))
+
+        if forceRDPSecurity:
+            params.append('/sec:rdp')
 
         if self.linuxCustomParameters is not None and self.linuxCustomParameters.strip() != '':
             params.append(self.linuxCustomParameters.strip())
@@ -158,10 +165,10 @@ class RDPFile(object):
 
     @property
     def as_rdesktop_params(self):
-        """
+        '''
         Parameters for rdestop with self rdp description
         Note that server is not added
-        """
+        '''
 
         params = ['-TUDS Connection', '-P']
 

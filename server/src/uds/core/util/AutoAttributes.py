@@ -99,9 +99,9 @@ class AutoAttributes(Serializable):
             return
         # We keep original data (maybe incomplete)
         try:
-            data = encoders.decode_bz2(data)
+            data = encoders.decode(data, 'bz2')
         except Exception:  # With old zip encoding
-            data = encoders.decode_zip(data)
+            data = encoders.decode(data, 'zip')
         for pair in data.split('\2'):
             k, v = pair.split('\1')
             self.dict[k] = pickle.loads(str(v))
