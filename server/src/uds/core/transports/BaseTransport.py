@@ -37,7 +37,6 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.util import OsDetector
 from uds.core import Module
 from uds.core.transports import protocols
-from uds.core.util import connection
 from uds.core.util import encoders
 
 import logging
@@ -214,7 +213,7 @@ class Transport(Module):
         """
         script, signature, params = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
         logger.debug('Transport script: {}'.format(script))
-        return encoders.encode_base64((script), asText=True).replace('\n', ''), signature, params
+        return encoders.encode(encoders.encode(script, 'bz2'), 'base64', asText=True).replace('\n', ''), signature, params
 
     def getLink(self, userService, transport, ip, os, user, password, request):
         '''

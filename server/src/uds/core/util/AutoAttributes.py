@@ -92,7 +92,7 @@ class AutoAttributes(Serializable):
         self.dict = d
 
     def marshal(self):
-        return encoders.encode_bz2('\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]))
+        return encoders.encode('\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]), 'bz2')
 
     def unmarshal(self, data):
         if data == '':  # Can be empty

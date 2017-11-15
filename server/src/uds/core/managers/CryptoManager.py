@@ -75,7 +75,7 @@ class CryptoManager(object):
             value = value.encode('utf-8')
 
         atfork()
-        return encoders.encode_base64((self._rsa.encrypt(value, six.b(''))[0]), asText=True)
+        return encoders.encode((self._rsa.encrypt(value, six.b(''))[0]), 'base64', asText=True)
 
     def decrypt(self, value):
         if isinstance(value, six.text_type):
@@ -83,7 +83,7 @@ class CryptoManager(object):
         # import inspect
         try:
             atfork()
-            return six.text_type(self._rsa.decrypt(encoders.decode_base64(value)).decode('utf-8'))
+            return six.text_type(self._rsa.decrypt(encoders.decode(value, 'base64')).decode('utf-8'))
         except Exception:
             logger.exception('Decripting: {0}'.format(value))
             # logger.error(inspect.stack())

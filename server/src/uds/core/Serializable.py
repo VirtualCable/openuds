@@ -80,10 +80,10 @@ class Serializable(object):
         '''
         Serializes and "obfuscates' the data.
         '''
-        return encoders.encode_base64(self.marshal())
+        return encoders.encode(self.marshal(), 'base64')
 
     def unserialize(self, str_):
         '''
         des-obfuscates the data and then de-serializes it via unmarshal method
         '''
-        return self.unmarshal(encoders.decode_base64(str_))
+        return self.unmarshal(encoders.decode(str_, 'base64'))

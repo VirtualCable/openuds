@@ -41,39 +41,15 @@ def __toBinary(data):
     return data
 
 
-def __encode(data, encoder, asText):
+def encode(data, encoder, asText):
     res = codecs.encode(__toBinary(data), encoder)
     if asText:
         return res.decode('utf8')
     return res
 
 
-def __decode(data, encoder, asText):
+def decode(data, encoder, asText):
     res = codecs.decode(__toBinary(data), encoder)
     if asText:
         return res.decode('utf8')
     return res
-
-
-def encode_bz2(text):
-    return __encode(text, 'bz2', False)
-
-
-def decode_bz2(data, asText=False):
-    return __decode(data, 'bz2', asText)
-
-
-def encode_base64(text, asText=False):
-    return __encode(text, 'base64', asText)
-
-
-def decode_base64(data, asText=False):
-    return __decode(data, 'base64', asText)
-
-
-def encode_zip(text):
-    return __encode(text, 'zip', False)
-
-
-def decode_zip(data, asText=False):
-    return __decode(data, 'zip', asText)

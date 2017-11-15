@@ -56,12 +56,12 @@ class DBFile(UUIDModel):
 
     @property
     def data(self):
-        return encoders.decode_zip(encoders.decode_base64(self.content))
+        return encoders.decode(encoders.decode(self.content, 'base64'), 'zip')
 
     @data.setter
     def data(self, value):
         self.size = len(value)
-        self.content = encoders.encode_base64(encoders.encode_zip(self.content))
+        self.content = encoders.encode(encoders.encode(value, 'zip'), 'base64')
 
     def __str__(self):
         return 'File: {} {} {} {}'.format(self.name, self.size, self.created, self.modified)

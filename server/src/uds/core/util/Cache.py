@@ -67,7 +67,7 @@ class Cache(object):
             expired = now > c.created + timedelta(seconds=c.validity)
             if expired:
                 return defValue
-            val = pickle.loads(encoders.decode_base64(c.value))
+            val = pickle.loads(encoders.decode(c.value, 'base64'))
             Cache.hits += 1
             return val
         except uds.models.Cache.DoesNotExist:  # @UndefinedVariable
@@ -97,7 +97,7 @@ class Cache(object):
         if validity is None:
             validity = Cache.DEFAULT_VALIDITY
         key = self.__getKey(skey)
-        value = encoders.encode_base64(pickle.dumps(value))
+        value = encoders.encode(pickle.dumps(value), 'base64')
         now = getSqlDatetime()
         try:
             uds.models.Cache.objects.create(owner=self._owner, key=key, value=value, created=now, validity=validity)  # @UndefinedVariable
