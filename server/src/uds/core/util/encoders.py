@@ -41,14 +41,14 @@ def __toBinary(data):
     return data
 
 
-def encode(data, encoder, asText):
+def encode(data, encoder, asText=False):
     res = codecs.encode(__toBinary(data), encoder)
     if asText:
         return res.decode('utf8')
     return res
 
 
-def decode(data, encoder, asText):
+def decode(data, encoder, asText=False):
     res = codecs.decode(__toBinary(data), encoder)
     if asText:
         return res.decode('utf8')

@@ -58,7 +58,16 @@ class DBFile(UUIDModel):
 
     @property
     def data(self):
-        return encoders.decode(encoders.decode(self.content, 'base64'), 'zip')
+        try:
+            return encoders.decode(encoders.decode(self.content, 'base64'), 'zip')
+        except Exception:
+            logger.error('DBFile {} has errors and cannot be used'.format(self.name))
+            try:
+                self.delete()  # Autodelete, invalid...
+            except:
+                logger.error('Could not even delete {}!!'.format(self.name))
+
+            return ''
 
     @data.setter
     def data(self, value):
