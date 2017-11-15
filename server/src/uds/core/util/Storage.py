@@ -57,7 +57,7 @@ class Storage(object):
         key = self.__getKey(skey)
         if isinstance(data, unicode):
             data = data.encode('utf-8')
-        data = encoders.encode_base64(data)
+        data = encoders.encode(data, 'base64')
         attr1 = '' if attr1 is None else attr1
         try:
             dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
@@ -79,7 +79,7 @@ class Storage(object):
             key = self.__getKey(skey)
             logger.debug('Accesing to {0} {1}'.format(skey, key))
             c = dbStorage.objects.get(pk=key)  # @UndefinedVariable
-            val = encoders.decode_base64(c.data)
+            val = encoders.decode(c.data, 'base64')
 
             if fromPickle:
                 return val
@@ -103,7 +103,7 @@ class Storage(object):
 
     def getPickleByAttr1(self, attr1):
         try:
-            return pickle.loads(encoders.decode_base64(dbStorage.objects.get(owner=self._owner, attr1=attr1).data))  # @UndefinedVariable
+            return pickle.loads(encoders.decode(dbStorage.objects.get(owner=self._owner, attr1=attr1).data, 'base64'))  # @UndefinedVariable
         except Exception:
             return None
 
@@ -133,7 +133,7 @@ class Storage(object):
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         for v in query:
-            yield encoders.decode_base64(v.data)
+            yield encoders.decode(v.data, 'base64')
 
     def filter(self, attr1):
         if attr1 is None:
@@ -142,7 +142,7 @@ class Storage(object):
             query = dbStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         for v in query:  # @UndefinedVariable
-            yield (v.key, encoders.decode_base64(v.data), v.attr1)
+            yield (v.key, encoders.decode(v.data, 'base64'), v.attr1)
 
     def filterPickle(self, attr1=None):
         for v in self.filter(attr1):

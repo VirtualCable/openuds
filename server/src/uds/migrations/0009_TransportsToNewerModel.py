@@ -100,13 +100,13 @@ def transformTransports(apps, schema_editor):
     model = apps.get_model("uds", 'Transport')
     for t in model.objects.all():
         if t.data_type == RDPTransport.typeType:
-            values = unmarshalRDP(encoders.decode_base64(t.data))
+            values = unmarshalRDP(encoders.decode(t.data, 'base64'))
             rdp = RDPTransport(Environment.getTempEnv(), values)
             t.data = rdp.serialize()
             t.save()
 
         if t.data_type == TRDPTransport.typeType:
-            values = unmarshalTRDP(encoders.decode_base64(t.data))
+            values = unmarshalTRDP(encoders.decode(t.data, 'base64'))
             rdp = TRDPTransport(Environment.getTempEnv(), values)
             t.data = rdp.serialize()
             t.save()

@@ -45,7 +45,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2017-11-14'
+__updated__ = '2017-11-15'
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +107,7 @@ class DelayedTaskRunner(object):
         try:
             with transaction.atomic():  # Encloses
                 task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
-                taskInstanceDump = encoders.decode_base64(task.instance)
+                taskInstanceDump = encoders.decode(task.instance, 'base64')
                 task.delete()
             taskInstance = loads(taskInstanceDump)
         except Exception:
@@ -124,7 +124,7 @@ class DelayedTaskRunner(object):
         now = getSqlDatetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
-        instanceDump = encoders.encode_base64(dumps(instance))
+        instanceDump = encoders.encode(dumps(instance), 'base64')
         typeName = str(cls.__module__ + '.' + cls.__name__)
 
         logger.debug('Inserting delayed task {0} with {1} bytes ({2})'.format(typeName, len(instanceDump), exec_time))

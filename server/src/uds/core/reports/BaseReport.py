@@ -43,7 +43,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-11-14'
+__updated__ = '2017-11-15'
 
 
 class Report(UserInterface):
@@ -128,7 +128,7 @@ class Report(UserInterface):
         '''
         data = self.generate()
         if self.encoded:
-            return encoders.encode_base64(data, asText=True).replace('\n', '')
+            return encoders.encode(data, 'base64', asText=True).replace('\n', '')
         else:
             return data
 
