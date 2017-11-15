@@ -41,7 +41,7 @@ from uds.core.util import encoders
 
 import logging
 
-__updated__ = '2017-11-14'
+__updated__ = '2017-11-15'
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +196,7 @@ raise Exception('The transport {transport.name} is not supported on your platfor
         """
         script = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
         logger.debug('Transport script: {}'.format(script))
-        return encoders.encode_base64((script), asText=True).replace('\n', '')
+        return encoders.encode_base64(encoders.encode_bz2(script), asText=True).replace('\n', '')
 
     def getLink(self, userService, transport, ip, os, user, password, request):
         '''
