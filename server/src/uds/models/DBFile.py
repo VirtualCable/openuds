@@ -34,7 +34,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2017-11-14'
+__updated__ = '2017-11-15'
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -63,7 +63,7 @@ class DBFile(UUIDModel):
     @data.setter
     def data(self, value):
         self.size = len(value)
-        self.content = encoders.encode_base64(encoders.encode_zip(self.content))
+        self.content = encoders.encode_base64(encoders.encode_zip(value))
 
     def __str__(self):
         return 'File: {} {} {} {}'.format(self.name, self.size, self.created, self.modified)
