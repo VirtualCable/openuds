@@ -96,7 +96,7 @@ class AutoAttributes(Serializable):
             return
         # We keep original data (maybe incomplete)
         try:
-            data = encoders.decode(data, 'bzip2')
+            data = encoders.decode(data, 'bz2')
         except Exception:  # With old zip encoding
             data = encoders.decode(data, 'zip')
         for pair in data.split('\2'):

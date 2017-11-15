@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 '''
 Created on Jul 29, 2011
 
@@ -40,7 +39,7 @@ from uds.core.util import OsDetector
 import six
 import os
 
-__updated__ = '2017-09-01'
+__updated__ = '2017-11-15'
 
 
 class RDPFile(object):
@@ -143,12 +142,23 @@ class RDPFile(object):
             params.append('/h:{}'.format(self.height))
 
         params.append('/bpp:{}'.format(self.bpp))
+
+        # RDP Security is A MUST if no username nor password is provided
+        # NLA requires USERNAME&PASSWORD previously
+        forceRDPSecurity = False
         if self.username != '':
             params.append('/u:{}'.format(self.username))
+        else:
+            forceRDPSecurity = True
         if self.password != '':
             params.append('/p:{}'.format(self.password))
+        else:
+            forceRDPSecurity = True
         if self.domain != '':
             params.append('/d:{}'.format(self.domain))
+
+        if forceRDPSecurity:
+            params.append('/sec:rdp')
 
         if self.linuxCustomParameters is not None and self.linuxCustomParameters.strip() != '':
             params.append(self.linuxCustomParameters.strip())
