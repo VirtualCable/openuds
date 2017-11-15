@@ -77,3 +77,11 @@ def encode_zip(text):
 
 def decode_zip(data, asText=False):
     return __decode(data, 'zip', asText)
+
+
+def encode_hex(text, asText=False):
+    return __encode(text, 'hex', asText)
+
+
+def decode_hex(data, asText=False):
+    return __decode(data, 'hex', asText)
