@@ -56,7 +56,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-10-26'
+__updated__ = '2017-11-16'
 
 
 @webLoginRequired(admin=False)
@@ -145,7 +145,6 @@ def clientEnabler(request, idService, idTransport):
         logger.exception('Error')
         error = six.text_type(e)
 
-
     return HttpResponse(
         json.dumps({
             'url': six.text_type(url),
@@ -153,6 +152,7 @@ def clientEnabler(request, idService, idTransport):
         }),
         content_type='application/json'
     )
+
 
 @webLoginRequired(admin=False)
 @never_cache
@@ -167,8 +167,8 @@ def release(request, idService):
             "Removing User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
             log.WEB
         )
+        userServiceManager().requestLogoff(userService)
         userService.release()
-
 
     return HttpResponseRedirect(reverse('Index'))
 

@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-10-26'
+__updated__ = '2017-11-17'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -428,6 +428,28 @@ class UserServiceManager(object):
 
         # All done
 
+    def requestLogoff(self, uService):
+        '''
+        Ask client to logoff user
+        '''
+        url = uService.getCommsUrl()
+        if url is None:
+            logger.error('Can\'t connect with actor (no actor or legacy actor)')
+            return
+        url += '/logoff'
+
+        try:
+            r = requests.post(url, data=json.dumps({}), headers={'content-type': 'application/json'}, verify=False, timeout=4)
+            r = json.loads(r.content)
+            logger.debug('Sent logoff to client using {}: {}'.format(url, r))
+            # In fact we ignore result right now
+        except Exception as e:
+            # TODO: Right now, this is an "experimental" feature, not supported on Apps (but will)
+            pass
+            # logger.info('Logoff requested but service was not listening: {}'.format(e, url))
+
+        # All done
+
     def checkForRemoval(self, uService):
         '''
         This method is used by UserService when a request for setInUse(False) is made
@@ -517,11 +539,9 @@ class UserServiceManager(object):
         if user is not None:
             userName = user.name
 
-
         if doTest is False:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
             return (None, userService, None, trans, None)
-
 
         serviceNotReadyCode = 0x0001
         ip = 'unknown'
@@ -532,6 +552,7 @@ class UserServiceManager(object):
             # If ready, show transport for this service, if also ready ofc
             iads = userService.getInstance()
             ip = iads.getIp()
+            userService.logIP(ip)  # Update known ip
 
             if self.checkUuid(userService) is False:  # Machine is not what is expected
                 serviceNotReadyCode = 0x0004
