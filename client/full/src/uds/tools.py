@@ -32,10 +32,6 @@
 '''
 from __future__ import unicode_literals
 
-# For signature checking
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
-from Crypto.Hash import SHA256
 from base64 import b64decode
 
 import tempfile
@@ -47,8 +43,6 @@ import stat
 import six
 import sys
 import time
-
-
 
 from log import logger
 
@@ -74,6 +68,7 @@ Okbm65EebVzOxfje+8dRq9Uqwip8f/qmzFsIIsx3wPSvkKawFwb0G5h2HX5oJrk0
 nVgtClKcDDlSaBsO875WDR0CAwEAAQ==
 -----END PUBLIC KEY-----'''
 
+
 def saveTempFile(content, filename=None):
     if filename is None:
         filename = b''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
@@ -91,6 +86,7 @@ def saveTempFile(content, filename=None):
     logger.info('Returning filename')
     return filename
 
+
 def readTempFile(filename):
     if 'win32' in sys.platform:
         filename = filename.encode('utf-8')
@@ -101,6 +97,7 @@ def readTempFile(filename):
             return f.read()
     except Exception:
         return None
+
 
 def testServer(host, port, timeOut=4):
     try:
@@ -184,6 +181,7 @@ def execBeforeExit():
     for fnc in _execBeforeExit:
         fnc.__call__()
 
+
 def verifySignature(script, signature):
     '''
     Verifies with a public key from whom the data came that it was indeed
@@ -192,6 +190,11 @@ def verifySignature(script, signature):
     param: signature String signature to be verified
     return: Boolean. True if the signature is valid; False otherwise.
     '''
+    # For signature checking
+    from Crypto.PublicKey import RSA
+    from Crypto.Signature import PKCS1_v1_5
+    from Crypto.Hash import SHA256
+
     rsakey = RSA.importKey(PUBLIC_KEY)
     signer = PKCS1_v1_5.new(rsakey)
     digest = SHA256.new(script)  # Script is "binary string" here
