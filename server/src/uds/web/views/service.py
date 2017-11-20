@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -140,7 +140,6 @@ def clientEnabler(request, idService, idTransport):
         logger.exception('Error')
         error = six.text_type(e)
 
-
     return HttpResponse(
         json.dumps({
             'url': six.text_type(url),
@@ -162,8 +161,8 @@ def release(request, idService):
             "Removing User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
             log.WEB
         )
+        userServiceManager().requestLogoff(userService)
         userService.release()
-
 
     return HttpResponseRedirect(reverse('Index'))
 

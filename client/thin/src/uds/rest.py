@@ -39,8 +39,8 @@ import json
 import six
 import osDetector
 
-
 from .log import logger
+
 
 class RetryException(Exception):
     pass
@@ -65,7 +65,7 @@ class RestRequest(object):
         logger.debug('Requesting {}'.format(url))
 
         try:
-            r = requests.get(url, headers={'Content-type': 'application/json', 'User-Agent': osDetector.getOs() + " - UDS Connector " + VERSION })
+            r = requests.get(url, headers={'Content-type': 'application/json', 'User-Agent': osDetector.getOs() + " - UDS Connector " + VERSION }, verify=False)
         except requests.exceptions.ConnectionError as e:
             raise Exception('Error connecting to UDS Server at {}'.format(self.restApiUrl[0:-11]))
 
