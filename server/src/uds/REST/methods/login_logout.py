@@ -142,11 +142,13 @@ class Auths(Handler):
 
     def auths(self):
         for a in Authenticator.objects.all():
-            if a.getType().isCustom() is False:
+            theType = a.getType()
+            if theType.isCustom() is False and theType.typeType not in ('IP',):
                 yield {
                     'authId': a.uuid,
                     'authSmallName': str(a.small_name),
                     'auth': a.name,
+                    'type': theType.typeType,
                 }
 
     def get(self):

@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2017-11-14'
+__updated__ = '2017-11-22'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -259,7 +259,7 @@ def authInfoUrl(authenticator):
     Helper method, so we can get the info url for an authenticator
     '''
     from django.core.urlresolvers import reverse
-    if isinstance(authenticator, unicode) or isinstance(authenticator, str):
+    if isinstance(authenticator, (six.text_type, six.binary_type)):
         name = authenticator
     else:
         name = authenticator.name
