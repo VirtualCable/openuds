@@ -62,10 +62,10 @@ import logging
 import pickle
 import six
 
-__updated__ = '2017-10-25'
-
+__updated__ = '2017-11-29'
 
 logger = logging.getLogger(__name__)
+
 
 @python_2_unicode_compatible
 class DeployedService(UUIDModel, TaggingMixin):
@@ -84,6 +84,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
     allow_users_remove = models.BooleanField(default=False)
+    ignores_unused = models.BooleanField(default=False)
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
     servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)
@@ -93,13 +94,11 @@ class DeployedService(UUIDModel, TaggingMixin):
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
     actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
 
-
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)
     cache_l2_srvs = models.PositiveIntegerField(default=0)
     max_srvs = models.PositiveIntegerField(default=0)
     current_pub_revision = models.PositiveIntegerField(default=1)
-
 
     # Meta service related
     meta_pools = models.ManyToManyField('self', symmetrical=False)
@@ -218,7 +217,6 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         return None
 
-
     def isAccessAllowed(self, chkDateTime=None):
         '''
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
@@ -264,7 +262,6 @@ class DeployedService(UUIDModel, TaggingMixin):
                 return -1
 
         return int((deadLine - chkDateTime).total_seconds())
-
 
     def storeValue(self, name, value):
         '''

@@ -69,7 +69,10 @@ class ServicesPools(ModelHandler):
         'actions': ActionsCalendars
     }
 
-    save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id', 'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs', 'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports', 'allow_users_remove']
+    save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id',
+                   'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs',
+                   'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports',
+                   'allow_users_remove', 'ignores_unused']
     remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
@@ -87,7 +90,6 @@ class ServicesPools(ModelHandler):
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
 
     custom_methods = [('setFallbackAccess', True), ('actionsList', True)]
-
 
     def item_as_dict(self, item):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -132,6 +134,7 @@ class ServicesPools(ModelHandler):
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,
             'allow_users_remove': item.allow_users_remove,
+            'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
             'info': Services.serviceInfo(item.service),
@@ -168,12 +171,36 @@ class ServicesPools(ModelHandler):
             'rdonly': True,
             'order': 101,
         }, {
+            'name': 'show_transports',
+            'value': True,
+            'label': ugettext('Show transports'),
+            'tooltip': ugettext('If active, alternative transports for user will be shown'),
+            'type': gui.InputField.CHECKBOX_TYPE,
+            'order': 110,
+            'tab': ugettext('Advanced'),
+        }, {
+            'name': 'allow_users_remove',
+            'value': False,
+            'label': ugettext('Allow removal by users'),
+            'tooltip': ugettext('If active, the user will be allowed to remove the service "manually". Be care with this, because the user will have the "poser" to delete it\'s own service'),
+            'type': gui.InputField.CHECKBOX_TYPE,
+            'order': 111,
+            'tab': ugettext('Advanced'),
+        }, {
+            'name': 'ignores_unused',
+            'value': False,
+            'label': ugettext('Ignores unused'),
+            'tooltip': ugettext('If active, UDS will not try to detect and remove assigned but not used user services.'),
+            'type': gui.InputField.CHECKBOX_TYPE,
+            'order': 112,
+            'tab': ugettext('Advanced'),
+        }, {
             'name': 'image_id',
             'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)] + gui.sortedChoices([gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]),
             'label': ugettext('Associated Image'),
             'tooltip': ugettext('Image assocciated with this service'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 102,
+            'order': 120,
             'tab': ugettext('Display'),
         }, {
             'name': 'servicesPoolGroup_id',
@@ -181,7 +208,7 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Pool group'),
             'tooltip': ugettext('Pool group for this pool (for pool clasify on display)'),
             'type': gui.InputField.IMAGECHOICE_TYPE,
-            'order': 103,
+            'order': 121,
             'tab': ugettext('Display'),
         }, {
             'name': 'initial_srvs',
@@ -190,7 +217,7 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Initial available services'),
             'tooltip': ugettext('Services created initially for this service pool'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 110,
+            'order': 130,
             'tab': ugettext('Availability'),
         }, {
             'name': 'cache_l1_srvs',
@@ -199,7 +226,7 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Services to keep in cache'),
             'tooltip': ugettext('Services kept in cache for improved user service assignation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 111,
+            'order': 131,
             'tab': ugettext('Availability'),
         }, {
             'name': 'cache_l2_srvs',
@@ -208,7 +235,7 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Services to keep in L2 cache'),
             'tooltip': ugettext('Services kept in cache of level2 for improved service generation'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 112,
+            'order': 132,
             'tab': ugettext('Availability'),
         }, {
             'name': 'max_srvs',
@@ -217,22 +244,8 @@ class ServicesPools(ModelHandler):
             'label': ugettext('Maximum number of services to provide'),
             'tooltip': ugettext('Maximum number of service (assigned and L1 cache) that can be created for this service'),
             'type': gui.InputField.NUMERIC_TYPE,
-            'order': 113,
+            'order': 133,
             'tab': ugettext('Availability'),
-        }, {
-            'name': 'show_transports',
-            'value': True,
-            'label': ugettext('Show transports'),
-            'tooltip': ugettext('If active, alternative transports for user will be shown'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 120,
-        }, {
-            'name': 'allow_users_remove',
-            'value': False,
-            'label': ugettext('Allow removal by users'),
-            'tooltip': ugettext('If active, the user will be allowed to remove the service "manually". Be care with this, because the user will have the "poser" to delete it\'s own service'),
-            'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 121,
         }]:
             self.addField(g, f)
 

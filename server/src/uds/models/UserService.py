@@ -55,8 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2017-10-26'
-
+__updated__ = '2017-11-29'
 
 logger = logging.getLogger(__name__)
 
@@ -505,6 +504,7 @@ class UserService(UUIDModel):
         log.clearLogs(toDelete)
 
         logger.debug('Deleted user service {0}'.format(toDelete))
+
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(UserService.beforeDelete, sender=UserService)
