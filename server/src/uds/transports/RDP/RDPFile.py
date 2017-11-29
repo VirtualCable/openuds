@@ -37,9 +37,9 @@ from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
 import six
-import os
+import shlex
 
-__updated__ = '2017-11-15'
+__updated__ = '2017-11-29'
 
 
 class RDPFile(object):
@@ -161,7 +161,7 @@ class RDPFile(object):
             params.append('/sec:rdp')
 
         if self.linuxCustomParameters is not None and self.linuxCustomParameters.strip() != '':
-            params.append(self.linuxCustomParameters.strip())
+            params += shlex.split(self.linuxCustomParameters.strip())
 
         return params
 
