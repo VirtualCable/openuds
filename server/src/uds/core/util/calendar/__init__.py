@@ -46,8 +46,7 @@ import six
 import bitarray
 import logging
 
-__updated__ = '2017-11-06'
-
+__updated__ = '2017-12-12'
 
 logger = logging.getLogger(__name__)
 
@@ -113,7 +112,6 @@ class CalendarChecker(object):
 
         return data
 
-
     def _updateEvents(self, checkFrom, startEvent=True):
 
         next_event = None
@@ -162,7 +160,7 @@ class CalendarChecker(object):
         Returns next event for this interval
         Returns a list of two elements. First is datetime of event begining, second is timedelta of duration
         '''
-        logger.debug('Obtainint nextEvent')
+        logger.debug('Obtaining nextEvent')
         if checkFrom is None:
             checkFrom = getSqlDatetime()
 
@@ -182,7 +180,6 @@ class CalendarChecker(object):
             CalendarChecker.hits += 1
 
         return next_event
-
 
     def debug(self):
         return "Calendar checker for {}".format(self.calendar)
