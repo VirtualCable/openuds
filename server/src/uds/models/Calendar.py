@@ -34,7 +34,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2017-11-06'
+__updated__ = '2017-12-12'
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
@@ -66,6 +66,7 @@ class Calendar(UUIDModel, TaggingMixin):
 
         res = UUIDModel.save(self, *args, **kwargs)
 
+        # Basically, recalculates all related actions next execution time...
         try:
             for v in self.calendaraction_set.all(): v.save()
         except Exception:
