@@ -117,8 +117,8 @@ class CalendarChecker(object):
         next_event = None
         for rule in self.calendar.rules.all():
             # logger.debug('RULE: start = {}, checkFrom = {}, end'.format(rule.start.date(), checkFrom.date()))
-            # if rule.end is not None and rule.end < checkFrom.date():
-            #     continue
+            if rule.end is not None and rule.end < checkFrom.date():
+                continue
             # logger.debug('Rule in check interval...')
             if startEvent:
                 event = rule.as_rrule().after(checkFrom)  # At start
