@@ -60,6 +60,7 @@ This package provides the required components to allow this machine to work on a
 /etc/init.d/udsactor
 /usr/bin/UDSActorTool-startup
 /usr/bin/udsactor
+/usr/bin/udsvapp
 /usr/bin/UDSActorTool
 /usr/sbin/UDSActorConfig
 /usr/sbin/UDSActorConfig-pkexec

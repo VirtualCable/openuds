@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
@@ -54,12 +54,11 @@ logger = logging.getLogger(__name__)
 READY_CACHE_TIMEOUT = 30
 SSH_KEY_LENGTH = 1024
 
-
 class BaseX2GOTransport(Transport):
-    """
+    '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    """
+    '''
     iconFile = 'x2go.png'
     protocol = protocols.X2GO
     supportedOss = (OsDetector.Linux, OsDetector.Windows)
@@ -78,24 +77,28 @@ class BaseX2GOTransport(Transport):
         tab=gui.PARAMETERS_TAB
     )
 
-    desktopType = gui.ChoiceField(
-        label=_('Desktop'), order=11, tooltip=_('Desktop session'),
-        values=[
-            {'id': 'XFCE', 'text': 'Xfce'},
-            {'id': 'MATE', 'text': 'Mate'},
-            {'id': 'LXDE', 'text': 'Lxde'},
-            {'id': 'GNOME', 'text': 'Gnome (see docs)'},
-            {'id': 'KDE', 'text': 'Kde (see docs)'},
-            # {'id': 'UNITY', 'text': 'Unity (see docs)'},
-            {'id': 'gnome-session-cinnamon', 'text': 'Cinnamon 1.4 (see docs)'},
-            {'id': 'gnome-session-cinnamon2d', 'text': 'Cinnamon 2.2 (see docs)'},
-            {'id': '/usr/bin/udsvapp', 'text': 'UDS vAPP'},
-        ],
+    desktopType = gui.ChoiceField(label=_('Desktop'), order=11, tooltip=_('Desktop session'),
+                              values=[
+                                  {'id': 'XFCE', 'text': 'Xfce'},
+                                  {'id': 'MATE', 'text': 'Mate'},
+                                  {'id': 'LXDE', 'text': 'Lxde'},
+                                  {'id': 'GNOME', 'text': 'Gnome (see docs)'},
+                                  {'id': 'KDE', 'text': 'Kde (see docs)'},
+                                  # {'id': 'UNITY', 'text': 'Unity (see docs)'},
+                                  {'id': 'gnome-session-cinnamon', 'text': 'Cinnamon 1.4 (see docs)'},
+                                  {'id': 'gnome-session-cinnamon2d', 'text': 'Cinnamon 2.2 (see docs)'},
+                                  {'id': 'UDSVAPP', 'text': 'UDS vAPP'},
+    ], tab=gui.PARAMETERS_TAB)
+
+    customCmd = gui.TextField(
+        order=12,
+        label=_('vAPP'),
+        tooltip=_('If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'),
         tab=gui.PARAMETERS_TAB
     )
 
     sound = gui.CheckBoxField(
-        order=12,
+        order=13,
         label=_('Enable sound'),
         tooltip=_('If checked, sound will be available'),
         defvalue=gui.TRUE,
@@ -103,7 +106,7 @@ class BaseX2GOTransport(Transport):
     )
 
     exports = gui.CheckBoxField(
-        order=13,
+        order=14,
         label=_('Redirect root folder'),
         tooltip=_('If checked, user home folder will be redirected'),
         defvalue=gui.FALSE,
@@ -112,7 +115,7 @@ class BaseX2GOTransport(Transport):
 
     speed = gui.ChoiceField(
         label=_('Speed'),
-        order=14,
+        order=15,
         tooltip=_('Connection speed'),
         defvalue='3',
         values=[
@@ -121,26 +124,17 @@ class BaseX2GOTransport(Transport):
             {'id': '2', 'text': 'ADSL'},
             {'id': '3', 'text': 'WAN'},
             {'id': '4', 'text': 'LAN'},
-        ],
-        tab=gui.PARAMETERS_TAB
-    )
+    ], tab=gui.PARAMETERS_TAB)
 
-    soundType = gui.ChoiceField(
-        label=_('Sound'),
-        order=30,
-        tooltip=_('Sound server'),
+    soundType = gui.ChoiceField(label=_('Sound'), order=30, tooltip=_('Sound server'),
         defvalue='pulse',
         values=[
             {'id': 'pulse', 'text': 'Pulse'},
             {'id': 'esd', 'text': 'ESD'},
-        ],
-        tab=gui.ADVANCED_TAB
+        ], tab=gui.ADVANCED_TAB
     )
 
-    keyboardLayout = gui.TextField(
-        label=_('Keyboard'),
-        order=31,
-        tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
+    keyboardLayout = gui.TextField(label=_('Keyboard'), order=31, tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
         defvalue='',
         tab=gui.ADVANCED_TAB
     )
@@ -157,31 +151,20 @@ class BaseX2GOTransport(Transport):
     # '8-png-%', '64-png', '256-png', '512-png', '4k-png'
     # '32k-png', '64k-png', '256k-png', '2m-png', '16m-png-%'
     # '16m-rgb-%', '16m-rle-%'
-    pack = gui.TextField(
-        label=_('Pack'),
-        order=32,
-        tooltip=_('Pack format. Change with care!'),
+    pack = gui.TextField(label=_('Pack'), order=32, tooltip=_('Pack format. Change with care!'),
         defvalue='16m-jpeg',
         tab=gui.ADVANCED_TAB
     )
 
-    quality = gui.NumericField(
-        label=_('Quality'),
-        order=33,
-        tooltip=_('Quality value used on some pack formats.'),
-        length=1,
-        defvalue='6',
-        minValue=1,
-        maxValue=9,
-        required=True,
-        tab=gui.ADVANCED_TAB
-    )
+    quality = gui.NumericField(label=_('Quality'), order=33, tooltip=_('Quality value used on some pack formats.'),
+        length=1, defvalue='6', minValue=1, maxValue=9, required=True,
+        tab=gui.ADVANCED_TAB)
 
     def isAvailableFor(self, userService, ip):
-        """
+        '''
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
-        """
+        '''
         logger.debug('Checking availability for {0}'.format(ip))
         ready = self.cache.get(ip)
         if ready is None:
@@ -212,7 +195,7 @@ class BaseX2GOTransport(Transport):
         return self.processUserPassword(service, user, password)
 
     def genKeyPairForSsh(self):
-        """
+        '''
         Generates a key pair for use with x2go
         The private part is used by client
         the public part must be "appended" to authorized_keys if it is not already added.
@@ -224,14 +207,14 @@ class BaseX2GOTransport(Transport):
             C:\Program Files (x86)\\x2goclient>x2goclient.exe --session-conf=c:/temp/sessions --session=UDS/test-session --close-disconnect --hide --no-menu
         Linux (tested):
             HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
-        """
+        '''
         key = paramiko.RSAKey.generate(SSH_KEY_LENGTH)
         privFile = six.StringIO()
         key.write_private_key(privFile)
         priv = privFile.getvalue()
 
         pub = key.get_base64()  # 'ssh-rsa {} UDS@X2GOCLIENT'.format(key.get_base64())
-        return priv, pub
+        return (priv, pub)
 
     def getAuthorizeScript(self, user, pubKey):
         return self.getScript('scripts/authorize.py').replace('__USER__', user).replace('__KEY__', pubKey)

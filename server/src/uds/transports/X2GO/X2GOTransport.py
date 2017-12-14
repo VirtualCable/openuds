@@ -58,6 +58,7 @@ class X2GOTransport(BaseX2GOTransport):
     fixedName = BaseX2GOTransport.fixedName
     # fullScreen = BaseX2GOTransport.fullScreen
     desktopType = BaseX2GOTransport.desktopType
+    customCmd = BaseX2GOTransport.customCmd
     sound = BaseX2GOTransport.sound
     exports = BaseX2GOTransport.exports
     speed = BaseX2GOTransport.speed
@@ -76,13 +77,17 @@ class X2GOTransport(BaseX2GOTransport):
 
         width, height = CommonPrefs.getWidthHeight(prefs)
 
+        desktop = self.desktopType.value
+        if desktop == "UDSVAPP":
+            desktop = "/usr/bin/udsvapp " + self.customCmd.value
+
         xf = x2gofile.getTemplate(
             speed=self.speed.value,
             pack=self.pack.value,
             quality=self.quality.value,
             sound=self.sound.isTrue(),
             soundSystem=self.sound.value,
-            windowManager=self.desktopType.value,
+            windowManager=desktop,
             exports=self.exports.isTrue(),
             width=width,
             height=height,

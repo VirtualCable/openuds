@@ -69,12 +69,14 @@ install-udsactor:
 	cp scripts/udsactor $(BINDIR)
 	cp scripts/UDSActorConfig-pkexec $(SBINDIR)
 	cp scripts/UDSActorTool-startup $(BINDIR)
+	cp scripts/udsvapp ${BINDIR}
 	
 	# Policy to run as administrator
 	cp policy/org.openuds.pkexec.UDSActorConfig.policy $(POLKITDIR)
 
 	# Fix permissions
 	chmod 755 $(BINDIR)/udsactor
+	chmod 755 $(BINDIR)/udsvapp
 	chmod 755 $(BINDIR)/UDSActorTool-startup
 	chmod 755 $(SBINDIR)/UDSActorConfig-pkexec
 	chmod 755 $(LIBDIR)/UDSActorConfig.py

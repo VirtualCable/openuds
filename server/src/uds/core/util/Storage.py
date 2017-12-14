@@ -150,7 +150,6 @@ class Storage(object):
 
     @staticmethod
     def delete(owner=None):
-        logger.info("Deleting storage items")
         if owner is None:
             objects = dbStorage.objects.all()  # @UndefinedVariable
         else:
