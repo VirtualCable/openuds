@@ -47,13 +47,13 @@ import six
 import os
 import logging
 
-__updated__ = '2017-10-09'
-
+__updated__ = '2017-12-14'
 
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 SSH_KEY_LENGTH = 1024
+
 
 class BaseX2GOTransport(Transport):
     '''
@@ -88,11 +88,18 @@ class BaseX2GOTransport(Transport):
                                   # {'id': 'UNITY', 'text': 'Unity (see docs)'},
                                   {'id': 'gnome-session-cinnamon', 'text': 'Cinnamon 1.4 (see docs)'},
                                   {'id': 'gnome-session-cinnamon2d', 'text': 'Cinnamon 2.2 (see docs)'},
-                                  {'id': '/usr/bin/udsvapp', 'text': 'UDS vAPP'},
+                                  {'id': 'UDSVAPP', 'text': 'UDS vAPP'},
     ], tab=gui.PARAMETERS_TAB)
 
-    sound = gui.CheckBoxField(
+    customCmd = gui.TextField(
         order=12,
+        label=_('vAPP'),
+        tooltip=_('If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'),
+        tab=gui.PARAMETERS_TAB
+    )
+
+    sound = gui.CheckBoxField(
+        order=13,
         label=_('Enable sound'),
         tooltip=_('If checked, sound will be available'),
         defvalue=gui.TRUE,
@@ -100,7 +107,7 @@ class BaseX2GOTransport(Transport):
     )
 
     exports = gui.CheckBoxField(
-        order=13,
+        order=14,
         label=_('Redirect root folder'),
         tooltip=_('If checked, user home folder will be redirected'),
         defvalue=gui.FALSE,
@@ -109,7 +116,7 @@ class BaseX2GOTransport(Transport):
 
     speed = gui.ChoiceField(
         label=_('Speed'),
-        order=14,
+        order=15,
         tooltip=_('Connection speed'),
         defvalue='3',
         values=[
@@ -153,8 +160,6 @@ class BaseX2GOTransport(Transport):
     quality = gui.NumericField(label=_('Quality'), order=33, tooltip=_('Quality value used on some pack formats.'),
         length=1, defvalue='6', minValue=1, maxValue=9, required=True,
         tab=gui.ADVANCED_TAB)
-
-
 
     def isAvailableFor(self, userService, ip):
         '''

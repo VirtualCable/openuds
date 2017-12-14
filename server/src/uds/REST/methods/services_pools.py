@@ -129,7 +129,7 @@ class ServicesPools(ModelHandler):
             'cache_l1_srvs': item.cache_l1_srvs,
             'cache_l2_srvs': item.cache_l2_srvs,
             'max_srvs': item.max_srvs,
-            'user_services_count': item.userServices.count(),
+            'user_services_count': item.userServices.exclude(state__in=State.INFO_STATES).count(),
             'user_services_in_preparation': item.userServices.filter(state=State.PREPARING).count(),
             'restrained': item.isRestrained(),
             'show_transports': item.show_transports,

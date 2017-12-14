@@ -45,14 +45,12 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds.models import UserService
 
-
 import datetime
 import six
 
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 # Actor key, configurable in Security Section of administration interface
 actorKey = Config.Config.section(Config.SECURITY_SECTION).value('Master Key',
@@ -100,8 +98,8 @@ class Actor(Handler):
         '''
         # Ensures that key is first parameter
         # Here, path will be .../actor/ACTION/KEY (probably /rest/actor/KEY/...)
-        logger.debug('{} == {}'.format(self._params.get('key'), actorKey.get(True)))
-        if self._params.get('key') != actorKey.get(True):
+        # logger.debug('{} == {}'.format(self._params.get('key'), actorKey.get()))
+        if self._params.get('key') != actorKey.get():
             return Actor.result(_('Invalid key'), error=ERR_INVALID_KEY)
         return None
 

@@ -34,7 +34,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-
 from uds.models import Service, UserService, Tag
 
 from uds.core.services import Service as coreService
@@ -93,7 +92,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'type': item.data_type,
             'type_name': _(itemType.name()),
             'deployed_services_count': item.deployedServices.count(),
-            'user_services_count': UserService.objects.filter(deployed_service__service=item).exclude(state__in=(State.REMOVED, State.ERROR)).count(),
+            'user_services_count': UserService.objects.filter(deployed_service__service=item).exclude(state__in=State.INFO_STATES).count(),
             'maintenance_mode': item.provider.maintenance_mode,
             'permission': perm
         }
