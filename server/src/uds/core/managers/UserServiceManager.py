@@ -209,7 +209,7 @@ class UserServiceManager(object):
         '''
         Removes a uService element
         @return: the uService removed (marked for removal)
-        """
+        '''
         with transaction.atomic():
             uService = UserService.objects.select_for_update().get(id=uService.id)
             logger.debug('Removing uService {0}'.format(uService))

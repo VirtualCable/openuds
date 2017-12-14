@@ -248,7 +248,6 @@ class WinDomainOsManager(WindowsOsManager):
             if self.__getGroup(l) is None:
                 return _('Check Error: group "{}" not found (using "cn" to locate it)').format(self._group)
 
-
         return _('Server check was successful')
 
     @staticmethod

@@ -41,12 +41,11 @@ from uds.models import TicketStore
 from .BaseX2GOTransport import BaseX2GOTransport
 from . import x2gofile
 
-
 import logging
 import random
 import string
 
-__updated__ = '2017-01-30'
+__updated__ = '2017-12-14'
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +73,6 @@ class TX2GOTransport(BaseX2GOTransport):
     keyboardLayout = BaseX2GOTransport.keyboardLayout
     pack = BaseX2GOTransport.pack
     quality = BaseX2GOTransport.quality
-
 
     def initialize(self, values):
         if values is not None:

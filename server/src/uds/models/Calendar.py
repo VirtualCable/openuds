@@ -28,11 +28,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 from __future__ import unicode_literals
+
+__updated__ = '2017-12-12'
 
 from django.db import models
 from uds.models.UUIDModel import UUIDModel
@@ -53,9 +55,9 @@ class Calendar(UUIDModel, TaggingMixin):
     modified = models.DateTimeField(auto_now=True)
 
     class Meta:
-        """
+        '''
         Meta class to declare db table
-        """
+        '''
         db_table = 'uds_calendar'
         app_label = 'uds'
 
@@ -64,6 +66,7 @@ class Calendar(UUIDModel, TaggingMixin):
 
         res = UUIDModel.save(self, *args, **kwargs)
 
+        # Basically, recalculates all related actions next execution time...
         try:
             for v in self.calendaraction_set.all(): v.save()
         except Exception:

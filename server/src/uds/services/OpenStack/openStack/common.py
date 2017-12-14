@@ -27,40 +27,35 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 import re
 
 import logging
 
-__updated__ = '2016-03-07'
+__updated__ = '2017-11-21'
 
 logger = logging.getLogger(__name__)
 
-(
-    ACTIVE, BUILDING, DELETED, ERROR,
-    HARD_REBOOT, MIGRATING, PASSWORD,
-    PAUSED, REBOOT, REBUILD, RESCUED,
-    RESIZED, REVERT_RESIZE, SOFT_DELETED,
-    STOPPED, SUSPENDED, UNKNOWN, VERIFY_RESIZE
-) = (
-    'ACTIVE', 'BUILDING', 'DELETED', 'ERROR',
-    'HARD_REBOOT', 'MIGRATING', 'PASSWORD',
-    'PAUSED', 'REBOOT', 'REBUILD', 'RESCUED',
-    'RESIZED', 'REVERT_RESIZE', 'SOFT_DELETED',
-    'STOPPED', 'SUSPENDED', 'UNKNOWN', 'VERIFY_RESIZE'
-)
+(ACTIVE, BUILDING, DELETED, ERROR,
+HARD_REBOOT, MIGRATING, PASSWORD,
+PAUSED, REBOOT, REBUILD, RESCUED,
+RESIZED, REVERT_RESIZE, SOFT_DELETED,
+STOPPED, SUSPENDED, UNKNOWN, VERIFY_RESIZE, SHUTOFF) = ('ACTIVE', 'BUILDING', 'DELETED', 'ERROR',
+                                              'HARD_REBOOT', 'MIGRATING', 'PASSWORD',
+                                              'PAUSED', 'REBOOT', 'REBUILD', 'RESCUED',
+                                              'RESIZED', 'REVERT_RESIZE', 'SOFT_DELETED',
+                                              'STOPPED', 'SUSPENDED', 'UNKNOWN', 'VERIFY_RESIZE', 'SHUTOFF')
 
 
 # Helpers to check statuses
 def statusIsLost(status):
     return status in [DELETED, ERROR, UNKNOWN, SOFT_DELETED]
 
-
 def sanitizeName(name):
-    """
+    '''
     machine names with [a-zA-Z0-9_-]
-    """
+    '''
     return re.sub("[^a-zA-Z0-9._-]", "_", name)

@@ -41,7 +41,7 @@ from . import x2gofile
 import six
 import logging
 
-__updated__ = '2017-01-30'
+__updated__ = '2017-12-14'
 
 logger = logging.getLogger(__name__)
 

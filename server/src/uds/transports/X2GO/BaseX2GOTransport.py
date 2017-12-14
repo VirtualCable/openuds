@@ -47,8 +47,7 @@ import six
 import os
 import logging
 
-__updated__ = '2017-10-09'
-
+__updated__ = '2017-12-14'
 
 logger = logging.getLogger(__name__)
 

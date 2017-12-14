@@ -27,24 +27,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 # pylint: disable=maybe-no-member
 from __future__ import unicode_literals
 
-import datetime
-import logging
-import time
-
-import bitarray
-import six
-
-from uds.core.util.Cache import Cache
+from uds.models.Util import NEVER
 from uds.models.Util import getSqlDatetime
 
-__updated__ = '2017-11-06'
+from uds.models.Calendar import Calendar
 
+from uds.core.util.Cache import Cache
+
+import datetime
+import time
+import six
+import bitarray
+import logging
+
+__updated__ = '2017-12-12'
 
 logger = logging.getLogger(__name__)
 
@@ -110,13 +112,15 @@ class CalendarChecker(object):
 
         return data
 
+
     def _updateEvents(self, checkFrom, startEvent=True):
 
         next_event = None
         for rule in self.calendar.rules.all():
-            if rule.start > checkFrom or (rule.end is not None and rule.end < checkFrom.date()):
+            # logger.debug('RULE: start = {}, checkFrom = {}, end'.format(rule.start.date(), checkFrom.date()))
+            if rule.end is not None and rule.end < checkFrom.date():
                 continue
-
+            # logger.debug('Rule in check interval...')
             if startEvent:
                 event = rule.as_rrule().after(checkFrom)  # At start
             else:
@@ -128,11 +132,11 @@ class CalendarChecker(object):
         return next_event
 
     def check(self, dtime=None):
-        """
+        '''
         Checks if the given time is a valid event on calendar
         @param dtime: Datetime object to check
         TODO: We can improve performance of this by getting from a cache first if we can
-        """
+        '''
         if dtime is None:
             dtime = getSqlDatetime()
 
@@ -154,11 +158,11 @@ class CalendarChecker(object):
         return data[dtime.hour * 60 + dtime.minute]
 
     def nextEvent(self, checkFrom=None, startEvent=True, offset=None):
-        """
+        '''
         Returns next event for this interval
         Returns a list of two elements. First is datetime of event begining, second is timedelta of duration
-        """
-        logger.debug('Obtainint nextEvent')
+        '''
+        logger.debug('Obtaining nextEvent')
         if checkFrom is None:
             checkFrom = getSqlDatetime()
 
@@ -169,7 +173,7 @@ class CalendarChecker(object):
         next_event = CalendarChecker.cache.get(cacheKey, None)
         if next_event is None:
             logger.debug('Regenerating cached nextEvent')
-            next_event = self._updateEvents(checkFrom - offset, startEvent)  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
+            next_event = self._updateEvents(checkFrom + offset, startEvent)  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
             if next_event is not None:
                 next_event += offset
             CalendarChecker.cache.put(cacheKey, next_event, 3600)

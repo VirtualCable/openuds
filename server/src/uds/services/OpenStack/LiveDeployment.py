@@ -39,8 +39,7 @@ from . import openStack
 import pickle
 import logging
 
-__updated__ = '2017-05-17'
-
+__updated__ = '2017-11-21'
 
 logger = logging.getLogger(__name__)
 
@@ -183,8 +182,8 @@ class LiveDeployment(UserDeployment):
 
         if status == openStack.PAUSED:
             self.service().resumeMachine(self._vmid)
-        elif status == openStack.STOPPED:
-            self.service().startMachine(self._vmId)
+        elif status in (openStack.STOPPED, openStack.SHUTOFF):
+            self.service().startMachine(self._vmid)
 
         # Right now, we suppose the machine is ready
 
@@ -384,7 +383,6 @@ class LiveDeployment(UserDeployment):
             self._mac, self._ip = self.service().getNetInfo(self._vmid)
 
         return ret
-
 
     def __checkStart(self):
         """

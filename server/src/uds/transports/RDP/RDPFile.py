@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2011-2017 Virtual Cable S.L.
+# Copyright (c) 2012 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 '''
 Created on Jul 29, 2011
 
@@ -38,7 +37,10 @@ from __future__ import unicode_literals
 
 from uds.core.util import OsDetector
 import six
-import os
+import shlex
+
+__updated__ = '2017-11-29'
+
 
 class RDPFile(object):
     fullScreen = False
@@ -159,7 +161,7 @@ class RDPFile(object):
             params.append('/sec:rdp')
 
         if self.linuxCustomParameters is not None and self.linuxCustomParameters.strip() != '':
-            params.append(self.linuxCustomParameters.strip())
+            params += shlex.split(self.linuxCustomParameters.strip())
 
         return params
 

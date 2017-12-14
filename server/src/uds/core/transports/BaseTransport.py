@@ -189,7 +189,7 @@ class Transport(Module):
         '''
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
-        """
+        ''' 
         return "raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))", \
             'EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'\
             '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'\
