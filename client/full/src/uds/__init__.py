@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 # On centos, old six release does not includes byte2int, nor six.PY2
 import six
 
-VERSION = '2.5.0'
+VERSION = '2.2.0'
 
 __title__ = 'udclient'
 __version__ = VERSION
