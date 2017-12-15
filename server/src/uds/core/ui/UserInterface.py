@@ -87,6 +87,7 @@ class gui(object):
     PARAMETERS_TAB = ugettext_noop('Parameters')
     CREDENTIALS_TAB = ugettext_noop('Credentials')
     TUNNEL_TAB = ugettext_noop('Tunnel')
+    DISPLAY_TAB = ugettext_noop('Display')
 
     # : Static Callbacks simple registry
     callbacks = {}
@@ -347,6 +348,7 @@ class gui(object):
                   tooltip = _('Other info'), rdonly = True)
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
@@ -375,6 +377,7 @@ class gui(object):
                   defvalue = '443', order = 1, tooltip = _('Port (usually 443)'),
                   required = True)
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             minValue = options.get('minValue', '987654321')
@@ -463,6 +466,7 @@ class gui(object):
                   required = True)
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.PASSWORD_TYPE)
@@ -498,6 +502,7 @@ class gui(object):
                   self.hidden.setDefValue(self.parent().serialize())
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._isSerializable = options.get('serializable', '') != ''
@@ -525,6 +530,7 @@ class gui(object):
                   tooltip = _('If checked, will use a ssl connection'))
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.CHECKBOX_TYPE)
@@ -628,6 +634,7 @@ class gui(object):
                   ev = gui.HiddenField() # ....
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._data['values'] = options.get('values', [])
@@ -647,6 +654,7 @@ class gui(object):
             self._data['values'] = values
 
     class ImageChoiceField(InputField):
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._data['values'] = options.get('values', [])
@@ -692,6 +700,7 @@ class gui(object):
                       {'id': '1', 'text': 'datastore1' } ]
                   )
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._data['values'] = options.get('values', [])
@@ -750,6 +759,7 @@ class gui(object):
         '''
         Image field
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
@@ -758,6 +768,7 @@ class gui(object):
         '''
         Informational field (no input is done)
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.INFO_TYPE)
@@ -768,6 +779,7 @@ class UserInterfaceType(type):
     Metaclass definition for moving the user interface descriptions to a usable
     better place
     '''
+
     def __new__(cls, classname, bases, classDict):
         newClassDict = {}
         _gui = {}

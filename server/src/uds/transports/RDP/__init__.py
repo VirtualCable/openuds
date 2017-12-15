@@ -36,10 +36,10 @@ from uds.core.managers.UserPrefsManager import UserPrefsManager, CommonPrefs
 from .RDPTransport import RDPTransport
 from .TRDPTransport import TRDPTransport
 
-UserPrefsManager.manager().registerPrefs('rdp',
-                                         _('Remote Desktop Protocol'),
-                                         [
-                                             CommonPrefs.screenSizePref,
-                                             CommonPrefs.depthPref
-                                         ]
-                                         )
+# UserPrefsManager.manager().registerPrefs('rdp',
+#                                         _('Remote Desktop Protocol'),
+#                                         [
+#                                             CommonPrefs.screenSizePref,
+#                                             CommonPrefs.depthPref
+#                                         ]
+#                                         )

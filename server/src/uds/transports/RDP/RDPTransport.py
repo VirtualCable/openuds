@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-11-14'
+__updated__ = '2017-12-15'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -72,6 +72,10 @@ class RDPTransport(BaseRDPTransport):
     smooth = BaseRDPTransport.smooth
     credssp = BaseRDPTransport.credssp
     multimedia = BaseRDPTransport.multimedia
+
+    screenSize = BaseRDPTransport.screenSize
+    colorDepth = BaseRDPTransport.colorDepth
+
     alsa = BaseRDPTransport.alsa
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
@@ -79,15 +83,17 @@ class RDPTransport(BaseRDPTransport):
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
-        prefs = user.prefs('rdp')
+        # prefs = user.prefs('rdp')
 
         ci = self.getConnectionInfo(userService, user, password)
         username, password, domain = ci['username'], ci['password'], ci['domain']
 
-        width, height = CommonPrefs.getWidthHeight(prefs)
-        depth = CommonPrefs.getDepth(prefs)
+        # width, height = CommonPrefs.getWidthHeight(prefs)
+        # depth = CommonPrefs.getDepth(prefs)
+        width, height = self.screenSize.value.split('x')
+        depth = self.colorDepth.value
 
-        r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
+        r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os['OS'])
         r.address = '{}:{}'.format(ip, 3389)
         r.username = username
         r.password = password
