@@ -44,6 +44,8 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
+__updated__ = '2017-12-15'
+
 
 class RDPTransport(BaseRDPTransport):
     '''
@@ -70,6 +72,10 @@ class RDPTransport(BaseRDPTransport):
     smooth = BaseRDPTransport.smooth
     credssp = BaseRDPTransport.credssp
     multimedia = BaseRDPTransport.multimedia
+
+    screenSize = BaseRDPTransport.screenSize
+    colorDepth = BaseRDPTransport.colorDepth
+
     alsa = BaseRDPTransport.alsa
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
@@ -77,15 +83,17 @@ class RDPTransport(BaseRDPTransport):
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
-        prefs = user.prefs('rdp')
+        # prefs = user.prefs('rdp')
 
         ci = self.getConnectionInfo(userService, user, password)
         username, password, domain = ci['username'], ci['password'], ci['domain']
 
-        width, height = CommonPrefs.getWidthHeight(prefs)
-        depth = CommonPrefs.getDepth(prefs)
+        # width, height = CommonPrefs.getWidthHeight(prefs)
+        # depth = CommonPrefs.getDepth(prefs)
+        width, height = self.screenSize.value.split('x')
+        depth = self.colorDepth.value
 
-        r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
+        r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os['OS'])
         r.enablecredsspsupport = ci.get('sso', self.credssp.isTrue())
         r.address = '{}:{}'.format(ip, 3389)
         r.username = username
@@ -100,7 +108,6 @@ class RDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
         r.smoothFonts = self.smooth.isTrue()
-        r.enablecredsspsupport = self.credssp.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
         r.smartcardString = self.smartcardString.value

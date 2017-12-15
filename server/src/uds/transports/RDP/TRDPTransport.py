@@ -48,6 +48,8 @@ import logging
 import random
 import string
 
+__updated__ = '2017-12-15'
+
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
@@ -86,6 +88,10 @@ class TRDPTransport(BaseRDPTransport):
     smooth = BaseRDPTransport.smooth
     credssp = BaseRDPTransport.credssp
     multimedia = BaseRDPTransport.multimedia
+
+    screenSize = BaseRDPTransport.screenSize
+    colorDepth = BaseRDPTransport.colorDepth
+
     alsa = BaseRDPTransport.alsa
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
@@ -98,13 +104,15 @@ class TRDPTransport(BaseRDPTransport):
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
         # We use helper to keep this clean
-        prefs = user.prefs('rdp')
+        # prefs = user.prefs('rdp')
 
         ci = self.getConnectionInfo(userService, user, password)
         username, password, domain = ci['username'], ci['password'], ci['domain']
 
-        width, height = CommonPrefs.getWidthHeight(prefs)
-        depth = CommonPrefs.getDepth(prefs)
+        # width, height = CommonPrefs.getWidthHeight(prefs)
+        # depth = CommonPrefs.getDepth(prefs)
+        width, height = self.screenSize.value.split('x')
+        depth = self.colorDepth.value
 
         tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
@@ -113,7 +121,7 @@ class TRDPTransport(BaseRDPTransport):
 
         logger.debug('Username generated: {0}, password: {1}'.format(tunuser, tunpass))
 
-        r = RDPFile(width == -1 or height == -1, width, height, depth, target=os['OS'])
+        r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os['OS'])
         r.enablecredsspsupport = ci.get('sso', self.credssp.isTrue())
         r.address = '{address}'
         r.username = username
