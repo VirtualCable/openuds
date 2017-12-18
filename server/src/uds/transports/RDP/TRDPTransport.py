@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-12-15'
+__updated__ = '2017-12-18'
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +82,8 @@ class TRDPTransport(BaseRDPTransport):
     allowDrives = BaseRDPTransport.allowDrives
     allowSerials = BaseRDPTransport.allowSerials
     allowClipboard = BaseRDPTransport.allowClipboard
+    allowAudio = BaseRDPTransport.allowAudio
+
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
@@ -131,6 +133,7 @@ class TRDPTransport(BaseRDPTransport):
         r.redirectDrives = self.allowDrives.isTrue()
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()
+        r.redirectAudio = self.allowAudio.isTrue()
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()

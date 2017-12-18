@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-12-15'
+__updated__ = '2017-12-18'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -66,6 +66,8 @@ class RDPTransport(BaseRDPTransport):
     allowDrives = BaseRDPTransport.allowDrives
     allowSerials = BaseRDPTransport.allowSerials
     allowClipboard = BaseRDPTransport.allowClipboard
+    allowAudio = BaseRDPTransport.allowAudio
+
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
@@ -103,6 +105,7 @@ class RDPTransport(BaseRDPTransport):
         r.redirectDrives = self.allowDrives.isTrue()
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()
+        r.redirectAudio = self.allowAudio.isTrue()
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
