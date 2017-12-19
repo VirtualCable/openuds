@@ -56,9 +56,8 @@ class NXTransport(Transport):
     '''
     typeName = _('NX Transport')
     typeType = 'NXTransport'
-    typeDescription = _('NX Protocol. Firect connection.')
+    typeDescription = _('NX Protocol. Direct connection.')
     iconFile = 'nx.png'
-    needsJava = True  # If this transport needs java for rendering
     protocol = protocols.NX
 
     useEmptyCreds = gui.CheckBoxField(label=_('Empty creds'), order=1, tooltip=_('If checked, the credentials used to connect will be emtpy'), tab=gui.CREDENTIALS_TAB)
