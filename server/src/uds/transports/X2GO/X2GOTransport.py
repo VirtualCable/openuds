@@ -50,7 +50,7 @@ class X2GOTransport(BaseX2GOTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('X2Go Transport Experimental')
+    typeName = _('X2Go Transport (Experimental)')
     typeType = 'X2GOTransport'
     typeDescription = _('X2Go Protocol (Experimental). Direct connection.')
 
