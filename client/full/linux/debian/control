@@ -10,6 +10,6 @@ Package: udsclient
 Section: admin
 Priority: optional
 Architecture: all
-Depends: python-paramiko (>=0.8.2), python-qt4 (>=4.9), python-six(>=1.1), python (>=2.7), rdesktop | freerdp-x11, desktop-file-utils, ${misc:Depends}
+Depends: python-paramiko (>=0.8.2), python-qt4 (>=4.9), python-six(>=1.1), python (>=2.7), freerdp-x11 | rdesktop, desktop-file-utils, ${misc:Depends}
 Description: Client connector for Universal Desktop Services (UDS) Broker
  This package provides the required components to allow this machine to connect to services provided by UDS Broker.

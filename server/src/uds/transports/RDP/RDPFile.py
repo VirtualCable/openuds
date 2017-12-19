@@ -39,7 +39,7 @@ from uds.core.util import OsDetector
 import six
 import shlex
 
-__updated__ = '2017-12-18'
+__updated__ = '2017-12-19'
 
 
 class RDPFile(object):
@@ -100,8 +100,11 @@ class RDPFile(object):
         if self.enableClipboard:
             params.append('/clipboard')
 
-        if self.redirectSmartcards and self.smartcardString not in (None, ''):
-            params.append('/smartcard:{}'.format(self.smartcardString))
+        if self.redirectSmartcards:
+            if self.smartcardString not in (None, ''):
+                params.append('/smartcard:{}'.format(self.smartcardString))
+            else:
+                params.append('/smartcard')
 
         if self.redirectAudio:
             if self.alsa:
