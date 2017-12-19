@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
@@ -38,22 +38,21 @@ from uds.core.util import tools
 from .BaseX2GOTransport import BaseX2GOTransport
 from . import x2gofile
 
-import six
 import logging
 
-__updated__ = '2017-12-14'
+__updated__ = '2017-12-19'
 
 logger = logging.getLogger(__name__)
 
 
 class X2GOTransport(BaseX2GOTransport):
-    """
+    '''
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    """
-    typeName = _('X2Go Transport Experimental (direct)')
+    '''
+    typeName = _('X2Go Transport Experimental')
     typeType = 'X2GOTransport'
-    typeDescription = _('X2Go Transport for direct connection (EXPERIMENTAL)')
+    typeDescription = _('X2Go Protocol (Experimental). Direct connection.')
 
     fixedName = BaseX2GOTransport.fixedName
     # fullScreen = BaseX2GOTransport.fullScreen

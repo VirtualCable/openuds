@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-12-15'
+__updated__ = '2017-12-18'
 
 logger = logging.getLogger(__name__)
 
@@ -60,12 +60,14 @@ class BaseRDPTransport(Transport):
     fixedPassword = gui.PasswordField(label=_('Password'), order=13, tooltip=_('If not empty, this password will be always used as credential'), tab=gui.CREDENTIALS_TAB)
     withoutDomain = gui.CheckBoxField(label=_('Without Domain'), order=14, tooltip=_('If checked, the domain part will always be emptied (to connect to xrdp for example is needed)'), tab=gui.CREDENTIALS_TAB)
     fixedDomain = gui.TextField(label=_('Domain'), order=15, tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'), tab=gui.CREDENTIALS_TAB)
+
     allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=20, tooltip=_('If checked, this transport will allow the use of smartcards'), tab=gui.PARAMETERS_TAB)
     allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=21, tooltip=_('If checked, this transport will allow the use of user printers'), tab=gui.PARAMETERS_TAB)
     allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=22, tooltip=_('If checked, this transport will allow the use of user drives'), tab=gui.PARAMETERS_TAB)
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=23, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
     allowClipboard = gui.CheckBoxField(label=_('Enable clipboard'), order=24, tooltip=_('If checked, copy-paste functions will be allowed'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
-    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=25, tooltip=_('If checked, will enable Credentials Provider Support)'), tab=gui.PARAMETERS_TAB)
+    allowAudio = gui.CheckBoxField(label=_('Enable sound'), order=25, tooltip=_('If checked, sound will be redirected.'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
+    credssp = gui.CheckBoxField(label=_('Credssp Support'), order=26, tooltip=_('If checked, will enable Credentials Provider Support)'), tab=gui.PARAMETERS_TAB)
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),

@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-12-15'
+__updated__ = '2017-12-19'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -52,9 +52,9 @@ class RDPTransport(BaseRDPTransport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('RDP Transport (direct)')
+    typeName = _('RDP Transport')
     typeType = 'RDPTransport'
-    typeDescription = _('RDP Transport for direct connection')
+    typeDescription = _('RDP Protocol. Direct connection.')
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName
@@ -66,6 +66,8 @@ class RDPTransport(BaseRDPTransport):
     allowDrives = BaseRDPTransport.allowDrives
     allowSerials = BaseRDPTransport.allowSerials
     allowClipboard = BaseRDPTransport.allowClipboard
+    allowAudio = BaseRDPTransport.allowAudio
+
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
@@ -104,6 +106,7 @@ class RDPTransport(BaseRDPTransport):
         r.redirectDrives = self.allowDrives.isTrue()
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()
+        r.redirectAudio = self.allowAudio.isTrue()
         r.showWallpaper = self.wallpaper.isTrue()
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
