@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 '''
 Created on Jul 29, 2011
 
@@ -55,9 +54,9 @@ class NXTransport(Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('NX Transport (direct)')
+    typeName = _('NX Transport')
     typeType = 'NXTransport'
-    typeDescription = _('NX Transport for direct connection')
+    typeDescription = _('NX Protocol. Firect connection.')
     iconFile = 'nx.png'
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.NX

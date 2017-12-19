@@ -45,7 +45,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-12-14'
+__updated__ = '2017-12-19'
 
 logger = logging.getLogger(__name__)
 
@@ -55,9 +55,9 @@ class TX2GOTransport(BaseX2GOTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('X2Go Transport Experimental (tunneled)')
+    typeName = _('X2Go Transport (Experimental)')
     typeType = 'TX2GOTransport'
-    typeDescription = _('X2Go Transport for tunneled connection (EXPERIMENTAL)')
+    typeDescription = _('X2Go Protocol (Experimental). Tunneled connection.')
     group = TUNNELED_GROUP
 
     tunnelServer = gui.TextField(label=_('Tunnel server'), order=1, tooltip=_('IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'), tab=gui.TUNNEL_TAB)

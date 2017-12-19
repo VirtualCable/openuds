@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 '''
 Created on Jul 29, 2011
 
@@ -60,9 +59,9 @@ class TSNXTransport(Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('NX Transport (tunneled)')
+    typeName = _('NX Transport')
     typeType = 'TSNXTransport'
-    typeDescription = _('NX Transport for tunneled connection')
+    typeDescription = _('NX protocol. Tunneled connection.')
     iconFile = 'nx.png'
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.NX

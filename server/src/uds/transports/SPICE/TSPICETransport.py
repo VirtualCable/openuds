@@ -47,7 +47,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-05-09'
+__updated__ = '2017-12-19'
 
 logger = logging.getLogger(__name__)
 
@@ -57,9 +57,9 @@ class TSPICETransport(BaseSpiceTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('SPICE Transport (tunneled)')
+    typeName = _('SPICE Transport ')
     typeType = 'TSSPICETransport'
-    typeDescription = _('SPICE Transport for tunneled connection  (EXPERIMENTAL)')
+    typeDescription = _('SPICE Protocol. Tunneled connection.')
     needsJava = True  # If this transport needs java for rendering
     protocol = protocols.SPICE
     group = TUNNELED_GROUP
