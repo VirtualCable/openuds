@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-09 09:19+0200\n"
+"POT-Creation-Date: 2017-12-19 22:34+0100\n"
 "PO-Revision-Date: 2017-10-05 08:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -20,20 +20,20 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: REST/methods/actor.py:95 REST/methods/client.py:92
-#: REST/methods/client.py:109
+#: REST/methods/actor.py:93 REST/methods/client.py:93
+#: REST/methods/client.py:110
 msgid "Correct"
 msgstr "صحيح"
 
-#: REST/methods/actor.py:105
+#: REST/methods/actor.py:103
 msgid "Invalid key"
 msgstr "المفتاح غير صالح"
 
-#: REST/methods/actor.py:171
+#: REST/methods/actor.py:169
 msgid "Unmanaged host"
 msgstr "مضيف غير مدار"
 
-#: REST/methods/actor.py:203 web/errors.py:79
+#: REST/methods/actor.py:201 web/errors.py:79
 msgid "User service not found"
 msgstr "لم يتم العثور على خدمة المستخدم"
 
@@ -49,7 +49,7 @@ msgstr "معرف"
 #: REST/methods/images.py:61 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
-#: REST/methods/services_pools.py:77 REST/methods/transports.py:57
+#: REST/methods/services_pools.py:80 REST/methods/transports.py:57
 #: REST/methods/user_services.py:235 REST/methods/user_services.py:270
 #: REST/methods/users_groups.py:113 REST/model.py:132
 #: templates/uds/admin/tmpl/calendar_rule.html:5
@@ -62,10 +62,10 @@ msgstr "الاسم"
 
 #: REST/methods/authenticators.py:61 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:72 REST/methods/services.py:190
+#: REST/methods/providers.py:72 REST/methods/services.py:189
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:262 REST/model.py:140
+#: REST/methods/users_groups.py:262 REST/model.py:150
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -73,12 +73,12 @@ msgstr "تعليقات"
 
 #: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:269 REST/model.py:149
+#: REST/methods/user_services.py:269 REST/model.py:159
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "الأولوية"
 
-#: REST/methods/authenticators.py:63 REST/model.py:160
+#: REST/methods/authenticators.py:63 REST/model.py:170
 msgid "Label"
 msgstr "التسمية"
 
@@ -95,8 +95,8 @@ msgstr "المستخدمين"
 
 #: REST/methods/authenticators.py:65 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:76 REST/methods/services.py:194
-#: REST/methods/services_pools.py:84 REST/methods/transports.py:60
+#: REST/methods/providers.py:76 REST/methods/services.py:193
+#: REST/methods/services_pools.py:87 REST/methods/transports.py:60
 msgid "tags"
 msgstr "العلامات"
 
@@ -129,7 +129,7 @@ msgstr "كل"
 msgid "Duration"
 msgstr "المدة"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:155
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:154
 msgid "Element already exists (duplicate key error)"
 msgstr "عنصر موجود بالفعل (خطأ مفتاح مكرر)"
 
@@ -260,45 +260,45 @@ msgstr "الوصف"
 msgid "Generates"
 msgstr "يقوم بإنشاء"
 
-#: REST/methods/services.py:159
+#: REST/methods/services.py:158
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "إدخال خطأ: {0}"
 
-#: REST/methods/services.py:183
+#: REST/methods/services.py:182
 #, python-brace-format
 msgid "Services of {0}"
 msgstr "خدمات {0}"
 
-#: REST/methods/services.py:185
+#: REST/methods/services.py:184
 msgid "Current services"
 msgstr "الخدمات الحالية"
 
-#: REST/methods/services.py:189
+#: REST/methods/services.py:188
 msgid "Service name"
 msgstr "اسم الخدمة"
 
-#: REST/methods/services.py:191 REST/methods/user_services.py:271
+#: REST/methods/services.py:190 REST/methods/user_services.py:271
 msgid "Type"
 msgstr "نوع"
 
-#: REST/methods/services.py:192 templates/uds/admin/tmpl/group-info.html:4
+#: REST/methods/services.py:191 templates/uds/admin/tmpl/group-info.html:4
 #: templates/uds/admin/tmpl/service-info.html:5
 #: templates/uds/admin/tmpl/user-info.html:5
 msgid "Services Pools"
 msgstr "تجمعات الخدمة"
 
-#: REST/methods/services.py:193 REST/methods/services_pools.py:79
+#: REST/methods/services.py:192 REST/methods/services_pools.py:82
 #: templates/uds/admin/tmpl/dashboard.html:88
 msgid "User services"
 msgstr "خدمات المستخدم"
 
-#: REST/methods/services.py:247 REST/methods/users_groups.py:201
+#: REST/methods/services.py:246 REST/methods/users_groups.py:201
 #: REST/methods/users_groups.py:354
 msgid "With errors"
 msgstr "مع الأخطاء"
 
-#: REST/methods/services.py:247 REST/methods/users_groups.py:201
+#: REST/methods/services.py:246 REST/methods/users_groups.py:201
 #: REST/methods/users_groups.py:354
 msgid "Ok"
 msgstr "موافق"
@@ -308,7 +308,7 @@ msgid "Access restrictions by calendar"
 msgstr "تقييدات الوصول بالتقويم"
 
 #: REST/methods/services_pool_calendars.py:90
-#: REST/methods/services_pool_calendars.py:156
+#: REST/methods/services_pool_calendars.py:155
 #: templates/uds/admin/tmpl/pool_add_access.html:12
 #: templates/uds/admin/tmpl/pool_add_action.html:5
 msgid "Calendar"
@@ -319,33 +319,33 @@ msgstr "التقويم"
 msgid "Access"
 msgstr "الوصول إلى"
 
-#: REST/methods/services_pool_calendars.py:152
+#: REST/methods/services_pool_calendars.py:151
 #: templates/uds/admin/tmpl/services_pool.html:36
 msgid "Scheduled actions"
 msgstr "الإجراءات المقررة"
 
-#: REST/methods/services_pool_calendars.py:157
+#: REST/methods/services_pool_calendars.py:156
 #: templates/uds/admin/tmpl/pool_add_action.html:35
 msgid "Action"
 msgstr "عمل"
 
-#: REST/methods/services_pool_calendars.py:158 core/ui/UserInterface.py:87
+#: REST/methods/services_pool_calendars.py:157 core/ui/UserInterface.py:87
 msgid "Parameters"
 msgstr "معلمات"
 
-#: REST/methods/services_pool_calendars.py:159
+#: REST/methods/services_pool_calendars.py:158
 msgid "Relative to"
 msgstr "بالنسبة إلى"
 
-#: REST/methods/services_pool_calendars.py:160
+#: REST/methods/services_pool_calendars.py:159
 msgid "Time offset"
 msgstr "الإزاحة بالتوقيت"
 
-#: REST/methods/services_pool_calendars.py:161
+#: REST/methods/services_pool_calendars.py:160
 msgid "Next execution"
 msgstr "تنفيذ التالي"
 
-#: REST/methods/services_pool_calendars.py:162
+#: REST/methods/services_pool_calendars.py:161
 msgid "Last execution"
 msgstr "آخر إعدام"
 
@@ -353,116 +353,159 @@ msgstr "آخر إعدام"
 msgid "Services Pool Groups"
 msgstr "خدمات تجمع مجموعات"
 
-#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:171
+#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:200
 msgid "Associated Image"
 msgstr "الصورة المرتبطة بها"
 
-#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:172
+#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:201
 msgid "Image assocciated with this service"
 msgstr "الصورة المرتبطة مع هذه الخدمة"
 
-#: REST/methods/services_pools.py:75
+#: REST/methods/services_pools.py:78
 #: templates/uds/admin/snippets/navbar.html:27
 #: templates/uds/admin/tmpl/services_pool.html:4
 #: templates/uds/admin/tmpl/services_pool.html:7
 msgid "Service Pools"
 msgstr "تجمعات الخدمة "
 
-#: REST/methods/services_pools.py:78 REST/methods/user_services.py:132
+#: REST/methods/services_pools.py:81 REST/methods/user_services.py:132
 msgid "status"
 msgstr "مركز"
 
-#: REST/methods/services_pools.py:80
+#: REST/methods/services_pools.py:83
 msgid "In Preparation"
 msgstr "قيد التهيئ "
 
-#: REST/methods/services_pools.py:81
+#: REST/methods/services_pools.py:84
 msgid "Shows transports"
 msgstr "تبين عمليات النقل"
 
-#: REST/methods/services_pools.py:82
+#: REST/methods/services_pools.py:85
 msgid "Pool Group"
 msgstr "تجمع مجموعات"
 
-#: REST/methods/services_pools.py:83
+#: REST/methods/services_pools.py:86
 msgid "Parent Service"
 msgstr "الخدمة الأم"
 
-#: REST/methods/services_pools.py:96 REST/methods/services_pools.py:178
+#: REST/methods/services_pools.py:98 REST/methods/services_pools.py:207
 msgid "Default"
 msgstr "افتراضي"
 
-#: REST/methods/services_pools.py:146
+#: REST/methods/services_pools.py:151
 msgid "Create at least one OS Manager before creating a new service pool"
 msgstr "إنشاء مدير واحد على الأقل لنظام التشغيل قبل إنشاء تجمع جديد للخدمة"
 
-#: REST/methods/services_pools.py:148
+#: REST/methods/services_pools.py:153
 msgid "Create at least a service before creating a new service pool"
 msgstr "قم بإنشاء على الأقل خدمة قبل إنشاء تجمع جديد للخدمة"
 
-#: REST/methods/services_pools.py:155
+#: REST/methods/services_pools.py:160
 msgid "Base service"
 msgstr "خدمة قاعدة"
 
-#: REST/methods/services_pools.py:156
+#: REST/methods/services_pools.py:161
 msgid "Service used as base of this service pool"
 msgstr "الخدمة التي تستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:163
+#: REST/methods/services_pools.py:168
 msgid "OS Manager"
 msgstr "إدارة نظام التشغيل"
 
-#: REST/methods/services_pools.py:164
+#: REST/methods/services_pools.py:169
 msgid "OS Manager used as base of this service pool"
 msgstr "إدارة نظام التشغيل يستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:175 REST/methods/services_pools.py:183
-#: services/OVirt/OVirtLinkedService.py:175
+#: REST/methods/services_pools.py:176
+msgid "Show transports"
+msgstr "إظهار النقل"
+
+#: REST/methods/services_pools.py:177
+msgid "If active, alternative transports for user will be shown"
+msgstr "في حالة نشطة، سيظهر النقل البديل للمستخدم"
+
+#: REST/methods/services_pools.py:180 REST/methods/services_pools.py:188
+#: REST/methods/services_pools.py:196 auths/RegexLdap/Authenticator.py:71
+#: core/ui/UserInterface.py:86
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
+#: services/OpenGnsys/OGService.py:130
+msgid "Advanced"
+msgstr "متقدم"
+
+#: REST/methods/services_pools.py:184
+msgid "Allow removal by users"
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.3431689E"
+
+#: REST/methods/services_pools.py:185
+msgid ""
+"If active, the user will be allowed to remove the service \"manually\". Be "
+"care with this, because the user will have the \"poser\" to delete it's own "
+"service"
+msgstr ""
+"إذا نشط، سيسمح للمستخدم بإزالة الخدمة \"يدوياً\". تكون "
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33858A33"
+"خدمة"
+
+#: REST/methods/services_pools.py:192
+msgid "Ignores unused"
+msgstr "يتجاهل غير المستخدمة"
+
+#: REST/methods/services_pools.py:193
+msgid ""
+"If active, UDS will not try to detect and remove assigned but not used user "
+"services."
+msgstr ""
+"في حالة نشطة، المصغرة لن يحاول اكتشاف وإزالة المستخدم المعينة ولكن لا تستخدمها "
+"خدمات."
+
+#: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
+#: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
 msgid "Display"
 msgstr "عرض"
 
-#: REST/methods/services_pools.py:179
+#: REST/methods/services_pools.py:208
 msgid "Pool group"
 msgstr "تجمع مجموعات"
 
-#: REST/methods/services_pools.py:180
+#: REST/methods/services_pools.py:209
 msgid "Pool group for this pool (for pool clasify on display)"
 msgstr "تجمع مجموعات لهذا التجمع  (لترتيب التجمعات عند العرض)"
 
-#: REST/methods/services_pools.py:188
+#: REST/methods/services_pools.py:217
 msgid "Initial available services"
 msgstr "أولى الخدمات المتاحة"
 
-#: REST/methods/services_pools.py:189
+#: REST/methods/services_pools.py:218
 msgid "Services created initially for this service pool"
 msgstr "الخدمات التي تم إنشاؤها في البداية لتجمع هذه الخدمة"
 
-#: REST/methods/services_pools.py:192 REST/methods/services_pools.py:201
-#: REST/methods/services_pools.py:210 REST/methods/services_pools.py:219
+#: REST/methods/services_pools.py:221 REST/methods/services_pools.py:230
+#: REST/methods/services_pools.py:239 REST/methods/services_pools.py:248
 msgid "Availability"
 msgstr "توافر"
 
-#: REST/methods/services_pools.py:197
+#: REST/methods/services_pools.py:226
 msgid "Services to keep in cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت"
 
-#: REST/methods/services_pools.py:198
+#: REST/methods/services_pools.py:227
 msgid "Services kept in cache for improved user service assignation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت لإسناد خدمة مستخدم محسنة"
 
-#: REST/methods/services_pools.py:206
+#: REST/methods/services_pools.py:235
 msgid "Services to keep in L2 cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت L2"
 
-#: REST/methods/services_pools.py:207
+#: REST/methods/services_pools.py:236
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت من L2 لتحسين خدمة الجيل"
 
-#: REST/methods/services_pools.py:215
+#: REST/methods/services_pools.py:244
 msgid "Maximum number of services to provide"
 msgstr "الحد الأقصى لعدد الخدمات المتوفرة"
 
-#: REST/methods/services_pools.py:216
+#: REST/methods/services_pools.py:245
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -470,19 +513,11 @@ msgstr ""
 "الحد الأقصى لعدد من الخدمات (المعينة ومخبأة في L1) التي يمكن أن تنشأ عن هذه "
 "الخدمة"
 
-#: REST/methods/services_pools.py:223
-msgid "Show transports"
-msgstr "إظهار النقل"
-
-#: REST/methods/services_pools.py:224
-msgid "If active, alternative transports for user will be shown"
-msgstr "في حالة نشطة، سيظهر النقل البديل للمستخدم"
-
-#: REST/methods/services_pools.py:239
+#: REST/methods/services_pools.py:261
 msgid "Base service does not exist anymore"
 msgstr "خدمة قاعدة غير موجود بعد الآن"
 
-#: REST/methods/services_pools.py:258
+#: REST/methods/services_pools.py:280
 msgid "This service requires an OS Manager"
 msgstr "تتطلب هذه الخدمة إدارة نظام التشغيل"
 
@@ -560,9 +595,8 @@ msgstr ""
 "إذا كانت محددة، سيتم تمكين النقل لشبكات مختارة. إذا كان غير محدد، سيتم تعطيل "
 "النقل لشبكات مختارة"
 
-#: REST/methods/transports.py:81
-#: services/Nutanix_enterprise/NutanixService.py:51
-#: templates/uds/html5/index.html:126 templates/uds/semantic/index.html:29
+#: REST/methods/transports.py:81 templates/uds/html5/index.html:132
+#: templates/uds/semantic/index.html:29
 msgid "Networks"
 msgstr "الشبكات"
 
@@ -685,14 +719,14 @@ msgstr "المستخدمون الحاليون"
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
 #: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:105
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:29
-#: services/Vmware_enterprise/ServiceProviderVC.py:31
+#: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
-#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
-#: transports/PCoIP_enterprise/PCoIPTransport.py:60
-#: transports/RDP/BaseRDPTransport.py:62
-#: transports/RGS_enterprise/RGSTransport.py:45
-#: transports/RGS_enterprise/TRGSTransport.py:55
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/PCoIP_enterprise/PCoIPTransport.py:59
+#: transports/RDP/BaseRDPTransport.py:61
+#: transports/RGS_enterprise/RGSTransport.py:46
+#: transports/RGS_enterprise/TRGSTransport.py:56
 #: transports/SPICE/BaseSPICETransport.py:72
 #: transports/X2GO/BaseX2GOTransport.py:69 web/forms/LoginForm.py:63
 msgid "Username"
@@ -745,35 +779,45 @@ msgid "Name of this element"
 msgstr "اسم هذا العنصر"
 
 #: REST/model.py:141
+#| msgid "Your pet's name"
+msgid "Short name"
+msgstr "الاسم المختصر"
+
+#: REST/model.py:142
+#| msgid "Services kept in cache for improved user service assignation"
+msgid "Short name for user service visualization"
+msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33858D83"
+
+#: REST/model.py:151
 msgid "Comments for this element"
 msgstr "تعليقات لهذا العنصر"
 
-#: REST/model.py:150
+#: REST/model.py:160
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr "تحديد أولوية هذا العنصر (انخفاض عدد الوسائل أولوية عليا)"
 
-#: REST/model.py:161
+#: REST/model.py:171
 msgid "Label for this element"
 msgstr "تسمية لهذا العنصر"
 
-#: REST/model.py:246
+#: REST/model.py:256
 msgid "Invalid Request"
 msgstr "طلب غير صالح"
 
-#: REST/model.py:253
+#: REST/model.py:263
 msgid "Method not found in {}: {}"
 msgstr "تعذر العثور على الأسلوب في {}: {}"
 
-#: REST/model.py:259
+#: REST/model.py:269
 msgid "Item not found"
 msgstr "تعذر العثور على عنصر"
 
-#: REST/model.py:264 web/errors.py:75
+#: REST/model.py:274 web/errors.py:75
 msgid "Access denied"
 msgstr "تم رفض الوصول"
 
-#: REST/model.py:267
+#: REST/model.py:277
 msgid "Operation not supported"
 msgstr "العملية غير معتمدة"
 
@@ -806,7 +850,7 @@ msgstr "قائمة المستخدمين ل {}"
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
 #: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:98
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:26
-#: services/Vmware_enterprise/ServiceProviderVC.py:29
+#: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:99
 msgid "Host"
 msgstr "المضيف"
@@ -866,14 +910,14 @@ msgstr ""
 #: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:106
 #: services/Sample/SampleService.py:131
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
-#: services/Vmware_enterprise/ServiceProviderVC.py:32
+#: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
-#: transports/PCoIP_enterprise/PCoIPTransport.py:61
-#: transports/RDP/BaseRDPTransport.py:63
-#: transports/RGS_enterprise/RGSTransport.py:46
-#: transports/RGS_enterprise/TRGSTransport.py:56
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
+#: transports/PCoIP_enterprise/PCoIPTransport.py:60
+#: transports/RDP/BaseRDPTransport.py:62
+#: transports/RGS_enterprise/RGSTransport.py:47
+#: transports/RGS_enterprise/TRGSTransport.py:57
 #: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:64
 msgid "Password"
 msgstr "كلمة المرور"
@@ -893,7 +937,7 @@ msgstr "كلمة مرور المستخدم ldap"
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
 #: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:111
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:36
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout"
 msgstr "مهلة"
 
@@ -972,7 +1016,7 @@ msgstr "EDirectory Server IP أو اسم المضيف"
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
 #: services/OpenStack/Provider.py:99
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:27
-#: services/Vmware_enterprise/ServiceProviderVC.py:30
+#: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Port"
 msgstr "منفذ"
 
@@ -1161,13 +1205,6 @@ msgid ""
 msgstr ""
 "فئة لكائنات LDAP التي سيتم التحقق منها أيضا لاسترجاعها المجموعات (عادة فارغة)"
 
-#: auths/RegexLdap/Authenticator.py:71 core/ui/UserInterface.py:86
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
-#: services/OpenGnsys/OGService.py:130
-msgid "Advanced"
-msgstr "متقدم"
-
 #: auths/RegexLdap/Authenticator.py:73
 msgid "Regex LDAP Authenticator"
 msgstr "المصادق Regex LDAP"
@@ -1276,7 +1313,7 @@ msgstr "Real name attrs"
 msgid "Fields from where to extract the real name"
 msgstr "حقول منها يستخرج الاسم الحقيقي"
 
-#: auths/SAML_enterprise/SAML.py:162
+#: auths/SAML_enterprise/SAML.py:161
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1284,11 +1321,11 @@ msgstr ""
 "يجب أن تكون شهادة الملقم PEM صالحة (PEM شهادات تبدأ ب-----BEGIN "
 "CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/SAML.py:167
+#: auths/SAML_enterprise/SAML.py:166
 msgid "Invalid server certificate. "
 msgstr "شهادة الملقم غير صالحة. "
 
-#: auths/SAML_enterprise/SAML.py:170
+#: auths/SAML_enterprise/SAML.py:169
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1296,20 +1333,25 @@ msgstr ""
 "يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN "
 "RSA PRIVATE KEY-----"
 
-#: auths/SAML_enterprise/SAML.py:202
+#: auths/SAML_enterprise/SAML.py:181
+#| msgid "Invalid key"
+msgid "Invalid private key. "
+msgstr "المفتاح الخاص غير صالحة. "
+
+#: auths/SAML_enterprise/SAML.py:201
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "لا يمكن إحضار url {0}: {1}"
 
-#: auths/SAML_enterprise/SAML.py:213
+#: auths/SAML_enterprise/SAML.py:212
 msgid " (obtained from URL)"
 msgstr " (تم الحصول عليها من URL)"
 
-#: auths/SAML_enterprise/SAML.py:214
+#: auths/SAML_enterprise/SAML.py:213
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML لا تبدو صالحة لبيانات التعريف IDP Metadata"
 
-#: auths/SAML_enterprise/SAML.py:235
+#: auths/SAML_enterprise/SAML.py:233
 msgid "Can't access idp metadata"
 msgstr "لا يمكن الوصول إلى بيانات التعريف IDP Metadata"
 
@@ -1408,11 +1450,11 @@ msgstr ""
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "لا يمكن تحديد موقع أي مجموعة مع السمة العضوية المحددة"
 
-#: core/BaseModule.py:200
+#: core/BaseModule.py:197
 msgid "No connection checking method is implemented."
 msgstr "لم ينفذ أي اتصال بالتحقق من الأسلوب."
 
-#: core/BaseModule.py:269
+#: core/BaseModule.py:266
 msgid "No check method provided."
 msgstr "لم يقدم  أسلوب الاختيار ."
 
@@ -1436,7 +1478,7 @@ msgstr "لا يمكن إنشاء المستخدمين داخل هذا مصدق"
 msgid "System Administrator"
 msgstr "مسؤول النظام"
 
-#: core/auths/auth.py:124
+#: core/auths/auth.py:126
 msgid "Forbidden"
 msgstr "ممنوع"
 
@@ -1461,7 +1503,7 @@ msgstr "لا يمكن إلغاء نشر منشور غير صالح للاستع�
 msgid "Can't unpublish publications with services in process"
 msgstr "لا يمكن إلغاء نشر المنشورات مع خدمات في طور الإستعمال"
 
-#: core/managers/UserPrefsManager.py:293
+#: core/managers/UserPrefsManager.py:293 transports/RDP/BaseRDPTransport.py:75
 msgid "Screen Size"
 msgstr "حجم الشاشة"
 
@@ -1518,11 +1560,11 @@ msgstr "إدارة قاعدة نظام التشغيل "
 msgid "Base Manager"
 msgstr "مدير قاعدة"
 
-#: core/reports/BaseReport.py:49
+#: core/reports/BaseReport.py:51
 msgid "Base Report"
 msgstr "تقرير قاعدة"
 
-#: core/reports/BaseReport.py:50
+#: core/reports/BaseReport.py:52
 msgid "Base report"
 msgstr "تقرير قاعدة"
 
@@ -1546,11 +1588,11 @@ msgstr "لا شيء"
 msgid "Base Clustered Service"
 msgstr "قاعدة خدمة عنقودية"
 
-#: core/transports/BaseTransport.py:47
+#: core/transports/BaseTransport.py:48
 msgid "Direct"
 msgstr "مباشر"
 
-#: core/transports/BaseTransport.py:48
+#: core/transports/BaseTransport.py:49
 msgid "Tunneled"
 msgstr "نفقي"
 
@@ -1948,11 +1990,11 @@ msgstr "مدير نظام التشغيل للسيطرة على أجهزة وين
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 #: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:76
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:76
-#: transports/PCoIP_enterprise/PCoIPTransport.py:62
-#: transports/RDP/BaseRDPTransport.py:65
-#: transports/RDS_enterprise/BaseRDSTransport.py:68
-#: transports/RGS_enterprise/RGSTransport.py:47
-#: transports/RGS_enterprise/TRGSTransport.py:57
+#: transports/PCoIP_enterprise/PCoIPTransport.py:61
+#: transports/RDP/BaseRDPTransport.py:64
+#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RGS_enterprise/RGSTransport.py:48
+#: transports/RGS_enterprise/TRGSTransport.py:58
 msgid "Domain"
 msgstr "مجال"
 
@@ -2369,7 +2411,8 @@ msgstr "عدد من الآلات المطلوبة للحفاظ على التوا
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:82
 #: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
-#: services/Vmware_enterprise/VCLinkedCloneService.py:42
+#: services/Vmware_enterprise/VCFullCloneService.py:42
+#: services/Vmware_enterprise/VCLinkedCloneService.py:43
 #: services/Xen/XenLinkedService.py:83
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "عدد من الآلات المطلوبة للحفاظ على تعليق انتظار للاستخدام"
@@ -2377,8 +2420,8 @@ msgstr "عدد من الآلات المطلوبة للحفاظ على تعليق
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:120
 #: services/Nutanix_enterprise/NutanixService.py:44
-#: services/OVirt/OVirtLinkedService.py:131
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/OVirt/OVirtLinkedService.py:132
+#: services/Vmware_enterprise/VCLinkedCloneService.py:82
 #: services/Xen/XenLinkedService.py:120
 msgid "Base Machine"
 msgstr "آلة الأساس"
@@ -2386,13 +2429,14 @@ msgstr "آلة الأساس"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:122
 #: services/Nutanix_enterprise/NutanixService.py:45
-#: services/OVirt/OVirtLinkedService.py:133
+#: services/OVirt/OVirtLinkedService.py:134
 #: services/Xen/XenLinkedService.py:122
 msgid "Service base machine"
 msgstr "آلة قاعدة الخدمة"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
 #: services/HyperV_enterprise/HyperVLinkedService.py:128
+#: services/Nutanix_enterprise/NutanixService.py:64
 #: services/OpenStack/LiveService.py:118 services/Xen/XenLinkedService.py:128
 msgid "Network"
 msgstr "شبكة الاتصال"
@@ -2407,15 +2451,16 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:137
-#: services/OVirt/OVirtLinkedService.py:139
-#: services/Vmware_enterprise/VCLinkedCloneService.py:82
+#: services/Nutanix_enterprise/NutanixService.py:51
+#: services/OVirt/OVirtLinkedService.py:140
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
 #: services/Xen/XenLinkedService.py:137
 msgid "Memory (Mb)"
 msgstr "ذاكرة (ميجا بايت)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
 #: services/HyperV_enterprise/HyperVLinkedService.py:142
-#: services/Vmware_enterprise/VCLinkedCloneService.py:83
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
 msgid "Memory for machines deployed from this service"
 msgstr "الذاكرة لآلات تم نشرها من هذه الخدمة"
 
@@ -2431,11 +2476,11 @@ msgstr "مخازن البيانات لوضع تدريجيات والمطبوعا
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:148
-#: services/Nutanix_enterprise/NutanixService.py:57
-#: services/OVirt/OVirtLinkedService.py:187
+#: services/Nutanix_enterprise/NutanixService.py:71
+#: services/OVirt/OVirtLinkedService.py:190
 #: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
 #: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+#: services/Vmware_enterprise/VCLinkedCloneService.py:92
 #: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
 msgstr "أسماء الأجهزة"
@@ -2444,47 +2489,47 @@ msgstr "أسماء الأجهزة"
 #: services/HyperV_enterprise/HyperVLinkedService.py:151
 #: services/OpenStack/LiveService.py:127
 #: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+#: services/Vmware_enterprise/VCLinkedCloneService.py:92
 msgid "Base name for clones from this machine"
 msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:158
-#: services/Nutanix_enterprise/NutanixService.py:66
-#: services/OVirt/OVirtLinkedService.py:197
+#: services/Nutanix_enterprise/NutanixService.py:80
+#: services/OVirt/OVirtLinkedService.py:200
 #: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
 #: services/VCloud_enterprise/VCloudCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:92
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
 #: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
 msgstr "طول الاسم "
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
 #: services/HyperV_enterprise/HyperVLinkedService.py:161
-#: services/Nutanix_enterprise/NutanixService.py:69
-#: services/OVirt/OVirtLinkedService.py:200
+#: services/Nutanix_enterprise/NutanixService.py:83
+#: services/OVirt/OVirtLinkedService.py:203
 #: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
 #: services/VCloud_enterprise/VCloudCloneService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Vmware_enterprise/VCLinkedCloneService.py:94
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr "حجم جزء رقمية عن أسماء هذه الآلات (بين 3 و 6)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:176
-#: services/Nutanix_enterprise/NutanixService.py:87
-#: services/OVirt/OVirtLinkedService.py:218
+#: services/Nutanix_enterprise/NutanixService.py:109
+#: services/OVirt/OVirtLinkedService.py:221
 #: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:155
-#: services/Vmware_enterprise/VCLinkedCloneService.py:114
+#: services/Vmware_enterprise/VCLinkedCloneService.py:130
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "لا يجب أن يكون طول اسم بالإضافة إلى طول قاعدة  أكبر من 15"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
 #: services/HyperV_enterprise/HyperVLinkedService.py:178
-#: services/Nutanix_enterprise/NutanixService.py:89
-#: services/OVirt/OVirtLinkedService.py:220
+#: services/Nutanix_enterprise/NutanixService.py:111
+#: services/OVirt/OVirtLinkedService.py:223
 #: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:157
-#: services/Vmware_enterprise/VCLinkedCloneService.py:116
+#: services/Vmware_enterprise/VCLinkedCloneService.py:132
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
 msgstr "لا يمكن أن يكون اسم الجهاز أرقام فقط"
@@ -2526,7 +2571,7 @@ msgstr "المهلة بالثواني لاتصال HyperV"
 #: services/HyperV_enterprise/HyperVProvider.py:92
 #: services/Nutanix_enterprise/NutanixProvider.py:46
 #: services/OVirt/OVirtProvider.py:117
-#: services/Vmware_enterprise/ServiceProviderVC.py:39
+#: services/Vmware_enterprise/ServiceProviderVC.py:41
 #: services/Xen/XenProvider.py:106
 msgid "Macs range"
 msgstr "نطاق MAC"
@@ -2549,9 +2594,9 @@ msgstr "اختبار اتصال ناجح"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:172
+#: services/Nutanix_enterprise/NutanixProvider.py:179
 #: services/OVirt/OVirtProvider.py:444
-#: services/Vmware_enterprise/ServiceProviderVC.py:142
+#: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
 msgstr "فشل الاتصال. تحقق اتصال params"
 
@@ -2573,7 +2618,7 @@ msgid "Reserved Space"
 msgstr "المساحة المحجوزة."
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:114
-#: services/OVirt/OVirtLinkedService.py:126
+#: services/OVirt/OVirtLinkedService.py:127
 #: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
 msgstr "مساحة حرة الحد الأدنى GB"
@@ -2583,28 +2628,32 @@ msgstr "مساحة حرة الحد الأدنى GB"
 #: services/HyperV_enterprise/HyperVLinkedService.py:143
 #: services/HyperV_enterprise/HyperVLinkedService.py:152
 #: services/HyperV_enterprise/HyperVLinkedService.py:162
-#: services/OVirt/OVirtLinkedService.py:134
-#: services/OVirt/OVirtLinkedService.py:145
-#: services/OVirt/OVirtLinkedService.py:156
-#: services/OVirt/OVirtLinkedService.py:170
-#: services/OVirt/OVirtLinkedService.py:183
-#: services/OVirt/OVirtLinkedService.py:191
-#: services/OVirt/OVirtLinkedService.py:201
+#: services/Nutanix_enterprise/NutanixService.py:46
+#: services/Nutanix_enterprise/NutanixService.py:58
+#: services/Nutanix_enterprise/NutanixService.py:66
+#: services/OVirt/OVirtLinkedService.py:135
+#: services/OVirt/OVirtLinkedService.py:147
+#: services/OVirt/OVirtLinkedService.py:159
+#: services/OVirt/OVirtLinkedService.py:173
+#: services/OVirt/OVirtLinkedService.py:186
+#: services/OVirt/OVirtLinkedService.py:194
+#: services/OVirt/OVirtLinkedService.py:204
 #: services/OpenNebula/LiveService.py:106
 #: services/OpenNebula/LiveService.py:116
 #: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:116
 #: services/OpenStack/LiveService.py:118 services/OpenStack/LiveService.py:119
 #: services/OpenStack/LiveService.py:121 services/OpenStack/LiveService.py:129
 #: services/OpenStack/LiveService.py:139
-#: services/Vmware_enterprise/VCLinkedCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
-#: services/Vmware_enterprise/VCLinkedCloneService.py:83
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#: services/Vmware_enterprise/VCLinkedCloneService.py:87
+#: services/Vmware_enterprise/VCFullCloneService.py:69
+#: services/Vmware_enterprise/VCLinkedCloneService.py:78
+#: services/Vmware_enterprise/VCLinkedCloneService.py:82
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
 #: services/Vmware_enterprise/VCLinkedCloneService.py:88
-#: services/Vmware_enterprise/VCLinkedCloneService.py:90
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Vmware_enterprise/VCLinkedCloneService.py:92
+#: services/Vmware_enterprise/VCLinkedCloneService.py:94
 #: services/Xen/XenLinkedService.py:123 services/Xen/XenLinkedService.py:132
 #: services/Xen/XenLinkedService.py:142 services/Xen/XenLinkedService.py:153
 #: services/Xen/XenLinkedService.py:162 services/Xen/XenLinkedService.py:172
@@ -2624,8 +2673,8 @@ msgstr "مزود خدمة منصة HyperV (تجريبي)"
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:33
-#: services/Vmware_enterprise/ServiceProviderVC.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:79
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
+#: services/Vmware_enterprise/ServiceProviderVC.py:84
 #: services/Xen/XenProvider.py:103
 msgid "Creation concurrency"
 msgstr "تزامن الخلق"
@@ -2635,7 +2684,7 @@ msgstr "تزامن الخلق"
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:33
-#: services/Vmware_enterprise/ServiceProviderVC.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Xen/XenProvider.py:103
 msgid "Maximum number of concurrently creating VMs"
 msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة الظاهرية."
@@ -2645,8 +2694,8 @@ msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة ا
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:36
-#: services/Vmware_enterprise/ServiceProviderVC.py:80
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:85
 #: services/Xen/XenProvider.py:104
 msgid "Removal concurrency"
 msgstr "تزامن الإزالة."
@@ -2656,7 +2705,7 @@ msgstr "تزامن الإزالة."
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:36
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Xen/XenProvider.py:104
 msgid "Maximum number of concurrently removing VMs"
 msgstr "الحد الأقصى لعدد الأجهزة الافتراضية إزالة في وقت واحد"
@@ -2694,7 +2743,19 @@ msgstr "المهلة بالثواني لاتصال Nutanix"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "مجموعة من صحيح MAC للآلات UDS إدارتها."
 
-#: services/Nutanix_enterprise/NutanixProvider.py:170
+#: services/Nutanix_enterprise/NutanixProvider.py:49
+msgid "Legacy API (v0.8)"
+msgstr "API القديمة (v0.8)"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:50
+msgid ""
+"If checked, legacy apy will be used. Only recommended on OLD Nutanix "
+"installations."
+msgstr ""
+"إذا راجعت، سيتم استخدام تراث أبي. وأوصى فقط على نوتانيكس القديم "
+"المنشآت."
+
+#: services/Nutanix_enterprise/NutanixProvider.py:177
 msgid "Connection works fine"
 msgstr "اتصال يعمل بشكل جيد"
 
@@ -2706,10 +2767,34 @@ msgstr "Nutanix خدمة أكروبوليس"
 msgid "Nutanix Acropolis based service"
 msgstr "الخدمة على Nutanix أكروبوليس."
 
-#: services/Nutanix_enterprise/NutanixService.py:52
+#: services/Nutanix_enterprise/NutanixService.py:57
 msgid ""
-"Networks for the machines (every machine will be attached to this network)"
-msgstr "شبكات للآلات (سوف تعلق كل آلة لهذه الشبكة)."
+"Memory assigned to machines. (Zero value means \"keep original machine memory"
+"\")"
+msgstr ""
+"الذاكرة التي تم تعيينها إلى آلات. (القيمة صفر يعني \"الحفاظ على ذاكرة الجهاز الأصلي"
+"\")"
+
+#: services/Nutanix_enterprise/NutanixService.py:65
+#| msgid ""
+#| "Networks for the machines (every machine will be attached to this network)"
+msgid ""
+"Network for the machines (every machine created will be attached to this "
+"network)"
+msgstr ""
+"شبكة للأجهزة (كل آلة تم إنشاؤها سوف يتم إرفاق هذا "
+"شبكة الاتصال)"
+
+#: services/Nutanix_enterprise/NutanixService.py:88
+#: services/VCloud_enterprise/VCloudCloneService.py:57
+#: services/Vmware_enterprise/VCLinkedCloneService.py:67
+msgid "Remove found duplicates"
+msgstr "إزالة الملفات المكررة"
+
+#: services/Nutanix_enterprise/NutanixService.py:91
+#: services/VCloud_enterprise/VCloudCloneService.py:57
+msgid "If active, found duplicates vApps for this service will be removed"
+msgstr "في حالة نشطة، سيتم إزالة التكرارات وجدت فابس لهذه الخدمة"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"
@@ -2735,32 +2820,32 @@ msgstr "المجال مخزن البيانات"
 msgid "Datastore domain where to publish and put incrementals"
 msgstr "طاق مخزن البيانات حيث نشر و وضع تدريجيا."
 
-#: services/OVirt/OVirtLinkedService.py:144
+#: services/OVirt/OVirtLinkedService.py:146
 #: services/Xen/XenLinkedService.py:141
 msgid "Memory assigned to machines"
 msgstr "الذاكرة المخصصة للآلات"
 
-#: services/OVirt/OVirtLinkedService.py:150
+#: services/OVirt/OVirtLinkedService.py:152
 msgid "Memory Guaranteed (Mb)"
 msgstr "ذاكرة مضمونة (ميجا بايت)."
 
-#: services/OVirt/OVirtLinkedService.py:155
+#: services/OVirt/OVirtLinkedService.py:158
 msgid "Physical memory guaranteed to machines"
 msgstr "الذاكرة الفعلية مضمونة للآلات"
 
-#: services/OVirt/OVirtLinkedService.py:161
+#: services/OVirt/OVirtLinkedService.py:164
 msgid "USB"
 msgstr "USB"
 
-#: services/OVirt/OVirtLinkedService.py:164
+#: services/OVirt/OVirtLinkedService.py:167
 msgid "Enable usb redirection for SPICE"
 msgstr "تمكين إعادة توجيه USB ل SPICE"
 
-#: services/OVirt/OVirtLinkedService.py:178
+#: services/OVirt/OVirtLinkedService.py:181
 msgid "Display type (only for administration purposes)"
 msgstr "نوع العرض (فقط لأغراض الإدارة)"
 
-#: services/OVirt/OVirtLinkedService.py:222
+#: services/OVirt/OVirtLinkedService.py:225
 #: services/Xen/XenLinkedService.py:190
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "الحد الأدنى المسموح به في الذاكرة 256MB"
@@ -2808,7 +2893,8 @@ msgstr "الأجهزة الفعلية أوبينجنسيس"
 
 #: services/OpenGnsys/OGService.py:77 services/OpenNebula/LiveService.py:76
 #: services/OpenStack/LiveService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:40
+#: services/Vmware_enterprise/VCFullCloneService.py:40
+#: services/Vmware_enterprise/VCLinkedCloneService.py:41
 msgid "Number of desired machines to keep running waiting for an user"
 msgstr "عدد من الآلات المطلوبة للحفاظ على تشغيل انتظار للمستخدم."
 
@@ -3067,11 +3153,11 @@ msgstr "المهلة بالثواني لاتصال Openstack"
 msgid "OpenStack test connection passed"
 msgstr "مر اختبار الاتصال Openstack."
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:609
+#: services/OpenStack/openStack/UDSOpenStackClient.py:610
 msgid "Authentication error"
 msgstr "خطأ مصادقة"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:611
+#: services/OpenStack/openStack/UDSOpenStackClient.py:612
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3382,15 +3468,6 @@ msgstr "فداتاسينتير"
 msgid "Virtual Datacenter"
 msgstr "مركز البيانات الافتراضية"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:57
-#: services/Vmware_enterprise/VCLinkedCloneService.py:67
-msgid "Remove found duplicates"
-msgstr "إزالة الملفات المكررة"
-
-#: services/VCloud_enterprise/VCloudCloneService.py:57
-msgid "If active, found duplicates vApps for this service will be removed"
-msgstr "في حالة نشطة، سيتم إزالة التكرارات وجدت فابس لهذه الخدمة"
-
 #: services/VCloud_enterprise/VCloudCloneService.py:59
 msgid "Catalog"
 msgstr "النشرة المصورة"
@@ -3408,12 +3485,12 @@ msgid "vApp template for the service"
 msgstr "قالب فب للخدمة"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:71
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
 msgid "Main Network"
 msgstr "الشبكة الرئيسية"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:72
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -3433,36 +3510,36 @@ msgstr "محلي"
 msgid "Remote"
 msgstr "التحكم عن بعد"
 
-#: services/Vmware_enterprise/PublicationVC.py:37
+#: services/Vmware_enterprise/PublicationVC.py:43
 msgid "Publication"
 msgstr "منشور"
 
-#: services/Vmware_enterprise/PublicationVC.py:38
+#: services/Vmware_enterprise/PublicationVC.py:44
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
 msgstr "UDS النشر ل{0} تم إنشاؤها في {1}"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:29
+#: services/Vmware_enterprise/ServiceProviderVC.py:31
 msgid "VMWare VCenter Server IP or Hostname"
 msgstr "برنامج VMWare IP خادم VCenter أو اسم المضيف"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:30
+#: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "VMWare VC Server Port (usually 443)"
 msgstr "VMWare الخادم ميناء VC (عادة 443)"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:31
+#: services/Vmware_enterprise/ServiceProviderVC.py:33
 msgid "User with valid privileges on VC"
 msgstr "المستخدم مع امتيازات صالح على VC"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:32
+#: services/Vmware_enterprise/ServiceProviderVC.py:34
 msgid "Password of the user of the VC"
 msgstr "كلمة السر للمستخدم من VC"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout in seconds of connection to VC"
 msgstr "المهلة بالثواني لاتصال VC"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:40
+#: services/Vmware_enterprise/ServiceProviderVC.py:42
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
@@ -3470,38 +3547,109 @@ msgstr ""
 "مجموعة MAC الصالحة للآلات التي تم إنشاؤها. يجب أن يكون داخل 00: 50: 56: 00: "
 "00: 00-00: 50: 56: 3F: FF: FF"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:45
+#: services/Vmware_enterprise/ServiceProviderVC.py:49
 msgid "VMWare VCenter Platform Provider"
 msgstr "مزود برنامج VMWare VCenter منصة"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:47
+#: services/Vmware_enterprise/ServiceProviderVC.py:51
 msgid "Provides connection to Virtual Center Services"
 msgstr "توفر وصولا إلى مركز الظاهرية"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:133
+#: services/Vmware_enterprise/ServiceProviderVC.py:137
 msgid "VmwareVC Provider: "
 msgstr "مزود VMWare VC:"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:140
+#: services/Vmware_enterprise/ServiceProviderVC.py:144
 msgid "Connection params ok"
 msgstr "اتصال params ok"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:32
-msgid "VMWare VCenter Platform Linked clone"
-msgstr "برنامج VMWare VCenter منصة استنساخ مرتبط"
+#: services/Vmware_enterprise/VCFixedMachinesService.py:27
+#| msgid "Machine IP"
+msgid "Fixed Machines Pool"
+msgstr "تجمع الأجهزة الثابتة"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:34
+#: services/Vmware_enterprise/VCFixedMachinesService.py:29
+#| msgid ""
+#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
-"This service provides access to Linked Clones machines on a Virtual Center"
-msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات النسخ مرتبط على مركز الظاهري"
+"This service provides access to a fixed group of selected machines on the "
+"Infrascruttur"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.343173B8"
+"إينفراسكروتور"
 
+#: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
 msgid "Datacenter"
 msgstr "مركز البيانات"
 
+#: services/Vmware_enterprise/VCFixedMachinesService.py:54
+#: services/Vmware_enterprise/VCFixedMachinesService.py:69
+#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#| msgid "Machine"
+msgid "Machines"
+msgstr "آلات"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:55
 #: services/Vmware_enterprise/VCLinkedCloneService.py:60
 msgid "Datacenter containing base machine"
 msgstr "مراكز البيانات التي تحتوي على آلة قاعدة"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:59
+#: services/Vmware_enterprise/VCLinkedCloneService.py:70
+msgid "Resource Pool"
+msgstr "تجمع الموارد"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:67
+#| msgid "Resource Pool containing base machine"
+msgid "Resource Pool containing base machines"
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317500"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#| msgid "Base Machine"
+msgid "Base Machines"
+msgstr "آلات الأساسية"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#| msgid "Base machine for this service"
+msgid "Base machines for this service"
+msgstr "الأجهزة الأساسية لهذه الخدمة"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:91
+msgid "We need at least a machine"
+msgstr "نحن بحاجة على الأقل آلة"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:32
+msgid "Clone based - Full"
+msgstr "استنساخ على أساس-كامل"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:34
+#| msgid ""
+#| "This service provides access to Linked Clones machines on a Virtual Center"
+msgid ""
+"This service provides access to FULL Cloned machines on a Virtual Center"
+msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.338597AB"
+"توفر هذه الخدمة إمكانية الوصول إلى آلات كلونيد كامل على مركز الظاهرية"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:68
+#| msgid "Datastore"
+msgid "VMs Datastores"
+msgstr "داتاستوريس السفن"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:69
+#| msgid "Datastores where to put publications"
+msgid "Datastores where to put machines"
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317970"
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:33
+#| msgid "Suse based Linux"
+msgid "Clone based - Linked"
+msgstr "استنساخ على أساس--مرتبطة"
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:35
+msgid ""
+"This service provides access to Linked Clones machines on a Virtual Center"
+msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات النسخ مرتبط على مركز الظاهري"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:62
 msgid "Pub. Resource Pool"
@@ -3523,39 +3671,44 @@ msgstr "مخازن البيانات حيث وضع المنشورات"
 msgid "If active, found duplicates clones for this service will be removed"
 msgstr "إذا كنت نشيطا، وجدت سيتم إزالة التكرارات استنساخ لهذه الخدمة"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:69
-msgid "Resource Pool"
-msgstr "تجمع الموارد"
+#: services/Vmware_enterprise/VCLinkedCloneService.py:68
+#| msgid "Unknown error"
+msgid "Keep on error"
+msgstr "تبقى على خطأ"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:75
+#: services/Vmware_enterprise/VCLinkedCloneService.py:68
+msgid "If active, access errors found on machine will not mark is as error."
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317AD3"
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:76
 msgid "Resource Pool containing base machine"
 msgstr "تجمع موارد تحتوي على آلة قاعدة"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/Vmware_enterprise/VCLinkedCloneService.py:82
 msgid "Base machine for this service"
 msgstr "آلة قاعدة لهذه الخدمة"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+#: services/Vmware_enterprise/VCLinkedCloneService.py:87
 msgid "Pub. Network"
 msgstr "شبكة النشر"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:87
+#: services/Vmware_enterprise/VCLinkedCloneService.py:88
 msgid "Network on which the machine will be deployed"
 msgstr "الشبكة التي سيتم نشرها بالجهاز"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 msgid "Clones Folder"
 msgstr "مجلد النسخ"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 msgid "Folder where deploy clones"
 msgstr "المجلد حيث نشر النسخ"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:89
+#: services/Vmware_enterprise/VCLinkedCloneService.py:90
 msgid "Inc.Datastores"
 msgstr "مخازن البيانات الموارد."
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:90
+#: services/Vmware_enterprise/VCLinkedCloneService.py:91
 msgid "Datastores where to put incrementals"
 msgstr "مخازن البيانات حيث الوضع تدريجي."
 
@@ -4034,7 +4187,7 @@ msgid "Cache"
 msgstr "ذاكرة التخزين المؤقت"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
-#: templates/uds/html5/index.html:127 templates/uds/semantic/index.html:30
+#: templates/uds/html5/index.html:133 templates/uds/semantic/index.html:30
 msgid "Transports"
 msgstr "النقل"
 
@@ -4211,46 +4364,54 @@ msgstr "تحت الصيانة"
 msgid "Currently in use"
 msgstr "قيد الاستخدام حاليا"
 
-#: templates/uds/html5/index.html:57 templates/uds/semantic/tmpl/items.html:24
+#: templates/uds/html5/index.html:64 templates/uds/semantic/tmpl/items.html:24
 #: templates/uds/semantic/tmpl/trans.html:8
 msgid "Connections"
 msgstr "روابط"
 
-#: templates/uds/html5/index.html:86
+#: templates/uds/html5/index.html:92
 msgid "Service under maintenance"
 msgstr "خدمة تحت الصيانة"
 
-#: templates/uds/html5/index.html:89
+#: templates/uds/html5/index.html:95
 msgid "This service is in maintenance mode."
 msgstr "هذه الخدمة هي في وضع الصيانة."
 
-#: templates/uds/html5/index.html:90 templates/uds/html5/index.html:109
+#: templates/uds/html5/index.html:96 templates/uds/html5/index.html:115
 msgid "Please, retry access in a while."
 msgstr "من فضلك، حاول في حين."
 
-#: templates/uds/html5/index.html:104
+#: templates/uds/html5/index.html:110
 msgid "Service access not allowed"
 msgstr "وصول الخدمة غير مسموح به."
 
-#: templates/uds/html5/index.html:107
+#: templates/uds/html5/index.html:113
 msgid "This service is currently not accesible due to schedule restrictions."
 msgstr "هذه الخدمة حاليا لا accesible بسبب قيود الجدول الزمني."
 
-#: templates/uds/html5/index.html:122
+#: templates/uds/html5/index.html:128
 msgid "Administrator info panel"
 msgstr "معلومات مدير الفريق."
 
-#: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:27
+#: templates/uds/html5/index.html:131 templates/uds/semantic/index.html:27
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/html5/index.html:128 templates/uds/semantic/index.html:31
+#: templates/uds/html5/index.html:134 templates/uds/semantic/index.html:31
 msgid "User Agent"
 msgstr "وكيل المستخدم."
 
-#: templates/uds/html5/index.html:129
+#: templates/uds/html5/index.html:135
 msgid "OS"
 msgstr "نظام التشغيل"
+
+#: templates/uds/html5/index.html:374
+msgid ""
+"Are you sure that you want to release this service. Its current content will "
+"be lost!"
+msgstr ""
+"هل أنت متأكد من أنك تريد أن الإفراج عن هذه الخدمة. سوف محتواه الحالي "
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33859C08"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -4386,19 +4547,19 @@ msgid "toggle navigation"
 msgstr "تبديل الملاحة."
 
 #: templates/uds/html5/snippets/navbar.html:25
+#: templates/uds/semantic/snippets/user-menu.html:10
+msgid "UDS Plugin"
+msgstr "مساعد UDS "
+
+#: templates/uds/html5/snippets/navbar.html:26
 #: templates/uds/semantic/snippets/navbar.html:23
 msgid "About"
 msgstr "حول"
 
-#: templates/uds/html5/snippets/navbar.html:41
+#: templates/uds/html5/snippets/navbar.html:42
 #: templates/uds/semantic/snippets/user-menu.html:8
 msgid "Preferences"
 msgstr "التفضيلات"
-
-#: templates/uds/html5/snippets/navbar.html:43
-#: templates/uds/semantic/snippets/user-menu.html:10
-msgid "UDS Plugin"
-msgstr "مساعد UDS "
 
 #: templates/uds/html5/templates/base.html:61
 #: templates/uds/semantic/templates/base.html:33
@@ -4533,56 +4694,56 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
-#: transports/RDP/BaseRDPTransport.py:61
-#: transports/RDS_enterprise/BaseRDSTransport.py:66
-#: transports/RGS_enterprise/RGSTransport.py:44
-#: transports/RGS_enterprise/TRGSTransport.py:54
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:60
+#: transports/RDS_enterprise/BaseRDSTransport.py:65
+#: transports/RGS_enterprise/RGSTransport.py:45
+#: transports/RGS_enterprise/TRGSTransport.py:55
 msgid "Empty creds"
 msgstr "أوراق الاعتماد فارغة."
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
-#: transports/RDP/BaseRDPTransport.py:61
-#: transports/RDS_enterprise/BaseRDSTransport.py:66
-#: transports/RGS_enterprise/RGSTransport.py:44
-#: transports/RGS_enterprise/TRGSTransport.py:54
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:60
+#: transports/RDS_enterprise/BaseRDSTransport.py:65
+#: transports/RGS_enterprise/RGSTransport.py:45
+#: transports/RGS_enterprise/TRGSTransport.py:55
 #: transports/SPICE/BaseSPICETransport.py:67
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدمة للاتصال أن تكون فارغة."
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:66
-#: transports/NX/TSNXTransport.py:75
-#: transports/PCoIP_enterprise/PCoIPTransport.py:60
-#: transports/RDP/BaseRDPTransport.py:62
-#: transports/RGS_enterprise/RGSTransport.py:45
-#: transports/RGS_enterprise/TRGSTransport.py:55
+#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:65
+#: transports/NX/TSNXTransport.py:74
+#: transports/PCoIP_enterprise/PCoIPTransport.py:59
+#: transports/RDP/BaseRDPTransport.py:61
+#: transports/RGS_enterprise/RGSTransport.py:46
+#: transports/RGS_enterprise/TRGSTransport.py:56
 #: transports/SPICE/BaseSPICETransport.py:73
 #: transports/X2GO/BaseX2GOTransport.py:70
 msgid "If not empty, this username will be always used as credential"
 msgstr "إن لم يكن فارغا، هذا المستخدم سيستخدم دائما الاعتماد."
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:67
-#: transports/NX/TSNXTransport.py:76
-#: transports/PCoIP_enterprise/PCoIPTransport.py:61
-#: transports/RDP/BaseRDPTransport.py:63
-#: transports/RGS_enterprise/RGSTransport.py:46
-#: transports/RGS_enterprise/TRGSTransport.py:56
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:66
+#: transports/NX/TSNXTransport.py:75
+#: transports/PCoIP_enterprise/PCoIPTransport.py:60
+#: transports/RDP/BaseRDPTransport.py:62
+#: transports/RGS_enterprise/RGSTransport.py:47
+#: transports/RGS_enterprise/TRGSTransport.py:57
 #: transports/SPICE/BaseSPICETransport.py:79
 msgid "If not empty, this password will be always used as credential"
 msgstr "إن لم يكن فارغا، سيتم كلمة المرور هذه يستخدم دائما الاعتماد."
 
 #: transports/HTML5RDP/HTML5RDP.py:75
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:75
-#: transports/RDP/BaseRDPTransport.py:64
-#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RDP/BaseRDPTransport.py:63
+#: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid "Without Domain"
 msgstr "دون المجال"
 
 #: transports/HTML5RDP/HTML5RDP.py:75
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
@@ -4592,10 +4753,10 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:76
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:76
-#: transports/RDP/BaseRDPTransport.py:65
-#: transports/RDS_enterprise/BaseRDSTransport.py:68
-#: transports/RGS_enterprise/RGSTransport.py:47
-#: transports/RGS_enterprise/TRGSTransport.py:57
+#: transports/RDP/BaseRDPTransport.py:64
+#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RGS_enterprise/RGSTransport.py:48
+#: transports/RGS_enterprise/TRGSTransport.py:58
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
 "\\user)"
@@ -4610,7 +4771,7 @@ msgstr "اظهر خلفية."
 
 #: transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
-#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:100
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -4620,27 +4781,27 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:102
 msgid "Allow Desk.Comp."
 msgstr "السماح Desk.Comp."
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:102
 msgid "If checked, desktop composition will be allowed"
 msgstr "إذا تم، سيكون يسمح تكوين سطح المكتب."
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:103
+#: transports/RDS_enterprise/BaseRDSTransport.py:87
 msgid "Font Smoothing"
 msgstr "تجانس الخطوط"
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:103
+#: transports/RDS_enterprise/BaseRDSTransport.py:87
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "في حالة تحديد تجانس الخطوط سيتم السماح (عملاء windows فقط)"
 
@@ -4761,12 +4922,12 @@ msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (تشفير طبقة النقل الأمن)"
 
 #: transports/HTML5RDP/HTML5RDP.py:118
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:118
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:117
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
 #: transports/HTML5RDP/HTML5RDP.py:120
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:120
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -4775,81 +4936,82 @@ msgstr ""
 "الأمان (علامة التبويب معلمات) بتعيين إلى \"برنامج التعمير والتنمية\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-msgid "HTML5 RDS Transport"
-msgstr "HTML5 النقل RDS"
+#| msgid "HTML5 RDS Transport"
+msgid "HTML5 RDS Transport for vApps"
+msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33859C6E"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-msgid "RDS Transport using HTML5 client"
-msgstr "RDS النقل باستخدام عميل HTML5"
+#| msgid "RDS Transport using HTML5 client"
+msgid "RDS Transport using HTML5 client for vApps"
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317CEC"
 
-#: transports/NX/NXTransport.py:58
-msgid "NX Transport (direct)"
-msgstr "NX النقل (مباشر)"
+#: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
+#| msgid "Transport"
+msgid "NX Transport"
+msgstr "النقل NX"
 
-#: transports/NX/NXTransport.py:60
-msgid "NX Transport for direct connection"
-msgstr "النقل NX للاتصال المباشر"
+#: transports/NX/NXTransport.py:59
+#| msgid "NX Transport for direct connection"
+msgid "NX Protocol. Firect connection."
+msgstr "بروتوكول NX. اتصال فيريكت."
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Listening port"
 msgstr "منفذ الاستماع"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Listening port of NX (ssh) at client machine"
 msgstr "منفذ الاستماع NX (SSH) على جهاز العميل"
 
-#: transports/NX/NXTransport.py:69 transports/NX/TSNXTransport.py:78
+#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
 msgid "Connection"
 msgstr "صلة"
 
-#: transports/NX/NXTransport.py:69 transports/NX/TSNXTransport.py:78
+#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
 msgid "Connection speed for this transport (quality)"
 msgstr "سرعة الاتصال لهذا النقل (الجودة)"
 
-#: transports/NX/NXTransport.py:77 transports/NX/TSNXTransport.py:86
+#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
 msgid "Session"
 msgstr "جلسة"
 
-#: transports/NX/NXTransport.py:77 transports/NX/TSNXTransport.py:86
+#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop session"
 msgstr "جلسة المكتب"
 
-#: transports/NX/NXTransport.py:83 transports/NX/TSNXTransport.py:92
+#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
 msgid "Disk Cache"
 msgstr "قرص ذاكرة التخزين المؤقت"
 
-#: transports/NX/NXTransport.py:83 transports/NX/TSNXTransport.py:92
+#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
 msgid "Cache size en Mb stored at disk"
 msgstr "حجم ذاكرة التخزين المؤقت ميجا بايت تخزين في القرص"
 
-#: transports/NX/NXTransport.py:92 transports/NX/TSNXTransport.py:101
+#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
 msgid "Memory Cache"
 msgstr "ذاكرة التخزين المؤقت"
 
-#: transports/NX/NXTransport.py:92 transports/NX/TSNXTransport.py:101
+#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
 msgid "Cache size en Mb kept at memory"
 msgstr "حجم ذاكرة التخزين المؤقت ميغابايت الاحتفاظ بها في الذاكرة"
 
-#: transports/NX/TSNXTransport.py:63
-msgid "NX Transport (tunneled)"
-msgstr "NX النقل (نفق)"
+#: transports/NX/TSNXTransport.py:64
+#| msgid "NX Transport for tunneled connection"
+msgid "NX protocol. Tunneled connection."
+msgstr "بروتوكول NX. اتصال النفق."
 
-#: transports/NX/TSNXTransport.py:65
-msgid "NX Transport for tunneled connection"
-msgstr "النقل NX للاتصال عبر نفق"
-
-#: transports/NX/TSNXTransport.py:71 transports/RDP/TRDPTransport.py:71
-#: transports/RDS_enterprise/TRDSTransport.py:69
-#: transports/RGS_enterprise/TRGSTransport.py:51
-#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:64
+#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/RDS_enterprise/TRDSTransport.py:68
+#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid "Tunnel server"
 msgstr "ملقم نفق"
 
-#: transports/NX/TSNXTransport.py:71 transports/RDP/TRDPTransport.py:71
-#: transports/RDS_enterprise/TRDSTransport.py:69
-#: transports/RGS_enterprise/TRGSTransport.py:51
-#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:64
+#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/RDS_enterprise/TRDSTransport.py:68
+#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
@@ -4857,13 +5019,13 @@ msgstr ""
 "IP أو اسم المضيف لخادم نفق إرسالها إلى جهاز العميل (\"العام\" الملكية "
 "الفكرية) والميناء. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:72
-#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/NX/TSNXTransport.py:71
+#: transports/RGS_enterprise/TRGSTransport.py:53
 msgid "Tunnel host check"
 msgstr "اختيار المضيف النفق"
 
-#: transports/NX/TSNXTransport.py:72
-#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/NX/TSNXTransport.py:71
+#: transports/RGS_enterprise/TRGSTransport.py:53
 msgid ""
 "If not empty, this server will be used to check if service is running before "
 "assigning it to user. (use HOST:PORT format)"
@@ -4871,10 +5033,10 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:101
-#: transports/RDS_enterprise/TRDSTransport.py:94
-#: transports/RGS_enterprise/TRGSTransport.py:78
-#: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
+#: transports/NX/TSNXTransport.py:114 transports/RDP/TRDPTransport.py:105
+#: transports/RDS_enterprise/TRDSTransport.py:93
+#: transports/RGS_enterprise/TRGSTransport.py:79
+#: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
 
@@ -4882,19 +5044,20 @@ msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
 msgid "NX/X2GO"
 msgstr "NX/X2GO"
 
-#: transports/PCoIP_enterprise/PCoIPTransport.py:51
+#: transports/PCoIP_enterprise/PCoIPTransport.py:50
 msgid "PCoIP Transport (Experimental)"
 msgstr "النقل PCoIP (تجريبي)"
 
-#: transports/PCoIP_enterprise/PCoIPTransport.py:53
-msgid "PCoIP Transport, Experimental"
-msgstr "PCoIP النقل، التجريبية"
+#: transports/PCoIP_enterprise/PCoIPTransport.py:52
+#| msgid "PCoIP Transport, Experimental"
+msgid "PCoIP using cloud access. Experimental."
+msgstr "بكويب باستخدام وصول سحابة. التجريبية."
 
-#: transports/PCoIP_enterprise/PCoIPTransport.py:62
+#: transports/PCoIP_enterprise/PCoIPTransport.py:61
 msgid "If not empty, this domain will be always used as credential domain"
 msgstr "إن لم يكن فارغا، سوف يكون هذا النطاق تستخدم دائما مجال الاعتماد"
 
-#: transports/RDP/BaseRDPTransport.py:64
+#: transports/RDP/BaseRDPTransport.py:63
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
@@ -4902,134 +5065,157 @@ msgstr ""
 "إذا تم، سيكون دائما يتم تفريغ جزء المجال (للاتصال xrdp لهو مطلوب سبيل المثال)"
 
 #: transports/RDP/BaseRDPTransport.py:66
-#: transports/RDS_enterprise/BaseRDSTransport.py:69
+#: transports/RDS_enterprise/BaseRDSTransport.py:68
 msgid "Allow Smartcards"
 msgstr "تسمح البطاقات المشفرة"
 
 #: transports/RDP/BaseRDPTransport.py:66
-#: transports/RDS_enterprise/BaseRDSTransport.py:69
+#: transports/RDS_enterprise/BaseRDSTransport.py:68
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام البطاقات الذكية"
 
 #: transports/RDP/BaseRDPTransport.py:67
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
+#: transports/RDS_enterprise/BaseRDSTransport.py:69
 msgid "Allow Printers"
 msgstr "السماح للطابعات."
 
 #: transports/RDP/BaseRDPTransport.py:67
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
+#: transports/RDS_enterprise/BaseRDSTransport.py:69
 msgid "If checked, this transport will allow the use of user printers"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام طابعات المستخدم."
 
 #: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDS_enterprise/BaseRDSTransport.py:70
 msgid "Allow Drives"
 msgstr "تسمح محركات الأقراص."
 
 #: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDS_enterprise/BaseRDSTransport.py:70
 msgid "If checked, this transport will allow the use of user drives"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام محركات أقراص المستخدم."
 
 #: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "Allow Serials"
 msgstr "السماح للمنافذ التسلسلية"
 
 #: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام المنافذ التسلسلية المستخدم"
 
 #: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:72
 msgid "Enable clipboard"
 msgstr "تمكين الحافظة"
 
 #: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:72
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "إذا راجعت، سيسمح لمهام نسخ ولصق"
 
 #: transports/RDP/BaseRDPTransport.py:71
+#: transports/X2GO/BaseX2GOTransport.py:103
+msgid "Enable sound"
+msgstr "تمكين الصوت"
+
+#: transports/RDP/BaseRDPTransport.py:71
+#| msgid "If checked, the Audio will be redirected."
+msgid "If checked, sound will be redirected."
+msgstr "إذا كان التحقق، ستتم إعادة توجيه الصوت."
+
+#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Credssp Support"
+msgstr "دعم Credssp"
+
+#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked, will enable Credentials Provider Support)"
+msgstr "إذا راجعت، سيمكن دعم موفر بيانات الاعتماد)"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#| msgid "Connection speed for this transport (quality)"
+msgid "Screen size for this transport"
+msgstr "حجم الشاشة لهذا النقل"
+
+#: transports/RDP/BaseRDPTransport.py:89
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "Color depth"
+msgstr "عمق اللون"
+
+#: transports/RDP/BaseRDPTransport.py:91
+#: transports/RDS_enterprise/BaseRDSTransport.py:78
+msgid "Color depth for this conextion"
+msgstr "عمق الألوان لهذا كونيكسشن"
+
+#: transports/RDP/BaseRDPTransport.py:100
 msgid "Wallpaper/theme"
 msgstr "خلفية/الموضوع"
 
-#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:101
 msgid "Multiple monitors"
 msgstr "أجهزة عرض متعددة"
 
-#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:101
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr ""
 "إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
 
-#: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
-msgid "Credssp Support"
-msgstr "دعم Credssp"
-
-#: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
-msgid "If checked, will enable Credentials Provider Support)"
-msgstr "إذا راجعت، سيمكن دعم موفر بيانات الاعتماد)"
-
-#: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:105
+#: transports/RDS_enterprise/BaseRDSTransport.py:89
 msgid "Multimedia sync"
 msgstr "تزامن الوسائط المتعددة"
 
-#: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:105
+#: transports/RDS_enterprise/BaseRDSTransport.py:89
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
 
-#: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:106
+#: transports/RDS_enterprise/BaseRDSTransport.py:90
 msgid "Use Alsa"
 msgstr "استخدام ALSA"
 
-#: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:106
+#: transports/RDS_enterprise/BaseRDSTransport.py:90
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
-#: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:79
+#: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "Printer string"
 msgstr "سلسلة الطابعة"
 
-#: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:79
+#: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "إذا كان يتم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل إكسفريردب"
 
-#: transports/RDP/BaseRDPTransport.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:80
+#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "Smartcard string"
 msgstr "سلسلة البطاقة الذكية"
 
-#: transports/RDP/BaseRDPTransport.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:80
+#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "إذا كان يتم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع "
 "العميل إكسفريردب"
 
-#: transports/RDP/BaseRDPTransport.py:80
-#: transports/RDS_enterprise/BaseRDSTransport.py:81
+#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid "Custom parameters"
 msgstr "معلمات مخصصة"
 
-#: transports/RDP/BaseRDPTransport.py:80
-#: transports/RDS_enterprise/BaseRDSTransport.py:81
+#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5037,152 +5223,151 @@ msgstr ""
 "إذا كانت المعلمة لا فارغة، إضافية تشمل لينكس العميل (على سبيل المثال/usb:"
 "معرف، dev:054 ج: 0268، أو أيثينج متوافق مع العميل الخاص بك إكسفريردب)"
 
-#: transports/RDP/RDPTransport.py:55
-msgid "RDP Transport (direct)"
-msgstr "RDP النقل (مباشر)"
+#: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
+#| msgid "Transport"
+msgid "RDP Transport"
+msgstr "النقل برنامج التعمير والتنمية"
 
 #: transports/RDP/RDPTransport.py:57
-msgid "RDP Transport for direct connection"
-msgstr "النقل RDP للاتصال المباشر"
+#| msgid "RDP Transport for direct connection"
+msgid "RDP Protocol. Direct connection."
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34318147"
 
-#: transports/RDP/TRDPTransport.py:64
-msgid "RDP Transport (tunneled)"
-msgstr "RDP النقل (نفق)"
+#: transports/RDP/TRDPTransport.py:65
+#| msgid "RDS Transport for tunneled connection"
+msgid "RDP Protocol. Tunneled connection."
+msgstr "بروتوكول RDP. اتصال النفق."
 
-#: transports/RDP/TRDPTransport.py:66
-msgid "RDP Transport with tunneled connection"
-msgstr "النقل RDP مع اتصال النفق"
-
-#: transports/RDP/TRDPTransport.py:74
-#: transports/RDS_enterprise/TRDSTransport.py:72
+#: transports/RDP/TRDPTransport.py:73
+#: transports/RDS_enterprise/TRDSTransport.py:71
 msgid "Tunnel wait time"
 msgstr "وقت الانتظار النفق"
 
-#: transports/RDP/TRDPTransport.py:74
-#: transports/RDS_enterprise/TRDSTransport.py:72
+#: transports/RDP/TRDPTransport.py:73
+#: transports/RDS_enterprise/TRDSTransport.py:71
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق النفق المستمع"
 
-#: transports/RDP/__init__.py:40 transports/RDS_enterprise/__init__.py:40
-msgid "Remote Desktop Protocol"
-msgstr "بروتوكول سطح المكتب البعيد"
-
 #: transports/RDS_enterprise/RDSTransport.py:55
-msgid "RDS Transport (direct)"
-msgstr "RDS النقل (مباشر)"
+#: transports/RDS_enterprise/TRDSTransport.py:63
+#| msgid "RDS Transport (direct)"
+msgid "RDS Transport for vApps"
+msgstr "النقل RDS فابس"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-msgid "RDS Transport for direct connection"
-msgstr "النقل RDS للاتصال المباشر"
+#| msgid "RDS Transport for direct connection"
+msgid "RDS Transport for vApps. Direct connection."
+msgstr "النقل RDS فابس. الاتصال المباشر."
 
-#: transports/RDS_enterprise/TRDSTransport.py:64
-msgid "RDS Transport (tunneled)"
-msgstr "RDS النقل (نفق)"
+#: transports/RDS_enterprise/TRDSTransport.py:65
+#| msgid "RDS Transport for tunneled connection"
+msgid "RDS Transport for vApps. Tunneled connection."
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.343182D8"
 
-#: transports/RDS_enterprise/TRDSTransport.py:66
-msgid "RDS Transport for tunneled connection"
-msgstr "النقل RDS للاتصال عبر نفق"
+#: transports/RGS_enterprise/RGSTransport.py:37
+#| msgid "Transport"
+msgid "RGS Transport"
+msgstr "النقل RGS"
 
-#: transports/RGS_enterprise/RGSTransport.py:36
-msgid "RGS Transport (direct)"
-msgstr "RGS النقل (مباشر)"
-
-#: transports/RGS_enterprise/RGSTransport.py:38
-msgid "RGS Transport for direct connection"
-msgstr "النقل RGS للاتصال المباشر"
-
-#: transports/RGS_enterprise/RGSTransport.py:48
-#: transports/RGS_enterprise/TRGSTransport.py:58
-msgid "Image quality"
-msgstr "جودة الصورة"
+#: transports/RGS_enterprise/RGSTransport.py:39
+#| msgid "RGS Transport for direct connection"
+msgid "RGS Protocol. Direct connection."
+msgstr "بروتوكول RGS. الاتصال المباشر."
 
 #: transports/RGS_enterprise/RGSTransport.py:49
 #: transports/RGS_enterprise/TRGSTransport.py:59
-msgid "Quality of image codec (0-100)"
-msgstr "نوعية ترميز الصورة (0-100)"
+msgid "Image quality"
+msgstr "جودة الصورة"
 
 #: transports/RGS_enterprise/RGSTransport.py:50
 #: transports/RGS_enterprise/TRGSTransport.py:60
-msgid "Adjustable Quality"
-msgstr "الجودة قابل للتعديل"
+msgid "Quality of image codec (0-100)"
+msgstr "نوعية ترميز الصورة (0-100)"
 
 #: transports/RGS_enterprise/RGSTransport.py:51
 #: transports/RGS_enterprise/TRGSTransport.py:61
-msgid "If checked, the image quality will be adjustable with bandwidth"
-msgstr "إذا تم، سيكون لجودة الصورة تكون قابلة للتعديل مع عرض النطاق الترددي"
+msgid "Adjustable Quality"
+msgstr "الجودة قابل للتعديل"
 
 #: transports/RGS_enterprise/RGSTransport.py:52
 #: transports/RGS_enterprise/TRGSTransport.py:62
-msgid "Min. Adjustable Quality"
-msgstr "الحد الأدنى من الجودة قابل للتعديل"
+msgid "If checked, the image quality will be adjustable with bandwidth"
+msgstr "إذا تم، سيكون لجودة الصورة تكون قابلة للتعديل مع عرض النطاق الترددي"
 
 #: transports/RGS_enterprise/RGSTransport.py:53
 #: transports/RGS_enterprise/TRGSTransport.py:63
+msgid "Min. Adjustable Quality"
+msgstr "الحد الأدنى من الجودة قابل للتعديل"
+
+#: transports/RGS_enterprise/RGSTransport.py:54
+#: transports/RGS_enterprise/TRGSTransport.py:64
 msgid ""
 "The lowest image quality applied to images to maintain the minimum update "
 "rate."
 msgstr ""
 "أقل جودة الصورة تطبيقها على الصور للحفاظ على الحد الأدنى لمعدل التحديث."
 
-#: transports/RGS_enterprise/RGSTransport.py:54
-#: transports/RGS_enterprise/TRGSTransport.py:64
+#: transports/RGS_enterprise/RGSTransport.py:55
+#: transports/RGS_enterprise/TRGSTransport.py:65
 msgid "Adjustable Frame Rate"
 msgstr "معدل الإطار قابل للتعديل."
 
-#: transports/RGS_enterprise/RGSTransport.py:55
-#: transports/RGS_enterprise/TRGSTransport.py:65
+#: transports/RGS_enterprise/RGSTransport.py:56
+#: transports/RGS_enterprise/TRGSTransport.py:66
 msgid "Update rate threshold to begin adjusting image quality"
 msgstr "تحديث عتبة نسبة لبدء تعديل جودة الصورة."
 
-#: transports/RGS_enterprise/RGSTransport.py:56
-#: transports/RGS_enterprise/TRGSTransport.py:66
+#: transports/RGS_enterprise/RGSTransport.py:57
+#: transports/RGS_enterprise/TRGSTransport.py:67
 msgid "Match Local Resolution"
 msgstr "تطابق القرار المحلي"
 
-#: transports/RGS_enterprise/RGSTransport.py:57
-#: transports/RGS_enterprise/TRGSTransport.py:67
+#: transports/RGS_enterprise/RGSTransport.py:58
+#: transports/RGS_enterprise/TRGSTransport.py:68
 msgid ""
 "Change the Sender's resolution to match the Receiver's resolution when "
 "connecting"
 msgstr "تغيير قرار المرسل لمطابقة قرار المتلقي عند الاتصال"
 
-#: transports/RGS_enterprise/RGSTransport.py:58
-#: transports/RGS_enterprise/TRGSTransport.py:68
+#: transports/RGS_enterprise/RGSTransport.py:59
+#: transports/RGS_enterprise/TRGSTransport.py:69
 msgid "Redirect USB"
 msgstr "إعادة توجيه USB"
 
-#: transports/RGS_enterprise/RGSTransport.py:59
-#: transports/RGS_enterprise/TRGSTransport.py:69
+#: transports/RGS_enterprise/RGSTransport.py:60
+#: transports/RGS_enterprise/TRGSTransport.py:70
 msgid "If checked, the USB will be redirected."
 msgstr "إذا تحققت، سيتم إعادة توجيه USB."
 
-#: transports/RGS_enterprise/RGSTransport.py:60
-#: transports/RGS_enterprise/TRGSTransport.py:70
+#: transports/RGS_enterprise/RGSTransport.py:61
+#: transports/RGS_enterprise/TRGSTransport.py:71
 msgid "Redirect Audio"
 msgstr "إعادة توجيه الصوت"
 
-#: transports/RGS_enterprise/RGSTransport.py:61
-#: transports/RGS_enterprise/TRGSTransport.py:71
+#: transports/RGS_enterprise/RGSTransport.py:62
+#: transports/RGS_enterprise/TRGSTransport.py:72
 msgid "If checked, the Audio will be redirected."
 msgstr "إذا تحققت، سيتم إعادة توجيه الصوت."
 
-#: transports/RGS_enterprise/RGSTransport.py:62
-#: transports/RGS_enterprise/TRGSTransport.py:72
+#: transports/RGS_enterprise/RGSTransport.py:63
+#: transports/RGS_enterprise/TRGSTransport.py:73
 msgid "Redirect Mic"
 msgstr "إعادة توجيه الميكروفون"
 
-#: transports/RGS_enterprise/RGSTransport.py:63
-#: transports/RGS_enterprise/TRGSTransport.py:73
+#: transports/RGS_enterprise/RGSTransport.py:64
+#: transports/RGS_enterprise/TRGSTransport.py:74
 msgid "If checked, the Mic will be redirected."
 msgstr "إذا تحققت، سيتم إعادة توجيه الميكروفونات."
 
-#: transports/RGS_enterprise/TRGSTransport.py:42
-msgid "RGS Transport (tunneled)"
-msgstr "RGS النقل (نفق)"
+#: transports/RGS_enterprise/TRGSTransport.py:43
+#| msgid "Transport"
+msgid "RGS Transport."
+msgstr "النقل RGS."
 
-#: transports/RGS_enterprise/TRGSTransport.py:44
-msgid "RGS Transport for tunneled connection"
-msgstr "النقل RGS للاتصال عبر نفق"
+#: transports/RGS_enterprise/TRGSTransport.py:45
+#| msgid "RGS Transport for tunneled connection"
+msgid "RGS Protocol. Tunneled connection"
+msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385A550"
 
 #: transports/SPICE/BaseSPICETransport.py:66
 msgid "Empty credentials"
@@ -5230,20 +5415,24 @@ msgid "Auto-redirect USB devices when plugged in."
 msgstr "إعادة التوجيه التلقائي أجهزة USB عند توصيل."
 
 #: transports/SPICE/SPICETransport.py:52
-msgid "SPICE Transport (direct)"
-msgstr "النقل التوابل (مباشر)"
+#| msgid "SPICE Transport (direct)"
+msgid "SPICE Transport"
+msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385A5C5"
 
 #: transports/SPICE/SPICETransport.py:54
-msgid "SPICE Transport for direct connection (EXPERIMENTAL)"
-msgstr "النقل SPICE للاتصال المباشر (تجريبية)"
+#| msgid "RDP Transport for direct connection"
+msgid "SPICE Protocol. Direct connection."
+msgstr "بروتوكول التوابل. الاتصال المباشر."
 
 #: transports/SPICE/TSPICETransport.py:60
-msgid "SPICE Transport (tunneled)"
-msgstr "النقل التوابل (نفق)"
+#| msgid "SPICE Transport (direct)"
+msgid "SPICE Transport "
+msgstr "النقل التوابل "
 
 #: transports/SPICE/TSPICETransport.py:62
-msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
-msgstr "النقل SPICE للاتصال النفق (تجريبية)"
+#| msgid "RDS Transport for tunneled connection"
+msgid "SPICE Protocol. Tunneled connection."
+msgstr "بروتوكول التوابل. اتصال النفق."
 
 #: transports/X2GO/BaseX2GOTransport.py:76
 msgid "Show fullscreen"
@@ -5253,77 +5442,89 @@ msgstr "عرض ملء الشاشة"
 msgid "Desktop"
 msgstr "سطح المكتب"
 
-#: transports/X2GO/BaseX2GOTransport.py:95
-msgid "Enable sound"
-msgstr "تمكين الصوت"
-
 #: transports/X2GO/BaseX2GOTransport.py:96
+msgid "vAPP"
+msgstr "فب"
+
+#: transports/X2GO/BaseX2GOTransport.py:97
+msgid ""
+"If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
+"executed. If UDS vAPP is not selected, this field will be ignored."
+msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385A829"
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.3431878C"
+"إعدام. إذا لم يتم تحديد فب المصغرة، سيتم تجاهل هذا الحقل."
+
+#: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"
 msgstr "إذا تم، سيكون الصوت متاح"
 
-#: transports/X2GO/BaseX2GOTransport.py:103
+#: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect root folder"
 msgstr "إعادة توجيه المجلد الجذر"
 
-#: transports/X2GO/BaseX2GOTransport.py:104
+#: transports/X2GO/BaseX2GOTransport.py:112
 msgid "If checked, user home folder will be redirected"
 msgstr "إذا تم، سيكون لإعادة توجيه المجلد الرئيسي المستخدم"
 
-#: transports/X2GO/BaseX2GOTransport.py:110
+#: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
 msgstr "سرعة"
 
-#: transports/X2GO/BaseX2GOTransport.py:112
+#: transports/X2GO/BaseX2GOTransport.py:120
 msgid "Connection speed"
 msgstr "سرعة الاتصال"
 
-#: transports/X2GO/BaseX2GOTransport.py:122
+#: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Sound"
 msgstr "الصوت"
 
-#: transports/X2GO/BaseX2GOTransport.py:122
+#: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Sound server"
 msgstr "خادم الصوت"
 
-#: transports/X2GO/BaseX2GOTransport.py:130
+#: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard"
 msgstr "لوحة المفاتيح"
 
-#: transports/X2GO/BaseX2GOTransport.py:130
+#: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard layout (es, us, fr, ...). Empty value means autodetect."
 msgstr "تخطيط لوحة المفاتيح (ES, US, FR ...). قيمة فارغة يعني كشف تلقائي."
 
-#: transports/X2GO/BaseX2GOTransport.py:147
+#: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack"
 msgstr "حزمة"
 
-#: transports/X2GO/BaseX2GOTransport.py:147
+#: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack format. Change with care!"
 msgstr "شكل حزمة. تغيير مع الرعاية!"
 
-#: transports/X2GO/BaseX2GOTransport.py:152
+#: transports/X2GO/BaseX2GOTransport.py:160
 msgid "Quality"
 msgstr "جودة"
 
-#: transports/X2GO/BaseX2GOTransport.py:152
+#: transports/X2GO/BaseX2GOTransport.py:160
 msgid "Quality value used on some pack formats."
 msgstr "قيمة الجودة المستخدمة في بعض الأشكال حزمة."
 
-#: transports/X2GO/TX2GOTransport.py:59
-msgid "X2Go Transport Experimental (tunneled)"
-msgstr "X2Go النقل التجريبية (نفق)"
+#: transports/X2GO/TX2GOTransport.py:58
+#| msgid "PCoIP Transport (Experimental)"
+msgid "X2Go Transport (Experimental)"
+msgstr "X2Go النقل (تجريبية)"
 
-#: transports/X2GO/TX2GOTransport.py:61
-msgid "X2Go Transport for tunneled connection (EXPERIMENTAL)"
-msgstr "النقل X2Go للاتصال النفق (تجريبية)"
+#: transports/X2GO/TX2GOTransport.py:60
+#| msgid "X2Go Transport Experimental (tunneled)"
+msgid "X2Go Protocol (Experimental). Tunneled connection."
+msgstr "X2Go البروتوكول (تجريبية). اتصال النفق."
 
 #: transports/X2GO/X2GOTransport.py:53
-msgid "X2Go Transport Experimental (direct)"
-msgstr "X2Go النقل التجريبية (مباشر)"
+#| msgid "X2Go Transport Experimental (direct)"
+msgid "X2Go Transport Experimental"
+msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385AA72"
 
 #: transports/X2GO/X2GOTransport.py:55
-msgid "X2Go Transport for direct connection (EXPERIMENTAL)"
-msgstr "النقل X2Go للاتصال المباشر (تجريبية)"
+#| msgid "X2Go Transport Experimental (direct)"
+msgid "X2Go Protocol (Experimental). Direct connection."
+msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.3431898A"
 
 #: web/errors.py:72
 msgid "Unknown error"
@@ -5394,7 +5595,7 @@ msgstr "الموثق لا يوفر المعلومات"
 msgid "UDS Plugin preferences"
 msgstr "تفضيلات البرنامج المساعد UDS"
 
-#: web/views/index.py:184
+#: web/views/index.py:189
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -5402,6 +5603,6 @@ msgstr ""
 "هذه الخدمة هي على وشك أن تحل محلها الإصدار الجديد. من فضلك، إغلاق جلسة قبل "
 "{} وحفظ كل ما تبذلونه من العمل لتجنب فقدان ذلك."
 
-#: web/views/service.py:115
+#: web/views/service.py:116
 msgid "Service not ready. Please, try again in a while."
 msgstr "الخدمة ليست جاهزة. من فضلك، حاول مرة أخرى في حين."

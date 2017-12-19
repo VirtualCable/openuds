@@ -63,7 +63,6 @@ class TSNXTransport(Transport):
     typeType = 'TSNXTransport'
     typeDescription = _('NX protocol. Tunneled connection.')
     iconFile = 'nx.png'
-    needsJava = True  # If this transport needs java for rendering
     protocol = protocols.NX
     group = TUNNELED_GROUP
 

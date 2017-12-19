@@ -56,7 +56,7 @@ class NXTransport(Transport):
     '''
     typeName = _('NX Transport')
     typeType = 'NXTransport'
-    typeDescription = _('NX Protocol. Firect connection.')
+    typeDescription = _('NX Protocol. Direct connection.')
     iconFile = 'nx.png'
     protocol = protocols.NX
 

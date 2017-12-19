@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-09 09:19+0200\n"
+"POT-Creation-Date: 2017-12-19 22:34+0100\n"
 "PO-Revision-Date: 2017-10-05 08:48+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -20,20 +20,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: REST/methods/actor.py:95 REST/methods/client.py:92
-#: REST/methods/client.py:109
+#: REST/methods/actor.py:93 REST/methods/client.py:93
+#: REST/methods/client.py:110
 msgid "Correct"
 msgstr "Corriger"
 
-#: REST/methods/actor.py:105
+#: REST/methods/actor.py:103
 msgid "Invalid key"
 msgstr "Clé non valide"
 
-#: REST/methods/actor.py:171
+#: REST/methods/actor.py:169
 msgid "Unmanaged host"
 msgstr "Hôte non managé"
 
-#: REST/methods/actor.py:203 web/errors.py:79
+#: REST/methods/actor.py:201 web/errors.py:79
 msgid "User service not found"
 msgstr "Service utilisateur introuvable"
 
@@ -49,7 +49,7 @@ msgstr "ID"
 #: REST/methods/images.py:61 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
-#: REST/methods/services_pools.py:77 REST/methods/transports.py:57
+#: REST/methods/services_pools.py:80 REST/methods/transports.py:57
 #: REST/methods/user_services.py:235 REST/methods/user_services.py:270
 #: REST/methods/users_groups.py:113 REST/model.py:132
 #: templates/uds/admin/tmpl/calendar_rule.html:5
@@ -62,10 +62,10 @@ msgstr "Nom"
 
 #: REST/methods/authenticators.py:61 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:72 REST/methods/services.py:190
+#: REST/methods/providers.py:72 REST/methods/services.py:189
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:262 REST/model.py:140
+#: REST/methods/users_groups.py:262 REST/model.py:150
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -73,12 +73,12 @@ msgstr "Commentaires"
 
 #: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:269 REST/model.py:149
+#: REST/methods/user_services.py:269 REST/model.py:159
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Priorité"
 
-#: REST/methods/authenticators.py:63 REST/model.py:160
+#: REST/methods/authenticators.py:63 REST/model.py:170
 msgid "Label"
 msgstr "Étiquette"
 
@@ -95,8 +95,8 @@ msgstr "Utilisateurs"
 
 #: REST/methods/authenticators.py:65 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:76 REST/methods/services.py:194
-#: REST/methods/services_pools.py:84 REST/methods/transports.py:60
+#: REST/methods/providers.py:76 REST/methods/services.py:193
+#: REST/methods/services_pools.py:87 REST/methods/transports.py:60
 msgid "tags"
 msgstr "Tags"
 
@@ -129,7 +129,7 @@ msgstr "Chaque"
 msgid "Duration"
 msgstr "Durée"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:155
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:154
 msgid "Element already exists (duplicate key error)"
 msgstr "Élément existe déjà (erreur de clé en double)"
 
@@ -260,45 +260,45 @@ msgstr "Description"
 msgid "Generates"
 msgstr "Génère"
 
-#: REST/methods/services.py:159
+#: REST/methods/services.py:158
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "Erreur d'entrée : {0}"
 
-#: REST/methods/services.py:183
+#: REST/methods/services.py:182
 #, python-brace-format
 msgid "Services of {0}"
 msgstr "Services de {0}"
 
-#: REST/methods/services.py:185
+#: REST/methods/services.py:184
 msgid "Current services"
 msgstr "Services actuels"
 
-#: REST/methods/services.py:189
+#: REST/methods/services.py:188
 msgid "Service name"
 msgstr "Nom du service"
 
-#: REST/methods/services.py:191 REST/methods/user_services.py:271
+#: REST/methods/services.py:190 REST/methods/user_services.py:271
 msgid "Type"
 msgstr "Type"
 
-#: REST/methods/services.py:192 templates/uds/admin/tmpl/group-info.html:4
+#: REST/methods/services.py:191 templates/uds/admin/tmpl/group-info.html:4
 #: templates/uds/admin/tmpl/service-info.html:5
 #: templates/uds/admin/tmpl/user-info.html:5
 msgid "Services Pools"
 msgstr "Piscines services"
 
-#: REST/methods/services.py:193 REST/methods/services_pools.py:79
+#: REST/methods/services.py:192 REST/methods/services_pools.py:82
 #: templates/uds/admin/tmpl/dashboard.html:88
 msgid "User services"
 msgstr "Services aux utilisateurs"
 
-#: REST/methods/services.py:247 REST/methods/users_groups.py:201
+#: REST/methods/services.py:246 REST/methods/users_groups.py:201
 #: REST/methods/users_groups.py:354
 msgid "With errors"
 msgstr "Avec Erreurs"
 
-#: REST/methods/services.py:247 REST/methods/users_groups.py:201
+#: REST/methods/services.py:246 REST/methods/users_groups.py:201
 #: REST/methods/users_groups.py:354
 msgid "Ok"
 msgstr "Bien"
@@ -308,7 +308,7 @@ msgid "Access restrictions by calendar"
 msgstr "Restrictions d'accès par calendrier"
 
 #: REST/methods/services_pool_calendars.py:90
-#: REST/methods/services_pool_calendars.py:156
+#: REST/methods/services_pool_calendars.py:155
 #: templates/uds/admin/tmpl/pool_add_access.html:12
 #: templates/uds/admin/tmpl/pool_add_action.html:5
 msgid "Calendar"
@@ -319,33 +319,33 @@ msgstr "Calendrier"
 msgid "Access"
 msgstr "Accès"
 
-#: REST/methods/services_pool_calendars.py:152
+#: REST/methods/services_pool_calendars.py:151
 #: templates/uds/admin/tmpl/services_pool.html:36
 msgid "Scheduled actions"
 msgstr "Actions prévues"
 
-#: REST/methods/services_pool_calendars.py:157
+#: REST/methods/services_pool_calendars.py:156
 #: templates/uds/admin/tmpl/pool_add_action.html:35
 msgid "Action"
 msgstr "Action"
 
-#: REST/methods/services_pool_calendars.py:158 core/ui/UserInterface.py:87
+#: REST/methods/services_pool_calendars.py:157 core/ui/UserInterface.py:87
 msgid "Parameters"
 msgstr "Paramètres"
 
-#: REST/methods/services_pool_calendars.py:159
+#: REST/methods/services_pool_calendars.py:158
 msgid "Relative to"
 msgstr "Par rapport à"
 
-#: REST/methods/services_pool_calendars.py:160
+#: REST/methods/services_pool_calendars.py:159
 msgid "Time offset"
 msgstr "Décalage horaire"
 
-#: REST/methods/services_pool_calendars.py:161
+#: REST/methods/services_pool_calendars.py:160
 msgid "Next execution"
 msgstr "Prochaine exécution"
 
-#: REST/methods/services_pool_calendars.py:162
+#: REST/methods/services_pool_calendars.py:161
 msgid "Last execution"
 msgstr "Dernière exécution"
 
@@ -353,120 +353,164 @@ msgstr "Dernière exécution"
 msgid "Services Pool Groups"
 msgstr "Groupes de pool de services"
 
-#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:171
+#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:200
 msgid "Associated Image"
 msgstr "Image associée"
 
-#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:172
+#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:201
 msgid "Image assocciated with this service"
 msgstr "Image associée à ce service"
 
-#: REST/methods/services_pools.py:75
+#: REST/methods/services_pools.py:78
 #: templates/uds/admin/snippets/navbar.html:27
 #: templates/uds/admin/tmpl/services_pool.html:4
 #: templates/uds/admin/tmpl/services_pool.html:7
 msgid "Service Pools"
 msgstr "Service pool"
 
-#: REST/methods/services_pools.py:78 REST/methods/user_services.py:132
+#: REST/methods/services_pools.py:81 REST/methods/user_services.py:132
 msgid "status"
 msgstr "statut"
 
-#: REST/methods/services_pools.py:80
+#: REST/methods/services_pools.py:83
 msgid "In Preparation"
 msgstr "En préparation"
 
-#: REST/methods/services_pools.py:81
+#: REST/methods/services_pools.py:84
 msgid "Shows transports"
 msgstr "Montrer les transports"
 
-#: REST/methods/services_pools.py:82
+#: REST/methods/services_pools.py:85
 msgid "Pool Group"
 msgstr "Groupe de pools"
 
-#: REST/methods/services_pools.py:83
+#: REST/methods/services_pools.py:86
 msgid "Parent Service"
 msgstr "Service parent"
 
-#: REST/methods/services_pools.py:96 REST/methods/services_pools.py:178
+#: REST/methods/services_pools.py:98 REST/methods/services_pools.py:207
 msgid "Default"
 msgstr "Par défaut"
 
-#: REST/methods/services_pools.py:146
+#: REST/methods/services_pools.py:151
 msgid "Create at least one OS Manager before creating a new service pool"
 msgstr "Créez au moins un OS gérant avant de créer un nouveau pool de service"
 
-#: REST/methods/services_pools.py:148
+#: REST/methods/services_pools.py:153
 msgid "Create at least a service before creating a new service pool"
 msgstr "Créez au moins un service avant de créer un nouveau pool de service"
 
-#: REST/methods/services_pools.py:155
+#: REST/methods/services_pools.py:160
 msgid "Base service"
 msgstr "Service de base"
 
-#: REST/methods/services_pools.py:156
+#: REST/methods/services_pools.py:161
 msgid "Service used as base of this service pool"
 msgstr "Service utilisé comme base de ce pool de service"
 
-#: REST/methods/services_pools.py:163
+#: REST/methods/services_pools.py:168
 msgid "OS Manager"
 msgstr "OS Manager"
 
-#: REST/methods/services_pools.py:164
+#: REST/methods/services_pools.py:169
 msgid "OS Manager used as base of this service pool"
 msgstr "Gestionnaire de l'OS utilisé comme base de cette piscine service"
 
-#: REST/methods/services_pools.py:175 REST/methods/services_pools.py:183
-#: services/OVirt/OVirtLinkedService.py:175
+#: REST/methods/services_pools.py:176
+msgid "Show transports"
+msgstr "Voir la transports"
+
+#: REST/methods/services_pools.py:177
+msgid "If active, alternative transports for user will be shown"
+msgstr ""
+"S'il est activé, les transports alternatifs pour utilisateur seront affichera"
+
+#: REST/methods/services_pools.py:180 REST/methods/services_pools.py:188
+#: REST/methods/services_pools.py:196 auths/RegexLdap/Authenticator.py:71
+#: core/ui/UserInterface.py:86
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
+#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
+#: services/OpenGnsys/OGService.py:130
+msgid "Advanced"
+msgstr "Advanced"
+
+#: REST/methods/services_pools.py:184
+msgid "Allow removal by users"
+msgstr "Permettre le retrait par les utilisateurs"
+
+#: REST/methods/services_pools.py:185
+msgid ""
+"If active, the user will be allowed to remove the service \"manually\". Be "
+"care with this, because the user will have the \"poser\" to delete it's own "
+"service"
+msgstr ""
+"S’il est activé, l’utilisateur pourra supprimer le service « manuellement ». Être "
+"soin avec cela, parce que l’utilisateur aura la « poser » pour supprimer son propre "
+"service"
+
+#: REST/methods/services_pools.py:192
+msgid "Ignores unused"
+msgstr "Ne tient pas compte non utilisé"
+
+#: REST/methods/services_pools.py:193
+msgid ""
+"If active, UDS will not try to detect and remove assigned but not used user "
+"services."
+msgstr ""
+"S’il est activé, UDS n’essaiera pas de détecter et de supprimer l’utilisateur affecté, mais non utilisée "
+"services."
+
+#: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
+#: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
 msgid "Display"
 msgstr "Affichage"
 
-#: REST/methods/services_pools.py:179
+#: REST/methods/services_pools.py:208
 msgid "Pool group"
 msgstr "Groupe piscine"
 
-#: REST/methods/services_pools.py:180
+#: REST/methods/services_pools.py:209
 msgid "Pool group for this pool (for pool clasify on display)"
 msgstr "Groupe de piscine pour ce pool (pour piscine Benodigd sur écran)"
 
-#: REST/methods/services_pools.py:188
+#: REST/methods/services_pools.py:217
 msgid "Initial available services"
 msgstr "Initiales services disponibles"
 
-#: REST/methods/services_pools.py:189
+#: REST/methods/services_pools.py:218
 msgid "Services created initially for this service pool"
 msgstr "Services créés initialement pour ce pool service"
 
-#: REST/methods/services_pools.py:192 REST/methods/services_pools.py:201
-#: REST/methods/services_pools.py:210 REST/methods/services_pools.py:219
+#: REST/methods/services_pools.py:221 REST/methods/services_pools.py:230
+#: REST/methods/services_pools.py:239 REST/methods/services_pools.py:248
 msgid "Availability"
 msgstr "Disponibilité"
 
-#: REST/methods/services_pools.py:197
+#: REST/methods/services_pools.py:226
 msgid "Services to keep in cache"
 msgstr "Services pour conserver en cache"
 
-#: REST/methods/services_pools.py:198
+#: REST/methods/services_pools.py:227
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
 "Services conservés dans le cache pour l'assignation de service utilisateur "
 "améliorée"
 
-#: REST/methods/services_pools.py:206
+#: REST/methods/services_pools.py:235
 msgid "Services to keep in L2 cache"
 msgstr "Services de garder en mémoire cache L2"
 
-#: REST/methods/services_pools.py:207
+#: REST/methods/services_pools.py:236
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr ""
 "Services conservés dans le cache de niveau 2 pour la production d'un service "
 "amélioré"
 
-#: REST/methods/services_pools.py:215
+#: REST/methods/services_pools.py:244
 msgid "Maximum number of services to provide"
 msgstr "Nombre maximum de services à fournir"
 
-#: REST/methods/services_pools.py:216
+#: REST/methods/services_pools.py:245
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -474,20 +518,11 @@ msgstr ""
 "Nombre maximal de service (assignés et cache L1) qui peuvent être créés pour "
 "ce service"
 
-#: REST/methods/services_pools.py:223
-msgid "Show transports"
-msgstr "Voir la transports"
-
-#: REST/methods/services_pools.py:224
-msgid "If active, alternative transports for user will be shown"
-msgstr ""
-"S'il est activé, les transports alternatifs pour utilisateur seront affichera"
-
-#: REST/methods/services_pools.py:239
+#: REST/methods/services_pools.py:261
 msgid "Base service does not exist anymore"
 msgstr "Service de base n'existe plus"
 
-#: REST/methods/services_pools.py:258
+#: REST/methods/services_pools.py:280
 msgid "This service requires an OS Manager"
 msgstr "Ce service nécessite un gestionnaire de système d'exploitation"
 
@@ -565,9 +600,8 @@ msgstr ""
 "Si coché, le transport sera activé pour les réseaux sélectionnés.If "
 "décochée, le transport sera désactivée pour les réseaux sélectionnés"
 
-#: REST/methods/transports.py:81
-#: services/Nutanix_enterprise/NutanixService.py:51
-#: templates/uds/html5/index.html:126 templates/uds/semantic/index.html:29
+#: REST/methods/transports.py:81 templates/uds/html5/index.html:132
+#: templates/uds/semantic/index.html:29
 msgid "Networks"
 msgstr "Réseaux"
 
@@ -691,14 +725,14 @@ msgstr "Utilisateurs actuels"
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
 #: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:105
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:29
-#: services/Vmware_enterprise/ServiceProviderVC.py:31
+#: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
-#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
-#: transports/PCoIP_enterprise/PCoIPTransport.py:60
-#: transports/RDP/BaseRDPTransport.py:62
-#: transports/RGS_enterprise/RGSTransport.py:45
-#: transports/RGS_enterprise/TRGSTransport.py:55
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/PCoIP_enterprise/PCoIPTransport.py:59
+#: transports/RDP/BaseRDPTransport.py:61
+#: transports/RGS_enterprise/RGSTransport.py:46
+#: transports/RGS_enterprise/TRGSTransport.py:56
 #: transports/SPICE/BaseSPICETransport.py:72
 #: transports/X2GO/BaseX2GOTransport.py:69 web/forms/LoginForm.py:63
 msgid "Username"
@@ -751,37 +785,47 @@ msgid "Name of this element"
 msgstr "Nom de cet élément"
 
 #: REST/model.py:141
+#| msgid "Your pet's name"
+msgid "Short name"
+msgstr "Nom court"
+
+#: REST/model.py:142
+#| msgid "Services kept in cache for improved user service assignation"
+msgid "Short name for user service visualization"
+msgstr "Nom court pour la visualisation de service utilisateur"
+
+#: REST/model.py:151
 msgid "Comments for this element"
 msgstr "Commentaires pour cet élément"
 
-#: REST/model.py:150
+#: REST/model.py:160
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Sélectionne la priorité de cet élément (priorité supérieure de moyens nombre "
 "inférieur)"
 
-#: REST/model.py:161
+#: REST/model.py:171
 msgid "Label for this element"
 msgstr "Étiquette pour cet élément"
 
-#: REST/model.py:246
+#: REST/model.py:256
 msgid "Invalid Request"
 msgstr "Requête non valide"
 
-#: REST/model.py:253
+#: REST/model.py:263
 msgid "Method not found in {}: {}"
 msgstr "Méthode introuvable {}: {}"
 
-#: REST/model.py:259
+#: REST/model.py:269
 msgid "Item not found"
 msgstr "Élément introuvable"
 
-#: REST/model.py:264 web/errors.py:75
+#: REST/model.py:274 web/errors.py:75
 msgid "Access denied"
 msgstr "Accès refusé"
 
-#: REST/model.py:267
+#: REST/model.py:277
 msgid "Operation not supported"
 msgstr "Opération non prise en charge"
 
@@ -814,7 +858,7 @@ msgstr "Liste des utilisateurs des {}"
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
 #: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:98
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:26
-#: services/Vmware_enterprise/ServiceProviderVC.py:29
+#: services/Vmware_enterprise/ServiceProviderVC.py:31
 #: services/Xen/XenProvider.py:99
 msgid "Host"
 msgstr "Serveur"
@@ -876,14 +920,14 @@ msgstr ""
 #: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:106
 #: services/Sample/SampleService.py:131
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:30
-#: services/Vmware_enterprise/ServiceProviderVC.py:32
+#: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
-#: transports/PCoIP_enterprise/PCoIPTransport.py:61
-#: transports/RDP/BaseRDPTransport.py:63
-#: transports/RGS_enterprise/RGSTransport.py:46
-#: transports/RGS_enterprise/TRGSTransport.py:56
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
+#: transports/PCoIP_enterprise/PCoIPTransport.py:60
+#: transports/RDP/BaseRDPTransport.py:62
+#: transports/RGS_enterprise/RGSTransport.py:47
+#: transports/RGS_enterprise/TRGSTransport.py:57
 #: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:64
 msgid "Password"
 msgstr "Mot de passe"
@@ -903,7 +947,7 @@ msgstr "Mot de passe de l'utilisateur ldap"
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
 #: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:111
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:36
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout"
 msgstr "Temporisation"
 
@@ -987,7 +1031,7 @@ msgstr "Serveur EDirectory IP ou nom d'hôte"
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
 #: services/OpenStack/Provider.py:99
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:27
-#: services/Vmware_enterprise/ServiceProviderVC.py:30
+#: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Port"
 msgstr "Port"
 
@@ -1187,13 +1231,6 @@ msgstr ""
 "Classe d’objets LDAP qui sera également vérifiée pour la récupération des "
 "groupes (normalement vide)"
 
-#: auths/RegexLdap/Authenticator.py:71 core/ui/UserInterface.py:86
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
-#: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
-#: services/OpenGnsys/OGService.py:130
-msgid "Advanced"
-msgstr "Advanced"
-
 #: auths/RegexLdap/Authenticator.py:73
 msgid "Regex LDAP Authenticator"
 msgstr "Authentificateur LDAP Regex"
@@ -1308,7 +1345,7 @@ msgstr "De son vrai nom attrs"
 msgid "Fields from where to extract the real name"
 msgstr "Champs d'où extraire le nom réel"
 
-#: auths/SAML_enterprise/SAML.py:162
+#: auths/SAML_enterprise/SAML.py:161
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1316,11 +1353,11 @@ msgstr ""
 "Certificat de serveur doit être un PEM valide (PEM certificats commence "
 "par---BEGIN CERTIFICATE---)"
 
-#: auths/SAML_enterprise/SAML.py:167
+#: auths/SAML_enterprise/SAML.py:166
 msgid "Invalid server certificate. "
 msgstr "Certificat de serveur non valide. "
 
-#: auths/SAML_enterprise/SAML.py:170
+#: auths/SAML_enterprise/SAML.py:169
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1328,20 +1365,25 @@ msgstr ""
 "Clé privée doit être un PEM valide (PEM clés privées commence par---BEGIN "
 "RSA PRIVATE KEY---"
 
-#: auths/SAML_enterprise/SAML.py:202
+#: auths/SAML_enterprise/SAML.py:181
+#| msgid "Invalid key"
+msgid "Invalid private key. "
+msgstr "Clé privée non valide. "
+
+#: auths/SAML_enterprise/SAML.py:201
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Impossible d'extraire url {0}: {1}"
 
-#: auths/SAML_enterprise/SAML.py:213
+#: auths/SAML_enterprise/SAML.py:212
 msgid " (obtained from URL)"
 msgstr " (obtenu à partir d'URL)"
 
-#: auths/SAML_enterprise/SAML.py:214
+#: auths/SAML_enterprise/SAML.py:213
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML ne semble pas valide pour les métadonnées de l'IDP "
 
-#: auths/SAML_enterprise/SAML.py:235
+#: auths/SAML_enterprise/SAML.py:233
 msgid "Can't access idp metadata"
 msgstr "Ne peut pas accéder aux métadonnées de l'idp"
 
@@ -1444,11 +1486,11 @@ msgstr ""
 "Ne peut pas localiser n'importe quel groupe avec l'attribut d'appartenance "
 "spécifié"
 
-#: core/BaseModule.py:200
+#: core/BaseModule.py:197
 msgid "No connection checking method is implemented."
 msgstr "Aucun lien vérifier la méthode n'est implémentée."
 
-#: core/BaseModule.py:269
+#: core/BaseModule.py:266
 msgid "No check method provided."
 msgstr "Aucune méthode de vérification fournie."
 
@@ -1473,7 +1515,7 @@ msgstr ""
 msgid "System Administrator"
 msgstr "Administrateur système"
 
-#: core/auths/auth.py:124
+#: core/auths/auth.py:126
 msgid "Forbidden"
 msgstr "Interdit"
 
@@ -1503,7 +1545,7 @@ msgid "Can't unpublish publications with services in process"
 msgstr ""
 "Ne peut annuler la publication des publications avec services de processus"
 
-#: core/managers/UserPrefsManager.py:293
+#: core/managers/UserPrefsManager.py:293 transports/RDP/BaseRDPTransport.py:75
 msgid "Screen Size"
 msgstr "Taille de l'écran"
 
@@ -1562,11 +1604,11 @@ msgstr "Gestionnaire d'OS de base"
 msgid "Base Manager"
 msgstr "Gestionnaire de base de"
 
-#: core/reports/BaseReport.py:49
+#: core/reports/BaseReport.py:51
 msgid "Base Report"
 msgstr "Rapport de base"
 
-#: core/reports/BaseReport.py:50
+#: core/reports/BaseReport.py:52
 msgid "Base report"
 msgstr "Rapport de base"
 
@@ -1590,11 +1632,11 @@ msgstr "Aucun"
 msgid "Base Clustered Service"
 msgstr "Base en cluster Service"
 
-#: core/transports/BaseTransport.py:47
+#: core/transports/BaseTransport.py:48
 msgid "Direct"
 msgstr "Direct"
 
-#: core/transports/BaseTransport.py:48
+#: core/transports/BaseTransport.py:49
 msgid "Tunneled"
 msgstr "En tunnel"
 
@@ -2002,11 +2044,11 @@ msgstr ""
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:35
 #: services/OpenStack/Provider.py:104 transports/HTML5RDP/HTML5RDP.py:76
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:76
-#: transports/PCoIP_enterprise/PCoIPTransport.py:62
-#: transports/RDP/BaseRDPTransport.py:65
-#: transports/RDS_enterprise/BaseRDSTransport.py:68
-#: transports/RGS_enterprise/RGSTransport.py:47
-#: transports/RGS_enterprise/TRGSTransport.py:57
+#: transports/PCoIP_enterprise/PCoIPTransport.py:61
+#: transports/RDP/BaseRDPTransport.py:64
+#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RGS_enterprise/RGSTransport.py:48
+#: transports/RGS_enterprise/TRGSTransport.py:58
 msgid "Domain"
 msgstr "Domaine"
 
@@ -2429,7 +2471,8 @@ msgstr "Nombre de machines désirés de courir d'attente pour un utilisateur."
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
 #: services/HyperV_enterprise/HyperVLinkedService.py:82
 #: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
-#: services/Vmware_enterprise/VCLinkedCloneService.py:42
+#: services/Vmware_enterprise/VCFullCloneService.py:42
+#: services/Vmware_enterprise/VCLinkedCloneService.py:43
 #: services/Xen/XenLinkedService.py:83
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr ""
@@ -2438,8 +2481,8 @@ msgstr ""
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:120
 #: services/Nutanix_enterprise/NutanixService.py:44
-#: services/OVirt/OVirtLinkedService.py:131
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/OVirt/OVirtLinkedService.py:132
+#: services/Vmware_enterprise/VCLinkedCloneService.py:82
 #: services/Xen/XenLinkedService.py:120
 msgid "Base Machine"
 msgstr "Machine de base"
@@ -2447,13 +2490,14 @@ msgstr "Machine de base"
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
 #: services/HyperV_enterprise/HyperVLinkedService.py:122
 #: services/Nutanix_enterprise/NutanixService.py:45
-#: services/OVirt/OVirtLinkedService.py:133
+#: services/OVirt/OVirtLinkedService.py:134
 #: services/Xen/XenLinkedService.py:122
 msgid "Service base machine"
 msgstr "Machine de base de service"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
 #: services/HyperV_enterprise/HyperVLinkedService.py:128
+#: services/Nutanix_enterprise/NutanixService.py:64
 #: services/OpenStack/LiveService.py:118 services/Xen/XenLinkedService.py:128
 msgid "Network"
 msgstr "Réseau"
@@ -2468,15 +2512,16 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
 #: services/HyperV_enterprise/HyperVLinkedService.py:137
-#: services/OVirt/OVirtLinkedService.py:139
-#: services/Vmware_enterprise/VCLinkedCloneService.py:82
+#: services/Nutanix_enterprise/NutanixService.py:51
+#: services/OVirt/OVirtLinkedService.py:140
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
 #: services/Xen/XenLinkedService.py:137
 msgid "Memory (Mb)"
 msgstr "Mémoire (Mb)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
 #: services/HyperV_enterprise/HyperVLinkedService.py:142
-#: services/Vmware_enterprise/VCLinkedCloneService.py:83
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
 msgid "Memory for machines deployed from this service"
 msgstr "Mémoire pour ordinateurs déployés de ce service"
 
@@ -2493,11 +2538,11 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
 #: services/HyperV_enterprise/HyperVLinkedService.py:148
-#: services/Nutanix_enterprise/NutanixService.py:57
-#: services/OVirt/OVirtLinkedService.py:187
+#: services/Nutanix_enterprise/NutanixService.py:71
+#: services/OVirt/OVirtLinkedService.py:190
 #: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
 #: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+#: services/Vmware_enterprise/VCLinkedCloneService.py:92
 #: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
 msgstr "Noms de machine"
@@ -2506,38 +2551,38 @@ msgstr "Noms de machine"
 #: services/HyperV_enterprise/HyperVLinkedService.py:151
 #: services/OpenStack/LiveService.py:127
 #: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+#: services/Vmware_enterprise/VCLinkedCloneService.py:92
 msgid "Base name for clones from this machine"
 msgstr "Nom de base des clones de cette machine"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
 #: services/HyperV_enterprise/HyperVLinkedService.py:158
-#: services/Nutanix_enterprise/NutanixService.py:66
-#: services/OVirt/OVirtLinkedService.py:197
+#: services/Nutanix_enterprise/NutanixService.py:80
+#: services/OVirt/OVirtLinkedService.py:200
 #: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
 #: services/VCloud_enterprise/VCloudCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:92
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
 #: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
 msgstr "Longueur du nom"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
 #: services/HyperV_enterprise/HyperVLinkedService.py:161
-#: services/Nutanix_enterprise/NutanixService.py:69
-#: services/OVirt/OVirtLinkedService.py:200
+#: services/Nutanix_enterprise/NutanixService.py:83
+#: services/OVirt/OVirtLinkedService.py:203
 #: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
 #: services/VCloud_enterprise/VCloudCloneService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Vmware_enterprise/VCLinkedCloneService.py:94
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr ""
 "Taille de la partie numérique pour les noms de ces machines (entre 3 et 6)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
 #: services/HyperV_enterprise/HyperVLinkedService.py:176
-#: services/Nutanix_enterprise/NutanixService.py:87
-#: services/OVirt/OVirtLinkedService.py:218
+#: services/Nutanix_enterprise/NutanixService.py:109
+#: services/OVirt/OVirtLinkedService.py:221
 #: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:155
-#: services/Vmware_enterprise/VCLinkedCloneService.py:114
+#: services/Vmware_enterprise/VCLinkedCloneService.py:130
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
 msgstr ""
@@ -2545,10 +2590,10 @@ msgstr ""
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
 #: services/HyperV_enterprise/HyperVLinkedService.py:178
-#: services/Nutanix_enterprise/NutanixService.py:89
-#: services/OVirt/OVirtLinkedService.py:220
+#: services/Nutanix_enterprise/NutanixService.py:111
+#: services/OVirt/OVirtLinkedService.py:223
 #: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:157
-#: services/Vmware_enterprise/VCLinkedCloneService.py:116
+#: services/Vmware_enterprise/VCLinkedCloneService.py:132
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
 msgstr "Nom de l'ordinateur ne peut pas être uniquement des nombres"
@@ -2591,7 +2636,7 @@ msgstr "Délai d'attente en secondes de connexion pour HyperV"
 #: services/HyperV_enterprise/HyperVProvider.py:92
 #: services/Nutanix_enterprise/NutanixProvider.py:46
 #: services/OVirt/OVirtProvider.py:117
-#: services/Vmware_enterprise/ServiceProviderVC.py:39
+#: services/Vmware_enterprise/ServiceProviderVC.py:41
 #: services/Xen/XenProvider.py:106
 msgid "Macs range"
 msgstr "Gamme Mac"
@@ -2614,9 +2659,9 @@ msgstr "Test de connexion réussie"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:172
+#: services/Nutanix_enterprise/NutanixProvider.py:179
 #: services/OVirt/OVirtProvider.py:444
-#: services/Vmware_enterprise/ServiceProviderVC.py:142
+#: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
 msgstr "Échec de la connexion. Vérifiez la connexion params"
 
@@ -2638,7 +2683,7 @@ msgid "Reserved Space"
 msgstr "Espace réservé"
 
 #: services/HyperV_enterprise/HyperVLinkedService.py:114
-#: services/OVirt/OVirtLinkedService.py:126
+#: services/OVirt/OVirtLinkedService.py:127
 #: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
 msgstr "Espace libre minimal en GB"
@@ -2648,28 +2693,32 @@ msgstr "Espace libre minimal en GB"
 #: services/HyperV_enterprise/HyperVLinkedService.py:143
 #: services/HyperV_enterprise/HyperVLinkedService.py:152
 #: services/HyperV_enterprise/HyperVLinkedService.py:162
-#: services/OVirt/OVirtLinkedService.py:134
-#: services/OVirt/OVirtLinkedService.py:145
-#: services/OVirt/OVirtLinkedService.py:156
-#: services/OVirt/OVirtLinkedService.py:170
-#: services/OVirt/OVirtLinkedService.py:183
-#: services/OVirt/OVirtLinkedService.py:191
-#: services/OVirt/OVirtLinkedService.py:201
+#: services/Nutanix_enterprise/NutanixService.py:46
+#: services/Nutanix_enterprise/NutanixService.py:58
+#: services/Nutanix_enterprise/NutanixService.py:66
+#: services/OVirt/OVirtLinkedService.py:135
+#: services/OVirt/OVirtLinkedService.py:147
+#: services/OVirt/OVirtLinkedService.py:159
+#: services/OVirt/OVirtLinkedService.py:173
+#: services/OVirt/OVirtLinkedService.py:186
+#: services/OVirt/OVirtLinkedService.py:194
+#: services/OVirt/OVirtLinkedService.py:204
 #: services/OpenNebula/LiveService.py:106
 #: services/OpenNebula/LiveService.py:116
 #: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:116
 #: services/OpenStack/LiveService.py:118 services/OpenStack/LiveService.py:119
 #: services/OpenStack/LiveService.py:121 services/OpenStack/LiveService.py:129
 #: services/OpenStack/LiveService.py:139
-#: services/Vmware_enterprise/VCLinkedCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
-#: services/Vmware_enterprise/VCLinkedCloneService.py:83
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
-#: services/Vmware_enterprise/VCLinkedCloneService.py:87
+#: services/Vmware_enterprise/VCFullCloneService.py:69
+#: services/Vmware_enterprise/VCLinkedCloneService.py:78
+#: services/Vmware_enterprise/VCLinkedCloneService.py:82
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
 #: services/Vmware_enterprise/VCLinkedCloneService.py:88
-#: services/Vmware_enterprise/VCLinkedCloneService.py:90
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 #: services/Vmware_enterprise/VCLinkedCloneService.py:91
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Vmware_enterprise/VCLinkedCloneService.py:92
+#: services/Vmware_enterprise/VCLinkedCloneService.py:94
 #: services/Xen/XenLinkedService.py:123 services/Xen/XenLinkedService.py:132
 #: services/Xen/XenLinkedService.py:142 services/Xen/XenLinkedService.py:153
 #: services/Xen/XenLinkedService.py:162 services/Xen/XenLinkedService.py:172
@@ -2689,8 +2738,8 @@ msgstr "Fournisseur de services de plate-forme HyperV (expérimental)"
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:33
-#: services/Vmware_enterprise/ServiceProviderVC.py:35
-#: services/Vmware_enterprise/ServiceProviderVC.py:79
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
+#: services/Vmware_enterprise/ServiceProviderVC.py:84
 #: services/Xen/XenProvider.py:103
 msgid "Creation concurrency"
 msgstr "Simultanéité de la création"
@@ -2700,7 +2749,7 @@ msgstr "Simultanéité de la création"
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:33
-#: services/Vmware_enterprise/ServiceProviderVC.py:35
+#: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Xen/XenProvider.py:103
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Nombre maximal de créer simultanément des VMs"
@@ -2710,8 +2759,8 @@ msgstr "Nombre maximal de créer simultanément des VMs"
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:36
-#: services/Vmware_enterprise/ServiceProviderVC.py:80
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:85
 #: services/Xen/XenProvider.py:104
 msgid "Removal concurrency"
 msgstr "Simultanéité d'enlèvement"
@@ -2721,7 +2770,7 @@ msgstr "Simultanéité d'enlèvement"
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
-#: services/Vmware_enterprise/ServiceProviderVC.py:36
+#: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Xen/XenProvider.py:104
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Nombre maximal d'éliminer simultanément les VMs"
@@ -2759,7 +2808,19 @@ msgstr "Délai d'attente en secondes de connexion à Nutanix"
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Gamme de Mac valide pour UDS gérés machines"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:170
+#: services/Nutanix_enterprise/NutanixProvider.py:49
+msgid "Legacy API (v0.8)"
+msgstr "API héritée (v0.8)"
+
+#: services/Nutanix_enterprise/NutanixProvider.py:50
+msgid ""
+"If checked, legacy apy will be used. Only recommended on OLD Nutanix "
+"installations."
+msgstr ""
+"Si cochée, tra l’héritage sera utilisé. Recommandé uniquement sur vieux Nutanix "
+"installations."
+
+#: services/Nutanix_enterprise/NutanixProvider.py:177
 msgid "Connection works fine"
 msgstr "Connexion fonctionne très bien"
 
@@ -2771,10 +2832,35 @@ msgstr "Nutanix Acropole Service"
 msgid "Nutanix Acropolis based service"
 msgstr "Acropole de Nutanix de base du service"
 
-#: services/Nutanix_enterprise/NutanixService.py:52
+#: services/Nutanix_enterprise/NutanixService.py:57
 msgid ""
-"Networks for the machines (every machine will be attached to this network)"
-msgstr "Réseaux pour les machines (chaque machine sera joint à ce réseau)"
+"Memory assigned to machines. (Zero value means \"keep original machine memory"
+"\")"
+msgstr ""
+"Mémoire attribuée aux machines. (Valeur zéro signifie « garder la mémoire de la machine originale"
+"\")"
+
+#: services/Nutanix_enterprise/NutanixService.py:65
+#| msgid ""
+#| "Networks for the machines (every machine will be attached to this network)"
+msgid ""
+"Network for the machines (every machine created will be attached to this "
+"network)"
+msgstr ""
+"Réseau pour les ordinateurs (toutes les machines créé seront attaché à cette "
+"réseau)"
+
+#: services/Nutanix_enterprise/NutanixService.py:88
+#: services/VCloud_enterprise/VCloudCloneService.py:57
+#: services/Vmware_enterprise/VCLinkedCloneService.py:67
+msgid "Remove found duplicates"
+msgstr "Supprimer les doublons trouvés"
+
+#: services/Nutanix_enterprise/NutanixService.py:91
+#: services/VCloud_enterprise/VCloudCloneService.py:57
+msgid "If active, found duplicates vApps for this service will be removed"
+msgstr ""
+"S’il est activé, les doublons trouvés vApps pour ce service sera supprimé"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"
@@ -2802,32 +2888,32 @@ msgstr ""
 "Domaine de magasin de données où les publier et de mettre des sauvegardes "
 "incrémentales"
 
-#: services/OVirt/OVirtLinkedService.py:144
+#: services/OVirt/OVirtLinkedService.py:146
 #: services/Xen/XenLinkedService.py:141
 msgid "Memory assigned to machines"
 msgstr "Mémoire attribuée aux machines"
 
-#: services/OVirt/OVirtLinkedService.py:150
+#: services/OVirt/OVirtLinkedService.py:152
 msgid "Memory Guaranteed (Mb)"
 msgstr "Mémoire garantie (Mb)"
 
-#: services/OVirt/OVirtLinkedService.py:155
+#: services/OVirt/OVirtLinkedService.py:158
 msgid "Physical memory guaranteed to machines"
 msgstr "Mémoire physique garantie aux machines"
 
-#: services/OVirt/OVirtLinkedService.py:161
+#: services/OVirt/OVirtLinkedService.py:164
 msgid "USB"
 msgstr "USB"
 
-#: services/OVirt/OVirtLinkedService.py:164
+#: services/OVirt/OVirtLinkedService.py:167
 msgid "Enable usb redirection for SPICE"
 msgstr "Activer la redirection usb pour SPICE"
 
-#: services/OVirt/OVirtLinkedService.py:178
+#: services/OVirt/OVirtLinkedService.py:181
 msgid "Display type (only for administration purposes)"
 msgstr "Type d'affichage (uniquement à des fins administratives)"
 
-#: services/OVirt/OVirtLinkedService.py:222
+#: services/OVirt/OVirtLinkedService.py:225
 #: services/Xen/XenLinkedService.py:190
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "Le minimum autorisé est de mémoire 256 Mo"
@@ -2876,7 +2962,8 @@ msgstr "OpenGnsys machines physiques"
 
 #: services/OpenGnsys/OGService.py:77 services/OpenNebula/LiveService.py:76
 #: services/OpenStack/LiveService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:40
+#: services/Vmware_enterprise/VCFullCloneService.py:40
+#: services/Vmware_enterprise/VCLinkedCloneService.py:41
 msgid "Number of desired machines to keep running waiting for an user"
 msgstr ""
 "Nombre d'ordinateurs de votre choix pour continuer à fonctionner en attente "
@@ -3141,11 +3228,11 @@ msgstr "Délai d'attente en secondes de connexion à OpenStack"
 msgid "OpenStack test connection passed"
 msgstr "OpenStack test de connexion passée"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:609
+#: services/OpenStack/openStack/UDSOpenStackClient.py:610
 msgid "Authentication error"
 msgstr "Erreur d'authentification"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:611
+#: services/OpenStack/openStack/UDSOpenStackClient.py:612
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3465,16 +3552,6 @@ msgstr "vDatacenter"
 msgid "Virtual Datacenter"
 msgstr "Datacenter virtuel"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:57
-#: services/Vmware_enterprise/VCLinkedCloneService.py:67
-msgid "Remove found duplicates"
-msgstr "Supprimer les doublons trouvés"
-
-#: services/VCloud_enterprise/VCloudCloneService.py:57
-msgid "If active, found duplicates vApps for this service will be removed"
-msgstr ""
-"S’il est activé, les doublons trouvés vApps pour ce service sera supprimé"
-
 #: services/VCloud_enterprise/VCloudCloneService.py:59
 msgid "Catalog"
 msgstr "Catalogue"
@@ -3492,12 +3569,12 @@ msgid "vApp template for the service"
 msgstr "PPAV modèle pour le service"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:71
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
 msgid "Main Network"
 msgstr "Réseau principal"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:72
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -3517,36 +3594,36 @@ msgstr "Local"
 msgid "Remote"
 msgstr "Distance"
 
-#: services/Vmware_enterprise/PublicationVC.py:37
+#: services/Vmware_enterprise/PublicationVC.py:43
 msgid "Publication"
 msgstr "Publication"
 
-#: services/Vmware_enterprise/PublicationVC.py:38
+#: services/Vmware_enterprise/PublicationVC.py:44
 #, python-brace-format
 msgid "UDS Publication for {0} created at {1}"
 msgstr "Publication UDS {0} créé à {1}"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:29
+#: services/Vmware_enterprise/ServiceProviderVC.py:31
 msgid "VMWare VCenter Server IP or Hostname"
 msgstr "VMWare VCenter Server IP ou nom d’hôte"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:30
+#: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "VMWare VC Server Port (usually 443)"
 msgstr "Port du serveur VMWare VC (habituellement 443)"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:31
+#: services/Vmware_enterprise/ServiceProviderVC.py:33
 msgid "User with valid privileges on VC"
 msgstr "Utilisateur avec des privilèges valides sur VC"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:32
+#: services/Vmware_enterprise/ServiceProviderVC.py:34
 msgid "Password of the user of the VC"
 msgstr "Mot de passe de l'utilisateur de la CV"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:38
+#: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout in seconds of connection to VC"
 msgstr "Délai en secondes de connexion à VC"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:40
+#: services/Vmware_enterprise/ServiceProviderVC.py:42
 msgid ""
 "Range of valid macs for created machines. Must be inside "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
@@ -3554,39 +3631,110 @@ msgstr ""
 "Gamme de Mac valide pour machines créées. Doit être à l'intérieur "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:45
+#: services/Vmware_enterprise/ServiceProviderVC.py:49
 msgid "VMWare VCenter Platform Provider"
 msgstr "Fournisseur de plates-formes VMWare VCenter"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:47
+#: services/Vmware_enterprise/ServiceProviderVC.py:51
 msgid "Provides connection to Virtual Center Services"
 msgstr "Fournit la connexion à des Services de centre virtuel"
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:133
+#: services/Vmware_enterprise/ServiceProviderVC.py:137
 msgid "VmwareVC Provider: "
 msgstr "VmwareVC fournisseur : "
 
-#: services/Vmware_enterprise/ServiceProviderVC.py:140
+#: services/Vmware_enterprise/ServiceProviderVC.py:144
 msgid "Connection params ok"
 msgstr "Connexion params ok"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:32
-msgid "VMWare VCenter Platform Linked clone"
-msgstr "VMWare VCenter plate-forme Linked clone"
+#: services/Vmware_enterprise/VCFixedMachinesService.py:27
+#| msgid "Machine IP"
+msgid "Fixed Machines Pool"
+msgstr "Pool de Machines fixes"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:34
+#: services/Vmware_enterprise/VCFixedMachinesService.py:29
+#| msgid ""
+#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
-"This service provides access to Linked Clones machines on a Virtual Center"
+"This service provides access to a fixed group of selected machines on the "
+"Infrascruttur"
 msgstr ""
-"Ce service donne accès aux machines de Clones liés sur un Virtual Center"
+"Ce service donne accès à un groupe fixe de machines sélectionnées sur le "
+"Infrascruttur"
 
+#: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
 msgid "Datacenter"
 msgstr "Datacenter"
 
+#: services/Vmware_enterprise/VCFixedMachinesService.py:54
+#: services/Vmware_enterprise/VCFixedMachinesService.py:69
+#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#| msgid "Machine"
+msgid "Machines"
+msgstr "Machines"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:55
 #: services/Vmware_enterprise/VCLinkedCloneService.py:60
 msgid "Datacenter containing base machine"
 msgstr "Machine de base contenant Datacenter"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:59
+#: services/Vmware_enterprise/VCLinkedCloneService.py:70
+msgid "Resource Pool"
+msgstr "Liste des ressources"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:67
+#| msgid "Resource Pool containing base machine"
+msgid "Resource Pool containing base machines"
+msgstr "Pool de ressources contenant des machines de base"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#| msgid "Base Machine"
+msgid "Base Machines"
+msgstr "Machines à base"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#| msgid "Base machine for this service"
+msgid "Base machines for this service"
+msgstr "Machines à base de ce service"
+
+#: services/Vmware_enterprise/VCFixedMachinesService.py:91
+msgid "We need at least a machine"
+msgstr "Nous avons besoin d’au moins une machine"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:32
+msgid "Clone based - Full"
+msgstr "Base de clone - Full"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:34
+#| msgid ""
+#| "This service provides access to Linked Clones machines on a Virtual Center"
+msgid ""
+"This service provides access to FULL Cloned machines on a Virtual Center"
+msgstr ""
+"Ce service donne accès aux machines complet cloné sur un Virtual Center"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:68
+#| msgid "Datastore"
+msgid "VMs Datastores"
+msgstr "Entrepôts de données VMs"
+
+#: services/Vmware_enterprise/VCFullCloneService.py:69
+#| msgid "Datastores where to put publications"
+msgid "Datastores where to put machines"
+msgstr "Entrepôts de données où mettre des machines"
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:33
+#| msgid "Suse based Linux"
+msgid "Clone based - Linked"
+msgstr "Clone sur - lié"
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:35
+msgid ""
+"This service provides access to Linked Clones machines on a Virtual Center"
+msgstr ""
+"Ce service donne accès aux machines de Clones liés sur un Virtual Center"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:62
 msgid "Pub. Resource Pool"
@@ -3609,39 +3757,44 @@ msgid "If active, found duplicates clones for this service will be removed"
 msgstr ""
 "S'il est activé, clones de doublons trouvés pour ce service seront supprimés"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:69
-msgid "Resource Pool"
-msgstr "Liste des ressources"
+#: services/Vmware_enterprise/VCLinkedCloneService.py:68
+#| msgid "Unknown error"
+msgid "Keep on error"
+msgstr "Garder en cas d’erreur"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:75
+#: services/Vmware_enterprise/VCLinkedCloneService.py:68
+msgid "If active, access errors found on machine will not mark is as error."
+msgstr "S’il est activé, les erreurs trouvées sur machine ne marquera pas un accès est comme erreur."
+
+#: services/Vmware_enterprise/VCLinkedCloneService.py:76
 msgid "Resource Pool containing base machine"
 msgstr "Machine de base contenant de ressource Pool"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:81
+#: services/Vmware_enterprise/VCLinkedCloneService.py:82
 msgid "Base machine for this service"
 msgstr "Machine de base pour ce service"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+#: services/Vmware_enterprise/VCLinkedCloneService.py:87
 msgid "Pub. Network"
 msgstr "Pub. Réseau"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:87
+#: services/Vmware_enterprise/VCLinkedCloneService.py:88
 msgid "Network on which the machine will be deployed"
 msgstr "Réseau sur lequel la machine sera déployée"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 msgid "Clones Folder"
 msgstr "Dossier de clones"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 msgid "Folder where deploy clones"
 msgstr "Dossier où déployer des clones"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:89
+#: services/Vmware_enterprise/VCLinkedCloneService.py:90
 msgid "Inc.Datastores"
 msgstr "Inc.Datastores"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:90
+#: services/Vmware_enterprise/VCLinkedCloneService.py:91
 msgid "Datastores where to put incrementals"
 msgstr "Entrepôts de données où mettre des sauvegardes incrémentales"
 
@@ -4127,7 +4280,7 @@ msgid "Cache"
 msgstr "Cache"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
-#: templates/uds/html5/index.html:127 templates/uds/semantic/index.html:30
+#: templates/uds/html5/index.html:133 templates/uds/semantic/index.html:30
 msgid "Transports"
 msgstr "Transports"
 
@@ -4309,48 +4462,56 @@ msgstr "Cours de maintenance"
 msgid "Currently in use"
 msgstr "En cours d'utilisation"
 
-#: templates/uds/html5/index.html:57 templates/uds/semantic/tmpl/items.html:24
+#: templates/uds/html5/index.html:64 templates/uds/semantic/tmpl/items.html:24
 #: templates/uds/semantic/tmpl/trans.html:8
 msgid "Connections"
 msgstr "Connexions"
 
-#: templates/uds/html5/index.html:86
+#: templates/uds/html5/index.html:92
 msgid "Service under maintenance"
 msgstr "Service en maintenance"
 
-#: templates/uds/html5/index.html:89
+#: templates/uds/html5/index.html:95
 msgid "This service is in maintenance mode."
 msgstr "Ce service est en mode maintenance."
 
-#: templates/uds/html5/index.html:90 templates/uds/html5/index.html:109
+#: templates/uds/html5/index.html:96 templates/uds/html5/index.html:115
 msgid "Please, retry access in a while."
 msgstr "Recommencez l'accès depuis un moment."
 
-#: templates/uds/html5/index.html:104
+#: templates/uds/html5/index.html:110
 msgid "Service access not allowed"
 msgstr "Accès non autorisé au service"
 
-#: templates/uds/html5/index.html:107
+#: templates/uds/html5/index.html:113
 msgid "This service is currently not accesible due to schedule restrictions."
 msgstr ""
 "Ce service n’est actuellement pas accessible en raison de contraintes de "
 "calendrier."
 
-#: templates/uds/html5/index.html:122
+#: templates/uds/html5/index.html:128
 msgid "Administrator info panel"
 msgstr "Panneau info administrateur"
 
-#: templates/uds/html5/index.html:125 templates/uds/semantic/index.html:27
+#: templates/uds/html5/index.html:131 templates/uds/semantic/index.html:27
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/html5/index.html:128 templates/uds/semantic/index.html:31
+#: templates/uds/html5/index.html:134 templates/uds/semantic/index.html:31
 msgid "User Agent"
 msgstr "User Agent"
 
-#: templates/uds/html5/index.html:129
+#: templates/uds/html5/index.html:135
 msgid "OS"
 msgstr "SYSTÈME D'EXPLOITATION"
+
+#: templates/uds/html5/index.html:374
+msgid ""
+"Are you sure that you want to release this service. Its current content will "
+"be lost!"
+msgstr ""
+"Etes-vous sûr que vous voulez distribuer ce service. Son contenu actuel sera "
+"être perdu !"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -4492,19 +4653,19 @@ msgid "toggle navigation"
 msgstr "activer/désactiver navigation"
 
 #: templates/uds/html5/snippets/navbar.html:25
+#: templates/uds/semantic/snippets/user-menu.html:10
+msgid "UDS Plugin"
+msgstr "Plugin de l’UDS"
+
+#: templates/uds/html5/snippets/navbar.html:26
 #: templates/uds/semantic/snippets/navbar.html:23
 msgid "About"
 msgstr "Sur"
 
-#: templates/uds/html5/snippets/navbar.html:41
+#: templates/uds/html5/snippets/navbar.html:42
 #: templates/uds/semantic/snippets/user-menu.html:8
 msgid "Preferences"
 msgstr "Préférences"
-
-#: templates/uds/html5/snippets/navbar.html:43
-#: templates/uds/semantic/snippets/user-menu.html:10
-msgid "UDS Plugin"
-msgstr "Plugin de l’UDS"
 
 #: templates/uds/html5/templates/base.html:61
 #: templates/uds/semantic/templates/base.html:33
@@ -4643,33 +4804,33 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
-#: transports/RDP/BaseRDPTransport.py:61
-#: transports/RDS_enterprise/BaseRDSTransport.py:66
-#: transports/RGS_enterprise/RGSTransport.py:44
-#: transports/RGS_enterprise/TRGSTransport.py:54
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:60
+#: transports/RDS_enterprise/BaseRDSTransport.py:65
+#: transports/RGS_enterprise/RGSTransport.py:45
+#: transports/RGS_enterprise/TRGSTransport.py:55
 msgid "Empty creds"
 msgstr "Références vide"
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
-#: transports/RDP/BaseRDPTransport.py:61
-#: transports/RDS_enterprise/BaseRDSTransport.py:66
-#: transports/RGS_enterprise/RGSTransport.py:44
-#: transports/RGS_enterprise/TRGSTransport.py:54
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:60
+#: transports/RDS_enterprise/BaseRDSTransport.py:65
+#: transports/RGS_enterprise/RGSTransport.py:45
+#: transports/RGS_enterprise/TRGSTransport.py:55
 #: transports/SPICE/BaseSPICETransport.py:67
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
 "Si coché, les informations d'identification utilisées pour se connecter sera "
 "vide"
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:66
-#: transports/NX/TSNXTransport.py:75
-#: transports/PCoIP_enterprise/PCoIPTransport.py:60
-#: transports/RDP/BaseRDPTransport.py:62
-#: transports/RGS_enterprise/RGSTransport.py:45
-#: transports/RGS_enterprise/TRGSTransport.py:55
+#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:65
+#: transports/NX/TSNXTransport.py:74
+#: transports/PCoIP_enterprise/PCoIPTransport.py:59
+#: transports/RDP/BaseRDPTransport.py:61
+#: transports/RGS_enterprise/RGSTransport.py:46
+#: transports/RGS_enterprise/TRGSTransport.py:56
 #: transports/SPICE/BaseSPICETransport.py:73
 #: transports/X2GO/BaseX2GOTransport.py:70
 msgid "If not empty, this username will be always used as credential"
@@ -4677,12 +4838,12 @@ msgstr ""
 "Si ce n'est vide, ce nom d'utilisateur sera toujours utilisé comme des "
 "titres de compétences"
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:67
-#: transports/NX/TSNXTransport.py:76
-#: transports/PCoIP_enterprise/PCoIPTransport.py:61
-#: transports/RDP/BaseRDPTransport.py:63
-#: transports/RGS_enterprise/RGSTransport.py:46
-#: transports/RGS_enterprise/TRGSTransport.py:56
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:66
+#: transports/NX/TSNXTransport.py:75
+#: transports/PCoIP_enterprise/PCoIPTransport.py:60
+#: transports/RDP/BaseRDPTransport.py:62
+#: transports/RGS_enterprise/RGSTransport.py:47
+#: transports/RGS_enterprise/TRGSTransport.py:57
 #: transports/SPICE/BaseSPICETransport.py:79
 msgid "If not empty, this password will be always used as credential"
 msgstr ""
@@ -4691,14 +4852,14 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:75
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:75
-#: transports/RDP/BaseRDPTransport.py:64
-#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RDP/BaseRDPTransport.py:63
+#: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid "Without Domain"
 msgstr "Sans nom de domaine"
 
 #: transports/HTML5RDP/HTML5RDP.py:75
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RDS_enterprise/BaseRDSTransport.py:66
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
@@ -4708,10 +4869,10 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:76
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:76
-#: transports/RDP/BaseRDPTransport.py:65
-#: transports/RDS_enterprise/BaseRDSTransport.py:68
-#: transports/RGS_enterprise/RGSTransport.py:47
-#: transports/RGS_enterprise/TRGSTransport.py:57
+#: transports/RDP/BaseRDPTransport.py:64
+#: transports/RDS_enterprise/BaseRDSTransport.py:67
+#: transports/RGS_enterprise/RGSTransport.py:48
+#: transports/RGS_enterprise/TRGSTransport.py:58
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
 "\\user)"
@@ -4726,7 +4887,7 @@ msgstr "Voir la papier peint"
 
 #: transports/HTML5RDP/HTML5RDP.py:77
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:77
-#: transports/RDP/BaseRDPTransport.py:71
+#: transports/RDP/BaseRDPTransport.py:100
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -4736,27 +4897,27 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:102
 msgid "Allow Desk.Comp."
 msgstr "Laisser Desk.Comp."
 
 #: transports/HTML5RDP/HTML5RDP.py:78
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:78
-#: transports/RDP/BaseRDPTransport.py:73
+#: transports/RDP/BaseRDPTransport.py:102
 msgid "If checked, desktop composition will be allowed"
 msgstr "S'il est activé, la composition du bureau sera autorisée"
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:103
+#: transports/RDS_enterprise/BaseRDSTransport.py:87
 msgid "Font Smoothing"
 msgstr "Lissage des polices"
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:75
+#: transports/RDP/BaseRDPTransport.py:103
+#: transports/RDS_enterprise/BaseRDSTransport.py:87
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Si cochée, lissage de polices seront autorisés (seulement pour les clients "
@@ -4880,12 +5041,12 @@ msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (Transport Layer Security cryptage)"
 
 #: transports/HTML5RDP/HTML5RDP.py:118
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:118
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:117
 msgid "The server must be http or https"
 msgstr "Der Server muss http oder Https sein."
 
 #: transports/HTML5RDP/HTML5RDP.py:120
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:120
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -4895,81 +5056,82 @@ msgstr ""
 "l’onglet Paramètres) la valeur « RDP »"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-msgid "HTML5 RDS Transport"
-msgstr "HTML5 Transports RDS"
+#| msgid "HTML5 RDS Transport"
+msgid "HTML5 RDS Transport for vApps"
+msgstr "Transports RDS HTML5 pour vApps"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-msgid "RDS Transport using HTML5 client"
-msgstr "Transports RDS en utilisant HTML5 client"
+#| msgid "RDS Transport using HTML5 client"
+msgid "RDS Transport using HTML5 client for vApps"
+msgstr "Transports RDS en utilisant HTML5 client pour vApps"
 
-#: transports/NX/NXTransport.py:58
-msgid "NX Transport (direct)"
-msgstr "NX Transport (direct)"
+#: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
+#| msgid "Transport"
+msgid "NX Transport"
+msgstr "Transport NX"
 
-#: transports/NX/NXTransport.py:60
-msgid "NX Transport for direct connection"
-msgstr "NX Transport pour une connexion directe"
+#: transports/NX/NXTransport.py:59
+#| msgid "NX Transport for direct connection"
+msgid "NX Protocol. Firect connection."
+msgstr "Protocole NX. Connexion directement."
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Listening port"
 msgstr "Port d'écoute"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Listening port of NX (ssh) at client machine"
 msgstr "Écoute le port de NX (ssh) à la machine client"
 
-#: transports/NX/NXTransport.py:69 transports/NX/TSNXTransport.py:78
+#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
 msgid "Connection"
 msgstr "Connexion"
 
-#: transports/NX/NXTransport.py:69 transports/NX/TSNXTransport.py:78
+#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
 msgid "Connection speed for this transport (quality)"
 msgstr "Vitesse de connexion pour ce transport (qualité)"
 
-#: transports/NX/NXTransport.py:77 transports/NX/TSNXTransport.py:86
+#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
 msgid "Session"
 msgstr "Session"
 
-#: transports/NX/NXTransport.py:77 transports/NX/TSNXTransport.py:86
+#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop session"
 msgstr "Session de bureau"
 
-#: transports/NX/NXTransport.py:83 transports/NX/TSNXTransport.py:92
+#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
 msgid "Disk Cache"
 msgstr "Cache disque"
 
-#: transports/NX/NXTransport.py:83 transports/NX/TSNXTransport.py:92
+#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
 msgid "Cache size en Mb stored at disk"
 msgstr "Cache en taille que Mo stocké à disque"
 
-#: transports/NX/NXTransport.py:92 transports/NX/TSNXTransport.py:101
+#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
 msgid "Memory Cache"
 msgstr "Mémoire Cache"
 
-#: transports/NX/NXTransport.py:92 transports/NX/TSNXTransport.py:101
+#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
 msgid "Cache size en Mb kept at memory"
 msgstr "Fr taille que Mo gardé à la mémoire de cache"
 
-#: transports/NX/TSNXTransport.py:63
-msgid "NX Transport (tunneled)"
-msgstr "Transport NX (tunnel)"
+#: transports/NX/TSNXTransport.py:64
+#| msgid "NX Transport for tunneled connection"
+msgid "NX protocol. Tunneled connection."
+msgstr "Protocole NX. Connexion par tunnel."
 
-#: transports/NX/TSNXTransport.py:65
-msgid "NX Transport for tunneled connection"
-msgstr "Transport NX pour connexion tunnelée"
-
-#: transports/NX/TSNXTransport.py:71 transports/RDP/TRDPTransport.py:71
-#: transports/RDS_enterprise/TRDSTransport.py:69
-#: transports/RGS_enterprise/TRGSTransport.py:51
-#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:64
+#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/RDS_enterprise/TRDSTransport.py:68
+#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid "Tunnel server"
 msgstr "Serveur de tunnel"
 
-#: transports/NX/TSNXTransport.py:71 transports/RDP/TRDPTransport.py:71
-#: transports/RDS_enterprise/TRDSTransport.py:69
-#: transports/RGS_enterprise/TRGSTransport.py:51
-#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:64
+#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/RDS_enterprise/TRDSTransport.py:68
+#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
@@ -4977,13 +5139,13 @@ msgstr ""
 "Adresse IP ou nom d'hôte du serveur tunnel envoyée au périphérique client "
 "(adresse ip « publique ») et port. (utilisez le format de l'hôte : PORT)"
 
-#: transports/NX/TSNXTransport.py:72
-#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/NX/TSNXTransport.py:71
+#: transports/RGS_enterprise/TRGSTransport.py:53
 msgid "Tunnel host check"
 msgstr "Tunnel hôte cocher"
 
-#: transports/NX/TSNXTransport.py:72
-#: transports/RGS_enterprise/TRGSTransport.py:52
+#: transports/NX/TSNXTransport.py:71
+#: transports/RGS_enterprise/TRGSTransport.py:53
 msgid ""
 "If not empty, this server will be used to check if service is running before "
 "assigning it to user. (use HOST:PORT format)"
@@ -4992,10 +5154,10 @@ msgstr ""
 "s'exécute avant assignant à l'utilisateur. (utilisez le format de l'hôte : "
 "PORT)"
 
-#: transports/NX/TSNXTransport.py:115 transports/RDP/TRDPTransport.py:101
-#: transports/RDS_enterprise/TRDSTransport.py:94
-#: transports/RGS_enterprise/TRGSTransport.py:78
-#: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:82
+#: transports/NX/TSNXTransport.py:114 transports/RDP/TRDPTransport.py:105
+#: transports/RDS_enterprise/TRDSTransport.py:93
+#: transports/RGS_enterprise/TRGSTransport.py:79
+#: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Devez utiliser HOST : PORT dans le champ serveur Tunnel"
 
@@ -5003,21 +5165,22 @@ msgstr "Devez utiliser HOST : PORT dans le champ serveur Tunnel"
 msgid "NX/X2GO"
 msgstr "NX/X2GO"
 
-#: transports/PCoIP_enterprise/PCoIPTransport.py:51
+#: transports/PCoIP_enterprise/PCoIPTransport.py:50
 msgid "PCoIP Transport (Experimental)"
 msgstr "Transport de PCoIP (expérimental)"
 
-#: transports/PCoIP_enterprise/PCoIPTransport.py:53
-msgid "PCoIP Transport, Experimental"
-msgstr "Transport de PCoIP, expérimental"
+#: transports/PCoIP_enterprise/PCoIPTransport.py:52
+#| msgid "PCoIP Transport, Experimental"
+msgid "PCoIP using cloud access. Experimental."
+msgstr "PCoIP utilisant access de nuage. Expérimental."
 
-#: transports/PCoIP_enterprise/PCoIPTransport.py:62
+#: transports/PCoIP_enterprise/PCoIPTransport.py:61
 msgid "If not empty, this domain will be always used as credential domain"
 msgstr ""
 "Si non vide, ce domaine sera toujours utilisé comme domaine d'informations "
 "d'identification"
 
-#: transports/RDP/BaseRDPTransport.py:64
+#: transports/RDP/BaseRDPTransport.py:63
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
@@ -5026,67 +5189,104 @@ msgstr ""
 "pour exemple est nécessaire)"
 
 #: transports/RDP/BaseRDPTransport.py:66
-#: transports/RDS_enterprise/BaseRDSTransport.py:69
+#: transports/RDS_enterprise/BaseRDSTransport.py:68
 msgid "Allow Smartcards"
 msgstr "Permettre aux cartes à puce"
 
 #: transports/RDP/BaseRDPTransport.py:66
-#: transports/RDS_enterprise/BaseRDSTransport.py:69
+#: transports/RDS_enterprise/BaseRDSTransport.py:68
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "Si cochée, ce transport permettra l'utilisation de cartes à puce"
 
 #: transports/RDP/BaseRDPTransport.py:67
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
+#: transports/RDS_enterprise/BaseRDSTransport.py:69
 msgid "Allow Printers"
 msgstr "Permettre aux imprimantes"
 
 #: transports/RDP/BaseRDPTransport.py:67
-#: transports/RDS_enterprise/BaseRDSTransport.py:70
+#: transports/RDS_enterprise/BaseRDSTransport.py:69
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
 "Si cochée, ce transport permettra l'utilisation des imprimantes utilisateur"
 
 #: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDS_enterprise/BaseRDSTransport.py:70
 msgid "Allow Drives"
 msgstr "Permettre aux lecteurs"
 
 #: transports/RDP/BaseRDPTransport.py:68
-#: transports/RDS_enterprise/BaseRDSTransport.py:71
+#: transports/RDS_enterprise/BaseRDSTransport.py:70
 msgid "If checked, this transport will allow the use of user drives"
 msgstr ""
 "Si cochée, ce transport permettra l'utilisation des lecteurs de l'utilisateur"
 
 #: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "Allow Serials"
 msgstr "Permettre aux publications en série"
 
 #: transports/RDP/BaseRDPTransport.py:69
-#: transports/RDS_enterprise/BaseRDSTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Si cochée, ce transport permettra l'utilisation de l'utilisateur ports série"
 
 #: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:72
 msgid "Enable clipboard"
 msgstr "Activez le presse-papiers"
 
 #: transports/RDP/BaseRDPTransport.py:70
-#: transports/RDS_enterprise/BaseRDSTransport.py:73
+#: transports/RDS_enterprise/BaseRDSTransport.py:72
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "S’il est activé, les fonctions copier-coller pourra"
 
 #: transports/RDP/BaseRDPTransport.py:71
+#: transports/X2GO/BaseX2GOTransport.py:103
+msgid "Enable sound"
+msgstr "Activer le son"
+
+#: transports/RDP/BaseRDPTransport.py:71
+#| msgid "If checked, the Audio will be redirected."
+msgid "If checked, sound will be redirected."
+msgstr "Si cochée, sons seront redirigés."
+
+#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "Credssp Support"
+msgstr "CredSSP Support"
+
+#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDS_enterprise/BaseRDSTransport.py:73
+msgid "If checked, will enable Credentials Provider Support)"
+msgstr ""
+"Si cochée, permettra aux informations d’identification fournisseur de "
+"soutien)"
+
+#: transports/RDP/BaseRDPTransport.py:77
+#| msgid "Connection speed for this transport (quality)"
+msgid "Screen size for this transport"
+msgstr "Taille de l’écran pour ce type de transport"
+
+#: transports/RDP/BaseRDPTransport.py:89
+#: transports/RDS_enterprise/BaseRDSTransport.py:76
+msgid "Color depth"
+msgstr "Profondeur de couleur"
+
+#: transports/RDP/BaseRDPTransport.py:91
+#: transports/RDS_enterprise/BaseRDSTransport.py:78
+msgid "Color depth for this conextion"
+msgstr "Profondeur de couleur pour cet hôtel"
+
+#: transports/RDP/BaseRDPTransport.py:100
 msgid "Wallpaper/theme"
 msgstr "Thème/fond d’écran"
 
-#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:101
 msgid "Multiple monitors"
 msgstr "Plusieurs moniteurs"
 
-#: transports/RDP/BaseRDPTransport.py:72
+#: transports/RDP/BaseRDPTransport.py:101
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -5094,74 +5294,60 @@ msgstr ""
 "S'il est activé, tous les moniteurs de client seront utilisés pour "
 "l'affichage (fonctionne uniquement sur clients Windows)"
 
-#: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
-msgid "Credssp Support"
-msgstr "CredSSP Support"
-
-#: transports/RDP/BaseRDPTransport.py:75
-#: transports/RDS_enterprise/BaseRDSTransport.py:74
-#: transports/RDS_enterprise/BaseRDSTransport.py:77
-msgid "If checked, will enable Credentials Provider Support)"
-msgstr ""
-"Si cochée, permettra aux informations d’identification fournisseur de "
-"soutien)"
-
-#: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:105
+#: transports/RDS_enterprise/BaseRDSTransport.py:89
 msgid "Multimedia sync"
 msgstr "Multimédia sync"
 
-#: transports/RDP/BaseRDPTransport.py:76
-#: transports/RDS_enterprise/BaseRDSTransport.py:76
+#: transports/RDP/BaseRDPTransport.py:105
+#: transports/RDS_enterprise/BaseRDSTransport.py:89
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "S’il est activé. Client Linux utilisera le paramètre multimédia pour xfreerdp"
 
-#: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:106
+#: transports/RDS_enterprise/BaseRDSTransport.py:90
 msgid "Use Alsa"
 msgstr "Utiliser Alsa"
 
-#: transports/RDP/BaseRDPTransport.py:77
-#: transports/RDS_enterprise/BaseRDSTransport.py:78
+#: transports/RDP/BaseRDPTransport.py:106
+#: transports/RDS_enterprise/BaseRDSTransport.py:90
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Si cochée, Linux client essaie d’utiliser ALSA, sinon impulsion sera utilisée"
 
-#: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:79
+#: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "Printer string"
 msgstr "Chaîne de l’imprimante"
 
-#: transports/RDP/BaseRDPTransport.py:78
-#: transports/RDS_enterprise/BaseRDSTransport.py:79
+#: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si l’imprimante est activée, la chaîne de l’imprimante utilisée avec "
 "xfreerdp client"
 
-#: transports/RDP/BaseRDPTransport.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:80
+#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "Smartcard string"
 msgstr "Chaîne de carte à puce"
 
-#: transports/RDP/BaseRDPTransport.py:79
-#: transports/RDS_enterprise/BaseRDSTransport.py:80
+#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si la carte à puce est cochée, la chaîne de carte à puce utilisée avec "
 "xfreerdp client"
 
-#: transports/RDP/BaseRDPTransport.py:80
-#: transports/RDS_enterprise/BaseRDSTransport.py:81
+#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid "Custom parameters"
 msgstr "Paramètres personnalisés"
 
-#: transports/RDP/BaseRDPTransport.py:80
-#: transports/RDS_enterprise/BaseRDSTransport.py:81
+#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -5170,87 +5356,84 @@ msgstr ""
 "usb :ID, dev:054 c : 0268, ou aything compatible avec votre client de "
 "xfreerdp)"
 
-#: transports/RDP/RDPTransport.py:55
-msgid "RDP Transport (direct)"
-msgstr "Transport de RDP (direct)"
+#: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
+#| msgid "Transport"
+msgid "RDP Transport"
+msgstr "Transport RDP"
 
 #: transports/RDP/RDPTransport.py:57
-msgid "RDP Transport for direct connection"
-msgstr "Transport de RDP pour une connexion directe"
+#| msgid "RDP Transport for direct connection"
+msgid "RDP Protocol. Direct connection."
+msgstr "Protocole RDP. Connexion directe."
 
-#: transports/RDP/TRDPTransport.py:64
-msgid "RDP Transport (tunneled)"
-msgstr "Transport de RDP (tunnel)"
+#: transports/RDP/TRDPTransport.py:65
+#| msgid "RDS Transport for tunneled connection"
+msgid "RDP Protocol. Tunneled connection."
+msgstr "Protocole RDP. Connexion par tunnel."
 
-#: transports/RDP/TRDPTransport.py:66
-msgid "RDP Transport with tunneled connection"
-msgstr "Transport de RDP avec connexion par tunnel"
-
-#: transports/RDP/TRDPTransport.py:74
-#: transports/RDS_enterprise/TRDSTransport.py:72
+#: transports/RDP/TRDPTransport.py:73
+#: transports/RDS_enterprise/TRDSTransport.py:71
 msgid "Tunnel wait time"
 msgstr "Délai d’attente de tunnel"
 
-#: transports/RDP/TRDPTransport.py:74
-#: transports/RDS_enterprise/TRDSTransport.py:72
+#: transports/RDP/TRDPTransport.py:73
+#: transports/RDS_enterprise/TRDSTransport.py:71
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "Temps maximum d’attente avant la fermeture de l’auditeur de tunnel"
 
-#: transports/RDP/__init__.py:40 transports/RDS_enterprise/__init__.py:40
-msgid "Remote Desktop Protocol"
-msgstr "Protocole Bureau distant"
-
 #: transports/RDS_enterprise/RDSTransport.py:55
-msgid "RDS Transport (direct)"
-msgstr "Transports RDS (direct)"
+#: transports/RDS_enterprise/TRDSTransport.py:63
+#| msgid "RDS Transport (direct)"
+msgid "RDS Transport for vApps"
+msgstr "Transports RDS pour vApps"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-msgid "RDS Transport for direct connection"
-msgstr "Transports RDS pour une connexion directe"
+#| msgid "RDS Transport for direct connection"
+msgid "RDS Transport for vApps. Direct connection."
+msgstr "Transports RDS pour vApps. Connexion directe."
 
-#: transports/RDS_enterprise/TRDSTransport.py:64
-msgid "RDS Transport (tunneled)"
-msgstr "Transports RDS (par tunnel)"
+#: transports/RDS_enterprise/TRDSTransport.py:65
+#| msgid "RDS Transport for tunneled connection"
+msgid "RDS Transport for vApps. Tunneled connection."
+msgstr "Transports RDS pour vApps. Connexion par tunnel."
 
-#: transports/RDS_enterprise/TRDSTransport.py:66
-msgid "RDS Transport for tunneled connection"
-msgstr "Transports RDS pour connexion par tunnel"
+#: transports/RGS_enterprise/RGSTransport.py:37
+#| msgid "Transport"
+msgid "RGS Transport"
+msgstr "RGS Transport"
 
-#: transports/RGS_enterprise/RGSTransport.py:36
-msgid "RGS Transport (direct)"
-msgstr "RGS Transport (direct)"
-
-#: transports/RGS_enterprise/RGSTransport.py:38
-msgid "RGS Transport for direct connection"
-msgstr "RGS Transport pour une connexion directe"
-
-#: transports/RGS_enterprise/RGSTransport.py:48
-#: transports/RGS_enterprise/TRGSTransport.py:58
-msgid "Image quality"
-msgstr "Qualité d'image"
+#: transports/RGS_enterprise/RGSTransport.py:39
+#| msgid "RGS Transport for direct connection"
+msgid "RGS Protocol. Direct connection."
+msgstr "Protocole RGS. Connexion directe."
 
 #: transports/RGS_enterprise/RGSTransport.py:49
 #: transports/RGS_enterprise/TRGSTransport.py:59
-msgid "Quality of image codec (0-100)"
-msgstr "Qualité du codec d'image (0-100)"
+msgid "Image quality"
+msgstr "Qualité d'image"
 
 #: transports/RGS_enterprise/RGSTransport.py:50
 #: transports/RGS_enterprise/TRGSTransport.py:60
-msgid "Adjustable Quality"
-msgstr "Qualité réglable"
+msgid "Quality of image codec (0-100)"
+msgstr "Qualité du codec d'image (0-100)"
 
 #: transports/RGS_enterprise/RGSTransport.py:51
 #: transports/RGS_enterprise/TRGSTransport.py:61
-msgid "If checked, the image quality will be adjustable with bandwidth"
-msgstr "S'il est activé, la qualité d'image sera réglable avec bande passante"
+msgid "Adjustable Quality"
+msgstr "Qualité réglable"
 
 #: transports/RGS_enterprise/RGSTransport.py:52
 #: transports/RGS_enterprise/TRGSTransport.py:62
-msgid "Min. Adjustable Quality"
-msgstr "Qualité réglable min."
+msgid "If checked, the image quality will be adjustable with bandwidth"
+msgstr "S'il est activé, la qualité d'image sera réglable avec bande passante"
 
 #: transports/RGS_enterprise/RGSTransport.py:53
 #: transports/RGS_enterprise/TRGSTransport.py:63
+msgid "Min. Adjustable Quality"
+msgstr "Qualité réglable min."
+
+#: transports/RGS_enterprise/RGSTransport.py:54
+#: transports/RGS_enterprise/TRGSTransport.py:64
 msgid ""
 "The lowest image quality applied to images to maintain the minimum update "
 "rate."
@@ -5258,24 +5441,24 @@ msgstr ""
 "La qualité d'image le plus bas appliquée aux images de maintenir la mise à "
 "jour minimale Ravel"
 
-#: transports/RGS_enterprise/RGSTransport.py:54
-#: transports/RGS_enterprise/TRGSTransport.py:64
+#: transports/RGS_enterprise/RGSTransport.py:55
+#: transports/RGS_enterprise/TRGSTransport.py:65
 msgid "Adjustable Frame Rate"
 msgstr "Cadence réglable"
 
-#: transports/RGS_enterprise/RGSTransport.py:55
-#: transports/RGS_enterprise/TRGSTransport.py:65
+#: transports/RGS_enterprise/RGSTransport.py:56
+#: transports/RGS_enterprise/TRGSTransport.py:66
 msgid "Update rate threshold to begin adjusting image quality"
 msgstr ""
 "Seuil de taux de mise à jour pour commencer le réglage qualité de l'image"
 
-#: transports/RGS_enterprise/RGSTransport.py:56
-#: transports/RGS_enterprise/TRGSTransport.py:66
+#: transports/RGS_enterprise/RGSTransport.py:57
+#: transports/RGS_enterprise/TRGSTransport.py:67
 msgid "Match Local Resolution"
 msgstr "Adapter la résolution locale"
 
-#: transports/RGS_enterprise/RGSTransport.py:57
-#: transports/RGS_enterprise/TRGSTransport.py:67
+#: transports/RGS_enterprise/RGSTransport.py:58
+#: transports/RGS_enterprise/TRGSTransport.py:68
 msgid ""
 "Change the Sender's resolution to match the Receiver's resolution when "
 "connecting"
@@ -5283,43 +5466,45 @@ msgstr ""
 "Changer la résolution de l'expéditeur pour l'adapter résolution du récepteur "
 "lorsque connexion"
 
-#: transports/RGS_enterprise/RGSTransport.py:58
-#: transports/RGS_enterprise/TRGSTransport.py:68
+#: transports/RGS_enterprise/RGSTransport.py:59
+#: transports/RGS_enterprise/TRGSTransport.py:69
 msgid "Redirect USB"
 msgstr "Redirection USB"
 
-#: transports/RGS_enterprise/RGSTransport.py:59
-#: transports/RGS_enterprise/TRGSTransport.py:69
+#: transports/RGS_enterprise/RGSTransport.py:60
+#: transports/RGS_enterprise/TRGSTransport.py:70
 msgid "If checked, the USB will be redirected."
 msgstr "Si cochée, l'USB sera redirigé."
 
-#: transports/RGS_enterprise/RGSTransport.py:60
-#: transports/RGS_enterprise/TRGSTransport.py:70
+#: transports/RGS_enterprise/RGSTransport.py:61
+#: transports/RGS_enterprise/TRGSTransport.py:71
 msgid "Redirect Audio"
 msgstr "Redirection Audio"
 
-#: transports/RGS_enterprise/RGSTransport.py:61
-#: transports/RGS_enterprise/TRGSTransport.py:71
+#: transports/RGS_enterprise/RGSTransport.py:62
+#: transports/RGS_enterprise/TRGSTransport.py:72
 msgid "If checked, the Audio will be redirected."
 msgstr "Si coché, le son sera redirigé."
 
-#: transports/RGS_enterprise/RGSTransport.py:62
-#: transports/RGS_enterprise/TRGSTransport.py:72
+#: transports/RGS_enterprise/RGSTransport.py:63
+#: transports/RGS_enterprise/TRGSTransport.py:73
 msgid "Redirect Mic"
 msgstr "Redirection Mic"
 
-#: transports/RGS_enterprise/RGSTransport.py:63
-#: transports/RGS_enterprise/TRGSTransport.py:73
+#: transports/RGS_enterprise/RGSTransport.py:64
+#: transports/RGS_enterprise/TRGSTransport.py:74
 msgid "If checked, the Mic will be redirected."
 msgstr "Si cochée, le micro sera redirigé."
 
-#: transports/RGS_enterprise/TRGSTransport.py:42
-msgid "RGS Transport (tunneled)"
-msgstr "RGS Transport (tunnel)"
+#: transports/RGS_enterprise/TRGSTransport.py:43
+#| msgid "Transport"
+msgid "RGS Transport."
+msgstr "RGS Transport."
 
-#: transports/RGS_enterprise/TRGSTransport.py:44
-msgid "RGS Transport for tunneled connection"
-msgstr "RGS Transport pour connexion par tunnel"
+#: transports/RGS_enterprise/TRGSTransport.py:45
+#| msgid "RGS Transport for tunneled connection"
+msgid "RGS Protocol. Tunneled connection"
+msgstr "Protocole RGS. Connexion par tunnel"
 
 #: transports/SPICE/BaseSPICETransport.py:66
 msgid "Empty credentials"
@@ -5368,20 +5553,24 @@ msgid "Auto-redirect USB devices when plugged in."
 msgstr "Redirection automatique des périphériques USB lorsqu’il est branché."
 
 #: transports/SPICE/SPICETransport.py:52
-msgid "SPICE Transport (direct)"
-msgstr "Transport aux épices (direct)"
+#| msgid "SPICE Transport (direct)"
+msgid "SPICE Transport"
+msgstr "Transport aux épices"
 
 #: transports/SPICE/SPICETransport.py:54
-msgid "SPICE Transport for direct connection (EXPERIMENTAL)"
-msgstr "Transports d'épices pour une connexion directe (expérimental)"
+#| msgid "RDP Transport for direct connection"
+msgid "SPICE Protocol. Direct connection."
+msgstr "Protocole de l’épice. Connexion directe."
 
 #: transports/SPICE/TSPICETransport.py:60
-msgid "SPICE Transport (tunneled)"
-msgstr "Transports d’épices (par tunnel)"
+#| msgid "SPICE Transport (direct)"
+msgid "SPICE Transport "
+msgstr "Transport aux épices "
 
 #: transports/SPICE/TSPICETransport.py:62
-msgid "SPICE Transport for tunneled connection  (EXPERIMENTAL)"
-msgstr "Transport d'épices pour une connexion par tunnel (expérimental)"
+#| msgid "RDS Transport for tunneled connection"
+msgid "SPICE Protocol. Tunneled connection."
+msgstr "Protocole de l’épice. Connexion par tunnel."
 
 #: transports/X2GO/BaseX2GOTransport.py:76
 msgid "Show fullscreen"
@@ -5391,78 +5580,90 @@ msgstr "Afficher plein écran"
 msgid "Desktop"
 msgstr "Ordinateur de bureau"
 
-#: transports/X2GO/BaseX2GOTransport.py:95
-msgid "Enable sound"
-msgstr "Activer le son"
-
 #: transports/X2GO/BaseX2GOTransport.py:96
+msgid "vAPP"
+msgstr "vAPP"
+
+#: transports/X2GO/BaseX2GOTransport.py:97
+msgid ""
+"If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
+"executed. If UDS vAPP is not selected, this field will be ignored."
+msgstr ""
+"Si UDS PPAV est sélectionné comme « Desktop », le chemin d’accès complet de l’application d’être "
+"exécuté. Si UDS PPAV n’est pas sélectionné, ce champ sera ignoré."
+
+#: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"
 msgstr "Si cochée, son testament disponible"
 
-#: transports/X2GO/BaseX2GOTransport.py:103
+#: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect root folder"
 msgstr "Rediriger le dossier racine"
 
-#: transports/X2GO/BaseX2GOTransport.py:104
+#: transports/X2GO/BaseX2GOTransport.py:112
 msgid "If checked, user home folder will be redirected"
 msgstr "Si cochée, dossier de départ de l’utilisateur sera Redirigé"
 
-#: transports/X2GO/BaseX2GOTransport.py:110
+#: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
 msgstr "Vitesse"
 
-#: transports/X2GO/BaseX2GOTransport.py:112
+#: transports/X2GO/BaseX2GOTransport.py:120
 msgid "Connection speed"
 msgstr "Vitesse de connexion"
 
-#: transports/X2GO/BaseX2GOTransport.py:122
+#: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Sound"
 msgstr "Son"
 
-#: transports/X2GO/BaseX2GOTransport.py:122
+#: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Sound server"
 msgstr "Serveur de sons"
 
-#: transports/X2GO/BaseX2GOTransport.py:130
+#: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard"
 msgstr "Clavier"
 
-#: transports/X2GO/BaseX2GOTransport.py:130
+#: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard layout (es, us, fr, ...). Empty value means autodetect."
 msgstr ""
 "Disposition de clavier (, nous, en es,...). Valeur vide signifie autodetect."
 
-#: transports/X2GO/BaseX2GOTransport.py:147
+#: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack"
 msgstr "Pack"
 
-#: transports/X2GO/BaseX2GOTransport.py:147
+#: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack format. Change with care!"
 msgstr "Format de paquet. Modifier avec soin !"
 
-#: transports/X2GO/BaseX2GOTransport.py:152
+#: transports/X2GO/BaseX2GOTransport.py:160
 msgid "Quality"
 msgstr "Qualité"
 
-#: transports/X2GO/BaseX2GOTransport.py:152
+#: transports/X2GO/BaseX2GOTransport.py:160
 msgid "Quality value used on some pack formats."
 msgstr "Valeur de qualité utilisée sur certains formats de paquet."
 
-#: transports/X2GO/TX2GOTransport.py:59
-msgid "X2Go Transport Experimental (tunneled)"
-msgstr "X2Go Transport expérimental (par tunnel)"
+#: transports/X2GO/TX2GOTransport.py:58
+#| msgid "PCoIP Transport (Experimental)"
+msgid "X2Go Transport (Experimental)"
+msgstr "X2Go Transport (expérimental)"
 
-#: transports/X2GO/TX2GOTransport.py:61
-msgid "X2Go Transport for tunneled connection (EXPERIMENTAL)"
-msgstr "X2Go Transport pour une connexion par tunnel (EXPÉRIMENTAL)"
+#: transports/X2GO/TX2GOTransport.py:60
+#| msgid "X2Go Transport Experimental (tunneled)"
+msgid "X2Go Protocol (Experimental). Tunneled connection."
+msgstr "X2Go protocole (expérimental). Connexion par tunnel."
 
 #: transports/X2GO/X2GOTransport.py:53
-msgid "X2Go Transport Experimental (direct)"
-msgstr "X2Go Transport expérimental (direct)"
+#| msgid "X2Go Transport Experimental (direct)"
+msgid "X2Go Transport Experimental"
+msgstr "X2Go Transport expérimental"
 
 #: transports/X2GO/X2GOTransport.py:55
-msgid "X2Go Transport for direct connection (EXPERIMENTAL)"
-msgstr "X2Go Transport pour une connexion directe (EXPÉRIMENTAL)"
+#| msgid "X2Go Transport Experimental (direct)"
+msgid "X2Go Protocol (Experimental). Direct connection."
+msgstr "X2Go protocole (expérimental). Connexion directe."
 
 #: web/errors.py:72
 msgid "Unknown error"
@@ -5537,7 +5738,7 @@ msgstr "Authentificateur ne fournit pas d'informations"
 msgid "UDS Plugin preferences"
 msgstr "Préférences du Plugin UDS"
 
-#: web/views/index.py:184
+#: web/views/index.py:189
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -5546,7 +5747,7 @@ msgstr ""
 "vous plaît, fermez le session avant {} et enregistrer tous vos travaux pour "
 "éviter de perdre il."
 
-#: web/views/service.py:115
+#: web/views/service.py:116
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
 "Service n'est pas prêt. S'il vous plaît, essayez à nouveau dans un certain "

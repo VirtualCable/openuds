@@ -5,13 +5,14 @@
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017
+# Naroa Uriarte <nuriarte@lanmedia.es>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-09 09:19+0200\n"
-"PO-Revision-Date: 2017-10-04 11:09+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2017-12-19 22:34+0100\n"
+"PO-Revision-Date: 2017-12-05 15:08+0000\n"
+"Last-Translator: Lanmedia Comunicaciones <jetxaniz@lanmedia.es>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
 "Language: eu\n"
@@ -106,7 +107,7 @@ msgstr "Bilaketa errorea"
 
 #: static/tmp_js/gui-d-authenticators.js:51 static/tmp_js/gui-form.js:318
 msgid "Accept"
-msgstr "onar ezazu"
+msgstr "Onartu"
 
 #: static/tmp_js/gui-d-authenticators.js:151
 #: static/tmp_js/gui-d-connectivity.js:43 static/tmp_js/gui-d-osmanagers.js:39
@@ -144,7 +145,7 @@ msgstr "Talde Berria"
 
 #: static/tmp_js/gui-d-authenticators.js:369
 msgid "Search groups"
-msgstr "Bilatu Taldeak"
+msgstr "Taldeak bilatu"
 
 #: static/tmp_js/gui-d-authenticators.js:369
 #: static/tmp_js/gui-permissions.js:36 static/tmp_js/gui-permissions.js:85
@@ -161,7 +162,7 @@ msgstr "Taldeak gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-authenticators.js:390
 msgid "Delete group"
-msgstr "Taldea Ezabatu"
+msgstr "Taldea ezabatu"
 
 #: static/tmp_js/gui-d-authenticators.js:390
 msgid "Group deletion error"
@@ -191,12 +192,12 @@ msgstr "Erabiltzaile berria"
 
 #: static/tmp_js/gui-d-authenticators.js:623
 msgid "Search users"
-msgstr "Bilatu erabiltzaileak"
+msgstr "Erabiltzaileak bilatu"
 
 #: static/tmp_js/gui-d-authenticators.js:623
 #: static/tmp_js/gui-permissions.js:33 static/tmp_js/gui-permissions.js:82
 msgid "User"
-msgstr "erabiltzaile"
+msgstr "Erabiltzailea"
 
 #: static/tmp_js/gui-d-authenticators.js:623
 msgid "Users found"
@@ -204,7 +205,7 @@ msgstr "Aurkitutako erabiltzaileak"
 
 #: static/tmp_js/gui-d-authenticators.js:637
 msgid "Delete user"
-msgstr "Erabiltzailea  Ezabatu"
+msgstr "Erabiltzailea  ezabatu"
 
 #: static/tmp_js/gui-d-authenticators.js:637
 msgid "User deletion error"
@@ -236,15 +237,15 @@ msgstr "Autentifikatzailea ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "day"
-msgstr "Eguna"
+msgstr "eguna"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "days"
-msgstr "Egunak"
+msgstr "egun"
 
 #: static/tmp_js/gui-d-calendar.js:23
 msgid "Daily"
-msgstr "Egunero"
+msgstr "egunero"
 
 #: static/tmp_js/gui-d-calendar.js:24
 msgid "week"
@@ -316,7 +317,7 @@ msgstr "Arau hau indarrean egongo da"
 
 #: static/tmp_js/gui-d-calendar.js:153
 msgid "of any week"
-msgstr "Edozein astekoa"
+msgstr "Edozein asteko"
 
 #: static/tmp_js/gui-d-calendar.js:161
 msgid "from"
@@ -332,23 +333,23 @@ msgstr "Arte"
 
 #: static/tmp_js/gui-d-calendar.js:167
 msgid "starting at"
-msgstr "Hasita"
+msgstr "hasita"
 
 #: static/tmp_js/gui-d-calendar.js:170
 msgid "and will remain valid for "
-msgstr "eta baliozko izanten jarraituko du"
+msgstr "eta baliozko izaten jarraituko du"
 
 #: static/tmp_js/gui-d-calendar.js:172
 msgid "with no duration"
-msgstr "Iraupenik Gabe"
+msgstr "Iraupenik gabe"
 
 #: static/tmp_js/gui-d-calendar.js:208
 msgid "New rule"
-msgstr "Arau barria"
+msgstr "Arau berria"
 
 #: static/tmp_js/gui-d-calendar.js:208
 msgid "Edit rule"
-msgstr "Editatu Araua"
+msgstr "Araua editatu"
 
 #: static/tmp_js/gui-d-calendar.js:209
 msgid "Save"
@@ -376,11 +377,11 @@ msgstr "Egutegi berria"
 
 #: static/tmp_js/gui-d-calendar.js:356
 msgid "Calendar creation error"
-msgstr "Egutegia ezabatzerakoan errorea"
+msgstr "Egutegia sortzerakoan errorea"
 
 #: static/tmp_js/gui-d-calendar.js:357
 msgid "Edit calendar"
-msgstr "Editatu egutegia"
+msgstr "Egutegia editatu"
 
 #: static/tmp_js/gui-d-calendar.js:357
 msgid "Calendar saving error"
@@ -388,7 +389,7 @@ msgstr "Egutegia gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-calendar.js:358
 msgid "Delete calendar"
-msgstr "Egutegia  Ezabatu"
+msgstr "Egutegia  ezabatu"
 
 #: static/tmp_js/gui-d-calendar.js:358
 msgid "Calendar deletion error"
@@ -396,7 +397,7 @@ msgstr "Egutegia ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-config.js:56
 msgid "Configuration saved"
-msgstr "konfigurazioa gordeta"
+msgstr "Konfigurazioa gordeta"
 
 #: static/tmp_js/gui-d-config.js:60
 msgid "No changes has been made"
@@ -412,7 +413,7 @@ msgstr "Garraioa sortzerakoan errorea"
 
 #: static/tmp_js/gui-d-connectivity.js:64
 msgid "Edit transport"
-msgstr "Editatu Garraioa"
+msgstr "Garraioa editatu"
 
 #: static/tmp_js/gui-d-connectivity.js:64
 msgid "Transport saving error"
@@ -420,7 +421,7 @@ msgstr "Garraioa gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-connectivity.js:65
 msgid "Delete transport"
-msgstr "Garraioa  Ezabatu"
+msgstr "Garraioa  ezabatu"
 
 #: static/tmp_js/gui-d-connectivity.js:65
 msgid "Transport deletion error"
@@ -436,7 +437,7 @@ msgstr "Sarea sortzerakoan errorea"
 
 #: static/tmp_js/gui-d-connectivity.js:73
 msgid "Edit network"
-msgstr "Editatu sarea"
+msgstr "Sarea editatu"
 
 #: static/tmp_js/gui-d-connectivity.js:73
 msgid "Network saving error"
@@ -444,7 +445,7 @@ msgstr "Sarea gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-connectivity.js:74
 msgid "Delete network"
-msgstr "Sarea  Ezabatu"
+msgstr "Sarea  ezabatu"
 
 #: static/tmp_js/gui-d-connectivity.js:74
 msgid "Network deletion error"
@@ -452,15 +453,15 @@ msgstr "Sarea ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-dashboard.js:40
 msgid "Staff member"
-msgstr "Langile Kidea"
+msgstr "Langile kidea"
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "New image"
-msgstr "Irudi Berria"
+msgstr "Irudi berria"
 
 #: static/tmp_js/gui-d-gallery.js:17
 msgid "Edit image"
-msgstr "Irudia Editatu"
+msgstr "Irudia editatu"
 
 #: static/tmp_js/gui-d-gallery.js:18
 msgid "Upload"
@@ -472,11 +473,11 @@ msgstr "Irudi bat aukeratu behar duzu"
 
 #: static/tmp_js/gui-d-gallery.js:34
 msgid "Image is too big (max. upload size is 256Kb)"
-msgstr "Irudi haundiegia (Gehienezko tamaina 256Kb)"
+msgstr "Irudi handiegia (gehienezko tamaina 256Kb)"
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Delete Image"
-msgstr "Irudia  Ezabatu"
+msgstr "Irudia  ezabatu"
 
 #: static/tmp_js/gui-d-gallery.js:80
 msgid "Image deletion error"
@@ -484,7 +485,7 @@ msgstr "Irudia ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-osmanagers.js:42
 msgid "New OSManager"
-msgstr "SE Zuzendari barria"
+msgstr "SE Zuzendari berria"
 
 #: static/tmp_js/gui-d-osmanagers.js:42
 msgid "OSManager creation error"
@@ -492,7 +493,7 @@ msgstr "SE Zuzendaria sortzerakoan errorea"
 
 #: static/tmp_js/gui-d-osmanagers.js:43
 msgid "Edit OSManager"
-msgstr "Editatu SE zuzendaria"
+msgstr "SE Zuzendaria editatu"
 
 #: static/tmp_js/gui-d-osmanagers.js:43
 msgid "OSManager saving error"
@@ -500,15 +501,15 @@ msgstr "SE Zuzendaria gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-osmanagers.js:44
 msgid "Delete OSManager"
-msgstr "SE Zuzendaria Ezabatu"
+msgstr "SE Zuzendaria ezabatu"
 
 #: static/tmp_js/gui-d-osmanagers.js:44
 msgid "OSManager deletion error"
-msgstr "SE zuzendaria ezabatzerakoan errorea"
+msgstr "SE Zuzendaria ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-reports.js:21 static/tmp_js/gui-d-reports.js:38
 msgid "Generate report"
-msgstr "Txostena atera"
+msgstr "Txostena sortu"
 
 #: static/tmp_js/gui-d-reports.js:59
 msgid "Error creating report"
@@ -544,11 +545,11 @@ msgstr "Zerbitzu berria"
 
 #: static/tmp_js/gui-d-services.js:206
 msgid "Service saving error"
-msgstr "Zerbitzua gordetzerakoa errorea"
+msgstr "Zerbitzua gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-services.js:207
 msgid "Delete service"
-msgstr "Zerbitzua  Ezabatu"
+msgstr "Zerbitzua  ezabatu"
 
 #: static/tmp_js/gui-d-services.js:207
 msgid "Service deletion error"
@@ -572,7 +573,7 @@ msgstr "Mantentze-modua"
 
 #: static/tmp_js/gui-d-services.js:255
 msgid "Enter Maintenance Mode?"
-msgstr "Mantentze-moduan jarri?"
+msgstr "Mantentze-moduan sartu?"
 
 #: static/tmp_js/gui-d-services.js:255
 msgid "Exit Maintenance Mode?"
@@ -580,7 +581,7 @@ msgstr "Mantentze-modutik irten?"
 
 #: static/tmp_js/gui-d-services.js:274
 msgid "Enter maintenance Mode"
-msgstr "Mantentze-moduan jarri"
+msgstr "Mantentze-moduan sartu"
 
 #: static/tmp_js/gui-d-services.js:277
 msgid "Exit Maintenance Mode"
@@ -588,7 +589,7 @@ msgstr "Mantentze-modutik irten"
 
 #: static/tmp_js/gui-d-services.js:285
 msgid "New services provider"
-msgstr "Zerbitzu hornitzaile barria"
+msgstr "Zerbitzu hornitzaile berria"
 
 #: static/tmp_js/gui-d-services.js:285
 msgid "Services provider creation error"
@@ -604,7 +605,7 @@ msgstr "Zerbitzu hornitzailea gordetzerakoan errorea"
 
 #: static/tmp_js/gui-d-services.js:287
 msgid "Delete services provider"
-msgstr "Zerbitzu Hornitzailea Ezabatu"
+msgstr "Zerbitzu Hornitzailea ezabatu"
 
 #: static/tmp_js/gui-d-services.js:287
 msgid "Services Provider deletion error"
@@ -616,7 +617,7 @@ msgstr "Ekin orain"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Execute action"
-msgstr "Buru ezazu ekintza"
+msgstr "Ekintza burutu"
 
 #: static/tmp_js/gui-d-servicespools-actions.js:62
 msgid "Launch action execution right now?"
@@ -678,7 +679,7 @@ msgstr "Indarrean ezeztatu"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:67
 msgid "Failed creating publication"
-msgstr "Argitalpena sortzean hutsa"
+msgstr "Argitalpena sortzean hutsegitea"
 
 #: static/tmp_js/gui-d-servicespools-transports.js:29
 msgid "Add transport"
@@ -708,7 +709,7 @@ msgstr "Ez"
 
 #: static/tmp_js/gui-d-servicespools.js:215
 msgid "error"
-msgstr "Errorea"
+msgstr "errorea"
 
 #: static/tmp_js/gui-d-servicespools.js:264
 msgid "Remove Cache element"
@@ -729,11 +730,11 @@ msgstr "Autentifikatzailea eta taldea eman behar duzu"
 
 #: static/tmp_js/gui-d-servicespools.js:329
 msgid "Remove group"
-msgstr "Taldea kendu"
+msgstr "Taldea ezabatu"
 
 #: static/tmp_js/gui-d-servicespools.js:329
 msgid "Group removal error"
-msgstr "Taldea kentzean errorea"
+msgstr "Taldea ezabatzerakoan errorea"
 
 #: static/tmp_js/gui-d-servicespools.js:382
 msgid "Remove Assigned service"
