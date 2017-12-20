@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-19 22:34+0100\n"
-"PO-Revision-Date: 2017-10-05 08:47+0000\n"
+"POT-Creation-Date: 2017-12-20 00:10+0100\n"
+"PO-Revision-Date: 2017-12-19 21:43+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/openuds/openuds/"
 "language/zh_CN/)\n"
@@ -705,7 +705,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -892,7 +892,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
-#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -4563,7 +4563,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4573,7 +4573,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4582,8 +4582,8 @@ msgstr ""
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:65
-#: transports/NX/TSNXTransport.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:64
+#: transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -4593,8 +4593,8 @@ msgstr ""
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:66
-#: transports/NX/TSNXTransport.py:75
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:65
+#: transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -4801,47 +4801,47 @@ msgid "NX Transport"
 msgstr ""
 
 #: transports/NX/NXTransport.py:59
-msgid "NX Protocol. Firect connection."
+msgid "NX Protocol. Direct connection."
 msgstr ""
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port"
 msgstr ""
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port of NX (ssh) at client machine"
 msgstr ""
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection"
 msgstr ""
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection speed for this transport (quality)"
 msgstr ""
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 msgid "Session"
 msgstr ""
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop session"
 msgstr ""
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Disk Cache"
 msgstr ""
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Cache size en Mb stored at disk"
 msgstr ""
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Memory Cache"
 msgstr ""
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Cache size en Mb kept at memory"
 msgstr ""
 
@@ -4849,14 +4849,14 @@ msgstr ""
 msgid "NX protocol. Tunneled connection."
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid "Tunnel server"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
@@ -4865,19 +4865,19 @@ msgid ""
 "port. (use HOST:PORT format)"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid "Tunnel host check"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid ""
 "If not empty, this server will be used to check if service is running before "
 "assigning it to user. (use HOST:PORT format)"
 msgstr ""
 
-#: transports/NX/TSNXTransport.py:114 transports/RDP/TRDPTransport.py:105
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:105
 #: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5320,16 +5320,12 @@ msgstr ""
 msgid "Quality value used on some pack formats."
 msgstr ""
 
-#: transports/X2GO/TX2GOTransport.py:58
+#: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
 msgid "X2Go Transport (Experimental)"
 msgstr ""
 
 #: transports/X2GO/TX2GOTransport.py:60
 msgid "X2Go Protocol (Experimental). Tunneled connection."
-msgstr ""
-
-#: transports/X2GO/X2GOTransport.py:53
-msgid "X2Go Transport Experimental"
 msgstr ""
 
 #: transports/X2GO/X2GOTransport.py:55

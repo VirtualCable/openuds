@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-19 22:34+0100\n"
-"PO-Revision-Date: 2017-10-19 09:24+0000\n"
-"Last-Translator: albert clar <albert.clar@uib.cat>\n"
+"POT-Creation-Date: 2017-12-20 00:10+0100\n"
+"PO-Revision-Date: 2017-12-19 21:43+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -724,7 +724,7 @@ msgstr "Usuaris actuals"
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -781,18 +781,12 @@ msgid "Name of this element"
 msgstr "Nom d'aquest element"
 
 #: REST/model.py:141
-#, fuzzy
-#| msgid "Your pet's name"
 msgid "Short name"
-msgstr "El nom de la vostra mascota"
+msgstr ""
 
 #: REST/model.py:142
-#, fuzzy
-#| msgid "Services kept in cache for improved user service assignation"
 msgid "Short name for user service visualization"
 msgstr ""
-"Serveis guardats en memòria cau per a millorar l'assignació de servei "
-"d'usuari"
 
 #: REST/model.py:151
 msgid "Comments for this element"
@@ -924,7 +918,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
-#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -1362,10 +1356,8 @@ msgstr ""
 "-----BEGIN RSA PRIVATE KEY-----)"
 
 #: auths/SAML_enterprise/SAML.py:181
-#, fuzzy
-#| msgid "Invalid key"
 msgid "Invalid private key. "
-msgstr "Clau incorrecta"
+msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:201
 #, python-brace-format
@@ -2815,14 +2807,10 @@ msgid ""
 msgstr ""
 
 #: services/Nutanix_enterprise/NutanixService.py:65
-#, fuzzy
-#| msgid ""
-#| "Networks for the machines (every machine will be attached to this network)"
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
 msgstr ""
-"Xarxa per a les màquines (qualsevol màquina s'associarà a aquesta xarxa)"
 
 #: services/Nutanix_enterprise/NutanixService.py:88
 #: services/VCloud_enterprise/VCloudCloneService.py:57
@@ -3617,20 +3605,14 @@ msgid "Connection params ok"
 msgstr "Paràmetres de connexió correctes"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:27
-#, fuzzy
-#| msgid "Machine IP"
 msgid "Fixed Machines Pool"
-msgstr "IP de la màquina"
+msgstr ""
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
-#, fuzzy
-#| msgid ""
-#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "Infrascruttur"
 msgstr ""
-"Aquest servei proporciona accés a màquines Linked clone d'un Virtual Center"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
@@ -3640,10 +3622,8 @@ msgstr "Datacenter"
 #: services/Vmware_enterprise/VCFixedMachinesService.py:54
 #: services/Vmware_enterprise/VCFixedMachinesService.py:69
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#, fuzzy
-#| msgid "Machine"
 msgid "Machines"
-msgstr "Màquina"
+msgstr ""
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:55
 #: services/Vmware_enterprise/VCLinkedCloneService.py:60
@@ -3656,22 +3636,16 @@ msgid "Resource Pool"
 msgstr "Pool de recursos"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:67
-#, fuzzy
-#| msgid "Resource Pool containing base machine"
 msgid "Resource Pool containing base machines"
-msgstr "Pool de recursos que conté la màquina base"
+msgstr ""
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#, fuzzy
-#| msgid "Base Machine"
 msgid "Base Machines"
-msgstr "Màquina base"
+msgstr ""
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#, fuzzy
-#| msgid "Base machine for this service"
 msgid "Base machines for this service"
-msgstr "Màquina base per a aquest servei"
+msgstr ""
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:91
 msgid "We need at least a machine"
@@ -3682,31 +3656,21 @@ msgid "Clone based - Full"
 msgstr ""
 
 #: services/Vmware_enterprise/VCFullCloneService.py:34
-#, fuzzy
-#| msgid ""
-#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
 msgstr ""
-"Aquest servei proporciona accés a màquines Linked clone d'un Virtual Center"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:68
-#, fuzzy
-#| msgid "Datastore"
 msgid "VMs Datastores"
-msgstr "Emmagatzematge de dades"
+msgstr ""
 
 #: services/Vmware_enterprise/VCFullCloneService.py:69
-#, fuzzy
-#| msgid "Datastores where to put publications"
 msgid "Datastores where to put machines"
-msgstr "Unitats d'emmagatzematge on guardar publicacions"
+msgstr ""
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:33
-#, fuzzy
-#| msgid "Suse based Linux"
 msgid "Clone based - Linked"
-msgstr "Linux basat en Suse"
+msgstr ""
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:35
 msgid ""
@@ -3736,10 +3700,8 @@ msgstr ""
 "Si està actiu, s'eliminarà la cerca de clons duplicats per a aquest servei"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Keep on error"
-msgstr "Error desconegut"
+msgstr ""
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "If active, access errors found on machine will not mark is as error."
@@ -4775,7 +4737,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4785,7 +4747,7 @@ msgstr "Credencials buides"
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4796,8 +4758,8 @@ msgstr ""
 "Si està seleccionat, les credencials utilitzades per a connectar-se estaran "
 "buïdes"
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:65
-#: transports/NX/TSNXTransport.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:64
+#: transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -4807,8 +4769,8 @@ msgstr ""
 msgid "If not empty, this username will be always used as credential"
 msgstr "Si no està buit, el nom d'usuari s'utilitzarà sempre a les credencials"
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:66
-#: transports/NX/TSNXTransport.py:75
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:65
+#: transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -5023,84 +4985,74 @@ msgstr ""
 "nivell de seguretat (a la pestanya Paràmetres) establert a \"RDP\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-#, fuzzy
-#| msgid "HTML5 RDS Transport"
 msgid "HTML5 RDS Transport for vApps"
-msgstr "Transport RDS HTML5"
+msgstr ""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-#, fuzzy
-#| msgid "RDS Transport using HTML5 client"
 msgid "RDS Transport using HTML5 client for vApps"
-msgstr "Transport RDP utilitzant client HTML5"
+msgstr ""
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
-#, fuzzy
-#| msgid "Transport"
 msgid "NX Transport"
-msgstr "Transport"
+msgstr ""
 
 #: transports/NX/NXTransport.py:59
-#, fuzzy
-#| msgid "NX Transport for direct connection"
-msgid "NX Protocol. Firect connection."
-msgstr "Transport NX per a connexió directa"
+msgid "NX Protocol. Direct connection."
+msgstr ""
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port"
 msgstr "Port d'escolta"
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port of NX (ssh) at client machine"
 msgstr "Port d'escolta de NX (SSH) a la màquina client"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection"
 msgstr "Connexió"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection speed for this transport (quality)"
 msgstr "Velocitat de connexió per a aquest transport (qualitat)"
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 msgid "Session"
 msgstr "Sessió"
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop session"
 msgstr "Sessió d'escriptori"
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Disk Cache"
 msgstr "Memòria cau de disc"
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Cache size en Mb stored at disk"
 msgstr "Mida de memòria cau en Mb desada en disc"
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Memory Cache"
 msgstr "Memòria cau"
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Cache size en Mb kept at memory"
 msgstr "Mida de memòria cau en Mb que es conserva en memòria"
 
 #: transports/NX/TSNXTransport.py:64
-#, fuzzy
-#| msgid "NX Transport for tunneled connection"
 msgid "NX protocol. Tunneled connection."
-msgstr "Transport NX per a connexió via túnel"
+msgstr ""
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid "Tunnel server"
 msgstr "Servidor de túnel"
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
@@ -5111,12 +5063,12 @@ msgstr ""
 "Nom de host o IP del servidor de túnel enviat al dispositiu client (IP "
 "\"pública\") i port (utilitzeu el format HOST:PORT)."
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid "Tunnel host check"
 msgstr "Verificació de host del túnel"
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid ""
 "If not empty, this server will be used to check if service is running before "
@@ -5125,7 +5077,7 @@ msgstr ""
 "Si no està buit, aquest servidor s'utilitzarà per a verificar si el servei "
 "funciona abans d'assignar-lo a l'usuari (utilitzeu el format HOST:PORT)."
 
-#: transports/NX/TSNXTransport.py:114 transports/RDP/TRDPTransport.py:105
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:105
 #: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5141,10 +5093,8 @@ msgid "PCoIP Transport (Experimental)"
 msgstr "Transport PCoIP (experimental)"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-#, fuzzy
-#| msgid "PCoIP Transport, Experimental"
 msgid "PCoIP using cloud access. Experimental."
-msgstr "Transport PCoIP, experimental"
+msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 msgid "If not empty, this domain will be always used as credential domain"
@@ -5219,10 +5169,8 @@ msgid "Enable sound"
 msgstr "Activa el so"
 
 #: transports/RDP/BaseRDPTransport.py:71
-#, fuzzy
-#| msgid "If checked, the Audio will be redirected."
 msgid "If checked, sound will be redirected."
-msgstr "Si està seleccionat, es redirigirà l'àudio"
+msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:72
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
@@ -5235,10 +5183,8 @@ msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Si està seleccionat, s'activarà el suport de proveïdor de credencials"
 
 #: transports/RDP/BaseRDPTransport.py:77
-#, fuzzy
-#| msgid "Connection speed for this transport (quality)"
 msgid "Screen size for this transport"
-msgstr "Velocitat de connexió per a aquest transport (qualitat)"
+msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:89
 #: transports/RDS_enterprise/BaseRDSTransport.py:76
@@ -5331,22 +5277,16 @@ msgstr ""
 "xfreerdp)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
-#, fuzzy
-#| msgid "Transport"
 msgid "RDP Transport"
-msgstr "Transport"
+msgstr ""
 
 #: transports/RDP/RDPTransport.py:57
-#, fuzzy
-#| msgid "RDP Transport for direct connection"
 msgid "RDP Protocol. Direct connection."
-msgstr "Transport RDP per a connexió directa"
+msgstr ""
 
 #: transports/RDP/TRDPTransport.py:65
-#, fuzzy
-#| msgid "RDS Transport for tunneled connection"
 msgid "RDP Protocol. Tunneled connection."
-msgstr "Transport RDP per a connexió via túnel"
+msgstr ""
 
 #: transports/RDP/TRDPTransport.py:73
 #: transports/RDS_enterprise/TRDSTransport.py:71
@@ -5360,34 +5300,24 @@ msgstr "Temps màxim d'espera abans de tancar l'agent d'escolta de túnel"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-#, fuzzy
-#| msgid "RDS Transport (direct)"
 msgid "RDS Transport for vApps"
-msgstr "Transport RDP (directe)"
+msgstr ""
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-#, fuzzy
-#| msgid "RDS Transport for direct connection"
 msgid "RDS Transport for vApps. Direct connection."
-msgstr "Transport RDP per a connexió directa"
+msgstr ""
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-#, fuzzy
-#| msgid "RDS Transport for tunneled connection"
 msgid "RDS Transport for vApps. Tunneled connection."
-msgstr "Transport RDP per a connexió via túnel"
+msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:37
-#, fuzzy
-#| msgid "Transport"
 msgid "RGS Transport"
-msgstr "Transport"
+msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:39
-#, fuzzy
-#| msgid "RGS Transport for direct connection"
 msgid "RGS Protocol. Direct connection."
-msgstr "Transport RGS per a connexió directa"
+msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:49
 #: transports/RGS_enterprise/TRGSTransport.py:59
@@ -5481,16 +5411,12 @@ msgid "If checked, the Mic will be redirected."
 msgstr "Si està seleccionat, es redirigirà el micròfon"
 
 #: transports/RGS_enterprise/TRGSTransport.py:43
-#, fuzzy
-#| msgid "Transport"
 msgid "RGS Transport."
-msgstr "Transport"
+msgstr ""
 
 #: transports/RGS_enterprise/TRGSTransport.py:45
-#, fuzzy
-#| msgid "RGS Transport for tunneled connection"
 msgid "RGS Protocol. Tunneled connection"
-msgstr "Transport RGS per a connexió via túnel"
+msgstr ""
 
 #: transports/SPICE/BaseSPICETransport.py:66
 msgid "Empty credentials"
@@ -5541,28 +5467,20 @@ msgid "Auto-redirect USB devices when plugged in."
 msgstr "Autoredirecció dels dispositius USB quan es connectin"
 
 #: transports/SPICE/SPICETransport.py:52
-#, fuzzy
-#| msgid "SPICE Transport (direct)"
 msgid "SPICE Transport"
-msgstr "Transport SPICE (directe)"
+msgstr ""
 
 #: transports/SPICE/SPICETransport.py:54
-#, fuzzy
-#| msgid "RDP Transport for direct connection"
 msgid "SPICE Protocol. Direct connection."
-msgstr "Transport RDP per a connexió directa"
+msgstr ""
 
 #: transports/SPICE/TSPICETransport.py:60
-#, fuzzy
-#| msgid "SPICE Transport (direct)"
 msgid "SPICE Transport "
-msgstr "Transport SPICE (directe)"
+msgstr ""
 
 #: transports/SPICE/TSPICETransport.py:62
-#, fuzzy
-#| msgid "RDS Transport for tunneled connection"
 msgid "SPICE Protocol. Tunneled connection."
-msgstr "Transport RDP per a connexió via túnel"
+msgstr ""
 
 #: transports/X2GO/BaseX2GOTransport.py:76
 msgid "Show fullscreen"
@@ -5635,29 +5553,17 @@ msgstr "Qualitat"
 msgid "Quality value used on some pack formats."
 msgstr "Valor de qualitat utilitzat en alguns formats de paquet"
 
-#: transports/X2GO/TX2GOTransport.py:58
-#, fuzzy
-#| msgid "PCoIP Transport (Experimental)"
+#: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
 msgid "X2Go Transport (Experimental)"
-msgstr "Transport PCoIP (experimental)"
+msgstr ""
 
 #: transports/X2GO/TX2GOTransport.py:60
-#, fuzzy
-#| msgid "X2Go Transport Experimental (tunneled)"
 msgid "X2Go Protocol (Experimental). Tunneled connection."
-msgstr "Transport experimental X2Go (via túnel)"
-
-#: transports/X2GO/X2GOTransport.py:53
-#, fuzzy
-#| msgid "X2Go Transport Experimental (direct)"
-msgid "X2Go Transport Experimental"
-msgstr "Transport experimental X2Go (directe)"
+msgstr ""
 
 #: transports/X2GO/X2GOTransport.py:55
-#, fuzzy
-#| msgid "X2Go Transport Experimental (direct)"
 msgid "X2Go Protocol (Experimental). Direct connection."
-msgstr "Transport experimental X2Go (directe)"
+msgstr ""
 
 #: web/errors.py:72
 msgid "Unknown error"

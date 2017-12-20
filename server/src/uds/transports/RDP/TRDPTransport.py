@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-12-19'
+__updated__ = '2017-12-20'
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class TRDPTransport(BaseRDPTransport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('RDP Transport')
+    typeName = _('RDP')
     typeType = 'TSRDPTransport'
     typeDescription = _('RDP Protocol. Tunneled connection.')
     needsJava = True  # If this transport needs java for rendering

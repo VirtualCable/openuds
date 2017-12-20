@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-19 22:34+0100\n"
-"PO-Revision-Date: 2017-10-05 08:48+0000\n"
+"POT-Creation-Date: 2017-12-20 00:10+0100\n"
+"PO-Revision-Date: 2017-12-19 21:43+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -441,9 +441,8 @@ msgid ""
 "care with this, because the user will have the \"poser\" to delete it's own "
 "service"
 msgstr ""
-"Se attivo, l'utente potrà rimuovere il servizio \"manualmente\". Essere "
-"cura con questo, perché l'utente avrà il \"poser\" per eliminare la sua "
-"servizio"
+"Se attivo, l'utente potrà rimuovere il servizio \"manualmente\". Essere cura "
+"con questo, perché l'utente avrà il \"poser\" per eliminare la sua servizio"
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
@@ -454,8 +453,8 @@ msgid ""
 "If active, UDS will not try to detect and remove assigned but not used user "
 "services."
 msgstr ""
-"Se attivo, UDS non tenterà di rilevare e rimuovere utente assegnato ma non utilizzato "
-"Servizi."
+"Se attivo, UDS non tenterà di rilevare e rimuovere utente assegnato ma non "
+"utilizzato Servizi."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -722,7 +721,7 @@ msgstr "Utenti correnti"
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -779,12 +778,10 @@ msgid "Name of this element"
 msgstr "Nome di questo elemento"
 
 #: REST/model.py:141
-#| msgid "Your pet's name"
 msgid "Short name"
 msgstr "Nome breve"
 
 #: REST/model.py:142
-#| msgid "Services kept in cache for improved user service assignation"
 msgid "Short name for user service visualization"
 msgstr "Nome breve per la visualizzazione di utente servizio"
 
@@ -918,7 +915,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
-#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -1351,7 +1348,6 @@ msgstr ""
 "BEGIN CHIAVE PRIVATA RSA-"
 
 #: auths/SAML_enterprise/SAML.py:181
-#| msgid "Invalid key"
 msgid "Invalid private key. "
 msgstr "Chiave privata non valida. "
 
@@ -2790,8 +2786,8 @@ msgid ""
 "If checked, legacy apy will be used. Only recommended on OLD Nutanix "
 "installations."
 msgstr ""
-"Se selezionata, verrà utilizzato eredità apy. Consigliato solo il vecchio Nutanix "
-"installazioni."
+"Se selezionata, verrà utilizzato eredità apy. Consigliato solo il vecchio "
+"Nutanix installazioni."
 
 #: services/Nutanix_enterprise/NutanixProvider.py:177
 msgid "Connection works fine"
@@ -2810,18 +2806,15 @@ msgid ""
 "Memory assigned to machines. (Zero value means \"keep original machine memory"
 "\")"
 msgstr ""
-"Memoria assegnata alle macchine. (Valore zero significa \"conservare memoria macchina originale"
-"\")"
+"Memoria assegnata alle macchine. (Valore zero significa \"conservare memoria "
+"macchina originale\")"
 
 #: services/Nutanix_enterprise/NutanixService.py:65
-#| msgid ""
-#| "Networks for the machines (every machine will be attached to this network)"
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
 msgstr ""
-"Rete per le macchine (ogni macchina creata sarà allegato a questo "
-"rete)"
+"Rete per le macchine (ogni macchina creata sarà allegato a questo rete)"
 
 #: services/Nutanix_enterprise/NutanixService.py:88
 #: services/VCloud_enterprise/VCloudCloneService.py:57
@@ -3611,19 +3604,16 @@ msgid "Connection params ok"
 msgstr "Connessione params ok"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:27
-#| msgid "Machine IP"
 msgid "Fixed Machines Pool"
 msgstr "Macchine fisse piscina"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
-#| msgid ""
-#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "Infrascruttur"
 msgstr ""
-"Questo servizio fornisce l'accesso ad un determinato gruppo di macchine selezionate sul "
-"Infrascruttur"
+"Questo servizio fornisce l'accesso ad un determinato gruppo di macchine "
+"selezionate sul Infrascruttur"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
@@ -3633,7 +3623,6 @@ msgstr "Datacenter"
 #: services/Vmware_enterprise/VCFixedMachinesService.py:54
 #: services/Vmware_enterprise/VCFixedMachinesService.py:69
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#| msgid "Machine"
 msgid "Machines"
 msgstr "Macchine"
 
@@ -3648,17 +3637,14 @@ msgid "Resource Pool"
 msgstr "Pool di risorse"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:67
-#| msgid "Resource Pool containing base machine"
 msgid "Resource Pool containing base machines"
 msgstr "Pool di risorse contenente macchine base"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#| msgid "Base Machine"
 msgid "Base Machines"
 msgstr "Macchine base"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#| msgid "Base machine for this service"
 msgid "Base machines for this service"
 msgstr "Macchine base per questo servizio"
 
@@ -3671,25 +3657,21 @@ msgid "Clone based - Full"
 msgstr "Clone basato - Full"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:34
-#| msgid ""
-#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
 msgstr ""
-"Questo servizio fornisce l'accesso alle macchine Cloned completo su un Virtual Center"
+"Questo servizio fornisce l'accesso alle macchine Cloned completo su un "
+"Virtual Center"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:68
-#| msgid "Datastore"
 msgid "VMs Datastores"
 msgstr "Macchine virtuali datastore"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:69
-#| msgid "Datastores where to put publications"
 msgid "Datastores where to put machines"
 msgstr "Datastore dove mettere macchine"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:33
-#| msgid "Suse based Linux"
 msgid "Clone based - Linked"
 msgstr "Clone basato - collegati"
 
@@ -3722,13 +3704,14 @@ msgstr ""
 "Se attivo, i duplicati trovati cloni per questo servizio verranno rimossi"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
-#| msgid "Unknown error"
 msgid "Keep on error"
 msgstr "Tenere in caso di errore"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "If active, access errors found on machine will not mark is as error."
-msgstr "Se attivo, gli errori trovati sulla macchina non segnerà l'accesso è come errore."
+msgstr ""
+"Se attivo, gli errori trovati sulla macchina non segnerà l'accesso è come "
+"errore."
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:76
 msgid "Resource Pool containing base machine"
@@ -4470,8 +4453,8 @@ msgid ""
 "Are you sure that you want to release this service. Its current content will "
 "be lost!"
 msgstr ""
-"Sei sicuro che si desidera rilasciare questo servizio. Suo contenuto corrente sarà "
-"essere perso!"
+"Sei sicuro che si desidera rilasciare questo servizio. Suo contenuto "
+"corrente sarà essere perso!"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -4762,7 +4745,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4772,7 +4755,7 @@ msgstr "Vuoto creds"
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4781,8 +4764,8 @@ msgstr "Vuoto creds"
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "Se selezionata, le credenziali utilizzate per connettersi sarà emtpy"
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:65
-#: transports/NX/TSNXTransport.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:64
+#: transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -4793,8 +4776,8 @@ msgid "If not empty, this username will be always used as credential"
 msgstr ""
 "Se non vuota, questo nome utente verrà sempre utilizzato come credenziale"
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:66
-#: transports/NX/TSNXTransport.py:75
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:65
+#: transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -5009,79 +4992,75 @@ msgstr ""
 "livello di protezione (nella scheda parametri) impostato su \"RDP\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-#| msgid "HTML5 RDS Transport"
 msgid "HTML5 RDS Transport for vApps"
 msgstr "Trasporto di RDS di HTML5 per vApp"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-#| msgid "RDS Transport using HTML5 client"
 msgid "RDS Transport using HTML5 client for vApps"
 msgstr "Trasporto di RDS utilizzando client di HTML5 per vApp"
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
-#| msgid "Transport"
 msgid "NX Transport"
 msgstr "Trasporto NX"
 
 #: transports/NX/NXTransport.py:59
-#| msgid "NX Transport for direct connection"
-msgid "NX Protocol. Firect connection."
+#| msgid "NX Protocol. Firect connection."
+msgid "NX Protocol. Direct connection."
 msgstr "Protocollo NX. Collegamento diretto."
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port"
 msgstr "Porta di ascolto"
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port of NX (ssh) at client machine"
 msgstr "Porto di NX (ssh) in computer client in ascolto"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection"
 msgstr "Connessione"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection speed for this transport (quality)"
 msgstr "Velocità di connessione per questo trasporto (qualità)"
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 msgid "Session"
 msgstr "Sessione"
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop session"
 msgstr "Sessione desktop"
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Disk Cache"
 msgstr "Cache disco"
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Cache size en Mb stored at disk"
 msgstr "Memorizzare nella cache en dimensione che MB conservati a disco"
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Memory Cache"
 msgstr "Memoria Cache"
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Cache size en Mb kept at memory"
 msgstr "En dimensione che MB mantenuto alla memoria di cache"
 
 #: transports/NX/TSNXTransport.py:64
-#| msgid "NX Transport for tunneled connection"
 msgid "NX protocol. Tunneled connection."
 msgstr "Protocollo NX. Connessione con tunnel."
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid "Tunnel server"
 msgstr "Server per il tunnel"
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
@@ -5092,12 +5071,12 @@ msgstr ""
 "IP o l'Hostname del server di tunnel inviato a un dispositivo client (ip "
 "\"pubblico\") e porto. (utilizzare il formato HOST: PORT)"
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid "Tunnel host check"
 msgstr "Controllo host tunnel"
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid ""
 "If not empty, this server will be used to check if service is running before "
@@ -5107,7 +5086,7 @@ msgstr ""
 "in esecuzione prima di assegnandolo all'utente. (utilizzare il formato HOST: "
 "PORT)"
 
-#: transports/NX/TSNXTransport.py:114 transports/RDP/TRDPTransport.py:105
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:105
 #: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5123,7 +5102,6 @@ msgid "PCoIP Transport (Experimental)"
 msgstr "PCoIP trasporto (sperimentale)"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-#| msgid "PCoIP Transport, Experimental"
 msgid "PCoIP using cloud access. Experimental."
 msgstr "PCoIP utilizzando accesso cloud. Sperimentale."
 
@@ -5200,7 +5178,6 @@ msgid "Enable sound"
 msgstr "Attivare l'audio"
 
 #: transports/RDP/BaseRDPTransport.py:71
-#| msgid "If checked, the Audio will be redirected."
 msgid "If checked, sound will be redirected."
 msgstr "Se selezionata, verrà reindirizzato suono."
 
@@ -5215,7 +5192,6 @@ msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Se selezionata, abiliterà il supporto del Provider di credenziali)"
 
 #: transports/RDP/BaseRDPTransport.py:77
-#| msgid "Connection speed for this transport (quality)"
 msgid "Screen size for this transport"
 msgstr "Dimensioni dello schermo per questo trasporto"
 
@@ -5308,17 +5284,14 @@ msgstr ""
 "ID, dev:054 c: 0268, o aything compatibile con il tuo client di xfreerdp)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
-#| msgid "Transport"
 msgid "RDP Transport"
 msgstr "Trasporto RDP"
 
 #: transports/RDP/RDPTransport.py:57
-#| msgid "RDP Transport for direct connection"
 msgid "RDP Protocol. Direct connection."
 msgstr "Protocollo RDP. Collegamento diretto."
 
 #: transports/RDP/TRDPTransport.py:65
-#| msgid "RDS Transport for tunneled connection"
 msgid "RDP Protocol. Tunneled connection."
 msgstr "Protocollo RDP. Connessione con tunnel."
 
@@ -5334,27 +5307,22 @@ msgstr "Tempo massimo di attesa prima di chiudere il listener di tunnel"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-#| msgid "RDS Transport (direct)"
 msgid "RDS Transport for vApps"
 msgstr "Trasporto di RDS per vApp"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-#| msgid "RDS Transport for direct connection"
 msgid "RDS Transport for vApps. Direct connection."
 msgstr "Trasporto di RDS per vApps. Collegamento diretto."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-#| msgid "RDS Transport for tunneled connection"
 msgid "RDS Transport for vApps. Tunneled connection."
 msgstr "Trasporto di RDS per vApps. Connessione con tunnel."
 
 #: transports/RGS_enterprise/RGSTransport.py:37
-#| msgid "Transport"
 msgid "RGS Transport"
 msgstr "Trasporto RGS"
 
 #: transports/RGS_enterprise/RGSTransport.py:39
-#| msgid "RGS Transport for direct connection"
 msgid "RGS Protocol. Direct connection."
 msgstr "Protocollo RGS. Collegamento diretto."
 
@@ -5451,12 +5419,10 @@ msgid "If checked, the Mic will be redirected."
 msgstr "Se selezionata, verrà reindirizzato il Mic."
 
 #: transports/RGS_enterprise/TRGSTransport.py:43
-#| msgid "Transport"
 msgid "RGS Transport."
 msgstr "Trasporto RGS."
 
 #: transports/RGS_enterprise/TRGSTransport.py:45
-#| msgid "RGS Transport for tunneled connection"
 msgid "RGS Protocol. Tunneled connection"
 msgstr "Protocollo RGS. Connessione con tunnel"
 
@@ -5509,22 +5475,18 @@ msgid "Auto-redirect USB devices when plugged in."
 msgstr "Auto-reindirizzare dispositivi USB quando è collegato."
 
 #: transports/SPICE/SPICETransport.py:52
-#| msgid "SPICE Transport (direct)"
 msgid "SPICE Transport"
 msgstr "Trasporto delle spezie"
 
 #: transports/SPICE/SPICETransport.py:54
-#| msgid "RDP Transport for direct connection"
 msgid "SPICE Protocol. Direct connection."
 msgstr "Protocollo delle spezie. Collegamento diretto."
 
 #: transports/SPICE/TSPICETransport.py:60
-#| msgid "SPICE Transport (direct)"
 msgid "SPICE Transport "
 msgstr "Trasporto delle spezie "
 
 #: transports/SPICE/TSPICETransport.py:62
-#| msgid "RDS Transport for tunneled connection"
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "Protocollo delle spezie. Connessione con tunnel."
 
@@ -5545,8 +5507,9 @@ msgid ""
 "If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
 "executed. If UDS vAPP is not selected, this field will be ignored."
 msgstr ""
-"Se UDS vAPP è selezionata come \"Desktop\", il percorso completo dell'applicazione per essere "
-"eseguito. Se UDS vAPP non è selezionata, questo campo verrà ignorato."
+"Se UDS vAPP è selezionata come \"Desktop\", il percorso completo "
+"dell'applicazione per essere eseguito. Se UDS vAPP non è selezionata, questo "
+"campo verrà ignorato."
 
 #: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"
@@ -5601,23 +5564,15 @@ msgstr "Qualità"
 msgid "Quality value used on some pack formats."
 msgstr "Valore di qualità utilizzato su alcuni formati di confezione."
 
-#: transports/X2GO/TX2GOTransport.py:58
-#| msgid "PCoIP Transport (Experimental)"
+#: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
 msgid "X2Go Transport (Experimental)"
 msgstr "X2go trasporti (sperimentali)"
 
 #: transports/X2GO/TX2GOTransport.py:60
-#| msgid "X2Go Transport Experimental (tunneled)"
 msgid "X2Go Protocol (Experimental). Tunneled connection."
 msgstr "X2go protocollo (sperimentale). Connessione con tunnel."
 
-#: transports/X2GO/X2GOTransport.py:53
-#| msgid "X2Go Transport Experimental (direct)"
-msgid "X2Go Transport Experimental"
-msgstr "X2go trasporto sperimentale"
-
 #: transports/X2GO/X2GOTransport.py:55
-#| msgid "X2Go Transport Experimental (direct)"
 msgid "X2Go Protocol (Experimental). Direct connection."
 msgstr "X2go protocollo (sperimentale). Collegamento diretto."
 
