@@ -56,12 +56,12 @@ READY_CACHE_TIMEOUT = 30
 
 class TSNXTransport(Transport):
     '''
-    Provides access via RDP to service.
+    Provides access via NX to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('NX Transport')
+    typeName = _('NX v3.5')
     typeType = 'TSNXTransport'
-    typeDescription = _('NX protocol. Tunneled connection.')
+    typeDescription = _('NX protocol v3.5. Tunneled connection.')
     iconFile = 'nx.png'
     protocol = protocols.NX
     group = TUNNELED_GROUP

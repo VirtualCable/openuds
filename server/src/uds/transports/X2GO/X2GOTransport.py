@@ -40,19 +40,19 @@ from . import x2gofile
 
 import logging
 
-__updated__ = '2017-12-19'
+__updated__ = '2017-12-20'
 
 logger = logging.getLogger(__name__)
 
 
 class X2GOTransport(BaseX2GOTransport):
     '''
-    Provides access via SPICE to service.
+    Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('X2Go Transport (Experimental)')
+    typeName = _('X2Go')
     typeType = 'X2GOTransport'
-    typeDescription = _('X2Go Protocol (Experimental). Direct connection.')
+    typeDescription = _('X2Go access (Experimental). Direct connection.')
 
     fixedName = BaseX2GOTransport.fixedName
     # fullScreen = BaseX2GOTransport.fullScreen

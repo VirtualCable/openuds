@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-19 22:34+0100\n"
-"PO-Revision-Date: 2017-10-05 08:47+0000\n"
+"POT-Creation-Date: 2017-12-20 00:10+0100\n"
+"PO-Revision-Date: 2017-12-19 21:43+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -435,7 +435,9 @@ msgstr "متقدم"
 
 #: REST/methods/services_pools.py:184
 msgid "Allow removal by users"
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.3431689E"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.3431689E"
 
 #: REST/methods/services_pools.py:185
 msgid ""
@@ -443,9 +445,8 @@ msgid ""
 "care with this, because the user will have the \"poser\" to delete it's own "
 "service"
 msgstr ""
-"إذا نشط، سيسمح للمستخدم بإزالة الخدمة \"يدوياً\". تكون "
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33858A33"
-"خدمة"
+"إذا نشط، سيسمح للمستخدم بإزالة الخدمة \"يدوياً\". تكون TranslateApiException: "
+"AppId is over the quota : ID=1230.V2_Json.Translate.33858A33خدمة"
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
@@ -456,8 +457,8 @@ msgid ""
 "If active, UDS will not try to detect and remove assigned but not used user "
 "services."
 msgstr ""
-"في حالة نشطة، المصغرة لن يحاول اكتشاف وإزالة المستخدم المعينة ولكن لا تستخدمها "
-"خدمات."
+"في حالة نشطة، المصغرة لن يحاول اكتشاف وإزالة المستخدم المعينة ولكن لا "
+"تستخدمها خدمات."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -722,7 +723,7 @@ msgstr "المستخدمون الحاليون"
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
 #: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
-#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
+#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -779,14 +780,14 @@ msgid "Name of this element"
 msgstr "اسم هذا العنصر"
 
 #: REST/model.py:141
-#| msgid "Your pet's name"
 msgid "Short name"
 msgstr "الاسم المختصر"
 
 #: REST/model.py:142
-#| msgid "Services kept in cache for improved user service assignation"
 msgid "Short name for user service visualization"
-msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33858D83"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
+"Translate.33858D83"
 
 #: REST/model.py:151
 msgid "Comments for this element"
@@ -913,7 +914,7 @@ msgstr ""
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
 #: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
-#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
+#: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -1334,7 +1335,6 @@ msgstr ""
 "RSA PRIVATE KEY-----"
 
 #: auths/SAML_enterprise/SAML.py:181
-#| msgid "Invalid key"
 msgid "Invalid private key. "
 msgstr "المفتاح الخاص غير صالحة. "
 
@@ -2752,8 +2752,7 @@ msgid ""
 "If checked, legacy apy will be used. Only recommended on OLD Nutanix "
 "installations."
 msgstr ""
-"إذا راجعت، سيتم استخدام تراث أبي. وأوصى فقط على نوتانيكس القديم "
-"المنشآت."
+"إذا راجعت، سيتم استخدام تراث أبي. وأوصى فقط على نوتانيكس القديم المنشآت."
 
 #: services/Nutanix_enterprise/NutanixProvider.py:177
 msgid "Connection works fine"
@@ -2772,18 +2771,14 @@ msgid ""
 "Memory assigned to machines. (Zero value means \"keep original machine memory"
 "\")"
 msgstr ""
-"الذاكرة التي تم تعيينها إلى آلات. (القيمة صفر يعني \"الحفاظ على ذاكرة الجهاز الأصلي"
-"\")"
+"الذاكرة التي تم تعيينها إلى آلات. (القيمة صفر يعني \"الحفاظ على ذاكرة الجهاز "
+"الأصلي\")"
 
 #: services/Nutanix_enterprise/NutanixService.py:65
-#| msgid ""
-#| "Networks for the machines (every machine will be attached to this network)"
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
-msgstr ""
-"شبكة للأجهزة (كل آلة تم إنشاؤها سوف يتم إرفاق هذا "
-"شبكة الاتصال)"
+msgstr "شبكة للأجهزة (كل آلة تم إنشاؤها سوف يتم إرفاق هذا شبكة الاتصال)"
 
 #: services/Nutanix_enterprise/NutanixService.py:88
 #: services/VCloud_enterprise/VCloudCloneService.py:57
@@ -3564,19 +3559,16 @@ msgid "Connection params ok"
 msgstr "اتصال params ok"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:27
-#| msgid "Machine IP"
 msgid "Fixed Machines Pool"
 msgstr "تجمع الأجهزة الثابتة"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
-#| msgid ""
-#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "Infrascruttur"
 msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.343173B8"
-"إينفراسكروتور"
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.343173B8إينفراسكروتور"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
@@ -3586,7 +3578,6 @@ msgstr "مركز البيانات"
 #: services/Vmware_enterprise/VCFixedMachinesService.py:54
 #: services/Vmware_enterprise/VCFixedMachinesService.py:69
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#| msgid "Machine"
 msgid "Machines"
 msgstr "آلات"
 
@@ -3601,17 +3592,16 @@ msgid "Resource Pool"
 msgstr "تجمع الموارد"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:67
-#| msgid "Resource Pool containing base machine"
 msgid "Resource Pool containing base machines"
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317500"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.34317500"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#| msgid "Base Machine"
 msgid "Base Machines"
 msgstr "آلات الأساسية"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
-#| msgid "Base machine for this service"
 msgid "Base machines for this service"
 msgstr "الأجهزة الأساسية لهذه الخدمة"
 
@@ -3624,25 +3614,24 @@ msgid "Clone based - Full"
 msgstr "استنساخ على أساس-كامل"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:34
-#| msgid ""
-#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
-msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.338597AB"
-"توفر هذه الخدمة إمكانية الوصول إلى آلات كلونيد كامل على مركز الظاهرية"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
+"Translate.338597ABتوفر هذه الخدمة إمكانية الوصول إلى آلات كلونيد كامل على "
+"مركز الظاهرية"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:68
-#| msgid "Datastore"
 msgid "VMs Datastores"
 msgstr "داتاستوريس السفن"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:69
-#| msgid "Datastores where to put publications"
 msgid "Datastores where to put machines"
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317970"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.34317970"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:33
-#| msgid "Suse based Linux"
 msgid "Clone based - Linked"
 msgstr "استنساخ على أساس--مرتبطة"
 
@@ -3672,13 +3661,14 @@ msgid "If active, found duplicates clones for this service will be removed"
 msgstr "إذا كنت نشيطا، وجدت سيتم إزالة التكرارات استنساخ لهذه الخدمة"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
-#| msgid "Unknown error"
 msgid "Keep on error"
 msgstr "تبقى على خطأ"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "If active, access errors found on machine will not mark is as error."
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317AD3"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.34317AD3"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:76
 msgid "Resource Pool containing base machine"
@@ -4411,7 +4401,8 @@ msgid ""
 "be lost!"
 msgstr ""
 "هل أنت متأكد من أنك تريد أن الإفراج عن هذه الخدمة. سوف محتواه الحالي "
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33859C08"
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
+"Translate.33859C08"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -4694,7 +4685,7 @@ msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4704,7 +4695,7 @@ msgstr "أوراق الاعتماد فارغة."
 
 #: transports/HTML5RDP/HTML5RDP.py:72
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:74
-#: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
+#: transports/NX/NXTransport.py:63 transports/NX/TSNXTransport.py:72
 #: transports/RDP/BaseRDPTransport.py:60
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
@@ -4713,8 +4704,8 @@ msgstr "أوراق الاعتماد فارغة."
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدمة للاتصال أن تكون فارغة."
 
-#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:65
-#: transports/NX/TSNXTransport.py:74
+#: transports/HTML5RDP/HTML5RDP.py:73 transports/NX/NXTransport.py:64
+#: transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
@@ -4724,8 +4715,8 @@ msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدم�
 msgid "If not empty, this username will be always used as credential"
 msgstr "إن لم يكن فارغا، هذا المستخدم سيستخدم دائما الاعتماد."
 
-#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:66
-#: transports/NX/TSNXTransport.py:75
+#: transports/HTML5RDP/HTML5RDP.py:74 transports/NX/NXTransport.py:65
+#: transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
@@ -4936,79 +4927,79 @@ msgstr ""
 "الأمان (علامة التبويب معلمات) بتعيين إلى \"برنامج التعمير والتنمية\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-#| msgid "HTML5 RDS Transport"
 msgid "HTML5 RDS Transport for vApps"
-msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.33859C6E"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
+"Translate.33859C6E"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-#| msgid "RDS Transport using HTML5 client"
 msgid "RDS Transport using HTML5 client for vApps"
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34317CEC"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.34317CEC"
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
-#| msgid "Transport"
 msgid "NX Transport"
 msgstr "النقل NX"
 
 #: transports/NX/NXTransport.py:59
-#| msgid "NX Transport for direct connection"
-msgid "NX Protocol. Firect connection."
-msgstr "بروتوكول NX. اتصال فيريكت."
+#| msgid "NX Protocol. Firect connection."
+msgid "NX Protocol. Direct connection."
+msgstr "بروتوكول NX. الاتصال المباشر."
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port"
 msgstr "منفذ الاستماع"
 
-#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
+#: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port of NX (ssh) at client machine"
 msgstr "منفذ الاستماع NX (SSH) على جهاز العميل"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection"
 msgstr "صلة"
 
-#: transports/NX/NXTransport.py:68 transports/NX/TSNXTransport.py:77
+#: transports/NX/NXTransport.py:67 transports/NX/TSNXTransport.py:76
 msgid "Connection speed for this transport (quality)"
 msgstr "سرعة الاتصال لهذا النقل (الجودة)"
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 msgid "Session"
 msgstr "جلسة"
 
-#: transports/NX/NXTransport.py:76 transports/NX/TSNXTransport.py:85
+#: transports/NX/NXTransport.py:75 transports/NX/TSNXTransport.py:84
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop session"
 msgstr "جلسة المكتب"
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Disk Cache"
 msgstr "قرص ذاكرة التخزين المؤقت"
 
-#: transports/NX/NXTransport.py:82 transports/NX/TSNXTransport.py:91
+#: transports/NX/NXTransport.py:81 transports/NX/TSNXTransport.py:90
 msgid "Cache size en Mb stored at disk"
 msgstr "حجم ذاكرة التخزين المؤقت ميجا بايت تخزين في القرص"
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Memory Cache"
 msgstr "ذاكرة التخزين المؤقت"
 
-#: transports/NX/NXTransport.py:91 transports/NX/TSNXTransport.py:100
+#: transports/NX/NXTransport.py:90 transports/NX/TSNXTransport.py:99
 msgid "Cache size en Mb kept at memory"
 msgstr "حجم ذاكرة التخزين المؤقت ميغابايت الاحتفاظ بها في الذاكرة"
 
 #: transports/NX/TSNXTransport.py:64
-#| msgid "NX Transport for tunneled connection"
 msgid "NX protocol. Tunneled connection."
 msgstr "بروتوكول NX. اتصال النفق."
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
 msgid "Tunnel server"
 msgstr "ملقم نفق"
 
-#: transports/NX/TSNXTransport.py:70 transports/RDP/TRDPTransport.py:70
+#: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
 #: transports/RGS_enterprise/TRGSTransport.py:52
 #: transports/SPICE/TSPICETransport.py:67 transports/X2GO/TX2GOTransport.py:63
@@ -5019,12 +5010,12 @@ msgstr ""
 "IP أو اسم المضيف لخادم نفق إرسالها إلى جهاز العميل (\"العام\" الملكية "
 "الفكرية) والميناء. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid "Tunnel host check"
 msgstr "اختيار المضيف النفق"
 
-#: transports/NX/TSNXTransport.py:71
+#: transports/NX/TSNXTransport.py:70
 #: transports/RGS_enterprise/TRGSTransport.py:53
 msgid ""
 "If not empty, this server will be used to check if service is running before "
@@ -5033,7 +5024,7 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:114 transports/RDP/TRDPTransport.py:105
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:105
 #: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5049,7 +5040,6 @@ msgid "PCoIP Transport (Experimental)"
 msgstr "النقل PCoIP (تجريبي)"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-#| msgid "PCoIP Transport, Experimental"
 msgid "PCoIP using cloud access. Experimental."
 msgstr "بكويب باستخدام وصول سحابة. التجريبية."
 
@@ -5120,7 +5110,6 @@ msgid "Enable sound"
 msgstr "تمكين الصوت"
 
 #: transports/RDP/BaseRDPTransport.py:71
-#| msgid "If checked, the Audio will be redirected."
 msgid "If checked, sound will be redirected."
 msgstr "إذا كان التحقق، ستتم إعادة توجيه الصوت."
 
@@ -5135,7 +5124,6 @@ msgid "If checked, will enable Credentials Provider Support)"
 msgstr "إذا راجعت، سيمكن دعم موفر بيانات الاعتماد)"
 
 #: transports/RDP/BaseRDPTransport.py:77
-#| msgid "Connection speed for this transport (quality)"
 msgid "Screen size for this transport"
 msgstr "حجم الشاشة لهذا النقل"
 
@@ -5224,17 +5212,16 @@ msgstr ""
 "معرف، dev:054 ج: 0268، أو أيثينج متوافق مع العميل الخاص بك إكسفريردب)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
-#| msgid "Transport"
 msgid "RDP Transport"
 msgstr "النقل برنامج التعمير والتنمية"
 
 #: transports/RDP/RDPTransport.py:57
-#| msgid "RDP Transport for direct connection"
 msgid "RDP Protocol. Direct connection."
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.34318147"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.34318147"
 
 #: transports/RDP/TRDPTransport.py:65
-#| msgid "RDS Transport for tunneled connection"
 msgid "RDP Protocol. Tunneled connection."
 msgstr "بروتوكول RDP. اتصال النفق."
 
@@ -5250,27 +5237,24 @@ msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق الن
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-#| msgid "RDS Transport (direct)"
 msgid "RDS Transport for vApps"
 msgstr "النقل RDS فابس"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-#| msgid "RDS Transport for direct connection"
 msgid "RDS Transport for vApps. Direct connection."
 msgstr "النقل RDS فابس. الاتصال المباشر."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-#| msgid "RDS Transport for tunneled connection"
 msgid "RDS Transport for vApps. Tunneled connection."
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.343182D8"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.343182D8"
 
 #: transports/RGS_enterprise/RGSTransport.py:37
-#| msgid "Transport"
 msgid "RGS Transport"
 msgstr "النقل RGS"
 
 #: transports/RGS_enterprise/RGSTransport.py:39
-#| msgid "RGS Transport for direct connection"
 msgid "RGS Protocol. Direct connection."
 msgstr "بروتوكول RGS. الاتصال المباشر."
 
@@ -5360,14 +5344,14 @@ msgid "If checked, the Mic will be redirected."
 msgstr "إذا تحققت، سيتم إعادة توجيه الميكروفونات."
 
 #: transports/RGS_enterprise/TRGSTransport.py:43
-#| msgid "Transport"
 msgid "RGS Transport."
 msgstr "النقل RGS."
 
 #: transports/RGS_enterprise/TRGSTransport.py:45
-#| msgid "RGS Transport for tunneled connection"
 msgid "RGS Protocol. Tunneled connection"
-msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385A550"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
+"Translate.3385A550"
 
 #: transports/SPICE/BaseSPICETransport.py:66
 msgid "Empty credentials"
@@ -5415,22 +5399,20 @@ msgid "Auto-redirect USB devices when plugged in."
 msgstr "إعادة التوجيه التلقائي أجهزة USB عند توصيل."
 
 #: transports/SPICE/SPICETransport.py:52
-#| msgid "SPICE Transport (direct)"
 msgid "SPICE Transport"
-msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385A5C5"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
+"Translate.3385A5C5"
 
 #: transports/SPICE/SPICETransport.py:54
-#| msgid "RDP Transport for direct connection"
 msgid "SPICE Protocol. Direct connection."
 msgstr "بروتوكول التوابل. الاتصال المباشر."
 
 #: transports/SPICE/TSPICETransport.py:60
-#| msgid "SPICE Transport (direct)"
 msgid "SPICE Transport "
 msgstr "النقل التوابل "
 
 #: transports/SPICE/TSPICETransport.py:62
-#| msgid "RDS Transport for tunneled connection"
 msgid "SPICE Protocol. Tunneled connection."
 msgstr "بروتوكول التوابل. اتصال النفق."
 
@@ -5450,9 +5432,11 @@ msgstr "فب"
 msgid ""
 "If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
 "executed. If UDS vAPP is not selected, this field will be ignored."
-msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385A829"
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.3431878C"
-"إعدام. إذا لم يتم تحديد فب المصغرة، سيتم تجاهل هذا الحقل."
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
+"Translate.3385A829TranslateApiException: AppId is over the quota : ID=1035."
+"V2_Json.Translate.3431878Cإعدام. إذا لم يتم تحديد فب المصغرة، سيتم تجاهل هذا "
+"الحقل."
 
 #: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"
@@ -5506,25 +5490,19 @@ msgstr "جودة"
 msgid "Quality value used on some pack formats."
 msgstr "قيمة الجودة المستخدمة في بعض الأشكال حزمة."
 
-#: transports/X2GO/TX2GOTransport.py:58
-#| msgid "PCoIP Transport (Experimental)"
+#: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
 msgid "X2Go Transport (Experimental)"
 msgstr "X2Go النقل (تجريبية)"
 
 #: transports/X2GO/TX2GOTransport.py:60
-#| msgid "X2Go Transport Experimental (tunneled)"
 msgid "X2Go Protocol (Experimental). Tunneled connection."
 msgstr "X2Go البروتوكول (تجريبية). اتصال النفق."
 
-#: transports/X2GO/X2GOTransport.py:53
-#| msgid "X2Go Transport Experimental (direct)"
-msgid "X2Go Transport Experimental"
-msgstr "TranslateApiException: AppId is over the quota : ID=1230.V2_Json.Translate.3385AA72"
-
 #: transports/X2GO/X2GOTransport.py:55
-#| msgid "X2Go Transport Experimental (direct)"
 msgid "X2Go Protocol (Experimental). Direct connection."
-msgstr "TranslateApiException: AppId is over the quota : ID=1035.V2_Json.Translate.3431898A"
+msgstr ""
+"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
+"Translate.3431898A"
 
 #: web/errors.py:72
 msgid "Unknown error"

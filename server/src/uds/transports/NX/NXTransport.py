@@ -51,12 +51,12 @@ READY_CACHE_TIMEOUT = 30
 
 class NXTransport(Transport):
     '''
-    Provides access via RDP to service.
+    Provides access via NX to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('NX Transport')
+    typeName = _('NX v3.5')
     typeType = 'NXTransport'
-    typeDescription = _('NX Protocol. Direct connection.')
+    typeDescription = _('NX Protocol v3.5. Direct connection.')
     iconFile = 'nx.png'
     protocol = protocols.NX
 

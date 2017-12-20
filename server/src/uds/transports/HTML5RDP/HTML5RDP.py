@@ -58,9 +58,9 @@ class HTML5RDPTransport(Transport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
-    typeName = _('HTML5 RDP Transport')
+    typeName = _('HTML5 RDP')
     typeType = 'HTML5RDPTransport'
-    typeDescription = _('RDP Transport using HTML5 client')
+    typeDescription = _('RDP protocol using HTML5 client')
     iconFile = 'html5.png'
 
     ownLink = True
@@ -108,7 +108,6 @@ class HTML5RDPTransport(Transport):
         defvalue='rdp',
         tab=gui.PARAMETERS_TAB
     )
-
 
     def initialize(self, values):
         if values is None:
@@ -196,7 +195,6 @@ class HTML5RDPTransport(Transport):
 
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
-
 
         if self.enableAudio.isTrue() is False:
             params['disable-audio'] = 'true'

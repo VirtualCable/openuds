@@ -47,7 +47,7 @@ import six
 import os
 import logging
 
-__updated__ = '2017-12-14'
+__updated__ = '2017-12-20'
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ SSH_KEY_LENGTH = 1024
 
 class BaseX2GOTransport(Transport):
     '''
-    Provides access via RDP to service.
+    Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
     iconFile = 'x2go.png'

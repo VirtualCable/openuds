@@ -44,8 +44,7 @@ from uds.services.OVirt.OVirtProvider import Provider as oVirtProvider
 import logging
 import os
 
-__updated__ = '2017-10-13'
-
+__updated__ = '2017-12-20'
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,7 @@ READY_CACHE_TIMEOUT = 30
 
 class BaseSpiceTransport(Transport):
     '''
-    Provides access via RDP to service.
+    Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
     iconFile = 'spice.png'
@@ -114,7 +113,6 @@ class BaseSpiceTransport(Transport):
         defvalue=gui.FALSE,
         tab=gui.ADVANCED_TAB
     )
-
 
     def isAvailableFor(self, userService, ip):
         '''
