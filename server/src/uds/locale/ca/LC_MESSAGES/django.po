@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-20 00:10+0100\n"
-"PO-Revision-Date: 2017-12-19 21:43+0000\n"
+"POT-Creation-Date: 2017-12-20 12:20+0100\n"
+"PO-Revision-Date: 2017-12-19 23:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
@@ -729,7 +729,7 @@ msgstr "Usuaris actuals"
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:56
-#: transports/SPICE/BaseSPICETransport.py:72
+#: transports/SPICE/BaseSPICETransport.py:71
 #: transports/X2GO/BaseX2GOTransport.py:69 web/forms/LoginForm.py:63
 msgid "Username"
 msgstr "Nom d'usuari"
@@ -923,7 +923,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
-#: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:64
+#: transports/SPICE/BaseSPICETransport.py:77 web/forms/LoginForm.py:64
 msgid "Password"
 msgstr "Contrasenya"
 
@@ -1270,7 +1270,7 @@ msgstr ""
 msgid "Certificates"
 msgstr "Certificats"
 
-#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:86
+#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:85
 msgid "Certificate"
 msgstr "Certificat"
 
@@ -4714,11 +4714,15 @@ msgid "Generic .tar.gz Linux"
 msgstr ".tar .gz linux genèric"
 
 #: transports/HTML5RDP/HTML5RDP.py:61
-msgid "HTML5 RDP Transport"
+#, fuzzy
+#| msgid "HTML5 RDP Transport"
+msgid "HTML5 RDP"
 msgstr "Transport RDP HTML5"
 
 #: transports/HTML5RDP/HTML5RDP.py:63
-msgid "RDP Transport using HTML5 client"
+#, fuzzy
+#| msgid "RDP Transport using HTML5 client"
+msgid "RDP protocol using HTML5 client"
 msgstr "Transport RDP utilitzant client HTML5"
 
 #: transports/HTML5RDP/HTML5RDP.py:71
@@ -4752,7 +4756,7 @@ msgstr "Credencials buides"
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
 #: transports/RGS_enterprise/TRGSTransport.py:55
-#: transports/SPICE/BaseSPICETransport.py:67
+#: transports/SPICE/BaseSPICETransport.py:66
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
 "Si està seleccionat, les credencials utilitzades per a connectar-se estaran "
@@ -4764,7 +4768,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:56
-#: transports/SPICE/BaseSPICETransport.py:73
+#: transports/SPICE/BaseSPICETransport.py:72
 #: transports/X2GO/BaseX2GOTransport.py:70
 msgid "If not empty, this username will be always used as credential"
 msgstr "Si no està buit, el nom d'usuari s'utilitzarà sempre a les credencials"
@@ -4775,7 +4779,7 @@ msgstr "Si no està buit, el nom d'usuari s'utilitzarà sempre a les credencials
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
-#: transports/SPICE/BaseSPICETransport.py:79
+#: transports/SPICE/BaseSPICETransport.py:78
 msgid "If not empty, this password will be always used as credential"
 msgstr ""
 "Si no està buit, aquesta contrasenya s'utilitzarà sempre a les credencials"
@@ -4970,12 +4974,12 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (xifrat de capa de seguretat de transport)"
 
-#: transports/HTML5RDP/HTML5RDP.py:118
+#: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
 
-#: transports/HTML5RDP/HTML5RDP.py:120
+#: transports/HTML5RDP/HTML5RDP.py:119
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:119
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
@@ -4985,19 +4989,21 @@ msgstr ""
 "nivell de seguretat (a la pestanya Paràmetres) establert a \"RDP\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-msgid "HTML5 RDS Transport for vApps"
+msgid "HTML5 RDS for vApps"
 msgstr ""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-msgid "RDS Transport using HTML5 client for vApps"
-msgstr ""
+#, fuzzy
+#| msgid "RDP Transport using HTML5 client"
+msgid "RDS protocol using HTML5 client for vApps"
+msgstr "Transport RDP utilitzant client HTML5"
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
-msgid "NX Transport"
+msgid "NX v3.5"
 msgstr ""
 
 #: transports/NX/NXTransport.py:59
-msgid "NX Protocol. Direct connection."
+msgid "NX Protocol v3.5. Direct connection."
 msgstr ""
 
 #: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
@@ -5042,7 +5048,7 @@ msgid "Cache size en Mb kept at memory"
 msgstr "Mida de memòria cau en Mb que es conserva en memòria"
 
 #: transports/NX/TSNXTransport.py:64
-msgid "NX protocol. Tunneled connection."
+msgid "NX protocol v3.5. Tunneled connection."
 msgstr ""
 
 #: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
@@ -5089,11 +5095,11 @@ msgid "NX/X2GO"
 msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
-msgid "PCoIP Transport (Experimental)"
-msgstr "Transport PCoIP (experimental)"
+msgid "PCoIP Cloud Access"
+msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-msgid "PCoIP using cloud access. Experimental."
+msgid "PCoIP protocol using Teradici Cloud Access."
 msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
@@ -5277,7 +5283,7 @@ msgstr ""
 "xfreerdp)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
-msgid "RDP Transport"
+msgid "RDP"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:57
@@ -5300,19 +5306,20 @@ msgstr "Temps màxim d'espera abans de tancar l'agent d'escolta de túnel"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-msgid "RDS Transport for vApps"
+msgid "RDS for vApps"
 msgstr ""
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-msgid "RDS Transport for vApps. Direct connection."
+msgid "RDS access using RDP for vApps. Direct connection."
 msgstr ""
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-msgid "RDS Transport for vApps. Tunneled connection."
+msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:37
-msgid "RGS Transport"
+#: transports/RGS_enterprise/TRGSTransport.py:43
+msgid "RGS"
 msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:39
@@ -5410,19 +5417,15 @@ msgstr "Redirigeix Micròfon"
 msgid "If checked, the Mic will be redirected."
 msgstr "Si està seleccionat, es redirigirà el micròfon"
 
-#: transports/RGS_enterprise/TRGSTransport.py:43
-msgid "RGS Transport."
-msgstr ""
-
 #: transports/RGS_enterprise/TRGSTransport.py:45
 msgid "RGS Protocol. Tunneled connection"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:66
+#: transports/SPICE/BaseSPICETransport.py:65
 msgid "Empty credentials"
 msgstr "Credencials buides"
 
-#: transports/SPICE/BaseSPICETransport.py:87
+#: transports/SPICE/BaseSPICETransport.py:86
 msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
 "etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
@@ -5431,51 +5434,47 @@ msgstr ""
 "a /etc/pki/ovirt-engine/certs/ca.der (utilitzeu el contingut d'aquest "
 "fitxer)."
 
-#: transports/SPICE/BaseSPICETransport.py:92
+#: transports/SPICE/BaseSPICETransport.py:91
 msgid "Fullscreen Mode"
 msgstr "Mode pantalla completa"
 
-#: transports/SPICE/BaseSPICETransport.py:93
+#: transports/SPICE/BaseSPICETransport.py:92
 #: transports/X2GO/BaseX2GOTransport.py:77
 msgid "If checked, viewer will be shown on fullscreen mode-"
 msgstr "Si està seleccionat, el visor apareixerà en mode pantalla completa"
 
-#: transports/SPICE/BaseSPICETransport.py:98
+#: transports/SPICE/BaseSPICETransport.py:97
 msgid "Smartcard Redirect"
 msgstr "Redirecció de Targetes intel·ligents"
 
-#: transports/SPICE/BaseSPICETransport.py:99
+#: transports/SPICE/BaseSPICETransport.py:98
 msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgstr ""
 "Si està seleccionat, el protocol SPICE permetrà la redirecció de targetes "
 "intel·ligents"
 
-#: transports/SPICE/BaseSPICETransport.py:105
+#: transports/SPICE/BaseSPICETransport.py:104
 msgid "Enable USB"
 msgstr "Activa USB"
 
-#: transports/SPICE/BaseSPICETransport.py:106
+#: transports/SPICE/BaseSPICETransport.py:105
 msgid "If checked, USB redirection will be allowed."
 msgstr "Si està seleccionat, es permetrà la redirecció USB"
 
-#: transports/SPICE/BaseSPICETransport.py:112
+#: transports/SPICE/BaseSPICETransport.py:111
 msgid "New USB Auto Sharing"
 msgstr "Nou Autocompartir USB"
 
-#: transports/SPICE/BaseSPICETransport.py:113
+#: transports/SPICE/BaseSPICETransport.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Autoredirecció dels dispositius USB quan es connectin"
 
-#: transports/SPICE/SPICETransport.py:52
-msgid "SPICE Transport"
+#: transports/SPICE/SPICETransport.py:52 transports/SPICE/TSPICETransport.py:60
+msgid "SPICE"
 msgstr ""
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Protocol. Direct connection."
-msgstr ""
-
-#: transports/SPICE/TSPICETransport.py:60
-msgid "SPICE Transport "
 msgstr ""
 
 #: transports/SPICE/TSPICETransport.py:62
@@ -5554,15 +5553,15 @@ msgid "Quality value used on some pack formats."
 msgstr "Valor de qualitat utilitzat en alguns formats de paquet"
 
 #: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
-msgid "X2Go Transport (Experimental)"
+msgid "X2Go"
 msgstr ""
 
 #: transports/X2GO/TX2GOTransport.py:60
-msgid "X2Go Protocol (Experimental). Tunneled connection."
+msgid "X2Go access (Experimental). Tunneled connection."
 msgstr ""
 
 #: transports/X2GO/X2GOTransport.py:55
-msgid "X2Go Protocol (Experimental). Direct connection."
+msgid "X2Go access (Experimental). Direct connection."
 msgstr ""
 
 #: web/errors.py:72

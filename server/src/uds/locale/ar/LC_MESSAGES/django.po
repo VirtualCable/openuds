@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-20 00:10+0100\n"
-"PO-Revision-Date: 2017-12-19 21:43+0000\n"
+"POT-Creation-Date: 2017-12-20 12:20+0100\n"
+"PO-Revision-Date: 2017-12-19 23:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -728,7 +728,7 @@ msgstr "المستخدمون الحاليون"
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:56
-#: transports/SPICE/BaseSPICETransport.py:72
+#: transports/SPICE/BaseSPICETransport.py:71
 #: transports/X2GO/BaseX2GOTransport.py:69 web/forms/LoginForm.py:63
 msgid "Username"
 msgstr "اسم المستخدم"
@@ -919,7 +919,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
-#: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:64
+#: transports/SPICE/BaseSPICETransport.py:77 web/forms/LoginForm.py:64
 msgid "Password"
 msgstr "كلمة المرور"
 
@@ -1251,7 +1251,7 @@ msgstr ""
 msgid "Certificates"
 msgstr "شهادات"
 
-#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:86
+#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:85
 msgid "Certificate"
 msgstr "شهادة"
 
@@ -4662,12 +4662,14 @@ msgid "Generic .tar.gz Linux"
 msgstr "Generic .tar.gz Linux"
 
 #: transports/HTML5RDP/HTML5RDP.py:61
-msgid "HTML5 RDP Transport"
-msgstr "النقل HTML5 RDP "
+#| msgid "HTML5 RDP Transport"
+msgid "HTML5 RDP"
+msgstr "HTML5 RDP"
 
 #: transports/HTML5RDP/HTML5RDP.py:63
-msgid "RDP Transport using HTML5 client"
-msgstr "النقل HTML5 باستخدام عميل RDP "
+#| msgid "RDP Transport using HTML5 client"
+msgid "RDP protocol using HTML5 client"
+msgstr "بروتوكول RDP باستخدام عميل HTML5"
 
 #: transports/HTML5RDP/HTML5RDP.py:71
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:73
@@ -4700,7 +4702,7 @@ msgstr "أوراق الاعتماد فارغة."
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
 #: transports/RGS_enterprise/TRGSTransport.py:55
-#: transports/SPICE/BaseSPICETransport.py:67
+#: transports/SPICE/BaseSPICETransport.py:66
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدمة للاتصال أن تكون فارغة."
 
@@ -4710,7 +4712,7 @@ msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدم�
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:56
-#: transports/SPICE/BaseSPICETransport.py:73
+#: transports/SPICE/BaseSPICETransport.py:72
 #: transports/X2GO/BaseX2GOTransport.py:70
 msgid "If not empty, this username will be always used as credential"
 msgstr "إن لم يكن فارغا، هذا المستخدم سيستخدم دائما الاعتماد."
@@ -4721,7 +4723,7 @@ msgstr "إن لم يكن فارغا، هذا المستخدم سيستخدم د�
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
-#: transports/SPICE/BaseSPICETransport.py:79
+#: transports/SPICE/BaseSPICETransport.py:78
 msgid "If not empty, this password will be always used as credential"
 msgstr "إن لم يكن فارغا، سيتم كلمة المرور هذه يستخدم دائما الاعتماد."
 
@@ -4912,12 +4914,12 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (تشفير طبقة النقل الأمن)"
 
-#: transports/HTML5RDP/HTML5RDP.py:118
+#: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
-#: transports/HTML5RDP/HTML5RDP.py:120
+#: transports/HTML5RDP/HTML5RDP.py:119
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:119
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
@@ -4927,25 +4929,23 @@ msgstr ""
 "الأمان (علامة التبويب معلمات) بتعيين إلى \"برنامج التعمير والتنمية\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-msgid "HTML5 RDS Transport for vApps"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
-"Translate.33859C6E"
+#| msgid "HTML5 RDS Transport for vApps"
+msgid "HTML5 RDS for vApps"
+msgstr "RDS HTML5 فابس"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-msgid "RDS Transport using HTML5 client for vApps"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.34317CEC"
+#| msgid "RDS Transport using HTML5 client for vApps"
+msgid "RDS protocol using HTML5 client for vApps"
+msgstr "بروتوكول RDS باستخدام عميل HTML5 فابس"
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
-msgid "NX Transport"
-msgstr "النقل NX"
+msgid "NX v3.5"
+msgstr "NX v3.5"
 
 #: transports/NX/NXTransport.py:59
-#| msgid "NX Protocol. Firect connection."
-msgid "NX Protocol. Direct connection."
-msgstr "بروتوكول NX. الاتصال المباشر."
+#| msgid "NX Protocol. Direct connection."
+msgid "NX Protocol v3.5. Direct connection."
+msgstr "بروتوكول NX v3.5. الاتصال المباشر."
 
 #: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
 msgid "Listening port"
@@ -4989,8 +4989,9 @@ msgid "Cache size en Mb kept at memory"
 msgstr "حجم ذاكرة التخزين المؤقت ميغابايت الاحتفاظ بها في الذاكرة"
 
 #: transports/NX/TSNXTransport.py:64
-msgid "NX protocol. Tunneled connection."
-msgstr "بروتوكول NX. اتصال النفق."
+#| msgid "NX protocol. Tunneled connection."
+msgid "NX protocol v3.5. Tunneled connection."
+msgstr "NX بروتوكول v3.5. اتصال النفق."
 
 #: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
 #: transports/RDS_enterprise/TRDSTransport.py:68
@@ -5036,12 +5037,12 @@ msgid "NX/X2GO"
 msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
-msgid "PCoIP Transport (Experimental)"
-msgstr "النقل PCoIP (تجريبي)"
+msgid "PCoIP Cloud Access"
+msgstr "وصول سحابة بكويب"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-msgid "PCoIP using cloud access. Experimental."
-msgstr "بكويب باستخدام وصول سحابة. التجريبية."
+msgid "PCoIP protocol using Teradici Cloud Access."
+msgstr "تيراديسي سحابة الوصول باستخدام بروتوكول بكويب."
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 msgid "If not empty, this domain will be always used as credential domain"
@@ -5212,8 +5213,8 @@ msgstr ""
 "معرف، dev:054 ج: 0268، أو أيثينج متوافق مع العميل الخاص بك إكسفريردب)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
-msgid "RDP Transport"
-msgstr "النقل برنامج التعمير والتنمية"
+msgid "RDP"
+msgstr "برنامج التعمير والتنمية"
 
 #: transports/RDP/RDPTransport.py:57
 msgid "RDP Protocol. Direct connection."
@@ -5237,22 +5238,24 @@ msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق الن
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-msgid "RDS Transport for vApps"
-msgstr "النقل RDS فابس"
+#| msgid "RDS Transport for vApps"
+msgid "RDS for vApps"
+msgstr "RDS فابس"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-msgid "RDS Transport for vApps. Direct connection."
-msgstr "النقل RDS فابس. الاتصال المباشر."
+#| msgid "RDS Transport for vApps. Direct connection."
+msgid "RDS access using RDP for vApps. Direct connection."
+msgstr "الوصول RDS باستخدام RDP فابس. الاتصال المباشر."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-msgid "RDS Transport for vApps. Tunneled connection."
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.343182D8"
+#| msgid "RDS Transport for vApps. Tunneled connection."
+msgid "RDS access using RDP for vApps. Tunneled connection."
+msgstr "الوصول RDS باستخدام RDP فابس. اتصال النفق."
 
 #: transports/RGS_enterprise/RGSTransport.py:37
-msgid "RGS Transport"
-msgstr "النقل RGS"
+#: transports/RGS_enterprise/TRGSTransport.py:43
+msgid "RGS"
+msgstr "RGS"
 
 #: transports/RGS_enterprise/RGSTransport.py:39
 msgid "RGS Protocol. Direct connection."
@@ -5343,21 +5346,17 @@ msgstr "إعادة توجيه الميكروفون"
 msgid "If checked, the Mic will be redirected."
 msgstr "إذا تحققت، سيتم إعادة توجيه الميكروفونات."
 
-#: transports/RGS_enterprise/TRGSTransport.py:43
-msgid "RGS Transport."
-msgstr "النقل RGS."
-
 #: transports/RGS_enterprise/TRGSTransport.py:45
 msgid "RGS Protocol. Tunneled connection"
 msgstr ""
 "TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
 "Translate.3385A550"
 
-#: transports/SPICE/BaseSPICETransport.py:66
+#: transports/SPICE/BaseSPICETransport.py:65
 msgid "Empty credentials"
 msgstr "أوراق إعتماد فارغة"
 
-#: transports/SPICE/BaseSPICETransport.py:87
+#: transports/SPICE/BaseSPICETransport.py:86
 msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
 "etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
@@ -5365,52 +5364,46 @@ msgstr ""
 "شهادة الخادم (العامة)، يمكن العثور على محرك ovirt الخاص بك، وربما في /etc/"
 "pki/ovirt-engine/certs/ca.der (استخدام محتويات هذا الملف)."
 
-#: transports/SPICE/BaseSPICETransport.py:92
+#: transports/SPICE/BaseSPICETransport.py:91
 msgid "Fullscreen Mode"
 msgstr "وضع ملء الشاشة"
 
-#: transports/SPICE/BaseSPICETransport.py:93
+#: transports/SPICE/BaseSPICETransport.py:92
 #: transports/X2GO/BaseX2GOTransport.py:77
 msgid "If checked, viewer will be shown on fullscreen mode-"
 msgstr "إذا تم، ستظهر المشاهد على وضع ملء الشاشة"
 
-#: transports/SPICE/BaseSPICETransport.py:98
+#: transports/SPICE/BaseSPICETransport.py:97
 msgid "Smartcard Redirect"
 msgstr "إعادة توجيه البطاقة الذكية"
 
-#: transports/SPICE/BaseSPICETransport.py:99
+#: transports/SPICE/BaseSPICETransport.py:98
 msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgstr "إذا راجعت، سيسمح البروتوكول التوابل توجيه البطاقة الذكية."
 
-#: transports/SPICE/BaseSPICETransport.py:105
+#: transports/SPICE/BaseSPICETransport.py:104
 msgid "Enable USB"
 msgstr "تمكين USB"
 
-#: transports/SPICE/BaseSPICETransport.py:106
+#: transports/SPICE/BaseSPICETransport.py:105
 msgid "If checked, USB redirection will be allowed."
 msgstr "إذا راجعت، سوف يكون السماح بإعادة توجيه الناقل التسلسلي العام."
 
-#: transports/SPICE/BaseSPICETransport.py:112
+#: transports/SPICE/BaseSPICETransport.py:111
 msgid "New USB Auto Sharing"
 msgstr "الناقل التسلسلي العام الجديد تبادل السيارات"
 
-#: transports/SPICE/BaseSPICETransport.py:113
+#: transports/SPICE/BaseSPICETransport.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "إعادة التوجيه التلقائي أجهزة USB عند توصيل."
 
-#: transports/SPICE/SPICETransport.py:52
-msgid "SPICE Transport"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
-"Translate.3385A5C5"
+#: transports/SPICE/SPICETransport.py:52 transports/SPICE/TSPICETransport.py:60
+msgid "SPICE"
+msgstr "التوابل"
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Protocol. Direct connection."
 msgstr "بروتوكول التوابل. الاتصال المباشر."
-
-#: transports/SPICE/TSPICETransport.py:60
-msgid "SPICE Transport "
-msgstr "النقل التوابل "
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Protocol. Tunneled connection."
@@ -5491,18 +5484,18 @@ msgid "Quality value used on some pack formats."
 msgstr "قيمة الجودة المستخدمة في بعض الأشكال حزمة."
 
 #: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
-msgid "X2Go Transport (Experimental)"
-msgstr "X2Go النقل (تجريبية)"
+msgid "X2Go"
+msgstr "X2Go"
 
 #: transports/X2GO/TX2GOTransport.py:60
-msgid "X2Go Protocol (Experimental). Tunneled connection."
-msgstr "X2Go البروتوكول (تجريبية). اتصال النفق."
+#| msgid "X2Go Protocol (Experimental). Tunneled connection."
+msgid "X2Go access (Experimental). Tunneled connection."
+msgstr "X2Go الوصول (التجريبية). اتصال النفق."
 
 #: transports/X2GO/X2GOTransport.py:55
-msgid "X2Go Protocol (Experimental). Direct connection."
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.3431898A"
+#| msgid "X2Go Protocol (Experimental). Direct connection."
+msgid "X2Go access (Experimental). Direct connection."
+msgstr "X2Go الوصول (التجريبية). الاتصال المباشر."
 
 #: web/errors.py:72
 msgid "Unknown error"
