@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-20 00:10+0100\n"
-"PO-Revision-Date: 2017-12-19 21:43+0000\n"
+"POT-Creation-Date: 2017-12-20 12:20+0100\n"
+"PO-Revision-Date: 2017-12-19 23:11+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -720,7 +720,7 @@ msgstr "Momentuko erabiltzaileak"
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:56
-#: transports/SPICE/BaseSPICETransport.py:72
+#: transports/SPICE/BaseSPICETransport.py:71
 #: transports/X2GO/BaseX2GOTransport.py:69 web/forms/LoginForm.py:63
 msgid "Username"
 msgstr "Erabiltzaile izena"
@@ -910,7 +910,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
-#: transports/SPICE/BaseSPICETransport.py:78 web/forms/LoginForm.py:64
+#: transports/SPICE/BaseSPICETransport.py:77 web/forms/LoginForm.py:64
 msgid "Password"
 msgstr "Pasahitza"
 
@@ -1244,7 +1244,7 @@ msgstr ""
 msgid "Certificates"
 msgstr "Ziurtagiriak"
 
-#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:86
+#: auths/SAML_enterprise/SAML.py:124 transports/SPICE/BaseSPICETransport.py:85
 msgid "Certificate"
 msgstr "Ziurtagiria"
 
@@ -4566,11 +4566,11 @@ msgid "Generic .tar.gz Linux"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:61
-msgid "HTML5 RDP Transport"
+msgid "HTML5 RDP"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:63
-msgid "RDP Transport using HTML5 client"
+msgid "RDP protocol using HTML5 client"
 msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:71
@@ -4602,7 +4602,7 @@ msgstr ""
 #: transports/RDS_enterprise/BaseRDSTransport.py:65
 #: transports/RGS_enterprise/RGSTransport.py:45
 #: transports/RGS_enterprise/TRGSTransport.py:55
-#: transports/SPICE/BaseSPICETransport.py:67
+#: transports/SPICE/BaseSPICETransport.py:66
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
 
@@ -4612,7 +4612,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:61
 #: transports/RGS_enterprise/RGSTransport.py:46
 #: transports/RGS_enterprise/TRGSTransport.py:56
-#: transports/SPICE/BaseSPICETransport.py:73
+#: transports/SPICE/BaseSPICETransport.py:72
 #: transports/X2GO/BaseX2GOTransport.py:70
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
@@ -4623,7 +4623,7 @@ msgstr ""
 #: transports/RDP/BaseRDPTransport.py:62
 #: transports/RGS_enterprise/RGSTransport.py:47
 #: transports/RGS_enterprise/TRGSTransport.py:57
-#: transports/SPICE/BaseSPICETransport.py:79
+#: transports/SPICE/BaseSPICETransport.py:78
 msgid "If not empty, this password will be always used as credential"
 msgstr ""
 
@@ -4800,12 +4800,12 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:118
+#: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
 msgid "The server must be http or https"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:120
+#: transports/HTML5RDP/HTML5RDP.py:119
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:119
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
@@ -4813,19 +4813,19 @@ msgid ""
 msgstr ""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-msgid "HTML5 RDS Transport for vApps"
+msgid "HTML5 RDS for vApps"
 msgstr ""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-msgid "RDS Transport using HTML5 client for vApps"
+msgid "RDS protocol using HTML5 client for vApps"
 msgstr ""
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
-msgid "NX Transport"
+msgid "NX v3.5"
 msgstr ""
 
 #: transports/NX/NXTransport.py:59
-msgid "NX Protocol. Direct connection."
+msgid "NX Protocol v3.5. Direct connection."
 msgstr ""
 
 #: transports/NX/NXTransport.py:66 transports/NX/TSNXTransport.py:75
@@ -4870,7 +4870,7 @@ msgid "Cache size en Mb kept at memory"
 msgstr ""
 
 #: transports/NX/TSNXTransport.py:64
-msgid "NX protocol. Tunneled connection."
+msgid "NX protocol v3.5. Tunneled connection."
 msgstr ""
 
 #: transports/NX/TSNXTransport.py:69 transports/RDP/TRDPTransport.py:70
@@ -4913,11 +4913,11 @@ msgid "NX/X2GO"
 msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
-msgid "PCoIP Transport (Experimental)"
+msgid "PCoIP Cloud Access"
 msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
-msgid "PCoIP using cloud access. Experimental."
+msgid "PCoIP protocol using Teradici Cloud Access."
 msgstr ""
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
@@ -5081,7 +5081,7 @@ msgid ""
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
-msgid "RDP Transport"
+msgid "RDP"
 msgstr ""
 
 #: transports/RDP/RDPTransport.py:57
@@ -5104,19 +5104,20 @@ msgstr ""
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-msgid "RDS Transport for vApps"
+msgid "RDS for vApps"
 msgstr ""
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-msgid "RDS Transport for vApps. Direct connection."
+msgid "RDS access using RDP for vApps. Direct connection."
 msgstr ""
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-msgid "RDS Transport for vApps. Tunneled connection."
+msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:37
-msgid "RGS Transport"
+#: transports/RGS_enterprise/TRGSTransport.py:43
+msgid "RGS"
 msgstr ""
 
 #: transports/RGS_enterprise/RGSTransport.py:39
@@ -5207,67 +5208,59 @@ msgstr ""
 msgid "If checked, the Mic will be redirected."
 msgstr ""
 
-#: transports/RGS_enterprise/TRGSTransport.py:43
-msgid "RGS Transport."
-msgstr ""
-
 #: transports/RGS_enterprise/TRGSTransport.py:45
 msgid "RGS Protocol. Tunneled connection"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:66
+#: transports/SPICE/BaseSPICETransport.py:65
 msgid "Empty credentials"
 msgstr "Egiaztagiri gabe"
 
-#: transports/SPICE/BaseSPICETransport.py:87
+#: transports/SPICE/BaseSPICETransport.py:86
 msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
 "etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:92
+#: transports/SPICE/BaseSPICETransport.py:91
 msgid "Fullscreen Mode"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:93
+#: transports/SPICE/BaseSPICETransport.py:92
 #: transports/X2GO/BaseX2GOTransport.py:77
 msgid "If checked, viewer will be shown on fullscreen mode-"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:98
+#: transports/SPICE/BaseSPICETransport.py:97
 msgid "Smartcard Redirect"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:99
+#: transports/SPICE/BaseSPICETransport.py:98
 msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:105
+#: transports/SPICE/BaseSPICETransport.py:104
 msgid "Enable USB"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:106
+#: transports/SPICE/BaseSPICETransport.py:105
 msgid "If checked, USB redirection will be allowed."
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:112
+#: transports/SPICE/BaseSPICETransport.py:111
 msgid "New USB Auto Sharing"
 msgstr ""
 
-#: transports/SPICE/BaseSPICETransport.py:113
+#: transports/SPICE/BaseSPICETransport.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr ""
 
-#: transports/SPICE/SPICETransport.py:52
-msgid "SPICE Transport"
+#: transports/SPICE/SPICETransport.py:52 transports/SPICE/TSPICETransport.py:60
+msgid "SPICE"
 msgstr ""
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Protocol. Direct connection."
-msgstr ""
-
-#: transports/SPICE/TSPICETransport.py:60
-msgid "SPICE Transport "
 msgstr ""
 
 #: transports/SPICE/TSPICETransport.py:62
@@ -5345,15 +5338,15 @@ msgid "Quality value used on some pack formats."
 msgstr ""
 
 #: transports/X2GO/TX2GOTransport.py:58 transports/X2GO/X2GOTransport.py:53
-msgid "X2Go Transport (Experimental)"
+msgid "X2Go"
 msgstr ""
 
 #: transports/X2GO/TX2GOTransport.py:60
-msgid "X2Go Protocol (Experimental). Tunneled connection."
+msgid "X2Go access (Experimental). Tunneled connection."
 msgstr ""
 
 #: transports/X2GO/X2GOTransport.py:55
-msgid "X2Go Protocol (Experimental). Direct connection."
+msgid "X2Go access (Experimental). Direct connection."
 msgstr ""
 
 #: web/errors.py:72
