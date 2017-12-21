@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-20 12:20+0100\n"
-"PO-Revision-Date: 2017-12-19 23:11+0000\n"
+"POT-Creation-Date: 2017-12-21 19:09+0100\n"
+"PO-Revision-Date: 2017-12-20 11:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -4662,12 +4662,10 @@ msgid "Generic .tar.gz Linux"
 msgstr "Generic .tar.gz Linux"
 
 #: transports/HTML5RDP/HTML5RDP.py:61
-#| msgid "HTML5 RDP Transport"
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
 
 #: transports/HTML5RDP/HTML5RDP.py:63
-#| msgid "RDP Transport using HTML5 client"
 msgid "RDP protocol using HTML5 client"
 msgstr "بروتوكول RDP باستخدام عميل HTML5"
 
@@ -4929,12 +4927,10 @@ msgstr ""
 "الأمان (علامة التبويب معلمات) بتعيين إلى \"برنامج التعمير والتنمية\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-#| msgid "HTML5 RDS Transport for vApps"
 msgid "HTML5 RDS for vApps"
 msgstr "RDS HTML5 فابس"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-#| msgid "RDS Transport using HTML5 client for vApps"
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "بروتوكول RDS باستخدام عميل HTML5 فابس"
 
@@ -4943,7 +4939,6 @@ msgid "NX v3.5"
 msgstr "NX v3.5"
 
 #: transports/NX/NXTransport.py:59
-#| msgid "NX Protocol. Direct connection."
 msgid "NX Protocol v3.5. Direct connection."
 msgstr "بروتوكول NX v3.5. الاتصال المباشر."
 
@@ -4989,7 +4984,6 @@ msgid "Cache size en Mb kept at memory"
 msgstr "حجم ذاكرة التخزين المؤقت ميغابايت الاحتفاظ بها في الذاكرة"
 
 #: transports/NX/TSNXTransport.py:64
-#| msgid "NX protocol. Tunneled connection."
 msgid "NX protocol v3.5. Tunneled connection."
 msgstr "NX بروتوكول v3.5. اتصال النفق."
 
@@ -5025,7 +5019,7 @@ msgstr ""
 "إن لم يكن فارغا، سيتم استخدام هذا الخادم للتحقق مما إذا الخدمة قيد التشغيل "
 "قبل تعيين إلى المستخدم. (استخدام HOST: تنسيق PORT)."
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:105
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:106
 #: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5177,33 +5171,45 @@ msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
 #: transports/RDP/BaseRDPTransport.py:107
+#| msgid "Redirect root folder"
+msgid "Redirect home folder"
+msgstr "إعادة توجيه المجلد الرئيسي"
+
+#: transports/RDP/BaseRDPTransport.py:107
+#| msgid ""
+#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
+#| "used"
+msgid "If checked, Linux client will try to redirect /home local folder"
+msgstr "إذا راجعت، سيحاول عميل لينكس إعادة توجيه مجلد محلي منزلي"
+
+#: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "Printer string"
 msgstr "سلسلة الطابعة"
 
-#: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "إذا كان يتم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل إكسفريردب"
 
-#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDP/BaseRDPTransport.py:109
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "Smartcard string"
 msgstr "سلسلة البطاقة الذكية"
 
-#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDP/BaseRDPTransport.py:109
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "إذا كان يتم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع "
 "العميل إكسفريردب"
 
-#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDP/BaseRDPTransport.py:110
 #: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid "Custom parameters"
 msgstr "معلمات مخصصة"
 
-#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDP/BaseRDPTransport.py:110
 #: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
@@ -5238,17 +5244,14 @@ msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق الن
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-#| msgid "RDS Transport for vApps"
 msgid "RDS for vApps"
 msgstr "RDS فابس"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-#| msgid "RDS Transport for vApps. Direct connection."
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "الوصول RDS باستخدام RDP فابس. الاتصال المباشر."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-#| msgid "RDS Transport for vApps. Tunneled connection."
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "الوصول RDS باستخدام RDP فابس. اتصال النفق."
 
@@ -5488,12 +5491,10 @@ msgid "X2Go"
 msgstr "X2Go"
 
 #: transports/X2GO/TX2GOTransport.py:60
-#| msgid "X2Go Protocol (Experimental). Tunneled connection."
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go الوصول (التجريبية). اتصال النفق."
 
 #: transports/X2GO/X2GOTransport.py:55
-#| msgid "X2Go Protocol (Experimental). Direct connection."
 msgid "X2Go access (Experimental). Direct connection."
 msgstr "X2Go الوصول (التجريبية). الاتصال المباشر."
 
