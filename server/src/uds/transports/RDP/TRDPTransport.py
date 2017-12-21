@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-12-20'
+__updated__ = '2017-12-21'
 
 logger = logging.getLogger(__name__)
 
@@ -89,12 +89,13 @@ class TRDPTransport(BaseRDPTransport):
     aero = BaseRDPTransport.aero
     smooth = BaseRDPTransport.smooth
     credssp = BaseRDPTransport.credssp
-    multimedia = BaseRDPTransport.multimedia
 
     screenSize = BaseRDPTransport.screenSize
     colorDepth = BaseRDPTransport.colorDepth
 
     alsa = BaseRDPTransport.alsa
+    multimedia = BaseRDPTransport.multimedia
+    redirectHome = BaseRDPTransport.redirectHome
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
     customParameters = BaseRDPTransport.customParameters
@@ -132,6 +133,7 @@ class TRDPTransport(BaseRDPTransport):
         r.redirectPrinters = self.allowPrinters.isTrue()
         r.redirectSmartcards = self.allowSmartcards.isTrue()
         r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectHome = self.redirectHome.isTrue()
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()
         r.redirectAudio = self.allowAudio.isTrue()

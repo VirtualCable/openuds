@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-12-18'
+__updated__ = '2017-12-21'
 
 logger = logging.getLogger(__name__)
 
@@ -102,9 +102,10 @@ class BaseRDPTransport(Transport):
 
     multimedia = gui.CheckBoxField(label=_('Multimedia sync'), order=40, tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'), tab='Linux Client')
     alsa = gui.CheckBoxField(label=_('Use Alsa'), order=41, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
-    printerString = gui.TextField(label=_('Printer string'), order=42, tooltip=_('If printer is checked, the printer string used with xfreerdp client'), tab='Linux Client')
-    smartcardString = gui.TextField(label=_('Smartcard string'), order=43, tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'), tab='Linux Client')
-    customParameters = gui.TextField(label=_('Custom parameters'), order=44, tooltip=_('If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'), tab='Linux Client')
+    redirectHome = gui.CheckBoxField(label=_('Redirect home folder'), order=42, tooltip=_('If checked, Linux client will try to redirect /home local folder'), tab='Linux Client', defvalue=gui.FALSE)
+    printerString = gui.TextField(label=_('Printer string'), order=43, tooltip=_('If printer is checked, the printer string used with xfreerdp client'), tab='Linux Client')
+    smartcardString = gui.TextField(label=_('Smartcard string'), order=44, tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'), tab='Linux Client')
+    customParameters = gui.TextField(label=_('Custom parameters'), order=45, tooltip=_('If not empty, extra parameter to include for Linux Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'), tab='Linux Client')
 
     def isAvailableFor(self, userService, ip):
         """

@@ -39,7 +39,7 @@ from uds.core.util import OsDetector
 import six
 import shlex
 
-__updated__ = '2017-12-19'
+__updated__ = '2017-12-21'
 
 
 class RDPFile(object):
@@ -54,6 +54,7 @@ class RDPFile(object):
     redirectSerials = False
     redirectPrinters = False
     redirectDrives = False
+    redirectHome = False
     redirectSmartcards = False
     redirectAudio = True
     compression = True
@@ -120,13 +121,19 @@ class RDPFile(object):
 
         if self.redirectDrives is True:
             params.append('/drive:media,/media')
-            params.append('/home-drive')
+            # params.append('/home-drive')
+
+        if self.redirectHome is True:
+            params.append('/drive:home,/home')
 
         if self.redirectSerials is True:
             params.append('/serial:/dev/ttyS0')
 
-        if self.redirectPrinters and self.printerString not in (None, ''):
-            params.append('/printer:{}'.format(self.printerString))
+        if self.redirectPrinters:
+            if self.printerString not in (None, ''):
+                params.append('/printer:{}'.format(self.printerString))
+            else:
+                params.append('/printer')
 
         if self.compression:
             params.append('/compression:on')
