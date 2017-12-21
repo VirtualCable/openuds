@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-20 12:20+0100\n"
-"PO-Revision-Date: 2017-12-19 23:11+0000\n"
+"POT-Creation-Date: 2017-12-21 19:09+0100\n"
+"PO-Revision-Date: 2017-12-20 11:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
@@ -4714,16 +4714,12 @@ msgid "Generic .tar.gz Linux"
 msgstr ".tar .gz linux genèric"
 
 #: transports/HTML5RDP/HTML5RDP.py:61
-#, fuzzy
-#| msgid "HTML5 RDP Transport"
 msgid "HTML5 RDP"
-msgstr "Transport RDP HTML5"
+msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:63
-#, fuzzy
-#| msgid "RDP Transport using HTML5 client"
 msgid "RDP protocol using HTML5 client"
-msgstr "Transport RDP utilitzant client HTML5"
+msgstr ""
 
 #: transports/HTML5RDP/HTML5RDP.py:71
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:73
@@ -4993,10 +4989,8 @@ msgid "HTML5 RDS for vApps"
 msgstr ""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-#, fuzzy
-#| msgid "RDP Transport using HTML5 client"
 msgid "RDS protocol using HTML5 client for vApps"
-msgstr "Transport RDP utilitzant client HTML5"
+msgstr ""
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
 msgid "NX v3.5"
@@ -5083,7 +5077,7 @@ msgstr ""
 "Si no està buit, aquest servidor s'utilitzarà per a verificar si el servei "
 "funciona abans d'assignar-lo a l'usuari (utilitzeu el format HOST:PORT)."
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:105
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:106
 #: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5244,35 +5238,51 @@ msgstr ""
 "manera s'utilitzarà PULSE"
 
 #: transports/RDP/BaseRDPTransport.py:107
+#, fuzzy
+#| msgid "Redirect root folder"
+msgid "Redirect home folder"
+msgstr "Redirigeix a la carpeta arrel"
+
+#: transports/RDP/BaseRDPTransport.py:107
+#, fuzzy
+#| msgid ""
+#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
+#| "used"
+msgid "If checked, Linux client will try to redirect /home local folder"
+msgstr ""
+"Si està seleccionat, el client Linux intentarà utilitzar ALSA, d'altra "
+"manera s'utilitzarà PULSE"
+
+#: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "Printer string"
 msgstr "Cadena d'impressora"
 
-#: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si Impressora està seleccionat, la cadena d'impressora utilitzada amb el "
 "client xfreerdp"
 
-#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDP/BaseRDPTransport.py:109
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "Smartcard string"
 msgstr "Cadena de targeta intel·ligent"
 
-#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDP/BaseRDPTransport.py:109
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si Targeta intel·ligent està seleccionat, la cadena de targeta intel·ligent "
 "utilitzada amb el client xfreerdp"
 
-#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDP/BaseRDPTransport.py:110
 #: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid "Custom parameters"
 msgstr "Paràmetres personalitzats"
 
-#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDP/BaseRDPTransport.py:110
 #: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"

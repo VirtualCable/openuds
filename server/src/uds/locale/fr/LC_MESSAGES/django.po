@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-20 12:20+0100\n"
-"PO-Revision-Date: 2017-12-19 23:11+0000\n"
+"POT-Creation-Date: 2017-12-21 19:09+0100\n"
+"PO-Revision-Date: 2017-12-20 11:21+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -4765,12 +4765,10 @@ msgid "Generic .tar.gz Linux"
 msgstr "Générique. tar.gz Linux"
 
 #: transports/HTML5RDP/HTML5RDP.py:61
-#| msgid "HTML5 RDP Transport"
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
 
 #: transports/HTML5RDP/HTML5RDP.py:63
-#| msgid "RDP Transport using HTML5 client"
 msgid "RDP protocol using HTML5 client"
 msgstr "Protocole RDP en utilisant HTML5 client"
 
@@ -5042,12 +5040,10 @@ msgstr ""
 "l’onglet Paramètres) la valeur « RDP »"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
-#| msgid "HTML5 RDS Transport for vApps"
 msgid "HTML5 RDS for vApps"
 msgstr "HTML5 RDS pour vApps"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
-#| msgid "RDS Transport using HTML5 client for vApps"
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "Protocole RDS en utilisant HTML5 client pour vApps"
 
@@ -5056,7 +5052,6 @@ msgid "NX v3.5"
 msgstr "NX v3.5"
 
 #: transports/NX/NXTransport.py:59
-#| msgid "NX Protocol. Direct connection."
 msgid "NX Protocol v3.5. Direct connection."
 msgstr "Protocole de NX v3.5. Connexion directe."
 
@@ -5102,7 +5097,6 @@ msgid "Cache size en Mb kept at memory"
 msgstr "Fr taille que Mo gardé à la mémoire de cache"
 
 #: transports/NX/TSNXTransport.py:64
-#| msgid "NX protocol. Tunneled connection."
 msgid "NX protocol v3.5. Tunneled connection."
 msgstr "NX protocole v3.5. Connexion par tunnel."
 
@@ -5139,7 +5133,7 @@ msgstr ""
 "s'exécute avant assignant à l'utilisateur. (utilisez le format de l'hôte : "
 "PORT)"
 
-#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:105
+#: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:106
 #: transports/RDS_enterprise/TRDSTransport.py:93
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
@@ -5300,35 +5294,47 @@ msgstr ""
 "Si cochée, Linux client essaie d’utiliser ALSA, sinon impulsion sera utilisée"
 
 #: transports/RDP/BaseRDPTransport.py:107
+#| msgid "Redirect root folder"
+msgid "Redirect home folder"
+msgstr "Rediriger le dossier de départ"
+
+#: transports/RDP/BaseRDPTransport.py:107
+#| msgid ""
+#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
+#| "used"
+msgid "If checked, Linux client will try to redirect /home local folder"
+msgstr "Si cochée, Linux client tentera de rediriger/home dossier local"
+
+#: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "Printer string"
 msgstr "Chaîne de l’imprimante"
 
-#: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si l’imprimante est activée, la chaîne de l’imprimante utilisée avec "
 "xfreerdp client"
 
-#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDP/BaseRDPTransport.py:109
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "Smartcard string"
 msgstr "Chaîne de carte à puce"
 
-#: transports/RDP/BaseRDPTransport.py:108
+#: transports/RDP/BaseRDPTransport.py:109
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si la carte à puce est cochée, la chaîne de carte à puce utilisée avec "
 "xfreerdp client"
 
-#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDP/BaseRDPTransport.py:110
 #: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid "Custom parameters"
 msgstr "Paramètres personnalisés"
 
-#: transports/RDP/BaseRDPTransport.py:109
+#: transports/RDP/BaseRDPTransport.py:110
 #: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
@@ -5362,17 +5368,14 @@ msgstr "Temps maximum d’attente avant la fermeture de l’auditeur de tunnel"
 
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
-#| msgid "RDS Transport for vApps"
 msgid "RDS for vApps"
 msgstr "RDS pour vApps"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
-#| msgid "RDS Transport for vApps. Direct connection."
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "À l’aide de RDP pour vApps l’accès RDS. Connexion directe."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
-#| msgid "RDS Transport for vApps. Tunneled connection."
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "À l’aide de RDP pour vApps l’accès RDS. Connexion par tunnel."
 
@@ -5615,12 +5618,10 @@ msgid "X2Go"
 msgstr "X2Go"
 
 #: transports/X2GO/TX2GOTransport.py:60
-#| msgid "X2Go Protocol (Experimental). Tunneled connection."
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go accès (expérimentale). Connexion par tunnel."
 
 #: transports/X2GO/X2GOTransport.py:55
-#| msgid "X2Go Protocol (Experimental). Direct connection."
 msgid "X2Go access (Experimental). Direct connection."
 msgstr "X2Go accès (expérimentale). Connexion directe."
 
