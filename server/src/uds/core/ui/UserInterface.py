@@ -765,7 +765,7 @@ class gui(object):
 
 
 class UserInterfaceType(type):
-    '''
+    """
     Metaclass definition for moving the user interface descriptions to a usable
     better place
     """

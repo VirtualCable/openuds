@@ -29,5 +29,5 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import counters
-import events
+from . import counters
+from . import events

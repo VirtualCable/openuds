@@ -39,10 +39,10 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 # from uds.core.util import validators
 
-from xen_client import XenServer
+from .xen_client import XenServer
 # from xen_client import XenFailure, XenFault
 
-from XenLinkedService import XenLinkedService
+from .XenLinkedService import XenLinkedService
 
 import six
 import logging

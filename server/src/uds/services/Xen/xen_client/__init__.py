@@ -29,9 +29,9 @@
 from __future__ import unicode_literals
 
 import six
-import XenAPI
+import XenAPI # From PIP, will remove this when dropped Python 2.7 support
+
 import ssl
-import six
 
 import logging
 

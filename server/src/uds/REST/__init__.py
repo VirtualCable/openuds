@@ -204,7 +204,7 @@ class Dispatcher(View):
 
         pkgpath = os.path.join(os.path.dirname(sys.modules[__name__].__file__), package)
         for _, name, _ in pkgutil.iter_modules([pkgpath]):
-            __import__(__name__ + '.' + package + '.' + name, globals(), locals(), [], -1)
+            __import__(__name__ + '.' + package + '.' + name, globals(), locals(), [], 0)
 
         Dispatcher.registerSubclasses(Handler.__subclasses__())  # @UndefinedVariable
 

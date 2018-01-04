@@ -55,7 +55,7 @@ def __init__():
     # Dinamycally import children of this package. The __init__.py files must register, if needed, inside AuthsFactory
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(name, globals(), locals(), [], -1)
+        __import__(name, globals(), locals(), [], 1)
     
     a = auths.Authenticator
     for cls in a.__subclasses__():

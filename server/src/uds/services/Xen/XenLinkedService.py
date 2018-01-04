@@ -36,8 +36,8 @@ from uds.core.services import Service, types as serviceTypes
 
 from uds.core.ui import gui
 
-from XenPublication import XenPublication
-from XenLinkedDeployment import XenLinkedDeployment
+from .XenPublication import XenPublication
+from .XenLinkedDeployment import XenLinkedDeployment
 
 import logging
 

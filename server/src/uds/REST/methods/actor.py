@@ -55,6 +55,9 @@ logger = logging.getLogger(__name__)
 
 # Actor key, configurable in Security Section of administration interface
 actorKey = Config.Config.section(Config.SECURITY_SECTION).value('Master Key',
+                                                                cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),
+                                                                type=Config.Config.TEXT_FIELD)
+
 actorKey.get()
 
 # Error codes:
@@ -124,7 +127,7 @@ class Actor(Handler):
         return services[0]
 
     def getTicket(self):
-        '''
+        """
         Processes get requests in order to obtain a ticket content
         GET /rest/actor/ticket/[ticketId]?key=masterKey&[secure=true|1|false|0]
         """

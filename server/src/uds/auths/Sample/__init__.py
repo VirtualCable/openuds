@@ -36,6 +36,6 @@ take care of registering it as provider
 """
 from __future__ import unicode_literals
 
-from SampleAuth import SampleAuth
+from .SampleAuth import SampleAuth
 
 __updated__ = '2014-02-19'

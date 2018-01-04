@@ -38,30 +38,30 @@ __updated__ = '2015-04-30'
 
 
 def cryptoManager():
-    from CryptoManager import CryptoManager
+    from .CryptoManager import CryptoManager
     return CryptoManager.manager()
 
 
 def taskManager():
-    from TaskManager import TaskManager
+    from .TaskManager import TaskManager
     return TaskManager
 
 
 def downloadsManager():
-    from DownloadsManager import DownloadsManager
+    from .DownloadsManager import DownloadsManager
     return DownloadsManager.manager()
 
 
 def logManager():
-    from LogManager import LogManager
+    from .LogManager import LogManager
     return LogManager.manager()
 
 
 def statsManager():
-    from StatsManager import StatsManager
+    from .StatsManager import StatsManager
     return StatsManager.manager()
 
 
 def userServiceManager():
-    from UserServiceManager import UserServiceManager
+    from .UserServiceManager import UserServiceManager
     return UserServiceManager.manager()

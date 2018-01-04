@@ -32,6 +32,4 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from Authenticator import RegexLdap
-
-__updated__ = '2014-02-19'
+from .Authenticator import RegexLdap

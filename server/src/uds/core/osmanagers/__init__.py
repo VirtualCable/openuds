@@ -33,14 +33,12 @@ UDS os managers related interfaces and classes
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from __future__ import unicode_literals
-from BaseOsManager import OSManager
-
-__updated__ = '2014-03-22'
+from .BaseOsManager import OSManager
 
 
 def factory():
     """
     Returns factory for register/access to authenticators
     """
-    from OSManagersFactory import OSManagersFactory
+    from .OSManagersFactory import OSManagersFactory
     return OSManagersFactory.factory()

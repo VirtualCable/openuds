@@ -36,10 +36,11 @@ from django.utils.translation import ugettext_lazy as _
 from uds.models import Authenticator
 from uds.core import auths
 
-from users_groups import Users, Groups
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
 from uds.core.util import permissions
+
+from .users_groups import Users, Groups
 
 import logging
 
