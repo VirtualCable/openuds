@@ -109,6 +109,17 @@ class HTML5RDPTransport(Transport):
         tab=gui.PARAMETERS_TAB
     )
 
+    ticketValidity = gui.NumericField(
+        length=3,
+        label=_('Ticket Validity'),
+        defvalue='60',
+        order=90,
+        tooltip=_('Time for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'),
+        required=True,
+        minValue=60,
+        tab=gui.ADVANCED_TAB
+    )
+
     def initialize(self, values):
         if values is None:
             return
@@ -191,7 +202,7 @@ class HTML5RDPTransport(Transport):
         }
 
         if self.enableFileSharing.isTrue():
-           params['enable-drive'] = 'true'
+            params['enable-drive'] = 'true'
 
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
@@ -213,6 +224,6 @@ class HTML5RDPTransport(Transport):
 
         logger.debug('RDP Params: {0}'.format(params))
 
-        ticket = TicketStore.create(params)
+        ticket = TicketStore.create(params, validity=self.ticketValidity.num())
 
         return HttpResponseRedirect("{}/transport/?{}&{}".format(self.guacamoleServer.value, ticket, request.build_absolute_uri(reverse('Index'))))
