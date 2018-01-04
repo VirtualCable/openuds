@@ -801,11 +801,11 @@ class UserInterface(object):
         # Generate a deep copy of inherited Gui, so each User Interface instance has its own "field" set, and do not share the "fielset" with others, what can be really dangerous
         # Till now, nothing bad happened cause there where being used "serialized", but this do not have to be this way
         self._gui = copy.deepcopy(self._gui)  # Ensure "gui" is our own instance, deep copied from base
-        for key, val in self._gui.iteritems():  # And refresh references to them
+        for key, val in six.iteritems(self._gui):  # And refresh references to them
             setattr(self, key, val)
 
         if values is not None:
-            for k, v in self._gui.iteritems():
+            for k, v in six.iteritems(self._gui):
                 if k in values:
                     v.value = values[k]
                 else:

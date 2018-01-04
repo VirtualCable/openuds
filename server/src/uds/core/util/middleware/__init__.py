@@ -75,7 +75,7 @@ class RedirectMiddleware(object):
             url = url.replace('http://', 'https://')
 
             return HttpResponseRedirect(url)
-	return self.get_response(request)
+        return self.get_response(request)
 
     @staticmethod
     def registerException(path):

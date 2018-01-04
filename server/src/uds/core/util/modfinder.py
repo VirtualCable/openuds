@@ -54,7 +54,8 @@ def loadModulesUrls():
             for _, name, _ in pkgutil.iter_modules([pkgpath]):
                 fullModName = '%s.%s.urls' % (modName, name)
                 try:
-                    mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], -1)
+                    mod = __import__(fullModName, globals(), locals(), ['urlpatterns'], 0)
+                    logger.debug('Lodaded mod {}'.format(mod))
                     patterns += mod.urlpatterns
                 except:
                     logger.exception('Loading patterns')

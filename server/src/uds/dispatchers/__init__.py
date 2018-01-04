@@ -42,7 +42,7 @@ def __init__():
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         try:
             logger.info('Loading dispatcher {}'.format(name))
-            __import__(name, globals(), locals(), [], -1)
+            __import__(name, globals(), locals(), [], 1)
         except:
             logger.exception('Loading dispatcher {}'.format(name))
 

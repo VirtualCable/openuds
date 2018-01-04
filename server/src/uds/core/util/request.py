@@ -62,7 +62,7 @@ class GlobalRequestMiddleware(object):
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def process_request(self, request):
+    def _process_request(self, request):
         # Add IP to request
         GlobalRequestMiddleware.fillIps(request)
         # Ensures request contains os
@@ -74,7 +74,7 @@ class GlobalRequestMiddleware(object):
         _requests[getIdent()] = request
         return None
 
-    def process_response(self, request, response):
+    def _process_response(self, request, response):
         # Remove IP from global cache (processing responses after this will make global request unavailable,
         # but can be got from request again)
         ident = getIdent()
@@ -89,11 +89,11 @@ class GlobalRequestMiddleware(object):
         return response
 
     def __call__(self, request):
-        self.process_request(request)
+        self._process_request(request)
 
         response = self.get_response(request)
 
-        return self.process_response(request, response)
+        return self._process_response(request, response)
 
     @staticmethod
     def fillIps(request):
