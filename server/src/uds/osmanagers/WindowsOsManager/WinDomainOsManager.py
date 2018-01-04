@@ -10,15 +10,15 @@
 """
 from __future__ import unicode_literals
 
+import six
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core import osmanagers
-from WindowsOsManager import WindowsOsManager
 from uds.core.util import log
 import dns.resolver
 import ldap
-import six
+from .WindowsOsManager import WindowsOsManager
 
 import logging
 

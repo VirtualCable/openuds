@@ -117,7 +117,7 @@ class Migration(migrations.Migration):
                 ('state', models.CharField(db_index=True, default='A', max_length=1)),
                 ('comments', models.CharField(default='', max_length=256)),
                 ('is_meta', models.BooleanField(db_index=True, default=False)),
-                ('groups', models.ManyToManyField(to=b'uds.Group')),
+                ('groups', models.ManyToManyField(to='uds.Group')),
                 ('manager', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='uds.Authenticator')),
             ],
             options={
@@ -345,12 +345,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='network',
             name='transports',
-            field=models.ManyToManyField(db_table='uds_net_trans', related_name='networks', to=b'uds.Transport'),
+            field=models.ManyToManyField(db_table='uds_net_trans', related_name='networks', to='uds.Transport'),
         ),
         migrations.AddField(
             model_name='group',
             name='users',
-            field=models.ManyToManyField(related_name='groups', to=b'uds.User'),
+            field=models.ManyToManyField(related_name='groups', to='uds.User'),
         ),
         migrations.AddField(
             model_name='group',
@@ -369,7 +369,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='deployedservice',
             name='assignedGroups',
-            field=models.ManyToManyField(db_table='uds__ds_grps', related_name='deployedServices', to=b'uds.Group'),
+            field=models.ManyToManyField(db_table='uds__ds_grps', related_name='deployedServices', to='uds.Group'),
         ),
         migrations.AddField(
             model_name='deployedservice',
@@ -384,7 +384,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='deployedservice',
             name='transports',
-            field=models.ManyToManyField(db_table='uds__ds_trans', related_name='deployedServices', to=b'uds.Transport'),
+            field=models.ManyToManyField(db_table='uds__ds_trans', related_name='deployedServices', to='uds.Transport'),
         ),
         migrations.AlterUniqueTogether(
             name='config',
@@ -499,7 +499,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='deployedservice',
             name='meta_pools',
-            field=models.ManyToManyField(to=b'uds.DeployedService'),
+            field=models.ManyToManyField(to='uds.DeployedService'),
         ),
         migrations.AddField(
             model_name='provider',

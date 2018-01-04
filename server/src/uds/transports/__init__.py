@@ -55,7 +55,7 @@ def __init__():
     # Dinamycally import children of this package. The __init__.py files must import classes
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(name, globals(), locals(), [])
+        __import__(name, globals(), locals(), [], 1)
 
     p = transports.Transport
     # This is marked as error in IDE, but it's not (__subclasses__)

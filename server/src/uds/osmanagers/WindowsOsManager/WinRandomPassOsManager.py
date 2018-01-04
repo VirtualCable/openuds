@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core import osmanagers
-from WindowsOsManager import WindowsOsManager
+from .WindowsOsManager import WindowsOsManager
 from uds.core.util import log
 
 import logging

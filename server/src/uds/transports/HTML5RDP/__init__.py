@@ -31,4 +31,4 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from HTML5RDP import HTML5RDPTransport
+from .HTML5RDP import HTML5RDPTransport

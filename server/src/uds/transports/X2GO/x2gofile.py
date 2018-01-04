@@ -95,7 +95,7 @@ sshproxykrblogin=false
 '''
 
 def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports, width, height, user):
-    trueFalse = lambda(x): 'true' if x else 'false'
+    trueFalse = lambda x: 'true' if x else 'false'
     export = 'export="{export}"' if exports else ''
     if width == -1 or height == -1:
         width = 800

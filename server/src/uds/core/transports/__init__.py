@@ -41,5 +41,5 @@ def factory():
     """
     Returns factory for register/access to service providers
     """
-    from TransportsFactory import TransportsFactory
+    from .TransportsFactory import TransportsFactory
     return TransportsFactory.factory()
