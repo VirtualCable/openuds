@@ -17,7 +17,7 @@ import threading
 import logging
 import six
 
-__updated__ = '2017-03-29'
+__updated__ = '2018-01-04'
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +98,6 @@ class Client(object):
             return False
         finally:
             lock.release()
-
 
     def isFullyFunctionalVersion(self):
         '''
@@ -297,7 +296,7 @@ class Client(object):
                                 'active': active == 'active'})
 
             res = {'name': d.name, 'id': d.id, 'storage_type': d.local and 'local' or 'shared',
-                    'storage_format': d.storage_format.value, 'description': d.description,
+                    'description': d.description,
                     'storage': storage}
 
             self._cache.put(dcKey, res, Client.CACHE_TIME_HIGH)
@@ -552,7 +551,6 @@ class Client(object):
 
             api = self.__getApi()
 
-
             vmService = api.system_service().vms_service().service(six.binary_type(machineId))
 
             if vmService.get() is None:
@@ -672,7 +670,6 @@ class Client(object):
                 vms.update(vmu)
             finally:
                 lock.release()
-
 
     def getConsoleConnection(self, machineId):
         '''
