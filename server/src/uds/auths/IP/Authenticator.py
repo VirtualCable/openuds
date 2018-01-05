@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
@@ -43,8 +42,6 @@ from uds.core.ui.UserInterface import gui
 import six
 
 import logging
-
-__updated__ = '2016-04-18'
 
 logger = logging.getLogger(__name__)
 

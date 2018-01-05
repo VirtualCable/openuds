@@ -44,6 +44,7 @@ from uds.REST import Handler
 import logging
 import random
 import string
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +132,7 @@ class Login(Handler):
             raise Exception('Invalid Credentials')
         except Exception as e:
             logger.exception('exception')
-            return {'result': 'error', 'error': unicode(e)}
+            return {'result': 'error', 'error': six.text_type(e)}
 
 
 class Logout(Handler):

@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import get_language, ugettext as _, ugettext_noop
+from uds.core.util import encoders
 import datetime
 import time
 import six
@@ -348,6 +349,7 @@ class gui(object):
                   tooltip = _('Other info'), rdonly = True)
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
@@ -376,6 +378,7 @@ class gui(object):
                   defvalue = '443', order = 1, tooltip = _('Port (usually 443)'),
                   required = True)
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             minValue = options.get('minValue', '987654321')
@@ -464,6 +467,7 @@ class gui(object):
                   required = True)
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.PASSWORD_TYPE)
@@ -499,6 +503,7 @@ class gui(object):
                   self.hidden.setDefValue(self.parent().serialize())
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._isSerializable = options.get('serializable', '') != ''
@@ -526,6 +531,7 @@ class gui(object):
                   tooltip = _('If checked, will use a ssl connection'))
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.CHECKBOX_TYPE)
@@ -629,6 +635,7 @@ class gui(object):
                   ev = gui.HiddenField() # ....
 
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._data['values'] = options.get('values', [])
@@ -648,6 +655,7 @@ class gui(object):
             self._data['values'] = values
 
     class ImageChoiceField(InputField):
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._data['values'] = options.get('values', [])
@@ -693,6 +701,7 @@ class gui(object):
                       {'id': '1', 'text': 'datastore1' } ]
                   )
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._data['values'] = options.get('values', [])
@@ -751,6 +760,7 @@ class gui(object):
         '''
         Image field
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
@@ -759,6 +769,7 @@ class gui(object):
         '''
         Informational field (no input is done)
         '''
+
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.INFO_TYPE)
@@ -769,7 +780,8 @@ class UserInterfaceType(type):
     Metaclass definition for moving the user interface descriptions to a usable
     better place
     """
-    def __new__(mcs, classname, bases, classDict):
+
+    def __new__(self, classname, bases, classDict):
         newClassDict = {}
         _gui = {}
         # We will keep a reference to gui elements also at _gui so we can access them easily
@@ -778,7 +790,7 @@ class UserInterfaceType(type):
                 _gui[attrName] = attr
             newClassDict[attrName] = attr
         newClassDict['_gui'] = _gui
-        return type.__new__(mcs, classname, bases, newClassDict)
+        return type.__new__(self, classname, bases, newClassDict)
 
 
 @six.add_metaclass(UserInterfaceType)
@@ -910,7 +922,7 @@ class UserInterface(object):
             elif val is False:
                 val = gui.FALSE
             arr.append(k + '\003' + val)
-        return '\002'.join(arr).encode('zip')
+        return encoders.encode('\002'.join(arr), 'zip')
 
     def unserializeForm(self, values):
         '''
@@ -929,7 +941,7 @@ class UserInterface(object):
                     continue
                 self._gui[k].value = self._gui[k].defValue
 
-            values = values.decode('zip')
+            values = encoders.decode(values, 'zip', True)
             if values == '':  # Has nothing
                 return
 
@@ -946,8 +958,9 @@ class UserInterface(object):
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))
         except Exception:
+            logger.exception('Exception on unserialization')
             # Values can contain invalid characters, so we log every single char
-            logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
+            # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
     @classmethod
     def guiDescription(cls, obj=None):

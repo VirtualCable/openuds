@@ -32,6 +32,7 @@
 
 from django.conf.urls import include, url
 from uds.core.util.modfinder import loadModulesUrls
+from django.views.i18n import javascript_catalog
 from uds import REST
 import uds.web.views
 
@@ -90,7 +91,7 @@ urlpatterns = [
 
     # Internacionalization in javascript
     # Javascript catalog
-    url(r'^jsi18n/(?P<lang>[a-z]*)$', uds.web.views.jsCatalog, js_info_dict, name='uds.web.views.jsCatalog'),
+    url(r'^jsi18n/(?P<packages>[a-z]*)$', javascript_catalog, js_info_dict, name='uds.web.views.jsCatalog'),
 ]
 
 # Append urls from special dispatchers

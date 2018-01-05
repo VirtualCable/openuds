@@ -31,7 +31,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from __future__ import unicode_literals
+
 import re
+import six
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Test patters for networks
 reCIDR = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$')
@@ -47,10 +52,13 @@ def ipToLong(ip):
     """
     convert decimal dotted quad string to long integer
     """
+    logger.debug('Getting ip from string {}'.format(ip))
     try:
-        hexn = ''.join(["%02X" % int(i) for i in ip.split('.')])
-        return int(hexn, 16)
-    except:
+        hexn = int(''.join(["%02X" % int(i) for i in ip.split('.')]), 16)
+        logger.debug('IP {} is {}'.format(ip, hexn))
+        return hexn
+    except Exception as e:
+        logger.error('Ivalid value: {}'.format(e))
         return 0  # Invalid values will map to "0.0.0.0" --> 0
 
 
@@ -86,6 +94,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
     """
 
     inputString = strNets
+    logger.debug('Getting network from {}'.format(strNets))
 
     def check(*args):
         for n in args:
@@ -97,7 +106,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
         val = 0
         for n in args:
             val += start * int(n)
-            start /= 256
+            start <<= 8
         return val
 
     def maskFromBits(nBits):
@@ -122,6 +131,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
         # Test patterns
         m = reCIDR.match(strNets)
         if m is not None:
+            logger.debug('Format is CIDR')
             check(*m.groups())
             bits = int(m.group(5))
             if bits < 0 | bits > 32:
@@ -133,6 +143,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
 
         m = reMask.match(strNets)
         if m is not None:
+            logger.debug('Format is network mask')
             check(*m.groups())
             val = toNum(*(m.groups()[0:4]))
             bits = toNum(*(m.groups()[4:8]))
@@ -141,6 +152,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
 
         m = reRange.match(strNets)
         if m is not None:
+            logger.debug('Format is network range')
             check(*m.groups())
             val = toNum(*(m.groups()[0:4]))
             val2 = toNum(*(m.groups()[4:8]))
@@ -150,6 +162,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
 
         m = reHost.match(strNets)
         if m is not None:
+            logger.debug('Format is a single host')
             check(*m.groups())
             val = toNum(*m.groups())
             return val, val
@@ -165,14 +178,15 @@ def networksFromString(strNets, allowMultipleNetworks=True):
 
         # No pattern recognized, invalid network
         raise Exception()
-    except:
+    except Exception as e:
+        logger.error('Invalid network found: {} {}'.format(strNets, e))
         raise ValueError(inputString)
 
 
 def ipInNetwork(ip, network):
-    if isinstance(ip, unicode) or isinstance(ip, str):
+    if isinstance(ip, six.string_types):
         ip = ipToLong(ip)
-    if isinstance(network, unicode) or isinstance(network, str):
+    if isinstance(network, six.string_types):
         network = networksFromString(network)
 
     for net in network:

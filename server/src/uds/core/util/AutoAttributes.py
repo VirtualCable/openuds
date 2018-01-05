@@ -31,6 +31,8 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 
+from __future__ import unicode_literals
+
 from uds.core.Serializable import Serializable
 from uds.core.util import encoders
 import pickle
@@ -95,16 +97,16 @@ class AutoAttributes(Serializable):
         return encoders.encode('\2'.join(['%s\1%s' % (k, pickle.dumps(v)) for k, v in self.dict.iteritems()]), 'bz2')
 
     def unmarshal(self, data):
-        if data == '':  # Can be empty
+        if data == b'':  # Can be empty
             return
         # We keep original data (maybe incomplete)
         try:
             data = encoders.decode(data, 'bz2')
         except Exception:  # With old zip encoding
             data = encoders.decode(data, 'zip')
-        for pair in data.split('\2'):
-            k, v = pair.split('\1')
-            self.dict[k] = pickle.loads(str(v))
+        for pair in data.split(b'\2'):
+            k, v = pair.split(b'\1')
+            self.dict[k] = pickle.loads(v)
 
     def __str__(self):
         str_ = '<AutoAttribute '

@@ -95,11 +95,11 @@ class CryptoManager(object):
             s1 = s1.encode('utf-8')
         if isinstance(s2, six.text_type):
             s2 = s2.encode('utf-8')
-        mult = (len(s1) / len(s2)) + 1
-        s1 = array.array(six.binary_type('B'), s1)
-        s2 = array.array(six.binary_type('B'), s2 * mult)
+        mult = int(len(s1) / len(s2)) + 1
+        s1 = array.array('B', s1)
+        s2 = array.array('B', s2 * mult)
         # We must return bynary in xor, because result is in fact binary
-        return six.binary_type(array.array(six.binary_type('B'), (s1[i] ^ s2[i] for i in range(len(s1)))).tostring())
+        return array.array('B', (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()
 
     def loadPrivateKey(self, rsaKey):
         try:
@@ -137,7 +137,7 @@ class CryptoManager(object):
             self._counter += 1
         else:
             obj = six.text_type(hash(obj))
-            
+
         if six.PY2:
             obj = six.binary_type(obj)
 
