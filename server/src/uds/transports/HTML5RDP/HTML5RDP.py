@@ -114,7 +114,7 @@ class HTML5RDPTransport(Transport):
         label=_('Ticket Validity'),
         defvalue='60',
         order=90,
-        tooltip=_('Time for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'),
+        tooltip=_('Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'),
         required=True,
         minValue=60,
         tab=gui.ADVANCED_TAB
