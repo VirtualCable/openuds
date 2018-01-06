@@ -17,7 +17,7 @@ import threading
 import logging
 import six
 
-__updated__ = '2018-01-04'
+__updated__ = '2018-01-05'
 
 logger = logging.getLogger(__name__)
 
@@ -259,7 +259,7 @@ class Client(object):
                 'name'
                 'id'
                 'storage_type' -> ('isisi', 'nfs', ....)
-                'storage_format' -> ('v1', v2')
+                # 'storage_format' -> ('v1', v2') --> Removed
                 'description'
                 'storage' -> array of dictionaries, with:
                    'id' -> Storage id
