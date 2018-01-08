@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-21 19:09+0100\n"
-"PO-Revision-Date: 2017-12-20 11:22+0000\n"
+"POT-Creation-Date: 2018-01-08 18:47+0100\n"
+"PO-Revision-Date: 2017-12-21 18:10+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -5006,13 +5006,27 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (encriptación de capa de seguridad de transporte)"
 
+#: transports/HTML5RDP/HTML5RDP.py:114
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+msgid "Ticket Validity"
+msgstr "Validez del billete"
+
 #: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+msgid ""
+"Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
+"The default value of 60 is recommended."
+msgstr ""
+"Permitido el tiempo, en segundos, para cliente de HTML5 cargar datos de UDS corredor. "
+"Se recomienda el valor predeterminado de 60."
+
+#: transports/HTML5RDP/HTML5RDP.py:128
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
 msgid "The server must be http or https"
 msgstr "El servidor debe ser http o https"
 
-#: transports/HTML5RDP/HTML5RDP.py:119
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
+#: transports/HTML5RDP/HTML5RDP.py:130
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5276,14 +5290,10 @@ msgstr ""
 "usará Pulse"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid "Redirect root folder"
 msgid "Redirect home folder"
 msgstr "Redirigir la carpeta de inicio"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid ""
-#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
-#| "used"
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr "Si, Linux cliente intentará redireccionar/carpeta local del hogar"
 

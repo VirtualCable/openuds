@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-21 19:09+0100\n"
-"PO-Revision-Date: 2017-12-20 11:21+0000\n"
+"POT-Creation-Date: 2018-01-08 18:47+0100\n"
+"PO-Revision-Date: 2017-12-21 18:09+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
@@ -4970,13 +4970,25 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (xifrat de capa de seguretat de transport)"
 
+#: transports/HTML5RDP/HTML5RDP.py:114
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+msgid "Ticket Validity"
+msgstr ""
+
 #: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+msgid ""
+"Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
+"The default value of 60 is recommended."
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:128
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
 
-#: transports/HTML5RDP/HTML5RDP.py:119
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
+#: transports/HTML5RDP/HTML5RDP.py:130
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5238,20 +5250,12 @@ msgstr ""
 "manera s'utilitzarà PULSE"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#, fuzzy
-#| msgid "Redirect root folder"
 msgid "Redirect home folder"
-msgstr "Redirigeix a la carpeta arrel"
+msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:107
-#, fuzzy
-#| msgid ""
-#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
-#| "used"
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
-"Si està seleccionat, el client Linux intentarà utilitzar ALSA, d'altra "
-"manera s'utilitzarà PULSE"
 
 #: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
