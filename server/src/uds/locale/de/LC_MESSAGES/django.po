@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-21 19:09+0100\n"
-"PO-Revision-Date: 2017-12-20 11:22+0000\n"
+"POT-Creation-Date: 2018-01-08 18:47+0100\n"
+"PO-Revision-Date: 2017-12-21 18:10+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -5006,13 +5006,27 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (Transport Layer Security-Verschlüsselung)"
 
+#: transports/HTML5RDP/HTML5RDP.py:114
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+msgid "Ticket Validity"
+msgstr "Ticketgültigkeit"
+
 #: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+msgid ""
+"Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
+"The default value of 60 is recommended."
+msgstr ""
+"Erlaubt in Sekunden, für HTML5 Client Daten von UDS Broker neu zu laden. "
+"Der Standardwert von 60 wird empfohlen."
+
+#: transports/HTML5RDP/HTML5RDP.py:128
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
 msgid "The server must be http or https"
 msgstr "Der Server muss http oder Https sein."
 
-#: transports/HTML5RDP/HTML5RDP.py:119
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
+#: transports/HTML5RDP/HTML5RDP.py:130
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5283,16 +5297,14 @@ msgstr ""
 "wird Puls verwendet werden"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid "Redirect root folder"
 msgid "Redirect home folder"
 msgstr "Umleiten der Ordner \"privat\""
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid ""
-#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
-#| "used"
 msgid "If checked, Linux client will try to redirect /home local folder"
-msgstr "Wenn diese Option aktiviert, werden Linux-Client versuchen, umleiten/lokalen Ordner home"
+msgstr ""
+"Wenn diese Option aktiviert, werden Linux-Client versuchen, umleiten/lokalen "
+"Ordner home"
 
 #: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91

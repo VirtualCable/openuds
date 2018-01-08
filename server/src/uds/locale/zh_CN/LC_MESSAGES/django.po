@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-21 19:09+0100\n"
-"PO-Revision-Date: 2017-12-20 11:21+0000\n"
+"POT-Creation-Date: 2018-01-08 18:47+0100\n"
+"PO-Revision-Date: 2017-12-21 18:09+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/openuds/openuds/"
 "language/zh_CN/)\n"
@@ -4776,13 +4776,25 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr ""
 
+#: transports/HTML5RDP/HTML5RDP.py:114
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+msgid "Ticket Validity"
+msgstr ""
+
 #: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+msgid ""
+"Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
+"The default value of 60 is recommended."
+msgstr ""
+
+#: transports/HTML5RDP/HTML5RDP.py:128
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
 msgid "The server must be http or https"
 msgstr ""
 
-#: transports/HTML5RDP/HTML5RDP.py:119
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
+#: transports/HTML5RDP/HTML5RDP.py:130
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""

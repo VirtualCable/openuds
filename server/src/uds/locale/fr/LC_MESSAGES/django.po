@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Abdel Baaddi <abaaddi@virtualcable.es>, 2016
+# Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-21 19:09+0100\n"
-"PO-Revision-Date: 2017-12-20 11:21+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-01-08 18:47+0100\n"
+"PO-Revision-Date: 2018-01-08 17:47+0000\n"
+"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
 "Language: fr\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: REST/methods/actor.py:93 REST/methods/client.py:93
 #: REST/methods/client.py:110
 msgid "Correct"
-msgstr "Corriger"
+msgstr "Correcte"
 
 #: REST/methods/actor.py:103
 msgid "Invalid key"
@@ -3900,7 +3900,7 @@ msgstr "Galerie"
 
 #: templates/uds/admin/snippets/navbar.html:33
 msgid "Services Pool Group"
-msgstr "Groupe des services de piscine"
+msgstr "Groupe de regroupement des services "
 
 #: templates/uds/admin/snippets/navbar.html:34
 #: templates/uds/admin/tmpl/reports.html:4
@@ -4042,11 +4042,11 @@ msgstr "Services de consultation"
 #: templates/uds/admin/tmpl/dashboard.html:96
 #: templates/uds/admin/tmpl/dashboard.html:123
 msgid "View services pools"
-msgstr "Vue services piscines"
+msgstr "Vue regroupement de services"
 
 #: templates/uds/admin/tmpl/dashboard.html:115
 msgid "Restrained services pools"
-msgstr "Piscines services sobre"
+msgstr "Regroupement de services restraint"
 
 #: templates/uds/admin/tmpl/dashboard.html:139
 msgid "Assigned services graph"
@@ -5024,13 +5024,27 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (Transport Layer Security cryptage)"
 
+#: transports/HTML5RDP/HTML5RDP.py:114
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+msgid "Ticket Validity"
+msgstr "Validité du billet"
+
 #: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+msgid ""
+"Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
+"The default value of 60 is recommended."
+msgstr ""
+"Durée, en secondes, pour le client de HTML5 recharger les données de l’UDS courtier a permis. "
+"La valeur par défaut de 60 est recommandée."
+
+#: transports/HTML5RDP/HTML5RDP.py:128
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
 msgid "The server must be http or https"
 msgstr "Der Server muss http oder Https sein."
 
-#: transports/HTML5RDP/HTML5RDP.py:119
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
+#: transports/HTML5RDP/HTML5RDP.py:130
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -5294,14 +5308,10 @@ msgstr ""
 "Si cochée, Linux client essaie d’utiliser ALSA, sinon impulsion sera utilisée"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid "Redirect root folder"
 msgid "Redirect home folder"
 msgstr "Rediriger le dossier de départ"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid ""
-#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
-#| "used"
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr "Si cochée, Linux client tentera de rediriger/home dossier local"
 

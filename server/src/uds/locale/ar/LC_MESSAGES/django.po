@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Abdel Baaddi <abaaddi@virtualcable.es>, 2017
+# Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-21 19:09+0100\n"
-"PO-Revision-Date: 2017-12-20 11:21+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-01-08 18:47+0100\n"
+"PO-Revision-Date: 2018-01-08 17:42+0000\n"
+"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
 "Language: ar\n"
@@ -435,9 +435,7 @@ msgstr "متقدم"
 
 #: REST/methods/services_pools.py:184
 msgid "Allow removal by users"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.3431689E"
+msgstr "السماح بمسح المستخدم"
 
 #: REST/methods/services_pools.py:185
 msgid ""
@@ -445,8 +443,8 @@ msgid ""
 "care with this, because the user will have the \"poser\" to delete it's own "
 "service"
 msgstr ""
-"إذا نشط، سيسمح للمستخدم بإزالة الخدمة \"يدوياً\". تكون TranslateApiException: "
-"AppId is over the quota : ID=1230.V2_Json.Translate.33858A33خدمة"
+"إذا نشط، سيسمح للمستخدم بإزالة الخدمة \"يدوياً\". كن حذراً، المستخدم سيتوفر "
+"على صلاحيات الإزالة يدويا"
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
@@ -785,9 +783,7 @@ msgstr "الاسم المختصر"
 
 #: REST/model.py:142
 msgid "Short name for user service visualization"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
-"Translate.33858D83"
+msgstr "إسم قصير لمستخدم الخدمة الإفتراضية "
 
 #: REST/model.py:151
 msgid "Comments for this element"
@@ -2045,7 +2041,7 @@ msgstr "ملقم تلميح"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 msgid "In case of several AD servers, which one is preferred"
-msgstr "في حالة وجود عدة ملقمات إعلانات، واحد الذي هو المفضل"
+msgstr "في حالة وجود عدة ملقمات إعلانات، واحد هو المفضل"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:49
 msgid "Must provide a domain!"
@@ -2299,11 +2295,11 @@ msgstr "تقرير أداء التجمعات UDS"
 
 #: reports/stats/pools_usage.py:87
 msgid "Services Asignation"
-msgstr "خدمات أسيجناتيون"
+msgstr "خدمات تعيين."
 
 #: reports/stats/pools_usage.py:101
 msgid "Service asignation by hour"
-msgstr "خدمة أسيجنيشن بساعة"
+msgstr "خدمات تعيين بساعة"
 
 #: reports/stats/pools_usage.py:105 reports/stats/pools_usage.py:283
 msgid "Hour"
@@ -2311,7 +2307,7 @@ msgstr "ساعة"
 
 #: reports/stats/pools_usage.py:127
 msgid "Pools usage on a day"
-msgstr "استخدام حمامات السباحة في يوم"
+msgstr "استخدام تجمعات في يوم"
 
 #: reports/stats/pools_usage.py:128
 msgid "Pools usage counters for an specific day"
@@ -2385,7 +2381,7 @@ msgstr "في المتوسط"
 
 #: reports/stats/usage_summary_pool.py:94
 msgid "Summary of pools usage"
-msgstr "ملخص استخدام برك"
+msgstr "ملخص استخدام تجمعات"
 
 #: reports/stats/usage_summary_pool.py:95
 msgid "Generates a report with the summary of a pool usage"
@@ -2752,7 +2748,7 @@ msgid ""
 "If checked, legacy apy will be used. Only recommended on OLD Nutanix "
 "installations."
 msgstr ""
-"إذا راجعت، سيتم استخدام تراث أبي. وأوصى فقط على نوتانيكس القديم المنشآت."
+"إذا راجعت، سيتم استخدام تراث API. وأوصى فقط على نوتانيكس القديم المنشآت."
 
 #: services/Nutanix_enterprise/NutanixProvider.py:177
 msgid "Connection works fine"
@@ -2789,7 +2785,7 @@ msgstr "إزالة الملفات المكررة"
 #: services/Nutanix_enterprise/NutanixService.py:91
 #: services/VCloud_enterprise/VCloudCloneService.py:57
 msgid "If active, found duplicates vApps for this service will be removed"
-msgstr "في حالة نشطة، سيتم إزالة التكرارات وجدت فابس لهذه الخدمة"
+msgstr "في حالة نشطة، سيتم إزالة التكرارات وجدت Vapps لهذه الخدمة"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"
@@ -2915,7 +2911,7 @@ msgstr "صورة نظام التشغيل أوبينجنسيس"
 
 #: services/OpenGnsys/OGService.py:126
 msgid "Max. reservation time"
-msgstr "ماكس. وقت الحجز"
+msgstr "Max. reservation time"
 
 #: services/OpenGnsys/OGService.py:128
 msgid ""
@@ -2947,8 +2943,8 @@ msgid ""
 "If checked, ssl certificate of OpenGnsys server must be valid (not self "
 "signed)"
 msgstr ""
-"إذا راجعت، شهادة ssl لملقم أوبينجنسيس يجب أن تكون سارية المفعول (لا الذاتي "
-"وقعت)"
+"إذا راجعت، شهادة ssl لملقم أوبينجنسيس يجب أن تكون سارية المفعول (لا يقبل "
+"التوقيع الداتي)"
 
 #: services/OpenGnsys/Provider.py:99
 msgid "User with valid privileges on OpenGnsys"
@@ -3566,9 +3562,7 @@ msgstr "تجمع الأجهزة الثابتة"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "Infrascruttur"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.343173B8إينفراسكروتور"
+msgstr "هذه الخدمة تتيح الدخول لمجموعة من الالات المصنفة مسبقا."
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
@@ -3593,9 +3587,7 @@ msgstr "تجمع الموارد"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:67
 msgid "Resource Pool containing base machines"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.34317500"
+msgstr "تجمع الخدمات يحتوي على الات مرجعية "
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
 msgid "Base Machines"
@@ -3617,19 +3609,15 @@ msgstr "استنساخ على أساس-كامل"
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
 msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
-"Translate.338597ABتوفر هذه الخدمة إمكانية الوصول إلى آلات كلونيد كامل على "
-"مركز الظاهرية"
+"توفر هذه الخدمة إمكانية الوصول إلى آلات استنساخ كامل على المركز الظاهري"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:68
 msgid "VMs Datastores"
-msgstr "داتاستوريس السفن"
+msgstr "VMs Datastores"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:69
 msgid "Datastores where to put machines"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.34317970"
+msgstr "Datastore لحفض الألات الإفتراضية "
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:33
 msgid "Clone based - Linked"
@@ -3666,9 +3654,7 @@ msgstr "تبقى على خطأ"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "If active, access errors found on machine will not mark is as error."
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.34317AD3"
+msgstr "إذا كانت نشطة، لن يتم اعتبار أخطاء الوصول الموجودة على الجهاز خطأ."
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:76
 msgid "Resource Pool containing base machine"
@@ -4399,10 +4385,7 @@ msgstr "نظام التشغيل"
 msgid ""
 "Are you sure that you want to release this service. Its current content will "
 "be lost!"
-msgstr ""
-"هل أنت متأكد من أنك تريد أن الإفراج عن هذه الخدمة. سوف محتواه الحالي "
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
-"Translate.33859C08"
+msgstr "هل أنت متأكد من أنك تريد تحرير هذه الخدمة. سيتم فقدان المحتوى الحالي!"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -4651,7 +4634,7 @@ msgstr "(يتطلب Python-2.7)"
 
 #: templatetags/html5.py:238
 msgid "Red Hat based Linux (RH, Fedora, Centos, ...)"
-msgstr "Red Hat based Linux (RH, Fedora, Centos, ...)"
+msgstr "(Red Hat based Linux (RH, Fedora, Centos"
 
 #: templatetags/html5.py:239
 msgid "Suse based Linux"
@@ -4912,13 +4895,27 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (تشفير طبقة النقل الأمن)"
 
+#: transports/HTML5RDP/HTML5RDP.py:114
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:114
+msgid "Ticket Validity"
+msgstr "صلاحية التذكرة"
+
 #: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
+msgid ""
+"Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
+"The default value of 60 is recommended."
+msgstr ""
+"يسمح الوقت، بالثواني، للعميل HTML5 لإعادة تحميل البيانات من \"وسيط مصغراً\". "
+"ويوصي بالقيمة الافتراضية ل 60."
+
+#: transports/HTML5RDP/HTML5RDP.py:128
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:128
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
 
-#: transports/HTML5RDP/HTML5RDP.py:119
-#: transports/HTML5RDS_enterprise/HTML5RDS.py:119
+#: transports/HTML5RDP/HTML5RDP.py:130
+#: transports/HTML5RDS_enterprise/HTML5RDS.py:130
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -4928,7 +4925,7 @@ msgstr ""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
 msgid "HTML5 RDS for vApps"
-msgstr "RDS HTML5 فابس"
+msgstr "RDS HTML5 Vapps"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
 msgid "RDS protocol using HTML5 client for vApps"
@@ -5171,14 +5168,10 @@ msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid "Redirect root folder"
 msgid "Redirect home folder"
 msgstr "إعادة توجيه المجلد الرئيسي"
 
 #: transports/RDP/BaseRDPTransport.py:107
-#| msgid ""
-#| "If checked, Linux client will try to use ALSA, otherwise Pulse will be "
-#| "used"
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr "إذا راجعت، سيحاول عميل لينكس إعادة توجيه مجلد محلي منزلي"
 
@@ -5190,7 +5183,7 @@ msgstr "سلسلة الطابعة"
 #: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If printer is checked, the printer string used with xfreerdp client"
-msgstr "إذا كان يتم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل إكسفريردب"
+msgstr "إذا تم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل XFreeRDP"
 
 #: transports/RDP/BaseRDPTransport.py:109
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
@@ -5201,8 +5194,8 @@ msgstr "سلسلة البطاقة الذكية"
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
-"إذا كان يتم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع "
-"العميل إكسفريردب"
+"إذا تم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع العميل "
+"XFreeRDP"
 
 #: transports/RDP/BaseRDPTransport.py:110
 #: transports/RDS_enterprise/BaseRDSTransport.py:93
@@ -5215,8 +5208,8 @@ msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgstr ""
-"إذا كانت المعلمة لا فارغة، إضافية تشمل لينكس العميل (على سبيل المثال/usb:"
-"معرف، dev:054 ج: 0268، أو أيثينج متوافق مع العميل الخاص بك إكسفريردب)"
+"إذا لم تكن المعلمة فارغة، إضافية تشمل لينكس العميل (على سبيل المثال /usb:id,"
+"dev:054c:0268، أو أي شيء متوافق مع العميل الخاص بك XFreeRDP)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
 msgid "RDP"
@@ -5224,9 +5217,7 @@ msgstr "برنامج التعمير والتنمية"
 
 #: transports/RDP/RDPTransport.py:57
 msgid "RDP Protocol. Direct connection."
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1035.V2_Json."
-"Translate.34318147"
+msgstr "بروتوكول RDP. اتصال مباشر."
 
 #: transports/RDP/TRDPTransport.py:65
 msgid "RDP Protocol. Tunneled connection."
@@ -5245,15 +5236,15 @@ msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق الن
 #: transports/RDS_enterprise/RDSTransport.py:55
 #: transports/RDS_enterprise/TRDSTransport.py:63
 msgid "RDS for vApps"
-msgstr "RDS فابس"
+msgstr "RDS for vApps"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
 msgid "RDS access using RDP for vApps. Direct connection."
-msgstr "الوصول RDS باستخدام RDP فابس. الاتصال المباشر."
+msgstr "الوصول RDS باستخدام RDP VApps. الاتصال المباشر."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
 msgid "RDS access using RDP for vApps. Tunneled connection."
-msgstr "الوصول RDS باستخدام RDP فابس. اتصال النفق."
+msgstr "الوصول RDS باستخدام RDP VApps. اتصال النفق."
 
 #: transports/RGS_enterprise/RGSTransport.py:37
 #: transports/RGS_enterprise/TRGSTransport.py:43
@@ -5351,9 +5342,7 @@ msgstr "إذا تحققت، سيتم إعادة توجيه الميكروفون�
 
 #: transports/RGS_enterprise/TRGSTransport.py:45
 msgid "RGS Protocol. Tunneled connection"
-msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
-"Translate.3385A550"
+msgstr "بروتوكول RGS. اتصال نفق"
 
 #: transports/SPICE/BaseSPICETransport.py:65
 msgid "Empty credentials"
@@ -5429,10 +5418,8 @@ msgid ""
 "If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
 "executed. If UDS vAPP is not selected, this field will be ignored."
 msgstr ""
-"TranslateApiException: AppId is over the quota : ID=1230.V2_Json."
-"Translate.3385A829TranslateApiException: AppId is over the quota : ID=1035."
-"V2_Json.Translate.3431878Cإعدام. إذا لم يتم تحديد فب المصغرة، سيتم تجاهل هذا "
-"الحقل."
+"إذا تم تحديد UDS vAPP  باسم \"سطح المكتب\"، FULL PATH من التطبيق ليتم "
+"تنفيذها. إذا لم يتم تحديد vAPP UDS، سيتم تجاهل هذا الحقل."
 
 #: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"
