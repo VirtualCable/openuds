@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-08 18:47+0100\n"
-"PO-Revision-Date: 2017-12-21 18:10+0000\n"
+"POT-Creation-Date: 2018-01-09 14:34+0100\n"
+"PO-Revision-Date: 2018-01-08 17:49+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -449,12 +449,15 @@ msgid "Ignores unused"
 msgstr "Ignora inutilizzati"
 
 #: REST/methods/services_pools.py:193
+#| msgid ""
+#| "If active, UDS will not try to detect and remove assigned but not used "
+#| "user services."
 msgid ""
-"If active, UDS will not try to detect and remove assigned but not used user "
-"services."
+"If the option is enabled, UDS will not attempt to detect and remove the user "
+"services assigned but not in use."
 msgstr ""
-"Se attivo, UDS non tenterà di rilevare e rimuovere utente assegnato ma non "
-"utilizzato Servizi."
+"Se l'opzione è attivata, UDS non tenterà di rilevare e rimuovere l'utente "
+"servizi assegnati ma non in uso."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -3608,12 +3611,15 @@ msgid "Fixed Machines Pool"
 msgstr "Macchine fisse piscina"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
+#| msgid ""
+#| "This service provides access to a fixed group of selected machines on the "
+#| "Infrascruttur"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
-"Infrascruttur"
+"infrastructure"
 msgstr ""
-"Questo servizio fornisce l'accesso ad un determinato gruppo di macchine "
-"selezionate sul Infrascruttur"
+"Questo servizio fornisce l'accesso ad un determinato gruppo di macchine selezionate sul "
+"infrastrutture"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
@@ -4988,8 +4994,8 @@ msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
 msgstr ""
-"Permesso di tempo, in secondi, per client HTML5 ricaricare i dati del Broker di UDS. "
-"Il valore predefinito di 60 è raccomandato."
+"Permesso di tempo, in secondi, per client HTML5 ricaricare i dati del Broker "
+"di UDS. Il valore predefinito di 60 è raccomandato."
 
 #: transports/HTML5RDP/HTML5RDP.py:128
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:128

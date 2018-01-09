@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-08 18:47+0100\n"
-"PO-Revision-Date: 2018-01-08 17:42+0000\n"
+"POT-Creation-Date: 2018-01-09 14:34+0100\n"
+"PO-Revision-Date: 2018-01-09 13:16+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -43,7 +43,7 @@ msgstr "المصادق الحالي"
 
 #: REST/methods/authenticators.py:59
 msgid "Id"
-msgstr "معرف"
+msgstr "Id"
 
 #: REST/methods/authenticators.py:60 REST/methods/calendars.py:60
 #: REST/methods/images.py:61 REST/methods/networks.py:60
@@ -448,15 +448,18 @@ msgstr ""
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
-msgstr "يتجاهل غير المستخدمة"
+msgstr "تجاهل غير المستخدمة"
 
 #: REST/methods/services_pools.py:193
+#| msgid ""
+#| "If active, UDS will not try to detect and remove assigned but not used "
+#| "user services."
 msgid ""
-"If active, UDS will not try to detect and remove assigned but not used user "
-"services."
+"If the option is enabled, UDS will not attempt to detect and remove the user "
+"services assigned but not in use."
 msgstr ""
-"في حالة نشطة، المصغرة لن يحاول اكتشاف وإزالة المستخدم المعينة ولكن لا "
-"تستخدمها خدمات."
+"إذا تم تمكين هذا الخيار، لن يحاول مصغراً لكشف وإزالة المستخدم "
+"الخدمات المعينة ولكن ليس قيد الاستخدام."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -1200,7 +1203,7 @@ msgid ""
 "Class for LDAP objects that will be also checked for groups retrieval "
 "(normally empty)"
 msgstr ""
-"فئة لكائنات LDAP التي سيتم التحقق منها أيضا لاسترجاعها المجموعات (عادة فارغة)"
+"فئة لكائنات LDAP التي سيتم التحقق منها أيضا لاسترجاعها للمجموعات (عادة فارغة)"
 
 #: auths/RegexLdap/Authenticator.py:73
 msgid "Regex LDAP Authenticator"
@@ -1332,7 +1335,7 @@ msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:181
 msgid "Invalid private key. "
-msgstr "المفتاح الخاص غير صالحة. "
+msgstr "المفتاح الخاص غير صالح. "
 
 #: auths/SAML_enterprise/SAML.py:201
 #, python-brace-format
@@ -1999,8 +2002,8 @@ msgid ""
 "Domain to join machines to (use FQDN form, Netbios name not supported for "
 "most operations)"
 msgstr ""
-"المجال للانضمام إلى آلات (استخدام FQDN النموذج، اسم Netbios غير معتمد من أجل "
-"معظم العمليات)"
+"المجال لضم آلات (استخدام FQDN النموذج، اسم Netbios غير معتمد من أجل معظم "
+"العمليات)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:36
 msgid "Account with rights to add machines to domain"
@@ -2025,23 +2028,23 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
 msgid "Machine Group"
-msgstr "مجموعة آلة"
+msgstr "مجموعة الات"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
 msgid ""
 "Group to which add machines on creation. If empty, no group will be used. "
 "(experimental)"
 msgstr ""
-"المجموعة التي إضافة آلات على خلق. إذا كان فارغاً، سيتم استخدام لا مجموعة. "
-"(تجريبية)"
+"المجموعة التي تضيف آلات بعد الخلق. إذا كانت فارغة، لن يتم استخدام أي مجموعة. "
+"(تجريبي)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 msgid "Server Hint"
-msgstr "ملقم تلميح"
+msgstr "تلميح ملقم "
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 msgid "In case of several AD servers, which one is preferred"
-msgstr "في حالة وجود عدة ملقمات إعلانات، واحد هو المفضل"
+msgstr "في حالة وجود عدة ملقمات إعلانات، احدها هو المفضل"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:49
 msgid "Must provide a domain!"
@@ -2295,11 +2298,11 @@ msgstr "تقرير أداء التجمعات UDS"
 
 #: reports/stats/pools_usage.py:87
 msgid "Services Asignation"
-msgstr "خدمات تعيين."
+msgstr " تعيين خدمات."
 
 #: reports/stats/pools_usage.py:101
 msgid "Service asignation by hour"
-msgstr "خدمات تعيين بساعة"
+msgstr "تعيين خدمات بساعة"
 
 #: reports/stats/pools_usage.py:105 reports/stats/pools_usage.py:283
 msgid "Hour"
@@ -2311,7 +2314,7 @@ msgstr "استخدام تجمعات في يوم"
 
 #: reports/stats/pools_usage.py:128
 msgid "Pools usage counters for an specific day"
-msgstr "برك استخدام عدادات ليوم معين"
+msgstr "استخدام عدادات تجمعات ليوم معين"
 
 #: reports/stats/pools_usage.py:133 reports/stats/usage_by_pool.py:189
 msgid "Date"
@@ -2785,7 +2788,7 @@ msgstr "إزالة الملفات المكررة"
 #: services/Nutanix_enterprise/NutanixService.py:91
 #: services/VCloud_enterprise/VCloudCloneService.py:57
 msgid "If active, found duplicates vApps for this service will be removed"
-msgstr "في حالة نشطة، سيتم إزالة التكرارات وجدت Vapps لهذه الخدمة"
+msgstr "إذا كانت نشطة، فستتم إزالة تطبيقات مكررة لهذه الخدمة"
 
 #: services/OVirt/OVirtLinkedService.py:56
 msgid "oVirt/RHEV Linked Clone"
@@ -2876,11 +2879,11 @@ msgstr "المهلة بالثواني لاتصال oVirt"
 
 #: services/OpenGnsys/OGService.py:56
 msgid "OpenGnsys Machines Service"
-msgstr "خدمة آلات أوبينجنسيس"
+msgstr "خدمة آلات OpenGnsys"
 
 #: services/OpenGnsys/OGService.py:60
 msgid "OpenGnsys physical machines"
-msgstr "الأجهزة الفعلية أوبينجنسيس"
+msgstr "الأجهزة الفعلية OpenGnsys"
 
 #: services/OpenGnsys/OGService.py:77 services/OpenNebula/LiveService.py:76
 #: services/OpenStack/LiveService.py:78
@@ -2907,32 +2910,33 @@ msgstr "صورة نظام التشغيل"
 
 #: services/OpenGnsys/OGService.py:120
 msgid "OpenGnsys Operating System Image"
-msgstr "صورة نظام التشغيل أوبينجنسيس"
+msgstr "صورة نظام التشغيل OpenGnsys"
 
 #: services/OpenGnsys/OGService.py:126
 msgid "Max. reservation time"
-msgstr "Max. reservation time"
+msgstr "الحد الأقصى لوقت الحجز"
 
 #: services/OpenGnsys/OGService.py:128
 msgid ""
 "Security parameter for OpenGnsys to keep reservations at most this hours"
-msgstr "المعلمة الأمن أوبينجنسيس لإبقاء التحفظات في معظم هذه الساعات"
+msgstr ""
+"المعلمة الأمن الحد الأقصى لوقت الحجز لإبقاء التحفظات في معظم هذه الساعات"
 
 #: services/OpenGnsys/Provider.py:77
 msgid "OpenGnsys Platform Provider"
-msgstr "موفر النظام الأساسي أوبينجنسيس"
+msgstr "موفر النظام الأساسي OpenGnsys"
 
 #: services/OpenGnsys/Provider.py:81
 msgid "OpenGnsys platform service provider (experimental)"
-msgstr "أوبينجنسيس منصة خدمة موفر (تجريبية)"
+msgstr "OpenGnsys موفر منصة خدمة  (تجريبية)"
 
 #: services/OpenGnsys/Provider.py:96
 msgid "OpenGnsys Host"
-msgstr "المضيف أوبينجنسيس"
+msgstr "المضيف OpenGnsys"
 
 #: services/OpenGnsys/Provider.py:97
 msgid "OpenGnsys Port (default is 443, and only ssl connection is allowed)"
-msgstr "ميناء أوبينجنسيس (الافتراضي هو 443، وهو يسمح باتصال ssl فقط)"
+msgstr "OpenGnsys Port (الافتراضي هو 443، وهو يسمح باتصال ssl فقط)"
 
 #: services/OpenGnsys/Provider.py:98
 msgid "Check Cert."
@@ -2943,38 +2947,38 @@ msgid ""
 "If checked, ssl certificate of OpenGnsys server must be valid (not self "
 "signed)"
 msgstr ""
-"إذا راجعت، شهادة ssl لملقم أوبينجنسيس يجب أن تكون سارية المفعول (لا يقبل "
+"إذا راجعت، شهادة ssl لملقم OpenGnsys يجب أن تكون سارية المفعول (لا يقبل "
 "التوقيع الداتي)"
 
 #: services/OpenGnsys/Provider.py:99
 msgid "User with valid privileges on OpenGnsys"
-msgstr "مستخدم لديه امتيازات صالحة في أوبينجنسيس"
+msgstr "مستخدم لديه امتيازات صالحة في OpenGnsys"
 
 #: services/OpenGnsys/Provider.py:100
 msgid "Password of the user of OpenGnsys"
-msgstr "كلمة المرور لمستخدم أوبينجنسيس"
+msgstr "كلمة المرور لمستخدم OpenGnsys"
 
 #: services/OpenGnsys/Provider.py:101
 msgid "UDS Server URL"
-msgstr "محدد موقع معلومات الخادم المصغرة"
+msgstr "محدد موقع معلومات الخادم UDS"
 
 #: services/OpenGnsys/Provider.py:101
 msgid "URL used by OpenGnsys to access UDS. If empty, UDS will guess it."
 msgstr ""
-"محدد موقع المعلومات المستخدمة من قبل أوبينجنسيس للوصول إلى مكاتب مصغرة. إذا "
-"كان فارغاً، سوف تخمين مصغراً عليه."
+"محدد موقع المعلومات المستخدمة من قبل OpenGnsys للوصول إلى UDS. إذا كان "
+"فارغاً، UDS سوف يخمين."
 
 #: services/OpenGnsys/Provider.py:106
 msgid "Timeout in seconds of connection to OpenGnsys"
-msgstr "المهلة بالثواني للاتصال أوبينجنسيس"
+msgstr "المهلة بالثواني للاتصال OpenGnsys"
 
 #: services/OpenGnsys/Provider.py:164
 msgid "OpenGnsys test connection passed"
-msgstr "أوبينجنسيس اختبار الاتصال تمرير"
+msgstr "OpenGnsys تمرير اختبار الاتصال "
 
 #: services/OpenGnsys/helpers.py:31
 msgid "All Labs"
-msgstr "كافة المعامل"
+msgstr "كافة المختبرات"
 
 #: services/OpenNebula/LiveService.py:55
 msgid "OpenNebula Live Images"
@@ -3210,8 +3214,7 @@ msgstr ""
 
 #: services/RDS_enterprise/RDSProvider.py:45
 msgid "User list for mapping. (Not used if User mapping is disabled)"
-msgstr ""
-"قائمة المستخدم لرسم الخرائط. (لا يستخدم إذا كان يتم تعطيل تعيين المستخدم)"
+msgstr "قائمة المستخدم لرسم الخرائط. (لا يستخدم إذا تم تعطيل تعيين المستخدم)"
 
 #: services/RDS_enterprise/RDSProvider.py:46
 msgid "User's password"
@@ -3227,7 +3230,7 @@ msgstr ""
 
 #: services/RDS_enterprise/RDSProvider.py:49
 msgid "Server Checking"
-msgstr "الملقم التحقق"
+msgstr " التحقق من الملقم"
 
 #: services/RDS_enterprise/RDSProvider.py:50
 msgid "If checked, the server will be checked before assigning or using it."
@@ -3421,7 +3424,7 @@ msgstr "المهلة بالثواني لاتصال vCloud"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:42
 msgid "VCloud Director Platform Provider"
-msgstr "VCloud المدير منصة موفر"
+msgstr "VCloud مدير موفر منصة"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:44
 msgid "Provides connection to vCloud Director platform"
@@ -3429,7 +3432,7 @@ msgstr "يوفر الاتصال بمنصة vCloud المدير"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:80
 msgid "Connection parameters seems correct"
-msgstr "معلمات الاتصال يبدو الصحيح"
+msgstr "يبدو أن معلمات التوصيل صحيحة"
 
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:190
 msgid "vCloud Provider: "
@@ -3437,23 +3440,23 @@ msgstr "vCloud الموفر: "
 
 #: services/VCloud_enterprise/VCloudCloneService.py:31
 msgid "VCloud Platform vApp"
-msgstr "فب منصة VCloud"
+msgstr "vApp منصة VCloud"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:33
 msgid "This service provides access to vApp based VDI"
-msgstr "توفر هذه الخدمة إمكانية الوصول إلى فاب على أساس VDI"
+msgstr "توفر هذه الخدمة إمكانية الوصول إلى vApp على أساس VDI"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:39
 msgid "Number of desired vApps to keep running waiting for an user"
-msgstr "عدد فابس المطلوب للحفاظ على تشغيل الانتظار للمستخدم"
+msgstr "عدد vApps المطلوب للحفاظ على تشغيل الانتظار للمستخدم"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:41
 msgid "Number of desired vApps to keep suspended waiting for use"
-msgstr "عدد فابس المطلوب تبقى معلقة في انتظار للاستخدام"
+msgstr "عدد vApps المطلوب تبقى معلقة في انتظار للاستخدام"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:53
 msgid "vDatacenter"
-msgstr "فداتاسينتير"
+msgstr "vDatacenter"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:54
 msgid "Virtual Datacenter"
@@ -3465,15 +3468,15 @@ msgstr "النشرة المصورة"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:59
 msgid "vApps source catalog"
-msgstr "كتالوج مصدر فابس"
+msgstr "لائحة مصدر vApps"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:68
 msgid "vApp Template"
-msgstr "فاب القالب"
+msgstr "vApp القالب"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:69
 msgid "vApp template for the service"
-msgstr "قالب فب للخدمة"
+msgstr "قالب vApp للخدمة"
 
 #: services/VCloud_enterprise/VCloudCloneService.py:71
 #: services/Vmware_enterprise/VCLinkedCloneService.py:85
@@ -3491,7 +3494,7 @@ msgstr ""
 
 #: services/VCloud_enterprise/VCloudCloneService.py:90
 msgid "Only vApp Templates with 1 VM are allowed"
-msgstr "مسموح فقط فب قوالب مع 1 VM"
+msgstr "مسموح فقط قوالب vApp  مع 1 VM"
 
 #: services/Vmware_enterprise/Helpers.py:72
 msgid "Local"
@@ -3559,10 +3562,15 @@ msgid "Fixed Machines Pool"
 msgstr "تجمع الأجهزة الثابتة"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
+#| msgid ""
+#| "This service provides access to a fixed group of selected machines on the "
+#| "Infrascruttur"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
-"Infrascruttur"
-msgstr "هذه الخدمة تتيح الدخول لمجموعة من الالات المصنفة مسبقا."
+"infrastructure"
+msgstr ""
+"توفر هذه الخدمة إمكانية الوصول إلى مجموعة ثابتة من الأجهزة المحددة في "
+"البنية التحتية"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
@@ -3591,7 +3599,7 @@ msgstr "تجمع الخدمات يحتوي على الات مرجعية "
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
 msgid "Base Machines"
-msgstr "آلات الأساسية"
+msgstr "آلات أساسية"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
 msgid "Base machines for this service"
@@ -3599,7 +3607,7 @@ msgstr "الأجهزة الأساسية لهذه الخدمة"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:91
 msgid "We need at least a machine"
-msgstr "نحن بحاجة على الأقل آلة"
+msgstr "نحن بحاجة لآلة على الأقل "
 
 #: services/Vmware_enterprise/VCFullCloneService.py:32
 msgid "Clone based - Full"
@@ -3621,7 +3629,7 @@ msgstr "Datastore لحفض الألات الإفتراضية "
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:33
 msgid "Clone based - Linked"
-msgstr "استنساخ على أساس--مرتبطة"
+msgstr "استنساخ على أساس--مرتبط"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:35
 msgid ""
@@ -4816,8 +4824,8 @@ msgid ""
 "If checked, the user will be able to upload/download files (if client "
 "browser supports it)"
 msgstr ""
-"إذا راجعت، المستخدم سوف تكون قادرة على تحميل/تنزيل الملفات (إذا كان العميل "
-"مستعرض يدعم ذلك)"
+"إذا كانت نشطة، المستخدم سوف تكون قادرة على تحميل/تنزيل الملفات (إذا كان "
+"العميل مستعرض يدعم ذلك)"
 
 #: transports/HTML5RDP/HTML5RDP.py:84
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:84
@@ -4867,7 +4875,7 @@ msgstr "الأمن"
 #: transports/HTML5RDP/HTML5RDP.py:100
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:100
 msgid "Connection security mode for Guacamole RDP connection"
-msgstr "وضع أمن الاتصال لاتصال RDP حبوبا"
+msgstr "وضع أمن الاتصال لاتصال RDP Guacamole"
 
 #: transports/HTML5RDP/HTML5RDP.py:103
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:103
@@ -4877,9 +4885,7 @@ msgstr "أي (السماح للملقم باختيار نوع المصادقة)"
 #: transports/HTML5RDP/HTML5RDP.py:104
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:104
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
-msgstr ""
-"برنامج التعمير والتنمية (التشفير \"القياسي برنامج التعمير والتنمية\". ينبغي "
-"أن تدعم كافة الملقمات)"
+msgstr "RDP (التشفير \"RDP\". ينبغي أن تدعم كافة الملقمات)"
 
 #: transports/HTML5RDP/HTML5RDP.py:105
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:105
@@ -4887,8 +4893,8 @@ msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
 msgstr ""
-"جيش التحرير الوطني (مصادقة \"طبقة شبكة الاتصال\". يتطلب اسم مستخدم صالح & "
-"كلمة المرور، أو سيفشل الاتصال)"
+"NLA (مصادقة \"طبقة شبكة الاتصال\". يتطلب اسم مستخدم صالح & كلمة المرور، أو "
+"سيفشل الاتصال)"
 
 #: transports/HTML5RDP/HTML5RDP.py:106
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:106
@@ -4920,8 +4926,8 @@ msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
 msgstr ""
-"بيانات الاعتماد فارغة (علامة التبويب بيانات اعتماد) مسموح فقط مع مستوى "
-"الأمان (علامة التبويب معلمات) بتعيين إلى \"برنامج التعمير والتنمية\""
+"بيانات الاعتماد فارغة (اعتمادبيانات علامة التبويب) مسموح فقط مع مستوى الأمان "
+"(معلمات علامة التبويب) بتعيين \"RDP\""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
 msgid "HTML5 RDS for vApps"
@@ -4929,7 +4935,7 @@ msgstr "RDS HTML5 Vapps"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
 msgid "RDS protocol using HTML5 client for vApps"
-msgstr "بروتوكول RDS باستخدام عميل HTML5 فابس"
+msgstr "بروتوكول RDS باستخدام عميل HTML5 vApps"
 
 #: transports/NX/NXTransport.py:57 transports/NX/TSNXTransport.py:62
 msgid "NX v3.5"
@@ -5029,11 +5035,11 @@ msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
 msgid "PCoIP Cloud Access"
-msgstr "وصول سحابة بكويب"
+msgstr "PCoIP الوصول السحابي"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
 msgid "PCoIP protocol using Teradici Cloud Access."
-msgstr "تيراديسي سحابة الوصول باستخدام بروتوكول بكويب."
+msgstr "بروتوكول الوصول السحابي باستخدام  Teradici PCoIP"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 msgid "If not empty, this domain will be always used as credential domain"
@@ -5094,7 +5100,7 @@ msgstr "تمكين الحافظة"
 #: transports/RDP/BaseRDPTransport.py:70
 #: transports/RDS_enterprise/BaseRDSTransport.py:72
 msgid "If checked, copy-paste functions will be allowed"
-msgstr "إذا راجعت، سيسمح لمهام نسخ ولصق"
+msgstr "إذا تم تحديدها، فسيتم السماح بوظائف النسخ واللصق."
 
 #: transports/RDP/BaseRDPTransport.py:71
 #: transports/X2GO/BaseX2GOTransport.py:103
@@ -5103,7 +5109,7 @@ msgstr "تمكين الصوت"
 
 #: transports/RDP/BaseRDPTransport.py:71
 msgid "If checked, sound will be redirected."
-msgstr "إذا كان التحقق، ستتم إعادة توجيه الصوت."
+msgstr "إذا تم تحديدها، ستتم إعادة توجيه الصوت."
 
 #: transports/RDP/BaseRDPTransport.py:72
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
@@ -5127,7 +5133,7 @@ msgstr "عمق اللون"
 #: transports/RDP/BaseRDPTransport.py:91
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid "Color depth for this conextion"
-msgstr "عمق الألوان لهذا كونيكسشن"
+msgstr "عمق الألوان لهذا الاتصال"
 
 #: transports/RDP/BaseRDPTransport.py:100
 msgid "Wallpaper/theme"
@@ -5173,7 +5179,7 @@ msgstr "إعادة توجيه المجلد الرئيسي"
 
 #: transports/RDP/BaseRDPTransport.py:107
 msgid "If checked, Linux client will try to redirect /home local folder"
-msgstr "إذا راجعت، سيحاول عميل لينكس إعادة توجيه مجلد محلي منزلي"
+msgstr "إذا تم تحديدها، سيحاول عميل Linux إعادة توجيه مجلد محلي منزلي"
 
 #: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
@@ -5213,7 +5219,7 @@ msgstr ""
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
 msgid "RDP"
-msgstr "برنامج التعمير والتنمية"
+msgstr "RDP"
 
 #: transports/RDP/RDPTransport.py:57
 msgid "RDP Protocol. Direct connection."
@@ -5371,7 +5377,7 @@ msgstr "إعادة توجيه البطاقة الذكية"
 
 #: transports/SPICE/BaseSPICETransport.py:98
 msgid "If checked, SPICE protocol will allow smartcard redirection."
-msgstr "إذا راجعت، سيسمح البروتوكول التوابل توجيه البطاقة الذكية."
+msgstr "إذا تم تحديدها، سيسمح البروتوكول SPICE توجيه البطاقة الذكية."
 
 #: transports/SPICE/BaseSPICETransport.py:104
 msgid "Enable USB"
@@ -5379,11 +5385,11 @@ msgstr "تمكين USB"
 
 #: transports/SPICE/BaseSPICETransport.py:105
 msgid "If checked, USB redirection will be allowed."
-msgstr "إذا راجعت، سوف يكون السماح بإعادة توجيه الناقل التسلسلي العام."
+msgstr "إذا تم تحديدها، سوف يكون السماح بإعادة توجيه الناقل التسلسلي العام."
 
 #: transports/SPICE/BaseSPICETransport.py:111
 msgid "New USB Auto Sharing"
-msgstr "الناقل التسلسلي العام الجديد تبادل السيارات"
+msgstr "جديد USB المشاركة التلقائية"
 
 #: transports/SPICE/BaseSPICETransport.py:112
 msgid "Auto-redirect USB devices when plugged in."
@@ -5391,15 +5397,15 @@ msgstr "إعادة التوجيه التلقائي أجهزة USB عند توص�
 
 #: transports/SPICE/SPICETransport.py:52 transports/SPICE/TSPICETransport.py:60
 msgid "SPICE"
-msgstr "التوابل"
+msgstr "SPICE"
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Protocol. Direct connection."
-msgstr "بروتوكول التوابل. الاتصال المباشر."
+msgstr "بروتوكول SPICE. الاتصال المباشر."
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Protocol. Tunneled connection."
-msgstr "بروتوكول التوابل. اتصال النفق."
+msgstr "بروتوكول SPICE. اتصال النفق."
 
 #: transports/X2GO/BaseX2GOTransport.py:76
 msgid "Show fullscreen"
@@ -5411,7 +5417,7 @@ msgstr "سطح المكتب"
 
 #: transports/X2GO/BaseX2GOTransport.py:96
 msgid "vAPP"
-msgstr "فب"
+msgstr "vAPP"
 
 #: transports/X2GO/BaseX2GOTransport.py:97
 msgid ""
@@ -5479,11 +5485,11 @@ msgstr "X2Go"
 
 #: transports/X2GO/TX2GOTransport.py:60
 msgid "X2Go access (Experimental). Tunneled connection."
-msgstr "X2Go الوصول (التجريبية). اتصال النفق."
+msgstr "X2Go إتصال (تجريبية). اتصال النفق."
 
 #: transports/X2GO/X2GOTransport.py:55
 msgid "X2Go access (Experimental). Direct connection."
-msgstr "X2Go الوصول (التجريبية). الاتصال المباشر."
+msgstr "X2Go إتصال (تجريبية). الاتصال المباشر."
 
 #: web/errors.py:72
 msgid "Unknown error"
