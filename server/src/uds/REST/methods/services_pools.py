@@ -190,7 +190,7 @@ class ServicesPools(ModelHandler):
             'name': 'ignores_unused',
             'value': False,
             'label': ugettext('Ignores unused'),
-            'tooltip': ugettext('If active, UDS will not try to detect and remove assigned but not used user services.'),
+            'tooltip': ugettext('If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'),
             'type': gui.InputField.CHECKBOX_TYPE,
             'order': 112,
             'tab': ugettext('Advanced'),
