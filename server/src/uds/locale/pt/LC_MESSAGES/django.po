@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-08 18:47+0100\n"
-"PO-Revision-Date: 2017-12-21 18:10+0000\n"
+"POT-Creation-Date: 2018-01-09 14:34+0100\n"
+"PO-Revision-Date: 2018-01-08 17:49+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -455,12 +455,15 @@ msgid "Ignores unused"
 msgstr "Ignora não utilizados"
 
 #: REST/methods/services_pools.py:193
+#| msgid ""
+#| "If active, UDS will not try to detect and remove assigned but not used "
+#| "user services."
 msgid ""
-"If active, UDS will not try to detect and remove assigned but not used user "
-"services."
+"If the option is enabled, UDS will not attempt to detect and remove the user "
+"services assigned but not in use."
 msgstr ""
-"Se ativo, UDS não tentará detectar e remover o usuário atribuído mas não "
-"usado serviços."
+"Se a opção estiver habilitada, UDS não tentará detectar e remover o usuário "
+"serviços atribuído, mas não no usam."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -3613,12 +3616,15 @@ msgid "Fixed Machines Pool"
 msgstr "Pool de máquinas fixas"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
+#| msgid ""
+#| "This service provides access to a fixed group of selected machines on the "
+#| "Infrascruttur"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
-"Infrascruttur"
+"infrastructure"
 msgstr ""
 "Este serviço fornece acesso a um grupo fixo de máquinas selecionadas sobre o "
-"Infrascruttur"
+"infraestrutura"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
@@ -4991,8 +4997,8 @@ msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
 msgstr ""
-"Tempo, em segundos, para o cliente do HTML5 recarregar os dados do corretor UDS permitido. "
-"Recomenda-se o valor padrão de 60."
+"Tempo, em segundos, para o cliente do HTML5 recarregar os dados do corretor "
+"UDS permitido. Recomenda-se o valor padrão de 60."
 
 #: transports/HTML5RDP/HTML5RDP.py:128
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:128

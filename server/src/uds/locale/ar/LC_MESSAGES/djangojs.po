@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Abdel Baaddi <abaaddi@virtualcable.es>, 2016-2017
+# Abdel Baaddi <abaaddi@virtualcable.es>, 2016-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-08 18:47+0100\n"
-"PO-Revision-Date: 2018-01-08 17:33+0000\n"
+"POT-Creation-Date: 2018-01-09 14:34+0100\n"
+"PO-Revision-Date: 2018-01-09 12:27+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -670,7 +670,7 @@ msgstr "نشر"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:22
 msgid "Cancel publication?"
-msgstr "إلغاء المنشور؟"
+msgstr "إلغاء النشر؟"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:39
 msgid "Force Cancel"
@@ -678,7 +678,7 @@ msgstr "إلغاء بالقوة"
 
 #: static/tmp_js/gui-d-servicespools-publications.js:67
 msgid "Failed creating publication"
-msgstr "فشل في إنشاء المنشور"
+msgstr "فشل في الإنشاء "
 
 #: static/tmp_js/gui-d-servicespools-transports.js:29
 msgid "Add transport"

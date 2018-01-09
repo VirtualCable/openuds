@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-08 18:47+0100\n"
+"POT-Creation-Date: 2018-01-09 14:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -445,8 +445,8 @@ msgstr ""
 
 #: REST/methods/services_pools.py:193
 msgid ""
-"If active, UDS will not try to detect and remove assigned but not used user "
-"services."
+"If the option is enabled, UDS will not attempt to detect and remove the user "
+"services assigned but not in use."
 msgstr ""
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
@@ -3477,7 +3477,7 @@ msgstr ""
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
-"Infrascruttur"
+"infrastructure"
 msgstr ""
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
