@@ -71,7 +71,7 @@ class Transports(ModelHandler):
                             'name': 'nets_positive',
                             'value': True,
                             'label': ugettext('Network access'),
-                            'tooltip': ugettext('If checked, the transport will be enabled for the selected networks.If unchecked, transport will be disabled for selected networks'),
+                            'tooltip': ugettext('If checked, the transport will be enabled for the selected networks. If unchecked, transport will be disabled for selected networks'),
                             'type': 'checkbox',
                             'order': 100,  # At end
                         }), {
@@ -114,7 +114,6 @@ class Transports(ModelHandler):
 
     def beforeSave(self, fields):
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])
-
 
     def afterSave(self, item):
         try:
