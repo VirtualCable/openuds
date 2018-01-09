@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-09 14:34+0100\n"
-"PO-Revision-Date: 2018-01-08 17:49+0000\n"
+"POT-Creation-Date: 2018-01-09 22:37+0100\n"
+"PO-Revision-Date: 2018-01-09 13:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -442,8 +442,8 @@ msgstr ""
 #: REST/methods/services_pools.py:185
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
-"care with this, because the user will have the \"poser\" to delete it's own "
-"service"
+"careful with this, because the user will have the \"power\" to delete it's "
+"own service"
 msgstr ""
 
 #: REST/methods/services_pools.py:192
@@ -466,7 +466,9 @@ msgid "Pool group"
 msgstr "Pool Taldea"
 
 #: REST/methods/services_pools.py:209
-msgid "Pool group for this pool (for pool clasify on display)"
+#, fuzzy
+#| msgid "Pool group for this pool (for pool clasify on display)"
+msgid "Pool group for this pool (for pool classify on display)"
 msgstr "Pool honentzako Pool taldea (pool-ak erakusterakoan antolatzeko)"
 
 #: REST/methods/services_pools.py:217
@@ -583,8 +585,12 @@ msgid "Network access"
 msgstr "Sare sarrera"
 
 #: REST/methods/transports.py:74
+#, fuzzy
+#| msgid ""
+#| "If checked, the transport will be enabled for the selected networks.If "
+#| "unchecked, transport will be disabled for selected networks"
 msgid ""
-"If checked, the transport will be enabled for the selected networks.If "
+"If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
 "Aktibo izan ezkero, autaturiko sareetan garraioak gaituko dira. Ostean, "

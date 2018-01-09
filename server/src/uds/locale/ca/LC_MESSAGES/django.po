@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-09 14:34+0100\n"
-"PO-Revision-Date: 2018-01-08 17:49+0000\n"
+"POT-Creation-Date: 2018-01-09 22:37+0100\n"
+"PO-Revision-Date: 2018-01-09 13:34+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
@@ -440,8 +440,8 @@ msgstr ""
 #: REST/methods/services_pools.py:185
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
-"care with this, because the user will have the \"poser\" to delete it's own "
-"service"
+"careful with this, because the user will have the \"power\" to delete it's "
+"own service"
 msgstr ""
 
 #: REST/methods/services_pools.py:192
@@ -464,7 +464,9 @@ msgid "Pool group"
 msgstr "Grup de pool"
 
 #: REST/methods/services_pools.py:209
-msgid "Pool group for this pool (for pool clasify on display)"
+#, fuzzy
+#| msgid "Pool group for this pool (for pool clasify on display)"
+msgid "Pool group for this pool (for pool classify on display)"
 msgstr ""
 "Grup de pool per a aquest pool  (per al pool classificau-ho a la pantalla)"
 
@@ -588,8 +590,12 @@ msgid "Network access"
 msgstr "Accés a la xarxa"
 
 #: REST/methods/transports.py:74
+#, fuzzy
+#| msgid ""
+#| "If checked, the transport will be enabled for the selected networks.If "
+#| "unchecked, transport will be disabled for selected networks"
 msgid ""
-"If checked, the transport will be enabled for the selected networks.If "
+"If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
 "Si està seleccionat, el transport s'habilitarà per a les xarxes "
@@ -3609,14 +3615,10 @@ msgid "Fixed Machines Pool"
 msgstr ""
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
-#, fuzzy
-#| msgid ""
-#| "This service provides access to Linked Clones machines on a Virtual Center"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
 msgstr ""
-"Aquest servei proporciona accés a màquines Linked clone d'un Virtual Center"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54

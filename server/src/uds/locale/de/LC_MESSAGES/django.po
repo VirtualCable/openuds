@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-09 14:34+0100\n"
-"PO-Revision-Date: 2018-01-08 17:49+0000\n"
+"POT-Creation-Date: 2018-01-09 22:37+0100\n"
+"PO-Revision-Date: 2018-01-09 13:35+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -443,28 +443,30 @@ msgid "Allow removal by users"
 msgstr "Entfernen von Benutzern zulassen"
 
 #: REST/methods/services_pools.py:185
+#| msgid ""
+#| "If active, the user will be allowed to remove the service \"manually\". "
+#| "Be care with this, because the user will have the \"poser\" to delete "
+#| "it's own service"
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
-"care with this, because the user will have the \"poser\" to delete it's own "
-"service"
+"careful with this, because the user will have the \"power\" to delete it's "
+"own service"
 msgstr ""
 "Wenn aktiv, wird der Benutzer den Dienst \"manuell\" zu entfernen. Werden "
-"kümmern, weil der Benutzer die \"Poser\" zu löschen müssen sie eigene Service"
+"damit vorsichtig sein, da der Benutzer die \"macht\" zu löschen müssen die "
+"eigenen service"
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
 msgstr "Ignoriert unbenutzt"
 
 #: REST/methods/services_pools.py:193
-#| msgid ""
-#| "If active, UDS will not try to detect and remove assigned but not used "
-#| "user services."
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
 msgstr ""
-"Wenn die Option aktiviert ist, versucht UDS nicht, erkennen und entfernen den Benutzer "
-"Dienstleistungen zugeordnet aber nicht in Gebrauch."
+"Wenn die Option aktiviert ist, versucht UDS nicht, erkennen und entfernen "
+"den Benutzer Dienstleistungen zugeordnet aber nicht in Gebrauch."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -476,9 +478,9 @@ msgid "Pool group"
 msgstr "Schwimmbad-Gruppe"
 
 #: REST/methods/services_pools.py:209
-msgid "Pool group for this pool (for pool clasify on display)"
-msgstr ""
-"Schwimmbad-Gruppe für diesen Pool (für Schwimmbad-Clasify auf dem Display)"
+#| msgid "Pool group for this pool (for pool clasify on display)"
+msgid "Pool group for this pool (for pool classify on display)"
+msgstr "Gruppe für diesen Pool zu bündeln, (für Pool einordnen auf dem Display)"
 
 #: REST/methods/services_pools.py:217
 msgid "Initial available services"
@@ -598,12 +600,15 @@ msgid "Network access"
 msgstr "Netzwerkzugriff"
 
 #: REST/methods/transports.py:74
+#| msgid ""
+#| "If checked, the transport will be enabled for the selected networks.If "
+#| "unchecked, transport will be disabled for selected networks"
 msgid ""
-"If checked, the transport will be enabled for the selected networks.If "
+"If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
-"Wenn aktiviert, wird der Transport für die ausgewählte Netze aktiviert.If "
-"ein unkontrollierter Verkehr für ausgewählte Netzwerke deaktiviert wird"
+"Wenn diese Option aktiviert, wird der Transport für die ausgewählten Netze aktiviert werden. If "
+"ungeprüft, Transport für ausgewählte Netze deaktiviert wird"
 
 #: REST/methods/transports.py:81 templates/uds/html5/index.html:132
 #: templates/uds/semantic/index.html:29
@@ -3626,15 +3631,12 @@ msgid "Fixed Machines Pool"
 msgstr "Festen Maschinen Pool"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
-#| msgid ""
-#| "This service provides access to a fixed group of selected machines on the "
-#| "Infrascruttur"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
 msgstr ""
-"Dieser Service bietet Zugriff auf eine feste Gruppe von ausgewählten Maschinen auf der "
-"Infrastruktur"
+"Dieser Service bietet Zugriff auf eine feste Gruppe von ausgewählten "
+"Maschinen auf der Infrastruktur"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54
