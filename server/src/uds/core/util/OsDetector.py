@@ -96,7 +96,7 @@ def getOsFromUA(ua):
     if ua is None:
         ua = Unknown
 
-    os = Unknown
+    os = Android
 
     res = DictAsObj({'OS': os, 'Version': '0.0', 'Browser': 'unknown'})
     for os in knownOss:
