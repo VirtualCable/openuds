@@ -187,7 +187,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         resumeHandle = 0
         while True:
             users, _, resumeHandle = win32net.NetLocalGroupGetMembers(None, groupName, 1, resumeHandle, 32768)
-            if user in [u['name'] for u in users]:
+            if user.lower() in [u['name'].lower() for u in users]:
                 useraAlreadyInGroup = True
                 break
             if resumeHandle == 0:

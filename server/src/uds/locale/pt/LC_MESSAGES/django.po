@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-09 14:34+0100\n"
-"PO-Revision-Date: 2018-01-08 17:49+0000\n"
+"POT-Creation-Date: 2018-01-09 22:37+0100\n"
+"PO-Revision-Date: 2018-01-09 13:35+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
@@ -441,23 +441,24 @@ msgid "Allow removal by users"
 msgstr "Permitir a remoção de usuários"
 
 #: REST/methods/services_pools.py:185
+#| msgid ""
+#| "If active, the user will be allowed to remove the service \"manually\". "
+#| "Be care with this, because the user will have the \"poser\" to delete "
+#| "it's own service"
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
-"care with this, because the user will have the \"poser\" to delete it's own "
-"service"
+"careful with this, because the user will have the \"power\" to delete it's "
+"own service"
 msgstr ""
-"Se ativo, o usuário poderá remover o serviço \"manualmente\". Ser Cuidado "
-"com isso, pois o usuário terá o \"impostor\" para excluir o seu próprio "
-"serviço"
+"Se ativo, o usuário poderá remover o serviço \"manualmente\". Ser "
+"Cuidado com isso, porque o usuário terá o \"poder\" para excluí-lo do "
+"serviço próprio"
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
 msgstr "Ignora não utilizados"
 
 #: REST/methods/services_pools.py:193
-#| msgid ""
-#| "If active, UDS will not try to detect and remove assigned but not used "
-#| "user services."
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -475,9 +476,9 @@ msgid "Pool group"
 msgstr "Grupo de piscina"
 
 #: REST/methods/services_pools.py:209
-msgid "Pool group for this pool (for pool clasify on display)"
-msgstr ""
-"Grupo de consórcio para este pool (para piscina classificá em exibição)"
+#| msgid "Pool group for this pool (for pool clasify on display)"
+msgid "Pool group for this pool (for pool classify on display)"
+msgstr "Grupo para esta piscina da piscina (para piscina classificar em exibição)"
 
 #: REST/methods/services_pools.py:217
 msgid "Initial available services"
@@ -596,11 +597,14 @@ msgid "Network access"
 msgstr "Acesso à rede"
 
 #: REST/methods/transports.py:74
+#| msgid ""
+#| "If checked, the transport will be enabled for the selected networks.If "
+#| "unchecked, transport will be disabled for selected networks"
 msgid ""
-"If checked, the transport will be enabled for the selected networks.If "
+"If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
-"Se marcada, o transporte será habilitado para as redes selecionadas.Se "
+"Se marcada, o transporte será habilitado para as redes selecionadas. Se "
 "desmarcada, o transporte será desabilitado para redes selecionadas"
 
 #: REST/methods/transports.py:81 templates/uds/html5/index.html:132
@@ -3616,9 +3620,6 @@ msgid "Fixed Machines Pool"
 msgstr "Pool de máquinas fixas"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
-#| msgid ""
-#| "This service provides access to a fixed group of selected machines on the "
-#| "Infrascruttur"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"

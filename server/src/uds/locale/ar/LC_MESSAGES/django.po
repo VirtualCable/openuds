@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-09 14:34+0100\n"
-"PO-Revision-Date: 2018-01-09 13:16+0000\n"
+"POT-Creation-Date: 2018-01-09 22:37+0100\n"
+"PO-Revision-Date: 2018-01-09 13:37+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -438,28 +438,30 @@ msgid "Allow removal by users"
 msgstr "السماح بمسح المستخدم"
 
 #: REST/methods/services_pools.py:185
+#| msgid ""
+#| "If active, the user will be allowed to remove the service \"manually\". "
+#| "Be care with this, because the user will have the \"poser\" to delete "
+#| "it's own service"
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
-"care with this, because the user will have the \"poser\" to delete it's own "
-"service"
+"careful with this, because the user will have the \"power\" to delete it's "
+"own service"
 msgstr ""
-"إذا نشط، سيسمح للمستخدم بإزالة الخدمة \"يدوياً\". كن حذراً، المستخدم سيتوفر "
-"على صلاحيات الإزالة يدويا"
+"إذا نشط، سيسمح للمستخدم بإزالة الخدمة \"يدوياً\". تكون "
+"حذراً مع هذا، لأنه سوف يكون لدى المستخدم \"السلطة\" حذفه في "
+"الخدمة الخاصة"
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
 msgstr "تجاهل غير المستخدمة"
 
 #: REST/methods/services_pools.py:193
-#| msgid ""
-#| "If active, UDS will not try to detect and remove assigned but not used "
-#| "user services."
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
 msgstr ""
-"إذا تم تمكين هذا الخيار، لن يحاول مصغراً لكشف وإزالة المستخدم "
-"الخدمات المعينة ولكن ليس قيد الاستخدام."
+"إذا تم تمكين الخيار، فإن UDS لا تحاول الكشف عن خدمات المستخدم التي تم "
+"تعيينها ولكن التي ليست قيد الاستخدام."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -471,8 +473,9 @@ msgid "Pool group"
 msgstr "تجمع مجموعات"
 
 #: REST/methods/services_pools.py:209
-msgid "Pool group for this pool (for pool clasify on display)"
-msgstr "تجمع مجموعات لهذا التجمع  (لترتيب التجمعات عند العرض)"
+#| msgid "Pool group for this pool (for pool clasify on display)"
+msgid "Pool group for this pool (for pool classify on display)"
+msgstr "تجمع الفريق لهذا التجمع (لتصنيف تجمع في العرض)"
 
 #: REST/methods/services_pools.py:217
 msgid "Initial available services"
@@ -590,12 +593,15 @@ msgid "Network access"
 msgstr "الوصول إلى شبكة الاتصال"
 
 #: REST/methods/transports.py:74
+#| msgid ""
+#| "If checked, the transport will be enabled for the selected networks.If "
+#| "unchecked, transport will be disabled for selected networks"
 msgid ""
-"If checked, the transport will be enabled for the selected networks.If "
+"If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
-"إذا كانت محددة، سيتم تمكين النقل لشبكات مختارة. إذا كان غير محدد، سيتم تعطيل "
-"النقل لشبكات مختارة"
+"إذا كانت محددة، سيتم تمكين النقل لشبكات مختارة. إذا كان "
+"دون رادع، سيتم تعطيل النقل لشبكات مختارة"
 
 #: REST/methods/transports.py:81 templates/uds/html5/index.html:132
 #: templates/uds/semantic/index.html:29
@@ -3562,15 +3568,12 @@ msgid "Fixed Machines Pool"
 msgstr "تجمع الأجهزة الثابتة"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
-#| msgid ""
-#| "This service provides access to a fixed group of selected machines on the "
-#| "Infrascruttur"
 msgid ""
 "This service provides access to a fixed group of selected machines on the "
 "infrastructure"
 msgstr ""
-"توفر هذه الخدمة إمكانية الوصول إلى مجموعة ثابتة من الأجهزة المحددة في "
-"البنية التحتية"
+"توفر هذه الخدمة إمكانية الوصول إلى مجموعة ثابتة من الأجهزة المحددة في البنية "
+"التحتية"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:47
 #: services/Vmware_enterprise/VCLinkedCloneService.py:54

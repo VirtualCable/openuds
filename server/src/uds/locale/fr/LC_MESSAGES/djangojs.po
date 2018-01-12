@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Abdel Baaddi <abaaddi@virtualcable.es>, 2016
+# Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-09 14:34+0100\n"
-"PO-Revision-Date: 2018-01-09 13:18+0000\n"
+"POT-Creation-Date: 2018-01-09 22:37+0100\n"
+"PO-Revision-Date: 2018-01-09 19:11+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -412,7 +412,7 @@ msgstr "Erreur de création de transport"
 
 #: static/tmp_js/gui-d-connectivity.js:64
 msgid "Edit transport"
-msgstr "Edit de transport"
+msgstr "Modification du transport"
 
 #: static/tmp_js/gui-d-connectivity.js:64
 msgid "Transport saving error"
@@ -528,7 +528,7 @@ msgstr "Actif"
 
 #: static/tmp_js/gui-d-services.js:147
 msgid "Service information"
-msgstr "Service d'information"
+msgstr " Information sur le service"
 
 #: static/tmp_js/gui-d-services.js:205
 msgid "Edit service"

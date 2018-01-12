@@ -121,7 +121,7 @@ gui.providers.link = (event) ->
         services = new GuiElement(servicesAPI, "services-" + selected[0].type)
         tmpLogTable = undefined
         servicesTable = services.table(
-          icon: 'services'
+          icon: 'providers'
           container: "services-placeholder"
           doNotLoadData: true
           rowSelect: "multi"
