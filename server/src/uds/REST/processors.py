@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 # from django.utils import simplejson as json
 # import ujson as json
 import json
-from xml_marshaller import xml_marshaller
+# from xml_marshaller import xml_marshaller
 import datetime
 import time
 import types
@@ -99,7 +99,7 @@ class ContentProcessor(object):
             return None
         elif isinstance(obj, (bool, int, float, six.text_type)):
             return obj
-        elif isinstance(obj, long):
+        elif six.PY2 and isinstance(obj, six.types.LongType):
             return int(obj)
         elif isinstance(obj, dict):
             res = {}
@@ -153,20 +153,21 @@ class JsonProcessor(MarshallerProcessor):
     extensions = ['json']
     marshaller = json
 
-
 # ---------------
 # XML Processor
 # ---------------
-class XMLProcessor(MarshallerProcessor):
-    """
-    Provides XML content processor
-    """
-    mime_type = 'application/xml'
-    extensions = ['xml']
-    marshaller = xml_marshaller
+#===============================================================================
+# class XMLProcessor(MarshallerProcessor):
+#     """
+#     Provides XML content processor
+#     """
+#     mime_type = 'application/xml'
+#     extensions = ['xml']
+#     marshaller = xml_marshaller
+#===============================================================================
 
 
-processors_list = (JsonProcessor, XMLProcessor)
+processors_list = (JsonProcessor,)
 default_processor = JsonProcessor
 available_processors_mime_dict = dict((cls.mime_type, cls) for cls in processors_list)
 available_processors_ext_dict = {}

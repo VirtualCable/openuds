@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 class LinuxOsManager(osmanagers.OSManager):
     typeName = _('Linux OS Manager')
     typeType = 'LinuxManager'
-    typeDescription = _('Os Manager to control linux virtual machines')
+    typeDescription = _('Os Manager to control Linux virtual machines')
     iconFile = 'losmanager.png'
 
     servicesType = (serviceTypes.VDI,)
@@ -71,7 +71,7 @@ class LinuxOsManager(osmanagers.OSManager):
         length=4,
         defvalue=-1,
         rdonly=False, order=11,
-        tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max idle time).'),
+        tooltip=_('Maximum idle time (in seconds) before session is automatically closed to the user (<= 0 means no max idle time).'),
         required=True)
 
     def __setProcessUnusedMachines(self):
@@ -221,7 +221,7 @@ class LinuxOsManager(osmanagers.OSManager):
         return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)])
 
     def unmarshal(self, s):
-        data = s.split('\t')
+        data = s.decode('utf8').split('\t')
         if data[0] == 'v1':
             self._onLogout = data[1]
             self._idle = -1

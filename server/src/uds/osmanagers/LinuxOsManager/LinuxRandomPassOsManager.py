@@ -98,7 +98,7 @@ class LinuxRandomPassManager(LinuxOsManager):
         return '\t'.join(['v1', self._userAccount, base.encode('hex')])
 
     def unmarshal(self, s):
-        data = s.split('\t')
+        data = s.decode('utf8').split('\t')
         if data[0] == 'v1':
             self._userAccount = data[1]
             super(LinuxRandomPassManager, self).unmarshal(data[2].decode('hex'))
