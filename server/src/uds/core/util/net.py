@@ -106,7 +106,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
         val = 0
         for n in args:
             val += start * int(n)
-            start <<= 8
+            start >>= 8
         return val
 
     def maskFromBits(nBits):

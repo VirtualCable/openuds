@@ -17,4 +17,6 @@ def generateUuid():
 
 
 def processUuid(uuid):
-    return six.text_type(uuid).lower()
+    if isinstance(uuid, six.binary_type):
+        uuid = uuid.decode('utf8')
+    return uuid.lower()

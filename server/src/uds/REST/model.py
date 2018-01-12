@@ -54,8 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-10-25'
-
+__updated__ = '2018-01-12'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -241,7 +240,7 @@ class BaseModelHandler(Handler):
             i = item.getInstance()
             i.initGui()  # Defaults & stuff
             for key, value in six.iteritems(i.valuesDict()):
-                if type(value) in (unicode, str):
+                if isinstance(value, six.string_types):
                     value = {"true": True, "false": False}.get(value, value)  # Translate "true" & "false" to True & False (booleans)
                 logger.debug('{0} = {1}'.format(key, value))
                 res[key] = value
@@ -629,7 +628,7 @@ class ModelHandler(BaseModelHandler):
     # gui related
     def getGui(self, type_):
         self.invalidRequestException()
-        return None # Will never reach this because previous raises an exception
+        return None  # Will never reach this because previous raises an exception
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception
@@ -798,6 +797,7 @@ class ModelHandler(BaseModelHandler):
                 self.fillIntanceFields(val, res)
                 return res
             except Exception:
+                logger.exception('Got Exception looking for item')
                 self.invalidItemException()
 
         # nArgs > 1

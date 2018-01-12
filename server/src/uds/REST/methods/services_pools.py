@@ -33,7 +33,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
-from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup
+from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
 from uds.models.CalendarAction import CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_PUBLISH
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
@@ -92,7 +92,6 @@ class ServicesPools(ModelHandler):
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
 
     custom_methods = [('setFallbackAccess', True), ('actionsList', True)]
-
 
     def item_as_dict(self, item):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -276,7 +275,7 @@ class ServicesPools(ModelHandler):
             'type': gui.InputField.CHOICE_TYPE,
             'tab': ugettext('Advanced'),
             'order': 131,
-        },{
+        }, {
             'name': 'allow_users_remove',
             'value': False,
             'label': ugettext('Allow removal by users'),
@@ -328,10 +327,8 @@ class ServicesPools(ModelHandler):
             except Exception:
                 raise RequestError(ugettext('This service requires an OS Manager'))
 
-
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max((int(fields['initial_srvs']), int(fields['cache_l1_srvs']), int(fields['max_srvs'])))
-
 
             # *** ACCOUNT ***
             accountId = fields['account_id']

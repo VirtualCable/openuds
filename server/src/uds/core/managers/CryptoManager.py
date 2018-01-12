@@ -135,11 +135,13 @@ class CryptoManager(object):
         if obj is None:
             obj = six.text_type(datetime.datetime.now()) + six.text_type(self._counter)
             self._counter += 1
+        elif isinstance(obj, six.binary_type):
+            obj = obj.decode('utf8')  # To binary
         else:
-            obj = six.text_type(hash(obj))
+            obj = '{}'.format(obj)
 
         if six.PY2:
-            obj = six.binary_type(obj)
+            obj = obj.encode('utf8')
 
         return six.text_type(uuid.uuid5(self._namespace, obj)).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 
