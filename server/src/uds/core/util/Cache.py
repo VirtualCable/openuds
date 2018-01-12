@@ -67,7 +67,11 @@ class Cache(object):
             expired = now > c.created + timedelta(seconds=c.validity)
             if expired:
                 return defValue
-            val = pickle.loads(encoders.decode(c.value, 'base64'))
+            try:
+                val = pickle.loads(encoders.decode(c.value, 'base64'))
+            except ValueError:
+                c.delete()
+                return defValue
             Cache.hits += 1
             return val
         except uds.models.Cache.DoesNotExist:  # @UndefinedVariable

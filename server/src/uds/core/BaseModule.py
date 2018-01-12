@@ -171,7 +171,7 @@ class Module(UserInterface, Environmentable, Serializable):
         data = file_.read()
         file_.close()
         if inBase64 == True:
-            return encoders.encode(data, 'base64')
+            return encoders.encode(data, 'base64', asText=True)
         else:
             return data
 
