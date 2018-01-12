@@ -41,6 +41,7 @@ logger = logging.getLogger(__name__)
 
 # Knowns OSs
 Linux = 'Linux'
+ChromeOS = 'CrOS'
 WindowsPhone = 'Windows Phone'
 Windows = 'Windows'
 Macintosh = 'Mac'
@@ -49,9 +50,9 @@ iPad = 'iPad'  #
 iPhone = 'iPhone'  # In fact, these are IOS both, but we can diferentiate it...
 Unknown = 'Unknown'
 
-knownOss = (WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone)  # Android is linux also, so it is cheched on first place
+knownOss = (WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone, ChromeOS)  # Android is linux also, so it is cheched on first place
 
-allOss = tuple(knownOss) + tuple(Unknown)
+allOss = (knownOss) + (Unknown,)
 desktopOss = (Linux, Windows, Macintosh)
 mobilesODD = list(set(allOss) - set(desktopOss))
 
