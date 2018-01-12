@@ -36,6 +36,7 @@ import uds.models.Cache
 from uds.models.Util import getSqlDatetime
 from uds.core.util import encoders
 from datetime import datetime, timedelta
+import six
 import hashlib
 import logging
 import pickle
@@ -44,18 +45,20 @@ logger = logging.getLogger(__name__)
 
 
 class Cache(object):
+    # Simple hits vs missses counters
     hits = 0
     misses = 0
 
     DEFAULT_VALIDITY = 60
 
     def __init__(self, owner):
-        self._owner = owner.encode('utf-8')
-        # Simple hits vs missses counters
+        self._owner = owner.encode('utf-8') if isinstance(owner, six.text_type) else owner
 
     def __getKey(self, key):
         h = hashlib.md5()
-        h.update(self._owner + key.encode('utf-8'))
+        if isinstance(key, six.text_type):
+            key = key.encode('utf8')
+        h.update(self._owner + key)
         return h.hexdigest()
 
     def get(self, skey, defValue=None):

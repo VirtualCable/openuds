@@ -38,6 +38,7 @@ from uds.core.util import encoders
 import hashlib
 import logging
 import pickle
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -45,17 +46,17 @@ logger = logging.getLogger(__name__)
 class Storage(object):
 
     def __init__(self, owner):
-        self._owner = owner.encode('utf-8')
+        self._owner = owner.encode('utf-8') if isinstance(owner, six.text_type) else owner
 
     def __getKey(self, key):
         h = hashlib.md5()
         h.update(self._owner)
-        h.update(key.encode('utf-8'))
+        h.update(key.encode('utf8') if isinstance(key, six.text_type) else key)
         return h.hexdigest()
 
     def saveData(self, skey, data, attr1=None):
         key = self.__getKey(skey)
-        if isinstance(data, unicode):
+        if isinstance(data, six.text_type):
             data = data.encode('utf-8')
         data = encoders.encode(data, 'base64')
         attr1 = '' if attr1 is None else attr1
@@ -69,7 +70,7 @@ class Storage(object):
         return self.saveData(skey, data)
 
     def putPickle(self, skey, data, attr1=None):
-        return self.saveData(skey, pickle.dumps(data), attr1)
+        return self.saveData(skey, pickle.dumps(data, protocol=2), attr1)  # Protocol 2 is compatible with python 2.7. This will be unnecesary when fully migrated
 
     def updateData(self, skey, data, attr1=None):
         self.saveData(skey, data, attr1)

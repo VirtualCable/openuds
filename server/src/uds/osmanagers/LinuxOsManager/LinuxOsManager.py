@@ -218,7 +218,7 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)])
+        return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)]).encode('utf8')
 
     def unmarshal(self, s):
         data = s.decode('utf8').split('\t')
