@@ -169,7 +169,7 @@ class GroupsManager(object):
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.
         '''
-        for grp in self.checkAllGroup(groupName):
+        for grp in self.checkAllGroups(groupName):
             if grp['valid']:
                 return True
         return False
