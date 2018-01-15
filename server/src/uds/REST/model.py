@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-01-12'
+__updated__ = '2018-01-15'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -399,13 +399,14 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         Evaluates if it is a new element or a "modify" operation (based on if it has parameter),
         and invokes "saveItem" with parent & item (that can be None for a new Item)
         """
-        # logger.debug("Detail args for PUT: {0}, {1}".format(self._args, self._params))
+        logger.debug("Detail args for PUT: {0}, {1}".format(self._args, self._params))
 
         parent = self._kwargs['parent']
 
-        item = None
-        # Create new if no args
-        if len(self._args) == 1:
+        if len(self._args) == 0:
+            # Create new
+            item = None
+        elif len(self._args) == 1:
             item = self._args[0]
         else:
             self.invalidRequestException()
@@ -701,7 +702,7 @@ class ModelHandler(BaseModelHandler):
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
     def processDetail(self):
-        logger.debug('Processing detail {} for user {}'.format(self._path, self._user))
+        logger.debug('Processing detail {} for with params {}'.format(self._path, self._params))
         try:
             item = self.model.objects.filter(uuid=self._args[0])[0]
             # If we do not have access to parent to, at least, read...

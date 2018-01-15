@@ -31,7 +31,7 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
@@ -145,7 +145,7 @@ class RegexLdap(auths.Authenticator):
                 attr = line[:equalPos]
             else:
                 attr = line
-            res.append(attr.encode('utf-8'))
+            res.append(tools.b2(attr))
         return res
 
     def __processField(self, field, attributes):
@@ -169,7 +169,7 @@ class RegexLdap(auths.Authenticator):
 
             for vv in val:
                 try:
-                    v = vv.decode('utf-8')
+                    v = tools.b2(vv)
                     logger.debug('v, vv: {}, {}'.format(v, vv))
                     srch = re.search(pattern, v, re.IGNORECASE)
                     logger.debug("Found against {0}: {1} ".format(v, srch.groups()))
@@ -264,25 +264,29 @@ class RegexLdap(auths.Authenticator):
         return self._connection
 
     def __getUser(self, username):
+        username = ldap.filter.escape_filter_chars(tools.b2(username))
         try:
-
             con = self.__connection()
-            filter_ = b'(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
-            attrlist = [self._userIdAttr.encode('utf-8')] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
+            filter_ = tools.b2('(&(objectClass={})({}={}))'.format(self._userClass, self._userIdAttr, username))
+            attrlist = [tools.b2(self._userIdAttr)] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
 
             logger.debug('Getuser filter_: {}, attr list: {}'.format(filter_, attrlist))
             res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
                                    filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
 
-            usr = dict((k, '') for k in attrlist)
-            dct = {k.lower(): v for k, v in six.iteritems(res[1])}
-            usr.update(dct)
+            logger.debug('Res: {}'.format(res))
+            if res[0] is None:
+                return None
+            usr = dict((tools.u2(k.lower()), ['']) for k in attrlist)
+            for k, v in six.iteritems(res[1]):
+                usr[tools.u2(k.lower())] = list(i.decode('utf8') for i in v)
+
             usr.update({'dn': res[0], '_id': username})
 
             # If altClass
             if self._altClass is not None and self._altClass != '':
                 logger.debug('Has alt class {}'.format(self._altClass))
-                filter_ = b'(&(objectClass=%s)(%s=%s))' % (self._altClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
+                filter_ = tools.b2('(&(objectClass={})({}={}))'.format(self._altClass, self._userIdAttr, username))
                 logger.debug('Get Alternate list filter: {}, attrlist: {}'.format(filter_, attrlist))
                 # Get alternate class objects
                 res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
@@ -294,22 +298,14 @@ class RegexLdap(auths.Authenticator):
                     logger.debug('*** Item: {}'.format(r))
 
                     for k, v in six.iteritems(r[1]):
-                        kl = k.lower()
+                        kl = tools.b2(k.lower())
                         # If already exists the field
                         if kl in usr:
-                            # Convert existint to list, so we can add a new value
-                            if not isinstance(usr[kl], (list, tuple)):
-                                usr[kl] = [usr[kl]]
-
-                            # Convert values to list, if not list
-                            if not isinstance(v, (list, tuple)):
-                                v = [v]
-
                             # Now append to existing values
                             for x in v:
-                                usr[kl].append(x)
+                                usr[kl].append(x.decode('utf8'))
                         else:
-                            usr[kl] = v
+                            usr[kl] = list(i.decode('utf8') for i in v)
 
             logger.debug('Usr: {0}'.format(usr))
             return usr
@@ -322,7 +318,6 @@ class RegexLdap(auths.Authenticator):
 
     def __getUserRealName(self, usr):
         return ' '.join(self.__processField(self._userNameAttr, usr))
-        # return ' '.join([ (type(usr.get(id_, '')) is list and ' '.join(( str(k) for k in usr.get(id_, ''))) or str(usr.get(id_, ''))) for id_ in self._userNameAttr.split(',') ]).strip()
 
     def authenticate(self, username, credentials, groupsManager):
         """
