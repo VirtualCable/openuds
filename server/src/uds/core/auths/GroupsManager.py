@@ -41,7 +41,7 @@ import re
 import inspect
 import logging
 
-__updated__ = '2015-01-23'
+__updated__ = '2018-01-15'
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +170,7 @@ class GroupsManager(object):
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.
         """
-        for grp in self.checkAllGroup(groupName):
+        for grp in self.checkAllGroups(groupName):
             if grp['valid']:
                 return True
         return False
