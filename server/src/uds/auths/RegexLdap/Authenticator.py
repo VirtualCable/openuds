@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
@@ -38,15 +37,15 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import auths
 from uds.core.auths.Exceptions import AuthenticatorException
+from uds.core.util import tools
 
 import six
 import ldap
 import ldap.filter
 import re
 import logging
-import six
 
-__updated__ = '2017-10-05'
+__updated__ = '2018-01-15'
 
 logger = logging.getLogger(__name__)
 
@@ -201,10 +200,10 @@ class RegexLdap(auths.Authenticator):
             self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password,
             self._timeout, self._ldapBase, self._userClass, self._userIdAttr,
             self._groupNameAttr, self._userNameAttr, self._altClass
-        ])
+        ]).encode('utf8')
 
     def unmarshal(self, val):
-        data = val.split('\t')
+        data = val.decode('utf8').split('\t')
         if data[0] == 'v1':
             logger.debug("Data: {0}".format(data[1:]))
             self._host, self._port, self._ssl, self._username, self._password, \
@@ -253,7 +252,7 @@ class RegexLdap(auths.Authenticator):
                 l.simple_bind_s(who=username, cred=password)
             except ldap.LDAPError as e:
                 str_ = _('Ldap connection error: ')
-                if isinstance(e.message, dict):
+                if hasattr(e, 'message') and isinstance(e.message, dict):
                     str_ += ', '.join((e.message.get('info', ''), e.message.get('desc')))
                 else:
                     str_ += six.text_type(e)

@@ -40,8 +40,9 @@ import datetime
 
 import sys
 import os
+import six
 
-__updated__ = '2017-01-31'
+__updated__ = '2018-01-15'
 
 
 class DictAsObj(object):
@@ -49,6 +50,7 @@ class DictAsObj(object):
     Returns a mix between a dict and an obj
     Can be accesses as .xxxx or ['xxx']
     """
+
     def __init__(self, dct=None, **kwargs):
         if dct is not None:
             self.__dict__.update(dct)
@@ -79,6 +81,7 @@ def timestampAsStr(stamp, format_='SHORT_DATETIME_FORMAT'):
     format_ = formats.get_format(format_)
     return filters.date(datetime.datetime.fromtimestamp(stamp), format_)
 
+
 def secondsToString(seconds):
     seconds = int(seconds)
     minutes = seconds / 60
@@ -97,3 +100,21 @@ def secondsToString(seconds):
     res.append(ugettext('{} seconds').format(seconds))
 
     return ', '.join(res)
+
+
+def b2(s):
+    """
+    Returns a b'' string on python2, or str on python3
+    """
+    if six.PY2:
+        return s.encode('utf8')
+    return s
+
+
+def u2(s):
+    """
+    returns an u'' string on python2, or str on python3
+    """
+    if six.PY2:
+        return s.decode('utf8')
+    return s

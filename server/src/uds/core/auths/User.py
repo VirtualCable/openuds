@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 import logging
 
-__updated__ = '2014-10-30'
+__updated__ = '2018-01-15'
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ class User(object):
         If it does not exists, it creates one default from authenticator and
         returns it.
         """
-        from GroupsManager import GroupsManager
+        from .GroupsManager import GroupsManager
 
         if self._grpsManager is None:
             self._grpsManager = GroupsManager(self._manager.dbAuthenticator())

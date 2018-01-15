@@ -11,5 +11,5 @@
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/uds/src</path>
 </pydev_pathproperty>
-<pydev_property name="org.python.pydev.PYTHON_ADDITIONAL_GRAMMAR_VALIDATION">3.6</pydev_property>
+
 </pydev_project>
