@@ -31,7 +31,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-03-24'
+__updated__ = '2018-01-16'
 
 from django.db import models
 from django.http import HttpResponse
@@ -40,11 +40,11 @@ from uds.models.UUIDModel import UUIDModel
 from uds.models.Util import getSqlDatetime
 from django.db.models import signals
 
+from uds.core.util import encoders
+
 from PIL import Image as PILImage  # @UnresolvedImport
 import io
 
-
-import base64
 import logging
 
 logger = logging.getLogger(__name__)
@@ -75,11 +75,11 @@ class Image(UUIDModel):
 
     @staticmethod
     def encode64(data):
-        return base64.encodestring(data).replace('\n', '')  # Removes \n
+        return encoders.encode(data, 'base64', asText=True).replace('\n', '')  # Removes \n
 
     @staticmethod
     def decode64(data64):
-        return base64.decodestring(data64)
+        return encoders.decode(data64, 'base64')
 
     @staticmethod
     def prepareForDb(data):
@@ -189,5 +189,6 @@ class Image(UUIDModel):
         toDelete = kwargs['instance']
 
         logger.debug('Deleted image {0}'.format(toDelete))
+
 
 signals.pre_delete.connect(Image.beforeDelete, sender=Image)

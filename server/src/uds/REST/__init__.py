@@ -145,22 +145,16 @@ class Dispatcher(View):
                 response[k] = val
             return response
         except RequestError as e:
-            logger.exception('Error processing request')
             return http.HttpResponseBadRequest(six.text_type(e))
         except ResponseError as e:
-            logger.exception('Error processing request')
             return http.HttpResponseServerError(six.text_type(e))
         except NotSupportedError as e:
-            logger.exception('Error processing request')
             return http.HttpResponseBadRequest(six.text_type(e))
         except AccessDenied as e:
-            logger.exception('Error processing request')
             return http.HttpResponseForbidden(six.text_type(e))
         except NotFound as e:
-            logger.exception('Error processing request')
             return http.HttpResponseNotFound(six.text_type(e))
         except HandlerError as e:
-            logger.exception('Error processing request')
             return http.HttpResponseBadRequest(six.text_type(e))
         except Exception as e:
             logger.exception('Error processing request')

@@ -63,7 +63,7 @@ class Images(ModelHandler):
     ]
 
     def beforeSave(self, fields):
-        fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))
+        fields['data'] = Image.prepareForDb(Image.decode64(fields['data'].encode('utf8')))
 
     def afterSave(self, item):
         # Updates the thumbnail and re-saves it

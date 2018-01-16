@@ -52,7 +52,6 @@ from uds.models import UserService
 
 logger = logging.getLogger(__name__)
 
-
 # Actor key, configurable in Security Section of administration interface
 actorKey = Config.Config.section(Config.SECURITY_SECTION).value('Master Key',
                                                                 cryptoManager().uuid(datetime.datetime.now()).replace('-', ''),

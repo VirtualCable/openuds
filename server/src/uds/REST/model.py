@@ -45,16 +45,16 @@ from uds.core.util.model import processUuid
 from uds.models import Tag
 
 import six
+from six.moves import filter
 import fnmatch
 import re
-import itertools
 import types
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-01-15'
+__updated__ = '2018-01-16'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -690,7 +690,7 @@ class ModelHandler(BaseModelHandler):
                     return False
                 return True
 
-            res = list(itertools.ifilter(fltr_function, data))
+            res = list(filter(fltr_function, data))
 
             logger.debug('After filtering: {}'.format(res))
             return res

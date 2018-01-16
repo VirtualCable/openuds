@@ -39,7 +39,7 @@ from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths.Exceptions import InvalidUserException
 import logging
 
-__updated__ = '2014-11-11'
+__updated__ = '2018-01-16'
 
 logger = logging.getLogger(__name__)
 
@@ -209,14 +209,14 @@ class Authenticator(Module):
         This method will allow us to know where to do redirection in case
         we need to use callback for authentication
         """
-        from auth import authCallbackUrl
+        from .auth import authCallbackUrl
         return authCallbackUrl(self.dbAuthenticator())
 
     def infoUrl(self):
         """
         Helper method to return info url for this authenticator
         """
-        from auth import authInfoUrl
+        from .auth import authInfoUrl
         return authInfoUrl(self.dbAuthenticator())
 
     @classmethod

@@ -65,6 +65,7 @@ class Config(object):
     CHOICE_FIELD = 4  # Choice fields must set its parameters on global "configParams" (better by calling ".setParams" method)
 
     class _Value(object):
+
         def __init__(self, section, key, default='', crypt=False, longText=False, **kwargs):
             logger.debug('Var: {} {} KWARGS: {}'.format(section, key, kwargs))
             self._type = kwargs.get('type', -1)
@@ -171,6 +172,7 @@ class Config(object):
                 logger.info("Could not save configuration key {0}.{1}".format(self._section.name(), self._key))
 
     class _Section(object):
+
         def __init__(self, sectionName):
             self._sectionName = sectionName
 

@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
@@ -45,7 +44,7 @@ import ldap
 import logging
 import six
 
-__updated__ = '2016-04-18'
+__updated__ = '2018-01-16'
 
 logger = logging.getLogger(__name__)
 
@@ -131,12 +130,14 @@ class SimpleLDAPAuthenticator(Authenticator):
             self._userNameAttr)
 
     def marshal(self):
-        return '\t'.join(['v1',
-                          self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
-                          self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr])
+        return '\t'.join([
+            'v1',
+            self._host, self._port, gui.boolToStr(self._ssl), self._username, self._password, self._timeout,
+            self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr
+        ]).encode('utf8')
 
     def unmarshal(self, str_):
-        data = str_.split('\t')
+        data = str_.decode('utf8').split('\t')
         if data[0] == 'v1':
             logger.debug("Data: {0}".format(data[1:]))
             self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr = data[1:]
