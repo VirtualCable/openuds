@@ -112,8 +112,8 @@ class Connection(Handler):
                              'not_accesible': not servicePool.isAccessAllowed(),
                              'to_be_replaced': False,  # Manually assigned will not be autoremoved never
                              'transports': trans,
-                             'maintenance': svr.isInMaintenance(),
-                             'in_use': svr.in_use})
+                             'maintenance': servicePool.isInMaintenance(),
+                             'in_use': servicePool.in_use})
 
         logger.debug(services)
 
@@ -143,7 +143,7 @@ class Connection(Handler):
                              'not_accesible': not servicePool.isAccessAllowed(),
                              'to_be_replaced': servicePool.toBeReplaced(),
                              'transports': trans,
-                             'maintenance': svr.isInMaintenance(),
+                             'maintenance': servicePool.isInMaintenance(),
                              'in_use': in_use})
 
         logger.debug('Services: {0}'.format(services))
@@ -164,7 +164,9 @@ class Connection(Handler):
                 'protocol': 'unknown',
                 'ip': ip
             }
-            ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
+            logger.debug('ip: {}, userService: {}, iads: {}, trans: {}, itrans: {}'.format(ip, userService, iads, trans, itrans))
+            if doNotCheck is False:
+                ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
             return Connection.result(result=ci)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
