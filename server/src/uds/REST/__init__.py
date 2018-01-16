@@ -145,16 +145,22 @@ class Dispatcher(View):
                 response[k] = val
             return response
         except RequestError as e:
+            logger.exception('Error processing request')
             return http.HttpResponseBadRequest(six.text_type(e))
         except ResponseError as e:
+            logger.exception('Error processing request')
             return http.HttpResponseServerError(six.text_type(e))
         except NotSupportedError as e:
+            logger.exception('Error processing request')
             return http.HttpResponseBadRequest(six.text_type(e))
         except AccessDenied as e:
+            logger.exception('Error processing request')
             return http.HttpResponseForbidden(six.text_type(e))
         except NotFound as e:
+            logger.exception('Error processing request')
             return http.HttpResponseNotFound(six.text_type(e))
         except HandlerError as e:
+            logger.exception('Error processing request')
             return http.HttpResponseBadRequest(six.text_type(e))
         except Exception as e:
             logger.exception('Error processing request')
@@ -207,5 +213,6 @@ class Dispatcher(View):
             __import__(__name__ + '.' + package + '.' + name, globals(), locals(), [], 0)
 
         Dispatcher.registerSubclasses(Handler.__subclasses__())  # @UndefinedVariable
+
 
 Dispatcher.initialize()

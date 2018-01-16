@@ -16,6 +16,7 @@ from uds.core.managers.CryptoManager import CryptoManager
 from uds.core import osmanagers
 from .WindowsOsManager import WindowsOsManager
 from uds.core.util import log
+from uds.core.util import encoders
 
 import logging
 
@@ -58,7 +59,6 @@ class WinRandomPassManager(WindowsOsManager):
 
         return WindowsOsManager.processUserPassword(self, service, username, password)
 
-
     def genPassword(self, service):
         import random
         import string
@@ -80,14 +80,14 @@ class WinRandomPassManager(WindowsOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v1', self._userAccount, CryptoManager.manager().encrypt(self._password), base.encode('hex')])
+        return '\t'.join(['v1', self._userAccount, CryptoManager.manager().encrypt(self._password), encoders.encode(base, 'hex', asText=True)]).encode('utf8')
 
     def unmarshal(self, s):
-        data = s.split('\t')
+        data = s.decode('utf8').split('\t')
         if data[0] == 'v1':
             self._userAccount = data[1]
             self._password = CryptoManager.manager().decrypt(data[2])
-            super(WinRandomPassManager, self).unmarshal(data[3].decode('hex'))
+            super(WinRandomPassManager, self).unmarshal(encoders.decode(data[3], 'hex'))
 
     def valuesDict(self):
         dic = super(WinRandomPassManager, self).valuesDict()

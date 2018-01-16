@@ -31,6 +31,8 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+from __future__ import unicode_literals
+
 from uds.core.services import UserDeployment
 from uds.core.util.State import State
 from uds.core.util import log
@@ -39,6 +41,7 @@ from uds.services.Xen.xen_client import XenPowerState
 
 import pickle
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -76,16 +79,30 @@ class XenLinkedDeployment(UserDeployment):
         """
         Does nothing right here, we will use envoronment storage in this sample
         """
-        return '\1'.join(['v1', self._name, self._ip, self._mac, self._vmid, self._reason, pickle.dumps(self._queue), self._task])
+        return six.b('\1').join([
+            six.b('v1'),
+            self._name.encode('utf8'),
+            self._ip.encode('utf8'),
+            self._mac.encode('utf8'),
+            self._vmid.encode('utf8'),
+            self._reason.encode('utf8'),
+            pickle.dumps(self._queue, protocol=0),
+            self._task.encode('utf8')
+        ])
 
     def unmarshal(self, str_):
         """
         Does nothing here also, all data are keeped at environment storage
         """
-        vals = str_.split('\1')
-        if vals[0] == 'v1':
-            self._name, self._ip, self._mac, self._vmid, self._reason, queue, self._task = vals[1:]
-            self._queue = pickle.loads(queue)
+        vals = str_.split(six.b('\1'))
+        if vals[0] == six.b('v1'):
+            self._name = vals[1].decode('utf8')
+            self._ip = vals[2].decode('utf8')
+            self._mac = vals[3].decode('utf8')
+            self._vmid = vals[4].decode('utf8')
+            self._reason = vals[5].decode('utf8')
+            self._queue = pickle.loads(vals[6])
+            self._task = vals[7].decode('utf8')
 
     def getName(self):
         """
@@ -179,7 +196,6 @@ class XenLinkedDeployment(UserDeployment):
             return self.__error('Machine is not available anymore')
 
         return State.FINISHED
-
 
     def notifyReadyFromOsManager(self, data):
         # Here we will check for suspending the VM (when full ready)
@@ -322,7 +338,6 @@ class XenLinkedDeployment(UserDeployment):
         self._task = self.service().startDeployFromTemplate(name, comments, templateId)
         if self._task is None:
             raise Exception('Can\'t create machine')
-
 
     def __remove(self):
         """

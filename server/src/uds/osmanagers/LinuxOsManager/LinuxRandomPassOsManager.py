@@ -37,6 +37,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core import osmanagers
 from uds.osmanagers.LinuxOsManager import LinuxOsManager
 from uds.core.util import log
+from uds.core.util import encoders
 
 import logging
 
@@ -95,13 +96,13 @@ class LinuxRandomPassManager(LinuxOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v1', self._userAccount, base.encode('hex')])
+        return '\t'.join(['v1', self._userAccount, encoders.encode(base, 'hex', asText=True)]).encode('utf8')
 
     def unmarshal(self, s):
         data = s.decode('utf8').split('\t')
         if data[0] == 'v1':
             self._userAccount = data[1]
-            super(LinuxRandomPassManager, self).unmarshal(data[2].decode('hex'))
+            super(LinuxRandomPassManager, self).unmarshal(encoders.decode(data[2], 'hex'))
 
     def valuesDict(self):
         dic = super(LinuxRandomPassManager, self).valuesDict()

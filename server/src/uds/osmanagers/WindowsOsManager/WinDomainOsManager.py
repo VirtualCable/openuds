@@ -16,6 +16,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core.managers.CryptoManager import CryptoManager
 from uds.core import osmanagers
 from uds.core.util import log
+from uds.core.util import encoders
 import dns.resolver
 import ldap
 from .WindowsOsManager import WindowsOsManager
@@ -294,10 +295,16 @@ class WinDomainOsManager(WindowsOsManager):
         '''
         Serializes the os manager data so we can store it in database
         '''
-        return '\t'.join(['v3', self._domain, self._ou, self._account, CryptoManager.manager().encrypt(self._password), base.encode('hex'), self._group, self._serverHint])
+        return '\t'.join([
+            'v3',
+            self._domain, self._ou, self._account,
+            CryptoManager.manager().encrypt(self._password),
+            encoders.encode(base, 'hex', asText=True),
+            self._group, self._serverHint]
+        ).encode('utf8')
 
     def unmarshal(self, s):
-        data = s.split('\t')
+        data = s.decode('utf8').split('\t')
         if data[0] in ('v1', 'v2', 'v3'):
             self._domain = data[1]
             self._ou = data[2]
@@ -314,7 +321,7 @@ class WinDomainOsManager(WindowsOsManager):
         else:
             self._serverHint = ''
 
-        super(WinDomainOsManager, self).unmarshal(data[5].decode('hex'))
+        super(WinDomainOsManager, self).unmarshal(encoders.decode(data[5], 'hex'))
 
     def valuesDict(self):
         dct = super(WinDomainOsManager, self).valuesDict()

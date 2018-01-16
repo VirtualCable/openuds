@@ -182,7 +182,7 @@ class WindowsOsManager(osmanagers.OSManager):
             # We get the userService logged hostname & ip and returns this
             ip, hostname = userService.getConnectionSource()
             deadLine = userService.deployed_service.getDeadline()
-            if userService.getProperty('actor_version', None) >= '2.0.0':
+            if userService.getProperty('actor_version', '0.0.0') >= '2.0.0':
                 ret = "{0}\t{1}\t{2}".format(ip, hostname, 0 if deadLine is None else deadLine)
             else:
                 ret = "{0}\t{1}".format(ip, hostname)
@@ -261,10 +261,10 @@ class WindowsOsManager(osmanagers.OSManager):
         """
         Serializes the os manager data so we can store it in database
         """
-        return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)])
+        return '\t'.join(['v2', self._onLogout, six.text_type(self._idle)]).encode('utf8')
 
     def unmarshal(self, s):
-        data = s.split('\t')
+        data = s.decode('utf8').split('\t')
         try:
             if data[0] == 'v1':
                 self._onLogout = data[1]
