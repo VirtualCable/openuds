@@ -164,7 +164,6 @@ class Connection(Handler):
                 'protocol': 'unknown',
                 'ip': ip
             }
-            logger.debug('ip: {}, userService: {}, iads: {}, trans: {}, itrans: {}'.format(ip, userService, iads, trans, itrans))
             if doNotCheck is False:
                 ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
             return Connection.result(result=ci)
