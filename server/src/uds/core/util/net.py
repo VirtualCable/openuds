@@ -59,12 +59,12 @@ def longToIp(n):
     convert long int to dotted quad string
     '''
     try:
-        d = 256 * 256 * 256
+        d = 1 << 24
         q = []
         while d > 0:
             m, n = divmod(n, d)
-            q.append(str(m))
-            d = d / 256
+            q.append(str(m))  # As m is an integer, this works on py2 and p3 correctly
+            d >>= 8
 
         return '.'.join(q)
     except:
@@ -97,7 +97,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
         val = 0
         for n in args:
             val += start * int(n)
-            start /= 256
+            start >>= 8
         return val
 
     def maskFromBits(nBits):
