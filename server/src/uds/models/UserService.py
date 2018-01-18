@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2017-11-29'
+__updated__ = '2018-01-18'
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +170,8 @@ class UserService(UUIDModel):
         except Exception as e:
             # The publication to witch this item points to, does not exists
             self.publication = None
-            logger.error("Got exception at getInstance of an userService {0} : {1}".format(e.__class__, e))
+            logger.exception("Got exception at getInstance of an userService {}".format(self))
+            logger.error()
         if serviceInstance.deployedType is None:
             raise Exception('Class {0} needs deployedType but it is not defined!!!'.format(serviceInstance.__class__.__name__))
         us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance, publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)
@@ -386,7 +387,6 @@ class UserService(UUIDModel):
 
         self.deployed_service.account.stopUsageAccounting(self)
 
-
     def isUsable(self):
         '''
         Returns if this service is usable
@@ -533,6 +533,7 @@ class UserService(UUIDModel):
         log.clearLogs(toDelete)
 
         logger.debug('Deleted user service {0}'.format(toDelete))
+
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(UserService.beforeDelete, sender=UserService)

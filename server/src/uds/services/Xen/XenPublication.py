@@ -51,7 +51,6 @@ class XenPublication(Publication):
     _state = ''
     _task = ''
 
-
     suggestedTime = 20  # : Suggested recheck time if publication is unfinished in seconds
 
     def initialize(self):
@@ -75,14 +74,14 @@ class XenPublication(Publication):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task])
+        return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task]).encode('utf8')
 
     def unmarshal(self, data):
         """
         deserializes the data and loads it inside instance.
         """
         logger.debug('Data: {0}'.format(data))
-        vals = data.split('\t')
+        vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
             self._name, self._reason, self._destroyAfter, self._templateId, self._state, self._task = vals[1:]
 
@@ -129,7 +128,6 @@ class XenPublication(Publication):
             self._state = 'error'
             self._reason = str(e)
             return State.ERROR
-
 
         return State.RUNNING
 

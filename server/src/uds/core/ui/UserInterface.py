@@ -958,7 +958,7 @@ class UserInterface(object):
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))
         except Exception:
-            logger.exception('Exception on unserialization')
+            logger.exception('Exception on unserialization on {}'.format(self.__class__))
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
