@@ -38,6 +38,7 @@ from uds.core.ui.UserInterface import gui
 from uds.core import auths
 from uds.core.auths.Exceptions import AuthenticatorException
 from uds.core.util import tools
+from uds.core.util import ldaputil
 
 import six
 import ldap
@@ -45,7 +46,7 @@ import ldap.filter
 import re
 import logging
 
-__updated__ = '2018-01-15'
+__updated__ = '2018-01-24'
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +146,7 @@ class RegexLdap(auths.Authenticator):
                 attr = line[:equalPos]
             else:
                 attr = line
-            res.append(tools.b2(attr))
+            res.append(attr)
         return res
 
     def __processField(self, field, attributes):
@@ -167,10 +168,8 @@ class RegexLdap(auths.Authenticator):
 
             logger.debug('Pattern: {0}'.format(pattern))
 
-            for vv in val:
+            for v in val:
                 try:
-                    v = tools.b2(vv)
-                    logger.debug('v, vv: {}, {}'.format(v, vv))
                     srch = re.search(pattern, v, re.IGNORECASE)
                     logger.debug("Found against {0}: {1} ".format(v, srch.groups()))
                     if srch is None:
@@ -178,6 +177,7 @@ class RegexLdap(auths.Authenticator):
                     res.append(''.join(srch.groups()))
                 except Exception:
                     pass  # Ignore exceptions here
+        logger.debug('Res: {}'.format(res))
         return res
 
     def valuesDict(self):
@@ -225,93 +225,36 @@ class RegexLdap(auths.Authenticator):
                 self._groupNameAttr, self._userNameAttr, self._altClass = data[1:]
             self._ssl = gui.strToBool(self._ssl)
 
-    def __connection(self, username=None, password=None):
-        if self._connection is None or username is not None:  # We want this method also to check credentials
-            l = None
-            cache = False
-            try:
-                if password is not None:
-                    password = password.encode('utf-8')
+    def __connection(self):
+        """
+        Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
+        @return: Connection established
+        @raise exception: If connection could not be established
+        """
+        if self._connection is None:  # We want this method also to check credentials
+            self._connection = ldaputil.connection(self._username, self._password, self._host, ssl=self._ssl, timeout=self._timeout, debug=False)
 
-                # ldap.set_option(ldap.OPT_DEBUG_LEVEL, 9)
-                ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
-                schema = self._ssl and 'ldaps' or 'ldap'
-                port = self._port != '389' and ':' + self._port or ''
-                uri = "%s://%s%s" % (schema, self._host, port)
-                logger.debug('Ldap uri: {0}'.format(uri))
-                l = ldap.initialize(uri=uri)
-                l.set_option(ldap.OPT_REFERRALS, 0)
-                l.network_timeout = l.timeout = int(self._timeout)
-                l.protocol_version = ldap.VERSION3
-
-                if username is None:
-                    cache = True
-                    username = self._username
-                    password = self._password
-
-                l.simple_bind_s(who=username, cred=password)
-            except ldap.LDAPError as e:
-                str_ = _('Ldap connection error: ')
-                if hasattr(e, 'message') and isinstance(e.message, dict):
-                    str_ += ', '.join((e.message.get('info', ''), e.message.get('desc')))
-                else:
-                    str_ += six.text_type(e)
-                raise Exception(str_)
-            if cache is True:
-                self._connection = l
-            else:
-                return l  # Do not cache nor overwrite "global" connection
         return self._connection
 
+    def __connectAs(self, username, password):
+        return ldaputil.connection(username, password, self._host, ssl=self._ssl, timeout=self._timeout, debug=False)
+
     def __getUser(self, username):
-        username = ldap.filter.escape_filter_chars(tools.b2(username))
-        try:
-            con = self.__connection()
-            filter_ = tools.b2('(&(objectClass={})({}={}))'.format(self._userClass, self._userIdAttr, username))
-            attrlist = [tools.b2(self._userIdAttr)] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr)
-
-            logger.debug('Getuser filter_: {}, attr list: {}'.format(filter_, attrlist))
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
-                                   filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
-
-            logger.debug('Res: {}'.format(res))
-            if res[0] is None:
-                return None
-            usr = dict((tools.u2(k.lower()), ['']) for k in attrlist)
-            for k, v in six.iteritems(res[1]):
-                usr[tools.u2(k.lower())] = list(i.decode('utf8') for i in v)
-
-            usr.update({'dn': res[0], '_id': username})
-
-            # If altClass
-            if self._altClass is not None and self._altClass != '':
-                logger.debug('Has alt class {}'.format(self._altClass))
-                filter_ = tools.b2('(&(objectClass={})({}={}))'.format(self._altClass, self._userIdAttr, username))
-                logger.debug('Get Alternate list filter: {}, attrlist: {}'.format(filter_, attrlist))
-                # Get alternate class objects
-                res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
-                                       filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)
-
-                for r in res:
-                    if r[0] is None:
-                        continue
-                    logger.debug('*** Item: {}'.format(r))
-
-                    for k, v in six.iteritems(r[1]):
-                        kl = tools.b2(k.lower())
-                        # If already exists the field
-                        if kl in usr:
-                            # Now append to existing values
-                            for x in v:
-                                usr[kl].append(x.decode('utf8'))
-                        else:
-                            usr[kl] = list(i.decode('utf8') for i in v)
-
-            logger.debug('Usr: {0}'.format(usr))
-            return usr
-        except Exception:
-            logger.exception('Exception:')
-            return None
+        """
+        Searchs for the username and returns its LDAP entry
+        @param username: username to search, using user provided parameters at configuration to map search entries.
+        @return: None if username is not found, an dictionary of LDAP entry attributes if found.
+        @note: Active directory users contains the groups it belongs to in "memberOf" attribute
+        """
+        return ldaputil.getFirst(
+            con=self.__connection(),
+            base=self._ldapBase,
+            objectClass=self._userClass,
+            field=self._userIdAttr,
+            value=username,
+            attributes=[self._userIdAttr] + self.__getAttrsFromField(self._userNameAttr) + self.__getAttrsFromField(self._groupNameAttr),
+            sizeLimit=LDAP_RESULT_LIMIT
+        )
 
     def __getGroups(self, usr):
         return self.__processField(self._groupNameAttr, usr)
@@ -337,7 +280,7 @@ class RegexLdap(auths.Authenticator):
                 return False
 
             # Let's see first if it credentials are fine
-            self.__connection(usr['dn'], credentials)  # Will raise an exception if it can't connect
+            self.__connectAs(usr['dn'], credentials)  # Will raise an exception if it can't connect
 
             groupsManager.validate(self.__getGroups(usr))
 
@@ -406,16 +349,18 @@ class RegexLdap(auths.Authenticator):
         try:
             con = self.__connection()
             res = []
-            for r in con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=%s*))' % (self._userClass, self._userIdAttr, pattern), sizelimit=LDAP_RESULT_LIMIT):
-                if r[0] is not None:  # Must have a dn, we do not accept references to other
-                    dct = {k.lower(): v for k, v in six.iteritems(r[1])}
-                    logger.debug('R: {0}'.format(dct))
-                    usrId = dct.get(self._userIdAttr.lower(), '')
-                    usrId = type(usrId) == list and usrId[0] or usrId
-                    res.append({
-                        'id': usrId,
-                        'name': self.__getUserRealName(dct)
-                    })
+            for r in ldaputil.getAsDict(
+                con=self.__connection(),
+                base=self._ldapBase,
+                ldapFilter='(&(&(objectClass={})({}={}*))(objectCategory=person))'.format(self._userClass, self._userIdAttr, ldaputil.escape(pattern)),
+                attrList=None,  # All attrs
+                sizeLimit=LDAP_RESULT_LIMIT
+            ):
+                logger.debug('R: {0}'.format(r))
+                res.append({
+                    'id': r.get(self._userIdAttr.lower(), '')[0],
+                    'name': self.__getUserRealName(r)
+                })
             logger.debug(res)
             return res
         except Exception:

@@ -94,12 +94,15 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
     """
     logger.debug('Filter: {}, attr list: {}'.format(ldapFilter, attrList))
 
+    if attrList is not None:
+        attrList = [tools.b2(i) for i in attrList]
+
     try:
     # On python2, attrs and search string is str (not unicode), in 3, str (not bytes)
         res = con.search_ext_s(base,
             scope=scope,
             filterstr=tools.b2(ldapFilter),
-            attrlist=[tools.b2(i) for i in attrList],
+            attrlist=attrList,
             sizelimit=sizeLimit
         )
 
@@ -111,11 +114,11 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
                     continue  # Skip None entities
 
                 # Convert back attritutes to test_type ONLY on python2
-                dct = dict((k, ['']) for k in attrList)
+                dct = tools.CaseInsensitiveDict((k, ['']) for k in attrList) if attrList is not None else tools.CaseInsensitiveDict()
 
                 # Convert back result fields to str
                 for k, v in six.iteritems(r[1]):
-                    dct[tools.u2(k)] = list(i.decode('utf8') for i in v)
+                    dct[tools.u2(k)] = list(i.decode('utf8', errors='replace') for i in v)
 
                 dct.update({'dn': r[0]})
 
@@ -125,7 +128,7 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
         logger.exception('Exception:')
 
 
-def getFirst(con, base, objectClass, field, value, attributes, sizeLimit=50):
+def getFirst(con, base, objectClass, field, value, attributes=None, sizeLimit=50):
     """
     Searchs for the username and returns its LDAP entry
     @param username: username to search, using user provided parameters at configuration to map search entries.
