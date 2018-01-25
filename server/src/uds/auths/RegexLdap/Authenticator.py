@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2016 Virtual Cable S.L.
+# Copyright (c) 2012-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -37,16 +37,13 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core import auths
 from uds.core.auths.Exceptions import AuthenticatorException
-from uds.core.util import tools
 from uds.core.util import ldaputil
 
-import six
 import ldap
-import ldap.filter
 import re
 import logging
 
-__updated__ = '2018-01-24'
+__updated__ = '2018-01-25'
 
 logger = logging.getLogger(__name__)
 
