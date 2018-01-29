@@ -11,12 +11,13 @@
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
+# Luis Fagundez <lframses@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-09 22:37+0100\n"
-"PO-Revision-Date: 2018-01-09 13:35+0000\n"
+"POT-Creation-Date: 2018-01-26 10:30+0100\n"
+"PO-Revision-Date: 2018-01-26 09:28+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -441,33 +442,29 @@ msgstr "Avanzado"
 
 #: REST/methods/services_pools.py:184
 msgid "Allow removal by users"
-msgstr "Permitir la remoción por los usuarios"
+msgstr "Permitir a los usuarios eliminar"
 
 #: REST/methods/services_pools.py:185
-#| msgid ""
-#| "If active, the user will be allowed to remove the service \"manually\". "
-#| "Be care with this, because the user will have the \"poser\" to delete "
-#| "it's own service"
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
 "own service"
 msgstr ""
-"Si está activo, el usuario podrá quitar el servicio \"manualmente\". Ser "
-"cuidado con esto, ya que el usuario tenga el \"poder\" para borrarlo de "
-"servicio propio"
+"Si está activo, el usuario podrá quitar el servicio \"manualmente\". Tenga "
+"cuidado con esto, ya que el usuario tendrá el \"poder\" para borrar el "
+"servicio propio."
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
-msgstr "Ignora"
+msgstr "Ignora no usadas"
 
 #: REST/methods/services_pools.py:193
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
 msgstr ""
-"Si la opción está activada, UDS no intentará detectar y eliminar el usuario "
-"servicios asignaron pero no en usan."
+"Si la opción está activada, UDS no intentará detectar y eliminar el servicio "
+"de usuario asignado pero no en uso."
 
 #: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
 #: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
@@ -479,9 +476,9 @@ msgid "Pool group"
 msgstr "Grupo de Pool"
 
 #: REST/methods/services_pools.py:209
-#| msgid "Pool group for this pool (for pool clasify on display)"
 msgid "Pool group for this pool (for pool classify on display)"
-msgstr "Grupo para esta piscina de la piscina (para piscina clasificar en pantalla)"
+msgstr ""
+"Grupo de pool para este pool  (para la clasificación del pool en pantalla)"
 
 #: REST/methods/services_pools.py:217
 msgid "Initial available services"
@@ -603,15 +600,12 @@ msgid "Network access"
 msgstr "Acceso de red"
 
 #: REST/methods/transports.py:74
-#| msgid ""
-#| "If checked, the transport will be enabled for the selected networks.If "
-#| "unchecked, transport will be disabled for selected networks"
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
-"Si está marcada, se habilitará el transporte para las redes seleccionadas. If "
-"no, el transporte se desactivará para redes seleccionadas"
+"Si está marcada, se habilitará el transporte para las redes seleccionadas. "
+"If no, el transporte se desactivará para redes seleccionadas"
 
 #: REST/methods/transports.py:81 templates/uds/html5/index.html:132
 #: templates/uds/semantic/index.html:29
@@ -734,7 +728,7 @@ msgstr "Usuarios actuales"
 #: auths/RegexLdap/Authenticator.py:83 auths/SimpleLDAP/Authenticator.py:81
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
-#: services/Nutanix_enterprise/NutanixProvider.py:39
+#: services/Nutanix_enterprise/NutanixProvider.py:37
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
 #: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:105
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:29
@@ -864,7 +858,7 @@ msgstr "Lista de usuarios para {}"
 #: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:57
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
-#: services/Nutanix_enterprise/NutanixProvider.py:37
+#: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
 #: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:98
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:26
@@ -925,7 +919,7 @@ msgstr ""
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:86
-#: services/Nutanix_enterprise/NutanixProvider.py:40
+#: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
 #: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:106
 #: services/Sample/SampleService.py:131
@@ -953,7 +947,7 @@ msgstr "Contraseña del usuario LDAP"
 #: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:91
-#: services/Nutanix_enterprise/NutanixProvider.py:44
+#: services/Nutanix_enterprise/NutanixProvider.py:42
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
 #: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:111
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:36
@@ -1036,7 +1030,7 @@ msgstr "IP del Servidor EDirectory o nombre de host"
 #: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
-#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
 #: services/OpenStack/Provider.py:99
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:27
@@ -1374,7 +1368,7 @@ msgstr ""
 
 #: auths/SAML_enterprise/SAML.py:181
 msgid "Invalid private key. "
-msgstr "Clave privada válida. "
+msgstr "Clave privada inválida. "
 
 #: auths/SAML_enterprise/SAML.py:201
 #, python-brace-format
@@ -2630,7 +2624,7 @@ msgstr "Tiempo de espera en segundos de conexión a HyperV"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:94
 #: services/HyperV_enterprise/HyperVProvider.py:92
-#: services/Nutanix_enterprise/NutanixProvider.py:46
+#: services/Nutanix_enterprise/NutanixProvider.py:44
 #: services/OVirt/OVirtProvider.py:117
 #: services/Vmware_enterprise/ServiceProviderVC.py:41
 #: services/Xen/XenProvider.py:106
@@ -2655,7 +2649,7 @@ msgstr "Test de conexión realizado con éxito"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:179
+#: services/Nutanix_enterprise/NutanixProvider.py:172
 #: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
@@ -2730,7 +2724,7 @@ msgid "HyperV platform service provider (experimental)"
 msgstr "Proveedor de servicios de plataforma HyperV (experimental)"
 
 #: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:33
@@ -2741,7 +2735,7 @@ msgid "Creation concurrency"
 msgstr "Concurrencia de creación"
 
 #: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:33
@@ -2751,7 +2745,7 @@ msgid "Maximum number of concurrently creating VMs"
 msgstr "Número máximo de creación de VMs de forma simultánea "
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:43
+#: services/Nutanix_enterprise/NutanixProvider.py:41
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
@@ -2762,7 +2756,7 @@ msgid "Removal concurrency"
 msgstr "Concurrencia de eliminación"
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:43
+#: services/Nutanix_enterprise/NutanixProvider.py:41
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
 #: services/VCloud_enterprise/ServiceProviderVCloud.py:34
@@ -2771,52 +2765,52 @@ msgstr "Concurrencia de eliminación"
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Número máximo de VMs que se pueden eliminar al mismo tiempo "
 
-#: services/Nutanix_enterprise/NutanixProvider.py:31
+#: services/Nutanix_enterprise/NutanixProvider.py:29
 msgid "Nutanix Acropolis Platform Provider"
 msgstr "Proveedor de Plataforma Nutanix Acrópolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:33
+#: services/Nutanix_enterprise/NutanixProvider.py:31
 msgid "Nutanix based VM provider"
 msgstr "Proveedor Nutanix basado en MV"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:37
+#: services/Nutanix_enterprise/NutanixProvider.py:35
 msgid "Nutanix Acropolis Server IP or Hostname"
 msgstr "Servidor IP o nombre de Host de Nutanix Acrópolis "
 
-#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/Nutanix_enterprise/NutanixProvider.py:36
 msgid "Nutanix Acropolis server Port (default 9440)"
 msgstr "Puerto del Servidor Nutanix Acrópolis (por defecto 9440)"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:39
+#: services/Nutanix_enterprise/NutanixProvider.py:37
 msgid "User with valid privileges on Nutanix Acropolis"
 msgstr "Usuario con privilegios válidos sobre Nutanix Acrópolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:40
+#: services/Nutanix_enterprise/NutanixProvider.py:38
 msgid "Password of the user of Nutanix Acropolis"
 msgstr "Contraseña del usuario de Nutanix Acrópolis"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:44
+#: services/Nutanix_enterprise/NutanixProvider.py:42
 msgid "Timeout in seconds of connection to Nutanix"
 msgstr "Tiempo de espera en segundos de conexión a Nutanix"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:47
+#: services/Nutanix_enterprise/NutanixProvider.py:45
 #: services/OVirt/OVirtProvider.py:118
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Rango de macs válidas para máquinas administradas por UDS "
 
-#: services/Nutanix_enterprise/NutanixProvider.py:49
+#: services/Nutanix_enterprise/NutanixProvider.py:47
 msgid "Legacy API (v0.8)"
-msgstr "API heredada (v0.8)"
+msgstr "API legacy (v0.8)"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:50
+#: services/Nutanix_enterprise/NutanixProvider.py:48
 msgid ""
-"If checked, legacy apy will be used. Only recommended on OLD Nutanix "
+"If checked, legacy API v0.8 will be used. Only recommended on OLD Nutanix "
 "installations."
 msgstr ""
-"Si está marcada, se utilizará el legado apy. Sólo se recomienda en Nutanix "
-"viejo instalaciones."
+"Si está marcada, se utilizará v0.8 API obsoleta. Sólo se recomienda en "
+"Nutanix viejo instalaciones."
 
-#: services/Nutanix_enterprise/NutanixProvider.py:177
+#: services/Nutanix_enterprise/NutanixProvider.py:170
 msgid "Connection works fine"
 msgstr "Conexión funciona bien"
 
@@ -2840,7 +2834,7 @@ msgstr ""
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
-msgstr "Red para las máquinas (cada máquina creada se adjuntará a este red)"
+msgstr "Red para las máquinas (cada máquina creada se adjuntará a esta red)"
 
 #: services/Nutanix_enterprise/NutanixService.py:88
 #: services/VCloud_enterprise/VCloudCloneService.py:57
@@ -3635,7 +3629,7 @@ msgstr "Parámetros de conexión ok"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:27
 msgid "Fixed Machines Pool"
-msgstr "Piscina de máquinas fijas"
+msgstr "Pool de máquinas fijas"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:29
 msgid ""
@@ -3668,15 +3662,15 @@ msgstr "Pool de recursos"
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:67
 msgid "Resource Pool containing base machines"
-msgstr "Fondo de recursos que contiene máquinas básicas"
+msgstr "Pool de recursos que contiene las máquinas base."
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
 msgid "Base Machines"
-msgstr "Máquinas básicas"
+msgstr "Máquinas base para este servicio."
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:74
 msgid "Base machines for this service"
-msgstr "Máquinas básicas para este servicio"
+msgstr "Máquinas base para este servicio."
 
 #: services/Vmware_enterprise/VCFixedMachinesService.py:91
 msgid "We need at least a machine"
@@ -5148,11 +5142,11 @@ msgstr "NX/X2GO"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:50
 msgid "PCoIP Cloud Access"
-msgstr "Acceso a la nube de PCoIP"
+msgstr "PCoIP Cloud Access"
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:52
 msgid "PCoIP protocol using Teradici Cloud Access."
-msgstr "Protocolo PCoIP con acceso a la nube Teradici."
+msgstr "Protocolo PCoIP usando Teradici Cloud Access."
 
 #: transports/PCoIP_enterprise/PCoIPTransport.py:61
 msgid "If not empty, this domain will be always used as credential domain"
@@ -5529,15 +5523,15 @@ msgstr "Auto-redirigir dispositivos USB enchufado."
 
 #: transports/SPICE/SPICETransport.py:52 transports/SPICE/TSPICETransport.py:60
 msgid "SPICE"
-msgstr "ESPECIA"
+msgstr "SPICE"
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Protocol. Direct connection."
-msgstr "Protocolo de la especia. Conexión directa."
+msgstr "Protocolo SPICE. Conexión directa."
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Protocol. Tunneled connection."
-msgstr "Protocolo de la especia. Conexión del túnel."
+msgstr "Protocolo SPICE. Conexión túnel."
 
 #: transports/X2GO/BaseX2GOTransport.py:76
 msgid "Show fullscreen"

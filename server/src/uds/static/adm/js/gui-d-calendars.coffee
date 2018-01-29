@@ -139,7 +139,7 @@ gui.calendars.link = ->
 
       if data.duration > 0
         dunit = dunitDct[data.duration_unit]
-        txt += gettext("and will remain valid for #{data.duration} #{dunit}")
+        txt += gettext("and will remain valid for") + "#{data.duration} #{dunit}"
       else
         txt += gettext("with no duration")
 
