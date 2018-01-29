@@ -32,13 +32,20 @@
 """
 from __future__ import unicode_literals
 
+from django.db import transaction, OperationalError, connection
+from django.db.utils import IntegrityError
 from uds.models.UniqueId import UniqueId
 from uds.models import getSqlDatetime
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
 MAX_SEQ = 1000000000000000
+
+
+class CreateNewIdException(Exception):
+    pass
 
 
 class UniqueIDGenerator(object):
@@ -50,8 +57,11 @@ class UniqueIDGenerator(object):
     def setBaseName(self, newBaseName):
         self._baseName = newBaseName
 
-    def __filter(self, rangeStart, rangeEnd=MAX_SEQ):
-        return UniqueId.objects.filter(basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd)  # @UndefinedVariable
+    def __filter(self, rangeStart, rangeEnd=MAX_SEQ, forUpdate=False):
+        # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
+        # if not for update, do not use the clause :)
+        obj = UniqueId.objects.select_for_update() if forUpdate else UniqueId.objects
+        return obj.filter(basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd)  # @UndefinedVariable
 
     def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
         """
@@ -60,80 +70,77 @@ class UniqueIDGenerator(object):
         """
         # First look for a name in the range defined
         stamp = getSqlDatetime(True)
+        seq = rangeStart
         # logger.debug(UniqueId)
-        try:
-            UniqueId.objects.lock()  # @UndefinedVariable
-            flt = self.__filter(rangeStart, rangeEnd)
+        counter = 0
+        while True:
+            counter += 1
             try:
-                item = flt.filter(assigned=False).order_by('seq')[0]
-                UniqueId.objects.filter(id=item.id).update(owner=self._owner, assigned=True, stamp=stamp)  # @UndefinedVariable
-                seq = item.seq
-            except Exception:  # No free element found
-                try:
-                    last = flt.filter(assigned=True)[0]  # DB Returns correct order so the 0 item is the last
-                    seq = last.seq + 1
-                except Exception:  # If there is no assigned at database
-                    seq = rangeStart
-                # logger.debug('Found seq {0}'.format(seq))
-                if seq > rangeEnd:
-                    return -1  # No ids free in range
-                UniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable
-            logger.debug('Seq: {}'.format(seq))
-            return seq
-        except Exception:
-            logger.exception('Generating unique id sequence')
-            return None
-        finally:
-            UniqueId.objects.unlock()  # @UndefinedVariable
+                # logger.debug('Creating new seq in range {}-{}'.format(rangeStart, rangeEnd))
+                with transaction.atomic():
+                    flt = self.__filter(rangeStart, rangeEnd, forUpdate=True)
+                    try:
+                        item = flt.filter(assigned=False).order_by('seq')[0]
+                        item.owner = self._owner
+                        item.assigned = True
+                        item.stamp = stamp
+                        item.save()
+                        # UniqueId.objects.filter(id=item.id).update(owner=self._owner, assigned=True, stamp=stamp)  # @UndefinedVariable
+                        seq = item.seq
+                        break
+                    except IndexError:  # No free element found
+                        # logger.debug('No free found, creating new one')
+                        try:
+                            last = flt.filter(assigned=True)[0]  # DB Returns correct order so the 0 item is the last
+                            seq = last.seq + 1
+                        except IndexError:  # If there is no assigned at database
+                            seq = rangeStart
+                        # logger.debug('Found seq {0}'.format(seq))
+                        if seq > rangeEnd:
+                            return -1  # No ids free in range
+                        UniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable
+                        break
+            except OperationalError:  # Locked, may ocurr for example on sqlite. We will wait a bit
+                # logger.exception('Got database locked')
+                if counter % 5 == 0:
+                    connection.close()
+                time.sleep(1)
+            except IntegrityError:  # Concurrent creation, may fail, simply retry
+                pass
+            except Exception:
+                return -1
+
+        # logger.debug('Seq: {}'.format(seq))
+        return seq
 
     def transfer(self, seq, toUidGen):
-        try:
-            UniqueId.objects.lock()  # @UndefinedVariable
-
-            obj = UniqueId.objects.get(owner=self._owner, seq=seq)  # @UndefinedVariable
-            obj.owner = toUidGen._owner
-            obj.basename = toUidGen._baseName
-            obj.stamp = getSqlDatetime(True)
-            obj.save()
-
-            return True
-        except Exception:
-            logger.exception('EXCEPTION AT transfer')
-            return False
-        finally:
-            UniqueId.objects.unlock()  # @UndefinedVariable
+        self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(owner=toUidGen._owner, basename=toUidGen._baseName, stamp=getSqlDatetime(True))
+        return True
 
     def free(self, seq):
-        try:
-            logger.debug('Freeing seq {0} from {1}  ({2})'.format(seq, self._owner, self._baseName))
-            UniqueId.objects.lock()  # @UndefinedVariable
-            flt = self.__filter(0).filter(owner=self._owner, seq=seq).update(owner='', assigned=False, stamp=getSqlDatetime(True))
-            if flt > 0:
-                self.__purge()
-        finally:
-            UniqueId.objects.unlock()  # @UndefinedVariable
+        logger.debug('Freeing seq {} from {}  ({})'.format(seq, self._owner, self._baseName))
+        with transaction.atomic():
+            flt = self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(owner='', assigned=False, stamp=getSqlDatetime(True))
+        if flt > 0:
+            self.__purge()
 
     def __purge(self):
+        logger.debug('Purging UniqueID database')
         try:
-            last = self.__filter(0).filter(assigned=True)[0]
+            last = self.__filter(0, forUpdate=False).filter(assigned=True)[0]
+            logger.debug('Last: {}'.format(last))
             seq = last.seq + 1
-        except:
+        except Exception:
+            # logger.exception('Error here')
             seq = 0
-        self.__filter(seq).delete()  # Clean ups all unassigned after last assigned in this range
+        with transaction.atomic():
+            self.__filter(seq).delete()  # Clean ups all unassigned after last assigned in this range
 
     def release(self):
-        try:
-            UniqueId.objects.lock()  # @UndefinedVariable
-            UniqueId.objects.filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetime(True))  # @UndefinedVariable
-            self.__purge()
-        finally:
-            UniqueId.objects.unlock()  # @UndefinedVariable
+        UniqueId.objects.select_for_update().filter(owner=self._owner).update(assigned=False, owner='', stamp=getSqlDatetime(True))  # @UndefinedVariable
+        self.__purge()
 
     def releaseOlderThan(self, stamp=None):
         stamp = getSqlDatetime(True) if stamp is None else stamp
-        try:
-            UniqueId.objects.lock()  # @UndefinedVariable
-            UniqueId.objects.filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
-            self.__purge()
-        finally:
-            UniqueId.objects.unlock()  # @UndefinedVariable
+        UniqueId.objects.select_for_update().filter(owner=self._owner, stamp__lt=stamp).update(assigned=False, owner='', stamp=stamp)  # @UndefinedVariable
+        self.__purge()

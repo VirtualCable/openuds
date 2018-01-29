@@ -95,8 +95,6 @@ class UserService(UUIDModel):
     # The communication is done using POST via REST & Json
     # comms_url = models.CharField(max_length=256, default=None, null=True, blank=True)
 
-    # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
-
     class Meta(UUIDModel.Meta):
         '''
         Meta class to declare default order and unique multiple field index

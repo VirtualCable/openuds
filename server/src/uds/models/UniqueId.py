@@ -34,17 +34,16 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from uds.core.db.LockingManager import LockingManager
+from django.utils.encoding import python_2_unicode_compatible
 
 import logging
 
-
-__updated__ = '2015-05-14'
-
+__updated__ = '2018-01-29'
 
 logger = logging.getLogger(__name__)
 
 
+@python_2_unicode_compatible
 class UniqueId(models.Model):
     """
     Unique ID Database. Used to store unique names, unique macs, etc...
@@ -56,8 +55,6 @@ class UniqueId(models.Model):
     assigned = models.BooleanField(db_index=True, default=True)
     stamp = models.IntegerField(db_index=True, default=0)
 
-    objects = LockingManager()
-
     class Meta:
         """
         Meta class to declare default order and unique multiple field index
@@ -66,5 +63,5 @@ class UniqueId(models.Model):
         ordering = ('-seq',)
         app_label = 'uds'
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{0} {1}.{2}, assigned is {3}".format(self.owner, self.basename, self.seq, self.assigned)
