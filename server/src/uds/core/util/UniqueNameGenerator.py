@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 class UniqueNameGenerator(UniqueIDGenerator):
 
     def __init__(self, owner):
-        super(UniqueNameGenerator, self).__init__('name', owner,)
+        super(UniqueNameGenerator, self).__init__('name', owner)
 
     def __toName(self, seq, length):
         if seq == -1:

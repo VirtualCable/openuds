@@ -40,13 +40,14 @@ logger = logging.getLogger(__name__)
 
 class UniqueGIDGenerator(UniqueIDGenerator):
 
-    def __init__(self, owner):
-        super(UniqueGIDGenerator, self).__init__('id', owner,)
+    def __init__(self, owner, baseName=None):
+        super(UniqueGIDGenerator, self).__init__('id', owner, baseName)
 
     def __toName(self, seq):
         if seq == -1:
             raise KeyError('No more GIDS available.')
-        return "%s%0*d" % (self._baseName, 8, seq)
+        return '{:s}{:08d}'.format(self._baseName, seq)
+        # return "%s%0*d" % (self._baseName, 8, seq)
 
     def get(self, rangeStart=0, rangeEnd=MAX_SEQ):
         return self.__toName(super(UniqueGIDGenerator, self).get())

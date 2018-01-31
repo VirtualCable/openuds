@@ -50,9 +50,9 @@ class CreateNewIdException(Exception):
 
 class UniqueIDGenerator(object):
 
-    def __init__(self, typeName, owner, baseName='uds'):
+    def __init__(self, typeName, owner, baseName=None):
         self._owner = owner + typeName
-        self._baseName = baseName
+        self._baseName = 'uds' if baseName is None else baseName
 
     def setBaseName(self, newBaseName):
         self._baseName = newBaseName

@@ -48,6 +48,8 @@ class UniqueMacGenerator(UniqueIDGenerator):
         return int(mac.replace(':', ''), 16)
 
     def __toMac(self, seq):
+        if seq == -1:  # No mor macs available
+            return '00:00:00:00:00:00'
         return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
 
     # noinspection PyMethodOverriding
