@@ -774,7 +774,7 @@ class ModelHandler(BaseModelHandler):
                         operation = getattr(self, self._args[1])
                         item = self.model.objects.get(uuid=self._args[0].lower())
                     except Exception as e:
-                        logger.error('processing {}/{}/{}: {}'.format(self.__class__.__name__, self._args, self._params, e))
+                        logger.error('Invalid custom method exception {}/{}/{}: {}'.format(self.__class__.__name__, self._args, self._params, e))
                         self.invalidMethodException()
 
                     return operation(item)

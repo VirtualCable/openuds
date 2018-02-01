@@ -123,7 +123,6 @@ class Authenticators(ModelHandler):
             else:
                 return auth.searchGroups(term)
         except Exception as e:
-            logger.exception('On search:')
             self.invalidResponseException('{}'.format(e))
 
     def test(self, type_):
