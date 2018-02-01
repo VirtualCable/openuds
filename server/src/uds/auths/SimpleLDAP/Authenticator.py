@@ -38,17 +38,17 @@ from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
 from uds.core.auths import Authenticator
 from uds.core.auths.Exceptions import AuthenticatorException
+from uds.core.util import ldaputil
 
-import ldap.filter
 import ldap
 import logging
 import six
 
-__updated__ = '2018-01-16'
+__updated__ = '2018-02-01'
 
 logger = logging.getLogger(__name__)
 
-LDAP_RESULT_LIMIT = 50
+LDAP_RESULT_LIMIT = 100
 
 
 class SimpleLDAPAuthenticator(Authenticator):
@@ -143,98 +143,56 @@ class SimpleLDAPAuthenticator(Authenticator):
             self._host, self._port, self._ssl, self._username, self._password, self._timeout, self._ldapBase, self._userClass, self._groupClass, self._userIdAttr, self._groupIdAttr, self._memberAttr, self._userNameAttr = data[1:]
             self._ssl = gui.strToBool(self._ssl)
 
-    def __connection(self, username=None, password=None):
-        if self._connection is None or username is not None:  # We want this method also to check credentials
-            if isinstance(username, six.text_type):
-                username = username.encode('utf8')
-            if isinstance(password, six.text_type):
-                password = password.encode('utf8')
-            l = None
-            cache = False
-            try:
-                # ldap.set_option(ldap.OPT_DEBUG_LEVEL, 9)
-                ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
-                schema = self._ssl and 'ldaps' or 'ldap'
-                port = self._port != '389' and ':' + self._port or ''
-                uri = "%s://%s%s" % (schema, self._host, port)
-                logger.debug('Ldap uri: {0}'.format(uri))
-                l = ldap.initialize(uri=uri)
-                l.network_timeout = l.timeout = int(self._timeout)
-                l.protocol_version = ldap.VERSION3
+    def __connection(self):
+        """
+        Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
+        @return: Connection established
+        @raise exception: If connection could not be established
+        """
+        if self._connection is None:  # We want this method also to check credentials
+            self._connection = ldaputil.connection(self._username, self._password, self._host, port=self._port, ssl=self._ssl, timeout=self._timeout, debug=False)
 
-                if username is None:
-                    cache = True
-                    username = self._username
-                    password = self._password
-
-                l.simple_bind_s(who=username, cred=password)
-            except ldap.LDAPError as e:
-                str_ = _('Ldap connection error: ')
-                if isinstance(e.message, dict):
-                    str_ += ', '.join((e.message.get('info', ''), e.message.get('desc')))
-                else:
-                    str_ += six.text_type(e)
-                raise Exception(str_)
-            if cache is True:
-                self._connection = l
-            else:
-                return l  # Do not cache nor overwrite "global" connection
         return self._connection
 
+    def __connectAs(self, username, password):
+        return ldaputil.connection(username, password, self._host, ssl=self._ssl, timeout=self._timeout, debug=False)
+
     def __getUser(self, username):
-        try:
-            con = self.__connection()
-            filter_ = '(&(objectClass=%s)(%s=%s))' % (self._userClass, self._userIdAttr, ldap.filter.escape_filter_chars(username, 0))
-            attrlist = [i.encode('utf-8') for i in self._userNameAttr.split(',') + [self._userIdAttr]]
-            logger.debug('Getuser filter_: {0}, attr list: {1}'.format(filter_, attrlist))
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
-                                   filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT)[0]
-            usr = dict((k, '') for k in attrlist)
-            usr.update(res[1])
-            usr.update({'dn': res[0], '_id': username})
-            logger.debug('Usr: {0}'.format(usr))
-            return usr
-        except Exception:
-            logger.exception('Exception:')
-            return None
+        return ldaputil.getFirst(
+            con=self.__connection(),
+            base=self._ldapBase,
+            objectClass=self._userClass,
+            field=self._userIdAttr,
+            value=username,
+            attributes=[i for i in self._userNameAttr.split(',')] + [self._userIdAttr],
+            sizeLimit=LDAP_RESULT_LIMIT
+        )
 
     def __getGroup(self, groupName):
-        try:
-            con = self.__connection()
-            filter_ = '(&(objectClass=%s)(%s=%s))' % (self._groupClass, self._groupIdAttr, groupName)
-            attrlist = [self._memberAttr.encode('utf-8')]
-            logger.debug('Getgroup filter_: {0}, attr list {1}'.format(filter_, attrlist))
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE,
-                                   filterstr=filter_, attrlist=attrlist, sizelimit=LDAP_RESULT_LIMIT * 10)[0]
-            grp = dict((k, ['']) for k in attrlist)
-            grp.update(res[1])
-            grp.update({'dn': res[0], '_id': groupName})
-            logger.debug('Group: {0}'.format(grp))
-            return grp
-        except Exception:
-            logger.exception('Exception:')
-            return None
+        return ldaputil.getFirst(
+            con=self.__connection(),
+            base=self._ldapBase,
+            objectClass=self._groupClass,
+            field=self._groupIdAttr,
+            value=groupName,
+            attributes=[self._memberAttr],
+            sizeLimit=LDAP_RESULT_LIMIT * 10
+        )
 
     def __getGroups(self, usr):
-        try:
-            con = self.__connection()
-            filter_ = '(&(objectClass=%s)(|(%s=%s)(%s=%s)))' % (self._groupClass, self._memberAttr, usr['_id'], self._memberAttr, usr['dn'])
-            logger.debug('Filter: {0}'.format(filter_))
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr=filter_, attrlist=[self._groupIdAttr.encode('utf8')],
-                                   sizelimit=LDAP_RESULT_LIMIT * 10)
-            groups = {}
-            for g in res:
-                v = g[1][self._groupIdAttr]
-                if type(v) is not list:
-                    v = [v]
-                for gg in v:
-                    groups[str(gg)] = g[0]
-            logger.debug('Groups: {0}'.format(groups))
-            return groups
+        filter_ = '(&(objectClass={})(|({}={})({}={})))'.format(self._groupClass, self._memberAttr, usr['_id'], self._memberAttr, usr['dn'])
 
-        except Exception:
-            logger.exception('Exception at __getGroups')
-            return {}
+        groups = {}
+        for d in ldaputil.getAsDict(
+            con=self.__connection(),
+            base=self._ldapBase,
+            ldapFilter=filter_,
+            attrList=[self._groupIdAttr],
+            sizeLimit=10 * LDAP_RESULT_LIMIT  # Increase LDAP limit, so we can accept 500 groups or so
+        ):
+            groups[d[self._groupIdAttr][0]] = d['dn']
+
+        return groups
 
     def __getUserRealName(self, usr):
         """
@@ -261,9 +219,9 @@ class SimpleLDAPAuthenticator(Authenticator):
                 return False
 
             # Let's see first if it credentials are fine
-            self.__connection(usr['dn'], credentials)  # Will raise an exception if it can't connect
+            self.__connectAs(usr['dn'], credentials)  # Will raise an exception if it can't connect
 
-            groupsManager.validate(self.__getGroups(usr).keys())
+            groupsManager.validate(list(self.__getGroups(usr).keys()))
 
             return True
 
@@ -322,19 +280,22 @@ class SimpleLDAPAuthenticator(Authenticator):
         user = self.__getUser(username)
         if user is None:
             raise AuthenticatorException(_('Username not found'))
-        groupsManager.validate(self.__getGroups(user).keys())
+        groupsManager.validate(list(self.__getGroups(user).keys()))
 
     def searchUsers(self, pattern):
         try:
-            con = self.__connection()
             res = []
-            for r in con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=%s*))' % (self._userClass, self._userIdAttr, pattern), sizelimit=LDAP_RESULT_LIMIT):
-                usrId = r[1].get(self._userIdAttr, '')
-                usrId = type(usrId) == list and usrId[0] or usrId
-                res.append({
-                    'id': usrId,
-                    'name': self.__getUserRealName(r[1])
-                })
+            for r in ldaputil.getAsDict(
+                con=self.__connection(),
+                base=self._ldapBase,
+                ldapFilter='(&(objectClass={})({}={}*))'.format(self._userClass, self._userIdAttr, pattern),
+                attrList=[self._userIdAttr],
+                sizeLimit=LDAP_RESULT_LIMIT
+            ):
+                    res.append({
+                        'id': r[self._userIdAttr][0],  # Ignore @...
+                        'name': self.__getUserRealName(r)
+                    })
             return res
         except Exception:
             logger.exception("Exception: ")
@@ -342,11 +303,15 @@ class SimpleLDAPAuthenticator(Authenticator):
 
     def searchGroups(self, pattern):
         try:
-            con = self.__connection()
             res = []
-            for r in con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=%s*))' % (self._groupClass, self._groupIdAttr, pattern), sizelimit=LDAP_RESULT_LIMIT):
-                grpId = r[1].get(self._groupIdAttr, '')
-                grpId = type(grpId) == list and grpId[0] or grpId
+            for r in ldaputil.getAsDict(
+                con=self.__connection(),
+                base=self._ldapBase,
+                ldapFilter='(&(objectClass={})({}={}*))'.format(self._groupClass, self._groupIdAttr, pattern),
+                attrList=[self._groupIdAttr],
+                sizeLimit=LDAP_RESULT_LIMIT
+            ):
+                grpId = r[self._groupIdAttr][0]
                 res.append({
                     'id': grpId,
                     'name': grpId
@@ -371,10 +336,14 @@ class SimpleLDAPAuthenticator(Authenticator):
         except Exception as e:
             return [False, str(e)]
 
+        logger.debug('Connected')
+
         try:
             con.search_s(base=self._ldapBase, scope=ldap.SCOPE_BASE)
         except Exception:
             return [False, _('Ldap search base is incorrect')]
+
+        logger.debug('Search base is correct')
 
         try:
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._userClass, sizelimit=1)) == 1:
@@ -384,6 +353,8 @@ class SimpleLDAPAuthenticator(Authenticator):
             # If found 1 or more, all right
             pass
 
+        logger.debug('LDAP user class seems to be correct')
+
         try:
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._groupClass, sizelimit=1)) == 1:
                 raise Exception()
@@ -391,6 +362,8 @@ class SimpleLDAPAuthenticator(Authenticator):
         except Exception as e:
             # If found 1 or more, all right
             pass
+
+        logger.debug('LDAP group class seems to be correct')
 
         try:
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(%s=*)' % self._userIdAttr, sizelimit=1)) == 1:
@@ -400,6 +373,8 @@ class SimpleLDAPAuthenticator(Authenticator):
             # If found 1 or more, all right
             pass
 
+        logger.debug('LDAP user id attribute seems to be correct')
+
         try:
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(%s=*)' % self._groupIdAttr, sizelimit=1)) == 1:
                 raise Exception()
@@ -407,6 +382,8 @@ class SimpleLDAPAuthenticator(Authenticator):
         except Exception as e:
             # If found 1 or more, all right
             pass
+
+        logger.debug('LDAP group id attribute seems to be correct')
 
         # Now test objectclass and attribute of users
         try:
@@ -417,9 +394,11 @@ class SimpleLDAPAuthenticator(Authenticator):
             # If found 1 or more, all right
             pass
 
+        logger.debug('LDAP user class and user id attr seems to be correct')
+
         # And group part, with membership
         try:
-            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._groupClass, self._groupIdAttr), attrlist=[self._memberAttr.encode('utf-8')])
+            res = con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._groupClass, self._groupIdAttr))
             if len(res) == 0:
                 raise Exception(_('Ldap group class or group id attr is probably wrong (can\'t find any group with both conditions)'))
             ok = False
@@ -431,5 +410,7 @@ class SimpleLDAPAuthenticator(Authenticator):
                 raise Exception(_('Can\'t locate any group with the membership attribute specified'))
         except Exception as e:
             return [False, six.text_type(e)]
+
+        logger.debug('LDAP group class and group id attr seems to be correct')
 
         return [True, _("Connection params seem correct, test was succesfully executed")]

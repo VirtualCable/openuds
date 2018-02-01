@@ -33,7 +33,9 @@
 # pylint: disable=no-name-in-module,import-error, maybe-no-member
 from __future__ import unicode_literals
 
-import ldap
+from django.utils.translation import ugettext as _
+
+import ldap.filter
 import six
 import logging
 from uds.core.util import tools
@@ -56,6 +58,7 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
     @return: Connection established
     @raise exception: If connection could not be established
     """
+    logger.debug('Login in to {} as user {}'.format(host, username))
     if isinstance(password, six.text_type):
         password = password.encode('utf-8')
     try:
@@ -74,6 +77,8 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
         l.protocol_version = ldap.VERSION3
 
         l.simple_bind_s(who=username, cred=password)
+    except ldap.SERVER_DOWN:
+        raise Exception(_('Can\'t contact LDAP server'))
     except ldap.LDAPError as e:
         _str = _('Connection error: ')
         if hasattr(e, 'message') and isinstance(e.message, dict):
@@ -84,6 +89,8 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
     except Exception:
         logger.exception('Exception connection:')
         raise
+
+    logger.debug('Conneciton was success')
     return l
 
 
@@ -97,35 +104,31 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
     if attrList is not None:
         attrList = [tools.b2(i) for i in attrList]
 
-    try:
     # On python2, attrs and search string is str (not unicode), in 3, str (not bytes)
-        res = con.search_ext_s(base,
-            scope=scope,
-            filterstr=tools.b2(ldapFilter),
-            attrlist=attrList,
-            sizelimit=sizeLimit
-        )
+    res = con.search_ext_s(base,
+        scope=scope,
+        filterstr=tools.b2(ldapFilter),
+        attrlist=attrList,
+        sizelimit=sizeLimit
+    )
 
-        logger.debug('Result: {}'.format(res))
+    logger.debug('Result of search {} on {}: {}'.format(ldapFilter, base, res))
 
-        if res is not None:
-            for r in res:
-                if r[0] is None:
-                    continue  # Skip None entities
+    if res is not None:
+        for r in res:
+            if r[0] is None:
+                continue  # Skip None entities
 
-                # Convert back attritutes to test_type ONLY on python2
-                dct = tools.CaseInsensitiveDict((k, ['']) for k in attrList) if attrList is not None else tools.CaseInsensitiveDict()
+            # Convert back attritutes to test_type ONLY on python2
+            dct = tools.CaseInsensitiveDict((k, ['']) for k in attrList) if attrList is not None else tools.CaseInsensitiveDict()
 
-                # Convert back result fields to str
-                for k, v in six.iteritems(r[1]):
-                    dct[tools.u2(k)] = list(i.decode('utf8', errors='replace') for i in v)
+            # Convert back result fields to str
+            for k, v in six.iteritems(r[1]):
+                dct[tools.u2(k)] = list(i.decode('utf8', errors='replace') for i in v)
 
-                dct.update({'dn': r[0]})
+            dct.update({'dn': r[0]})
 
-                yield dct
-
-    except Exception:
-        logger.exception('Exception:')
+            yield dct
 
 
 def getFirst(con, base, objectClass, field, value, attributes=None, sizeLimit=50):

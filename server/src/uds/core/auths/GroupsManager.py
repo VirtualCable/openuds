@@ -41,7 +41,7 @@ import re
 import inspect
 import logging
 
-__updated__ = '2018-01-15'
+__updated__ = '2018-02-01'
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ class GroupsManager(object):
                 except Exception:
                     logger.exception('Exception in RE')
             else:
-                logger.debug('Group NORMAL: {}=={}'.format(name, gName))
+                logger.debug('Group: {}=={}'.format(name, gName))
                 if name == gName:
                     res.append(grp)
         return res

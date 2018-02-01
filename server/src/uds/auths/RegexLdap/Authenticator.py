@@ -43,11 +43,11 @@ import ldap
 import re
 import logging
 
-__updated__ = '2018-01-25'
+__updated__ = '2018-02-01'
 
 logger = logging.getLogger(__name__)
 
-LDAP_RESULT_LIMIT = 50
+LDAP_RESULT_LIMIT = 100
 
 
 class RegexLdap(auths.Authenticator):
@@ -229,7 +229,7 @@ class RegexLdap(auths.Authenticator):
         @raise exception: If connection could not be established
         """
         if self._connection is None:  # We want this method also to check credentials
-            self._connection = ldaputil.connection(self._username, self._password, self._host, ssl=self._ssl, timeout=self._timeout, debug=False)
+            self._connection = ldaputil.connection(self._username, self._password, self._host, port=self._port, ssl=self._ssl, timeout=self._timeout, debug=False)
 
         return self._connection
 
