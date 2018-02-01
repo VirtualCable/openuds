@@ -44,7 +44,6 @@ from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.models import Tag
 
-
 import fnmatch
 import re
 import itertools
@@ -54,8 +53,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-10-25'
-
+__updated__ = '2018-02-01'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -255,6 +253,10 @@ class BaseModelHandler(Handler):
         '''
         message = _('Invalid Request') if message is None else message
         raise RequestError('{} {}: {}'.format(message, self.__class__, self._args))
+
+    def invalidResponseException(self, message=None):
+        message = 'Invalid response' if message is None else message
+        raise ResponseError(message)
 
     def invalidMethodException(self):
         '''
