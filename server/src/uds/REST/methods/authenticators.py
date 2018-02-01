@@ -122,9 +122,9 @@ class Authenticators(ModelHandler):
                 return auth.searchUsers(term)
             else:
                 return auth.searchGroups(term)
-        except Exception:
-            logger.exception('Got exception searching:')
-            self.invalidRequestException()
+        except Exception as e:
+            logger.exception('On search:')
+            self.invalidResponseException('{}'.format(e))
 
     def test(self, type_):
         from uds.core.Environment import Environment

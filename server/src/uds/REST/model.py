@@ -45,7 +45,7 @@ from uds.core.util.model import processUuid
 from uds.models import Tag
 
 import six
-from six.moves import filter
+from six.moves import filter  # @UnresolvedImport
 import fnmatch
 import re
 import types
@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-01-16'
+__updated__ = '2018-02-01'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -254,6 +254,10 @@ class BaseModelHandler(Handler):
         """
         message = _('Invalid Request') if message is None else message
         raise RequestError('{} {}: {}'.format(message, self.__class__, self._args))
+
+    def invalidResponseException(self, message=None):
+        message = 'Invalid response' if message is None else message
+        raise ResponseError(message)
 
     def invalidMethodException(self):
         """
@@ -699,6 +703,8 @@ class ModelHandler(BaseModelHandler):
             logger.info('Filtering expression {} is invalid!'.format(self.fltr))
             raise RequestError('Filtering expression {} is invalid'.format(self.fltr))
 
+        return data
+
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
     def processDetail(self):
@@ -767,16 +773,19 @@ class ModelHandler(BaseModelHandler):
                     try:
                         operation = getattr(self, self._args[1])
                         item = self.model.objects.get(uuid=self._args[0].lower())
-                        return operation(item)
-                    except Exception:
+                    except Exception as e:
+                        logger.error('processing {}/{}/{}: {}'.format(self.__class__.__name__, self._args, self._params, e))
                         self.invalidMethodException()
+
+                    return operation(item)
 
             elif self._args[0] == cm[0]:
                 try:
                     operation = getattr(self, self._args[0])
-                    return operation()
                 except Exception:
                     self.invalidMethodException()
+
+                return operation()
 
         if nArgs == 1:
             if self._args[0] == OVERVIEW:
