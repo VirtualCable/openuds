@@ -4,7 +4,7 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012-2014
-# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017
+# Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2018
 # albert clar <albert.clar@uib.cat>, 2017
 # blafuente <blafuente@virtualcable.es>, 2014
 # blafuente <blafuente@virtualcable.es>, 2014-2016
@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-26 10:30+0100\n"
-"PO-Revision-Date: 2018-01-26 09:28+0000\n"
+"POT-Creation-Date: 2018-02-06 15:17+0100\n"
+"PO-Revision-Date: 2018-02-01 22:38+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
@@ -58,7 +58,7 @@ msgstr "Id"
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:80 REST/methods/transports.py:57
 #: REST/methods/user_services.py:235 REST/methods/user_services.py:270
-#: REST/methods/users_groups.py:113 REST/model.py:132
+#: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
 #: templates/uds/admin/tmpl/group-info.html:43
@@ -72,7 +72,7 @@ msgstr "Nombre"
 #: REST/methods/providers.py:72 REST/methods/services.py:189
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:262 REST/model.py:150
+#: REST/methods/users_groups.py:262 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -80,12 +80,12 @@ msgstr "Comentarios"
 
 #: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:269 REST/model.py:159
+#: REST/methods/user_services.py:269 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Prioridad"
 
-#: REST/methods/authenticators.py:63 REST/model.py:170
+#: REST/methods/authenticators.py:63 REST/model.py:168
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -605,7 +605,7 @@ msgid ""
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
 "Si está marcada, se habilitará el transporte para las redes seleccionadas. "
-"If no, el transporte se desactivará para redes seleccionadas"
+"Si no, el transporte se desactivará para redes seleccionadas"
 
 #: REST/methods/transports.py:81 templates/uds/html5/index.html:132
 #: templates/uds/semantic/index.html:29
@@ -779,57 +779,57 @@ msgstr "Metagrupo"
 msgid "UDS Meta Group"
 msgstr "Metagrupo UDS "
 
-#: REST/model.py:123
+#: REST/model.py:121
 msgid "Tags"
 msgstr "Etiquetas"
 
-#: REST/model.py:125
+#: REST/model.py:123
 msgid "Tags for this element"
 msgstr "Etiquetas para este elemento"
 
-#: REST/model.py:134
+#: REST/model.py:132
 msgid "Name of this element"
 msgstr "Nombre de este elemento"
 
-#: REST/model.py:141
+#: REST/model.py:139
 msgid "Short name"
 msgstr "Nombre corto"
 
-#: REST/model.py:142
+#: REST/model.py:140
 msgid "Short name for user service visualization"
 msgstr "Nombre corto para la visualización del servicio de usuario"
 
-#: REST/model.py:151
+#: REST/model.py:149
 msgid "Comments for this element"
 msgstr "Comentarios para este elemento"
 
-#: REST/model.py:160
+#: REST/model.py:158
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Selecciona la prioridad de este elemento (a menor número, mayor prioridad)"
 
-#: REST/model.py:171
+#: REST/model.py:169
 msgid "Label for this element"
 msgstr "Etiqueta para este elemento"
 
-#: REST/model.py:256
+#: REST/model.py:254
 msgid "Invalid Request"
 msgstr "Solicitud no válida"
 
-#: REST/model.py:263
+#: REST/model.py:265
 msgid "Method not found in {}: {}"
 msgstr "Método no encontrado en {}: {}"
 
-#: REST/model.py:269
+#: REST/model.py:271
 msgid "Item not found"
 msgstr "Elemento no encontrado"
 
-#: REST/model.py:274 web/errors.py:75
+#: REST/model.py:276 web/errors.py:75
 msgid "Access denied"
 msgstr "Acceso denegado"
 
-#: REST/model.py:277
+#: REST/model.py:279
 msgid "Operation not supported"
 msgstr "Operación no soportada"
 
@@ -2807,8 +2807,8 @@ msgid ""
 "If checked, legacy API v0.8 will be used. Only recommended on OLD Nutanix "
 "installations."
 msgstr ""
-"Si está marcada, se utilizará v0.8 API obsoleta. Sólo se recomienda en "
-"Nutanix viejo instalaciones."
+"Si está marcada, se utilizará el API v0.8 obsoleto. Sólo se recomienda en "
+"instalaciones de Nutanix antiguas."
 
 #: services/Nutanix_enterprise/NutanixProvider.py:170
 msgid "Connection works fine"
@@ -3323,32 +3323,44 @@ msgstr "RemoteAPP en Plataforma RDS"
 msgid "RDS Platform RemoteAPP based service"
 msgstr "Servicio basado en Plataforma RDS RemoteAPP"
 
-#: services/RDS_enterprise/RDSService.py:45
+#: services/RDS_enterprise/RDSService.py:44
 msgid "Application path"
 msgstr "Ruta de la aplicación"
 
-#: services/RDS_enterprise/RDSService.py:46
+#: services/RDS_enterprise/RDSService.py:45
 msgid "Full path of the application this service will represent"
 msgstr ""
 "Ruta de acceso completa de la aplicación que representará este servicio"
 
-#: services/RDS_enterprise/RDSService.py:54
+#: services/RDS_enterprise/RDSService.py:53
 msgid "Application parameters"
 msgstr "Parámetros de aplicación"
 
-#: services/RDS_enterprise/RDSService.py:55
+#: services/RDS_enterprise/RDSService.py:54
 msgid "Applications parameters, as will be passed in command line"
 msgstr "Parámetros de aplicaciones, como se pasará en línea de comandos"
 
-#: services/RDS_enterprise/RDSService.py:63
+#: services/RDS_enterprise/RDSService.py:62
 msgid "Max. Allowd services"
 msgstr "Máx. servicios permitidos"
 
-#: services/RDS_enterprise/RDSService.py:68
+#: services/RDS_enterprise/RDSService.py:67
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr "Número máximo de servicios permitidos (0 significa sin límite)"
 
-#: services/RDS_enterprise/RDSService.py:85
+#: services/RDS_enterprise/RDSService.py:72
+msgid "Wait spawned processes"
+msgstr "Esperar procesos generados"
+
+#: services/RDS_enterprise/RDSService.py:75
+msgid ""
+"If active, RDS Actor will wait until the application and all spawned "
+"processes finished before considering app logged out"
+msgstr ""
+"Si activa RDS Actor esperará hasta la aplicación y todos los procesos "
+"generados acaben antes de considerar la aplicación ha finalizado."
+
+#: services/RDS_enterprise/RDSService.py:93
 msgid "A valid application path is required"
 msgstr "Se requiere una ruta de aplicación válida"
 
@@ -3678,26 +3690,26 @@ msgstr "Necesitamos al menos una máquina"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:32
 msgid "Clone based - Full"
-msgstr "Base de clon - completo"
+msgstr "Basado de clones - completo"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:34
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
 msgstr ""
-"Este servicio proporciona acceso a máquinas de clon completo en un Centro "
-"Virtual de"
+"Este servicio proporciona acceso a máquinas de clon completo en un Virtual "
+"Center"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:68
 msgid "VMs Datastores"
-msgstr "Almacenes de datos de máquinas virtuales"
+msgstr "Datastores de máquinas virtuales"
 
 #: services/Vmware_enterprise/VCFullCloneService.py:69
 msgid "Datastores where to put machines"
-msgstr "Almacenes de datos dónde colocar los equipos"
+msgstr "Almacenes de datos dónde colocar las máquinas"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:33
 msgid "Clone based - Linked"
-msgstr "Clon basa - vinculados"
+msgstr "Basado en clones - enlazados"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:35
 msgid ""
@@ -3730,13 +3742,13 @@ msgstr ""
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "Keep on error"
-msgstr "Mantener en error"
+msgstr "Mantener si error"
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "If active, access errors found on machine will not mark is as error."
 msgstr ""
-"Si está activo, los errores encontrados en la máquina no va a marcar el "
-"acceso es como error."
+"Si está activo, los errores encontrados en la máquina no la marcará como "
+"erronea."
 
 #: services/Vmware_enterprise/VCLinkedCloneService.py:76
 msgid "Resource Pool containing base machine"
@@ -4484,8 +4496,8 @@ msgid ""
 "Are you sure that you want to release this service. Its current content will "
 "be lost!"
 msgstr ""
-"Está seguro que desea lanzar este servicio. Su contenido actual será ¡se "
-"perderán!"
+"¿Está seguro que desea liberar este servicio?. ¡Su contenido actual será se "
+"perderá!"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -5010,7 +5022,7 @@ msgstr "TLS (encriptación de capa de seguridad de transporte)"
 #: transports/HTML5RDP/HTML5RDP.py:114
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:114
 msgid "Ticket Validity"
-msgstr "Validez del billete"
+msgstr "Validez del ticket"
 
 #: transports/HTML5RDP/HTML5RDP.py:117
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:117
@@ -5018,8 +5030,9 @@ msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
 msgstr ""
-"Permitido el tiempo, en segundos, para cliente de HTML5 cargar datos de UDS "
-"corredor. Se recomienda el valor predeterminado de 60."
+"Tiempo permitido, en segundos, para que el cliente de HTML5 pueda recargar "
+"los datos de conexión desde el broker UDS. Se recomienda el valor "
+"predeterminado de 60."
 
 #: transports/HTML5RDP/HTML5RDP.py:128
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:128
@@ -5037,7 +5050,7 @@ msgstr ""
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:61
 msgid "HTML5 RDS for vApps"
-msgstr "RDS de HTML5 para vApps"
+msgstr "HTML5 RDS para vApps"
 
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:63
 msgid "RDS protocol using HTML5 client for vApps"
@@ -5248,7 +5261,7 @@ msgstr "Profundidad de color"
 #: transports/RDP/BaseRDPTransport.py:91
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid "Color depth for this conextion"
-msgstr "Profundidad de color para este conextion"
+msgstr "Profundidad de color para esta conextion"
 
 #: transports/RDP/BaseRDPTransport.py:100
 msgid "Wallpaper/theme"
@@ -5292,11 +5305,13 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:107
 msgid "Redirect home folder"
-msgstr "Redirigir la carpeta de inicio"
+msgstr "Redirigir la carpeta home"
 
 #: transports/RDP/BaseRDPTransport.py:107
 msgid "If checked, Linux client will try to redirect /home local folder"
-msgstr "Si, Linux cliente intentará redireccionar/carpeta local del hogar"
+msgstr ""
+"Si está marcado, el cliente Linux intentará redireccionar la carpeta home "
+"local."
 
 #: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
@@ -5472,7 +5487,7 @@ msgstr "Si está seleccionado, el micro será redirigido."
 
 #: transports/RGS_enterprise/TRGSTransport.py:45
 msgid "RGS Protocol. Tunneled connection"
-msgstr "Protocolo de RGS. Túnel de conexión"
+msgstr "Protocolo de RGS. Conexión del túnel."
 
 #: transports/SPICE/BaseSPICETransport.py:65
 msgid "Empty credentials"
@@ -5551,8 +5566,8 @@ msgid ""
 "executed. If UDS vAPP is not selected, this field will be ignored."
 msgstr ""
 "Si UDS vAPP es seleccionado como \"Desktop\", la ruta de acceso completa de "
-"la aplicación que ejecutado. Si UDS vAPP no está seleccionado, este campo "
-"será ignorado."
+"la aplicación que será ejecutada. Si UDS vAPP no está seleccionado, este "
+"campo será ignorado."
 
 #: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"

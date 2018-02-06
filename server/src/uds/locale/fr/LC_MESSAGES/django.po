@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-26 10:30+0100\n"
-"PO-Revision-Date: 2018-01-26 09:28+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-02-06 15:17+0100\n"
+"PO-Revision-Date: 2018-02-06 11:24+0000\n"
+"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
 "Language: fr\n"
@@ -51,7 +51,7 @@ msgstr "ID"
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:80 REST/methods/transports.py:57
 #: REST/methods/user_services.py:235 REST/methods/user_services.py:270
-#: REST/methods/users_groups.py:113 REST/model.py:132
+#: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
 #: templates/uds/admin/tmpl/group-info.html:43
@@ -65,7 +65,7 @@ msgstr "Nom"
 #: REST/methods/providers.py:72 REST/methods/services.py:189
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:262 REST/model.py:150
+#: REST/methods/users_groups.py:262 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -73,12 +73,12 @@ msgstr "Commentaires"
 
 #: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:269 REST/model.py:159
+#: REST/methods/user_services.py:269 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Priorité"
 
-#: REST/methods/authenticators.py:63 REST/model.py:170
+#: REST/methods/authenticators.py:63 REST/model.py:168
 msgid "Label"
 msgstr "Étiquette"
 
@@ -444,9 +444,9 @@ msgid ""
 "careful with this, because the user will have the \"power\" to delete it's "
 "own service"
 msgstr ""
-"S’il est activé, l’utilisateur pourra supprimer le service « manuellement ». "
-"Être prudent avec cela, parce que l’utilisateur aura le « pouvoir » de le "
-"supprimer de propre service"
+"S'il est actif, l'utilisateur sera autorisé à supprimer le service "
+"\"manuellement\". Soyez prudent avec cela, car l'utilisateur aura le "
+"\"pouvoir\" de supprimer son propre service"
 
 #: REST/methods/services_pools.py:192
 msgid "Ignores unused"
@@ -471,7 +471,7 @@ msgstr "Groupe de pools"
 
 #: REST/methods/services_pools.py:209
 msgid "Pool group for this pool (for pool classify on display)"
-msgstr "Groupe pour ce pool la piscine (pour piscine classer sur écran)"
+msgstr "Pool group pour ce pool (classification des pool par affichage)"
 
 #: REST/methods/services_pools.py:217
 msgid "Initial available services"
@@ -597,8 +597,9 @@ msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
-"Si coché, le transport sera activé pour les réseaux sélectionnés. If "
-"décochée, le transport sera désactivée pour les réseaux sélectionnés"
+"Si cette case est cochée, le transport sera activé pour les réseaux "
+"sélectionnés. Si cette case n'est pas cochée, le transport sera désactivé "
+"pour les réseaux sélectionnés"
 
 #: REST/methods/transports.py:81 templates/uds/html5/index.html:132
 #: templates/uds/semantic/index.html:29
@@ -772,58 +773,58 @@ msgstr "Groupe Meta"
 msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
-#: REST/model.py:123
+#: REST/model.py:121
 msgid "Tags"
 msgstr "Tag"
 
-#: REST/model.py:125
+#: REST/model.py:123
 msgid "Tags for this element"
 msgstr "Tags pour cet élément"
 
-#: REST/model.py:134
+#: REST/model.py:132
 msgid "Name of this element"
 msgstr "Nom de cet élément"
 
-#: REST/model.py:141
+#: REST/model.py:139
 msgid "Short name"
 msgstr "Nom court"
 
-#: REST/model.py:142
+#: REST/model.py:140
 msgid "Short name for user service visualization"
 msgstr "Nom court pour la visualisation de service utilisateur"
 
-#: REST/model.py:151
+#: REST/model.py:149
 msgid "Comments for this element"
 msgstr "Commentaires pour cet élément"
 
-#: REST/model.py:160
+#: REST/model.py:158
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Sélectionne la priorité de cet élément (priorité supérieure de moyens nombre "
 "inférieur)"
 
-#: REST/model.py:171
+#: REST/model.py:169
 msgid "Label for this element"
 msgstr "Tag pour cet élément"
 
-#: REST/model.py:256
+#: REST/model.py:254
 msgid "Invalid Request"
 msgstr "Requête non valide"
 
-#: REST/model.py:263
+#: REST/model.py:265
 msgid "Method not found in {}: {}"
 msgstr "Méthode introuvable {}: {}"
 
-#: REST/model.py:269
+#: REST/model.py:271
 msgid "Item not found"
 msgstr "Élément introuvable"
 
-#: REST/model.py:274 web/errors.py:75
+#: REST/model.py:276 web/errors.py:75
 msgid "Access denied"
 msgstr "Accès refusé"
 
-#: REST/model.py:277
+#: REST/model.py:279
 msgid "Operation not supported"
 msgstr "Opération non prise en charge"
 
@@ -2812,8 +2813,8 @@ msgid ""
 "If checked, legacy API v0.8 will be used. Only recommended on OLD Nutanix "
 "installations."
 msgstr ""
-"Si cochée, héritage API v0.8 sera utilisé. Recommandé uniquement sur vieux "
-"Nutanix installations."
+"Si cette case est cochée, l'ancienne version de l'API v0.8 sera utilisée. "
+"Seulement recommandé pour les installations OLD Nutanix."
 
 #: services/Nutanix_enterprise/NutanixProvider.py:170
 msgid "Connection works fine"
@@ -3335,32 +3336,44 @@ msgstr "RDS plate-forme RemoteAPP"
 msgid "RDS Platform RemoteAPP based service"
 msgstr "Service basé sur RemoteAPP de la plateforme RDS"
 
-#: services/RDS_enterprise/RDSService.py:45
+#: services/RDS_enterprise/RDSService.py:44
 msgid "Application path"
 msgstr "Chemin de l'application"
 
-#: services/RDS_enterprise/RDSService.py:46
+#: services/RDS_enterprise/RDSService.py:45
 msgid "Full path of the application this service will represent"
 msgstr "Chemin d'accès complet de la demande que ce service représentera"
 
-#: services/RDS_enterprise/RDSService.py:54
+#: services/RDS_enterprise/RDSService.py:53
 msgid "Application parameters"
 msgstr "Paramètres de l’application"
 
-#: services/RDS_enterprise/RDSService.py:55
+#: services/RDS_enterprise/RDSService.py:54
 msgid "Applications parameters, as will be passed in command line"
 msgstr ""
 "Paramètres des applications, tel qu’il est passé dans la ligne de commande"
 
-#: services/RDS_enterprise/RDSService.py:63
+#: services/RDS_enterprise/RDSService.py:62
 msgid "Max. Allowd services"
 msgstr "Max. Services autorisés"
 
-#: services/RDS_enterprise/RDSService.py:68
+#: services/RDS_enterprise/RDSService.py:67
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr "Nombre maximum de services autorisés (0 ne signifie aucune limite)"
 
-#: services/RDS_enterprise/RDSService.py:85
+#: services/RDS_enterprise/RDSService.py:72
+msgid "Wait spawned processes"
+msgstr "Attendre le processus engendré"
+
+#: services/RDS_enterprise/RDSService.py:75
+msgid ""
+"If active, RDS Actor will wait until the application and all spawned "
+"processes finished before considering app logged out"
+msgstr ""
+"S'il est actif, RDS Actor attendra que l'application et tous les processus "
+"engendrés aient terminé avant de considérer l'application déconnectée"
+
+#: services/RDS_enterprise/RDSService.py:93
 msgid "A valid application path is required"
 msgstr "Un chemin d'accès d'application valide est requis"
 
@@ -5210,13 +5223,13 @@ msgstr "Si coché, ce transport permettra l'utilisation de lecteurs utilisateur"
 #: transports/RDP/BaseRDPTransport.py:69
 #: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "Allow Serials"
-msgstr "Permettre aux publications en série"
+msgstr "Autoriser les publications en série"
 
 #: transports/RDP/BaseRDPTransport.py:69
 #: transports/RDS_enterprise/BaseRDSTransport.py:71
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
-"Si cochée, ce transport permettra l'utilisation de l'utilisateur ports série"
+"Si coché, ce transport permettra l'utilisation de ports série utilisateur"
 
 #: transports/RDP/BaseRDPTransport.py:70
 #: transports/RDS_enterprise/BaseRDSTransport.py:72
@@ -5226,7 +5239,7 @@ msgstr "Activez le presse-papiers"
 #: transports/RDP/BaseRDPTransport.py:70
 #: transports/RDS_enterprise/BaseRDSTransport.py:72
 msgid "If checked, copy-paste functions will be allowed"
-msgstr "S’il est activé, les fonctions copier-coller pourra"
+msgstr "Si cochée, les fonctions copier-coller seront autorisées"
 
 #: transports/RDP/BaseRDPTransport.py:71
 #: transports/X2GO/BaseX2GOTransport.py:103
@@ -5235,19 +5248,18 @@ msgstr "Activer le son"
 
 #: transports/RDP/BaseRDPTransport.py:71
 msgid "If checked, sound will be redirected."
-msgstr "Si cochée, sons seront redirigés."
+msgstr "Si coché, le son sera redirigé."
 
 #: transports/RDP/BaseRDPTransport.py:72
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "Credssp Support"
-msgstr "CredSSP Support"
+msgstr "Support CredSSP "
 
 #: transports/RDP/BaseRDPTransport.py:72
 #: transports/RDS_enterprise/BaseRDSTransport.py:73
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr ""
-"Si cochée, permettra aux informations d’identification fournisseur de "
-"soutien)"
+"Si coché, activera le support du fournisseur d'informations d'identification)"
 
 #: transports/RDP/BaseRDPTransport.py:77
 msgid "Screen size for this transport"
@@ -5261,7 +5273,7 @@ msgstr "Profondeur de couleur"
 #: transports/RDP/BaseRDPTransport.py:91
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
 msgid "Color depth for this conextion"
-msgstr "Profondeur de couleur pour cet hôtel"
+msgstr "Profondeur de couleur pour cette connection"
 
 #: transports/RDP/BaseRDPTransport.py:100
 msgid "Wallpaper/theme"
@@ -5276,13 +5288,13 @@ msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr ""
-"S'il est activé, tous les moniteurs de client seront utilisés pour "
-"l'affichage (fonctionne uniquement sur clients Windows)"
+"Si cette case est cochée, tous les moniteurs clients seront utilisés pour "
+"l'affichage (ne fonctionne que sur les clients Windows)"
 
 #: transports/RDP/BaseRDPTransport.py:105
 #: transports/RDS_enterprise/BaseRDSTransport.py:89
 msgid "Multimedia sync"
-msgstr "Multimédia sync"
+msgstr "Sync Multimédia "
 
 #: transports/RDP/BaseRDPTransport.py:105
 #: transports/RDS_enterprise/BaseRDSTransport.py:89
@@ -5300,15 +5312,17 @@ msgstr "Utiliser Alsa"
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
-"Si cochée, Linux client essaie d’utiliser ALSA, sinon impulsion sera utilisée"
+"Si coché, le client Linux essayera d'utiliser ALSA, sinon, Pulse sera utilisé"
 
 #: transports/RDP/BaseRDPTransport.py:107
 msgid "Redirect home folder"
-msgstr "Rediriger le dossier de départ"
+msgstr "Rediriger le dossier home"
 
 #: transports/RDP/BaseRDPTransport.py:107
 msgid "If checked, Linux client will try to redirect /home local folder"
-msgstr "Si cochée, Linux client tentera de rediriger/home dossier local"
+msgstr ""
+"Si cette case est cochée, le client Linux va essayer de rediriger / home "
+"local folder"
 
 #: transports/RDP/BaseRDPTransport.py:108
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
@@ -5319,7 +5333,7 @@ msgstr "Chaîne de l’imprimante"
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
-"Si l’imprimante est activée, la chaîne de l’imprimante utilisée avec "
+"Si l’imprimante est activée, la chaîne de l’imprimante sera utilisée avec "
 "xfreerdp client"
 
 #: transports/RDP/BaseRDPTransport.py:109
@@ -5331,7 +5345,7 @@ msgstr "Chaîne de carte à puce"
 #: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
-"Si la carte à puce est cochée, la chaîne de carte à puce utilisée avec "
+"Si la carte à puce est cochée, la chaîne de carte à puce serautilisée avec "
 "xfreerdp client"
 
 #: transports/RDP/BaseRDPTransport.py:110
@@ -5345,9 +5359,9 @@ msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgstr ""
-"Si le paramètre non vide, en sus d’inclure pour Linux Client (par exemple /"
-"usb :ID, dev:054 c : 0268, ou aything compatible avec votre client de "
-"xfreerdp)"
+"Si non vide, paramètre supplémentaire à inclure pour le client Linux (par "
+"exemple / usb: id, dev: 054c: 0268, ou quoi que ce soit compatible avec "
+"votre client xfreerdp)"
 
 #: transports/RDP/RDPTransport.py:55 transports/RDP/TRDPTransport.py:63
 msgid "RDP"
@@ -5378,11 +5392,11 @@ msgstr "RDS pour vApps"
 
 #: transports/RDS_enterprise/RDSTransport.py:57
 msgid "RDS access using RDP for vApps. Direct connection."
-msgstr "À l’aide de RDP pour vApps l’accès RDS. Connexion directe."
+msgstr "Accès RDS en utilisant RDP pour les vApps. Connexion directe."
 
 #: transports/RDS_enterprise/TRDSTransport.py:65
 msgid "RDS access using RDP for vApps. Tunneled connection."
-msgstr "À l’aide de RDP pour vApps l’accès RDS. Connexion par tunnel."
+msgstr "Accès RDS en utilisant RDP pour les vApps. Connexion en tunnel."
 
 #: transports/RGS_enterprise/RGSTransport.py:37
 #: transports/RGS_enterprise/TRGSTransport.py:43
@@ -5424,8 +5438,8 @@ msgid ""
 "The lowest image quality applied to images to maintain the minimum update "
 "rate."
 msgstr ""
-"La qualité d'image le plus bas appliquée aux images de maintenir la mise à "
-"jour minimale Ravel"
+"La qualité d'image la plus basse appliquée aux images pour maintenir le taux "
+"de mise à jour minimum."
 
 #: transports/RGS_enterprise/RGSTransport.py:55
 #: transports/RGS_enterprise/TRGSTransport.py:65
@@ -5436,7 +5450,7 @@ msgstr "Cadence réglable"
 #: transports/RGS_enterprise/TRGSTransport.py:66
 msgid "Update rate threshold to begin adjusting image quality"
 msgstr ""
-"Seuil de taux de mise à jour pour commencer le réglage qualité de l'image"
+"Seuil de taux de mise à jour pour commencer le réglage de la qualité d'image"
 
 #: transports/RGS_enterprise/RGSTransport.py:57
 #: transports/RGS_enterprise/TRGSTransport.py:67
@@ -5449,8 +5463,8 @@ msgid ""
 "Change the Sender's resolution to match the Receiver's resolution when "
 "connecting"
 msgstr ""
-"Changer la résolution de l'expéditeur pour l'adapter résolution du récepteur "
-"lorsque connexion"
+"Changer la résolution de l'expéditeur pour correspondre à la résolution du "
+"récepteur lors de la connexion"
 
 #: transports/RGS_enterprise/RGSTransport.py:59
 #: transports/RGS_enterprise/TRGSTransport.py:69
@@ -5488,16 +5502,16 @@ msgstr "Protocole RGS. Connexion par tunnel"
 
 #: transports/SPICE/BaseSPICETransport.py:65
 msgid "Empty credentials"
-msgstr "Informations d’identification de vides"
+msgstr "Informations d’identification vides"
 
 #: transports/SPICE/BaseSPICETransport.py:86
 msgid ""
 "Server certificate (public), can be found on your ovirt engine, probably at /"
 "etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file)."
 msgstr ""
-"Certificat serveur (public), se trouvent sur votre moteur ovirt, "
-"probablement à /etc/PKI/ovirt-Engine/certs/ca.der (utilisez le contenu de ce "
-"fichier)."
+"Le certificat de serveur (public), peut être trouvé sur votre moteur "
+"d'ovirt, probablement dans /etc/pki/ovirt-engine/certs/ca.der (Utilisez le "
+"contenu de ce fichier)."
 
 #: transports/SPICE/BaseSPICETransport.py:91
 msgid "Fullscreen Mode"
@@ -5506,7 +5520,7 @@ msgstr "Mode plein écran"
 #: transports/SPICE/BaseSPICETransport.py:92
 #: transports/X2GO/BaseX2GOTransport.py:77
 msgid "If checked, viewer will be shown on fullscreen mode-"
-msgstr "Si cochée, spectateur sera montré sur fullscreen mode-"
+msgstr "Si elle est cochée, la visionneuse sera affichée en mode plein écran"
 
 #: transports/SPICE/BaseSPICETransport.py:97
 msgid "Smartcard Redirect"
@@ -5522,7 +5536,7 @@ msgstr "Activer USB"
 
 #: transports/SPICE/BaseSPICETransport.py:105
 msgid "If checked, USB redirection will be allowed."
-msgstr "S’il est activé, redirection USB est autorisée."
+msgstr "S’il est activé, redirection USB sera autorisée."
 
 #: transports/SPICE/BaseSPICETransport.py:111
 msgid "New USB Auto Sharing"
@@ -5530,23 +5544,24 @@ msgstr "Nouvelle clé USB Auto partage"
 
 #: transports/SPICE/BaseSPICETransport.py:112
 msgid "Auto-redirect USB devices when plugged in."
-msgstr "Redirection automatique des périphériques USB lorsqu’il est branché."
+msgstr ""
+"Redirection automatique des périphériques USB lorsqu’ils sont branchés."
 
 #: transports/SPICE/SPICETransport.py:52 transports/SPICE/TSPICETransport.py:60
 msgid "SPICE"
-msgstr "ÉPICE"
+msgstr "SPICE"
 
 #: transports/SPICE/SPICETransport.py:54
 msgid "SPICE Protocol. Direct connection."
-msgstr "Protocole de l’épice. Connexion directe."
+msgstr "Protocole SPICE. Connexion directe."
 
 #: transports/SPICE/TSPICETransport.py:62
 msgid "SPICE Protocol. Tunneled connection."
-msgstr "Protocole de l’épice. Connexion par tunnel."
+msgstr "Protocole SPICE. Connexion par tunnel."
 
 #: transports/X2GO/BaseX2GOTransport.py:76
 msgid "Show fullscreen"
-msgstr "Afficher plein écran"
+msgstr "Afficher en plein écran"
 
 #: transports/X2GO/BaseX2GOTransport.py:81
 msgid "Desktop"
@@ -5561,13 +5576,13 @@ msgid ""
 "If UDS vAPP is selected as \"Desktop\", the FULL PATH of the app to be "
 "executed. If UDS vAPP is not selected, this field will be ignored."
 msgstr ""
-"Si UDS PPAV est sélectionné comme « Desktop », le chemin d’accès complet de "
-"l’application d’être exécuté. Si UDS PPAV n’est pas sélectionné, ce champ "
-"sera ignoré."
+"Si UDS vAPP est sélectionné comme \"Desktop\", le chemin complet de "
+"l'application à exécuter. Si UDS vAPP n'est pas sélectionné, ce champ sera "
+"ignoré."
 
 #: transports/X2GO/BaseX2GOTransport.py:104
 msgid "If checked, sound will be available"
-msgstr "Si cochée, son testament disponible"
+msgstr "Si cochée, le son sera disponible"
 
 #: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect root folder"
@@ -5575,7 +5590,7 @@ msgstr "Rediriger le dossier racine"
 
 #: transports/X2GO/BaseX2GOTransport.py:112
 msgid "If checked, user home folder will be redirected"
-msgstr "Si cochée, dossier de départ de l’utilisateur sera Redirigé"
+msgstr "Si cochée, le dossier home de l’utilisateur sera redirigé"
 
 #: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
@@ -5591,7 +5606,7 @@ msgstr "Son"
 
 #: transports/X2GO/BaseX2GOTransport.py:130
 msgid "Sound server"
-msgstr "Serveur de sons"
+msgstr "Serveur de son"
 
 #: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard"
@@ -5600,7 +5615,7 @@ msgstr "Clavier"
 #: transports/X2GO/BaseX2GOTransport.py:138
 msgid "Keyboard layout (es, us, fr, ...). Empty value means autodetect."
 msgstr ""
-"Disposition de clavier (, nous, en es,...). Valeur vide signifie autodetect."
+"Disposition de clavier (es, us, fr, ....). Valeur vide signifie autodetect."
 
 #: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack"
@@ -5608,7 +5623,7 @@ msgstr "Pack"
 
 #: transports/X2GO/BaseX2GOTransport.py:155
 msgid "Pack format. Change with care!"
-msgstr "Format de paquet. Modifier avec soin !"
+msgstr "Format de paquet. Modifier avec soin!"
 
 #: transports/X2GO/BaseX2GOTransport.py:160
 msgid "Quality"
@@ -5649,7 +5664,7 @@ msgstr ""
 
 #: web/errors.py:78
 msgid "You need to enable cookies to let this application work"
-msgstr "Vous devez activer les cookies de laisser cette application"
+msgstr "Vous devez activer les cookies pour autoriser cette application"
 
 #: web/errors.py:80
 msgid "Authenticator not found"
@@ -5668,8 +5683,8 @@ msgid ""
 "Your browser is not supported. Please, upgrade it to a modern HTML5 browser "
 "like Firefox or Chrome"
 msgstr ""
-"Votre navigateur n'est pas pris en charge. S'il vous plaît, mettre à niveau "
-"vers un navigateur modern de HTML5 comme Firefox ou Chrome"
+"Ton navigateur n'est pas supporté. S'il vous plaît, mettez à jour vers un "
+"navigateur HTML5 moderne comme Firefox ou Chrome"
 
 #: web/errors.py:84
 msgid "The requested service is in maintenance mode"
@@ -5685,11 +5700,11 @@ msgstr ""
 
 #: web/errors.py:86
 msgid "Preparing service"
-msgstr "Préparation de service"
+msgstr "Préparation du service"
 
 #: web/errors.py:87
 msgid "Service access denied by calendars"
-msgstr "Service accès refusé par les calendriers"
+msgstr "Accès au service refusé par les agendas"
 
 #: web/forms/LoginForm.py:60
 msgid "authenticator"
@@ -5708,12 +5723,11 @@ msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
 msgstr ""
-"Ce service est sur le point d’être remplacée par une nouvelle version. S’il "
-"vous plaît, fermez le session avant {} et enregistrer tous vos travaux pour "
-"éviter de perdre il."
+"Ce service est sur le point d'être remplacé par une nouvelle version. "
+"Veuillez fermer la session avant {} et sauvegarder tout votre travail pour "
+"éviter de le perdre."
 
 #: web/views/service.py:116
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
-"Service n'est pas prêt. S'il vous plaît, essayez à nouveau dans un certain "
-"temps."
+"Service n'est pas prêt. S'il vous plaît, essayez à nouveau dans un instant."

@@ -15,9 +15,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-26 10:30+0100\n"
-"PO-Revision-Date: 2018-01-26 09:28+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-02-06 15:17+0100\n"
+"PO-Revision-Date: 2018-01-26 09:33+0000\n"
+"Last-Translator: Luis Fagundez <lframses@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -326,11 +326,11 @@ msgstr "de cualquier semana"
 
 #: static/tmp_js/gui-d-calendar.js:162
 msgid "from"
-msgstr "De"
+msgstr "Desde el"
 
 #: static/tmp_js/gui-d-calendar.js:164
 msgid "onwards"
-msgstr "a partir"
+msgstr "en adelante"
 
 #: static/tmp_js/gui-d-calendar.js:166
 msgid "until "
@@ -338,11 +338,11 @@ msgstr "hasta "
 
 #: static/tmp_js/gui-d-calendar.js:168
 msgid "starting at"
-msgstr "comenzando el"
+msgstr "comenzando a las"
 
 #: static/tmp_js/gui-d-calendar.js:171
 msgid "and will remain valid for"
-msgstr "y seguirá siendo válido para"
+msgstr "y seguirá siendo válida durante"
 
 #: static/tmp_js/gui-d-calendar.js:173
 msgid "with no duration"
