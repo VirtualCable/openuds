@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-26 10:30+0100\n"
-"PO-Revision-Date: 2018-01-26 09:28+0000\n"
+"POT-Creation-Date: 2018-02-06 15:17+0100\n"
+"PO-Revision-Date: 2018-02-01 22:23+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
 "de/)\n"
@@ -50,7 +50,7 @@ msgstr "ID"
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
 #: REST/methods/services_pools.py:80 REST/methods/transports.py:57
 #: REST/methods/user_services.py:235 REST/methods/user_services.py:270
-#: REST/methods/users_groups.py:113 REST/model.py:132
+#: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
 #: templates/uds/admin/tmpl/calendar_rule.html:7
 #: templates/uds/admin/tmpl/group-info.html:43
@@ -64,7 +64,7 @@ msgstr "Name"
 #: REST/methods/providers.py:72 REST/methods/services.py:189
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
-#: REST/methods/users_groups.py:262 REST/model.py:150
+#: REST/methods/users_groups.py:262 REST/model.py:148
 #: templates/uds/admin/tmpl/calendar_rule.html:14
 #: templates/uds/admin/tmpl/group.html:49 templates/uds/admin/tmpl/user.html:40
 msgid "Comments"
@@ -72,12 +72,12 @@ msgstr "Kommentare"
 
 #: REST/methods/authenticators.py:62 REST/methods/services_pool_calendars.py:89
 #: REST/methods/services_pool_groups.py:62 REST/methods/transports.py:56
-#: REST/methods/user_services.py:269 REST/model.py:159
+#: REST/methods/user_services.py:269 REST/model.py:157
 #: templates/uds/admin/tmpl/pool_add_access.html:5
 msgid "Priority"
 msgstr "Priorität"
 
-#: REST/methods/authenticators.py:63 REST/model.py:170
+#: REST/methods/authenticators.py:63 REST/model.py:168
 msgid "Label"
 msgstr "Etikett"
 
@@ -775,58 +775,58 @@ msgstr "Meta group"
 msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
-#: REST/model.py:123
+#: REST/model.py:121
 msgid "Tags"
 msgstr "Markierungen"
 
-#: REST/model.py:125
+#: REST/model.py:123
 msgid "Tags for this element"
 msgstr "Tags für dieses element"
 
-#: REST/model.py:134
+#: REST/model.py:132
 msgid "Name of this element"
 msgstr "Name dieses Elements"
 
-#: REST/model.py:141
+#: REST/model.py:139
 msgid "Short name"
 msgstr "Kurzname"
 
-#: REST/model.py:142
+#: REST/model.py:140
 msgid "Short name for user service visualization"
 msgstr "Kurzname für Benutzer-Service-Visualisierung"
 
-#: REST/model.py:151
+#: REST/model.py:149
 msgid "Comments for this element"
 msgstr "Kommentare für dieses element"
 
-#: REST/model.py:160
+#: REST/model.py:158
 msgid ""
 "Selects the priority of this element (lower number means higher priority)"
 msgstr ""
 "Bestimmt die Priorität dieses Elements (niedrigere Zahl bedeutet höhere "
 "Priorität)"
 
-#: REST/model.py:171
+#: REST/model.py:169
 msgid "Label for this element"
 msgstr "Bezeichnung für dieses element"
 
-#: REST/model.py:256
+#: REST/model.py:254
 msgid "Invalid Request"
 msgstr "Ungültige Anforderung"
 
-#: REST/model.py:263
+#: REST/model.py:265
 msgid "Method not found in {}: {}"
 msgstr "Methode nicht gefunden in {}: {}"
 
-#: REST/model.py:269
+#: REST/model.py:271
 msgid "Item not found"
 msgstr "Element nicht gefunden"
 
-#: REST/model.py:274 web/errors.py:75
+#: REST/model.py:276 web/errors.py:75
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: REST/model.py:277
+#: REST/model.py:279
 msgid "Operation not supported"
 msgstr "Vorgang wird nicht unterstützt"
 
@@ -3315,32 +3315,44 @@ msgstr "RDS-Plattform RemoteAPP"
 msgid "RDS Platform RemoteAPP based service"
 msgstr "RDS-Plattform RemoteAPP basierten Dienst"
 
-#: services/RDS_enterprise/RDSService.py:45
+#: services/RDS_enterprise/RDSService.py:44
 msgid "Application path"
 msgstr "Anwendungspfad"
 
-#: services/RDS_enterprise/RDSService.py:46
+#: services/RDS_enterprise/RDSService.py:45
 msgid "Full path of the application this service will represent"
 msgstr "Vollständiger Pfad der Anwendung, die diesen Dienst vertreten wird"
 
-#: services/RDS_enterprise/RDSService.py:54
+#: services/RDS_enterprise/RDSService.py:53
 msgid "Application parameters"
 msgstr "Anwendungsparameter"
 
-#: services/RDS_enterprise/RDSService.py:55
+#: services/RDS_enterprise/RDSService.py:54
 msgid "Applications parameters, as will be passed in command line"
 msgstr "Anwendungen-Parameter, wie in der Befehlszeile übergeben werden"
 
-#: services/RDS_enterprise/RDSService.py:63
+#: services/RDS_enterprise/RDSService.py:62
 msgid "Max. Allowd services"
 msgstr "Max. Allowd Dienstleistungen"
 
-#: services/RDS_enterprise/RDSService.py:68
+#: services/RDS_enterprise/RDSService.py:67
 msgid "Maximum number of allowed services (0 means no limit)"
 msgstr ""
 "Maximale Anzahl von erlaubten Dienstleistungen (0 bedeutet keine Begrenzung)"
 
-#: services/RDS_enterprise/RDSService.py:85
+#: services/RDS_enterprise/RDSService.py:72
+msgid "Wait spawned processes"
+msgstr "Erzeugte Prozesse warten"
+
+#: services/RDS_enterprise/RDSService.py:75
+msgid ""
+"If active, RDS Actor will wait until the application and all spawned "
+"processes finished before considering app logged out"
+msgstr ""
+"Wenn aktiv, RDS Schauspieler, bis die Anwendung und alle warten wird "
+"hervorgebracht Prozesse beendet vor der Prüfung, dass app abgemeldet"
+
+#: services/RDS_enterprise/RDSService.py:93
 msgid "A valid application path is required"
 msgstr "Ein gültiger Anwendungspfad ist erforderlich"
 
