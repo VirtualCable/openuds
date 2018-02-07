@@ -46,8 +46,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-05-10'
-
+__updated__ = '2018-02-07'
 
 availableReports = []
 
@@ -78,10 +77,10 @@ def __init__():
     # Dinamycally import children of this package. The __init__.py files must import classes
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     # TODO: Make this work with python3 also!!! (look for alternative, we have time...)
-    if six.PY2:
-        for _, name, _ in pkgutil.iter_modules([pkgpath]):
-            __import__(name, globals(), locals(), [], 1)
+    for _, name, _ in pkgutil.iter_modules([pkgpath]):
+        __import__(name, globals(), locals(), [], 1)
 
     recursiveAdd(reports.Report)
+
 
 __init__()

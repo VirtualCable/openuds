@@ -109,13 +109,16 @@ class Reports(model.BaseModelHandler):
             logger.debug('Report: {}'.format(report))
             result = report.generateEncoded()
 
-            return {
+            data = {
                 'mime_type': report.mime_type,
                 'encoded': report.encoded,
                 'filename': report.filename,
                 'data': result
             }
 
+            logger.debug('Data: {}'.format(data))
+
+            return data
         except Exception as e:
             logger.exception('Generating report')
             return self.invalidRequestException(six.text_type(e))

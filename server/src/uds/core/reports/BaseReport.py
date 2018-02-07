@@ -33,17 +33,20 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_noop as _
+from django.template import loader
 
 from uds.core.ui.UserInterface import UserInterface
 from uds.core.util import encoders
+from . import stock
 
-import datetime
 import six
+from weasyprint import HTML, CSS
+from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-11-15'
+__updated__ = '2018-02-07'
 
 
 class Report(UserInterface):
@@ -81,6 +84,46 @@ class Report(UserInterface):
         if cls.uuid is None:
             raise Exception('Class does not includes an uuid!!!: {}'.format(cls))
         return cls.uuid
+
+    @staticmethod
+    def asPDF(html, header=None, water=None):
+        """
+        Renders an html as PDF.
+        Uses the "report.css" as stylesheet
+        """
+        with open(stock.getStockCssPath('report.css'), 'r') as f:
+            css = f.read()
+
+        css = (
+            css.replace("{header}", _('Report') if  header is None else header)
+                .replace('{page}', _('Page'))
+                .replace('{of}', _('of'))
+                .replace('{water}', 'UDS Enterprise' if water is None else water)
+                .replace('{printed}', _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.now()))
+        )
+
+        h = HTML(string=html)
+        c = CSS(string=css)
+
+        pdf = h.write_pdf(stylesheets=[c])
+
+        with open('/home/dkmaster/kk/kk.pdf', 'wb') as f:
+            f.write(pdf)
+
+        return pdf
+
+    @staticmethod
+    def templateAsPDF(templateName, dct, header=None, water=None):
+        """
+        Renders a template as PDF
+        """
+        t = loader.get_template(templateName)
+
+        renderedHtml = t.render(dct)
+
+        logger.debug('HTML: {}'.format(renderedHtml))
+
+        return Report.asPDF(renderedHtml, header, water)
 
     def __init__(self, values=None):
         """
@@ -127,10 +170,14 @@ class Report(UserInterface):
         Basically calls generate and encodes resuslt as base64
         """
         data = self.generate()
+        with open('/home/dkmaster/kk/kk2.pdf', 'wb') as f:
+            f.write(data)
         if self.encoded:
-            return encoders.encode(data, 'base64', asText=True).replace('\n', '')
-        else:
-            return data
+            data = encoders.encode(data, 'base64', asText=True).replace('\n', '')
+            with open('/home/dkmaster/kk/kk2.base64', 'w') as f:
+                f.write(data)
+
+        return data
 
     def __str__(self):
         return 'Report {} with uuid {}'.format(self.name, self.uuid)
