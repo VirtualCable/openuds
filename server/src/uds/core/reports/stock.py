@@ -39,10 +39,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-04-29'
+__updated__ = '2018-02-07'
 
 LOGO = 'logo-512.png'
+CSS = 'report.css'
 
 
-def getStockImagePath(stockImg):
+def getStockImagePath(stockImg=None):
+    if stockImg is None:
+        stockImg = LOGO
     return tools.packageRelativeFile(__name__, 'stock_images/' + stockImg)
+
+
+def getStockCssPath(css=None):
+    if css is None:
+        css = CSS
+    return tools.packageRelativeFile(__name__, 'css/' + css)
