@@ -48,12 +48,11 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER
 
-
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2015-06-21'
+__updated__ = '2018-02-07'
 
 
 class UsersReport(Report):
@@ -164,6 +163,6 @@ class ListReportsUsersCSV(ListReportUsers):
         for v in users:
             writer.writerow([v.name, v.real_name, v.last_access])
 
-        writer.writerow(['ñoño', 'ádios', 'hola'])
+        # writer.writerow(['ñoño', 'ádios', 'hola'])
 
         return output.getvalue()
