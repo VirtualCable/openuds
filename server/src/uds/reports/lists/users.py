@@ -112,6 +112,6 @@ class ListReportsUsersCSV(ListReportUsers):
         for v in users:
             writer.writerow([v.name, v.real_name, v.last_access])
 
-        writer.writerow(['ñoño', 'ádios', 'hola'])
+        # writer.writerow(['ñoño', 'ádios', 'hola'])
 
         return output.getvalue()
