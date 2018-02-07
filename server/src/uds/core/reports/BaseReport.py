@@ -40,13 +40,26 @@ from uds.core.util import encoders
 from . import stock
 
 import six
-from weasyprint import HTML, CSS
+from weasyprint import HTML, CSS, default_url_fetcher
 from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
 
 __updated__ = '2018-02-07'
+
+
+# url fetcher for weasyprint
+def report_fetcher(url):
+    logger.debug('Getting url for weasyprint {}'.format(url))
+    if url.startswith('stock://'):
+        imagePath = stock.getStockImagePath(url[8:])
+        with open(imagePath, 'rb') as f:
+            image = f.read()
+        return dict(string=image,
+                    mime_type='image/png')
+    else:
+        return default_url_fetcher(url)
 
 
 class Report(UserInterface):
@@ -98,19 +111,14 @@ class Report(UserInterface):
             css.replace("{header}", _('Report') if  header is None else header)
                 .replace('{page}', _('Page'))
                 .replace('{of}', _('of'))
-                .replace('{water}', 'UDS Enterprise' if water is None else water)
+                .replace('{water}', 'UDS Report' if water is None else water)
                 .replace('{printed}', _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.now()))
         )
 
-        h = HTML(string=html)
+        h = HTML(string=html, url_fetcher=report_fetcher)
         c = CSS(string=css)
 
-        pdf = h.write_pdf(stylesheets=[c])
-
-        with open('/home/dkmaster/kk/kk.pdf', 'wb') as f:
-            f.write(pdf)
-
-        return pdf
+        return h.write_pdf(stylesheets=[c])
 
     @staticmethod
     def templateAsPDF(templateName, dct, header=None, water=None):
@@ -119,11 +127,7 @@ class Report(UserInterface):
         """
         t = loader.get_template(templateName)
 
-        renderedHtml = t.render(dct)
-
-        logger.debug('HTML: {}'.format(renderedHtml))
-
-        return Report.asPDF(renderedHtml, header, water)
+        return Report.asPDF(t.render(dct), header, water)
 
     def __init__(self, values=None):
         """
@@ -170,12 +174,8 @@ class Report(UserInterface):
         Basically calls generate and encodes resuslt as base64
         """
         data = self.generate()
-        with open('/home/dkmaster/kk/kk2.pdf', 'wb') as f:
-            f.write(data)
         if self.encoded:
             data = encoders.encode(data, 'base64', asText=True).replace('\n', '')
-            with open('/home/dkmaster/kk/kk2.base64', 'w') as f:
-                f.write(data)
 
         return data
 

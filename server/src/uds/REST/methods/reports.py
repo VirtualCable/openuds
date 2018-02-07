@@ -116,8 +116,6 @@ class Reports(model.BaseModelHandler):
                 'data': result
             }
 
-            logger.debug('Data: {}'.format(data))
-
             return data
         except Exception as e:
             logger.exception('Generating report')

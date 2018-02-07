@@ -1,49 +1,29 @@
+{% load l10n i18n %}
 <html lang="en">
     <head>
-        <title>Report test</title>
+        <title>Users Report</title>
     </head>
     <body>
-        <div class="content">
-            <table style="width: 100%">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Parent</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>name of person</td>
-                        <td>123</td>
-                        <td>his</td>
-                    </tr>
-                    <tr>
-                            <td>name of person 2</td>
-                            <td>123 2</td>
-                            <td>his 2</td>
-                    </tr>
-                    <tr>
-                        <td>name of person 3</td>
-                        <td>123 3</td>
-                        <td>his </td>
-                    </tr>
-                    <tr>
-                            <td>name of person 4</td>
-                            <td>123 4</td>
-                            <td>his 4</td>
-                        </tr>
-                    <tr>
-                        <td>name of person 5</td>
-                        <td>123 5</td>
-                        <td>his 5</td>
-                    </tr>
-                            
-                </tbody>
-            </table>
-            <p style="page-break-before: always">
-                This is a new page
-            </p>
-        </div>
+        <table style="width: 100%; font-size: 0.8em;">
+            <thead>
+                <tr>
+                    <th style="width: 25%">{% trans 'User ID' %}</th>
+                    <th style="width: 50%">{% trans 'Real name' %}</th>
+                    <th style="width: 25%">{% trans 'Last Access' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.real_name }}</td>
+                    <td>{{ user.last_access }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <!-- <p style="page-break-before: always">
+            This is a new page
+        </p> -->
     </body>
 </html>

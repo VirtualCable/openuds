@@ -1,5 +1,5 @@
 @page {
-    margin: 3cm 2cm; padding-left: 1.5cm;
+    margin: 1.5cm 1.5cm; padding-left: 1cm;
     @top-center {
         content: "{header}";
         vertical-align: bottom;
@@ -23,8 +23,19 @@
         transform: rotate(-90deg);
     }
 }
-body { text-align: justify }
-h1 { bookmark-level: none }
+body { 
+    text-align: justify;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 14px;
+    background-image: url(stock://logo-512-trans.png);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 80%;
+    background-position: center center;
+    background-blend-mode: 
+}
+
+h1 { bookmark-level: none; }
 
 tbody tr:nth-child(odd) {
     background-color: #4C8BF5;

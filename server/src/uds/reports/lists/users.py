@@ -83,7 +83,7 @@ class ListReportUsers(ListReport):
             'uds/reports/lists/users.html',
             dct={'users': users},
             header=ugettext('Users List for {}').format(auth.name),
-            water=auth.name
+            water=ugettext('UDS Report of users in {}'.format(auth.name))
         )
 
 
