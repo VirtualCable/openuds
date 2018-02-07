@@ -1,4 +1,4 @@
-# jshint strict: true 
+# jshint strict: true
 gui.reports = new GuiElement(api.reports, "reports")
 gui.reports.link = (event) ->
   "use strict"
@@ -9,7 +9,7 @@ gui.reports.link = (event) ->
       reports: "reports-placeholder"
     )
     gui.setLinksEvents()
-    
+
     tableId = gui.reports.table(
       icon: 'reports'
       container: "reports-placeholder"
@@ -43,14 +43,18 @@ gui.reports.link = (event) ->
                     closeFnc()
                     gui.doLog data
                     if data.encoded
+                      gui.doLog('Data is encoded')
                       content = base64.decode(data.data)
+                      gui.doLog('Length: ' + content.length)
                     else
                       content = data.data
                     setTimeout( (()->
+                        byteContent = new Uint8Array(content.length)
+                        byteContent[i] = content.charCodeAt(i) for i in [0..content.length-1]
+
+                        blob = new Blob([byteContent], type: data.content_type)
                         saveAs(
-                          new Blob([content],
-                                   type: data.content_type
-                              ), 
+                          blob,
                           data.filename
                         )
                       ), 100)
