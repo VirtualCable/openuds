@@ -81,7 +81,10 @@ class ListReportUsers(ListReport):
 
         return self.templateAsPDF(
             'uds/reports/lists/users.html',
-            dct={'users': users},
+            dct={
+                'users': users,
+                'auth': auth.name,
+            },
             header=ugettext('Users List for {}').format(auth.name),
             water=ugettext('UDS Report of users in {}'.format(auth.name))
         )

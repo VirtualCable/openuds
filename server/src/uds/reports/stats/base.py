@@ -35,12 +35,11 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core import reports
 
-
-__updated__ = '2015-06-21'
+__updated__ = '2018-02-07'
 
 
 class StatsReport(reports.Report):
     """
-    Base report por stats reports
+    Base report for statistics reports
     """
     group = _('Statistics')  # So we can make submenus with reports

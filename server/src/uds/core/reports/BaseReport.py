@@ -49,19 +49,6 @@ logger = logging.getLogger(__name__)
 __updated__ = '2018-02-07'
 
 
-# url fetcher for weasyprint
-def report_fetcher(url):
-    logger.debug('Getting url for weasyprint {}'.format(url))
-    if url.startswith('stock://'):
-        imagePath = stock.getStockImagePath(url[8:])
-        with open(imagePath, 'rb') as f:
-            image = f.read()
-        return dict(string=image,
-                    mime_type='image/png')
-    else:
-        return default_url_fetcher(url)
-
-
 class Report(UserInterface):
     mime_type = 'application/pdf'  # Report returns pdfs by default, but could be anything else
     name = _('Base Report')  # Report name
@@ -99,11 +86,30 @@ class Report(UserInterface):
         return cls.uuid
 
     @staticmethod
-    def asPDF(html, header=None, water=None):
+    def asPDF(html, header=None, water=None, images=None):
         """
         Renders an html as PDF.
         Uses the "report.css" as stylesheet
         """
+
+        # url fetcher for weasyprint
+        def report_fetcher(url):
+            logger.debug('Getting url for weasyprint {}'.format(url))
+            if url.startswith('stock://'):
+                imagePath = stock.getStockImagePath(url[8:])
+                with open(imagePath, 'rb') as f:
+                    image = f.read()
+                return dict(string=image,
+                            mime_type='image/png')
+            elif url.startswith('image://'):
+                if isinstance(images, dict):
+                    logger.debug('Getting image {} --> {}'.format(url[8:], images.get(url[8:])))
+                    img = images.get(url[8:])
+                return dict(string=img,
+                            mime_type='image/png')
+            else:
+                return default_url_fetcher(url)
+
         with open(stock.getStockCssPath('report.css'), 'r') as f:
             css = f.read()
 
@@ -121,13 +127,13 @@ class Report(UserInterface):
         return h.write_pdf(stylesheets=[c])
 
     @staticmethod
-    def templateAsPDF(templateName, dct, header=None, water=None):
+    def templateAsPDF(templateName, dct, header=None, water=None, images=None):
         """
         Renders a template as PDF
         """
         t = loader.get_template(templateName)
 
-        return Report.asPDF(t.render(dct), header, water)
+        return Report.asPDF(t.render(dct), header=header, water=water, images=images)
 
     def __init__(self, values=None):
         """

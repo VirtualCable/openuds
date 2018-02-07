@@ -3,7 +3,9 @@
     @top-center {
         content: "{header}";
         vertical-align: bottom;
-        border-bottom: 0.5pt solid 
+        border-bottom: 0.5pt solid;
+        font-weight: bolder;
+        
     }
     @top-right {
         content: "{page} " counter(page)
@@ -17,7 +19,7 @@
     }
     @left-top {
         content: "{water}"; font: .5cm/1.5 Fontin Sans;
-        background: #005a9c; color: #fff; text-align: right;
+        background: #557891; color: #fff; text-align: right;
         padding-right: 2em; height: 1.5em; width: 10cm;
         transform-origin: 100% 0;
         transform: rotate(-90deg);
@@ -38,6 +40,13 @@ body {
 h1 { bookmark-level: none; }
 
 tbody tr:nth-child(odd) {
-    background-color: #4C8BF5;
-    color: #fff;
+    background-color: rgb(199, 222, 241);
+    /*color: #fff; */
+}
+
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /* width: 50%; */
 }

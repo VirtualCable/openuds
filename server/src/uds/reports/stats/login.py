@@ -36,7 +36,6 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 import django.template.defaultfilters as filters
 
 from uds.core.ui.UserInterface import gui
-from uds.core.reports.tools import UDSImage, UDSGeraldoReport
 from uds.core.util.stats import events
 
 import csv
@@ -48,11 +47,6 @@ import pycha.bar
 from .base import StatsReport
 
 from uds.core.util import tools
-from geraldo.generators.pdf import PDFGenerator
-from geraldo import ReportBand, ObjectValue, BAND_WIDTH, Label, SubReport
-from reportlab.lib.units import cm, mm
-from reportlab.lib.enums import TA_RIGHT, TA_CENTER
-from PIL import Image as PILImage
 
 import datetime
 import six
@@ -60,65 +54,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-05-04'
+__updated__ = '2018-02-07'
 
-# several constants as Width height, margins, ..
-WIDTH, HEIGHT = 1800, 1000
-GERALDO_WIDTH = 120 * mm
-GERALDO_HEIGHT = GERALDO_WIDTH * HEIGHT / WIDTH
-
-
-class AccessReport(UDSGeraldoReport):
-    header_elements = []
-
-    class band_detail(ReportBand):
-        height = 400 * mm  # Height bigger than a page, so a new page is launched
-        # auto_expand_height = True
-        elements = (
-            Label(text=_('Users access by date'), top=0.6 * cm, left=0, width=BAND_WIDTH,
-                  style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
-            UDSImage(left=4 * cm, top=1 * cm,
-                     width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
-                     get_image=lambda x: x.instance['image']),
-
-            Label(text=_('Users access by day of week'), top=GERALDO_HEIGHT + 1.2 * cm, left=0, width=BAND_WIDTH,
-                  style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
-            UDSImage(left=4 * cm, top=GERALDO_HEIGHT + 1.6 * cm,
-                     width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
-                     get_image=lambda x: x.instance['image2']),
-
-            Label(text=_('Users access by hour'), top=2 * GERALDO_HEIGHT + 2 * cm, left=0, width=BAND_WIDTH,
-                  style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
-            UDSImage(left=4 * cm, top=2 * GERALDO_HEIGHT + 2.4 * cm,
-                     width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
-                     get_image=lambda x: x.instance['image3']),
-        )
-
-    subreports = [
-        SubReport(
-            queryset_string='%(object)s["data"]',
-            band_header=ReportBand(
-                height=1 * cm,
-                auto_expand_height=True,
-                elements=(
-                    Label(text=_('Users access by date'), top=0.2 * cm, left=0, width=BAND_WIDTH,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 12, 'alignment': TA_CENTER}),
-                    Label(text=_('Date range'), top=1.0 * cm, left=1.2 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 10}),
-                    Label(text=_('Users'), top=1.0 * cm, left=14 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 10}),
-                ),
-                # borders={'bottom': True}
-            ),
-            band_detail=ReportBand(
-                height=0.5 * cm,
-                elements=(
-                    ObjectValue(attribute_name='date', top=0, left=1.2 * cm, width=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 9}),
-                    ObjectValue(attribute_name='users', top=0, left=14 * cm, style={'fontName': 'Helvetica', 'fontSize': 9}),
-                )
-            ),
-        )
-    ]
+# several constants as Width height
+WIDTH, HEIGHT = 1920, 1080
 
 
 class StatsReportLogin(StatsReport):
@@ -180,7 +119,7 @@ class StatsReportLogin(StatsReport):
 
         samplingIntervals = []
         prevVal = None
-        for val in range(start, end, (end - start) / (samplingPoints + 1)):
+        for val in range(start, end, int((end - start) / (samplingPoints + 1))):
             if prevVal is None:
                 prevVal = val
                 continue
@@ -232,6 +171,9 @@ class StatsReportLogin(StatsReport):
         #
         # User access by date graph
         #
+        graph1 = six.BytesIO()
+        graph2 = six.BytesIO()
+        graph3 = six.BytesIO()
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
@@ -242,7 +184,7 @@ class StatsReportLogin(StatsReport):
             'axis': {
                 'x': {
                     'ticks': [
-                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(i), xLabelFormat)) for i in range(start, end, (end - start) / 11)
+                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(i), xLabelFormat)) for i in range(start, end, int((end - start) / 11))
                     ],
                     'range': (start, end),
                     'showLines': True,
@@ -259,7 +201,7 @@ class StatsReportLogin(StatsReport):
                 'lineColor': '#187FF2'
             },
             'colorScheme': {
-                'name': 'gradient',
+                'name': 'rainbow',
                 'args': {
                     'initialColor': '#B8CA16',
                 },
@@ -285,7 +227,12 @@ class StatsReportLogin(StatsReport):
         chart.addDataset(dataset)
         chart.render()
 
-        img = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
+        surface.write_to_png(graph1)
+
+        del chart
+        del surface  # calls finish, flushing to SVG
+
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         #
         # User access by day of week
@@ -313,8 +260,12 @@ class StatsReportLogin(StatsReport):
         chart.addDataset(dataset)
         chart.render()
 
-        img2 = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
+        surface.write_to_png(graph2)
 
+        del chart
+        del surface  # calls finish, flushing to SVG
+
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         # Hourly chart
         dataset = ((ugettext('Users access to UDS'), [(i, dataHour[i]) for i in range(0, 24)]),)
@@ -338,25 +289,26 @@ class StatsReportLogin(StatsReport):
         chart.addDataset(dataset)
         chart.render()
 
-        img3 = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
+        surface.write_to_png(graph3)
 
-        output = six.StringIO()
+        del chart
+        del surface  # calls finish, flushing to SVG
 
-        queryset = [
-            {'image': img, 'image2': img2, 'image3': img3, 'data': reportData}
-        ]
+        with open('/home/dkmaster/kk/g1.svg', 'wb') as f:
+            f.write(graph1.getvalue())
 
-        logger.debug(queryset)
-
-        try:
-            report = AccessReport(queryset=queryset)
-            report.title = ugettext('Users access to UDS')
-            # report = UsersReport(queryset=users)
-            report.generate_by(PDFGenerator, filename=output)
-            return output.getvalue()
-        except Exception:
-            logger.exception('Errool')
-            return None
+        return self.templateAsPDF(
+            'uds/reports/stats/user-access.html',
+            dct={
+                'data': reportData,
+                'begining': self.startDate.date(),
+                'ending': self.endDate.date(),
+                'intervals': self.samplingPoints.num(),
+            },
+            header=ugettext('Users access to UDS'),
+            water=ugettext('UDS Report for users access'),
+            images={'graph1': graph1.getvalue(), 'graph2': graph2.getvalue(), 'graph3': graph3.getvalue()},
+        )
 
 
 class StatsReportLoginCSV(StatsReportLogin):
@@ -373,7 +325,7 @@ class StatsReportLoginCSV(StatsReportLogin):
     samplingPoints = StatsReportLogin.samplingPoints
 
     def generate(self):
-        output = StringIO.StringIO()
+        output = six.StringIO()
         writer = csv.writer(output)
 
         reportData = self.getRangeData()[2]
