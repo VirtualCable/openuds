@@ -39,14 +39,15 @@ from uds.core.ui.UserInterface import UserInterface
 from uds.core.util import encoders
 from . import stock
 
-import six
 from weasyprint import HTML, CSS, default_url_fetcher
 from datetime import datetime
+
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-07'
+__updated__ = '2018-02-08'
 
 
 class Report(UserInterface):
@@ -103,8 +104,8 @@ class Report(UserInterface):
                             mime_type='image/png')
             elif url.startswith('image://'):
                 if isinstance(images, dict):
-                    logger.debug('Getting image {} --> {}'.format(url[8:], images.get(url[8:])))
-                    img = images.get(url[8:])
+                    img = images.get(url[8:], None)
+                    logger.debug('Getting image {}? {}'.format(url[8:], img != None))
                 return dict(string=img,
                             mime_type='image/png')
             else:

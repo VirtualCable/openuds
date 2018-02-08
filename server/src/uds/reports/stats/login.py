@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-07'
+__updated__ = '2018-02-08'
 
 # several constants as Width height
 WIDTH, HEIGHT = 1920, 1080
@@ -230,7 +230,7 @@ class StatsReportLogin(StatsReport):
         surface.write_to_png(graph1)
 
         del chart
-        del surface  # calls finish, flushing to SVG
+        del surface  # calls finish, flushing to image
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
@@ -263,7 +263,7 @@ class StatsReportLogin(StatsReport):
         surface.write_to_png(graph2)
 
         del chart
-        del surface  # calls finish, flushing to SVG
+        del surface  # calls finish, flushing to image
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
@@ -291,17 +291,17 @@ class StatsReportLogin(StatsReport):
 
         surface.write_to_png(graph3)
 
-        del chart
-        del surface  # calls finish, flushing to SVG
+        with open('/home/dkmaster/kk/kk.png', 'wb') as f:
+            f.write(graph3.getvalue())
 
-        with open('/home/dkmaster/kk/g1.svg', 'wb') as f:
-            f.write(graph1.getvalue())
+        del chart
+        del surface  # calls finish, flushing to image
 
         return self.templateAsPDF(
             'uds/reports/stats/user-access.html',
             dct={
                 'data': reportData,
-                'begining': self.startDate.date(),
+                'beginning': self.startDate.date(),
                 'ending': self.endDate.date(),
                 'intervals': self.samplingPoints.num(),
             },

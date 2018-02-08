@@ -35,54 +35,24 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from uds.core.ui.UserInterface import gui
-from uds.core.reports.tools import UDSGeraldoReport
 from uds.core.util.stats import events
-
 
 import six
 import csv
 
-
 from .base import StatsReport
 
 from uds.models import ServicePool
-from geraldo.generators.pdf import PDFGenerator
-from geraldo import ReportBand, ObjectValue, Label
-from reportlab.lib.units import cm, mm
 
 import datetime
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-05-17'
+__updated__ = '2018-02-08'
 
 # several constants as Width height, margins, ..
-WIDTH, HEIGHT = 1800, 1000
-GERALDO_WIDTH = 120 * mm
-GERALDO_HEIGHT = GERALDO_WIDTH * HEIGHT / WIDTH
-
-
-class UsersReport(UDSGeraldoReport):
-    title = ''
-    author = 'UDS'
-
-    header_elements = [
-        Label(text=_('Access Datetime'), top=2.0 * cm, left=0.5 * cm),
-        Label(text=_('User'), top=2.0 * cm, left=5.5 * cm),
-        Label(text=_('Duration(seconds)'), top=2.0 * cm, left=12 * cm),
-    ]
-
-    header_height = 2.5 * cm
-
-
-    class band_detail(ReportBand):
-        height = 0.5 * cm
-        elements = (
-            ObjectValue(attribute_name='date', left=0.5 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
-            ObjectValue(attribute_name='name', left=5.5 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
-            ObjectValue(attribute_name='time', left=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
-        )
+WIDTH, HEIGHT = 1920, 1080
 
 
 class UsageByPool(StatsReport):
@@ -153,19 +123,22 @@ class UsageByPool(StatsReport):
                         'time': total
                     })
 
-        logger.debug('data')
+        logger.debug('data: {}'.format(data))
 
         return data, pool.name
 
     def generate(self):
         items, poolName = self.getData()
 
-        output = six.StringIO()
-
-        report = UsersReport(queryset=items)
-        report.title = _('Users usage list for {}').format(poolName)
-        report.generate_by(PDFGenerator, filename=output)
-        return output.getvalue()
+        return self.templateAsPDF(
+            'uds/reports/stats/usage-by-pool.html',
+            dct={
+                'data': items,
+                'pool': poolName,
+            },
+            header=ugettext('Users usage list for {}').format(poolName),
+            water=ugettext('UDS Report of users in {}').format(poolName)
+        )
 
 
 class UsageByPoolCSV(UsageByPool):
@@ -180,7 +153,7 @@ class UsageByPoolCSV(UsageByPool):
     endDate = UsageByPool.endDate
 
     def generate(self):
-        output = StringIO.StringIO()
+        output = six.StringIO()
         writer = csv.writer(output)
 
         reportData, poolName = self.getData()

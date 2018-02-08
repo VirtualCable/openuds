@@ -1,0 +1,35 @@
+{% load l10n i18n %}
+<html lang="en">
+    <head>
+        <title>Users usage summary for {{ pool }}</title>
+        <meta name="author" content="UDS">
+        <meta name="description" content="Users usage summary for {{ pool }} from {{ beginning }} to {{ ending }}">
+        <meta name="keywords" content="uds,report,usage,users,summary">
+        <meta name="generator" content="UDS Reporting">
+    </head>
+    <body>
+        <table style="width: 100%; font-size: 0.8em;">
+            <thead>
+                <tr>
+                    <th style="width: 25%">{% trans 'User' %}</th>
+                    <th style="width: 50%">{% trans 'Sessions' %}</th>
+                    <th style="width: 25%">{% trans 'Hours' %}</th>
+                    <th style="width: 25%">{% trans 'Average' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in data %}
+                <tr>
+                    <td>{{ d.user }}</td>
+                    <td>{{ d.sessions }}</td>
+                    <td>{{ d.hours }}</td>
+                    <td>{{ d.average }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <!-- <p style="page-break-before: always">
+            This is a new page
+        </p> -->
+    </body>
+</html>

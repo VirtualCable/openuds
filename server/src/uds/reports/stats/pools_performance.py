@@ -37,95 +37,30 @@ from django.db.models import Count
 import django.template.defaultfilters as filters
 
 from uds.core.ui.UserInterface import gui
-from uds.core.reports.tools import UDSImage, UDSGeraldoReport
 from uds.core.util.stats import events
 
 import csv
 import six
 
 import cairo
-import pycha.line
-import pycha.bar
+# import pycha.line
+# import pycha.bar
 import pycha.stackedbar
 
 from .base import StatsReport
 
 from uds.core.util import tools
 from uds.models import ServicePool
-from geraldo.generators.pdf import PDFGenerator
-from geraldo import ReportBand, ObjectValue, BAND_WIDTH, Label, SubReport, SystemField, Line
-from reportlab.lib.units import cm, mm
-from reportlab.lib.enums import TA_RIGHT, TA_CENTER
-# from reportlab.lib import colors
-from PIL import Image as PILImage
 
 import datetime
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-05-04'
+__updated__ = '2018-02-08'
 
 # several constants as Width height, margins, ..
-WIDTH, HEIGHT = 1800, 1000
-GERALDO_WIDTH = 120 * mm
-GERALDO_HEIGHT = GERALDO_WIDTH * HEIGHT / WIDTH
-
-
-class AccessReport(UDSGeraldoReport):
-
-    header_elements = []
-
-    class band_detail(ReportBand):
-        height = 400 * mm  # Height bigger than a page, so a new page is launched for listings
-        # auto_expand_height = True
-        elements = (
-            Label(text=_('Distinct users by pool'), top=0.6 * cm, left=0, width=BAND_WIDTH,
-                  style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
-            UDSImage(left=4 * cm, top=1 * cm,
-                     width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
-                     get_image=lambda x: x.instance['image']),
-
-            Label(text=_('Accesses by pool'), top=GERALDO_HEIGHT + 1.2 * cm, left=0, width=BAND_WIDTH,
-                  style={'fontName': 'Helvetica-Bold', 'fontSize': 10, 'alignment': TA_CENTER}),
-            UDSImage(left=4 * cm, top=GERALDO_HEIGHT + 1.6 * cm,
-                     width=GERALDO_WIDTH, height=GERALDO_HEIGHT,
-                     get_image=lambda x: x.instance['image2']),
-        )
-
-    subreports = [
-        SubReport(
-            queryset_string='%(object)s["data"]',
-            band_header=ReportBand(
-                height=1 * cm,
-                auto_expand_height=True,
-                elements=(
-                    # Label(text=_('Users access by date'), top=0.2 * cm, left=0, width=BAND_WIDTH,
-                    #      style={'fontName': 'Helvetica-Bold', 'fontSize': 12, 'alignment': TA_CENTER}),
-
-                    Label(text=_('Pool'), top=1.0 * cm, left=1.2 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
-                    Label(text=_('Date range'), top=1.0 * cm, left=8 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
-                    Label(text=_('Users'), top=1.0 * cm, left=14 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
-                    Label(text=_('Accesses'), top=1.0 * cm, left=16 * cm,
-                          style={'fontName': 'Helvetica-Bold', 'fontSize': 9}),
-                ),
-                # borders={'bottom': True}
-            ),
-            band_detail=ReportBand(
-                height=0.5 * cm,
-                elements=(
-                    ObjectValue(attribute_name='name', top=0, left=1.2 * cm, width=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
-                    ObjectValue(attribute_name='date', top=0, left=8 * cm, width=12 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
-                    ObjectValue(attribute_name='users', top=0, left=14 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
-                    ObjectValue(attribute_name='accesses', top=0, left=16 * cm, style={'fontName': 'Helvetica', 'fontSize': 8}),
-                )
-            ),
-        ),
-    ]
-
+WIDTH, HEIGHT = 1920, 1080
 
 
 class PoolPerformanceReport(StatsReport):
@@ -174,9 +109,12 @@ class PoolPerformanceReport(StatsReport):
     def initGui(self):
         logger.debug('Initializing gui')
         vals = [
-            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all()
+            gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')
         ]
         self.pools.setValues(vals)
+
+    def getPools(self):
+        return [(v.id, v.name) for v in ServicePool.objects.filter(uuid__in=self.pools.value)]
 
     def getRangeData(self):
         start = self.startDate.stamp()
@@ -191,7 +129,8 @@ class PoolPerformanceReport(StatsReport):
 
         samplingPoints = self.samplingPoints.num()
 
-        pools = [(v.id, v.name) for v in ServicePool.objects.filter(uuid__in=self.pools.value)]
+        pools = self.getPools()
+
         if len(pools) == 0:
             raise Exception(_('Select at least a service pool for the report'))
 
@@ -206,7 +145,7 @@ class PoolPerformanceReport(StatsReport):
         # Generate samplings interval
         samplingIntervals = []
         prevVal = None
-        for val in range(start, end, (end - start) / (samplingPoints + 1)):
+        for val in range(start, end, int((end - start) / (samplingPoints + 1))):
             if prevVal is None:
                 prevVal = val
                 continue
@@ -255,6 +194,9 @@ class PoolPerformanceReport(StatsReport):
 
         xLabelFormat, poolsData, reportData = self.getRangeData()
 
+        graph1 = six.BytesIO()
+        graph2 = six.BytesIO()
+
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         options = {
@@ -262,7 +204,7 @@ class PoolPerformanceReport(StatsReport):
             'axis': {
                 'x': {
                     'ticks': [
-                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat)) for i, l in enumerate(range(start, end, (end - start) / self.samplingPoints.num()))
+                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat)) for i, l in enumerate(range(start, end, int((end - start) / self.samplingPoints.num())))
                     ],
                     'range': (0, self.samplingPoints.num()),
                     'showLines': True,
@@ -279,7 +221,7 @@ class PoolPerformanceReport(StatsReport):
                 'lineColor': '#187FF2'
             },
             'colorScheme': {
-                'name': 'rainbow',
+                'name': 'gradient',
                 'args': {
                     'initialColor': 'blue',
                 },
@@ -317,7 +259,12 @@ class PoolPerformanceReport(StatsReport):
 
         chart.render()
 
-        img = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
+        surface.write_to_png(graph1)
+
+        del chart
+        del surface  # calls finish, flushing to image
+
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         # Accesses
         chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
@@ -334,26 +281,26 @@ class PoolPerformanceReport(StatsReport):
 
         chart.render()
 
-        img2 = PILImage.frombuffer("RGBA", (surface.get_width(), surface.get_height()), surface.get_data(), "raw", "BGRA", 0, 1)
+        surface.write_to_png(graph2)
+
+        del chart
+        del surface  # calls finish, flushing to image
 
         # Generate Data for pools, basically joining all pool data
 
-        queryset = [
-            {'image': img, 'image2': img2, 'data': reportData }
-        ]
-
-        logger.debug(queryset)
-
-        output = six.StringIO()
-
-        try:
-            report = AccessReport(queryset=queryset)
-            report.title = ugettext('UDS Pools Performance Report')
-            report.generate_by(PDFGenerator, filename=output)
-            return output.getvalue()
-        except Exception:
-            logger.exception('Errool')
-            return None
+        return self.templateAsPDF(
+            'uds/reports/stats/pools-performance.html',
+            dct={
+                'data': reportData,
+                'pools': [i[1] for i in self.getPools()],
+                'beginning': self.startDate.date(),
+                'ending': self.endDate.date(),
+                'intervals': self.samplingPoints.num(),
+            },
+            header=ugettext('UDS Pools Performance Report'),
+            water=ugettext('Pools Performance'),
+            images={'graph1': graph1.getvalue(), 'graph2': graph2.getvalue()},
+        )
 
 
 class PoolPerformanceReportCSV(PoolPerformanceReport):
@@ -369,7 +316,7 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
     samplingPoints = PoolPerformanceReport.samplingPoints
 
     def generate(self):
-        output = StringIO.StringIO()
+        output = six.StringIO()
         writer = csv.writer(output)
 
         reportData = self.getRangeData()[2]

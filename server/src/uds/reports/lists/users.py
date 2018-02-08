@@ -45,7 +45,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-07'
+__updated__ = '2018-02-08'
 
 
 class ListReportUsers(ListReport):
@@ -86,7 +86,7 @@ class ListReportUsers(ListReport):
                 'auth': auth.name,
             },
             header=ugettext('Users List for {}').format(auth.name),
-            water=ugettext('UDS Report of users in {}'.format(auth.name))
+            water=ugettext('UDS Report of users in {}').format(auth.name)
         )
 
 
