@@ -124,8 +124,7 @@ class Reports(model.BaseModelHandler):
     # Gui related
     def getGui(self, uuid):
         report = self._findReport(uuid)
-
-        return report.guiDescription(report)
+        return sorted(report.guiDescription(report), key=lambda f: f['gui']['order'])
 
     # Returns the list of
     def getItems(self):
