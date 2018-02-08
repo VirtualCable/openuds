@@ -1,0 +1,48 @@
+{% load l10n i18n %}
+<html lang="en">
+    <head>
+        <title>
+            UDS Pools Usage Report
+        </title>
+        <meta name="author" content="UDS">
+        <meta name="description" content="Report of pools usage of {{ pools|join:", " }}, for day {{ beginning }}">
+        <meta name="keywords" content="uds,report,access">
+        <meta name="generator" content="UDS Reporting">
+    </head>
+    <body>
+        <p>{% trans 'Pools:' %} {{ pools|join:", " }}</p>
+        <p>{% trans 'Date:' %} {{ beginning }}</p>
+        <p></p>
+        <p style="text-align: center">
+            {% trans "Distinct users by pool" %}
+        </p>
+        <img src="image://graph1" class="center" style="height: 9cm;">
+        
+        <p style="page-break-before: always; text-align: center;">
+            {% trans "Services assignation" %}
+        </p>
+        <table style="width: 100%; font-size: 0.8em;">
+            <thead>
+                <tr>
+                    <th style="width: 70%">{% trans 'Pool' %}</th>
+                    <th style="width: 30%">{% trans 'Hour' %}</th>
+                    <th style="width: 30%">{% trans 'Services' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in data|dictsort:"name.lower" %}
+            {% for h, v in d.hours.items %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>{{ h }}</td>
+                <td>{{ v }}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+        <!-- <p style="page-break-before: always">
+            This is a new page
+        </p> -->
+    </body>
+</html>

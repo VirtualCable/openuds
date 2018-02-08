@@ -1,0 +1,54 @@
+{% load l10n i18n %}
+<html lang="en">
+    <head>
+        <title>
+            UDS Pools Performance Report
+        </title>
+        <meta name="author" content="UDS">
+        <meta name="description" content="Report of pools performance of {{ pools|join:", " }}, from {{ beginning }} to {{ ending }} with {{ intervals }} intervals">
+        <meta name="keywords" content="uds,report,access">
+        <meta name="generator" content="UDS Reporting">
+    </head>
+    <body>
+        <p>{% trans 'Pools:' %} {{ pools|join:", " }}</p>
+        <p>{% trans 'Start date:' %} {{ beginning }}</p>
+        <p>{% trans 'End date:' %} {{ ending }}</p>
+        <p>{% trans 'Intervals:' %} {{ intervals }}</p>
+        <p></p>
+        <p style="text-align: center">
+            {% trans "Distinct users by pool" %}
+        </p>
+        <img src="image://graph1" class="center" style="height: 9cm;">
+        <p style="text-align: center">
+            {% trans "Accesses by pool" %}
+        </p>
+        <img src="image://graph2" class="center" style="height: 9cm;">
+        
+        <p style="page-break-before: always; text-align: center;">
+            {% trans "Users Accesses by pool/date" %}
+        </p>
+        <table style="width: 100%; font-size: 0.8em;">
+            <thead>
+                <tr>
+                    <th style="width: 70%">{% trans 'Pool' %}</th>
+                    <th style="width: 30%">{% trans 'Date range' %}</th>
+                    <th style="width: 30%">{% trans 'Users' %}</th>
+                    <th style="width: 30%">{% trans 'Accesses' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in data %}
+                <tr>
+                    <td>{{ d.name }}</td>
+                    <td>{{ d.date }}</td>
+                    <td>{{ d.users }}</td>
+                    <td>{{ d.accesses }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <!-- <p style="page-break-before: always">
+            This is a new page
+        </p> -->
+    </body>
+</html>
