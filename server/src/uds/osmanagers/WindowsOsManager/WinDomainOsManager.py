@@ -17,6 +17,8 @@ from uds.core.managers.CryptoManager import CryptoManager
 from uds.core import osmanagers
 from uds.core.util import log
 from uds.core.util import encoders
+from uds.core.util import ldaputil
+
 import dns.resolver
 import ldap
 from .WindowsOsManager import WindowsOsManager
@@ -76,16 +78,6 @@ class WinDomainOsManager(WindowsOsManager):
             if self._ou.lower().find(lpath) == -1:
                 self._ou += ',' + lpath
 
-    def __getLdapError(self, e):
-        logger.debug('Ldap Error: {0} {1}'.format(e, e.message))
-        _str = ''
-        if type(e.message) == dict:
-            # _str += e.message.has_key('info') and e.message['info'] + ',' or ''
-            _str += e.message.get('desc', '')
-        else:
-            _str += str(e)
-        return _str
-
     def __getServerList(self):
         if self._serverHint != '':
             yield (self._serverHint, 389)
@@ -98,61 +90,54 @@ class WinDomainOsManager(WindowsOsManager):
         Tries to connect to LDAP
         Raises an exception if not found:
             dns.resolver.NXDOMAIN
-            ldap.LDAPError
+            ldaputil.LDAPError
         """
         if servers is None:
             servers = self.__getServerList()
 
+        account = self._account
+        if account.find('@') == -1:
+            account += '@' + self._domain
+
         _str = "No servers found"
         for server in servers:
             _str = ''
-
             try:
-                uri = "%s://%s:%d" % ('ldap', server[0], server[1])
-                logger.debug('URI: {0}'.format(uri))
+                return ldaputil.connection(account, self._password, server[0], server[1], ssl=False, timeout=10, debug=False)
+            except Exception as e:
+                _str = 'Error: {}'.format(e)
 
-                ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # Disable certificate check
-                l = ldap.initialize(uri=uri)
-                l.set_option(ldap.OPT_REFERRALS, 0)
-                l.network_timeout = l.timeout = 5
-                l.protocol_version = ldap.VERSION3
-
-                account = self._account
-                if account.find('@') == -1:
-                    account += '@' + self._domain
-
-                logger.debug('Account data: {0}, {1}, {2}, {3}'.format(self._account, self._domain, account, self._password))
-
-                l.simple_bind_s(who=account, cred=self._password)
-
-                return l
-            except ldap.LDAPError as e:
-                _str = self.__getLdapError(e)
-
-        raise ldap.LDAPError(_str)
+        raise ldaputil.LDAPError(_str)
 
     def __getGroup(self, l):
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
-        group = self._group.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+        group = ldaputil.escape(self._group)
+        try:
+            obj = next(ldaputil.getAsDict(l, base, "(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(group), ['dn'], sizeLimit=50))
+        except StopIteration:
+            obj = None
 
-        res = l.search_ext_s(base=base, scope=ldap.SCOPE_SUBTREE, filterstr="(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(group), attrlist=[b'dn'])
-        if res[0] is None:
+        if obj is None:
             return None
 
-        return res[0][0]  # Returns the DN
+        return obj['dn']  # Returns the DN
 
     def __getMachine(self, l, machineName):
         if self._ou:
-            ou = self._ou
+            base = self._ou
         else:
-            ou = ','.join(['DC=' + i for i in self._domain.split('.')])
+            base = ','.join(['DC=' + i for i in self._domain.split('.')])
 
-        fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(machineName)
-        res = l.search_ext_s(base=ou, scope=ldap.SCOPE_SUBTREE, filterstr=fltr, attrlist=[b'dn'])
-        if res[0] is None:
+        fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(ldaputil.escape(machineName))
+        try:
+            obj = next(ldaputil.getAsDict(l, base, fltr, ['dn'], sizeLimit=50))
+        except StopIteration:
+            obj = None
+
+        if obj is None:
             return None
 
-        return res[0][0]  # Returns the DN
+        return obj['dn']  # Returns the DN
 
     def readyReceived(self, userService, data):
         # No group to add
@@ -173,6 +158,9 @@ class WinDomainOsManager(WindowsOsManager):
 
                 machine = self.__getMachine(l, userService.friendly_name)
                 group = self.__getGroup(l)
+                # #
+                # Direct LDAP operation "modify", maybe this need to be added to ldaputil? :)
+                # #
                 l.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))
                 error = None
                 break
@@ -183,7 +171,7 @@ class WinDomainOsManager(WindowsOsManager):
                 # Already added this machine to this group, pass
                 error = None
                 break
-            except ldap.LDAPError:
+            except ldaputil.LDAPError:
                 logger.exception('Ldap Exception caught')
                 error = "Could not remove machine from domain (invalid credentials for {0})".format(self._account)
             except Exception as e:
@@ -210,7 +198,7 @@ class WinDomainOsManager(WindowsOsManager):
             logger.warn('Could not find _ldap._tcp.' + self._domain)
             log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
             return
-        except ldap.LDAPError:
+        except ldaputil.LDAPError:
             logger.exception('Ldap Exception caught')
             log.doLog(service, log.WARN, "Could not remove machine from domain (invalid credentials for {0})".format(self._account), log.OSMANAGER)
             return
@@ -222,6 +210,9 @@ class WinDomainOsManager(WindowsOsManager):
             res = self.__getMachine(l, service.friendly_name)
             if res is None:
                 raise Exception('Machine {} not found on AD (permissions?)'.format(service.friendly_name))
+            # #
+            # Direct LDAP operation "modify", maybe this need to be added to ldaputil? :)
+            # #
             l.delete_s(res)  # Remove by DN, SYNC
         except IndexError:
             logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, self._ou))
@@ -231,7 +222,7 @@ class WinDomainOsManager(WindowsOsManager):
     def check(self):
         try:
             l = self.__connectLdap()
-        except ldap.LDAPError as e:
+        except ldaputil.LDAPError as e:
             return _('Check error: {0}').format(self.__getLdapError(e))
         except dns.resolver.NXDOMAIN:
             return [True, _('Could not find server parameters (_ldap._tcp.{0} can\'t be resolved)').format(self._domain)]
@@ -241,7 +232,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         try:
             l.search_st(self._ou, ldap.SCOPE_BASE)
-        except ldap.LDAPError as e:
+        except ldaputil.LDAPError as e:
             return _('Check error: {0}').format(self.__getLdapError(e))
 
         # Group
@@ -260,7 +251,7 @@ class WinDomainOsManager(WindowsOsManager):
             logger.debug(wd)
             try:
                 l = wd.__connectLdap()
-            except ldap.LDAPError as e:
+            except ldaputil.LDAPError as e:
                 return [False, _('Could not access AD using LDAP ({0})').format(wd.__getLdapError(e))]
 
             ou = wd._ou
@@ -271,7 +262,7 @@ class WinDomainOsManager(WindowsOsManager):
             r = l.search_st(ou, ldap.SCOPE_BASE)
             logger.debug('Result of search: {0}'.format(r))
 
-        except ldap.LDAPError:
+        except ldaputil.LDAPError:
             if wd._ou == '':
                 return [False, _('The default path {0} for computers was not found!!!').format(wd._ou)]
             else:

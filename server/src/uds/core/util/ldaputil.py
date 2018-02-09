@@ -43,6 +43,18 @@ from uds.core.util import tools
 logger = logging.getLogger(__name__)
 
 
+class LDAPError(Exception):
+
+    @staticmethod
+    def reraise(e):
+        _str = _('Connection error: ')
+        if hasattr(e, 'message') and isinstance(e.message, dict):
+            _str += ', '.join((e.message.get('info', ''), e.message.get('desc')))
+        else:
+            _str += "{}".format(e)
+        raise LDAPError(_str)
+
+
 def escape(value):
     """
     Escape filter chars for ldap search filter
@@ -78,17 +90,12 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
 
         l.simple_bind_s(who=username, cred=password)
     except ldap.SERVER_DOWN:
-        raise Exception(_('Can\'t contact LDAP server'))
+        raise LDAPError(_('Can\'t contact LDAP server'))
     except ldap.LDAPError as e:
-        _str = _('Connection error: ')
-        if hasattr(e, 'message') and isinstance(e.message, dict):
-            _str += ', '.join((e.message.get('info', ''), e.message.get('desc')))
-        else:
-            _str += "{}".format(e)
-        raise Exception(_str)
-    except Exception:
+        LDAPError.reraise(e)
+    except Exception as e:
         logger.exception('Exception connection:')
-        raise
+        raise LDAPError('{}'.format(e))
 
     logger.debug('Conneciton was success')
     return l
@@ -104,13 +111,19 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
     if attrList is not None:
         attrList = [tools.b2(i) for i in attrList]
 
-    # On python2, attrs and search string is str (not unicode), in 3, str (not bytes)
-    res = con.search_ext_s(base,
-        scope=scope,
-        filterstr=tools.b2(ldapFilter),
-        attrlist=attrList,
-        sizelimit=sizeLimit
-    )
+    try:
+        # On python2, attrs and search string is str (not unicode), in 3, str (not bytes)
+        res = con.search_ext_s(base,
+            scope=scope,
+            filterstr=tools.b2(ldapFilter),
+            attrlist=attrList,
+            sizelimit=sizeLimit
+        )
+    except ldap.LDAPError as e:
+        LDAPError.reraise(e)
+    except Exception as e:
+        logger.exception('Exception connection:')
+        raise LDAPError('{}'.format(e))
 
     logger.debug('Result of search {} on {}: {}'.format(ldapFilter, base, res))
 
