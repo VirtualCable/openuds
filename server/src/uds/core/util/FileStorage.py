@@ -73,11 +73,9 @@ class FileStorage(Storage):
 
         self.cache._cache.flush_all()  # On start, ensures that cache is empty to avoid surprises
 
-        # noinspection PyArgumentList
-        Storage.__init__(self, *args, **kwargs)
+        Storage.__init__(self, *args, **kwargs)  # @UndefinedVariable
 
     def get_valid_name(self, name):
-        logger.debug('Name in get_valid_name: {}'.format(name))
         if name is None:
             return name
         return name.replace('\\', os.path.sep)
@@ -91,7 +89,6 @@ class FileStorage(Storage):
         return 'fstor' + six.text_type(hash(self.get_valid_name(name)))
 
     def _dbFileForReadOnly(self, name):
-        logger.debug('Name in _dbFileForReadOnly: {}'.format(name))
         # If we have a cache, & the cache contains the object
         if self.cache is not None:
             dbf = self.cache.get(self._getKey(name))
@@ -101,7 +98,6 @@ class FileStorage(Storage):
         return self._dbFileForReadWrite(name)
 
     def _dbFileForReadWrite(self, name):
-        logger.debug('Name in _dbFileForReadWrite: {}'.format(name))
         f = DBFile.objects.get(name=self.get_valid_name(name))
         self._storeInCache(f)
         return f
