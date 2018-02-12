@@ -32,6 +32,10 @@
 """
 from __future__ import unicode_literals
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def initialize():
     """
@@ -47,11 +51,14 @@ def initialize():
     # Dinamycally import children of this package.
     pkgpath = os.path.dirname(sys.modules[__name__].__file__)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        __import__(name, globals(), locals())
+        logger.debug('Importing {}'.format(name))
+        __import__(name, globals(), locals(), [], 1)
 
     p = jobs.Job
     # This is marked as error in IDE, but it's not (__subclasses__)
     for cls in p.__subclasses__():
+        logger.debug('Examining worker {}'.format(cls.__module__))
         # Limit to autoregister just workers jobs inside this module
         if cls.__module__[0:16] == 'uds.core.workers':
+            logger.debug('Added worker {} to list'.format(cls.__module__))
             TaskManager.registerJob(cls)
