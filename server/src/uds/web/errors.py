@@ -37,7 +37,7 @@ from django.shortcuts import render
 from django.template import RequestContext
 
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from .transformers import scrambleId, transformId
 
 from uds.models import DeployedService, Transport, UserService, Authenticator

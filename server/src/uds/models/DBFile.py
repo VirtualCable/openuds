@@ -59,9 +59,11 @@ class DBFile(UUIDModel):
         try:
             return encoders.decode(encoders.decode(self.content, 'base64'), 'zip')
         except Exception:
+            logger.exception('Getting data')
             logger.error('DBFile {} has errors and cannot be used'.format(self.name))
             try:
-                self.delete()  # Autodelete, invalid...
+                # self.delete()  # Autodelete, invalid...
+                pass
             except:
                 logger.error('Could not even delete {}!!'.format(self.name))
 
@@ -69,8 +71,11 @@ class DBFile(UUIDModel):
 
     @data.setter
     def data(self, value):
+        logger.debug('Encoding value: {}'.format(value))
         self.size = len(value)
-        self.content = encoders.encode(encoders.encode(value, 'zip'), 'base64')
+        content = encoders.encode(encoders.encode(value, 'zip'), 'base64', asText=True)
+        logger.debug('Content is {}'.format(type(content)))
+        self.content = content
 
     def __str__(self):
         return 'File: {} {} {} {}'.format(self.name, self.size, self.created, self.modified)

@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('interval', models.IntegerField(default=1)),
                 ('duration', models.IntegerField(default=0)),
                 ('duration_unit', models.CharField(default='MINUTES', max_length=32, choices=[('MINUTES', 'Minutes'), ('HOURS', 'Hours'), ('DAYS', 'Days'), ('WEEKS', 'Weeks')])),
-                ('calendar', models.ForeignKey(related_name='rules', to='uds.Calendar')),
+                ('calendar', models.ForeignKey(related_name='rules', to='uds.Calendar', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'uds_calendar_rules',

@@ -31,7 +31,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext
 from django.utils import formats
 
@@ -51,7 +51,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-11-10'
+__updated__ = '2018-02-12'
 
 
 def about(request):

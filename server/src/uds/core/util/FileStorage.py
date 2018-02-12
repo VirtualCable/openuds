@@ -77,6 +77,9 @@ class FileStorage(Storage):
         Storage.__init__(self, *args, **kwargs)
 
     def get_valid_name(self, name):
+        logger.debug('Name in get_valid_name: {}'.format(name))
+        if name is None:
+            return name
         return name.replace('\\', os.path.sep)
 
     def _getKey(self, name):
@@ -88,6 +91,7 @@ class FileStorage(Storage):
         return 'fstor' + six.text_type(hash(self.get_valid_name(name)))
 
     def _dbFileForReadOnly(self, name):
+        logger.debug('Name in _dbFileForReadOnly: {}'.format(name))
         # If we have a cache, & the cache contains the object
         if self.cache is not None:
             dbf = self.cache.get(self._getKey(name))
@@ -97,6 +101,7 @@ class FileStorage(Storage):
         return self._dbFileForReadWrite(name)
 
     def _dbFileForReadWrite(self, name):
+        logger.debug('Name in _dbFileForReadWrite: {}'.format(name))
         f = DBFile.objects.get(name=self.get_valid_name(name))
         self._storeInCache(f)
         return f
@@ -114,6 +119,7 @@ class FileStorage(Storage):
             'modified': f.modified
         })
 
+        logger.debug('Name in _dbFileForReadWrite: {}'.format(f.name))
         self.cache.set(self._getKey(f.name), dbf, 3600)  # Cache defaults to one hour
 
     def _removeFromCache(self, name):
@@ -162,7 +168,7 @@ class FileStorage(Storage):
     def exists(self, name):
         logger.debug('Called exists for {}'.format(name))
         try:
-            _ = self._dbFileForReadOnly(name).uuid # Tries to access uuid
+            _ = self._dbFileForReadOnly(name).uuid  # Tries to access uuid
             return True
         except DBFile.DoesNotExist:
             return False

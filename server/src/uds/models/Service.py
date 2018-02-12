@@ -64,10 +64,10 @@ class Service(ManagedObjectModel, TaggingMixin):
     or a Terminal Server configuration).
     """
     # pylint: disable=model-missing-unicode
-    provider = models.ForeignKey(Provider, related_name='services')
+    provider = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
 
     # Proxy for this service
-    proxy = models.ForeignKey(Proxy, null=True, blank=True, related_name='services')
+    proxy = models.ForeignKey(Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE)
 
 
     class Meta(ManagedObjectModel.Meta):

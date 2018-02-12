@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=128, db_index=True)),
                 ('value', models.TextField(default='')),
-                ('user_service', models.ForeignKey(related_name='properties', to='uds.UserService')),
+                ('user_service', models.ForeignKey(related_name='properties', to='uds.UserService', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'uds__user_service_property',

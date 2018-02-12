@@ -32,7 +32,7 @@ from __future__ import unicode_literals
 
 import logging
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
@@ -53,8 +53,7 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-
-__updated__ = '2017-02-14'
+__updated__ = '2018-02-12'
 
 
 @csrf_exempt

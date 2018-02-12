@@ -30,9 +30,10 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from django.conf.urls import include, url
+from django.urls import re_path
+from django.conf.urls import include
 from uds.core.util.modfinder import loadModulesUrls
-from django.views.i18n import javascript_catalog
+from django.views.i18n import JavaScriptCatalog
 from uds import REST
 import uds.web.views
 
@@ -42,56 +43,56 @@ js_info_dict = {
 }
 
 urlpatterns = [
-    url(r'^$', uds.web.views.index, name='uds.web.views.index'),
-    url(r'^login/$', uds.web.views.login, name='uds.web.views.login'),
-    url(r'^login/(?P<tag>.+)$', uds.web.views.login, name='uds.web.views.login'),
-    url(r'^logout$', uds.web.views.logout, name='uds.web.views.logout'),
+    re_path(r'^$', uds.web.views.index, name='uds.web.views.index'),
+    re_path(r'^login/$', uds.web.views.login, name='uds.web.views.login'),
+    re_path(r'^login/(?P<tag>.+)$', uds.web.views.login, name='uds.web.views.login'),
+    re_path(r'^logout$', uds.web.views.logout, name='uds.web.views.logout'),
     # Icons
-    url(r'^transicon/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='uds.web.views.transportIcon'),
+    re_path(r'^transicon/(?P<idTrans>.+)$', uds.web.views.transportIcon, name='uds.web.views.transportIcon'),
     # Images
-    url(r'^srvimg/(?P<idImage>.+)$', uds.web.views.serviceImage, name='uds.web.views.serviceImage'),
-    url(r'^galimg/(?P<idImage>.+)$', uds.web.views.image, name='galleryImage'),
+    re_path(r'^srvimg/(?P<idImage>.+)$', uds.web.views.serviceImage, name='uds.web.views.serviceImage'),
+    re_path(r'^galimg/(?P<idImage>.+)$', uds.web.views.image, name='galleryImage'),
     # Error URL
-    url(r'^error/(?P<idError>.+)$', uds.web.views.error, name='uds.web.views.error'),
+    re_path(r'^error/(?P<idError>.+)$', uds.web.views.error, name='uds.web.views.error'),
     # Transport own link processor
-    url(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.transportOwnLink, name='TransportOwnLink'),
+    re_path(r'^trans/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.transportOwnLink, name='TransportOwnLink'),
     # Authenticators custom html
-    url(r'^customAuth/(?P<idAuth>.*)$', uds.web.views.customAuth, name='uds.web.views.customAuth'),
+    re_path(r'^customAuth/(?P<idAuth>.*)$', uds.web.views.customAuth, name='uds.web.views.customAuth'),
     # Preferences
-    url(r'^prefs$', uds.web.views.prefs, name='uds.web.views.prefs'),
+    re_path(r'^prefs$', uds.web.views.prefs, name='uds.web.views.prefs'),
     # Change Language
-    url(r'^i18n/', include('django.conf.urls.i18n')),
+    re_path(r'^i18n/', include('django.conf.urls.i18n')),
     # Downloads
-    url(r'^idown/(?P<idDownload>[a-zA-Z0-9-]*)$', uds.web.views.download, name='uds.web.views.download'),
+    re_path(r'^idown/(?P<idDownload>[a-zA-Z0-9-]*)$', uds.web.views.download, name='uds.web.views.download'),
     # downloads for client
-    url(r'^down$', uds.web.views.client_downloads, name='uds.web.views.client_downloads'),
-    url(r'^down/(?P<os>[a-zA-Z0-9-]*)$', uds.web.views.client_downloads, name='uds.web.views.client_downloads'),
-    url(r'^pluginDetection/(?P<detection>[a-zA-Z0-9-]*)$', uds.web.views.plugin_detection, name='PluginDetection'),
+    re_path(r'^down$', uds.web.views.client_downloads, name='uds.web.views.client_downloads'),
+    re_path(r'^down/(?P<os>[a-zA-Z0-9-]*)$', uds.web.views.client_downloads, name='uds.web.views.client_downloads'),
+    re_path(r'^pluginDetection/(?P<detection>[a-zA-Z0-9-]*)$', uds.web.views.plugin_detection, name='PluginDetection'),
     # Client access enabler
-    url(r'^enable/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.clientEnabler, name='ClientAccessEnabler'),
+    re_path(r'^enable/(?P<idService>.+)/(?P<idTransport>.+)$', uds.web.views.clientEnabler, name='ClientAccessEnabler'),
 
     # Releaser
-    url(r'^release/(?P<idService>.+)$', uds.web.views.release, name='Releaser'),
+    re_path(r'^release/(?P<idService>.+)$', uds.web.views.release, name='Releaser'),
 
     # Custom authentication callback
-    url(r'^auth/(?P<authName>.+)', uds.web.views.authCallback, name='uds.web.views.authCallback'),
-    url(r'^authinfo/(?P<authName>.+)', uds.web.views.authInfo, name='uds.web.views.authInfo'),
-    url(r'^about', uds.web.views.about, name='uds.web.views.about'),
+    re_path(r'^auth/(?P<authName>.+)', uds.web.views.authCallback, name='uds.web.views.authCallback'),
+    re_path(r'^authinfo/(?P<authName>.+)', uds.web.views.authInfo, name='uds.web.views.authInfo'),
+    re_path(r'^about', uds.web.views.about, name='uds.web.views.about'),
     # Ticket authentication
-    url(r'^tkauth/(?P<ticketId>.+)$', uds.web.views.ticketAuth, name='TicketAuth'),
+    re_path(r'^tkauth/(?P<ticketId>.+)$', uds.web.views.ticketAuth, name='TicketAuth'),
 
     # REST Api
-    url(r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
+    re_path(r'^rest/(?P<arguments>.*)$', REST.Dispatcher.as_view(), name="REST"),
 
     # Web admin GUI
-    url(r'^adm/', include('uds.admin.urls')),
+    re_path(r'^adm/', include('uds.admin.urls')),
 
     # Files
-    url(r'^files/(?P<uuid>.+)', uds.web.views.file_storage, name='uds.web.views.file_storage'),
+    re_path(r'^files/(?P<uuid>.+)', uds.web.views.file_storage, name='uds.web.views.file_storage'),
 
     # Internacionalization in javascript
-    # Javascript catalog
-    url(r'^jsi18n/(?P<packages>[a-z]*)$', javascript_catalog, js_info_dict, name='uds.web.views.jsCatalog'),
+    # Javascript catalog. In fact, lang is not used, but it is maintanied for "backward" user templates compatibility
+    re_path(r'^jsi18n/(?P<lang>[a-z]*)$', JavaScriptCatalog.as_view(), name='uds.web.views.jsCatalog'),
 ]
 
 # Append urls from special dispatchers

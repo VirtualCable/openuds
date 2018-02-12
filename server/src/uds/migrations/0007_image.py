@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='deployedservice',
             name='image',
-            field=models.ForeignKey(related_name='deployedServices', blank=True, to='uds.Image', null=True),
+            field=models.ForeignKey(related_name='deployedServices', blank=True, to='uds.Image', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

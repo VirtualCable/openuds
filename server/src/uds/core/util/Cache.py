@@ -63,7 +63,7 @@ class Cache(object):
 
     def get(self, skey, defValue=None):
         now = getSqlDatetime()
-        # logger.debug('Requesting key "%s" for cache "%s"' % (skey, self._owner,))
+        logger.debug('Requesting key "%s" for cache "%s"' % (skey, self._owner,))
         try:
             key = self.__getKey(skey)
             c = uds.models.Cache.objects.get(pk=key)  # @UndefinedVariable
@@ -71,8 +71,10 @@ class Cache(object):
             if expired:
                 return defValue
             try:
+                logger.debug('value: {} ----- {}'.format(c.value, encoders.decode(c.value, 'base64')))
                 val = pickle.loads(encoders.decode(c.value, 'base64'))
-            except ValueError:
+            except Exception:  # If invalid, simple do no tuse it
+                logger.exception('Invalid pickle from cache')
                 c.delete()
                 return defValue
             Cache.hits += 1

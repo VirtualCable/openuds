@@ -32,7 +32,7 @@ from __future__ import unicode_literals
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext
 
 from uds.core.auths.auth import webLogin, authenticate, authLogLogin, authLogLogout, getUDSCookie, webLoginRequired, webLogout
@@ -48,7 +48,8 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2017-06-01'
+__updated__ = '2018-02-12'
+
 
 # Allow cross-domain login
 # @csrf_exempt

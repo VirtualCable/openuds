@@ -39,7 +39,7 @@ from uds.core.auths.GroupsManager import GroupsManager
 from uds.core.auths.Exceptions import InvalidUserException
 import logging
 
-__updated__ = '2018-01-16'
+__updated__ = '2018-02-12'
 
 logger = logging.getLogger(__name__)
 
@@ -200,7 +200,7 @@ class Authenticator(Module):
         if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
             self.getGroups(user.name, groupsManager)
-            user.groups = [g.dbGroup() for g in groupsManager.getValidGroups()]
+            user.groups.set([g.dbGroup() for g in groupsManager.getValidGroups()])
 
     def callbackUrl(self):
         """

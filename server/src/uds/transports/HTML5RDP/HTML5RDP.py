@@ -34,7 +34,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 
 from uds.core.ui.UserInterface import gui

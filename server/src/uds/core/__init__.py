@@ -41,5 +41,5 @@ from uds.core.BaseModule import Module
 
 import time
 
-VERSION = '2.x.x-DEVEL'
+VERSION = '3.x.x-DEVEL'
 VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))

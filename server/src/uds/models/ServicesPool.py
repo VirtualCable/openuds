@@ -76,8 +76,8 @@ class DeployedService(UUIDModel, TaggingMixin):
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
-    service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices')
-    osmanager = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices')
+    service = models.ForeignKey(Service, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
+    osmanager = models.ForeignKey(OSManager, null=True, blank=True, related_name='deployedServices', on_delete=models.CASCADE)
     transports = models.ManyToManyField(Transport, related_name='deployedServices', db_table='uds__ds_trans')
     assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
     state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
@@ -96,7 +96,7 @@ class DeployedService(UUIDModel, TaggingMixin):
     actionsCalendars = models.ManyToManyField(Calendar, related_name='actionsSP', through='CalendarAction')
 
     # Usage accounting
-    account = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools')
+    account = models.ForeignKey(Account, null=True, blank=True, related_name='servicesPools', on_delete=models.CASCADE)
 
     initial_srvs = models.PositiveIntegerField(default=0)
     cache_l1_srvs = models.PositiveIntegerField(default=0)

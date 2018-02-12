@@ -39,10 +39,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-05'
+__updated__ = '2018-02-12'
+
 
 @cache_page(3600, key_prefix='file', cache='memory')
 def file_storage(request, uuid):
+    logger.debug('Getting {} from DB'.format(uuid))
     f = DBFile.objects.get(uuid=uuid)
     content_type, encoding = mimetypes.guess_type(f.name)
 

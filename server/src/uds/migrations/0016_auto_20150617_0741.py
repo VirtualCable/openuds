@@ -44,16 +44,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='group',
             name='manager',
-            field=uds.models.Util.UnsavedForeignKey(related_name='groups', to='uds.Authenticator'),
+            field=uds.models.Util.UnsavedForeignKey(related_name='groups', to='uds.Authenticator', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='user',
             name='manager',
-            field=uds.models.Util.UnsavedForeignKey(related_name='users', to='uds.Authenticator'),
+            field=uds.models.Util.UnsavedForeignKey(related_name='users', to='uds.Authenticator', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='deployedservicepublicationchangelog',
             name='publication',
-            field=models.ForeignKey(related_name='changelog', to='uds.DeployedService'),
+            field=models.ForeignKey(related_name='changelog', to='uds.DeployedService', on_delete=models.CASCADE),
         ),
     ]

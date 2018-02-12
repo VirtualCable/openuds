@@ -63,12 +63,13 @@ def country(lang):
 
 
 # Config related
-@register.assignment_tag
+@register.simple_tag
 def get_theme():
     return GlobalConfig.UDS_THEME.get()
 
 
 class EnhacedVisual(template.Node):
+
     def __init__(self, nodelistTrue, nodelistFalse):
         self._nodelistTrue = nodelistTrue
         self._nodelistFalse = nodelistFalse
@@ -98,6 +99,7 @@ def enhaced_visual(parser, token):
 
 
 class TabIndex(template.Node):
+
     def __init__(self, tabIndexName):
         self.tabIndexIname = tabIndexName
 
@@ -121,6 +123,7 @@ def tabindex(parser, token):
 
 
 class Preference(template.Node):
+
     def __init__(self, modName, prefName):
         self.modName = modName
         self.prefName = prefName
@@ -147,26 +150,27 @@ def preference(parser, token):
     return Preference(modName, prefName)
 
 
-@register.assignment_tag
+@register.simple_tag
 def preferences_allowed():
     return GlobalConfig.PREFERENCES_ALLOWED.getBool(True)
 
 
-@register.assignment_tag
+@register.simple_tag
 def pageReloadTime():
     return GlobalConfig.RELOAD_TIME.getInt(True)
 
 
-@register.assignment_tag
+@register.simple_tag
 def root_id():
     return ROOT_ID
 
 
-@register.assignment_tag
+@register.simple_tag
 def image_size():
     return Image.MAX_IMAGE_SIZE
 
-@register.assignment_tag
+
+@register.simple_tag
 def calendar_denied_msg():
     text = GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip()
     if text == '':
@@ -174,8 +178,10 @@ def calendar_denied_msg():
 
     return text
 
+
 # Browser related
 class IfBrowser(template.Node):
+
     def __init__(self, nodelistTrue, nodelistFalse, browsers):
         self._nodelistTrue = nodelistTrue
         self._nodelistFalse = nodelistFalse

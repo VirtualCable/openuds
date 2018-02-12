@@ -21,8 +21,8 @@ class Migration(migrations.Migration):
                 ('object_type', models.SmallIntegerField(default=-1, db_index=True)),
                 ('object_id', models.IntegerField(default=None, null=True, db_index=True, blank=True)),
                 ('permission', models.SmallIntegerField(default=0, db_index=True)),
-                ('group', models.ForeignKey(related_name='permissions', default=None, blank=True, to='uds.Group', null=True)),
-                ('user', models.ForeignKey(related_name='permissions', default=None, blank=True, to='uds.User', null=True)),
+                ('group', models.ForeignKey(related_name='permissions', default=None, blank=True, to='uds.Group', null=True, on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(related_name='permissions', default=None, blank=True, to='uds.User', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

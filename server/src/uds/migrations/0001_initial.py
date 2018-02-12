@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
                 ('state', models.CharField(default='P', max_length=1, db_index=True)),
                 ('state_date', models.DateTimeField()),
                 ('revision', models.PositiveIntegerField(default=1)),
-                ('deployed_service', models.ForeignKey(related_name='publications', to='uds.DeployedService')),
+                ('deployed_service', models.ForeignKey(related_name='publications', to='uds.DeployedService', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('publish_date',),
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ('comments', models.CharField(default='', max_length=256)),
                 ('is_meta', models.BooleanField(default=False, db_index=True)),
                 ('groups', models.ManyToManyField(to='uds.Group')),
-                ('manager', models.ForeignKey(related_name='groups', to='uds.Authenticator')),
+                ('manager', models.ForeignKey(related_name='groups', to='uds.Authenticator', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('name',),
@@ -203,7 +203,7 @@ class Migration(migrations.Migration):
                 ('data_type', models.CharField(max_length=128)),
                 ('data', models.TextField(default='')),
                 ('comments', models.CharField(max_length=256)),
-                ('provider', models.ForeignKey(related_name='services', to='uds.Provider')),
+                ('provider', models.ForeignKey(related_name='services', to='uds.Provider', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('name',),
@@ -295,7 +295,7 @@ class Migration(migrations.Migration):
                 ('is_admin', models.BooleanField(default=False)),
                 ('last_access', models.DateTimeField(default=datetime.datetime(1972, 7, 1, 0, 0))),
                 ('parent', models.IntegerField(default=-1)),
-                ('manager', models.ForeignKey(related_name='users', to='uds.Authenticator')),
+                ('manager', models.ForeignKey(related_name='users', to='uds.Authenticator', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('name',),
@@ -309,7 +309,7 @@ class Migration(migrations.Migration):
                 ('module', models.CharField(max_length=32, db_index=True)),
                 ('name', models.CharField(max_length=32, db_index=True)),
                 ('value', models.CharField(max_length=128, db_index=True)),
-                ('user', models.ForeignKey(related_name='preferences', to='uds.User')),
+                ('user', models.ForeignKey(related_name='preferences', to='uds.User', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -332,9 +332,9 @@ class Migration(migrations.Migration):
                 ('src_hostname', models.CharField(default='', max_length=64)),
                 ('src_ip', models.CharField(default='', max_length=15)),
                 ('cluster_node', models.CharField(default=None, max_length=128, null=True, db_index=True, blank=True)),
-                ('deployed_service', models.ForeignKey(related_name='userServices', to='uds.DeployedService')),
-                ('publication', models.ForeignKey(related_name='userServices', blank=True, to='uds.DeployedServicePublication', null=True)),
-                ('user', models.ForeignKey(related_name='userServices', default=None, blank=True, to='uds.User', null=True)),
+                ('deployed_service', models.ForeignKey(related_name='userServices', to='uds.DeployedService', on_delete=models.CASCADE)),
+                ('publication', models.ForeignKey(related_name='userServices', blank=True, to='uds.DeployedServicePublication', null=True, on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(related_name='userServices', default=None, blank=True, to='uds.User', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('creation_date',),
@@ -379,13 +379,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='deployedservice',
             name='osmanager',
-            field=models.ForeignKey(related_name='deployedServices', blank=True, to='uds.OSManager', null=True),
+            field=models.ForeignKey(related_name='deployedServices', blank=True, to='uds.OSManager', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='deployedservice',
             name='service',
-            field=models.ForeignKey(related_name='deployedServices', blank=True, to='uds.Service', null=True),
+            field=models.ForeignKey(related_name='deployedServices', blank=True, to='uds.Service', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
