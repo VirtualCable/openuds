@@ -65,6 +65,7 @@ class CalendarChecker(object):
         self.calendar = calendar
 
     def _updateData(self, dtime):
+        logger.debug('Updating {}'.format(dtime))
         # Else, update the array
         CalendarChecker.updates += 1
 

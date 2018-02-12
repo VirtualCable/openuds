@@ -39,6 +39,7 @@ from functools import wraps
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.utils.translation import get_language
 from django.utils.decorators import available_attrs
+from django.urls import reverse
 
 from django.utils.translation import ugettext as _
 from uds.core.util.Config import GlobalConfig
@@ -250,7 +251,6 @@ def authCallbackUrl(authenticator):
     '''
     Helper method, so we can get the auth call back url for an authenticator
     '''
-    from django.core.urlresolvers import reverse
     return reverse('uds.web.views.authCallback', kwargs={'authName': authenticator.name})
 
 
@@ -258,7 +258,6 @@ def authInfoUrl(authenticator):
     '''
     Helper method, so we can get the info url for an authenticator
     '''
-    from django.core.urlresolvers import reverse
     if isinstance(authenticator, (six.text_type, six.binary_type)):
         name = authenticator
     else:

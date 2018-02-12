@@ -58,7 +58,7 @@ class Storage(object):
         key = self.__getKey(skey)
         if isinstance(data, six.text_type):
             data = data.encode('utf-8')
-        data = encoders.encode(data, 'base64')
+        data = encoders.encode(data, 'base64', asText=True)
         attr1 = '' if attr1 is None else attr1
         try:
             dbStorage.objects.create(owner=self._owner, key=key, data=data, attr1=attr1)  # @UndefinedVariable
