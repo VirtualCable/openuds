@@ -313,9 +313,9 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
 
-    if not QtGui.QSystemTrayIcon.isSystemTrayAvailable():
-        # QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
-        sys.exit(1)
+    #if not QtGui.QSystemTrayIcon.isSystemTrayAvailable():
+    #    # QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
+    #    sys.exit(1)
 
     # This is important so our app won't close on message windows
     QtGui.QApplication.setQuitOnLastWindowClosed(False)
