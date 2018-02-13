@@ -175,7 +175,7 @@ def ticketAuth(request, ticketId):
             raise InvalidUserException()
 
         # Add groups to user (replace existing groups)
-        usr.groups = grps
+        usr.groups.set(grps)
 
         # Force cookie generation
         webLogin(request, None, usr, password)

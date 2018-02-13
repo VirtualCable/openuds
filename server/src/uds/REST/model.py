@@ -892,7 +892,7 @@ class ModelHandler(BaseModelHandler):
             # Now if tags, update them
             if tags is not None:
                 logger.debug('Updating tags: {}'.format(tags))
-                item.tags = [ Tag.objects.get_or_create(tag=val)[0] for val in tags]
+                item.tags.set([ Tag.objects.get_or_create(tag=val)[0] for val in tags])
 
         except self.model.DoesNotExist:
             raise NotFound('Item not found')

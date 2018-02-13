@@ -80,7 +80,7 @@ class Serializable(object):
         '''
         Serializes and "obfuscates' the data.
         '''
-        return encoders.encode(self.marshal(), 'base64')
+        return encoders.encode(self.marshal(), 'base64', asText=True)
 
     def unserialize(self, str_):
         '''
