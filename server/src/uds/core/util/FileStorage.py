@@ -115,7 +115,6 @@ class FileStorage(Storage):
             'modified': f.modified
         })
 
-        logger.debug('Name in _dbFileForReadWrite: {}'.format(f.name))
         self.cache.set(self._getKey(f.name), dbf, 3600)  # Cache defaults to one hour
 
     def _removeFromCache(self, name):
