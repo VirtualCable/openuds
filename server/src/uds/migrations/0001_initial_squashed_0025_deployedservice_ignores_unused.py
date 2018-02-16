@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
                 ('owner_type', models.SmallIntegerField(db_index=True, default=0)),
                 ('created', models.DateTimeField(db_index=True)),
                 ('source', models.CharField(db_index=True, default='internal', max_length=16)),
-                ('level', models.PositiveSmallIntegerField(db_index=True, default=0)),
+                ('level', models.PositiveIntegerField(db_index=True, default=0)),
                 ('data', models.CharField(default='', max_length=255)),
             ],
             options={
