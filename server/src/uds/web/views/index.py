@@ -35,8 +35,6 @@ from django.urls import reverse
 from django.utils.translation import ugettext
 from django.utils import formats
 
-from django.template import RequestContext
-
 from uds.core.auths.auth import webLoginRequired, webLogout
 
 from uds.models import DeployedService, Transport, UserService, Network, ServicesPoolGroup
@@ -51,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-02-14'
 
 
 def about(request):

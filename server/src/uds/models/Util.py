@@ -40,8 +40,7 @@ from time import mktime
 
 import logging
 
-__updated__ = '2015-05-03'
-
+__updated__ = '2018-02-16'
 
 logger = logging.getLogger(__name__)
 
@@ -70,10 +69,10 @@ def getSqlDatetime(unix=False):
       * mysql
       * sqlite
     """
-
-    if connection.vendor == 'mysql':
+    if connection.vendor in ('mysql', 'microsoft'):
         cursor = connection.cursor()
-        cursor.execute('SELECT NOW()')
+        sentence = 'SELECT NOW()' if connection.vendor == 'mysql' else 'SELECT CURRENT_TIMESTAMP'
+        cursor.execute(sentence)
         date = cursor.fetchone()[0]
     else:
         date = datetime.now()  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
@@ -82,6 +81,16 @@ def getSqlDatetime(unix=False):
         return int(mktime(date.timetuple()))
     else:
         return date
+
+
+def getSqlFnc(fncName):
+    '''
+    Convert different sql functions for different platforms
+    '''
+    if connection.vendor == 'microsoft':
+        return { 'CEIL': 'CEILING'}.get(fncName, fncName)
+
+    return fncName
 
 
 def optimizeTable(dbTable):

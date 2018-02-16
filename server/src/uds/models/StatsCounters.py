@@ -37,12 +37,11 @@ from django.db import models
 
 from uds.models.Util import NEVER_UNIX
 from uds.models.Util import getSqlDatetime
+from uds.models.Util import getSqlFnc
 
 import logging
 
-
-__updated__ = '2017-05-03'
-
+__updated__ = '2018-02-16'
 
 logger = logging.getLogger(__name__)
 
@@ -123,12 +122,13 @@ class StatsCounters(models.Model):
                 last = q.order_by('stamp').reverse()[0].stamp
                 interval = int((last - first) / (elements - 1))
 
-        filt += ' AND stamp>={0} AND stamp<={1} GROUP BY CEIL(stamp/{2}) ORDER BY stamp'.format(since, to, interval)
+        stampValue = '{ceil}(stamp/{interval})'.format(ceil=getSqlFnc('CEIL'), interval=interval)
+        filt += ' AND stamp>={0} AND stamp<={1} GROUP BY {2} ORDER BY stamp'.format(since, to, stampValue)
 
-        fnc = kwargs.get('use_max', False) and 'MAX' or 'AVG'
+        fnc = getSqlFnc('MAX' if kwargs.get('use_max', False) else 'AVG')
 
-        query = ('SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type,stamp,'
-                        'CEIL({0}(value)) AS value '
+        query = ('SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, ' + stampValue + '*{}'.format(interval) + ' AS stamp,' +
+                        getSqlFnc('CEIL') + '({0}(value)) AS value '
                  'FROM {1} WHERE {2}').format(fnc, StatsCounters._meta.db_table, filt)
 
         logger.debug('Stats query: {0}'.format(query))

@@ -527,6 +527,8 @@ class UserServiceManager(object):
             logger.debug('Getting A service {}'.format(idService))
             userService = UserService.objects.get(uuid=idService)
             userService.deployed_service.validateUser(user)
+        elif kind == 'M':  # This is a meta service..
+            pass
         else:
             ds = ServicePool.objects.get(uuid=idService)
             # We first do a sanity check for this, if the user has access to this service

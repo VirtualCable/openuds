@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2014-04-24'
+__updated__ = '2018-02-16'
 
 from django.db import models
 
@@ -55,7 +55,7 @@ class Log(models.Model):
 
     created = models.DateTimeField(db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)
-    level = models.PositiveSmallIntegerField(default=0, db_index=True)
+    level = models.PositiveIntegerField(default=0, db_index=True)
     data = models.CharField(max_length=255, default='')
 
     class Meta:

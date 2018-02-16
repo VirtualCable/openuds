@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-from django.db import models
+from django.db import models, transaction
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -63,9 +63,10 @@ import logging
 import pickle
 import six
 
-__updated__ = '2017-11-29'
+__updated__ = '2018-02-14'
 
 logger = logging.getLogger(__name__)
+
 
 @python_2_unicode_compatible
 class DeployedService(UUIDModel, TaggingMixin):
@@ -104,9 +105,8 @@ class DeployedService(UUIDModel, TaggingMixin):
     max_srvs = models.PositiveIntegerField(default=0)
     current_pub_revision = models.PositiveIntegerField(default=1)
 
-
     # Meta service related
-    meta_pools = models.ManyToManyField('self', symmetrical=False)
+    # meta_pools = models.ManyToManyField('self', symmetrical=False)
 
     class Meta(UUIDModel.Meta):
         '''
@@ -407,7 +407,6 @@ class DeployedService(UUIDModel, TaggingMixin):
             return None
 
         return self.account.addUsageAccount(userService, start, end)
-
 
     @staticmethod
     def getDeployedServicesForGroups(groups):

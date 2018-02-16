@@ -30,10 +30,10 @@
 '''
 from __future__ import unicode_literals
 
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.template import RequestContext
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
@@ -43,7 +43,7 @@ from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.ui import theme
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
-from uds.core.util import html
+from uds.core.util import html, log
 from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
 import uds.web.errors as errors
@@ -147,6 +147,7 @@ def clientEnabler(request, idService, idTransport):
         }),
         content_type='application/json'
     )
+
 
 @webLoginRequired(admin=False)
 @never_cache

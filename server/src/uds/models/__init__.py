@@ -54,17 +54,16 @@ from .OSManager import OSManager
 from .Transport import Transport
 from .Network import Network
 
-
 # Authenticators
 from .Authenticator import Authenticator
 from .User import User
 from .UserPreference import UserPreference
 from .Group import Group
 
-
 # Provisioned services
 from .ServicesPool import DeployedService  # Old name, will continue here for a while already
 from .ServicesPool import ServicePool  # New name
+# from .MetaServicePool import
 from .ServicesPoolGroup import ServicesPoolGroup
 from .ServicesPoolPublication import DeployedServicePublication
 from .UserService import UserService
@@ -76,7 +75,6 @@ from .Log import Log
 # Stats
 from .StatsCounters import StatsCounters
 from .StatsEvents import StatsEvents
-
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
 # We could use django cache (and maybe we do it in a near future), but we need to clean up things when objecs owning them are deleted
@@ -115,8 +113,7 @@ from .Tag import Tag
 # Utility
 from .DBFile import DBFile
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-02-14'
 
 logger = logging.getLogger(__name__)
 
