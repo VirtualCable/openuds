@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2017-11-17'
+__updated__ = '2018-02-16'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -534,7 +534,9 @@ class UserServiceManager(object):
 
         # If transport is not available for the request IP...
         if trans.validForIp(srcIp) is False:
-            raise InvalidServiceException()
+            msg = 'The requested transport {} is not valid for {}'.format(trans.name, srcIp)
+            logger.error(msg)
+            raise InvalidServiceException(msg)
 
         if user is not None:
             userName = user.name
