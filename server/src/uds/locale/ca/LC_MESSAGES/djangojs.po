@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-06 15:17+0100\n"
+"POT-Creation-Date: 2018-02-20 14:28+0100\n"
 "PO-Revision-Date: 2018-01-26 09:30+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -510,11 +510,11 @@ msgstr "Error esborrant Gestor de SO"
 msgid "Generate report"
 msgstr "Genera informe"
 
-#: static/tmp_js/gui-d-reports.js:73
+#: static/tmp_js/gui-d-reports.js:85
 msgid "Error creating report"
 msgstr "Error creant l'informe"
 
-#: static/tmp_js/gui-d-reports.js:78
+#: static/tmp_js/gui-d-reports.js:90
 msgid "Error obtaining report description"
 msgstr "Error en l'obtenció de la descripció de l'informe"
 

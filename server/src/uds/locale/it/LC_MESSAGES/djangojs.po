@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-06 15:17+0100\n"
+"POT-Creation-Date: 2018-02-20 14:28+0100\n"
 "PO-Revision-Date: 2018-01-26 09:30+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -508,11 +508,11 @@ msgstr "OSManager errore di omissione"
 msgid "Generate report"
 msgstr "Generare report"
 
-#: static/tmp_js/gui-d-reports.js:73
+#: static/tmp_js/gui-d-reports.js:85
 msgid "Error creating report"
 msgstr "Errore di creazione di report"
 
-#: static/tmp_js/gui-d-reports.js:78
+#: static/tmp_js/gui-d-reports.js:90
 msgid "Error obtaining report description"
 msgstr "Descrizione dell'errore ottenere report"
 
