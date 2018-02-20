@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-06 15:17+0100\n"
+"POT-Creation-Date: 2018-02-20 14:28+0100\n"
 "PO-Revision-Date: 2018-02-06 11:24+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -743,8 +743,8 @@ msgstr "Nom d'utilisateur"
 msgid "state"
 msgstr "État"
 
-#: REST/methods/users_groups.py:116 reports/lists/users.py:86
-#: reports/lists/users.py:162
+#: REST/methods/users_groups.py:116 reports/lists/users.py:85
+#: reports/lists/users.py:161
 msgid "Last access"
 msgstr "Dernier accès"
 
@@ -833,18 +833,18 @@ msgid "requested a template that do not exist"
 msgstr "demandé un modèle qui n'existent pas"
 
 #: admin/views/reporting/usage.py:84 admin/views/reporting/users.py:87
-#: core/reports/tools/report.py:72 reports/lists/users.py:87
+#: core/reports/tools/report.py:72 reports/lists/users.py:86
 #, python-format
 msgid "Page %(page_number)d of %(page_count)d"
 msgstr "Page %(page_number)d de %(page_count)d"
 
 #: admin/views/reporting/usage.py:93 admin/views/reporting/users.py:97
-#: core/reports/tools/report.py:82 reports/lists/users.py:97
+#: core/reports/tools/report.py:82 reports/lists/users.py:96
 #, python-format
 msgid "Printed in %(now:%Y, %b %d)s at %(now:%H:%M)s"
 msgstr "Imprimé en %(now:%Y, %b %d)s à %(now:%H:%M)s"
 
-#: admin/views/reporting/users.py:112 reports/lists/users.py:137
+#: admin/views/reporting/users.py:112 reports/lists/users.py:136
 msgid "Users List for {}"
 msgstr "Liste des utilisateurs des {}"
 
@@ -2210,31 +2210,31 @@ msgstr "Acteur UDS pour les machines windows"
 msgid "Lists"
 msgstr "Listes"
 
-#: reports/lists/users.py:84 reports/lists/users.py:162
+#: reports/lists/users.py:83 reports/lists/users.py:161
 msgid "User ID"
 msgstr "ID de l'utilisateur"
 
-#: reports/lists/users.py:85 reports/lists/users.py:162
+#: reports/lists/users.py:84 reports/lists/users.py:161
 #: templates/uds/admin/tmpl/group-info.html:44
 msgid "Real Name"
 msgstr "Vrai nom"
 
-#: reports/lists/users.py:112 templates/uds/admin/tmpl/permissions_add.html:5
+#: reports/lists/users.py:111 templates/uds/admin/tmpl/permissions_add.html:5
 #: templates/uds/admin/tmpl/pool_add_group.html:5
 #: templates/uds/html5/login.html:79 templates/uds/semantic/login.html:99
 #: web/forms/LoginForm.py:65
 msgid "Authenticator"
 msgstr "Authentificateur"
 
-#: reports/lists/users.py:114
+#: reports/lists/users.py:113
 msgid "Authenticator from where to list users"
 msgstr "Authentificateur d'où lister les utilisateurs"
 
-#: reports/lists/users.py:118
+#: reports/lists/users.py:117
 msgid "Users list"
 msgstr "Liste des utilisateurs"
 
-#: reports/lists/users.py:119
+#: reports/lists/users.py:118
 msgid "List users of platform"
 msgstr "Liste des utilisateurs de la plate-forme"
 
@@ -5157,7 +5157,7 @@ msgstr ""
 "format HOST: PORT)"
 
 #: transports/NX/TSNXTransport.py:113 transports/RDP/TRDPTransport.py:106
-#: transports/RDS_enterprise/TRDSTransport.py:93
+#: transports/RDS_enterprise/TRDSTransport.py:94
 #: transports/RGS_enterprise/TRGSTransport.py:79
 #: transports/SPICE/TSPICETransport.py:78 transports/X2GO/TX2GOTransport.py:81
 msgid "Must use HOST:PORT in Tunnel Server Field"
@@ -5272,8 +5272,9 @@ msgstr "Profondeur de couleur"
 
 #: transports/RDP/BaseRDPTransport.py:91
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
-msgid "Color depth for this conextion"
-msgstr "Profondeur de couleur pour cette connection"
+#| msgid "Color depth for this conextion"
+msgid "Color depth for this connection"
+msgstr "Profondeur de couleur pour cette connexion"
 
 #: transports/RDP/BaseRDPTransport.py:100
 msgid "Wallpaper/theme"
@@ -5315,46 +5316,48 @@ msgstr ""
 "Si coché, le client Linux essayera d'utiliser ALSA, sinon, Pulse sera utilisé"
 
 #: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "Redirect home folder"
 msgstr "Rediriger le dossier home"
 
 #: transports/RDP/BaseRDPTransport.py:107
+#: transports/RDS_enterprise/BaseRDSTransport.py:91
 msgid "If checked, Linux client will try to redirect /home local folder"
 msgstr ""
 "Si cette case est cochée, le client Linux va essayer de rediriger / home "
 "local folder"
 
 #: transports/RDP/BaseRDPTransport.py:108
-#: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "Printer string"
 msgstr "Chaîne de l’imprimante"
 
 #: transports/RDP/BaseRDPTransport.py:108
-#: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/RDS_enterprise/BaseRDSTransport.py:92
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si l’imprimante est activée, la chaîne de l’imprimante sera utilisée avec "
 "xfreerdp client"
 
 #: transports/RDP/BaseRDPTransport.py:109
-#: transports/RDS_enterprise/BaseRDSTransport.py:92
+#: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid "Smartcard string"
 msgstr "Chaîne de carte à puce"
 
 #: transports/RDP/BaseRDPTransport.py:109
-#: transports/RDS_enterprise/BaseRDSTransport.py:92
+#: transports/RDS_enterprise/BaseRDSTransport.py:93
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si la carte à puce est cochée, la chaîne de carte à puce serautilisée avec "
 "xfreerdp client"
 
 #: transports/RDP/BaseRDPTransport.py:110
-#: transports/RDS_enterprise/BaseRDSTransport.py:93
+#: transports/RDS_enterprise/BaseRDSTransport.py:94
 msgid "Custom parameters"
 msgstr "Paramètres personnalisés"
 
 #: transports/RDP/BaseRDPTransport.py:110
-#: transports/RDS_enterprise/BaseRDSTransport.py:93
+#: transports/RDS_enterprise/BaseRDSTransport.py:94
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
