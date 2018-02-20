@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2017-12-21'
+__updated__ = '2018-02-15'
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ class BaseRDPTransport(Transport):
     colorDepth = gui.ChoiceField(
         label=_('Color depth'),
         order=31,
-        tooltip=_('Color depth for this conextion'),
+        tooltip=_('Color depth for this connection'),
         defvalue='24',
         values=[
             {'id': '8', 'text': '8' },

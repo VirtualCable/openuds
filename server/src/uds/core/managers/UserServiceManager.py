@@ -51,6 +51,8 @@ import requests
 import json
 import logging
 
+__updated__ = '2018-02-16'
+
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
 
@@ -573,7 +575,9 @@ class UserServiceManager(object):
 
         # If transport is not available for the request IP...
         if trans.validForIp(srcIp) is False:
-            raise InvalidServiceException()
+            msg = 'The requested transport {} is not valid for {}'.format(trans.name, srcIp)
+            logger.error(msg)
+            raise InvalidServiceException(msg)
 
         if user is not None:
             userName = user.name
@@ -593,6 +597,7 @@ class UserServiceManager(object):
             # If ready, show transport for this service, if also ready ofc
             iads = userService.getInstance()
             ip = iads.getIp()
+            userService.logIP(ip)  # Update known ip
 
             if self.checkUuid(userService) is False:  # Machine is not what is expected
                 serviceNotReadyCode = 0x0004
