@@ -82,7 +82,7 @@ module.exports = function(grunt) {
           update: true,
         },
         files: [{
-          '<%= config.dev %>/css/uds.css': ['<%= config.src %>/css/uds.scss']
+          '<%= config.dev %>/css/uds.css': ['<%= config.src %>/css/uds.scss', '<%= config.src %>/css/pages/*.scss']
         }]
       },
       dist: {
@@ -91,7 +91,7 @@ module.exports = function(grunt) {
           style: 'compressed'
         },
         files: [{
-          '<%= config.dist %>/css/uds.css': ['<%= config.src %>/css/uds.scss']
+          '<%= config.dist %>/css/uds.css': ['<%= config.src %>/css/uds.scss', '<%= config.src %>/css/pages/*.scss'],
         }]
       }
     },
