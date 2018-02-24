@@ -35,6 +35,7 @@ module.exports = function(grunt) {
     copy: {
       dev: {
         files: [
+          // Javascript from libs
           { 
             expand: true, 
             flatten: true, 
@@ -42,14 +43,18 @@ module.exports = function(grunt) {
               'node_modules/bootstrap/dist/js/bootstrap.js',  // Bootstrap js
               'node_modules/jquery/dist/jquery.js',  // Jquery js
               'node_modules/popper.js/dist/umd/popper.js', // Popper js
-              'node_modules/angular/angular.js' // Angular
+              'node_modules/angular/angular.js', // Angular
+              'node_modules/bootstrap-select/dist/js/bootstrap-select.js' // Bootstrap select
             ], 
             dest: '<%= config.dev %>/_static_/js/lib' 
-          },  // To Lib folder
+          },  
+          // Fontawewsome
+          { expand: true, flatten: true, src: 'node_modules/font-awesome/fonts/*', dest:'<%= config.dev %>/_static_/fonts' },
+          
           // Index & Templates, no changes for development environment
           { expand: true, flatten: true, src: config.src.html, dest:'<%= config.dev %>' },
           { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dev %>/_static_/templates' },
-          /// Images
+          // Images
           { expand: true, flatten: true, src: config.src.images, dest:'<%= config.dev %>/_static_/img' },
           // Server provided files, so we can "emulate" on development
           { expand: true, flatten: true, src: config.src.server_provided, dest: config.dev },
@@ -76,7 +81,10 @@ module.exports = function(grunt) {
             src: [
               'node_modules/bootstrap/dist/js/bootstrap.min.js',  // Bootstrap js
               'node_modules/jquery/dist/jquery.min.js',  // Jquery js
-              'node_modules/popper.js/dist/umd/popper.min.js' // Popper js
+              'node_modules/popper.js/dist/umd/popper.min.js', // Popper js
+              'node_modules/angular/angular.min.js', // Angular
+              'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js', // Bootstrap select
+              'node_modules/bootstrap-select/dist/js/i18n/*.min,js' // Bootstrap select
             ], 
             dest: '<%= config.dist %>/static/js/lib' 
           },
@@ -183,7 +191,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
 
   // Tasks
-  grunt.registerTask('dev', ['copy:dev', 'coffee:dev', 'sass:dev', 'http-server', 'watch'])
+  grunt.registerTask('build-dev', ['copy:dev', 'coffee:dev', 'sass:dev'])
+  grunt.registerTask('dev', ['build-dev', 'http-server', 'watch'])
   grunt.registerTask('dist', ['clean:dist', 'copy:dist', 'coffee:dist', 'sass:dist'])
 
   // Default task is dev
