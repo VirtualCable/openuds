@@ -9,10 +9,11 @@ module.exports = function(grunt) {
       dev: 'dev',    // dev path
       // Source elements path
       src: {
-        html: 'src/html/**/*.html',
+        html: 'src/index.html',
+        templates: 'src/templates/*.html',
         sass: 'src/css/uds.scss', 
         sass_watch: 'src/css/**/*.scss', 
-        typescript: 'src/js/**/*.ts'
+        coffee: 'src/js/**/*.coffee'
       }
       
     },
@@ -32,12 +33,14 @@ module.exports = function(grunt) {
             src: [
               'node_modules/bootstrap/dist/js/bootstrap.js',  // Bootstrap js
               'node_modules/jquery/dist/jquery.js',  // Jquery js
-              'node_modules/popper.js/dist/popper.js' // Popper js
+              'node_modules/popper.js/dist/popper.js', // Popper js
+              'node_modules/angular/angular.js' // Angular
             ], 
             dest: '<%= config.dev %>/js/lib' 
           },  // To Lib folder
-          // HTML for testing
-          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dev %>' }
+          // Index & Templates
+          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dev %>' },
+          { expand: true, flatten: true, src: ['<%= config.src.templates %>'], dest:'<%= config.dev %>/templates' },
         ]
       },
       dist: {
@@ -51,32 +54,38 @@ module.exports = function(grunt) {
               'node_modules/popper.js/dist/popper.min.js' // Popper js
             ], 
             dest: '<%= config.dist %>/js/lib' 
-          }/*,  // To Lib folder
-          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dist %>' } */
+          },
+          // Index & Templates
+          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dist %>' },
+          { expand: true, flatten: true, src: ['<%= config.src.templates %>'], dest:'<%= config.dist %>/templates' },
+          
         ]
       }
     },
 
-    typescript: {
+    coffee: {
       options: {
-        target: 'es3',
+        join: true,
       },
       dev: {
         options: {
           sourceMap: true,
         },
-          src: [ '<%= config.src.typescript %>' ],
-        dest: '<%= config.dev %>/js/uds.js',
+        files: {
+          '<%= config.dev %>/js/uds.js': ['<%= config.src.coffee %>']
+        },
       },
       dist: {
         options: {
           sourceMap: false,
         },
-          src: [ '<%= config.src.typescript %>' ],
-        dest: '<%= config.dist %>/js/uds.js',
+        files: {
+          '<%= config.dist %>/js/uds.js': ['<%= config.src.coffee %>']
+        },
       }
       
     },
+
     // Compiles Sass to CSS and generates necessary files if requested
     sass: {
       options: {
@@ -135,11 +144,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-http-server');
-  grunt.loadNpmTasks('grunt-typescript');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
 
   // Default task.
-  grunt.registerTask('dev', ['copy:dev', 'typescript:dev', 'sass:dev'])
-  grunt.registerTask('dist', ['clean:dist', 'copy:dist', 'typescript:dist', 'sass:dist'])
+  grunt.registerTask('dev', ['copy:dev', 'coffee:dev', 'sass:dev'])
+  grunt.registerTask('dist', ['clean:dist', 'copy:dist', 'coffee:dist', 'sass:dist'])
   grunt.registerTask('default', ['dev']);
 
 };
