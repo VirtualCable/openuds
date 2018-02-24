@@ -1,0 +1,1 @@
+udsClientApp = angular.module('udsClientApp', []);

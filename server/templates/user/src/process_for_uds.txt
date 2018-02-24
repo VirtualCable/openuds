@@ -1,0 +1,8 @@
+TODO: 
+Steps:
+  1.- /*.html goes to "templates/uds/modern" (name to be defined ;-)) (these are basically login.html & index.html)
+  2.- templates/* goes to "static/templates" right now. Maybe they end on "templates/uds/..." also.
+  3.- All js files goes to "static/js/" (with path)
+  4.- Add to HTML files the headers for the templates ({% load i18n static %} and whatever is needed)
+  5.- Replace all "_static_" with "{% get_static_prefix %}"
+ ... (to be continued)

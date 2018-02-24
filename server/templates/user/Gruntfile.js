@@ -1,22 +1,30 @@
 /*global module:false*/
+
+config = {
+  dist: 'dist', // Dist path
+  dev: 'dev',    // dev path
+  uds_template: 'modern',
+  // Source elements path
+  src: {
+    base: 'src',
+    html: 'src/*.html',
+    templates: 'src/templates/*.html',
+    images: ['src/img/**/*.png', 'src/img/**/*.ico', 'src/img/**/*.gif'],
+    server_provided: 'src/server_provided/*',
+    sass: 'src/css/uds.scss', 
+    sass_watch: 'src/css/**/*.scss', 
+    coffee: 'src/js/**/*.coffee'
+  }
+  
+}
+
+
 module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
     // Project settings
-    config: {
-      dist: 'dist', // Dist path
-      dev: 'dev',    // dev path
-      // Source elements path
-      src: {
-        html: 'src/index.html',
-        templates: 'src/templates/*.html',
-        sass: 'src/css/uds.scss', 
-        sass_watch: 'src/css/**/*.scss', 
-        coffee: 'src/js/**/*.coffee'
-      }
-      
-    },
+    config: config,
 
     // Tasks
     clean: {
@@ -33,17 +41,34 @@ module.exports = function(grunt) {
             src: [
               'node_modules/bootstrap/dist/js/bootstrap.js',  // Bootstrap js
               'node_modules/jquery/dist/jquery.js',  // Jquery js
-              'node_modules/popper.js/dist/popper.js', // Popper js
+              'node_modules/popper.js/dist/umd/popper.js', // Popper js
               'node_modules/angular/angular.js' // Angular
             ], 
-            dest: '<%= config.dev %>/js/lib' 
+            dest: '<%= config.dev %>/_static_/js/lib' 
           },  // To Lib folder
-          // Index & Templates
-          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dev %>' },
-          { expand: true, flatten: true, src: ['<%= config.src.templates %>'], dest:'<%= config.dev %>/templates' },
+          // Index & Templates, no changes for development environment
+          { expand: true, flatten: true, src: config.src.html, dest:'<%= config.dev %>' },
+          { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dev %>/_static_/templates' },
+          /// Images
+          { expand: true, flatten: true, src: config.src.images, dest:'<%= config.dev %>/_static_/img' },
+          // Server provided files, so we can "emulate" on development
+          { expand: true, flatten: true, src: config.src.server_provided, dest: config.dev },
+
         ]
       },
       dist: {
+        options: {
+          // Process files to make them
+          process: function(content, srcPath) {
+            if( /.?src\/[^\/]*.html/g.test(srcPath) ) {
+              grunt.log.write(' converting for template... ');
+              return '{% load l10n i18n static%}' + 
+                content.replace(/_static_\//g, '{% get_static_prefix %}');
+            } else {
+              return content;
+            }
+          }
+        },
         files: [
           { 
             expand: true, 
@@ -51,13 +76,22 @@ module.exports = function(grunt) {
             src: [
               'node_modules/bootstrap/dist/js/bootstrap.min.js',  // Bootstrap js
               'node_modules/jquery/dist/jquery.min.js',  // Jquery js
-              'node_modules/popper.js/dist/popper.min.js' // Popper js
+              'node_modules/popper.js/dist/umd/popper.min.js' // Popper js
             ], 
-            dest: '<%= config.dist %>/js/lib' 
+            dest: '<%= config.dist %>/static/js/lib' 
           },
-          // Index & Templates
-          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dist %>' },
-          { expand: true, flatten: true, src: ['<%= config.src.templates %>'], dest:'<%= config.dist %>/templates' },
+          // html files
+          { 
+            expand: true, 
+            flatten: true, 
+            src: config.src.html, 
+            dest:'<%= config.dist %>/templates/uds/<%= config.uds_template %>',
+          },
+          // Templates (angular)
+          { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dist %>/templates' },
+          /// Images
+          { expand: true, flatten: true, src: config.src.images, dest:'<%= config.dist %>/static/img' }
+          
           
         ]
       }
@@ -72,7 +106,7 @@ module.exports = function(grunt) {
           sourceMap: true,
         },
         files: {
-          '<%= config.dev %>/js/uds.js': ['<%= config.src.coffee %>']
+          '<%= config.dev %>/_static_/js/uds.js': ['<%= config.src.coffee %>']
         },
       },
       dist: {
@@ -80,7 +114,7 @@ module.exports = function(grunt) {
           sourceMap: false,
         },
         files: {
-          '<%= config.dist %>/js/uds.js': ['<%= config.src.coffee %>']
+          '<%= config.dist %>/static/js/uds.js': ['<%= config.src.coffee %>']
         },
       }
       
@@ -93,37 +127,38 @@ module.exports = function(grunt) {
         loadPath: [
           'node_modules/'
         ],
-    },
+      },
       dev: {
         options: {
           update: true,
         },
         files: [{
-          '<%= config.dev %>/css/uds.css': ['<%= config.src.sass %>']
+          '<%= config.dev %>/_static_/css/uds.css': ['<%= config.src.sass %>']
         }]
       },
       dist: {
         options: {
           update: false,
+          sourcemap: 'none',
           style: 'compressed'
         },
         files: [{
-          '<%= config.dist %>/css/uds.css': ['<%= config.src.sass %>'],
+          '<%= config.dist %>/static/css/uds.css': ['<%= config.src.sass %>'],
         }]
       }
     },
 
     watch: {
-      typescript: {
-        files: '<%= config.src.typescript %>',
-        tasks: ['typescrypt:dev']
+      coffee: {
+        files: '<%= config.src.coffee %>',
+        tasks: ['coffee:dev']
       },
       sass: {
         files: '<%= config.src.sass_watch %>',
         tasks: ['sass:dev']
       },
       html: {
-        files: '<%= config.src.html %>',
+        files: ['<%= config.src.html %>', '<%= config.src.templates %>', '<%= config.src.server_provided %>'],
         tasks: ['copy:dev']
       }
     },
@@ -132,7 +167,8 @@ module.exports = function(grunt) {
         root: '<%= config.dev %>',
         port: 9000,
         host: '0.0.0.0',
-        cache: 0
+        cache: 0,
+        runInBackground: true
       }
     }
   
@@ -146,9 +182,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-http-server');
   grunt.loadNpmTasks('grunt-contrib-coffee');
 
-  // Default task.
-  grunt.registerTask('dev', ['copy:dev', 'coffee:dev', 'sass:dev'])
+  // Tasks
+  grunt.registerTask('dev', ['copy:dev', 'coffee:dev', 'sass:dev', 'http-server', 'watch'])
   grunt.registerTask('dist', ['clean:dist', 'copy:dist', 'coffee:dist', 'sass:dist'])
-  grunt.registerTask('default', ['dev']);
+
+  // Default task is dev
+  grunt.registerTask('default', ['dist']);
+
+  // Aliases
+  grunt.registerTask('serve', ['http-server']);
 
 };
