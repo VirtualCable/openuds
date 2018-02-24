@@ -5,9 +5,16 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // Project settings
     config: {
-      src: 'src',  // Src path
       dist: 'dist', // Dist path
-      dev: 'dev'    // dev path
+      dev: 'dev',    // dev path
+      // Source elements path
+      src: {
+        html: 'src/html/**/*.html',
+        sass: 'src/css/uds.scss', 
+        sass_watch: 'src/css/**/*.scss', 
+        typescript: 'src/js/**/*.ts'
+      }
+      
     },
 
     // Tasks
@@ -29,7 +36,8 @@ module.exports = function(grunt) {
             ], 
             dest: '<%= config.dev %>/js/lib' 
           },  // To Lib folder
-          { expand: true, flatten: true, src: ['<%= config.src %>/html/*.html'], dest:'<%= config.dev %>' }
+          // HTML for testing
+          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dev %>' }
         ]
       },
       dist: {
@@ -43,31 +51,31 @@ module.exports = function(grunt) {
               'node_modules/popper.js/dist/popper.min.js' // Popper js
             ], 
             dest: '<%= config.dist %>/js/lib' 
-          },  // To Lib folder
-          { expand: true, flatten: true, src: ['<%= config.src %>/html/*.html'], dest:'<%= config.dist %>' }
+          }/*,  // To Lib folder
+          { expand: true, flatten: true, src: ['<%= config.src.html %>'], dest:'<%= config.dist %>' } */
         ]
       }
     },
 
-    coffee: {
+    typescript: {
+      options: {
+        target: 'es3',
+      },
       dev: {
         options: {
           sourceMap: true,
-          join: true
         },
-        files: {
-          '<%= config.dev %>/js/uds.js': ['<%= config.src %>/js/*.coffee']
+          src: [ '<%= config.src.typescript %>' ],
+        dest: '<%= config.dev %>/js/uds.js',
       },
       dist: {
         options: {
           sourceMap: false,
-          join: true
         },
-        files: {
-          '<%= config.dist %>/js/uds.js': ['<%= config.src %>/js/*.coffee']
-        }
+          src: [ '<%= config.src.typescript %>' ],
+        dest: '<%= config.dist %>/js/uds.js',
       }
-      }      
+      
     },
     // Compiles Sass to CSS and generates necessary files if requested
     sass: {
@@ -82,7 +90,7 @@ module.exports = function(grunt) {
           update: true,
         },
         files: [{
-          '<%= config.dev %>/css/uds.css': ['<%= config.src %>/css/uds.scss', '<%= config.src %>/css/pages/*.scss']
+          '<%= config.dev %>/css/uds.css': ['<%= config.src.sass %>']
         }]
       },
       dist: {
@@ -91,31 +99,47 @@ module.exports = function(grunt) {
           style: 'compressed'
         },
         files: [{
-          '<%= config.dist %>/css/uds.css': ['<%= config.src %>/css/uds.scss', '<%= config.src %>/css/pages/*.scss'],
+          '<%= config.dist %>/css/uds.css': ['<%= config.src.sass %>'],
         }]
       }
     },
 
-    /*watch: {
-      gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
+    watch: {
+      typescript: {
+        files: '<%= config.src.typescript %>',
+        tasks: ['typescrypt:dev']
       },
-      lib_test: {
-        files: '<%= jshint.lib_test.src %>',
-        tasks: ['jshint:lib_test', 'qunit']
+      sass: {
+        files: '<%= config.src.sass_watch %>',
+        tasks: ['sass:dev']
+      },
+      html: {
+        files: '<%= config.src.html %>',
+        tasks: ['copy:dev']
       }
-    }*/
+    },
+    'http-server': {
+      dev: {
+        root: '<%= config.dev %>',
+        port: 9000,
+        host: '0.0.0.0',
+        cache: 0
+      }
+    }
+  
   });
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-http-server');
+  grunt.loadNpmTasks('grunt-typescript');
 
   // Default task.
-  grunt.registerTask('dev', ['clean:dev', 'copy:dev', 'coffee:dev', 'sass:dev'])
+  grunt.registerTask('dev', ['copy:dev', 'typescript:dev', 'sass:dev'])
+  grunt.registerTask('dist', ['clean:dist', 'copy:dist', 'typescript:dist', 'sass:dist'])
   grunt.registerTask('default', ['dev']);
 
 };

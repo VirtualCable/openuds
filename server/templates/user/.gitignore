@@ -4,5 +4,5 @@
 /dev
 .*
 /.*
-
+yarn-error.log
 
