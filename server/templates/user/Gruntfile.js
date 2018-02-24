@@ -11,7 +11,7 @@ config = {
     templates: 'src/templates/*.html',
     images: ['src/img/**/*.png', 'src/img/**/*.ico', 'src/img/**/*.gif'],
     static: 'src/static',
-    server_provided: 'src/server_provided/*',
+    server_provided: 'src/server_provided',
     sass: 'src/css/uds.scss', 
     sass_watch: 'src/css/**/*.scss', 
     coffee: 'src/js/**/*.coffee',
@@ -20,6 +20,7 @@ config = {
       'node_modules/jquery/dist/jquery.min.js',  // Jquery js
       'node_modules/popper.js/dist/umd/popper.min.js', // Popper js
       'node_modules/angular/angular.min.js', // Angular
+      'node_modules/angular-cookies/angular-cookies.min.js' // Angular cookies
     ]
   }
   
@@ -59,7 +60,7 @@ module.exports = function(grunt) {
           // Other Static elements, from libraries normally
           { expand: true, flatten: false, cwd: config.src.static, src: '**/*', dest:'<%= config.dev %>/_static_/' },
           // Server provided files, so we can "emulate" on development
-          { expand: true, flatten: true, src: config.src.server_provided, dest: config.dev },
+          { expand: true, flatten: false, cwd: config.src.server_provided, src:'**/*' , dest: config.dev },
 
         ]
       },

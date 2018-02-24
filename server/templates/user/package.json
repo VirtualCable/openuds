@@ -18,7 +18,9 @@
     "jquery": "^3.3.1",
     "popper.js": "^1.12.9"
   },
-  "dependencies": {},
+  "dependencies": {
+    "angular-cookies": "^1.6.9"
+  },
   "name": "uds-user",
   "version": "1.0.0",
   "description": "User space for UDS web frontend",
