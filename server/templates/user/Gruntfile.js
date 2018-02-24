@@ -10,10 +10,17 @@ config = {
     html: 'src/*.html',
     templates: 'src/templates/*.html',
     images: ['src/img/**/*.png', 'src/img/**/*.ico', 'src/img/**/*.gif'],
+    static: 'src/static',
     server_provided: 'src/server_provided/*',
     sass: 'src/css/uds.scss', 
     sass_watch: 'src/css/**/*.scss', 
-    coffee: 'src/js/**/*.coffee'
+    coffee: 'src/js/**/*.coffee',
+    js_lib: [
+      'node_modules/bootstrap/dist/js/bootstrap.min.js',  // Bootstrap js
+      'node_modules/jquery/dist/jquery.min.js',  // Jquery js
+      'node_modules/popper.js/dist/umd/popper.min.js', // Popper js
+      'node_modules/angular/angular.min.js', // Angular
+    ]
   }
   
 }
@@ -39,23 +46,18 @@ module.exports = function(grunt) {
           { 
             expand: true, 
             flatten: true, 
-            src: [
-              'node_modules/bootstrap/dist/js/bootstrap.js',  // Bootstrap js
-              'node_modules/jquery/dist/jquery.js',  // Jquery js
-              'node_modules/popper.js/dist/umd/popper.js', // Popper js
-              'node_modules/angular/angular.js', // Angular
-              'node_modules/bootstrap-select/dist/js/bootstrap-select.js' // Bootstrap select
-            ], 
+            src: config.src.js_lib, 
             dest: '<%= config.dev %>/_static_/js/lib' 
           },  
           // Fontawewsome
           { expand: true, flatten: true, src: 'node_modules/font-awesome/fonts/*', dest:'<%= config.dev %>/_static_/fonts' },
-          
           // Index & Templates, no changes for development environment
           { expand: true, flatten: true, src: config.src.html, dest:'<%= config.dev %>' },
           { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dev %>/_static_/templates' },
           // Images
           { expand: true, flatten: true, src: config.src.images, dest:'<%= config.dev %>/_static_/img' },
+          // Other Static elements, from libraries normally
+          { expand: true, flatten: false, cwd: config.src.static, src: '**/*', dest:'<%= config.dev %>/_static_/' },
           // Server provided files, so we can "emulate" on development
           { expand: true, flatten: true, src: config.src.server_provided, dest: config.dev },
 
@@ -78,14 +80,7 @@ module.exports = function(grunt) {
           { 
             expand: true, 
             flatten: true, 
-            src: [
-              'node_modules/bootstrap/dist/js/bootstrap.min.js',  // Bootstrap js
-              'node_modules/jquery/dist/jquery.min.js',  // Jquery js
-              'node_modules/popper.js/dist/umd/popper.min.js', // Popper js
-              'node_modules/angular/angular.min.js', // Angular
-              'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js', // Bootstrap select
-              'node_modules/bootstrap-select/dist/js/i18n/*.min,js' // Bootstrap select
-            ], 
+            src: config.src.js_lib, 
             dest: '<%= config.dist %>/static/js/lib' 
           },
           // html files
@@ -95,10 +90,12 @@ module.exports = function(grunt) {
             src: config.src.html, 
             dest:'<%= config.dist %>/templates/uds/<%= config.uds_template %>',
           },
-          // Templates (angular)
-          { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dist %>/templates' },
+          // Templates (angular, for now goes to static, but maybe it needs to go to other "django templates" folder)
+          { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dist %>/static/templates' },
           /// Images
-          { expand: true, flatten: true, src: config.src.images, dest:'<%= config.dist %>/static/img' }
+          { expand: true, flatten: true, src: config.src.images, dest:'<%= config.dist %>/static/img' },
+          // Other Static elements, from libraries normally
+          { expand: true, flatten: false, cwd: config.src.static, src: '**/*', dest:'<%= config.dist %>/static/' },
           
           
         ]
