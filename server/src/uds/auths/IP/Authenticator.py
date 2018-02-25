@@ -68,7 +68,9 @@ class IPAuth(Authenticator):
         return "IP Authenticator"
 
     def getIp(self):
-        return getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
+        ip = getRequest().ip_proxy if self.acceptProxy.isTrue() else getRequest().ip  # pylint: disable=maybe-no-member
+        logger.debug('Client IP: {}'.format(ip))
+        return ip
 
     def getGroups(self, ip, groupsManager):
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen

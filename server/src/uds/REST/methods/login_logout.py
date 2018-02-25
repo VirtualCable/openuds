@@ -88,6 +88,7 @@ class Login(Handler):
         Locale comes on "Header", as any HTTP Request (Accept-Language header)
         Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
         '''
+        logger.debug(self._request.ip)
         try:
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
@@ -124,7 +125,7 @@ class Login(Handler):
                     if user is None:  # invalid credentials
                         raise Exception()
                     self.genAuthToken(auth.id, user.name, password, locale, platform, user.is_admin, user.staff_member, scrambler)
-                    return{'result': 'ok', 'token': self.getAuthToken(), 'version': UDS_VERSION, 'scrambler': scrambler }
+                    return {'result': 'ok', 'token': self.getAuthToken(), 'version': UDS_VERSION, 'scrambler': scrambler }
                 except:
                     logger.exception('Credentials ')
                     raise Exception('Invalid Credentials (invalid authenticator)')

@@ -14,7 +14,7 @@ config = {
     server_provided: 'src/server_provided',
     sass: 'src/css/uds.scss', 
     sass_watch: 'src/css/**/*.scss', 
-    coffee: 'src/js/**/*.coffee',
+    typescript: 'src/js/**/*.ts',
     js_lib: [
       'node_modules/bootstrap/dist/js/bootstrap.min.js',  // Bootstrap js
       'node_modules/jquery/dist/jquery.min.js',  // Jquery js
@@ -103,27 +103,33 @@ module.exports = function(grunt) {
       }
     },
 
-    coffee: {
-      options: {
-        join: true,
-      },
+    ts: {
       dev: {
+        src: [config.src.typescript],
+        dest: '<%= config.dev %>/_static_/js/uds.js',
         options: {
+          module: 'system',
+          moduleResolution: 'node',
+          target: 'es5',
           sourceMap: true,
-        },
-        files: {
-          '<%= config.dev %>/_static_/js/uds.js': ['<%= config.src.coffee %>']
-        },
+          experimentalDecorators: true,
+          emitDecoratorMetadata: true,
+          noImplicitAny: false
+        }
       },
       dist: {
+        src: [config.src.typescript],
+        dest: '<%= config.dist %>/static/js/uds.js',
         options: {
+          module: 'system',
+          moduleResolution: 'node',
+          target: 'es5',
           sourceMap: false,
-        },
-        files: {
-          '<%= config.dist %>/static/js/uds.js': ['<%= config.src.coffee %>']
-        },
-      }
-      
+          experimentalDecorators: true,
+          emitDecoratorMetadata: true,
+          noImplicitAny: false
+        }
+      }      
     },
 
     // Compiles Sass to CSS and generates necessary files if requested
@@ -155,9 +161,9 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      coffee: {
-        files: '<%= config.src.coffee %>',
-        tasks: ['coffee:dev']
+      ts: {
+        files: '<%= config.src.typescript %>',
+        tasks: ['ts:dev']
       },
       sass: {
         files: '<%= config.src.sass_watch %>',
@@ -186,12 +192,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-http-server');
-  grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-ts');
 
   // Tasks
-  grunt.registerTask('build-dev', ['copy:dev', 'coffee:dev', 'sass:dev'])
+  grunt.registerTask('build-dev', ['copy:dev', 'ts:dev', 'sass:dev'])
   grunt.registerTask('dev', ['build-dev', 'http-server', 'watch'])
-  grunt.registerTask('dist', ['clean:dist', 'copy:dist', 'coffee:dist', 'sass:dist'])
+  grunt.registerTask('dist', ['clean:dist', 'copy:dist', 'ts:dist', 'sass:dist'])
 
   // Default task is dev
   grunt.registerTask('default', ['dist']);
