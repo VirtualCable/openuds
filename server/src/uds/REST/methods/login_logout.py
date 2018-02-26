@@ -88,7 +88,6 @@ class Login(Handler):
         Locale comes on "Header", as any HTTP Request (Accept-Language header)
         Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
         '''
-        logger.debug(self._request.ip)
         try:
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')

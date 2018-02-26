@@ -41,6 +41,8 @@ from uds.web.forms.LoginForm import LoginForm
 from uds.core.util.Config import GlobalConfig
 from uds.core.util.Cache import Cache
 from uds.core.util import OsDetector
+from uds.core.util.model import processUuid
+
 from uds.core.ui import theme
 from uds.core import VERSION
 
@@ -48,7 +50,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2018-02-12'
+__updated__ = '2018-02-26'
 
 
 # Allow cross-domain login
@@ -88,7 +90,7 @@ def login(request, tag=None):
         if form.is_valid():
             os = request.os
             try:
-                authenticator = Authenticator.objects.get(pk=form.cleaned_data['authenticator'])
+                authenticator = Authenticator.objects.get(uuid=processUuid(form.cleaned_data['authenticator']))
             except Exception:
                 authenticator = Authenticator()
             userName = form.cleaned_data['user']
@@ -149,17 +151,23 @@ def login(request, tag=None):
     return response
 
 
+# Gets the html from the custom authtenticator
 def customAuth(request, idAuth):
     res = ''
     try:
-        a = Authenticator.objects.get(pk=idAuth).getInstance()
-        res = a.getHtml(request)
+        try:
+            auth = Authenticator.objects.get(uuid=processUuid(idAuth))
+        except Authenticator.DoesNotExist:
+            auth = Authenticator.objects.get(pk=idAuth)
+        res = auth.getInstance().getHtml(request)
         if res is None:
             res = ''
     except Exception:
         logger.exception('customAuth')
         res = 'error'
     return HttpResponse(res, content_type='text/html')
+
+# Gets the list of authenticators
 
 
 @webLoginRequired(admin=False)

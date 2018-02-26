@@ -5,8 +5,8 @@ namespace uds {
     var udsClientApp = angular.module('udsClientApp', []);
 
     class LoginController {
-        selected: any;
-        authenticators: any;
+        selected: Authenticator;
+        authenticators: Authenticator[];
         api : API;
 
         // Order is important!!, must mucht those on constructor
@@ -35,8 +35,9 @@ namespace uds {
 
         authChanged(auth:Authenticator) : void {
             debug(auth);
-            if auth.isCustom
-            this.selected = auth;
+            if (auth.isCustom)
+                
+                this.selected = auth;
         }
 
         doLogin() : void {

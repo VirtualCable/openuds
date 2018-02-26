@@ -9,8 +9,17 @@ gui.configuration.link = ->
     api.configuration.overview ((data) ->
       gui.doLog data
       gui.clearWorkspace()
+      # Ensures that UDS, Security & Enterprise ar the first elements. The rest is not important the order :).
+      dataOrdered = {
+        'UDS': {},
+        'Security': {},
+        'Enterprise': {}
+      }
+      for k, v of data
+        dataOrdered[k] = v
+
       gui.appendToWorkspace api.templates.evaluate(tmpl,
-        config: data
+        config: dataOrdered
       )
       gui.setLinksEvents()
       gui.tools.applyCustoms "#form_config"

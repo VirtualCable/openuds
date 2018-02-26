@@ -1,0 +1,128 @@
+{% load l10n i18n static html5 compress %}{% spaceless %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info for LANGUAGE_CODE as LANGUAGE_INFO %}
+<!DOCTYPE html>{% endspaceless %}
+<html lang='{{LANGUAGE_CODE}}'>
+	<head>
+		<title>{% block title %}{% endblock %}</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="robots" content="noindex, nofollow" />
+		{% block meta %}{% endblock %}
+
+		{% block icon %}<link href="{% get_static_prefix %}img/favicon.png?v=2" rel="icon" type="image/x-icon" />{% endblock %}
+
+		<!-- Bootstrap -->
+    {% compress css %}
+		<link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/jquery-ui.min.css" rel="stylesheet" media="screen">
+		<link href="{% get_static_prefix %}css/font-awesome.min.css" rel="stylesheet" media="screen">
+    {% endcompress %}
+
+		{% ifbrowser ie<9 %}
+		<script src="{% get_static_prefix %}/js/respond.min.js"></script>
+		{% endifbrowser %}
+
+    {% compress css %}
+		<link href="{% get_static_prefix %}css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/bootstrap-select.min.css" rel="stylesheet" media="screen">
+
+		{% ifbrowser ie<10 %}
+		<link href="{% get_static_prefix %}css/fix.css" rel="stylesheet" media="screen">
+		{% endifbrowser %}
+
+		<link href="{% get_static_prefix %}css/bootstrap-switch.css" rel="stylesheet" media="screen">
+        <link href="{% get_static_prefix %}css/uds-html5.css" rel="stylesheet" media="screen">
+
+    {% endcompress %}
+
+    {% compress css %}
+		{% ifbrowser ie<9 %}
+		<script src="{% get_static_prefix %}/js/html5shiv.js"></script>
+		{% endifbrowser %}
+
+		{% block css %}{% endblock %}
+    {% endcompress %}
+	</head>
+
+	<body>
+		<!-- Navigation bar -->
+    <div class="container-fluid">
+		  {% block menu %}{% include 'uds/html5/snippets/navbar.html' %}{% endblock %}
+    </div>
+		<!-- End of menu -->
+    <div class="st-sticky-wrap">
+        <div class="container">
+        {% ifbrowser ie<10 %}
+        <div class="alert alert-dismissable alert-danger">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          {% trans 'Your browser is supported only partially. Please, upgrade it to a modern html5 browser like Firefox, Chrome, Opera, ... (IE must be 10 or better, and must also disable "Compatibility View Mode" for this site)' %}
+        </div>
+        {% endifbrowser %}
+   			{% block messages %}
+   			{% if messages %}
+   			{% for message in messages %}
+   			<div class="alert alert-dismissable {{ message.tags }}">
+   			  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+   			  {{ message }}
+   			</div>
+   			{% endfor %}
+   			{% endif %}
+   			{% endblock %}
+   		 	<!-- Content -->
+  			{% block body %}{% endblock %}
+  			<!--  End of content -->
+    	</div> <!-- End of container -->
+      <div class="st-sticky-push"></div>
+    </div>
+		<footer>
+		{% block footer %}
+			<a href="http://www.udsenterprise.com">UDS Enterprise Edition. &copy; 2012-2016 Virtual Cable S.L.U.</a>
+		{% endblock %}
+		</footer>
+
+    <script src="{% url 'uds.web.views.jsCatalog' LANGUAGE_CODE %}"></script>
+    {% compress js %}
+		<script src="{% get_static_prefix %}js/jquery-1.10.2.min.js"></script>
+        <script src="{% get_static_prefix %}js/jquery-ui.min.js"></script>
+		<script src="{% get_static_prefix %}js/jquery.cookie.js"></script>
+        <script src="{% get_static_prefix %}js/jquery.blockUI.js"></script>
+        <script src="{% get_static_prefix %}js/jquery.cookiebar.js"></script>
+		<script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
+		<script src="{% get_static_prefix %}js/bootstrap-switch.min.js"></script>
+        <script src="{% get_static_prefix %}js/bootstrap-select.min.js"></script>
+        <script>
+            var clientRest = "/" + "{% url 'ClientAccessEnabler' 'x' 'x' %}".split("/")[1];
+            var bypassPluginDetection = "{% preference _uds.bypassPluginDetection %}" == "1";
+        </script>
+        <script type="text/coffeescript" charset="utf-8" src="{% get_static_prefix %}js/uds-client.coffee"></script>
+
+		<script>
+			$(function(){
+				$('.selectpicker').selectpicker();
+
+                $.cookieBar({
+                  fixed: true,
+                  zindex: 10000,
+                  message: "{% trans "We use cookies to track usage and preferences" %}",
+                  acceptText: "{% trans "I Understand" %}",
+                  policyButton: false,
+                  policyText: "{% trans "Privacy Policy" %}",
+                  policyURL: '/',
+                  forceShow: false,
+                  append: false
+                });
+
+			});
+		</script>
+    {% endcompress %}
+
+
+    {% compress js %}
+		{% block js %}{% endblock %}
+    {% endcompress %}
+
+	</body>
+</html>

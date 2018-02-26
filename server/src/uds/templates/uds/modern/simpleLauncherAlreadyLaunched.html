@@ -11,7 +11,7 @@
             <p class="text-danger">{% trans 'Please, note that reloading this page will not work.' %}<br/>
                {% trans 'Close this window and try to relaunch service from origin.' %}</p>
             </p>
-            <h6>{% trans 'You can obtain required UDS plugin from the' %} <a href="{% url 'ClientDownload' %}">{% trans 'UDS Plugin download page' %}</a></h6>
+            <h6>{% trans 'You can obtain required UDS plugin from the' %} <a href="{% url 'uds.web.views.client_downloads' %}">{% trans 'UDS Plugin download page' %}</a></h6>
         </div>  
 {% endblock %} 
 

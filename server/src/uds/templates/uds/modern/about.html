@@ -4,8 +4,8 @@
 {% block body %}
 
 <div class="jumbotron">
-  <h2 class="text-center">Universal Desktop Services {{ version }}</h2>
-  <p class="text-center"><small><a href="http://www.udsenterprise.com" target="_blank"> &copy; 2012-2015 Virtual Cable S.L.U.</a></small></p>
+  <h2 class="text-center">Universal Desktop Services {{ version }} build {{ version_stamp }}</h2>
+  <p class="text-center"><small><a href="http://www.udsenterprise.com" target="_blank"> &copy; 2012-2016 Virtual Cable S.L.U.</a></small></p>
 </div>
 
 <div class="row">
@@ -17,6 +17,7 @@
       <li><a href="https://www.djangoproject.com/" target="_blank">Django</a></li>
       <li><a href="http://www.jcraft.com" target="_blank">Jsch</a></li>
       <li><a href="http://guac-dev.org/" target="_blank">Guacamole</a></li>
+      <li><a href="http://weasyprint.org/" target="_blank">weasyprint</a></li>
       <li><a href="https://github.com/django-compressor/django-compressor" target="_blank">Django compressor</a></li>
       <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></li>
       <li><a href="http://www.bootstrap-switch.org/" target="_blank">Bootstrap switch</a></li>
@@ -24,7 +25,7 @@
       <li><a href="http://www.virtuosoft.eu/code/bootstrap-touchspin/" target="_blank">Bootstrap touchspin</a></li>
       <li><a href="http://fontawesome.io" target="_blank">Font Awesome by Dave Gandy</a></li>
       <li><a href="http://coffeescript.org/" target="_blank">Coffescript</a></li>
-      <li><a href="http://sass-lang.com/" target="_blank">Sass</a>/<a href="http://compass-style.org/" target="_blank">Compass</a></li>
+      <li><a href="http://sass-lang.com/" target="_blank">Sass</a> / <a href="http://compass-style.org/" target="_blank">Compass</a></li>
       <li><a href="http://jquery.com/" target="_blank">jQuery</a></li>
       <li><a href="http://handlebarsjs.com/" target="_blank">Handlebars</a></li>
       <li><a href="https://github.com/carhartl/jquery-cookie" target="_blank">jQuery cookie</a></li>
@@ -32,13 +33,12 @@
       <li><a href="http://malsup.com/jquery/block/" target="_blank">jQuery blockui</a></li>
       <li><a href="http://www.flotcharts.org/" target="_blank">flot</a></li>
       <li><a href="https://datatables.net/" target="_blank">jQuery datatables</a></li>
-      <li><a href="https://datatables.net/extras/tabletools/" target="_blank">jQuery Datatables tabletools</a></li>
       <li><a href="https://github.com/eligrey/Blob.js/" target="_blank">Blob</a></li>
       <li><a href="https://github.com/eligrey/FileSaver.js/" target="_blank">Filesaver</a></li>
       <li><a href="http://kde-look.org/content/show.php/Crystal+Project?content=60475)" target="_blank">Crystal project icons</a></li>
       <li><a href="https://github.com/NitruxSA/flattr-icons" target="_blank">Flattr Icons</a></li>
     </ul>
-    <p><small>* {% trans 'If you found that we missed to mention any component, please let us know' %}</small></p>
+    <p><small>* {% trans 'If you find that we missed any component, please let us know' %}</small></p>
     <p class="text-center"><a href="{% url 'uds.web.views.index' %}" class="btn btn-lg btn-info"><i class="fa fa-home"></i> {% trans "Back" %}</a></p>
   </div>
 </div>

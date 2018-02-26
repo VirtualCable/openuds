@@ -336,7 +336,7 @@ class GlobalConfig(object):
         themes = []
         try:
             for d in os.listdir(os.path.join(os.path.dirname(uds.__file__), 'templates', 'uds')):
-                if d != 'admin':
+                if d not in ('admin', 'reports'):  # Exclude folders with own internal templates
                     themes.append(d)
         except Exception as e:
             pass

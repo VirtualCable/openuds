@@ -97,11 +97,11 @@ class LoginForm(forms.Form):
                 continue
             if a.getType().isCustom() and tag == 'disabled':
                 continue
-            choices.append((a.id, a.name))
+            choices.append((a.uuid, a.name))
             if a.getType().isCustom():
-                nonStandard.append(str(a.id))
+                nonStandard.append(a.uuid)
             else:
-                standard.append(str(a.id))
+                standard.append(a.uuid)
 
         self.fields['authenticator'].choices = choices
         self.fields['nonStandard'].initial = ','.join(nonStandard)
