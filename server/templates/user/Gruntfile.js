@@ -14,7 +14,7 @@ config = {
     server_provided: 'src/server_provided',
     sass: 'src/css/uds.scss', 
     sass_watch: 'src/css/**/*.scss', 
-    typescript: 'src/js/**/*.ts',
+    ts: 'src/js/',
     js_lib: [
       'node_modules/bootstrap/dist/js/bootstrap.min.js',  // Bootstrap js
       'node_modules/jquery/dist/jquery.min.js',  // Jquery js
@@ -70,8 +70,13 @@ module.exports = function(grunt) {
           process: function(content, srcPath) {
             if( /.?src\/[^\/]*.html/g.test(srcPath) ) {
               grunt.log.write(' converting for template... ');
-              return '{% load l10n i18n static%}' + 
-                content.replace(/_static_\//g, '{% get_static_prefix %}');
+              return '{% load l10n i18n static%}{% get_current_language as LANGUAGE_CODE %}' + 
+                content.replace(/_static_\//g, '{% get_static_prefix %}')                // Static content
+                       .replace(/html lang="[a-z]*"/g, 'html lang="{{LANGUAGE_CODE}}"')  //
+                       .replace(/<trans>(.*?)<\/trans>/g, function(match, $1) {
+                          return "{% trans \"" +  $1.replace(/"/g, "&quot;") + "\" %}";
+                        })
+                       .replace(/(<form id="loginform"[^>]*>)/, "$1{% csrf_token %}");
             } else {
               return content;
             }
@@ -104,30 +109,29 @@ module.exports = function(grunt) {
     },
 
     ts: {
+      options: {
+        rootDir: config.src.ts,
+        module: 'system',
+        moduleResolution: 'node',
+        target: 'es5',
+        experimentalDecorators: true,
+        emitDecoratorMetadata: true,
+        noImplicitAny: false
+      },
       dev: {
-        src: [config.src.typescript],
-        dest: '<%= config.dev %>/_static_/js/uds.js',
+        files: [
+          { src: ['<%= config.src.ts %>/*.ts'], dest: '<%= config.dev %>/_static_/js/'},
+        ],
         options: {
-          module: 'system',
-          moduleResolution: 'node',
-          target: 'es5',
           sourceMap: true,
-          experimentalDecorators: true,
-          emitDecoratorMetadata: true,
-          noImplicitAny: false
         }
       },
       dist: {
-        src: [config.src.typescript],
-        dest: '<%= config.dist %>/static/js/uds.js',
+        files: [
+          { src: ['<%= config.src.ts %>/*.ts'], dest: '<%= config.dist %>/static/js/'},
+        ],
         options: {
-          module: 'system',
-          moduleResolution: 'node',
-          target: 'es5',
           sourceMap: false,
-          experimentalDecorators: true,
-          emitDecoratorMetadata: true,
-          noImplicitAny: false
         }
       }      
     },
@@ -162,7 +166,7 @@ module.exports = function(grunt) {
 
     watch: {
       ts: {
-        files: '<%= config.src.typescript %>',
+        files: '<%= config.src.ts %>/**/*.ts',
         tasks: ['ts:dev']
       },
       sass: {

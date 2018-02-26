@@ -5,6 +5,7 @@
   },
   "devDependencies": {
     "@types/angular": "^1.6.43",
+    "@types/angular-cookies": "^1.4.5",
     "grunt": "~0.4.5",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-coffee": "^2.0.0",
@@ -16,7 +17,6 @@
     "typescript": "^2.7.2"
   },
   "dependencies": {
-    "@types/angular-cookies": "^1.4.5",
     "angular": "^1.6.9",
     "angular-cookies": "^1.6.9",
     "angular-route": "^1.6.9",

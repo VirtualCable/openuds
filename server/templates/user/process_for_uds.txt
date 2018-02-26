@@ -1,8 +1,19 @@
-TODO: 
+Rules to follow, for correct working:
+
+1.- on Develompent (and on src code), use "_static_" path for static content. It will be translated correctly to "{% get_static_prefix %}" when generating DIST
+2.- The html files will be modified so they include the "template" info needed. (For example, will be added the lang code, etc...)
+3.- For translations, everything between <trans> & </trans> will be promoted to a translatable string. NO MULTILINE IS ALLOWED!!! :)
+4.- the login form shout start as this: <form id="loginform"
+    This way, we will locate it and add the "csrf" token inside it.
+
+
+This is what is done when generating "dist" 
 Steps:
   1.- /*.html goes to "templates/uds/modern" (name to be defined ;-)) (these are basically login.html & index.html)
   2.- templates/* goes to "static/templates" right now. Maybe they end on "templates/uds/..." also.
   3.- All js files goes to "static/js/" (with path)
   4.- Add to HTML files the headers for the templates ({% load i18n static %} and whatever is needed)
   5.- Replace all "_static_" with "{% get_static_prefix %}"
+  6.- Replace all <trans>...</trans> with {% translate "..." %} (with " escaped to &quot;)
+  7.- Add after "<form id="loginform"...>" this: {% csrf_token %}, so the form contains the cross site protection.
  ... (to be continued)

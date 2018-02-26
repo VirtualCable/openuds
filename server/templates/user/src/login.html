@@ -5,27 +5,29 @@
     <title>My HTML File</title>
     <link href="_static_/css/uds.css" rel="stylesheet" />
 
+    <!-- lang related -->
     <script src="/jsi18n"></script>
     <script src="/_static_/js/lib/jquery.min.js"></script>
     <script src="/_static_/js/lib/popper.min.js"></script>
     <script src="/_static_/js/lib/bootstrap.min.js"></script>
     
     <script src="/_static_/js/lib/angular.min.js"></script>
-    <script src="/_static_/js/lib/angular-cookies.min.js"></script>
 
-    <script src="/_static_/js/uds.js"></script>
+    <!-- uds libraries -->
+    <script src="/_static_/js/uds/params.js"></script>
+    <script src="/_static_/js/uds/API.js"></script>
+    
+    <script src="/_static_/js/login.js"></script>
   </head>
   <body>
 
       <div class="container">
           <div class="row" id="login" data-ng-controller="LoginController as login">
               <div class="col-md-4 col-md-offset-4">
-                  <h1 class="text-center login-title">Bienvenido a UDS 2.2.0</h1>
+                  <h1 class="text-center login-title"><trans>Welcome to UDS Enterprise</trans></h1>
                   <div class="account-wall">
                     <img class="profile-img" src="/_static_/img/login-img.png" alt="">
                       <form id="loginform" class="form-signin" name="loginform" method="post">
-                
-                        <input name="csrfmiddlewaretoken" value="En0H2UeVnv9QQjVBjQnPoN7ivaQ8LeSb" type="hidden">
                   
                   <input id="id_standard" name="standard" value="1" type="hidden">
                   
@@ -43,18 +45,19 @@
                       <div class="dropdown clearfix">
                       <button class="btn btn-secondary dropdown-toggle" type="button" 
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                        style="min-width:auto;width:100%;"
+                        style="min-width:auto; width:100%;"
                       >
                         {{ login.selected.auth }}
                       </button>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="min-width:auto;width:100%;">
-                          <h6 class="dropdown-header">Dropdown header</h6>
+                          <h6 class="dropdown-header"><trans>Authenticators</trans>></h6>
                         <a data-ng-repeat="auth in login.authenticators" class="dropdown-item" href="#" data-ng-click="login.authChanged(auth)">{{ auth.auth }}</a>
                       </div>
                     </div>
                   </div>
                   
-                  <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="fa fa-sign-in"></span> Inicie sesión</button>
+                  <button id="do_login" class="btn btn-lg btn-primary btn-block" data-ng-click="login.doLogin()"><span class="fa fa-sign-in"></span><trans>Sign in</trans></button>
+
                 <div id="nonStandard" style="display: none">
                   <div id="nonStandardLogin" class="form">
                     non standard logins
