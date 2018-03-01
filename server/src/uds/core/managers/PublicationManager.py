@@ -53,6 +53,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
     '''
     This delayed task is for removing a pending "removable" publication
     '''
+
     def __init__(self, publicationId):
         super(PublicationOldMachinesCleaner, self).__init__()
         self._id = publicationId
@@ -77,6 +78,7 @@ class PublicationLauncher(DelayedTask):
     '''
     This delayed task if for launching a new publication
     '''
+
     def __init__(self, publish):
         super(PublicationLauncher, self).__init__()
         self._publishId = publish.id
@@ -108,6 +110,7 @@ class PublicationFinishChecker(DelayedTask):
     '''
     This delayed task is responsible of checking if a publication is finished
     '''
+
     def __init__(self, servicePoolPub):
         super(PublicationFinishChecker, self).__init__()
         self._publishId = servicePoolPub.id
@@ -128,8 +131,14 @@ class PublicationFinishChecker(DelayedTask):
                     for old in servicePoolPub.deployed_service.publications.filter(state=State.USABLE):
                         old.state = State.REMOVABLE
                         old.save()
-                        pc = PublicationOldMachinesCleaner(old.id)
-                        pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600, 'pclean-' + str(old.id), True)
+
+                        osm = servicePoolPub.deployed_service.osmanager
+                        # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
+                        doPublicationCleanup = True if osm is None else not osm.getInstance().isPersistent()
+
+                        if doPublicationCleanup:
+                            pc = PublicationOldMachinesCleaner(old.id)
+                            pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600, 'pclean-' + str(old.id), True)
 
                     servicePoolPub.setState(State.USABLE)
                     servicePoolPub.deployed_service.markOldUserServicesAsRemovables(servicePoolPub)

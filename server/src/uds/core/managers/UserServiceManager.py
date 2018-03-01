@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2018-02-16'
+__updated__ = '2018-03-02'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -455,12 +455,17 @@ class UserServiceManager(object):
         This method is used by UserService when a request for setInUse(False) is made
         This checks that the service can continue existing or not
         '''
-        # uService = UserService.objects.get(id=uService.id)
-        if uService.publication is None:
-            return
-        if uService.publication.id != uService.deployed_service.activePublication().id:
-            logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
-            uService.remove()
+        osm = uService.deployed_service.osmanager
+        # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
+        doPublicationCleanup = True if osm is None else not osm.getInstance().isPersistent()
+
+        if doPublicationCleanup:
+            if uService.publication is None:
+                return
+
+            if uService.publication.id != uService.deployed_service.activePublication().id:
+                logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
+                uService.remove()
 
     def notifyReadyFromOsManager(self, uService, data):
         try:

@@ -197,6 +197,9 @@ class LinuxOsManager(osmanagers.OSManager):
         if self._onLogout == 'remove':
             userService.remove()
 
+    def isPersistent(self):
+        return not self._onLogout == 'remove'
+
     def checkState(self, service):
         logger.debug('Checking state for service {0}'.format(service))
         return State.RUNNING
