@@ -2,7 +2,9 @@
 """
 Url patterns for UDS project (Django)
 """
-from django.conf.urls import include, url
+from django.conf.urls import include
+from django.urls import path
+
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -10,5 +12,5 @@ from django.conf.urls import include, url
 
 
 urlpatterns = [
-    url(r'^', include('uds.urls')),
+    path('', include('uds.urls')),
 ]

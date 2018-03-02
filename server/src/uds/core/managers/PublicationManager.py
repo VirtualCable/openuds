@@ -132,8 +132,14 @@ class PublicationFinishChecker(DelayedTask):
                     for old in servicePoolPub.deployed_service.publications.filter(state=State.USABLE):
                         old.state = State.REMOVABLE
                         old.save()
-                        pc = PublicationOldMachinesCleaner(old.id)
-                        pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600, 'pclean-' + str(old.id), True)
+
+                        osm = servicePoolPub.deployed_service.osmanager
+                        # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
+                        doPublicationCleanup = True if osm is None else not osm.getInstance().isPersistent()
+
+                        if doPublicationCleanup:
+                            pc = PublicationOldMachinesCleaner(old.id)
+                            pc.register(GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600, 'pclean-' + str(old.id), True)
 
                     servicePoolPub.setState(State.USABLE)
                     servicePoolPub.deployed_service.markOldUserServicesAsRemovables(servicePoolPub)
@@ -205,7 +211,7 @@ class PublicationManager(object):
         """
         Initiates the publication of a service pool, or raises an exception if this cannot be done
         :param servicePool: Service pool object (db object)
-        :param changeLog: if not Noe, store change log string on "change log" table
+        :param changeLog: if not None, store change log string on "change log" table
         """
         if servicePool.publications.filter(state__in=State.PUBLISH_STATES).count() > 0:
             raise PublishException(_('Already publishing. Wait for previous publication to finish and try again'))

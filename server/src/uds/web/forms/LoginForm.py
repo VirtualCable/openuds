@@ -82,15 +82,7 @@ class LoginForm(forms.Form):
         nonStandard = []
         standard = []
 
-        auths = None
-        if tag is not None:
-            auths = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
-            if auths.count() == 0:
-                auths = Authenticator.objects.all().order_by('priority', 'name')[0:1]
-            logger.debug(auths)
-            logger.debug(list(auths))
-        else:
-            auths = Authenticator.objects.all().order_by('priority', 'name')
+        auths = Authenticator.getByTag(tag)
 
         for a in auths:
             if a.getType() is None:

@@ -42,7 +42,7 @@ from uds.core import Module
 
 import six
 
-__updated__ = '2017-10-02'
+__updated__ = '2018-03-02'
 
 STORAGE_KEY = 'osmk'
 
@@ -259,6 +259,13 @@ class OSManager(Module):
 
         if save:
             userService.save()
+
+    def isPersistent(self):
+        '''
+        When a publication if finished, old assigned machines will be removed if this value is True.
+        Defaults to False
+        '''
+        return False
 
     def __str__(self):
         return "Base OS Manager"

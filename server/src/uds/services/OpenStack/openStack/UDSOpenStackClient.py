@@ -33,32 +33,25 @@
 # pylint: disable=maybe-no-member,protected-access
 from django.utils.translation import ugettext as _
 
-from uds.core.util.Cache import Cache
-
 import logging
 import requests
 import json
 import dateutil.parser
-import hashlib
 import six
 
-
-__updated__ = '2017-11-13'
+__updated__ = '2018-03-02'
 
 logger = logging.getLogger(__name__)
 
 # Required: Authentication v3
 
-
-# This is a vary basic implementation for what we need from openstack
+# This is an implementation for what we need from openstack
 # This does not includes (nor it is intention) full API implementation, just the parts we need
-# Theese are related to auth, compute & network basically
-
-# In case we Cache time for endpoints. This is more likely to not change never, so we will tray to keep it as long as we can (1 hour for example?)
-# ENDPOINTS_TIMEOUT = 1 * 3600
+# These are related to auth, compute & network basically
 
 # Do not verify SSL conections right now
 VERIFY_SSL = False
+
 
 # Helpers
 def ensureResponseIsValid(response, errMsg=None):
@@ -96,28 +89,30 @@ def getRecurringUrlJson(url, headers, key, params=None, errMsg=None, timeout=10)
 
 # Decorators
 def authRequired(func):
+
     def ensurer(obj, *args, **kwargs):
         obj.ensureAuthenticated()
         try:
             return func(obj, *args, **kwargs)
         except Exception as e:
             logger.error('Got error {} for openstack'.format(e))
-            obj._cleanCache()  # On any request error, force next time auth
             raise
+
     return ensurer
 
+
 def authProjectRequired(func):
+
     def ensurer(obj, *args, **kwargs):
         if obj._projectId is None:
             raise Exception('Need a project for method {}'.format(func))
         obj.ensureAuthenticated()
         return func(obj, *args, **kwargs)
+
     return ensurer
 
 
 class Client(object):
-    cache = Cache('uds-openstack')
-
     PUBLIC = 'public'
     PRIVATE = 'private'
     INTERNAL = 'url'
@@ -138,18 +133,6 @@ class Client(object):
 
         self._authUrl = 'http{}://{}:{}/'.format('s' if useSSL else '', host, port)
 
-        # Generates a hash for auth + credentials
-        h = hashlib.md5()
-        h.update(six.binary_type(host))
-        h.update(six.binary_type(port))
-        h.update(six.binary_type(domain))
-        h.update(six.binary_type(username))
-        h.update(six.binary_type(password))
-        h.update(six.binary_type(useSSL))
-        h.update(six.binary_type(projectId))
-        h.update(six.binary_type(region))
-        self._cacheKey = h.hexdigest()
-
     def _getEndpointFor(self, type_):  # If no region is indicatad, first endpoint is returned
         for i in self._catalog:
             if i['type'] == type_:
@@ -164,38 +147,7 @@ class Client(object):
 
         return headers
 
-    def _getFromCache(self):
-        cached = self.cache.get(self._cacheKey)
-        if cached is not None:
-            self._authenticated = True
-            self._tokenId = cached['tokenId']
-            # Extract the token id
-            self._userId = cached['userId']
-            self._projectId = cached['projectId']
-            self._catalog = cached['catalog']
-
-            return True
-
-        return False
-
-    def _saveToCache(self, validity=600):
-        self.cache.put(self._cacheKey,
-                       {
-                        'tokenId': self._tokenId,
-                        'userId': self._userId,
-                        'projectId': self._projectId,
-                        'catalog': self._catalog
-                       },
-                       validity - 60)  # We substract some seconds to allow some time desynchronization
-
-    def _clearCache(self):
-        self.cache.remove(self._cacheKey)
-
     def authPassword(self):
-        # If cached data exists, use it as auth
-        if self._getFromCache() is True:
-            return
-
         data = {
             'auth': {
                 'identity': {
@@ -239,19 +191,15 @@ class Client(object):
         self._userId = token['user']['id']
         validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
 
-
         logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
-        # Now, if endpoints are present (only if tenant was specified), store & cache them
+        # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectId is not None:
             self._catalog = token['catalog']
-
-        self._saveToCache(validity)
 
     def ensureAuthenticated(self):
         if self._authenticated is False:
             self.authPassword()
-
 
     @authRequired
     def listProjects(self):
@@ -261,7 +209,6 @@ class Client(object):
                                      errMsg='List Projects',
                                      timeout=self._timeout)
 
-
     @authRequired
     def listRegions(self):
         return getRecurringUrlJson(self._authUrl + 'v3/regions/',
@@ -269,7 +216,6 @@ class Client(object):
                                      key='regions',
                                      errMsg='List Regions',
                                      timeout=self._timeout)
-
 
     @authProjectRequired
     def listServers(self, detail=False, params=None):
@@ -281,7 +227,6 @@ class Client(object):
                                     errMsg='List Vms',
                                     timeout=self._timeout)
 
-
     @authProjectRequired
     def listImages(self):
         return getRecurringUrlJson(self._getEndpointFor('image') + '/v2/images?status=active',
@@ -289,7 +234,6 @@ class Client(object):
                                      key='images',
                                      errMsg='List Images',
                                      timeout=self._timeout)
-
 
     @authProjectRequired
     def listVolumeTypes(self):
@@ -299,7 +243,6 @@ class Client(object):
                                      errMsg='List Volume Types',
                                      timeout=self._timeout)
 
-
     @authProjectRequired
     def listVolumes(self):
         # self._getEndpointFor('volumev2') + '/volumes'
@@ -308,7 +251,6 @@ class Client(object):
                                      key='volumes',
                                      errMsg='List Volumes',
                                      timeout=self._timeout)
-
 
     @authProjectRequired
     def listVolumeSnapshots(self, volumeId=None):
@@ -320,7 +262,6 @@ class Client(object):
             if volumeId is None or s['volume_id'] == volumeId:
                 yield s
 
-
     @authProjectRequired
     def listAvailabilityZones(self):
         for az in getRecurringUrlJson(self._getEndpointFor('compute') + '/os-availability-zone',
@@ -331,7 +272,6 @@ class Client(object):
             if az['zoneState']['available'] is True:
                 yield az['zoneName']
 
-
     @authProjectRequired
     def listFlavors(self):
         return getRecurringUrlJson(self._getEndpointFor('compute') + '/flavors',
@@ -339,7 +279,6 @@ class Client(object):
                                      key='flavors',
                                      errMsg='List Flavors',
                                      timeout=self._timeout)
-
 
     @authProjectRequired
     def listNetworks(self):
@@ -372,7 +311,6 @@ class Client(object):
                                      errMsg='List security groups',
                                      timeout=self._timeout)
 
-
     @authProjectRequired
     def getServer(self, serverId):
         r = requests.get(self._getEndpointFor('compute') + '/servers/{server_id}'.format(server_id=serverId),
@@ -396,7 +334,6 @@ class Client(object):
 
         return v
 
-
     @authProjectRequired
     def getSnapshot(self, snapshotId):
         """
@@ -413,7 +350,6 @@ class Client(object):
         v = r.json()['snapshot']
 
         return v
-
 
     @authProjectRequired
     def updateSnapshot(self, snapshotId, name=None, description=None):
@@ -435,7 +371,6 @@ class Client(object):
         v = r.json()['snapshot']
 
         return v
-
 
     @authProjectRequired
     def createVolumeSnapshot(self, volumeId, name, description=None):
@@ -460,7 +395,6 @@ class Client(object):
         ensureResponseIsValid(r, 'Cannot create snapshot. Ensure volume is in state "available"')
 
         return r.json()['snapshot']
-
 
     @authProjectRequired
     def createVolumeFromSnapshot(self, snapshotId, name, description=None):
@@ -520,7 +454,6 @@ class Client(object):
 
         return r.json()['server']
 
-
     @authProjectRequired
     def deleteServer(self, serverId):
         r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
@@ -533,7 +466,6 @@ class Client(object):
 
         # This does not returns anything
 
-
     @authProjectRequired
     def deleteSnapshot(self, snapshotId):
         r = requests.delete(self._getEndpointFor('volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
@@ -544,7 +476,6 @@ class Client(object):
         ensureResponseIsValid(r, 'Cannot remove snapshot.')
 
         # Does not returns a message body
-
 
     @authProjectRequired
     def startServer(self, serverId):
@@ -557,7 +488,6 @@ class Client(object):
         ensureResponseIsValid(r, 'Starting server')
 
         # This does not returns anything
-
 
     @authProjectRequired
     def stopServer(self, serverId):
@@ -588,7 +518,6 @@ class Client(object):
                           timeout=self._timeout)
 
         ensureResponseIsValid(r, 'Resuming server')
-
 
     def testConnection(self):
         # First, ensure requested api is supported

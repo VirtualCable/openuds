@@ -1,9 +1,11 @@
 {% extends "uds/html5/templates/base.html" %}
-{% load i18n static html5 %}
+{% load i18n static html5 uds %}
 
 {% block title %}{% trans 'Welcome to UDS' %}{% endblock %}
 
 {% block js %}
+{% javascript_auths authenticators %}
+
 <script type="text/javascript">
 	function chkNonStandardAuth(val, nonStandard) {
 		if( $.inArray(val, nonStandard) >= 0) {

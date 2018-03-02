@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-26'
+__updated__ = '2018-02-26'
 
 
 @python_2_unicode_compatible
@@ -177,6 +177,28 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
+    def getByTag(tag=None):
+        '''
+        Gets authenticator by tag name.
+        Special tag name "disabled" is used to exclude customAuth
+        '''
+        from uds.core.util.Config import GlobalConfig
+
+        auths = []
+        if tag is not None:
+            auths = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
+            if auths.count() == 0:
+                auths = Authenticator.objects.all().order_by('priority', 'name')
+                # If disallow global login (use all auths), get just the first by priority/name
+                if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
+                    auths = auths[0:1]
+            logger.debug(auths)
+        else:
+            auths = Authenticator.objects.all().order_by('priority', 'name')
+
+        return [auth for auth in auths if auth.getType().isCustom() is False or tag != 'disabled']
+
+    @staticmethod
     def beforeDelete(sender, **kwargs):
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
@@ -205,6 +227,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(Authenticator.beforeDelete, sender=Authenticator)

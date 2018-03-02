@@ -80,12 +80,13 @@ def login(request, tag=None):
 
     logger.debug('Tag: {0}'.format(tag))
 
-    logger.debug(request.method)
     if request.method == 'POST':
         if 'uds' not in request.COOKIES:
             logger.debug('Request does not have uds cookie')
             return errors.errorView(request, errors.COOKIES_NEEDED)  # We need cookies to keep session data
         request.session.cycle_key()
+
+        # Get data from form
         form = LoginForm(request.POST, tag=tag)
         if form.is_valid():
             os = request.os
@@ -140,6 +141,7 @@ def login(request, tag=None):
         theme.template('login.html'),
         {
             'form': form,
+            'authenticators': Authenticator.getByTag(tag),
             'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True),
             'version': VERSION
 
