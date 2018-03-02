@@ -143,6 +143,8 @@ class Scheduler(object):
                 # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
                 # This params are all set inside fltr (look at __init__)
                 job = dbScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]  # @UndefinedVariable
+                if job.last_execution > now:
+                    logger.warn('EXecuted {} due to last_execution being in the future!'.format(job.name))
                 job.state = State.RUNNING
                 job.owner_server = self._hostname
                 job.last_execution = now
