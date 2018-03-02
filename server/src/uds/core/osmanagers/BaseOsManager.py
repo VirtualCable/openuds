@@ -209,7 +209,7 @@ class OSManager(Module):
 
         log.doLog(userService, log.INFO, "User {0} has logged in".format(userName), log.OSMANAGER)
 
-        log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
+        log.useLog('login', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
         counter = int(userService.getProperty('loginsCounter', '0')) + 1
         userService.setProperty('loginsCounter', six.text_type(counter))
@@ -255,7 +255,7 @@ class OSManager(Module):
 
         log.doLog(userService, log.INFO, "User {0} has logged out".format(userName), log.OSMANAGER)
 
-        log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName)
+        log.useLog('logout', uniqueId, serviceIp, userName, knownUserIP, fullUserName, userService.friendly_name, userService.deployed_service.name)
 
         if save:
             userService.save()
