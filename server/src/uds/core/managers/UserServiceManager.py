@@ -494,7 +494,7 @@ class UserServiceManager(object):
             remove = False
             with transaction.atomic():
                 uService = UserService.objects.select_for_update().get(id=uService.id)
-                if uService.publication not is None and uService.publication.id != uService.deployed_service.activePublication().id:
+                if uService.publication is not None and uService.publication.id != uService.deployed_service.activePublication().id:
                     logger.debug('Old revision of user service, marking as removable: {0}'.format(uService))
                     remove = True
 

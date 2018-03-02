@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2017-04-17'
+__updated__ = '2018-03-02'
 
 logger = logging.getLogger(__name__)
 

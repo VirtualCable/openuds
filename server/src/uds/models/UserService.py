@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2018-01-18'
+__updated__ = '2018-03-02'
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class UserService(UUIDModel):
     # We need to keep separated two differents os states so service operations (move beween caches, recover service) do not affects os manager state
     state = models.CharField(max_length=1, default=State.PREPARING, db_index=True)  # We set index so filters at cache level executes faster
     os_state = models.CharField(max_length=1, default=State.PREPARING)  # The valid values for this field are PREPARE and USABLE
-    state_date = models.DateTimeField(auto_now_add=True, db_index=True)
+    state_date = models.DateTimeField(db_index=True)
     creation_date = models.DateTimeField(db_index=True)
     data = models.TextField(default='')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userServices', null=True, blank=True, default=None)
@@ -94,6 +94,8 @@ class UserService(UUIDModel):
     # if This is None, communication is not possible
     # The communication is done using POST via REST & Json
     # comms_url = models.CharField(max_length=256, default=None, null=True, blank=True)
+
+    # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
 
     class Meta(UUIDModel.Meta):
         '''
@@ -169,7 +171,6 @@ class UserService(UUIDModel):
             # The publication to witch this item points to, does not exists
             self.publication = None
             logger.exception("Got exception at getInstance of an userService {}".format(self))
-            logger.error()
         if serviceInstance.deployedType is None:
             raise Exception('Class {0} needs deployedType but it is not defined!!!'.format(serviceInstance.__class__.__name__))
         us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance, publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)

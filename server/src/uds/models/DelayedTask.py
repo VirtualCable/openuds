@@ -33,6 +33,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2018-03-02'
+
 from django.db import models
 
 import logging
@@ -53,7 +55,7 @@ class DelayedTask(models.Model):
     type = models.CharField(max_length=128)
     tag = models.CharField(max_length=64, db_index=True)  # A tag for letting us locate delayed publications...
     instance = models.TextField()
-    insert_date = models.DateTimeField(auto_now_add=True)
+    insert_date = models.DateTimeField()
     execution_delay = models.PositiveIntegerField()
     execution_time = models.DateTimeField(db_index=True)
 

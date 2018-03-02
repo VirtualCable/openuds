@@ -34,6 +34,8 @@
 
 from __future__ import unicode_literals
 
+__updated__ = '2018-03-02'
+
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from uds.models.UUIDModel import UUIDModel
@@ -51,8 +53,8 @@ class DBFile(UUIDModel):
     name = models.CharField(max_length=255, primary_key=True)
     content = models.TextField(blank=True)
     size = models.IntegerField(default=0)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField()
+    modified = models.DateTimeField()
 
     @property
     def data(self):
@@ -61,7 +63,7 @@ class DBFile(UUIDModel):
         except Exception:
             logger.error('DBFile {} has errors and cannot be used'.format(self.name))
             try:
-                # self.delete()  # Autodelete, invalid...
+                self.delete()  # Autodelete, invalid...
                 pass
             except:
                 logger.error('Could not even delete {}!!'.format(self.name))
