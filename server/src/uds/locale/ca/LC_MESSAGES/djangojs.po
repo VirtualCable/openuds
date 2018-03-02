@@ -4,14 +4,14 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2017
-# albert clar <albert.clar@uib.cat>, 2017
+# albert clar <albert.clar@uib.cat>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-20 14:28+0100\n"
-"PO-Revision-Date: 2018-01-26 09:30+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-03-02 18:34+0100\n"
+"PO-Revision-Date: 2018-03-02 07:17+0000\n"
+"Last-Translator: albert clar <albert.clar@uib.cat>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -336,7 +336,7 @@ msgstr "començant a"
 
 #: static/tmp_js/gui-d-calendar.js:171
 msgid "and will remain valid for"
-msgstr ""
+msgstr "i continuarà essent vàlid fins a"
 
 #: static/tmp_js/gui-d-calendar.js:173
 msgid "with no duration"

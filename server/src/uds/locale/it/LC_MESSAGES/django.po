@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-20 14:28+0100\n"
-"PO-Revision-Date: 2018-02-01 22:23+0000\n"
+"POT-Creation-Date: 2018-03-02 18:34+0100\n"
+"PO-Revision-Date: 2018-02-20 13:29+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
@@ -1500,28 +1500,28 @@ msgstr "Amministratore di sistema"
 msgid "Forbidden"
 msgstr "Vietato"
 
-#: core/managers/PublicationManager.py:206
+#: core/managers/PublicationManager.py:215
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Già pubblicando. Attendere la pubblicazione precedente finire e riprovare"
 
-#: core/managers/PublicationManager.py:209
+#: core/managers/PublicationManager.py:218
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr ""
 "Il servizio è in modalità di manutenzione e nuove pubblicazioni non sono "
 "ammessi"
 
-#: core/managers/PublicationManager.py:242
+#: core/managers/PublicationManager.py:251
 msgid "Can't cancel non running publication"
 msgstr "Non è possibile annullare la pubblicazione non in esecuzione"
 
-#: core/managers/PublicationManager.py:264
+#: core/managers/PublicationManager.py:273
 msgid "Can't unpublish non usable publication"
 msgstr ""
 "Non è possibile annullare la pubblicazione pubblicazione non utilizzabile"
 
-#: core/managers/PublicationManager.py:267
+#: core/managers/PublicationManager.py:276
 msgid "Can't unpublish publications with services in process"
 msgstr ""
 "Non è possibile annullare la pubblicazione di pubblicazioni con servizi nel "
@@ -3190,11 +3190,11 @@ msgstr "Timeout in secondi di connessione a OpenStack"
 msgid "OpenStack test connection passed"
 msgstr "OpenStack test connessione passata"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:610
+#: services/OpenStack/openStack/UDSOpenStackClient.py:539
 msgid "Authentication error"
 msgstr "Errore di autenticazione"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:612
+#: services/OpenStack/openStack/UDSOpenStackClient.py:541
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -5228,7 +5228,6 @@ msgstr "Profondità di colore"
 
 #: transports/RDP/BaseRDPTransport.py:91
 #: transports/RDS_enterprise/BaseRDSTransport.py:78
-#| msgid "Color depth for this conextion"
 msgid "Color depth for this connection"
 msgstr "Profondità di colore per questa connessione"
 
