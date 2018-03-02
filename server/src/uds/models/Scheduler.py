@@ -33,7 +33,7 @@
 
 from __future__ import unicode_literals
 
-__updated__ = '2015-10-05'
+__updated__ = '2018-03-02'
 
 from django.db import models
 from django.db.models import signals
@@ -70,7 +70,7 @@ class Scheduler(models.Model):
 
     name = models.CharField(max_length=64, unique=True)
     frecuency = models.PositiveIntegerField(default=DAY)
-    last_execution = models.DateTimeField(auto_now_add=True, db_index=True)
+    last_execution = models.DateTimeField(db_index=True)
     next_execution = models.DateTimeField(default=NEVER, db_index=True)
     owner_server = models.CharField(max_length=64, db_index=True, default='')
     state = models.CharField(max_length=1, default=State.FOR_EXECUTE, db_index=True)
@@ -80,7 +80,6 @@ class Scheduler(models.Model):
         Meta class to declare default order and unique multiple field index
         '''
         app_label = 'uds'
-
 
     def getEnvironment(self):
         '''
@@ -111,6 +110,7 @@ class Scheduler(models.Model):
 
     def __unicode__(self):
         return u"Scheduled task {0}, every {1}, last execution at {2}, state = {3}".format(self.name, self.frecuency, self.last_execution, self.state)
+
 
 # Connects a pre deletion signal to Scheduler
 signals.pre_delete.connect(Scheduler.beforeDelete, sender=Scheduler)

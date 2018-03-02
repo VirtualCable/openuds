@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2017-11-29'
+__updated__ = '2018-03-02'
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class UserService(UUIDModel):
     # We need to keep separated two differents os states so service operations (move beween caches, recover service) do not affects os manager state
     state = models.CharField(max_length=1, default=State.PREPARING, db_index=True)  # We set index so filters at cache level executes faster
     os_state = models.CharField(max_length=1, default=State.PREPARING)  # The valid values for this field are PREPARE and USABLE
-    state_date = models.DateTimeField(auto_now_add=True, db_index=True)
+    state_date = models.DateTimeField(db_index=True)
     creation_date = models.DateTimeField(db_index=True)
     data = models.TextField(default='')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userServices', null=True, blank=True, default=None)

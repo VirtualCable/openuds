@@ -43,7 +43,7 @@ import threading
 import time
 import logging
 
-__updated__ = '2017-04-17'
+__updated__ = '2018-03-02'
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +55,7 @@ class JobThread(threading.Thread):
       Ensures that the job is executed in a controlled way (any exception will be catch & processed)
       Ensures that the scheduler db entry is released after run
     '''
+
     def __init__(self, jobInstance, dbJob):
         super(JobThread, self).__init__()
         self._jobInstance = jobInstance

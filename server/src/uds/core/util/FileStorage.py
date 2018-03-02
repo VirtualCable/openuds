@@ -39,7 +39,9 @@ from django.core.files.storage import Storage
 from django.conf import settings
 from six.moves.urllib import parse as urlparse  # @UnresolvedImport
 
-from uds.models.DBFile import DBFile
+from uds.models import DBFile
+from uds.models import getSqlDatetime
+
 from .tools import DictAsObj
 
 import six
@@ -131,9 +133,11 @@ class FileStorage(Storage):
         try:
             f = self._dbFileForReadWrite(name)
         except DBFile.DoesNotExist:
-            f = DBFile.objects.create(owner=self.owner, name=name)
+            now = getSqlDatetime()
+            f = DBFile.objects.create(owner=self.owner, name=name, created=now, modified=now)
 
         f.data = content.read()
+        f.modified = getSqlDatetime()
         f.save()
 
         # Store on cache also
