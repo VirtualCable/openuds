@@ -66,7 +66,8 @@ module.exports = function(grunt) {
       },
       dist: {
         options: {
-          // Process files to make them
+          // Process files to make them, except "known" binaries, to do not mess them
+          processContentExclude: ['**/*.{png,gif,jpg,ico,otf,eot,ttf,woff,woff2}'],
           process: function(content, srcPath) {
             if( /.?src\/[^\/]*.html/g.test(srcPath) ) {
               grunt.log.write(' converting for template... ');
@@ -96,6 +97,8 @@ module.exports = function(grunt) {
             src: config.src.html, 
             dest:'<%= config.dist %>/templates/uds/<%= config.uds_template %>',
           },
+          // Fontawewsome
+          { expand: true, flatten: true, src: 'node_modules/font-awesome/fonts/*', dest:'<%= config.dist %>/static/fonts' },
           // Templates (angular, for now goes to static, but maybe it needs to go to other "django templates" folder)
           { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dist %>/static/templates' },
           /// Images
