@@ -51,7 +51,7 @@ module.exports = function(grunt) {
             dest: '<%= config.dev %>/_static_/js/lib' 
           },  
           // Fontawewsome
-          { expand: true, flatten: true, src: 'node_modules/font-awesome/fonts/*', dest:'<%= config.dev %>/_static_/fonts' },
+          { expand: true, flatten: true, src: 'node_modules/@fortawesome/fontawesome-free-webfonts/webfonts/*', dest:'<%= config.dev %>/_static_/webfonts' },
           // Index & Templates, no changes for development environment
           { expand: true, flatten: true, src: config.src.html, dest:'<%= config.dev %>' },
           { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dev %>/_static_/templates' },
@@ -98,7 +98,7 @@ module.exports = function(grunt) {
             dest:'<%= config.dist %>/templates/uds/<%= config.uds_template %>',
           },
           // Fontawewsome
-          { expand: true, flatten: true, src: 'node_modules/font-awesome/fonts/*', dest:'<%= config.dist %>/static/fonts' },
+          { expand: true, flatten: true, src: 'node_modules/@fortawesome/fontawesome-free-webfonts/webfonts/*', dest:'<%= config.dist %>/static/webfonts' },
           // Templates (angular, for now goes to static, but maybe it needs to go to other "django templates" folder)
           { expand: true, flatten: true, src: config.src.templates, dest:'<%= config.dist %>/static/templates' },
           /// Images
