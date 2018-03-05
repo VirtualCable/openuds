@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-02 18:34+0100\n"
-"PO-Revision-Date: 2018-02-20 13:29+0000\n"
+"POT-Creation-Date: 2018-03-05 13:58+0100\n"
+"PO-Revision-Date: 2018-03-05 12:43+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -1858,7 +1858,7 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:50
-msgid "On Logout"
+msgid "Logout Action"
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
@@ -1876,15 +1876,20 @@ msgstr ""
 msgid "Remove service"
 msgstr "Zerbitzua kendu"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:66
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:57
+msgid "Keep service assigned even on new publication"
+msgstr ""
+
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:71
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:63
 msgid "Max.Idle time"
 msgstr ""
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:74
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:75
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max idle time)."
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max idle time)."
 msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:47
@@ -2094,17 +2099,17 @@ msgstr ""
 msgid "Os Manager to control windows machines without domain."
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:68
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max. idle time)"
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max. idle time)"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:77
 msgid "Length must be numeric!!"
 msgstr ""
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be betwen 1 and 6"
 msgstr ""
 

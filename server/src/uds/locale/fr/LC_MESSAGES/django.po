@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-02 18:34+0100\n"
-"PO-Revision-Date: 2018-02-20 13:29+0000\n"
+"POT-Creation-Date: 2018-03-05 13:58+0100\n"
+"PO-Revision-Date: 2018-03-05 12:43+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
@@ -1924,8 +1924,8 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:50
-msgid "On Logout"
-msgstr "Sur Logout"
+msgid "Logout Action"
+msgstr "Action de déconnexion"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:53
@@ -1942,19 +1942,24 @@ msgstr "Garder les services affectés"
 msgid "Remove service"
 msgstr "Retirer un service"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:66
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:57
+msgid "Keep service assigned even on new publication"
+msgstr "Garder le service affecté même sur la nouvelle publication"
+
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:71
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:63
 msgid "Max.Idle time"
 msgstr "Temps d'inactivité maximal"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:74
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:75
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max idle time)."
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max idle time)."
 msgstr ""
-"Temps d'inactivité maximal (en secondes) avant que la session soit "
-"automatiquement fermée à l'utilisateur (< = 0 signifie aucune durée "
-"d'inactivité maximale)."
+"Temps d’inactivité maximal (en secondes) avant la session est "
+"automatiquement fermée à la utilisateur (< = 0 signifie aucune durée "
+"d’inactivité maximale)."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:47
 msgid "Linux Random Password OS Manager"
@@ -2185,20 +2190,20 @@ msgstr "OS MAnager basique pour Windows"
 msgid "Os Manager to control windows machines without domain."
 msgstr "OS Manager basique pour Windows sans domaine"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:68
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max. idle time)"
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max. idle time)"
 msgstr ""
-"Temps d'inactivité maximum (en secondes) avant que la session soit "
-"automatiquement fermée à l'utilisateur (<= 0 signifie pas de temps "
-"d'inactivité maximum)"
+"Temps d’inactivité maximal (en secondes) avant la session est "
+"automatiquement fermée à la utilisateur (< = 0 signifie aucune durée "
+"d’inactivité max.)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:77
 msgid "Length must be numeric!!"
 msgstr "La longueur doit être numérique!!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be betwen 1 and 6"
 msgstr "La longueur doit être comprise entre 1 et 6"
 

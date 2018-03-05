@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-02 18:34+0100\n"
-"PO-Revision-Date: 2018-02-20 13:29+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
+"POT-Creation-Date: 2018-03-05 13:58+0100\n"
+"PO-Revision-Date: 2018-03-05 12:54+0000\n"
+"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
 "Language: ar\n"
@@ -1876,8 +1876,8 @@ msgstr "مدير نظام للسيطرة على الأجهزة الظاهرية 
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:50
-msgid "On Logout"
-msgstr "عند الخروج"
+msgid "Logout Action"
+msgstr "إجراءات تسجيل الخروج"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:53
@@ -1894,18 +1894,23 @@ msgstr "الحفاظ على الخدمة المخصصة"
 msgid "Remove service"
 msgstr "إزالة الخدمة"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:66
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:57
+msgid "Keep service assigned even on new publication"
+msgstr "الحفاظ على الخدمة المعينة حتى في منشور جديد"
+
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:71
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:63
 msgid "Max.Idle time"
 msgstr "الوقت الأقصى للخمول"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:74
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:75
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max idle time)."
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max idle time)."
 msgstr ""
-"الوقت الأقصى للخمول (بالثواني) قبل جلسة مغلقة تلقائيا للمستخدم (<= 0 يعني "
-"عدم وجود حد أقصى للخمول)."
+"يتم الإغلاق بعد الحد الأقصى لوقت الخمول (بالثواني) قبل الإغلاق التلقائي "
+"للمستخدم (<= 0 يعني عدم وجود حد أقصى لوقت الخمول)."
 
 #: osmanagers/LinuxOsManager/LinuxRandomPassOsManager.py:47
 msgid "Linux Random Password OS Manager"
@@ -2130,19 +2135,19 @@ msgstr "مدير نظام التشغيل ويندوز الأساسي"
 msgid "Os Manager to control windows machines without domain."
 msgstr "مدير نظام التشغيل للسيطرة على أجهزة ويندوز دون المجال."
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:68
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max. idle time)"
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max. idle time)"
 msgstr ""
-"وقت الخمول الأقصى (بالثواني) قبل أن يتم إغلاق الجلسة تلقائيا للمستخدم (<= 0 "
-"يعني عدم وجود حد أقصى)"
+"يتم الإغلاق بعد وقت الخمول الأقصى (بالثواني) قبل الإغلاق التلقائي للمستخدم "
+"(<= 0 يعني عدم وجود حد أقصى لوقت الخمول)."
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:77
 msgid "Length must be numeric!!"
 msgstr "يجب أن يكون الطول رقما !!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be betwen 1 and 6"
 msgstr "يجب أن يكون الطول ما بين 1 و 6"
 
