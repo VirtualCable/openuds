@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 from __future__ import unicode_literals
 
@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-26'
+__updated__ = '2018-03-05'
 
 
 @python_2_unicode_compatible
@@ -137,11 +137,10 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
 
 
-        """
-        if realName is None:
-            realName = username
+        '''
+        realName = realName if realName is None else username
         user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
-        if realName is not None and realName != user.real_name:
+        if user.real_name.strip() == '' and realName != user.real_name:
             user.real_name = realName
             user.save()
 
