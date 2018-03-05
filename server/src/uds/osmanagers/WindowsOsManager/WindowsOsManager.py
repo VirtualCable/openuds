@@ -47,13 +47,14 @@ class WindowsOsManager(osmanagers.OSManager):
     servicesType = (serviceTypes.VDI,)
 
     onLogout = gui.ChoiceField(
-        label=_('On Logout'),
+        label=_('Logout Action'),
         order=10,
         rdonly=True,
         tooltip=_('What to do when user logs out from service'),
         values=[
             {'id': 'keep', 'text': _('Keep service assigned')},
-            {'id': 'remove', 'text': _('Remove service')}
+            {'id': 'remove', 'text': _('Remove service')},
+            {'id': 'keep-always', 'text': _('Keep service assigned even on new publication')},
         ],
         defvalue='keep'
     )
@@ -64,7 +65,7 @@ class WindowsOsManager(osmanagers.OSManager):
         defvalue=-1,
         rdonly=False,
         order=11,
-        tooltip=_('Maximum idle time (in seconds) before session is automaticatlly closed to the user (<= 0 means no max. idle time)'),
+        tooltip=_('Maximum idle time (in seconds) before session is automatically closed to the user (<= 0 means no max. idle time)'),
         required=True
     )
 
@@ -216,7 +217,7 @@ class WindowsOsManager(osmanagers.OSManager):
             userService.remove()
 
     def isPersistent(self):
-        return not self._onLogout == 'remove'
+        return not self._onLogout == 'keep-always'
 
     def checkState(self, service):
         logger.debug('Checking state for service {0}'.format(service))

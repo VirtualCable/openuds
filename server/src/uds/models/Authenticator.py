@@ -48,7 +48,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-02-26'
+__updated__ = '2018-03-05'
+
 
 @python_2_unicode_compatible
 class Authenticator(ManagedObjectModel, TaggingMixin):
@@ -137,10 +138,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
 
         '''
-        if realName is None:
-            realName = username
+        realName = realName if realName is None else username
         user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
-        if realName is not None and realName != user.real_name:
+        if user.real_name.strip() == '' and realName != user.real_name:
             user.real_name = realName
             user.save()
 
@@ -204,6 +204,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     def __str__(self):
         return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(Authenticator.beforeDelete, sender=Authenticator)
