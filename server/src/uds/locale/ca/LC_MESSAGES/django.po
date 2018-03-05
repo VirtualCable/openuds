@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-02 18:34+0100\n"
-"PO-Revision-Date: 2018-02-23 13:30+0000\n"
-"Last-Translator: albert clar <albert.clar@uib.cat>\n"
+"POT-Creation-Date: 2018-03-05 13:58+0100\n"
+"PO-Revision-Date: 2018-03-05 12:47+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
 "ca/)\n"
 "Language: ca\n"
@@ -1910,8 +1911,8 @@ msgstr "Gestor de SO per a controlar màquines virtuals Linux"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:59
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:50
-msgid "On Logout"
-msgstr "En tancar la sessió"
+msgid "Logout Action"
+msgstr "Acció de sortida"
 
 #: osmanagers/LinuxOsManager/LinuxOsManager.py:62
 #: osmanagers/WindowsOsManager/WindowsOsManager.py:53
@@ -1928,15 +1929,20 @@ msgstr "Conserva el servei assignat"
 msgid "Remove service"
 msgstr "Elimina servei"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:70
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:62
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:66
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:57
+msgid "Keep service assigned even on new publication"
+msgstr "Mantenir el servei assignat fins i tot en una nova publicació"
+
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:71
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:63
 msgid "Max.Idle time"
 msgstr "Temps màxim d'inactivitat"
 
-#: osmanagers/LinuxOsManager/LinuxOsManager.py:74
+#: osmanagers/LinuxOsManager/LinuxOsManager.py:75
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max idle time)."
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max idle time)."
 msgstr ""
 "Temps màxim d'inactivitat (en segons) abans que una sessió es tanqui "
 "automàticament (<=0 vol dir que no hi ha temps màxim d'inactivitat)"
@@ -2169,19 +2175,19 @@ msgstr "Gestor de SO per a Windows Bàsic"
 msgid "Os Manager to control windows machines without domain."
 msgstr "Gestor de SO per a controlar màquines Windows no agregades a domini"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:67
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:68
 msgid ""
-"Maximum idle time (in seconds) before session is automaticatlly closed to "
-"the user (<= 0 means no max. idle time)"
+"Maximum idle time (in seconds) before session is automatically closed to the "
+"user (<= 0 means no max. idle time)"
 msgstr ""
 "Temps màxim d'inactivitat (en segons) abans que una sessió es tanqui "
 "automàticament (<=0 vol dir que no hi ha temps màxim d'inactivitat)"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:76
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:77
 msgid "Length must be numeric!!"
 msgstr "La longitud ha de ser un valor numèric!"
 
-#: osmanagers/WindowsOsManager/WindowsOsManager.py:78
+#: osmanagers/WindowsOsManager/WindowsOsManager.py:79
 msgid "Length must be betwen 1 and 6"
 msgstr "La longitud ha d'estar entre 1 i 6"
 
