@@ -127,7 +127,7 @@ class MarshallerProcessor(ContentProcessor):
 
     def processParameters(self):
         try:
-            if self._request.META.get('CONTENT_LENGTH', '0') == '' or len(self._request.body) == 0:
+            if self._request.META.get('CONTENT_LENGTH', '0') == '0' or len(self._request.body) == 0:
                 return self.processGetParameters()
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body.decode('utf8'))
