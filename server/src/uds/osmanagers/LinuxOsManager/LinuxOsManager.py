@@ -32,7 +32,7 @@
 '''
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import ugettext_noop as _, ugettext_lazy
 from django.conf import settings
 from uds.core.services import types as serviceTypes
 from uds.core.ui.UserInterface import gui
@@ -61,9 +61,9 @@ class LinuxOsManager(osmanagers.OSManager):
         rdonly=True,
         tooltip=_('What to do when user logs out from service'),
         values=[
-            {'id': 'keep', 'text': _('Keep service assigned')},
-            {'id': 'remove', 'text': _('Remove service')},
-            {'id': 'keep-always', 'text': _('Keep service assigned even on new publication')},
+            {'id': 'keep', 'text': ugettext_lazy('Keep service assigned')},
+            {'id': 'remove', 'text': ugettext_lazy('Remove service')},
+            {'id': 'keep-always', 'text': ugettext_lazy('Keep service assigned even on new publication')},
         ],
         defvalue='keep')
 
