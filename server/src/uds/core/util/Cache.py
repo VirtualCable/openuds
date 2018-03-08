@@ -74,6 +74,10 @@ class Cache(object):
             Cache.misses += 1
             logger.debug('key not found: {}'.format(skey))
             return defValue
+        except Exception as e:
+            Cache.misses += 1
+            logger.debug('Cache inaccesible: {}:{}'.format(skey, e))
+            return defValue
 
     def remove(self, skey):
         '''
