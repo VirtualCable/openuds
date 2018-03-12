@@ -51,6 +51,12 @@ GuacUI.Client = {
         0x0205: "This connection is currently in use, and concurrent access to \
                  this connection is not allowed. Please try again later.",
 
+        0x0207: "The Guacamole server is not currently reachable. Please \
+                 check your network and try again.",
+
+        0x0208: "The Guacamole server is not accepting connections. Please \
+                 check your network and try again.",
+
         0x0301: "You do not have permission to access this connection because \
                  you are not logged in. Please log in and try again.",
 
@@ -94,14 +100,32 @@ GuacUI.Client = {
                  the connection. Please try again or contact your system       \
                  administrator.",
 
-        0x0205: "This connection has been closed because it conflicts with \
-                 another connection. Please try again later.",
+        0x0207: "The remote desktop server is currently unreachable. If the    \
+                 problem persists, please notify your system administrator, or \
+                 check your system logs.",
+
+        0x0208: "The remote desktop server is currently unavailable. If the    \
+                 problem persists, please notify your system administrator, or \
+                 check your system logs.",
+
+        0x0209: "The remote desktop server has closed the connection because   \
+                 it conflicts with another connection. Please try again later.",
+
+        0x020A: "The remote desktop server has closed the connection because   \
+                 it appeared to be inactive. If this is undesired or           \
+                 unexpected, please notify your system administrator, or check \
+                 your system settings.",
+
+        0x020B: "The remote desktop server has forcibly closed the connection. \
+                 If this is undesired or unexpected, please notify your system \
+                 administrator, or check your system logs.",
 
         0x0301: "Log in failed. Please reconnect and try again.",
 
-        0x0303: "You do not have permission to access this connection. If you \
-                 require access, please ask your system administrator to add  \
-                 you the list of allowed users, or check your system settings.",
+        0x0303: "The remote desktop server has denied access to this          \
+                 connection. If you require access, please ask your system    \
+                 administrator to grant your account access, or check your    \
+                 system settings.",
 
         0x0308: "The Guacamole server has closed the connection because there \
                  has been no response from your browser for long enough that  \
@@ -179,6 +203,8 @@ GuacUI.Client = {
         0x0200: true,
         0x0202: true,
         0x0203: true,
+        0x0207: true,
+        0x0208: true,
         0x0308: true
     },
 
@@ -190,6 +216,8 @@ GuacUI.Client = {
         0x0200: true,
         0x0202: true,
         0x0203: true,
+        0x0207: true,
+        0x0208: true,
         0x0301: true,
         0x0308: true
     },
