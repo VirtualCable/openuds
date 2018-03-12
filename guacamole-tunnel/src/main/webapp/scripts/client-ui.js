@@ -203,6 +203,8 @@ GuacUI.Client = {
         0x0200: true,
         0x0202: true,
         0x0203: true,
+        0x0207: true,
+        0x0208: true,
         0x0308: true
     },
 
@@ -214,6 +216,8 @@ GuacUI.Client = {
         0x0200: true,
         0x0202: true,
         0x0203: true,
+        0x0207: true,
+        0x0208: true,
         0x0301: true,
         0x0308: true
     },
