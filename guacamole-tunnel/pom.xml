@@ -81,14 +81,14 @@
         <dependency>
             <groupId>org.apache.guacamole</groupId>
             <artifactId>guacamole-common</artifactId>
-            <version>0.9.10-incubating</version>
+            <version>0.9.14</version>
         </dependency>
 
         <!-- Guacamole JavaScript library -->
         <dependency>
             <groupId>org.apache.guacamole</groupId>
             <artifactId>guacamole-common-js</artifactId>
-            <version>0.9.12-incubating</version>
+            <version>0.9.14</version>
             <type>zip</type>
             <scope>runtime</scope>
         </dependency>
