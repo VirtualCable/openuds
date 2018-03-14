@@ -73,7 +73,8 @@ class ServicesPools(ModelHandler):
     save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id',
                    'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs',
                    'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports',
-                   'allow_users_remove', 'ignores_unused']
+                   'allow_users_remove', 'allow_users_reset', 'ignores_unused']
+
     remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
@@ -139,6 +140,7 @@ class ServicesPools(ModelHandler):
             'show_transports': item.show_transports,
             'visible': item.visible,
             'allow_users_remove': item.allow_users_remove,
+            'allow_users_reset': item.allow_users_reset,
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.getEffectivePermission(self._user, item),
@@ -192,12 +194,20 @@ class ServicesPools(ModelHandler):
             'order': 111,
             'tab': ugettext('Advanced'),
         }, {
+            'name': 'allow_users_reset',
+            'value': False,
+            'label': ugettext('Allow reset by users'),
+            'tooltip': ugettext('If active, the user will be allowed to reset the service'),
+            'type': gui.InputField.CHECKBOX_TYPE,
+            'order': 112,
+            'tab': ugettext('Advanced'),
+        }, {
             'name': 'ignores_unused',
             'value': False,
             'label': ugettext('Ignores unused'),
             'tooltip': ugettext('If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'),
             'type': gui.InputField.CHECKBOX_TYPE,
-            'order': 112,
+            'order': 113,
             'tab': ugettext('Advanced'),
         }, {
             'name': 'image_id',

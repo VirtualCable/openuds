@@ -51,6 +51,8 @@ import requests
 import json
 import logging
 
+__updated__ = '2018-03-14'
+
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
 
@@ -363,10 +365,23 @@ class UserServiceManager(object):
         UserServiceOpChecker.makeUnique(uService, ui, state)
         return False
 
+    def reset(self, uService):
+        UserService.objects.update()
+        uService = UserService.objects.get(id=uService.id)
+        if uService.deployed_service.service.getType().canReset is False:
+            return
+
+        logger.debug('Reseting'.format(uService))
+
+        ui = uService.getInstance()
+        try:
+            ui.reset()
+        except Exception:
+            logger.exception('Reseting service')
+
     def notifyPreconnect(self, uService, userName, protocol):
 
         proxy = uService.deployed_service.proxy
-
         url = uService.getCommsUrl()
         if url is None:
             logger.debug('No notification is made because agent does not supports notifications')

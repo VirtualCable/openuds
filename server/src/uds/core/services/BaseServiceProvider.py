@@ -39,7 +39,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-25'
+__updated__ = '2018-03-14'
 
 
 class ServiceProvider(Module):

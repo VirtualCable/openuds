@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2018-02-14'
+__updated__ = '2018-03-14'
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +86,10 @@ class DeployedService(UUIDModel, TaggingMixin):
     show_transports = models.BooleanField(default=True)
     visible = models.BooleanField(default=True)
     allow_users_remove = models.BooleanField(default=False)
+    allow_users_reset = models.BooleanField(default=False)
+
     ignores_unused = models.BooleanField(default=False)
+
     image = models.ForeignKey(Image, null=True, blank=True, related_name='deployedServices', on_delete=models.SET_NULL)
 
     servicesPoolGroup = models.ForeignKey(ServicesPoolGroup, null=True, blank=True, related_name='servicesPools', on_delete=models.SET_NULL)

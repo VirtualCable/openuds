@@ -73,7 +73,7 @@ urlpatterns = [
 
     # Releaser
     re_path(r'^release/(?P<idService>.+)$', uds.web.views.release, name='Releaser'),
-
+    re_path(r'^reset/(?P<idService>.+)$', 'web.views.reset', name='Reseter'),
     # Custom authentication callback
     re_path(r'^auth/(?P<authName>.+)', uds.web.views.authCallback, name='uds.web.views.authCallback'),
     re_path(r'^authinfo/(?P<authName>.+)', uds.web.views.authInfo, name='uds.web.views.authInfo'),

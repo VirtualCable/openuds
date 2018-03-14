@@ -54,6 +54,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+__updated__ = '2018-03-14'
+
 
 @webLoginRequired(admin=False)
 def transportOwnLink(request, idService, idTransport):
@@ -154,7 +156,7 @@ def clientEnabler(request, idService, idTransport):
 def release(request, idService):
     logger.debug('ID Service: {}'.format(idService))
     userService = userServiceManager().locateUserService(request.user, idService, create=False)
-    logger.debug('UserSrvice: >{}<'.format(userService))
+    logger.debug('UserService: >{}<'.format(userService))
     if userService is not None and userService.deployed_service.allow_users_remove:
         log.doLog(
             userService.deployed_service,
@@ -164,6 +166,26 @@ def release(request, idService):
         )
         userServiceManager().requestLogoff(userService)
         userService.release()
+
+    return HttpResponseRedirect(reverse('Index'))
+
+
+@webLoginRequired(admin=False)
+@never_cache
+def reset(request, idService):
+    logger.debug('ID Service: {}'.format(idService))
+    userService = userServiceManager().locateUserService(request.user, idService, create=False)
+    logger.debug('UserService: >{}<'.format(userService))
+    if (userService is not None and userService.deployed_service.allow_users_reset
+            and userService.deployed_service.service.getType().canReset):
+        log.doLog(
+            userService.deployed_service,
+            log.INFO,
+            "Reseting User Service {} as requested by {} from {}".format(userService.friendly_name, request.user.pretty_name, request.ip),
+            log.WEB
+        )
+        # userServiceManager().requestLogoff(userService)
+        userServiceManager().reset(userService)
 
     return HttpResponseRedirect(reverse('Index'))
 

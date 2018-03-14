@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -37,11 +37,11 @@ from uds.core import Module
 from uds.core.transports import protocols
 from . import types
 
-__updated__ = '2017-01-12'
+__updated__ = '2018-03-14'
 
 
 class Service(Module):
-    """
+    '''
     This class is in fact an interface, and represents a service, that is the
     definition of an offering for consumers (users).
 
@@ -76,7 +76,7 @@ class Service(Module):
     only need data that is keeped at form fields, marshal and unmarshal and in fact
     not needed.
 
-    """
+    '''
 
     # : Constant for indicating that max elements this service can deploy is unlimited.
     UNLIMITED = -1
@@ -170,79 +170,79 @@ class Service(Module):
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
     spawnsNew = False
 
+    # : If the service allows "reset", here we will announce it
+    # : Defaults to False
+    canReset = False
+
     # : 'kind' of services that this service provides:
     # : For example, VDI, VAPP, ...
     servicesTypeProvided = types.ALL
 
-    # : If the service can provide any other option on release appart of "delete" & "keep assigned"
-    # : Defaults to None (no any other options are provided)
-    actionsOnRelease = None
-
     def __init__(self, environment, parent, values=None):
-        """
+        '''
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, parent, values)".
         We want to use the env, parent methods outside class. If not called, you must implement your own methods
         cache and storage are "convenient" methods to access _env.cache and _env.storage
-        """
+        '''
         super(Service, self).__init__(environment, values)
         self._provider = parent
         self.initialize(values)
 
     def initialize(self, values):
-        """
+        '''
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
         and invoke base methods.
         This will get invoked when all initialization stuff is done
 
         Args:
-            values: If values is not none, this object is being initialized
+            Values: If values is not none, this object is being initialized
             from administration interface, and not unmarshal will be done.
             If it's None, this is initialized internally, and unmarshal will
             be called after this.
 
         Default implementation does nothing
-        """
+        '''
         pass
 
     def parent(self):
-        """
+        '''
         Utility method to access parent provider for this service
 
         Returns
 
             Parent provider instance object (not database object)
-        """
+        '''
         return self._provider
 
     def requestServicesForAssignation(self, **kwargs):
-        """
+        '''
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
         @return an array with the services that we can assign (they must be of type deployedType)
         We will access the returned array in "name" basis. This means that the service will be assigned by "name", so be care that every single service
         returned are not repeated... :-)
-        """
+        '''
         raise Exception('The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(self.__class__.__name__))
 
     def macGenerator(self):
-        """
+        '''
         Utility method to access provided macs generator (inside environment)
 
         Returns the environment unique mac addresses generator
-        """
+        '''
         return self.idGenerators('mac')
 
     def nameGenerator(self):
-        """
+        '''
         Utility method to access provided names generator (inside environment)
 
         Returns the environment unique name generator
-        """
+        '''
         return self.idGenerators('name')
 
     def __str__(self):
-        """
+        '''
         String method, mainly used for debugging purposes
-        """
+        '''
         return "Base Service Provider"

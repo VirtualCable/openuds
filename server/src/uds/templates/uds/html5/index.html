@@ -50,6 +50,9 @@
                               {% if ser.allow_users_remove %}
                               <span data-href="{% url 'Releaser' idService=ser.id %}" class="release fa fa-trash"> </span>
                               {% endif %}
+                              {% if ser.allow_users_reset %}
+                              <span data-href="{% url 'Reseter' idService=ser.id %}" class="reseter fa fa-refresh"> </span>
+                              {% endif %}
                             </span>
                             {% endif %}
                         </div>
@@ -284,6 +287,10 @@
             span.gear > span.release {
                 cursor: cell;
             }
+
+            span.gear > span.reseter {
+                cursor: cell;
+            }
         </style>
 {% endblock %}
 
@@ -371,6 +378,26 @@
                 event.stopPropagation();
                 event.preventDefault();
                 if ( confirm("{%trans 'Are you sure that you want to release this service. Its current content will be lost!' %}") ) {
+                  window.location.href = $(this).attr('data-href');
+                }
+
+                return false;
+            });
+
+            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.release').on("click", function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+                if ( confirm("{%trans 'Are you sure that you want to release this service. Its current content will be lost!' %}") ) {
+                  window.location.href = $(this).attr('data-href');
+                }
+
+                return false;
+            });
+
+            $('div.service:not(.maintenance, .notaccesible) > span.gear > span.reseter').on("click", function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+                if ( confirm("{%trans 'Are you sure that you want to reset this service. USE WITH CAUTION!' %}") ) {
                   window.location.href = $(this).attr('data-href');
                 }
 
