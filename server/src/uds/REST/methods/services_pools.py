@@ -276,6 +276,9 @@ class ServicesPools(ModelHandler):
                 if serviceType.publicationType is None:
                     self._params['publish_on_save'] = False
 
+                if serviceType.canReset is False:
+                    self._params['allow_users_reset'] = False
+
                 if serviceType.needsManager is True:
                     osmanager = OSManager.objects.get(uuid=processUuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
