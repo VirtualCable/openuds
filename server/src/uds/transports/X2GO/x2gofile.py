@@ -75,7 +75,7 @@ autologin=false
 krblogin=false
 krbdelegation=false
 directrdp=false
-rootless=false
+rootless={rootless}
 published=false
 applications=WWWBROWSER, MAILCLIENT, OFFICE, TERMINAL
 command={windowManager}
@@ -94,7 +94,8 @@ sshproxyautologin=false
 sshproxykrblogin=false
 '''
 
-def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports, width, height, user):
+
+def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports, rootless, width, height, user):
     trueFalse = lambda(x): 'true' if x else 'false'
     export = 'export="{export}"' if exports else ''
     if width == -1 or height == -1:
@@ -111,6 +112,7 @@ def getTemplate(speed, pack, quality, sound, soundSystem, windowManager, exports
         soundSystem=soundSystem,
         windowManager=windowManager,
         export=export,
+        rootless=rootless and 'true' or 'false',
         width=width,
         height=height,
         fullscreen=fullscreen,
