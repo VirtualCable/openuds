@@ -62,6 +62,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     @staticmethod
     def serviceInfo(item):
         info = item.getType()
+
         return {
             'icon': info.icon().replace('\n', ''),
             'needs_publication': info.publicationType is not None,
@@ -74,6 +75,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'allowedProtocols': info.allowedProtocols,
             'servicesTypeProvided': info.servicesTypeProvided,
             'must_assign_manually': info.mustAssignManually,
+            'can_reset': info.canReset,
         }
 
     @staticmethod

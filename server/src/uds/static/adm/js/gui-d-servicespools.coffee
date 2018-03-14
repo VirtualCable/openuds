@@ -72,6 +72,7 @@ gui.servicesPools.link = (event) ->
   serviceChangedFnc = (formId) ->
     $fld = $(formId + " [name=\"service_id\"]")
     $osmFld = $(formId + " [name=\"osmanager_id\"]")
+    $canResetFld = $(formId + " [name=\"allow_users_reset\"]")
     selectors = []
     $.each [
       "initial_srvs"
@@ -89,6 +90,13 @@ gui.servicesPools.link = (event) ->
     unless $fld.val() is -1
       api.providers.service $fld.val(), (data) ->
         gui.doLog "Onchange", data
+        if $canResetFld.bootstrapSwitch("readonly") == data.info.can_reset
+          gui.doLog('reset doent not match field')
+          $canResetFld.bootstrapSwitch "toggleReadonly", true
+        if data.info.can_reset is false
+          gui.doLog($canResetFld.bootstrapSwitch("readonly"), data.info.can_reset)
+        
+          
         if data.info.needs_manager is false
           $osmFld.prop "disabled", "disabled"
         else

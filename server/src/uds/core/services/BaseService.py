@@ -37,7 +37,7 @@ from uds.core import Module
 from uds.core.transports import protocols
 from . import types
 
-__updated__ = '2016-03-09'
+__updated__ = '2018-03-14'
 
 
 class Service(Module):
@@ -167,13 +167,13 @@ class Service(Module):
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
     spawnsNew = False
 
+    # : If the service allows "reset", here we will announce it
+    # : Defaults to False
+    canReset = False
+
     # : 'kind' of services that this service provides:
     # : For example, VDI, VAPP, ...
     servicesTypeProvided = types.ALL
-
-    # : If the service can provide any other option on release appart of "delete" & "keep assigned"
-    # : Defaults to None (no any other options are provided)
-    actionsOnRelease = None
 
     def __init__(self, environment, parent, values=None):
         '''

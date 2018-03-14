@@ -39,7 +39,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-04-25'
+__updated__ = '2018-03-14'
 
 
 class ServiceProvider(Module):
@@ -119,7 +119,6 @@ class ServiceProvider(Module):
     # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
     ignoreLimits = None
-
 
     @classmethod
     def getServicesTypes(cls):
