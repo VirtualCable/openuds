@@ -81,6 +81,7 @@ class LiveService(Service):
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
     mustAssignManually = False
+    canReset = True
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
@@ -111,7 +112,7 @@ class LiveService(Service):
         label=_('Machine Names'),
         rdonly=False,
         order=111,
-        tooltip='Base name for clones from this machine',
+        tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
         required=True
     )
@@ -254,6 +255,9 @@ class LiveService(Service):
         Returns:
         """
         return self.parent().suspendMachine(machineId)
+
+    def resetMachine(self, machineId):
+        return self.parent().resetMachine(machineId)
 
     def removeMachine(self, machineId):
         """

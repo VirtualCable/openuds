@@ -41,7 +41,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-11-07'
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +88,7 @@ class OVirtLinkedService(Service):
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
     mustAssignManually = False
+    canReset = True
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None

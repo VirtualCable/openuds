@@ -39,8 +39,7 @@ from . import on
 import pickle
 import logging
 
-__updated__ = '2017-03-27'
-
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +179,10 @@ class LiveDeployment(UserDeployment):
 
         self.cache.put('ready', '1')
         return State.FINISHED
+
+    def reset(self):
+        if self._vmid != '':
+            self.service().resetMachine(self._vmid)
 
     def getConsoleConnection(self):
         return self.service().getConsoleConnection(self._vmid)

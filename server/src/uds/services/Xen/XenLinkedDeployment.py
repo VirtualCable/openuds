@@ -197,6 +197,10 @@ class XenLinkedDeployment(UserDeployment):
 
         return State.FINISHED
 
+    def reset(self):
+        if self._vmid != '':
+            self.service().resetVM(self._vmid)  # Reset in sync
+
     def notifyReadyFromOsManager(self, data):
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for {0}'.format(self._name))
