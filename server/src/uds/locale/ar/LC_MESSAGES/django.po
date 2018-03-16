@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-09 11:18+0100\n"
-"PO-Revision-Date: 2018-03-05 12:54+0000\n"
+"POT-Creation-Date: 2018-03-16 10:55+0100\n"
+"PO-Revision-Date: 2018-03-16 09:47+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
 "ar/)\n"
@@ -49,7 +49,7 @@ msgstr "Id"
 #: REST/methods/images.py:61 REST/methods/networks.py:60
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:71
 #: REST/methods/reports.py:58 REST/methods/services_pool_groups.py:64
-#: REST/methods/services_pools.py:80 REST/methods/transports.py:57
+#: REST/methods/services_pools.py:81 REST/methods/transports.py:57
 #: REST/methods/user_services.py:235 REST/methods/user_services.py:270
 #: REST/methods/users_groups.py:113 REST/model.py:130
 #: templates/uds/admin/tmpl/calendar_rule.html:5
@@ -62,7 +62,7 @@ msgstr "الاسم"
 
 #: REST/methods/authenticators.py:61 REST/methods/calendarrules.py:104
 #: REST/methods/calendars.py:61 REST/methods/osmanagers.py:58
-#: REST/methods/providers.py:72 REST/methods/services.py:189
+#: REST/methods/providers.py:72 REST/methods/services.py:191
 #: REST/methods/services_pool_groups.py:65 REST/methods/transports.py:58
 #: REST/methods/user_services.py:272 REST/methods/users_groups.py:114
 #: REST/methods/users_groups.py:262 REST/model.py:148
@@ -85,7 +85,7 @@ msgstr "التسمية"
 #: REST/methods/authenticators.py:64 reports/stats/login.py:108
 #: reports/stats/login.py:381 reports/stats/pool_performance.py:110
 #: reports/stats/pool_performance.py:377
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/RDSProvider.py:44
 #: templates/uds/admin/tmpl/authenticators.html:31
 #: templates/uds/admin/tmpl/dashboard.html:34
 #: templates/uds/admin/tmpl/group-info.html:5
@@ -95,8 +95,8 @@ msgstr "المستخدمين"
 
 #: REST/methods/authenticators.py:65 REST/methods/calendars.py:63
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:60
-#: REST/methods/providers.py:76 REST/methods/services.py:193
-#: REST/methods/services_pools.py:87 REST/methods/transports.py:60
+#: REST/methods/providers.py:76 REST/methods/services.py:195
+#: REST/methods/services_pools.py:88 REST/methods/transports.py:60
 msgid "tags"
 msgstr "العلامات"
 
@@ -129,7 +129,7 @@ msgstr "كل"
 msgid "Duration"
 msgstr "المدة"
 
-#: REST/methods/calendarrules.py:132 REST/methods/services.py:154
+#: REST/methods/calendarrules.py:132 REST/methods/services.py:156
 msgid "Element already exists (duplicate key error)"
 msgstr "عنصر موجود بالفعل (خطأ مفتاح مكرر)"
 
@@ -260,45 +260,45 @@ msgstr "الوصف"
 msgid "Generates"
 msgstr "يقوم بإنشاء"
 
-#: REST/methods/services.py:158
+#: REST/methods/services.py:160
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "إدخال خطأ: {0}"
 
-#: REST/methods/services.py:182
+#: REST/methods/services.py:184
 #, python-brace-format
 msgid "Services of {0}"
 msgstr "خدمات {0}"
 
-#: REST/methods/services.py:184
+#: REST/methods/services.py:186
 msgid "Current services"
 msgstr "الخدمات الحالية"
 
-#: REST/methods/services.py:188
+#: REST/methods/services.py:190
 msgid "Service name"
 msgstr "اسم الخدمة"
 
-#: REST/methods/services.py:190 REST/methods/user_services.py:271
+#: REST/methods/services.py:192 REST/methods/user_services.py:271
 msgid "Type"
 msgstr "نوع"
 
-#: REST/methods/services.py:191 templates/uds/admin/tmpl/group-info.html:4
+#: REST/methods/services.py:193 templates/uds/admin/tmpl/group-info.html:4
 #: templates/uds/admin/tmpl/service-info.html:5
 #: templates/uds/admin/tmpl/user-info.html:5
 msgid "Services Pools"
 msgstr "تجمعات الخدمة"
 
-#: REST/methods/services.py:192 REST/methods/services_pools.py:82
+#: REST/methods/services.py:194 REST/methods/services_pools.py:83
 #: templates/uds/admin/tmpl/dashboard.html:88
 msgid "User services"
 msgstr "خدمات المستخدم"
 
-#: REST/methods/services.py:246 REST/methods/users_groups.py:201
+#: REST/methods/services.py:248 REST/methods/users_groups.py:201
 #: REST/methods/users_groups.py:354
 msgid "With errors"
 msgstr "مع الأخطاء"
 
-#: REST/methods/services.py:246 REST/methods/users_groups.py:201
+#: REST/methods/services.py:248 REST/methods/users_groups.py:201
 #: REST/methods/users_groups.py:354
 msgid "Ok"
 msgstr "موافق"
@@ -353,91 +353,91 @@ msgstr "آخر إعدام"
 msgid "Services Pool Groups"
 msgstr "خدمات تجمع مجموعات"
 
-#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:200
+#: REST/methods/services_pool_groups.py:86 REST/methods/services_pools.py:210
 msgid "Associated Image"
 msgstr "الصورة المرتبطة بها"
 
-#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:201
+#: REST/methods/services_pool_groups.py:87 REST/methods/services_pools.py:211
 msgid "Image assocciated with this service"
 msgstr "الصورة المرتبطة مع هذه الخدمة"
 
-#: REST/methods/services_pools.py:78
+#: REST/methods/services_pools.py:79
 #: templates/uds/admin/snippets/navbar.html:27
 #: templates/uds/admin/tmpl/services_pool.html:4
 #: templates/uds/admin/tmpl/services_pool.html:7
 msgid "Service Pools"
 msgstr "تجمعات الخدمة "
 
-#: REST/methods/services_pools.py:81 REST/methods/user_services.py:132
+#: REST/methods/services_pools.py:82 REST/methods/user_services.py:132
 msgid "status"
 msgstr "مركز"
 
-#: REST/methods/services_pools.py:83
+#: REST/methods/services_pools.py:84
 msgid "In Preparation"
 msgstr "قيد التهيئ "
 
-#: REST/methods/services_pools.py:84
+#: REST/methods/services_pools.py:85
 msgid "Shows transports"
 msgstr "تبين عمليات النقل"
 
-#: REST/methods/services_pools.py:85
+#: REST/methods/services_pools.py:86
 msgid "Pool Group"
 msgstr "تجمع مجموعات"
 
-#: REST/methods/services_pools.py:86
+#: REST/methods/services_pools.py:87
 msgid "Parent Service"
 msgstr "الخدمة الأم"
 
-#: REST/methods/services_pools.py:98 REST/methods/services_pools.py:207
+#: REST/methods/services_pools.py:99 REST/methods/services_pools.py:217
 msgid "Default"
 msgstr "افتراضي"
 
-#: REST/methods/services_pools.py:151
+#: REST/methods/services_pools.py:153
 msgid "Create at least one OS Manager before creating a new service pool"
 msgstr "إنشاء مدير واحد على الأقل لنظام التشغيل قبل إنشاء تجمع جديد للخدمة"
 
-#: REST/methods/services_pools.py:153
+#: REST/methods/services_pools.py:155
 msgid "Create at least a service before creating a new service pool"
 msgstr "قم بإنشاء على الأقل خدمة قبل إنشاء تجمع جديد للخدمة"
 
-#: REST/methods/services_pools.py:160
+#: REST/methods/services_pools.py:162
 msgid "Base service"
 msgstr "خدمة قاعدة"
 
-#: REST/methods/services_pools.py:161
+#: REST/methods/services_pools.py:163
 msgid "Service used as base of this service pool"
 msgstr "الخدمة التي تستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:168
+#: REST/methods/services_pools.py:170
 msgid "OS Manager"
 msgstr "إدارة نظام التشغيل"
 
-#: REST/methods/services_pools.py:169
+#: REST/methods/services_pools.py:171
 msgid "OS Manager used as base of this service pool"
 msgstr "إدارة نظام التشغيل يستخدم كقاعدة لهذا التجمع للخدمة"
 
-#: REST/methods/services_pools.py:176
+#: REST/methods/services_pools.py:178
 msgid "Show transports"
 msgstr "إظهار النقل"
 
-#: REST/methods/services_pools.py:177
+#: REST/methods/services_pools.py:179
 msgid "If active, alternative transports for user will be shown"
 msgstr "في حالة نشطة، سيظهر النقل البديل للمستخدم"
 
-#: REST/methods/services_pools.py:180 REST/methods/services_pools.py:188
-#: REST/methods/services_pools.py:196 auths/RegexLdap/Authenticator.py:71
-#: core/ui/UserInterface.py:86
+#: REST/methods/services_pools.py:182 REST/methods/services_pools.py:190
+#: REST/methods/services_pools.py:198 REST/methods/services_pools.py:206
+#: auths/RegexLdap/Authenticator.py:71 core/ui/UserInterface.py:86
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:39
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:40
 #: services/OpenGnsys/OGService.py:130
 msgid "Advanced"
 msgstr "متقدم"
 
-#: REST/methods/services_pools.py:184
+#: REST/methods/services_pools.py:186
 msgid "Allow removal by users"
 msgstr "السماح بمسح المستخدم"
 
-#: REST/methods/services_pools.py:185
+#: REST/methods/services_pools.py:187
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -446,11 +446,19 @@ msgstr ""
 "إذا نشط، فسيسمح للمستخدم بإزالة الخدمة \"يدويا\". كن حذرا مع هذا، لأن "
 "المستخدم سوف يكون \"السلطة\" لحذف انها الخدمة الخاصة"
 
-#: REST/methods/services_pools.py:192
+#: REST/methods/services_pools.py:194
+msgid "Allow reset by users"
+msgstr "السماح بإعادة برمجة المصنع قبل المستخدمين"
+
+#: REST/methods/services_pools.py:195
+msgid "If active, the user will be allowed to reset the service"
+msgstr "في حالة التفعيل، سيسمح للمستخدم بإعادة برمجة الخدمة"
+
+#: REST/methods/services_pools.py:202
 msgid "Ignores unused"
 msgstr "تجاهل غير المستخدمة"
 
-#: REST/methods/services_pools.py:193
+#: REST/methods/services_pools.py:203
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -458,53 +466,53 @@ msgstr ""
 "إذا تم تمكين الخيار، فإن UDS لا تحاول الكشف عن خدمات المستخدم التي تم "
 "تعيينها ولكن التي ليست قيد الاستخدام."
 
-#: REST/methods/services_pools.py:204 REST/methods/services_pools.py:212
-#: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:178
+#: REST/methods/services_pools.py:214 REST/methods/services_pools.py:222
+#: core/ui/UserInterface.py:90 services/OVirt/OVirtLinkedService.py:179
 msgid "Display"
 msgstr "عرض"
 
-#: REST/methods/services_pools.py:208
+#: REST/methods/services_pools.py:218
 msgid "Pool group"
 msgstr "تجمع مجموعات"
 
-#: REST/methods/services_pools.py:209
+#: REST/methods/services_pools.py:219
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "تجمع الفريق لهذا التجمع (لتصنيف تجمع في العرض)"
 
-#: REST/methods/services_pools.py:217
+#: REST/methods/services_pools.py:227
 msgid "Initial available services"
 msgstr "أولى الخدمات المتاحة"
 
-#: REST/methods/services_pools.py:218
+#: REST/methods/services_pools.py:228
 msgid "Services created initially for this service pool"
 msgstr "الخدمات التي تم إنشاؤها في البداية لتجمع هذه الخدمة"
 
-#: REST/methods/services_pools.py:221 REST/methods/services_pools.py:230
-#: REST/methods/services_pools.py:239 REST/methods/services_pools.py:248
+#: REST/methods/services_pools.py:231 REST/methods/services_pools.py:240
+#: REST/methods/services_pools.py:249 REST/methods/services_pools.py:258
 msgid "Availability"
 msgstr "توافر"
 
-#: REST/methods/services_pools.py:226
+#: REST/methods/services_pools.py:236
 msgid "Services to keep in cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت"
 
-#: REST/methods/services_pools.py:227
+#: REST/methods/services_pools.py:237
 msgid "Services kept in cache for improved user service assignation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت لإسناد خدمة مستخدم محسنة"
 
-#: REST/methods/services_pools.py:235
+#: REST/methods/services_pools.py:245
 msgid "Services to keep in L2 cache"
 msgstr "خدمات تبقى في ذاكرة التخزين المؤقت L2"
 
-#: REST/methods/services_pools.py:236
+#: REST/methods/services_pools.py:246
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "خدمات الاحتفاظ بها في ذاكرة التخزين المؤقت من L2 لتحسين خدمة الجيل"
 
-#: REST/methods/services_pools.py:244
+#: REST/methods/services_pools.py:254
 msgid "Maximum number of services to provide"
 msgstr "الحد الأقصى لعدد الخدمات المتوفرة"
 
-#: REST/methods/services_pools.py:245
+#: REST/methods/services_pools.py:255
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -512,11 +520,11 @@ msgstr ""
 "الحد الأقصى لعدد من الخدمات (المعينة ومخبأة في L1) التي يمكن أن تنشأ عن هذه "
 "الخدمة"
 
-#: REST/methods/services_pools.py:261
+#: REST/methods/services_pools.py:271
 msgid "Base service does not exist anymore"
 msgstr "خدمة قاعدة غير موجود بعد الآن"
 
-#: REST/methods/services_pools.py:280
+#: REST/methods/services_pools.py:293
 msgid "This service requires an OS Manager"
 msgstr "تتطلب هذه الخدمة إدارة نظام التشغيل"
 
@@ -594,7 +602,7 @@ msgstr ""
 "إذا تم تحديده، سيتم تمكين النقل للشبكات المحددة. إذا تم إلغاء تحديده، سيتم "
 "تعطيل النقل لشبكات محددة"
 
-#: REST/methods/transports.py:81 templates/uds/html5/index.html:132
+#: REST/methods/transports.py:81 templates/uds/html5/index.html:135
 #: templates/uds/semantic/index.html:29
 msgid "Networks"
 msgstr "الشبكات"
@@ -714,12 +722,12 @@ msgstr "المستخدمون الحاليون"
 #: auths/RegexLdap/Authenticator.py:83 auths/SimpleLDAP/Authenticator.py:81
 #: services/HyperV_enterprise/HyperVClusterProvider.py:91
 #: services/HyperV_enterprise/HyperVProvider.py:85
-#: services/Nutanix_enterprise/NutanixProvider.py:37
+#: services/Nutanix_enterprise/NutanixProvider.py:35
 #: services/OVirt/OVirtProvider.py:110 services/OpenGnsys/Provider.py:99
 #: services/OpenNebula/Provider.py:101 services/OpenStack/Provider.py:105
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 #: services/Vmware_enterprise/ServiceProviderVC.py:33
-#: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:16
+#: services/Xen/XenProvider.py:99 templates/uds/admin/tmpl/user.html:16
 #: templates/uds/semantic/login.html:84 transports/HTML5RDP/HTML5RDP.py:73
 #: transports/NX/NXTransport.py:64 transports/NX/TSNXTransport.py:73
 #: transports/PCoIP_enterprise/PCoIPTransport.py:59
@@ -843,12 +851,12 @@ msgstr "قائمة المستخدمين ل {}"
 #: auths/RegexLdap/Authenticator.py:57 auths/SimpleLDAP/Authenticator.py:57
 #: services/HyperV_enterprise/HyperVClusterProvider.py:89
 #: services/HyperV_enterprise/HyperVProvider.py:83
-#: services/Nutanix_enterprise/NutanixProvider.py:35
+#: services/Nutanix_enterprise/NutanixProvider.py:33
 #: services/OVirt/OVirtProvider.py:109 services/OpenGnsys/Provider.py:96
 #: services/OpenNebula/Provider.py:98 services/OpenStack/Provider.py:98
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:26
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
 #: services/Vmware_enterprise/ServiceProviderVC.py:31
-#: services/Xen/XenProvider.py:99
+#: services/Xen/XenProvider.py:98
 msgid "Host"
 msgstr "المضيف"
 
@@ -902,13 +910,13 @@ msgstr ""
 #: osmanagers/WindowsOsManager/WinRandomPassOsManager.py:33
 #: services/HyperV_enterprise/HyperVClusterProvider.py:92
 #: services/HyperV_enterprise/HyperVProvider.py:86
-#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/Nutanix_enterprise/NutanixProvider.py:36
 #: services/OVirt/OVirtProvider.py:111 services/OpenGnsys/Provider.py:100
 #: services/OpenNebula/Provider.py:102 services/OpenStack/Provider.py:106
 #: services/Sample/SampleService.py:131
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 #: services/Vmware_enterprise/ServiceProviderVC.py:34
-#: services/Xen/XenProvider.py:101 templates/uds/admin/tmpl/user.html:83
+#: services/Xen/XenProvider.py:100 templates/uds/admin/tmpl/user.html:83
 #: templates/uds/semantic/login.html:91 transports/HTML5RDP/HTML5RDP.py:74
 #: transports/NX/NXTransport.py:65 transports/NX/TSNXTransport.py:74
 #: transports/PCoIP_enterprise/PCoIPTransport.py:60
@@ -930,10 +938,10 @@ msgstr "كلمة مرور المستخدم ldap"
 #: auths/RegexLdap/Authenticator.py:62 auths/SimpleLDAP/Authenticator.py:62
 #: services/HyperV_enterprise/HyperVClusterProvider.py:93
 #: services/HyperV_enterprise/HyperVProvider.py:91
-#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/Nutanix_enterprise/NutanixProvider.py:40
 #: services/OVirt/OVirtProvider.py:116 services/OpenGnsys/Provider.py:106
 #: services/OpenNebula/Provider.py:107 services/OpenStack/Provider.py:111
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:36
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:40
 msgid "Timeout"
 msgstr "مهلة"
@@ -1009,10 +1017,10 @@ msgstr "EDirectory Server IP أو اسم المضيف"
 #: auths/RegexLdap/Authenticator.py:58 auths/SimpleLDAP/Authenticator.py:58
 #: services/HyperV_enterprise/HyperVClusterProvider.py:90
 #: services/HyperV_enterprise/HyperVProvider.py:84
-#: services/Nutanix_enterprise/NutanixProvider.py:36
+#: services/Nutanix_enterprise/NutanixProvider.py:34
 #: services/OpenGnsys/Provider.py:97 services/OpenNebula/Provider.py:99
 #: services/OpenStack/Provider.py:99
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
 #: services/Vmware_enterprise/ServiceProviderVC.py:32
 msgid "Port"
 msgstr "منفذ"
@@ -1977,8 +1985,9 @@ msgstr ""
 "الدورة."
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:49
-msgid "RDS UDS Actor (for remote apps on Windows Server 2012)"
-msgstr "Actor UDS RDS (للتطبيقات عن بعد على Windows Server 2012)"
+msgid "RDS UDS Actor (for remote apps on Windows Server 2012 and 2016)"
+msgstr ""
+"الفاعل UDS RDS (بالنسبة للتطبيقات عن بعد في Windows Server 2012 و 2016)"
 
 #: osmanagers/WindowsOsManager/WinDomainOsManager.py:29
 msgid "Windows Domain OS Manager"
@@ -2397,12 +2406,12 @@ msgid "HyperV Cluster Linked Clone (Experimental)"
 msgstr "HyperV استنساخ العنقودية المرتبطة (تجريبي)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:55
-#: services/HyperV_enterprise/HyperVLinkedService.py:59
+#: services/HyperV_enterprise/HyperVLinkedService.py:60
 msgid "Hyper Services based on templates and differential disks (experimental)"
 msgstr "الخدمات فرط استنادا إلى قوالب والأقراص التفاضلية (تجريبي)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:72
-#: services/HyperV_enterprise/HyperVLinkedService.py:76
+#: services/HyperV_enterprise/HyperVLinkedService.py:77
 #: services/OVirt/OVirtLinkedService.py:77
 #: services/TestService_enterprise/TestService.py:27
 #: services/Xen/XenLinkedService.py:77
@@ -2410,7 +2419,7 @@ msgid "Number of desired machines to keep running waiting for a user"
 msgstr "عدد من الآلات المطلوبة للحفاظ على التوالي في انتظار المستخدم"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:78
-#: services/HyperV_enterprise/HyperVLinkedService.py:82
+#: services/HyperV_enterprise/HyperVLinkedService.py:83
 #: services/OVirt/OVirtLinkedService.py:83 services/OpenStack/LiveService.py:81
 #: services/Vmware_enterprise/VCFullCloneService.py:42
 #: services/Vmware_enterprise/VCLinkedCloneService.py:43
@@ -2419,31 +2428,31 @@ msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "عدد من الآلات المطلوبة للحفاظ على تعليق انتظار للاستخدام"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:120
-#: services/Nutanix_enterprise/NutanixService.py:44
-#: services/OVirt/OVirtLinkedService.py:132
-#: services/Vmware_enterprise/VCLinkedCloneService.py:82
+#: services/HyperV_enterprise/HyperVLinkedService.py:121
+#: services/Nutanix_enterprise/NutanixService.py:45
+#: services/OVirt/OVirtLinkedService.py:133
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
 #: services/Xen/XenLinkedService.py:120
 msgid "Base Machine"
 msgstr "آلة الأساس"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:94
-#: services/HyperV_enterprise/HyperVLinkedService.py:122
-#: services/Nutanix_enterprise/NutanixService.py:45
-#: services/OVirt/OVirtLinkedService.py:134
+#: services/HyperV_enterprise/HyperVLinkedService.py:123
+#: services/Nutanix_enterprise/NutanixService.py:46
+#: services/OVirt/OVirtLinkedService.py:135
 #: services/Xen/XenLinkedService.py:122
 msgid "Service base machine"
 msgstr "آلة قاعدة الخدمة"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:95
-#: services/HyperV_enterprise/HyperVLinkedService.py:128
-#: services/Nutanix_enterprise/NutanixService.py:64
-#: services/OpenStack/LiveService.py:118 services/Xen/XenLinkedService.py:128
+#: services/HyperV_enterprise/HyperVLinkedService.py:129
+#: services/Nutanix_enterprise/NutanixService.py:65
+#: services/OpenStack/LiveService.py:119 services/Xen/XenLinkedService.py:128
 msgid "Network"
 msgstr "شبكة الاتصال"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:96
-#: services/HyperV_enterprise/HyperVLinkedService.py:131
+#: services/HyperV_enterprise/HyperVLinkedService.py:132
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
@@ -2451,86 +2460,86 @@ msgstr ""
 "والرئيسية"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:98
-#: services/HyperV_enterprise/HyperVLinkedService.py:137
-#: services/Nutanix_enterprise/NutanixService.py:51
-#: services/OVirt/OVirtLinkedService.py:140
-#: services/Vmware_enterprise/VCLinkedCloneService.py:83
+#: services/HyperV_enterprise/HyperVLinkedService.py:138
+#: services/Nutanix_enterprise/NutanixService.py:52
+#: services/OVirt/OVirtLinkedService.py:141
+#: services/Vmware_enterprise/VCLinkedCloneService.py:84
 #: services/Xen/XenLinkedService.py:137
 msgid "Memory (Mb)"
 msgstr "ذاكرة (ميجا بايت)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:99
-#: services/HyperV_enterprise/HyperVLinkedService.py:142
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
+#: services/HyperV_enterprise/HyperVLinkedService.py:143
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
 msgid "Memory for machines deployed from this service"
 msgstr "الذاكرة لآلات تم نشرها من هذه الخدمة"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:100
-#: services/HyperV_enterprise/HyperVLinkedService.py:101
+#: services/HyperV_enterprise/HyperVLinkedService.py:103
 msgid "Datastore Drives"
 msgstr "محركات مخزن البيانات"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:101
-#: services/HyperV_enterprise/HyperVLinkedService.py:105
+#: services/HyperV_enterprise/HyperVLinkedService.py:107
 msgid "Datastores where to put incrementals & publications"
 msgstr "مخازن البيانات لوضع تدريجيات والمطبوعات"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:148
-#: services/Nutanix_enterprise/NutanixService.py:71
-#: services/OVirt/OVirtLinkedService.py:190
-#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:124
+#: services/HyperV_enterprise/HyperVLinkedService.py:149
+#: services/Nutanix_enterprise/NutanixService.py:72
+#: services/OVirt/OVirtLinkedService.py:191
+#: services/OpenNebula/LiveService.py:112 services/OpenStack/LiveService.py:125
 #: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:92
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
 #: services/Xen/XenLinkedService.py:158
 msgid "Machine Names"
 msgstr "أسماء الأجهزة"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:102
-#: services/HyperV_enterprise/HyperVLinkedService.py:151
-#: services/OpenStack/LiveService.py:127
+#: services/HyperV_enterprise/HyperVLinkedService.py:152
+#: services/OpenNebula/LiveService.py:115 services/OpenStack/LiveService.py:128
 #: services/VCloud_enterprise/VCloudCloneService.py:76
-#: services/Vmware_enterprise/VCLinkedCloneService.py:92
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
 msgid "Base name for clones from this machine"
 msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:103
-#: services/HyperV_enterprise/HyperVLinkedService.py:158
-#: services/Nutanix_enterprise/NutanixService.py:80
-#: services/OVirt/OVirtLinkedService.py:200
-#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:134
+#: services/HyperV_enterprise/HyperVLinkedService.py:159
+#: services/Nutanix_enterprise/NutanixService.py:81
+#: services/OVirt/OVirtLinkedService.py:201
+#: services/OpenNebula/LiveService.py:122 services/OpenStack/LiveService.py:135
 #: services/VCloud_enterprise/VCloudCloneService.py:77
-#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Vmware_enterprise/VCLinkedCloneService.py:94
 #: services/Xen/XenLinkedService.py:168
 msgid "Name Length"
 msgstr "طول الاسم "
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:104
-#: services/HyperV_enterprise/HyperVLinkedService.py:161
-#: services/Nutanix_enterprise/NutanixService.py:83
-#: services/OVirt/OVirtLinkedService.py:203
-#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:137
+#: services/HyperV_enterprise/HyperVLinkedService.py:162
+#: services/Nutanix_enterprise/NutanixService.py:84
+#: services/OVirt/OVirtLinkedService.py:204
+#: services/OpenNebula/LiveService.py:125 services/OpenStack/LiveService.py:138
 #: services/VCloud_enterprise/VCloudCloneService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:94
+#: services/Vmware_enterprise/VCLinkedCloneService.py:95
 msgid "Size of numeric part for the names of these machines (between 3 and 6)"
 msgstr "حجم جزء رقمية عن أسماء هذه الآلات (بين 3 و 6)"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:116
-#: services/HyperV_enterprise/HyperVLinkedService.py:176
-#: services/Nutanix_enterprise/NutanixService.py:109
-#: services/OVirt/OVirtLinkedService.py:221
-#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:155
-#: services/Vmware_enterprise/VCLinkedCloneService.py:130
+#: services/HyperV_enterprise/HyperVLinkedService.py:177
+#: services/Nutanix_enterprise/NutanixService.py:110
+#: services/OVirt/OVirtLinkedService.py:222
+#: services/OpenNebula/LiveService.py:140 services/OpenStack/LiveService.py:156
+#: services/Vmware_enterprise/VCLinkedCloneService.py:131
 #: services/Xen/XenLinkedService.py:186
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "لا يجب أن يكون طول اسم بالإضافة إلى طول قاعدة  أكبر من 15"
 
 #: services/HyperV_enterprise/HyperVClusterLinkedService.py:118
-#: services/HyperV_enterprise/HyperVLinkedService.py:178
-#: services/Nutanix_enterprise/NutanixService.py:111
-#: services/OVirt/OVirtLinkedService.py:223
-#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:157
-#: services/Vmware_enterprise/VCLinkedCloneService.py:132
+#: services/HyperV_enterprise/HyperVLinkedService.py:179
+#: services/Nutanix_enterprise/NutanixService.py:112
+#: services/OVirt/OVirtLinkedService.py:224
+#: services/OpenNebula/LiveService.py:142 services/OpenStack/LiveService.py:158
+#: services/Vmware_enterprise/VCLinkedCloneService.py:133
 #: services/Xen/XenLinkedService.py:188
 msgid "The machine name can't be only numbers"
 msgstr "لا يمكن أن يكون اسم الجهاز أرقام فقط"
@@ -2570,16 +2579,16 @@ msgstr "المهلة بالثواني لاتصال HyperV"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:94
 #: services/HyperV_enterprise/HyperVProvider.py:92
-#: services/Nutanix_enterprise/NutanixProvider.py:44
+#: services/Nutanix_enterprise/NutanixProvider.py:42
 #: services/OVirt/OVirtProvider.py:117
 #: services/Vmware_enterprise/ServiceProviderVC.py:41
-#: services/Xen/XenProvider.py:106
+#: services/Xen/XenProvider.py:105
 msgid "Macs range"
 msgstr "نطاق MAC"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:95
 #: services/HyperV_enterprise/HyperVProvider.py:93
-#: services/Xen/XenProvider.py:107
+#: services/Xen/XenProvider.py:106
 msgid "Range of valid macs for created machines"
 msgstr "مجموعة صالحة من MAC للآلات التي تم إنشاؤها."
 
@@ -2589,13 +2598,13 @@ msgstr "الملقم المحدد ليس عنقودي"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:299
 #: services/HyperV_enterprise/HyperVProvider.py:259
-#: services/Xen/XenProvider.py:409
+#: services/Xen/XenProvider.py:419
 msgid "Connection test successful"
 msgstr "اختبار اتصال ناجح"
 
 #: services/HyperV_enterprise/HyperVClusterProvider.py:300
 #: services/HyperV_enterprise/HyperVProvider.py:260
-#: services/Nutanix_enterprise/NutanixProvider.py:172
+#: services/Nutanix_enterprise/NutanixProvider.py:181
 #: services/OVirt/OVirtProvider.py:444
 #: services/Vmware_enterprise/ServiceProviderVC.py:146
 msgid "Connection failed. Check connection params"
@@ -2608,53 +2617,53 @@ msgstr "فشل الاتصال. تحقق اتصال params"
 msgid "UDS pub for {0} at {1}"
 msgstr "UDS pub for {0} at {1}"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:55
+#: services/HyperV_enterprise/HyperVLinkedService.py:56
 msgid "HyperV Linked Clone (Experimental)"
 msgstr "HyperV استنساخ مرتبط (تجريبي)"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:111
-#: services/OVirt/OVirtLinkedService.py:123
+#: services/HyperV_enterprise/HyperVLinkedService.py:113
+#: services/OVirt/OVirtLinkedService.py:124
 #: services/Xen/XenLinkedService.py:112
 msgid "Reserved Space"
 msgstr "المساحة المحجوزة."
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:114
-#: services/OVirt/OVirtLinkedService.py:127
+#: services/HyperV_enterprise/HyperVLinkedService.py:116
+#: services/OVirt/OVirtLinkedService.py:128
 #: services/Xen/XenLinkedService.py:115
 msgid "Minimal free space in GB"
 msgstr "مساحة حرة الحد الأدنى GB"
 
-#: services/HyperV_enterprise/HyperVLinkedService.py:123
-#: services/HyperV_enterprise/HyperVLinkedService.py:132
-#: services/HyperV_enterprise/HyperVLinkedService.py:143
-#: services/HyperV_enterprise/HyperVLinkedService.py:152
-#: services/HyperV_enterprise/HyperVLinkedService.py:162
-#: services/Nutanix_enterprise/NutanixService.py:46
-#: services/Nutanix_enterprise/NutanixService.py:58
-#: services/Nutanix_enterprise/NutanixService.py:66
-#: services/OVirt/OVirtLinkedService.py:135
-#: services/OVirt/OVirtLinkedService.py:147
-#: services/OVirt/OVirtLinkedService.py:159
-#: services/OVirt/OVirtLinkedService.py:173
-#: services/OVirt/OVirtLinkedService.py:186
-#: services/OVirt/OVirtLinkedService.py:194
-#: services/OVirt/OVirtLinkedService.py:204
-#: services/OpenNebula/LiveService.py:106
+#: services/HyperV_enterprise/HyperVLinkedService.py:124
+#: services/HyperV_enterprise/HyperVLinkedService.py:133
+#: services/HyperV_enterprise/HyperVLinkedService.py:144
+#: services/HyperV_enterprise/HyperVLinkedService.py:153
+#: services/HyperV_enterprise/HyperVLinkedService.py:163
+#: services/Nutanix_enterprise/NutanixService.py:47
+#: services/Nutanix_enterprise/NutanixService.py:59
+#: services/Nutanix_enterprise/NutanixService.py:67
+#: services/OVirt/OVirtLinkedService.py:136
+#: services/OVirt/OVirtLinkedService.py:148
+#: services/OVirt/OVirtLinkedService.py:160
+#: services/OVirt/OVirtLinkedService.py:174
+#: services/OVirt/OVirtLinkedService.py:187
+#: services/OVirt/OVirtLinkedService.py:195
+#: services/OVirt/OVirtLinkedService.py:205
+#: services/OpenNebula/LiveService.py:107
 #: services/OpenNebula/LiveService.py:116
-#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:116
-#: services/OpenStack/LiveService.py:118 services/OpenStack/LiveService.py:119
-#: services/OpenStack/LiveService.py:121 services/OpenStack/LiveService.py:129
-#: services/OpenStack/LiveService.py:139
-#: services/Vmware_enterprise/VCFullCloneService.py:69
-#: services/Vmware_enterprise/VCLinkedCloneService.py:78
-#: services/Vmware_enterprise/VCLinkedCloneService.py:82
-#: services/Vmware_enterprise/VCLinkedCloneService.py:84
-#: services/Vmware_enterprise/VCLinkedCloneService.py:86
-#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/OpenNebula/LiveService.py:126 services/OpenStack/LiveService.py:117
+#: services/OpenStack/LiveService.py:119 services/OpenStack/LiveService.py:120
+#: services/OpenStack/LiveService.py:122 services/OpenStack/LiveService.py:130
+#: services/OpenStack/LiveService.py:140
+#: services/Vmware_enterprise/VCFullCloneService.py:70
+#: services/Vmware_enterprise/VCLinkedCloneService.py:79
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
+#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/Vmware_enterprise/VCLinkedCloneService.py:87
 #: services/Vmware_enterprise/VCLinkedCloneService.py:89
-#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+#: services/Vmware_enterprise/VCLinkedCloneService.py:90
 #: services/Vmware_enterprise/VCLinkedCloneService.py:92
-#: services/Vmware_enterprise/VCLinkedCloneService.py:94
+#: services/Vmware_enterprise/VCLinkedCloneService.py:93
+#: services/Vmware_enterprise/VCLinkedCloneService.py:95
 #: services/Xen/XenLinkedService.py:123 services/Xen/XenLinkedService.py:132
 #: services/Xen/XenLinkedService.py:142 services/Xen/XenLinkedService.py:153
 #: services/Xen/XenLinkedService.py:162 services/Xen/XenLinkedService.py:172
@@ -2670,85 +2679,85 @@ msgid "HyperV platform service provider (experimental)"
 msgstr "مزود خدمة منصة HyperV (تجريبي)"
 
 #: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:40
+#: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:33
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
 #: services/Vmware_enterprise/ServiceProviderVC.py:84
-#: services/Xen/XenProvider.py:103
+#: services/Xen/XenProvider.py:102
 msgid "Creation concurrency"
 msgstr "تزامن الخلق"
 
 #: services/HyperV_enterprise/HyperVProvider.py:88
-#: services/Nutanix_enterprise/NutanixProvider.py:40
+#: services/Nutanix_enterprise/NutanixProvider.py:38
 #: services/OVirt/OVirtProvider.py:113 services/OpenGnsys/Provider.py:103
 #: services/OpenNebula/Provider.py:104 services/OpenStack/Provider.py:108
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:33
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
 #: services/Vmware_enterprise/ServiceProviderVC.py:37
-#: services/Xen/XenProvider.py:103
+#: services/Xen/XenProvider.py:102
 msgid "Maximum number of concurrently creating VMs"
 msgstr "الحد الأقصى لعدد بالتزامن خلق الأجهزة الظاهرية."
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:41
+#: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
 #: services/Vmware_enterprise/ServiceProviderVC.py:85
-#: services/Xen/XenProvider.py:104
+#: services/Xen/XenProvider.py:103
 msgid "Removal concurrency"
 msgstr "تزامن الإزالة."
 
 #: services/HyperV_enterprise/HyperVProvider.py:89
-#: services/Nutanix_enterprise/NutanixProvider.py:41
+#: services/Nutanix_enterprise/NutanixProvider.py:39
 #: services/OVirt/OVirtProvider.py:114 services/OpenGnsys/Provider.py:104
 #: services/OpenNebula/Provider.py:105 services/OpenStack/Provider.py:109
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:34
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:35
 #: services/Vmware_enterprise/ServiceProviderVC.py:38
-#: services/Xen/XenProvider.py:104
+#: services/Xen/XenProvider.py:103
 msgid "Maximum number of concurrently removing VMs"
 msgstr "الحد الأقصى لعدد الأجهزة الافتراضية إزالة في وقت واحد"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:29
+#: services/Nutanix_enterprise/NutanixProvider.py:27
 msgid "Nutanix Acropolis Platform Provider"
 msgstr "مزود منصة Nutanix أكروبوليس "
 
-#: services/Nutanix_enterprise/NutanixProvider.py:31
+#: services/Nutanix_enterprise/NutanixProvider.py:29
 msgid "Nutanix based VM provider"
 msgstr "Nutanix مقرا مزود الجهاز الظاهري."
 
-#: services/Nutanix_enterprise/NutanixProvider.py:35
+#: services/Nutanix_enterprise/NutanixProvider.py:33
 msgid "Nutanix Acropolis Server IP or Hostname"
 msgstr "Nutanix IP خادم أكروبوليس أو اسم المضيف"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:36
+#: services/Nutanix_enterprise/NutanixProvider.py:34
 msgid "Nutanix Acropolis server Port (default 9440)"
 msgstr "Nutanix أكروبوليس الخادم ميناء (افتراضي 9440)"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:37
+#: services/Nutanix_enterprise/NutanixProvider.py:35
 msgid "User with valid privileges on Nutanix Acropolis"
 msgstr "المستخدم مع امتيازات صالح على Nutanix أكروبوليس"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:38
+#: services/Nutanix_enterprise/NutanixProvider.py:36
 msgid "Password of the user of Nutanix Acropolis"
 msgstr "كلمة السر للمستخدم من Nutanix أكروبوليس"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:42
+#: services/Nutanix_enterprise/NutanixProvider.py:40
 msgid "Timeout in seconds of connection to Nutanix"
 msgstr "المهلة بالثواني لاتصال Nutanix"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:45
+#: services/Nutanix_enterprise/NutanixProvider.py:43
 #: services/OVirt/OVirtProvider.py:118
 msgid "Range of valid macs for UDS managed machines"
 msgstr "مجموعة من صحيح MAC للآلات UDS إدارتها."
 
-#: services/Nutanix_enterprise/NutanixProvider.py:47
+#: services/Nutanix_enterprise/NutanixProvider.py:45
 msgid "Legacy API (v0.8)"
 msgstr "API القديمة (v0.8)"
 
-#: services/Nutanix_enterprise/NutanixProvider.py:48
+#: services/Nutanix_enterprise/NutanixProvider.py:46
 msgid ""
 "If checked, legacy API v0.8 will be used. Only recommended on OLD Nutanix "
 "installations."
@@ -2756,7 +2765,7 @@ msgstr ""
 "إذا تم تحديده، فسيتم استخدام الإصدار القديم من واجهة برمجة التطبيقات v0.8. "
 "ينصح فقط على المنشآت نوتانيكس قديم."
 
-#: services/Nutanix_enterprise/NutanixProvider.py:170
+#: services/Nutanix_enterprise/NutanixProvider.py:179
 msgid "Connection works fine"
 msgstr "اتصال يعمل بشكل جيد"
 
@@ -2768,7 +2777,7 @@ msgstr "Nutanix خدمة أكروبوليس"
 msgid "Nutanix Acropolis based service"
 msgstr "الخدمة على Nutanix أكروبوليس."
 
-#: services/Nutanix_enterprise/NutanixService.py:57
+#: services/Nutanix_enterprise/NutanixService.py:58
 msgid ""
 "Memory assigned to machines. (Zero value means \"keep original machine memory"
 "\")"
@@ -2776,20 +2785,20 @@ msgstr ""
 "الذاكرة التي تم تعيينها إلى آلات. (القيمة صفر يعني \"الحفاظ على ذاكرة الجهاز "
 "الأصلي\")"
 
-#: services/Nutanix_enterprise/NutanixService.py:65
+#: services/Nutanix_enterprise/NutanixService.py:66
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
 msgstr "شبكة للأجهزة (كل آلة تم إنشاؤها سوف يتم إرفاق هذا شبكة الاتصال)"
 
-#: services/Nutanix_enterprise/NutanixService.py:88
-#: services/VCloud_enterprise/VCloudCloneService.py:57
-#: services/Vmware_enterprise/VCLinkedCloneService.py:67
+#: services/Nutanix_enterprise/NutanixService.py:89
+#: services/VCloud_enterprise/VCloudCloneService.py:58
+#: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "Remove found duplicates"
 msgstr "إزالة الملفات المكررة"
 
-#: services/Nutanix_enterprise/NutanixService.py:91
-#: services/VCloud_enterprise/VCloudCloneService.py:57
+#: services/Nutanix_enterprise/NutanixService.py:92
+#: services/VCloud_enterprise/VCloudCloneService.py:58
 msgid "If active, found duplicates vApps for this service will be removed"
 msgstr "إذا كانت نشطة، فستتم إزالة تطبيقات مكررة لهذه الخدمة"
 
@@ -2801,48 +2810,48 @@ msgstr "oVirt/RHEV الطفرات استنساخ مرتبط"
 msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "الخدمات oVirt استنادا إلى قوالب و COW (التجريبية)."
 
-#: services/OVirt/OVirtLinkedService.py:103
+#: services/OVirt/OVirtLinkedService.py:104
 msgid "Cluster"
 msgstr "العنقود"
 
-#: services/OVirt/OVirtLinkedService.py:110
+#: services/OVirt/OVirtLinkedService.py:111
 msgid "Cluster to contain services"
 msgstr "الكتلة تحتوي على الخدمات."
 
-#: services/OVirt/OVirtLinkedService.py:114
+#: services/OVirt/OVirtLinkedService.py:115
 msgid "Datastore Domain"
 msgstr "المجال مخزن البيانات"
 
-#: services/OVirt/OVirtLinkedService.py:117
+#: services/OVirt/OVirtLinkedService.py:118
 msgid "Datastore domain where to publish and put incrementals"
 msgstr "طاق مخزن البيانات حيث نشر و وضع تدريجيا."
 
-#: services/OVirt/OVirtLinkedService.py:146
+#: services/OVirt/OVirtLinkedService.py:147
 #: services/Xen/XenLinkedService.py:141
 msgid "Memory assigned to machines"
 msgstr "الذاكرة المخصصة للآلات"
 
-#: services/OVirt/OVirtLinkedService.py:152
+#: services/OVirt/OVirtLinkedService.py:153
 msgid "Memory Guaranteed (Mb)"
 msgstr "ذاكرة مضمونة (ميجا بايت)."
 
-#: services/OVirt/OVirtLinkedService.py:158
+#: services/OVirt/OVirtLinkedService.py:159
 msgid "Physical memory guaranteed to machines"
 msgstr "الذاكرة الفعلية مضمونة للآلات"
 
-#: services/OVirt/OVirtLinkedService.py:164
+#: services/OVirt/OVirtLinkedService.py:165
 msgid "USB"
 msgstr "USB"
 
-#: services/OVirt/OVirtLinkedService.py:167
+#: services/OVirt/OVirtLinkedService.py:168
 msgid "Enable usb redirection for SPICE"
 msgstr "تمكين إعادة توجيه USB ل SPICE"
 
-#: services/OVirt/OVirtLinkedService.py:181
+#: services/OVirt/OVirtLinkedService.py:182
 msgid "Display type (only for administration purposes)"
 msgstr "نوع العرض (فقط لأغراض الإدارة)"
 
-#: services/OVirt/OVirtLinkedService.py:225
+#: services/OVirt/OVirtLinkedService.py:226
 #: services/Xen/XenLinkedService.py:190
 msgid "The minimum allowed memory is 256 Mb"
 msgstr "الحد الأدنى المسموح به في الذاكرة 256MB"
@@ -2991,19 +3000,19 @@ msgstr "OpenNebula صور حية"
 msgid "OpenNebula live images based service"
 msgstr "الخدمة على OpenNebula الصور الحية."
 
-#: services/OpenNebula/LiveService.py:96
+#: services/OpenNebula/LiveService.py:97
 msgid "Datastore"
 msgstr "مخزن البيانات"
 
-#: services/OpenNebula/LiveService.py:98
+#: services/OpenNebula/LiveService.py:99
 msgid "Service clones datastore"
 msgstr "استنساخ خدمة مخزن البيانات"
 
-#: services/OpenNebula/LiveService.py:103
+#: services/OpenNebula/LiveService.py:104
 msgid "Base Template"
 msgstr "قالب قاعدة."
 
-#: services/OpenNebula/LiveService.py:105
+#: services/OpenNebula/LiveService.py:106
 msgid "Service base template"
 msgstr "قالب قاعدة الخدمة."
 
@@ -3043,7 +3052,7 @@ msgstr "كلمة السر للمستخدم من OpenNebula"
 msgid "Timeout in seconds of connection to OpenNebula"
 msgstr "المهلة بالثواني لاتصال OpenNebula"
 
-#: services/OpenNebula/Provider.py:158
+#: services/OpenNebula/Provider.py:157
 msgid "Opennebula test connection passed"
 msgstr "مر اختبار الاتصال Opennebula"
 
@@ -3055,55 +3064,55 @@ msgstr "OpenStack حجم واقعي."
 msgid "OpenStack live images based service"
 msgstr "OpenStack  خدمة الحية الصور استنادا"
 
-#: services/OpenStack/LiveService.py:99
+#: services/OpenStack/LiveService.py:100
 msgid "Region"
 msgstr "منطقة"
 
-#: services/OpenStack/LiveService.py:99
+#: services/OpenStack/LiveService.py:100
 msgid "Service region"
 msgstr "منطقة الخدمة"
 
-#: services/OpenStack/LiveService.py:100
+#: services/OpenStack/LiveService.py:101
 msgid "Project"
 msgstr "مشروع"
 
-#: services/OpenStack/LiveService.py:106
+#: services/OpenStack/LiveService.py:107
 msgid "Project for this service"
 msgstr "مشروع لهذه الخدمة"
 
-#: services/OpenStack/LiveService.py:108
+#: services/OpenStack/LiveService.py:109
 msgid "Availability Zones"
 msgstr "مناطق التوافر."
 
-#: services/OpenStack/LiveService.py:114
+#: services/OpenStack/LiveService.py:115
 msgid "Service availability zones"
 msgstr "مناطق توافر الخدمة"
 
-#: services/OpenStack/LiveService.py:116
+#: services/OpenStack/LiveService.py:117
 msgid "Volume"
 msgstr "حجم"
 
-#: services/OpenStack/LiveService.py:116
+#: services/OpenStack/LiveService.py:117
 msgid "Base volume for service (restricted by availability zone)"
 msgstr "حجم قاعدة للخدمة (مقيدة منطقة توافر)"
 
-#: services/OpenStack/LiveService.py:118
+#: services/OpenStack/LiveService.py:119
 msgid "Network to attach to this service"
 msgstr "شبكة لتعلق على هذه الخدمة"
 
-#: services/OpenStack/LiveService.py:119
+#: services/OpenStack/LiveService.py:120
 msgid "Flavor"
 msgstr "نكهة"
 
-#: services/OpenStack/LiveService.py:119
+#: services/OpenStack/LiveService.py:120
 msgid "Flavor for service"
 msgstr "نكهة للخدمة"
 
-#: services/OpenStack/LiveService.py:121
+#: services/OpenStack/LiveService.py:122
 msgid "Security Groups"
 msgstr "مجموعات الأمن."
 
-#: services/OpenStack/LiveService.py:121
+#: services/OpenStack/LiveService.py:122
 msgid "Service security groups"
 msgstr "مجموعات أمان الخدمة"
 
@@ -3151,11 +3160,11 @@ msgstr "المهلة بالثواني لاتصال Openstack"
 msgid "OpenStack test connection passed"
 msgstr "مر اختبار الاتصال Openstack."
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:539
+#: services/OpenStack/openStack/UDSOpenStackClient.py:550
 msgid "Authentication error"
 msgstr "خطأ مصادقة"
 
-#: services/OpenStack/openStack/UDSOpenStackClient.py:541
+#: services/OpenStack/openStack/UDSOpenStackClient.py:552
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -3191,23 +3200,23 @@ msgstr "IP ثابت واحد"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى الجهاز عن طريق IP"
 
-#: services/RDS_enterprise/RDSProvider.py:35
+#: services/RDS_enterprise/RDSProvider.py:34
 msgid "RDS Platform Provider"
 msgstr "مزود منصة RDS "
 
-#: services/RDS_enterprise/RDSProvider.py:37
+#: services/RDS_enterprise/RDSProvider.py:36
 msgid "Microsoft RDS based provider"
 msgstr "مايكروسوفت RDS مزود قاعدة."
 
-#: services/RDS_enterprise/RDSProvider.py:41
+#: services/RDS_enterprise/RDSProvider.py:40
 msgid "List of servers"
 msgstr "قائمة ملقمات"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid "User mapping"
 msgstr "وصل المستخدمين"
 
-#: services/RDS_enterprise/RDSProvider.py:43
+#: services/RDS_enterprise/RDSProvider.py:42
 msgid ""
 "If active, user mapping will be done. If not, credential from user will be "
 "redirected to RDS server."
@@ -3215,15 +3224,15 @@ msgstr ""
 "إذا كان نشيطا، سيتم  وصل المستخدمين. إن لم يكن، سيتم إعادة توجيه الاعتماد من "
 "المستخدم إلى خادم RDS."
 
-#: services/RDS_enterprise/RDSProvider.py:45
+#: services/RDS_enterprise/RDSProvider.py:44
 msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgstr "قائمة المستخدم لرسم الخرائط. (لا يستخدم إذا تم تعطيل تعيين المستخدم)"
 
-#: services/RDS_enterprise/RDSProvider.py:46
+#: services/RDS_enterprise/RDSProvider.py:45
 msgid "User's password"
 msgstr "كلمة مرور المستخدم"
 
-#: services/RDS_enterprise/RDSProvider.py:46
+#: services/RDS_enterprise/RDSProvider.py:45
 msgid ""
 "Default password for users in list mapping. (Not used if User mapping is "
 "disabled)"
@@ -3231,19 +3240,19 @@ msgstr ""
 "كلمة المرور الافتراضية للمستخدمين في قائمة وصل المستخدمين. (لا تستخدم إذا تم "
 "تعطيل وصل المستخدمين)"
 
-#: services/RDS_enterprise/RDSProvider.py:49
+#: services/RDS_enterprise/RDSProvider.py:48
 msgid "Server Checking"
 msgstr " التحقق من الملقم"
 
-#: services/RDS_enterprise/RDSProvider.py:50
+#: services/RDS_enterprise/RDSProvider.py:49
 msgid "If checked, the server will be checked before assigning or using it."
 msgstr "إذا كانت محددة، سيتم التحقق من الملقم قبل تعيين أو استخدامه."
 
-#: services/RDS_enterprise/RDSProvider.py:75
+#: services/RDS_enterprise/RDSProvider.py:74
 msgid "Error: User {} on host {} is being used and cannot be removed right now"
 msgstr "الخطأ: العضو {} على المضيف {} يستخدم ولا يمكن إزالتها في الوقت الحالي"
 
-#: services/RDS_enterprise/RDSProvider.py:105
+#: services/RDS_enterprise/RDSProvider.py:104
 #: services/Sample/SampleProvider.py:178
 #: services/TestService_enterprise/TestProvider.py:73
 msgid "Nothing tested, but all went fine.."
@@ -3409,31 +3418,31 @@ msgstr "خدمة اختبار مع مخبأ"
 msgid "Test service for cache L1 only"
 msgstr "خدمة اختبار لL1 ذاكرة التخزين المؤقت فقط"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:26
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
 msgid "vCloud Server IP or Hostname"
 msgstr "vCloud ملقم IP أو اسم المضيف"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:27
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
 msgid "vCloud Server Port (usually 443)"
 msgstr "vCloud منفذ الملقم (عادة 443)"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
 msgid "Organization"
 msgstr "المنظمة"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:28
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
 msgid "Organization to use on vCloud"
 msgstr "المنظمة لاستخدامها في vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:29
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
 msgid "User with valid privileges on vCloud"
 msgstr "مستخدم لديه امتيازات صالحة على vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:30
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:31
 msgid "Password of the user of vCloud"
 msgstr "كلمة المرور للمستخدم ل vCloud"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:36
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:37
 msgid "Timeout in seconds of connection to vCloud"
 msgstr "المهلة بالثواني لاتصال vCloud"
 
@@ -3449,57 +3458,57 @@ msgstr "يوفر الاتصال بمنصة vCloud المدير"
 msgid "Connection parameters seems correct"
 msgstr "يبدو أن معلمات التوصيل صحيحة"
 
-#: services/VCloud_enterprise/ServiceProviderVCloud.py:190
+#: services/VCloud_enterprise/ServiceProviderVCloud.py:192
 msgid "vCloud Provider: "
 msgstr "vCloud الموفر: "
 
-#: services/VCloud_enterprise/VCloudCloneService.py:31
+#: services/VCloud_enterprise/VCloudCloneService.py:32
 msgid "VCloud Platform vApp"
 msgstr "vApp منصة VCloud"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:33
+#: services/VCloud_enterprise/VCloudCloneService.py:34
 msgid "This service provides access to vApp based VDI"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى vApp على أساس VDI"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:39
+#: services/VCloud_enterprise/VCloudCloneService.py:40
 msgid "Number of desired vApps to keep running waiting for an user"
 msgstr "عدد vApps المطلوب للحفاظ على تشغيل الانتظار للمستخدم"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:41
+#: services/VCloud_enterprise/VCloudCloneService.py:42
 msgid "Number of desired vApps to keep suspended waiting for use"
 msgstr "عدد vApps المطلوب تبقى معلقة في انتظار للاستخدام"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:53
+#: services/VCloud_enterprise/VCloudCloneService.py:54
 msgid "vDatacenter"
 msgstr "vDatacenter"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:54
+#: services/VCloud_enterprise/VCloudCloneService.py:55
 msgid "Virtual Datacenter"
 msgstr "مركز البيانات الافتراضية"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:59
+#: services/VCloud_enterprise/VCloudCloneService.py:60
 msgid "Catalog"
 msgstr "النشرة المصورة"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:59
+#: services/VCloud_enterprise/VCloudCloneService.py:60
 msgid "vApps source catalog"
 msgstr "لائحة مصدر vApps"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:68
+#: services/VCloud_enterprise/VCloudCloneService.py:69
 msgid "vApp Template"
 msgstr "vApp القالب"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:69
+#: services/VCloud_enterprise/VCloudCloneService.py:70
 msgid "vApp template for the service"
 msgstr "قالب vApp للخدمة"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:71
-#: services/Vmware_enterprise/VCLinkedCloneService.py:85
+#: services/VCloud_enterprise/VCloudCloneService.py:72
+#: services/Vmware_enterprise/VCLinkedCloneService.py:86
 msgid "Main Network"
 msgstr "الشبكة الرئيسية"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:72
-#: services/Vmware_enterprise/VCLinkedCloneService.py:86
+#: services/VCloud_enterprise/VCloudCloneService.py:73
+#: services/Vmware_enterprise/VCLinkedCloneService.py:87
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
@@ -3507,7 +3516,7 @@ msgstr ""
 "إذا تم العثور على أكثر من واجهة في الجهاز، واستخدام وجدت لأول مرة على هذه "
 "الشبكة والرئيسية"
 
-#: services/VCloud_enterprise/VCloudCloneService.py:90
+#: services/VCloud_enterprise/VCloudCloneService.py:89
 msgid "Only vApp Templates with 1 VM are allowed"
 msgstr "مسموح فقط قوالب vApp  مع 1 VM"
 
@@ -3584,40 +3593,40 @@ msgstr ""
 "توفر هذه الخدمة إمكانية الوصول إلى مجموعة ثابتة من الأجهزة المحددة في البنية "
 "التحتية"
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:47
-#: services/Vmware_enterprise/VCLinkedCloneService.py:54
+#: services/Vmware_enterprise/VCFixedMachinesService.py:48
+#: services/Vmware_enterprise/VCLinkedCloneService.py:55
 msgid "Datacenter"
 msgstr "مركز البيانات"
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:54
-#: services/Vmware_enterprise/VCFixedMachinesService.py:69
-#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#: services/Vmware_enterprise/VCFixedMachinesService.py:55
+#: services/Vmware_enterprise/VCFixedMachinesService.py:70
+#: services/Vmware_enterprise/VCFixedMachinesService.py:75
 msgid "Machines"
 msgstr "آلات"
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:55
-#: services/Vmware_enterprise/VCLinkedCloneService.py:60
+#: services/Vmware_enterprise/VCFixedMachinesService.py:56
+#: services/Vmware_enterprise/VCLinkedCloneService.py:61
 msgid "Datacenter containing base machine"
 msgstr "مراكز البيانات التي تحتوي على آلة قاعدة"
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:59
-#: services/Vmware_enterprise/VCLinkedCloneService.py:70
+#: services/Vmware_enterprise/VCFixedMachinesService.py:60
+#: services/Vmware_enterprise/VCLinkedCloneService.py:71
 msgid "Resource Pool"
 msgstr "تجمع الموارد"
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:67
+#: services/Vmware_enterprise/VCFixedMachinesService.py:68
 msgid "Resource Pool containing base machines"
 msgstr "تجمع الخدمات يحتوي على الات مرجعية "
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#: services/Vmware_enterprise/VCFixedMachinesService.py:75
 msgid "Base Machines"
 msgstr "آلات أساسية"
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:74
+#: services/Vmware_enterprise/VCFixedMachinesService.py:75
 msgid "Base machines for this service"
 msgstr "الأجهزة الأساسية لهذه الخدمة"
 
-#: services/Vmware_enterprise/VCFixedMachinesService.py:91
+#: services/Vmware_enterprise/VCFixedMachinesService.py:92
 msgid "We need at least a machine"
 msgstr "نحن بحاجة لآلة على الأقل "
 
@@ -3631,11 +3640,11 @@ msgid ""
 msgstr ""
 "توفر هذه الخدمة إمكانية الوصول إلى آلات استنساخ كامل على المركز الظاهري"
 
-#: services/Vmware_enterprise/VCFullCloneService.py:68
+#: services/Vmware_enterprise/VCFullCloneService.py:69
 msgid "VMs Datastores"
 msgstr "VMs Datastores"
 
-#: services/Vmware_enterprise/VCFullCloneService.py:69
+#: services/Vmware_enterprise/VCFullCloneService.py:70
 msgid "Datastores where to put machines"
 msgstr "Datastore لحفض الألات الإفتراضية "
 
@@ -3648,63 +3657,63 @@ msgid ""
 "This service provides access to Linked Clones machines on a Virtual Center"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات النسخ مرتبط على مركز الظاهري"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:62
+#: services/Vmware_enterprise/VCLinkedCloneService.py:63
 msgid "Pub. Resource Pool"
 msgstr "تجمع موارد النشر."
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:62
+#: services/Vmware_enterprise/VCLinkedCloneService.py:63
 msgid "Resource Pool where deploy clones"
 msgstr "تجمع موارد حيث نشر النسخ."
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:64
+#: services/Vmware_enterprise/VCLinkedCloneService.py:65
 msgid "Pub.Datastores"
 msgstr "مخازن بيانات النشر"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:65
+#: services/Vmware_enterprise/VCLinkedCloneService.py:66
 msgid "Datastores where to put publications"
 msgstr "مخازن البيانات حيث وضع المنشورات"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:67
+#: services/Vmware_enterprise/VCLinkedCloneService.py:68
 msgid "If active, found duplicates clones for this service will be removed"
 msgstr "إذا كنت نشيطا، وجدت سيتم إزالة التكرارات استنساخ لهذه الخدمة"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:68
+#: services/Vmware_enterprise/VCLinkedCloneService.py:69
 msgid "Keep on error"
 msgstr "تبقى على خطأ"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:68
+#: services/Vmware_enterprise/VCLinkedCloneService.py:69
 msgid "If active, access errors found on machine will not mark is as error."
 msgstr "إذا كانت نشطة، لن يتم اعتبار أخطاء الوصول الموجودة على الجهاز خطأ."
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:76
+#: services/Vmware_enterprise/VCLinkedCloneService.py:77
 msgid "Resource Pool containing base machine"
 msgstr "تجمع موارد تحتوي على آلة قاعدة"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:82
+#: services/Vmware_enterprise/VCLinkedCloneService.py:83
 msgid "Base machine for this service"
 msgstr "آلة قاعدة لهذه الخدمة"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:87
+#: services/Vmware_enterprise/VCLinkedCloneService.py:88
 msgid "Pub. Network"
 msgstr "شبكة النشر"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:88
+#: services/Vmware_enterprise/VCLinkedCloneService.py:89
 msgid "Network on which the machine will be deployed"
 msgstr "الشبكة التي سيتم نشرها بالجهاز"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:89
+#: services/Vmware_enterprise/VCLinkedCloneService.py:90
 msgid "Clones Folder"
 msgstr "مجلد النسخ"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:89
+#: services/Vmware_enterprise/VCLinkedCloneService.py:90
 msgid "Folder where deploy clones"
 msgstr "المجلد حيث نشر النسخ"
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:90
+#: services/Vmware_enterprise/VCLinkedCloneService.py:91
 msgid "Inc.Datastores"
 msgstr "مخازن البيانات الموارد."
 
-#: services/Vmware_enterprise/VCLinkedCloneService.py:91
+#: services/Vmware_enterprise/VCLinkedCloneService.py:92
 msgid "Datastores where to put incrementals"
 msgstr "مخازن البيانات حيث الوضع تدريجي."
 
@@ -3740,37 +3749,37 @@ msgstr "الظل مضاعف الذاكرة (over-commit الذاكرة)."
 msgid "Length of numeric part for the names of this machines (beetwen 3 and 6"
 msgstr "طول الجزء رقمية عن أسماء تلك الآلات (بين 3 و 6"
 
-#: services/Xen/XenProvider.py:80
+#: services/Xen/XenProvider.py:79
 msgid "Xenserver Platform Provider"
 msgstr "مزود لمنصة XenServer "
 
-#: services/Xen/XenProvider.py:84
+#: services/Xen/XenProvider.py:83
 msgid "XenServer platform service provider"
 msgstr "مزود خدمة منصة لXenServer "
 
-#: services/Xen/XenProvider.py:99
+#: services/Xen/XenProvider.py:98
 msgid "XenServer Server IP or Hostname"
 msgstr "IP خادم XenServer أو اسم المضيف"
 
-#: services/Xen/XenProvider.py:100
+#: services/Xen/XenProvider.py:99
 msgid "User with valid privileges on XenServer"
 msgstr "المستخدم مع امتياز صالح على XenServer "
 
-#: services/Xen/XenProvider.py:101
+#: services/Xen/XenProvider.py:100
 msgid "Password of the user of XenServer"
 msgstr "كلمة السر للمستخدم من XenServer"
 
-#: services/Xen/XenProvider.py:108
+#: services/Xen/XenProvider.py:107
 msgid "Verify Certificate"
 msgstr "التحقق من شهادة"
 
-#: services/Xen/XenProvider.py:109
+#: services/Xen/XenProvider.py:108
 msgid ""
 "If selected, certificate will be checked against system valid certificate "
 "providers"
 msgstr "إذا حدد، سيتم فحص الشهادة ضد نظام مقدمي الشهادة."
 
-#: services/Xen/XenProvider.py:411
+#: services/Xen/XenProvider.py:421
 #, python-brace-format
 msgid "Connection failed: {0}"
 msgstr "فشل الاتصال: {0}"
@@ -4183,7 +4192,7 @@ msgid "Cache"
 msgstr "ذاكرة التخزين المؤقت"
 
 #: templates/uds/admin/tmpl/services_pool.html:34
-#: templates/uds/html5/index.html:133 templates/uds/semantic/index.html:30
+#: templates/uds/html5/index.html:136 templates/uds/semantic/index.html:30
 msgid "Transports"
 msgstr "النقل"
 
@@ -4360,52 +4369,56 @@ msgstr "تحت الصيانة"
 msgid "Currently in use"
 msgstr "قيد الاستخدام حاليا"
 
-#: templates/uds/html5/index.html:64 templates/uds/semantic/tmpl/items.html:24
+#: templates/uds/html5/index.html:67 templates/uds/semantic/tmpl/items.html:24
 #: templates/uds/semantic/tmpl/trans.html:8
 msgid "Connections"
 msgstr "روابط"
 
-#: templates/uds/html5/index.html:92
+#: templates/uds/html5/index.html:95
 msgid "Service under maintenance"
 msgstr "خدمة تحت الصيانة"
 
-#: templates/uds/html5/index.html:95
+#: templates/uds/html5/index.html:98
 msgid "This service is in maintenance mode."
 msgstr "هذه الخدمة هي في وضع الصيانة."
 
-#: templates/uds/html5/index.html:96 templates/uds/html5/index.html:115
+#: templates/uds/html5/index.html:99 templates/uds/html5/index.html:118
 msgid "Please, retry access in a while."
 msgstr "من فضلك، حاول في حين."
 
-#: templates/uds/html5/index.html:110
+#: templates/uds/html5/index.html:113
 msgid "Service access not allowed"
 msgstr "وصول الخدمة غير مسموح به."
 
-#: templates/uds/html5/index.html:113
+#: templates/uds/html5/index.html:116
 msgid "This service is currently not accesible due to schedule restrictions."
 msgstr "هذه الخدمة حاليا لا accesible بسبب قيود الجدول الزمني."
 
-#: templates/uds/html5/index.html:128
+#: templates/uds/html5/index.html:131
 msgid "Administrator info panel"
 msgstr "معلومات مدير الفريق."
 
-#: templates/uds/html5/index.html:131 templates/uds/semantic/index.html:27
+#: templates/uds/html5/index.html:134 templates/uds/semantic/index.html:27
 msgid "Ip"
 msgstr "IP"
 
-#: templates/uds/html5/index.html:134 templates/uds/semantic/index.html:31
+#: templates/uds/html5/index.html:137 templates/uds/semantic/index.html:31
 msgid "User Agent"
 msgstr "وكيل المستخدم."
 
-#: templates/uds/html5/index.html:135
+#: templates/uds/html5/index.html:138
 msgid "OS"
 msgstr "نظام التشغيل"
 
-#: templates/uds/html5/index.html:374
+#: templates/uds/html5/index.html:381 templates/uds/html5/index.html:391
 msgid ""
 "Are you sure that you want to release this service. Its current content will "
 "be lost!"
 msgstr "هل أنت متأكد من أنك تريد تحرير هذه الخدمة. سيتم فقدان المحتوى الحالي!"
+
+#: templates/uds/html5/index.html:401
+msgid "Are you sure that you want to reset this service. USE WITH CAUTION!"
+msgstr "هل أنت متأكد من رغبتك في إعادة تعيين هذه الخدمة. استخدام بحذر!"
 
 #: templates/uds/html5/login.html:4 templates/uds/html5/login.html:59
 #: templates/uds/semantic/login.html:4 templates/uds/semantic/login.html:78
@@ -5574,7 +5587,7 @@ msgstr "الموثق لا يوفر المعلومات"
 msgid "UDS Plugin preferences"
 msgstr "تفضيلات البرنامج المساعد UDS"
 
-#: web/views/index.py:189
+#: web/views/index.py:190
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
