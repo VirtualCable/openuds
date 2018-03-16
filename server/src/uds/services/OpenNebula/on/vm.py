@@ -39,7 +39,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import VmState
 
-__updated__ = '2017-03-28'
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ def getMachineState(api, machineId):
         # return vm.state
         return api.getVMState(machineId)
     except Exception as e:
-        logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
+        logger.error('Error obtaining machine state for {} on OpenNebula: {}'.format(machineId, e))
 
     return VmState.UNKNOWN
 
@@ -73,7 +73,7 @@ def getMachineSubstate(api, machineId):
     try:
         return api.getVMSubState(machineId)
     except Exception as e:
-        logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
+        logger.error('Error obtaining machine state for {} on OpenNebula: {}'.format(machineId, e))
 
     return VmState.UNKNOWN
 
@@ -90,12 +90,11 @@ def startMachine(api, machineId):
     Returns:
     '''
     try:
-        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
-        # vm.resume()
         api.VMAction(machineId, 'resume')
     except Exception as e:
-        # logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
+        # MAybe the machine is already running. If we get error here, simply ignore it for now...
         pass
+
 
 def stopMachine(api, machineId):
     '''
@@ -107,23 +106,40 @@ def stopMachine(api, machineId):
     Returns:
     '''
     try:
-        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
-        # vm.poweroff_hard()
         api.VMAction(machineId, 'poweroff-hard')
     except Exception as e:
-        logger.error('Error obtaining machine state for {} on opennebula: {}'.format(machineId, e))
+        logger.error('Error powering off {} on OpenNebula: {}'.format(machineId, e))
 
 
 def suspendMachine(api, machineId):
     '''
-    Tries to start a machine. No check is done, it is simply requested to OpenNebula
+    Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
         machineId: Id of the machine
 
     Returns:
     '''
-    startMachine(api, machineId)
+    try:
+        api.VMAction(machineId, 'suspend')
+    except Exception as e:
+        logger.error('Error suspending {} on OpenNebula: {}'.format(machineId, e))
+
+
+def resetMachine(api, machineId):
+    '''
+    Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
+
+    Args:
+        machineId: Id of the machine
+
+    Returns:
+    '''
+    try:
+        api.VMAction(machineId, 'reboot-hard')
+    except Exception as e:
+        logger.error('Error reseting {} on OpenNebula: {}'.format(machineId, e))
+
 
 def removeMachine(api, machineId):
     '''
@@ -139,8 +155,8 @@ def removeMachine(api, machineId):
         # vm.delete()
         api.deleteVM(machineId)
     except Exception as e:
-        logger.exception('Error removing machine {} on opennebula: {}'.format(machineId, e))
-        raise 'Error removing machine {} on opennebula: {}'.format(machineId, e)
+        logger.exception('Error removing machine {} on OpenNebula: {}'.format(machineId, e))
+        raise 'Error removing machine {} on OpenNebula: {}'.format(machineId, e)
 
 
 def enumerateMachines(api):
@@ -191,6 +207,7 @@ def getNetInfo(api, machineId, networkId=None):
     except Exception:
         raise Exception('No network interface found on template. Please, add a network and republish.')
 
+
 def getDisplayConnection(api, machineId):
     '''
     If machine is not running or there is not a display, will return NONE
@@ -218,8 +235,6 @@ def getDisplayConnection(api, machineId):
     except Exception:
         return None  # No SPICE connection
 
-
-
 # Sample NIC Content (there will be as much as nics)
 #         <NIC>
 #             <BRIDGE><![CDATA[br0]]></BRIDGE>
@@ -233,6 +248,4 @@ def getDisplayConnection(api, machineId):
 #             <NIC_ID><![CDATA[2]]></NIC_ID>
 #             <VLAN><![CDATA[NO]]></VLAN>
 #         </NIC>
-
-
 

@@ -88,6 +88,7 @@ class XenLinkedService(Service):
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
     mustAssignManually = False
+    canReset = True
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
@@ -96,7 +97,6 @@ class XenLinkedService(Service):
     deployedType = XenLinkedDeployment
 
     servicesTypeProvided = (serviceTypes.VDI,)
-
 
     # Now the form part
     datastore = gui.ChoiceField(
@@ -216,11 +216,8 @@ class XenLinkedService(Service):
         self.datastore.setValues(storages_list)
         self.network.setValues(network_list)
 
-
-
     def checkTaskFinished(self, task):
         return self.parent().checkTaskFinished(task)
-
 
     def datastoreHasSpace(self):
         # Get storages for that datacenter
@@ -236,7 +233,6 @@ class XenLinkedService(Service):
         Xen Seems to allow all kind of names
         '''
         return name
-
 
     def startDeployTemplate(self, name, comments):
         '''
@@ -325,6 +321,17 @@ class XenLinkedService(Service):
         '''
         return self.parent().stopVM(machineId, async)
 
+    def resetVM(self, machineId, async=True):
+        '''
+        Tries to stop a machine. No check is done, it is simply requested to Xen
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        '''
+        return self.parent().resetVM(machineId, async)
+
     def canSuspendVM(self, machineId):
         '''
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
@@ -358,7 +365,6 @@ class XenLinkedService(Service):
         Returns:
         '''
         return self.parent().suspendVM(machineId, async)
-
 
     def removeVM(self, machineId):
         '''

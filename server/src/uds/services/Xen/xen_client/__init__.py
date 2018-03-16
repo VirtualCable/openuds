@@ -90,6 +90,7 @@ class XenFailure(XenAPI.Failure, XenFault):
 
 
 class XenException(XenFault):
+
     def __init__(self, message):
         XenFault.__init__(self, message)
         logger.debug('Exception create: {0}'.format(message))
@@ -103,6 +104,7 @@ class XenPowerState(object):
 
 
 class XenServer(object):
+
     def __init__(self, host, port, username, password, useSSL=False, verifySSL=False):
         self._originalHost = self._host = host
         self._port = unicode(port)
@@ -332,6 +334,14 @@ class XenServer(object):
         if async:
             return self.Async.VM.hard_shutdown(vmId)
         return self.VM.hard_shutdown(vmId)
+
+    def resetVM(self, vmId, async=True):
+        vmState = self.getVMPowerState(vmId)
+        if vmState in (XenPowerState.suspended, XenPowerState.halted):
+            return None  # Already powered off
+        if async:
+            return self.Async.VM.hard_reboot(vmId)
+        return self.VM.hard_reboot(vmId)
 
     def canSuspendVM(self, vmId):
         operations = self.VM.get_allowed_operations(vmId)

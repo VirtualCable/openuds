@@ -39,7 +39,7 @@ import json
 import dateutil.parser
 import six
 
-__updated__ = '2018-03-02'
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -518,6 +518,17 @@ class Client(object):
                           timeout=self._timeout)
 
         ensureResponseIsValid(r, 'Resuming server')
+
+    @authProjectRequired
+    def resetServer(self, serverId):
+        r = requests.post(self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+                          data='{"reboot":{"type":"HARD"}}',
+                          headers=self._requestHeaders(),
+                          verify=VERIFY_SSL,
+                          timeout=self._timeout)
+
+        # Ignore response for this...
+        # ensureResponseIsValid(r, 'Reseting server')
 
     def testConnection(self):
         # First, ensure requested api is supported

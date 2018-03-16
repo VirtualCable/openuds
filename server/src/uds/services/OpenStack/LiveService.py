@@ -42,7 +42,7 @@ from uds.core.ui import gui
 import six
 import logging
 
-__updated__ = '2017-05-16'
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +85,7 @@ class LiveService(Service):
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
     mustAssignManually = False
+    canReset = True
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
@@ -160,7 +161,6 @@ class LiveService(Service):
         # self.ev.value = self.parent().env.key
 
         self._api = None
-
 
     def initGui(self):
         '''
@@ -270,7 +270,7 @@ class LiveService(Service):
 
         Returns:
         '''
-        return self.api.startServer(machineId)
+        self.api.startServer(machineId)
 
     def stopMachine(self, machineId):
         '''
@@ -281,7 +281,18 @@ class LiveService(Service):
 
         Returns:
         '''
-        return self.api.stopServer(machineId)
+        self.api.stopServer(machineId)
+
+    def resetMachine(self, machineId):
+        '''
+        Tries to stop a machine. No check is done, it is simply requested to OpenStack
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        '''
+        self.api.resetServer(machineId)
 
     def suspendMachine(self, machineId):
         '''
@@ -292,7 +303,7 @@ class LiveService(Service):
 
         Returns:
         '''
-        return self.api.suspendServer(machineId)
+        self.api.suspendServer(machineId)
 
     def resumeMachine(self, machineId):
         '''
@@ -303,8 +314,7 @@ class LiveService(Service):
 
         Returns:
         '''
-        return self.api.suspendServer(machineId)
-
+        self.api.resumeServer(machineId)
 
     def removeMachine(self, machineId):
         '''
@@ -315,7 +325,7 @@ class LiveService(Service):
 
         Returns:
         '''
-        return self.api.deleteServer(machineId)
+        self.api.deleteServer(machineId)
 
     def getNetInfo(self, machineId):
         '''

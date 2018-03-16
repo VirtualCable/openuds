@@ -43,16 +43,16 @@ from defusedxml import minidom
 from .LiveService import LiveService
 from . import on
 
-
 import logging
 import six
 
 # Python bindings for OpenNebula
 # import oca
 
-__updated__ = '2017-03-28'
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
+
 
 class Provider(ServiceProvider):
     '''
@@ -125,7 +125,6 @@ class Provider(ServiceProvider):
     def endpoint(self):
         return 'http{}://{}:{}/RPC2'.format('s' if self.ssl.isTrue() else '', self.host.value, self.port.value)
 
-
     @property
     def api(self):
         if self._api is None:
@@ -194,7 +193,6 @@ class Provider(ServiceProvider):
         '''
         return on.vm.getMachineSubstate(self.api, machineId)
 
-
     def startMachine(self, machineId):
         '''
         Tries to start a machine. No check is done, it is simply requested to OpenNebula.
@@ -207,6 +205,7 @@ class Provider(ServiceProvider):
         Returns:
         '''
         on.vm.startMachine(self.api, machineId)
+        return True
 
     def stopMachine(self, machineId):
         '''
@@ -218,6 +217,7 @@ class Provider(ServiceProvider):
         Returns:
         '''
         on.vm.stopMachine(self.api, machineId)
+        return True
 
     def suspendMachine(self, machineId):
         '''
@@ -229,6 +229,13 @@ class Provider(ServiceProvider):
         Returns:
         '''
         on.vm.suspendMachine(self.api, machineId)
+        return True
+
+    def resetMachine(self, machineId):
+        '''
+        Resets a machine (hard-reboot)
+        '''
+        on.vm.resetMachine(self.api, machineId)
 
     def removeMachine(self, machineId):
         '''
@@ -240,6 +247,7 @@ class Provider(ServiceProvider):
         Returns:
         '''
         on.vm.removeMachine(self.api, machineId)
+        return True
 
     def getNetInfo(self, machineId, networkId=None):
         '''
@@ -262,7 +270,6 @@ class Provider(ServiceProvider):
                 'expiry': ''
             }
         }
-
 
     @staticmethod
     def test(env, data):

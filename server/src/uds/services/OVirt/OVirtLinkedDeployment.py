@@ -38,8 +38,7 @@ from .OVirtJobs import OVirtDeferredRemoval
 import pickle
 import logging
 
-__updated__ = '2017-03-22'
-
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -184,6 +183,13 @@ class OVirtLinkedDeployment(UserDeployment):
 
         self.cache.put('ready', '1')
         return State.FINISHED
+
+    def reset(self):
+        '''
+        o oVirt, reset operation just shutdowns it until v3 support is removed
+        '''
+        if self._vmid != '':
+            self.service().stopMachine(self._vmid)
 
     def getConsoleConnection(self):
         return self.service().getConsoleConnection(self._vmid)

@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-03-28'
+__updated__ = '2018-03-16'
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,7 @@ class LiveService(Service):
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
     mustAssignManually = False
+    canReset = True
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
@@ -106,7 +107,6 @@ class LiveService(Service):
         tab=_('Machine'),
         required=True
     )
-
 
     baseName = gui.TextField(
         label=_('Machine Names'),
@@ -236,7 +236,7 @@ class LiveService(Service):
 
     def stopMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to OpenNebula
+        Tries to stop a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
@@ -247,7 +247,7 @@ class LiveService(Service):
 
     def suspendMachine(self, machineId):
         '''
-        Tries to start a machine. No check is done, it is simply requested to OpenNebula
+        Tries to suspend machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
@@ -255,6 +255,9 @@ class LiveService(Service):
         Returns:
         '''
         return self.parent().suspendMachine(machineId)
+
+    def resetMachine(self, machineId):
+        return self.parent().resetMachine(machineId)
 
     def removeMachine(self, machineId):
         '''

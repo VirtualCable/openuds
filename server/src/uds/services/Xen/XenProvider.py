@@ -49,8 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2017-03-06'
-
+__updated__ = '2018-03-16'
 
 CACHE_TIME_FOR_SERVER = 1800
 
@@ -319,6 +318,17 @@ class Provider(ServiceProvider):
         Returns:
         '''
         return self.__getApi().stopVM(machineId, async)
+
+    def resetVM(self, machineId, async=True):
+        '''
+        Tries to start a machine. No check is done, it is simply requested to XenServer
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        '''
+        return self.__getApi().resetVM(machineId, async)
 
     def canSuspendVM(self, machineId):
         '''
