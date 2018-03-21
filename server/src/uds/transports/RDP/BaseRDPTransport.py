@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 import logging
 import os
 
-__updated__ = '2018-02-15'
+__updated__ = '2018-03-21'
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ class BaseRDPTransport(Transport):
     wallpaper = gui.CheckBoxField(label=_('Wallpaper/theme'), order=32, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.DISPLAY_TAB)
     multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=33, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'), tab=gui.DISPLAY_TAB)
     aero = gui.CheckBoxField(label=_('Allow Desk.Comp.'), order=34, tooltip=_('If checked, desktop composition will be allowed'), tab=gui.DISPLAY_TAB)
-    smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=35, tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'), tab=gui.DISPLAY_TAB)
+    smooth = gui.CheckBoxField(label=_('Font Smoothing'), order=35, tooltip=_('If checked, fonts smoothing will be allowed'), tab=gui.DISPLAY_TAB)
 
     multimedia = gui.CheckBoxField(label=_('Multimedia sync'), order=40, tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'), tab='Linux Client')
     alsa = gui.CheckBoxField(label=_('Use Alsa'), order=41, tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'), tab='Linux Client')
