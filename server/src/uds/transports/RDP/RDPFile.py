@@ -39,7 +39,7 @@ from uds.core.util import OsDetector
 import six
 import shlex
 
-__updated__ = '2017-12-21'
+__updated__ = '2018-03-21'
 
 
 class RDPFile(object):
@@ -152,6 +152,9 @@ class RDPFile(object):
             params.append('/h:{}'.format(self.height))
 
         params.append('/bpp:{}'.format(self.bpp))
+
+        if self.smoothFonts is True:
+            params.append('+fonts')
 
         # RDP Security is A MUST if no username nor password is provided
         # NLA requires USERNAME&PASSWORD previously
