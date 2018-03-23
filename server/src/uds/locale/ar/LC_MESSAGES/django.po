@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-16 10:55+0100\n"
+"POT-Creation-Date: 2018-03-23 10:40+0100\n"
 "PO-Revision-Date: 2018-03-16 09:47+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -4807,7 +4807,6 @@ msgstr "تجانس الخطوط"
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:103
 #: transports/RDS_enterprise/BaseRDSTransport.py:87
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "في حالة تحديد تجانس الخطوط سيتم السماح (عملاء windows فقط)"
@@ -5175,6 +5174,11 @@ msgid ""
 msgstr ""
 "إذا تحققت، سوف تستخدم كافة أجهزة العميل لعرض (يعمل فقط على عملاء ويندوز)."
 
+#: transports/RDP/BaseRDPTransport.py:103
+#| msgid "If checked, fonts smoothing will be allowed (windows clients only)"
+msgid "If checked, fonts smoothing will be allowed"
+msgstr "إذا راجعت، سيسمح لتجانس الخطوط"
+
 #: transports/RDP/BaseRDPTransport.py:105
 #: transports/RDS_enterprise/BaseRDSTransport.py:89
 msgid "Multimedia sync"
@@ -5200,6 +5204,7 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:107
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect home folder"
 msgstr "إعادة توجيه المجلد الرئيسي"
 
@@ -5458,13 +5463,14 @@ msgstr ""
 msgid "If checked, sound will be available"
 msgstr "إذا تم، سيكون الصوت متاح"
 
-#: transports/X2GO/BaseX2GOTransport.py:111
-msgid "Redirect root folder"
-msgstr "إعادة توجيه المجلد الجذر"
-
 #: transports/X2GO/BaseX2GOTransport.py:112
-msgid "If checked, user home folder will be redirected"
-msgstr "إذا تم، سيكون لإعادة توجيه المجلد الرئيسي المستخدم"
+#| msgid "If checked, user home folder will be redirected"
+msgid ""
+"If checked, user home folder will be redirected. (On linux, also redirects /"
+"media)"
+msgstr ""
+"إذا كان التحقق، ستتم إعادة توجيه المجلد الرئيسي المستخدم. (في لينكس، وأيضا إعادة توجيه/"
+"وسائط الإعلام)"
 
 #: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
