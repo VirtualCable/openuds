@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 10:40+0100\n"
-"PO-Revision-Date: 2018-03-16 09:29+0000\n"
+"POT-Creation-Date: 2018-03-23 10:51+0100\n"
+"PO-Revision-Date: 2018-03-23 09:41+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
 "eu/)\n"
@@ -5064,10 +5064,8 @@ msgid ""
 msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:103
-#, fuzzy
-#| msgid "If checked, the host will be reversed dns"
 msgid "If checked, fonts smoothing will be allowed"
-msgstr "Aktibo izanez gero, ostalariak atzeranzko dns-a izango du"
+msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:105
 #: transports/RDS_enterprise/BaseRDSTransport.py:89
