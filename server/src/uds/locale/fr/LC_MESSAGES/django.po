@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 10:40+0100\n"
-"PO-Revision-Date: 2018-03-16 09:50+0000\n"
-"Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>\n"
+"POT-Creation-Date: 2018-03-23 10:51+0100\n"
+"PO-Revision-Date: 2018-03-23 09:41+0000\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
 "Language: fr\n"
@@ -5311,7 +5311,6 @@ msgstr ""
 "l'affichage (ne fonctionne que sur les clients Windows)"
 
 #: transports/RDP/BaseRDPTransport.py:103
-#| msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Si coché, le lissage de polices pourront"
 
@@ -5612,13 +5611,12 @@ msgid "If checked, sound will be available"
 msgstr "Si cochée, le son sera disponible"
 
 #: transports/X2GO/BaseX2GOTransport.py:112
-#| msgid "If checked, user home folder will be redirected"
 msgid ""
 "If checked, user home folder will be redirected. (On linux, also redirects /"
 "media)"
 msgstr ""
-"Si cochée, dossier de départ de l’utilisateur sera redirigé. (Sous linux, aussi redirige /"
-"média)"
+"Si cochée, dossier de départ de l’utilisateur sera redirigé. (Sous linux, "
+"aussi redirige /média)"
 
 #: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
