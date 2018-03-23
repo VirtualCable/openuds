@@ -45,7 +45,7 @@ import logging
 import random
 import string
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-03-22'
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +90,7 @@ class TX2GOTransport(BaseX2GOTransport):
 
         width, height = CommonPrefs.getWidthHeight(prefs)
 
+        rootless = False
         desktop = self.desktopType.value
         if desktop == "UDSVAPP":
             desktop = "/usr/bin/udsvapp " + self.customCmd.value

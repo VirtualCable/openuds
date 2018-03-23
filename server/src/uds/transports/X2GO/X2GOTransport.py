@@ -40,7 +40,7 @@ from . import x2gofile
 
 import logging
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-03-22'
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +76,7 @@ class X2GOTransport(BaseX2GOTransport):
 
         width, height = CommonPrefs.getWidthHeight(prefs)
 
+        rootless = False
         desktop = self.desktopType.value
         if desktop == "UDSVAPP":
             desktop = "/usr/bin/udsvapp " + self.customCmd.value
