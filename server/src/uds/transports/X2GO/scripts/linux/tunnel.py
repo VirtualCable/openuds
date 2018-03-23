@@ -21,7 +21,7 @@ if forwardThread.status == 2:
 
 tools.addTaskToWait(forwardThread)
 
-home = expanduser('~') + ':1;'
+home = expanduser('~') + ':1;/media:1;'
 keyFile = tools.saveTempFile('''{m.key}''')
 theFile = '''{m.xf}'''.format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
 filename = tools.saveTempFile(theFile)

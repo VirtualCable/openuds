@@ -47,7 +47,7 @@ import six
 import os
 import logging
 
-__updated__ = '2017-12-20'
+__updated__ = '2018-03-23'
 
 logger = logging.getLogger(__name__)
 
@@ -108,8 +108,8 @@ class BaseX2GOTransport(Transport):
 
     exports = gui.CheckBoxField(
         order=14,
-        label=_('Redirect root folder'),
-        tooltip=_('If checked, user home folder will be redirected'),
+        label=_('Redirect home folder'),
+        tooltip=_('If checked, user home folder will be redirected. (On linux, also redirects /media)'),
         defvalue=gui.FALSE,
         tab=gui.PARAMETERS_TAB
     )

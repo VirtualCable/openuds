@@ -12,7 +12,7 @@ from uds import tools  # @UnresolvedImport
 
 import six
 
-home = expanduser('~') + ':1;'
+home = expanduser('~') + ':1;/media:1;'
 keyFile = tools.saveTempFile('''{m.key}''')
 theFile = '''{m.xf}'''.format(export=home, keyFile=keyFile.replace('\\', '/'), ip='{m.ip}', port='22')
 filename = tools.saveTempFile(theFile)
