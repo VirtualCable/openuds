@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-16 10:55+0100\n"
+"POT-Creation-Date: 2018-03-23 10:40+0100\n"
 "PO-Revision-Date: 2018-03-16 09:47+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
@@ -4916,7 +4916,6 @@ msgstr "Suavizado de fuentes"
 
 #: transports/HTML5RDP/HTML5RDP.py:79
 #: transports/HTML5RDS_enterprise/HTML5RDS.py:79
-#: transports/RDP/BaseRDPTransport.py:103
 #: transports/RDS_enterprise/BaseRDSTransport.py:87
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
@@ -5298,6 +5297,11 @@ msgstr ""
 "Si está marcada, todos los monitores cliente se utilizarán para visualizar "
 "(sólo funciona en clientes Windows)"
 
+#: transports/RDP/BaseRDPTransport.py:103
+#| msgid "If checked, fonts smoothing will be allowed (windows clients only)"
+msgid "If checked, fonts smoothing will be allowed"
+msgstr "Si está marcada, se permitirá el suavizado de fuentes"
+
 #: transports/RDP/BaseRDPTransport.py:105
 #: transports/RDS_enterprise/BaseRDSTransport.py:89
 msgid "Multimedia sync"
@@ -5324,6 +5328,7 @@ msgstr ""
 
 #: transports/RDP/BaseRDPTransport.py:107
 #: transports/RDS_enterprise/BaseRDSTransport.py:91
+#: transports/X2GO/BaseX2GOTransport.py:111
 msgid "Redirect home folder"
 msgstr "Redirigir la carpeta home"
 
@@ -5594,13 +5599,14 @@ msgstr ""
 msgid "If checked, sound will be available"
 msgstr "Si está marcada, el sonido se habilitará"
 
-#: transports/X2GO/BaseX2GOTransport.py:111
-msgid "Redirect root folder"
-msgstr "Redirigir carpeta raíz"
-
 #: transports/X2GO/BaseX2GOTransport.py:112
-msgid "If checked, user home folder will be redirected"
-msgstr "Si está marcada, la carpeta HOME del usuarió será redirigida"
+#| msgid "If checked, user home folder will be redirected"
+msgid ""
+"If checked, user home folder will be redirected. (On linux, also redirects /"
+"media)"
+msgstr ""
+"Si está marcada, carpeta de inicio de usuario será redirigido. (En linux, también redirige /"
+"medios de comunicación)"
 
 #: transports/X2GO/BaseX2GOTransport.py:118
 msgid "Speed"
