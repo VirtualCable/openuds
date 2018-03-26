@@ -103,7 +103,7 @@ class Storage(object):
 
     def getPickleByAttr1(self, attr1):
         try:
-            return pickle.loads(encoders.decode(dbStorage.objects.get(owner=self._owner, attr1=attr1).data, 'base64'))  # @UndefinedVariable
+            return pickle.loads(encoders.decode(dbStorage.objects.filter(owner=self._owner, attr1=attr1)[0].data, 'base64'))  # @UndefinedVariable
         except Exception:
             return None
 
