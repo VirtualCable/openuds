@@ -39,7 +39,7 @@
                              data-href="{{ trans.link }}"
                              data-href-alt="{% url 'uds.web.views.client_downloads' %}">
                              <div class="service-image">
-                                <img {% if ser.name != ser.visual_name %}class="with-tooltip" data-content="{{ser.name|capfirst}}"{% endif %} class="se-agranda" src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
+                                <img {% if ser.name != ser.visual_name %}class="se-agranda with-tooltip" data-content="{{ser.name|capfirst}}"{% endif %} class="se-agranda" src="{% url "uds.web.views.serviceImage" idImage=ser.imageId %}" />
                             </div>
                             <span {% if ser.show_transports and numTransports > 1 %} style="width: 130px;"{% endif %}>{{ ser.visual_name|capfirst|truncatechars:16 }}</span>
                             {% if ser.show_transports and numTransports > 1 or ser.allow_users_remove or ser.allow_users_reset %}
