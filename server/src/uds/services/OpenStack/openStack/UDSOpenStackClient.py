@@ -38,11 +38,11 @@ from uds.core.util.Cache import Cache
 import logging
 import requests
 import json
-import dateutil.parser
+# import dateutil.parser
 import hashlib
 import six
 
-__updated__ = '2018-02-27'
+__updated__ = '2018-03-01'
 
 logger = logging.getLogger(__name__)
 
@@ -59,9 +59,16 @@ logger = logging.getLogger(__name__)
 VERIFY_SSL = False
 
 
+class AuthenticationRequiredException(Exception):
+    pass
+
+
 # Helpers
 def ensureResponseIsValid(response, errMsg=None):
     if response.ok is False:
+        if response.status_code == 401:
+            raise AuthenticationRequiredException('Authentication required')
+
         try:
             _x, err = response.json().popitem()  # Extract any key, in case of error is expected to have only one top key so this will work
             errMsg = errMsg + ': {message}'.format(**err)
@@ -69,7 +76,7 @@ def ensureResponseIsValid(response, errMsg=None):
             pass  # If error geting error message, simply ignore it (will be loged on service log anyway)
         if errMsg is None:
             errMsg = 'Error checking response'
-        logger.error('{}: {}'.format(errMsg, response.content))
+        logger.error('{}: {} ({})'.format(errMsg, response.content, response.status_code))
         raise Exception(errMsg)
 
 
@@ -100,6 +107,11 @@ def authRequired(func):
         obj.ensureAuthenticated()
         try:
             return func(obj, *args, **kwargs)
+        except AuthenticationRequiredException:
+            # Retry funcion with a re-auth
+            obj._cleanCache()
+            obj.authPassword()
+            return func(obj, *args, **kwargs)
         except Exception as e:
             logger.error('Got error {} for openstack'.format(e))
             obj._cleanCache()  # On any request error, force next time auth
@@ -114,7 +126,17 @@ def authProjectRequired(func):
         if obj._projectId is None:
             raise Exception('Need a project for method {}'.format(func))
         obj.ensureAuthenticated()
-        return func(obj, *args, **kwargs)
+        try:
+            return func(obj, *args, **kwargs)
+        except AuthenticationRequiredException:
+            # Retry funcion with a re-auth
+            obj._cleanCache()
+            obj.authPassword()
+            return func(obj, *args, **kwargs)
+        except Exception as e:
+            logger.error('Got error {} for openstack'.format(e))
+            obj._cleanCache()  # On any request error, force next time auth
+            raise
 
     return ensurer
 
@@ -197,8 +219,8 @@ class Client(object):
 
     def authPassword(self):
         # If cached data exists, use it as auth
-        # if self._getFromCache() is True:
-        #     return
+        if self._getFromCache() is True:
+            return
 
         data = {
             'auth': {
@@ -241,15 +263,15 @@ class Client(object):
         # Extract the token id
         token = r.json()['token']
         self._userId = token['user']['id']
-        validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
 
-        logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
+        # validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
+        # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
         # Now, if endpoints are present (only if tenant was specified), store & cache them
         if self._projectId is not None:
             self._catalog = token['catalog']
 
-        # self._saveToCache(validity)
+        self._saveToCache(300)  # Store credentials 300 seconds
 
     def ensureAuthenticated(self):
         if self._authenticated is False:
