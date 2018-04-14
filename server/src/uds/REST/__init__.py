@@ -97,7 +97,7 @@ class Dispatcher(View):
         # Here, service points to the path
         cls = service['']
         if cls is None:
-            return http.HttpResponseNotFound('method not found')
+            return http.HttpResponseNotFound('method not found', content_type="text/plain")
 
         # Guess content type from content type header (post) or ".xxx" to method
         try:
@@ -116,48 +116,44 @@ class Dispatcher(View):
         except processors.ParametersException as e:
             logger.debug('Path: {0}'.format(full_path))
             logger.debug('Error: {0}'.format(e))
-            return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(full_path, e))
+            return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(full_path, e), content_type="text/plain")
         except AttributeError:
             allowedMethods = []
             for n in ['get', 'post', 'put', 'delete']:
                 if hasattr(handler, n):
                     allowedMethods.append(n)
-            return http.HttpResponseNotAllowed(allowedMethods)
+            return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
         except AccessDenied:
-            return http.HttpResponseForbidden('access denied')
+            return http.HttpResponseForbidden('access denied', content_type="text/plain")
         except Exception:
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute {0} for {1}'.format(http_method, full_path))
-            return http.HttpResponseServerError('Unexcepected error')
+            return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
 
         # Invokes the handler's operation, add headers to response and returns
         try:
-            start = time.time()
             response = operation()
-            logger.debug('Execution time for method: {0}'.format(time.time() - start))
 
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
-                start = time.time()
                 response = processor.getResponse(response)
-            logger.debug('Execution time for encoding: {0}'.format(time.time() - start))
             for k, val in handler.headers().iteritems():
                 response[k] = val
             return response
         except RequestError as e:
-            return http.HttpResponseBadRequest(six.text_type(e))
+            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
         except ResponseError as e:
-            return http.HttpResponseServerError(six.text_type(e))
+            return http.HttpResponseServerError(six.text_type(e), content_type="text/plain")
         except NotSupportedError as e:
-            return http.HttpResponseBadRequest(six.text_type(e))
+            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
         except AccessDenied as e:
-            return http.HttpResponseForbidden(six.text_type(e))
+            return http.HttpResponseForbidden(six.text_type(e), content_type="text/plain")
         except NotFound as e:
-            return http.HttpResponseNotFound(six.text_type(e))
+            return http.HttpResponseNotFound(six.text_type(e), content_type="text/plain")
         except HandlerError as e:
-            return http.HttpResponseBadRequest(six.text_type(e))
+            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
         except Exception as e:
             logger.exception('Error processing request')
-            return http.HttpResponseServerError(six.text_type(e))
+            return http.HttpResponseServerError(six.text_type(e), content_type="text/plain")
 
     @staticmethod
     def registerSubclasses(classes):
@@ -206,5 +202,6 @@ class Dispatcher(View):
             __import__(__name__ + '.' + package + '.' + name, globals(), locals(), [], -1)
 
         Dispatcher.registerSubclasses(Handler.__subclasses__())  # @UndefinedVariable
+
 
 Dispatcher.initialize()
