@@ -26,22 +26,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
-import logging
+from django import http
+from django.views.generic.base import View
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _, activate
+from django.conf import settings
+from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError, NotSupportedError
+
 import time
+import logging
 
 import six
-from django import http
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import View
-
-from uds.REST.handlers import Handler, HandlerError, AccessDenied, NotFound, RequestError, ResponseError, \
-    NotSupportedError
 
 logger = logging.getLogger(__name__)
 
@@ -51,17 +52,17 @@ AUTH_TOKEN_HEADER = 'X-Auth-Token'
 
 
 class Dispatcher(View):
-    """
+    '''
     This class is responsible of dispatching REST requests
-    """
+    '''
     # This attribute will contain all paths-->handler relations, added at Initialized method
     services = {'': None}  # Will include a default /rest handler, but rigth now this will be fine
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, **kwargs):
-        """
+        '''
         Processes the REST request and routes it wherever it needs to be routed
-        """
+        '''
         logger.debug('Language in dispatcher: {0}'.format(request.LANGUAGE_CODE))
         from uds.REST import processors
 
@@ -96,7 +97,7 @@ class Dispatcher(View):
         # Here, service points to the path
         cls = service['']
         if cls is None:
-            return http.HttpResponseNotFound('method not found')
+            return http.HttpResponseNotFound('method not found', content_type="text/plain")
 
         # Guess content type from content type header (post) or ".xxx" to method
         try:
@@ -117,54 +118,50 @@ class Dispatcher(View):
         except processors.ParametersException as e:
             logger.debug('Path: {0}'.format(full_path))
             logger.debug('Error: {0}'.format(e))
-            return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(full_path, e))
+            return http.HttpResponseServerError('Invalid parameters invoking {0}: {1}'.format(full_path, e), content_type="text/plain")
         except AttributeError:
             allowedMethods = []
             for n in ['get', 'post', 'put', 'delete']:
                 if hasattr(handler, n):
                     allowedMethods.append(n)
-            return http.HttpResponseNotAllowed(allowedMethods)
+            return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
         except AccessDenied:
-            return http.HttpResponseForbidden('access denied')
+            return http.HttpResponseForbidden('access denied', content_type="text/plain")
         except Exception:
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute {0} for {1}'.format(http_method, full_path))
-            return http.HttpResponseServerError('Unexcepected error')
+            return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
 
         # Invokes the handler's operation, add headers to response and returns
         try:
-            start = time.time()
             response = operation()
-            logger.debug('Execution time for method: {0}'.format(time.time() - start))
 
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
-                start = time.time()
                 response = processor.getResponse(response)
-            logger.debug('Execution time for encoding: {0}'.format(time.time() - start))
-            for k, val in six.iteritems(handler.headers()):
+            for k, val in handler.headers().items():
                 response[k] = val
             return response
         except RequestError as e:
-            return http.HttpResponseBadRequest(six.text_type(e))
+            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
         except ResponseError as e:
-            return http.HttpResponseServerError(six.text_type(e))
+            return http.HttpResponseServerError(six.text_type(e), content_type="text/plain")
         except NotSupportedError as e:
-            return http.HttpResponseBadRequest(six.text_type(e))
+            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
         except AccessDenied as e:
-            return http.HttpResponseForbidden(six.text_type(e))
+            return http.HttpResponseForbidden(six.text_type(e), content_type="text/plain")
         except NotFound as e:
-            return http.HttpResponseNotFound(six.text_type(e))
+            return http.HttpResponseNotFound(six.text_type(e), content_type="text/plain")
         except HandlerError as e:
-            return http.HttpResponseBadRequest(six.text_type(e))
+            return http.HttpResponseBadRequest(six.text_type(e), content_type="text/plain")
         except Exception as e:
             logger.exception('Error processing request')
-            return http.HttpResponseServerError(six.text_type(e))
+            return http.HttpResponseServerError(six.text_type(e), content_type="text/plain")
 
     @staticmethod
     def registerSubclasses(classes):
-        """
+        '''
         Try to register Handler subclasses that have not been inherited
-        """
+        '''
         for cls in classes:
             if len(cls.__subclasses__()) == 0:  # Only classes that has not been inherited will be registered as Handlers
                 logger.debug('Found class {0}'.format(cls))
@@ -189,10 +186,10 @@ class Dispatcher(View):
     # Initializes the dispatchers
     @staticmethod
     def initialize():
-        """
+        '''
         This imports all packages that are descendant of this package, and, after that,
         it register all subclases of Handler. (In fact, it looks for packages inside "methods" package, child of this)
-        """
+        '''
         import os.path
         import pkgutil
         import sys
