@@ -80,7 +80,7 @@ def deprecated(func):
     def new_func(*args, **kwargs):
         try:
             caller = inspect.stack()[1]
-            logger.warn(
+            logger.warning(
                 "Call to deprecated function {0} from {1}:{2}.".format(func.__name__,
                                                                        caller[1], caller[2]
                                                                        )

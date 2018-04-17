@@ -71,6 +71,7 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
     @raise exception: If connection could not be established
     """
     logger.debug('Login in to {} as user {}'.format(host, username))
+    l = None
     if isinstance(password, six.text_type):
         password = password.encode('utf-8')
     try:
@@ -111,9 +112,11 @@ def getAsDict(con, base, ldapFilter, attrList, sizeLimit, scope=ldap.SCOPE_SUBTR
     if attrList is not None:
         attrList = [tools.b2(i) for i in attrList]
 
+    res = None
     try:
         # On python2, attrs and search string is str (not unicode), in 3, str (not bytes)
-        res = con.search_ext_s(base,
+        res = con.search_ext_s(
+            base,
             scope=scope,
             filterstr=tools.b2(ldapFilter),
             attrlist=attrList,

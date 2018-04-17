@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django import http
@@ -52,17 +52,17 @@ AUTH_TOKEN_HEADER = 'X-Auth-Token'
 
 
 class Dispatcher(View):
-    '''
+    """
     This class is responsible of dispatching REST requests
-    '''
+    """
     # This attribute will contain all paths-->handler relations, added at Initialized method
     services = {'': None}  # Will include a default /rest handler, but rigth now this will be fine
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, **kwargs):
-        '''
+        """
         Processes the REST request and routes it wherever it needs to be routed
-        '''
+        """
         logger.debug('Language in dispatcher: {0}'.format(request.LANGUAGE_CODE))
         from uds.REST import processors
 
@@ -159,9 +159,9 @@ class Dispatcher(View):
 
     @staticmethod
     def registerSubclasses(classes):
-        '''
+        """
         Try to register Handler subclasses that have not been inherited
-        '''
+        """
         for cls in classes:
             if len(cls.__subclasses__()) == 0:  # Only classes that has not been inherited will be registered as Handlers
                 logger.debug('Found class {0}'.format(cls))
@@ -186,10 +186,10 @@ class Dispatcher(View):
     # Initializes the dispatchers
     @staticmethod
     def initialize():
-        '''
+        """
         This imports all packages that are descendant of this package, and, after that,
         it register all subclases of Handler. (In fact, it looks for packages inside "methods" package, child of this)
-        '''
+        """
         import os.path
         import pkgutil
         import sys

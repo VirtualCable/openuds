@@ -297,6 +297,7 @@ class BaseModelHandler(Handler):
 
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
+# noinspection PyMissingConstructor
 class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-used
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
@@ -407,10 +408,9 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
 
         parent = self._kwargs['parent']
 
-        if len(self._args) == 0:
-            # Create new
-            item = None
-        elif len(self._args) == 1:
+        # Create new item unless param received
+        item = None
+        if len(self._args) == 1:
             item = self._args[0]
         else:
             self.invalidRequestException()
@@ -770,6 +770,7 @@ class ModelHandler(BaseModelHandler):
         for cm in self.custom_methods:
             if nArgs > 1 and cm[1] is True:  # Method needs parent (existing item)
                 if self._args[1] == cm[0]:
+                    item = operation = None
                     try:
                         operation = getattr(self, self._args[1])
                         item = self.model.objects.get(uuid=self._args[0].lower())
@@ -780,6 +781,7 @@ class ModelHandler(BaseModelHandler):
                     return operation(item)
 
             elif self._args[0] == cm[0]:
+                operation = None
                 try:
                     operation = getattr(self, self._args[0])
                 except Exception:

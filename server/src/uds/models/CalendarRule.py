@@ -116,7 +116,7 @@ class CalendarRule(UUIDModel):
         if self.interval == 0:  # Fix 0 intervals
             self.interval = 1
 
-        end = datetime.datetime.combine(self.end if self.end is not None else datetime.datetime.max.date(), datetime.datetime.max.time());
+        end = datetime.datetime.combine(self.end if self.end is not None else datetime.datetime.max.date(), datetime.datetime.max.time())
 
         if self.frequency == WEEKDAYS:
             dw = []
@@ -133,7 +133,7 @@ class CalendarRule(UUIDModel):
         if self.interval == 0:  # Fix 0 intervals
             self.interval = 1
 
-        end = datetime.datetime.combine(self.end if self.end is not None else datetime.datetime.max.date(), datetime.datetime.max.time());
+        end = datetime.datetime.combine(self.end if self.end is not None else datetime.datetime.max.date(), datetime.datetime.max.time())
 
         if self.frequency == WEEKDAYS:
             dw = []

@@ -99,6 +99,7 @@ class CountersPoolAssigned(StatsReport):
 
         data = []
 
+        pool = None
         for poolUuid in self.pools.value:
             try:
                 pool = ServicePool.objects.get(uuid=poolUuid)

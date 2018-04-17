@@ -64,7 +64,7 @@ class JobThread(threading.Thread):
         try:
             self._jobInstance.execute()
         except Exception:
-            logger.warn("Exception executing job {0}".format(self._dbJobId))
+            logger.warning("Exception executing job {0}".format(self._dbJobId))
         finally:
             self.jobDone()
 
@@ -144,7 +144,7 @@ class Scheduler(object):
                 # This params are all set inside fltr (look at __init__)
                 job = dbScheduler.objects.select_for_update().filter(fltr).order_by('next_execution')[0]  # @UndefinedVariable
                 if job.last_execution > now:
-                    logger.warn('EXecuted {} due to last_execution being in the future!'.format(job.name))
+                    logger.warning('EXecuted {} due to last_execution being in the future!'.format(job.name))
                 job.state = State.RUNNING
                 job.owner_server = self._hostname
                 job.last_execution = now

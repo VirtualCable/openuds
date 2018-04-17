@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from django.utils.translation import ugettext_noop as _, ugettext
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
@@ -48,9 +48,9 @@ logger = logging.getLogger(__name__)
 
 
 class LiveService(Service):
-    '''
+    """
     OpenStack Live Service
-    '''
+    """
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using ugettext_noop)
@@ -144,12 +144,12 @@ class LiveService(Service):
     ev = gui.HiddenField(value=None)  # We need to keep the env so we can instantiate the Provider
 
     def initialize(self, values):
-        '''
+        """
         We check here form values to see if they are valid.
 
         Note that we check them through FROM variables, that already has been
         initialized by __init__ method of base class, before invoking this.
-        '''
+        """
         if values is not None:
             length = int(self.lenName.value)
             if len(self.baseName.value) + length > 15:
@@ -163,9 +163,9 @@ class LiveService(Service):
         self._api = None
 
     def initGui(self):
-        '''
+        """
         Loads required values inside
-        '''
+        """
         api = self.parent().api()
         regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
         self.region.setValues(regions)
@@ -198,13 +198,13 @@ class LiveService(Service):
         return self.api.createVolumeSnapshot(self.volume.value, templateName, description)
 
     def getTemplate(self, snapshotId):
-        '''
+        """
         Checks current state of a template (an snapshot)
-        '''
+        """
         return self.api.getSnapshot(snapshotId)
 
     def deployFromTemplate(self, name, snapshotId):
-        '''
+        """
         Deploys a virtual machine on selected cluster from selected template
 
         Args:
@@ -214,7 +214,7 @@ class LiveService(Service):
 
         Returns:
             Id of the machine being created form template
-        '''
+        """
         logger.debug('Deploying from template {0} machine {1}'.format(snapshotId, name))
         # self.datastoreHasSpace()
         return self.api.createServerFromSnapshot(snapshotId=snapshotId,
@@ -225,13 +225,13 @@ class LiveService(Service):
                                           securityGroupsIdsList=self.securityGroups.value)['id']
 
     def removeTemplate(self, templateId):
-        '''
+        """
         invokes removeTemplate from parent provider
-        '''
+        """
         self.api.deleteSnapshot(templateId)
 
     def getMachineState(self, machineId):
-        '''
+        """
         Invokes getServer from openstack client
 
         Args:
@@ -256,11 +256,11 @@ class LiveService(Service):
                 STOPPED. The server is powered off and the disk image still persists.
                 SUSPENDED. The server is suspended, either by request or necessity. This status appears for only the XenServer/XCP, KVM, and ESXi hypervisors. Administrative users can suspend an instance if it is infrequently used or to perform system maintenance. When you suspend an instance, its VM state is stored on disk, all memory is written to disk, and the virtual machine is stopped. Suspending an instance is similar to placing a device in hibernation; memory and vCPUs become available to create other instances.
                 VERIFY_RESIZE. System is awaiting confirmation that the server is operational after a move or resize.
-        '''
+        """
         return self.api.getServer(machineId)['status']
 
     def startMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenStack.
 
         This start also "resume" suspended/paused machines
@@ -269,80 +269,80 @@ class LiveService(Service):
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         self.api.startServer(machineId)
 
     def stopMachine(self, machineId):
-        '''
+        """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         self.api.stopServer(machineId)
 
     def resetMachine(self, machineId):
-        '''
+        """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         self.api.resetServer(machineId)
 
     def suspendMachine(self, machineId):
-        '''
+        """
         Tries to suspend a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         self.api.suspendServer(machineId)
 
     def resumeMachine(self, machineId):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         self.api.resumeServer(machineId)
 
     def removeMachine(self, machineId):
-        '''
+        """
         Tries to delete a machine. No check is done, it is simply requested to OpenStack
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         self.api.deleteServer(machineId)
 
     def getNetInfo(self, machineId):
-        '''
+        """
         Gets the mac address of first nic of the machine
-        '''
+        """
         net = self.api.getServer(machineId)['addresses']
         vals = six.next(six.itervalues(net))[0]  # Returns "any" mac address of any interface. We just need only one interface info
         return (vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr'])
 
     def getBaseName(self):
-        '''
+        """
         Returns the base name
-        '''
+        """
         return self.baseName.value
 
     def getLenName(self):
-        '''
+        """
         Returns the length of numbers part
-        '''
+        """
         return int(self.lenName.value)

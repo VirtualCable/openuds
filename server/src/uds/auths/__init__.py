@@ -60,5 +60,6 @@ def __init__():
     a = auths.Authenticator
     for cls in a.__subclasses__():
         auths.factory().insert(cls)
-        
+
+
 __init__()

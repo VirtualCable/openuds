@@ -108,7 +108,6 @@ class Connection(Handler):
                              'thumb': servicePool.image.thumb64 if servicePool.image is not None else DEFAULT_THUMB_BASE64,
                              'show_transports': servicePool.show_transports,
                              'allow_users_remove': servicePool.allow_users_remove,
-                             'maintenance': servicePool.isInMaintenance(),
                              'not_accesible': not servicePool.isAccessAllowed(),
                              'to_be_replaced': False,  # Manually assigned will not be autoremoved never
                              'transports': trans,
@@ -139,7 +138,6 @@ class Connection(Handler):
                              'thumb': servicePool.image.thumb64 if servicePool.image is not None else DEFAULT_THUMB_BASE64,
                              'show_transports': servicePool.show_transports,
                              'allow_users_remove': servicePool.allow_users_remove,
-                             'maintenance': servicePool.isInMaintenance(),
                              'not_accesible': not servicePool.isAccessAllowed(),
                              'to_be_replaced': servicePool.toBeReplaced(),
                              'transports': trans,

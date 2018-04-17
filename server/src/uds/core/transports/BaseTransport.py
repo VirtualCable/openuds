@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_noop as _
@@ -49,13 +49,13 @@ TUNNELED_GROUP = _('Tunneled')
 
 
 class Transport(Module):
-    '''
+    """
     An OS Manager is responsible for communication the service the different actions to take (i.e. adding a windows machine to a domain)
     The Service (i.e. virtual machine) communicates with the OSManager via a published web method, that must include the unique ID.
     In order to make easier to agents identify themselfs, the Unique ID can be a list with various Ids (i.e. the macs of the virtual machine).
     Server will iterate thought them and look for an identifier associated with the service. This list is a comma separated values (i.e. AA:BB:CC:DD:EE:FF,00:11:22:...)
     Remember also that we inherit the test and check methods from BaseModule
-    '''
+    """
     # Transport informational related data, inherited from BaseModule
     typeName = 'Base Transport Manager'
     typeType = 'Base Transport'
@@ -85,7 +85,7 @@ class Transport(Module):
         self.initialize(values)
 
     def initialize(self, values):
-        '''
+        """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
         and invoke base methods.
@@ -98,13 +98,13 @@ class Transport(Module):
             be called after this.
 
         Default implementation does nothing
-        '''
+        """
         pass
 
     def destroy(self):
-        '''
+        """
         Invoked when Transport is deleted
-        '''
+        """
         pass
 
     def testServer(self, userService, ip, port, timeout=4):
@@ -114,17 +114,17 @@ class Transport(Module):
         return connection.testServer(ip, six.text_type(port), timeout)
 
     def isAvailableFor(self, userService, ip):
-        '''
+        """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
-        '''
+        """
         return False
 
     def getCustomAvailableErrorMsg(self, userService, ip):
-        '''
+        """
         Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
         Override this in yours transports if needed
-        '''
+        """
         return "Not accessible (using service ip {0})".format(ip)
 
     @classmethod
@@ -138,22 +138,22 @@ class Transport(Module):
 
     @classmethod
     def supportsOs(cls, osName):
-        '''
+        """
         Helper method to check if transport supports requested operating system.
         Class method
-        '''
+        """
         logger.debug('Checking suported os {0} against {1}'.format(osName, cls.supportedOss))
         return cls.supportedOss.count(osName) > 0
 
     @classmethod
     def providesConnetionInfo(cls):
-        '''
+        """
         Helper method to check if transport provides information about connection
-        '''
+        """
         return cls.getConnectionInfo != Transport.getConnectionInfo
 
     def getConnectionInfo(self, service, user, password):
-        '''
+        """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
         (such as Client applications, some kinds of TC, etc... we must provide it or those
@@ -174,22 +174,22 @@ class Transport(Module):
                I have implemented processUserPassword in both so in most cases we do not need if the service is
                DeployedService or UserService. In case of processUserPassword for an DeployedService, no transformation
                is done, because there is no relation at that level between user and service.
-        '''
+        """
         return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
 
     def processedUser(self, userService, user):
-        '''
+        """
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification
         @return: transformed username
-        '''
+        """
         return user.name
 
     def getUDSTransportScript(self, userService, transport, ip, os, user, password, request):
-        '''
+        """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
-        ''' 
+        """
         return "raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))", \
             'EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'\
             '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'\
@@ -216,10 +216,10 @@ class Transport(Module):
         return encoders.encode(encoders.encode(script, 'bz2'), 'base64', asText=True).replace('\n', ''), signature, params
 
     def getLink(self, userService, transport, ip, os, user, password, request):
-        '''
+        """
         Must override if transport does provides its own link
         If transport provides own link, this method provides the link itself
-        '''
+        """
         return None
 
     def __str__(self):

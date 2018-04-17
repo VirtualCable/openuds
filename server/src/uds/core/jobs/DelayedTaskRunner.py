@@ -107,7 +107,7 @@ class DelayedTaskRunner(object):
             with transaction.atomic():  # Encloses
                 task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
-                    logger.warn('EXecuted {} due to insert_date being in the future!'.format(task.type))
+                    logger.warning('EXecuted {} due to insert_date being in the future!'.format(task.type))
                 taskInstanceDump = encoders.decode(task.instance, 'base64')
                 task.delete()
             taskInstance = loads(taskInstanceDump)

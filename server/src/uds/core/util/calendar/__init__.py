@@ -113,7 +113,6 @@ class CalendarChecker(object):
 
         return data
 
-
     def _updateEvents(self, checkFrom, startEvent=True):
 
         next_event = None
@@ -142,7 +141,8 @@ class CalendarChecker(object):
             dtime = getSqlDatetime()
 
         # First, try to get data from cache if it is valid
-        cacheKey = six.text_type(hash(self.calendar.modified)) + six.text_type(dtime.date().toordinal()) + self.calendar.uuid + 'checker'
+        cacheKey = six.text_type(hash(self.calendar.modified)) + six.text_type(
+            dtime.date().toordinal()) + self.calendar.uuid + 'checker'
         cached = CalendarChecker.cache.get(cacheKey, None)
 
         if cached is not None:
@@ -170,11 +170,14 @@ class CalendarChecker(object):
         if offset is None:
             offset = datetime.timedelta(minutes=0)
 
-        cacheKey = six.text_type(hash(self.calendar.modified)) + self.calendar.uuid + six.text_type(offset.seconds) + six.text_type(int(time.mktime(checkFrom.timetuple()))) + 'event' + ('x' if startEvent is True else '_')
+        cacheKey = six.text_type(hash(self.calendar.modified)) + self.calendar.uuid + six.text_type(
+            offset.seconds) + six.text_type(int(time.mktime(checkFrom.timetuple()))) + 'event' + (
+                       'x' if startEvent is True else '_')
         next_event = CalendarChecker.cache.get(cacheKey, None)
         if next_event is None:
             logger.debug('Regenerating cached nextEvent')
-            next_event = self._updateEvents(checkFrom + offset, startEvent)  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
+            next_event = self._updateEvents(checkFrom + offset,
+                                            startEvent)  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
             if next_event is not None:
                 next_event += offset
             CalendarChecker.cache.put(cacheKey, next_event, 3600)

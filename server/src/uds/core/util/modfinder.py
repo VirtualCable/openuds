@@ -35,7 +35,6 @@ from __future__ import unicode_literals
 import os.path
 import pkgutil
 import sys
-import imp
 import logging
 import uds.dispatchers  # @UnusedImport
 

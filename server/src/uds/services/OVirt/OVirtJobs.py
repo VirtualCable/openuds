@@ -76,7 +76,7 @@ class OVirtDeferredRemoval(jobs.Job):
                 logger.info('Machine {} could not be removed right now, queued for later: {}'.format(vmId, e))
 
         except Exception as e:
-            logger.warn('Exception got queuing for Removal: {}'.format(e))
+            logger.warning('Exception got queuing for Removal: {}'.format(e))
 
     def run(self):
         from .OVirtProvider import Provider as OVirtProvider

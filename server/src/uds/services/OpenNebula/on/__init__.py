@@ -41,14 +41,15 @@ from . import template
 from . import vm
 # Import submodules
 from .common import *
+import types
 
 __updated__ = '2017-03-28'
 
 logger = logging.getLogger(__name__)
 
 module = sys.modules[__name__]
-VmState = imp.new_module('VmState')
-ImageState = imp.new_module('ImageState')
+VmState = types.ModuleType('VmState')
+ImageState = types.ModuleType('ImageState')
 
 for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED', 'DONE', 'FAILED', 'POWEROFF', 'UNDEPLOYED']):
     setattr(VmState, i[1], i[0])

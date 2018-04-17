@@ -99,7 +99,9 @@ class CaseInsensitiveDict(dict):
     def setdefault(self, key, *args, **kwargs):
         return super(CaseInsensitiveDict, self).setdefault(self.__class__._k(key), *args, **kwargs)
 
-    def update(self, E={}, **F):
+    def update(self, E=None, **F):
+        if E is None:
+            E = {}
         super(CaseInsensitiveDict, self).update(self.__class__(E))
         super(CaseInsensitiveDict, self).update(self.__class__(**F))
 

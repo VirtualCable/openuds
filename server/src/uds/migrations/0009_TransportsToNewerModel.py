@@ -99,7 +99,6 @@ def unmarshalTRDP(str_):
         }
 
 
-
 def transformTransports(apps, schema_editor):
     """
     Move serialization to a better model (it's time, the mode is there since 1.1 :) )

@@ -58,4 +58,4 @@ def javascript_auths(authenticators):
             'priority': a.priority,
             'isCustom': theType.isCustom()
         })
-    return mark_safe('<script type="text/javascript">\nvar authenticators = ' + json.dumps(res, indent=4) + ';\n</script>');
+    return mark_safe('<script type="text/javascript">\nvar authenticators = ' + json.dumps(res, indent=4) + ';\n</script>')

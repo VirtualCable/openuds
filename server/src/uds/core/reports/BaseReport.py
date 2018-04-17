@@ -103,9 +103,10 @@ class Report(UserInterface):
                 return dict(string=image,
                             mime_type='image/png')
             elif url.startswith('image://'):
+                img = ''  # Empty image
                 if isinstance(images, dict):
                     img = images.get(url[8:], None)
-                    logger.debug('Getting image {}? {}'.format(url[8:], img != None))
+                    logger.debug('Getting image {}? {}'.format(url[8:], img is not None))
                 return dict(string=img,
                             mime_type='image/png')
             else:

@@ -165,7 +165,7 @@ class WinDomainOsManager(WindowsOsManager):
                 error = None
                 break
             except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
-                logger.warn('Could not find _ldap._tcp.' + self._domain)
+                logger.warning('Could not find _ldap._tcp.' + self._domain)
                 log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
             except ldap.ALREADY_EXISTS:
                 # Already added this machine to this group, pass
@@ -195,7 +195,7 @@ class WinDomainOsManager(WindowsOsManager):
         try:
             l = self.__connectLdap()
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
-            logger.warn('Could not find _ldap._tcp.' + self._domain)
+            logger.warning('Could not find _ldap._tcp.' + self._domain)
             log.doLog(service, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
             return
         except ldaputil.LDAPError:

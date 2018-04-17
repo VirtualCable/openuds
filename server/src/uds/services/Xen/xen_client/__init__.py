@@ -396,13 +396,14 @@ class XenServer(object):
         logger.debug('Removing machine')
         vdisToDelete = []
         for vdb in self.VM.get_VBDs(vmId):
+            vdi = None
             try:
                 vdi = self.VBD.get_VDI(vdb)
                 if vdi == 'OpaqueRef:NULL':
                     logger.debug('VDB without VDI')
                     continue
                 logger.debug('VDI: {0}'.format(vdi))
-            except:
+            except Exception:
                 logger.exception('Exception getting VDI from VDB')
             if self.VDI.get_read_only(vdi) is True:
                 logger.debug('{0} is read only, skipping'.format(vdi))

@@ -49,6 +49,7 @@ class XUACompatibleMiddleware(object):
             response['X-UA-Compatible'] = 'IE=edge'
         return response
 
+
 class RedirectMiddleware(object):
     NO_REDIRECT = [
         'rest',

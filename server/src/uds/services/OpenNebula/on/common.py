@@ -32,7 +32,7 @@
 """
 
 import sys
-import imp
+import types
 import re
 
 import logging
@@ -42,7 +42,7 @@ __updated__ = '2016-02-09'
 logger = logging.getLogger(__name__)
 
 module = sys.modules[__name__]
-VmState = imp.new_module('VmState')
+VmState = types.ModuleType('VmState')
 
 for i in enumerate(['INIT', 'PENDING', 'HOLD', 'ACTIVE', 'STOPPED', 'SUSPENDED', 'DONE', 'FAILED', 'POWEROFF', 'UNDEPLOYED', 'UNKNOWN']):
     setattr(VmState, i[1], i[0])

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 class Module(UserInterface, Environmentable, Serializable):
-    '''
+    """
     Base class for all modules used by UDS.
     This base module provides all the needed methods that modules must implement
 
@@ -93,7 +93,7 @@ class Module(UserInterface, Environmentable, Serializable):
 
     Environmentable is a base class that provides utility method to access a separate Environment for every single
     module.
-    '''
+    """
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
     typeName = 'Base Module'
@@ -105,13 +105,13 @@ class Module(UserInterface, Environmentable, Serializable):
     iconFile = 'base.png'  # This is expected to be png, use this format always
 
     class ValidationException(Exception):
-        '''
+        """
         Exception used to indicate that the params assigned are invalid
-        '''
+        """
 
     @classmethod
     def name(cls):
-        '''
+        """
         Returns "translated" typeName, using ugettext for transforming
         cls.typeName
 
@@ -120,12 +120,12 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             Translated type name (using ugettext)
-        '''
+        """
         return _(cls.typeName)
 
     @classmethod
     def type(cls):
-        '''
+        """
         Returns typeType
 
         Args:
@@ -133,12 +133,12 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             the typeType of this class (or derived class)
-        '''
+        """
         return cls.typeType
 
     @classmethod
     def description(cls):
-        '''
+        """
         This method returns the "translated" description, that is, using
         ugettext for transforming cls.typeDescription.
 
@@ -148,12 +148,12 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Translated description (using ugettext)
 
-        '''
+        """
         return _(cls.typeDescription)
 
     @classmethod
     def icon(cls, inBase64=True):
-        '''
+        """
         Reads the file specified by iconFile at module folder, and returns it content.
         This is used to obtain an icon so administration can represent it.
 
@@ -165,19 +165,19 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Base 64 encoded or raw image, obtained from the specified file at
             'iconFile' class attribute
-        '''
+        """
         logger.debug('Loading icon for class {0} ({1})'.format(cls, cls.iconFile))
         file_ = open(os.path.dirname(sys.modules[cls.__module__].__file__) + '/' + cls.iconFile, 'rb')
         data = file_.read()
         file_.close()
-        if inBase64 == True:
+        if inBase64:
             return encoders.encode(data, 'base64', asText=True)
         else:
             return data
 
     @staticmethod
     def test(env, data):
-        '''
+        """
         Test if the connection data is ok.
 
         Returns an array, first value indicates "Ok" if true, "Bad" or "Error"
@@ -193,11 +193,11 @@ class Module(UserInterface, Environmentable, Serializable):
             Array of two elements, first is True of False, depending on test
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
-        '''
+        """
         return [True, _("No connection checking method is implemented.")]
 
     def __init__(self, environment, values=None):
-        '''
+        """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(environment, values)".
 
@@ -218,7 +218,7 @@ class Module(UserInterface, Environmentable, Serializable):
         If you override marshal, unmarshal and inherited UserInterface method
         valuesDict, you must also take account of values (dict) provided at the
         __init__ method of your class.
-        '''
+        """
         #
         UserInterface.__init__(self, values)
         Environmentable.__init__(self, environment)
@@ -228,33 +228,33 @@ class Module(UserInterface, Environmentable, Serializable):
         return "Base Module"
 
     def isDirty(self):
-        '''
+        """
         This method informs the core if the module has changed serializable data,
         and that must be re-serialized
 
         Default implemetation is that on every method call, module will be dirty
 
         Note: The implementation of this is a work in progress, so right now the module will be serialized out on every access
-        '''
+        """
         return True
 
     def marshal(self):
-        '''
+        """
         By default and if not overriden by descendants, this method, overridden
         from Serializable, and returns the serialization of
         form field stored values.
-        '''
+        """
         return self.serializeForm()
 
     def unmarshal(self, str_):
-        '''
+        """
         By default and if not overriden by descendants, this method recovers
         data serialized using serializeForm
-        '''
+        """
         self.unserializeForm(str_)
 
     def check(self):
-        '''
+        """
         Method that will provide the "check" capability for the module.
 
         The return value that this method must provide is simply an string,
@@ -262,11 +262,11 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             Internacionalized (using ugettext) string of result of the check.
-        '''
+        """
         return _("No check method provided.")
 
     def destroy(self):
-        '''
+        """
         Invoked before deleting an module from database.
 
         Do whatever needed here, as deleting associated data if needed
@@ -274,5 +274,5 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             Nothing
-        '''
+        """
         pass
