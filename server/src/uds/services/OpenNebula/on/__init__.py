@@ -82,6 +82,7 @@ def asList(element):
     return element,
 
 
+# noinspection PyShadowingNames
 class OpenNebulaClient(object):
     def __init__(self, username, password, endpoint):
         self.username = username

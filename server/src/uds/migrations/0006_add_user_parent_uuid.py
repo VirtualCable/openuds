@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 
 
+# noinspection PyUnusedLocal
 def add_parent_uuids(apps, schema_editor):
     """
     Adds uuids values to migrated models
@@ -22,6 +23,7 @@ def add_parent_uuids(apps, schema_editor):
         m.save()
 
 
+# noinspection PyUnusedLocal
 def remove_parent_uuids(apps, schema_editor):
     """
     Dummy function. uuid field will be dropped on reverse migration

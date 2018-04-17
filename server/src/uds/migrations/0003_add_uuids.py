@@ -6,6 +6,7 @@ from django.db import models, migrations
 from uds.core.util.model import generateUuid
 
 
+# noinspection PyUnusedLocal
 def add_uuids(apps, schema_editor):
     """
     Adds uuids values to migrated models
@@ -19,6 +20,7 @@ def add_uuids(apps, schema_editor):
             m.save()
 
 
+# noinspection PyUnusedLocal
 def remove_uuids(apps, schema_editor):
     """
     Dummy function. uuid field will be dropped on reverse migration

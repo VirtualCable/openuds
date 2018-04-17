@@ -60,7 +60,7 @@ def getMachineState(api, machineId):
         # vm.info()
         # return vm.state
         return api.getVMState(machineId)
-    except Exception as e:
+    except Exception:
         logger.error('Error obtaining machine state for {} on OpenNebula: {}'.format(machineId, e))
 
     return VmState.UNKNOWN
@@ -72,7 +72,7 @@ def getMachineSubstate(api, machineId):
     """
     try:
         return api.getVMSubState(machineId)
-    except Exception as e:
+    except Exception:
         logger.error('Error obtaining machine state for {} on OpenNebula: {}'.format(machineId, e))
 
     return VmState.UNKNOWN
@@ -91,9 +91,10 @@ def startMachine(api, machineId):
     """
     try:
         api.VMAction(machineId, 'resume')
-    except Exception as e:
+    except Exception:
         # MAybe the machine is already running. If we get error here, simply ignore it for now...
         pass
+
 
 def stopMachine(api, machineId):
     """
@@ -106,7 +107,7 @@ def stopMachine(api, machineId):
     """
     try:
         api.VMAction(machineId, 'poweroff-hard')
-    except Exception as e:
+    except Exception:
         logger.error('Error powering off {} on OpenNebula: {}'.format(machineId, e))
 
 
@@ -121,7 +122,7 @@ def suspendMachine(api, machineId):
     """
     try:
         api.VMAction(machineId, 'suspend')
-    except Exception as e:
+    except Exception:
         logger.error('Error suspending {} on OpenNebula: {}'.format(machineId, e))
 
 
@@ -136,7 +137,7 @@ def resetMachine(api, machineId):
     """
     try:
         api.VMAction(machineId, 'reboot-hard')
-    except Exception as e:
+    except Exception:
         logger.error('Error reseting {} on OpenNebula: {}'.format(machineId, e))
 
 
@@ -153,7 +154,7 @@ def removeMachine(api, machineId):
         # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
         # vm.delete()
         api.deleteVM(machineId)
-    except Exception as e:
+    except Exception:
         logger.exception('Error removing machine {} on OpenNebula: {}'.format(machineId, e))
         raise 'Error removing machine {} on OpenNebula: {}'.format(machineId, e)
 

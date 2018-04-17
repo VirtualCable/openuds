@@ -344,7 +344,6 @@ class RegexLdap(auths.Authenticator):
 
     def searchUsers(self, pattern):
         try:
-            con = self.__connection()
             res = []
             for r in ldaputil.getAsDict(
                 con=self.__connection(),
@@ -388,7 +387,7 @@ class RegexLdap(auths.Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._userClass, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user class seems to be incorrect (no user found by that class)')]
-        except Exception as e:
+        except Exception:
             # If found 1 or more, all right
             pass
 
@@ -397,7 +396,7 @@ class RegexLdap(auths.Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._userClass, self._userIdAttr), sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user id attr is probably wrong (can\'t find any user with both conditions)')]
-        except Exception as e:
+        except Exception:
             # If found 1 or more, all right
             pass
 
@@ -418,7 +417,7 @@ class RegexLdap(auths.Authenticator):
             # Check validity of regular expression (try to compile it)
             # this only right now
             pass
-        except Exception as e:
+        except Exception:
             pass
 
         return [True, _("Connection params seem correct, test was succesfully executed")]

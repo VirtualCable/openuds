@@ -156,10 +156,10 @@ class Auths(Handler):
     authenticated = False  # By default, all handlers needs authentication
 
     def auths(self):
-        all = self._params.get('all', 'false') == 'true'
+        paramAll = self._params.get('all', 'false') == 'true'
         for a in Authenticator.objects.all():
             theType = a.getType()
-            if all or (theType.isCustom() is False and theType.typeType not in ('IP',)):
+            if paramAll or (theType.isCustom() is False and theType.typeType not in ('IP',)):
                 yield {
                     'authId': a.uuid,
                     'authSmallName': str(a.small_name),

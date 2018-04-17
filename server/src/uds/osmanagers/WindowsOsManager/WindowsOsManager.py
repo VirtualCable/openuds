@@ -114,8 +114,6 @@ class WindowsOsManager(osmanagers.OSManager):
     def notifyIp(self, uid, service, data):
         si = service.getInstance()
         ip = ''
-
-        ip = ''
         # Notifies IP to deployed
         for p in data['ips']:
             if p[0].lower() == uid.lower():

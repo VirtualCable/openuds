@@ -101,7 +101,6 @@ class WinDomainOsManager(WindowsOsManager):
 
         _str = "No servers found"
         for server in servers:
-            _str = ''
             try:
                 return ldaputil.connection(account, self._password, server[0], server[1], ssl=False, timeout=10, debug=False)
             except Exception as e:

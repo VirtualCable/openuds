@@ -183,7 +183,6 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         from uds.core.util.Config import GlobalConfig
 
-        auths = []
         if tag is not None:
             auths = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
             if auths.count() == 0:

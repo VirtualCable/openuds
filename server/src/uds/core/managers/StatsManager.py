@@ -172,8 +172,8 @@ class StatsManager(object):
 
         try:
             # Replaces nulls for ''
-            def noneToEmpty(str):
-                return six.text_type(str) if str is not None else ''
+            def noneToEmpty(value):
+                return six.text_type(value) if value is not None else ''
 
             fld1 = noneToEmpty(kwargs.get('fld1', kwargs.get('username', kwargs.get('platform', ''))))
             fld2 = noneToEmpty(kwargs.get('fld2', kwargs.get('srcip', kwargs.get('browser', ''))))

@@ -349,7 +349,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._userClass, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user class seems to be incorrect (no user found by that class)')]
-        except Exception as e:
+        except Exception:
             # If found 1 or more, all right
             pass
 
@@ -359,7 +359,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._groupClass, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap group class seems to be incorrect (no group found by that class)')]
-        except Exception as e:
+        except Exception:
             # If found 1 or more, all right
             pass
 
@@ -369,7 +369,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(%s=*)' % self._userIdAttr, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user id attribute seems to be incorrect (no user found by that attribute)')]
-        except Exception as e:
+        except Exception:
             # If found 1 or more, all right
             pass
 
@@ -379,7 +379,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(%s=*)' % self._groupIdAttr, sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap group id attribute seems to be incorrect (no group found by that attribute)')]
-        except Exception as e:
+        except Exception:
             # If found 1 or more, all right
             pass
 
@@ -390,7 +390,7 @@ class SimpleLDAPAuthenticator(Authenticator):
             if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(&(objectClass=%s)(%s=*))' % (self._userClass, self._userIdAttr), sizelimit=1)) == 1:
                 raise Exception()
             return [False, _('Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)')]
-        except Exception as e:
+        except Exception:
             # If found 1 or more, all right
             pass
 
@@ -408,7 +408,7 @@ class SimpleLDAPAuthenticator(Authenticator):
                     break
             if ok is False:
                 raise Exception(_('Can\'t locate any group with the membership attribute specified'))
-        except Exception as e:
+        except Exception:
             return [False, six.text_type(e)]
 
         logger.debug('LDAP group class and group id attr seems to be correct')
