@@ -52,7 +52,7 @@ Unknown = 'Unknown'
 
 knownOss = (WindowsPhone, Android, Linux, Windows, Macintosh, iPad, iPhone, ChromeOS)  # Android is linux also, so it is cheched on first place
 
-allOss = (knownOss) + (Unknown,)
+allOss = knownOss + (Unknown,)
 desktopOss = (Linux, Windows, Macintosh)
 mobilesODD = list(set(allOss) - set(desktopOss))
 

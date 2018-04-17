@@ -202,7 +202,7 @@ def getNetInfo(api, machineId, networkId=None):
         except Exception:
             ip = ''
 
-        return (node.getElementsByTagName('MAC')[0].childNodes[0].data, ip)
+        return node.getElementsByTagName('MAC')[0].childNodes[0].data, ip
     except Exception:
         raise Exception('No network interface found on template. Please, add a network and republish.')
 
