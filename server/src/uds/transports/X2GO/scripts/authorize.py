@@ -22,7 +22,7 @@ def updateAuthorizedKeys(user, pubKey):
 
     # Create .ssh on user home
     home = os.path.expanduser('~{}'.format(user))
-    uid = pwd.getpwnam(user)
+
     if not os.path.exists(home):  # User not found, nothing done
         logError('Home folder for user {} not found'.format(user))
         return
@@ -59,5 +59,6 @@ def updateAuthorizedKeys(user, pubKey):
     os.chmod(authorizedKeys, 0o0600)
 
     # Done
+
 
 updateAuthorizedKeys(USER, KEY)

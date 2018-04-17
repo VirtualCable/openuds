@@ -27,40 +27,40 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util import encoders
 
 
 class Serializable(object):
-    '''
+    """
     This class represents the interface that all serializable objects must provide.
 
     Every single serializable class must implement marshall & unmarshall methods. Also, the class must allow
     to be initialized without parameters, so we can:
     - Initialize the object with default values
     - Read values from seralized data
-    '''
+    """
 
     def __init__(self):
         pass
 
     def marshal(self):
-        '''
+        """
         This is the method that must be overriden in order to serialize an object.
 
         The system will use in fact 'seralize' and 'deserialize' methods, but theese are
         only suitable methods to "codify" serialized values
 
         :note: This method must be overridden
-        '''
+        """
         raise Exception('Base marshaler called!!!')
 
     def unmarshal(self, str_):
-        '''
+        """
         This is the method that must be overriden in order to unserialize an object.
 
         The system will use in fact 'seralize' and 'deserialize' methods, but these are
@@ -73,17 +73,17 @@ class Serializable(object):
             str_ _ : String readed from persistent storage to deseralilize
 
         :note: This method must be overridden
-        '''
+        """
         raise Exception('Base unmarshaler called!!!')
 
     def serialize(self):
-        '''
+        """
         Serializes and "obfuscates' the data.
-        '''
+        """
         return encoders.encode(self.marshal(), 'base64', asText=True)
 
     def unserialize(self, str_):
-        '''
+        """
         des-obfuscates the data and then de-serializes it via unmarshal method
-        '''
+        """
         return self.unmarshal(encoders.decode(str_, 'base64'))

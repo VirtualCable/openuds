@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -65,13 +65,13 @@ class Attribute(object):
 
 # noinspection PyMissingConstructor
 class AutoAttributes(Serializable):
-    '''
+    """
     Easy creation of attributes to marshal & unmarshal at modules
     usage as base class (First class so yours inherits this "marshal" and "unmarshal"
     initialize at init with super(myclass,self).__init__(attr1=type, attr2=type, ...)
     or with declare(attr1=type,attr2=type,..)
     Access attrs as "self._attr1, self._attr2"
-    '''
+    """
 
     def __init__(self, **kwargs):
         self.dict = None

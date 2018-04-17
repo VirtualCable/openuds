@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -55,9 +55,9 @@ logger = logging.getLogger(__name__)
 
 
 class Services(DetailHandler):  # pylint: disable=too-many-public-methods
-    '''
+    """
     Detail handler for Services, whose parent is a Provider
-    '''
+    """
 
     custom_methods = ['servicesPools']
 
@@ -82,11 +82,11 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     def serviceToDict(item, perm, full=False):
-        '''
+        """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
-        '''
+        """
         itemType = item.getType()
         retVal = {
             'id': item.uuid,
@@ -125,10 +125,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     def _deleteIncompleteService(self, service):  # pylint: disable=no-self-use
-        '''
+        """
         Deletes a service if it is needed to (that is, if it is not None) and silently catch any exception of this operation
         :param service:  Service to delete (may be None, in which case it does nothing)
-        '''
+        """
         if service is not None:
             try:
                 service.delete()

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 from django.db import transaction
 import uds.models.Cache
@@ -90,10 +90,10 @@ class Cache(object):
             return defValue
 
     def remove(self, skey):
-        '''
+        """
         Removes an stored cached item
         If cached item does not exists, nothing happens (no exception thrown)
-        '''
+        """
         # logger.debug('Removing key "%s" for uService "%s"' % (skey, self._owner))
         try:
             key = self.__getKey(skey)

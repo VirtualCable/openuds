@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -54,21 +54,21 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /actor path
 class Connection(Handler):
-    '''
+    """
     Processes actor requests
-    '''
+    """
     authenticated = True  # Actor requests are not authenticated
     needs_admin = False
     needs_staff = False
 
     @staticmethod
     def result(result=None, error=None, errorCode=0, retryable=False):
-        '''
+        """
         Helper method to create a "result" set for connection response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
         :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
         :return: A dictionary, suitable for response to Caller
-        '''
+        """
         result = result if result is not None else ''
         res = {'result': result, 'date': datetime.datetime.now()}
         if error is not None:
@@ -199,9 +199,9 @@ class Connection(Handler):
         return password
 
     def get(self):
-        '''
+        """
         Processes get requests
-        '''
+        """
         logger.debug("Connection args for GET: {0}".format(self._args))
 
         if len(self._args) == 0:

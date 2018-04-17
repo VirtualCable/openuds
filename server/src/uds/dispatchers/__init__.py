@@ -43,9 +43,10 @@ def __init__():
         try:
             logger.info('Loading dispatcher {}'.format(name))
             __import__(name, globals(), locals(), [], 1)
-        except:
+        except Exception:
             logger.exception('Loading dispatcher {}'.format(name))
 
     logger.debug('Dispatchers initialized')
+
 
 __init__()

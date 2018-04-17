@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.conf import settings
@@ -128,10 +128,10 @@ class CryptoManager(object):
         return six.text_type(hashlib.sha1(value).hexdigest())
 
     def uuid(self, obj=None):
-        '''
+        """
         Generates an uuid from obj. (lower case)
         If obj is None, returns an uuid based on current datetime + counter
-        '''
+        """
         if obj is None:
             obj = six.text_type(datetime.datetime.now()) + six.text_type(self._counter)
             self._counter += 1

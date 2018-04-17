@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.managers import logManager
@@ -63,9 +63,9 @@ __valueLevels = dict((v, k) for k, v in __nameLevels.items())
 
 
 def logLevelFromStr(str_):
-    '''
+    """
     Gets the numeric log level from an string.
-    '''
+    """
     return __nameLevels.get(str_.upper(), OTHER)
 
 
@@ -74,7 +74,7 @@ def logStrFromLevel(level):
 
 
 def useLog(type_, serviceUniqueId, serviceIp, username, srcIP=None, srcUser=None, userServiceName=None, poolName=None):
-    '''
+    """
     Logs an "use service" event (logged from actors)
     :param type_: Type of event (commonly 'login' or 'logout' )
     :param serviceUniqueId: Unique id of service
@@ -82,7 +82,7 @@ def useLog(type_, serviceUniqueId, serviceIp, username, srcIP=None, srcUser=None
     :param username: Username notified from service (internal "user service" user name
     :param srcIP: IP of user holding that service at time of event
     :param srcUser: Username holding that service at time of evet
-    '''
+    """
     srcIP = 'unknown' if srcIP is None else srcIP
     srcUser = 'unknown' if srcUser is None else srcUser
     userServiceName = 'unknown' if userServiceName is None else userServiceName
@@ -97,9 +97,9 @@ def doLog(wichObject, level, message, source=UNKNOWN, avoidDuplicates=True):
 
 
 def getLogs(wichObject, limit=None):
-    '''
+    """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
-    '''
+    """
     from uds.core.util.Config import GlobalConfig
 
     if limit is None:
@@ -109,7 +109,7 @@ def getLogs(wichObject, limit=None):
 
 
 def clearLogs(wichObject):
-    '''
+    """
     Clears the logs associated with the object using the logManager
-    '''
+    """
     return logManager().clearLogs(wichObject)

@@ -232,9 +232,9 @@ class Provider(ServiceProvider):
         return True
 
     def resetMachine(self, machineId):
-        '''
+        """
         Resets a machine (hard-reboot)
-        '''
+        """
         on.vm.resetMachine(self.api, machineId)
 
     def removeMachine(self, machineId):

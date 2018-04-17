@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import get_language, ugettext as _, ugettext_noop
@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 
 class gui(object):
-    '''
+    """
     This class contains the representations of fields needed by UDS modules and
     administation interface.
 
@@ -76,7 +76,7 @@ class gui(object):
     At class instantiation, this data is extracted and processed, so the admin
     can access this form to let users
     create new instances of this module.
-    '''
+    """
 
     # : True string value
     TRUE = 'true'
@@ -96,11 +96,11 @@ class gui(object):
     # Helpers
     @staticmethod
     def convertToChoices(vals):
-        '''
+        """
         Helper to convert from array of strings to the same dict used in choice,
         multichoice, ..
         The id is set to values in the array (strings), while text is left empty.
-        '''
+        """
         res = []
         for v in vals:
             res.append({'id': v, 'text': ''})
@@ -114,7 +114,7 @@ class gui(object):
 
     @staticmethod
     def choiceItem(id_, text):
-        '''
+        """
         Helper method to create a single choice item.
 
         Args:
@@ -128,7 +128,7 @@ class gui(object):
 
         :note: Text can be anything, the method converts it first to text before
         assigning to dictionary
-        '''
+        """
         return {'id': str(id_), 'text': six.text_type(text)}
 
     @staticmethod
@@ -141,7 +141,7 @@ class gui(object):
 
     @staticmethod
     def strToBool(str_):
-        '''
+        """
         Converts the string "true" (case insensitive) to True (boolean).
         Anything else is converted to false
 
@@ -150,7 +150,7 @@ class gui(object):
 
         Returns:
             True if the string is "true" (case insensitive), False else.
-        '''
+        """
         if isinstance(str_, bool):
             return str_
         if six.text_type(str_).lower() == gui.TRUE:
@@ -159,7 +159,7 @@ class gui(object):
 
     @staticmethod
     def boolToStr(bol):
-        '''
+        """
         Converts a boolean to the string representation. True is converted to
         "true", False to "false".
 
@@ -168,7 +168,7 @@ class gui(object):
 
         Returns:
             "true" if bol evals to True, "false" if don't.
-        '''
+        """
         if bol:
             return gui.TRUE
         return gui.FALSE
@@ -176,7 +176,7 @@ class gui(object):
     # Classes
 
     class InputField(object):
-        '''
+        """
         Class representing an simple input field.
         This class is not directly usable, must be used by any inherited class
         (fields all of them)
@@ -211,7 +211,7 @@ class gui(object):
         Take into account also that "value" has precedence over "defValue",
         so if you use both, the used one will be "value". This is valid for
         all form fields.
-        '''
+        """
         TEXT_TYPE = 'text'
         TEXTBOX_TYPE = 'textbox'
         NUMERIC_TYPE = 'numeric'
@@ -243,50 +243,50 @@ class gui(object):
                 self._data['tab'] = options.get('tab')
 
         def _type(self, type_):
-            '''
+            """
             Sets the type of this field.
 
             Args:
                 type: Type to set (from constants of this class)
-            '''
+            """
             self._data['type'] = type_
 
         def isType(self, type_):
-            '''
+            """
             Returns true if this field is of specified type
-            '''
+            """
             return self._data['type'] == type_
 
         @property
         def value(self):
-            '''
+            """
             Obtains the stored value.
             If the stored value is None (this will only happens if value is forced to be so, by default empty value is ''),
             returns default value instead.
             This is mainly used for hidden fields, so we have correctly initialized
-            '''
+            """
             return self._data['value'] if self._data['value'] is not None else self.defValue
 
         @value.setter
         def value(self, value):
-            '''
+            """
             Stores new value (not the default one)
-            '''
+            """
             self._setValue(value)
 
         def _setValue(self, value):
-            '''
+            """
             So we can override value setting at descendants
-            '''
+            """
             self._data['value'] = value
 
         def guiDescription(self):
-            '''
+            """
             Returns the dictionary with the description of this item.
             We copy it, cause we need to translate the label and tooltip fields
             and don't want to
             alter original values.
-            '''
+            """
             data = self._data.copy()
             data['label'] = data['label'] != '' and _(data['label']) or ''
             data['tooltip'] = data['tooltip'] != '' and _(data['tooltip']) or ''
@@ -296,9 +296,9 @@ class gui(object):
 
         @property
         def defValue(self):
-            '''
+            """
             Returns the default value for this field
-            '''
+            """
             return self._data['defvalue']
 
         @defValue.setter
@@ -306,12 +306,12 @@ class gui(object):
             self.setDefValue(defValue)
 
         def setDefValue(self, defValue):
-            '''
+            """
             Sets the default value of the field·
 
             Args:
                 defValue: Default value (string)
-            '''
+            """
             self._data['defvalue'] = defValue
 
         @property
@@ -319,7 +319,7 @@ class gui(object):
             return self._data['label']
 
     class TextField(InputField):
-        '''
+        """
         This represents a text field.
 
         The values of parameters are inherited from :py:class:`InputField`
@@ -348,7 +348,7 @@ class gui(object):
               other = gui.TextField(length=64, label = _('Other'), order = 1,
                   tooltip = _('Other info'), rdonly = True)
 
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
@@ -359,7 +359,7 @@ class gui(object):
             self._data['multiline'] = multiline
 
     class NumericField(InputField):
-        '''
+        """
         This represents a numeric field. It apears with an spin up/down button.
 
         The values of parameres are inherited from :py:class:`InputField`
@@ -377,7 +377,7 @@ class gui(object):
               num = gui.NumericField(length=5, label = _('Port'),
                   defvalue = '443', order = 1, tooltip = _('Port (usually 443)'),
                   required = True)
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
@@ -389,9 +389,9 @@ class gui(object):
             self._type(gui.InputField.NUMERIC_TYPE)
 
         def num(self):
-            '''
+            """
             Return value as integer
-            '''
+            """
             try:
                 v = int(self.value)
             except Exception:
@@ -399,7 +399,7 @@ class gui(object):
             return v
 
     class DateField(InputField):
-        '''
+        """
         This represents a date field.
 
         The values of parameres are inherited from :py:class:`InputField`
@@ -416,7 +416,7 @@ class gui(object):
                   order = 4, tooltip = _('Ending date'),
                   required = True)
 
-        '''
+        """
 
         def processValue(self, valueName, options):
             val = options.get(valueName, '')
@@ -447,7 +447,7 @@ class gui(object):
             return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
 
     class PasswordField(InputField):
-        '''
+        """
         This represents a password field. It appears with "*" at input, so the contents is not displayed
 
         The values of parameres are inherited from :py:class:`InputField`
@@ -466,14 +466,14 @@ class gui(object):
                   order = 4, tooltip = _('Password of the user'),
                   required = True)
 
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.PASSWORD_TYPE)
 
     class HiddenField(InputField):
-        '''
+        """
         This represents a hidden field. It is not displayed to the user. It use
         is for keeping info at form needed
         by module, but not editable by user (i.e., one service can keep info
@@ -502,7 +502,7 @@ class gui(object):
                   # value for current instance
                   self.hidden.setDefValue(self.parent().serialize())
 
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
@@ -513,7 +513,7 @@ class gui(object):
             return self._isSerializable
 
     class CheckBoxField(InputField):
-        '''
+        """
         This represents a check box field, with values "true" and "false"
 
         The values of parameters are inherited from :py:class:`InputField`
@@ -530,20 +530,20 @@ class gui(object):
               ssl = gui.CheckBoxField(label = _('Use SSL'), order = 3,
                   tooltip = _('If checked, will use a ssl connection'))
 
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.CHECKBOX_TYPE)
 
         def isTrue(self):
-            '''
+            """
             Checks that the value is true
-            '''
+            """
             return self.value is True or self.value == gui.TRUE
 
     class ChoiceField(InputField):
-        '''
+        """
         This represents a simple combo box with single selection.
 
         The values of parameters are inherited from :py:class:`InputField`
@@ -634,7 +634,7 @@ class gui(object):
                   vc = gui.HiddenField()
                   ev = gui.HiddenField() # ....
 
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
@@ -649,9 +649,9 @@ class gui(object):
             self._type(gui.InputField.CHOICE_TYPE)
 
         def setValues(self, values):
-            '''
+            """
             Set the values for this choice field
-            '''
+            """
             self._data['values'] = values
 
     class ImageChoiceField(InputField):
@@ -663,13 +663,13 @@ class gui(object):
             self._type(gui.InputField.IMAGECHOICE_TYPE)
 
         def setValues(self, values):
-            '''
+            """
             Set the values for this choice field
-            '''
+            """
             self._data['values'] = values
 
     class MultiChoiceField(InputField):
-        '''
+        """
         Multichoices are list of items that are multi-selectable.
 
         There is a new parameter here, not covered by InputField:
@@ -700,7 +700,7 @@ class gui(object):
                   values = [ {'id': '0', 'text': 'datastore0' },
                       {'id': '1', 'text': 'datastore1' } ]
                   )
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
@@ -709,13 +709,13 @@ class gui(object):
             self._type(gui.InputField.MULTI_CHOICE_TYPE)
 
         def setValues(self, values):
-            '''
+            """
             Set the values for this multi choice field
-            '''
+            """
             self._data['values'] = values
 
     class EditableList(InputField):
-        '''
+        """
         Editables list are lists of editable elements (i.e., a list of IPs, macs,
         names, etcc) treated as simple strings with no id
 
@@ -739,7 +739,7 @@ class gui(object):
               #
               ipList = gui.EditableList(label=_('List of IPS'))
 
-        '''
+        """
 
         # : Constant for separating values at "value" method
         SEPARATOR = '\001'
@@ -750,25 +750,25 @@ class gui(object):
             self._type(gui.InputField.EDITABLE_LIST)
 
         def _setValue(self, values):
-            '''
+            """
             So we can override value setting at descendants
-            '''
+            """
             super(self.__class__, self)._setValue(values)
             self._data['values'] = gui.convertToList(values)
 
     class ImageField(InputField):
-        '''
+        """
         Image field
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
             self._type(gui.InputField.TEXT_TYPE)
 
     class InfoField(InputField):
-        '''
+        """
         Informational field (no input is done)
-        '''
+        """
 
         def __init__(self, **options):
             super(self.__class__, self).__init__(**options)
@@ -795,7 +795,7 @@ class UserInterfaceType(type):
 
 #@six.add_metaclass(UserInterfaceType)
 class UserInterface(object, metaclass=UserInterfaceType):
-    '''
+    """
     This class provides the management for gui descriptions (user forms)
 
     Once a class is derived from this one, that class can contain Field
@@ -804,7 +804,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
 
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
-    '''
+    """
     # __metaclass__ = UserInterfaceType
 
     def __init__(self, values=None):
@@ -824,7 +824,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
                     logger.warning('Field {} not found'.format(k))
 
     def initGui(self):
-        '''
+        """
         This method gives the oportunity to initialize gui fields before they
         are send to administration client.
         We need this because at initialization time we probably don't have the
@@ -841,11 +841,11 @@ class UserInterface(object, metaclass=UserInterfaceType):
                but may happen that two services of same type are requested at same
                time, and returned data will be probable a nonsense. We will take care
                of this posibility in a near version...
-        '''
+        """
         pass
 
     def valuesDict(self):
-        '''
+        """
         Returns own data needed for user interaction as a dict of key-names ->
         values. The values returned must be strings.
 
@@ -870,7 +870,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
         :note: By default, the provided method returns the correct values
                extracted from form fields
 
-        '''
+        """
         dic = {}
         for k, v in six.iteritems(self._gui):
             if v.isType(gui.InputField.EDITABLE_LIST):
@@ -887,7 +887,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
         return dic
 
     def serializeForm(self):
-        '''
+        """
         All values stored at form fields are serialized and returned as a single
         string
         Separating char is
@@ -896,7 +896,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
 
         Note: Hidens are not serialized, they are ignored
 
-        '''
+        """
 
         # import inspect
         # logger.debug('Caller is : {}'.format(inspect.stack()))
@@ -925,11 +925,11 @@ class UserInterface(object, metaclass=UserInterfaceType):
         return encoders.encode('\002'.join(arr), 'zip')
 
     def unserializeForm(self, values):
-        '''
+        """
         This method unserializes the values previously obtained using
         :py:meth:`serializeForm`, and stores
         the valid values form form fileds inside its corresponding field
-        '''
+        """
         if values == b'':  # Has nothing
             return
 
@@ -964,7 +964,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
 
     @classmethod
     def guiDescription(cls, obj=None):
-        '''
+        """
         This simple method generates the theGui description needed by the
         administration client, so it can
         represent it at user interface and manage it.
@@ -972,7 +972,7 @@ class UserInterface(object, metaclass=UserInterfaceType):
         Args:
             object: If not none, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
-        '''
+        """
         logger.debug('Active language for theGui translation: {0}'.format(get_language()))
         theGui = cls
         if obj is not None:

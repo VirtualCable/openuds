@@ -261,10 +261,10 @@ class OSManager(Module):
             userService.save()
 
     def isPersistent(self):
-        '''
+        """
         When a publication if finished, old assigned machines will be removed if this value is True.
         Defaults to False
-        '''
+        """
         return False
 
     def __str__(self):

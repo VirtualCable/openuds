@@ -84,9 +84,9 @@ def getSqlDatetime(unix=False):
 
 
 def getSqlFnc(fncName):
-    '''
+    """
     Convert different sql functions for different platforms
-    '''
+    """
     if connection.vendor == 'microsoft':
         return { 'CEIL': 'CEILING'}.get(fncName, fncName)
 

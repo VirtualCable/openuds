@@ -84,7 +84,7 @@ class Authenticators(ModelHandler):
     def getGui(self, type_):
         try:
             return self.addDefaultFields(auths.factory().lookup(type_).guiDescription(), ['name', 'comments', 'tags', 'priority', 'small_name'])
-        except:
+        except Exception:
             raise NotFound('type not found')
 
     def item_as_dict(self, auth):

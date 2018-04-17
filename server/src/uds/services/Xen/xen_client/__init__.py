@@ -29,7 +29,7 @@
 from __future__ import unicode_literals
 
 import six
-import XenAPI # From PIP, will remove this when dropped Python 2.7 support
+import XenAPI  # From PIP, will remove this when dropped Python 2.7 support
 
 import ssl
 
@@ -477,7 +477,7 @@ class XenServer(object):
             tags = self.VM.get_tags(vmId)
             try:
                 del tags[tags.index(TAG_MACHINE)]
-            except:
+            except Exception:
                 pass
             tags.append(TAG_TEMPLATE)
             self.VM.set_tags(vmId, tags)

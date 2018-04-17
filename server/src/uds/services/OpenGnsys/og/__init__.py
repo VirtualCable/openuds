@@ -228,7 +228,7 @@ class OpenGnsysClient(object):
     @ensureConnected
     def notifyDeadline(self, machineId, deadLine):
         ou, lab, client = machineId.split('.')
-        if deadLine  is None:
+        if deadLine is None:
             deadLine = 0
         errMsg = 'Notifying deadline'
         data = {

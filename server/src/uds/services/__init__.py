@@ -70,4 +70,5 @@ def __init__():
                 continue
             services.factory().insert(cls)
 
+
 __init__()

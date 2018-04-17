@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from uds.core.util.Config import GlobalConfig
@@ -52,14 +52,14 @@ logger = logging.getLogger(__name__)
 
 
 class Login(Handler):
-    '''
+    """
     Responsible of user authentication
-    '''
+    """
     path = 'auth'
     authenticated = False  # Public method
 
     def post(self):
-        '''
+        """
         This login uses parameters to generate auth token
         The alternative is to use the template tag inside "REST" that is called auth_token, that extracts an auth token from an user session
         We can use any of this forms due to the fact that the auth token is in fact a session key
@@ -87,7 +87,7 @@ class Login(Handler):
 
         Locale comes on "Header", as any HTTP Request (Accept-Language header)
         Calls to any method of REST that must be authenticated needs to be called with "X-Auth-Token" Header added
-        '''
+        """
         try:
             if 'authId' not in self._params and 'authSmallName' not in self._params and 'auth' not in self._params:
                 raise RequestError('Invalid parameters (no auth)')
@@ -136,9 +136,9 @@ class Login(Handler):
 
 
 class Logout(Handler):
-    '''
+    """
     Responsible of user de-authentication
-    '''
+    """
     path = 'auth'
     authenticated = True  # By default, all handlers needs authentication
 

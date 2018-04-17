@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.db import transaction
@@ -116,15 +116,15 @@ class Storage(object):
             pass
 
     def lock(self):
-        '''
+        """
         Use with care. If locked, it must be unlocked before returning
-        '''
+        """
         dbStorage.objects.lock()  # @UndefinedVariable
 
     def unlock(self):
-        '''
+        """
         Must be used to unlock table
-        '''
+        """
         dbStorage.objects.unlock()  # @UndefinedVariable
 
     def locateByAttr1(self, attr1):

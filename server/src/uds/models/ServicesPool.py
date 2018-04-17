@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -70,9 +70,9 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class DeployedService(UUIDModel, TaggingMixin):
-    '''
+    """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
-    '''
+    """
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
@@ -112,27 +112,27 @@ class DeployedService(UUIDModel, TaggingMixin):
     # meta_pools = models.ManyToManyField('self', symmetrical=False)
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare the name of the table at database
-        '''
+        """
         db_table = 'uds__deployed_service'
         app_label = 'uds'
 
     def getEnvironment(self):
-        '''
+        """
         Returns an environment valid for the record this object represents
-        '''
+        """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
 
     def activePublication(self):
-        '''
+        """
         Returns the current valid publication for this deployed service.
 
         Returns:
             Publication db record if this deployed service has an valid active publication.
 
             None if there is no valid publication for this deployed service.
-        '''
+        """
         try:
             return self.publications.filter(state=states.publication.USABLE)[0]
         except Exception:
@@ -142,14 +142,14 @@ class DeployedService(UUIDModel, TaggingMixin):
         return self.osmanager.getType().transformsUserOrPasswordForService()
 
     def processUserPassword(self, username, password):
-        '''
+        """
         This method is provided for consistency between UserService and DeployedService
         There is no posibility to check the username and password that a user will use to
         connect to a service at this level, because here there is no relation between both.
 
         The only function of this method is allow Transport to transform username/password in
         getConnectionInfo without knowing if it is requested by a DeployedService or an UserService
-        '''
+        """
         return [username, password]
 
     @staticmethod
@@ -182,7 +182,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         return six.text_type(self.name)
 
     def isRestrained(self):
-        '''
+        """
         Maybe this deployed service is having problems, and that may block some task in some
         situations.
 
@@ -194,7 +194,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         The time that a service is in restrain mode is 20 minutes by default (1200 secs), but it can be modified
         at globalconfig variables
-        '''
+        """
         from uds.core.util.Config import GlobalConfig
 
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
@@ -229,9 +229,9 @@ class DeployedService(UUIDModel, TaggingMixin):
         return None
 
     def isAccessAllowed(self, chkDateTime=None):
-        '''
+        """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
-        '''
+        """
         if chkDateTime is None:
             chkDateTime = getSqlDatetime()
 
@@ -245,9 +245,9 @@ class DeployedService(UUIDModel, TaggingMixin):
         return access == states.action.ALLOW
 
     def getDeadline(self, chkDateTime=None):
-        '''
+        """
         Gets the deadline for an access on chkDateTime
-        '''
+        """
         if chkDateTime is None:
             chkDateTime = getSqlDatetime()
 
@@ -275,17 +275,17 @@ class DeployedService(UUIDModel, TaggingMixin):
         return int((deadLine - chkDateTime).total_seconds())
 
     def storeValue(self, name, value):
-        '''
+        """
         Stores a value inside custom storage
 
         Args:
             name: Name of the value to store
             value: Value of the value to store
-        '''
+        """
         self.getEnvironment().storage.put(name, value)
 
     def recoverValue(self, name):
-        '''
+        """
         Recovers a value from custom storage
 
         Args:
@@ -293,11 +293,11 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         Returns:
             Stored value, None if no value was stored
-        '''
+        """
         return self.getEnvironment().storage.get(name)
 
     def setState(self, state, save=True):
-        '''
+        """
         Updates the state of this object and, optionally, saves it
 
         Args:
@@ -305,26 +305,26 @@ class DeployedService(UUIDModel, TaggingMixin):
 
             save: Defaults to true. If false, record will not be saved to db, just modified
 
-        '''
+        """
         self.state = state
         self.state_date = getSqlDatetime()
         if save is True:
             self.save()
 
     def remove(self):
-        '''
+        """
         Marks the deployed service for removing.
 
         The background worker will be the responsible for removing the deployed service
-        '''
+        """
         self.setState(states.servicePool.REMOVABLE)
 
     def removed(self):
-        '''
+        """
         Mark the deployed service as removed.
 
         A background worker will check for removed deloyed services and clean database of them.
-        '''
+        """
         # self.transports.clear()
         # self.assignedGroups.clear()
         # self.osmanager = None
@@ -333,7 +333,7 @@ class DeployedService(UUIDModel, TaggingMixin):
         self.delete()
 
     def markOldUserServicesAsRemovables(self, activePub):
-        '''
+        """
         Used when a new publication is finished.
 
         Marks all user deployed services that belongs to this deployed service, that do not belongs
@@ -345,7 +345,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         Args:
             activePub: Active publication used as "current" publication to make checks
-        '''
+        """
         now = getSqlDatetime()
         if activePub is None:
             logger.error('No active publication, don\'t know what to erase!!! (ds = {0})'.format(self))
@@ -358,19 +358,19 @@ class DeployedService(UUIDModel, TaggingMixin):
                 ap.userServices.filter(cache_level=0, state=states.userService.USABLE, in_use=False).update(state=states.userService.REMOVABLE, state_date=now)
 
     def validateGroups(self, grps):
-        '''
+        """
         Ensures that at least a group of grps (database groups) has access to this Service Pool
         raise an InvalidUserException if fails check
-        '''
+        """
         from uds.core import auths
         if len(set(grps) & set(self.assignedGroups.all())) == 0:
             raise auths.Exceptions.InvalidUserException()
 
     def validatePublication(self):
-        '''
+        """
         Ensures that, if this service has publications, that a publication is active
         raises an IvalidServiceException if check fails
-        '''
+        """
         if self.activePublication() is None and self.service.getType().publicationType is not None:
             raise InvalidServiceException()
 
@@ -381,7 +381,7 @@ class DeployedService(UUIDModel, TaggingMixin):
             raise InvalidServiceException()
 
     def validateUser(self, user):
-        '''
+        """
         Validates that the user has access to this deployed service
 
         Args:
@@ -395,7 +395,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
             InvalidServiceException() if user has rights to access, but the deployed service is not ready (no active publication)
 
-        '''
+        """
         # We have to check if at least one group from this user is valid for this deployed service
 
         logger.debug('User: {0}'.format(user.id))
@@ -413,7 +413,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     @staticmethod
     def getDeployedServicesForGroups(groups):
-        '''
+        """
         Return deployed services with publications for the groups requested.
 
         Args:
@@ -421,7 +421,7 @@ class DeployedService(UUIDModel, TaggingMixin):
 
         Returns:
             List of accesible deployed services
-        '''
+        """
         from uds.core import services
         # Get services that HAS publications
         list1 = DeployedService.objects.filter(assignedGroups__in=groups, assignedGroups__state=states.group.ACTIVE,
@@ -433,50 +433,50 @@ class DeployedService(UUIDModel, TaggingMixin):
         return list(set([r for r in list1] + [r for r in list2]))
 
     def publish(self, changeLog=None):
-        '''
+        """
         Launches the publication of this deployed service.
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
-        '''
+        """
         from uds.core.managers.PublicationManager import PublicationManager
         PublicationManager.manager().publish(self, changeLog)
 
     def unpublish(self):
-        '''
+        """
         Unpublish (removes) current active publcation.
 
         It checks that there is an active publication, and then redirects the request to the publication itself
-        '''
+        """
         pub = self.activePublication()
         if pub is not None:
             pub.unpublish()
 
     def cachedUserServices(self):
-        '''
+        """
         Utility method to access the cached user services (level 1 and 2)
 
         Returns:
             A list of db records (userService) with cached user services
-        '''
+        """
         return self.userServices.exclude(cache_level=0)
 
     def assignedUserServices(self):
-        '''
+        """
         Utility method to access the assigned user services
 
         Returns:
             A list of db records (userService) with assinged user services
-        '''
+        """
         return self.userServices.filter(cache_level=0)
 
     def erroneousUserServices(self):
-        '''
+        """
         Utility method to locate invalid assigned user services.
 
         If an user deployed service is assigned, it MUST have an user associated.
 
         If it don't has an user associated, the user deployed service is wrong.
-        '''
+        """
         return self.userServices.filter(cache_level=0, user=None)
 
     def testServer(self, host, port, timeout=4):
@@ -484,14 +484,14 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         The main purpuse of this hook is to call the "destroy" method of the object to delete and
         to clear related data of the object (environment data such as own storage, cache, etc...
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         from uds.core.util.permissions import clean
         toDelete = kwargs['instance']
 

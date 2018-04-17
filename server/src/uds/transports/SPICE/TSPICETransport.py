@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from django.utils.translation import ugettext_noop as _
 from uds.core.ui.UserInterface import gui
@@ -53,10 +53,10 @@ logger = logging.getLogger(__name__)
 
 
 class TSPICETransport(BaseSpiceTransport):
-    '''
+    """
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    '''
+    """
     typeName = _('SPICE')
     typeType = 'TSSPICETransport'
     typeDescription = _('SPICE Protocol. Tunneled connection.')

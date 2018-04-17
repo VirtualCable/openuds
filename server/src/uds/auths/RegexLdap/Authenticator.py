@@ -132,7 +132,7 @@ class RegexLdap(auths.Authenticator):
                     pattern = '(' + pattern + ')'
                 try:
                     re.search(pattern, '')
-                except:
+                except Exception:
                     raise auths.Authenticator.ValidationException('Invalid pattern in {0}: {1}'.format(fieldLabel, line))
 
     def __getAttrsFromField(self, field):
@@ -408,7 +408,7 @@ class RegexLdap(auths.Authenticator):
             try:
                 if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(%s=*)' % vals, sizelimit=1)) == 1:
                     continue
-            except:
+            except Exception:
                 continue
             return [False, _('Ldap group id attribute seems to be incorrect (no group found by that attribute)')]
 

@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 from __future__ import unicode_literals
 
@@ -91,6 +91,7 @@ dunit_to_mins = {
 weekdays = [rules.SU, rules.MO, rules.TU, rules.WE, rules.TH, rules.FR, rules.SA]
 
 
+# noinspection PyPep8
 @python_2_unicode_compatible
 class CalendarRule(UUIDModel):
     name = models.CharField(max_length=128)
@@ -106,9 +107,9 @@ class CalendarRule(UUIDModel):
     calendar = models.ForeignKey(Calendar, related_name='rules', on_delete=models.CASCADE)
 
     class Meta:
-        '''
+        """
         Meta class to declare db table
-        '''
+        """
         db_table = 'uds_calendar_rules'
         app_label = 'uds'
 

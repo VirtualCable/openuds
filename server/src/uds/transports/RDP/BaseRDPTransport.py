@@ -75,13 +75,15 @@ class BaseRDPTransport(Transport):
         tooltip=_('Screen size for this transport'),
         defvalue='-1x-1',
         values=[
-            {'id': '640x480', 'text': '640x480' },
-            {'id': '800x600', 'text': '800x600' },
-            {'id': '1024x768', 'text': '1024x768' },
-            {'id': '1366x768', 'text': '1366x768' },
-            {'id': '1920x1080', 'text': '1920x1080' },
-            {'id': '-1x-1', 'text': 'Full screen' },
-    ], tab=gui.DISPLAY_TAB)
+            {'id': '640x480', 'text': '640x480'},
+            {'id': '800x600', 'text': '800x600'},
+            {'id': '1024x768', 'text': '1024x768'},
+            {'id': '1366x768', 'text': '1366x768'},
+            {'id': '1920x1080', 'text': '1920x1080'},
+            {'id': '-1x-1', 'text': 'Full screen'},
+        ],
+        tab=gui.DISPLAY_TAB
+    )
 
     colorDepth = gui.ChoiceField(
         label=_('Color depth'),
@@ -89,11 +91,13 @@ class BaseRDPTransport(Transport):
         tooltip=_('Color depth for this connection'),
         defvalue='24',
         values=[
-            {'id': '8', 'text': '8' },
-            {'id': '16', 'text': '16' },
-            {'id': '24', 'text': '24' },
-            {'id': '32', 'text': '32' },
-    ], tab=gui.DISPLAY_TAB)
+            {'id': '8', 'text': '8'},
+            {'id': '16', 'text': '16'},
+            {'id': '24', 'text': '24'},
+            {'id': '32', 'text': '32'},
+        ],
+        tab=gui.DISPLAY_TAB
+    )
 
     wallpaper = gui.CheckBoxField(label=_('Wallpaper/theme'), order=32, tooltip=_('If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'), tab=gui.DISPLAY_TAB)
     multimon = gui.CheckBoxField(label=_('Multiple monitors'), order=33, tooltip=_('If checked, all client monitors will be used for displaying (only works on windows clients)'), tab=gui.DISPLAY_TAB)

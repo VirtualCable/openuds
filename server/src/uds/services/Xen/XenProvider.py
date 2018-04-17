@@ -318,14 +318,14 @@ class Provider(ServiceProvider):
         return self.__getApi().stopVM(machineId, async)
 
     def resetVM(self, machineId, async=True):
-        '''
+        """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.__getApi().resetVM(machineId, async)
 
     def canSuspendVM(self, machineId):

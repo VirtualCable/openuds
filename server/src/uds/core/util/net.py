@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 import re
 import six
@@ -48,9 +48,9 @@ reHost = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 
 
 def ipToLong(ip):
-    '''
+    """
     convert decimal dotted quad string to long integer
-    '''
+    """
     try:
         hexn = int(''.join(["%02X" % int(i) for i in ip.split('.')]), 16)
         logger.debug('IP {} is {}'.format(ip, hexn))
@@ -61,9 +61,9 @@ def ipToLong(ip):
 
 
 def longToIp(n):
-    '''
+    """
     convert long int to dotted quad string
-    '''
+    """
     try:
         d = 1 << 24
         q = []
@@ -78,7 +78,7 @@ def longToIp(n):
 
 
 def networksFromString(strNets, allowMultipleNetworks=True):
-    '''
+    """
     Parses the network from strings in this forms:
       - A.* (or A.*.* or A.*.*.*)
       - A.B.* (or A.B.*.* )
@@ -89,7 +89,7 @@ def networksFromString(strNets, allowMultipleNetworks=True):
       - A.B.C.D
     If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
-    '''
+    """
 
     inputString = strNets
     logger.debug('Getting network from {}'.format(strNets))

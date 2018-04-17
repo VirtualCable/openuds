@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 # pylint: disable=maybe-no-member
 from __future__ import unicode_literals
 
@@ -132,11 +132,11 @@ class CalendarChecker(object):
         return next_event
 
     def check(self, dtime=None):
-        '''
+        """
         Checks if the given time is a valid event on calendar
         @param dtime: Datetime object to check
         TODO: We can improve performance of this by getting from a cache first if we can
-        '''
+        """
         if dtime is None:
             dtime = getSqlDatetime()
 
@@ -159,10 +159,10 @@ class CalendarChecker(object):
         return data[dtime.hour * 60 + dtime.minute]
 
     def nextEvent(self, checkFrom=None, startEvent=True, offset=None):
-        '''
+        """
         Returns next event for this interval
         Returns a list of two elements. First is datetime of event begining, second is timedelta of duration
-        '''
+        """
         logger.debug('Obtaining nextEvent')
         if checkFrom is None:
             checkFrom = getSqlDatetime()

@@ -575,10 +575,10 @@ class UserDeployment(Environmentable, Serializable):
         raise Exception('cancel method for class {0} not provided!'.format(self.__class__.__name__))
 
     def reset(self):
-        '''
+        """
         This method is invoked for "reset" an user service
         This method is not intended to be a task right now, it's more like the
-        '''
+        """
         raise Exception('reset method for class {0} not provided!'.format(self.__class__.__name__))
 
     def __str__(self):

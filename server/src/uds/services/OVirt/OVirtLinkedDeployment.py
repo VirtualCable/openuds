@@ -185,9 +185,9 @@ class OVirtLinkedDeployment(UserDeployment):
         return State.FINISHED
 
     def reset(self):
-        '''
+        """
         o oVirt, reset operation just shutdowns it until v3 support is removed
-        '''
+        """
         if self._vmid != '':
             self.service().stopMachine(self._vmid)
 

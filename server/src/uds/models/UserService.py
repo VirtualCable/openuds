@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 
 # pylint: disable=model-missing-unicode, too-many-public-methods
 
@@ -62,10 +62,10 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class UserService(UUIDModel):
-    '''
+    """
     This is the base model for assigned user service and cached user services.
     This are the real assigned services to users. DeployedService is the container (the group) of this elements.
-    '''
+    """
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
@@ -98,9 +98,9 @@ class UserService(UUIDModel):
     # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
 
     class Meta(UUIDModel.Meta):
-        '''
+        """
         Meta class to declare default order and unique multiple field index
-        '''
+        """
         db_table = 'uds__user_service'
         ordering = ('creation_date',)
         app_label = 'uds'
@@ -112,13 +112,13 @@ class UserService(UUIDModel):
 
     @property
     def name(self):
-        '''
+        """
         Simple accessor to deployed service name plus unique name
-        '''
+        """
         return "{}\\{}".format(self.deployed_service.name, self.friendly_name)
 
     def getEnvironment(self):
-        '''
+        """
         Returns an environment valid for the record this object represents.
 
         In the case of the user, there is an instatiation of "generators".
@@ -128,7 +128,7 @@ class UserService(UUIDModel):
         To access this generators, use the Envirnment class, and the keys 'name' and 'mac'.
 
         (see related classes uds.core.util.UniqueNameGenerator and uds.core.util.UniqueMacGenerator)
-        '''
+        """
         return Environment.getEnvForTableElement(
             self._meta.verbose_name,
             self.id,
@@ -140,7 +140,7 @@ class UserService(UUIDModel):
         )
 
     def getInstance(self):
-        '''
+        """
         Instantiates the object this record contains. In this case, the instantiated object needs also
         the os manager and the publication, so we also instantiate those here.
 
@@ -154,7 +154,7 @@ class UserService(UUIDModel):
             The instance Instance of the class this provider represents
 
         Raises:
-        '''
+        """
         # We get the service instance, publication instance and osmanager instance
         ds = self.deployed_service
         serviceInstance = ds.service.getInstance()
@@ -179,20 +179,20 @@ class UserService(UUIDModel):
         return us
 
     def updateData(self, us):
-        '''
+        """
         Updates the data field with the serialized :py:class:uds.core.services.UserDeployment
 
         Args:
             dsp: :py:class:uds.core.services.UserDeployment to serialize
 
         :note: This method do not saves the updated record, just updates the field
-        '''
+        """
         self.data = us.serialize()
 
     def getName(self):
-        '''
+        """
         Returns the name of the user deployed service
-        '''
+        """
         if self.friendly_name == '':
             si = self.getInstance()
             self.friendly_name = si.getName()
@@ -201,9 +201,9 @@ class UserService(UUIDModel):
         return self.friendly_name
 
     def getUniqueId(self):
-        '''
+        """
         Returns the unique id of the user deployed service
-        '''
+        """
         if self.unique_id == '':
             si = self.getInstance()
             self.unique_id = si.getUniqueId()
@@ -211,18 +211,18 @@ class UserService(UUIDModel):
         return self.unique_id
 
     def storeValue(self, name, value):
-        '''
+        """
         Stores a value inside custom storage
 
         Args:
             name: Name of the value to store
             value: Value of the value to store
-        '''
+        """
         # Store value as a property
         self.setProperty(name, value)
 
     def recoverValue(self, name):
-        '''
+        """
         Recovers a value from custom storage
 
         Args:
@@ -230,7 +230,7 @@ class UserService(UUIDModel):
 
         Returns:
             Stored value, None if no value was stored
-        '''
+        """
         val = self.getProperty(name)
 
         # To transition between old stor at storage table and new properties table
@@ -240,7 +240,7 @@ class UserService(UUIDModel):
         return val
 
     def setConnectionSource(self, ip, hostname=''):
-        '''
+        """
         Notifies that the last access to this service was initiated from provided params
 
         Args:
@@ -249,39 +249,39 @@ class UserService(UUIDModel):
 
         Returns:
             Nothing
-        '''
+        """
         self.src_ip = ip
         self.src_hostname = hostname
         self.save()
 
     def getConnectionSource(self):
-        '''
+        """
         Returns stored connection source data (ip & hostname)
 
         Returns:
             An array of two elements, first is the ip & second is the hostname
 
         :note: If the transport did not notified this data, this may be "empty"
-        '''
+        """
         return [self.src_ip, self.src_hostname]
 
     def getOsManager(self):
         return self.deployed_service.osmanager
 
     def needsOsManager(self):
-        '''
+        """
         Returns True if this User Service needs an os manager (i.e. parent services pools is marked to use an os manager)
-        '''
+        """
         return self.getOsManager() is not None
 
     def transformsUserOrPasswordForService(self):
-        '''
+        """
         If the os manager changes the username or the password, this will return True
-        '''
+        """
         return self.deployed_service.transformsUserOrPasswordForService()
 
     def processUserPassword(self, username, password):
-        '''
+        """
         Before accessing a service by a transport, we can request
         the service to "transform" the username & password that the transport
         will use to connect to that service.
@@ -298,7 +298,7 @@ class UserService(UUIDModel):
             transformed password.
 
         :note: This method MUST be invoked by transport before using credentials passed to getHtml.
-        '''
+        """
         ds = self.deployed_service
         serviceInstance = ds.service.getInstance()
         if serviceInstance.needsManager is False:
@@ -307,7 +307,7 @@ class UserService(UUIDModel):
         return ds.osmanager.getInstance().processUserPassword(self, username, password)
 
     def setState(self, state):
-        '''
+        """
         Updates the state of this object and, optionally, saves it
 
         Args:
@@ -315,13 +315,13 @@ class UserService(UUIDModel):
 
             save: Defaults to true. If false, record will not be saved to db, just modified
 
-        '''
+        """
         if state != self.state:
             self.state_date = getSqlDatetime()
             self.state = state
 
     def setOsState(self, state):
-        '''
+        """
         Updates the os state (state of the os) of this object and, optionally, saves it
 
         Args:
@@ -329,31 +329,31 @@ class UserService(UUIDModel):
 
             save: Defaults to true. If false, record will not be saved to db, just modified
 
-        '''
+        """
         if state != self.os_state:
             self.state_date = getSqlDatetime()
             self.os_state = state
 
     def assignToUser(self, user):
-        '''
+        """
         Assigns this user deployed service to an user.
 
         Args:
             user: User to assing to (db record)
-        '''
+        """
         self.cache_level = 0
         self.state_date = getSqlDatetime()
         self.user = user
 
     def setInUse(self, state):
-        '''
+        """
         Set the "in_use" flag for this user deployed service
 
         Args:
             state: State to set to the "in_use" flag of this record
 
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
-        '''
+        """
         from uds.core.managers.UserServiceManager import UserServiceManager
         self.in_use = state
         self.in_use_date = getSqlDatetime()
@@ -387,21 +387,21 @@ class UserService(UUIDModel):
         self.deployed_service.account.stopUsageAccounting(self)
 
     def isUsable(self):
-        '''
+        """
         Returns if this service is usable
-        '''
+        """
         return State.isUsable(self.state)
 
     def isPreparing(self):
-        '''
+        """
         Returns if this service is in preparation (not ready to use, but in its way to be so...)
-        '''
+        """
         return State.isPreparing(self.state)
 
     def isReady(self):
-        '''
+        """
         Returns if this service is ready (not preparing or marked for removal)
-        '''
+        """
         # Call to isReady of the instance
         from uds.core.managers.UserServiceManager import UserServiceManager
         return UserServiceManager.manager().isReady(self)
@@ -410,53 +410,53 @@ class UserService(UUIDModel):
         return self.deployed_service.isInMaintenance()
 
     def remove(self):
-        '''
+        """
         Mark this user deployed service for removal
-        '''
+        """
         self.setState(State.REMOVABLE)
         self.save()
 
     def release(self):
-        '''
+        """
         A much more convenient method name that "remove" (i think :) )
-        '''
+        """
         self.remove()
 
     def cancel(self):
-        '''
+        """
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
-        '''
+        """
         from uds.core.managers.UserServiceManager import UserServiceManager
         UserServiceManager.manager().cancel(self)
 
     def removeOrCancel(self):
-        '''
+        """
         Marks for removal or cancels it, depending on state
-        '''
+        """
         if self.isUsable():
             self.remove()
         else:
             self.cancel()
 
     def moveToLevel(self, cacheLevel):
-        '''
+        """
         Moves cache items betwen levels, managed directly
 
         Args:
             cacheLevel: New cache level to put object in
-        '''
+        """
         from uds.core.managers.UserServiceManager import UserServiceManager
         UserServiceManager.manager().moveToLevel(self, cacheLevel)
 
     @staticmethod
     def getUserAssignedServices(user):
-        '''
+        """
         Return DeployedUserServices (not deployed services) that this user owns and are assignable
         For this to happen, we locate all user services assigned to this user, and we keep those that:
         * Must assign service manually
         This method is probably slow, but i don't think a user will have more than a bunch of services assigned
         @returns and array of dicts with id, name and transports
-        '''
+        """
         logger.debug("Filtering assigned services for user {0}".format(user))
         res = []
         for us in UserService.objects.filter(user=user):
@@ -476,10 +476,10 @@ class UserService(UUIDModel):
             return default
 
     def getProperties(self):
-        '''
+        """
         Retrieves all properties as a dictionary
         The number of properties per item is expected to be "relatively small" (no more than 5 items?)
-        '''
+        """
         dct = {}
         for v in self.properties.all():
             dct[v.name] = v.value
@@ -503,9 +503,9 @@ class UserService(UUIDModel):
         return self.getProperty('ip', '0.0.0.0')
 
     def isValidPublication(self):
-        '''
+        """
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
-        '''
+        """
         return self.deployed_service.service.getType().publicationType is None or self.publication == self.deployed_service.activePublication()
 
     def testServer(self, host, port, timeout=4):
@@ -517,14 +517,14 @@ class UserService(UUIDModel):
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
-        '''
+        """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
         The main purpuse of this hook is to call the "destroy" method of the object to delete and
         to clear related data of the object (environment data such as own storage, cache, etc...
 
         :note: If destroy raises an exception, the deletion is not taken.
-        '''
+        """
         toDelete = kwargs['instance']
         toDelete.getEnvironment().clearRelatedData()
 

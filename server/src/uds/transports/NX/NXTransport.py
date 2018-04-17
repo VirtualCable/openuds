@@ -28,11 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-'''
+"""
 Created on Jul 29, 2011
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
 from uds.core.ui.UserInterface import gui
@@ -50,10 +50,10 @@ READY_CACHE_TIMEOUT = 30
 
 
 class NXTransport(Transport):
-    '''
+    """
     Provides access via NX to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    '''
+    """
     typeName = _('NX v3.5')
     typeType = 'NXTransport'
     typeDescription = _('NX Protocol v3.5. Direct connection.')
@@ -119,9 +119,9 @@ class NXTransport(Transport):
             self._cacheMem = ''
 
     def marshal(self):
-        '''
+        """
         Serializes the transport data so we can store it in database
-        '''
+        """
         return str.join('\t', ['v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
                                self._connection, self._session, self._cacheDisk, self._cacheMem])
 
@@ -144,10 +144,10 @@ class NXTransport(Transport):
         }
 
     def isAvailableFor(self, userService, ip):
-        '''
+        """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
-        '''
+        """
         logger.debug('Checking availability for {0}'.format(ip))
         ready = self.cache.get(ip)
         if ready is None:

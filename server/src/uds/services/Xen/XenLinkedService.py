@@ -322,14 +322,14 @@ class XenLinkedService(Service):
         return self.parent().stopVM(machineId, async)
 
     def resetVM(self, machineId, async=True):
-        '''
+        """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
         Args:
             machineId: Id of the machine
 
         Returns:
-        '''
+        """
         return self.parent().resetVM(machineId, async)
 
     def canSuspendVM(self, machineId):

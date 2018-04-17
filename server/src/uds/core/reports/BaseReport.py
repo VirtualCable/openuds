@@ -116,7 +116,7 @@ class Report(UserInterface):
             css = f.read()
 
         css = (
-            css.replace("{header}", _('Report') if  header is None else header)
+            css.replace("{header}", _('Report') if header is None else header)
                 .replace('{page}', _('Page'))
                 .replace('{of}', _('of'))
                 .replace('{water}', 'UDS Report' if water is None else water)

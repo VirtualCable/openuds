@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''
+"""
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
+"""
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
@@ -59,21 +59,21 @@ REQUIRED_CLIENT_VERSION = '2.5.0'
 
 # Enclosed methods under /actor path
 class Client(Handler):
-    '''
+    """
     Processes actor requests
-    '''
+    """
     authenticated = False  # Client requests are not authenticated
 
     @staticmethod
     def result(result=None, error=None, errorCode=0, retryable=False):
-        '''
+        """
         Helper method to create a "result" set for actor response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
         :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
         :param errorCode: Code of the error to return, if error is not None
         :param retryable: If True, this operation can (and must) be retryed
         :return: A dictionary, suitable for response to Caller
-        '''
+        """
         result = result if result is not None else ''
         res = {'result': result}
         if error is not None:
@@ -90,15 +90,15 @@ class Client(Handler):
         return res
 
     def test(self):
-        '''
+        """
         Executes and returns the test
-        '''
+        """
         return Client.result(_('Correct'))
 
     def get(self):
-        '''
+        """
         Processes get requests
-        '''
+        """
         logger.debug("Client args for GET: {0}".format(self._args))
 
         if len(self._args) == 0:  # Gets version

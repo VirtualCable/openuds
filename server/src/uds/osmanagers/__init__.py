@@ -63,4 +63,5 @@ def __init__():
     for cls in p.__subclasses__():
         osmanagers.factory().insert(cls)
 
+
 __init__()
