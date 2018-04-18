@@ -83,7 +83,7 @@
   gui.forms.fromFields = (fields, item, forShow) ->
     editing = item? # Locate real Editing
     item = item or id: ""
-    form = "<form class=\"form-horizontal\" role=\"form\">" + "<input type=\"hidden\" name=\"id\" class=\"modal_field_data\" value=\"" + item.id + "\">"
+    form = "<form autocomplete=\"off\" class=\"form-horizontal\" role=\"form\">" + "<input type=\"hidden\" name=\"id\" class=\"modal_field_data\" value=\"" + item.id + "\">"
     fillers = []
     originalValues = {}
 
