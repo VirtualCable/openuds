@@ -102,7 +102,6 @@ class DelayedTaskRunner(object):
         now = getSqlDatetime()
         filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=30))
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
-        taskInstance = None
         try:
             with transaction.atomic():  # Encloses
                 task = dbDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]  # @UndefinedVariable

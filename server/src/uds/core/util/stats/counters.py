@@ -208,4 +208,5 @@ def _initializeData():
         CT_STORAGE: _('Storage')
     }
 
+
 _initializeData()

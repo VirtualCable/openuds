@@ -338,7 +338,7 @@ class GlobalConfig(object):
             for d in os.listdir(os.path.join(os.path.dirname(uds.__file__), 'templates', 'uds')):
                 if d not in ('admin', 'reports'):  # Exclude folders with own internal templates
                     themes.append(d)
-        except Exception as e:
+        except Exception:
             pass
 
         GlobalConfig.UDS_THEME.setParams(themes)
@@ -375,5 +375,6 @@ class GlobalConfig(object):
 
 
 # Context processor
+# noinspection PyUnusedLocal
 def context_processor(request):
     return {'css_path': GlobalConfig.CSS.get()}

@@ -62,7 +62,7 @@ class FileStorage(Storage):
 
         try:
             cache = caches[cacheName]
-        except:
+        except Exception:
             logger.info('No cache for FileStorage configured.')
             cache = None
 

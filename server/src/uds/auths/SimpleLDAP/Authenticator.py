@@ -408,7 +408,7 @@ class SimpleLDAPAuthenticator(Authenticator):
                     break
             if ok is False:
                 raise Exception(_('Can\'t locate any group with the membership attribute specified'))
-        except Exception:
+        except Exception as e:
             return [False, six.text_type(e)]
 
         logger.debug('LDAP group class and group id attr seems to be correct')

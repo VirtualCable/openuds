@@ -85,9 +85,9 @@ class DownloadsManager(object):
         if _id not in self._downloadables:
             logger.error('ID {0} not found in {1}!!!'.format(_id, self._downloadables))
             raise Http404
-        return self.__send_file(request, self._downloadables[_id]['name'], self._downloadables[_id]['path'], self._downloadables[_id]['mime'])
+        return self._send_file(request, self._downloadables[_id]['name'], self._downloadables[_id]['path'], self._downloadables[_id]['mime'])
 
-    def __send_file(self, request, name, filename, mime):
+    def _send_file(self, _, name, filename, mime):
         """
         Send a file through Django without loading the whole file into
         memory at once. The FileWrapper will turn the file object into an

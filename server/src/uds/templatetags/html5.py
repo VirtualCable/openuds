@@ -205,7 +205,7 @@ def ifbrowser(parser, token):
     cmd = token.split_contents()
     try:
         browsers = cmd[1:]
-    except:
+    except Exception:
         raise template.TemplateSyntaxError('{0} tag requires browsers to be checked')
 
     states = {}

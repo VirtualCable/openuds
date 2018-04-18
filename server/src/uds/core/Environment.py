@@ -185,7 +185,6 @@ class Environmentable(object):
         """
         self._env = environment
 
-
     @property
     def cache(self):
         """

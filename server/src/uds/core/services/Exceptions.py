@@ -95,6 +95,7 @@ class ServiceInMaintenanceMode(ServiceException):
     """
     pass
 
+
 class ServiceAccessDeniedByCalendar(ServiceException):
     """
     This service can't be accessed right now, probably due to date-time restrictions

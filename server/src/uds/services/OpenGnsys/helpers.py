@@ -15,6 +15,7 @@ from uds.core.ui import gui
 
 logger = logging.getLogger(__name__)
 
+
 def getResources(parameters):
     """
     This helper is designed as a callback for Project Selector
@@ -32,8 +33,8 @@ def getResources(parameters):
     images = [gui.choiceItem(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])]
 
     data = [
-        {'name': 'lab', 'values': labs },
-        {'name': 'image', 'values': images },
+        {'name': 'lab', 'values': labs},
+        {'name': 'image', 'values': images},
     ]
     logger.debug('Return data: {}'.format(data))
     return data

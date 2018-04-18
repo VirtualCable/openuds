@@ -130,17 +130,26 @@ class BaseX2GOTransport(Transport):
             {'id': '2', 'text': 'ADSL'},
             {'id': '3', 'text': 'WAN'},
             {'id': '4', 'text': 'LAN'},
-    ], tab=gui.PARAMETERS_TAB)
+        ],
+        tab=gui.PARAMETERS_TAB
+    )
 
-    soundType = gui.ChoiceField(label=_('Sound'), order=30, tooltip=_('Sound server'),
+    soundType = gui.ChoiceField(
+        label=_('Sound'),
+        order=30,
+        tooltip=_('Sound server'),
         defvalue='pulse',
         values=[
             {'id': 'pulse', 'text': 'Pulse'},
             {'id': 'esd', 'text': 'ESD'},
-        ], tab=gui.ADVANCED_TAB
+        ],
+        tab=gui.ADVANCED_TAB
     )
 
-    keyboardLayout = gui.TextField(label=_('Keyboard'), order=31, tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
+    keyboardLayout = gui.TextField(
+        label=_('Keyboard'),
+        order=31,
+        tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
         defvalue='',
         tab=gui.ADVANCED_TAB
     )

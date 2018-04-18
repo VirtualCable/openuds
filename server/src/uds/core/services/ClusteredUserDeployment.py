@@ -38,6 +38,7 @@ from uds.core.util.State import State
 __updated__ = '2014-11-11'
 
 
+# noinspection PyUnusedLocal
 class ClusteredUserDeployment(UserDeployment):
 
     def startMigration(self, dstNode):

@@ -91,6 +91,7 @@ def extractKey(dictionary, key, **kwargs):
         value = default
     return value
 
+
 _browsers = {
     'ie': [OsDetector.IExplorer],
     'opera': [OsDetector.Opera],

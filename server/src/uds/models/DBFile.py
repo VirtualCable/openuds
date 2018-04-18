@@ -65,7 +65,7 @@ class DBFile(UUIDModel):
             try:
                 self.delete()  # Autodelete, invalid...
                 pass
-            except:
+            except Exception:
                 logger.error('Could not even delete {}!!'.format(self.name))
 
             return ''

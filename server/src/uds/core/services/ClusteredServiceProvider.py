@@ -203,9 +203,9 @@ class ClusteredServiceProvider(ServiceProvider):
 
         node = None
         
-        def isInNode(n):
-            if serviceInstance.ensureExistsOnNode(n) is True:
-                node = n
+        # def isInNode(n):
+        #     if serviceInstance.ensureExistsOnNode(n) is True:
+        #         node = n
 
         pool = ThreadPool(10)
 

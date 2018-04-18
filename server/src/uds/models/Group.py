@@ -112,4 +112,5 @@ class Group(UUIDModel):
 
         logger.debug('Deleted group {0}'.format(toDelete))
 
+
 signals.pre_delete.connect(Group.beforeDelete, sender=Group)

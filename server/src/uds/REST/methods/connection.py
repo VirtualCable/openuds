@@ -221,7 +221,7 @@ class Connection(Handler):
                 return self.connection(True)
 
         if len(self._args) == 4:
-        # /connection/idService/idTransport/scrambler/hostname
+            # /connection/idService/idTransport/scrambler/hostname
             return self.script()
 
         raise RequestError('Invalid Request')

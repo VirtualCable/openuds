@@ -80,11 +80,13 @@ class HTML5RDPTransport(Transport):
     enableAudio = gui.CheckBoxField(label=_('Enable Audio'), order=24, tooltip=_('If checked, the audio will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
     enablePrinting = gui.CheckBoxField(label=_('Enable Printing'), order=25, tooltip=_('If checked, the printing will be redirected to client (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
     enableFileSharing = gui.CheckBoxField(label=_('Enable File Sharing'), order=8, tooltip=_('If checked, the user will be able to upload/download files (if client browser supports it)'), tab=gui.PARAMETERS_TAB)
-    serverLayout = gui.ChoiceField(order=26,
+    serverLayout = gui.ChoiceField(
+        order=26,
         label=_('Layout'),
         tooltip=_('Keyboards Layout of server'),
         required=True,
-        values=[ gui.choiceItem('-', 'default'),
+        values=[
+            gui.choiceItem('-', 'default'),
             gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
             gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
             gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
@@ -95,7 +97,8 @@ class HTML5RDPTransport(Transport):
         defvalue='-',
         tab=gui.PARAMETERS_TAB
     )
-    security = gui.ChoiceField(order=27,
+    security = gui.ChoiceField(
+        order=27,
         label=_('Security'),
         tooltip=_('Connection security mode for Guacamole RDP connection'),
         required=True,

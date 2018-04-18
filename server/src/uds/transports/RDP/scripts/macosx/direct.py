@@ -33,11 +33,12 @@ def onExit():
     subprocess.call(
         [
             'security',
-             'delete-generic-password',
-             '-a', sp['usernameWithDomain'],  # @UndefinedVariable
-             '-s', 'Remote Desktop Connection 2 Password for {}'.format(sp['ip']),  # @UndefinedVariable
+            'delete-generic-password',
+            '-a', sp['usernameWithDomain'],  # @UndefinedVariable
+            '-s', 'Remote Desktop Connection 2 Password for {}'.format(sp['ip']),  # @UndefinedVariable
         ]
     )
+
 
 if executable is None:
     raise Exception('''<p><b>Microsoft Remote Desktop Connection not found</b></p>
@@ -48,7 +49,8 @@ if executable is None:
         <p>You can get it from <a href="{}static/other/CoRD.pkg">this link</a></p>
     </li>
 </ul>
-<p>If both apps are installed, Remote Desktop Connection will be used as first option</p>'''.format(sp['this_server']))  # @UndefinedVariable
+<p>If both apps are installed, Remote Desktop Connection will be used as first option</p>'''.format(
+        sp['this_server']))  # @UndefinedVariable
 elif executable == msrdc:
     try:
         filename = tools.saveTempFile(sp['as_file'])  # @UndefinedVariable
