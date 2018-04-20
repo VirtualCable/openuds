@@ -32,6 +32,9 @@
 """
 from __future__ import unicode_literals
 
+import csv
+import six
+
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.db.models import Count
 import django.template.defaultfilters as filters
@@ -39,13 +42,7 @@ import django.template.defaultfilters as filters
 from uds.core.ui.UserInterface import gui
 from uds.core.util.stats import events
 
-import csv
-import six
-
-import cairo
-# import pycha.line
-# import pycha.bar
-import pycha.stackedbar
+from uds.core.reports import graphs
 
 from .base import StatsReport
 
@@ -57,10 +54,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-08'
+__updated__ = '2018-04-19'
 
 # several constants as Width height, margins, ..
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
 
 
 class PoolPerformanceReport(StatsReport):
@@ -193,11 +190,12 @@ class PoolPerformanceReport(StatsReport):
         end = self.endDate.stamp()
 
         xLabelFormat, poolsData, reportData = self.getRangeData()
+        size = (WIDTH, HEIGHT, DPI)
 
         graph1 = six.BytesIO()
         graph2 = six.BytesIO()
 
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
+        # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         options = {
             'encoding': 'utf-8',
@@ -243,9 +241,11 @@ class PoolPerformanceReport(StatsReport):
             'title': _('Users by pool'),
         }
 
-        # chart = pycha.line.LineChart(surface, options)
-        # chart = pycha.bar.VerticalBarChart(surface, options)
-        chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
+        data = {}
+
+        graphs.barChart(size, data, graph1)
+
+        # chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
 
         dataset = []
         for pool in poolsData:
@@ -255,19 +255,37 @@ class PoolPerformanceReport(StatsReport):
             dataset.append((ugettext('Users for {}').format(pool['name']), ds))
 
         logger.debug('Dataset: {}'.format(dataset))
-        chart.addDataset(dataset)
+        # chart.addDataset(dataset)
 
-        chart.render()
+        # chart.render()
 
-        surface.write_to_png(graph1)
+        # surface.write_to_png(graph1)
 
-        del chart
-        del surface  # calls finish, flushing to image
+        # del chart
+        # del surface  # calls finish, flushing to image
 
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
+        # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         # Accesses
-        chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
+        # chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
+        data = {
+            'x': [1, 2, 3, 4, 5, 6],
+            'xticks': [filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat) for l in range(start, end, int((end - start) / self.samplingPoints.num()))],
+            'xlabel': _('Date'),
+            'y': [
+                {
+                 'label': 'First',
+                 'data': [1, 2, 4, 8, 16, 32],
+                },
+                {
+                 'label': 'Second',
+                 'data': [31, 15, 7, 3, 1, 0],
+                }
+            ],
+            'ylabel': 'Data YYYYY'
+        }
+
+        graphs.barChart(size, data, graph2)
 
         dataset = []
         for pool in poolsData:
@@ -277,14 +295,14 @@ class PoolPerformanceReport(StatsReport):
             dataset.append((ugettext('Accesses for {}').format(pool['name']), ds))
 
         logger.debug('Dataset: {}'.format(dataset))
-        chart.addDataset(dataset)
+        # chart.addDataset(dataset)
 
-        chart.render()
+        # chart.render()
 
-        surface.write_to_png(graph2)
+        # surface.write_to_png(graph2)
 
-        del chart
-        del surface  # calls finish, flushing to image
+        # del chart
+        # del surface  # calls finish, flushing to image
 
         # Generate Data for pools, basically joining all pool data
 

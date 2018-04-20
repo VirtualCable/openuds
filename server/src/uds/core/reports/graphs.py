@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,11 +27,48 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
-from __future__ import unicode_literals
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import io
 
-from .BaseReport import Report
 
-__updated__ = '2018-04-19'
+def barChart(size, data, output):
+    data = {
+        'x': [1, 2, 3, 4, 5, 6],
+        'xticks': ['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis'],
+        'xlabel': 'Data X',
+        'y': [
+            {
+             'label': 'First',
+             'data': [1, 2, 4, 8, 16, 32],
+            },
+            {
+             'label': 'Second',
+             'data': [31, 15, 7, 3, 1, 0],
+            }
+        ],
+        'ylabel': 'Data YYYYY'
+    }
+
+    width = 0.35
+    fig = Figure(figsize=(size[0], size[1]), dpi=size[2])
+
+    axis = fig.add_subplot(1, 1, 1)
+
+    xs = data['x']  # x axis
+    xticks = [''] + [l for l in data['xticks']] + ['']  # Iterables
+    ys = data['y']  # List of dictionaries
+
+    bottom = [0] * len(ys[0]['data'])
+    plts = []
+    for y in ys:
+        plts.append(axis.bar(xs, y['data'], width, bottom=bottom, label=y.get('label')))
+        bottom = y['data']
+
+    axis.set_xlabel(data['xlabel'])
+    axis.set_ylabel(data['ylabel'])
+    axis.set_xticklabels(xticks)
+    axis.legend()
+
+    canvas = FigureCanvas(fig)
+    canvas.print_png(output)

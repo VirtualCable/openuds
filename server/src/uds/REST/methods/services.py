@@ -162,7 +162,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 service = parent.services.get(uuid=processUuid(item))
                 service.__dict__.update(fields)
 
-            service.tags = [Tag.objects.get_or_create(tag=val)[0] for val in tags]
+            service.tags.set([Tag.objects.get_or_create(tag=val)[0] for val in tags])
             service.proxy = proxy
 
             service.data = service.getInstance(self._params).serialize()  # This may launch an validation exception (the getInstance(...) part)
@@ -242,10 +242,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             for f in [{
                 'name': 'proxy_id',
                 'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Proxy.objects.all()]),
-                'label': ugettext('Proxy'),
-                'tooltip': ugettext('Proxy for services behind a firewall'),
+                'label': _('Proxy'),
+                'tooltip': _('Proxy for services behind a firewall'),
                 'type': gui.InputField.CHOICE_TYPE,
-                'tab': ugettext('Advanced'),
+                'tab': _('Advanced'),
                 'order': 132,
                 },
             ]:
