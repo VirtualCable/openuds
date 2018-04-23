@@ -27,47 +27,38 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-import io
+import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 def barChart(size, data, output):
-    data = {
-        'x': [1, 2, 3, 4, 5, 6],
-        'xticks': ['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis'],
-        'xlabel': 'Data X',
-        'y': [
-            {
-             'label': 'First',
-             'data': [1, 2, 4, 8, 16, 32],
-            },
-            {
-             'label': 'Second',
-             'data': [31, 15, 7, 3, 1, 0],
-            }
-        ],
-        'ylabel': 'Data YYYYY'
-    }
+    d = data['x']
+    ind = np.arange(len(d))
+    ys = data['y']
 
     width = 0.35
     fig = Figure(figsize=(size[0], size[1]), dpi=size[2])
 
-    axis = fig.add_subplot(1, 1, 1)
+    axis = fig.add_subplot(111)
+    axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
-    xs = data['x']  # x axis
-    xticks = [''] + [l for l in data['xticks']] + ['']  # Iterables
-    ys = data['y']  # List of dictionaries
-
-    bottom = [0] * len(ys[0]['data'])
-    plts = []
+    bottom = np.zeros(len(ys[0]['data']))
     for y in ys:
-        plts.append(axis.bar(xs, y['data'], width, bottom=bottom, label=y.get('label')))
-        bottom = y['data']
+        axis.bar(ind, y['data'], width, bottom=bottom, label=y.get('label'))
+        bottom += np.array(y['data'])
 
+    axis.set_title(data.get('title', ''))
     axis.set_xlabel(data['xlabel'])
     axis.set_ylabel(data['ylabel'])
-    axis.set_xticklabels(xticks)
+
+    axis.set_xticks(ind)
+    axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
+
     axis.legend()
 
     canvas = FigureCanvas(fig)

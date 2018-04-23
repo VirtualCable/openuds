@@ -194,7 +194,6 @@ class XenServer(object):
     def getTaskInfo(self, task):
         progress = 0
         result = None
-        status = 'unknown'
         destroyTask = False
         try:
             status = self.task.get_status(task)

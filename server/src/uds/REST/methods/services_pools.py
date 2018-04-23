@@ -280,17 +280,9 @@ class ServicesPools(ModelHandler):
         }, {
             'name': 'account_id',
             'values': [gui.choiceItem(-1, '')] + gui.sortedChoices([gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]),
-            'label': ugettext('Account'),
+            'label': ugettext('Accounting'),
             'tooltip': ugettext('Account associated to this service pool'),
             'type': gui.InputField.CHOICE_TYPE,
-            'tab': ugettext('Advanced'),
-            'order': 131,
-        }, {
-            'name': 'allow_users_remove',
-            'value': False,
-            'label': ugettext('Allow removal by users'),
-            'tooltip': ugettext('If active, the user will be allowed to remove the service "manually". Be care with this, because the user will have the "poser" to delete it\'s own service'),
-            'type': gui.InputField.CHECKBOX_TYPE,
             'tab': ugettext('Advanced'),
             'order': 131,
         }

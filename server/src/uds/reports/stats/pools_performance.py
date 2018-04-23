@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-04-19'
+__updated__ = '2018-04-23'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
@@ -197,112 +197,41 @@ class PoolPerformanceReport(StatsReport):
 
         # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
-        options = {
-            'encoding': 'utf-8',
-            'axis': {
-                'x': {
-                    'ticks': [
-                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat)) for i, l in enumerate(range(start, end, int((end - start) / self.samplingPoints.num())))
-                    ],
-                    'range': (0, self.samplingPoints.num()),
-                    'showLines': True,
-                },
-                'y': {
-                    'tickCount': 10,
-                    'showLines': True,
-                },
-                'tickFontSize': 16,
-            },
-            'background': {
-                'chartColor': '#f0f0f0',
-                'baseColor': '#f0f0f0',
-                'lineColor': '#187FF2'
-            },
-            'colorScheme': {
-                'name': 'gradient',
-                'args': {
-                    'initialColor': 'blue',
-                },
-            },
-            'legend': {
-                'hide': False,
-                'legendFontSize': 16,
-                'position': {
-                    'left': 96,
-                    'top': 40,
-                }
-            },
-            'padding': {
-                'left': 48,
-                'top': 16,
-                'right': 48,
-                'bottom': 48,
-            },
-            'title': _('Users by pool'),
-        }
+        # logger.debug('PoolsData: %s', poolsData)
 
-        data = {}
-
-        graphs.barChart(size, data, graph1)
-
-        # chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
-
-        dataset = []
-        for pool in poolsData:
-            logger.debug(pool['dataUsers'])
-            ds = list((i, l[1]) for i, l in enumerate(pool['dataUsers']))
-            logger.debug(ds)
-            dataset.append((ugettext('Users for {}').format(pool['name']), ds))
-
-        logger.debug('Dataset: {}'.format(dataset))
-        # chart.addDataset(dataset)
-
-        # chart.render()
-
-        # surface.write_to_png(graph1)
-
-        # del chart
-        # del surface  # calls finish, flushing to image
-
-        # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
-
-        # Accesses
-        # chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
+        X = [v[0] for v in poolsData[0]['dataUsers']]
         data = {
-            'x': [1, 2, 3, 4, 5, 6],
-            'xticks': [filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat) for l in range(start, end, int((end - start) / self.samplingPoints.num()))],
+            'title': 'Distinct Users',
+            'x': X,
+            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
             'xlabel': _('Date'),
             'y': [
                 {
-                 'label': 'First',
-                 'data': [1, 2, 4, 8, 16, 32],
-                },
-                {
-                 'label': 'Second',
-                 'data': [31, 15, 7, 3, 1, 0],
+                    'label': p['name'],
+                    'data': [v[1] + 2 for v in p['dataUsers']]
                 }
-            ],
-            'ylabel': 'Data YYYYY'
+            for p in poolsData],
+            'ylabel': 'Users'
+        }
+
+        graphs.barChart(size, data, graph1)
+
+        X = [v[0] for v in poolsData[0]['dataAccesses']]
+        data = {
+            'title': 'Accesses',
+            'x': X,
+            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
+            'xlabel': _('Date'),
+            'y': [
+                {
+                    'label': p['name'],
+                    'data': [v[1] + 2 for v in p['dataAccesses']]
+                }
+            for p in poolsData],
+            'ylabel': 'Accesses'
         }
 
         graphs.barChart(size, data, graph2)
-
-        dataset = []
-        for pool in poolsData:
-            logger.debug(pool['dataAccesses'])
-            ds = list((i, l[1]) for i, l in enumerate(pool['dataAccesses']))
-            logger.debug(ds)
-            dataset.append((ugettext('Accesses for {}').format(pool['name']), ds))
-
-        logger.debug('Dataset: {}'.format(dataset))
-        # chart.addDataset(dataset)
-
-        # chart.render()
-
-        # surface.write_to_png(graph2)
-
-        # del chart
-        # del surface  # calls finish, flushing to image
 
         # Generate Data for pools, basically joining all pool data
 
