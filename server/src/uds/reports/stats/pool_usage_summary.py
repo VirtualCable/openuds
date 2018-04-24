@@ -37,9 +37,8 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.core.ui.UserInterface import gui
 from uds.core.util.stats import events
 
-import six
+import io
 import csv
-import six
 
 from .base import StatsReport
 
@@ -50,7 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-08'
+__updated__ = '2018-04-24'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT = 1920, 1080
@@ -128,8 +127,7 @@ class UsageSummaryByPool(StatsReport):
 
         # Extract different number of users
         data = []
-        for k, v in six.iteritems(users):
-
+        for k, v in users.items():
             data.append({
                 'user': k,
                 'sessions': v['sessions'],
@@ -170,7 +168,7 @@ class UsageSummaryByPoolCSV(UsageSummaryByPool):
     endDate = UsageSummaryByPool.endDate
 
     def generate(self):
-        output = six.StringIO()
+        output = io.StringIO()
         writer = csv.writer(output)
 
         reportData, poolName = self.getData()

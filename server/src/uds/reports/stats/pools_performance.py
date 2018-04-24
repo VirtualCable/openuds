@@ -32,8 +32,10 @@
 """
 from __future__ import unicode_literals
 
+import io
 import csv
-import six
+import datetime
+import logging
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.db.models import Count
@@ -49,12 +51,9 @@ from .base import StatsReport
 from uds.core.util import tools
 from uds.models import ServicePool
 
-import datetime
-import logging
-
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-04-23'
+__updated__ = '2018-04-24'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
@@ -186,14 +185,11 @@ class PoolPerformanceReport(StatsReport):
 
     def generate(self):
         # Generate the sampling intervals and get dataUsers from db
-        start = self.startDate.stamp()
-        end = self.endDate.stamp()
-
         xLabelFormat, poolsData, reportData = self.getRangeData()
         size = (WIDTH, HEIGHT, DPI)
 
-        graph1 = six.BytesIO()
-        graph2 = six.BytesIO()
+        graph1 = io.BytesIO()
+        graph2 = io.BytesIO()
 
         # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
@@ -208,7 +204,7 @@ class PoolPerformanceReport(StatsReport):
             'y': [
                 {
                     'label': p['name'],
-                    'data': [v[1] + 2 for v in p['dataUsers']]
+                    'data': [v[1] for v in p['dataUsers']]
                 }
             for p in poolsData],
             'ylabel': 'Users'
@@ -225,7 +221,7 @@ class PoolPerformanceReport(StatsReport):
             'y': [
                 {
                     'label': p['name'],
-                    'data': [v[1] + 2 for v in p['dataAccesses']]
+                    'data': [v[1] for v in p['dataAccesses']]
                 }
             for p in poolsData],
             'ylabel': 'Accesses'
@@ -263,7 +259,7 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
     samplingPoints = PoolPerformanceReport.samplingPoints
 
     def generate(self):
-        output = six.StringIO()
+        output = io.StringIO()
         writer = csv.writer(output)
 
         reportData = self.getRangeData()[2]
