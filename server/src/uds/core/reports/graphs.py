@@ -26,6 +26,10 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# -*- coding: utf-8 -*-
+"""
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+"""
 
 import logging
 
@@ -56,10 +60,43 @@ def barChart(size, data, output):
     axis.set_xlabel(data['xlabel'])
     axis.set_ylabel(data['ylabel'])
 
-    axis.set_xticks(ind)
-    axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
+    if data.get('allTicks', True) is True:
+        axis.set_xticks(ind)
+
+    if 'xtickFnc' in data:
+        axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
 
     axis.legend()
+    FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    canvas = FigureCanvas(fig)
-    canvas.print_png(output)
+    fig.savefig(output, format='png', transparent=True)
+
+
+def lineChart(size, data, output):
+    x = data['x']
+    y = data['y']
+
+    fig = Figure(figsize=(size[0], size[1]), dpi=size[2])
+
+    axis = fig.add_subplot(111)
+    axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
+
+    for i in y:
+        yy = i['data']
+        axis.plot(x, yy, label=i.get('label'), marker='.', color='orange')
+        axis.fill_between(x, yy, 0)
+
+    axis.set_title(data.get('title', ''))
+    axis.set_xlabel(data['xlabel'])
+    axis.set_ylabel(data['ylabel'])
+
+    if data.get('allTicks', True) is True:
+        axis.set_xticks(x)
+
+    if 'xtickFnc' in data:
+        axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
+
+    axis.legend()
+    FigureCanvas(fig)  # Stores canvas on fig.canvas
+
+    fig.savefig(output, format='png', transparent=True)

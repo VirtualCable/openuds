@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,6 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 import io
 import csv
 import datetime
@@ -57,6 +55,7 @@ __updated__ = '2018-04-24'
 
 # several constants as Width height, margins, ..
 WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
+SIZE = (WIDTH, HEIGHT, DPI)
 
 
 class PoolPerformanceReport(StatsReport):
@@ -186,7 +185,6 @@ class PoolPerformanceReport(StatsReport):
     def generate(self):
         # Generate the sampling intervals and get dataUsers from db
         xLabelFormat, poolsData, reportData = self.getRangeData()
-        size = (WIDTH, HEIGHT, DPI)
 
         graph1 = io.BytesIO()
         graph2 = io.BytesIO()
@@ -197,7 +195,7 @@ class PoolPerformanceReport(StatsReport):
 
         X = [v[0] for v in poolsData[0]['dataUsers']]
         data = {
-            'title': 'Distinct Users',
+            'title': _('Distinct Users'),
             'x': X,
             'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
             'xlabel': _('Date'),
@@ -207,14 +205,14 @@ class PoolPerformanceReport(StatsReport):
                     'data': [v[1] for v in p['dataUsers']]
                 }
             for p in poolsData],
-            'ylabel': 'Users'
+            'ylabel': _('Users')
         }
 
-        graphs.barChart(size, data, graph1)
+        graphs.barChart(SIZE, data, graph1)
 
         X = [v[0] for v in poolsData[0]['dataAccesses']]
         data = {
-            'title': 'Accesses',
+            'title': _('Accesses'),
             'x': X,
             'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else '',
             'xlabel': _('Date'),
@@ -224,10 +222,10 @@ class PoolPerformanceReport(StatsReport):
                     'data': [v[1] for v in p['dataAccesses']]
                 }
             for p in poolsData],
-            'ylabel': 'Accesses'
+            'ylabel': _('Accesses')
         }
 
-        graphs.barChart(size, data, graph2)
+        graphs.barChart(SIZE, data, graph2)
 
         # Generate Data for pools, basically joining all pool data
 

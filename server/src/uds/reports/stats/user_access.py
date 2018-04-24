@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015 Virtual Cable S.L.
+# Copyright (c) 2015-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,34 +30,29 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
+import csv
+import io
+import datetime
+import logging
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 import django.template.defaultfilters as filters
 
 from uds.core.ui.UserInterface import gui
 from uds.core.util.stats import events
-
-import csv
-
-import cairo
-import pycha.line
-import pycha.bar
+from uds.core.reports import graphs
 
 from .base import StatsReport
 
 from uds.core.util import tools
 
-import datetime
-import six
-import logging
-
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-08'
+__updated__ = '2018-04-24'
 
 # several constants as Width height
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
+SIZE = (WIDTH, HEIGHT, DPI)
 
 
 class StatsReportLogin(StatsReport):
@@ -171,131 +166,62 @@ class StatsReportLogin(StatsReport):
         #
         # User access by date graph
         #
-        graph1 = six.BytesIO()
-        graph2 = six.BytesIO()
-        graph3 = six.BytesIO()
+        graph1 = io.BytesIO()
 
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
-
-        dataset = ((ugettext('Users access to UDS'), data),)
-
-        options = {
-            'encoding': 'utf-8',
-            'axis': {
-                'x': {
-                    'ticks': [
-                        dict(v=i, label=filters.date(datetime.datetime.fromtimestamp(i), xLabelFormat)) for i in range(start, end, int((end - start) / 11))
-                    ],
-                    'range': (start, end),
-                    'showLines': True,
-                },
-                'y': {
-                    'tickCount': 10,
-                    'showLines': True,
-                },
-                'tickFontSize': 16,
-            },
-            'background': {
-                'chartColor': '#f0f0f0',
-                'baseColor': '#f0f0f0',
-                'lineColor': '#187FF2'
-            },
-            'colorScheme': {
-                'name': 'rainbow',
-                'args': {
-                    'initialColor': '#B8CA16',
-                },
-            },
-            'legend': {
-                'hide': False,
-                'legendFontSize': 16,
-                'position': {
-                    'left': 48,
-                    'bottom': 8,
+        X = [v[0] for v in data]
+        d = {
+            'title': _('Users Access (global)'),
+            'x': X,
+            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat),
+            'xlabel': _('Date'),
+            'y': [
+                {
+                    'label': 'Users',
+                    'data': [v[1] for v in data]
                 }
-            },
-            'padding': {
-                'left': 48,
-                'top': 16,
-                'right': 48,
-                'bottom': 48,
-            },
-            'title': _('Users access to UDS')
+            ],
+            'ylabel': 'Users',
+            'allTicks': False
         }
 
-        chart = pycha.line.LineChart(surface, options)
-        chart.addDataset(dataset)
-        chart.render()
+        graphs.lineChart(SIZE, d, graph1)
 
-        surface.write_to_png(graph1)
-
-        del chart
-        del surface  # calls finish, flushing to image
-
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
-
-        #
-        # User access by day of week
-        #
+        graph2 = io.BytesIO()
+        graph3 = io.BytesIO()
         dataWeek, dataHour = self.getWeekHourlyData()
 
-        dataset = ((ugettext('Users access to UDS'), [(i, dataWeek[i]) for i in range(0, 7)]),)
-
-        options['axis'] = {
-            'x': {
-                'ticks': [
-                    dict(v=i, label='Day {}'.format(i)) for i in range(0, 7)
-                ],
-                'range': (0, 6),
-                'showLines': True,
-            },
-            'y': {
-                'tickCount': 10,
-                'showLines': True,
-            },
-            'tickFontSize': 16,
+        X = list(range(7))
+        d = {
+            'title': _('Users Access (by week)'),
+            'x': X,
+            'xtickFnc': lambda l: [_('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'), _('Sunday')][l],
+            'xlabel': _('Day of Week'),
+            'y': [
+                {
+                    'label': 'Users',
+                    'data': [v for v in dataWeek]
+                }
+            ],
+            'ylabel': 'Users'
         }
 
-        chart = pycha.bar.VerticalBarChart(surface, options)
-        chart.addDataset(dataset)
-        chart.render()
+        graphs.barChart(SIZE, d, graph2)
 
-        surface.write_to_png(graph2)
-
-        del chart
-        del surface  # calls finish, flushing to image
-
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
-
-        # Hourly chart
-        dataset = ((ugettext('Users access to UDS'), [(i, dataHour[i]) for i in range(0, 24)]),)
-
-        options['axis'] = {
-            'x': {
-                'ticks': [
-                    dict(v=i, label='{}:00'.format(i)) for i in range(0, 24)
-                ],
-                'range': (0, 24),
-                'showLines': True,
-            },
-            'y': {
-                'tickCount': 10,
-                'showLines': True,
-            },
-            'tickFontSize': 16,
+        X = list(range(24))
+        d = {
+            'title': _('Users Access (by hour)'),
+            'x': X,
+            'xlabel': _('Hour'),
+            'y': [
+                {
+                    'label': 'Users',
+                    'data': [v for v in dataHour]
+                }
+            ],
+            'ylabel': 'Users'
         }
 
-        chart = pycha.bar.VerticalBarChart(surface, options)
-        chart.addDataset(dataset)
-        chart.render()
-
-        surface.write_to_png(graph3)
-
-        with open('/home/dkmaster/kk/kk.png', 'wb') as f:
-            f.write(graph3.getvalue())
-
-        del chart
-        del surface  # calls finish, flushing to image
+        graphs.barChart(SIZE, d, graph3)
 
         return self.templateAsPDF(
             'uds/reports/stats/user-access.html',
