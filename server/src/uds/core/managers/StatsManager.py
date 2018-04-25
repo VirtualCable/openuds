@@ -36,7 +36,6 @@ from uds.models import StatsCounters
 from uds.models import getSqlDatetime
 from uds.models import StatsEvents
 from uds.models import optimizeTable
-from django.db import connection
 import datetime
 import time
 import six
@@ -171,6 +170,7 @@ class StatsManager(object):
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
+
             # Replaces nulls for ''
             def noneToEmpty(value):
                 return six.text_type(value) if value is not None else ''

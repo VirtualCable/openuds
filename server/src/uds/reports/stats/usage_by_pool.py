@@ -49,10 +49,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-08'
-
-# several constants as Width height, margins, ..
-WIDTH, HEIGHT = 1920, 1080
+__updated__ = '2018-04-25'
 
 
 class UsageByPool(StatsReport):

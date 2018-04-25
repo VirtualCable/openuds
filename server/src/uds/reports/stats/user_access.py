@@ -48,7 +48,7 @@ from uds.core.util import tools
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-04-24'
+__updated__ = '2018-04-25'
 
 # several constants as Width height
 WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
@@ -142,12 +142,15 @@ class StatsReportLogin(StatsReport):
 
         dataWeek = [0] * 7
         dataHour = [0] * 24
+        dataWeekHour = [[0] * 24 for _ in range(7)]
         for val in events.statsManager().getEvents(events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end):
             s = datetime.datetime.fromtimestamp(val.stamp)
             dataWeek[s.weekday()] += 1
             dataHour[s.hour] += 1
+            dataWeekHour[s.weekday()][s.hour] += 1
+            logger.debug('Data: {} {}'.format(s.weekday(), s.hour))
 
-        return dataWeek, dataHour
+        return dataWeek, dataHour, dataWeekHour
 
     def generate(self):
         # Sample query:
@@ -156,10 +159,6 @@ class StatsReportLogin(StatsReport):
         #   ' WHERE event_type = 0 and stamp >= {start} and stamp <= {end}'
         #   ' GROUP BY CEIL(stamp/(3600))'
         #   ' ORDER BY block'
-
-        # Generate the sampling intervals and get data from db
-        start = self.startDate.stamp()
-        end = self.endDate.stamp()
 
         xLabelFormat, data, reportData = self.getRangeData()
 
@@ -188,14 +187,15 @@ class StatsReportLogin(StatsReport):
 
         graph2 = io.BytesIO()
         graph3 = io.BytesIO()
-        dataWeek, dataHour = self.getWeekHourlyData()
+        graph4 = io.BytesIO()
+        dataWeek, dataHour, dataWeekHour = self.getWeekHourlyData()
 
         X = list(range(7))
         d = {
             'title': _('Users Access (by week)'),
             'x': X,
             'xtickFnc': lambda l: [_('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'), _('Sunday')][l],
-            'xlabel': _('Day of Week'),
+            'xlabel': _('Day of week'),
             'y': [
                 {
                     'label': 'Users',
@@ -223,6 +223,23 @@ class StatsReportLogin(StatsReport):
 
         graphs.barChart(SIZE, d, graph3)
 
+        X = list(range(24))
+        Y = list(range(7))
+        d = {
+            'title': _('Users Access (by hour)'),
+            'x': X,
+            'xlabel': _('Hour'),
+            'xtickFnc': lambda l: l,
+            'y': Y,
+            'ylabel': _('Day of week'),
+            'ytickFnc': lambda l: [_('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'), _('Sunday')][l],
+            'z': dataWeekHour,
+            'zlabel': _('Users')
+
+        }
+
+        graphs.surfaceChart(SIZE, d, graph4)
+
         return self.templateAsPDF(
             'uds/reports/stats/user-access.html',
             dct={
@@ -233,7 +250,7 @@ class StatsReportLogin(StatsReport):
             },
             header=ugettext('Users access to UDS'),
             water=ugettext('UDS Report for users access'),
-            images={'graph1': graph1.getvalue(), 'graph2': graph2.getvalue(), 'graph3': graph3.getvalue()},
+            images={'graph1': graph1.getvalue(), 'graph2': graph2.getvalue(), 'graph3': graph3.getvalue(), 'graph4': graph4.getvalue()},
         )
 
 
@@ -251,7 +268,7 @@ class StatsReportLoginCSV(StatsReportLogin):
     samplingPoints = StatsReportLogin.samplingPoints
 
     def generate(self):
-        output = six.StringIO()
+        output = io.StringIO()
         writer = csv.writer(output)
 
         reportData = self.getRangeData()[2]

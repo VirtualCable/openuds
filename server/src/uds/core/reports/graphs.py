@@ -35,6 +35,9 @@ import logging
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -45,8 +48,9 @@ def barChart(size, data, output):
     ind = np.arange(len(d))
     ys = data['y']
 
-    width = 0.35
+    width = 0.60
     fig = Figure(figsize=(size[0], size[1]), dpi=size[2])
+    FigureCanvas(fig)  # Stores canvas on fig.canvas
 
     axis = fig.add_subplot(111)
     axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
@@ -67,7 +71,6 @@ def barChart(size, data, output):
         axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
 
     axis.legend()
-    FigureCanvas(fig)  # Stores canvas on fig.canvas
 
     fig.savefig(output, format='png', transparent=True)
 
@@ -77,6 +80,7 @@ def lineChart(size, data, output):
     y = data['y']
 
     fig = Figure(figsize=(size[0], size[1]), dpi=size[2])
+    FigureCanvas(fig)  # Stores canvas on fig.canvas
 
     axis = fig.add_subplot(111)
     axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
@@ -97,6 +101,49 @@ def lineChart(size, data, output):
         axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
 
     axis.legend()
+
+    fig.savefig(output, format='png', transparent=True)
+
+
+def surfaceChart(size, data, output):
+    x = data['x']
+    y = data['y']
+    z = data['z']
+
+    logger.debug('X: {}'.format(x))
+    logger.debug('Y: {}'.format(y))
+    logger.debug('Z: {}'.format(z))
+
+    x, y = np.meshgrid(x, y)
+    z = np.array(z)
+
+    logger.debug('X\': {}'.format(x))
+    logger.debug('Y\': {}'.format(y))
+    logger.debug('Z\': {}'.format(z))
+
+    fig = Figure(figsize=(size[0], size[1]), dpi=size[2])
     FigureCanvas(fig)  # Stores canvas on fig.canvas
+
+    axis = fig.add_subplot(111, projection='3d')
+    # axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
+
+    if data.get('wireframe', False) is True:
+        axis.plot_wireframe(x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm)  # @UndefinedVariable
+    else:
+        axis.plot_surface(x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm)  # @UndefinedVariable
+
+    axis.set_title(data.get('title', ''))
+    axis.set_xlabel(data['xlabel'])
+    axis.set_ylabel(data['ylabel'])
+    axis.set_zlabel(data['zlabel'])
+
+    if data.get('allTicks', True) is True:
+        axis.set_xticks(data['x'])
+        axis.set_yticks(data['y'])
+
+    if 'xtickFnc' in data:
+        axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
+    if 'ytickFnc' in data:
+        axis.set_yticklabels([data['ytickFnc'](v) for v in axis.get_yticks()])
 
     fig.savefig(output, format='png', transparent=True)
