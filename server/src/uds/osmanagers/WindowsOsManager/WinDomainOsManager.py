@@ -141,10 +141,10 @@ class WinDomainOsManager(WindowsOsManager):
         return res[0][0]  # Returns the DN
 
     def __getMachine(self, l, machineName):
-        if self._ou:
-            ou = self._ou
-        else:
-            ou = ','.join(['DC=' + i for i in self._domain.split('.')])
+        # if self._ou:
+        #    ou = self._ou
+        # else:
+        ou = ','.join(['DC=' + i for i in self._domain.split('.')])
 
         fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(machineName)
         res = l.search_ext_s(base=ou, scope=ldap.SCOPE_SUBTREE, filterstr=fltr, attrlist=[b'dn'])
@@ -247,7 +247,6 @@ class WinDomainOsManager(WindowsOsManager):
         if self._group != '':
             if self.__getGroup(l) is None:
                 return _('Check Error: group "{}" not found (using "cn" to locate it)').format(self._group)
-
 
         return _('Server check was successful')
 
