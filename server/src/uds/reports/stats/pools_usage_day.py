@@ -30,35 +30,28 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from uds.core.ui.UserInterface import gui
 from uds.core.util.stats import counters
 
-import six
 import csv
+import io
+import datetime
+import logging
 
 from .base import StatsReport
 
 from uds.models import ServicePool
-
-import cairo
-# import pycha.line
-# import pycha.bar
-import pycha.stackedbar
-
-import datetime
-import logging
-import six
+from uds.core.reports import graphs
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-08'
+__updated__ = '2018-04-25'
 
 # several constants as Width height, margins, ..
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT, DPI = 19.2, 10.8, 100
+SIZE = (WIDTH, HEIGHT, DPI)
 
 
 class CountersPoolAssigned(StatsReport):
@@ -108,7 +101,7 @@ class CountersPoolAssigned(StatsReport):
 
             hours = {}
             for i in range(24):
-                hours[i] = 0
+                hours[i] = i * i
 
             for x in counters.getCounters(pool, counters.CT_ASSIGNED, since=start, to=end, limit=24, use_max=True, all=False):
                 hour = x[0].hour
@@ -125,76 +118,24 @@ class CountersPoolAssigned(StatsReport):
     def generate(self):
         items = self.getData()
 
-        graph1 = six.BytesIO()
+        graph1 = io.BytesIO()
 
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
-
-        options = {
-            'encoding': 'utf-8',
-            'axis': {
-                'x': {
-                    'ticks': [
-                        dict(v=i, label='{:02d}'.format(i)) for i in range(24)
-                    ],
-                    'range': (0, 23),
-                    'showLines': True,
-                },
-                'y': {
-                    'tickCount': 10,
-                    'showLines': True,
-                },
-                'tickFontSize': 16,
-            },
-            'background': {
-                'chartColor': '#f0f0f0',
-                'baseColor': '#f0f0f0',
-                'lineColor': '#187FF2'
-            },
-            'colorScheme': {
-                'name': 'gradient',
-                'args': {
-                    'initialColor': 'blue',
-                },
-            },
-            'legend': {
-                'hide': False,
-                'legendFontSize': 16,
-                'position': {
-                    'left': 96,
-                    'top': 40,
-                }
-            },
-            'padding': {
-                'left': 48,
-                'top': 16,
-                'right': 48,
-                'bottom': 48,
-            },
+        X = list(range(24))
+        d = {
             'title': _('Services by hour'),
+            'x': X,
+            'xtickFnc': lambda l: '{:02d}'.format(l),
+            'xlabel': _('Hour'),
+            'y': [
+                {
+                    'label': i['name'],
+                    'data': [i['hours'][v] for v in X]
+                } for i in items
+            ],
+            'ylabel': 'Services'
         }
 
-        # chart = pycha.line.LineChart(surface, options)
-        # chart = pycha.bar.VerticalBarChart(surface, options)
-        chart = pycha.stackedbar.StackedVerticalBarChart(surface, options)
-
-        dataset = []
-        for pool in items:
-            logger.debug(pool['hours'])
-            ds = list((i, pool['hours'][i]) for i in range(24))
-            # logger.debug(ds)
-            dataset.append((ugettext('Services for {}').format(pool['name']), ds))
-
-        # logger.debug('Dataset: {}'.format(dataset))
-        chart.addDataset(dataset)
-
-        chart.render()
-
-        surface.write_to_png(graph1)
-
-        del chart
-        del surface  # calls finish, flushing to image
-
-        logger.debug('Items: {}'.format(items))
+        graphs.barChart(SIZE, d, graph1)
 
         return self.templateAsPDF(
             'uds/reports/stats/pools-usage-day.html',
@@ -220,7 +161,7 @@ class CountersPoolAssignedCSV(CountersPoolAssigned):
     pools = CountersPoolAssigned.pools
 
     def generate(self):
-        output = six.StringIO()
+        output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow([ugettext('Pool'), ugettext('Hour'), ugettext('Services')])
 
