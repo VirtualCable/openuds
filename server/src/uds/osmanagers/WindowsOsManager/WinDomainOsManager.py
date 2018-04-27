@@ -122,10 +122,10 @@ class WinDomainOsManager(WindowsOsManager):
         return obj['dn']  # Returns the DN
 
     def __getMachine(self, l, machineName):
-        if self._ou:
-            base = self._ou
-        else:
-            base = ','.join(['DC=' + i for i in self._domain.split('.')])
+        # if self._ou:
+        #     base = self._ou
+        # else:
+        base = ','.join(['DC=' + i for i in self._domain.split('.')])
 
         fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(ldaputil.escape(machineName))
         try:
@@ -160,13 +160,13 @@ class WinDomainOsManager(WindowsOsManager):
                 # #
                 # Direct LDAP operation "modify", maybe this need to be added to ldaputil? :)
                 # #
-                l.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))
+                l.modify_s(group, ((ldap.MOD_ADD, 'member', machine),))  # @UndefinedVariable
                 error = None
                 break
             except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
                 logger.warning('Could not find _ldap._tcp.' + self._domain)
                 log.doLog(userService, log.WARN, "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(self._domain), log.OSMANAGER)
-            except ldap.ALREADY_EXISTS:
+            except ldap.ALREADY_EXISTS:  # @UndefinedVariable
                 # Already added this machine to this group, pass
                 error = None
                 break
@@ -230,7 +230,7 @@ class WinDomainOsManager(WindowsOsManager):
             return [False, str(e)]
 
         try:
-            l.search_st(self._ou, ldap.SCOPE_BASE)
+            l.search_st(self._ou, ldap.SCOPE_BASE)  # @UndefinedVariable
         except ldaputil.LDAPError as e:
             return _('Check error: {0}').format(self.__getLdapError(e))
 
@@ -258,7 +258,7 @@ class WinDomainOsManager(WindowsOsManager):
                 ou = 'cn=Computers,dc=' + ',dc='.join(wd._domain.split('.'))
 
             logger.debug('Checking {0} with ou {1}'.format(wd._domain, ou))
-            r = l.search_st(ou, ldap.SCOPE_BASE)
+            r = l.search_st(ou, ldap.SCOPE_BASE)  # @UndefinedVariable
             logger.debug('Result of search: {0}'.format(r))
 
         except ldaputil.LDAPError:
