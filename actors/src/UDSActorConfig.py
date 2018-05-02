@@ -33,6 +33,7 @@
 from __future__ import unicode_literals
 
 import sys
+import os
 from PyQt4 import QtCore, QtGui
 import six
 
@@ -93,6 +94,11 @@ class UDSConfigDialog(QtGui.QDialog):
         self.close()
 
 if __name__ == "__main__":
+
+    # If to be run as "sudo" on linux, we will need this to avoid problems
+    if 'linux' in sys.platform:
+        os.environ['QT_X11_NO_MITSHM'] = '1'
+
     app = QtGui.QApplication(sys.argv)
 
     if store.checkPermissions() is False:
