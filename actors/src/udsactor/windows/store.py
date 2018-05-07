@@ -32,9 +32,12 @@
 from __future__ import unicode_literals
 
 from win32com.shell import shell  # @UnresolvedImport, pylint: disable=import-error
-import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
+try:
+    import _winreg as wreg  # @UnresolvedImport, pylint: disable=import-error
+except Exception: # Python3
+    import winreg as wreg
 import win32security  # @UnresolvedImport, pylint: disable=import-error
-import cPickle
+import pickle
 
 DEBUG = False
 
@@ -78,7 +81,7 @@ def readConfig():
         key = wreg.OpenKey(baseKey, path, 0, wreg.KEY_QUERY_VALUE)  # @UndefinedVariable
         data, _ = wreg.QueryValueEx(key, '')  # @UndefinedVariable
         wreg.CloseKey(key)  # @UndefinedVariable
-        return cPickle.loads(decoder(data))
+        return pickle.loads(decoder(data))
     except Exception:
         return None
 
@@ -90,7 +93,7 @@ def writeConfig(data, fixPermissions=True):
         if fixPermissions is True:
             fixRegistryPermissions(key.handle)
 
-    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(cPickle.dumps(data)))  # @UndefinedVariable
+    wreg.SetValueEx(key, "", 0, wreg.REG_BINARY, encoder(pickle.dumps(data)))  # @UndefinedVariable
     wreg.CloseKey(key)  # @UndefinedVariable
 
 def useOldJoinSystem():

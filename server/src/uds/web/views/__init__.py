@@ -43,6 +43,6 @@ from ..errors import error
 from .images import image
 from .file_storage import file_storage
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-05-04'
 
 logger = logging.getLogger(__name__)

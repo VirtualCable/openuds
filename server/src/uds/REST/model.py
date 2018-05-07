@@ -54,7 +54,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-01'
+__updated__ = '2018-05-07'
 
 # a few constants
 OVERVIEW = 'overview'
@@ -412,7 +412,7 @@ class DetailHandler(BaseModelHandler):  # pylint: disable=abstract-class-not-use
         item = None
         if len(self._args) == 1:
             item = self._args[0]
-        else:
+        elif len(self._args) > 1:  # PUT expects 0 or 1 parameters. 0 == NEW, 1 = EDIT
             self.invalidRequestException()
 
         logger.debug('Invoking proper saving detail item {}'.format(item))

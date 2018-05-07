@@ -34,10 +34,11 @@ from __future__ import unicode_literals
 import servicemanager  # @UnresolvedImport, pylint: disable=import-error
 import logging
 import os
+import six
 import tempfile
 
 # Valid logging levels, from UDS Broker (uds.core.utils.log)
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in xrange(6))
+OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (10000 * (x + 1) for x in six.moves.xrange(6))
 
 
 class LocalLogger(object):

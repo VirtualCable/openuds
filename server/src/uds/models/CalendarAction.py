@@ -58,10 +58,14 @@ CALENDAR_ACTION_CACHE_L1 = {'id': 'CACHEL1', 'description': _('Set cache size'),
 CALENDAR_ACTION_CACHE_L2 = {'id': 'CACHEL2', 'description': _('Set L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1'},)}
 CALENDAR_ACTION_INITIAL = {'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services'), 'default': '1'},)}
 CALENDAR_ACTION_MAX = {'id': 'MAX', 'description': _('Set maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10'},)}
+CALENDAR_ACTION_ADD_TRANSPORT = {'id': 'ADD_TRANSPORT', 'description': _('Add a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Transport to add'), 'default': ''},)}
+CALENDAR_ACTION_DEL_TRANSPORT = {'id': 'REMOVE_TRANSPORT', 'description': _('Remove a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Trasport to remove'), 'default': ''},)}
 
 CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (
     CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
-    CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX
+    CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL,
+    CALENDAR_ACTION_MAX, CALENDAR_ACTION_ADD_TRANSPORT,
+    CALENDAR_ACTION_DEL_TRANSPORT
 )))
 
 
@@ -106,6 +110,9 @@ class CalendarAction(UUIDModel):
         elif CALENDAR_ACTION_PUBLISH['id'] == self.action:
             self.service_pool.publish(changeLog='Scheduled publication action')
             saveServicePool = False
+        elif CALENDAR_ACTION_ADD_TRANSPORT['id'] == self.action:
+            # TODO: Insert transport
+            pass
 
         # On save, will regenerate nextExecution
         if save:

@@ -1,9 +1,10 @@
 readParamsFromInputs = (modalId) ->
   a = {}
-  a[$(v).attr('name')] = $(v).val() for v in $(modalId + ' .action_parameters')
+  for v in $(modalId + ' select.action_parameters,input.action_parameters')
+    a[$(v).attr('name')] = $(v).val()
   return a
 
-actionSelectChangeFnc = (modalId, actionsList) ->
+actionSelectChangeFnc = (modalId, actionsList, context) ->
   gui.doLog "onChange"
   action = $(modalId + " #id_action_select").val()
   if action == '-1'
@@ -14,11 +15,25 @@ actionSelectChangeFnc = (modalId, actionsList) ->
       if i['params'].length > 0
         html = ''
         for j in i['params']
-          html += '<div class="form-group"><label for="fld_' + j['name'] +
-                  '" class="col-sm-3 control-label">' + j['description'] +
-                  '</label><div class="col-sm-9"><input type="' + j['type'] +
-                  '" class="action_parameters" name="' + j['name'] +
-                  '" value="' + j['default'] + '"></div></div>'
+          if j['type'] == 'transport'
+            html += '<div class="form-group"><label for="fld_' + j['name'] +
+                    '" class="col-sm-3 control-label">' + j['description'] +
+                    '</label><div class="col-sm-9"><select class="selectpicker show-menu-arrow show-tick action_parameters"' +
+                    '  name="' + j['name'] + '" data-style="btn-default" data-width="100%" data-live-search="true">';
+            # Add transports
+            for k in context['transports']
+              html += '<option value="' + k['id'] + '"'
+              if k['id'] == j['default']
+                html += ' selected'
+              html += '>' + k['name'] + '</option>'
+
+            html += '</div></div>'
+          else
+            html += '<div class="form-group"><label for="fld_' + j['name'] +
+                    '" class="col-sm-3 control-label">' + j['description'] +
+                    '</label><div class="col-sm-9"><input type="' + j['type'] +
+                    '" class="action_parameters" name="' + j['name'] +
+                    '" value="' + j['default'] + '"></div></div>'
         $(modalId + " #parameters").html(html)
         gui.tools.applyCustoms modalId
   return
@@ -86,38 +101,41 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
 
       api.templates.get "pool_add_action", (tmpl) ->
         api.calendars.overview (data) ->
-          api.servicesPools.actionsList servPool.id, (actionsList) ->
-            modalId = gui.launchModal(gettext("Add scheduled action"), api.templates.evaluate(tmpl,
-              calendars: data
-              calendarId: ''
-              actionsList: actionsList
-              action: ''
-              eventsOffset: 0
-              atStart: true
-            ))
-            $(modalId + " .button-accept").on "click", (event) ->
-              offset = $(modalId + " #id_offset").val()
-              calendar = $(modalId + " #id_calendar_select").val()
-              action = $(modalId + " #id_action_select").val()
-              atStart = $(modalId + " #atStart_field").is(":checked")
-              actionsCalendars.rest.create
-                calendarId: calendar
-                action: action
-                eventsOffset: offset
-                atStart: atStart
-                action: action
-                params: readParamsFromInputs(modalId)
+          api.transports.overview (trans) ->
+            api.servicesPools.actionsList servPool.id, (actionsList) ->
+              modalId = gui.launchModal(gettext("Add scheduled action"), api.templates.evaluate(tmpl,
+                calendars: data
+                calendarId: ''
+                actionsList: actionsList
+                action: ''
+                eventsOffset: 0
+                atStart: true
+              ))
+              
+              $(modalId + " .button-accept").on "click", (event) ->
+                offset = $(modalId + " #id_offset").val()
+                calendar = $(modalId + " #id_calendar_select").val()
+                action = $(modalId + " #id_action_select").val()
+                atStart = $(modalId + " #atStart_field").is(":checked")
+                actionsCalendars.rest.create
+                  calendarId: calendar
+                  action: action
+                  eventsOffset: offset
+                  atStart: atStart
+                  action: action
+                  params: readParamsFromInputs(modalId)
 
-              , (data) ->
-                $(modalId).modal "hide"
-                refreshFnc()
+                , (data) ->
+                  $(modalId).modal "hide"
+                  refreshFnc()
+                  return
+
                 return
-
+              $(modalId + ' #id_action_select').on "change", (event) ->
+                actionSelectChangeFnc(modalId, actionsList, {'transports': trans })
+              # Makes form "beautyfull" :-)
+              gui.tools.applyCustoms modalId
               return
-            $(modalId + ' #id_action_select').on "change", (event) ->
-              actionSelectChangeFnc(modalId, actionsList)
-            # Makes form "beautyfull" :-)
-            gui.tools.applyCustoms modalId
             return
           return
         return
@@ -138,43 +156,44 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
                       gui.doLog 'Setting value'
                       k['default'] = item.params[j]
 
-            api.calendars.overview (data) ->
-              gui.doLog "Item: ", item
-              modalId = gui.launchModal(gettext("Edit access calendar"), api.templates.evaluate(tmpl,
-                calendars: data
-                calendarId: item.calendarId
-                actionsList: actionsList
-                action: item.action
-                eventsOffset: item.eventsOffset
-                atStart: item.atStart
-              ))
-              $(modalId + " .button-accept").on "click", (event) ->
-                offset = $(modalId + " #id_offset").val()
-                calendar = $(modalId + " #id_calendar_select").val()
-                action = $(modalId + " #id_action_select").val()
-                atStart = $(modalId + " #atStart_field").is(":checked")
-                actionsCalendars.rest.save
-                  id: item.id
-                  calendarId: calendar
-                  action: action
-                  eventsOffset: offset
-                  atStart: atStart
-                  action: action
-                  params: readParamsFromInputs(modalId)
-                , (data) ->
-                  $(modalId).modal "hide"
-                  refreshFnc()
+            api.transports.overview (trans) ->
+              api.calendars.overview (data) ->
+                gui.doLog "Item: ", item
+                modalId = gui.launchModal(gettext("Edit access calendar"), api.templates.evaluate(tmpl,
+                  calendars: data
+                  calendarId: item.calendarId
+                  actionsList: actionsList
+                  action: item.action
+                  eventsOffset: item.eventsOffset
+                  atStart: item.atStart
+                ))
+                $(modalId + " .button-accept").on "click", (event) ->
+                  offset = $(modalId + " #id_offset").val()
+                  calendar = $(modalId + " #id_calendar_select").val()
+                  action = $(modalId + " #id_action_select").val()
+                  atStart = $(modalId + " #atStart_field").is(":checked")
+                  actionsCalendars.rest.save
+                    id: item.id
+                    calendarId: calendar
+                    action: action
+                    eventsOffset: offset
+                    atStart: atStart
+                    action: action
+                    params: readParamsFromInputs(modalId)
+                  , (data) ->
+                    $(modalId).modal "hide"
+                    refreshFnc()
+                    return
                   return
-                return
-              $(modalId + ' #id_action_select').on "change", (event) ->
-                actionSelectChangeFnc(modalId, actionsList)
+                $(modalId + ' #id_action_select').on "change", (event) ->
+                  actionSelectChangeFnc(modalId, actionsList, {'transports': trans })
 
-              # Triggers the event manually
-              actionSelectChangeFnc(modalId, actionsList)
-              # Makes form "beautyfull" :-)
-              gui.tools.applyCustoms modalId
+                # Triggers the event manually
+                actionSelectChangeFnc(modalId, actionsList)
+                # Makes form "beautyfull" :-)
+                gui.tools.applyCustoms modalId
+                return
               return
-            return
           return
         return
 

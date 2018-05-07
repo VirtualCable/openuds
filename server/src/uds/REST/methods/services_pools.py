@@ -34,7 +34,15 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
-from uds.models.CalendarAction import CALENDAR_ACTION_INITIAL, CALENDAR_ACTION_MAX, CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_PUBLISH
+from uds.models.CalendarAction import (
+    CALENDAR_ACTION_INITIAL,
+    CALENDAR_ACTION_MAX,
+    CALENDAR_ACTION_CACHE_L1,
+    CALENDAR_ACTION_CACHE_L2,
+    CALENDAR_ACTION_PUBLISH,
+    CALENDAR_ACTION_ADD_TRANSPORT,
+    CALENDAR_ACTION_DEL_TRANSPORT,
+)
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
 from uds.core.util.model import processUuid
@@ -412,4 +420,6 @@ class ServicesPools(ModelHandler):
         if itemInfo.publicationType is not None:
             validActions += (CALENDAR_ACTION_PUBLISH,)
 
+        # Transport actions
+        validActions += (CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT)
         return validActions
