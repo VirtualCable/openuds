@@ -1,4 +1,3 @@
-ujson
 xml_marshaller
 six
 pycrypto
@@ -13,3 +12,4 @@ MySQL-python
 reportlab
 bitarray
 paramiko
+Django==1.9.9
