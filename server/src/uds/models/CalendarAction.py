@@ -38,10 +38,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from uds.models.Calendar import Calendar
 from uds.models.UUIDModel import UUIDModel
-from uds.models.Util import NEVER, getSqlDatetime
+from uds.models.Util import getSqlDatetime
 from uds.core.util import calendar
 from uds.models.ServicesPool import ServicePool
-from django.utils.encoding import python_2_unicode_compatible
+from uds.models.Transport import Transport
 # from django.utils.translation import ugettext_lazy as _, ugettext
 
 import datetime
@@ -69,7 +69,6 @@ CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (
 )))
 
 
-@python_2_unicode_compatible
 class CalendarAction(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     service_pool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
@@ -111,8 +110,17 @@ class CalendarAction(UUIDModel):
             self.service_pool.publish(changeLog='Scheduled publication action')
             saveServicePool = False
         elif CALENDAR_ACTION_ADD_TRANSPORT['id'] == self.action:
-            # TODO: Insert transport
-            pass
+            try:
+                t = Transport.objects.get(uuid=params['transport'])
+                self.service_pool.transports.add(t)
+            except Exception:
+                self.service_pool.log('Scheduled action not executed because transport is not available anymore')
+        elif CALENDAR_ACTION_DEL_TRANSPORT['id'] == self.action:
+            try:
+                t = Transport.objects.get(uuid=params['transport'])
+                self.service_pool.transports.remove(t)
+            except Exception:
+                self.service_pool.log('Scheduled action not executed because transport is not available anymore')
 
         # On save, will regenerate nextExecution
         if save:

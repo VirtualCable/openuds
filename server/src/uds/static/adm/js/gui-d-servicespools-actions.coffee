@@ -5,7 +5,6 @@ readParamsFromInputs = (modalId) ->
   return a
 
 actionSelectChangeFnc = (modalId, actionsList, context) ->
-  gui.doLog "onChange"
   action = $(modalId + " #id_action_select").val()
   if action == '-1'
     return
@@ -42,66 +41,77 @@ actionSelectChangeFnc = (modalId, actionsList, context) ->
 gui.servicesPools.actionsCalendars = (servPool, info) ->
   actionsApi = api.servicesPools.detail(servPool.id, "actions", { permission: servPool.permission })
   actionsCalendars = new GuiElement(actionsApi, "actions")
-  actionsCalendarsTable = actionsCalendars.table(
-    doNotLoadData: true
-    icon: 'assigned'
-    container: "actions-placeholder"
-    rowSelect: "multi"
-    buttons: [
-      "new"
-      "edit"
-      {
-        text: gettext("Launch Now")
-        css: "disabled"
-        disabled: true
-        click: (val, value, btn, tbl, refreshFnc) ->
-          if val.length != 1
+  # Get transports
+  api.transports.overview (oTrans) ->
+    dctTrans = {}
+    trans = []
+    # Keep only valid transports for this service pool
+    for t in oTrans
+        if (t.protocol in servPool.info.allowedProtocols)
+          trans.push(t)
+          dctTrans[t.id] = t.name
+
+    # Now we create the table
+    actionsCalendarsTable = actionsCalendars.table(
+      doNotLoadData: true
+      icon: 'assigned'
+      container: "actions-placeholder"
+      rowSelect: "multi"
+      buttons: [
+        "new"
+        "edit"
+        {
+          text: gettext("Launch Now")
+          css: "disabled"
+          disabled: true
+          click: (val, value, btn, tbl, refreshFnc) ->
+            if val.length != 1
+              return
+
+            gui.forms.confirmModal gettext("Execute action"), gettext("Launch action execution right now?"),
+              onYes: ->
+                actionsApi.invoke val[0].id + "/execute", ->
+                  refreshFnc()
+                  return
             return
 
-          gui.doLog val, val[0]
-          gui.forms.confirmModal gettext("Execute action"), gettext("Launch action execution right now?"),
-            onYes: ->
-              actionsApi.invoke val[0].id + "/execute", ->
-                refreshFnc()
-                return
-          return
+          select: (vals, self, btn, tbl, refreshFnc) ->
+            unless vals.length == 1
+              $(btn).addClass "disabled"
+              $(btn).prop('disabled', true)
+              return
 
-        select: (vals, self, btn, tbl, refreshFnc) ->
-          unless vals.length == 1
-            $(btn).addClass "disabled"
-            $(btn).prop('disabled', true)
+            val = vals[0]
+
+            $(btn).removeClass("disabled").prop('disabled', false)
+            # $(btn).addClass("disabled").prop('disabled', true)
             return
+        }
+        "delete"
+        "xls"
+      ]
 
-          val = vals[0]
+      onCheck: (action, selected) ->
+        if action == 'edit'
+          return true
+        for v in selected
+          if v.id == -1
+            return false  # No action allowed on DEFAULT
 
-          $(btn).removeClass("disabled").prop('disabled', false)
-          # $(btn).addClass("disabled").prop('disabled', true)
-          return
-      }
-      "delete"
-      "xls"
-    ]
-
-    onCheck: (action, selected) ->
-      if action == 'edit'
         return true
-      for v in selected
-        if v.id == -1
-          return false  # No action allowed on DEFAULT
 
-      return true
+      onData: (data) ->
+        $.each data, (index, value) ->
+          for k in Object.keys(value.params)
+            if k == 'transport'
+              value.params[k] = dctTrans[value.params[k]]
+          value.params = ( k + "=" + value.params[k] for k in Object.keys(value.params)).toString()
+          value.atStart = if value.atStart then gettext('Beginning') else gettext('Ending')
+          value.calendar = gui.fastLink(value.calendar, value.calendarId, 'gui.servicesPools.fastLink', 'goCalendarLink')
 
-    onData: (data) ->
-      $.each data, (index, value) ->
-        value.params = ( k + "=" + value.params[k] for k in Object.keys(value.params)).toString()
-        value.atStart = if value.atStart then gettext('Beginning') else gettext('Ending')
-        value.calendar = gui.fastLink(value.calendar, value.calendarId, 'gui.servicesPools.fastLink', 'goCalendarLink')
-
-    onNew: (value, table, refreshFnc) ->
-
-      api.templates.get "pool_add_action", (tmpl) ->
-        api.calendars.overview (data) ->
-          api.transports.overview (trans) ->
+      onNew: (value, table, refreshFnc) ->
+        api.templates.get "pool_add_action", (tmpl) ->
+          api.calendars.overview (data) ->
             api.servicesPools.actionsList servPool.id, (actionsList) ->
               modalId = gui.launchModal(gettext("Add scheduled action"), api.templates.evaluate(tmpl,
                 calendars: data
@@ -139,26 +149,19 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
             return
           return
         return
-      return
 
-    onEdit: (value, event, table, refreshFnc) ->
-      api.templates.get "pool_add_action", (tmpl) ->
-        api.servicesPools.actionsList servPool.id, (actionsList) ->
-          actionsCalendars.rest.item value.id, (item) ->
-            for i in actionsList
-              if i['id'] == item.action
-                gui.doLog "Found ", i
-                for j in Object.keys(item.params)
-                  gui.doLog "Testing ", j
-                  for k in i['params']
-                    gui.doLog 'Checking ', k
-                    if k['name'] == j
-                      gui.doLog 'Setting value'
-                      k['default'] = item.params[j]
+      onEdit: (value, event, table, refreshFnc) ->
+        api.templates.get "pool_add_action", (tmpl) ->
+          api.servicesPools.actionsList servPool.id, (actionsList) ->
+            actionsCalendars.rest.item value.id, (item) ->
+              for i in actionsList
+                if i['id'] == item.action
+                  for j in Object.keys(item.params)
+                    for k in i['params']
+                      if k['name'] == j
+                        k['default'] = item.params[j]
 
-            api.transports.overview (trans) ->
               api.calendars.overview (data) ->
-                gui.doLog "Item: ", item
                 modalId = gui.launchModal(gettext("Edit access calendar"), api.templates.evaluate(tmpl,
                   calendars: data
                   calendarId: item.calendarId
@@ -189,15 +192,15 @@ gui.servicesPools.actionsCalendars = (servPool, info) ->
                   actionSelectChangeFnc(modalId, actionsList, {'transports': trans })
 
                 # Triggers the event manually
-                actionSelectChangeFnc(modalId, actionsList)
+                actionSelectChangeFnc(modalId, actionsList, {'transports': trans })
                 # Makes form "beautyfull" :-)
                 gui.tools.applyCustoms modalId
                 return
               return
+            return
           return
         return
-
-    onDelete: gui.methods.del(actionsCalendars, gettext("Remove access calendar"), gettext("Access calendar removal error"))
-  )
+      onDelete: gui.methods.del(actionsCalendars, gettext("Remove access calendar"), gettext("Access calendar removal error"))
+    )
 
   return [actionsCalendarsTable]

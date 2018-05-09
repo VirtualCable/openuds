@@ -63,7 +63,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-05-09'
 
 logger = logging.getLogger(__name__)
 
@@ -481,6 +481,10 @@ class DeployedService(UUIDModel, TaggingMixin):
 
     def testServer(self, host, port, timeout=4):
         return self.service.testServer(host, port, timeout)
+
+    # Utility for logging
+    def log(self, message, level=log.INFO):
+        log.doLog(self, level, message, log.INTERNAL)
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

@@ -37,7 +37,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
-
 from uds.models import CalendarAccess, CalendarAction, Calendar
 from uds.models.CalendarAction import CALENDAR_ACTION_DICT
 from uds.core.util.State import State
@@ -60,6 +59,7 @@ class AccessCalendars(DetailHandler):
     """
     Processes the transports detail requests of a Service Pool
     """
+
     @staticmethod
     def as_dict(item):
         return {
@@ -79,7 +79,6 @@ class AccessCalendars(DetailHandler):
                 return AccessCalendars.as_dict(i)
         except Exception:
             self.invalidItemException()
-
 
     def getTitle(self, parent):
         return _('Access restrictions by calendar')
@@ -123,15 +122,17 @@ class ActionsCalendars(DetailHandler):
 
     @staticmethod
     def as_dict(item):
+        action = CALENDAR_ACTION_DICT[item.action]
+        params = json.loads(item.params)
         return {
             'id': item.uuid,
             'calendarId': item.calendar.uuid,
             'calendar': item.calendar.name,
             'action': item.action,
-            'actionDescription':  CALENDAR_ACTION_DICT[item.action]['description'],
+            'actionDescription':  action['description'],
             'atStart': item.at_start,
             'eventsOffset': item.events_offset,
-            'params': json.loads(item.params),
+            'params': params,
             'nextExecution': item.next_execution,
             'lastExecution': item.last_execution
         }
