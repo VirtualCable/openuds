@@ -209,10 +209,7 @@ class WinDomainOsManager(WindowsOsManager):
             res = self.__getMachine(l, service.friendly_name)
             if res is None:
                 raise Exception('Machine {} not found on AD (permissions?)'.format(service.friendly_name))
-            # #
-            # Direct LDAP operation "modify", maybe this need to be added to ldaputil? :)
-            # #
-            l.delete_s(res)  # Remove by DN, SYNC
+            ldaputil.recursive_delete(l, res)
         except IndexError:
             logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, self._ou))
         except Exception:

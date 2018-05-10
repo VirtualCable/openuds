@@ -169,3 +169,15 @@ def getFirst(con, base, objectClass, field, value, attributes=None, sizeLimit=50
 
     return obj
 
+
+# Recursive delete
+def recursive_delete(con, base_dn):
+    search = con.search_s(base_dn, ldap.SCOPE_ONELEVEL)
+
+    for dn, _ in search:
+        # recursive_delete(conn, dn)
+        # RIGHT NOW IS NOT RECURSIVE, JUST 1 LEVEL BELOW!!!
+        con.delete_s(dn)
+
+    con.delete_s(base_dn)
+
