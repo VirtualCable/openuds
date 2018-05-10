@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016 Virtual Cable S.L.
+# Copyright (c) 2016-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -39,9 +39,10 @@ from django.db import models
 from uds.models.Calendar import Calendar
 from uds.models.UUIDModel import UUIDModel
 from uds.models.Util import getSqlDatetime
-from uds.core.util import calendar
+from uds.core.util import (calendar, log)
 from uds.models.ServicesPool import ServicePool
 from uds.models.Transport import Transport
+from uds.models.Authenticator import Authenticator
 # from django.utils.translation import ugettext_lazy as _, ugettext
 
 import datetime
@@ -58,14 +59,17 @@ CALENDAR_ACTION_CACHE_L1 = {'id': 'CACHEL1', 'description': _('Set cache size'),
 CALENDAR_ACTION_CACHE_L2 = {'id': 'CACHEL2', 'description': _('Set L2 cache size'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Cache L2 size'), 'default': '1'},)}
 CALENDAR_ACTION_INITIAL = {'id': 'INITIAL', 'description': _('Set initial services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Initial services'), 'default': '1'},)}
 CALENDAR_ACTION_MAX = {'id': 'MAX', 'description': _('Set maximum number of services'), 'params': ({'type': 'numeric', 'name': 'size', 'description': _('Maximum services'), 'default': '10'},)}
-CALENDAR_ACTION_ADD_TRANSPORT = {'id': 'ADD_TRANSPORT', 'description': _('Add a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Transport to add'), 'default': ''},)}
-CALENDAR_ACTION_DEL_TRANSPORT = {'id': 'REMOVE_TRANSPORT', 'description': _('Remove a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Trasport to remove'), 'default': ''},)}
+CALENDAR_ACTION_ADD_TRANSPORT = {'id': 'ADD_TRANSPORT', 'description': _('Add a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Transport'), 'default': ''},)}
+CALENDAR_ACTION_DEL_TRANSPORT = {'id': 'REMOVE_TRANSPORT', 'description': _('Remove a transport'), 'params': ({'type': 'transport', 'name': 'transport', 'description': _('Trasport'), 'default': ''},)}
+CALENDAR_ACTION_ADD_GROUP = {'id': 'ADD_GROUP', 'description': _('Add a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
+CALENDAR_ACTION_DEL_GROUP = {'id': 'REMOVE_GROUP', 'description': _('Remove a group'), 'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},)}
 
 CALENDAR_ACTION_DICT = dict(list((c['id'], c) for c in (
     CALENDAR_ACTION_PUBLISH, CALENDAR_ACTION_CACHE_L1,
     CALENDAR_ACTION_CACHE_L2, CALENDAR_ACTION_INITIAL,
-    CALENDAR_ACTION_MAX, CALENDAR_ACTION_ADD_TRANSPORT,
-    CALENDAR_ACTION_DEL_TRANSPORT
+    CALENDAR_ACTION_MAX,
+    CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT,
+    CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP
 )))
 
 
@@ -91,6 +95,38 @@ class CalendarAction(UUIDModel):
     def offset(self):
         return datetime.timedelta(minutes=self.events_offset)
 
+    @property
+    def prettyParams(self):
+        try:
+            ca = CALENDAR_ACTION_DICT.get(self.action)
+            params = json.loads(self.params)
+            res = []
+            for p in ca['params']:
+                val = params[p['name']]
+                pp = '{}='.format(p['name'])
+                # Transport
+                if p['type'] == 'transport':
+                    try:
+                        pp += Transport.objects.get(uuid=val).name
+                    except Exception:
+                        pp += '(invalid)'
+                # Groups
+                elif p['type'] == 'group':
+                    try:
+                        auth, grp = params[p['name']].split('@')
+                        auth = Authenticator.objects.get(uuid=auth)
+                        grp = auth.groups.get(uuid=grp)
+                        pp += grp.name + '@' + auth.name
+                    except Exception:
+                        pp += '(invalid)'
+                else:
+                    pp += str(val)
+                res.append(pp)
+            return ','.join(res)
+        except Exception:
+            logger.exception('error')
+            return '(invalid action)'
+
     def execute(self, save=True):
         logger.debug('Executing action')
         self.last_execution = getSqlDatetime()
@@ -98,29 +134,66 @@ class CalendarAction(UUIDModel):
 
         saveServicePool = save
 
+        def sizeVal():
+            v = int(params['size'])
+            return v if v >= 0 else 0
+
+        executed = False
         if CALENDAR_ACTION_CACHE_L1['id'] == self.action:
-            self.service_pool.cache_l1_srvs = int(params['size'])
+            self.service_pool.cache_l1_srvs = sizeVal()
+            executed = True
         elif CALENDAR_ACTION_CACHE_L2['id'] == self.action:
-            self.service_pool.cache_l1_srvs = int(params['size'])
+            self.service_pool.cache_l1_srvs = sizeVal()
+            executed = True
         elif CALENDAR_ACTION_INITIAL['id'] == self.action:
-            self.service_pool.initial_srvs = int(params['size'])
+            self.service_pool.initial_srvs = sizeVal()
+            executed = True
         elif CALENDAR_ACTION_MAX['id'] == self.action:
-            self.service_pool.max_srvs = int(params['size'])
+            self.service_pool.max_srvs = sizeVal()
+            executed = True
         elif CALENDAR_ACTION_PUBLISH['id'] == self.action:
             self.service_pool.publish(changeLog='Scheduled publication action')
             saveServicePool = False
+            executed = True
+        # Add transport
         elif CALENDAR_ACTION_ADD_TRANSPORT['id'] == self.action:
             try:
                 t = Transport.objects.get(uuid=params['transport'])
                 self.service_pool.transports.add(t)
+                executed = True
             except Exception:
                 self.service_pool.log('Scheduled action not executed because transport is not available anymore')
+            saveServicePool = False
+        # Remove transport
         elif CALENDAR_ACTION_DEL_TRANSPORT['id'] == self.action:
             try:
                 t = Transport.objects.get(uuid=params['transport'])
                 self.service_pool.transports.remove(t)
+                executed = True
             except Exception:
-                self.service_pool.log('Scheduled action not executed because transport is not available anymore')
+                self.service_pool.log('Scheduled action not executed because transport is not available anymore', level=log.ERROR)
+            saveServicePool = False
+        elif CALENDAR_ACTION_ADD_GROUP['id'] == self.action:
+            try:
+                auth, grp = params['group'].split('@')
+                grp = Authenticator.objects.get(uuid=auth).groups.get(uuid=grp)
+
+            except Exception:
+                pass
+        elif CALENDAR_ACTION_DEL_GROUP['id'] == self.action:
+            pass
+
+        if executed:
+            try:
+                self.service_pool.log(
+                    'Executed action {} [{}]'.format(
+                        CALENDAR_ACTION_DICT.get(self.action)['description'], self.prettyParams
+                    ),
+                    level=log.INFO
+                )
+            except Exception:
+                # Avoid invalid ACTIONS errors on log
+                self.service_pool.log('Action {} is not a valid scheduled action! please, remove it from your list.'.format(self.action))
 
         # On save, will regenerate nextExecution
         if save:

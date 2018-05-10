@@ -16,7 +16,6 @@ gui.servicesPools.transports = (servPool, info) ->
     onNew: (value, table, refreshFnc) ->
       api.templates.get "pool_add_transport", (tmpl) ->
         api.transports.overview (data) ->
-          gui.doLog "Data Received: ", servPool, data
           valid = []
           for i in data
             if (i.protocol in servPool.info.allowedProtocols)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014 Virtual Cable S.L.
+# Copyright (c) 2014-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext, ugettext_lazy as _
 from uds.models import DeployedService, OSManager, Service, Image, ServicesPoolGroup, Account
 from uds.models.CalendarAction import (
@@ -42,6 +40,8 @@ from uds.models.CalendarAction import (
     CALENDAR_ACTION_PUBLISH,
     CALENDAR_ACTION_ADD_TRANSPORT,
     CALENDAR_ACTION_DEL_TRANSPORT,
+    CALENDAR_ACTION_ADD_GROUP,
+    CALENDAR_ACTION_DEL_GROUP
 )
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.State import State
@@ -81,7 +81,7 @@ class ServicesPools(ModelHandler):
     save_fields = ['name', 'short_name', 'comments', 'tags', 'service_id',
                    'osmanager_id', 'image_id', 'servicesPoolGroup_id', 'initial_srvs',
                    'cache_l1_srvs', 'cache_l2_srvs', 'max_srvs', 'show_transports',
-                   'allow_users_remove', 'allow_users_reset', 'ignores_unused']
+                   'allow_users_remove', 'allow_users_reset', 'ignores_unused', 'account_id']
 
     remove_fields = ['osmanager_id', 'service_id']
 
@@ -420,6 +420,6 @@ class ServicesPools(ModelHandler):
         if itemInfo.publicationType is not None:
             validActions += (CALENDAR_ACTION_PUBLISH,)
 
-        # Transport actions
-        validActions += (CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT)
+        # Transport & groups actions
+        validActions += (CALENDAR_ACTION_ADD_TRANSPORT, CALENDAR_ACTION_DEL_TRANSPORT, CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_DEL_GROUP)
         return validActions

@@ -124,7 +124,7 @@ class Transports(ModelHandler):
         if networks is None:
             return
         logger.debug('Networks: {0}'.format(networks))
-        item.networks = Network.objects.filter(id__in=networks)
+        item.networks.set(Network.objects.filter(id__in=networks))
 
         # try:
         #    oss = ','.join(self._params['allowed_oss'])

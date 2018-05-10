@@ -133,6 +133,7 @@ class ActionsCalendars(DetailHandler):
             'atStart': item.at_start,
             'eventsOffset': item.events_offset,
             'params': params,
+            'pretty_params': item.prettyParams,
             'nextExecution': item.next_execution,
             'lastExecution': item.last_execution
         }
@@ -154,7 +155,7 @@ class ActionsCalendars(DetailHandler):
         return [
             {'calendar': {'title': _('Calendar')}},
             {'actionDescription': {'title': _('Action')}},
-            {'params': {'title': _('Parameters')}},
+            {'pretty_params': {'title': _('Parameters')}},
             {'atStart': {'title': _('Relative to')}},
             {'eventsOffset': {'title': _('Time offset')}},
             {'nextExecution': {'title': _('Next execution'), 'type': 'datetime'}},
