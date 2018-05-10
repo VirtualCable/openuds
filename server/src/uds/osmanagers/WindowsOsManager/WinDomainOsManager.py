@@ -221,7 +221,20 @@ class WinDomainOsManager(WindowsOsManager):
             res = self.__getMachine(l, service.friendly_name)
             if res is None:
                 raise Exception('Machine {} not found on AD (permissions?)'.format(service.friendly_name))
-            l.delete_s(res)  # Remove by DN, SYNC
+
+            # Recursive delete
+            def recursive_delete(conn, base_dn):
+                search = conn.search_s(base_dn, ldap.SCOPE_ONELEVEL)
+
+                for dn, _ in search:
+                    # recursive_delete(conn, dn)
+                    # Do not recurre, just delete it
+                    conn.delete_s(dn)
+
+                conn.delete_s(base_dn)
+
+            # l.delete_s(res)  # Remove by DN, SYNC
+            recursive_delete(l, res)
         except IndexError:
             logger.error('Error deleting {} from BASE {}'.format(service.friendly_name, self._ou))
         except Exception:
