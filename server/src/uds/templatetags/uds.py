@@ -32,8 +32,8 @@
 """
 
 from django import template
-from django.utils.translation import ugettext as _
-from django.templatetags.static import static
+from django.utils.translation import gettext, get_language
+from django.conf import settings
 from django.utils.html import mark_safe
 
 import json
@@ -59,3 +59,13 @@ def javascript_auths(authenticators):
             'isCustom': theType.isCustom()
         })
     return mark_safe('<script type="text/javascript">\nvar authenticators = ' + json.dumps(res, indent=4) + ';\n</script>')
+
+
+@register.simple_tag
+def jsdata():
+    udsConfig = {
+        'language': get_language(),
+        'available_languages': [(k, gettext(v)) for k, v in settings.LANGUAGES]
+    }
+    javascript = 'var udsConfig = ' + json.dumps(udsConfig) + ';';
+    return mark_safe('<script type="text/javascript">{}\n</script>'.format(javascript))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,8 +45,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
-__updated__ = '2017-04-17'
 
 
 # Default ssl context is unverified, as MOST servers that we will connect will be with self signed certificates...
