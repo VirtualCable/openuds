@@ -52,7 +52,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# Enclosed methods under /actor path
+# Enclosed methods under /connection path
 class Connection(Handler):
     """
     Processes actor requests

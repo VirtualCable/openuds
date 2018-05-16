@@ -51,7 +51,7 @@ import requests
 import json
 import logging
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-05-16'
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -567,6 +567,9 @@ class UserServiceManager(object):
         """
         userService = self.locateUserService(user, idService, create=True)
 
+        # Early log of "access try" so we can imagine what is going on
+        userService.setConnectionSource(srcIp, 'unknown')
+
         if userService.isInMaintenance() is True:
             raise ServiceInMaintenanceMode()
 
@@ -624,7 +627,7 @@ class UserServiceManager(object):
                     serviceNotReadyCode = 0x0003
                     itrans = trans.getInstance()
                     if itrans.isAvailableFor(userService, ip):
-                        userService.setConnectionSource(srcIp, 'unknown')
+                        # userService.setConnectionSource(srcIp, 'unknown')
                         log.doLog(userService, log.INFO, "User service ready", log.WEB)
                         self.notifyPreconnect(userService, itrans.processedUser(userService, user), itrans.protocol)
                         traceLogger.info('READY on service "{}" for user "{}" with transport "{}" (ip:{})'.format(userService.name, userName, trans.name, ip))
