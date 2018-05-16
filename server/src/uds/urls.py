@@ -30,7 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from django.urls import re_path
+from django.urls import re_path, path
 from django.conf.urls import include
 from uds.core.util.modfinder import loadModulesUrls
 from django.views.i18n import JavaScriptCatalog
@@ -93,6 +93,10 @@ urlpatterns = [
     # Internacionalization in javascript
     # Javascript catalog. In fact, lang is not used, but it is maintanied for "backward" user templates compatibility
     re_path(r'^jsi18n/(?P<lang>[a-z]*)$', JavaScriptCatalog.as_view(), name='uds.web.views.jsCatalog'),
+
+    # Modern
+    path('js', uds.web.views.modern.js, name="uds.js"),
+    re_path('^modern.*', uds.web.views.modern.index, name='modern'),
 ]
 
 # Append urls from special dispatchers

@@ -30,15 +30,16 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-from django import template
-from django.utils.translation import gettext, get_language
-from django.conf import settings
-from django.utils.html import mark_safe
-
 import json
 
 import logging
+
+from django import template
+from django.conf import settings
+from django.utils.translation import gettext, get_language
+from django.utils.html import mark_safe
+from django.templatetags.static import static
+from uds.REST.methods.client import CLIENT_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -62,10 +63,29 @@ def javascript_auths(authenticators):
 
 
 @register.simple_tag
-def jsdata():
+def udsJs(request):
     udsConfig = {
         'language': get_language(),
-        'available_languages': [(k, gettext(v)) for k, v in settings.LANGUAGES]
+        'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
+        'os': request.os['OS'],
     }
-    javascript = 'var udsConfig = ' + json.dumps(udsConfig) + ';';
-    return mark_safe('<script type="text/javascript">{}\n</script>'.format(javascript))
+
+    packages = (
+        ('clients/UDSClientSetup-{version}.exe'.format(version=CLIENT_VERSION), gettext('Debian based Linux') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+        ('udsclient_{version}_all.deb'.format(version=CLIENT_VERSION), gettext('Debian based Linux') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+        ('udsclient-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), gettext('Red Hat based Linux (RH, Fedora, Centos, ...)') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+        ('udsclient-opensuse-{version}-1.noarch.rpm'.format(version=CLIENT_VERSION), gettext('Suse based Linux') + ' ' + gettext('(requires Python-2.7)'), 'Linux'),
+        ('udsclient-{version}.tar.gz'.format(version=CLIENT_VERSION), gettext('Generic .tar.gz Linux') + ' ' + gettext('(requires Python-2.7)'), 'Linux')
+    )
+
+    udsPlugins = [
+        {
+            'url': static(url),
+            'description': description,
+            'os': os
+        } for url, description, os in packages
+    ]
+
+    javascript = 'var udsConfig = ' + json.dumps(udsConfig) + ';\n';
+    javascript += 'var plugins = ';
+    return mark_safe(javascript);

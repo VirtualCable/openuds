@@ -42,7 +42,8 @@ from .client_download import client_downloads, plugin_detection
 from ..errors import error
 from .images import image
 from .file_storage import file_storage
+from . import modern
 
-__updated__ = '2018-05-04'
+__updated__ = '2018-05-14'
 
 logger = logging.getLogger(__name__)
