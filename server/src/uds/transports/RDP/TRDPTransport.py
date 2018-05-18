@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2017-12-21'
+__updated__ = '2018-05-18'
 
 logger = logging.getLogger(__name__)
 

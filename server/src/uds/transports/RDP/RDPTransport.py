@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2017-12-21'
+__updated__ = '2018-05-18'
 
 
 class RDPTransport(BaseRDPTransport):
