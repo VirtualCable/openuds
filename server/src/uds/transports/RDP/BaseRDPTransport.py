@@ -42,7 +42,7 @@ from uds.core.util import connection
 import logging
 import os
 
-__updated__ = '2018-03-21'
+__updated__ = '2018-05-18'
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,17 @@ class BaseRDPTransport(Transport):
 
     allowSmartcards = gui.CheckBoxField(label=_('Allow Smartcards'), order=20, tooltip=_('If checked, this transport will allow the use of smartcards'), tab=gui.PARAMETERS_TAB)
     allowPrinters = gui.CheckBoxField(label=_('Allow Printers'), order=21, tooltip=_('If checked, this transport will allow the use of user printers'), tab=gui.PARAMETERS_TAB)
-    allowDrives = gui.CheckBoxField(label=_('Allow Drives'), order=22, tooltip=_('If checked, this transport will allow the use of user drives'), tab=gui.PARAMETERS_TAB)
+    allowDrives = gui.ChoiceField(
+        label=_('Allow Drives'),
+        order=22,
+        tooltip=_('Local drives redirection allowed'),
+        defvalue='false',
+        values=[
+            {'id': 'false', 'text': 'None' },
+            {'id': 'dynamic', 'text': 'Only PnP drives' },
+            {'id': 'true', 'text': 'All drives' },
+    ], tab=gui.PARAMETERS_TAB)
+
     allowSerials = gui.CheckBoxField(label=_('Allow Serials'), order=23, tooltip=_('If checked, this transport will allow the use of user serial ports'), tab=gui.PARAMETERS_TAB)
     allowClipboard = gui.CheckBoxField(label=_('Enable clipboard'), order=24, tooltip=_('If checked, copy-paste functions will be allowed'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)
     allowAudio = gui.CheckBoxField(label=_('Enable sound'), order=25, tooltip=_('If checked, sound will be redirected.'), tab=gui.PARAMETERS_TAB, defvalue=gui.TRUE)

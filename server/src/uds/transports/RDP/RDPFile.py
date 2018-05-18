@@ -39,7 +39,7 @@ from uds.core.util import OsDetector
 import six
 import shlex
 
-__updated__ = '2018-03-21'
+__updated__ = '2018-05-18'
 
 
 class RDPFile(object):
@@ -53,7 +53,7 @@ class RDPFile(object):
     password = ''
     redirectSerials = False
     redirectPrinters = False
-    redirectDrives = False
+    redirectDrives = "false"  # Can have "true", "false" or "dynamic"
     redirectHome = False
     redirectSmartcards = False
     redirectAudio = True
@@ -119,7 +119,7 @@ class RDPFile(object):
                 if self.multimedia:
                     params.append('/multimedia')
 
-        if self.redirectDrives is True:
+        if self.redirectDrives != 'false':
             params.append('/drive:media,/media')
             # params.append('/home-drive')
 
@@ -198,7 +198,7 @@ class RDPFile(object):
         else:
             params.append('-rsound:off')
 
-        if self.redirectDrives is True:
+        if self.redirectDrives != 'false':
             params.append('-rdisk:media=/media')
 
         if self.redirectSerials is True:
@@ -238,7 +238,6 @@ class RDPFile(object):
         screenMode = self.fullScreen and "2" or "1"
         audioMode = self.redirectAudio and "0" or "2"
         serials = self.redirectSerials and "1" or "0"
-        drives = self.redirectDrives and "1" or "0"
         scards = self.redirectSmartcards and "1" or "0"
         printers = self.redirectPrinters and "1" or "0"
         compression = self.compression and "1" or "0"
@@ -290,8 +289,11 @@ class RDPFile(object):
         if self.redirectAudio is True:
             res += 'audiocapturemode:i:1\n'
 
-        if self.redirectDrives is True:
-            res += 'drivestoredirect:s:*\n'
+        if self.redirectDrives != 'false':
+            if self.redirectDrives == 'true':
+                res += 'drivestoredirect:s:*\n'
+            else:  # Dynamic
+                res += 'drivestoredirect:s:DynamicDrives\n'
             res += 'devicestoredirect:s:*\n'
 
         res += 'enablecredsspsupport:i:{}\n'.format(0 if self.enablecredsspsupport is False else 1)
@@ -312,7 +314,7 @@ class RDPFile(object):
         <integer>{}</integer>
     </dict>'''.format(self.width, self.height)
 
-        drives = self.redirectDrives and "1" or "0"
+        drives = self.redirectDrives != 'false' and "1" or "0"
         audioMode = self.redirectAudio and "0" or "2"
         wallpaper = self.showWallpaper and 'true' or 'false'
 
