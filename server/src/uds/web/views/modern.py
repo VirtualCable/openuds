@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2018 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,30 +28,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from __future__ import unicode_literals
-
 from django.shortcuts import render
-from django.utils.translation import ugettext as _
-
-from uds.core.auths.auth import webLoginRequired
-from uds.core.managers.DownloadsManager import DownloadsManager
-from uds.core.ui import theme
-
-import logging
-
-logger = logging.getLogger(__name__)
-
-__updated__ = '2018-05-18'
 
 
-@webLoginRequired(admin=True)
-def download(request, idDownload):
-    """
-    Downloadables management
-    """
-    if idDownload == '':
-        files = [{'id': key, 'name': val['name'], 'comment': _(val['comment'])} for key, val in DownloadsManager.manager().getDownloadables().items()]
-        logger.debug('Files: {0}'.format(files))
-        return render(request, theme.template('downloads.html'), {'files': files})
+def index(request):
+    return render(request, 'uds/modern/index.html', {})
 
-    return DownloadsManager.manager().send(request, idDownload)
+
+def js(request):
+    return render(request, 'uds/js.js', content_type='text/javascript')

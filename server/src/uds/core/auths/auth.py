@@ -54,7 +54,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2018-02-26'
+__updated__ = '2018-05-18'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -62,43 +62,6 @@ authLogger = logging.getLogger('authLog')
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
 ROOT_ID = -20091204  # Any negative number will do the trick
-
-
-def getUDSCookie(request, response=None, force=False):
-    """
-    Generates a random cookie for uds, used, for example, to encript things
-    """
-    if 'uds' not in request.COOKIES:
-        import random
-        import string
-        cookie = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
-        if response is not None:
-            response.set_cookie('uds', cookie)
-        request.COOKIES['uds'] = cookie
-    else:
-        cookie = request.COOKIES['uds']
-
-    if response is not None and force is True:
-        response.set_cookie('uds', cookie)
-
-    return cookie
-
-
-def getRootUser():
-    # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-    from uds.models import Authenticator
-    u = User(id=ROOT_ID, name=GlobalConfig.SUPER_USER_LOGIN.get(True), real_name=_('System Administrator'), state=State.ACTIVE, staff_member=True, is_admin=True)
-    u.manager = Authenticator()
-    u.getGroups = lambda: []
-    u.updateLastAccess = lambda: None
-    u.logout = lambda: None
-    return u
-
-
-@deprecated
-def getIp(request):
-    logger.info('Deprecated IP')
-    return request.ip
 
 
 # Decorator to make easier protect pages that needs to be logged in
@@ -151,6 +114,43 @@ def trustedSourceRequired(view_func):
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
+
+
+def getUDSCookie(request, response=None, force=False):
+    """
+    Generates a random cookie for uds, used, for example, to encript things
+    """
+    if 'uds' not in request.COOKIES:
+        import random
+        import string
+        cookie = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))  # @UndefinedVariable
+        if response is not None:
+            response.set_cookie('uds', cookie)
+        request.COOKIES['uds'] = cookie
+    else:
+        cookie = request.COOKIES['uds']
+
+    if response is not None and force is True:
+        response.set_cookie('uds', cookie)
+
+    return cookie
+
+
+def getRootUser():
+    # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+    from uds.models import Authenticator
+    u = User(id=ROOT_ID, name=GlobalConfig.SUPER_USER_LOGIN.get(True), real_name=_('System Administrator'), state=State.ACTIVE, staff_member=True, is_admin=True)
+    u.manager = Authenticator()
+    u.getGroups = lambda: []
+    u.updateLastAccess = lambda: None
+    u.logout = lambda: None
+    return u
+
+
+@deprecated
+def getIp(request):
+    logger.info('Deprecated IP')
+    return request.ip
 
 
 def __registerUser(authenticator, authInstance, username):
