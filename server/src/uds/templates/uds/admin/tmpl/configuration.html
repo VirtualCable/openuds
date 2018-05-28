@@ -36,6 +36,9 @@
                             {{ set_var "cfg_section" key }}
                             {{# eachKeySorted value }}
                             {{ set_var "cfg_key" key }}
+                            {{# ifequals value.type 6 }}
+                            <!-- hidden -->
+                            {{ else }}
                             <div class="form-group">
                                <label for="fld_{{ clean_whitespace ../key }}{{ key }}" class="col-sm-5 control-label">{{ key }}</label>
                                <div class="col-sm-6">
@@ -58,7 +61,7 @@
                                      </select>
                                      {{ else }}
                                      <div>
-                                         <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" value="{{ value.value }}">
+                                         <input type="{{# ifequals value.type 2 }}numeric{{ else }}text{{/ ifequals}}" {{# ifequals value.type 5 }}readonly{{/ ifequals }} class="form-control config-ctrl" data-section="{{ cfg_section }}" data-key="{{ cfg_key }}" value="{{ value.value }}">
                                      </div>
                                      {{/ ifequals }}
                                    {{/ ifequals }}
@@ -66,6 +69,7 @@
                                {{/ if }}
                                </div>
                             </div>
+                            {{/ ifequals }}
                             {{ unset_var "cfg_key" }}
                             {{/ eachKeySorted }}
                         </div>

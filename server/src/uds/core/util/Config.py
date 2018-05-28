@@ -50,6 +50,7 @@ getLater = []
 # For custom params (for choices mainly)
 configParams = {}
 
+
 class Config(object):
     '''
     Keeps persistence configuration data
@@ -61,8 +62,11 @@ class Config(object):
     NUMERIC_FIELD = 2
     BOOLEAN_FIELD = 3
     CHOICE_FIELD = 4  # Choice fields must set its parameters on global "configParams" (better by calling ".setParams" method)
+    READ_FIELD = 5  # Only can viewed, but not changed (can be changed througn API, it's just read only to avoid "mistakes")
+    HIDDEN_FIELD = 6  # Not visible on "admin" config edition
 
     class _Value(object):
+
         def __init__(self, section, key, default='', crypt=False, longText=False, **kwargs):
             logger.debug('Var: {} {} KWARGS: {}'.format(section, key, kwargs))
             self._type = kwargs.get('type', -1)
@@ -169,6 +173,7 @@ class Config(object):
                 logger.info("Could not save configuration key {0}.{1}".format(self._section.name(), self._key))
 
     class _Section(object):
+
         def __init__(self, sectionName):
             self._sectionName = sectionName
 
@@ -324,6 +329,9 @@ class GlobalConfig(object):
     # This is used so templates can change "styles" from admin interface
     LOWERCASE_USERNAME = Config.section(SECURITY_SECTION).value('Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD)
 
+    # Global UDS ID (common for all servers on the same cluster)
+    UDS_ID = Config.section(GLOBAL_SECTION).value('UDS ID', CryptoManager.manager().uuid(), type=Config.READ_FIELD)
+
     initDone = False
 
     @staticmethod
@@ -338,7 +346,6 @@ class GlobalConfig(object):
             pass
 
         GlobalConfig.UDS_THEME.setParams(themes)
-
 
     @staticmethod
     def initialize():
