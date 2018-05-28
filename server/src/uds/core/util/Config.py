@@ -63,6 +63,8 @@ class Config(object):
     NUMERIC_FIELD = 2
     BOOLEAN_FIELD = 3
     CHOICE_FIELD = 4  # Choice fields must set its parameters on global "configParams" (better by calling ".setParams" method)
+    READ_FIELD = 5  # Only can viewed, but not changed (can be changed througn API, it's just read only to avoid "mistakes")
+    HIDDEN_FIELD = 6  # Not visible on "admin" config edition
 
     class _Value(object):
 
@@ -327,6 +329,9 @@ class GlobalConfig(object):
 
     # This is used so templates can change "styles" from admin interface
     LOWERCASE_USERNAME = Config.section(SECURITY_SECTION).value('Convert username to lowercase', '1', type=Config.BOOLEAN_FIELD)
+
+    # Global UDS ID (common for all servers on the same cluster)
+    UDS_ID = Config.section(GLOBAL_SECTION).value('UDS ID', CryptoManager.manager().uuid(), type=Config.READ_FIELD)
 
     initDone = False
 
