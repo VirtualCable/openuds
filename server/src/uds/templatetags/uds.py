@@ -43,6 +43,9 @@ from django.templatetags.static import static
 
 from uds.REST.methods.client import CLIENT_VERSION
 from uds.core.managers import downloadsManager
+from uds.core.util.Config import GlobalConfig
+
+from uds.models import Authenticator
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +57,7 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 @register.simple_tag(takes_context=True)
 def udsJs(context):
     request = context['request']
+    auth_host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
 
     profile = {
         'user': None if request.user is None else request.user.name,
@@ -65,14 +69,38 @@ def udsJs(context):
     if csrf_token is not None:
         csrf_token = str(csrf_token)
 
+    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
+        try:
+            authenticators = [Authenticator.objects.get(small_name=auth_host)]
+        except Exception:
+            try:
+                authenticators = [Authenticator.objects.order_by('priority')[0].small_name]
+            except Exception:  # There is no authenticators yet...
+                authenticators = []
+    else:
+        authenticators = Authenticator.objects.all()
+
+    # the auths for client
+    def getAuth(auth):
+        theType = auth.getType()
+        return {
+            'id': auth.uuid,
+            'name': auth.name,
+            'label': auth.small_name,
+            'priority': auth.priority,
+            'is_custom': theType.isCustom()
+        }
+
     config = {
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
+        'authenticators': [getAuth(auth) for auth in authenticators],
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
         'urls': {
-            'lang': reverse('set_language'),
+            'changeLang': reverse('set_language'),
+            'login': reverse('uds.web.views.login'),
             'logout': reverse('uds.web.views.logout')
         }
     }
