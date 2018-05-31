@@ -61,6 +61,7 @@ def sigTerm(sigNo, stackFrame):
 
 # About dialog
 class UDSAboutDialog(QtGui.QDialog):
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.ui = Ui_UDSAboutDialog()
@@ -72,6 +73,7 @@ class UDSAboutDialog(QtGui.QDialog):
 
 
 class UDSMessageDialog(QtGui.QDialog):
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.ui = Ui_UDSMessageDialog()
@@ -165,6 +167,7 @@ class MessagesProcessor(QtCore.QThread):
 
 
 class UDSSystemTray(QtGui.QSystemTrayIcon):
+
     def __init__(self, app_, parent=None):
         self.app = app_
 
@@ -310,10 +313,11 @@ class UDSSystemTray(QtGui.QSystemTrayIcon):
 
         self.app.quit()
 
+
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
 
-    #if not QtGui.QSystemTrayIcon.isSystemTrayAvailable():
+    # if not QtGui.QSystemTrayIcon.isSystemTrayAvailable():
     #    # QtGui.QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
     #    sys.exit(1)
 
@@ -337,7 +341,7 @@ if __name__ == '__main__':
     res = app.exec_()
 
     logger.debug('Exiting')
-    trayIcon.quit()
+    trayIcon.quit(logoff=doLogoff)  # Pass existing doLogoff
 
     if doLogoff:
         try:
@@ -345,6 +349,5 @@ if __name__ == '__main__':
             operations.loggoff()  # Invoke log off
         except Exception:
             pass
-
 
     sys.exit(res)
