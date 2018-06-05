@@ -1,6 +1,6 @@
 # This is a template
 # Saved as .py for easier editing
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module
 from PyQt4 import QtCore, QtGui  # @UnresolvedImport

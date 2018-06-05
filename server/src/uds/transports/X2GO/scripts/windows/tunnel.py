@@ -1,6 +1,6 @@
 # This is a template
 # Saved as .py for easier editing
-from __future__ import unicode_literals
+#from __future__ import unicode_literals
 
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable
 
@@ -20,7 +20,7 @@ if forwardThread.status == 2:
     raise Exception('Unable to open tunnel')
 
 tools.addTaskToWait(forwardThread)
-
+# Care, expanduser is encoding using "mcbs", so treat it as bytes always
 home = expanduser('~').replace('\\', '\\\\') + '#1;'
 keyFile = tools.saveTempFile('''{m.key}''')
 theFile = '''{m.xf}'''.format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=port)
