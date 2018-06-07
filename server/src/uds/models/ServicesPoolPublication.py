@@ -47,8 +47,7 @@ from uds.models.UUIDModel import UUIDModel
 
 import logging
 
-__updated__ = '2016-03-29'
-
+__updated__ = '2018-06-07'
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +133,7 @@ class DeployedServicePublication(UUIDModel):
         if serviceInstance.publicationType is None:
             raise Exception('Class {0} do not have defined publicationType but needs to be published!!!'.format(serviceInstance.__class__))
 
-        dpl = serviceInstance.publicationType(self.getEnvironment(), service=serviceInstance, osManager=osManagerInstance, revision=self.revision, dsName=self.deployed_service.name)
+        dpl = serviceInstance.publicationType(self.getEnvironment(), service=serviceInstance, osManager=osManagerInstance, revision=self.revision, dsName=self.deployed_service.name, uuid=self.uuid)
         # Only invokes deserialization if data has something. '' is nothing
         if self.data != '' and self.data is not None:
             dpl.unserialize(self.data)
@@ -204,6 +203,7 @@ class DeployedServicePublication(UUIDModel):
 
     def __str__(self):
         return 'Publication {0}, rev {1}, state {2}'.format(self.deployed_service.name, self.revision, State.toString(self.state))
+
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(DeployedServicePublication.beforeDelete, sender=DeployedServicePublication)

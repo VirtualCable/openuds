@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from uds.core import Environmentable
 from uds.core import Serializable
 
-__updated__ = '2016-02-26'
+__updated__ = '2018-06-07'
 
 
 class Publication(Environmentable, Serializable):
@@ -90,6 +90,7 @@ class Publication(Environmentable, Serializable):
         self._service = kwargs['service']  # Raises an exception if service is not included
         self._revision = kwargs.get('revision', -1)
         self._dsName = kwargs.get('dsName', 'Unknown')
+        self._uuid = kwargs.get('uuid', '')
 
         self.initialize()
 
@@ -140,6 +141,11 @@ class Publication(Environmentable, Serializable):
         at administration interface.
         '''
         return self._dsName
+
+    def getUuid(self):
+        """
+        """
+        return self._uuid
 
     def publish(self):
         '''
