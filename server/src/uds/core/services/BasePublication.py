@@ -35,7 +35,7 @@ from __future__ import unicode_literals
 from uds.core import Environmentable
 from uds.core import Serializable
 
-__updated__ = '2017-01-12'
+__updated__ = '2018-06-07'
 
 
 class Publication(Environmentable, Serializable):
@@ -91,6 +91,7 @@ class Publication(Environmentable, Serializable):
         self._revision = kwargs.get('revision', -1)
         self._dbPublication = kwargs.get('dbPublication')
         self._dsName = kwargs.get('dsName', 'Unknown')
+        self._uuid = kwargs.get('uuid', '')
 
         self.initialize()
 
@@ -139,6 +140,10 @@ class Publication(Environmentable, Serializable):
 
         This name is set by core, using the administrator provided data
         at administration interface.
+        '''
+        return self._dsName
+
+    def getUuid(self):
         """
         return self._dsName
 

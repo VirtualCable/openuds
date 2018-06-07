@@ -37,7 +37,7 @@ from uds.core import Module
 from uds.core.transports import protocols
 from . import types
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-06-07'
 
 
 class Service(Module):
@@ -178,7 +178,7 @@ class Service(Module):
     # : For example, VDI, VAPP, ...
     servicesTypeProvided = types.ALL
 
-    def __init__(self, environment, parent, values=None):
+    def __init__(self, environment, parent, values=None, uuid=None):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, parent, values)".
         We want to use the env, parent methods outside class. If not called, you must implement your own methods

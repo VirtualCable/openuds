@@ -196,7 +196,7 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return [True, _("No connection checking method is implemented.")]
 
-    def __init__(self, environment, values=None):
+    def __init__(self, environment, values=None, uuid=None):
         """
         Do not forget to invoke this in your derived class using
         "super(self.__class__, self).__init__(environment, values)".
@@ -223,6 +223,7 @@ class Module(UserInterface, Environmentable, Serializable):
         UserInterface.__init__(self, values)
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
+        self._uuid = uuid if uuid is not None else ''
 
     def __str__(self):
         return "Base Module"
@@ -264,6 +265,9 @@ class Module(UserInterface, Environmentable, Serializable):
             Internacionalized (using ugettext) string of result of the check.
         """
         return _("No check method provided.")
+
+    def getUuid(self):
+        return self._uuid
 
     def destroy(self):
         """

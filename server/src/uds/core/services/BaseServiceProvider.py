@@ -39,7 +39,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-06-07'
 
 
 class ServiceProvider(Module):
@@ -144,7 +144,7 @@ class ServiceProvider(Module):
                 break
         return res
 
-    def __init__(self, environment, values=None):
+    def __init__(self, environment, values=None, uuid=None):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         if you override this method. Better is to provide an "__initialize__" method, that will be invoked
@@ -152,7 +152,7 @@ class ServiceProvider(Module):
         Values parameter is provided (are not None) when creating or modifying the service provider, so params check should ocur here and, if not
         valid, raise an "ValidationException" message
         """
-        super(ServiceProvider, self).__init__(environment, values)
+        super(ServiceProvider, self).__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
     def initialize(self, values):
