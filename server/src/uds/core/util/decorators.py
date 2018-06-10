@@ -39,7 +39,7 @@ from functools import wraps
 
 import logging
 
-__updated__ = '2016-04-05'
+__updated__ = '2018-06-08'
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,9 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     '''
+
     def wrap(view_func):
+
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             '''
@@ -62,7 +64,9 @@ def denyBrowsers(browsers=['ie<9'], errorResponse=lambda request: errors.errorVi
                     return errorResponse(request)
 
             return view_func(request, *args, **kwargs)
+
         return _wrapped_view
+
     return wrap
 
 
@@ -85,4 +89,56 @@ def deprecated(func):
             logger.info('No stack info on deprecated function call {0}'.format(func.__name__))
 
         return func(*args, **kwargs)
+
     return new_func
+
+
+# Decorator that allows us a "fast&clean" caching system on service providers
+#
+# Decorator for caching
+# Decorator that tries to get from cache before executing
+def allowCache(cachePrefix, cacheTimeout, cachingArgs=None):
+    """Decorator that give us a "quick& clean" caching feature on service providers.
+
+    Note: This decorator is intended ONLY for service providers
+
+    :param cachePrefix: the cache key "prefix" (prepended on generated key from args)
+    :param cacheTimeout: The cache timeout in seconds
+    :param cachingArgs: The caching args. Can be a single integer or a list.
+                        First arg (self) is 0, so normally cachingArgs are 1, or [1,2,..]
+    """
+
+    def allowCacheDecorator(fnc):
+
+        @wraps(fnc)
+        def wrapper(*args, **kwargs):
+            if cachingArgs is not None:
+                if isinstance(cachingArgs, (list, tuple)):
+                    argList = [args[i] if i < len(args) else '' for i in cachingArgs]
+                else:
+                    argList = args[cachingArgs] if cachingArgs < len(args) else ''
+                cacheKey = '{}-{}.{}'.format(cachePrefix, args[0].subscriptionId.value, argList)
+            else:
+                cacheKey = '{}-{}.gen'.format(cachePrefix, args[0].subscriptionId.value)
+
+            data = None
+            if kwargs.get('force', False) is False and args[0].cache is not None:
+                data = args[0].cache.get(cacheKey)
+
+            if kwargs.has_key('force'):
+                # Remove force key
+                del kwargs['force']
+
+            if data is None:
+                data = fnc(*args, **kwargs)
+                try:
+                    # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
+                    args[0].cache.put(cacheKey, data, cacheTimeout)
+                except Exception as e:
+                    logger.debug('Data for {} is not serializable, not cached. {} ({})'.format(cacheKey, data, e))
+            return data
+
+        return wrapper
+
+    return allowCacheDecorator
+
