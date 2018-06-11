@@ -297,6 +297,7 @@
 {% block js %}
         {% pageReloadTime as reloadTime %}
         <script>
+        var openedWindow = null;
         function getUrlVars() {
             var vars = [], hash;
             var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
@@ -318,7 +319,10 @@
             if ( url.substring(0, 7) == 'udsa://' ) {
                 uds.launch($el);
             } else {
-                window.location = url;
+                if( openedWindow != null) {
+                    openedWindow.close();
+                }
+                openedWindow = window.open(url, 'uds_rds_mm');
             }
         }
 
@@ -361,7 +365,10 @@
                 if ( url.substring(0, 7) == 'udsa://' ) {
                     uds.launch(el);
                 } else {
-                    window.location = url;
+                        if( openedWindow != null) {
+                        openedWindow.close();
+                 }
+                 openedWindow = window.open(url, 'uds_rds_mm');
                 }
 
                 return false;
