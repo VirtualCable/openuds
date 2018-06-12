@@ -47,9 +47,7 @@ from uds.models.Provider import Provider
 
 import logging
 
-
-__updated__ = '2016-03-09'
-
+__updated__ = '2018-06-12'
 
 logger = logging.getLogger(__name__)
 
@@ -104,8 +102,9 @@ class Service(ManagedObjectModel, TaggingMixin):
         Raises:
         '''
         if self._cachedInstance is not None and values is None:
-            logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
+            # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
+        # logger.debug('No cached instance for {}, getting from DB'.format(self.name))
 
         prov = self.provider.getInstance()
         sType = prov.getServiceByType(self.data_type)
@@ -161,6 +160,7 @@ class Service(ManagedObjectModel, TaggingMixin):
 
         # Clears related permissions
         clean(toDelete)
+
 
 # : Connects a pre deletion signal to Service
 signals.pre_delete.connect(Service.beforeDelete, sender=Service)
