@@ -86,6 +86,9 @@ class LogManager(object):
         from uds.models import getSqlDatetime
         from uds.models import Log
 
+        # Ensure message fits on space
+        message = message[:255]
+
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
         if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():

@@ -50,9 +50,7 @@ from uds.models.Provider import Provider
 import logging
 import six
 
-
-__updated__ = '2017-05-10'
-
+__updated__ = '2018-06-12'
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +109,7 @@ class Service(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         if self._cachedInstance is not None and values is None:
-            logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
+            # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
 
         prov = self.provider.getInstance()

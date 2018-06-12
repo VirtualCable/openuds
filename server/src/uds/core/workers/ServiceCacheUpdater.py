@@ -234,7 +234,6 @@ class ServiceCacheUpdater(Job):
         logger.debug('Starting cache checking')
         # We need to get
         servicesThatNeedsUpdate = self.servicesPoolsNeedingCacheUpdate()
-        logger.debug('**** Services That Needs Update: {}'.format(servicesThatNeedsUpdate))
         for sp, cacheL1, cacheL2, assigned in servicesThatNeedsUpdate:
             # We have cache to update??
             logger.debug("Updating cache for {0}".format(sp))

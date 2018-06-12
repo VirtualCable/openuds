@@ -39,8 +39,7 @@ from uds.models.UUIDModel import UUIDModel
 
 import logging
 
-__updated__ = '2016-03-09'
-
+__updated__ = '2018-06-12'
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +96,7 @@ class ManagedObjectModel(UUIDModel):
             Can be overriden
         """
         if self._cachedInstance is not None and values is None:
-            logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
+            # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
 
         klass = self.getType()

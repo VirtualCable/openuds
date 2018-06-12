@@ -132,7 +132,7 @@ class DeployedServiceRemover(Job):
         # First check if there is someone in "removable" estate
         rems = DeployedService.objects.filter(state=State.REMOVABLE)[:10]
         if len(rems) > 0:
-            logger.debug('Found a deployed service marked for removal. Starting removal of {0}'.format(rems))
+            # logger.debug('Found a deployed service marked for removal. Starting removal of {0}'.format(rems))
             for ds in rems:
                 try:
                     # Skips checking deployed services in maintenance mode
@@ -147,7 +147,7 @@ class DeployedServiceRemover(Job):
 
         rems = DeployedService.objects.filter(state=State.REMOVING)[:10]
         if len(rems) > 0:
-            logger.debug('Found a deployed service in removing state, continuing removal of {0}'.format(rems))
+            # logger.debug('Found a deployed service in removing state, continuing removal of {0}'.format(rems))
             for ds in rems:
                 try:
                     # Skips checking deployed services in maintenance mode

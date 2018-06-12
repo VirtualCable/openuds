@@ -36,7 +36,7 @@ from uds.core import Environmentable
 from uds.core import Serializable
 from uds.core.util.State import State
 
-__updated__ = '2018-06-07'
+__updated__ = '2018-06-11'
 
 
 class UserDeployment(Environmentable, Serializable):
@@ -139,6 +139,9 @@ class UserDeployment(Environmentable, Serializable):
         self._osmanager = kwargs.get('osmanager', None)
         self._dbService = kwargs.get('dbservice', None)
         self._uuid = kwargs.get('uuid', '')
+        # If it has dbService
+        if self._dbService:
+            self._uuid = self._dbService.uuid
 
         self.initialize()
 
