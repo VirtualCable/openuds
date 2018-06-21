@@ -86,6 +86,7 @@ class PublicationLauncher(DelayedTask):
     def run(self):
         logger.debug('Publishing')
         try:
+            now = getSqlDatetime()
             with transaction.atomic():
                 servicePoolPub = DeployedServicePublication.objects.select_for_update().get(pk=self._publishId)
                 if servicePoolPub.state != State.LAUNCHING:  # If not preparing (may has been canceled by user) just return
@@ -96,7 +97,7 @@ class PublicationLauncher(DelayedTask):
             state = pi.publish()
             deployedService = servicePoolPub.deployed_service
             deployedService.current_pub_revision += 1
-            deployedService.storeValue('toBeReplacedIn', pickle.dumps(datetime.datetime.now() + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))))
+            deployedService.storeValue('toBeReplacedIn', pickle.dumps(now + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True))))
             deployedService.save()
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
         except Exception:

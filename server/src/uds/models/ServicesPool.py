@@ -62,7 +62,7 @@ import logging
 import pickle
 import six
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-06-21'
 
 logger = logging.getLogger(__name__)
 
@@ -206,7 +206,6 @@ class DeployedService(UUIDModel, TaggingMixin):
         return self.service is not None and self.service.isInMaintenance()
 
     def toBeReplaced(self):
-        # return datetime.now()
         activePub = self.activePublication()
         if activePub is None or activePub.revision == self.current_pub_revision - 1:
             return None
