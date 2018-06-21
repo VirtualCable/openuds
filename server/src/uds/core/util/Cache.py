@@ -111,7 +111,7 @@ class Cache(object):
             c.owner = self._owner
             c.key = key
             c.value = value
-            c.created = datetime.now()
+            c.created = now
             c.validity = validity
             c.save()
 
