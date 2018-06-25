@@ -34,34 +34,40 @@ UDS managers (downloads, users preferences, publications, ...)
 '''
 from __future__ import unicode_literals
 
-__updated__ = '2015-04-30'
+__updated__ = '2018-06-25'
 
 
 def cryptoManager():
+    ':rtype uds.core.managers.CryptoManager.CryptoManager'
     from CryptoManager import CryptoManager
     return CryptoManager.manager()
 
 
 def taskManager():
+    ':rtype uds.core.managers.TaskManager.TaskManager'
     from TaskManager import TaskManager
     return TaskManager
 
 
 def downloadsManager():
+    ':rtype uds.core.managers.DownloadsManager.DownloadsManager'
     from DownloadsManager import DownloadsManager
     return DownloadsManager.manager()
 
 
 def logManager():
+    ':rtype uds.core.managers.LogManager.LogManager'
     from LogManager import LogManager
     return LogManager.manager()
 
 
 def statsManager():
+    ':rtype uds.core.managers.StatsManager.StatsManager'
     from StatsManager import StatsManager
     return StatsManager.manager()
 
 
 def userServiceManager():
     from UserServiceManager import UserServiceManager
+    ':rtype uds.core.managers.UserServiceManager.UserServiceManager'
     return UserServiceManager.manager()
