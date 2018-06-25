@@ -132,7 +132,7 @@ class CryptoManager(object):
         If obj is None, returns an uuid based on current datetime + counter
         '''
         if obj is None:
-            obj = six.text_type(datetime.datetime.now()) + six.text_type(self._counter)
+            obj = self.randomString()
             self._counter += 1
 
         if isinstance(obj, six.text_type):
@@ -140,7 +140,7 @@ class CryptoManager(object):
         else:
             obj = six.binary_type(obj)
 
-        return six.text_type(uuid.uuid5(self._namespace, six.binary_type(obj))).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
+        return six.text_type(uuid.uuid5(self._namespace, six.binary_type(obj))).lower()  # uuid must return a lowercase uuid always?, just in case... :)
 
     def randomString(self, length=40):
         return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
