@@ -39,7 +39,7 @@ from functools import wraps
 
 import logging
 
-__updated__ = '2018-06-08'
+__updated__ = '2018-06-25'
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +97,7 @@ def deprecated(func):
 #
 # Decorator for caching
 # Decorator that tries to get from cache before executing
-def allowCache(cachePrefix, cacheTimeout, cachingArgs=None):
+def allowCache(cachePrefix, cacheTimeout, cachingArgs=None, cachingKeyFnc=None):
     """Decorator that give us a "quick& clean" caching feature on service providers.
 
     Note: This decorator is intended ONLY for service providers
@@ -107,6 +107,8 @@ def allowCache(cachePrefix, cacheTimeout, cachingArgs=None):
     :param cachingArgs: The caching args. Can be a single integer or a list.
                         First arg (self) is 0, so normally cachingArgs are 1, or [1,2,..]
     """
+    if not cachingKeyFnc:
+        cachingKeyFnc = lambda(x):''
 
     def allowCacheDecorator(fnc):
 
@@ -117,9 +119,9 @@ def allowCache(cachePrefix, cacheTimeout, cachingArgs=None):
                     argList = [args[i] if i < len(args) else '' for i in cachingArgs]
                 else:
                     argList = args[cachingArgs] if cachingArgs < len(args) else ''
-                cacheKey = '{}-{}.{}'.format(cachePrefix, args[0].subscriptionId.value, argList)
+                cacheKey = '{}-{}.{}'.format(cachePrefix, cachingKeyFnc(args[0]), argList)
             else:
-                cacheKey = '{}-{}.gen'.format(cachePrefix, args[0].subscriptionId.value)
+                cacheKey = '{}-{}.gen'.format(cachePrefix, cachingKeyFnc(args[0]))
 
             data = None
             if kwargs.get('force', False) is False and args[0].cache is not None:

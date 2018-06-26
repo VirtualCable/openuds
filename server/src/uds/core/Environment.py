@@ -72,6 +72,7 @@ class Environment(object):
         '''
         Method to acces the cache of the environment.
         @return: a referente to an Storage Instance
+        :rtype uds.core.util.Storage.Storage
         '''
         return self._storage
 
@@ -179,7 +180,6 @@ class Environmentable(object):
         '''
         self._env = environment
 
-
     @property
     def cache(self):
         '''
@@ -197,6 +197,8 @@ class Environmentable(object):
 
         Returns:
             Storage for the object
+
+        :rtype uds.core.util.Storage.Storage
         '''
         return self._env.storage
 
