@@ -64,6 +64,7 @@ class Environment(object):
         '''
         Method to acces the cache of the environment.
         @return: a referente to a Cache instance
+        :rtype uds.core.util.Cache.Cache
         '''
         return self._cache
 
@@ -187,6 +188,7 @@ class Environmentable(object):
 
         Returns:
             Cache for the object
+        :rtype uds.core.util.Cache.Cache
         '''
         return self._env.cache
 

@@ -50,7 +50,8 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2017-06-01'
+__updated__ = '2018-06-27'
+
 
 # Allow cross-domain login
 # @csrf_exempt
@@ -84,7 +85,6 @@ def login(request, tag=None):
         if 'uds' not in request.COOKIES:
             logger.debug('Request does not have uds cookie')
             return errors.errorView(request, errors.COOKIES_NEEDED)  # We need cookies to keep session data
-        request.session.cycle_key()
         form = LoginForm(request.POST, tag=tag)
         if form.is_valid():
             os = request.os
@@ -119,6 +119,8 @@ def login(request, tag=None):
                     form.add_error(None, ugettext('Invalid credentials'))
                     authLogLogin(request, authenticator, userName, 'Invalid credentials')
                 else:
+                    request.session.cycle_key()
+
                     logger.debug('User {} has logged in'.format(userName))
                     cache.remove(cacheKey)  # Valid login, remove cached tries
                     response = HttpResponseRedirect(reverse('uds.web.views.index'))

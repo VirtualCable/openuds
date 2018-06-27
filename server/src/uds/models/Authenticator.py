@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-03-05'
+__updated__ = '2018-06-27'
 
 
 @python_2_unicode_compatible
@@ -138,9 +138,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
 
         '''
-        realName = realName if realName is None else username
+        realName = realName if realName else username
         user, _ = self.users.get_or_create(name=username, defaults={'real_name': realName, 'last_access': NEVER, 'state': State.ACTIVE})
-        if user.real_name.strip() == '' and realName != user.real_name:
+        if (user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()) and realName != user.real_name:
             user.real_name = realName
             user.save()
 
