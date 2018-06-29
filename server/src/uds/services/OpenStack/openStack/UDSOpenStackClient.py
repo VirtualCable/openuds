@@ -39,7 +39,7 @@ import json
 import dateutil.parser
 import six
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-06-29'
 
 logger = logging.getLogger(__name__)
 
@@ -424,6 +424,9 @@ class Client(object):
             'server': {
                 'name': name,
                 'imageRef': '',
+                'metadata' : {
+                    'udsOwner' : 'xxxxx'
+                },
                 # 'os-availability-zone': availabilityZone,
                 'availability_zone': availabilityZone,
                 'block_device_mapping_v2': [{
