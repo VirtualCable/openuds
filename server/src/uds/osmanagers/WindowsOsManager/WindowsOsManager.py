@@ -93,6 +93,16 @@ class WindowsOsManager(osmanagers.OSManager):
 
         self.__setProcessUnusedMachines()
 
+    def isRemovableOnLogout(self, userService):
+        '''
+        Says if a machine is removable on logout
+        '''
+        if userService.in_use == False:
+            if (self._onLogout == 'remove') or (not userService.isValidPublication() and self._onLogout == 'keep'):
+                return True
+
+        return False
+
     def release(self, service):
         pass
 
@@ -179,8 +189,7 @@ class WindowsOsManager(osmanagers.OSManager):
                 ret = "{0}\t{1}".format(ip, hostname)
         elif msg == "logoff" or msg == 'logout':
             self.loggedOut(userService, data, False)
-            if userService.in_use == False and self._onLogout == 'remove':
-                doRemove = True
+            doRemove = self.isRemovableOnLogout(userService)
         elif msg == "ip":
             # This ocurss on main loop inside machine, so userService is usable
             state = State.USABLE
@@ -213,11 +222,11 @@ class WindowsOsManager(osmanagers.OSManager):
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         '''
-        if self._onLogout == 'remove':
+        if self.isRemovableOnLogout(userService):
             userService.remove()
 
     def isPersistent(self):
-        return not self._onLogout == 'keep-always'
+        return self._onLogout == 'keep-always'
 
     def checkState(self, service):
         logger.debug('Checking state for service {0}'.format(service))
