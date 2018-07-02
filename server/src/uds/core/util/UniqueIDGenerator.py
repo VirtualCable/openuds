@@ -89,17 +89,22 @@ class UniqueIDGenerator(object):
                         seq = item.seq
                         break
                     except IndexError:  # No free element found
-                        # logger.debug('No free found, creating new one')
-                        try:
-                            last = flt.filter(assigned=True)[0]  # DB Returns correct order so the 0 item is the last
-                            seq = last.seq + 1
-                        except IndexError:  # If there is no assigned at database
-                            seq = rangeStart
-                        # logger.debug('Found seq {0}'.format(seq))
-                        if seq > rangeEnd:
-                            return -1  # No ids free in range
-                        UniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable
-                        break
+                        item = None
+                # No item was found on first instance (already created, but freed)
+                if item is None:
+                    # logger.debug('No free found, creating new one')
+                    try:
+                        last = flt.filter(assigned=True)[0]  # DB Returns correct order so the 0 item is the last
+                        seq = last.seq + 1
+                    except IndexError:  # If there is no assigned at database
+                        seq = rangeStart
+                    # logger.debug('Found seq {0}'.format(seq))
+                    if seq > rangeEnd:
+                        return -1  # No ids free in range
+                    # May ocurr on some circustance that a concurrency access gives same item twice, in this case, we
+                    # will get an "duplicate key error",
+                    UniqueId.objects.create(owner=self._owner, basename=self._baseName, seq=seq, assigned=True, stamp=stamp)  # @UndefinedVariable
+                    break
             except OperationalError:  # Locked, may ocurr for example on sqlite. We will wait a bit
                 # logger.exception('Got database locked')
                 if counter % 5 == 0:

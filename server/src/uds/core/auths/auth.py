@@ -54,7 +54,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2018-05-18'
+__updated__ = '2018-06-27'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')

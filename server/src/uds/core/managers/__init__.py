@@ -53,11 +53,13 @@ def downloadsManager():
 
 
 def logManager():
+    ':rtype uds.core.managers.LogManager.LogManager'
     from .LogManager import LogManager
     return LogManager.manager()
 
 
 def statsManager():
+    ':rtype uds.core.managers.StatsManager.StatsManager'
     from .StatsManager import StatsManager
     return StatsManager.manager()
 

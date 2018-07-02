@@ -53,7 +53,7 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-06-27'
 
 
 @csrf_exempt
@@ -70,6 +70,8 @@ def authCallback(request, authName):
         authenticator = Authenticator.objects.get(name=authName)
         params = request.GET.copy()
         params.update(request.POST)
+        logger.debug('Request session:%s -> %s, %s', request.ip, request.session.keys(), request.session.session_key)
+
         params['_request'] = request
         # params['_session'] = request.session
         # params['_user'] = request.user

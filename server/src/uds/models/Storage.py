@@ -33,13 +33,10 @@
 
 from __future__ import unicode_literals
 from django.db import models
-from uds.core.db.LockingManager import LockingManager
 
 import logging
 
-
-__updated__ = '2016-04-05'
-
+__updated__ = '2018-06-15'
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +51,8 @@ class Storage(models.Model):
     data = models.TextField(default='')
     attr1 = models.CharField(max_length=64, db_index=True, null=True, blank=True, default=None)
 
-    objects = LockingManager()
+    # Removed old locking manager, that blocked tables
+    # TODO: review that all is consistents (it should)
 
     class Meta:
         """

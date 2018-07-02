@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2018-03-02'
+__updated__ = '2018-06-15'
 
 logger = logging.getLogger(__name__)
 
@@ -94,8 +94,6 @@ class UserService(UUIDModel):
     # if This is None, communication is not possible
     # The communication is done using POST via REST & Json
     # comms_url = models.CharField(max_length=256, default=None, null=True, blank=True)
-
-    # objects = LockingManager() This model is on an innoDb table, so we do not need the locking manager anymore
 
     class Meta(UUIDModel.Meta):
         """
