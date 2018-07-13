@@ -3,7 +3,6 @@ django-compressor==2.2
 bitarray==0.8.1
 html5lib==1.0.1
 six==1.11.0
-pycrypto==2.6.1
 dnspython==1.15.0
 lxml==3.6.0
 ovirt-engine-sdk-python==4.1.7
