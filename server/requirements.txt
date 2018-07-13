@@ -19,3 +19,4 @@ XenAPI==1.2
 WeasyPrint==0.42.2
 webencodings==0.5.1
 xml-marshaller==0.9.7
+pycrypto>=2.6.1
