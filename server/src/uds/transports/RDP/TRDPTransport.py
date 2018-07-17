@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2018-05-18'
+__updated__ = '2018-07-17'
 
 logger = logging.getLogger(__name__)
 
@@ -157,7 +157,7 @@ class TRDPTransport(BaseRDPTransport):
             'tunPort': sshPort,
             'tunWait': self.tunnelWait.num(),
             'username': username,
-            'password': password,
+            'password': password.replace('\'', '\\\''),
             'hasCredentials': username != '' and password != '',
             'domain': domain,
             'width': width,

@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
-__updated__ = '2018-05-18'
+__updated__ = '2018-07-17'
 
 
 class RDPTransport(BaseRDPTransport):
@@ -125,7 +125,7 @@ class RDPTransport(BaseRDPTransport):
             'ip': ip,
             'port': 3389,
             'username': username,
-            'password': password,
+            'password': password.replace('\'', '\\\''),
             'hasCredentials': username != '' and password != '',
             'domain': domain,
             'width': width,
