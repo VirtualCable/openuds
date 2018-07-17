@@ -125,7 +125,7 @@ class RDPTransport(BaseRDPTransport):
             'ip': ip,
             'port': 3389,
             'username': username,
-            'password': password.replace('\'', '\\\''),
+            'password': password,
             'hasCredentials': username != '' and password != '',
             'domain': domain,
             'width': width,

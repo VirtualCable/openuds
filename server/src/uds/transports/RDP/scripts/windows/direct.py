@@ -13,7 +13,7 @@ from uds import tools  # @UnresolvedImport
 import six
 
 try:
-    thePass = six.binary_type('{m.password}'.encode('UTF-16LE'))
+    thePass = six.binary_type("""{m.password}""".encode('UTF-16LE'))
     password = win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01).encode('hex')
 except Exception:
     logger.info('Cannot encrypt for user, trying for machine')

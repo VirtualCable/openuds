@@ -157,7 +157,7 @@ class TRDPTransport(BaseRDPTransport):
             'tunPort': sshPort,
             'tunWait': self.tunnelWait.num(),
             'username': username,
-            'password': password.replace('\'', '\\\''),
+            'password': password,
             'hasCredentials': username != '' and password != '',
             'domain': domain,
             'width': width,
