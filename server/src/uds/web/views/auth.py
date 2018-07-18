@@ -41,6 +41,7 @@ from django.template import RequestContext
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
 from uds.models import Authenticator, DeployedService
 from uds.core.managers import userServiceManager
+from uds.core.managers import cryptoManager
 from uds.core.util import html
 from uds.core.util import OsDetector
 from uds.core.util.State import State
@@ -57,7 +58,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-06-27'
+__updated__ = '2018-07-18'
 
 
 @csrf_exempt
@@ -156,7 +157,7 @@ def ticketAuth(request, ticketId):
             auth = data['auth']
             realname = data['realname']
             servicePool = data['servicePool']
-            password = data['password']
+            password = cryptoManager().decrypt(data['password'])
             transport = data['transport']
         except Exception:
             logger.error('Ticket stored is not valid')
