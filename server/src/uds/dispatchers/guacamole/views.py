@@ -36,6 +36,7 @@ from django.http import HttpResponse
 from uds.models import TicketStore
 from uds.core.util import net
 from uds.core.auths import auth
+from uds.core.managers import cryptoManager
 
 import logging
 
@@ -57,6 +58,7 @@ def guacamole(request, tunnelId):
 
     try:
         val = TicketStore.get(tunnelId, invalidate=False)
+        val['password'] = cryptoManager().decrypt(val['password'])
 
         response = dict2resp(val)
     except Exception:

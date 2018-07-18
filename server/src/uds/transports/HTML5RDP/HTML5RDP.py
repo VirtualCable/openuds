@@ -44,6 +44,7 @@ from uds.core.transports.BaseTransport import TUNNELED_GROUP
 from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util import OsDetector
+from uds.core.managers import cryptoManager
 from uds.models import TicketStore
 
 import logging
@@ -194,7 +195,7 @@ class HTML5RDPTransport(Transport):
             'protocol': 'rdp',
             'hostname': ip,
             'username': username,
-            'password': password,
+            'password': cryptoManager().encrypt(password),
             'ignore-cert': 'true',
             'security': self.security.value,
             'drive-path': '/share/{}'.format(user.uuid),

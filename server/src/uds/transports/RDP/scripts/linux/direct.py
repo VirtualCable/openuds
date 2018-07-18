@@ -27,8 +27,8 @@ def execRdesktop(rdesktop):
     import subprocess  # @Reimport
     params = [rdesktop] + {m.r.as_rdesktop_params} + ['{m.r.address}']  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
-    if '{m.password}' != '':
-        p.stdin.write('{m.password}')
+    if """{m.password}""" != '':
+        p.stdin.write("""{m.password}""")
     p.stdin.close()
     tools.addTaskToWait(p)
 

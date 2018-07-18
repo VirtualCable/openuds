@@ -29,7 +29,7 @@ def execRdesktop(rdesktop, port):
     params = [rdesktop] + {m.r.as_rdesktop_params} + ['127.0.0.1:{{}}'.format(port)]  # @UndefinedVariable
     p = subprocess.Popen(params, stdin=subprocess.PIPE)
     if {m.hasCredentials}:  # @UndefinedVariable
-        p.stdin.write('{m.password}')
+        p.stdin.write("""{m.password}""")
     p.stdin.close()
     tools.addTaskToWait(p)
 
