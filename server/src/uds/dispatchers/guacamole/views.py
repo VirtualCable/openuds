@@ -56,9 +56,11 @@ def dict2resp(dct):
 def guacamole(request, tunnelId):
     logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
 
+    tunnelId, scrambler = tunnelId.split('.')
+
     try:
         val = TicketStore.get(tunnelId, invalidate=False)
-        val['password'] = cryptoManager().decrypt(val['password'])
+        val['password'] = cryptoManager().xor(val['password'], scrambler)
 
         response = dict2resp(val)
     except Exception:

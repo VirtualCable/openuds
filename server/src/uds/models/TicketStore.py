@@ -44,7 +44,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-01-14'
+__updated__ = '2018-07-19'
 
 
 class TicketStore(UUIDModel):
@@ -148,10 +148,11 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def cleanup():
+        from datetime import timedelta
         now = getSqlDatetime()
-        cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
-        number = TicketStore.objects.filter(stamp__lt=cleanSince).delete()
-        logger.debug('Cleaned {} tickets'.format(number))
+        for v in TicketStore.objects.all():
+            if now > v.stamp + timedelta(seconds=v.validity):
+                v.delete()
 
     def __unicode__(self):
         if self.validator is not None:
