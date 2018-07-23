@@ -152,7 +152,7 @@ def ticketAuth(request, ticketId):
             auth = data['auth']
             realname = data['realname']
             servicePool = data['servicePool']
-            password = data['password']
+            password = cryptoManager().decrypt(data['password'])
             transport = data['transport']
         except Exception:
             logger.error('Ticket stored is not valid')

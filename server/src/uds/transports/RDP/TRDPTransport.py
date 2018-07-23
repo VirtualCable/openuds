@@ -27,9 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_noop as _
 from uds.core.managers.UserPrefsManager import CommonPrefs
@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2018-05-18'
+__updated__ = '2018-07-19'
 
 logger = logging.getLogger(__name__)
 
@@ -56,10 +56,10 @@ READY_CACHE_TIMEOUT = 30
 
 
 class TRDPTransport(BaseRDPTransport):
-    """
+    '''
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
-    """
+    '''
     typeName = _('RDP')
     typeType = 'TSRDPTransport'
     typeDescription = _('RDP Protocol. Tunneled connection.')
@@ -132,7 +132,7 @@ class TRDPTransport(BaseRDPTransport):
         r.domain = domain
         r.redirectPrinters = self.allowPrinters.isTrue()
         r.redirectSmartcards = self.allowSmartcards.isTrue()
-        r.redirectDrives = self.allowDrives.isTrue()
+        r.redirectDrives = self.allowDrives.value
         r.redirectHome = self.redirectHome.isTrue()
         r.redirectSerials = self.allowSerials.isTrue()
         r.enableClipboard = self.allowClipboard.isTrue()

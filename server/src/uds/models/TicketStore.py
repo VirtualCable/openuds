@@ -25,9 +25,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""
+'''
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 
 from __future__ import unicode_literals
 
@@ -45,7 +45,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-09-16'
+__updated__ = '2018-07-19'
 
 
 class TicketStore(UUIDModel):
@@ -78,7 +78,7 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def generateUuid():
-        # more owner is this:
+        # more secure is this:
         # ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(40))
         return cryptoManager().randomString(40)
 
@@ -91,7 +91,7 @@ class TicketStore(UUIDModel):
             validator = pickle.dumps(validator)
         data = pickle.dumps(data)
         if secure:
-            data = cryptoManager().encrypt(data)
+            pass
 
         return TicketStore.objects.create(stamp=getSqlDatetime(), data=data, validator=validator, validity=validity, owner=owner).uuid
 
@@ -106,16 +106,16 @@ class TicketStore(UUIDModel):
 
         data = pickle.dumps(data)
         if secure:
-            data = cryptoManager().encrypt()
+            pass
 
         try:
-            t = TicketStore.objects.get(uuid=uuid, owner=owner)
-            t.data = data
+            t = TicketStore.objects.get(uuid=uuid)
+            t.data = pickle.dumps(data)
             t.stamp = getSqlDatetime()
             t.validity = validity
             t.save()
         except TicketStore.DoesNotExist:
-            t = TicketStore.objects.create(uuid=uuid, stamp=getSqlDatetime(), data=data, validator=validator, validity=validity, owner=owner)
+            t = TicketStore.objects.create(uuid=uuid, stamp=getSqlDatetime(), data=pickle.dumps(data), validator=validator, validity=validity)
 
     @staticmethod
     def get(uuid, invalidate=True, owner=None, secure=False):
@@ -128,10 +128,8 @@ class TicketStore(UUIDModel):
             if t.stamp + validity < now:
                 raise TicketStore.InvalidTicket('Not valid anymore')
 
-            if secure is True:
-                data = pickle.loads(cryptoManager().decrypt(t.data))
-            else:
-                data = pickle.loads(t.data)
+            # if secure: TODO
+            data = pickle.loads(t.data)
 
             # If has validator, execute it
             if t.validator is not None:
@@ -161,10 +159,13 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def cleanup():
+        from datetime import timedelta
         now = getSqlDatetime()
-        cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
+        for v in TicketStore.objects.all():
+            if now > v.stamp + timedelta(seconds=v.validity):
+                v.delete()
+	cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
         number = TicketStore.objects.filter(stamp__lt=cleanSince).delete()
-        logger.debug('Cleaned {} tickets'.format(number))
 
     def __unicode__(self):
         if self.validator is not None:

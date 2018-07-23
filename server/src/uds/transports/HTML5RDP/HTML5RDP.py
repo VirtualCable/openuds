@@ -44,6 +44,7 @@ from uds.core.transports.BaseTransport import TUNNELED_GROUP
 from uds.core.transports import protocols
 from uds.core.util import connection
 from uds.core.util import OsDetector
+from uds.core.managers import cryptoManager
 from uds.models import TicketStore
 
 import logging
@@ -192,12 +193,15 @@ class HTML5RDPTransport(Transport):
         if domain != '':
             username = domain + '\\' + username
 
+        scrambler = cryptoManager().randomString(32)
+        passwordCrypted = cryptoManager().xor(password, scrambler)
+
         # Build params dict
         params = {
             'protocol': 'rdp',
             'hostname': ip,
             'username': username,
-            'password': password,
+            'password': passwordCrypted,
             'ignore-cert': 'true',
             'security': self.security.value,
             'drive-path': '/share/{}'.format(user.uuid),
@@ -229,4 +233,5 @@ class HTML5RDPTransport(Transport):
 
         ticket = TicketStore.create(params, validity=self.ticketValidity.num())
 
-        return HttpResponseRedirect("{}/transport/?{}&{}".format(self.guacamoleServer.value, ticket, request.build_absolute_uri(reverse('Index'))))
+        return HttpResponseRedirect("{}/transport/?{}.{}&{}".format(self.guacamoleServer.value, ticket, scrambler, request.build_absolute_uri(reverse('Index'))))
+

@@ -21,8 +21,8 @@ if forwardThread.status == 2:
 
 tools.addTaskToWait(forwardThread)
 
-thePass = six.binary_type('{m.password}'.encode('UTF-16LE'))
 try:
+    thePass = six.binary_type(sp['password'].encode('UTF-16LE'))
     password = win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01).encode('hex')
 except Exception:
     # Cannot encrypt for user, trying for machine

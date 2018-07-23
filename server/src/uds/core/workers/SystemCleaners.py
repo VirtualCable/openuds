@@ -59,7 +59,7 @@ class CacheCleaner(Job):
 
 class TicketStoreCleaner(Job):
 
-    frecuency = 3600 * 12  # every twelve hours
+    frecuency = 60  # every minute (60 seconds)
     friendly_name = 'Ticket Storage Cleaner'
 
     def __init__(self, environment):

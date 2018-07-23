@@ -38,6 +38,7 @@ from uds.models import Authenticator
 from uds.models import DeployedService
 from uds.models import Transport
 from uds.models import TicketStore
+from uds.core.managers import cryptoManager
 from uds.core.util.model import processUuid
 from uds.core.util import tools
 
@@ -207,7 +208,7 @@ class Tickets(Handler):
 
         data = {
             'username': username,
-            'password': password,
+            'password': cryptoManager().encrypt(password),
             'realname': realname,
             'groups': groups,
             'auth': auth.uuid,

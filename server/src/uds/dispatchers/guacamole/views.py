@@ -35,6 +35,7 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from uds.models import TicketStore
 from uds.core.auths import auth
+from uds.core.managers import cryptoManager
 
 import six
 import logging
@@ -55,8 +56,11 @@ def dict2resp(dct):
 def guacamole(request, tunnelId):
     logger.debug('Received credentials request for tunnel id {0}'.format(tunnelId))
 
+    tunnelId, scrambler = tunnelId.split('.')
+
     try:
         val = TicketStore.get(tunnelId, invalidate=False)
+        val['password'] = cryptoManager().xor(val['password'], scrambler)
 
         response = dict2resp(val)
     except Exception:
