@@ -53,7 +53,7 @@ from uds.models import User
 import logging
 import six
 
-__updated__ = '2018-06-27'
+__updated__ = '2018-07-26'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -207,6 +207,7 @@ def authenticate(username, password, authenticator, useInternalAuthenticate=Fals
 
     # If do not have any valid group
     if gm.hasValidGroups() is False:
+        logger.info('User {} has been authenticated, but he does not belongs to any UDS know group')
         return None
 
     return __registerUser(authenticator, authInstance, username)
