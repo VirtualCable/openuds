@@ -164,7 +164,7 @@ class TicketStore(UUIDModel):
         for v in TicketStore.objects.all():
             if now > v.stamp + timedelta(seconds=v.validity):
                 v.delete()
-	cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
+        cleanSince = now - datetime.timedelta(seconds=TicketStore.MAX_VALIDITY)
         number = TicketStore.objects.filter(stamp__lt=cleanSince).delete()
 
     def __unicode__(self):

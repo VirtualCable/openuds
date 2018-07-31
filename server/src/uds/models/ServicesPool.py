@@ -72,7 +72,7 @@ logger = logging.getLogger(__name__)
 class DeployedService(UUIDModel, TaggingMixin):
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
-    '''
+    """
     # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
