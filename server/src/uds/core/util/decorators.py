@@ -108,7 +108,7 @@ def allowCache(cachePrefix, cacheTimeout, cachingArgs=None, cachingKeyFnc=None):
                         First arg (self) is 0, so normally cachingArgs are 1, or [1,2,..]
     """
     if not cachingKeyFnc:
-        cachingKeyFnc = lambda(x):''
+        cachingKeyFnc = lambda x:''
 
     def allowCacheDecorator(fnc):
 

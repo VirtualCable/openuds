@@ -49,7 +49,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2018-06-27'
+__updated__ = '2018-07-26'
 
 
 # Allow cross-domain login
@@ -112,11 +112,11 @@ def login(request, tag=None):
                 logger.debug('User: {}'.format(user))
 
                 if user is None:
-                    logger.debug("Invalid credentials for user {0}".format(userName))
+                    logger.debug("Invalid user {0} (access denied)".format(userName))
                     tries += 1
                     cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
-                    form.add_error(None, ugettext('Invalid credentials'))
-                    authLogLogin(request, authenticator, userName, 'Invalid credentials')
+                    form.add_error(None, ugettext('Access denied'))
+                    authLogLogin(request, authenticator, userName, 'Access denied (user not allowed by UDS)')
                 else:
                     request.session.cycle_key()
 
