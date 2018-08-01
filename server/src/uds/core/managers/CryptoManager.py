@@ -35,12 +35,13 @@ from __future__ import unicode_literals
 from django.conf import settings
 from uds.core.util import encoders
 from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES
 from OpenSSL import crypto
 from Crypto.Random import atfork
 import hashlib
 import array
 import uuid
-import datetime
+import struct
 import random
 import string
 
@@ -63,6 +64,23 @@ class CryptoManager(object):
         self._rsa = RSA.importKey(settings.RSA_KEY)
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
         self._counter = 0
+
+    @staticmethod
+    def AESKey(key, length):
+        if isinstance(key, six.text_type):
+            key = key.encode('utf8')
+
+        while len(key) < length:
+            key += key  # Dup key
+
+        kl = [ord(v) for v in key]
+        pos = 0
+        while len(kl) > length:
+            kl[pos] ^= kl[length]
+            pos = (pos + 1) % length
+            del kl[length]
+
+        return b''.join([chr(v) for v in kl])
 
     @staticmethod
     def manager():
@@ -88,6 +106,28 @@ class CryptoManager(object):
             logger.exception('Decripting: {0}'.format(value))
             # logger.error(inspect.stack())
             return 'decript error'
+
+    def AESCrypt(self, text, key, base64=False):
+        # First, match key to 16 bytes. If key is over 16, create a new one based on key of 16 bytes length
+        cipher = AES.new(CryptoManager.AESKey(key, 16))
+        rndStr = self.randomString(cipher.block_size)
+        paddedLength = ((len(text) + 4 + 15) // 16) * 16
+        toEncode = struct.pack('>i', len(text)) + text + rndStr[:paddedLength - len(text) - 4]
+        encoded = cipher.encrypt(toEncode)
+        if hex:
+            return encoders.encode(encoded, 'base64', True)
+
+        return encoded
+
+    def AESDecrypt(self, text, key, base64=False):
+        if base64:
+            text = encoders.decode(text, 'base64')
+
+        cipher = AES.new(CryptoManager.AESKey(key, 16))
+        toDecode = cipher.decrypt(text)
+        return toDecode[4:4 + struct.unpack('>i', toDecode[:4])[0]]
+
+        return
 
     def xor(self, s1, s2):
         if isinstance(s1, six.text_type):
