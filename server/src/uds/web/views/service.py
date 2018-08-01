@@ -56,7 +56,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-03-14'
+__updated__ = '2018-08-02'
 
 
 @webLoginRequired(admin=False)
@@ -117,7 +117,7 @@ def clientEnabler(request, idService, idTransport):
     try:
         res = userServiceManager().getService(request.user, request.ip, idService, idTransport, doTest=False)
         scrambler = cryptoManager().randomString(32)
-        password = cryptoManager().xor(webPassword(request), scrambler)
+        password = cryptoManager().symCrypt(webPassword(request), scrambler)
 
         _x, userService, _x, trans, _x = res
 

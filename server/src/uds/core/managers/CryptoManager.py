@@ -100,6 +100,12 @@ class CryptoManager(object):
         # We must return bynary in xor, because result is in fact binary
         return six.binary_type(array.array(six.binary_type('B'), (s1[i] ^ s2[i] for i in range(len(s1)))).tostring())
 
+    def symCrypt(self, text, key):
+        return self.xor(text, key)
+
+    def symDecrpyt(self, cryptText, key):
+        return self.xor(cryptText, key).decode('utf-8')
+
     def loadPrivateKey(self, rsaKey):
         try:
             pk = RSA.importKey(rsaKey)

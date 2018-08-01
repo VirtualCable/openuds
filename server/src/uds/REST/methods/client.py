@@ -135,7 +135,7 @@ class Client(Handler):
             res = userServiceManager().getService(self._request.user, self._request.ip, data['service'], data['transport'])
             logger.debug('Res: {}'.format(res))
             ip, userService, userServiceInstance, transport, transportInstance = res
-            password = cryptoManager().xor(data['password'], scrambler).decode('utf-8')
+            password = cryptoManager().symDecrpyt(data['password'], scrambler)
 
             userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
 

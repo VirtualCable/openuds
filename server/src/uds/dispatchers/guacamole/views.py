@@ -60,7 +60,7 @@ def guacamole(request, tunnelId):
 
     try:
         val = TicketStore.get(tunnelId, invalidate=False)
-        val['password'] = cryptoManager().xor(val['password'], scrambler)
+        val['password'] = cryptoManager().symDecrpyt(val['password'], scrambler)
 
         response = dict2resp(val)
     except Exception:

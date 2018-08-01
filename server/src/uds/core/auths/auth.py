@@ -46,14 +46,14 @@ from uds.core.util import log
 from uds.core.util.decorators import deprecated
 from uds.core import auths
 from uds.core.util.stats import events
-from uds.core.managers.CryptoManager import CryptoManager
+from uds.core.managers import cryptoManager
 from uds.core.util.State import State
 from uds.models import User
 
 import logging
 import six
 
-__updated__ = '2018-07-26'
+__updated__ = '2018-08-02'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -286,7 +286,7 @@ def webLogin(request, response, user, password):
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)  # Stores "bytes"
+    request.session[PASS_KEY] = cryptoManager().symCrypt(password, cookie)  # Stores "bytes"
     # Ensures that this user will have access through REST api if logged in through web interface
     REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, password, get_language(), user.is_admin, user.staff_member, cookie)
     return True
@@ -300,7 +300,7 @@ def webPassword(request):
     @param request: DJango Request
     @return: Unscrambled user password
     '''
-    return CryptoManager.manager().xor(request.session.get(PASS_KEY, ''), getUDSCookie(request)).decode('utf-8')  # recover as original unicode string
+    return cryptoManager().symDecrpyt(request.session.get(PASS_KEY, ''), getUDSCookie(request))  # recover as original unicode string
 
 
 def webLogout(request, exit_url=None):
