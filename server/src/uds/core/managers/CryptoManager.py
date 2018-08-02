@@ -109,7 +109,7 @@ class CryptoManager(object):
 
     def AESCrypt(self, text, key, base64=False):
         # First, match key to 16 bytes. If key is over 16, create a new one based on key of 16 bytes length
-        cipher = AES.new(CryptoManager.AESKey(key, 16))
+        cipher = AES.new(CryptoManager.AESKey(key, 16), AES.MODE_CBC, 'udsinitvectoruds')
         rndStr = self.randomString(cipher.block_size)
         paddedLength = ((len(text) + 4 + 15) // 16) * 16
         toEncode = struct.pack('>i', len(text)) + text + rndStr[:paddedLength - len(text) - 4]
@@ -123,7 +123,7 @@ class CryptoManager(object):
         if base64:
             text = encoders.decode(text, 'base64')
 
-        cipher = AES.new(CryptoManager.AESKey(key, 16))
+        cipher = AES.new(CryptoManager.AESKey(key, 16), AES.MODE_CBC, 'udsinitvectoruds')
         toDecode = cipher.decrypt(text)
         return toDecode[4:4 + struct.unpack('>i', toDecode[:4])[0]]
 
