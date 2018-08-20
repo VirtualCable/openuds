@@ -40,7 +40,7 @@ from uds.core.ui import gui
 
 import logging
 
-__updated__ = '2017-03-28'
+__updated__ = '2018-08-20'
 
 logger = logging.getLogger(__name__)
 
@@ -214,12 +214,12 @@ class LiveService(Service):
         """
         return self.parent().getMachineState(machineId)
 
-    def getMachineSubState(self, machineId):
+    def getMachineSubstate(self, machineId):
         """
         On OpenNebula, the machine can be "active" but not "running".
         Any active machine will have a LCM_STATE, that is what we get here
         """
-        return self.parent().getMachineSubState(machineId)
+        return self.parent().getMachineSubstate(machineId)
 
     def startMachine(self, machineId):
         """
@@ -236,7 +236,7 @@ class LiveService(Service):
 
     def stopMachine(self, machineId):
         """
-        Tries to start a machine. No check is done, it is simply requested to OpenNebula
+        Tries to stop a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine
@@ -247,7 +247,7 @@ class LiveService(Service):
 
     def suspendMachine(self, machineId):
         """
-        Tries to start a machine. No check is done, it is simply requested to OpenNebula
+        Tries to suspend machine. No check is done, it is simply requested to OpenNebula
 
         Args:
             machineId: Id of the machine

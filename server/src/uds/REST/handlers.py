@@ -195,7 +195,7 @@ class Handler(object):
         session['REST'] = {
             'auth': id_auth,
             'username': username,
-            'password': cryptoManager().xor(password, scrambler),  # Stores "bytes"
+            'password': cryptoManager().symCrypt(password, scrambler),  # Stores "bytes"
             'locale': locale,
             'platform': platform,
             'is_admin': is_admin,

@@ -27,12 +27,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
+'''
 Provides useful functions for authenticating, used by web interface.
 
 
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
-"""
+'''
 from __future__ import unicode_literals
 
 from functools import wraps
@@ -47,14 +47,14 @@ from uds.core.util import log
 from uds.core.util.decorators import deprecated
 from uds.core import auths
 from uds.core.util.stats import events
-from uds.core.managers.CryptoManager import CryptoManager
+from uds.core.managers import cryptoManager
 from uds.core.util.State import State
 from uds.models import User
 
 import logging
 import six
 
-__updated__ = '2018-07-26'
+__updated__ = '2018-08-02'
 
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
@@ -62,6 +62,43 @@ authLogger = logging.getLogger('authLog')
 USER_KEY = 'uk'
 PASS_KEY = 'pk'
 ROOT_ID = -20091204  # Any negative number will do the trick
+
+
+def getUDSCookie(request, response=None, force=False):
+    '''
+    Generates a random cookie for uds, used, for example, to encript things
+    '''
+    if 'uds' not in request.COOKIES:
+        import random
+        import string
+        cookie = ''.join(random.choice(string.letters + string.digits) for _ in range(32))  # @UndefinedVariable
+        if response is not None:
+            response.set_cookie('uds', cookie)
+        request.COOKIES['uds'] = cookie
+    else:
+        cookie = request.COOKIES['uds']
+
+    if response is not None and force is True:
+        response.set_cookie('uds', cookie)
+
+    return cookie
+
+
+def getRootUser():
+    # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+    from uds.models import Authenticator
+    u = User(id=ROOT_ID, name=GlobalConfig.SUPER_USER_LOGIN.get(True), real_name=_('System Administrator'), state=State.ACTIVE, staff_member=True, is_admin=True)
+    u.manager = Authenticator()
+    u.getGroups = lambda: []
+    u.updateLastAccess = lambda: None
+    u.logout = lambda: None
+    return u
+
+
+@deprecated
+def getIp(request):
+    logger.info('Deprecated IP')
+    return request.ip
 
 
 # Decorator to make easier protect pages that needs to be logged in
@@ -285,7 +322,7 @@ def webLogin(request, response, user, password):
     user.updateLastAccess()
     request.session.clear()
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = CryptoManager.manager().xor(password, cookie)  # Stores "bytes"
+    request.session[PASS_KEY] = cryptoManager().symCrypt(password, cookie)  # Stores "bytes"
     # Ensures that this user will have access through REST api if logged in through web interface
     REST.Handler.storeSessionAuthdata(request.session, manager_id, user.name, password, get_language(), request.os, user.is_admin, user.staff_member, cookie)
     return True
@@ -299,7 +336,7 @@ def webPassword(request):
     @param request: DJango Request
     @return: Unscrambled user password
     """
-    return CryptoManager.manager().xor(request.session.get(PASS_KEY, ''), getUDSCookie(request)).decode('utf-8')  # recover as original unicode string
+    return cryptoManager().symDecrpyt(request.session.get(PASS_KEY, ''), getUDSCookie(request))  # recover as original unicode string
 
 
 def webLogout(request, exit_url=None):

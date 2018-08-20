@@ -194,7 +194,7 @@ class HTML5RDPTransport(Transport):
             username = domain + '\\' + username
 
         scrambler = cryptoManager().randomString(32)
-        passwordCrypted = cryptoManager().xor(password, scrambler)
+        passwordCrypted = cryptoManager().symCrypt(password, scrambler)
 
         # Build params dict
         params = {

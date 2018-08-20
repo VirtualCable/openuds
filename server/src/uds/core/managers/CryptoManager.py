@@ -35,12 +35,14 @@ from __future__ import unicode_literals
 from django.conf import settings
 from uds.core.util import encoders
 from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES
 from uds.core.util import encoders
 from OpenSSL import crypto
 from Crypto.Random import atfork
 import hashlib
 import array
 import uuid
+import struct
 import datetime
 import random
 import string
@@ -64,6 +66,23 @@ class CryptoManager(object):
         self._rsa = RSA.importKey(settings.RSA_KEY)
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
         self._counter = 0
+
+    @staticmethod
+    def AESKey(key, length):
+        if isinstance(key, six.text_type):
+            key = key.encode('utf8')
+
+        while len(key) < length:
+            key += key  # Dup key
+
+        kl = [ord(v) for v in key]
+        pos = 0
+        while len(kl) > length:
+            kl[pos] ^= kl[length]
+            pos = (pos + 1) % length
+            del kl[length]
+
+        return b''.join([chr(v) for v in kl])
 
     @staticmethod
     def manager():
@@ -90,6 +109,28 @@ class CryptoManager(object):
             # logger.error(inspect.stack())
             return 'decript error'
 
+    def AESCrypt(self, text, key, base64=False):
+        # First, match key to 16 bytes. If key is over 16, create a new one based on key of 16 bytes length
+        cipher = AES.new(CryptoManager.AESKey(key, 16), AES.MODE_CBC, 'udsinitvectoruds')
+        rndStr = self.randomString(cipher.block_size)
+        paddedLength = ((len(text) + 4 + 15) // 16) * 16
+        toEncode = struct.pack('>i', len(text)) + text + rndStr[:paddedLength - len(text) - 4]
+        encoded = cipher.encrypt(toEncode)
+        if hex:
+            return encoders.encode(encoded, 'base64', True)
+
+        return encoded
+
+    def AESDecrypt(self, text, key, base64=False):
+        if base64:
+            text = encoders.decode(text, 'base64')
+
+        cipher = AES.new(CryptoManager.AESKey(key, 16), AES.MODE_CBC, 'udsinitvectoruds')
+        toDecode = cipher.decrypt(text)
+        return toDecode[4:4 + struct.unpack('>i', toDecode[:4])[0]]
+
+        return
+
     def xor(self, s1, s2):
         if isinstance(s1, six.text_type):
             s1 = s1.encode('utf-8')
@@ -100,6 +141,12 @@ class CryptoManager(object):
         s2 = array.array('B', s2 * mult)
         # We must return bynary in xor, because result is in fact binary
         return array.array('B', (s1[i] ^ s2[i] for i in range(len(s1)))).tostring()
+
+    def symCrypt(self, text, key):
+        return self.xor(text, key)
+
+    def symDecrpyt(self, cryptText, key):
+        return self.xor(cryptText, key).decode('utf-8')
 
     def loadPrivateKey(self, rsaKey):
         try:
@@ -133,15 +180,12 @@ class CryptoManager(object):
         If obj is None, returns an uuid based on current datetime + counter
         """
         if obj is None:
-            obj = six.text_type(datetime.datetime.now()) + six.text_type(self._counter)
+            obj = self.randomString()
             self._counter += 1
         elif isinstance(obj, six.binary_type):
             obj = obj.decode('utf8')  # To binary
         else:
             obj = '{}'.format(obj)
-
-        if six.PY2:
-            obj = obj.encode('utf8')
 
         return six.text_type(uuid.uuid5(self._namespace, obj)).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 

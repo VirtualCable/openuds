@@ -182,7 +182,7 @@ class Connection(Handler):
             res = userServiceManager().getService(self._user, self._request.ip, idService, idTransport)
             logger.debug('Res: {}'.format(res))
             ip, userService, userServiceInstance, transport, transportInstance = res
-            password = cryptoManager().xor(self.getValue('password'), scrambler).decode('utf-8')
+            password = cryptoManager().symDecrpyt(self.getValue('password'), scrambler)
 
             userService.setConnectionSource(self._request.ip, hostname)  # Store where we are accessing from so we can notify Service
 

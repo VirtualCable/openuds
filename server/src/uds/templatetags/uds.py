@@ -101,7 +101,8 @@ def udsJs(context):
         'urls': {
             'changeLang': reverse('set_language'),
             'login': reverse('uds.web.views.login'),
-            'logout': reverse('uds.web.views.logout')
+            'logout': reverse('uds.web.views.logout'),
+            'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
         }
     }
 
