@@ -49,7 +49,7 @@ import six
 # Python bindings for OpenNebula
 # import oca
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-08-20'
 
 logger = logging.getLogger(__name__)
 
@@ -187,7 +187,7 @@ class Provider(ServiceProvider):
         '''
         return on.vm.getMachineState(self.api, machineId)
 
-    def getMachineSubState(self, machineId):
+    def getMachineSubstate(self, machineId):
         '''
         Returns the  LCM_STATE of a machine (must be ready)
         '''

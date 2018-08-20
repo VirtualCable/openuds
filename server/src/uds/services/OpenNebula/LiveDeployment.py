@@ -39,7 +39,7 @@ from . import on
 import pickle
 import logging
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-08-20'
 
 logger = logging.getLogger(__name__)
 
@@ -355,6 +355,13 @@ class LiveDeployment(UserDeployment):
 
         if state == on.VmState.UNKNOWN:
             raise Exception('Machine not found')
+
+        if state == on.VmState.ACTIVE:
+            subState = self.service().getMachineSubstate(self._vmid)
+            if subState < 3:  # Less than running
+                logger.info('Must wait before remove: {}'.format(subState))
+                self.__pushFrontOp(opRetry)
+                return
 
         self.service().removeMachine(self._vmid)
 

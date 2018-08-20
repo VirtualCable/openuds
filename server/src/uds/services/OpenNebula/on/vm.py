@@ -39,7 +39,7 @@ from defusedxml import minidom
 # Python bindings for OpenNebula
 from .common import VmState
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-08-20'
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ def getMachineSubstate(api, machineId):
     Returns the lcm_state
     '''
     try:
-        return api.getVMSubState(machineId)
+        return api.getVMSubstate(machineId)
     except Exception as e:
         logger.error('Error obtaining machine state for {} on OpenNebula: {}'.format(machineId, e))
 
@@ -156,7 +156,7 @@ def removeMachine(api, machineId):
         api.deleteVM(machineId)
     except Exception as e:
         logger.exception('Error removing machine {} on OpenNebula: {}'.format(machineId, e))
-        raise 'Error removing machine {} on OpenNebula: {}'.format(machineId, e)
+        raise Exception('Error removing machine {} on OpenNebula: {}'.format(machineId, e))
 
 
 def enumerateMachines(api):
