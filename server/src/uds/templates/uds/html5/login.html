@@ -11,7 +11,8 @@
 		    var vv = val;
 			$("#login").hide(300, function() {
 				$.get('{%url "uds.web.views.customAuth" idAuth=''%}' + vv, function(data) {
-				  $('#nonStandardLogin').html(data);
+				  eval(data);
+				  // $('#nonStandardLogin').html(data);
 				  $('#nonStandard').show(300);
 				});
 			});

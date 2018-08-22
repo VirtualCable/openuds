@@ -112,9 +112,13 @@ class IPAuth(Authenticator):
         self.getGroups(ip, gm)
 
         if gm.hasValidGroups() and self.dbAuthenticator().isValidUser(ip, True):
-            passw = ''
-            return '<script type="text/javascript">$("#id_user").val("' + ip + '");$("#id_password").val("' + passw + '");$("#loginform").submit();</script>'
+            return '''function setVal(element, value) {{
+                        document.getElementById(element).value = value;
+                    }}
+                    setVal("id_user", "{ip}");
+                    setVal("id_password", "{passwd}");
+                    document.getElementById("loginform").submit();'''.format(ip=ip, passwd='')
         else:
-            return '<div>Invalid auth (' + ip + ')</div><script type="text/javascript">$("#backToLogin").click()</script>'
+            return 'alert("invalid authhenticator"); window.location.reload();</script>'
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password
