@@ -28,11 +28,45 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import logging
+
 from django.shortcuts import render
+from uds.core.auths.auth import getUDSCookie
+
+logger = logging.getLogger(__name__)
 
 
 def index(request):
-    return render(request, 'uds/modern/index.html', {})
+
+    response = render(request, 'uds/modern/index.html', {})
+
+    # Ensure UDS cookie is present
+    getUDSCookie(request, response)
+
+    return response
+
+
+# Basically, the original /login method, but fixed for modern interface
+def login(request, tag=None):
+    from uds.web.forms.LoginForm import LoginForm
+    from uds.web.authentication import checkLogin
+    from uds.core.auths.auth import webLogin
+    from django.http import HttpResponseRedirect
+    from django.urls import reverse
+
+    # Default empty form
+    if request.method == 'POST':
+        form = LoginForm(request.POST, tag=tag)
+        user, data = checkLogin(request, form, tag)
+        if user:
+            response = HttpResponseRedirect(reverse('modern.index'))
+            webLogin(request, response, user, data)  # data is user password here
+        else:
+            # If error is numeric, redirect...
+            # Error, set error on session for process for js
+            request.session['errors'] = data
+    else:
+        return index(request)
 
 
 def js(request):

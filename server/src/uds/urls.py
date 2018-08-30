@@ -96,7 +96,8 @@ urlpatterns = [
 
     # Modern
     path('js', uds.web.views.modern.js, name="uds.js"),
-    re_path('^modern.*', uds.web.views.modern.index, name='modern'),
+    path(r'modern/login/', uds.web.views.login, name='modern.login'),
+    re_path('^modern.*', uds.web.views.modern.index, name='modern.index'),
 ]
 
 # Append urls from special dispatchers

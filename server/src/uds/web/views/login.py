@@ -32,15 +32,14 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils.translation import ugettext
 
-from uds.core.auths.auth import webLogin, authenticate, authLogLogin, authLogLogout, getUDSCookie, webLoginRequired, webLogout
+from uds.core.auths.auth import webLogin, authLogLogout, getUDSCookie, webLoginRequired, webLogout
 from uds.models import Authenticator
 from uds.web.forms.LoginForm import LoginForm
 from uds.core.util.Config import GlobalConfig
-from uds.core.util.Cache import Cache
-from uds.core.util import OsDetector
 from uds.core.util.model import processUuid
+
+from uds.web.authentication import checkLogin
 
 from uds.core.ui import theme
 from uds.core import VERSION
@@ -49,7 +48,7 @@ import uds.web.errors as errors
 import logging
 
 logger = logging.getLogger(__name__)
-__updated__ = '2018-07-26'
+__updated__ = '2018-08-30'
 
 
 # Allow cross-domain login
@@ -61,91 +60,34 @@ def login(request, tag=None):
     :param tag: tag of login auth
     """
     # request.session.set_expiry(GlobalConfig.USER_SESSION_LENGTH.getInt())
+    response = None
 
-    host = request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'  # Last one is a placeholder in case we can't locate host name
+    # Default empty form
+    form = LoginForm(tag=tag)
 
-    # Get Authenticators limitation
-    logger.debug('Host: {0}'.format(host))
-    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
-        if tag is None:
-            try:
-                Authenticator.objects.get(small_name=host)
-                tag = host
-            except Exception:
-                try:
-                    tag = Authenticator.objects.order_by('priority')[0].small_name
-                except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
-                    tag = None
-
-    logger.debug('Tag: {0}'.format(tag))
-
-    logger.debug(request.method)
     if request.method == 'POST':
-        if 'uds' not in request.COOKIES:
-            logger.debug('Request does not have uds cookie')
-            return errors.errorView(request, errors.COOKIES_NEEDED)  # We need cookies to keep session data
         form = LoginForm(request.POST, tag=tag)
-        if form.is_valid():
-            os = request.os
-            try:
-                authenticator = Authenticator.objects.get(uuid=processUuid(form.cleaned_data['authenticator']))
-            except Exception:
-                authenticator = Authenticator()
-            userName = form.cleaned_data['user']
-            if GlobalConfig.LOWERCASE_USERNAME.getBool(True) is True:
-                userName = userName.lower()
+        user, data = checkLogin(request, form, tag)
+        if user:
+            response = HttpResponseRedirect(reverse('uds.web.views.index'))
+            webLogin(request, response, user, data)  # data is user password here
+        else:  # error, data = error
+            if isinstance(data, int):
+                return errors.errorView(request, data)
+            # Error to notify
+            form.add_error(None, data)
 
-            cache = Cache('auth')
-            cacheKey = str(authenticator.id) + userName
-            tries = cache.get(cacheKey)
-            if tries is None:
-                tries = 0
-            if authenticator.getInstance().blockUserOnLoginFailures is True and tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
-                form.add_error(None, 'Too many authentication errors. User temporarily  blocked.')
-                authLogLogin(request, authenticator, userName, 'Temporarily blocked')
-            else:
-                password = form.cleaned_data['password']
-                user = None
-                if password == '':
-                    password = 'axd56adhg466jasd6q8sadñ€sáé--v'
-                user = authenticate(userName, password, authenticator)
-                logger.debug('User: {}'.format(user))
+    if response is None:
+        response = render(request,
+            theme.template('login.html'),
+            {
+                'form': form,
+                'authenticators': Authenticator.getByTag(tag),
+                'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True),
+                'version': VERSION
 
-                if user is None:
-                    logger.debug("Invalid user {0} (access denied)".format(userName))
-                    tries += 1
-                    cache.put(cacheKey, tries, GlobalConfig.LOGIN_BLOCK.getInt())
-                    form.add_error(None, ugettext('Access denied'))
-                    authLogLogin(request, authenticator, userName, 'Access denied (user not allowed by UDS)')
-                else:
-                    request.session.cycle_key()
-
-                    logger.debug('User {} has logged in'.format(userName))
-                    cache.remove(cacheKey)  # Valid login, remove cached tries
-                    response = HttpResponseRedirect(reverse('uds.web.views.index'))
-                    webLogin(request, response, user, form.cleaned_data['password'])
-                    # Add the "java supported" flag to session
-                    request.session['OS'] = os
-                    if form.cleaned_data['logouturl'] != '':
-                        logger.debug('The logoout url will be {}'.format(form.cleaned_data['logouturl']))
-                        request.session['logouturl'] = form.cleaned_data['logouturl']
-                    authLogLogin(request, authenticator, user.name)
-                    return response
-        else:
-            logger.info('Invalid form received')
-    else:
-        form = LoginForm(tag=tag)
-
-    response = render(request,
-        theme.template('login.html'),
-        {
-            'form': form,
-            'authenticators': Authenticator.getByTag(tag),
-            'customHtml': GlobalConfig.CUSTOM_HTML_LOGIN.get(True),
-            'version': VERSION
-
-        }
-    )
+            }
+        )
 
     getUDSCookie(request, response)
 

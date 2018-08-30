@@ -359,6 +359,10 @@ LOGGING = {
         }
     },
     'loggers': {
+        '': {
+            'handlers': ['file'],
+            'level': LOGLEVEL,
+        },
         'django': {
             'handlers': ['null'],
             'propagate': True,

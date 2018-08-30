@@ -33,10 +33,8 @@
 from __future__ import unicode_literals
 
 from functools import wraps
-import base64
-import random
-import string
-import six
+from uds.core.managers import cryptoManager
+from uds.core.util import encoders
 
 import logging
 
@@ -64,15 +62,22 @@ def transformId(view_func):
                 except Exception:
                     return errors.errorView(request, errors.INVALID_REQUEST)
         return view_func(request, *args, **kwargs)
+
     return _wrapped_view
 
 
 def scrambleId(request, id_):
-    if request.session.get(SCRAMBLE_SES) is None:
-        request.session[SCRAMBLE_SES] = ''.join(random.choice(string.letters) for _ in range(SCRAMBLE_LEN))
-    return base64.b64encode(six.text_type(id_) + request.session.get(SCRAMBLE_SES)).encode('hex')
+    if SCRAMBLE_SES not in request.session:
+        request.session[SCRAMBLE_SES] = cryptoManager().randomString(SCRAMBLE_LEN)
+
+    id_ = str(id_)
+    if len(id_) < SCRAMBLE_LEN:
+        id_ = (id_ + '~' + cryptoManager().randomString(SCRAMBLE_LEN))[:SCRAMBLE_LEN]
+
+    scrambled = cryptoManager().xor(id_, request.session[SCRAMBLE_SES])
+    return encoders.encode(scrambled, 'base64', asText=True)[:-3]
 
 
 def unscrambleId(request, id_):
-    idd = base64.b64decode(id_.decode('hex'))
-    return idd[:-SCRAMBLE_LEN]
+    idd = cryptoManager().xor(encoders.decode(id_ + '==\n', 'base64', asText=False), request.session[SCRAMBLE_SES])
+    return idd.decode('utf8').split('~')[0]
