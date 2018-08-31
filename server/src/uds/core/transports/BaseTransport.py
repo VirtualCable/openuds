@@ -38,9 +38,9 @@ from uds.core.util import OsDetector
 from uds.core import Module
 from uds.core.transports import protocols
 from uds.core.util import encoders
+from uds.core.util import connection
 
 import logging
-
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +111,7 @@ class Transport(Module):
         proxy = userService.deployed_service.service.proxy
         if proxy is not None:
             return proxy.doTestServer(ip, port, timeout)
-        return connection.testServer(ip, six.text_type(port), timeout)
+        return connection.testServer(ip, str(port), timeout)
 
     def isAvailableFor(self, userService, ip):
         """

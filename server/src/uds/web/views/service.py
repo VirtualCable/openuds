@@ -48,13 +48,12 @@ from uds.core.services.Exceptions import ServiceNotReadyError, MaxServicesReache
 
 import uds.web.errors as errors
 
-import six
 import json
 import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-08-02'
+__updated__ = '2018-08-31'
 
 
 @webLoginRequired(admin=False)
@@ -140,12 +139,12 @@ def clientEnabler(request, idService, idTransport):
         error = errors.errorString(errors.SERVICE_CALENDAR_DENIED)
     except Exception as e:
         logger.exception('Error')
-        error = six.text_type(e)
+        error = str(e)
 
     return HttpResponse(
         json.dumps({
-            'url': six.text_type(url),
-            'error': six.text_type(error)
+            'url': str(url),
+            'error': str(error)
         }),
         content_type='application/json'
     )

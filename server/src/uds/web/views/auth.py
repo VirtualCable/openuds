@@ -42,7 +42,7 @@ from django.views.decorators.csrf import csrf_exempt
 import uds.web.errors as errors
 from uds.core.auths.Exceptions import InvalidUserException
 from uds.core.auths.auth import webLogin, webLogout, authenticateViaCallback, authLogLogin, getUDSCookie
-from uds.core.managers import userServiceManager
+from uds.core.managers import userServiceManager, cryptoManager
 from uds.core.services.Exceptions import InvalidServiceException, ServiceNotReadyError
 from uds.core.ui import theme
 from uds.core.util import OsDetector
@@ -53,7 +53,7 @@ from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-06-27'
+__updated__ = '2018-08-31'
 
 
 @csrf_exempt

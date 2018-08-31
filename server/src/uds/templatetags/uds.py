@@ -45,6 +45,8 @@ from uds.REST.methods.client import CLIENT_VERSION
 from uds.core.managers import downloadsManager
 from uds.core.util.Config import GlobalConfig
 
+from uds.core import VERSION, VERSION_STAMP
+
 from uds.models import Authenticator
 
 logger = logging.getLogger(__name__)
@@ -92,17 +94,22 @@ def udsJs(context):
         }
 
     config = {
+        'version': VERSION,
+        'version_stamp': VERSION_STAMP,
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
         'authenticators': [getAuth(auth) for auth in authenticators],
+        'bypassPluginDetection': False,
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
         'csrf': csrf_token,
         'urls': {
             'changeLang': reverse('set_language'),
-            'login': reverse('uds.web.views.login'),
-            'logout': reverse('uds.web.views.logout'),
+            'login': reverse('modern.login'),
+            'logout': reverse('modern.logout'),
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
+            'services': reverse('modern.services'),
+            'enabler': reverse('ClientAccessEnabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
         }
     }
 
@@ -121,17 +128,22 @@ def udsJs(context):
         )
     ]
 
-    actors = [];
+    actors = []
 
     if profile['role'] == 'staff':  # Add staff things
         actors = [{'url': reverse('uds.web.views.download', kwargs={'idDownload': key}), 'name': val['name'], 'description': gettext(val['comment'])} for key, val in downloadsManager().getDownloadables().items()]
         config['urls']['admin'] = reverse('uds.admin.views.index')
 
+    if request.user:
+        prefs = request.user.prefs('_uds')
+        # Update bypass configuration with user information
+        config['bypassPluginDetection'] = prefs.get('bypassPluginDetection') == '1'
+
     uds = {
         'profile': profile,
         'config': config,
         'plugins': plugins,
-        'actors': actors
+        'actors': actors,
     }
 
     javascript = 'var udsData = ' + json.dumps(uds) + ';\n';

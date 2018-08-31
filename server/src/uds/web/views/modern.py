@@ -29,16 +29,24 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import json
 
 from django.shortcuts import render
-from uds.core.auths.auth import getUDSCookie
+from django.http import HttpResponse
+from django.urls import reverse
+from uds.core.auths.auth import (
+    getUDSCookie,
+    denyNonAuthenticated
+)
+from uds.web.services import getServicesData
 
 logger = logging.getLogger(__name__)
 
 
 def index(request):
-
     response = render(request, 'uds/modern/index.html', {})
+
+    logger.debug('Session expires at %s', request.session.get_expiry_date())
 
     # Ensure UDS cookie is present
     getUDSCookie(request, response)
@@ -52,7 +60,6 @@ def login(request, tag=None):
     from uds.web.authentication import checkLogin
     from uds.core.auths.auth import webLogin
     from django.http import HttpResponseRedirect
-    from django.urls import reverse
 
     # Default empty form
     if request.method == 'POST':
@@ -65,9 +72,20 @@ def login(request, tag=None):
             # If error is numeric, redirect...
             # Error, set error on session for process for js
             request.session['errors'] = data
+            return HttpResponse(data);
     else:
-        return index(request)
+        response = index(request)
+
+    return response
 
 
 def js(request):
     return render(request, 'uds/js.js', content_type='text/javascript')
+
+
+@denyNonAuthenticated
+def services(request):
+    data = getServicesData(request)
+
+    return HttpResponse(content=json.dumps(data), content_type='application/json')
+

@@ -96,7 +96,9 @@ urlpatterns = [
 
     # Modern
     path('js', uds.web.views.modern.js, name="uds.js"),
-    path(r'modern/login/', uds.web.views.login, name='modern.login'),
+    path(r'modern/login/', uds.web.views.modern.login, name='modern.login'),
+    path(r'modern/logout/', uds.web.views.logout, name='modern.logout'),
+    path(r'modern/services/', uds.web.views.modern.services, name='modern.services'),
     re_path('^modern.*', uds.web.views.modern.index, name='modern.index'),
 ]
 
