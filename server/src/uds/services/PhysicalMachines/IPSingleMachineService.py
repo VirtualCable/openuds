@@ -47,7 +47,6 @@ class IPSingleMachineService(services.Service):
     # Gui
     ip = gui.TextField(length=64, label=_('Machine IP'), order=1, tooltip=_('Machine IP'), required=True)
 
-
     # Description of service
     typeName = _('Static Single IP')
     typeType = 'IPSingleMachineService'
@@ -71,7 +70,6 @@ class IPSingleMachineService(services.Service):
     def getUnassignedMachine(self):
         ip = None
         try:
-            self.storage.lock()
             counter = self.storage.getPickle('counter')
             counter = counter + 1 if counter is not None else 1
             self.storage.putPickle('counter', counter)
@@ -79,8 +77,6 @@ class IPSingleMachineService(services.Service):
         except Exception:
             ip = None
             logger.exception("Exception at getUnassignedMachine")
-        finally:
-            self.storage.unlock()
 
         return ip
 

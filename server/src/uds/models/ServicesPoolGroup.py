@@ -44,8 +44,7 @@ from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
 import logging
 
-__updated__ = '2016-02-16'
-
+__updated__ = '2018-09-03'
 
 logger = logging.getLogger(__name__)
 
@@ -71,10 +70,10 @@ class ServicesPoolGroup(UUIDModel):
     def __str__(self):
         return u"Service Pool group {0}({1})".format(self.name, self.comments)
 
-
     @property
     def as_dict(self):
         return {
+            'id': self.uuid,
             'name': self.name,
             'comments': self.comments,
             'priority': self.priority,

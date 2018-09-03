@@ -43,7 +43,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-08-31'
+__updated__ = '2018-09-03'
 
 
 def about(request):
@@ -70,6 +70,18 @@ def index(request):
         return webLogout(request)
 
     data = getServicesData(request)
+
+    # List of services groups
+    allGroups = [v for v in sorted([ser['group'] for ser in data['services']], key=lambda s: s['priority'])]
+    # Now remove duplicates
+    data['groups'] = []
+    already = []
+    for g in allGroups:
+        if g['name'] not in already:
+            already.append(g['name'])
+            data['groups'].append(g)
+
+    logger.debug('Groups: {}'.format(data['groups']))
 
     response = render(
         request,

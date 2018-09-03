@@ -189,20 +189,7 @@ def getServicesData(request):
             autorun = True
             # return redirect('uds.web.views.service', idService=services[0]['id'], idTransport=services[0]['transports'][0]['id'])
 
-    # List of services groups
-    allGroups = [v for v in sorted([ser['group'] for ser in services], key=lambda s: s['priority'])]
-    # Now remove duplicates
-    groups = []
-    already = []
-    for g in allGroups:
-        if g['name'] not in already:
-            already.append(g['name'])
-            groups.append(g)
-
-    logger.debug('Groups: {}'.format(groups))
-
     return {
-            'groups': groups,
             'services': services,
             'ip': request.ip,
             'nets': nets,

@@ -88,7 +88,6 @@ class IPMachinesService(services.Service):
     def getUnassignedMachine(self):
         # Search first unassigned machine
         try:
-            self.storage.lock()
             for ip in self._ips:
                 if self.storage.readData(ip) is None:
                     self.storage.saveData(ip, ip)
@@ -97,14 +96,9 @@ class IPMachinesService(services.Service):
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
             return None
-        finally:
-            self.storage.unlock()
 
     def unassignMachine(self, ip):
         try:
-            self.storage.lock()
             self.storage.remove(ip)
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
-        finally:
-            self.storage.unlock()
