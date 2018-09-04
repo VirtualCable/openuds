@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 import logging
 
-__updated__ = '2018-01-15'
+__updated__ = '2018-09-04'
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,7 @@ class User(object):
                 for g in self._groups:
                     if g.dbGroup().is_meta is False:
                         lst += (g.dbGroup().id,)
-                usr.groups = lst
+                usr.groups.set(lst)
             else:
                 # From db
                 usr = DbUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
