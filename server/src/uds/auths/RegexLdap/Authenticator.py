@@ -43,7 +43,7 @@ import ldap
 import re
 import logging
 
-__updated__ = '2018-02-01'
+__updated__ = '2018-09-04'
 
 logger = logging.getLogger(__name__)
 
@@ -348,7 +348,7 @@ class RegexLdap(auths.Authenticator):
             for r in ldaputil.getAsDict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter='(&(&(objectClass={})({}={}*))(objectCategory=person))'.format(self._userClass, self._userIdAttr, ldaputil.escape(pattern)),
+                ldapFilter='(&(&(objectClass={})({}={}*)))'.format(self._userClass, self._userIdAttr, ldaputil.escape(pattern)),
                 attrList=None,  # All attrs
                 sizeLimit=LDAP_RESULT_LIMIT
             ):

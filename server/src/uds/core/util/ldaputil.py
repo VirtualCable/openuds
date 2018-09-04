@@ -98,7 +98,7 @@ def connection(username, password, host, port=-1, ssl=False, timeout=3, debug=Fa
         logger.exception('Exception connection:')
         raise LDAPError('{}'.format(e))
 
-    logger.debug('Conneciton was success')
+    logger.debug('Connection was successful')
     return l
 
 

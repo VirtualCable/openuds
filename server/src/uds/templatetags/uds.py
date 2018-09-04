@@ -110,6 +110,7 @@ def udsJs(context):
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('modern.services'),
             'enabler': reverse('ClientAccessEnabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
+            'galeryImage': reverse('galleryImage', kwargs={ 'idImage': 'param1' }),
         }
     }
 
