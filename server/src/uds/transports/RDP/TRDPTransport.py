@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2018-07-19'
+__updated__ = '2018-09-06'
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +88,7 @@ class TRDPTransport(BaseRDPTransport):
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
     smooth = BaseRDPTransport.smooth
+    showConnectionBar = BaseRDPTransport.showConnectionBar
     credssp = BaseRDPTransport.credssp
 
     screenSize = BaseRDPTransport.screenSize
@@ -140,6 +141,7 @@ class TRDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.isTrue()
         r.desktopComposition = self.aero.isTrue()
         r.smoothFonts = self.smooth.isTrue()
+        r.displayConnectionBar = self.showConnectionBar.isTrue()
         r.enablecredsspsupport = self.credssp.isTrue()
         r.multimedia = self.multimedia.isTrue()
         r.alsa = self.alsa.isTrue()
