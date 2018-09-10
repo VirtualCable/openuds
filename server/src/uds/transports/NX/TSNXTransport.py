@@ -27,7 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
 Created on Jul 29, 2011
 
@@ -140,8 +139,8 @@ class TSNXTransport(Transport):
         return str.join('\t', ['v1', gui.boolToStr(self._useEmptyCreds), self._fixedName, self._fixedPassword, self._listenPort,
                                self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer])
 
-    def unmarshal(self, string):
-        data = string.split('\t')
+    def unmarshal(self, val):
+        data = val.decode('utf8').split('\t')
         if data[0] == 'v1':
             self._useEmptyCreds = gui.strToBool(data[1])
             self._fixedName, self._fixedPassword, self._listenPort, self._connection, self._session, self._cacheDisk, self._cacheMem, self._tunnelServer, self._tunnelCheckServer = data[2:]
@@ -194,7 +193,7 @@ class TSNXTransport(Transport):
         if self._useEmptyCreds is True:
             username, password = '', ''
 
-        tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.choice(string.ascii_letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshServer = self._tunnelServer

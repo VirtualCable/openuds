@@ -37,9 +37,7 @@ from uds.core.util.State import State
 from datetime import datetime
 import logging
 
-
-__updated__ = '2017-03-22'
-
+__updated__ = '2018-09-10'
 
 logger = logging.getLogger(__name__)
 
@@ -71,14 +69,14 @@ class OVirtPublication(Publication):
         """
         returns data from an instance of Sample Publication serialized
         """
-        return '\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state])
+        return b'\t'.join(['v1', self._name, self._reason, self._destroyAfter, self._templateId, self._state])
 
     def unmarshal(self, data):
         """
         deserializes the data and loads it inside instance.
         """
         logger.debug('Data: {0}'.format(data))
-        vals = data.split('\t')
+        vals = data.split(b'\t')
         if vals[0] == 'v1':
             self._name, self._reason, self._destroyAfter, self._templateId, self._state = vals[1:]
 
@@ -117,7 +115,6 @@ class OVirtPublication(Publication):
             self._state = 'error'
             self._reason = str(e)
             return State.ERROR
-
 
         if self._state == 'removed':
             self._state = 'error'

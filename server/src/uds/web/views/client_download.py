@@ -45,8 +45,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2016-08-26'
-
+__updated__ = '2018-09-10'
 
 UserPrefsManager.manager().registerPrefs(
     '_uds',

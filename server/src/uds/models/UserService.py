@@ -55,7 +55,7 @@ from uds.models.Util import getSqlDatetime
 
 import logging
 
-__updated__ = '2018-06-15'
+__updated__ = '2018-09-10'
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +173,10 @@ class UserService(UUIDModel):
             raise Exception('Class {0} needs deployedType but it is not defined!!!'.format(serviceInstance.__class__.__name__))
         us = serviceInstance.deployedType(self.getEnvironment(), service=serviceInstance, publication=publicationInstance, osmanager=osmanagerInstance, dbservice=self)
         if self.data != '' and self.data is not None:
-            us.unserialize(self.data)
+            try:
+                us.unserialize(self.data)
+            except Exception:
+                logger.exception('Error unserializing {}//{} : {}'.format(self.deployed_service.name, self.uuid, self.data))
         return us
 
     def updateData(self, us):

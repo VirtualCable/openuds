@@ -48,7 +48,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__updated__ = '2018-06-27'
+__updated__ = '2018-09-07'
 
 
 @python_2_unicode_compatible
@@ -194,7 +194,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         else:
             auths = Authenticator.objects.all().order_by('priority', 'name')
 
-        return [auth for auth in auths if auth.getType().isCustom() is False or tag != 'disabled']
+        return [auth for auth in auths if auth.getType() and (auth.getType().isCustom() is False or tag != 'disabled')]
 
     @staticmethod
     def beforeDelete(sender, **kwargs):

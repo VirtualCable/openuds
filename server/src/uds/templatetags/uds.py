@@ -98,7 +98,7 @@ def udsJs(context):
         'version_stamp': VERSION_STAMP,
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
-        'authenticators': [getAuth(auth) for auth in authenticators],
+        'authenticators': [getAuth(auth) for auth in authenticators if auth.getType()],
         'bypassPluginDetection': False,
         'os': request.os['OS'],
         'csrf_field': CSRF_FIELD,
@@ -110,7 +110,8 @@ def udsJs(context):
             'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
             'services': reverse('modern.services'),
             'enabler': reverse('ClientAccessEnabler', kwargs={ 'idService': 'param1', 'idTransport': 'param2' }),
-            'galeryImage': reverse('galleryImage', kwargs={ 'idImage': 'param1' }),
+            'galleryImage': reverse('galleryImage', kwargs={ 'idImage': 'param1' }),
+            'transportIcon': reverse('uds.web.views.transportIcon', kwargs={'idTrans': 'param1'})
         }
     }
 

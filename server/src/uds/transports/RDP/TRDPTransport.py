@@ -48,7 +48,7 @@ import logging
 import random
 import string
 
-__updated__ = '2018-09-06'
+__updated__ = '2018-09-10'
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +118,7 @@ class TRDPTransport(BaseRDPTransport):
         width, height = self.screenSize.value.split('x')
         depth = self.colorDepth.value
 
-        tunpass = ''.join(random.choice(string.letters + string.digits) for _i in range(12))
+        tunpass = ''.join(random.choice(string.ascii_letters + string.digits) for _i in range(12))
         tunuser = TicketStore.create(tunpass)
 
         sshHost, sshPort = self.tunnelServer.value.split(':')
@@ -187,7 +187,6 @@ class TRDPTransport(BaseRDPTransport):
         if os is None:
             return super(self.__class__, self).getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
-
         sp = {
             'tunUser': tunuser,
             'tunPass': tunpass,
@@ -199,7 +198,5 @@ class TRDPTransport(BaseRDPTransport):
             'this_server': request.build_absolute_uri('/'),
             'r': r,
         }
-
-        m = tools.DictAsObj(data)
 
         return self.getScript('scripts/{}/tunnel.py', os, sp)
